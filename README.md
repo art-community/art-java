@@ -1,0 +1,22 @@
+# Application Development Kit (ADK) 
+
+ADK - гибкий фреймворк основанный на микросервисах, архитектура включает в себя основные потребности гибкой, масштабируемой, отказоустойчивой системы: DI, механизмы перепосыла сообщений, реконфигурация на лету, отказоустойчивость к недоступности интегрированных систем, встроенная функциональная деградация
+
+*  [Модуль "application-config"](http://10.35.215.200/gitlab/development/application-config/blob/release/readme.md)
+*  [Модуль "application-core" (Ядро ADK)](http://10.35.215.200/gitlab/development/application-core/blob/release/readme.md)
+*  [Модуль "application-entity" (Сущности ADK)](http://10.35.215.200/gitlab/development/application-entity/blob/release/readme.md)
+*  [Модуль "application-http"](http://10.35.215.200/gitlab/development/application-http/blob/release/readme.md)
+*  [Модуль "application-http-client"](http://10.35.215.200/gitlab/development/application-http-client/blob/release/readme.md)
+*  [Модуль "application-http-json"](http://10.35.215.200/gitlab/development/application-http-json/blob/release/readme.md)
+*  [Модуль "application-http-server"](http://10.35.215.200/gitlab/development/application-http-server/blob/release/readme.md)
+*  [Модуль "application-logging"](http://10.35.215.200/gitlab/development/application-logging/blob/release/readme.md)
+*  [Модуль "application-metrics"](http://10.35.215.200/gitlab/development/application-metrics/blob/release/readme.md)
+*  [Модуль "application-protobuf"](http://10.35.215.200/gitlab/development/application-protobuf/blob/release/readme.md)
+*  [Модуль "application-grpc-client"](http://10.35.215.200/gitlab/development/application-grpc-client/blob/release/readme.md)
+*  [Модуль "application-protobuf-generated"](http://10.35.215.200/gitlab/development/application-protobuf-generated/blob/release/readme.md)
+*  [Модуль "application-protobuf-server"](http://10.35.215.200/gitlab/development/application-protobuf-server/blob/release/readme.md)
+*  [Модуль "application-rocks-db"](http://10.35.215.200/gitlab/development/application-rocks-db/blob/release/README.md)
+*  [Модуль "application-service"](http://10.35.215.200/gitlab/development/application-service/blob/release/README.md)
+*  [Модуль "application-soap-client"](http://10.35.215.200/gitlab/development/application-soap-client/blob/release/README.md)
+*  [Модуль "application-sql"](http://10.35.215.200/gitlab/development/application-sql/blob/release/README.md)
+*  [Модуль "application-xml"](http://10.35.215.200/gitlab/development/application-xml/blob/release/README.md)

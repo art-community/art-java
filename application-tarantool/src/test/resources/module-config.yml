@@ -1,0 +1,9 @@
+tarantool:
+  configurations:
+    T:
+      connection:
+        host: vm-server
+        port: 3301
+        username: user
+        password: password
+      instanceMode: remote

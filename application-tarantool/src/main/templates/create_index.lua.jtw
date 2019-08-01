@@ -1,0 +1,38 @@
+box.space.{{ spaceName }}:create_index('{{ indexName }}', {
+        {%- if not (empty(sequence)) -%}
+            sequence = '{{ sequence }}';
+        {%- endif -%}
+        {%- if not (empty(type)) -%}
+            type = '{{ type }}';
+        {%- endif -%}
+        {%- if not (empty(id)) -%}
+            id = {{ id }};
+        {%- endif -%}
+        {%- if not (empty(parts)) -%}
+            parts = {{ parts }};
+        {%- endif -%}
+        {%- if not (empty(dimension)) -%}
+            dimension = {{ dimension }};
+        {%- endif -%}
+        {%- if not (empty(distance)) -%}
+            distance = {{ distance }};
+        {%- endif -%}
+        {%- if not (empty(bloom_fpr)) -%}
+            bloom_fpr = {{ bloomFpr }};
+        {%- endif -%}
+        {%- if not (empty(pageSize)) -%}
+            page_size = {{ pageSize }};
+        {%- endif -%}
+        {%- if not (empty(rangeSize)) -%}
+            range_size = {{ rangeSize}};
+        {%- endif -%}
+        {%- if not (empty(runCountPerLevel)) -%}
+            run_count_per_level = {{ runCountPerLevel }};
+        {%- endif -%}
+        {%- if not (empty(runSizeRatio)) -%}
+            run_size_ratio = {{ runSizeRatio }};
+        {%- endif -%}
+        if_not_exists = true;
+        unique = {{ unique }};
+   }
+)

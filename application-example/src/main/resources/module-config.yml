@@ -1,0 +1,54 @@
+# example module config section
+exampleModule:
+  stringConfig: "Hello, World!"
+  intConfig: 10
+
+# configurator section
+configurator:
+  host: "10.35.215.200"
+  port: 8000
+
+# protobuf config section
+grpc:
+  communication:
+    targets:
+      EXAMPLE_SERVICE:
+        host: localhost
+        port: 10001
+        path: "/example"
+  server:
+    port: 10001
+    path: "/example"
+
+# http config section
+http:
+  communication:
+    targets:
+      EXAMPLE_SERVICE:
+        host: localhost
+        port: 10000
+        path: "/example"
+  server:
+    port: 10000
+    path: "/example"
+    url: "http://100.90.146.15:10000"
+
+soap:
+  exampleSoapServicePath: "/ExampleSoapService"
+
+# Oracle Database config section
+sql:
+  db:
+    url: "jdbc:oracle:thin:@//10.28.43.13:1521/MSKDEV3"
+    login: "sa"
+    password: "sa"
+    provider: "oracle"
+
+# RocksDb config section
+rocks:
+  db:
+    path: "rocks.db"
+
+# Metrics config section
+metrics:
+  path: "/example"

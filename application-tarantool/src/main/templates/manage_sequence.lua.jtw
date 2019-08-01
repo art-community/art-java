@@ -1,0 +1,24 @@
+function drop{{ sequenceName }}()
+    if box.sequence.{{ sequenceName }} ~= nil then
+        box.sequence.{{ sequenceName }}:drop()
+    end
+end
+
+function reset{{ sequenceName }}()
+    if box.sequence.{{ sequenceName }} ~= nil then
+        box.sequence.{{ sequenceName }}:reset()
+    end
+end
+
+function next{{ sequenceName }}()
+    if box.sequence.{{ sequenceName }} ~= nil then
+        return box.sequence.{{ sequenceName }}:next()
+    end
+    return -1
+end
+
+function set{{ sequenceName }}(value)
+    if box.sequence.{{ sequenceName }} ~= nil then
+        box.sequence.{{ sequenceName }}:set(value)
+    end
+end

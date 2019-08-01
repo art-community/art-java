@@ -1,0 +1,188 @@
+package ru.adk.http.client.configuration;
+
+import lombok.Getter;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.ConnectionConfig;
+import org.apache.http.config.SocketConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.impl.nio.reactor.IOReactorConfig;
+import org.apache.http.nio.client.HttpAsyncClient;
+import org.zalando.logbook.httpclient.LogbookHttpRequestInterceptor;
+import org.zalando.logbook.httpclient.LogbookHttpResponseInterceptor;
+import ru.adk.http.client.exception.HttpClientException;
+import ru.adk.http.client.interceptor.HttpClientInterceptor;
+import ru.adk.http.client.interceptor.HttpClientTracingRequestInterception;
+import ru.adk.http.client.model.HttpCommunicationTargetConfiguration;
+import ru.adk.http.configuration.HttpModuleConfiguration;
+import static java.security.KeyStore.getInstance;
+import static java.text.MessageFormat.format;
+import static java.util.Collections.emptyMap;
+import static java.util.Objects.nonNull;
+import static org.apache.http.HttpVersion.HTTP_1_1;
+import static org.apache.http.ssl.SSLContexts.custom;
+import static ru.adk.core.constants.NetworkConstants.LOCALHOST;
+import static ru.adk.core.constants.StringConstants.EMPTY_STRING;
+import static ru.adk.core.extension.ExceptionExtensions.exceptionIfNull;
+import static ru.adk.core.factory.CollectionsFactory.linkedListOf;
+import static ru.adk.http.client.constants.HttpClientExceptionMessages.HTTP_COMMUNICATION_TARGET_NOT_FOUND;
+import static ru.adk.http.client.constants.HttpClientExceptionMessages.HTTP_SAL_CONFIGURATION_FAILED;
+import static ru.adk.http.client.constants.HttpClientModuleConstants.RESPONSE_BUFFER_DEFAULT_SIZE;
+import static ru.adk.http.client.interceptor.HttpClientInterceptor.interceptRequest;
+import static ru.adk.http.client.module.HttpClientModule.httpClientModule;
+import static ru.adk.http.constants.HttpCommonConstants.DEFAULT_HTTP_PORT;
+import static ru.adk.logging.LoggingModule.loggingModule;
+import javax.net.ssl.HostnameVerifier;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.util.List;
+import java.util.Map;
+
+public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
+    HttpClient getClient();
+
+    HttpAsyncClient getAsyncClient();
+
+    RequestConfig getRequestConfig();
+
+    SocketConfig getSocketConfig();
+
+    IOReactorConfig getIoReactorConfig();
+
+    ConnectionConfig getConnectionConfig();
+
+    HttpVersion getHttpVersion();
+
+    int getResponseBodyBufferSize();
+
+    List<HttpClientInterceptor> getRequestInterceptors();
+
+    List<HttpClientInterceptor> getResponseInterceptors();
+
+    boolean isSsl();
+
+    boolean isDisableSslHostNameVerification();
+
+    String getSslKeyStoreType();
+
+    String getSslKeyStoreFilePath();
+
+    String getSslKeyStorePassword();
+
+    String getBalancerHost();
+
+    int getBalancerPort();
+
+
+    Map<String, HttpCommunicationTargetConfiguration> getCommunicationTargets();
+
+    default HttpCommunicationTargetConfiguration getCommunicationTargetConfiguration(String serviceId) {
+        return exceptionIfNull(getCommunicationTargets().get(serviceId), new HttpClientException(format(HTTP_COMMUNICATION_TARGET_NOT_FOUND, serviceId))).toBuilder().build();
+    }
+
+    @Getter
+    class HttpClientModuleDefaultConfiguration extends HttpModuleDefaultConfiguration implements HttpClientModuleConfiguration {
+        private final RequestConfig requestConfig = RequestConfig.DEFAULT;
+        private final SocketConfig socketConfig = SocketConfig.DEFAULT;
+        private final ConnectionConfig connectionConfig = ConnectionConfig.DEFAULT;
+        private final IOReactorConfig ioReactorConfig = IOReactorConfig.DEFAULT;
+        private final HttpVersion httpVersion = HTTP_1_1;
+        private final List<HttpClientInterceptor> requestInterceptors = linkedListOf(interceptRequest(new HttpClientTracingRequestInterception()));
+        private final List<HttpClientInterceptor> responseInterceptors = linkedListOf();
+        private final int responseBodyBufferSize = RESPONSE_BUFFER_DEFAULT_SIZE;
+        private final boolean ssl = false;
+        private final boolean disableSslHostNameVerification = true;
+        private final String sslKeyStoreType = EMPTY_STRING;
+        private final String sslKeyStoreFilePath = EMPTY_STRING;
+        private final String sslKeyStorePassword = EMPTY_STRING;
+        private final String balancerHost = LOCALHOST;
+        private final int balancerPort = DEFAULT_HTTP_PORT;
+        private final Map<String, HttpCommunicationTargetConfiguration> communicationTargets = emptyMap();
+        @Getter(lazy = true)
+        private final HttpClient client = createHttpClient();
+        @Getter(lazy = true)
+        private final HttpAsyncClient asyncClient = createAsyncHttpClient();
+
+        @SuppressWarnings({"Duplicates", "WeakerAccess"})
+        protected CloseableHttpAsyncClient createAsyncHttpClient() {
+            HttpAsyncClientBuilder clientBuilder = HttpAsyncClients.custom()
+                    .setDefaultRequestConfig(getRequestConfig())
+                    .setDefaultIOReactorConfig(getIoReactorConfig())
+                    .setDefaultConnectionConfig(getConnectionConfig());
+            if (isSsl()) {
+                try {
+                    if (disableSslHostNameVerification) {
+                        HostnameVerifier allowAll = (hostName, session) -> true;
+                        clientBuilder.setSSLHostnameVerifier(allowAll);
+                    }
+                    clientBuilder.setSSLContext(custom().loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray()).build());
+                } catch (Exception e) {
+                    throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
+                }
+            }
+            if (isEnableTracing()) {
+                clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()))
+                        .addInterceptorLast(new LogbookHttpResponseInterceptor());
+            }
+            CloseableHttpAsyncClient client = clientBuilder.build();
+            client.start();
+            return client;
+        }
+
+        @SuppressWarnings({"Duplicates", "WeakerAccess"})
+        protected CloseableHttpClient createHttpClient() {
+            HttpClientBuilder clientBuilder = HttpClients.custom()
+                    .setDefaultRequestConfig(getRequestConfig())
+                    .setDefaultConnectionConfig(getConnectionConfig())
+                    .setDefaultSocketConfig(getSocketConfig());
+            if (isEnableTracing()) {
+                clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()))
+                        .addInterceptorLast(new LogbookHttpResponseInterceptor());
+            }
+            if (isSsl()) {
+                try {
+                    if (disableSslHostNameVerification) {
+                        HostnameVerifier allowAll = (hostName, session) -> true;
+                        clientBuilder.setSSLHostnameVerifier(allowAll);
+                    }
+                    clientBuilder.setSSLContext(custom().loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray()).build());
+                } catch (Exception e) {
+                    throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
+                }
+            }
+            return clientBuilder.build();
+        }
+
+        private KeyStore loadKeyStore() {
+            FileInputStream keyStoreInputStream = null;
+            try {
+                KeyStore keyStore = getInstance(getSslKeyStoreType());
+                keyStoreInputStream = new FileInputStream(new File(getSslKeyStoreFilePath()));
+                keyStore.load(keyStoreInputStream, getSslKeyStorePassword().toCharArray());
+                return keyStore;
+            } catch (Exception e) {
+                throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
+            } finally {
+                if (nonNull(keyStoreInputStream)) {
+                    try {
+                        keyStoreInputStream.close();
+                    } catch (IOException e) {
+                        loggingModule()
+                                .getLogger(HttpClientModuleConfiguration.class)
+                                .error(HTTP_SAL_CONFIGURATION_FAILED, e);
+                    }
+                }
+            }
+        }
+
+    }
+}
+

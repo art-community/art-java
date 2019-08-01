@@ -1,0 +1,22 @@
+box.sequence.{{ sequenceName }}.alter({
+        {%- if not (empty(start)) -%}
+            start
+        {%- endif -%}
+        {%- if not (empty(min)) -%}
+            min
+        {%- endif -%}
+        {%- if not (empty(max)) -%}
+            max
+        {%- endif -%}
+        {%- if not (empty(cycle)) -%}
+            cycle
+        {%- endif -%}
+        {%- if not (empty(cache)) -%}
+            cache
+        {%- endif -%}
+        {%- if not (empty(step)) -%}
+            step
+        {%- endif -%}
+        if_not_exists = true;
+    }
+)

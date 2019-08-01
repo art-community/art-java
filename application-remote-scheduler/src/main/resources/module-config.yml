@@ -1,0 +1,11 @@
+scheduler:
+  http:
+    path: /scheduler
+  refreshDeferredPeriodMinutes: 5
+  refreshPeriodicPeriodMinutes: 1440
+balancer:
+  host: localhost
+  port: 20005
+db:
+  adapter:
+    serviceId: "CRM_SCHEDULER_DB_ADAPTER_SERVICE"

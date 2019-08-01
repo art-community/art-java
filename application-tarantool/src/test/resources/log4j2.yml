@@ -1,0 +1,15 @@
+Configuration:
+  status: info
+  name: LoggerYamlConfiguration
+  Appenders:
+    Console:
+      name: ConsoleAppender
+      PatternLayout:
+        Pattern: "%d %p %c{1.} [%t] %m %ex%n"
+        Charset: "UTF-8"
+  Loggers:
+    Root:
+      level: trace
+      includeLocation: true
+      AppenderRef:
+        ref: ConsoleAppender
