@@ -1,16 +1,16 @@
 package specification
 
-import ru.adk.entity.tuple.PlainTupleReader
-import ru.adk.entity.tuple.PlainTupleWriter
+import ru.art.entity.tuple.PlainTupleReader
+import ru.art.entity.tuple.PlainTupleWriter
 import spock.lang.Specification
 
-import static ru.adk.core.factory.CollectionsFactory.fixedArrayOf
-import static ru.adk.core.factory.CollectionsFactory.mapOf
-import static ru.adk.entity.Entity.entityBuilder
-import static ru.adk.entity.PrimitivesFactory.stringPrimitive
-import static ru.adk.entity.tuple.TupleReader.readTuple
-import static ru.adk.entity.tuple.TupleWriter.writeTuple
-import static ru.adk.entity.tuple.schema.ValueSchema.fromTuple
+import static ru.art.core.factory.CollectionsFactory.fixedArrayOf
+import static ru.art.core.factory.CollectionsFactory.mapOf
+import static ru.art.entity.Entity.entityBuilder
+import static ru.art.entity.PrimitivesFactory.stringPrimitive
+import static ru.art.entity.tuple.TupleReader.readTuple
+import static ru.art.entity.tuple.TupleWriter.writeTuple
+import static ru.art.entity.tuple.schema.ValueSchema.fromTuple
 
 class ValueTupleSpecification extends Specification {
     def "should descript entity into/from tuple correctly"() {

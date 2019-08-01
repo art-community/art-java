@@ -1,0 +1,60 @@
+package ru.art.http.server.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import ru.art.entity.mapper.ValueFromModelMapper;
+import ru.art.entity.mapper.ValueToModelMapper;
+import ru.art.http.constants.HttpMethodType;
+import ru.art.http.constants.HttpRequestDataSource;
+import ru.art.http.constants.MimeToContentTypeMapper;
+import ru.art.http.server.builder.HttpServiceBuilder;
+import ru.art.http.server.builder.HttpServiceBuilderImplementation;
+import ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode;
+import ru.art.http.server.interceptor.HttpServerInterceptor;
+import ru.art.http.server.path.HttpPath;
+import ru.art.service.constants.RequestValidationPolicy;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode.CHECKED;
+import java.util.List;
+import java.util.Map;
+
+@Getter
+@AllArgsConstructor
+public class HttpService {
+    private final String path;
+    private final List<HttpMethod> httpMethods;
+    private final List<HttpServerInterceptor> requestInterceptors;
+    private final List<HttpServerInterceptor> responseInterceptors;
+
+    public static HttpServiceBuilder httpService() {
+        return new HttpServiceBuilderImplementation();
+    }
+
+    @Getter
+    @Builder
+    public static class HttpMethod {
+        private final String methodId;
+        private final HttpPath path;
+        private final HttpMethodType methodType;
+        private final HttpRequestDataSource requestDataSource;
+        private final ValueToModelMapper requestMapper;
+        private final ValueFromModelMapper responseMapper;
+        private final ValueFromModelMapper exceptionMapper;
+        private final List<HttpServerInterceptor> requestInterceptors;
+        private final List<HttpServerInterceptor> responseInterceptors;
+        private final RequestValidationPolicy requestValidationPolicy;
+        private final MimeToContentTypeMapper consumesContentType;
+        private final MimeToContentTypeMapper producesContentType;
+        private final boolean ignoreRequestAcceptType;
+        private final boolean ignoreRequestContentType;
+        private final boolean overrideResponseContentType;
+        @Builder.Default
+        private final HttpResponseHandlingMode responseHandlingMode = CHECKED;
+    }
+
+    @Getter
+    @Builder
+    public static class HttpMethodGroup {
+        private Map<HttpMethodType, HttpMethod> methods;
+    }
+}

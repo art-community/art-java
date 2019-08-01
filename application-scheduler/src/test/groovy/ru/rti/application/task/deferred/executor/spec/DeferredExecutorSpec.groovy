@@ -1,7 +1,7 @@
-package ru.adk.task.deferred.executor.spec
+package ru.art.task.deferred.executor.spec
 
 
-import ru.adk.task.deferred.executor.model.DeferredEventResult
+import ru.art.task.deferred.executor.model.DeferredEventResult
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -9,8 +9,8 @@ import spock.lang.Unroll
 import static java.lang.System.getenv
 import static java.lang.Thread.sleep
 import static java.time.LocalDateTime.now
-import static ru.adk.task.deferred.executor.DeferredExecutorImpl.builder as deferredExecutorBuilder
-import static ru.adk.task.deferred.executor.operation.DeferredExecutorSpecOperations.*
+import static ru.art.task.deferred.executor.DeferredExecutorImpl.builder as deferredExecutorBuilder
+import static ru.art.task.deferred.executor.operation.DeferredExecutorSpecOperations.*
 
 @IgnoreIf({ getenv('TRAVIS') as boolean })
 class DeferredExecutorSpec extends Specification {

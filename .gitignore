@@ -55,8 +55,6 @@ gradlew.bat
 gradle-wrapper.properties
 /build
 build
-local-logging-config.yml
-local-module-config.yml
 dist
 package-lock.json
 node_modules

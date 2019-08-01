@@ -1,5 +1,5 @@
-import ru.adk.example.module.ExampleModule;
-import static ru.adk.core.extension.ThreadExtensions.thread;
+import ru.art.example.module.ExampleModule;
+import static ru.art.core.extension.ThreadExtensions.thread;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ExampleTestInitializer {

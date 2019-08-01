@@ -1,7 +1,7 @@
-package ru.adk.task.deferred.executor.operation
+package ru.art.task.deferred.executor.operation
 
-import ru.adk.task.deferred.executor.DeferredExecutor
-import ru.adk.task.deferred.executor.model.DeferredEventResult
+import ru.art.task.deferred.executor.DeferredExecutor
+import ru.art.task.deferred.executor.model.DeferredEventResult
 
 import java.time.LocalDateTime
 import java.util.concurrent.Callable

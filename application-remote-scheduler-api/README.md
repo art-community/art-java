@@ -1,2 +1,0 @@
-# application-remote-scheduler-api
-

@@ -1,21 +1,21 @@
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ru.adk.example.api.model.ExampleRequest;
-import ru.adk.example.api.model.ExampleResponse;
-import ru.adk.example.api.model.ExampleStateModel;
-import ru.adk.example.api.communication.http.ExampleServiceHttpCommunicationSpecification;
-import static ru.adk.example.api.constants.ExampleApiConstants.EXAMPLE_HTTP_COMMUNICATION_SERVICE_ID;
-import static ru.adk.example.api.constants.ExampleApiConstants.EXAMPLE_SERVICE_ID;
-import static ru.adk.example.api.constants.ExampleApiConstants.Methods.*;
-import static ru.adk.example.api.constants.ExampleApiConstants.Paths.REQUEST_RESPONSE_HANDLING_EXAMPLE_PATH;
-import static ru.adk.example.api.mapping.ExampleRequestResponseMapper.ExampleRequestMapper.fromExampleRequest;
-import static ru.adk.example.api.mapping.ExampleRequestResponseMapper.ExampleResponseMapper.toExampleResponse;
-import static ru.adk.example.factory.ExampleRequestFactory.getExampleRequest;
-import static ru.adk.http.client.communicator.HttpCommunicator.httpCommunicator;
-import static ru.adk.http.client.module.HttpClientModule.httpClientModule;
-import static ru.adk.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
-import static ru.adk.service.ServiceController.executeServiceMethod;
-import static ru.adk.service.ServiceModule.serviceModule;
+import ru.art.example.api.model.ExampleRequest;
+import ru.art.example.api.model.ExampleResponse;
+import ru.art.example.api.model.ExampleStateModel;
+import ru.art.example.api.communication.http.ExampleServiceHttpCommunicationSpecification;
+import static ru.art.example.api.constants.ExampleApiConstants.EXAMPLE_HTTP_COMMUNICATION_SERVICE_ID;
+import static ru.art.example.api.constants.ExampleApiConstants.EXAMPLE_SERVICE_ID;
+import static ru.art.example.api.constants.ExampleApiConstants.Methods.*;
+import static ru.art.example.api.constants.ExampleApiConstants.Paths.REQUEST_RESPONSE_HANDLING_EXAMPLE_PATH;
+import static ru.art.example.api.mapping.ExampleRequestResponseMapper.ExampleRequestMapper.fromExampleRequest;
+import static ru.art.example.api.mapping.ExampleRequestResponseMapper.ExampleResponseMapper.toExampleResponse;
+import static ru.art.example.factory.ExampleRequestFactory.getExampleRequest;
+import static ru.art.http.client.communicator.HttpCommunicator.httpCommunicator;
+import static ru.art.http.client.module.HttpClientModule.httpClientModule;
+import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
+import static ru.art.service.ServiceController.executeServiceMethod;
+import static ru.art.service.ServiceModule.serviceModule;
 import java.util.Optional;
 
 /**

@@ -1,4 +1,4 @@
-package ru.adk.task.deferred.executor.model
+package ru.art.task.deferred.executor.model
 
 import java.time.LocalDateTime
 

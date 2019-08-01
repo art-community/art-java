@@ -4,7 +4,7 @@ plugins {
     `java-library`
 }
 
-group = "ru.adk"
+group = "ru.art"
 
 adk {
     embeddedModules {

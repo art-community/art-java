@@ -1,23 +1,23 @@
-import ru.adk.tarantool.configuration.lua.TarantoolIndexConfiguration
+import ru.art.tarantool.configuration.lua.TarantoolIndexConfiguration
 import spock.lang.Specification
 
 import static java.util.Optional.empty
-import static ru.adk.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
-import static ru.adk.core.constants.StringConstants.EMPTY_STRING
-import static ru.adk.core.factory.CollectionsFactory.setOf
-import static ru.adk.entity.Entity.entityBuilder
-import static ru.adk.entity.PrimitivesFactory.stringPrimitive
-import static ru.adk.tarantool.configuration.TarantoolConfiguration.TarantoolEntityMapping.mapping
-import static ru.adk.tarantool.configuration.TarantoolModuleConfiguration.entityMapping
-import static ru.adk.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.STRING
-import static ru.adk.tarantool.dao.TarantoolDao.tarantool
-import static ru.adk.tarantool.model.TarantoolUpdateFieldOperation.assigment
-import static ru.adk.tarantool.module.TarantoolModule.tarantoolModule
-import static ru.adk.tarantool.module.TarantoolModule.tarantoolModuleState
-import static ru.adk.tarantool.service.TarantoolIndexService.createIndex
-import static ru.adk.tarantool.service.TarantoolSequenceService.createSequence
-import static ru.adk.tarantool.service.TarantoolSpaceService.createSpace
-import static ru.adk.tarantool.service.TarantoolSpaceService.dropSpace
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
+import static ru.art.core.constants.StringConstants.EMPTY_STRING
+import static ru.art.core.factory.CollectionsFactory.setOf
+import static ru.art.entity.Entity.entityBuilder
+import static ru.art.entity.PrimitivesFactory.stringPrimitive
+import static ru.art.tarantool.configuration.TarantoolConfiguration.TarantoolEntityMapping.mapping
+import static ru.art.tarantool.configuration.TarantoolModuleConfiguration.entityMapping
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.STRING
+import static ru.art.tarantool.dao.TarantoolDao.tarantool
+import static ru.art.tarantool.model.TarantoolUpdateFieldOperation.assigment
+import static ru.art.tarantool.module.TarantoolModule.tarantoolModule
+import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState
+import static ru.art.tarantool.service.TarantoolIndexService.createIndex
+import static ru.art.tarantool.service.TarantoolSequenceService.createSequence
+import static ru.art.tarantool.service.TarantoolSpaceService.createSpace
+import static ru.art.tarantool.service.TarantoolSpaceService.dropSpace
 
 class MainSpecification extends Specification {
     def spaceName = "DataEntity"

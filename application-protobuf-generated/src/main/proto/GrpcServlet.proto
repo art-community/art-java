@@ -1,18 +1,18 @@
 syntax = "proto3";
-option java_package = "ru.adk.grpc.servlet";
+option java_package = "ru.art.grpc.servlet";
 import "Value.proto";
 option java_outer_classname = "GrpcServletMessage";
 option java_multiple_files = true;
-package ru.adk.grpc.servlet;
+package ru.art.grpc.servlet;
 
 message GrpcRequest {
     string serviceId = 1;
     string methodId = 2;
-    ru.adk.protobuf.entity.ProtobufValue requestData = 3;
+    ru.art.protobuf.entity.ProtobufValue requestData = 3;
 }
 
 message GrpcResponse {
     string errorCode = 1;
-    ru.adk.protobuf.entity.ProtobufValue responseData = 2;
+    ru.art.protobuf.entity.ProtobufValue responseData = 2;
     string errorMessage = 3;
 }

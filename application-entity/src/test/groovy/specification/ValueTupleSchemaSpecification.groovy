@@ -1,13 +1,13 @@
 package specification
 
-import ru.adk.entity.tuple.schema.EntitySchema
+import ru.art.entity.tuple.schema.EntitySchema
 import spock.lang.Specification
 
-import static ru.adk.core.factory.CollectionsFactory.fixedArrayOf
-import static ru.adk.core.factory.CollectionsFactory.mapOf
-import static ru.adk.entity.Entity.entityBuilder
-import static ru.adk.entity.PrimitivesFactory.stringPrimitive
-import static ru.adk.entity.tuple.schema.ValueSchema.fromValue
+import static ru.art.core.factory.CollectionsFactory.fixedArrayOf
+import static ru.art.core.factory.CollectionsFactory.mapOf
+import static ru.art.entity.Entity.entityBuilder
+import static ru.art.entity.PrimitivesFactory.stringPrimitive
+import static ru.art.entity.tuple.schema.ValueSchema.fromValue
 
 class ValueTupleSchemaSpecification extends Specification {
     def "should descript entity scheme into/from tuple correctly"() {

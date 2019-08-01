@@ -2,4 +2,4 @@ plugins {
     id("adkProject") version "1.0"
 }
 
-group = "ru.adk"
+group = "ru.art"
