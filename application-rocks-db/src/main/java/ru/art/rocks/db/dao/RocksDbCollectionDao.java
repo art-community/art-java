@@ -16,7 +16,6 @@
 
 package ru.art.rocks.db.dao;
 
-import static java.nio.ByteBuffer.wrap;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Objects.isNull;
@@ -164,7 +163,7 @@ public interface RocksDbCollectionDao {
         if (isEmpty(key)) return;
         if (isNull(value)) return;
         List<Character> charList = getCharList(key);
-        charList.set(index, wrap(new byte[]{value}).getChar());
+        charList.set(index, value.toString().charAt(0));
         putChars(key, charList);
     }
 

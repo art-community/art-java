@@ -19,8 +19,6 @@ package ru.art.rocks.db.dao;
 import org.rocksdb.RocksDBException;
 import org.rocksdb.RocksIterator;
 import ru.art.rocks.db.exception.RocksDbOperationException;
-import static java.nio.ByteBuffer.allocate;
-import static java.nio.ByteBuffer.wrap;
 import static java.text.MessageFormat.format;
 import static java.util.Objects.isNull;
 import static java.util.Optional.*;
@@ -100,14 +98,14 @@ public interface RocksDbPrimitiveDao {
     static void put(String key, byte value) {
         if (isEmpty(key)) return;
         byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = new byte[]{value};
+        byte[] valueBytes = ((Byte) value).toString().getBytes();
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
     static void put(String key, boolean value) {
         if (isEmpty(key)) return;
         byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = allocate(Byte.BYTES).put((byte) (value ? 1 : 0)).array();
+        byte[] valueBytes = ((Boolean) value).toString().getBytes();
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
@@ -143,14 +141,14 @@ public interface RocksDbPrimitiveDao {
     static void put(String key, Byte value) {
         if (isEmpty(key)) return;
         byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = allocate(Byte.BYTES).put(value).array();
+        byte[] valueBytes = value.toString().getBytes();
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
     static void put(String key, Boolean value) {
         if (isEmpty(key)) return;
         byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = allocate(Byte.BYTES).put((byte) (value ? 1 : 0)).array();
+        byte[] valueBytes = value.toString().getBytes();
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
@@ -258,7 +256,7 @@ public interface RocksDbPrimitiveDao {
         if (isEmpty(key)) return;
         if (isNull(value)) return;
         byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = new byte[]{value};
+        byte[] valueBytes = value.toString().getBytes();
         add(keyBytes, valueBytes);
     }
 
@@ -328,19 +326,11 @@ public interface RocksDbPrimitiveDao {
     }
 
     static Optional<Byte> getByte(String key) {
-        if (isEmpty(key)) return empty();
-        byte[] keyBytes = key.getBytes();
-        byte[] bytes = RocksDbPrimitiveDao.get(keyBytes);
-        if (isEmpty(bytes)) return empty();
-        return of(wrap(bytes).get());
+        return getString(key).map(Byte::valueOf);
     }
 
     static Optional<Boolean> getBoolean(String key) {
-        if (isEmpty(key)) return empty();
-        byte[] keyBytes = key.getBytes();
-        byte[] bytes = RocksDbPrimitiveDao.get(keyBytes);
-        if (isEmpty(bytes)) return empty();
-        return of(wrap(bytes).get() == 1);
+        return getString(key).map(Boolean::valueOf);
     }
 
 
