@@ -16,8 +16,11 @@
 
 package ru.art.core.constants;
 
-public interface SystemProperties {
-    String CONFIG_FILE_PATH_PROPERTY = "module.config.file";
-    String PROFILE_PROPERTY = "profile";
-    String OS_NAME_PROPERTY = "os.name";
+public interface SystemNamePatterns {
+    String WIN = "win";
+    String MAC = "mac";
+    String NIX = "nix";
+    String NUX = "nux";
+    String AIX = "aix";
+    String SUNOS = "sunos";
 }

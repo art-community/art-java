@@ -30,7 +30,7 @@ import static java.util.Objects.isNull;
 import static ru.art.config.TypesafeConfigLoaderConstants.DEFAULT_TYPESAFE_CONFIG_FILE_NAME;
 import static ru.art.config.TypesafeConfigLoadingExceptionMessages.CONFIG_FILE_NOT_FOUND;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.SystemProperties.CONFIG_FILE_PATH;
+import static ru.art.core.constants.SystemProperties.CONFIG_FILE_PATH_PROPERTY;
 import static ru.art.core.wrapper.ExceptionWrapper.wrap;
 import java.io.*;
 import java.net.URL;
@@ -43,7 +43,7 @@ class TypesafeConfigLoader {
     }
 
     private static Reader loadConfigReader(ConfigSyntax configSyntax) throws IOException {
-        String configFilePath = getProperty(CONFIG_FILE_PATH);
+        String configFilePath = getProperty(CONFIG_FILE_PATH_PROPERTY);
         File configFile;
         if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists()) {
             URL configFileUrl = TypesafeConfigLoader.class.getClassLoader().getResource(DEFAULT_TYPESAFE_CONFIG_FILE_NAME);

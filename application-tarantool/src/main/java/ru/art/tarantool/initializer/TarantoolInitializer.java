@@ -35,6 +35,7 @@ import static org.apache.logging.log4j.io.IoBuilder.forLogger;
 import static org.jtwig.JtwigTemplate.classpathTemplate;
 import static ru.art.core.constants.StringConstants.COLON;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
+import static ru.art.core.determinant.SystemDeterminant.isWindows;
 import static ru.art.core.extension.FileExtensions.writeFile;
 import static ru.art.core.jar.JarExtensions.extractCurrentJarEntry;
 import static ru.art.core.jar.JarExtensions.insideJar;
@@ -43,8 +44,8 @@ import static ru.art.tarantool.connector.TarantoolConnector.connectToTarantool;
 import static ru.art.tarantool.connector.TarantoolConnector.tryConnectToTarantool;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Directories.BIN;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Directories.LUA;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Scripts.INITIALIZATION;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.LOCAL;
@@ -82,14 +83,14 @@ public class TarantoolInitializer {
                 return;
             }
         } catch (Exception e) {
-            if (instanceMode == LOCAL) {
+            if (instanceMode == LOCAL && !isWindows()) {
                 logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
                 startTarantool(instanceId);
             }
             connectToTarantool(instanceId);
             return;
         }
-        if (instanceMode == LOCAL) {
+        if (instanceMode == LOCAL && !isWindows()) {
             logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
             startTarantool(instanceId);
         }

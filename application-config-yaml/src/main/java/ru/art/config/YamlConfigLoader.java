@@ -24,7 +24,7 @@ import static java.util.Objects.isNull;
 import static ru.art.config.YamlConfigLoaderConstants.DEFAULT_YAML_CONFIG_FILE_NAME;
 import static ru.art.config.YamlLoadingExceptionMessages.CONFIG_FILE_WAS_NOT_FOUND;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.SystemProperties.CONFIG_FILE_PATH;
+import static ru.art.core.constants.SystemProperties.CONFIG_FILE_PATH_PROPERTY;
 import static ru.art.core.context.Context.contextConfiguration;
 import static ru.art.core.wrapper.ExceptionWrapper.wrap;
 import java.io.*;
@@ -37,7 +37,7 @@ class YamlConfigLoader {
     }
 
     private static InputStream loadConfigInputStream() throws IOException {
-        String configFilePath = getProperty(CONFIG_FILE_PATH);
+        String configFilePath = getProperty(CONFIG_FILE_PATH_PROPERTY);
         File configFile;
         if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists()) {
             URL configFileUrl = YamlConfigLoader.class.getClassLoader().getResource(DEFAULT_YAML_CONFIG_FILE_NAME);
