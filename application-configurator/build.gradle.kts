@@ -1,11 +1,3 @@
-plugins {
-    id("adkProject") version "1.0"
-    java
-    `java-library`
-}
-
-group = "ru.art"
-
 adk {
     embeddedModules {
         applicationCore()

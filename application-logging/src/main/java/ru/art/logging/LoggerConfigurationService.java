@@ -80,7 +80,7 @@ public interface LoggerConfigurationService {
 
     static Level loadLoggingLevel() {
         LoggerConfig rootLogger;
-        if (isNull(rootLogger = getRootLogger())) return INFO;
+        if (isNull(rootLogger = getRootLogger()) || isEmpty(rootLogger.getName())) return INFO;
         return getOrElse(rootLogger.getLevel(), INFO);
     }
 

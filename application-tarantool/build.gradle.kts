@@ -1,11 +1,5 @@
 import ru.adk.gradle.plugin.configuration.*
 
-plugins {
-    id("adkProject") version "1.0"
-}
-
-group = "ru.art"
-
 adk {
     embeddedModules {
         applicationCore()
