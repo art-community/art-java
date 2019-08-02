@@ -13,13 +13,12 @@ public class RemoteConfigCommunicationSpecification implements GrpcCommunication
     private final String host;
     private final Integer port;
     private final String path;
-    private final String serviceId;
+    private final String serviceId = REMOTE_CONFIG_SERVICE_ID;
 
     public RemoteConfigCommunicationSpecification(String host, Integer port, String path) {
         this.host = host;
         this.port = port;
         this.path = path;
-        serviceId = serviceId(host, port, path);
     }
 
     @Getter(lazy = true)

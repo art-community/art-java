@@ -17,13 +17,12 @@ public class LockServiceProxySpecification implements GrpcCommunicationSpecifica
     private final String path;
     private final String host;
     private final Integer port;
-    private final String serviceId;
+    private final String serviceId = LOCK_SERVICE_ID;
 
     public LockServiceProxySpecification(String path, String host, Integer port) {
         this.path = path;
         this.host = host;
         this.port = port;
-        serviceId = serviceId(host, port, path);
     }
 
     @Getter(lazy = true)

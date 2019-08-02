@@ -34,7 +34,7 @@ public interface Specification {
         return serviceModule().getExceptionWrapper();
     }
 
-    default ServiceExecutionConfiguration getServiceExecutionConfiguration() {
+    default ServiceExecutionConfiguration getExecutionConfiguration() {
         CircuitBreakerServiceConfig circuitBreakerServiceConfig = CircuitBreakerServiceConfig
                 .builder()
                 .breakable(false)

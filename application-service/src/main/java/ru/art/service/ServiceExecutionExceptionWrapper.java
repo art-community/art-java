@@ -57,7 +57,7 @@ public class ServiceExecutionExceptionWrapper {
 
     public <RequestType, ResponseType> ServiceResponse<ResponseType> wrapServiceExecution(ServiceMethodCommand command, RequestType request) throws Exception {
         Specification service = serviceModule().getServiceRegistry().getService(command.getServiceId());
-        ResponseType responseData = executeServiceWithConfiguration(() -> service.executeMethod(command.getMethodId(), request), command, service.getServiceExecutionConfiguration());
+        ResponseType responseData = executeServiceWithConfiguration(() -> service.executeMethod(command.getMethodId(), request), command, service.getExecutionConfiguration());
         return okResponse(command, responseData);
     }
 }
