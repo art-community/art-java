@@ -7,3 +7,8 @@ tarantool:
         username: user
         password: password
       instanceMode: remote
+      entities:
+        DataEntity:
+          fields:
+            Data: 2
+            Entity: 3

@@ -2,12 +2,16 @@ package ru.art.tarantool.dao;
 
 import org.tarantool.TarantoolClient;
 import ru.art.entity.Entity;
+import ru.art.tarantool.model.TarantoolUpdateFieldOperation;
+import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Optional.*;
+import static java.util.stream.Collectors.toList;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.arrayOf;
+import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
 import static ru.art.entity.Value.asEntity;
 import static ru.art.entity.tuple.PlainTupleReader.readTuple;
 import static ru.art.entity.tuple.schema.ValueSchema.fromTuple;
@@ -28,16 +32,13 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
     public Optional<Entity> getByIndex(String spaceName, String indexName, Set<?> keys) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
-        List<?> result = callTarantoolFunction(client, GET + VALUE_POSTFIX + spaceName + BY + indexName, keys);
-        List<?> tuple = (List<?>) result.get(0);
-        if (isEmpty(result) || isEmpty(tuple)) {
+        List<?> result = callTarantoolFunction(client, GET + spaceName + VALUE_POSTFIX + BY + indexName, keys);
+        if (isEmpty(result) || result.size() == 1) {
             return empty();
         }
-        List<?> schema = (List<?>) result.get(1);
-        if (isEmpty(schema)) {
-            return empty();
-        }
-        return of(asEntity(readTuple(tuple, fromTuple(schema))));
+        List<List<?>> valueTuple = cast(result.get(0));
+        List<List<?>> schemaTuple = cast(result.get(1));
+        return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
     public Optional<Entity> getByIndex(String spaceName, String indexName) {
@@ -48,15 +49,15 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
     public List<Entity> selectByIndex(String spaceName, String indexName, Set<?> keys) {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
-        List<List<?>> result = cast(callTarantoolFunction(client, SELECT + VALUES_POSTFIX + spaceName + BY + indexName, keys));
-        List<List<?>> tuples = cast(result.get(0));
-        if (isEmpty(result) || isEmpty(tuples)) {
+        List<List<?>> result = cast(callTarantoolFunction(client, SELECT + spaceName + VALUES_POSTFIX + BY + indexName, keys));
+        if (isEmpty(result) || result.size() == 1) {
             return emptyList();
         }
-        List<List<?>> schemes = cast(result.get(1));
-        List<Entity> values = arrayOf(tuples.size());
-        for (int i = 0; i < tuples.size(); i++) {
-            values.add(asEntity(readTuple(tuples.get(i), fromTuple(schemes.get(i)))));
+        List<List<List<?>>> valueTuples = cast(result.get(0));
+        List<List<List<?>>> schemeTuples = cast(result.get(1));
+        List<Entity> values = arrayOf(valueTuples.size());
+        for (int i = 0; i < valueTuples.size(); i++) {
+            values.add(asEntity(readTuple(valueTuples.get(i), fromTuple(schemeTuples.get(i)))));
         }
         return values;
     }
@@ -66,23 +67,23 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
     }
 
 
-    public Entity deleteByIndex(String spaceName, String indexName, Set<?> keys) {
+    public Optional<Entity> deleteByIndex(String spaceName, String indexName, Set<?> keys) {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
-        List<List<?>> result = cast(callTarantoolFunction(client, DELETE + VALUES_POSTFIX + spaceName + BY + indexName, keys));
-        List<List<?>> tuple = cast(result.get(0));
-        if (isEmpty(result) || isEmpty(tuple)) {
-            return null;
+        List<List<?>> result = cast(callTarantoolFunction(client, DELETE + spaceName + VALUES_POSTFIX + BY + indexName, keys));
+        if (isEmpty(result) || result.size() == 1) {
+            return empty();
         }
-        List<List<?>> schema = cast(result.get(1));
-        return asEntity(readTuple(tuple, fromTuple(schema)));
+        List<List<?>> valueTuple = cast(result.get(0));
+        List<List<?>> schemaTuple = cast(result.get(1));
+        return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
 
     public long countByIndex(String spaceName, String indexName, Set<?> keys) {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
-        List<?> result = callTarantoolFunction(client, COUNT + VALUES_POSTFIX + spaceName + BY + indexName, keys);
+        List<?> result = callTarantoolFunction(client, COUNT + spaceName + VALUES_POSTFIX + BY + indexName, keys);
         if (isEmpty(result)) {
             return 0L;
         }
@@ -96,10 +97,66 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
     public long lenByIndex(String spaceName, String indexName) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
-        List<?> result = callTarantoolFunction(client, LEN + VALUES_POSTFIX + spaceName + BY + indexName);
+        List<?> result = callTarantoolFunction(client, LEN + spaceName + VALUES_POSTFIX + BY + indexName);
         if (isEmpty(result)) {
             return 0L;
         }
         return ((Number) ((List<?>) result.get(0)).get(0)).longValue();
     }
+
+    public Optional<Entity> updateByIndex(String spaceName, String indexName, Set<?> keys, TarantoolUpdateFieldOperation... operations) {
+        List<TarantoolUpdateFieldOperation> operationsWithSchema = stream(operations)
+                .filter(operation -> !isEmpty(operation.getSchemaOperation()))
+                .collect(toList());
+        List<TarantoolUpdateFieldOperation> operationsWithoutSchema = stream(operations)
+                .filter(operation -> isEmpty(operation.getSchemaOperation()))
+                .collect(toList());
+        Optional<Entity> entity = empty();
+        if (!isEmpty(operationsWithSchema)) {
+            entity = updateWithSchema(spaceName, indexName, keys, operationsWithSchema);
+        }
+        if (!isEmpty(operationsWithoutSchema)) {
+            entity = updateWithoutSchema(spaceName, indexName, keys, operationsWithoutSchema);
+        }
+        return entity;
+    }
+
+    private Optional<Entity> updateWithSchema(String spaceName, String indexName, Set<?> keys, List<TarantoolUpdateFieldOperation> operations) {
+        evaluateValueScript(instanceId, spaceName);
+        TarantoolClient client = tarantoolModuleState().getClient(instanceId);
+        String functionName = UPDATE + spaceName + VALUE_POSTFIX + WITH_SCHEMA_POSTFIX + BY + indexName;
+        List<?> valueOperations = operations
+                .stream()
+                .map(TarantoolUpdateFieldOperation::getValueOperation)
+                .collect(toList());
+        List<?> schemaOperations = operations
+                .stream()
+                .map(TarantoolUpdateFieldOperation::getSchemaOperation)
+                .collect(toList());
+        List<List<?>> arguments = fixedArrayOf(fixedArrayOf(keys), valueOperations, schemaOperations);
+        List<List<?>> result = cast(callTarantoolFunction(client, functionName, arguments));
+        if (isEmpty(result) || result.size() == 1) {
+            return empty();
+        }
+        List<List<?>> valueTuple = cast(result.get(0));
+        List<List<?>> schemaTuple = cast(result.get(1));
+        return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
+    }
+
+    private Optional<Entity> updateWithoutSchema(String spaceName, String indexName, Set<?> keys, List<TarantoolUpdateFieldOperation> operations) {
+        evaluateValueScript(instanceId, spaceName);
+        TarantoolClient client = tarantoolModuleState().getClient(instanceId);
+        String functionName = UPDATE + spaceName + VALUE_POSTFIX + BY + indexName;
+        List<List<?>> result = cast(callTarantoolFunction(client, functionName, fixedArrayOf(fixedArrayOf(keys), operations
+                .stream()
+                .map(TarantoolUpdateFieldOperation::getValueOperation)
+                .collect(toList()))));
+        if (isEmpty(result) || result.size() == 1) {
+            return empty();
+        }
+        List<List<?>> valueTuple = cast(result.get(0));
+        List<List<?>> schemaTuple = cast(result.get(1));
+        return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
+    }
+
 }

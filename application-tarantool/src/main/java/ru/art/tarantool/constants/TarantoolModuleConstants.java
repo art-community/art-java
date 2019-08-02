@@ -46,12 +46,13 @@ public interface TarantoolModuleConstants {
 
     interface ExceptionMessages {
         String CONFIGURATION_IS_NULL = "Tarantool ''{0}'' configuration is null. Please specify it.";
-        String ENTITY_MAPPING_IS_NULL = "Tarantool ''{0}'' entity mapping is null. Please specify it.";
+        String ENTITY_FIELDS_MAPPING_IS_NULL = "Tarantool ''{0}'' entity ''{1}'' fields mapping is null. Please specify it.";
         String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Connection waiting time has passed";
         String TARANTOOL_EXECUTABLE_NOT_EXISTS = "Tarantool ''{0}'' executable not exists inside classpath";
         String TARANTOOL_INITIALIZATION_SCRIP_NOT_EXISTS = "Tarantool ''{0}'' initialization script not exists inside classpath";
         String ENTITY_WITHOUT_ID_FILED = "Entity ''{0}'' does not has 'id' long field";
         String ENTITY_IS_NULL = "Entity ''{0}'' is null";
+        String RESULT_ENTITY_IS_NULL = "Result entity ''{0}'' is null";
     }
 
     interface LoggingMessages {

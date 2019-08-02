@@ -9,8 +9,8 @@ import static ru.art.tarantool.caller.TarantoolFunctionCaller.callTarantoolFunct
 import static ru.art.tarantool.configuration.lua.TarantoolSpaceConfiguration.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.DROP;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.RENAME;
-import static ru.art.tarantool.executor.TarantoolLuaExecutor.*;
-import static ru.art.tarantool.module.TarantoolModule.*;
+import static ru.art.tarantool.executor.TarantoolLuaExecutor.evaluateLuaScript;
+import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState;
 import java.util.Set;
 
 @NoArgsConstructor(access = PRIVATE)

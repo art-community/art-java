@@ -19,38 +19,6 @@ public class TarantoolDao {
         return new TarantoolDao(instanceId);
     }
 
-    public Optional<Entity> getByIndex(String spaceName, String indexName, Set<?> keys) {
-        return indexDao.getByIndex(spaceName, indexName, keys);
-    }
-
-    public Optional<Entity> getByIndex(String spaceName, String indexName) {
-        return indexDao.getByIndex(spaceName, indexName);
-    }
-
-    public List<Entity> selectByIndex(String spaceName, String indexName, Set<?> keys) {
-        return indexDao.selectByIndex(spaceName, indexName, keys);
-    }
-
-    public List<Entity> selectAllByIndex(String spaceName, String indexName) {
-        return indexDao.selectAllByIndex(spaceName, indexName);
-    }
-
-    public Entity deleteByIndex(String spaceName, String indexName, Set<?> keys) {
-        return indexDao.deleteByIndex(spaceName, indexName, keys);
-    }
-
-    public long countByIndex(String spaceName, String indexName, Set<?> keys) {
-        return indexDao.countByIndex(spaceName, indexName, keys);
-    }
-
-    public long countByIndex(String spaceName, String indexName) {
-        return indexDao.countByIndex(spaceName, indexName);
-    }
-
-    public long lenByIndex(String spaceName, String indexName) {
-        return indexDao.lenByIndex(spaceName, indexName);
-    }
-
     public Entity put(String spaceName, Entity entity) {
         return valueDao.put(spaceName, entity);
     }
@@ -235,6 +203,14 @@ public class TarantoolDao {
         return valueDao.deleteAll(spaceName);
     }
 
+    public Optional<Entity> update(String spaceName, Set<?> keys, TarantoolUpdateFieldOperation... operations) {
+        return valueDao.update(spaceName, keys, operations);
+    }
+
+    public void upsert(String spaceName, Entity defaultEntity, TarantoolUpdateFieldOperation... operations) {
+        valueDao.upsert(spaceName, defaultEntity, operations);
+    }
+
     public long count(String spaceName, Set<?> keys) {
         return valueDao.count(spaceName, keys);
     }
@@ -255,21 +231,47 @@ public class TarantoolDao {
         valueDao.truncate(spaceName);
     }
 
-    public TarantoolDao sequencedId() {
+    public void sequencedId() {
         valueDao.sequencedId();
-        return this;
     }
 
-    public TarantoolDao manualId() {
+    public void manualId() {
         valueDao.manualId();
-        return this;
     }
 
-    public Entity update(String spaceName, Set<?> keys, TarantoolUpdateFieldOperation... operations) {
-        return valueDao.update(spaceName, keys, operations);
+    public Optional<Entity> getByIndex(String spaceName, String indexName, Set<?> keys) {
+        return indexDao.getByIndex(spaceName, indexName, keys);
     }
 
-    public void upsert(String spaceName, Entity defaultEntity, TarantoolUpdateFieldOperation... operations) {
-        valueDao.upsert(spaceName, defaultEntity, operations);
+    public Optional<Entity> getByIndex(String spaceName, String indexName) {
+        return indexDao.getByIndex(spaceName, indexName);
+    }
+
+    public List<Entity> selectByIndex(String spaceName, String indexName, Set<?> keys) {
+        return indexDao.selectByIndex(spaceName, indexName, keys);
+    }
+
+    public List<Entity> selectAllByIndex(String spaceName, String indexName) {
+        return indexDao.selectAllByIndex(spaceName, indexName);
+    }
+
+    public Optional<Entity> deleteByIndex(String spaceName, String indexName, Set<?> keys) {
+        return indexDao.deleteByIndex(spaceName, indexName, keys);
+    }
+
+    public long countByIndex(String spaceName, String indexName, Set<?> keys) {
+        return indexDao.countByIndex(spaceName, indexName, keys);
+    }
+
+    public long countByIndex(String spaceName, String indexName) {
+        return indexDao.countByIndex(spaceName, indexName);
+    }
+
+    public long lenByIndex(String spaceName, String indexName) {
+        return indexDao.lenByIndex(spaceName, indexName);
+    }
+
+    public Optional<Entity> updateByIndex(String spaceName, String indexName, Set<?> keys, TarantoolUpdateFieldOperation... operations) {
+        return indexDao.updateByIndex(spaceName, indexName, keys, operations);
     }
 }

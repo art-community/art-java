@@ -1,25 +1,27 @@
+import ru.art.entity.Entity
 import ru.art.tarantool.configuration.lua.TarantoolIndexConfiguration
 import spock.lang.Specification
 
 import static java.util.Optional.empty
-import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.core.constants.StringConstants.EMPTY_STRING
 import static ru.art.core.factory.CollectionsFactory.setOf
 import static ru.art.entity.Entity.entityBuilder
 import static ru.art.entity.PrimitivesFactory.stringPrimitive
-import static ru.art.tarantool.configuration.TarantoolConfiguration.TarantoolEntityMapping.mapping
-import static ru.art.tarantool.configuration.TarantoolModuleConfiguration.entityMapping
+import static ru.art.tarantool.configuration.TarantoolModuleConfiguration.fieldMapping
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.STRING
 import static ru.art.tarantool.dao.TarantoolDao.tarantool
 import static ru.art.tarantool.model.TarantoolUpdateFieldOperation.assigment
-import static ru.art.tarantool.module.TarantoolModule.tarantoolModule
+import static ru.art.tarantool.model.TarantoolUpdateFieldOperation.deletion
+import static ru.art.tarantool.model.TarantoolUpdateFieldOperation.insertion
 import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState
 import static ru.art.tarantool.service.TarantoolIndexService.createIndex
+import static ru.art.tarantool.service.TarantoolIndexService.dropIndex
 import static ru.art.tarantool.service.TarantoolSequenceService.createSequence
+import static ru.art.tarantool.service.TarantoolSequenceService.dropSequence
 import static ru.art.tarantool.service.TarantoolSpaceService.createSpace
 import static ru.art.tarantool.service.TarantoolSpaceService.dropSpace
 
-class MainSpecification extends Specification {
+class TarantoolCrudSpecification extends Specification {
     def spaceName = "DataEntity"
     def instanceId = "T"
     def secondaryIndex = "SecondaryIndex"
@@ -38,11 +40,6 @@ class MainSpecification extends Specification {
     def "should run CRUD operations with tarantool with preparation steps"() {
         setup:
         useAgileConfigurations()
-
-        tarantoolModule()
-                .getTarantoolConfigurations()[instanceId]
-                .entityMapping[spaceName] = mapping().field(fieldName, 2).map()
-
         createSpace(instanceId, spaceName)
         createSequence(instanceId, sequence)
         createIndex(instanceId, TarantoolIndexConfiguration.builder()
@@ -54,7 +51,7 @@ class MainSpecification extends Specification {
                 .spaceName(spaceName)
                 .indexName(secondaryIndex)
                 .part(TarantoolIndexConfiguration.Part.builder()
-                .fieldNumber(entityMapping(instanceId, spaceName).number(fieldName))
+                .fieldNumber(fieldMapping(instanceId, spaceName).map(fieldName))
                 .type(STRING)
                 .build())
                 .build())
@@ -68,10 +65,11 @@ class MainSpecification extends Specification {
                 .getString(fieldName) == entity.getString(fieldName)
 
         when:
-        def newEntity = dao.update(spaceName, setOf(entity.getInt(idField)) as Set<Integer>, assigment(entityMapping(instanceId, spaceName).number(fieldName), fieldName, stringPrimitive(newValue)))
+        def newEntity = dao.update(spaceName, setOf(entity.getInt(idField)) as Set<Integer>,
+                assigment(fieldMapping(instanceId, spaceName).map(fieldName), fieldName, stringPrimitive(newValue)))
 
         then:
-        dao.getByIndex(spaceName, secondaryIndex, setOf(newValue)).get() == newEntity
+        dao.getByIndex(spaceName, secondaryIndex, setOf(newValue)) == newEntity
 
         when:
         dao.deleteByIndex(spaceName, secondaryIndex, setOf(newValue))
@@ -83,6 +81,9 @@ class MainSpecification extends Specification {
 
         cleanup:
         dropSpace(instanceId, spaceName)
+        dropIndex(instanceId, spaceName, primaryIndex)
+        dropIndex(instanceId, spaceName, secondaryIndex)
+        dropSequence(instanceId, sequence)
         tarantoolModuleState().loadedCommonScripts.clear()
         tarantoolModuleState().loadedValueScripts.clear()
     }
@@ -90,10 +91,6 @@ class MainSpecification extends Specification {
     def "should run CRUD operations with tarantool without preparation steps"() {
         setup:
         useAgileConfigurations()
-
-        tarantoolModule()
-                .getTarantoolConfigurations()[instanceId]
-                .entityMapping[spaceName] = mapping().field(fieldName, 2).map()
 
         when:
         entity = dao.put(spaceName, entity)
@@ -111,12 +108,12 @@ class MainSpecification extends Specification {
         0L == dao.len(spaceName)
 
         when:
-        dao.upsert(spaceName, entity, assigment(entityMapping(instanceId, spaceName).number(fieldName), fieldName, stringPrimitive("Мяу")))
+        dao.upsert(spaceName, entity, assigment(fieldMapping(instanceId, spaceName).map(fieldName), fieldName, stringPrimitive(newValue)))
         createIndex(instanceId, TarantoolIndexConfiguration.builder()
                 .spaceName(spaceName)
                 .indexName(secondaryIndex)
                 .part(TarantoolIndexConfiguration.Part.builder()
-                .fieldNumber(entityMapping(instanceId, spaceName).number(fieldName))
+                .fieldNumber(fieldMapping(instanceId, spaceName).map(fieldName))
                 .type(STRING)
                 .build())
                 .build())
@@ -125,19 +122,46 @@ class MainSpecification extends Specification {
         dao.getByIndex(spaceName, secondaryIndex, setOf(entity.getString(fieldName))).isPresent()
 
         when:
-        dao.upsert(spaceName, entity, assigment(entityMapping(instanceId, spaceName).number(fieldName), fieldName, stringPrimitive("Гав")))
+        dao.upsert(spaceName, entity, assigment(fieldMapping(instanceId, spaceName).map(fieldName), fieldName, stringPrimitive("Гав")))
 
         then:
         dao.getByIndex(spaceName, secondaryIndex, setOf("Гав")).isPresent()
 
         when:
-        dao.update(spaceName, setOf(entity.getInt(idField)) as Set<Integer>, assigment(entityMapping(instanceId, spaceName).number(fieldName), fieldName, stringPrimitive("Мяу")))
+        dao.update(spaceName, setOf(entity.getInt(idField)) as Set<Integer>,
+                assigment(fieldMapping(instanceId, spaceName).map(fieldName), fieldName, stringPrimitive(newValue)))
 
         then:
-        dao.getByIndex(spaceName, secondaryIndex, setOf("Мяу")).isPresent()
+        dao.getByIndex(spaceName, secondaryIndex, setOf(newValue)).isPresent()
+
+        when:
+        Entity insertedEntity = entityBuilder()
+                .longField("Long", 1L)
+                .build()
+        dao.updateByIndex(spaceName, secondaryIndex, setOf(newValue) as Set<String>,
+                insertion(fieldMapping(instanceId, spaceName).map("Entity"), "Entity", insertedEntity),
+                assigment(fieldMapping(instanceId, spaceName).map(fieldName), fieldName, stringPrimitive("$newValue,$newValue")))
+
+        then:
+        dao.getByIndex(spaceName, secondaryIndex, setOf("$newValue,$newValue".toString())).isPresent()
+        dao.getByIndex(spaceName, secondaryIndex, setOf("$newValue,$newValue".toString()))
+                .map { it.getEntity("Entity") }
+                .get() == insertedEntity
+
+        when:
+        dao.updateByIndex(spaceName, secondaryIndex, setOf("$newValue,$newValue".toString()) as Set<String>,
+                deletion(fieldMapping(instanceId, spaceName).map("Entity"), 1),
+                assigment(fieldMapping(instanceId, spaceName).map(fieldName), fieldName, stringPrimitive(newValue)))
+
+        then:
+        dao.getByIndex(spaceName, secondaryIndex, setOf(newValue)).isPresent()
+        !dao.getByIndex(spaceName, secondaryIndex, setOf(newValue)).map { it.getEntity("Entity") }.isPresent()
 
         cleanup:
         dropSpace(instanceId, spaceName)
+        dropIndex(instanceId, spaceName, primaryIndex)
+        dropIndex(instanceId, spaceName, secondaryIndex)
+        dropSequence(instanceId, sequence)
         tarantoolModuleState().loadedCommonScripts.clear()
         tarantoolModuleState().loadedValueScripts.clear()
     }
