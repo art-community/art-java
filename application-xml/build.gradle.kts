@@ -2,7 +2,7 @@
 
 
 
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()
@@ -11,5 +11,5 @@ adk {
 }
 
 dependencies {
-    embedded("org.jvnet.staxex", "stax-ex", adk.externalDependencyVersionsConfiguration.staxVersion)
+    embedded("org.jvnet.staxex", "stax-ex", art.externalDependencyVersionsConfiguration.staxVersion)
 }

@@ -1,4 +1,4 @@
-adk {
+art {
     embeddedModules {
         applicationCore()
         applicationEntity()

@@ -1,4 +1,4 @@
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()
@@ -8,7 +8,7 @@ adk {
 }
 
 dependencies {
-    with(adk.externalDependencyVersionsConfiguration) {
+    with(art.externalDependencyVersionsConfiguration) {
         embedded("io.grpc", "grpc-protobuf", grpcVersion).exclude("com.google.guava", "guava")
         embedded("com.google.guava", "guava", guavaVersion)
     }

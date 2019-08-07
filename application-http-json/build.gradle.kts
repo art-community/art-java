@@ -2,7 +2,7 @@
 
 
 
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()

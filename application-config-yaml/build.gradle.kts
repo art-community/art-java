@@ -1,4 +1,4 @@
-adk {
+art {
     providedModules {
         applicationCore()
         applicationLogging()
@@ -7,7 +7,7 @@ adk {
 }
 
 dependencies {
-    with(adk.externalDependencyVersionsConfiguration) {
+    with(art.externalDependencyVersionsConfiguration) {
         embedded("io.advantageous.konf", "konf", konfVersion)
         embedded("com.esotericsoftware.yamlbeans", "yamlbeans", yamlbeansVersion)
     }

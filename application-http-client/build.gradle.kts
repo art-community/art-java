@@ -1,4 +1,4 @@
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()
@@ -9,7 +9,7 @@ adk {
 }
 
 dependencies {
-    with(adk.externalDependencyVersionsConfiguration) {
+    with(art.externalDependencyVersionsConfiguration) {
         embedded("org.apache.httpcomponents", "httpclient", apacheHttpClientVersion)
                 .exclude("org.apache.httpcomponents", "httpcore")
         embedded("org.apache.httpcomponents", "httpasyncclient", apacheHttpAsyncClientVersion)

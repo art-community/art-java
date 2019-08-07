@@ -1,4 +1,4 @@
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()
@@ -7,7 +7,7 @@ adk {
 }
 
 dependencies {
-    with(adk.externalDependencyVersionsConfiguration) {
+    with(art.externalDependencyVersionsConfiguration) {
         embedded("org.zalando", "logbook-core", logbookVersion)
         embedded("org.apache.httpcomponents", "httpcore", apacheHttpCoreVersion)
     }

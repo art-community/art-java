@@ -1,11 +1,11 @@
-adk {
+art {
     providedModules {
         applicationCore()
     }
 }
 
 dependencies {
-    with(adk.externalDependencyVersionsConfiguration) {
+    with(art.externalDependencyVersionsConfiguration) {
         embedded("org.slf4j", "jul-to-slf4j", sl4jVersion)
 
         embedded("org.apache.logging.log4j", "log4j-api", log4jVersion)

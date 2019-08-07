@@ -1,4 +1,4 @@
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()
@@ -6,7 +6,7 @@ adk {
 }
 
 dependencies {
-    with(adk.externalDependencyVersionsConfiguration) {
+    with(art.externalDependencyVersionsConfiguration) {
         embedded("io.advantageous.konf", "konf-typesafe-config", konfTypesafeConfigVersion)
         embedded("io.advantageous.konf", "konf", konfVersion)
         embedded("com.typesafe", "config", typesafeConfigVersion)

@@ -1,4 +1,4 @@
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()
@@ -8,5 +8,5 @@ adk {
 }
 
 dependencies {
-    embedded("io.projectreactor", "reactor-core", adk.externalDependencyVersionsConfiguration.projectReactorVersion)
+    embedded("io.projectreactor", "reactor-core", art.externalDependencyVersionsConfiguration.projectReactorVersion)
 }

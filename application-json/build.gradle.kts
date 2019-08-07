@@ -1,4 +1,4 @@
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()
@@ -7,7 +7,7 @@ adk {
 }
 
 dependencies {
-    with(adk.externalDependencyVersionsConfiguration) {
+    with(art.externalDependencyVersionsConfiguration) {
         embedded("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
         embedded("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)
     }

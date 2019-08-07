@@ -1,4 +1,4 @@
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()
@@ -7,7 +7,7 @@ adk {
 }
 
 dependencies {
-    with(adk.externalDependencyVersionsConfiguration) {
+    with(art.externalDependencyVersionsConfiguration) {
         embedded("io.github.resilience4j", "resilience4j-circuitbreaker", resilience4jVersion)
         embedded("io.github.resilience4j", "resilience4j-ratelimiter", resilience4jVersion)
         embedded("io.github.resilience4j", "resilience4j-retry", resilience4jVersion)

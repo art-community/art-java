@@ -1,4 +1,4 @@
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()
@@ -13,6 +13,6 @@ adk {
 }
 
 dependencies {
-    embedded("io.rsocket", "rsocket-core", adk.externalDependencyVersionsConfiguration.rsocketVersion)
-    embedded("io.rsocket", "rsocket-transport-netty", adk.externalDependencyVersionsConfiguration.rsocketVersion)
+    embedded("io.rsocket", "rsocket-core", art.externalDependencyVersionsConfiguration.rsocketVersion)
+    embedded("io.rsocket", "rsocket-transport-netty", art.externalDependencyVersionsConfiguration.rsocketVersion)
 }

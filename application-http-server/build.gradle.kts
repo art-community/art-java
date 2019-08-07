@@ -2,7 +2,7 @@
 
 
 
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()
@@ -14,7 +14,7 @@ adk {
 }
 
 dependencies {
-    with(adk.externalDependencyVersionsConfiguration) {
+    with(art.externalDependencyVersionsConfiguration) {
         embedded("org.apache.tomcat.embed", "tomcat-embed-core", tomcatVersion)
                 .exclude("org.apache.tomcat", "tomcat-juli")
                 .exclude("org.apache.httpcomponents", "httpcore")

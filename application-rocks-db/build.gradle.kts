@@ -1,4 +1,4 @@
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()
@@ -9,5 +9,5 @@ adk {
 }
 
 dependencies {
-    embedded("org.rocksdb", "rocksdbjni", adk.externalDependencyVersionsConfiguration.rocksdbVersion)
+    embedded("org.rocksdb", "rocksdbjni", art.externalDependencyVersionsConfiguration.rocksdbVersion)
 }

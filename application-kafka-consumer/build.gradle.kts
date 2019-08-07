@@ -1,4 +1,4 @@
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()
@@ -16,7 +16,7 @@ configurations {
 }
 
 dependencies {
-    with(adk.externalDependencyVersionsConfiguration) {
+    with(art.externalDependencyVersionsConfiguration) {
         embedded("org.apache.kafka", "kafka-streams", kafkaVersion)
         embedded("org.apache.kafka", "kafka-clients", kafkaVersion)
         embedded("org.apache.kafka", "kafka-log4j-appender", kafkaLog4jAppenderVersion)

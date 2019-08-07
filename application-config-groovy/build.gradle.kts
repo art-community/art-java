@@ -1,4 +1,4 @@
-adk {
+art {
     providedModules {
         applicationCore()
         applicationEntity()
@@ -6,5 +6,5 @@ adk {
 }
 
 dependencies {
-    embedded("org.codehaus.groovy", "groovy-all", adk.externalDependencyVersionsConfiguration.groovyVersion)
+    embedded("org.codehaus.groovy", "groovy-all", art.externalDependencyVersionsConfiguration.groovyVersion)
 }

@@ -1,4 +1,4 @@
-adk {
+art {
     withSpockFramework()
     providedModules {
         applicationCore()
