@@ -23,9 +23,12 @@ import static ru.art.config.constants.ConfigType.YAML;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_PATH;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.CONFIGURATOR_GRPC_PORT_PROPERTY;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.CONFIGURATOR_SECTION_ID;
+import static ru.art.core.extension.ExceptionExtensions.ifExceptionOrEmpty;
+import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
 
 @Getter
-public class ConfiguratorProtobufServerConfiguration extends GrpcServerModuleDefaultConfiguration {
+public class ConfiguratorGrpcServerConfiguration extends GrpcServerModuleDefaultConfiguration {
     private final String path = CONFIGURATOR_PATH;
-    private final int port = config(CONFIGURATOR_SECTION_ID, YAML).getInt(CONFIGURATOR_GRPC_PORT_PROPERTY);
+    private final int port = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID, YAML).getInt(CONFIGURATOR_GRPC_PORT_PROPERTY),
+            findAvailableTcpPort());
 }

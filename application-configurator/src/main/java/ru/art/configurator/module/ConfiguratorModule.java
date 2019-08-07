@@ -66,7 +66,7 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
                 .loadModule(new ServiceModule())
                 .loadModule(new RocksDbModule(), new ConfiguratorRocksDbConfiguration())
                 .loadModule(new HttpServerModule(), new ConfiguratorHttpServerConfiguration())
-                .loadModule(new GrpcServerModule(), new ConfiguratorProtobufServerConfiguration())
+                .loadModule(new GrpcServerModule(), new ConfiguratorGrpcServerConfiguration())
                 .loadModule(new MetricsModule(), new ConfiguratorMetricsConfiguration())
                 .loadModule(new ConfiguratorModule())
                 .loadModule(new GrpcClientModule())
