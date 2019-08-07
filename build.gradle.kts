@@ -28,7 +28,7 @@ afterEvaluate {
                     val jar: Jar by tasks
                     artifact(jar)
                     artifact(sourceJar)
-                            groupId = rootProject.group as String
+                    groupId = rootProject.group as String
                     artifactId = project.name
                     version = rootProject.version as String
                     pom {
@@ -57,4 +57,5 @@ afterEvaluate {
             tasks["bintrayUpload"].dependsOn(tasks["generatePomFileFor${name.capitalize()}Publication"], sourceJar)
         }
     }
+    tasks["bintrayUpload"].enabled = false
 }
