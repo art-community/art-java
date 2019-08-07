@@ -14,14 +14,21 @@
  *    limitations under the License.
  */
 
-package ru.art.service.constants;
+package ru.art.service.state;
 
-public interface ServiceModuleConstants {
-    String DEFAULT_SERVICE_TYPE = "DEFAULT";
-    String SERVICE_MODULE_ID = "SERVICE_MODULE";
-    String SERVICE_COMMAND_REGEX = "[()]";
-    String REQUEST_EVENT = "serviceRequest";
-    String RESPONSE_EVENT = "serviceResponse";
-    String DEFAULT_REQUEST_ID = "DEFAULT_REQUEST_ID";
-    String REQUEST_VALUE_KEY = "requestValue";
+import ru.art.core.module.ModuleState;
+import ru.art.entity.Value;
+import static java.util.Optional.*;
+import java.util.Optional;
+
+public class ServiceModuleState implements ModuleState {
+    private final ThreadLocal<Value> requestValue = new ThreadLocal<>();
+
+    public Optional<Value> getRequestValue() {
+        return ofNullable(requestValue.get());
+    }
+
+    public void setRequestValue(Value value) {
+        requestValue.set(value);
+    }
 }

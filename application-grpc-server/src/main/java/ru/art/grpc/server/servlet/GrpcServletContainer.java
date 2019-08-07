@@ -52,10 +52,13 @@ import static ru.art.logging.LoggingModuleConstants.DEFAULT_REQUEST_ID;
 import static ru.art.logging.LoggingModuleConstants.LoggingParameters.REQUEST_ID_KEY;
 import static ru.art.logging.LoggingParametersManager.clearServiceCallLoggingParameters;
 import static ru.art.logging.LoggingParametersManager.putServiceCallLoggingParameters;
+import static ru.art.logging.ThreadContextExtensions.putIfNotNull;
 import static ru.art.protobuf.descriptor.ProtobufEntityReader.readProtobuf;
 import static ru.art.protobuf.descriptor.ProtobufEntityWriter.writeProtobuf;
 import static ru.art.service.ServiceController.executeServiceMethodUnchecked;
+import static ru.art.service.ServiceModule.serviceModuleState;
 import static ru.art.service.constants.RequestValidationPolicy.NON_VALIDATABLE;
+import static ru.art.service.constants.ServiceModuleConstants.REQUEST_VALUE_KEY;
 import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
 import java.util.Map;
 
@@ -76,17 +79,17 @@ public class GrpcServletContainer extends GrpcServlet {
         }
 
         @Override
-        public void executeService(GrpcRequest GrpcRequest, StreamObserver<GrpcResponse> responseObserver) {
-            String serviceMethodId = GrpcRequest.getServiceId() + DOT + GrpcRequest.getMethodId() + BRACKETS;
+        public void executeService(GrpcRequest grpcRequest, StreamObserver<GrpcResponse> responseObserver) {
+            String serviceMethodId = grpcRequest.getServiceId() + DOT + grpcRequest.getMethodId() + BRACKETS;
             clearServiceCallLoggingParameters();
             putServiceCallLoggingParameters(ServiceCallLoggingParameters.builder()
-                    .serviceId(GrpcRequest.getServiceId())
+                    .serviceId(grpcRequest.getServiceId())
                     .serviceMethodId(serviceMethodId)
                     .serviceMethodCommand(serviceMethodId + DOT + getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID))
                     .loggingEventType(GRPC_LOGGING_EVENT)
                     .build());
             try {
-                executeServiceChecked(GrpcRequest, responseObserver);
+                executeServiceChecked(grpcRequest, responseObserver);
                 clearServiceCallLoggingParameters();
             } catch (Exception e) {
                 loggingModule()
@@ -178,6 +181,8 @@ public class GrpcServletContainer extends GrpcServlet {
                 return newServiceRequest(serviceMethodCommand);
             }
 
+            putIfNotNull(REQUEST_VALUE_KEY, requestData);
+            serviceModuleState().setRequestValue(requestData);
             Object request = requestMapper.map(cast(requestData));
             return newServiceRequest(serviceMethodCommand, request, getOrElse(methodConfig.validationPolicy(), NON_VALIDATABLE));
         }

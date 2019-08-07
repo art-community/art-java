@@ -23,7 +23,7 @@ import lombok.Getter;
 import org.apache.logging.log4j.Logger;
 import reactor.core.publisher.Mono;
 import ru.art.rsocket.exception.RsocketServerException;
-import ru.art.rsocket.socket.AcceptorRsocket;
+import ru.art.rsocket.socket.RsocketAcceptor;
 import ru.art.rsocket.specification.RsocketServiceSpecification;
 import static io.rsocket.RSocketFactory.ServerTransportAcceptor;
 import static io.rsocket.RSocketFactory.receive;
@@ -67,7 +67,7 @@ public class RsocketServer {
     private Mono<CloseableChannel> createServer() {
         ServerTransportAcceptor acceptor = receive()
                 .resume()
-                .acceptor((setup, sendingSocket) -> just(new AcceptorRsocket(sendingSocket, setup)));
+                .acceptor((setup, sendingSocket) -> just(new RsocketAcceptor(sendingSocket, setup)));
         switch (transport) {
             case TCP:
                 return acceptor.transport(TcpServerTransport.create(rsocketModule().getAcceptorHost(), rsocketModule().getAcceptorTcpPort())).start().onTerminateDetach();

@@ -150,7 +150,7 @@ class HttpServiceServlet extends HttpServlet {
         if (nonNull(contentType = request.getHeader(CONTENT_TYPE)) && contentType.contains(MULTIPART_PATTERN)) {
             calculateParts(request, requestContextBuilder);
         }
-        httpServerModuleState().updateRequestContext(requestContextBuilder.build());
+        httpServerModuleState().setRequestContext(requestContextBuilder.build());
     }
 
     private void calculateParts(HttpServletRequest request, HttpRequestContextBuilder requestContextBuilder) {

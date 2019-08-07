@@ -18,6 +18,7 @@ package ru.art.http.server;
 
 import lombok.NoArgsConstructor;
 import ru.art.entity.Entity;
+import ru.art.entity.StringParametersMap;
 import ru.art.entity.Value;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
@@ -47,8 +48,12 @@ import static ru.art.http.server.module.HttpServerModule.httpServerModuleState;
 import static ru.art.http.server.parser.HttpParametersParser.parsePathParameters;
 import static ru.art.http.server.parser.HttpParametersParser.parseQueryParameters;
 import static ru.art.logging.LoggingModule.loggingModule;
+import static ru.art.logging.ThreadContextExtensions.putIfNotNull;
 import static ru.art.service.ServiceController.executeServiceMethodUnchecked;
+import static ru.art.service.ServiceModule.serviceModuleState;
+import static ru.art.service.constants.ServiceModuleConstants.REQUEST_VALUE_KEY;
 import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
+import static ru.art.service.mapping.ServiceResponseMapping.fromServiceResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.io.IOException;
@@ -86,7 +91,7 @@ class HttpServerRequestHandler {
     }
 
     private static byte[] mapServiceResponse(HttpMethod httpMethod, ServiceResponse<?> response) {
-        return mapResponseObject(response, cast(httpMethod.getResponseMapper()));
+        return mapResponseObject(response, fromServiceResponse(cast(httpMethod.getResponseMapper())));
     }
 
     private static byte[] mapResponseObject(Object object, ValueFromModelMapper<?, ? extends Value> mapper) {
@@ -109,16 +114,28 @@ class HttpServerRequestHandler {
             case BODY:
                 if (httpServerModuleState().getRequestContext().isHasContent()) return null;
                 HttpContentMapper contentMapper = httpServerModule().getContentMappers().get(requestContentType);
-                Value entity = contentMapper.getFromContent().mapFromBytes(readRequestBody(request), requestContentType, getOrElse(requestContentType.getCharset(), contextConfiguration().getCharset()));
-                if (isNull(entity)) return null;
-                return requestMapper.map(cast(entity));
+                Value value = contentMapper
+                        .getFromContent()
+                        .mapFromBytes(readRequestBody(request), requestContentType, getOrElse(requestContentType.getCharset(), contextConfiguration().getCharset()));
+                if (isNull(value)) return null;
+                putIfNotNull(REQUEST_VALUE_KEY, value);
+                serviceModuleState().setRequestValue(value);
+                return requestMapper.map(cast(value));
             case PATH_PARAMETERS:
-                return requestMapper.map(cast(parsePathParameters(request, methodConfig)));
+                StringParametersMap pathParameters = parsePathParameters(request, methodConfig);
+                putIfNotNull(REQUEST_VALUE_KEY, pathParameters);
+                serviceModuleState().setRequestValue(pathParameters);
+                return requestMapper.map(cast(pathParameters));
             case QUERY_PARAMETERS:
-                return requestMapper.map(cast(parseQueryParameters(request)));
+                StringParametersMap queryParameters = parseQueryParameters(request);
+                putIfNotNull(REQUEST_VALUE_KEY, queryParameters);
+                serviceModuleState().setRequestValue(queryParameters);
+                return requestMapper.map(cast(queryParameters));
             case MULTIPART:
                 Entity multipartEntity = readMultiParts(request);
                 if (isNull(multipartEntity) || multipartEntity.isEmpty()) return null;
+                putIfNotNull(REQUEST_VALUE_KEY, multipartEntity);
+                serviceModuleState().setRequestValue(multipartEntity);
                 return requestMapper.map(cast(multipartEntity));
             default:
                 throw new HttpServerException(format(UNKNOWN_HTTP_REQUEST_DATA_SOURCE, methodConfig.getRequestDataSource()));

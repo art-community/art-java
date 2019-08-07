@@ -1,7 +1,8 @@
 import ru.art.gradle.configuration.*
+import ru.art.gradle.configurator.project.*
 
 art {
-    embeddedModules {
+    providedModules {
         applicationCore()
         applicationEntity()
         applicationLogging()
@@ -18,6 +19,7 @@ art {
         applicationJson()
         applicationHttpJson()
         applicationHttpServer()
+        useVersion(project.version as String)
     }
     resources {
         resourceDirs.add("src/main/templates")
@@ -28,14 +30,24 @@ art {
 }
 
 dependencies {
-    embedded("org.jtwig", "jtwig-web", art.externalDependencyVersionsConfiguration.jtwigVersion)
-            .exclude("com.google.guava", "guava")
-            .exclude("org.apache.httpcomponents", "httpclient")
-    embedded("org.zeroturnaround", "zt-exec", "1.10")
-    embedded("org.zeroturnaround", "zt-exec", "1.10")
-    embedded("org.apache.logging.log4j", "log4j-iostreams", "2.11.2")
-    embedded("org.tarantool", "connector", "1.9.1")
-    embedded("com.google.guava", "guava", art.externalDependencyVersionsConfiguration.guavaVersion)
-    embedded("org.apache.httpcomponents", "httpclient", art.externalDependencyVersionsConfiguration.apacheHttpClientVersion)
+    with(art.externalDependencyVersionsConfiguration) {
+        embedded("org.jtwig", "jtwig-web", jtwigVersion)
+                .exclude("com.google.guava", "guava")
+                .exclude("org.apache.httpcomponents", "httpclient")
+        embedded("org.zeroturnaround", "zt-exec", zeroTurnaroundVersion)
+        embedded("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
+        embedded("org.tarantool", "connector", tarantoolConnectorVersion)
+        embedded("com.google.guava", "guava", guavaVersion)
+        embedded("org.apache.httpcomponents", "httpclient", apacheHttpClientVersion)
+    }
+}
 
+afterConfiguring {
+    configurations {
+        with(embedded.get()) {
+            exclude("org.slf4j", "slf4j-api")
+            exclude("org.slf4j", "slf4j-log4j12")
+            exclude("org.slf4j", "jul-to-slf4j")
+        }
+    }
 }

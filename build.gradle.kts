@@ -2,7 +2,7 @@ import com.jfrog.bintray.gradle.BintrayExtension.*
 
 plugins {
     `maven-publish`
-    id("ru.art.project") version "1.0.3"
+    id("ru.art.project") version "1.0.6"
     id("com.jfrog.bintray") version ("1.8.4")
 }
 
@@ -40,8 +40,8 @@ afterEvaluate {
         }
 
         bintray {
-            user = ""
-            key = ""
+            user = "antonb"
+            key = "7729eaea5e7246eb64bc6536a2b0630694bbf5d1"
             publish = true
             override = true
             setPublications(project.name)

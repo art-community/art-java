@@ -45,8 +45,8 @@ import static ru.art.rsocket.writer.ServiceResponsePayloadWriter.writeServiceRes
 import static ru.art.service.ServiceController.executeServiceMethodUnchecked;
 import static ru.art.service.ServiceModule.serviceModule;
 
-public class AcceptorRsocket extends AbstractRSocket {
-    public AcceptorRsocket(RSocket socket, ConnectionSetupPayload setupPayload) {
+public class RsocketAcceptor extends AbstractRSocket {
+    public RsocketAcceptor(RSocket socket, ConnectionSetupPayload setupPayload) {
         rsocketModuleState().currentRocketState(new CurrentRsocketState(setupPayload.dataMimeType(), setupPayload.metadataMimeType(), socket));
     }
 
