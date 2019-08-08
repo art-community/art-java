@@ -1,5 +1,5 @@
 art {
-    withProtobufGenerator()
+    protobufGenerator()
 }
 
 dependencies {

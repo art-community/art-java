@@ -1,5 +1,5 @@
 art {
-    withSpockFramework()
+    spockFramework()
     providedModules {
         applicationCore()
         applicationLogging()

@@ -1,5 +1,4 @@
 import ru.art.gradle.configuration.*
-import ru.art.gradle.configurator.project.*
 
 art {
     providedModules {
@@ -26,7 +25,7 @@ art {
         resourceDirs.add("src/main/tarantool")
         resourceDirs.add("src/main/lua")
     }
-    withSpockFramework()
+    spockFramework()
 }
 
 dependencies {
@@ -41,13 +40,10 @@ dependencies {
         embedded("org.apache.httpcomponents", "httpclient", apacheHttpClientVersion)
     }
 }
-
-afterConfiguring {
-    configurations {
+configurations {
         with(embedded.get()) {
             exclude("org.slf4j", "slf4j-api")
             exclude("org.slf4j", "slf4j-log4j12")
             exclude("org.slf4j", "jul-to-slf4j")
         }
     }
-}
