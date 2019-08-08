@@ -38,7 +38,7 @@ class TarantoolCommonDao {
         this.instanceId = instanceId;
     }
 
-    long count(String spaceName, Set<?> keys) {
+    public long count(String spaceName, Set<?> keys) {
         evaluateCommonScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, COUNT + spaceName, keys);
@@ -48,16 +48,16 @@ class TarantoolCommonDao {
         return ((Number) ((List<?>) result.get(0)).get(0)).longValue();
     }
 
-    long count(String spaceName, long id) {
+    public long count(String spaceName, long id) {
         return count(spaceName, setOf(id));
     }
 
-    long count(String spaceName) {
+    public long count(String spaceName) {
         return count(spaceName, emptySet());
     }
 
 
-    long len(String spaceName) {
+    public long len(String spaceName) {
         evaluateCommonScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, LEN + spaceName);
@@ -68,17 +68,17 @@ class TarantoolCommonDao {
     }
 
 
-    void truncate(String spaceName) {
+    public void truncate(String spaceName) {
         evaluateCommonScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         callTarantoolFunction(client, TRUNCATE + spaceName);
     }
 
-    void sequencedId() {
+    public void sequencedId() {
         idCalculationMode = SEQUENCE;
     }
 
-    void manualId() {
+    public void manualId() {
         idCalculationMode = MANUAL;
     }
 }

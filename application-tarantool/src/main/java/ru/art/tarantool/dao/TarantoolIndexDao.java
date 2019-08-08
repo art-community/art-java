@@ -40,12 +40,12 @@ import java.util.Optional;
 import java.util.Set;
 
 @SuppressWarnings("Duplicates")
-final class TarantoolIndexDao extends TarantoolCommonDao {
+public final class TarantoolIndexDao extends TarantoolCommonDao {
     TarantoolIndexDao(String instanceId) {
         super(instanceId);
     }
 
-    Optional<Entity> getByIndex(String spaceName, String indexName, Set<?> keys) {
+    public Optional<Entity> getByIndex(String spaceName, String indexName, Set<?> keys) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, GET + spaceName + VALUE_POSTFIX + BY + indexName, keys);
@@ -57,12 +57,12 @@ final class TarantoolIndexDao extends TarantoolCommonDao {
         return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
-    Optional<Entity> getByIndex(String spaceName, String indexName) {
+    public Optional<Entity> getByIndex(String spaceName, String indexName) {
         return getByIndex(spaceName, indexName, emptySet());
     }
 
 
-    List<Entity> selectByIndex(String spaceName, String indexName, Set<?> keys) {
+    public List<Entity> selectByIndex(String spaceName, String indexName, Set<?> keys) {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, SELECT + spaceName + VALUES_POSTFIX + BY + indexName, keys));
@@ -78,12 +78,12 @@ final class TarantoolIndexDao extends TarantoolCommonDao {
         return values;
     }
 
-    List<Entity> selectAllByIndex(String spaceName, String indexName) {
+    public List<Entity> selectAllByIndex(String spaceName, String indexName) {
         return selectByIndex(spaceName, indexName, emptySet());
     }
 
 
-    Optional<Entity> deleteByIndex(String spaceName, String indexName, Set<?> keys) {
+    public Optional<Entity> deleteByIndex(String spaceName, String indexName, Set<?> keys) {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, DELETE + spaceName + VALUES_POSTFIX + BY + indexName, keys));
@@ -96,7 +96,7 @@ final class TarantoolIndexDao extends TarantoolCommonDao {
     }
 
 
-    long countByIndex(String spaceName, String indexName, Set<?> keys) {
+    public long countByIndex(String spaceName, String indexName, Set<?> keys) {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, COUNT + spaceName + VALUES_POSTFIX + BY + indexName, keys);
@@ -106,11 +106,11 @@ final class TarantoolIndexDao extends TarantoolCommonDao {
         return ((Number) ((List<?>) result.get(0)).get(0)).longValue();
     }
 
-    long countByIndex(String spaceName, String indexName) {
+    public long countByIndex(String spaceName, String indexName) {
         return countByIndex(spaceName, indexName, emptySet());
     }
 
-    long lenByIndex(String spaceName, String indexName) {
+    public long lenByIndex(String spaceName, String indexName) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, LEN + spaceName + VALUES_POSTFIX + BY + indexName);
@@ -120,7 +120,7 @@ final class TarantoolIndexDao extends TarantoolCommonDao {
         return ((Number) ((List<?>) result.get(0)).get(0)).longValue();
     }
 
-    Optional<Entity> updateByIndex(String spaceName, String indexName, Set<?> keys, TarantoolUpdateFieldOperation... operations) {
+    public Optional<Entity> updateByIndex(String spaceName, String indexName, Set<?> keys, TarantoolUpdateFieldOperation... operations) {
         List<TarantoolUpdateFieldOperation> operationsWithSchema = stream(operations)
                 .filter(operation -> !isEmpty(operation.getSchemaOperation()))
                 .collect(toList());

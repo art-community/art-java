@@ -33,17 +33,18 @@ import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Entity.concat;
 import static ru.art.entity.Entity.entityBuilder;
+import static ru.art.entity.PrimitivesFactory.longPrimitive;
 import static ru.art.entity.Value.*;
 import static ru.art.entity.tuple.PlainTupleReader.readTuple;
 import static ru.art.entity.tuple.PlainTupleWriter.PlainTupleWriterResult;
 import static ru.art.entity.tuple.PlainTupleWriter.writeTuple;
 import static ru.art.entity.tuple.schema.ValueSchema.fromTuple;
 import static ru.art.tarantool.caller.TarantoolFunctionCaller.callTarantoolFunction;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.ENTITY_IS_NULL;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.ENTITY_WITHOUT_ID_FILED;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ID_FIELD;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.MANUAL;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.SEQUENCE;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.VALUE;
 import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState;
 import static ru.art.tarantool.service.TarantoolScriptService.evaluateValueScript;
@@ -52,12 +53,12 @@ import java.util.Optional;
 import java.util.Set;
 
 @SuppressWarnings("Duplicates")
-final class TarantoolValueDao extends TarantoolCommonDao {
+public final class TarantoolValueDao extends TarantoolCommonDao {
     TarantoolValueDao(String instanceId) {
         super(instanceId);
     }
 
-    Entity put(String spaceName, Entity entity) {
+    public Entity put(String spaceName, Entity entity) {
         if (isNull(entity)) {
             throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
         }
@@ -78,41 +79,41 @@ final class TarantoolValueDao extends TarantoolCommonDao {
         return asEntity(readTuple(result.get(0), fromTuple(result.get(1))));
     }
 
-    Entity put(String spaceName, Long id, Primitive primitive) {
+    public Entity put(String spaceName, Long id, Primitive primitive) {
         return put(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, primitive).build());
     }
 
-    Entity put(String spaceName, Long id, CollectionValue<?> collectionValue) {
+    public Entity put(String spaceName, Long id, CollectionValue<?> collectionValue) {
         return put(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, collectionValue).build());
     }
 
-    Entity put(String spaceName, Long id, StringParametersMap stringParameters) {
+    public Entity put(String spaceName, Long id, StringParametersMap stringParameters) {
         return put(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, stringParameters).build());
     }
 
-    Entity put(String spaceName, Long id, MapValue mapValue) {
+    public Entity put(String spaceName, Long id, MapValue mapValue) {
         return put(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, mapValue).build());
     }
 
 
-    Entity put(String spaceName, Primitive primitive) {
+    public Entity put(String spaceName, Primitive primitive) {
         return put(spaceName, 1L, primitive);
     }
 
-    Entity put(String spaceName, CollectionValue<?> collectionValue) {
+    public Entity put(String spaceName, CollectionValue<?> collectionValue) {
         return put(spaceName, 1L, collectionValue);
     }
 
-    Entity put(String spaceName, StringParametersMap stringParameters) {
+    public Entity put(String spaceName, StringParametersMap stringParameters) {
         return put(spaceName, 1L, stringParameters);
     }
 
-    Entity put(String spaceName, MapValue mapValue) {
+    public Entity put(String spaceName, MapValue mapValue) {
         return put(spaceName, 1L, mapValue);
     }
 
 
-    Optional<Entity> get(String spaceName, Set<?> keys) {
+    public Optional<Entity> get(String spaceName, Set<?> keys) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, GET + spaceName + VALUE_POSTFIX, keys);
@@ -124,48 +125,48 @@ final class TarantoolValueDao extends TarantoolCommonDao {
         return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
-    Optional<Entity> get(String spaceName, long id) {
+    public Optional<Entity> get(String spaceName, long id) {
         return get(spaceName, setOf(id));
     }
 
 
-    Optional<Primitive> getPrimitive(String spaceName, long id) {
+    public Optional<Primitive> getPrimitive(String spaceName, long id) {
         return get(spaceName, id).map(value -> asPrimitive(asEntity(value).getValue(VALUE)));
     }
 
-    Optional<Primitive> getPrimitive(String spaceName) {
+    public Optional<Primitive> getPrimitive(String spaceName) {
         return getPrimitive(spaceName, 1);
     }
 
 
-    Optional<CollectionValue<?>> getCollectionValue(String spaceName, long id) {
+    public Optional<CollectionValue<?>> getCollectionValue(String spaceName, long id) {
         return get(spaceName, id).map(value -> asCollection(asEntity(value).getValue(VALUE)));
     }
 
-    Optional<CollectionValue<?>> getCollectionValue(String spaceName) {
+    public Optional<CollectionValue<?>> getCollectionValue(String spaceName) {
         return getCollectionValue(spaceName, 1);
     }
 
 
-    Optional<StringParametersMap> getStringParameters(String spaceName, long id) {
+    public Optional<StringParametersMap> getStringParameters(String spaceName, long id) {
         return get(spaceName, id).map(value -> asStringParametersMap(asEntity(value).getValue(VALUE)));
     }
 
-    Optional<StringParametersMap> getStringParameters(String spaceName) {
+    public Optional<StringParametersMap> getStringParameters(String spaceName) {
         return getStringParameters(spaceName, 1);
     }
 
 
-    Optional<MapValue> getMapValue(String spaceName, long id) {
+    public Optional<MapValue> getMapValue(String spaceName, long id) {
         return get(spaceName, id).map(value -> asMap(asEntity(value).getValue(VALUE)));
     }
 
-    Optional<MapValue> getMapValue(String spaceName) {
+    public Optional<MapValue> getMapValue(String spaceName) {
         return getMapValue(spaceName, 1);
     }
 
 
-    List<Entity> select(String spaceName, Set<?> keys) {
+    public List<Entity> select(String spaceName, Set<?> keys) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, SELECT + spaceName + VALUES_POSTFIX, keys));
@@ -181,68 +182,68 @@ final class TarantoolValueDao extends TarantoolCommonDao {
         return values;
     }
 
-    List<Entity> select(String spaceName, long id) {
+    public List<Entity> select(String spaceName, long id) {
         return select(spaceName, setOf(id));
     }
 
-    List<Entity> selectAll(String spaceName) {
+    public List<Entity> selectAll(String spaceName) {
         return select(spaceName, emptySet());
     }
 
 
-    List<Primitive> selectPrimitives(String spaceName, Set<?> keys) {
+    public List<Primitive> selectPrimitives(String spaceName, Set<?> keys) {
         return select(spaceName, keys).stream().map(entity -> asPrimitive(entity.getValue(VALUE))).collect(toList());
     }
 
-    List<Primitive> selectPrimitives(String spaceName, long id) {
+    public List<Primitive> selectPrimitives(String spaceName, long id) {
         return selectPrimitives(spaceName, setOf(id));
     }
 
-    List<Primitive> selectAllPrimitives(String spaceName) {
+    public List<Primitive> selectAllPrimitives(String spaceName) {
         return selectPrimitives(spaceName, emptySet());
     }
 
 
-    List<CollectionValue<?>> selectCollections(String spaceName, Set<?> keys) {
+    public List<CollectionValue<?>> selectCollections(String spaceName, Set<?> keys) {
         return select(spaceName, keys).stream().map(entity -> asCollection(entity.getValue(VALUE))).collect(toList());
     }
 
-    List<CollectionValue<?>> selectCollections(String spaceName, long id) {
+    public List<CollectionValue<?>> selectCollections(String spaceName, long id) {
         return selectCollections(spaceName, setOf(id));
     }
 
-    List<CollectionValue<?>> selectAllCollections(String spaceName) {
+    public List<CollectionValue<?>> selectAllCollections(String spaceName) {
         return selectCollections(spaceName, emptySet());
     }
 
 
-    List<StringParametersMap> selectStringParameters(String spaceName, Set<?> keys) {
+    public List<StringParametersMap> selectStringParameters(String spaceName, Set<?> keys) {
         return select(spaceName, keys).stream().map(entity -> asStringParametersMap(entity.getValue(VALUE))).collect(toList());
     }
 
-    List<StringParametersMap> selectStringParameters(String spaceName, long id) {
+    public List<StringParametersMap> selectStringParameters(String spaceName, long id) {
         return selectStringParameters(spaceName, setOf(id));
     }
 
-    List<StringParametersMap> selectAllStringParameters(String spaceName) {
+    public List<StringParametersMap> selectAllStringParameters(String spaceName) {
         return selectStringParameters(spaceName, emptySet());
     }
 
 
-    List<MapValue> selectMaps(String spaceName, Set<?> keys) {
+    public List<MapValue> selectMaps(String spaceName, Set<?> keys) {
         return select(spaceName, keys).stream().map(entity -> asMap(entity.getValue(VALUE))).collect(toList());
     }
 
-    List<MapValue> selectMaps(String spaceName, long id) {
+    public List<MapValue> selectMaps(String spaceName, long id) {
         return selectMaps(spaceName, setOf(id));
     }
 
-    List<MapValue> selectAllMaps(String spaceName) {
+    public List<MapValue> selectAllMaps(String spaceName) {
         return selectMaps(spaceName, emptySet());
     }
 
 
-    Entity insert(String spaceName, Entity entity) {
+    public Entity insert(String spaceName, Entity entity) {
         if (isNull(entity)) {
             throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
         }
@@ -263,41 +264,41 @@ final class TarantoolValueDao extends TarantoolCommonDao {
         return asEntity(readTuple(result.get(0), fromTuple(result.get(1))));
     }
 
-    Entity insert(String spaceName, Long id, Primitive primitive) {
+    public Entity insert(String spaceName, Long id, Primitive primitive) {
         return insert(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, primitive).build());
     }
 
-    Entity insert(String spaceName, Long id, CollectionValue<?> collectionValue) {
+    public Entity insert(String spaceName, Long id, CollectionValue<?> collectionValue) {
         return insert(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, collectionValue).build());
     }
 
-    Entity insert(String spaceName, Long id, StringParametersMap stringParameters) {
+    public Entity insert(String spaceName, Long id, StringParametersMap stringParameters) {
         return insert(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, stringParameters).build());
     }
 
-    Entity insert(String spaceName, Long id, MapValue mapValue) {
+    public Entity insert(String spaceName, Long id, MapValue mapValue) {
         return insert(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, mapValue).build());
     }
 
 
-    Entity insert(String spaceName, Primitive primitive) {
+    public Entity insert(String spaceName, Primitive primitive) {
         return insert(spaceName, 1L, primitive);
     }
 
-    Entity insert(String spaceName, CollectionValue<?> collectionValue) {
+    public Entity insert(String spaceName, CollectionValue<?> collectionValue) {
         return insert(spaceName, 1L, collectionValue);
     }
 
-    Entity insert(String spaceName, StringParametersMap stringParameters) {
+    public Entity insert(String spaceName, StringParametersMap stringParameters) {
         return insert(spaceName, 1L, stringParameters);
     }
 
-    Entity insert(String spaceName, MapValue mapValue) {
+    public Entity insert(String spaceName, MapValue mapValue) {
         return insert(spaceName, 1L, mapValue);
     }
 
 
-    Optional<Entity> delete(String spaceName, Set<?> keys) {
+    public Optional<Entity> delete(String spaceName, Set<?> keys) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, DELETE + spaceName + VALUES_POSTFIX, keys));
@@ -309,11 +310,11 @@ final class TarantoolValueDao extends TarantoolCommonDao {
         return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
-    Optional<Entity> delete(String spaceName, long id) {
+    public Optional<Entity> delete(String spaceName, long id) {
         return delete(spaceName, setOf(id));
     }
 
-    List<Entity> deleteAll(String spaceName) {
+    public List<Entity> deleteAll(String spaceName) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, DELETE_ALL + spaceName + VALUES_POSTFIX));
@@ -330,7 +331,7 @@ final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
 
-    Optional<Entity> update(String spaceName, Set<?> keys, TarantoolUpdateFieldOperation... operations) {
+    public Optional<Entity> update(String spaceName, Set<?> keys, TarantoolUpdateFieldOperation... operations) {
         List<TarantoolUpdateFieldOperation> operationsWithSchema = stream(operations)
                 .filter(operation -> !isEmpty(operation.getSchemaOperation()))
                 .collect(toList());
@@ -385,14 +386,16 @@ final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
 
-    void upsert(String spaceName, Entity defaultEntity, TarantoolUpdateFieldOperation... operations) {
+    public void upsert(String spaceName, Entity defaultEntity, TarantoolUpdateFieldOperation... operations) {
         if (isNull(defaultEntity)) {
-            throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
+            return;
         }
-        if (!defaultEntity.getFieldNames().contains(ID_FIELD) && idCalculationMode == MANUAL) {
+        if (!defaultEntity.getFieldNames().contains(ID_FIELD)) {
             throw new TarantoolDaoException(format(ENTITY_WITHOUT_ID_FILED, spaceName));
         }
-        defaultEntity = concat(entityBuilder().longField(ID_FIELD, null).build(), defaultEntity);
+        if (idCalculationMode == SEQUENCE) {
+            defaultEntity.getFields().put(ID_FIELD, cast(longPrimitive(null)));
+        }
         evaluateValueScript(instanceId, spaceName);
         PlainTupleWriterResult valueTupleResult = writeTuple(defaultEntity);
         if (isNull(valueTupleResult)) {
