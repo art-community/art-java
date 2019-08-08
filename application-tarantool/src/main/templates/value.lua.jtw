@@ -50,7 +50,7 @@ end;
 
 function delete{{ spaceName }}ValuesBy{{ indexName }}(keys)
     local tuple = box.space.{{ spaceName }}.index.{{ indexName }}:delete(keys);
-    if tuples == nil then
+    if tuple == nil then
         return {}
     end
 

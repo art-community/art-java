@@ -14,6 +14,7 @@ allprojects {
         jcenter()
         mavenCentral()
     }
+
     apply(plugin = "io.github.art.project")
     apply(plugin = "com.jfrog.bintray")
     apply(plugin = "maven-publish")
@@ -23,6 +24,7 @@ allprojects {
         lombok()
         tests()
     }
+
     afterEvaluate {
         val jar: Jar by tasks
         val sourceJar = task("sourceJar", type = Jar::class) {
