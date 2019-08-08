@@ -50,7 +50,7 @@ public class TarantoolSpaceConfiguration {
     public String toCreateSpaceLua() {
         JtwigModel model = new JtwigModel()
                 .with(SPACE_NAME, spaceName)
-                .with(ID, id)
+                .with(ID_FIELD, id)
                 .with(TEMPORARY, temporary)
                 .with(ENGINE, engine)
                 .with(FIELD_COUNT, fieldCount)

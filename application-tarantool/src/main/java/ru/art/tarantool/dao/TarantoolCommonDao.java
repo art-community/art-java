@@ -30,15 +30,15 @@ import static ru.art.tarantool.service.TarantoolScriptService.evaluateCommonScri
 import java.util.List;
 import java.util.Set;
 
-public class TarantoolCommonDao {
+class TarantoolCommonDao {
     final String instanceId;
-    TarantoolIdCalculationMode idCalculationMode = MANUAL;
+    TarantoolIdCalculationMode idCalculationMode = SEQUENCE;
 
     TarantoolCommonDao(String instanceId) {
         this.instanceId = instanceId;
     }
 
-    public long count(String spaceName, Set<?> keys) {
+    long count(String spaceName, Set<?> keys) {
         evaluateCommonScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, COUNT + spaceName, keys);
@@ -48,16 +48,16 @@ public class TarantoolCommonDao {
         return ((Number) ((List<?>) result.get(0)).get(0)).longValue();
     }
 
-    public long count(String spaceName, long id) {
+    long count(String spaceName, long id) {
         return count(spaceName, setOf(id));
     }
 
-    public long count(String spaceName) {
+    long count(String spaceName) {
         return count(spaceName, emptySet());
     }
 
 
-    public long len(String spaceName) {
+    long len(String spaceName) {
         evaluateCommonScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, LEN + spaceName);
@@ -68,17 +68,17 @@ public class TarantoolCommonDao {
     }
 
 
-    public void truncate(String spaceName) {
+    void truncate(String spaceName) {
         evaluateCommonScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         callTarantoolFunction(client, TRUNCATE + spaceName);
     }
 
-    public void sequencedId() {
+    void sequencedId() {
         idCalculationMode = SEQUENCE;
     }
 
-    public void manualId() {
+    void manualId() {
         idCalculationMode = MANUAL;
     }
 }

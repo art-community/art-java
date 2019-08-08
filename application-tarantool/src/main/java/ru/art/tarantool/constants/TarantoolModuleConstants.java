@@ -32,7 +32,7 @@ public interface TarantoolModuleConstants {
     String JTW_EXTENSION = ".jtw";
     String IS_NULLABLE = "is_nullable";
     String COLLATION = "collation";
-    String ID = "id";
+    String ID_FIELD = "id";
     String VALUE = "value";
 
     interface Templates {

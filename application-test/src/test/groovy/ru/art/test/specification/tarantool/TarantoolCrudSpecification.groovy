@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package ru.art.test
+package ru.art.test.specification.tarantool
 
 import ru.art.entity.Entity
 import ru.art.tarantool.configuration.lua.TarantoolIndexConfiguration
@@ -47,10 +47,7 @@ class TarantoolCrudSpecification extends Specification {
     def fieldName = "Data"
     def idField = "id"
     def dataValue = "Тест"
-    def entity = entityBuilder()
-            .intField(idField, null)
-            .stringField(fieldName, dataValue)
-            .build()
+    def entity = entityBuilder().stringField(fieldName, dataValue).build()
     def dao = tarantool(instanceId)
     def newValue = "Мяу"
 

@@ -59,6 +59,17 @@ public class Entity implements Value {
         return new EntityBuilder();
     }
 
+    public static Entity concat(Entity... entities) {
+        if (CheckerForEmptiness.isEmpty(entities)) {
+            return null;
+        }
+        EntityBuilder entityBuilder = entityBuilder();
+        for (Entity entity : entities) {
+            entityBuilder.fields.putAll(entity.fields);
+        }
+        return entityBuilder.build();
+    }
+
     public <T, V extends Value> T getValue(String name, ValueToModelMapper<T, V> mapper) {
         if (isNull(mapper)) throw new ValueMappingException(MAPPER_IS_NULL);
         return mapper.map(cast(fields.get(name)));
@@ -637,7 +648,10 @@ public class Entity implements Value {
         }
 
         public <T> EntityBuilder entityCollectionField(String name, Collection<T> collection, ValueFromModelMapper<T, Entity> mapper) {
-            return entityCollectionField(name, collection.stream().map(mapper::map).collect(toList()));
+            return entityCollectionField(name, collection.stream()
+                    .filter(Objects::nonNull)
+                    .map(mapper::map)
+                    .collect(toList()));
         }
 
         public EntityBuilder boolCollectionField(String name, Collection<Boolean> value) {
