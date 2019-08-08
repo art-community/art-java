@@ -47,8 +47,8 @@ allprojects {
         }
 
         bintray {
-            user = "antonb"
-            key = "7729eaea5e7246eb64bc6536a2b0630694bbf5d1"
+            user = ""
+            key = ""
             publish = true
             override = true
             setPublications(project.name)
