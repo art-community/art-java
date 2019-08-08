@@ -26,6 +26,7 @@ import static org.apache.logging.log4j.LogManager.getRootLogger;
 import static org.apache.logging.log4j.core.config.Configurator.setAllLevels;
 import static ru.art.logging.LoggerConfigurationService.*;
 import static ru.art.logging.LoggingModuleConstants.LoggingMode.SOCKET;
+import java.util.Set;
 
 public interface LoggingModuleConfiguration extends ModuleConfiguration {
     Logger getLogger();
@@ -36,7 +37,7 @@ public interface LoggingModuleConfiguration extends ModuleConfiguration {
 
     Level getLevel();
 
-    LoggingMode getLoggingMode();
+    Set<LoggingMode> getLoggingModes();
 
     SocketAppenderConfiguration getSocketAppenderConfiguration();
 
@@ -45,7 +46,7 @@ public interface LoggingModuleConfiguration extends ModuleConfiguration {
         private final Logger logger = LogManager.getLogger(LoggingModuleConfiguration.class);
         private final Level level = loadLoggingLevel();
         private final SocketAppenderConfiguration socketAppenderConfiguration = loadSocketAppenderCurrentConfiguration();
-        private final LoggingMode loggingMode = loadLoggingMode();
+        private final Set<LoggingMode> loggingModes = loadLoggingModes();
 
         @Override
         public Logger getLogger(String topic) {
@@ -59,8 +60,8 @@ public interface LoggingModuleConfiguration extends ModuleConfiguration {
 
         @Override
         public void refresh() {
-            setLoggingMode(getLoggingMode());
-            if (getLoggingMode() == SOCKET) {
+            setLoggingModes(loggingModes);
+            if (getLoggingModes().contains(SOCKET)) {
                 updateSocketAppender(getSocketAppenderConfiguration());
             }
             setAllLevels(getRootLogger().getName(), getLevel());

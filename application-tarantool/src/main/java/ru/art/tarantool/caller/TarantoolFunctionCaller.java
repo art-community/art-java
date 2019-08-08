@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 import org.tarantool.TarantoolClient;
 import ru.art.tarantool.exception.TarantoolExecutionException;
 import static java.text.MessageFormat.format;
+import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.caster.Caster.cast;
@@ -33,7 +34,7 @@ import java.util.concurrent.CompletableFuture;
 @NoArgsConstructor(access = PRIVATE)
 public final class TarantoolFunctionCaller {
     public static List<?> callTarantoolFunction(TarantoolClient client, String functionName) {
-        logFunctionCall(functionName);
+        logFunctionCall(functionName, emptyList(), CALLING_FUNCTION);
         try {
             List<?> result = cast(client.syncOps().call(functionName));
             logFunctionCall(functionName, result, CALLED_FUNCTION);
@@ -76,22 +77,13 @@ public final class TarantoolFunctionCaller {
         }
     }
 
-    private static void logFunctionCall(String functionName) {
+    private static void logFunctionCall(String functionName, Collection<?> arguments, String callingState) {
         if (!tarantoolModule().isEnableTracing()) {
             return;
         }
         loggingModule()
                 .getLogger(TarantoolFunctionCaller.class)
-                .trace(format(CALLING_FUNCTION, functionName));
-    }
-
-    private static void logFunctionCall(String functionName, Object result, String callingState) {
-        if (!tarantoolModule().isEnableTracing()) {
-            return;
-        }
-        loggingModule()
-                .getLogger(TarantoolFunctionCaller.class)
-                .trace(format(callingState, functionName, result));
+                .trace(format(callingState, functionName, arguments));
     }
 
     private static void logException(String functionName, Exception e) {

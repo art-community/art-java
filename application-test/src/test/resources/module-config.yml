@@ -1,4 +1,5 @@
 tarantool:
+  enableTracing: true
   configurations:
     T:
       connection:

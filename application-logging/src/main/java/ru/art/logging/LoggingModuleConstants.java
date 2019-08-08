@@ -21,6 +21,8 @@ public interface LoggingModuleConstants {
     String DEFAULT_REQUEST_ID = "DEFAULT_REQUEST_ID";
     String PORT = "port";
     String ADDRESS = "address";
+    String LOG4J2_YAML_FILE = "log4j2.yml";
+    String LOG4J2_CONFIGURATION_FILE_PROPERTY = "log4j.configurationFile";
 
     enum LoggingMode {
         CONSOLE,

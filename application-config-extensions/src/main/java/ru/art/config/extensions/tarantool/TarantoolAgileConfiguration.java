@@ -23,9 +23,13 @@ import ru.art.tarantool.configuration.TarantoolConnectionConfiguration;
 import ru.art.tarantool.configuration.TarantoolLocalConfiguration;
 import ru.art.tarantool.configuration.TarantoolModuleConfiguration.TarantoolModuleDefaultConfiguration;
 import ru.art.tarantool.configuration.lua.TarantoolInitialConfiguration;
+import static java.util.Collections.emptyMap;
+import static java.util.function.Function.*;
+import static java.util.stream.Collectors.toMap;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.tarantool.TarantoolConfigKeys.*;
+import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.constants.NetworkConstants.LOCALHOST;
 import static ru.art.core.constants.StringConstants.DOT;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
@@ -33,6 +37,7 @@ import static ru.art.core.extension.ExceptionExtensions.ifException;
 import static ru.art.core.extension.ExceptionExtensions.nullIfException;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.LOCAL;
+import static ru.art.tarantool.model.TarantoolEntityFieldsMapping.entityFieldsMapping;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -90,6 +95,14 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
                         .memtxMemory(nullIfException(() -> config.getLong(INITIAL_SECTION_ID + DOT + MEMTX_MEMORY)))
                         .slabAllocFactor(nullIfException(() -> config.getInt(INITIAL_SECTION_ID + DOT + SLAB_ALLOC_FACTOR))).build())
                 .instanceMode(ifException(() -> TarantoolInstanceMode.valueOf(config.getString(INSTANCE_MODE).toUpperCase()), LOCAL))
+                .entityFieldsMappings(ifException(() -> config.getConfig(ENTITIES).getKeys()
+                        .stream().collect(toMap(identity(), entityName -> entityFieldsMapping()
+                                .fieldsMapping(cast(config.getConfig(ENTITIES + DOT + entityName + DOT + FIELDS)
+                                        .getKeys()
+                                        .stream()
+                                        .collect(toMap(identity(), (String fieldName) ->
+                                                config.getInt(ENTITIES + DOT + entityName + DOT + FIELDS + DOT + fieldName)))))
+                                .map())), emptyMap()))
                 .build();
         tarantoolConfigurations = configMap(TARANTOOL_CONFIGURATIONS_SECTION_ID, mapper, super.getTarantoolConfigurations());
     }

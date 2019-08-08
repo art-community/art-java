@@ -26,16 +26,22 @@ import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import static java.lang.Integer.parseInt;
+import static java.lang.System.getProperty;
 import static java.util.Objects.isNull;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.logging.log4j.Level.INFO;
 import static org.apache.logging.log4j.LogManager.getContext;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
+import static ru.art.core.factory.CollectionsFactory.setOf;
 import static ru.art.logging.LoggingModuleConstants.*;
 import static ru.art.logging.LoggingModuleConstants.LoggingMode.CONSOLE;
 import static ru.art.logging.LoggingModuleConstants.LoggingMode.SOCKET;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public interface LoggerConfigurationService {
     static void updateSocketAppender(SocketAppenderConfiguration socketAppenderConfiguration) {
@@ -82,21 +88,28 @@ public interface LoggerConfigurationService {
         return ConsoleAppenderConfiguration.builder().patternLayout(layout).build();
     }
 
-    static LoggingMode loadLoggingMode() {
+    static Set<LoggingMode> loadLoggingModes() {
         LoggerConfig rootLogger;
-        if (isNull(rootLogger = getRootLogger())) return CONSOLE;
+        if (isNull(rootLogger = getRootLogger())) return setOf(CONSOLE);
         List<AppenderRef> appenderRefs = rootLogger.getAppenderRefs();
-        if (isEmpty(appenderRefs)) return CONSOLE;
-        AppenderRef appenderRef = appenderRefs.get(0);
-        if (isNull(appenderRef)) return CONSOLE;
-        String ref = appenderRef.getRef();
-        if (isEmpty(ref)) return CONSOLE;
-        return ref.equalsIgnoreCase(SocketAppender.class.getSimpleName()) ? SOCKET : CONSOLE;
+        if (isEmpty(appenderRefs)) return setOf(CONSOLE);
+        return appenderRefs.stream()
+                .map(AppenderRef::getRef)
+                .filter(Objects::nonNull)
+                .map(ref -> ref.equalsIgnoreCase(SocketAppender.class.getSimpleName()) ? SOCKET : CONSOLE)
+                .collect(toSet());
     }
 
     static Level loadLoggingLevel() {
+        if (isNull(LoggerConfigurationService.class
+                .getClassLoader()
+                .getResource(LOG4J2_YAML_FILE))
+                && isNull(getProperty(LOG4J2_CONFIGURATION_FILE_PROPERTY))
+                && !new File(getProperty(LOG4J2_CONFIGURATION_FILE_PROPERTY)).exists()) {
+            return INFO;
+        }
         LoggerConfig rootLogger;
-        if (isNull(rootLogger = getRootLogger()) || isEmpty(rootLogger.getName())) return INFO;
+        if (isNull(rootLogger = getRootLogger())) return INFO;
         return getOrElse(rootLogger.getLevel(), INFO);
     }
 
@@ -123,23 +136,25 @@ public interface LoggerConfigurationService {
                 .build();
     }
 
-    static void setLoggingMode(LoggingMode mode) {
+    static void setLoggingModes(Set<LoggingMode> modes) {
         LoggerContext context = (LoggerContext) getContext(false);
         Logger rootLogger = context.getRootLogger();
-        switch (mode) {
-            case CONSOLE:
-                ConsoleAppender loadedConsoleAppender = createLoadedConsoleAppender();
-                loadedConsoleAppender.start();
-                rootLogger.getAppenders().values().forEach(rootLogger::removeAppender);
-                rootLogger.addAppender(loadedConsoleAppender);
-                context.updateLoggers();
-                return;
-            case SOCKET:
-                SocketAppender loadedSocketAppender = createLoadedSocketAppender();
-                loadedSocketAppender.start();
-                rootLogger.getAppenders().values().forEach(rootLogger::removeAppender);
-                rootLogger.addAppender(loadedSocketAppender);
-                context.updateLoggers();
+        for (LoggingMode mode : modes) {
+            switch (mode) {
+                case CONSOLE:
+                    ConsoleAppender loadedConsoleAppender = createLoadedConsoleAppender();
+                    loadedConsoleAppender.start();
+                    rootLogger.getAppenders().values().forEach(rootLogger::removeAppender);
+                    rootLogger.addAppender(loadedConsoleAppender);
+                    context.updateLoggers();
+                    break;
+                case SOCKET:
+                    SocketAppender loadedSocketAppender = createLoadedSocketAppender();
+                    loadedSocketAppender.start();
+                    rootLogger.getAppenders().values().forEach(rootLogger::removeAppender);
+                    rootLogger.addAppender(loadedSocketAppender);
+                    context.updateLoggers();
+            }
         }
     }
 

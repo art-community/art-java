@@ -1,5 +1,3 @@
-import ru.art.gradle.configuration.*
-
 art {
     providedModules {
         applicationCore()
@@ -7,25 +5,11 @@ art {
         applicationLogging()
         applicationService()
     }
-    testModules {
-        applicationConfig()
-        applicationConfigYaml()
-        applicationConfigRemote()
-        applicationConfigExtensions(project::substituteWithArtifact)
-        applicationHttp()
-        applicationMetrics()
-        applicationMetricsHttp()
-        applicationJson()
-        applicationHttpJson()
-        applicationHttpServer()
-        useVersion(project.version as String)
-    }
     resources {
         resourceDirs.add("src/main/templates")
         resourceDirs.add("src/main/tarantool")
         resourceDirs.add("src/main/lua")
     }
-    spockFramework()
 }
 
 dependencies {

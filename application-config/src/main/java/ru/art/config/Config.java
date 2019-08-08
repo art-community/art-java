@@ -1,19 +1,3 @@
-/*
- *    Copyright 2019 ART
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
-
 package ru.art.config;
 
 import groovy.util.ConfigObject;
@@ -326,8 +310,6 @@ public class Config {
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
     }
-
-
     @SuppressWarnings("unchecked")
     public Set<String> getKeys(String path) {
         switch (configType) {
@@ -341,6 +323,24 @@ public class Config {
                 return ((Map<String, ?>) asGroovyConfig().get(path)).keySet();
             case REMOTE_ENTITY_CONFIG:
                 return asEntityConfig().findEntity(path).getFieldNames();
+            default:
+                throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
+
+        }
+    }
+
+    public Set<String> getKeys() {
+        switch (configType) {
+            case PROPERTIES:
+            case JSON:
+            case HOCON:
+                return asTypesafeConfig().getMap(EMPTY_STRING).keySet();
+            case YAML:
+                return asYamlConfig().getMap(EMPTY_STRING).keySet();
+            case GROOVY:
+                return cast(asGroovyConfig().keySet());
+            case REMOTE_ENTITY_CONFIG:
+                return asEntityConfig().getFieldNames();
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
 
