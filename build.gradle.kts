@@ -2,7 +2,7 @@ import com.jfrog.bintray.gradle.*
 
 plugins {
     `maven-publish`
-    id("ru.art.project") version "1.0.17"
+    id("io.github.art.project") version "1.0.20"
     id("com.jfrog.bintray") version ("1.8.4")
 }
 
@@ -14,7 +14,7 @@ allprojects {
         jcenter()
         mavenCentral()
     }
-    apply(plugin = "ru.art.project")
+    apply(plugin = "io.github.art.project")
     apply(plugin = "com.jfrog.bintray")
     apply(plugin = "maven-publish")
 
