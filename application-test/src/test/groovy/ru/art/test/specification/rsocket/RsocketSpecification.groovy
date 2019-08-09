@@ -1,0 +1,278 @@
+/*
+ *    Copyright 2019 ART
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+package ru.art.test.specification.rsocket
+
+import reactor.core.publisher.Flux
+import ru.art.core.caster.Caster
+import ru.art.entity.Entity
+import spock.lang.Specification
+import spock.lang.Unroll
+
+import static reactor.core.publisher.Flux.just
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
+import static ru.art.core.constants.NetworkConstants.LOCALHOST
+import static ru.art.core.extension.ThreadExtensions.thread
+import static ru.art.entity.Entity.concat
+import static ru.art.entity.Entity.entityBuilder
+import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.REACTIVE
+import static ru.art.rsocket.communicator.RsocketCommunicator.rsocketCommunicator
+import static ru.art.rsocket.constants.RsocketModuleConstants.EXECUTE_RSOCKET_FUNCTION
+import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.JSON
+import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.PROTOBUF
+import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.TCP
+import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.WEB_SOCKET
+import static ru.art.rsocket.function.RsocketServiceFunction.rsocket
+import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.rsocketCommunicationTarget
+import static ru.art.rsocket.module.RsocketModule.rsocketModule
+import static ru.art.rsocket.server.RsocketServer.rsocketTcpServer
+import static ru.art.rsocket.server.RsocketServer.rsocketWebSocketServer
+
+class RsocketSpecification extends Specification {
+    def serviceId = "TEST_SERVICE"
+    def request = entityBuilder().stringField("request", "request").build()
+    def response = entityBuilder().stringField("response", "response").build()
+
+    @Unroll
+    "should communicate by rsocket (format = #format, transport = #transport, mode = fireAndForget())"() {
+        setup:
+        useAgileConfigurations()
+        rsocket(serviceId)
+                .requestMapper(Caster.&cast)
+                .responseMapper(Caster.&cast)
+                .handle { request -> concat(request as Entity, response) }
+        thread {
+            switch (transport) {
+                case TCP:
+                    rsocketTcpServer().await()
+                    break
+                case WEB_SOCKET:
+                    rsocketWebSocketServer().await()
+                    break
+            }
+        }
+        sleep(500L)
+        def communicator = rsocketCommunicator(LOCALHOST, {
+            switch (transport) {
+                case TCP:
+                    rsocketModule().acceptorTcpPort
+                    break
+                case WEB_SOCKET:
+                    rsocketModule().acceptorWebSocketPort
+                    break
+            }
+        }.call())
+                .requestMapper(Caster.&cast)
+                .responseMapper(Caster.&cast)
+                .serviceId(serviceId)
+                .methodId(EXECUTE_RSOCKET_FUNCTION)
+
+        when:
+        def response = communicator.call().blockOptional()
+
+        then:
+        response != null
+
+        where:
+        format   | transport
+        PROTOBUF | TCP
+        JSON     | TCP
+        PROTOBUF | WEB_SOCKET
+        JSON     | WEB_SOCKET
+    }
+
+    @Unroll
+    "should communicate by rsocket (format = #format, transport = #transport, mode = requestResponse())"() {
+        setup:
+        useAgileConfigurations()
+        rsocket(serviceId)
+                .requestMapper(Caster.&cast)
+                .responseMapper(Caster.&cast)
+                .handle { request -> concat(request as Entity, response) }
+        thread {
+            switch (transport) {
+                case TCP:
+                    rsocketTcpServer().await()
+                    break
+                case WEB_SOCKET:
+                    rsocketWebSocketServer().await()
+                    break
+            }
+        }
+        sleep(500L)
+        def communicator = rsocketCommunicator(rsocketCommunicationTarget()
+                .host(LOCALHOST)
+                .port({
+                    switch (transport) {
+                        case TCP:
+                            rsocketModule().acceptorTcpPort
+                            break
+                        case WEB_SOCKET:
+                            rsocketModule().acceptorWebSocketPort
+                            break
+                    }
+                }.call())
+                .dataFormat(format)
+                .transport(transport)
+                .build())
+                .requestMapper(Caster.&cast)
+                .responseMapper(Caster.&cast)
+                .serviceId(serviceId)
+                .methodId(EXECUTE_RSOCKET_FUNCTION)
+
+        when:
+        def response = communicator.execute().block()
+
+        then:
+        response
+        (response.responseData as Entity) == this.response
+
+        when:
+        response = communicator.execute(request).block()
+
+        then:
+        response
+        (response.responseData as Entity) == concat(request, this.response)
+
+        where:
+        format   | transport
+        PROTOBUF | TCP
+        JSON     | TCP
+        PROTOBUF | WEB_SOCKET
+        JSON     | WEB_SOCKET
+    }
+
+    @Unroll
+    "should communicate by rsocket (format = #format, transport = #transport, mode = requestStream())"() {
+        setup:
+        useAgileConfigurations()
+        rsocket(serviceId)
+                .requestMapper(Caster.&cast)
+                .responseMapper(Caster.&cast)
+                .responseProcessingMode(REACTIVE)
+                .handle { request -> just(concat(request as Entity, response)) }
+        thread {
+            switch (transport) {
+                case TCP:
+                    rsocketTcpServer().await()
+                    break
+                case WEB_SOCKET:
+                    rsocketWebSocketServer().await()
+                    break
+            }
+        }
+        sleep(500L)
+        def communicator = rsocketCommunicator(rsocketCommunicationTarget()
+                .host(LOCALHOST)
+                .port({
+                    switch (transport) {
+                        case TCP:
+                            rsocketModule().acceptorTcpPort
+                            break
+                        case WEB_SOCKET:
+                            rsocketModule().acceptorWebSocketPort
+                            break
+                    }
+                }.call())
+                .dataFormat(format)
+                .transport(transport)
+                .build())
+                .requestMapper(Caster.&cast)
+                .responseMapper(Caster.&cast)
+                .serviceId(serviceId)
+                .methodId(EXECUTE_RSOCKET_FUNCTION)
+
+        when:
+        def response = communicator.stream().blockFirst()
+
+        then:
+        response
+        (response.responseData as Entity) == this.response
+
+        when:
+        response = communicator.stream(request).blockFirst()
+
+        then:
+        response
+        (response.responseData as Entity) == concat(request, this.response)
+
+        where:
+        format   | transport
+        PROTOBUF | TCP
+        JSON     | TCP
+        PROTOBUF | WEB_SOCKET
+        JSON     | WEB_SOCKET
+    }
+
+    @Unroll
+    "should communicate by rsocket (format = #format, transport = #transport, mode = requestChannel())"() {
+        setup:
+        useAgileConfigurations()
+        rsocket(serviceId)
+                .requestMapper(Caster.&cast)
+                .responseMapper(Caster.&cast)
+                .requestProcessingMode(REACTIVE)
+                .responseProcessingMode(REACTIVE)
+                .handle { request -> (request as Flux<Entity>).map { concat(it as Entity, response) } }
+        thread {
+            switch (transport) {
+                case TCP:
+                    rsocketTcpServer().await()
+                    break
+                case WEB_SOCKET:
+                    rsocketWebSocketServer().await()
+                    break
+            }
+        }
+
+        sleep(500L)
+        def communicator = rsocketCommunicator(rsocketCommunicationTarget()
+                .host(LOCALHOST)
+                .port({
+                    switch (transport) {
+                        case TCP:
+                            rsocketModule().acceptorTcpPort
+                            break
+                        case WEB_SOCKET:
+                            rsocketModule().acceptorWebSocketPort
+                            break
+                    }
+                }.call())
+                .dataFormat(format)
+                .transport(transport)
+                .build())
+                .requestMapper(Caster.&cast)
+                .responseMapper(Caster.&cast)
+                .serviceId(serviceId)
+                .methodId(EXECUTE_RSOCKET_FUNCTION)
+
+        when:
+        def response = communicator.channel(just(request)).blockFirst()
+
+        then:
+        response
+        (response.responseData as Entity) == concat(request, this.response)
+
+
+        where:
+        format   | transport
+        PROTOBUF | TCP
+        JSON     | TCP
+        PROTOBUF | WEB_SOCKET
+        JSON     | WEB_SOCKET
+    }
+
+}

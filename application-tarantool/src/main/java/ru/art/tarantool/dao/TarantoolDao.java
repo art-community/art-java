@@ -21,7 +21,7 @@ import lombok.experimental.Delegate;
 public class TarantoolDao {
     @Delegate
     private final TarantoolIndexDao indexDao;
-    @Delegate
+    @Delegate(excludes = TarantoolCommonDao.class)
     private final TarantoolValueDao valueDao;
 
     private TarantoolDao(String instanceId) {
