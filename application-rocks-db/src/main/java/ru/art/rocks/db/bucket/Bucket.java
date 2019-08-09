@@ -32,7 +32,7 @@ public class Bucket {
         return new Bucket(name);
     }
 
-    public Bucket withKey(String key) {
+    public Bucket addKey(String key) {
         keys.add(key);
         return this;
     }
