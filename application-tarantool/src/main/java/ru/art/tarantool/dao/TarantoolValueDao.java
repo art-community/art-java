@@ -33,18 +33,17 @@ import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Entity.concat;
 import static ru.art.entity.Entity.entityBuilder;
-import static ru.art.entity.PrimitivesFactory.longPrimitive;
 import static ru.art.entity.Value.*;
 import static ru.art.entity.tuple.PlainTupleReader.readTuple;
 import static ru.art.entity.tuple.PlainTupleWriter.PlainTupleWriterResult;
 import static ru.art.entity.tuple.PlainTupleWriter.writeTuple;
 import static ru.art.entity.tuple.schema.ValueSchema.fromTuple;
 import static ru.art.tarantool.caller.TarantoolFunctionCaller.callTarantoolFunction;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.ENTITY_IS_NULL;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.ENTITY_WITHOUT_ID_FILED;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ID_FIELD;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.MANUAL;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.SEQUENCE;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.VALUE;
 import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState;
 import static ru.art.tarantool.service.TarantoolScriptService.evaluateValueScript;
@@ -388,14 +387,12 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
 
     public void upsert(String spaceName, Entity defaultEntity, TarantoolUpdateFieldOperation... operations) {
         if (isNull(defaultEntity)) {
-            return;
+            throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
         }
-        if (!defaultEntity.getFieldNames().contains(ID_FIELD)) {
+        if (!defaultEntity.getFieldNames().contains(ID_FIELD) && idCalculationMode == MANUAL) {
             throw new TarantoolDaoException(format(ENTITY_WITHOUT_ID_FILED, spaceName));
         }
-        if (idCalculationMode == SEQUENCE) {
-            defaultEntity.getFields().put(ID_FIELD, cast(longPrimitive(null)));
-        }
+        defaultEntity = concat(entityBuilder().longField(ID_FIELD, null).build(), defaultEntity);
         evaluateValueScript(instanceId, spaceName);
         PlainTupleWriterResult valueTupleResult = writeTuple(defaultEntity);
         if (isNull(valueTupleResult)) {

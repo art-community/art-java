@@ -46,7 +46,7 @@ import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.
 import static ru.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE;
 import static ru.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
-import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.rsocketCommunicationTarget;
+import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.*;
 import static ru.art.rsocket.reader.RsocketPayloadReader.readPayload;
 import static ru.art.rsocket.selector.RsocketDataFormatMimeTypeConverter.toMimeType;
 import static ru.art.rsocket.writer.ServiceRequestPayloadWriter.writeServiceRequestPayload;

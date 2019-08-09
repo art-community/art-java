@@ -37,6 +37,7 @@ class GrpcSpecification extends Specification {
     def response = entityBuilder().stringField("response", "response").build()
 
     def "should communicate by GRPC"() {
+
         setup:
         useAgileConfigurations()
         grpc(serviceId)

@@ -16,6 +16,7 @@
 
 package ru.art.test.specification.tarantool
 
+
 import ru.art.entity.Entity
 import ru.art.tarantool.configuration.lua.TarantoolIndexConfiguration
 import spock.lang.Specification
