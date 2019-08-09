@@ -26,6 +26,7 @@ import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import static java.util.Collections.*;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.*;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.constants.DateConstants.YYYY_MM_DD_T_HH_MM_SS_24H_SSS_Z_DASH_FORMAT;
@@ -65,7 +66,9 @@ public class Entity implements Value {
         }
         EntityBuilder entityBuilder = entityBuilder();
         for (Entity entity : entities) {
-            entityBuilder.fields.putAll(entity.fields);
+            if (nonNull(entity)) {
+                entityBuilder.fields.putAll(entity.fields);
+            }
         }
         return entityBuilder.build();
     }

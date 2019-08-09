@@ -27,11 +27,14 @@ import static java.util.Objects.isNull;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.entity.Value.asEntity;
+import static ru.art.logging.ThreadContextExtensions.putIfNotNull;
 import static ru.art.rsocket.constants.RsocketModuleConstants.REQUEST_DATA;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
 import static ru.art.rsocket.extractor.EntityServiceCommandExtractor.extractServiceMethodCommand;
 import static ru.art.rsocket.model.RsocketReactiveMethods.fromCommand;
 import static ru.art.rsocket.reader.RsocketPayloadReader.readPayload;
+import static ru.art.service.ServiceModule.serviceModuleState;
+import static ru.art.service.constants.ServiceModuleConstants.REQUEST_VALUE_KEY;
 
 @Getter
 @Builder
@@ -57,8 +60,11 @@ public class RsocketRequestReactiveContext {
                     .rsocketReactiveMethods(rsocketServiceMethods)
                     .build();
         }
+        putIfNotNull(REQUEST_VALUE_KEY, requestDataValue);
+        serviceModuleState().setRequestValue(requestDataValue);
+        Object requestData = requestMapper.map(cast(requestDataValue));
         return RsocketRequestReactiveContext.builder()
-                .requestData(requestMapper.map(cast(requestDataValue)))
+                .requestData(requestData)
                 .rsocketReactiveGroupKey(RsocketReactiveGroupKey.builder()
                         .serviceMethodCommand(command)
                         .responseMapper(rsocketServiceMethods.getRsocketMethod().responseMapper())

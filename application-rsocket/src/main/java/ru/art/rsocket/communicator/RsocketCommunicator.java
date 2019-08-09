@@ -28,6 +28,7 @@ import ru.art.core.validator.BuilderValidator;
 import ru.art.entity.Value;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
+import ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport;
 import ru.art.rsocket.exception.RsocketClientException;
 import ru.art.rsocket.model.RsocketCommunicationTargetConfiguration;
 import ru.art.service.model.ServiceResponse;
@@ -45,6 +46,7 @@ import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.
 import static ru.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE;
 import static ru.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
+import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.rsocketCommunicationTarget;
 import static ru.art.rsocket.reader.RsocketPayloadReader.readPayload;
 import static ru.art.rsocket.selector.RsocketDataFormatMimeTypeConverter.toMimeType;
 import static ru.art.rsocket.writer.ServiceRequestPayloadWriter.writeServiceRequestPayload;
@@ -95,7 +97,15 @@ public class RsocketCommunicator {
     }
 
     public static RsocketCommunicator rsocketCommunicator(String host, int port) {
-        return new RsocketCommunicator(RsocketCommunicationTargetConfiguration.rsocketCommunicationTarget().port(port).host(host).build());
+        return new RsocketCommunicator(rsocketCommunicationTarget().port(port).host(host).build());
+    }
+
+    public static RsocketCommunicator rsocketCommunicator(String host, int port, RsocketDataFormat dataFormat) {
+        return new RsocketCommunicator(rsocketCommunicationTarget().port(port).host(host).dataFormat(dataFormat).build());
+    }
+
+    public static RsocketCommunicator rsocketCommunicator(String host, int port, RsocketTransport transport) {
+        return new RsocketCommunicator(rsocketCommunicationTarget().port(port).host(host).transport(transport).build());
     }
 
     public static RsocketCommunicator rsocketCommunicator(RsocketCommunicationTargetConfiguration targetConfiguration) {

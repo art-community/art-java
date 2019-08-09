@@ -22,8 +22,8 @@ import ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
 import ru.art.rsocket.exception.RsocketClientException;
 import ru.art.rsocket.model.RsocketCommunicationTargetConfiguration;
 import static java.text.MessageFormat.format;
+import static ru.art.core.constants.NetworkConstants.BROADCAST_IP_ADDRESS;
 import static ru.art.core.constants.NetworkConstants.LOCALHOST;
-import static ru.art.core.context.Context.contextConfiguration;
 import static ru.art.core.extension.ExceptionExtensions.exceptionIfNull;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
@@ -54,7 +54,7 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
     @Getter
     class RsocketModuleDefaultConfiguration implements RsocketModuleConfiguration {
         private final RsocketDataFormat defaultDataFormat = PROTOBUF;
-        private final String acceptorHost = contextConfiguration().getIpAddress();
+        private final String acceptorHost = BROADCAST_IP_ADDRESS;
         private final int acceptorTcpPort = findAvailableTcpPort();
         private final int acceptorWebSocketPort = findAvailableTcpPort();
         private final String balancerHost = LOCALHOST;
