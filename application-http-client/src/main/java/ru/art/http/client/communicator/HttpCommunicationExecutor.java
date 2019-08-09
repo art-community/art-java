@@ -26,11 +26,13 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.nio.client.HttpAsyncClient;
+import org.zalando.logbook.httpclient.LogbookHttpAsyncResponseConsumer;
 import ru.art.core.constants.InterceptionStrategy;
 import ru.art.entity.Value;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.client.exception.HttpClientException;
+import ru.art.http.client.handler.HttpCommunicationCancellationHandler;
 import ru.art.http.client.handler.HttpCommunicationExceptionHandler;
 import ru.art.http.client.handler.HttpCommunicationResponseHandler;
 import ru.art.http.client.interceptor.HttpClientInterceptor;
@@ -43,6 +45,8 @@ import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static lombok.AccessLevel.PACKAGE;
 import static org.apache.http.client.methods.RequestBuilder.create;
+import static org.apache.http.nio.client.methods.HttpAsyncMethods.create;
+import static org.apache.http.nio.client.methods.HttpAsyncMethods.createConsumer;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.InterceptionStrategy.PROCESS_HANDLING;
@@ -98,7 +102,13 @@ class HttpCommunicationExecutor {
             if (strategy == STOP_HANDLING) return;
         }
         HttpAsyncClient client = getOrElse(configuration.getAsyncClient(), httpClientModule().getAsyncClient());
-        client.execute(httpUriRequest, new HttpAsyncClientCallback(configuration.getRequest(), httpUriRequest, configuration));
+        HttpAsyncClientCallback callback = new HttpAsyncClientCallback(configuration.getRequest(), httpUriRequest, configuration);
+        if (httpClientModule().isEnableTracing()) {
+            LogbookHttpAsyncResponseConsumer<HttpResponse> logbookConsumer = new LogbookHttpAsyncResponseConsumer<>(createConsumer());
+            client.execute(create(httpUriRequest), logbookConsumer, callback);
+            return;
+        }
+        client.execute(httpUriRequest, callback);
     }
 
     private static HttpUriRequest buildRequest(HttpCommunicationConfiguration configuration) {
@@ -114,7 +124,9 @@ class HttpCommunicationExecutor {
         ValueFromModelMapper<Object, ? extends Value> requestMapper = cast(configuration.getRequestMapper());
         MimeToContentTypeMapper producesContentType;
         MimeType producesMimeType;
-        if (isNull(requestMapper) || isNull(producesContentType = configuration.getProducesContentType()) || isNull(producesMimeType = producesContentType.getMimeType())) {
+        if (isNull(requestMapper)
+                || isNull(producesContentType = configuration.getProducesContentType())
+                || isNull(producesMimeType = producesContentType.getMimeType())) {
             return requestBuilder.build();
         }
         Value requestValue = requestMapper.map(configuration.getRequest());
@@ -125,6 +137,9 @@ class HttpCommunicationExecutor {
             throw new HttpClientException(format(REQUEST_CONTENT_TYPE_NOT_SUPPORTED, producesMimeType.toString()));
         }
         byte[] payload = contentMapper.getToContent().mapToBytes(requestValue, producesMimeType, configuration.getRequestContentCharset());
+        if (isEmpty(payload)) {
+            return requestBuilder.build();
+        }
         EntityBuilder entityBuilder = EntityBuilder.create().setBinary(payload)
                 .setContentType(producesContentType.getContentType())
                 .setContentEncoding(configuration.getRequestContentEncoding());
@@ -140,7 +155,9 @@ class HttpCommunicationExecutor {
         MimeType consumesMimeType;
         if (isNull(consumesContentType) || isNull(consumesMimeType = consumesContentType.getMimeType())) return null;
         Header contentType = httpResponse.getEntity().getContentType();
-        MimeType responseContentType = isNull(contentType) || configuration.isIgnoreResponseContentType() ? consumesMimeType : MimeType.valueOf(contentType.getValue());
+        MimeType responseContentType = isNull(contentType) || configuration.isIgnoreResponseContentType()
+                ? consumesMimeType
+                : MimeType.valueOf(contentType.getValue());
         HttpContentMapper contentMapper = httpClientModule()
                 .getContentMappers()
                 .get(responseContentType);
@@ -185,12 +202,18 @@ class HttpCommunicationExecutor {
 
         @Override
         public void failed(Exception exception) {
-            configuration.getExceptionHandler().failed(ofNullable(cast(request)), exception);
+            HttpCommunicationExceptionHandler<?> exceptionHandler = configuration.getExceptionHandler();
+            if (nonNull(exceptionHandler)) {
+                exceptionHandler.failed(ofNullable(cast(request)), exception);
+            }
         }
 
         @Override
         public void cancelled() {
-            configuration.getCancellationHandler().cancelled(ofNullable(cast(request)));
+            HttpCommunicationCancellationHandler<?> cancellationHandler = configuration.getCancellationHandler();
+            if (nonNull(cancellationHandler)) {
+                cancellationHandler.cancelled(ofNullable(cast(request)));
+            }
         }
     }
 }

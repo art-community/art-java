@@ -51,7 +51,6 @@ import static ru.art.http.client.constants.HttpClientExceptionMessages.HTTP_COMM
 import static ru.art.http.client.constants.HttpClientExceptionMessages.HTTP_SAL_CONFIGURATION_FAILED;
 import static ru.art.http.client.constants.HttpClientModuleConstants.RESPONSE_BUFFER_DEFAULT_SIZE;
 import static ru.art.http.client.interceptor.HttpClientInterceptor.interceptRequest;
-import static ru.art.http.client.module.HttpClientModule.httpClientModule;
 import static ru.art.http.constants.HttpCommonConstants.DEFAULT_HTTP_PORT;
 import static ru.art.logging.LoggingModule.loggingModule;
 import javax.net.ssl.HostnameVerifier;
@@ -145,8 +144,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                 }
             }
             if (isEnableTracing()) {
-                clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()))
-                        .addInterceptorLast(new LogbookHttpResponseInterceptor());
+                clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()));
             }
             CloseableHttpAsyncClient client = clientBuilder.build();
             client.start();

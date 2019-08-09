@@ -25,7 +25,6 @@ import spock.lang.Unroll
 import static reactor.core.publisher.Flux.just
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.core.constants.NetworkConstants.LOCALHOST
-import static ru.art.core.extension.ThreadExtensions.thread
 import static ru.art.entity.Entity.concat
 import static ru.art.entity.Entity.entityBuilder
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.REACTIVE
@@ -38,8 +37,8 @@ import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.W
 import static ru.art.rsocket.function.RsocketServiceFunction.rsocket
 import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.rsocketCommunicationTarget
 import static ru.art.rsocket.module.RsocketModule.rsocketModule
-import static ru.art.rsocket.server.RsocketServer.rsocketTcpServer
-import static ru.art.rsocket.server.RsocketServer.rsocketWebSocketServer
+import static ru.art.rsocket.server.RsocketServer.rsocketTcpServerInSeparatedThread
+import static ru.art.rsocket.server.RsocketServer.rsocketWebSocketServerInSeparatedThread
 
 class RsocketSpecification extends Specification {
     def serviceId = "TEST_SERVICE"
@@ -54,15 +53,13 @@ class RsocketSpecification extends Specification {
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
                 .handle { request -> concat(request as Entity, response) }
-        thread {
-            switch (transport) {
-                case TCP:
-                    rsocketTcpServer().await()
-                    break
-                case WEB_SOCKET:
-                    rsocketWebSocketServer().await()
-                    break
-            }
+        switch (transport) {
+            case TCP:
+                rsocketTcpServerInSeparatedThread()
+                break
+            case WEB_SOCKET:
+                rsocketWebSocketServerInSeparatedThread()
+                break
         }
         sleep(500L)
         def communicator = rsocketCommunicator(LOCALHOST, {
@@ -102,15 +99,13 @@ class RsocketSpecification extends Specification {
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
                 .handle { request -> concat(request as Entity, response) }
-        thread {
-            switch (transport) {
-                case TCP:
-                    rsocketTcpServer().await()
-                    break
-                case WEB_SOCKET:
-                    rsocketWebSocketServer().await()
-                    break
-            }
+        switch (transport) {
+            case TCP:
+                rsocketTcpServerInSeparatedThread()
+                break
+            case WEB_SOCKET:
+                rsocketWebSocketServerInSeparatedThread()
+                break
         }
         sleep(500L)
         def communicator = rsocketCommunicator(rsocketCommunicationTarget()
@@ -164,15 +159,13 @@ class RsocketSpecification extends Specification {
                 .responseMapper(Caster.&cast)
                 .responseProcessingMode(REACTIVE)
                 .handle { request -> just(concat(request as Entity, response)) }
-        thread {
-            switch (transport) {
-                case TCP:
-                    rsocketTcpServer().await()
-                    break
-                case WEB_SOCKET:
-                    rsocketWebSocketServer().await()
-                    break
-            }
+        switch (transport) {
+            case TCP:
+                rsocketTcpServerInSeparatedThread()
+                break
+            case WEB_SOCKET:
+                rsocketWebSocketServerInSeparatedThread()
+                break
         }
         sleep(500L)
         def communicator = rsocketCommunicator(rsocketCommunicationTarget()
@@ -227,15 +220,13 @@ class RsocketSpecification extends Specification {
                 .requestProcessingMode(REACTIVE)
                 .responseProcessingMode(REACTIVE)
                 .handle { request -> (request as Flux<Entity>).map { concat(it as Entity, response) } }
-        thread {
-            switch (transport) {
-                case TCP:
-                    rsocketTcpServer().await()
-                    break
-                case WEB_SOCKET:
-                    rsocketWebSocketServer().await()
-                    break
-            }
+        switch (transport) {
+            case TCP:
+                rsocketTcpServerInSeparatedThread()
+                break
+            case WEB_SOCKET:
+                rsocketWebSocketServerInSeparatedThread()
+                break
         }
 
         sleep(500L)

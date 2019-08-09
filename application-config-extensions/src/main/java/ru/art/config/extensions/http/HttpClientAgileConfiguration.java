@@ -73,9 +73,10 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
                         .setConnectionRequestTimeout(getOrElse(config.getInt(CONNECTION_REQUEST_TIMEOUT), super.getRequestConfig().getConnectionRequestTimeout()))
                         .build())
                 .build(), super.getCommunicationTargets());
-        int socketTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, SOCKET_TIMEOUT, DEFAULT_TIMEOUT);
+        int socketTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, SOCKET_TIMEOUT, RequestConfig.DEFAULT.getSocketTimeout());
         int connectionTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, CONNECTION_TIMEOUT, DEFAULT_TIMEOUT);
-        int connectionRequestTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, CONNECTION_REQUEST_TIMEOUT, DEFAULT_TIMEOUT);
+        int soTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, SO_TIMEOUT, SocketConfig.DEFAULT.getSoTimeout());
+        int connectionRequestTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, CONNECTION_REQUEST_TIMEOUT, RequestConfig.DEFAULT.getConnectionRequestTimeout());
         int ioReactorThreadCount = configInt(HTTP_COMMUNICATION_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE);
         ioReactorConfig = IOReactorConfig.custom()
                 .setIoThreadCount(ioReactorThreadCount)
@@ -86,7 +87,7 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
                 .setConnectionRequestTimeout(connectionRequestTimeout)
                 .build();
         socketConfig = SocketConfig.custom()
-                .setSoTimeout(socketTimeout)
+                .setSoTimeout(soTimeout)
                 .build();
         ssl = configBoolean(HTTP_COMMUNICATION_SECTION_ID, SSL, super.isSsl());
         disableSslHostNameVerification = configBoolean(HTTP_COMMUNICATION_SECTION_ID, IS_DISABLE_SSL_HOST_NAME_VERIFICATION, super.isDisableSslHostNameVerification());

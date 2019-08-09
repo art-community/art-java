@@ -24,6 +24,7 @@ public interface HttpConfigKeys {
     String MIN_SPARE_THREADS_COUNT = "minSpareThreadsCount";
     String WEB_URL = "webUrl";
     String CONNECTION_TIMEOUT = "connectionTimeout";
+    String SO_TIMEOUT = "soTimeout";
     String CONNECTION_REQUEST_TIMEOUT = "connectionRequestTimeout";
     String SOCKET_TIMEOUT = "socketTimeout";
     String SCHEME = "scheme";
