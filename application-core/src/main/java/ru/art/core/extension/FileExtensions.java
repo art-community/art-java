@@ -17,13 +17,15 @@
 package ru.art.core.extension;
 
 import ru.art.core.exception.InternalRuntimeException;
+import static java.lang.System.arraycopy;
 import static java.nio.ByteBuffer.allocateDirect;
 import static java.nio.ByteBuffer.wrap;
 import static java.nio.channels.FileChannel.open;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardOpenOption.*;
-import static ru.art.core.constants.BufferConstants.MAX_FILE_BUFFER_SIZE;
+import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
+import static ru.art.core.constants.BufferConstants.MAX_BUFFER_SIZE;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
 import static ru.art.core.context.Context.contextConfiguration;
 import java.io.IOException;
@@ -33,19 +35,19 @@ import java.nio.file.Path;
 
 public interface FileExtensions {
     static String readFile(String path) {
-        return readFile(get(path), MAX_FILE_BUFFER_SIZE);
+        return readFile(get(path), MAX_BUFFER_SIZE);
     }
 
     static String readFileQuietly(String path) {
-        return readFileQuietly(get(path), MAX_FILE_BUFFER_SIZE);
+        return readFileQuietly(get(path), MAX_BUFFER_SIZE);
     }
 
     static String readFile(Path path) {
-        return readFile(path, MAX_FILE_BUFFER_SIZE);
+        return readFile(path, MAX_BUFFER_SIZE);
     }
 
     static String readFileQuietly(Path path) {
-        return readFileQuietly(path, MAX_FILE_BUFFER_SIZE);
+        return readFileQuietly(path, MAX_BUFFER_SIZE);
     }
 
     static String readFile(String path, int bufferSize) {
@@ -53,14 +55,14 @@ public interface FileExtensions {
     }
 
     static String readFile(Path path, int bufferSize) {
-        ByteBuffer byteBuffer = allocateDirect(bufferSize);
+        ByteBuffer buffer = allocateDirect(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
         try {
             FileChannel fileChannel = open(path);
             do {
-                fileChannel.read(byteBuffer);
-                byteBuffer.flip();
-                result.append(contextConfiguration().getCharset().newDecoder().decode(byteBuffer).toString());
+                fileChannel.read(buffer);
+                buffer.flip();
+                result.append(contextConfiguration().getCharset().newDecoder().decode(buffer).toString());
             } while (fileChannel.position() < fileChannel.size());
         } catch (IOException e) {
             throw new InternalRuntimeException(e);
@@ -69,14 +71,14 @@ public interface FileExtensions {
     }
 
     static String readFileQuietly(Path path, int bufferSize) {
-        ByteBuffer byteBuffer = allocateDirect(bufferSize);
+        ByteBuffer buffer = allocateDirect(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
         try {
             FileChannel fileChannel = open(path);
             do {
-                fileChannel.read(byteBuffer);
-                byteBuffer.flip();
-                result.append(contextConfiguration().getCharset().newDecoder().decode(byteBuffer).toString());
+                fileChannel.read(buffer);
+                buffer.flip();
+                result.append(contextConfiguration().getCharset().newDecoder().decode(buffer).toString());
             } while (fileChannel.position() < fileChannel.size());
         } catch (IOException e) {
             e.printStackTrace();
@@ -86,19 +88,19 @@ public interface FileExtensions {
 
 
     static byte[] readFileBytes(String path) {
-        return readFileBytes(get(path), MAX_FILE_BUFFER_SIZE);
+        return readFileBytes(get(path), MAX_BUFFER_SIZE);
     }
 
     static byte[] readFileBytesQuietly(String path) {
-        return readFileBytesQuietly(get(path), MAX_FILE_BUFFER_SIZE);
+        return readFileBytesQuietly(get(path), MAX_BUFFER_SIZE);
     }
 
     static byte[] readFileBytes(Path path) {
-        return readFileBytes(path, MAX_FILE_BUFFER_SIZE);
+        return readFileBytes(path, MAX_BUFFER_SIZE);
     }
 
     static byte[] readFileBytesQuietly(Path path) {
-        return readFileBytesQuietly(path, MAX_FILE_BUFFER_SIZE);
+        return readFileBytesQuietly(path, MAX_BUFFER_SIZE);
     }
 
     static byte[] readFileBytes(String path, int bufferSize) {
@@ -106,35 +108,38 @@ public interface FileExtensions {
     }
 
     static byte[] readFileBytes(Path path, int bufferSize) {
-        byte[] result = new byte[bufferSize];
-        ByteBuffer byteBuffer = allocateDirect(bufferSize);
+        ByteBuffer buffer = allocateDirect(bufferSize);
+        byte[] result = EMPTY_BYTES;
         try {
             FileChannel fileChannel = open(path);
             do {
-                fileChannel.read(byteBuffer);
+                fileChannel.read(buffer);
+                buffer.flip();
+                if (result.length == 0 && buffer.limit() <= bufferSize) {
+                    result = new byte[buffer.limit()];
+                    buffer.get(result);
+                    return result;
+                }
+                byte[] bufferBytes = new byte[buffer.limit()];
+                buffer.get(bufferBytes);
+                byte[] newResult = new byte[result.length + bufferBytes.length];
+                arraycopy(result, 0, newResult, 0, result.length);
+                arraycopy(bufferBytes, 0, newResult, result.length, bufferBytes.length);
+                result = newResult;
+                buffer.clear();
             } while (fileChannel.position() < fileChannel.size());
         } catch (IOException e) {
             throw new InternalRuntimeException(e);
         }
-        byteBuffer.flip();
-        byteBuffer.get(result);
         return result;
     }
 
     static byte[] readFileBytesQuietly(Path path, int bufferSize) {
-        byte[] result = new byte[bufferSize];
-        ByteBuffer byteBuffer = allocateDirect(bufferSize);
         try {
-            FileChannel fileChannel = open(path);
-            do {
-                fileChannel.read(byteBuffer);
-            } while (fileChannel.position() < fileChannel.size());
-        } catch (IOException e) {
-            e.printStackTrace();
+            return readFileBytes(path, bufferSize);
+        } catch (Exception e) {
+            return EMPTY_BYTES;
         }
-        byteBuffer.flip();
-        byteBuffer.get(result);
-        return result;
     }
 
 
