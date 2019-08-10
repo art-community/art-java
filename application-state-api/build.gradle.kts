@@ -6,4 +6,12 @@ art {
         applicationService()
         applicationGrpcClient()
     }
+
+    generator {
+        packageName = "ru.art.state.api"
+    }
+
+    dependencySubstitution {
+        substituteWithCode(project.group as String, "application-generator")
+    }
 }

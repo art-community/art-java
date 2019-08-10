@@ -31,6 +31,7 @@ import static com.squareup.javapoet.CodeBlock.of;
 import static com.squareup.javapoet.TypeSpec.interfaceBuilder;
 import static java.io.File.separator;
 import static java.text.MessageFormat.format;
+import static java.util.Objects.nonNull;
 import static javax.lang.model.element.Modifier.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
@@ -46,6 +47,7 @@ import static ru.art.generator.mapper.operations.CommonOperations.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -110,20 +112,22 @@ public interface GeneratorOperations {
                 .indent(TABULATION)
                 .build();
         try {
-            StringBuilder classJarPath = new StringBuilder(clazz.getProtectionDomain()
-                    .getCodeSource()
-                    .getLocation()
-                    .getPath());
-            if (classJarPath.toString().contains(DOT_JAR)) {
-                String[] pathParts = classJarPath.toString().split(separator);
+            URL location = clazz.getProtectionDomain().getCodeSource().getLocation();
+            StringBuilder classJarPath = new StringBuilder();
+            if (nonNull(location) && (classJarPath.append(location.getPath()).toString().contains(DOT_JAR))) {
                 String temp = jarPathToMain.substring(0, jarPathToMain.substring(0, jarPathToMain.lastIndexOf(BUILD)).lastIndexOf(separator));
                 classJarPath.replace(0, classJarPath.length(), temp.substring(0, temp.lastIndexOf(separator)))
                         .append(separator)
                         .append(BUILD)
                         .append(separator);
             }
-
-            javaFile.writeTo(new File(classJarPath.subSequence(0, classJarPath.indexOf(BUILD)).toString() + SRC_MAIN_JAVA));
+            if (classJarPath.length() != 0) {
+                javaFile.writeTo(new File(classJarPath.subSequence(0, classJarPath.indexOf(BUILD)).toString() + SRC_MAIN_JAVA));
+                generatedFiles.add(clazz);
+                printMessage(format(GENERATED_SUCCESSFULLY, clazz.getSimpleName() + MAPPER));
+                return;
+            }
+            javaFile.writeTo(new File(jarPathToMain.subSequence(0, jarPathToMain.indexOf(BUILD)).toString() + SRC_MAIN_JAVA));
             generatedFiles.add(clazz);
             printMessage(format(GENERATED_SUCCESSFULLY, clazz.getSimpleName() + MAPPER));
         } catch (StringIndexOutOfBoundsException e) {

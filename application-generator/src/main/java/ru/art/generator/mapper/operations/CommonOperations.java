@@ -63,9 +63,10 @@ public interface CommonOperations {
     static ClassName createMapperForInnerClassIfNeeded(Class genClass, String jarPathToMain) {
         if (genClass.isEnum()) return ClassName.get(genClass);
         if (!genClass.isAnnotationPresent(NonGenerated.class)) {
-            String genPackage = genClass.getPackage().getName().contains(MODEL) ?
-                    genClass.getPackage().getName().replace(MODEL, MAPPING) :
-                    genClass.getPackage().getName().substring(0, genClass.getPackage().getName().lastIndexOf(DOT)) + DOT + MAPPING;
+            String classPackage = genClass.getName().substring(0, genClass.getName().indexOf(genClass.getSimpleName()) - 1);
+            String genPackage = classPackage.contains(MODEL) ?
+                    classPackage.replace(MODEL, MAPPING) :
+                    classPackage.substring(0, classPackage.lastIndexOf(DOT)) + DOT + MAPPING;
             if (!generatedFiles.contains(genClass))
                 createMapperClass(genClass, genPackage, jarPathToMain);
             return ClassName.get(genPackage, genClass.getSimpleName() + MAPPER);
@@ -85,9 +86,10 @@ public interface CommonOperations {
         Class genClass = (Class) type.getActualTypeArguments()[0];
         if (genClass.isEnum()) return ClassName.get(genClass);
         if (!genClass.isAnnotationPresent(NonGenerated.class)) {
-            String genPackage = genClass.getPackage().getName().contains(MODEL) ?
-                    genClass.getPackage().getName().replace(MODEL, MAPPING) :
-                    genClass.getPackage().getName().substring(0, genClass.getPackage().getName().lastIndexOf(DOT)) + DOT + MAPPING;
+            String classPackage = genClass.getName().substring(0, genClass.getName().indexOf(genClass.getSimpleName()) - 1);
+            String genPackage = classPackage.contains(MODEL) ?
+                    classPackage.replace(MODEL, MAPPING) :
+                    classPackage.substring(0, classPackage.lastIndexOf(DOT)) + DOT + MAPPING;
             if (!generatedFiles.contains(genClass))
                 createMapperClass(genClass, genPackage, jarPathToMain);
             return ClassName.get(genPackage, genClass.getSimpleName() + MAPPER);

@@ -63,10 +63,10 @@ public class Generator {
         String fullGenPackagePath = genPackageParentPath + separator + generatedPackageName;
 
 
-        String parentPackage = startPackagePath.substring(startPackagePath.indexOf(RU))
+        String parentPackage = startPackagePath.substring(startPackagePath.indexOf(MAIN) + MAIN.length() + 1)
                 .replace(SLASH, DOT)
                 .replace(BACKWARD_SLASH, DOT);
-        String genParentPackage = genPackageParentPath.substring(genPackageParentPath.indexOf(RU))
+        String genParentPackage = genPackageParentPath.substring(genPackageParentPath.indexOf(MAIN) + MAIN.length() + 1)
                 .replace(SLASH, DOT)
                 .replace(BACKWARD_SLASH, DOT);
         String packageModel = parentPackage + DOT + modelPackageName;

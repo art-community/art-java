@@ -23,7 +23,6 @@ import static java.text.MessageFormat.format;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.generator.common.constants.Constants.GENERATION_COMPLETED;
 import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.MAIN;
-import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.RU;
 import static ru.art.generator.common.operations.CommonOperations.printError;
 import static ru.art.generator.common.operations.CommonOperations.printMessage;
 import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.PathAndPackageConstants.*;
@@ -93,7 +92,7 @@ public class Generator {
         }
 
         String genPackageParentPath = genPackagePath.replace(SLASH_SERVICE_SLASH, SLASH_SPEC_SLASH);
-        String genParentPackage = genPackageParentPath.substring(genPackageParentPath.indexOf(RU))
+        String genParentPackage = genPackageParentPath.substring(genPackageParentPath.indexOf(MAIN) + MAIN.length() + 1)
                 .replace(SLASH, DOT)
                 .replace(BACKWARD_SLASH, DOT);
         String genPackage = genParentPackage + DOT + SPEC;

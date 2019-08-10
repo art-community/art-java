@@ -16,6 +16,8 @@
 
 package ru.art.generator.common.constants;
 
+import static java.io.File.separator;
+
 /**
  * Interface for common constants for all generators.
  */
@@ -36,9 +38,8 @@ public interface Constants {
     String ANNOTATION = "@{0}";
 
     interface PathAndPackageConstants {
-        String SRC_MAIN_JAVA = "src\\main\\java";
+        String SRC_MAIN_JAVA = "src" + separator + "main" + separator + "java";
         String BUILD = "build";
-        String RU = "ru";
         String MAIN = "main";
         String DOT_JAR = ".jar";
         String RU_RTI_CRM = "ru.rti.crm";

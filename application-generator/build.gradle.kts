@@ -10,5 +10,5 @@ art {
 }
 
 dependencies {
-    embedded("com.squareup", "javapoet", "1.11.+")
+    embedded("com.squareup", "javapoet", art.externalDependencyVersionsConfiguration.javaPoetVersion)
 }

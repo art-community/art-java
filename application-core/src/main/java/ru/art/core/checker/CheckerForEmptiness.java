@@ -17,14 +17,12 @@
 package ru.art.core.checker;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
 import java.util.Collection;
 import java.util.Map;
 
 public interface CheckerForEmptiness {
     static <T> boolean isNotEmpty(T val) {
-        return nonNull(val) && !val.toString().trim().equals(EMPTY_STRING);
+        return !isEmpty(val);
     }
 
     static <T> boolean isEmpty(T val) {

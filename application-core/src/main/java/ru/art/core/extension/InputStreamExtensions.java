@@ -17,11 +17,12 @@
 package ru.art.core.extension;
 
 import ru.art.core.exception.InternalRuntimeException;
+import static java.lang.System.arraycopy;
 import static java.nio.ByteBuffer.allocateDirect;
 import static java.nio.channels.Channels.newChannel;
 import static java.util.Collections.emptyList;
 import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
-import static ru.art.core.constants.BufferConstants.MAX_FILE_BUFFER_SIZE;
+import static ru.art.core.constants.BufferConstants.MAX_BUFFER_SIZE;
 import static ru.art.core.constants.StreamConstants.EOF;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
 import static ru.art.core.context.Context.contextConfiguration;
@@ -60,17 +61,32 @@ public interface InputStreamExtensions {
     }
 
     static byte[] toByteArray(InputStream is) {
-        ByteBuffer buffer = allocateDirect(MAX_FILE_BUFFER_SIZE);
+        return toByteArray(is, MAX_BUFFER_SIZE);
+    }
+
+    static byte[] toByteArray(InputStream is, int bufferSize) {
+        ByteBuffer buffer = allocateDirect(bufferSize);
+        byte[] result = EMPTY_BYTES;
         try {
             ReadableByteChannel channel = newChannel(is);
-            while (channel.read(buffer) > 0) {
+            while (channel.read(buffer) != EOF) {
                 buffer.flip();
+                if (result.length == 0 && buffer.limit() <= bufferSize) {
+                    result = new byte[buffer.limit()];
+                    buffer.get(result);
+                    return result;
+                }
+                byte[] bufferBytes = new byte[buffer.limit()];
+                buffer.get(bufferBytes);
+                byte[] newResult = new byte[result.length + bufferBytes.length];
+                arraycopy(result, 0, newResult, 0, result.length);
+                arraycopy(bufferBytes, 0, newResult, result.length, bufferBytes.length);
+                result = newResult;
+                buffer.clear();
             }
         } catch (IOException e) {
             throw new InternalRuntimeException(e);
         }
-        byte[] result = new byte[buffer.limit()];
-        buffer.get(result);
         return result;
     }
 

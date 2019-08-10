@@ -48,7 +48,6 @@ public interface Constants {
         String BUILD_CLASSES_JAVA_MAIN = "build" + separator + "classes" + separator + "java" + separator + "main";
         String DOT_CLASS = ".class";
         String DOT_JAVA = ".java";
-        String RU = "ru";
         String MAIN = "main";
         String MODEL = "model";
         String MAPPING = "mapping";
