@@ -2,9 +2,12 @@ import com.jfrog.bintray.gradle.*
 
 plugins {
     `maven-publish`
-    id("io.github.art.project") version "1.0.34"
+    id("io.github.art.project") version "1.0.36"
     id("com.jfrog.bintray") version "1.8.4"
 }
+
+val bintrayUser: String? by project
+val bintrayKey: String? by project
 
 allprojects {
     group = "io.github.art"
@@ -49,8 +52,8 @@ allprojects {
         }
 
         bintray {
-            user = ""
-            key = ""
+            user = bintrayUser ?: ""
+            key = bintrayKey ?: ""
             publish = true
             override = true
             setPublications(project.name)
@@ -70,5 +73,4 @@ allprojects {
 
 afterEvaluate {
     tasks["bintrayUpload"].enabled = false
-    tasks["build"].enabled = false
 }

@@ -60,7 +60,7 @@ public interface GrpcServerModuleConfiguration extends ModuleConfiguration {
         private final boolean executeServiceInTransportThread = false;
         private final Executor overridingExecutor = newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
         private final GrpcServerSecurityConfiguration securityConfiguration = null;
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ServerInterceptor> interceptors = linkedListOf(new GrpcServerLoggingInterceptor());
         private final int maxInboundMessageSize = DEFAULT_MAX_INBOUND_MESSAGE_SIZE;
         private final int handshakeTimeout = DEFAULT_HANDSHAKE_TIMEOUT;

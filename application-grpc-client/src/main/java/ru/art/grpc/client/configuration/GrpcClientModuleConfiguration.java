@@ -55,7 +55,7 @@ public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
 
     @Getter
     class GrpcClientModuleDefaultConfiguration implements GrpcClientModuleConfiguration {
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ClientInterceptor> interceptors = linkedListOf(new GrpcClientTracingInterceptor());
         private final long timeout = DEFAULT_TIMEOUT;
         private final Executor overridingExecutor = newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
