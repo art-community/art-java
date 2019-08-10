@@ -39,6 +39,7 @@ import ru.art.generator.spec.http.proxyspec.model.HttpProxyCodeBlockFillData;
 import ru.art.generator.spec.http.proxyspec.model.HttpProxyMethodsAnnotations;
 import ru.art.generator.spec.http.proxyspec.model.StaticImports;
 import static com.squareup.javapoet.CodeBlock.of;
+import static java.io.File.separator;
 import static java.text.MessageFormat.format;
 import static javax.lang.model.element.Modifier.FINAL;
 import static javax.lang.model.element.Modifier.PRIVATE;
@@ -128,12 +129,12 @@ public interface HttpProxyBlockGenerator {
                 .build());
 
         importsForMethods.put(method, imports);
-        methodIds.add(getMethodId(method.getAnnotation(MethodPath.class).methodPath().replace(SLASH, EMPTY_STRING)));
+        methodIds.add(getMethodId(method.getAnnotation(MethodPath.class).methodPath().replace(separator, EMPTY_STRING)));
 
         ParameterizedTypeName fieldType = getParametrizedFieldType(method, generatedFields);
 
         FieldSpec.Builder fieldBuilder = FieldSpec.builder(fieldType,
-                method.getAnnotation(MethodPath.class).methodPath().replace(SLASH, EMPTY_STRING), PRIVATE, FINAL)
+                method.getAnnotation(MethodPath.class).methodPath().replace(separator, EMPTY_STRING), PRIVATE, FINAL)
                 .initializer(codeBlocksBuilder.build())
                 .addAnnotation(AnnotationSpec.builder(Getter.class)
                         .addMember(LAZY, VALUE_PATTERN, true)

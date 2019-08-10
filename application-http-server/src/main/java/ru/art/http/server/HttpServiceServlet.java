@@ -39,6 +39,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.apache.logging.log4j.ThreadContext.get;
+import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.StringConstants.COMMA;
 import static ru.art.core.constants.StringConstants.DOT;
@@ -118,9 +119,9 @@ class HttpServiceServlet extends HttpServlet {
     private void handleException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
         loggingModule().getLogger(HttpServiceServlet.class).error(HTTP_REQUEST_HANDLING_EXCEPTION_MESSAGE, exception);
         Class exceptionClass = exception.getClass();
-        HttpExceptionHandler<Exception> exceptionExceptionHandler = httpServerModule().getExceptionHandlers().get(exceptionClass);
+        HttpExceptionHandler<Exception> exceptionExceptionHandler = cast(httpServerModule().getExceptionHandlers().get(exceptionClass));
         if (isNull(exceptionExceptionHandler)) {
-            exceptionExceptionHandler = httpServerModule().getExceptionHandlers().get(Exception.class);
+            exceptionExceptionHandler = cast(httpServerModule().getExceptionHandlers().get(Exception.class));
         }
         if (isNull(exceptionExceptionHandler)) throw new HttpServerException(exception);
         exceptionExceptionHandler.handle(exception, request, response);
@@ -162,7 +163,7 @@ class HttpServiceServlet extends HttpServlet {
         } catch (ServletException servletException) {
             loggingModule()
                     .getLogger(HttpServiceServlet.class)
-                    .warn(CANT_READ_MULTIPART_DATA_SKIP, servletException);
+                    .error(CANT_READ_MULTIPART_DATA_SKIP, servletException);
             return;
         }
         parts.forEach(part -> addPartToContext(requestContextBuilder, part));

@@ -19,7 +19,7 @@ package ru.art.kafka.consumer.configuration;
 import lombok.Builder;
 import lombok.Getter;
 import org.apache.kafka.common.serialization.Serde;
-import ru.art.kafka.consumer.exception.KafkaConsumerConfigurationException;
+import ru.art.kafka.consumer.exception.KafkaConsumerModuleException;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.kafka.consumer.module.KafkaConsumerModule.kafkaConsumerModule;
 import java.util.Properties;
@@ -27,7 +27,6 @@ import java.util.Properties;
 @Getter
 @Builder(builderMethodName = "streamConfiguration")
 public class KafkaStreamConfiguration<KeySerde, ValueSerde> {
-
     /**
      * list ip-address and port kafka brokers
      */
@@ -53,8 +52,8 @@ public class KafkaStreamConfiguration<KeySerde, ValueSerde> {
 
 
     public void validate() {
-        if (isEmpty(bootstrapServers)) throw new KafkaConsumerConfigurationException("bootstrapServer is empty");
-        if (isEmpty(keySerde)) throw new KafkaConsumerConfigurationException("keySerde is empty");
-        if (isEmpty(valueSerde)) throw new KafkaConsumerConfigurationException("valueSerde is empty");
+        if (isEmpty(bootstrapServers)) throw new KafkaConsumerModuleException("bootstrapServer is empty");
+        if (isEmpty(keySerde)) throw new KafkaConsumerModuleException("keySerde is empty");
+        if (isEmpty(valueSerde)) throw new KafkaConsumerModuleException("valueSerde is empty");
     }
 }

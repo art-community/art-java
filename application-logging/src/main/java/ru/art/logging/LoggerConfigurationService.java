@@ -104,8 +104,8 @@ public interface LoggerConfigurationService {
         if (isNull(LoggerConfigurationService.class
                 .getClassLoader()
                 .getResource(LOG4J2_YAML_FILE))
-                && isNull(getProperty(LOG4J2_CONFIGURATION_FILE_PROPERTY))
-                && !new File(getProperty(LOG4J2_CONFIGURATION_FILE_PROPERTY)).exists()) {
+                || isNull(getProperty(LOG4J2_CONFIGURATION_FILE_PROPERTY))
+                || !new File(getProperty(LOG4J2_CONFIGURATION_FILE_PROPERTY)).exists()) {
             return INFO;
         }
         LoggerConfig rootLogger;

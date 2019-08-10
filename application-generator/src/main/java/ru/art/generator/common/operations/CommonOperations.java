@@ -21,9 +21,9 @@ import com.squareup.javapoet.CodeBlock;
 import ru.art.generator.exception.NotSupportedTypeForPrimitiveMapperException;
 import ru.art.generator.spec.http.servicespec.exception.HttpServiceSpecGeneratorException;
 import static com.squareup.javapoet.CodeBlock.of;
+import static java.io.File.separator;
 import static java.text.MessageFormat.format;
 import static ru.art.core.constants.StringConstants.DOUBLE_TABULATION;
-import static ru.art.core.constants.StringConstants.SLASH;
 import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.*;
 import static ru.art.generator.common.constants.Constants.PrimitiveMapperConstants.*;
 import static ru.art.generator.common.constants.Constants.SupportedJavaClasses.*;
@@ -76,7 +76,7 @@ public interface CommonOperations {
                 .getLocation()
                 .getPath());
         if (classJarPath.toString().contains(DOT_JAR)) {
-            String[] pathParts = classJarPath.toString().split(SLASH);
+            String[] pathParts = classJarPath.toString().split(separator);
             int moduleNameIndex = -1;
             for (int i = 0; i < pathParts.length; i++)
                 if (RU_RTI_CRM.equals(pathParts[i])) {
@@ -85,12 +85,12 @@ public interface CommonOperations {
                 }
             if (moduleNameIndex == -1)
                 throw new HttpServiceSpecGeneratorException(format(UNABLE_TO_PARSE_JAR_PATH, modelClass.getSimpleName()));
-            String temp = jarPathToMain.substring(0, jarPathToMain.substring(0, jarPathToMain.lastIndexOf(BUILD)).lastIndexOf(SLASH));
-            classJarPath.replace(0, classJarPath.length(), temp.substring(0, temp.lastIndexOf(SLASH)))
+            String temp = jarPathToMain.substring(0, jarPathToMain.substring(0, jarPathToMain.lastIndexOf(BUILD)).lastIndexOf(separator));
+            classJarPath.replace(0, classJarPath.length(), temp.substring(0, temp.lastIndexOf(separator)))
                     .append(pathParts[moduleNameIndex])
-                    .append(SLASH)
+                    .append(separator)
                     .append(BUILD)
-                    .append(SLASH);
+                    .append(separator);
         }
         return classJarPath.toString();
     }

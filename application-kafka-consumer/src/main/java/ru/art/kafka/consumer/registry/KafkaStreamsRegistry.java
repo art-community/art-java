@@ -19,10 +19,15 @@ package ru.art.kafka.consumer.registry;
 import lombok.Getter;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.KStream;
+import org.apache.logging.log4j.Logger;
 import ru.art.kafka.consumer.container.KafkaStreamContainer;
+import static org.apache.kafka.streams.StreamsConfig.*;
+import static ru.art.core.constants.StringConstants.COLON;
+import static ru.art.core.constants.StringConstants.SPACE;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
+import static ru.art.kafka.consumer.module.KafkaConsumerModule.kafkaConsumerModule;
+import static ru.art.logging.LoggingModule.loggingModule;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
@@ -30,9 +35,13 @@ import java.util.function.Function;
 @Getter
 public class KafkaStreamsRegistry {
     private final Map<String, KafkaStreams> registry = mapOf();
+    private static final Logger logger = loggingModule().getLogger(KafkaStreamsRegistry.class);
 
     public static KStream<?, ?> withTracing(KStream<?, ?> stream) {
-        return stream.peek(((key, value) -> System.out.println("Key : " + key + " Value : " + value)));
+        if (!kafkaConsumerModule().isEnableTracing()) {
+            return stream;
+        }
+        return stream.peek(((key, value) -> logger.info(key + COLON + SPACE + value)));
     }
 
     @SuppressWarnings("Duplicates")
@@ -40,10 +49,10 @@ public class KafkaStreamsRegistry {
         StreamsBuilder builder = new StreamsBuilder();
         Properties properties = new Properties();
         KafkaStreamContainer streamContainer = streamCreator.apply(builder);
-        properties.put(StreamsConfig.APPLICATION_ID_CONFIG, appId);
-        properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, streamContainer.getConfiguration().getBootstrapServers());
-        properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, streamContainer.getConfiguration().getKeySerde().getClass());
-        properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, streamContainer.getConfiguration().getValueSerde().getClass());
+        properties.put(APPLICATION_ID_CONFIG, appId);
+        properties.put(BOOTSTRAP_SERVERS_CONFIG, streamContainer.getConfiguration().getBootstrapServers());
+        properties.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, streamContainer.getConfiguration().getKeySerde().getClass());
+        properties.put(DEFAULT_VALUE_SERDE_CLASS_CONFIG, streamContainer.getConfiguration().getValueSerde().getClass());
         properties.putAll(streamContainer.getConfiguration().getKafkaProperties());
         registry.put(appId, new KafkaStreams(builder.build(), properties));
         return this;
@@ -54,10 +63,10 @@ public class KafkaStreamsRegistry {
         StreamsBuilder builder = new StreamsBuilder();
         Properties properties = new Properties();
         KafkaStreamContainer streamContainer = streamCreator.apply(withTracing(builder.stream(topic)));
-        properties.put(StreamsConfig.APPLICATION_ID_CONFIG, appId);
-        properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, streamContainer.getConfiguration().getBootstrapServers());
-        properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, streamContainer.getConfiguration().getKeySerde().getClass());
-        properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, streamContainer.getConfiguration().getValueSerde().getClass());
+        properties.put(APPLICATION_ID_CONFIG, appId);
+        properties.put(BOOTSTRAP_SERVERS_CONFIG, streamContainer.getConfiguration().getBootstrapServers());
+        properties.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, streamContainer.getConfiguration().getKeySerde().getClass());
+        properties.put(DEFAULT_VALUE_SERDE_CLASS_CONFIG, streamContainer.getConfiguration().getValueSerde().getClass());
         properties.putAll(streamContainer.getConfiguration().getKafkaProperties());
         registry.put(appId, new KafkaStreams(builder.build(), properties));
         return this;

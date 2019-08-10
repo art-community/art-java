@@ -23,25 +23,25 @@ import ru.art.service.exception.ServiceInternalException;
 import static java.util.Objects.isNull;
 
 public interface ServiceExecutionInterceptor {
-    static ServiceRequestInterceptor interceptRequest(ServiceRequestInterception interception) {
+    static RequestInterceptor interceptRequest(ServiceRequestInterception interception) {
         if (isNull(interception)) throw new ServiceInternalException(ServiceExceptionsMessages.INTERCEPTION_IS_NULL);
-        return new ServiceRequestInterceptor(interception);
+        return new RequestInterceptor(interception);
     }
 
-    static ServiceResponseInterceptor interceptResponse(ServiceResponseInterception interception) {
+    static ResponseInterceptor interceptResponse(ServiceResponseInterception interception) {
         if (isNull(interception)) throw new ServiceInternalException(ServiceExceptionsMessages.INTERCEPTION_IS_NULL);
-        return new ServiceResponseInterceptor(interception);
+        return new ResponseInterceptor(interception);
     }
 
     @Getter
     @AllArgsConstructor
-    class ServiceRequestInterceptor {
+    class RequestInterceptor {
         private final ServiceRequestInterception interception;
     }
 
     @Getter
     @AllArgsConstructor
-    class ServiceResponseInterceptor {
+    class ResponseInterceptor {
         private final ServiceResponseInterception interception;
     }
 }

@@ -21,20 +21,20 @@ import ru.art.service.Specification;
 import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.REACTIVE_SERVICE_TYPE;
 import static ru.art.reactive.service.module.ReactiveServiceModule.reactiveServiceModule;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.ServiceRequestInterceptor;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.ServiceResponseInterceptor;
+import static ru.art.service.interceptor.ServiceExecutionInterceptor.RequestInterceptor;
+import static ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
 import java.util.List;
 
 public interface ReactiveServiceSpecification extends Specification {
     ReactiveService getReactiveService();
 
     @Override
-    default List<ServiceRequestInterceptor> getRequestInterceptors() {
+    default List<RequestInterceptor> getRequestInterceptors() {
         return reactiveServiceModule().getRequestInterceptors();
     }
 
     @Override
-    default List<ServiceResponseInterceptor> getResponseInterceptors() {
+    default List<ResponseInterceptor> getResponseInterceptors() {
         return reactiveServiceModule().getResponseInterceptors();
     }
 

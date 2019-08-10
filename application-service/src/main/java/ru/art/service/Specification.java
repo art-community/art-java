@@ -19,13 +19,13 @@ package ru.art.service;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import io.github.resilience4j.retry.RetryConfig;
-import ru.art.service.interceptor.ServiceExecutionInterceptor.ServiceResponseInterceptor;
+import ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
 import ru.art.service.model.*;
 import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.service.ServiceModule.serviceModule;
 import static ru.art.service.constants.ServiceModuleConstants.DEFAULT_SERVICE_TYPE;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.ServiceRequestInterceptor;
+import static ru.art.service.interceptor.ServiceExecutionInterceptor.RequestInterceptor;
 import java.util.List;
 import java.util.Map;
 
@@ -34,15 +34,15 @@ public interface Specification {
 
     <P, R> R executeMethod(String methodId, P request);
 
-    default ServiceDeactivationConfig getDeactivationConfig() {
-        return ServiceDeactivationConfig.builder().build();
+    default DeactivationConfig getDeactivationConfig() {
+        return DeactivationConfig.builder().build();
     }
 
-    default List<ServiceRequestInterceptor> getRequestInterceptors() {
+    default List<RequestInterceptor> getRequestInterceptors() {
         return ServiceModule.serviceModule().getRequestInterceptors();
     }
 
-    default List<ServiceResponseInterceptor> getResponseInterceptors() {
+    default List<ResponseInterceptor> getResponseInterceptors() {
         return serviceModule().getResponseInterceptors();
     }
 
@@ -76,11 +76,11 @@ public interface Specification {
                 .build();
     }
 
-    default Map<String, List<ServiceRequestInterceptor>> getMethodRequestInterceptors() {
+    default Map<String, List<RequestInterceptor>> getMethodRequestInterceptors() {
         return mapOf();
     }
 
-    default Map<String, List<ServiceResponseInterceptor>> getMethodResponseInterceptors() {
+    default Map<String, List<ResponseInterceptor>> getMethodResponseInterceptors() {
         return mapOf();
     }
 

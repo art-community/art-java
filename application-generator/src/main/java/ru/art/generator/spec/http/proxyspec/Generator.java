@@ -19,14 +19,11 @@ package ru.art.generator.spec.http.proxyspec;
 import ru.art.generator.common.annotation.NonGenerated;
 import ru.art.generator.spec.http.proxyspec.annotation.HttpProxyService;
 import ru.art.generator.spec.http.proxyspec.exception.HttpProxySpecGeneratorException;
-
 import static java.text.MessageFormat.format;
-import static ru.art.core.constants.StringConstants.DOT;
-import static ru.art.core.constants.StringConstants.SLASH;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.generator.common.constants.Constants.GENERATION_COMPLETED;
 import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.MAIN;
 import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.RU;
-import static ru.art.generator.common.constants.Constants.SymbolsAndFormatting.BACKWARD_SLASH;
 import static ru.art.generator.common.operations.CommonOperations.printError;
 import static ru.art.generator.common.operations.CommonOperations.printMessage;
 import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.PathAndPackageConstants.*;
@@ -60,7 +57,7 @@ import static ru.art.generator.spec.http.proxyspec.operations.HttpProxySpecifica
  * public final String host;
  * public final Integer port;
  * public final String path;
- * @Getter(lazy = true)
+ * @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
  * @Accessors(fluent = true)
  * private final HttpClientProxyBuilder.HttpClientProxyPreparedBuilder<?, ExampleMapper> MethodPath
  * = HttpClientProxyBuilder.<Object, ExampleMapper> httpClientProxy(getUrl() + "MethodPath")

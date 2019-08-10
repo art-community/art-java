@@ -21,7 +21,7 @@ import ru.art.entity.mapper.ValueToModelMapper.StringParametersMapToModelMapper;
 import ru.art.http.server.model.HttpService;
 import ru.art.service.ServiceLoggingInterception;
 import ru.art.service.exception.UnknownServiceMethodException;
-import ru.art.service.interceptor.ServiceExecutionInterceptor.ServiceResponseInterceptor;
+import ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
 import ru.art.service.model.ServiceInterceptionResult;
 import ru.art.service.model.ServiceRequest;
 import ru.art.service.model.ServiceResponse;
@@ -72,7 +72,7 @@ public class HttpWebUiServiceSpecification implements HttpServiceSpecification {
             .serve(EMPTY_STRING);
 
     @Override
-    public List<ServiceResponseInterceptor> getResponseInterceptors() {
+    public List<ResponseInterceptor> getResponseInterceptors() {
         return linkedListOf(interceptResponse(new ServiceLoggingInterception() {
             @Override
             public ServiceInterceptionResult intercept(ServiceRequest<?> request, ServiceResponse<?> response) {

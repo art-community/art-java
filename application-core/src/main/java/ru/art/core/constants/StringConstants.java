@@ -41,6 +41,7 @@ public interface StringConstants {
     String TRUE_NUMERIC = "1";
     String FALSE_NUMERIC = "0";
     String SLASH = "/";
+    String BACKWARD_SLASH = "\\";
     String DOUBLE_QUOTES = "\"";
     String WILDCARD = "*";
     String EMPTY_STRING = "";

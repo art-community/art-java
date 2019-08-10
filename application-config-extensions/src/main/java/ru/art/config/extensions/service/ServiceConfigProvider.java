@@ -98,12 +98,14 @@ public interface ServiceConfigProvider {
                 .build();
     }
 
-    static ServiceDeactivationConfig getServiceDeactivationConfig(String serviceId) {
-        if (!hasPath(DEACTIVATION)) return ServiceDeactivationConfig.builder().build();
-        if (!hasPath(DEACTIVATION, serviceId)) return ServiceDeactivationConfig.builder().build();
+    static DeactivationConfig getServiceDeactivationConfig(String serviceId) {
+        if (!hasPath(DEACTIVATION)) return DeactivationConfig.builder().build();
+        if (!hasPath(DEACTIVATION, serviceId)) return DeactivationConfig.builder().build();
         boolean deactivated = hasPath(DEACTIVATION, serviceId) || configBoolean(DEACTIVATION, serviceId + DOT + DEACTIVATED);
-        List<String> deactivatedMethods = hasPath(DEACTIVATION + DOT + serviceId, METHODS) ? configStringList(DEACTIVATION + DOT + serviceId, METHODS) : emptyList();
-        return ServiceDeactivationConfig.builder().deactivated(deactivated).deactivatedMethods(deactivatedMethods).build();
+        List<String> deactivatedMethods = hasPath(DEACTIVATION + DOT + serviceId, METHODS)
+                ? configStringList(DEACTIVATION + DOT + serviceId, METHODS)
+                : emptyList();
+        return DeactivationConfig.builder().deactivated(deactivated).deactivatedMethods(deactivatedMethods).build();
     }
 
     static Config serviceConfig(String serviceId) {

@@ -14,17 +14,26 @@
  *    limitations under the License.
  */
 
-package ru.art.service.model;
+package ru.art.kafka.serializer;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-import java.util.List;
+import org.apache.kafka.common.serialization.Serializer;
+import ru.art.entity.Value;
+import static ru.art.json.descriptor.JsonEntityWriter.writeJson;
+import java.util.Map;
 
-@Builder
-@Getter
-public class ServiceDeactivationConfig {
-    private boolean deactivated;
-    @Singular
-    private List<String> deactivatedMethods;
+public class KafkaJsonSerializer implements Serializer<Value> {
+    @Override
+    public void configure(Map<String, ?> configs, boolean isKey) {
+
+    }
+
+    @Override
+    public byte[] serialize(String topic, Value data) {
+        return writeJson(data).getBytes();
+    }
+
+    @Override
+    public void close() {
+
+    }
 }

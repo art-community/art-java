@@ -165,7 +165,7 @@ class HttpServerRequestHandler {
             } catch (IOException e) {
                 loggingModule()
                         .getLogger(HttpServerRequestHandler.class)
-                        .warn(EXCEPTION_OCCURRED_DURING_READING_PART, e);
+                        .error(EXCEPTION_OCCURRED_DURING_READING_PART, e);
             }
         }
         return entityBuilder.build();

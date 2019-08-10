@@ -16,38 +16,57 @@
 
 package ru.art.kafka.producer.configuration;
 
+import lombok.Builder;
+import lombok.Getter;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.Serializer;
-import ru.art.core.module.ModuleConfiguration;
 import ru.art.kafka.producer.exception.KafkaProducerConfigurationException;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import java.util.Properties;
 
-public interface KafkaProducerConfiguration extends ModuleConfiguration {
-
+@Getter
+@Builder(buildMethodName = "producerConfiguration")
+public class KafkaProducerConfiguration {
     /**
      * @return clientId - identifies producer application
      */
-    String getClientId();
+    private final String clientId;
 
     /**
      * @return topic name
      */
-    String getTopic();
+    private final String topic;
 
     /**
      * @return list ip-address and port kafka brokers
      */
-    String getBootstrapServers();
+    private final String bootstrapServers;
 
     /**
      * @return Serializer for key
      */
-    <KeySerializer> Serializer<KeySerializer> getKeySerializer();
+    private final Serializer<?> keySerializer;
 
     /**
      * @return Serializer for value
      */
-    <ValueSerializer> Serializer<ValueSerializer> getValueSerializer();
+    private final Serializer valueSerializer;
+
+    /**
+     * @return Quantity resend any record whose send fails with a potentially temporary error
+     */
+    private final int retries;
+
+    /**
+     * @return Quantity resend any record whose send fails with a potentially temporary error for single connection
+     */
+    private final int maxAttemptPerSingleConnection;
+
+    /**
+     * @return timeout in milliseconds for an upper bound on the time to report success or
+     * failure for method {@link org.apache.kafka.clients.producer.KafkaProducer#send(ProducerRecord)}
+     */
+    private final int deliveryTimeout;
 
     /**
      * Default value null
@@ -55,19 +74,9 @@ public interface KafkaProducerConfiguration extends ModuleConfiguration {
      * @return Other properties for kafka producer
      * Read more http://kafka.apache.org/documentation/
      */
-    default Properties getOtherProperties() {
-        return new Properties();
-    }
+    private final Properties otherProperties;
 
-    /**
-     * @return configuration kafka producer for retries
-     */
-    default KafkaProducerRetryConfiguration getRetries() {
-        return null;
-    }
-
-
-    default void validate() {
+    public void validate() {
         if (isEmpty(getTopic())) throw new KafkaProducerConfigurationException("topic is empty");
         if (isEmpty(getClientId())) throw new KafkaProducerConfigurationException("clientId is empty");
         if (isEmpty(getBootstrapServers())) throw new KafkaProducerConfigurationException("bootstrapServer is empty");

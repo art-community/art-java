@@ -30,8 +30,8 @@ import ru.art.http.server.interceptor.HttpServerInterceptor;
 import ru.art.http.server.model.HttpService;
 import ru.art.http.server.specification.HttpServiceSpecification;
 import ru.art.service.exception.UnknownServiceMethodException;
-import ru.art.service.interceptor.ServiceExecutionInterceptor.ServiceRequestInterceptor;
-import ru.art.service.interceptor.ServiceExecutionInterceptor.ServiceResponseInterceptor;
+import ru.art.service.interceptor.ServiceExecutionInterceptor.RequestInterceptor;
+import ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
 import ru.art.service.model.CircuitBreakerServiceConfig;
 import ru.art.service.model.RateLimiterServiceConfig;
 import ru.art.service.model.RetryServiceConfig;
@@ -165,15 +165,15 @@ public class ExampleServiceSpecification implements HttpServiceSpecification, Gr
     private final List<String> serviceTypes = fixedArrayOf(GRPC_SERVICE_TYPE, HTTP_SERVICE_TYPE, SOAP_SERVICE_TYPE);
 
     @Override
-    public List<ServiceRequestInterceptor> getRequestInterceptors() {
-        List<ServiceRequestInterceptor> interceptors = linkedListOf(serviceModule().getRequestInterceptors());
+    public List<RequestInterceptor> getRequestInterceptors() {
+        List<RequestInterceptor> interceptors = linkedListOf(serviceModule().getRequestInterceptors());
         interceptors.add(interceptRequest(new ExampleServiceInterception()));
         return interceptors;
     }
 
     @Override
-    public List<ServiceResponseInterceptor> getResponseInterceptors() {
-        List<ServiceResponseInterceptor> interceptors = linkedListOf(serviceModule().getResponseInterceptors());
+    public List<ResponseInterceptor> getResponseInterceptors() {
+        List<ResponseInterceptor> interceptors = linkedListOf(serviceModule().getResponseInterceptors());
         interceptors.add(interceptResponse(new ExampleServiceInterception()));
         return interceptors;
     }

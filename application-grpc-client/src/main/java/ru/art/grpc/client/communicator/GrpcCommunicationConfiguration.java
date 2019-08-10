@@ -17,7 +17,6 @@
 package ru.art.grpc.client.communicator;
 
 import io.grpc.ClientInterceptor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -50,7 +49,6 @@ public class GrpcCommunicationConfiguration {
     private ValueToModelMapper<?, ? extends Value> responseMapper;
     private GrpcCommunicationCompletionHandler<?, ?> completionHandler;
     private GrpcCommunicationExceptionHandler<?> exceptionHandler;
-    @Builder.Default
     private List<ClientInterceptor> interceptors = emptyList();
     private Executor overrideExecutor;
     @ToString.Include

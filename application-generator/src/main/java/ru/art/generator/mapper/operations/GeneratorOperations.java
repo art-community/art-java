@@ -29,6 +29,7 @@ import ru.art.generator.mapper.exception.MappingGeneratorException;
 import static com.squareup.javapoet.CodeBlock.join;
 import static com.squareup.javapoet.CodeBlock.of;
 import static com.squareup.javapoet.TypeSpec.interfaceBuilder;
+import static java.io.File.separator;
 import static java.text.MessageFormat.format;
 import static javax.lang.model.element.Modifier.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -114,17 +115,12 @@ public interface GeneratorOperations {
                     .getLocation()
                     .getPath());
             if (classJarPath.toString().contains(DOT_JAR)) {
-                String[] pathParts = classJarPath.toString().split(SLASH);
-                int moduleNameIndex = -1;
-                for (int i = 0; i < pathParts.length; i++)
-                    if (RU_RTI_CRM.equals(pathParts[i])) {
-                        moduleNameIndex = i + 1;
-                        break;
-                    }
-                if (moduleNameIndex == -1)
-                    throw new MappingGeneratorException(format(UNABLE_TO_PARSE_JAR_PATH, clazz.getSimpleName()));
-                String temp = jarPathToMain.substring(0, jarPathToMain.substring(0, jarPathToMain.lastIndexOf(BUILD)).lastIndexOf(SLASH));
-                classJarPath.replace(0, classJarPath.length(), temp.substring(0, temp.lastIndexOf(SLASH))).append(pathParts[moduleNameIndex]).append(SLASH).append(BUILD).append(SLASH);
+                String[] pathParts = classJarPath.toString().split(separator);
+                String temp = jarPathToMain.substring(0, jarPathToMain.substring(0, jarPathToMain.lastIndexOf(BUILD)).lastIndexOf(separator));
+                classJarPath.replace(0, classJarPath.length(), temp.substring(0, temp.lastIndexOf(separator)))
+                        .append(separator)
+                        .append(BUILD)
+                        .append(separator);
             }
 
             javaFile.writeTo(new File(classJarPath.subSequence(0, classJarPath.indexOf(BUILD)).toString() + SRC_MAIN_JAVA));
@@ -189,23 +185,21 @@ public interface GeneratorOperations {
                     .getPath());
 
             if (requestJarPath.toString().contains(DOT_JAR)) {
-                String[] pathParts = requestJarPath.toString().split(SLASH);
-                int moduleNameIndex = -1;
-                for (int i = 0; i < pathParts.length; i++)
-                    if (RU_RTI_CRM.equals(pathParts[i])) {
-                        moduleNameIndex = i + 1;
-                        break;
-                    }
-                if (moduleNameIndex == -1)
-                    throw new MappingGeneratorException(format(UNABLE_TO_PARSE_JAR_PATH, request.getSimpleName()));
-                String temp = jarPathToMain.substring(0, jarPathToMain.substring(0, jarPathToMain.lastIndexOf(BUILD)).lastIndexOf(SLASH));
-                requestJarPath.replace(0, requestJarPath.length(), temp.substring(0, temp.lastIndexOf(SLASH))).append(pathParts[moduleNameIndex]).append(SLASH).append(BUILD).append(SLASH);
+                String[] pathParts = requestJarPath.toString().split(separator);
+                String temp = jarPathToMain.substring(0, jarPathToMain.substring(0, jarPathToMain.lastIndexOf(BUILD)).lastIndexOf(separator));
+                requestJarPath.replace(0, requestJarPath.length(), temp.substring(0, temp.lastIndexOf(separator)))
+                        .append(separator)
+                        .append(BUILD)
+                        .append(separator);
             }
 
             javaFile.writeTo(new File(requestJarPath.subSequence(0, requestJarPath.indexOf(BUILD)).toString() + SRC_MAIN_JAVA));
             generatedFiles.add(request);
             generatedFiles.add(response);
-            printMessage(format(GENERATED_SUCCESSFULLY, request.getSimpleName().replace(REQUEST, EMPTY_STRING) + REQUEST + RESPONSE + MAPPER));
+            printMessage(format(GENERATED_SUCCESSFULLY, request.getSimpleName().replace(REQUEST, EMPTY_STRING)
+                    + REQUEST
+                    + RESPONSE
+                    + MAPPER));
         } catch (StringIndexOutOfBoundsException e) {
             throw new MappingGeneratorException(format(UNABLE_TO_PARSE_JAR_PATH, request.getSimpleName()), e);
         } catch (IOException e) {

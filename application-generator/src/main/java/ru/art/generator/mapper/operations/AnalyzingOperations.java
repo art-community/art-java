@@ -21,7 +21,6 @@ import ru.art.generator.mapper.annotation.NonGenerated;
 import ru.art.generator.mapper.exception.DefinitionException;
 import static java.text.MessageFormat.format;
 import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.constants.CharConstants.SLASH;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
 import static ru.art.generator.mapper.constants.Constants.*;
@@ -111,7 +110,7 @@ public interface AnalyzingOperations {
                     Class clazz = getClass(path, mappingFile.getName().replace(DOT_CLASS, EMPTY_STRING), packageMapping);
                     if (!clazz.isAnnotationPresent(NonGenerated.class)) {
                         File mappingFileNonCompiled =
-                                new File(nonCompiledMappingPackagePath + SLASH + mappingFile.getName().replace(DOT_CLASS, EMPTY_STRING) + DOT_JAVA);
+                                new File(nonCompiledMappingPackagePath + File.separator + mappingFile.getName().replace(DOT_CLASS, EMPTY_STRING) + DOT_JAVA);
                         mappingFileNonCompiled.delete();
                     }
                 } catch (DefinitionException e) {

@@ -22,6 +22,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import ru.art.kafka.producer.configuration.KafkaProducerConfiguration;
 import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.clients.CommonClientConfigs.CLIENT_ID_CONFIG;
+import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
 import java.util.Properties;
 
@@ -42,13 +43,17 @@ public class KafkaProducerCommunicator<KeyType, ValueType> {
      *
      * @param configuration - configuration for kafka producer proxy
      */
-    public KafkaProducerCommunicator(KafkaProducerConfiguration configuration) {
+    private KafkaProducerCommunicator(KafkaProducerConfiguration configuration) {
         configuration.validate();
         Properties properties = ifEmpty(configuration.getOtherProperties(), new Properties());
         properties.put(BOOTSTRAP_SERVERS_CONFIG, configuration.getBootstrapServers());
         properties.put(CLIENT_ID_CONFIG, configuration.getClientId());
         this.topic = configuration.getTopic();
-        this.kafkaProducer = new KafkaProducer<>(properties, configuration.getKeySerializer(), configuration.getValueSerializer());
+        this.kafkaProducer = new KafkaProducer<>(properties, cast(configuration.getKeySerializer()), cast(configuration.getValueSerializer()));
+    }
+
+    public static <KeyType, ValueType> KafkaProducerCommunicator<KeyType, ValueType> kafkaProducerCommunicator(KafkaProducerConfiguration configuration) {
+        return new KafkaProducerCommunicator<>(configuration);
     }
 
     public void pushKafkaRecord(KeyType key, ValueType value) {

@@ -34,7 +34,7 @@ public interface KafkaStreamsConfiguration {
     }
 
     @Getter
-    class KafkaStreamModuleDefaultConfiguration implements KafkaStreamsConfiguration {
-        KafkaStreamsRegistry kafkaStreamsRegistry = new KafkaStreamsRegistry();
+    class KafkaStreamsDefaultConfiguration implements KafkaStreamsConfiguration {
+        private final KafkaStreamsRegistry kafkaStreamsRegistry = new KafkaStreamsRegistry();
     }
 }

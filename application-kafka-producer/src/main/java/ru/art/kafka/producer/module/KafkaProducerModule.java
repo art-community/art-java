@@ -19,19 +19,21 @@ package ru.art.kafka.producer.module;
 import lombok.Getter;
 import ru.art.core.module.Module;
 import ru.art.core.module.ModuleState;
-import ru.art.kafka.producer.configuration.KafkaProducerConfiguration;
-import ru.art.kafka.producer.constants.KafkaProducerModuleConstants;
+import ru.art.kafka.producer.configuration.KafkaProducerModuleConfiguration;
+import ru.art.kafka.producer.configuration.KafkaProducerModuleConfiguration.KafkaProducerDefaultModuleConfiguration;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
+import static ru.art.kafka.producer.constants.KafkaProducerModuleConstants.KAFKA_PRODUCER_MODULE_ID;
 
 @Getter
-public class KafkaProducerModule implements Module<KafkaProducerConfiguration, ModuleState> {
+public class KafkaProducerModule implements Module<KafkaProducerModuleConfiguration, ModuleState> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final KafkaProducerConfiguration kafkaProducerModule = context().getModule(KafkaProducerModuleConstants.KAFKA_PRODUCER_MODULE_ID, new KafkaProducerModule());
-    private final String id = KafkaProducerModuleConstants.KAFKA_PRODUCER_MODULE_ID;
-    private final KafkaProducerConfiguration defaultConfiguration = null;
+    private static final KafkaProducerModuleConfiguration kafkaProducerModule = context()
+            .getModule(KAFKA_PRODUCER_MODULE_ID, new KafkaProducerModule());
+    private final String id = KAFKA_PRODUCER_MODULE_ID;
+    private final KafkaProducerModuleConfiguration defaultConfiguration = new KafkaProducerDefaultModuleConfiguration();
 
-    public static KafkaProducerConfiguration kafkaProducerModule() {
+    public static KafkaProducerModuleConfiguration kafkaProducerModule() {
         return getKafkaProducerModule();
     }
 

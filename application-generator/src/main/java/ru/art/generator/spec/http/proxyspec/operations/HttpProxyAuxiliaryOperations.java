@@ -34,6 +34,7 @@ import ru.art.generator.spec.http.proxyspec.model.StaticImports;
 import ru.art.http.client.communicator.HttpCommunicator;
 import ru.art.http.client.interceptor.HttpClientInterceptor;
 import ru.art.http.constants.MimeToContentTypeMapper;
+import static java.io.File.separator;
 import static java.text.MessageFormat.format;
 import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.constants.StringConstants.*;
@@ -71,11 +72,11 @@ public interface HttpProxyAuxiliaryOperations {
             if (currentMethod.getParameters().length != 0) {
                 if (!notGeneratedFieldsForMethod.get(currentMethod.getName()).containsValue(REQUEST_MAPPER)) {
                     methodBuilder.addStatement(EXEC_RESP_AND_REQ_PROXY_SPEC, methodId,
-                            currentMethod.getAnnotation(MethodPath.class).methodPath().replace(SLASH, EMPTY_STRING),
+                            currentMethod.getAnnotation(MethodPath.class).methodPath().replace(separator, EMPTY_STRING),
                             currentMethod.getParameters()[0].getType());
                 } else {
                     methodBuilder.addStatement(EXEC_RESP_PROXY_SPEC, methodId,
-                            currentMethod.getAnnotation(MethodPath.class).methodPath().replace(SLASH, EMPTY_STRING));
+                            currentMethod.getAnnotation(MethodPath.class).methodPath().replace(separator, EMPTY_STRING));
                     methodBuilder.addStatement(TODO_NOT_GENERATED_REQ_IN_EXEC + DOUBLE_QUOTES + methodId + DOUBLE_QUOTES);
                 }
             } else
@@ -84,19 +85,19 @@ public interface HttpProxyAuxiliaryOperations {
             if (currentMethod.getParameters().length != 0) {
                 if (!notGeneratedFieldsForMethod.get(currentMethod.getName()).containsValue(REQUEST_MAPPER)) {
                     methodBuilder.addStatement(EXEC_REQ_PROXY_SPEC, methodId,
-                            currentMethod.getAnnotation(MethodPath.class).methodPath().replace(SLASH, EMPTY_STRING),
+                            currentMethod.getAnnotation(MethodPath.class).methodPath().replace(separator, EMPTY_STRING),
                             currentMethod.getParameters()[0].getType());
                 } else {
                     methodBuilder.addStatement(TODO_NOT_GENERATED_REQ_IN_EXEC + DOUBLE_QUOTES + methodId + DOUBLE_QUOTES);
                     methodBuilder.addStatement(EXEC_NO_RESP_OR_REQ_PROXY_SPEC, methodId,
-                            currentMethod.getAnnotation(MethodPath.class).methodPath().replace(SLASH, EMPTY_STRING));
+                            currentMethod.getAnnotation(MethodPath.class).methodPath().replace(separator, EMPTY_STRING));
                 }
             } else
                 throw new MethodConsumesWithoutParamsException(format(METHOD_NAME_STRING, currentMethod.getName()) + METHOD_CONSUMES_WITHOUT_PARAMS);
         else
             methodBuilder.addStatement(annotations.isHasResponseMapper() ? EXEC_RESP_PROXY_SPEC : EXEC_NO_RESP_OR_REQ_PROXY_SPEC,
                     methodId,
-                    currentMethod.getAnnotation(MethodPath.class).methodPath().replace(SLASH, EMPTY_STRING));
+                    currentMethod.getAnnotation(MethodPath.class).methodPath().replace(separator, EMPTY_STRING));
         return methodBuilder;
     }
 

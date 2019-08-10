@@ -4,6 +4,7 @@ art {
         applicationEntity()
         applicationLogging()
         applicationService()
+        applicationKafka()
     }
 }
 

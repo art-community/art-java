@@ -19,6 +19,7 @@ package ru.art.generator.mapper;
 import ru.art.generator.mapper.annotation.NonGenerated;
 import ru.art.generator.mapper.exception.MappingGeneratorException;
 import ru.art.generator.mapper.operations.AnalyzingOperations;
+import static java.io.File.separator;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.constants.StringConstants.*;
@@ -26,7 +27,6 @@ import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
 import static ru.art.generator.mapper.constants.Constants.REQUEST;
 import static ru.art.generator.mapper.constants.Constants.RESPONSE;
-import static ru.art.generator.mapper.constants.Constants.SymbolsAndFormatting.BACKWARD_SLASH;
 import static ru.art.generator.mapper.operations.AnalyzingOperations.deleteFile;
 import static ru.art.generator.mapper.operations.AnalyzingOperations.getListOfFilesInCompiledPackage;
 import static ru.art.generator.mapper.operations.CommonOperations.printError;
@@ -59,8 +59,8 @@ public class Generator {
      */
     public static void performGeneration(String startPackagePath, String modelPackageName, String generatedPackageName) {
         String genPackageParentPath = startPackagePath.replace(SLASH_MODEL, SLASH_MAPPING);
-        String fullModelPackagePath = startPackagePath + BACKWARD_SLASH + modelPackageName;
-        String fullGenPackagePath = genPackageParentPath + BACKWARD_SLASH + generatedPackageName;
+        String fullModelPackagePath = startPackagePath + separator + modelPackageName;
+        String fullGenPackagePath = genPackageParentPath + separator + generatedPackageName;
 
 
         String parentPackage = startPackagePath.substring(startPackagePath.indexOf(RU))
@@ -123,7 +123,7 @@ public class Generator {
             if (isEmpty(modelFileList.get(i))) continue;
             String currentModelFileName = modelFileList.get(i).getName();
             if (modelFileList.get(i).isDirectory()) {
-                performGeneration(modelFileList.get(i).getPath().replace(BACKWARD_SLASH + currentModelFileName, EMPTY_STRING),
+                performGeneration(modelFileList.get(i).getPath().replace(separator + currentModelFileName, EMPTY_STRING),
                         currentModelFileName,
                         currentModelFileName);
                 continue;

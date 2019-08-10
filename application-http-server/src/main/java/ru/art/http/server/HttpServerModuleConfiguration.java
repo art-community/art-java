@@ -116,17 +116,22 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         private final String host = BROADCAST_IP_ADDRESS;
         private final int port = findAvailableTcpPort();
         private final String path = DEFAULT_MODULE_PATH;
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<HttpServerInterceptor> requestInterceptors = initializeInterceptors();
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<HttpServerInterceptor> responseInterceptors = linkedListOf();
         private final boolean ignoreAcceptHeader = false;
-        private final Map<? extends Class<? extends Exception>, ? extends HttpExceptionHandler<? extends Exception>> exceptionHandlers = mapOf(Exception.class, new ExceptionHttpJsonHandler())
+        private final Map<? extends Class<? extends Exception>, ? extends HttpExceptionHandler<? extends Exception>> exceptionHandlers =
+                mapOf(Exception.class, new ExceptionHttpJsonHandler())
                 .add(cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler()));
         private final HttpWebConfiguration webConfiguration = HttpWebConfiguration.builder().webUrl(DEFAULT_WEB_URL).build();
 
         private static List<HttpServerInterceptor> initializeInterceptors() {
             return linkedListOf(intercept(new HttpServerLoggingInterception()), intercept(new HttpWebInterception()));
+        }
+
+        public <T extends Exception> Map<Class<T>, HttpExceptionHandler<T>> getExceptionHandlers() {
+            return cast(exceptionHandlers);
         }
     }
 }

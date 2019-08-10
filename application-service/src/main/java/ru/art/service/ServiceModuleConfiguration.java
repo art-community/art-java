@@ -23,8 +23,8 @@ import io.github.resilience4j.retry.RetryRegistry;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ru.art.core.module.ModuleConfiguration;
-import ru.art.service.interceptor.ServiceExecutionInterceptor.ServiceRequestInterceptor;
-import ru.art.service.interceptor.ServiceExecutionInterceptor.ServiceResponseInterceptor;
+import ru.art.service.interceptor.ServiceExecutionInterceptor.RequestInterceptor;
+import ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
 import ru.art.service.interceptor.ServiceValidationInterception;
 import ru.art.service.validation.Validator;
 import static java.text.MessageFormat.format;
@@ -45,9 +45,9 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
 
     Validator getValidator();
 
-    List<ServiceRequestInterceptor> getRequestInterceptors();
+    List<RequestInterceptor> getRequestInterceptors();
 
-    List<ServiceResponseInterceptor> getResponseInterceptors();
+    List<ResponseInterceptor> getResponseInterceptors();
 
     ServiceExecutionExceptionWrapper getExceptionWrapper();
 
@@ -67,10 +67,10 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
         private final RetryRegistry retryRegistry = RetryRegistry.ofDefaults();
         private final BulkheadRegistry bulkheadRegistry = BulkheadRegistry.ofDefaults();
         private final Validator validator = new Validator();
-        @Getter(lazy = true)
-        private final List<ServiceRequestInterceptor> requestInterceptors = linkedListOf(interceptRequest(new ServiceLoggingInterception()), interceptRequest(new ServiceValidationInterception()));
-        @Getter(lazy = true)
-        private final List<ServiceResponseInterceptor> responseInterceptors = linkedListOf(interceptResponse(new ServiceLoggingInterception()));
+        @Getter
+        private final List<RequestInterceptor> requestInterceptors = linkedListOf(interceptRequest(new ServiceLoggingInterception()), interceptRequest(new ServiceValidationInterception()));
+        @Getter
+        private final List<ResponseInterceptor> responseInterceptors = linkedListOf(interceptResponse(new ServiceLoggingInterception()));
         @Getter(lazy = true)
         private final ServiceExecutionExceptionWrapper exceptionWrapper = exceptionWrapperBuilder()
                 .addExceptionWrapper(new NpeWrapper())
@@ -91,7 +91,9 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
         }
 
         public ServiceRegistry registerService(Specification specification) {
-            loggingModule().getLogger(ServiceRegistry.class).debug(format(SERVICE_REGISTRATION_MESSAGE, specification.getServiceId(), specification.getClass().getName()));
+            loggingModule()
+                    .getLogger(ServiceRegistry.class)
+                    .info(format(SERVICE_REGISTRATION_MESSAGE, specification.getServiceId(), specification.getClass().getName()));
             services.put(specification.getServiceId(), specification);
             return this;
         }

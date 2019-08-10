@@ -45,7 +45,7 @@ import java.util.Map;
 public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefaultConfiguration {
     private final Map<MimeType, HttpContentMapper> contentMappers = configureContentMappers(super.getContentMappers());
     private final int port = config(CONFIGURATOR_SECTION_ID, YAML).asYamlConfig().getInt(CONFIGURATOR_HTTP_PORT_PROPERTY);
-    @Getter(lazy = true)
+    @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
     private final List<HttpServerInterceptor> requestInterceptors = initializeRequestInterceptors(super.getRequestInterceptors());
     @Getter(lazy = true)
     private final HttpWebConfiguration webConfiguration = HttpWebConfiguration.builder()

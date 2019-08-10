@@ -18,12 +18,14 @@ package ru.art.tarantool.configuration.lua;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
 import org.jtwig.JtwigModel;
 import static org.jtwig.JtwigTemplate.classpathTemplate;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.DEFAULT_TARANTOOL_PORT;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.JTW_EXTENSION;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.CONFIGURATION;
+import java.util.Map;
 
 @Getter
 @Builder
@@ -44,23 +46,26 @@ public class TarantoolInitialConfiguration {
     private Long memtexMaxTupleSize;
     private Long memtxMemory;
     private Integer slabAllocFactor;
+    @Singular
+    private Map<String, Object> options;
 
     public String toLua() {
-        return classpathTemplate(CONFIGURATION + JTW_EXTENSION)
-                .render(new JtwigModel()
-                        .with(LISTEN, port)
-                        .with(BACKGROUND, background)
-                        .with(CUSTOM_PROC_TITLE, customProcTitle)
-                        .with(MEMTX_DIR, memtxDir)
-                        .with(VINYL_DIR, vinylDir)
-                        .with(WORK_DIR, workDir)
-                        .with(USERNAME, username)
-                        .with(PID_FILE, pidFile)
-                        .with(READ_ONLY, readOnly)
-                        .with(VINYL_TIMEOUT, vinylTimeout)
-                        .with(MEMTX_MAX_TUPLE_SIZE, memtexMaxTupleSize)
-                        .with(MEMTX_MEMORY, memtxMemory)
-                        .with(SLAB_ALLOC_FACTOR, slabAllocFactor)
-                        .with(WORKER_POOL_THREADS, workerPoolThreads));
+        JtwigModel model = new JtwigModel()
+                .with(LISTEN, port)
+                .with(BACKGROUND, background)
+                .with(CUSTOM_PROC_TITLE, customProcTitle)
+                .with(MEMTX_DIR, memtxDir)
+                .with(VINYL_DIR, vinylDir)
+                .with(WORK_DIR, workDir)
+                .with(USERNAME, username)
+                .with(PID_FILE, pidFile)
+                .with(READ_ONLY, readOnly)
+                .with(VINYL_TIMEOUT, vinylTimeout)
+                .with(MEMTX_MAX_TUPLE_SIZE, memtexMaxTupleSize)
+                .with(MEMTX_MEMORY, memtxMemory)
+                .with(SLAB_ALLOC_FACTOR, slabAllocFactor)
+                .with(WORKER_POOL_THREADS, workerPoolThreads);
+        options.forEach(model::with);
+        return classpathTemplate(CONFIGURATION + JTW_EXTENSION).render(model);
     }
 }

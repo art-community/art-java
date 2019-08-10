@@ -31,7 +31,7 @@ import java.util.List;
 
 @Getter
 public class HttpServerModule implements Module<HttpServerModuleConfiguration, HttpServerModuleState> {
-    @Getter(lazy = true, value = PRIVATE)
+    @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}), value = PRIVATE)
     private final static List<HttpServiceSpecification> httpServices = serviceModule().getServiceRegistry()
             .getServices()
             .values()

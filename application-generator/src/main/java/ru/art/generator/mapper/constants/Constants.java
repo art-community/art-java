@@ -16,6 +16,8 @@
 
 package ru.art.generator.mapper.constants;
 
+import static java.io.File.separator;
+
 /**
  * Interface for common constants of mapper generator
  */
@@ -34,17 +36,16 @@ public interface Constants {
     String BUILDER = "Builder";
 
     interface SymbolsAndFormatting {
-        String BACKWARD_SLASH = "\\";
         String STRING_PATTERN = "$S";
         String PATTERN_FOR_GENERIC_INNER_TYPES = ".+<.+<.+";
     }
 
     interface PathAndPackageConstants {
-        String SLASH_MODEL = "\\model";
-        String SLASH_MAPPING = "\\mapping";
-        String SRC_MAIN_JAVA = "src\\main\\java";
+        String SLASH_MODEL = separator + "model";
+        String SLASH_MAPPING = separator + "mapping";
+        String SRC_MAIN_JAVA = "src" + separator + "main" + separator + "java";
         String BUILD = "build";
-        String BUILD_CLASSES_JAVA_MAIN = "build\\classes\\java\\main";
+        String BUILD_CLASSES_JAVA_MAIN = "build" + separator + "classes" + separator + "java" + separator + "main";
         String DOT_CLASS = ".class";
         String DOT_JAVA = ".java";
         String RU = "ru";
@@ -52,7 +53,6 @@ public interface Constants {
         String MODEL = "model";
         String MAPPING = "mapping";
         String DOT_JAR = ".jar";
-        String RU_RTI_CRM = "ru.rti.crm";
     }
 
     interface SupportedJavaClasses {

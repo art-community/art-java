@@ -16,8 +16,12 @@
 
 package ru.art.kafka.consumer.exception;
 
-public class KafkaConsumerConfigurationException extends RuntimeException {
-    public KafkaConsumerConfigurationException(String message) {
+public class KafkaConsumerModuleException extends RuntimeException {
+    public KafkaConsumerModuleException(String message) {
         super(message);
+    }
+
+    public KafkaConsumerModuleException(Exception e) {
+        super(e);
     }
 }

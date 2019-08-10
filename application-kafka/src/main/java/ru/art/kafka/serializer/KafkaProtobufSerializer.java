@@ -14,25 +14,26 @@
  *    limitations under the License.
  */
 
-package request
+package ru.art.kafka.serializer;
 
-object Request {
-  val CONNECTION_REQUEST: String => String = (userId: String) =>
-    s"""
-       |{
-       |	"profile": "$userId",
-       |	"modulePath": "test",
-       |	"moduleEndpoint": {
-       |		"host": "localhost",
-       |		"port": 1234
-       |	}
-       |}
-    """.stripMargin
+import org.apache.kafka.common.serialization.Serializer;
+import ru.art.entity.Value;
+import static ru.art.protobuf.descriptor.ProtobufEntityWriter.writeProtobuf;
+import java.util.Map;
 
-  val GET_CLUSTER_PROFILE_REQUEST: String => String = (userId: String) =>
-    s"""
-       |{
-       |	"profile": "$userId"
-       |}
-    """.stripMargin
+public class KafkaProtobufSerializer implements Serializer<Value> {
+    @Override
+    public void configure(Map<String, ?> configs, boolean isKey) {
+
+    }
+
+    @Override
+    public byte[] serialize(String topic, Value data) {
+        return writeProtobuf(data).toByteArray();
+    }
+
+    @Override
+    public void close() {
+
+    }
 }

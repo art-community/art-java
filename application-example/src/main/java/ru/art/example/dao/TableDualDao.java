@@ -29,7 +29,7 @@ import static ru.art.sql.module.SqlModule.sqlModule;
 public class TableDualDao {
 
     public static String testQuery() {
-        Result testQueryValue = using(sqlModule().getJooqConfiguration())
+        Result<?> testQueryValue = using(sqlModule().getJooqConfiguration())
                 .select(ONE)
                 .from(TABLE_DUAL)
                 .maxRows(1)

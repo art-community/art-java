@@ -20,19 +20,20 @@ import lombok.Getter;
 import ru.art.core.module.ModuleConfiguration;
 import ru.art.reactive.service.interception.ReactiveServiceLoggingInterception;
 import ru.art.reactive.service.interception.ReactiveServiceValidationInterception;
+import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.factory.CollectionsFactory.linkedListOf;
 import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import java.util.List;
 
 public interface ReactiveServiceModuleConfiguration extends ModuleConfiguration {
-    List<ServiceRequestInterceptor> getRequestInterceptors();
+    List<RequestInterceptor> getRequestInterceptors();
 
-    List<ServiceResponseInterceptor> getResponseInterceptors();
+    List<ResponseInterceptor> getResponseInterceptors();
 
+    @Getter
     class ReactiveServiceModuleDefaultConfiguration implements ReactiveServiceModuleConfiguration {
-        @Getter(lazy = true)
-        private final List<ServiceRequestInterceptor> requestInterceptors = linkedListOf(interceptRequest(new ReactiveServiceLoggingInterception()), interceptRequest(new ReactiveServiceValidationInterception()));
-        @Getter(lazy = true)
-        private final List<ServiceResponseInterceptor> responseInterceptors = linkedListOf(interceptResponse(new ReactiveServiceLoggingInterception()));
+        private final List<RequestInterceptor> requestInterceptors = linkedListOf(interceptRequest(new ReactiveServiceLoggingInterception()),
+                interceptRequest(new ReactiveServiceValidationInterception()));
+        private final List<ResponseInterceptor> responseInterceptors = cast(linkedListOf(interceptResponse(new ReactiveServiceLoggingInterception())));
     }
 }

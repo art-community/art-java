@@ -16,6 +16,8 @@
 
 package ru.art.generator.spec.common.constants;
 
+import static java.io.File.separator;
+
 /**
  * Interface containing constants for all specification's generators.
  */
@@ -35,8 +37,8 @@ public interface CommonSpecGeneratorConstants {
     String INTERCEPT_RESPONSE = "interceptResponse";
 
     interface PathAndPackageConstants {
-        String SLASH_SPEC_SLASH = "\\spec\\";
-        String SLASH_SERVICE_SLASH = "\\service\\";
+        String SLASH_SPEC_SLASH = separator + "spec" + separator;
+        String SLASH_SERVICE_SLASH = separator + "service" + separator;
         String SPEC = "spec";
     }
 

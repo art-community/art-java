@@ -45,7 +45,6 @@ public interface Constants {
     }
 
     interface SymbolsAndFormatting {
-        String BACKWARD_SLASH = "\\";
         String VALUE_PATTERN = "$L";
         String STRING_PATTERN = "$S";
         String METHOD_PATTERN = "$N";

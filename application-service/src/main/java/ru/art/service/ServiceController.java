@@ -17,7 +17,7 @@
 package ru.art.service;
 
 import ru.art.service.exception.ServiceExecutionException;
-import ru.art.service.interceptor.ServiceExecutionInterceptor.ServiceRequestInterceptor;
+import ru.art.service.interceptor.ServiceExecutionInterceptor.RequestInterceptor;
 import ru.art.service.model.*;
 import static java.text.MessageFormat.format;
 import static java.util.Objects.isNull;
@@ -35,7 +35,7 @@ import static ru.art.service.constants.ServiceErrorCodes.INTERNAL_ERROR;
 import static ru.art.service.constants.ServiceExceptionsMessages.SERVICE_WITH_ID_NOT_EXISTS;
 import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
 import static ru.art.service.factory.ServiceResponseFactory.okResponse;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.ServiceResponseInterceptor;
+import static ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
 import static ru.art.service.model.ServiceInterceptionResult.nextInterceptor;
 import static ru.art.service.model.ServiceInterceptionResult.stopHandling;
 import java.util.Date;
@@ -87,13 +87,13 @@ public interface ServiceController {
     }
 
     static <RequestType> ServiceInterceptionResult beforeServiceExecution(Specification service, ServiceRequest<RequestType> request) {
-        ServiceDeactivationConfig deactivationConfig = service.getDeactivationConfig();
+        DeactivationConfig deactivationConfig = service.getDeactivationConfig();
         if (deactivationConfig.isDeactivated() || deactivationConfig.getDeactivatedMethods().contains(request.getServiceMethodCommand().getMethodId()))
             return stopHandling(request, okResponse(request.getServiceMethodCommand()));
-        List<ServiceRequestInterceptor> methodRequestInterceptors = service.getMethodRequestInterceptors().get(request.getServiceMethodCommand().getMethodId());
-        List<ServiceRequestInterceptor> requestInterceptors = service.getRequestInterceptors();
+        List<RequestInterceptor> methodRequestInterceptors = service.getMethodRequestInterceptors().get(request.getServiceMethodCommand().getMethodId());
+        List<RequestInterceptor> requestInterceptors = service.getRequestInterceptors();
         ServiceInterceptionResult serviceInterceptionResult = nextInterceptor(request);
-        for (ServiceRequestInterceptor interceptor : requestInterceptors) {
+        for (RequestInterceptor interceptor : requestInterceptors) {
             serviceInterceptionResult = cast(interceptor.getInterception().intercept(serviceInterceptionResult.getRequest()));
             if (serviceInterceptionResult.getNextInterceptionStrategy() == PROCESS_HANDLING) break;
             if (serviceInterceptionResult.getNextInterceptionStrategy() == STOP_HANDLING) {
@@ -105,7 +105,7 @@ public interface ServiceController {
             return serviceInterceptionResult;
         }
 
-        for (ServiceRequestInterceptor interceptor : methodRequestInterceptors) {
+        for (RequestInterceptor interceptor : methodRequestInterceptors) {
             serviceInterceptionResult = cast(interceptor.getInterception().intercept(serviceInterceptionResult.getRequest()));
             if (serviceInterceptionResult.getNextInterceptionStrategy() == PROCESS_HANDLING) break;
             if (serviceInterceptionResult.getNextInterceptionStrategy() == STOP_HANDLING) {
@@ -117,10 +117,10 @@ public interface ServiceController {
     }
 
     static <RequestType, ResponseType> ServiceInterceptionResult afterServiceExecution(ServiceRequest<RequestType> request, Specification service, ServiceResponse<ResponseType> response) {
-        List<ServiceResponseInterceptor> methodResponseInterceptors = service.getMethodResponseInterceptors().get(request.getServiceMethodCommand().getMethodId());
-        List<ServiceResponseInterceptor> responseInterceptors = service.getResponseInterceptors();
+        List<ResponseInterceptor> methodResponseInterceptors = service.getMethodResponseInterceptors().get(request.getServiceMethodCommand().getMethodId());
+        List<ResponseInterceptor> responseInterceptors = service.getResponseInterceptors();
         ServiceInterceptionResult serviceInterceptionResult = nextInterceptor(request, response);
-        for (ServiceResponseInterceptor interceptor : responseInterceptors) {
+        for (ResponseInterceptor interceptor : responseInterceptors) {
             serviceInterceptionResult = cast(interceptor.getInterception().intercept(serviceInterceptionResult.getRequest(), response));
             if (serviceInterceptionResult.getNextInterceptionStrategy() == PROCESS_HANDLING) break;
             if (serviceInterceptionResult.getNextInterceptionStrategy() == STOP_HANDLING) {
@@ -132,7 +132,7 @@ public interface ServiceController {
             return serviceInterceptionResult;
         }
 
-        for (ServiceResponseInterceptor interceptor : methodResponseInterceptors) {
+        for (ResponseInterceptor interceptor : methodResponseInterceptors) {
             serviceInterceptionResult = cast(interceptor.getInterception().intercept(serviceInterceptionResult.getRequest(), response));
             if (serviceInterceptionResult.getNextInterceptionStrategy() == PROCESS_HANDLING) break;
             if (serviceInterceptionResult.getNextInterceptionStrategy() == STOP_HANDLING) {

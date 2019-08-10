@@ -16,21 +16,25 @@
 
 package ru.art.kafka.consumer.configuration;
 
+import lombok.Getter;
 import org.apache.kafka.common.serialization.Deserializer;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.kafka.consumer.exception.KafkaConsumerConfigurationException;
+import ru.art.kafka.deserializer.KafkaProtobufDeserializer;
+import ru.art.kafka.consumer.exception.KafkaConsumerModuleException;
+import static java.util.Collections.emptySet;
+import static java.util.concurrent.Executors.newFixedThreadPool;
+import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
+import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
 import java.time.Duration;
-import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
-public interface KafkaConsumerConfiguration extends ModuleConfiguration {
-
+public interface KafkaConsumerConfiguration {
     /**
      * @return Executor for multi-thread consumers
      */
-
     ExecutorService getExecutor();
 
     /**
@@ -51,7 +55,7 @@ public interface KafkaConsumerConfiguration extends ModuleConfiguration {
     /**
      * @return List topics name
      */
-    List<String> getTopics();
+    Set<String> getTopics();
 
     /**
      * @return List ip-address and port kafka brokers
@@ -79,13 +83,33 @@ public interface KafkaConsumerConfiguration extends ModuleConfiguration {
     }
 
     default void validate() {
-        if (isEmpty(getServiceId())) throw new KafkaConsumerConfigurationException("serviceId is empty");
-        if (isEmpty(getTopics())) throw new KafkaConsumerConfigurationException("topic is empty");
-        if (isEmpty(getBootstrapServers())) throw new KafkaConsumerConfigurationException("bootstrapServers is empty");
-        if (isEmpty(getDuration())) throw new KafkaConsumerConfigurationException("duration is empty");
-        if (isEmpty(getGroupId())) throw new KafkaConsumerConfigurationException("groupId is empty");
-        if (isEmpty(getKeyDeserializer())) throw new KafkaConsumerConfigurationException("keyDeserializer is empty");
+        if (isEmpty(getServiceId())) throw new KafkaConsumerModuleException("serviceId is empty");
+        if (isEmpty(getTopics())) throw new KafkaConsumerModuleException("topic is empty");
+        if (isEmpty(getBootstrapServers())) throw new KafkaConsumerModuleException("bootstrapServers is empty");
+        if (isEmpty(getDuration())) throw new KafkaConsumerModuleException("duration is empty");
+        if (isEmpty(getGroupId())) throw new KafkaConsumerModuleException("groupId is empty");
+        if (isEmpty(getKeyDeserializer())) throw new KafkaConsumerModuleException("keyDeserializer is empty");
         if (isEmpty(getValueDeserializer()))
-            throw new KafkaConsumerConfigurationException("valueDeserializer is empty");
+            throw new KafkaConsumerModuleException("valueDeserializer is empty");
+    }
+
+    @Getter
+    class KafkaConsumerDefaultConfiguration implements KafkaConsumerConfiguration {
+        private final ExecutorService executor = newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
+        private final String serviceId = DEFAULT_KAFKA_SERVICE_ID;
+        private final Duration duration = DEFAULT_DURATION;
+        private final String groupId = DEFAULT_KAFKA_GROUP_ID;
+        private final Set<String> topics = emptySet();
+        private final String bootstrapServers = DEFAULT_KAFKA_BOOTSTRAP_SERVERS;
+        private final Deserializer<?> keyDeserializer = new KafkaProtobufDeserializer();
+        private final Deserializer<?> valueDeserializer = new KafkaProtobufDeserializer();
+
+        public <KeyDeserializer> Deserializer<KeyDeserializer> getKeyDeserializer() {
+            return cast(keyDeserializer);
+        }
+
+        public <ValueDeSerializer> Deserializer<ValueDeSerializer>getValueDeserializer() {
+            return cast(valueDeserializer);
+        }
     }
 }

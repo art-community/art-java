@@ -27,15 +27,15 @@ import static ru.art.http.server.model.HttpService.httpService;
 import static ru.art.metrics.constants.MetricsModuleConstants.*;
 import static ru.art.metrics.http.constants.MetricsModuleHttpConstants.METRICS_CONTENT_TYPE;
 import static ru.art.metrics.module.MetricsModule.metricsModule;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.ServiceRequestInterceptor;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.ServiceResponseInterceptor;
+import static ru.art.service.interceptor.ServiceExecutionInterceptor.RequestInterceptor;
+import static ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
 import java.util.List;
 
 @Getter
 public class MetricServiceSpecification implements HttpServiceSpecification {
     private final String serviceId = METRICS_SERVICE_ID;
-    private final List<ServiceRequestInterceptor> requestInterceptors = emptyList();
-    private final List<ServiceResponseInterceptor> responseInterceptors = emptyList();
+    private final List<RequestInterceptor> requestInterceptors = emptyList();
+    private final List<ResponseInterceptor> responseInterceptors = emptyList();
 
     private final HttpService httpService = httpService()
             .get(METRICS_METHOD_ID)
