@@ -28,6 +28,9 @@ import static ru.art.generator.mapper.constants.Constants.*;
 import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
 import static ru.art.generator.mapper.constants.ExceptionConstants.DefinitionExceptions.UNABLE_TO_DEFINE_CLASS;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Map;
 
@@ -48,27 +51,14 @@ public interface AnalyzingOperations {
      * @throws DefinitionException is thrown when unable to define class by url.
      */
     static Class getClass(String path, String fileName, String packagePath) throws DefinitionException {
-        return new ClassLoader(Generator.class.getClassLoader()) {
-            @Override
-            public Class<?> loadClass(String name) {
-                try {
-                    String classFile = path.substring(0, path.indexOf(MAIN) + MAIN.length())
-                            + separator
-                            + name.replace(DOT, separator)
-                            + DOT_CLASS;
-                    if (!new File(classFile).exists()) {
-                        return super.loadClass(name, true);
-                    }
-                    byte[] classCode = readFileBytes(classFile);
-                    System.out.println("Define: " + classFile);
-                    Class<?> definedClass = defineClass(name, classCode, 0, classCode.length);
-                    resolveClass(definedClass);
-                    return definedClass;
-                } catch (ClassNotFoundException e) {
-                    throw new DefinitionException(format(UNABLE_TO_DEFINE_CLASS, fileName), e);
-                }
-            }
-        }.loadClass(packagePath + DOT + fileName);
+        URL[] urls = new URL[1];
+        File file = new File(path);
+        try {
+            urls[0] = file.toURI().toURL();
+            return URLClassLoader.newInstance(urls, Generator.class.getClassLoader()).loadClass(packagePath + DOT + fileName);
+        } catch (MalformedURLException | ClassNotFoundException e) {
+            throw new DefinitionException(format(UNABLE_TO_DEFINE_CLASS, fileName), e);
+        }
     }
 
     /**
