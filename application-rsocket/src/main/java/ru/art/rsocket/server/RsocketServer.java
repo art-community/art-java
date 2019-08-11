@@ -31,6 +31,9 @@ import static java.lang.System.currentTimeMillis;
 import static java.text.MessageFormat.format;
 import static java.util.Objects.nonNull;
 import static reactor.core.publisher.Mono.just;
+import static ru.art.core.constants.NetworkConstants.BROADCAST_IP_ADDRESS;
+import static ru.art.core.constants.NetworkConstants.LOCALHOST;
+import static ru.art.core.context.Context.contextConfiguration;
 import static ru.art.core.extension.ThreadExtensions.thread;
 import static ru.art.logging.LoggingModule.loggingModule;
 import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.RSOCKET_RESTART_FAILED;
@@ -97,7 +100,10 @@ public class RsocketServer {
                 .stream()
                 .filter(entry -> entry.getValue().getServiceTypes().contains(RSOCKET_SERVICE_TYPE))
                 .forEach(entry -> logger.info(format(RSOCKET_LOADED_SERVICE_MESSAGE,
-                        rsocketModule().getAcceptorHost(),
+                        rsocketModule().getAcceptorHost().equals(BROADCAST_IP_ADDRESS) ||
+                                rsocketModule().getAcceptorHost().equals(LOCALHOST) ?
+                                contextConfiguration().getIpAddress() :
+                                rsocketModule().getAcceptorHost(),
                         transport == TCP ? rsocketModule().getAcceptorTcpPort() : rsocketModule().getAcceptorWebSocketPort(),
                         entry.getKey(),
                         ((RsocketServiceSpecification) entry.getValue()).getRsocketService().getRsocketMethods().keySet()))))
