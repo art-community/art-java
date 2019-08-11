@@ -32,7 +32,6 @@ public class RemoteSchedulerModuleConfiguration implements ModuleConfiguration {
     private String dbAdapterServiceId;
     private int refreshDeferredPeriodMinutes;
     private int refreshPeriodicPeriodMinutes;
-    private String path;
 
     public RemoteSchedulerModuleConfiguration() {
         refresh();
@@ -45,6 +44,5 @@ public class RemoteSchedulerModuleConfiguration implements ModuleConfiguration {
         dbAdapterServiceId = configString(DB_ADAPTER_SECTION_ID, SERVICE_ID, DEFAULT_DB_ADAPTER_SERVICE_ID);
         refreshDeferredPeriodMinutes = configInt(SCHEDULER_SECTION_ID, REFRESH_DEFERRED_PERIOD_MINUTES, DEFAULT_REFRESH_DEFERRED_PERIOD_MINUTES);
         refreshPeriodicPeriodMinutes = configInt(SCHEDULER_SECTION_ID, REFRESH_PERIODIC_PERIOD_MINUTES, DEFAULT_REFRESH_PERIODIC_PERIOD_MINUTES);
-        path = configString(SCHEDULER_SECTION_ID, HTTP_PATH_KEY, DEFAULT_HTTP_PATH);
     }
 }

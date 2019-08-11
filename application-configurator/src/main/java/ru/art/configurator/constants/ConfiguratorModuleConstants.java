@@ -56,7 +56,7 @@ public interface ConfiguratorModuleConstants {
         String CONFIGURATOR_GRPC_PORT_PROPERTY = "grpc.port";
         String CONFIGURATOR_GRPC_PATH_PROPERTY = "grpc.path";
         String CONFIGURATOR_URL_PROPERTY = "http.url";
-        String CONFIGURATOR_USER = "user";
+        String CONFIGURATOR_USERNAME = "username";
         String CONFIGURATOR_PASSWORD = "password";
         String CONFIGURATOR_ROCKS_DB_PATH = "rocks.db.path";
     }

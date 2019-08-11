@@ -49,7 +49,6 @@ public interface RemoteSchedulerModuleConstants {
         String SCHEDULER_SECTION_ID = "scheduler";
         String REFRESH_DEFERRED_PERIOD_MINUTES = "refreshDeferredPeriodMinutes";
         String REFRESH_PERIODIC_PERIOD_MINUTES = "refreshPeriodicPeriodMinutes";
-        String HTTP_PATH_KEY = "http.path";
 
         String DB_ADAPTER_SECTION_ID = "db";
         String SERVICE_ID = "adapter.serviceId";
@@ -63,6 +62,5 @@ public interface RemoteSchedulerModuleConstants {
         String DEFAULT_DB_ADAPTER_SERVICE_ID = "SCHEDULER_DB_ADAPTER_SERVICE";
         int DEFAULT_REFRESH_DEFERRED_PERIOD_MINUTES = 1;
         int DEFAULT_REFRESH_PERIODIC_PERIOD_MINUTES = 1;
-        String DEFAULT_HTTP_PATH = "/scheduler";
     }
 }

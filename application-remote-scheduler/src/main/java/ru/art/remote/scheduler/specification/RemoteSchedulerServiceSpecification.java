@@ -35,6 +35,7 @@ import static ru.art.grpc.server.model.GrpcService.grpcService;
 import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVICE_TYPE;
 import static ru.art.http.server.model.HttpService.httpService;
+import static ru.art.http.server.module.HttpServerModule.httpServerModule;
 import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.Methods.*;
 import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.REMOTE_SCHEDULER_SERVICE_ID;
 import static ru.art.remote.scheduler.api.mapping.DeferredTaskMappers.DeferredTaskCollectionMapper.deferredTaskCollectionFromModelMapper;
@@ -47,7 +48,6 @@ import static ru.art.remote.scheduler.api.mapping.PeriodicTaskMappers.PeriodicTa
 import static ru.art.remote.scheduler.api.mapping.PeriodicTaskMappers.PeriodicTaskRequestMapper.periodicTaskRequestToModelMapper;
 import static ru.art.remote.scheduler.api.mapping.TaskIdMapper.taskIdMapper;
 import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.*;
-import static ru.art.remote.scheduler.module.RemoteSchedulerModule.remoteSchedulerModule;
 import static ru.art.remote.scheduler.service.RemoteSchedulerService.*;
 import static ru.art.service.constants.RequestValidationPolicy.NOT_NULL;
 import static ru.art.service.constants.RequestValidationPolicy.VALIDATABLE;
@@ -125,7 +125,7 @@ public class RemoteSchedulerServiceSpecification implements Specification, HttpS
             .requestMapper(taskIdMapper.getToModel())
             .listen(cancel_PATH)
 
-            .serve(remoteSchedulerModule().getPath());
+            .serve(httpServerModule().getPath());
 
     private final GrpcService grpcService = grpcService()
             .method(ADD_DEFERRED_TASK, grpcMethod()

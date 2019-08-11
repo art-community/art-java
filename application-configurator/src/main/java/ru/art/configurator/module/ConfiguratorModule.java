@@ -85,7 +85,7 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
 
     @Override
     public void onLoad() {
-        String userName = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_USER), randomUUID().toString());
+        String userName = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_USERNAME), randomUUID().toString());
         String password = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_PASSWORD), randomUUID().toString());
         register(userName, password);
     }
