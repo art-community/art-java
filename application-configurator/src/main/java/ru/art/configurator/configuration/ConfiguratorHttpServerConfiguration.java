@@ -51,13 +51,9 @@ import java.util.Map;
 public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefaultConfiguration {
     private final Map<MimeType, HttpContentMapper> contentMappers = configureContentMappers(super.getContentMappers());
     private final int port = ifException(() -> config(CONFIGURATOR_SECTION_ID).getInt(CONFIGURATOR_HTTP_PORT_PROPERTY), super.getPort());
-    @Getter(lazy = true)
     private final Logbook logbook = logbookWithoutMetricsLogs(logbookWithoutWebLogs()).build();
-    @Getter(lazy = true)
-    private final String path = ifException(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_WEB_URL_PROPERTY), CONFIGURATOR_PATH);
-    @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+    private final String path = CONFIGURATOR_PATH;
     private final List<HttpServerInterceptor> requestInterceptors = initializeRequestInterceptors(super.getRequestInterceptors());
-    @Getter(lazy = true)
     private final HttpWebConfiguration webConfiguration = HttpWebConfiguration.builder()
             .templateResourceVariables(URL_TEMPLATE_VARIABLE, (url) -> ifException(() ->
                             config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_WEB_URL_PROPERTY),
