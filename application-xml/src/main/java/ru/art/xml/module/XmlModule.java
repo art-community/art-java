@@ -21,7 +21,6 @@ import ru.art.core.module.Module;
 import ru.art.core.module.ModuleState;
 import ru.art.xml.configuration.XmlModuleConfiguration;
 import ru.art.xml.configuration.XmlModuleConfiguration.XmlModuleDefaultConfiguration;
-import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
 import static ru.art.xml.constants.XmlModuleConstants.XML_MODULE_ID;
 
