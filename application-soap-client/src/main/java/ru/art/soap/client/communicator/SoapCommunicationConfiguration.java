@@ -75,13 +75,13 @@ class SoapCommunicationConfiguration {
         if (urlIsEmpty || operationIdIsEmpty || operationNamespaceIsEmpty) {
             String message = INVALID_SOAP_COMMUNICATION_CONFIGURATION;
             if (urlIsEmpty) {
-                message += "url";
+                message += "url,";
             }
             if (operationIdIsEmpty) {
-                message += ",operationId";
+                message += "operationId,";
             }
             if (operationNamespaceIsEmpty) {
-                message += ",operationNamespace";
+                message += "operationNamespace";
             }
             throw new SoapClientModuleException(message);
         }

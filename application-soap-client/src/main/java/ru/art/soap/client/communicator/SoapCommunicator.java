@@ -47,7 +47,7 @@ public interface SoapCommunicator {
 
     SoapCommunicator requestConfig(RequestConfig requestConfig);
 
-    SoapCommunicator requestMapper(ValueFromModelMapper<?, XmlEntity> requestMapper);
+    <RequestType> SoapCommunicator requestMapper(ValueFromModelMapper<RequestType, XmlEntity> requestMapper);
 
     SoapCommunicator responseMapper(ValueToModelMapper<?, XmlEntity> responseMapper);
 

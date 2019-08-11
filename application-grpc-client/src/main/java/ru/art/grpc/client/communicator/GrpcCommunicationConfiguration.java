@@ -64,10 +64,10 @@ public class GrpcCommunicationConfiguration {
         if (serviceIdIsEmpty || methodIdIsEmpty) {
             String message = INVALID_GRPC_COMMUNICATION_CONFIGURATION;
             if (serviceIdIsEmpty) {
-                message += "serviceId";
+                message += "serviceId,";
             }
             if (methodIdIsEmpty) {
-                message += ",methodId";
+                message += "methodId";
             }
             throw new GrpcClientException(message);
         }
