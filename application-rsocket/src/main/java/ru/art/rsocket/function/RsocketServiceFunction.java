@@ -24,12 +24,9 @@ import ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
 import ru.art.rsocket.service.RsocketService;
 import ru.art.rsocket.service.RsocketService.RsocketMethod;
 import ru.art.service.constants.RequestValidationPolicy;
-import static java.util.UUID.randomUUID;
 import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.CharConstants.UNDERSCORE;
 import static ru.art.reactive.service.model.ReactiveService.ReactiveMethod;
 import static ru.art.rsocket.constants.RsocketModuleConstants.EXECUTE_RSOCKET_FUNCTION;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RSOCKET_SERVICE_TYPE;
 import static ru.art.service.ServiceModule.serviceModule;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -74,7 +71,7 @@ public class RsocketServiceFunction {
         return this;
     }
 
-    public void handle(Function<?, ?> function) {
+    public <RequestType, ResponseType> void handle(Function<RequestType, ResponseType> function) {
         serviceModule()
                 .getServiceRegistry()
                 .registerService(new RsocketFunctionalServiceSpecification(serviceId,
@@ -87,14 +84,14 @@ public class RsocketServiceFunction {
                         function));
     }
 
-    public void consume(Consumer<?> consumer) {
+    public <RequestType> void consume(Consumer<RequestType> consumer) {
         handle(request -> {
             consumer.accept(cast(request));
             return null;
         });
     }
 
-    public void produce(Supplier<?> producer) {
+    public <ResponseType> void produce(Supplier<ResponseType> producer) {
         handle(request -> producer.get());
     }
 

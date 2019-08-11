@@ -51,20 +51,20 @@ public class GrpcServiceFunction {
         return this;
     }
 
-    public void handle(Function<?, ?> function) {
+    public <RequestType, ResponseType> void handle(Function<RequestType, ResponseType> function) {
         serviceModule()
                 .getServiceRegistry()
                 .registerService(new GrpcFunctionalServiceSpecification(serviceId, GrpcService.grpcService().method(EXECUTE_GRPC_FUNCTION, grpcMethod).serve(), function));
     }
 
-    public void consume(Consumer<?> consumer) {
+    public<RequestType> void consume(Consumer<RequestType> consumer) {
         handle(request -> {
             consumer.accept(cast(request));
             return null;
         });
     }
 
-    public void produce(Supplier<?> producer) {
+    public <ResponseType> void produce(Supplier<ResponseType> producer) {
         handle(request -> producer.get());
     }
 

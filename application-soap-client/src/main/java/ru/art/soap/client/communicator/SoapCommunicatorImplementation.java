@@ -52,14 +52,14 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
     }
 
     SoapCommunicatorImplementation(HttpCommunicationTargetConfiguration targetConfiguration) {
-        configuration.setUrl(validator.notEmptyField(targetConfiguration.path(), "path"));
         if (isNotEmpty(targetConfiguration.url())) {
             configuration.setUrl(targetConfiguration.url());
             return;
         }
         configuration.setUrl(validator.notEmptyField(targetConfiguration.scheme(), "scheme") + SCHEME_DELIMITER
-                + validator.notEmptyField(targetConfiguration.host(), "url")
-                + COLON + validator.notNullField(targetConfiguration.port(), "port"));
+                + validator.notEmptyField(targetConfiguration.host(), "host")
+                + COLON + validator.notNullField(targetConfiguration.port(), "port")
+                + validator.notEmptyField(targetConfiguration.path(), "path"));
     }
 
     @Override
