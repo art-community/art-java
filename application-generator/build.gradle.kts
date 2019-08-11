@@ -11,4 +11,5 @@ art {
 
 dependencies {
     embedded("com.squareup", "javapoet", art.externalDependencyVersionsConfiguration.javaPoetVersion)
+    embedded("org.projectlombok","lombok", art.externalDependencyVersionsConfiguration.lombokVersion)
 }
