@@ -94,10 +94,7 @@ public class PeriodicExecutor {
 
     private Future<?> execute(IdentifiedRunnable task, LocalDateTime startTime, Duration duration) {
         Future<?> future = deferredExecutor.execute(new NotifiedRunnable(task.getRunnable(), () -> executeAgain(task, duration)), startTime);
-        loggingModule().getLogger().info("Returning Periodic Task with id: " + task.getId());
-        loggingModule().getLogger().info("Periodic executingTasks size: " + executingTasks.size());
         executingTasks.put(task.getId(), future);
-        loggingModule().getLogger().info("Periodic Task with id: " + task.getId() + " returned");
         return future;
     }
 
