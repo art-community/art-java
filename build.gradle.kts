@@ -1,8 +1,8 @@
-import com.jfrog.bintray.gradle.*
+import com.jfrog.bintray.gradle.BintrayExtension.*
 
 plugins {
     `maven-publish`
-    id("io.github.art.project") version "1.0.46"
+    id("io.github.art.project") version "1.0.54"
     id("com.jfrog.bintray") version "1.8.4"
 }
 
@@ -57,7 +57,7 @@ allprojects {
             publish = true
             override = true
             setPublications(project.name)
-            pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
+            pkg(delegateClosureOf<PackageConfig> {
                 repo = "art"
                 name = rootProject.group as String
                 userOrg = "art-community"
