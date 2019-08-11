@@ -5,6 +5,8 @@ art {
         applicationLogging()
         applicationService()
         applicationConfig()
+        applicationConfigTypesafe()
+        applicationConfigGroovy()
         applicationConfigYaml()
         applicationConfigRemote()
         applicationConfigRemoteApi()

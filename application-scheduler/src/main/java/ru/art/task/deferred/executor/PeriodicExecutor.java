@@ -22,7 +22,6 @@ import static java.time.LocalDateTime.now;
 import static java.util.Objects.nonNull;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.factory.CollectionsFactory.concurrentHashMap;
-import static ru.art.logging.LoggingModule.loggingModule;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;

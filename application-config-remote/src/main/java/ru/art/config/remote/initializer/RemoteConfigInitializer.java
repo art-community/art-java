@@ -37,20 +37,25 @@ public interface RemoteConfigInitializer {
                 .loadModule(new ServiceModule())
                 .loadModule(new ConfigModule())
                 .loadModule(new GrpcClientModule());
-        Config localConfig = config(EMPTY_STRING);
-        if (!localConfig.hasPath(CONFIGURATOR_HOST) ||
-                !localConfig.hasPath(CONFIGURATOR_PORT) ||
-                !localConfig.hasPath(CONFIGURATOR_PATH)) {
-            loggingModule().getLogger(RemoteConfigInitializer.class).warn(CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS);
+        try {
+            Config localConfig = config(EMPTY_STRING);
+            if (!localConfig.hasPath(CONFIGURATOR_HOST) ||
+                    !localConfig.hasPath(CONFIGURATOR_PORT) ||
+                    !localConfig.hasPath(CONFIGURATOR_PATH)) {
+                loggingModule().getLogger(RemoteConfigInitializer.class).warn(CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS);
+                return context;
+            }
+            String configuratorHost = localConfig.getString(CONFIGURATOR_HOST);
+            Integer configuratorPort = localConfig.getInt(CONFIGURATOR_PORT);
+            String configuratorPath = localConfig.getString(CONFIGURATOR_PATH);
+            serviceModule()
+                    .getServiceRegistry()
+                    .registerService(new ConfiguratorCommunicationSpecification(configuratorHost, configuratorPort, configuratorPath))
+                    .registerService(new RemoteConfigServiceSpecification());
+            return context;
+        } catch (Exception e) {
+            loggingModule().getLogger(RemoteConfigInitializer.class).warn(CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS, e);
             return context;
         }
-        String configuratorHost = localConfig.getString(CONFIGURATOR_HOST);
-        Integer configuratorPort = localConfig.getInt(CONFIGURATOR_PORT);
-        String configuratorPath = localConfig.getString(CONFIGURATOR_PATH);
-        serviceModule()
-                .getServiceRegistry()
-                .registerService(new ConfiguratorCommunicationSpecification(configuratorHost, configuratorPort, configuratorPath))
-                .registerService(new RemoteConfigServiceSpecification());
-        return context;
     }
 }
