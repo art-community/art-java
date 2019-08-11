@@ -26,22 +26,18 @@ import ru.art.entity.constants.ValueType;
 import ru.art.entity.exception.ValueMappingException;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.Map.Entry;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.StringExtensions.emptyIfNull;
 import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.entity.Entity.entityBuilder;
-import static ru.art.entity.Value.*;
 import static ru.art.entity.constants.ValueMappingExceptionMessages.XML_TAG_IS_UNFILLED;
 import static ru.art.entity.constants.ValueType.XML_ENTITY;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -190,171 +186,6 @@ public class XmlEntity implements Value {
         return CheckerForEmptiness.isEmpty(tag);
     }
 
-    public Entity toEntityFromTags() {
-        Entity.EntityBuilder entityBuilder = entityBuilder();
-        String value = getValue();
-        if (isNotEmpty(tag) && isNotEmpty(value)) {
-            entityBuilder.stringField(tag, value);
-        }
-        if (isNotEmpty(children)) {
-            children.forEach(child -> entityBuilder.entityField(child.tag, child.toEntityFromTags()));
-        }
-        return entityBuilder.build();
-    }
-
-    public Entity toEntityFromAttributes() {
-        Entity.EntityBuilder entityBuilder = entityBuilder();
-        if (CheckerForEmptiness.isEmpty(attributes)) {
-            return entityBuilder.build();
-        }
-        attributes.forEach(entityBuilder::stringField);
-        return entityBuilder.build();
-    }
-
-    public static XmlEntity fromValueAsTags(Entity entity) {
-        XmlEntityBuilder xmlEntityBuilder = xmlEntityBuilder();
-        if (Value.isEmpty(entity)) {
-            return xmlEntityBuilder.create();
-        }
-        entity.getFields().forEach((key, value) -> addValue(xmlEntityBuilder, key, value));
-        return xmlEntityBuilder.create();
-    }
-
-    private static void addValue(XmlEntityBuilder builder, String name, Value value) {
-        if (CheckerForEmptiness.isEmpty(name) || Value.isEmpty(value)) {
-            return;
-        }
-        builder = builder.child().tag(name);
-        switch (value.getType()) {
-            case ENTITY:
-                builder.child(fromValueAsTags(asEntity(value))).build();
-                return;
-            case STRING:
-            case LONG:
-            case DOUBLE:
-            case FLOAT:
-            case INT:
-            case BOOL:
-            case BYTE:
-                builder.value(value.toString()).build();
-                return;
-            case COLLECTION:
-                addCollectionValue(builder, (CollectionValue) value);
-                builder.build();
-                return;
-            case STRING_PARAMETERS_MAP:
-                builder.children(((StringParametersMap) value)
-                        .getParameters()
-                        .entrySet()
-                        .stream()
-                        .map(entry -> xmlEntityBuilder().tag(entry.getKey()).value(entry.getValue()).create())
-                        .collect(toList()));
-                builder.build();
-                return;
-            case MAP:
-                addMapValue(builder, (MapValue) value);
-                builder.build();
-        }
-    }
-
-    private static void addCollectionValue(XmlEntityBuilder builder, CollectionValue value) {
-        if (Value.isEmpty(value)) {
-            return;
-        }
-        Collection<?> elements = value.getElements();
-        int index = 0;
-        for (Object element : elements) {
-            switch (value.getElementsType()) {
-                case ENTITY:
-                    builder.child(fromValueAsTags((Entity) element));
-                    break;
-                case STRING:
-                case LONG:
-                case DOUBLE:
-                case FLOAT:
-                case INT:
-                case BOOL:
-                case BYTE:
-                    builder.child().tag(element.toString()).build();
-                    break;
-                case COLLECTION:
-                    builder = builder.child();
-                    addCollectionValue(builder, (CollectionValue) element);
-                    builder = builder.build();
-                    break;
-                case STRING_PARAMETERS_MAP:
-                    builder.children(((StringParametersMap) element)
-                            .getParameters()
-                            .entrySet()
-                            .stream()
-                            .map(entry -> xmlEntityBuilder().tag(entry.getKey()).value(entry.getValue()).create())
-                            .collect(toList()));
-                    break;
-                case MAP:
-                    builder = builder.child();
-                    addMapValue(builder, (MapValue) element);
-                    builder = builder.build();
-                    break;
-            }
-        }
-    }
-
-    private static void addMapValue(XmlEntityBuilder builder, MapValue value) {
-        if (Value.isEmpty(value)) {
-            return;
-        }
-        Map<Value, Value> elements = cast(value.getElements());
-        for (Map.Entry<Value, Value> element : elements.entrySet()) {
-            Value elementKey = element.getKey();
-            Value elementValue = element.getValue();
-            if (!isPrimitive(elementKey)) {
-                continue;
-            }
-            builder = builder.child().tag(asPrimitive(elementKey).toString());
-            switch (elementValue.getType()) {
-                case ENTITY:
-                    builder.child(fromValueAsTags((Entity) elementValue));
-                    break;
-                case STRING:
-                case LONG:
-                case DOUBLE:
-                case FLOAT:
-                case INT:
-                case BOOL:
-                case BYTE:
-                    builder.value(elementValue.toString());
-                    break;
-                case COLLECTION:
-                    addCollectionValue(builder, (CollectionValue) elementValue);
-                    break;
-                case STRING_PARAMETERS_MAP:
-                    builder.children(((StringParametersMap) elementValue)
-                            .getParameters()
-                            .entrySet()
-                            .stream()
-                            .map(entry -> xmlEntityBuilder().tag(entry.getKey()).value(entry.getValue()).create())
-                            .collect(toList()));
-                    break;
-                case MAP:
-                    addMapValue(builder, (MapValue) elementValue);
-                    break;
-            }
-            builder.build();
-        }
-    }
-
-    public static XmlEntity fromEntityAsAttributes(String tag, Entity entity) {
-        XmlEntityBuilder builder = xmlEntityBuilder().tag(tag);
-        if (Value.isEmpty(entity)) {
-            return builder.create();
-        }
-        entity.getFields().entrySet()
-                .stream()
-                .filter(entry -> isPrimitive(entry.getValue()))
-                .forEach(entry -> builder.stringAttributeField(entry.getKey(), asPrimitive(entry.getValue()).toString()));
-        return builder.create();
-    }
-
     @NoArgsConstructor(access = PRIVATE)
     public static class XmlEntityBuilder {
         private final Map<String, String> attributes = mapOf();
@@ -420,7 +251,7 @@ public class XmlEntity implements Value {
 
         public <T> XmlEntityBuilder attributeFields(Map<String, T> attributes) {
             this.attributes
-                    .putAll(attributes.entrySet().stream().collect(toMap(Map.Entry::getKey, StringExtensions::emptyIfNull)));
+                    .putAll(attributes.entrySet().stream().collect(toMap(Entry::getKey, StringExtensions::emptyIfNull)));
             return this;
         }
 
