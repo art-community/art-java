@@ -21,9 +21,9 @@ import ru.art.rocks.db.configuration.RocksDbModuleConfiguration.RocksDbModuleDef
 import static ru.art.config.ConfigProvider.config;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.CONFIGURATOR_ROCKS_DB_PATH;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.CONFIGURATOR_SECTION_ID;
-import static ru.art.core.extension.ExceptionExtensions.ifException;
+import static ru.art.core.extension.ExceptionExtensions.ifExceptionOrEmpty;
 
 @Getter
 public class ConfiguratorRocksDbConfiguration extends RocksDbModuleDefaultConfiguration {
-    private String path = ifException(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_ROCKS_DB_PATH), super.getPath());
+    private String path = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_ROCKS_DB_PATH), super.getPath());
 }

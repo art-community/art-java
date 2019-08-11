@@ -28,11 +28,9 @@ import ru.art.metrics.http.specification.MetricServiceSpecification;
 import ru.art.soap.server.specification.SoapServiceExecutionSpecification;
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations;
 import static ru.art.core.context.Context.context;
-import static ru.art.core.extension.ThreadExtensions.thread;
 import static ru.art.example.constants.ExampleAppModuleConstants.EXAMPLE_MODULE_ID;
-import static ru.art.example.constants.ExampleAppModuleConstants.HTTP_SERVER_BOOTSTRAP_THREAD;
 import static ru.art.grpc.server.GrpcServer.grpcServer;
-import static ru.art.http.server.HttpServer.httpServer;
+import static ru.art.http.server.HttpServer.httpServerInSeparatedThread;
 import static ru.art.service.ServiceModule.serviceModule;
 
 /**
@@ -67,7 +65,7 @@ public class ExampleModule implements Module<ExampleModuleConfiguration, Example
                 .registerService(new MetricServiceSpecification())
                 .registerService(new ExampleServiceGrpcCommunicationSpecification())
                 .registerService(new ExampleServiceHttpCommunicationSpecification());
-        thread(HTTP_SERVER_BOOTSTRAP_THREAD, () -> httpServer().await());
+        httpServerInSeparatedThread();
         grpcServer().await();
     }
 }

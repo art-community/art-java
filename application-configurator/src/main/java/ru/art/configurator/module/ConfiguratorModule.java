@@ -38,15 +38,13 @@ import static java.util.UUID.randomUUID;
 import static ru.art.config.ConfigProvider.config;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.CONFIGURATOR_MODULE_ID;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.HTTP_SERVER_BOOTSTRAP_THREAD;
 import static ru.art.configurator.service.UserService.register;
 import static ru.art.core.configuration.ContextInitialConfiguration.ApplicationContextConfiguration;
 import static ru.art.core.context.Context.context;
 import static ru.art.core.context.Context.initContext;
 import static ru.art.core.extension.ExceptionExtensions.ifException;
-import static ru.art.core.extension.ThreadExtensions.thread;
 import static ru.art.grpc.server.GrpcServer.grpcServer;
-import static ru.art.http.server.HttpServer.httpServer;
+import static ru.art.http.server.HttpServer.httpServerInSeparatedThread;
 import static ru.art.service.ServiceModule.serviceModule;
 
 @Getter
@@ -73,7 +71,7 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
                 .registerService(new HttpWebUiServiceSpecification())
                 .registerService(new UserServiceSpecification())
                 .registerService(new MetricServiceSpecification());
-        thread(HTTP_SERVER_BOOTSTRAP_THREAD, () -> httpServer().await());
+        httpServerInSeparatedThread();
         grpcServer().await();
     }
 
