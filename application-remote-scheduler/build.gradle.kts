@@ -25,5 +25,7 @@ art {
         applicationMetricsHttp()
         applicationScheduler()
         applicationRemoteSchedulerApi()
+        applicationXml()
+        applicationHttpXml()
     }
 }

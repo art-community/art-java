@@ -27,5 +27,7 @@ art {
         applicationScheduler()
         applicationRocksDb()
         applicationStateApi()
+        applicationXml()
+        applicationHttpXml()
     }
 }
