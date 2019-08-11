@@ -27,8 +27,7 @@ import static ru.art.core.constants.NetworkConstants.LOCALHOST;
 import static ru.art.core.extension.ExceptionExtensions.exceptionIfNull;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
-import static ru.art.rsocket.constants.RsocketModuleConstants.DEFAULT_RSOCKET_PORT;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RSOCKET_COMMUNICATION_TARGET_CONFIGURATION_NOT_FOUND;
+import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.PROTOBUF;
 import java.util.Map;
 
@@ -41,14 +40,19 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
 
     String getBalancerHost();
 
-    int getBalancerPort();
+    int getBalancerTcpPort();
+
+    int getBalancerWebSocketPort();
 
     RsocketDataFormat getDefaultDataFormat();
 
     Map<String, RsocketCommunicationTargetConfiguration> getCommunicationTargets();
 
     default RsocketCommunicationTargetConfiguration getCommunicationTargetConfiguration(String serviceId) {
-        return exceptionIfNull(getCommunicationTargets().get(serviceId), new RsocketClientException(format(RSOCKET_COMMUNICATION_TARGET_CONFIGURATION_NOT_FOUND, serviceId))).toBuilder().build();
+        return exceptionIfNull(getCommunicationTargets().get(serviceId),
+                new RsocketClientException(format(RSOCKET_COMMUNICATION_TARGET_CONFIGURATION_NOT_FOUND, serviceId)))
+                .toBuilder()
+                .build();
     }
 
     @Getter
@@ -58,7 +62,8 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
         private final int acceptorTcpPort = findAvailableTcpPort();
         private final int acceptorWebSocketPort = findAvailableTcpPort();
         private final String balancerHost = LOCALHOST;
-        private final int balancerPort = DEFAULT_RSOCKET_PORT;
+        private final int balancerTcpPort = DEFAULT_RSOCKET_TCP_PORT;
+        private final int balancerWebSocketPort = DEFAULT_RSOCKET_WEB_SOCKET_PORT;
         private final Map<String, RsocketCommunicationTargetConfiguration> communicationTargets = mapOf();
     }
 }

@@ -20,7 +20,8 @@ import lombok.Getter;
 import ru.art.rsocket.configuration.RsocketModuleConfiguration.RsocketModuleDefaultConfiguration;
 import ru.art.rsocket.model.RsocketCommunicationTargetConfiguration;
 import static ru.art.config.extensions.ConfigExtensions.*;
-import static ru.art.config.extensions.common.CommonConfigKeys.*;
+import static ru.art.config.extensions.common.CommonConfigKeys.HOST;
+import static ru.art.config.extensions.common.CommonConfigKeys.TARGETS;
 import static ru.art.config.extensions.rsocket.RsocketConfigKeys.*;
 import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
 import static ru.art.core.context.Context.context;
@@ -39,7 +40,8 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
     private int acceptorTcpPort = super.getAcceptorTcpPort();
     private int acceptorWebSocketPort = super.getAcceptorWebSocketPort();
     private String balancerHost;
-    private int balancerPort;
+    private int balancerTcpPort;
+    private int balancerWebSocketPort;
     private Map<String, RsocketCommunicationTargetConfiguration> communicationTargets;
 
     public RsocketAgileConfiguration() {
@@ -51,16 +53,17 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
         dataFormat = ifException(() -> RsocketDataFormat.valueOf(configString(RSOCKET_SECTION_ID, DEFAULT_DATA_FORMAT).toUpperCase()), super.getDefaultDataFormat());
         String newAcceptorHost = configString(RSOCKET_ACCEPTOR_SECTION_ID, HOST, super.getAcceptorHost());
         boolean restart = !acceptorHost.equals(newAcceptorHost);
-        int newAcceptorTcpPort = configInt(RSOCKET_ACCEPTOR_SECTION_ID, RSOCKET_ACCEPTOR_TCP_PORT, super.getAcceptorTcpPort());
+        int newAcceptorTcpPort = configInt(RSOCKET_ACCEPTOR_SECTION_ID, TCP_PORT, super.getAcceptorTcpPort());
         restart |= acceptorTcpPort != newAcceptorTcpPort;
-        int newAcceptorWebSocketPort = configInt(RSOCKET_ACCEPTOR_SECTION_ID, RSOCKET_ACCEPTOR_WEB_SOCKET_PORT, super.getAcceptorWebSocketPort());
+        int newAcceptorWebSocketPort = configInt(RSOCKET_ACCEPTOR_SECTION_ID, WEB_SOCKET_PORT, super.getAcceptorWebSocketPort());
         restart |= acceptorWebSocketPort != newAcceptorWebSocketPort;
         balancerHost = configString(RSOCKET_BALANCER_SECTION_ID, HOST, super.getBalancerHost());
-        balancerPort = configInt(RSOCKET_BALANCER_SECTION_ID, PORT, super.getBalancerPort());
+        balancerTcpPort = configInt(RSOCKET_BALANCER_SECTION_ID, TCP_PORT, super.getBalancerTcpPort());
+        balancerWebSocketPort = configInt(RSOCKET_BALANCER_SECTION_ID, WEB_SOCKET_PORT, super.getBalancerTcpPort());
         communicationTargets = configMap(RSOCKET_SECTION_ID, TARGETS, config -> rsocketCommunicationTarget()
                 .host(ifEmpty(config.getString(HOST), balancerHost))
-                .port(getOrElse(config.getInt(PORT), balancerPort))
-                .dataFormat(ifException(() -> RsocketDataFormat.valueOf(config.getString(DEFAULT_DATA_FORMAT).toUpperCase()), super.getDefaultDataFormat()))
+                .tcpPort(getOrElse(config.getInt(TCP_PORT), balancerTcpPort))
+                .webSocketPort(getOrElse(config.getInt(WEB_SOCKET_PORT), balancerWebSocketPort))
                 .build(), super.getCommunicationTargets());
         if (restart && context().hasModule(RSOCKET_MODULE_ID)) {
             rsocketModuleState().getServer().restart();

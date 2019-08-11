@@ -27,7 +27,8 @@ public interface RsocketModuleConstants {
     String RSOCKET_COMMUNICATION_TARGET_CONFIGURATION_NOT_FOUND = "RSocket communication target configuration was not found for serviceId: ''{0}''";
     String RSOCKET_SERVER_THREAD = "rsocket-server-bootstrap-thread";
     String BINARY_MIME_TYPE = "application/binary";
-    int DEFAULT_RSOCKET_PORT = 9000;
+    int DEFAULT_RSOCKET_TCP_PORT = 9000;
+    int DEFAULT_RSOCKET_WEB_SOCKET_PORT = 10000;
     String REACTIVE_SERVICE_EXCEPTION_ERROR_CODE = "REACTIVE_SERVICE_EXCEPTION";
 
     enum RsocketDataFormat {

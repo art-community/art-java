@@ -110,7 +110,7 @@ class RsocketSpecification extends Specification {
         sleep(500L)
         def communicator = rsocketCommunicator(rsocketCommunicationTarget()
                 .host(LOCALHOST)
-                .port({
+                .tcpPort({
                     switch (transport) {
                         case TCP:
                             rsocketModule().acceptorTcpPort
@@ -170,7 +170,7 @@ class RsocketSpecification extends Specification {
         sleep(500L)
         def communicator = rsocketCommunicator(rsocketCommunicationTarget()
                 .host(LOCALHOST)
-                .port({
+                .tcpPort({
                     switch (transport) {
                         case TCP:
                             rsocketModule().acceptorTcpPort
@@ -232,7 +232,7 @@ class RsocketSpecification extends Specification {
         sleep(500L)
         def communicator = rsocketCommunicator(rsocketCommunicationTarget()
                 .host(LOCALHOST)
-                .port({
+                .tcpPort({
                     switch (transport) {
                         case TCP:
                             rsocketModule().acceptorTcpPort

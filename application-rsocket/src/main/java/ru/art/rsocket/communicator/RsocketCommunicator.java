@@ -73,7 +73,7 @@ public class RsocketCommunicator {
                         .resume()
                         .dataMimeType(toMimeType(configuration.dataFormat()))
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
-                        .transport(TcpClientTransport.create(configuration.host(), configuration.port()))
+                        .transport(TcpClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .start()
                         .doOnSubscribe(channel -> loggingModule()
                                 .getLogger(RsocketCommunicator.class)
@@ -85,7 +85,7 @@ public class RsocketCommunicator {
                         .resume()
                         .dataMimeType(toMimeType(configuration.dataFormat()))
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
-                        .transport(WebsocketClientTransport.create(configuration.host(), configuration.port()))
+                        .transport(WebsocketClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .start()
                         .doOnSubscribe(channel -> loggingModule()
                                 .getLogger(RsocketCommunicator.class)
@@ -97,15 +97,15 @@ public class RsocketCommunicator {
     }
 
     public static RsocketCommunicator rsocketCommunicator(String host, int port) {
-        return new RsocketCommunicator(rsocketCommunicationTarget().port(port).host(host).build());
+        return new RsocketCommunicator(rsocketCommunicationTarget().tcpPort(port).host(host).build());
     }
 
     public static RsocketCommunicator rsocketCommunicator(String host, int port, RsocketDataFormat dataFormat) {
-        return new RsocketCommunicator(rsocketCommunicationTarget().port(port).host(host).dataFormat(dataFormat).build());
+        return new RsocketCommunicator(rsocketCommunicationTarget().tcpPort(port).host(host).dataFormat(dataFormat).build());
     }
 
     public static RsocketCommunicator rsocketCommunicator(String host, int port, RsocketTransport transport) {
-        return new RsocketCommunicator(rsocketCommunicationTarget().port(port).host(host).transport(transport).build());
+        return new RsocketCommunicator(rsocketCommunicationTarget().tcpPort(port).host(host).transport(transport).build());
     }
 
     public static RsocketCommunicator rsocketCommunicator(RsocketCommunicationTargetConfiguration targetConfiguration) {

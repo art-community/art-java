@@ -85,7 +85,7 @@ public class FunctionalProtocolsServicesExample {
         sleep(100L);
         rsocketCommunicator(rsocketCommunicationTarget()
                 .host(rsocketModule().getAcceptorHost())
-                .port(rsocketModule().getAcceptorWebSocketPort())
+                .tcpPort(rsocketModule().getAcceptorWebSocketPort())
                 .transport(WEB_SOCKET)
                 .build())
                 .serviceId(RSOCKET_SERVICE_TYPE)

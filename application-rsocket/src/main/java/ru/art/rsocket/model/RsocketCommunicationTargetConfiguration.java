@@ -32,7 +32,9 @@ public class RsocketCommunicationTargetConfiguration {
     @Setter
     private String host;
     @Setter
-    private int port;
+    private Integer tcpPort;
+    @Setter
+    private Integer webSocketPort;
     @Builder.Default
     private final RsocketTransport transport = TCP;
     @Builder.Default
