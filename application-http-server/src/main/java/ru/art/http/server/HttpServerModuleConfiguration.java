@@ -23,6 +23,7 @@ import org.zalando.logbook.Logbook;
 import org.zalando.logbook.LogbookCreator;
 import ru.art.http.configuration.HttpModuleConfiguration;
 import ru.art.http.logger.ZalangoLogbookLogWriter;
+import ru.art.http.mime.MimeType;
 import ru.art.http.server.filter.HtmlLogsFilter;
 import ru.art.http.server.handler.HttpExceptionHandler;
 import ru.art.http.server.interceptor.HttpServerInterceptor;
@@ -34,9 +35,9 @@ import static ru.art.core.constants.NetworkConstants.BROADCAST_IP_ADDRESS;
 import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
+import static ru.art.http.constants.HttpMimeTypes.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.DEFAULT_BUFFER_SIZE;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.DEFAULT_WEB_URL;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.ResourceExtensions.*;
 import static ru.art.http.server.interceptor.HttpServerInterceptor.intercept;
 import java.util.List;
@@ -94,14 +95,20 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         private final Map<String, Function<String, String>> templateResourceVariables;
         @Singular("resourcePathMapping")
         private final Map<String, Function<String, String>> resourcePathMapping;
-
         @Builder.Default
         private final int resourceBufferSize = DEFAULT_BUFFER_SIZE;
-
         @Builder.Default
         private final Set<String> templatingResourceExtensions = setOf(HTML, WSDL);
         @Builder.Default
         private final Set<String> availableResourceExtensions = setOf(WEBP, JPEG, PNG, CSS, MAP, JS, HTML, WSDL);
+        @Builder.Default
+        private final Map<MimeType, String> logbookResponseBodyReplacers = mapOf(TEXT_HTML, WEB_RESOURCE)
+                .add(TEXT_JS, WEB_RESOURCE)
+                .add(TEXT_CSS, WEB_RESOURCE)
+                .add(IMAGE_WEBP, WEB_RESOURCE)
+                .add(IMAGE_PNG, WEB_RESOURCE)
+                .add(IMAGE_JPEG, WEB_RESOURCE)
+                .add(IMAGE_GIF, WEB_RESOURCE);
     }
 
     @Getter
@@ -123,7 +130,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         private final boolean ignoreAcceptHeader = false;
         private final Map<? extends Class<? extends Exception>, ? extends HttpExceptionHandler<? extends Exception>> exceptionHandlers =
                 mapOf(Exception.class, new ExceptionHttpJsonHandler())
-                .add(cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler()));
+                        .add(cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler()));
         private final HttpWebConfiguration webConfiguration = HttpWebConfiguration.builder().webUrl(DEFAULT_WEB_URL).build();
 
         private static List<HttpServerInterceptor> initializeInterceptors() {

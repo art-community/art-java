@@ -24,6 +24,7 @@ import static java.util.Collections.emptyList;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.entity.PrimitiveMapping.stringMapper;
 import static ru.art.http.server.model.HttpService.httpService;
+import static ru.art.http.server.module.HttpServerModule.httpServerModule;
 import static ru.art.metrics.constants.MetricsModuleConstants.*;
 import static ru.art.metrics.http.constants.MetricsModuleHttpConstants.METRICS_CONTENT_TYPE;
 import static ru.art.metrics.module.MetricsModule.metricsModule;
@@ -42,7 +43,7 @@ public class MetricServiceSpecification implements HttpServiceSpecification {
             .produces(METRICS_CONTENT_TYPE)
             .responseMapper(stringMapper.getFromModel())
             .listen(METRICS_PATH)
-            .serve(metricsModule().getPath());
+            .serve(httpServerModule().getPath());
 
     @Override
     public <P, R> R executeMethod(String methodId, P request) {

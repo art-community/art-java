@@ -38,8 +38,6 @@ import java.util.Set;
 public interface MetricModuleConfiguration extends ModuleConfiguration {
     Set<MeterBinder> getMeterBinders();
 
-    String getPath();
-
     PrometheusMeterRegistry getPrometheusMeterRegistry();
 
     @Getter
