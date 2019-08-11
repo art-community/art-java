@@ -22,10 +22,9 @@ import org.apache.http.entity.ContentType;
 import ru.art.http.constants.HttpMimeTypes;
 import ru.art.http.constants.MimeToContentTypeMapper;
 import ru.art.http.mime.MimeType;
-import static lombok.AccessLevel.PRIVATE;
 
 @Getter
-@AllArgsConstructor(access = PRIVATE)
+@AllArgsConstructor
 public class SoapMimeToContentTypeMapper {
     private MimeType mimeType;
     private ContentType contentType;

@@ -18,13 +18,16 @@ package ru.art.soap.server.specification;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import ru.art.http.server.builder.HttpServiceBuilder;
 import ru.art.http.server.model.HttpService;
 import ru.art.http.server.specification.HttpServiceSpecification;
 import ru.art.service.exception.UnknownServiceMethodException;
+import ru.art.soap.server.model.SoapService;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
 import static ru.art.core.constants.StringConstants.UNDERSCORE;
 import static ru.art.entity.PrimitiveMapping.stringMapper;
+import static ru.art.http.server.builder.HttpServiceBuilder.*;
 import static ru.art.http.server.model.HttpService.httpService;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
 import static ru.art.soap.server.mapper.SoapMapper.soapRequestToModelMapper;
@@ -39,22 +42,31 @@ public class SoapServiceExecutionSpecification implements HttpServiceSpecificati
     @Getter(lazy = true)
     private final String serviceId = soapServiceSpecification.getServiceId() + UNDERSCORE + SOAP_SERVICE_TYPE;
     @Getter(lazy = true)
-    private final HttpService httpService = httpService()
-
-            .post(EXECUTE_SOAP_SERVICE)
-            .consumes(soapServiceSpecification.getSoapService().getConsumes().toHttpMimeToContentTypeMapper())
-            .fromBody()
-            .requestMapper(soapRequestToModelMapper)
-            .ignoreRequestAcceptType()
-            .produces(soapServiceSpecification.getSoapService().getProduces().toHttpMimeToContentTypeMapper())
-            .responseMapper(soapResponseFromModelMapper)
-            .listen(soapServiceSpecification.getSoapService().getListeningPath())
-
+    private final HttpService httpService = addExecuteSoapServiceOperation(httpService())
             .get(GET_SERVICE_WSDL)
             .responseMapper(stringMapper.getFromModel())
             .listen(soapServiceSpecification.getSoapService().getListeningPath())
 
             .serve(EMPTY_STRING);
+
+    @SuppressWarnings("all")
+    private HttpServiceBuilder addExecuteSoapServiceOperation(HttpServiceBuilder builder) {
+        SoapService soapService = soapServiceSpecification.getSoapService();
+        HttpMethodWithBodyBuilder methodWithBodyBuilder = builder.post(EXECUTE_SOAP_SERVICE)
+                .consumes(soapService.getConsumes().toHttpMimeToContentTypeMapper());
+        if (soapServiceSpecification.getSoapService().isIgnoreRequestContentType()) {
+            methodWithBodyBuilder = methodWithBodyBuilder.ignoreRequestContentType();
+        }
+        HttpMethodResponseBuilder methodResponseBuilder = methodWithBodyBuilder
+                .fromBody()
+                .requestMapper(soapRequestToModelMapper);
+        if (soapServiceSpecification.getSoapService().isIgnoreRequestAcceptType()) {
+            methodResponseBuilder = methodResponseBuilder.ignoreRequestAcceptType();
+        }
+        return methodResponseBuilder.produces(soapService.getProduces().toHttpMimeToContentTypeMapper())
+                .responseMapper(soapResponseFromModelMapper)
+                .listen(soapService.getListeningPath());
+    }
 
     @Override
     public <P, R> R executeMethod(String methodId, P request) {

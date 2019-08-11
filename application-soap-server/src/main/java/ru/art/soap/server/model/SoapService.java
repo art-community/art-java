@@ -35,6 +35,8 @@ public class SoapService {
     private String listeningPath;
     private String wsdlResourcePath;
     private Object defaultFaultResponse;
+    private boolean ignoreRequestAcceptType;
+    private boolean ignoreRequestContentType;
     private XmlEntityFromModelMapper<?> defaultFaultMapper;
     @Builder.Default
     private final SoapMimeToContentTypeMapper consumes = textXml();
