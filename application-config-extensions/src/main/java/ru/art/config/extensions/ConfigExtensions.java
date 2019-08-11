@@ -254,11 +254,11 @@ public interface ConfigExtensions {
 
 
     static <T> Map<String, T> configMap(String path, Function<Config, T> configMapper, Map<String, T> defaultValues) {
-        return ifException(() -> configMap(path, configMapper), defaultValues);
+        return ifExceptionOrEmpty(() -> configMap(path, configMapper), defaultValues);
     }
 
     static <T> Map<String, T> configMap(String sectionId, String path, Function<Config, T> configMapper, Map<String, T> defaultValues) {
-        return ifException(() -> configMap(sectionId, path, configMapper), defaultValues);
+        return ifExceptionOrEmpty(() -> configMap(sectionId, path, configMapper), defaultValues);
     }
 
     static boolean hasPath(String sectionId, String path) {

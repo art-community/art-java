@@ -42,7 +42,7 @@ import static ru.art.configurator.service.UserService.register;
 import static ru.art.core.configuration.ContextInitialConfiguration.ApplicationContextConfiguration;
 import static ru.art.core.context.Context.context;
 import static ru.art.core.context.Context.initContext;
-import static ru.art.core.extension.ExceptionExtensions.ifException;
+import static ru.art.core.extension.ExceptionExtensions.ifExceptionOrEmpty;
 import static ru.art.grpc.server.GrpcServer.grpcServer;
 import static ru.art.http.server.HttpServer.httpServerInSeparatedThread;
 import static ru.art.service.ServiceModule.serviceModule;
@@ -85,8 +85,8 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
 
     @Override
     public void onLoad() {
-        String userName = ifException(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_USER), randomUUID().toString());
-        String password = ifException(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_PASSWORD), randomUUID().toString());
+        String userName = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_USER), randomUUID().toString());
+        String password = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_PASSWORD), randomUUID().toString());
         register(userName, password);
     }
 }

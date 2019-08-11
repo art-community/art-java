@@ -33,8 +33,7 @@ import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.constants.NetworkConstants.LOCALHOST;
 import static ru.art.core.constants.StringConstants.DOT;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.extension.ExceptionExtensions.ifException;
-import static ru.art.core.extension.ExceptionExtensions.nullIfException;
+import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.LOCAL;
 import static ru.art.tarantool.model.TarantoolEntityFieldsMapping.entityFieldsMapping;
@@ -75,10 +74,10 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
                 .build();
         Function<Config, TarantoolConfiguration> mapper = config -> TarantoolConfiguration.builder()
                 .connectionConfiguration(TarantoolConnectionConfiguration.builder()
-                        .host(ifException(() -> config.getString(CONNECTION_SECTION_ID + DOT + HOST), LOCALHOST))
-                        .port(ifException(() -> config.getInt(CONNECTION_SECTION_ID + DOT + PORT), DEFAULT_TARANTOOL_PORT))
-                        .username(ifException(() -> config.getString(CONNECTION_SECTION_ID + DOT + USERNAME), DEFAULT_TARANTOOL_USERNAME))
-                        .password(ifException(() -> config.getString(CONNECTION_SECTION_ID + DOT + PASSWORD), EMPTY_STRING))
+                        .host(ifExceptionOrEmpty(() -> config.getString(CONNECTION_SECTION_ID + DOT + HOST), LOCALHOST))
+                        .port(ifExceptionOrEmpty(() -> config.getInt(CONNECTION_SECTION_ID + DOT + PORT), DEFAULT_TARANTOOL_PORT))
+                        .username(ifExceptionOrEmpty(() -> config.getString(CONNECTION_SECTION_ID + DOT + USERNAME), DEFAULT_TARANTOOL_USERNAME))
+                        .password(ifExceptionOrEmpty(() -> config.getString(CONNECTION_SECTION_ID + DOT + PASSWORD), EMPTY_STRING))
                         .build())
                 .initialConfiguration(TarantoolInitialConfiguration.builder()
                         .port(DEFAULT_TARANTOOL_PORT)
@@ -95,7 +94,7 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
                         .memtxMemory(nullIfException(() -> config.getLong(INITIAL_SECTION_ID + DOT + MEMTX_MEMORY)))
                         .slabAllocFactor(nullIfException(() -> config.getInt(INITIAL_SECTION_ID + DOT + SLAB_ALLOC_FACTOR))).build())
                 .instanceMode(ifException(() -> TarantoolInstanceMode.valueOf(config.getString(INSTANCE_MODE).toUpperCase()), LOCAL))
-                .entityFieldsMappings(ifException(() -> config.getConfig(ENTITIES).getKeys()
+                .entityFieldsMappings(ifExceptionOrEmpty(() -> config.getConfig(ENTITIES).getKeys()
                         .stream().collect(toMap(identity(), entityName -> entityFieldsMapping()
                                 .fieldsMapping(cast(config.getConfig(ENTITIES + DOT + entityName + DOT + FIELDS)
                                         .getKeys()
