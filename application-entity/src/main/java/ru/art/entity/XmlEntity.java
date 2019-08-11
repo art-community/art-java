@@ -31,6 +31,7 @@ import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static lombok.AccessLevel.PRIVATE;
+import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.StringExtensions.emptyIfNull;
@@ -215,7 +216,7 @@ public class XmlEntity implements Value {
         if (Value.isEmpty(entity)) {
             return xmlEntityBuilder.create();
         }
-        entity.getFields().forEach((key, value1) -> addValue(xmlEntityBuilder, key, value1));
+        entity.getFields().forEach((key, value) -> addValue(xmlEntityBuilder, key, value));
         return xmlEntityBuilder.create();
     }
 
@@ -223,9 +224,10 @@ public class XmlEntity implements Value {
         if (CheckerForEmptiness.isEmpty(name) || Value.isEmpty(value)) {
             return;
         }
+        builder = builder.child().tag(name);
         switch (value.getType()) {
             case ENTITY:
-                builder.child(fromValueAsTags(asEntity(value)));
+                builder.child(fromValueAsTags(asEntity(value))).build();
                 return;
             case STRING:
             case LONG:
@@ -234,10 +236,24 @@ public class XmlEntity implements Value {
             case INT:
             case BOOL:
             case BYTE:
-                builder.tag(name).value(value.toString());
+                builder.value(value.toString()).build();
                 return;
             case COLLECTION:
                 addCollectionValue(builder, (CollectionValue) value);
+                builder.build();
+                return;
+            case STRING_PARAMETERS_MAP:
+                builder.children(((StringParametersMap) value)
+                        .getParameters()
+                        .entrySet()
+                        .stream()
+                        .map(entry -> xmlEntityBuilder().tag(entry.getKey()).value(entry.getValue()).create())
+                        .collect(toList()));
+                builder.build();
+                return;
+            case MAP:
+                addMapValue(builder, (MapValue) value);
+                builder.build();
         }
     }
 
@@ -248,10 +264,10 @@ public class XmlEntity implements Value {
         Collection<?> elements = value.getElements();
         int index = 0;
         for (Object element : elements) {
-            builder.tag(EMPTY_STRING + index++);
             switch (value.getElementsType()) {
                 case ENTITY:
                     builder.child(fromValueAsTags((Entity) element));
+                    break;
                 case STRING:
                 case LONG:
                 case DOUBLE:
@@ -259,11 +275,71 @@ public class XmlEntity implements Value {
                 case INT:
                 case BOOL:
                 case BYTE:
-                    builder.value(element.toString());
-                    return;
+                    builder.child().tag(element.toString()).build();
+                    break;
                 case COLLECTION:
+                    builder = builder.child();
                     addCollectionValue(builder, (CollectionValue) element);
+                    builder = builder.build();
+                    break;
+                case STRING_PARAMETERS_MAP:
+                    builder.children(((StringParametersMap) element)
+                            .getParameters()
+                            .entrySet()
+                            .stream()
+                            .map(entry -> xmlEntityBuilder().tag(entry.getKey()).value(entry.getValue()).create())
+                            .collect(toList()));
+                    break;
+                case MAP:
+                    builder = builder.child();
+                    addMapValue(builder, (MapValue) element);
+                    builder = builder.build();
+                    break;
             }
+        }
+    }
+
+    private static void addMapValue(XmlEntityBuilder builder, MapValue value) {
+        if (Value.isEmpty(value)) {
+            return;
+        }
+        Map<Value, Value> elements = cast(value.getElements());
+        for (Map.Entry<Value, Value> element : elements.entrySet()) {
+            Value elementKey = element.getKey();
+            Value elementValue = element.getValue();
+            if (!isPrimitive(elementKey)) {
+                continue;
+            }
+            builder = builder.child().tag(asPrimitive(elementKey).toString());
+            switch (elementValue.getType()) {
+                case ENTITY:
+                    builder.child(fromValueAsTags((Entity) elementValue));
+                    break;
+                case STRING:
+                case LONG:
+                case DOUBLE:
+                case FLOAT:
+                case INT:
+                case BOOL:
+                case BYTE:
+                    builder.value(elementValue.toString());
+                    break;
+                case COLLECTION:
+                    addCollectionValue(builder, (CollectionValue) elementValue);
+                    break;
+                case STRING_PARAMETERS_MAP:
+                    builder.children(((StringParametersMap) elementValue)
+                            .getParameters()
+                            .entrySet()
+                            .stream()
+                            .map(entry -> xmlEntityBuilder().tag(entry.getKey()).value(entry.getValue()).create())
+                            .collect(toList()));
+                    break;
+                case MAP:
+                    addMapValue(builder, (MapValue) elementValue);
+                    break;
+            }
+            builder.build();
         }
     }
 
