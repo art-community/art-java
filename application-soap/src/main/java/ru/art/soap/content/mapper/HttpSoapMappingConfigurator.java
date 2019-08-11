@@ -17,7 +17,7 @@
 package ru.art.soap.content.mapper;
 
 import ru.art.http.mapper.HttpContentMapper;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import ru.art.http.xml.HttpXmlMapper;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.http.constants.HttpMimeTypes.*;

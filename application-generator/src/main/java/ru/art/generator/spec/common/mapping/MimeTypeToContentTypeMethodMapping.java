@@ -19,7 +19,7 @@ package ru.art.generator.spec.common.mapping;
 import ru.art.generator.spec.http.common.exception.MimeTypeDefinitionException;
 import ru.art.generator.spec.http.proxyspec.constants.MimeTypes;
 import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import static java.text.MessageFormat.format;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;

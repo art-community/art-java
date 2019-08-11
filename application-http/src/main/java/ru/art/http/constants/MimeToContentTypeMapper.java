@@ -19,7 +19,7 @@ package ru.art.http.constants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.http.entity.ContentType;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import static org.apache.http.entity.ContentType.create;
 import static ru.art.core.constants.StringConstants.SLASH;
 import static ru.art.http.constants.HttpMimeTypes.TEXT_XML_WIN_1251;

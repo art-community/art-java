@@ -19,7 +19,7 @@ package ru.art.http.server.context;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import java.util.Map;
 
 @Getter

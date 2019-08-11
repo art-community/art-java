@@ -17,10 +17,10 @@
 package ru.art.http.constants;
 
 
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import static java.nio.charset.Charset.forName;
 import static ru.art.core.constants.StringConstants.WILDCARD;
-import static ru.art.http.mime.MimeType.mimeType;
+import static ru.art.core.mime.MimeType.mimeType;
 
 public interface HttpMimeTypes {
     MimeType ALL = mimeType(WILDCARD, WILDCARD);

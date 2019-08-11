@@ -14,13 +14,13 @@
  *    limitations under the License.
  */
 
-package ru.art.http.exception;
+package ru.art.core.exception;
 
-import ru.art.http.constants.HttpMimeTypeExceptionFormat;
 import static java.text.MessageFormat.format;
+import static ru.art.core.constants.MimeTypeExceptionFormat.INVALID_MIME_TYPE_MESSAGE;
 
 public class InvalidMimeTypeException extends RuntimeException {
     public InvalidMimeTypeException(String value, String message) {
-        super(format(HttpMimeTypeExceptionFormat.INVALID_MIME_TYPE_MESSAGE, message, value));
+        super(format(INVALID_MIME_TYPE_MESSAGE, message, value));
     }
 }

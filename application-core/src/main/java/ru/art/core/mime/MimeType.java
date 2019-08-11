@@ -14,11 +14,11 @@
  *    limitations under the License.
  */
 
-package ru.art.http.mime;
+package ru.art.core.mime;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import ru.art.http.exception.InvalidMimeTypeException;
+import ru.art.core.exception.InvalidMimeTypeException;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static java.nio.charset.Charset.forName;
 import static java.text.MessageFormat.format;
@@ -29,13 +29,13 @@ import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.CharConstants.DOUBLE_QUOTES;
 import static ru.art.core.constants.CharConstants.SEMICOLON;
+import static ru.art.core.constants.ExceptionMessages.*;
+import static ru.art.core.constants.MimeTypeConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.NullCheckingExtensions.doIfNotNull;
 import static ru.art.core.extension.StringExtensions.isQuotedString;
 import static ru.art.core.extension.StringExtensions.unquote;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.http.constants.HttpExceptionsMessages.*;
-import static ru.art.http.constants.MimeTypeConstants.*;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Map;

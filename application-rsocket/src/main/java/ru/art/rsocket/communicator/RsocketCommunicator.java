@@ -38,6 +38,7 @@ import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 import static reactor.core.publisher.Flux.empty;
 import static reactor.core.publisher.Flux.from;
+import static reactor.core.publisher.Mono.just;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.logging.LoggingModule.loggingModule;
@@ -57,7 +58,7 @@ import java.util.Optional;
 @SuppressWarnings("Duplicates")
 @RequiredArgsConstructor
 public class RsocketCommunicator {
-    private final RSocket socket;
+    private final Mono<RSocket> socket;
     private String serviceId;
     private String methodId;
     private ValueFromModelMapper requestMapper;
@@ -75,10 +76,9 @@ public class RsocketCommunicator {
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
                         .transport(TcpClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .start()
-                        .doOnSubscribe(channel -> loggingModule()
+                        .doOnSubscribe(subscription -> loggingModule()
                                 .getLogger(RsocketCommunicator.class)
-                                .info(RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE))
-                        .block();
+                                .info(RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE));
                 return;
             case WEB_SOCKET:
                 socket = connect()
@@ -87,10 +87,9 @@ public class RsocketCommunicator {
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
                         .transport(WebsocketClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .start()
-                        .doOnSubscribe(channel -> loggingModule()
+                        .doOnSubscribe(subscription -> loggingModule()
                                 .getLogger(RsocketCommunicator.class)
-                                .info(RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE))
-                        .block();
+                                .info(RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE));
                 return;
         }
         throw new RsocketClientException(format(UNSUPPORTED_TRANSPORT, configuration.transport()));
@@ -113,7 +112,7 @@ public class RsocketCommunicator {
     }
 
     public static RsocketCommunicator rsocketCommunicator(RSocket socket) {
-        return new RsocketCommunicator(socket);
+        return new RsocketCommunicator(just(socket));
     }
 
     public RsocketCommunicator serviceId(String serviceId) {
@@ -139,25 +138,26 @@ public class RsocketCommunicator {
     public Mono<Void> call() {
         validator.validate();
         validateRequiredFields();
-        return socket.fireAndForget(writeServiceRequestPayload(serviceId, methodId, dataFormat));
+        return socket.flatMap(rsocket -> rsocket.fireAndForget(writeServiceRequestPayload(serviceId, methodId, dataFormat)));
     }
 
     public <ResponseType> Mono<ServiceResponse<ResponseType>> execute() {
         validator.validate();
         validateRequiredFields();
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
-        return socket.requestResponse(writeServiceRequestPayload(serviceId, methodId, dataFormat))
+        return socket.flatMap(rsocket -> rsocket.requestResponse(writeServiceRequestPayload(serviceId, methodId, dataFormat))
                 .map(responsePayload -> ofNullable(readPayload(responsePayload, dataFormat)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue))));
+                .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue)))));
     }
 
     public <ResponseType> Flux<ServiceResponse<ResponseType>> stream() {
         validator.validate();
         validateRequiredFields();
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
-        Flux<Payload> requestStream = socket.requestStream(writeServiceRequestPayload(serviceId, methodId, dataFormat));
+        Flux<Payload> requestStream = socket
+                .flatMapMany(rsocket -> rsocket.requestStream(writeServiceRequestPayload(serviceId, methodId, dataFormat)));
         if (isNull(responseModelMapper)) {
             return empty();
         }
@@ -175,7 +175,7 @@ public class RsocketCommunicator {
         Payload requestPayload = isNull(requestModelMapper)
                 ? writeServiceRequestPayload(serviceId, methodId, dataFormat)
                 : writeServiceRequestPayload(serviceId, methodId, requestModelMapper.map(cast(request)), dataFormat);
-        return socket.fireAndForget(requestPayload);
+        return socket.flatMap(rsocket -> rsocket.fireAndForget(requestPayload));
     }
 
     @SuppressWarnings("Duplicates")
@@ -187,7 +187,7 @@ public class RsocketCommunicator {
         Payload requestPayload = isNull(requestModelMapper)
                 ? writeServiceRequestPayload(serviceId, methodId, dataFormat)
                 : writeServiceRequestPayload(serviceId, methodId, requestModelMapper.map(cast(request)), dataFormat);
-        Mono<Payload> requestResponse = socket.requestResponse(requestPayload);
+        Mono<Payload> requestResponse = socket.flatMap(rsocket -> rsocket.requestResponse(requestPayload));
         return requestResponse
                 .map(responsePayload -> ofNullable(readPayload(responsePayload, dataFormat)))
                 .filter(Optional::isPresent)
@@ -207,11 +207,11 @@ public class RsocketCommunicator {
         if (isNull(responseModelMapper)) {
             return empty();
         }
-        return socket.requestStream(requestPayload)
+        return socket.flatMapMany(rsocket -> rsocket.requestStream(requestPayload)
                 .map(responsePayload -> ofNullable(readPayload(responsePayload, dataFormat)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue))));
+                .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue)))));
     }
 
     public <RequestType, ResponseType> Flux<ServiceResponse<ResponseType>> channel(Publisher<RequestType> request) {
@@ -222,13 +222,13 @@ public class RsocketCommunicator {
         if (isNull(responseModelMapper)) {
             return empty();
         }
-        return socket.requestChannel(from(request)
+        return socket.flatMapMany(rsocket -> rsocket.requestChannel(from(request)
                 .filter(Objects::nonNull)
                 .map(requestPayload -> writeServiceRequestPayload(serviceId, methodId, isNull(requestModelMapper) ? null : requestModelMapper.map(cast(requestPayload)), dataFormat)))
                 .map(responsePayload -> ofNullable(readPayload(responsePayload, dataFormat)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue))));
+                .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue)))));
     }
 
     private void validateRequiredFields() {

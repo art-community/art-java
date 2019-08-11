@@ -18,7 +18,7 @@ package ru.art.http.server.filter;
 
 import org.zalando.logbook.RawHttpResponse;
 import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.http.mime.MimeType.valueOf;
+import static ru.art.core.mime.MimeType.valueOf;
 import static ru.art.http.server.module.HttpServerModule.httpServerModule;
 
 public interface HtmlLogsFilter {

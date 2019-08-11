@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package ru.art.http.constants;
+package ru.art.core.constants;
 
 import lombok.NoArgsConstructor;
 import static lombok.AccessLevel.PRIVATE;

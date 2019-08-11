@@ -20,7 +20,7 @@ import lombok.Getter;
 import org.zalando.logbook.Logbook;
 import ru.art.configurator.dao.UserDao;
 import ru.art.http.mapper.HttpContentMapper;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import ru.art.http.server.HttpServerModuleConfiguration.HttpServerModuleDefaultConfiguration;
 import ru.art.http.server.interceptor.CookieInterceptor;
 import ru.art.http.server.interceptor.HttpServerInterceptor;

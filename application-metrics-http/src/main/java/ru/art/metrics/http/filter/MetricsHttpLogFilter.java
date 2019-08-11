@@ -21,19 +21,18 @@ import org.zalando.logbook.LogbookCreator.Builder;
 import ru.art.http.logger.ZalangoLogbookLogWriter;
 import static org.zalando.logbook.Conditions.exclude;
 import static org.zalando.logbook.Conditions.requestTo;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
 import static ru.art.metrics.constants.MetricsModuleConstants.METRICS_PATH;
 
 public interface MetricsHttpLogFilter {
     static Builder logbookWithoutMetricsLogs(Builder builder) {
         return builder
-                .condition(exclude(requestTo(httpServerModule().getPath() + METRICS_PATH)))
+                .condition(exclude(requestTo(METRICS_PATH)))
                 .writer(new ZalangoLogbookLogWriter());
     }
 
     static Builder logbookWithoutMetricsLogs() {
         return Logbook.builder()
-                .condition(exclude(requestTo(httpServerModule().getPath() + METRICS_PATH)))
+                .condition(exclude(requestTo(METRICS_PATH)))
                 .writer(new ZalangoLogbookLogWriter());
     }
 }

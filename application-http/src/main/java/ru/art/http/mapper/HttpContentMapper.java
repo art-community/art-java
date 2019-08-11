@@ -19,7 +19,7 @@ package ru.art.http.mapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ru.art.entity.Value;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import java.nio.charset.Charset;
 
 @Getter

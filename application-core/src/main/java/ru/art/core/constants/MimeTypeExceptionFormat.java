@@ -14,8 +14,8 @@
  *    limitations under the License.
  */
 
-package ru.art.http.constants;
+package ru.art.core.constants;
 
-public interface HttpMimeTypeExceptionFormat {
+public interface MimeTypeExceptionFormat {
     String INVALID_MIME_TYPE_MESSAGE = "{0}. Value: ''{1}''";
 }

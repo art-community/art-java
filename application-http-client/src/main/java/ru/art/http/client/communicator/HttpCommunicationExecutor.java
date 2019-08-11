@@ -38,7 +38,7 @@ import ru.art.http.client.handler.HttpCommunicationResponseHandler;
 import ru.art.http.client.interceptor.HttpClientInterceptor;
 import ru.art.http.constants.MimeToContentTypeMapper;
 import ru.art.http.mapper.HttpContentMapper;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import static java.text.MessageFormat.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -61,7 +61,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = PACKAGE)
 class HttpCommunicationExecutor {
-    static <ResponseType> ResponseType executeSyncRequest(HttpCommunicationConfiguration configuration) {
+    static <ResponseType> ResponseType executeHttpRequest(HttpCommunicationConfiguration configuration) {
         HttpUriRequest request = buildRequest(configuration);
         List<HttpClientInterceptor> requestInterceptors = configuration.getRequestInterceptors();
         if (isEmpty(requestInterceptors)) {
@@ -90,7 +90,7 @@ class HttpCommunicationExecutor {
         }
     }
 
-    static void executeAsyncRequest(HttpCommunicationConfiguration configuration) {
+    static void executeAsynchronousHttpRequest(HttpCommunicationConfiguration configuration) {
         HttpUriRequest httpUriRequest = buildRequest(configuration);
         List<HttpClientInterceptor> requestInterceptors = configuration.getRequestInterceptors();
         if (isEmpty(requestInterceptors)) {

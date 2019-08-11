@@ -17,8 +17,11 @@
 package ru.art.rsocket.selector;
 
 import lombok.NoArgsConstructor;
+import ru.art.core.mime.MimeType;
 import static io.rsocket.metadata.WellKnownMimeType.*;
 import static lombok.AccessLevel.PRIVATE;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.constants.StringConstants.SLASH;
 import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
 import static ru.art.rsocket.constants.RsocketModuleConstants.BINARY_MIME_TYPE;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
@@ -28,10 +31,14 @@ import static ru.art.rsocket.module.RsocketModule.rsocketModule;
 @NoArgsConstructor(access = PRIVATE)
 public class RsocketDataFormatMimeTypeConverter {
     public static RsocketDataFormat fromMimeType(String mimeType) {
-        if (APPLICATION_JSON.getString().equalsIgnoreCase(mimeType)) return JSON;
-        if (APPLICATION_PROTOBUF.getString().equalsIgnoreCase(mimeType)) return PROTOBUF;
-        if (APPLICATION_XML.getString().equalsIgnoreCase(mimeType)) return XML;
-        if (TEXT_XML.getString().equalsIgnoreCase(mimeType)) return XML;
+        if (isEmpty(mimeType)) {
+            return rsocketModule().getDefaultDataFormat();
+        }
+        MimeType type = MimeType.valueOf(mimeType);
+        if (APPLICATION_JSON.getString().equals(type.getType() + SLASH + type.getSubtype())) return JSON;
+        if (APPLICATION_PROTOBUF.getString().equals(type.getType() + SLASH + type.getSubtype())) return PROTOBUF;
+        if (APPLICATION_XML.getString().equals(type.getType() + SLASH + type.getSubtype())) return XML;
+        if (TEXT_XML.getString().equals(type.getType() + SLASH + type.getSubtype())) return XML;
         return rsocketModule().getDefaultDataFormat();
     }
 

@@ -18,7 +18,7 @@ package ru.art.metrics.http.constants;
 
 import org.apache.http.entity.ContentType;
 import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import static io.prometheus.client.exporter.common.TextFormat.CONTENT_TYPE_004;
 
 public interface MetricsModuleHttpConstants {

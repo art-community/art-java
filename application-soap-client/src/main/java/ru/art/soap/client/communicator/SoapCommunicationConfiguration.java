@@ -34,6 +34,7 @@ import ru.art.soap.content.mapper.SoapMimeToContentTypeMapper;
 import static lombok.AccessLevel.PACKAGE;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.linkedListOf;
+import static ru.art.http.client.module.HttpClientModule.httpClientModule;
 import static ru.art.soap.client.constants.SoapClientModuleExceptionMessages.INVALID_SOAP_COMMUNICATION_CONFIGURATION;
 import static ru.art.soap.client.module.SoapClientModule.soapClientModule;
 import static ru.art.soap.content.mapper.SoapMimeToContentTypeMapper.textXml;
@@ -43,11 +44,11 @@ import java.util.List;
 @Getter
 @Setter(value = PACKAGE)
 class SoapCommunicationConfiguration {
-    private HttpClient syncHttpClient;
-    private HttpAsyncClient asyncHttpClient;
+    private HttpClient httpClient;
+    private HttpAsyncClient asynchronousHttpClient;
     private String url;
     private String operationId;
-    private RequestConfig requestConfig;
+    private RequestConfig requestConfig = httpClientModule().getRequestConfig();
     private ValueFromModelMapper<?, XmlEntity> requestMapper;
     private ValueToModelMapper<?, XmlEntity> responseMapper;
     private String operationPrefix;

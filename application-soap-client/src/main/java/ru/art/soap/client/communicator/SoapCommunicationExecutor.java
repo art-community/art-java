@@ -17,7 +17,10 @@
 package ru.art.soap.client.communicator;
 
 import lombok.NoArgsConstructor;
+import ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
+import ru.art.entity.mapper.ValueToModelMapper.XmlEntityToModelMapper;
 import ru.art.http.client.communicator.HttpCommunicator;
+import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PACKAGE;
 import static ru.art.http.client.communicator.HttpCommunicator.httpCommunicator;
 import static ru.art.http.constants.HttpHeaders.ACCEPT;
@@ -32,43 +35,54 @@ class SoapCommunicationExecutor {
         HttpCommunicator httpCommunicator = httpCommunicator(configuration.getUrl());
         configuration.getRequestInterceptors().forEach(httpCommunicator::addRequestInterceptor);
         configuration.getResponseInterceptors().forEach(httpCommunicator::addResponseInterceptor);
-        return httpCommunicator
-                .client(configuration.getSyncHttpClient())
+        httpCommunicator = httpCommunicator
                 .version(configuration.getHttpVersion())
                 .requestCharset(configuration.getRequestCharset())
                 .addHeader(ACCEPT, configuration.getConsumesMimeType().getMimeType().toString())
-                .addHeader(CONTENT_TYPE, configuration.getProducesMimeType().getMimeType().toString())
-                .responseMapper(soapResponseToModel(configuration))
-                .config(configuration.getRequestConfig())
+                .addHeader(CONTENT_TYPE, configuration.getConsumesMimeType().getMimeType().toString());
+        XmlEntityToModelMapper<?> responseMapper = soapResponseToModel(configuration);
+        if (nonNull(responseMapper)) {
+            httpCommunicator = httpCommunicator.responseMapper(responseMapper);
+        }
+        XmlEntityFromModelMapper<?> requestMapper = soapRequestFromModel(configuration);
+        if (nonNull(requestMapper)) {
+            httpCommunicator = httpCommunicator.requestMapper(requestMapper);
+        }
+        return httpCommunicator.config(configuration.getRequestConfig())
                 .consumes(configuration.getConsumesMimeType().toHttpMimeToContentTypeMapper())
                 .post()
                 .requestEncoding(configuration.getRequestBodyEncoding())
                 .produces(configuration.getProducesMimeType().toHttpMimeToContentTypeMapper())
-                .requestMapper(soapRequestFromModel(configuration))
                 .execute(configuration.getRequest());
     }
 
-    static void executeAsync(SoapCommunicationConfiguration configuration) {
+    static void executeAsynchronous(SoapCommunicationConfiguration configuration) {
         HttpCommunicator httpCommunicator = httpCommunicator(configuration.getUrl());
         configuration.getRequestInterceptors().forEach(httpCommunicator::addRequestInterceptor);
         configuration.getRequestInterceptors().forEach(httpCommunicator::addResponseInterceptor);
-        httpCommunicator
+        httpCommunicator = httpCommunicator
                 .version(configuration.getHttpVersion())
                 .requestCharset(configuration.getRequestCharset())
                 .addHeader(ACCEPT, configuration.getConsumesMimeType().getMimeType().toString())
-                .addHeader(CONTENT_TYPE, configuration.getConsumesMimeType().getMimeType().toString())
-                .responseMapper(soapResponseToModel(configuration))
-                .config(configuration.getRequestConfig())
+                .addHeader(CONTENT_TYPE, configuration.getConsumesMimeType().getMimeType().toString());
+        XmlEntityToModelMapper<?> responseMapper = soapResponseToModel(configuration);
+        if (nonNull(responseMapper)) {
+            httpCommunicator = httpCommunicator.responseMapper(responseMapper);
+        }
+        XmlEntityFromModelMapper<?> requestMapper = soapRequestFromModel(configuration);
+        if (nonNull(requestMapper)) {
+            httpCommunicator = httpCommunicator.requestMapper(requestMapper);
+        }
+        httpCommunicator.config(configuration.getRequestConfig())
                 .consumes(configuration.getConsumesMimeType().toHttpMimeToContentTypeMapper())
                 .post()
                 .requestEncoding(configuration.getRequestBodyEncoding())
                 .produces(configuration.getProducesMimeType().toHttpMimeToContentTypeMapper())
-                .requestMapper(soapRequestFromModel(configuration))
                 .asynchronous()
                 .completionHandler(configuration.getResponseHandler())
                 .exceptionHandler(configuration.getExceptionHandler())
                 .cancellationHandler(configuration.getCancellationHandler())
-                .client(configuration.getAsyncHttpClient())
+                .client(configuration.getAsynchronousHttpClient())
                 .executeAsynchronous(configuration.getRequest());
     }
 }

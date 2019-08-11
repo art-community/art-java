@@ -38,8 +38,8 @@ import static ru.art.core.constants.StringConstants.SCHEME_DELIMITER;
 import static ru.art.core.context.Context.contextConfiguration;
 import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
 import static ru.art.core.extension.StringExtensions.emptyIfNull;
-import static ru.art.http.client.communicator.HttpCommunicationExecutor.executeAsyncRequest;
-import static ru.art.http.client.communicator.HttpCommunicationExecutor.executeSyncRequest;
+import static ru.art.http.client.communicator.HttpCommunicationExecutor.executeAsynchronousHttpRequest;
+import static ru.art.http.client.communicator.HttpCommunicationExecutor.executeHttpRequest;
 import static ru.art.http.client.module.HttpClientModule.httpClientModule;
 import static ru.art.http.constants.HttpMethodType.*;
 import java.nio.charset.Charset;
@@ -127,7 +127,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public HttpCommunicator client(HttpClient client) {
-        configuration.setSyncClient(validator.notNullField(client, "syncClient"));
+        configuration.setSyncClient(validator.notNullField(getOrElse(client, httpClientModule().getClient()), "syncClient"));
         return this;
     }
 
@@ -152,7 +152,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public HttpCommunicator config(RequestConfig requestConfig) {
-        configuration.setRequestConfig(validator.notNullField(requestConfig, "requestConfig"));
+        configuration.setRequestConfig(validator.notNullField(getOrElse(requestConfig, httpClientModule().getRequestConfig()), "requestConfig"));
         return this;
     }
 
@@ -222,13 +222,13 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     public <RequestType, ResponseType> Optional<ResponseType> execute(RequestType request) {
         configuration.setRequest(validator.notNullField(request, "request"));
         validator.validate();
-        return ofNullable(executeSyncRequest(configuration));
+        return ofNullable(executeHttpRequest(configuration));
     }
 
     @Override
     public <ResponseType> Optional<ResponseType> execute() {
         validator.validate();
-        return ofNullable(executeSyncRequest(configuration));
+        return ofNullable(executeHttpRequest(configuration));
     }
 
 
@@ -260,7 +260,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     public <RequestType> void executeAsynchronous(RequestType request) {
         configuration.setRequest(validator.notNullField(request, "request"));
         validator.validate();
-        executeAsyncRequest(configuration);
+        executeAsynchronousHttpRequest(configuration);
     }
 
     @Override
@@ -271,6 +271,6 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     @Override
     public void executeAsynchronous() {
         validator.validate();
-        executeAsyncRequest(configuration);
+        executeAsynchronousHttpRequest(configuration);
     }
 }

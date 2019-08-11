@@ -22,7 +22,7 @@ import ru.art.core.module.ModuleConfiguration;
 import ru.art.http.logger.ZalangoLogbookLogWriter;
 import ru.art.http.mapper.HttpContentMapper;
 import ru.art.http.mapper.HttpTextPlainMapper;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.http.constants.HttpMimeTypes.ALL;
 import java.util.Map;

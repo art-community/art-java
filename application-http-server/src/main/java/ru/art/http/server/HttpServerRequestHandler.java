@@ -24,7 +24,7 @@ import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.constants.HttpRequestDataSource;
 import ru.art.http.mapper.HttpContentMapper;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import ru.art.http.server.exception.HttpServerException;
 import ru.art.http.server.model.HttpService.HttpMethod;
 import ru.art.service.model.ServiceMethodCommand;

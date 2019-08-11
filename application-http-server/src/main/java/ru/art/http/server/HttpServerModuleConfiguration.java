@@ -23,7 +23,7 @@ import org.zalando.logbook.Logbook;
 import org.zalando.logbook.LogbookCreator;
 import ru.art.http.configuration.HttpModuleConfiguration;
 import ru.art.http.logger.ZalangoLogbookLogWriter;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import ru.art.http.server.filter.HtmlLogsFilter;
 import ru.art.http.server.handler.HttpExceptionHandler;
 import ru.art.http.server.interceptor.HttpServerInterceptor;

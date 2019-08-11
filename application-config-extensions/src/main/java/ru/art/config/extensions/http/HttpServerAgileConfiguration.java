@@ -19,7 +19,7 @@ package ru.art.config.extensions.http;
 import lombok.Getter;
 import org.zalando.logbook.Logbook;
 import ru.art.http.mapper.HttpContentMapper;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import ru.art.http.server.HttpServerModuleConfiguration.HttpServerModuleDefaultConfiguration;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;

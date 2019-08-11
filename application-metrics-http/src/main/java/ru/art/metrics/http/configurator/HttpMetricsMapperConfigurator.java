@@ -19,7 +19,7 @@ package ru.art.metrics.http.configurator;
 import ru.art.core.factory.CollectionsFactory;
 import ru.art.http.mapper.HttpContentMapper;
 import ru.art.http.mapper.HttpTextPlainMapper;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.metrics.http.constants.MetricsModuleHttpConstants.METRICS_CONTENT_TYPE;
 import java.util.Map;

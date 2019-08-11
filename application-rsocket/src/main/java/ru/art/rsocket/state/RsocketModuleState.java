@@ -43,6 +43,6 @@ public class RsocketModuleState implements ModuleState {
     public static class CurrentRsocketState {
         private final String dataMimeType;
         private final String metadataMimeType;
-        private final RSocket RSocket;
+        private final RSocket rsocket;
     }
 }

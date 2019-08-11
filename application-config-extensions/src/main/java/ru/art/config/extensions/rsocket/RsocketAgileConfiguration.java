@@ -50,20 +50,25 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
 
     @Override
     public void refresh() {
-        dataFormat = ifException(() -> RsocketDataFormat.valueOf(configString(RSOCKET_SECTION_ID, DEFAULT_DATA_FORMAT).toUpperCase()), super.getDefaultDataFormat());
+        dataFormat = ifException(() -> RsocketDataFormat.valueOf(configString(RSOCKET_SECTION_ID, DEFAULT_DATA_FORMAT).toUpperCase()),
+                super.getDefaultDataFormat());
         String newAcceptorHost = configString(RSOCKET_ACCEPTOR_SECTION_ID, HOST, super.getAcceptorHost());
         boolean restart = !acceptorHost.equals(newAcceptorHost);
+        acceptorHost = newAcceptorHost;
         int newAcceptorTcpPort = configInt(RSOCKET_ACCEPTOR_SECTION_ID, TCP_PORT, super.getAcceptorTcpPort());
         restart |= acceptorTcpPort != newAcceptorTcpPort;
+        acceptorTcpPort = newAcceptorTcpPort;
         int newAcceptorWebSocketPort = configInt(RSOCKET_ACCEPTOR_SECTION_ID, WEB_SOCKET_PORT, super.getAcceptorWebSocketPort());
         restart |= acceptorWebSocketPort != newAcceptorWebSocketPort;
+        acceptorWebSocketPort = newAcceptorWebSocketPort;
         balancerHost = configString(RSOCKET_BALANCER_SECTION_ID, HOST, super.getBalancerHost());
         balancerTcpPort = configInt(RSOCKET_BALANCER_SECTION_ID, TCP_PORT, super.getBalancerTcpPort());
-        balancerWebSocketPort = configInt(RSOCKET_BALANCER_SECTION_ID, WEB_SOCKET_PORT, super.getBalancerTcpPort());
+        balancerWebSocketPort = configInt(RSOCKET_BALANCER_SECTION_ID, WEB_SOCKET_PORT, super.getBalancerWebSocketPort());
         communicationTargets = configMap(RSOCKET_SECTION_ID, TARGETS, config -> rsocketCommunicationTarget()
                 .host(ifEmpty(config.getString(HOST), balancerHost))
                 .tcpPort(getOrElse(config.getInt(TCP_PORT), balancerTcpPort))
                 .webSocketPort(getOrElse(config.getInt(WEB_SOCKET_PORT), balancerWebSocketPort))
+                .dataFormat(super.getDefaultDataFormat())
                 .build(), super.getCommunicationTargets());
         if (restart && context().hasModule(RSOCKET_MODULE_ID)) {
             rsocketModuleState().getServer().restart();

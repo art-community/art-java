@@ -19,7 +19,7 @@ package ru.art.http.mapper;
 import ru.art.entity.CollectionValuesFactory;
 import ru.art.entity.Value;
 import ru.art.http.exception.HttpTextMapperException;
-import ru.art.http.mime.MimeType;
+import ru.art.core.mime.MimeType;
 import static java.util.Objects.isNull;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;

@@ -64,7 +64,7 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
 
     @Override
     public SoapCommunicator client(HttpClient syncClient) {
-        configuration.setSyncHttpClient(validator.notEmptyField(syncClient, "syncClient"));
+        configuration.setHttpClient(validator.notEmptyField(syncClient, "syncClient"));
         return this;
     }
 
@@ -82,7 +82,7 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
     }
 
     @Override
-    public SoapCommunicator requestMapper(ValueFromModelMapper<?, XmlEntity> requestMapper) {
+    public <RequestType> SoapCommunicator requestMapper(ValueFromModelMapper<RequestType, XmlEntity> requestMapper) {
         configuration.setRequestMapper(validator.notNullField(requestMapper, "requestMapper"));
         return this;
     }
@@ -172,25 +172,25 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
 
     @Override
     public SoapAsynchronousCommunicator client(HttpAsyncClient asyncClient) {
-        configuration.setAsyncHttpClient(validator.notNullField(asyncClient, "asyncClient"));
+        configuration.setAsynchronousHttpClient(validator.notNullField(asyncClient, "asynchronousClient"));
         return this;
     }
 
     @Override
     public <RequestType, ResponseType> SoapAsynchronousCommunicator responseHandler(HttpCommunicationResponseHandler<RequestType, ResponseType> httpCommunicationResponseHandler) {
-        configuration.setResponseHandler(validator.notNullField(httpCommunicationResponseHandler, "httpAsyncClientResponseHandler"));
+        configuration.setResponseHandler(validator.notNullField(httpCommunicationResponseHandler, "responseHandler"));
         return this;
     }
 
     @Override
     public <RequestType> SoapAsynchronousCommunicator exceptionHandler(HttpCommunicationExceptionHandler<RequestType> httpCommunicationExceptionHandler) {
-        configuration.setExceptionHandler(validator.notNullField(httpCommunicationExceptionHandler, "httpAsyncClientExceptionHandler"));
+        configuration.setExceptionHandler(validator.notNullField(httpCommunicationExceptionHandler, "exceptionHandler"));
         return this;
     }
 
     @Override
     public <RequestType> SoapAsynchronousCommunicator cancellationHandler(HttpCommunicationCancellationHandler<RequestType> httpAsyncClientCancellationHandler) {
-        configuration.setCancellationHandler(validator.notNullField(httpAsyncClientCancellationHandler, "httpAsyncClientCancellationHandler"));
+        configuration.setCancellationHandler(validator.notNullField(httpAsyncClientCancellationHandler, "cancellationHandler"));
         return this;
     }
 
@@ -204,6 +204,6 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
         configuration.setRequest(validator.notNullField(request, "request"));
         validator.validate();
         configuration.validateRequiredFields();
-        SoapCommunicationExecutor.executeAsync(configuration);
+        SoapCommunicationExecutor.executeAsynchronous(configuration);
     }
 }
