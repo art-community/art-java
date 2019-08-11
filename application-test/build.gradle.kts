@@ -20,3 +20,9 @@ art {
     }
     spockFramework()
 }
+
+configurations {
+    with(testRuntimeClasspath.get()) {
+        exclude("org.apache.logging.log4j")
+    }
+}
