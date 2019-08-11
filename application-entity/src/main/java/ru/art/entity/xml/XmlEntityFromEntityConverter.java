@@ -92,10 +92,10 @@ public final class XmlEntityFromEntityConverter {
         if (isNull(value)) {
             return;
         }
-        Collection<?> elements = value.getElements();
+        Collection<Value> elements = cast(value.getElements());
         int index = 0;
-        for (Object element : elements) {
-            switch (value.getElementsType()) {
+        for (Value element : elements) {
+            switch (element.getType()) {
                 case ENTITY:
                     builder.child(fromEntityAsTags((Entity) element));
                     break;

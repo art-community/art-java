@@ -17,10 +17,11 @@
 package ru.art.entity.xml;
 
 import lombok.NoArgsConstructor;
-import ru.art.entity.*;
+import ru.art.entity.Entity;
+import ru.art.entity.StringParametersMap;
+import ru.art.entity.Value;
+import ru.art.entity.XmlEntity;
 import static java.util.Collections.emptyList;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.caster.Caster.cast;
@@ -28,12 +29,11 @@ import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.extension.CollectionExtensions.areAllUnique;
 import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
-import static ru.art.entity.CollectionValuesFactory.entityCollection;
-import static ru.art.entity.CollectionValuesFactory.stringCollection;
+import static ru.art.entity.CollectionValuesFactory.valueCollection;
 import static ru.art.entity.Entity.EntityBuilder;
 import static ru.art.entity.Entity.entityBuilder;
+import static ru.art.entity.PrimitivesFactory.stringPrimitive;
 import static ru.art.entity.Value.isEmpty;
-import static ru.art.entity.constants.ValueType.CollectionElementsType;
 import java.util.List;
 import java.util.Map;
 
@@ -74,50 +74,19 @@ public final class XmlEntityToEntityConverter {
                 .stream()
                 .findFirst()
                 .orElse(emptyList());
-        List<?> collection = dynamicArrayOf();
-        CollectionElementsType elementsType = null;
+        List<Value> collection = dynamicArrayOf();
         for (XmlEntity child : childrenCollection) {
-            if (isEmpty(child.getTag())) {
-                continue;
-            }
             if (isEmpty(child.getChildren()) && isEmpty(child.getValue())) {
-                if (isNull(elementsType)) {
-                    elementsType = CollectionElementsType.STRING;
-                    collection.add(cast(child.getTag()));
-                    continue;
-                }
-                if (elementsType != CollectionElementsType.STRING) {
-                    continue;
-                }
-                collection.add(cast(child.getTag()));
+                collection.add(stringPrimitive(child.getTag()));
                 continue;
             }
             if (isEmpty(child.getChildren())) {
-                if (isNull(elementsType)) {
-                    elementsType = CollectionElementsType.ENTITY;
-                    collection.add(cast(entityBuilder().stringField(child.getTag(), child.getValue()).build()));
-                    continue;
-                }
-                if (elementsType != CollectionElementsType.ENTITY) {
-                    continue;
-                }
                 collection.add(cast(entityBuilder().stringField(child.getTag(), child.getValue()).build()));
-                continue;
-            }
-            if (isNull(elementsType)) {
-                elementsType = CollectionElementsType.ENTITY;
-                collection.add(cast(entityBuilder().valueField(child.getTag(), toEntityFromTags(child).getValue(child.getTag())).build()));
-                continue;
-            }
-            if (elementsType != CollectionElementsType.ENTITY) {
                 continue;
             }
             collection.add(cast(entityBuilder().valueField(child.getTag(), toEntityFromTags(child).getValue(child.getTag())).build()));
         }
-        CollectionValue<?> collectionValue = elementsType == CollectionElementsType.STRING
-                ? stringCollection(cast(collection))
-                : entityCollection(cast(collection));
-        return entityBuilder.valueField(xmlEntity.getTag(), collectionValue).build();
+        return entityBuilder.valueField(xmlEntity.getTag(), valueCollection(cast(collection))).build();
     }
 
     public static Entity toEntityFromAttributes(XmlEntity xmlEntity) {
