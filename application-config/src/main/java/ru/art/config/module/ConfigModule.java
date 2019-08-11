@@ -26,12 +26,10 @@ import static ru.art.core.context.Context.context;
 
 @Getter
 public class ConfigModule implements Module<ConfigModuleConfiguration, ModuleState> {
-    @Getter(lazy = true)
-    private static final ConfigModuleConfiguration configModule = context().getModule(CONFIG_MODULE_ID, new ConfigModule());
     private final ConfigModuleConfiguration defaultConfiguration = new ConfigModuleDefaultConfiguration();
     private final String id = CONFIG_MODULE_ID;
 
     public static ConfigModuleConfiguration configModule() {
-        return getConfigModule();
+        return context().getModule(CONFIG_MODULE_ID, new ConfigModule());
     }
 }

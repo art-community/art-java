@@ -58,4 +58,11 @@ public interface RemoteSchedulerModuleConstants {
     interface ExceptionMessages {
         String ID_IS_EMPTY = "Id is empty";
     }
+
+    interface Defaults {
+        String DEFAULT_DB_ADAPTER_SERVICE_ID = "SCHEDULER_DB_ADAPTER_SERVICE";
+        int DEFAULT_REFRESH_DEFERRED_PERIOD_MINUTES = 1;
+        int DEFAULT_REFRESH_PERIODIC_PERIOD_MINUTES = 1;
+        String DEFAULT_HTTP_PATH = "/scheduler";
+    }
 }

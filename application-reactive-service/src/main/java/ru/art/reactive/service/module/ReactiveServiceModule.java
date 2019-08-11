@@ -26,12 +26,10 @@ import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.R
 
 @Getter
 public class ReactiveServiceModule implements Module<ReactiveServiceModuleConfiguration, ModuleState> {
-    @Getter(lazy = true)
-    private static final ReactiveServiceModuleConfiguration reactiveServiceModule = context().getModule(REACTIVE_SERVICE_MODULE_ID, new ReactiveServiceModule());
     private final ReactiveServiceModuleConfiguration defaultConfiguration = new ReactiveServiceModuleDefaultConfiguration();
     private final String id = REACTIVE_SERVICE_MODULE_ID;
 
     public static ReactiveServiceModuleConfiguration reactiveServiceModule() {
-        return getReactiveServiceModule();
+        return context().getModule(REACTIVE_SERVICE_MODULE_ID, new ReactiveServiceModule());
     }
 }

@@ -24,5 +24,6 @@ public interface RemoteConfigLoaderConstants {
     interface LocalConfigKeys {
         String CONFIGURATOR_HOST = "configurator.host";
         String CONFIGURATOR_PORT = "configurator.port";
+        String CONFIGURATOR_PATH = "configurator.path";
     }
 }

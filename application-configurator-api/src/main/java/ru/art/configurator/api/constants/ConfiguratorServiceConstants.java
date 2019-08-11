@@ -17,7 +17,7 @@
 package ru.art.configurator.api.constants;
 
 public interface ConfiguratorServiceConstants {
-    String CONFIGURATOR_PATH = "/configurator";
+    String DEFAULT_CONFIGURATOR_PATH = "/configurator";
     String CONFIGURATOR_SERVICE_ID = "CONFIGURATOR_SERVICE";
     String USER_SERVICE_ID = "USER_SERVICE";
 

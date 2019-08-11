@@ -39,20 +39,16 @@ import static ru.art.task.deferred.executor.SchedulerModuleActions.asynchronousP
 
 @Getter
 public class ApplicationStateModule implements Module<ApplicationStateModuleConfiguration, ApplicationState> {
-    @Getter(lazy = true)
-    private final static ApplicationStateModuleConfiguration applicationStateModule = context().getModule(APPLICATION_STATE_MODULE_ID, new ApplicationStateModule());
-    @Getter(lazy = true)
-    private final static ApplicationState applicationState = context().getModuleState(APPLICATION_STATE_MODULE_ID, new ApplicationStateModule());
     private final ApplicationState state = new ApplicationState();
     private final String id = APPLICATION_STATE_MODULE_ID;
     private final ApplicationStateModuleConfiguration defaultConfiguration = new ApplicationStateModuleDefaultConfiguration();
 
     public static ApplicationStateModuleConfiguration applicationStateModule() {
-        return getApplicationStateModule();
+        return context().getModule(APPLICATION_STATE_MODULE_ID, new ApplicationStateModule());
     }
 
     public static ApplicationState applicationState() {
-        return getApplicationState();
+        return context().getModuleState(APPLICATION_STATE_MODULE_ID, new ApplicationStateModule());
     }
 
     public static void main(String[] args) {

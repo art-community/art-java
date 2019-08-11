@@ -26,7 +26,6 @@ import ru.art.rocks.db.exception.RocksDbOperationException;
 import ru.art.rocks.db.state.RocksDbModuleState;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static lombok.AccessLevel.PRIVATE;
 import static org.rocksdb.RocksDB.loadLibrary;
 import static org.rocksdb.RocksDB.open;
 import static ru.art.core.context.Context.context;
@@ -36,20 +35,16 @@ import static ru.art.rocks.db.constants.RocksDbModuleConstants.ROCKS_DB_MODULE_I
 
 @Getter
 public class RocksDbModule implements Module<RocksDbModuleConfiguration, RocksDbModuleState> {
-    @Getter(lazy = true, value = PRIVATE)
-    private final static RocksDbModuleConfiguration rocksDbModule = context().getModule(ROCKS_DB_MODULE_ID, new RocksDbModule());
-    @Getter(lazy = true, value = PRIVATE)
-    private final static RocksDbModuleState rocksDbModuleState = context().getModuleState(ROCKS_DB_MODULE_ID, new RocksDbModule());
     private final RocksDbModuleConfiguration defaultConfiguration = new RocksDbModuleDefaultConfiguration();
     private final String id = ROCKS_DB_MODULE_ID;
     private RocksDbModuleState state;
 
     public static RocksDbModuleConfiguration rocksDbModule() {
-        return getRocksDbModule();
+        return context().getModule(ROCKS_DB_MODULE_ID, new RocksDbModule());
     }
 
     public static RocksDbModuleState rocksDbModuleState() {
-        return getRocksDbModuleState();
+        return context().getModuleState(ROCKS_DB_MODULE_ID, new RocksDbModule());
     }
 
     @Override

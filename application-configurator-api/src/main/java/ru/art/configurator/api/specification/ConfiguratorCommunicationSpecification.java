@@ -25,7 +25,6 @@ import ru.art.grpc.client.specification.GrpcCommunicationSpecification;
 import ru.art.service.exception.UnknownServiceMethodException;
 import static java.lang.System.getProperty;
 import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.CONFIGURATOR_COMMUNICATION_SERVICE_ID;
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_PATH;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_SERVICE_ID;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.GET_PROTOBUF_CONFIG;
 import static ru.art.configurator.api.mapping.ConfigurationMapping.configurationMapper;
@@ -44,7 +43,7 @@ import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator;
 public class ConfiguratorCommunicationSpecification implements GrpcCommunicationSpecification {
     private final String host;
     private final Integer port;
-    private final String path = CONFIGURATOR_PATH;
+    private final String path;
     private final String serviceId = CONFIGURATOR_COMMUNICATION_SERVICE_ID;
     private final String profileId = getProperty(PROFILE_PROPERTY);
     private final ModuleKey moduleKey = new ModuleKey(isEmpty(profileId) ? LOCAL_PROFILE : profileId, contextConfiguration().getMainModuleId());

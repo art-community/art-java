@@ -24,17 +24,12 @@ import ru.art.tarantool.initializer.TarantoolInitializer;
 import ru.art.tarantool.state.TarantoolModuleState;
 import static java.util.Map.Entry;
 import static java.util.Objects.nonNull;
-import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TARANTOOL_MODULE_ID;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.ON_MODULE_LOAD;
 
 @Getter
 public class TarantoolModule implements Module<TarantoolModuleConfiguration, TarantoolModuleState> {
-    @Getter(lazy = true, value = PRIVATE)
-    private final static TarantoolModuleConfiguration tarantoolModule = context().getModule(TARANTOOL_MODULE_ID, new TarantoolModule());
-    @Getter(lazy = true, value = PRIVATE)
-    private final static TarantoolModuleState tarantoolModuleState = context().getModuleState(TARANTOOL_MODULE_ID, new TarantoolModule());
     private final String id = TARANTOOL_MODULE_ID;
     private final TarantoolModuleConfiguration defaultConfiguration = new TarantoolModuleDefaultConfiguration();
     @Getter(lazy = true)
@@ -54,10 +49,10 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
     }
 
     public static TarantoolModuleConfiguration tarantoolModule() {
-        return getTarantoolModule();
+        return context().getModule(TARANTOOL_MODULE_ID, new TarantoolModule());
     }
 
     public static TarantoolModuleState tarantoolModuleState() {
-        return getTarantoolModuleState();
+        return context().getModuleState(TARANTOOL_MODULE_ID, new TarantoolModule());
     }
 }

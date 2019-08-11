@@ -19,28 +19,28 @@ package ru.art.configurator.configuration;
 import lombok.Getter;
 import org.zalando.logbook.Logbook;
 import ru.art.configurator.dao.UserDao;
-import ru.art.core.constants.StringConstants;
-import ru.art.http.constants.HttpCommonConstants;
 import ru.art.http.mapper.HttpContentMapper;
 import ru.art.http.mime.MimeType;
 import ru.art.http.server.HttpServerModuleConfiguration.HttpServerModuleDefaultConfiguration;
 import ru.art.http.server.interceptor.CookieInterceptor;
 import ru.art.http.server.interceptor.HttpServerInterceptor;
 import static ru.art.config.ConfigProvider.config;
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_PATH;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.DEFAULT_CONFIGURATOR_PATH;
+import static ru.art.configurator.constants.ConfiguratorModuleConstants.AUTHORIZATION_CHECKING_URLS;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
+import static ru.art.configurator.constants.ConfiguratorModuleConstants.TOKEN_COOKIE;
 import static ru.art.configurator.http.content.mapping.ConfiguratorHttpContentMapping.configureContentMappers;
 import static ru.art.core.constants.NetworkConstants.LOCALHOST;
 import static ru.art.core.constants.StringConstants.COLON;
 import static ru.art.core.constants.StringConstants.SCHEME_DELIMITER;
-import static ru.art.core.extension.ExceptionExtensions.ifException;
+import static ru.art.core.extension.ExceptionExtensions.ifExceptionOrEmpty;
 import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
 import static ru.art.http.constants.HttpCommonConstants.HTTP_SCHEME;
 import static ru.art.http.constants.HttpStatus.UNAUTHORIZED;
 import static ru.art.http.server.HttpServerModuleConfiguration.initializeWebServerInterceptors;
 import static ru.art.http.server.HttpServerModuleConfiguration.logbookWithoutWebLogs;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.INDEX_HTML;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.URL_TEMPLATE_VARIABLE;
 import static ru.art.http.server.interceptor.HttpServerInterceptor.intercept;
 import static ru.art.http.server.service.HttpWebResourceService.getStringResource;
 import static ru.art.metrics.http.filter.MetricsHttpLogFilter.logbookWithoutMetricsLogs;
@@ -50,14 +50,14 @@ import java.util.Map;
 @Getter
 public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefaultConfiguration {
     private final Map<MimeType, HttpContentMapper> contentMappers = configureContentMappers(super.getContentMappers());
-    private final int port = ifException(() -> config(CONFIGURATOR_SECTION_ID).getInt(CONFIGURATOR_HTTP_PORT_PROPERTY), super.getPort());
+    private final int port = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getInt(CONFIGURATOR_HTTP_PORT_PROPERTY), super.getPort());
     private final Logbook logbook = logbookWithoutMetricsLogs(logbookWithoutWebLogs()).build();
-    private final String path = CONFIGURATOR_PATH;
+    private final String path = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_HTTP_PATH_PROPERTY), DEFAULT_CONFIGURATOR_PATH);
     private final List<HttpServerInterceptor> requestInterceptors = initializeRequestInterceptors(super.getRequestInterceptors());
     private final HttpWebConfiguration webConfiguration = HttpWebConfiguration.builder()
-            .templateResourceVariables(URL_TEMPLATE_VARIABLE, (url) -> ifException(() ->
-                            config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_WEB_URL_PROPERTY),
-                    HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST + COLON + port + CONFIGURATOR_PATH))
+            .templateResourceVariables(URL_TEMPLATE_VARIABLE, (url) -> ifExceptionOrEmpty(() ->
+                            config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_URL_PROPERTY),
+                    HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST + COLON + port + path))
             .build();
 
     private static List<HttpServerInterceptor> initializeRequestInterceptors(List<HttpServerInterceptor> superInterceptors) {

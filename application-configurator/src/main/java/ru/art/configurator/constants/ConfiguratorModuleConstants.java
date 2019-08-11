@@ -26,7 +26,7 @@ public interface ConfiguratorModuleConstants {
 
     String APPLICATION_BALANCER_HOST_CONFIG_KEY = "balancer.host";
     String APPLICATION_BALANCER_PORT_CONFIG_KEY = "balancer.port";
-    String APPLICATION_MODULE_GRPC_PATH_CONFIG_KEY = "protobuf.server.path";
+    String APPLICATION_MODULE_GRPC_PATH_CONFIG_KEY = "grpc.server.path";
     String TOKEN_COOKIE = "TOKEN";
     String LOGIN_PATH = "/login";
     String CHECK_TOKEN_PATH = "/checkToken";
@@ -52,8 +52,10 @@ public interface ConfiguratorModuleConstants {
     interface ConfiguratorLocalConfigKeys {
         String CONFIGURATOR_SECTION_ID = "configurator";
         String CONFIGURATOR_HTTP_PORT_PROPERTY = "http.port";
+        String CONFIGURATOR_HTTP_PATH_PROPERTY = "http.path";
         String CONFIGURATOR_GRPC_PORT_PROPERTY = "grpc.port";
-        String CONFIGURATOR_WEB_URL_PROPERTY = "http.url";
+        String CONFIGURATOR_GRPC_PATH_PROPERTY = "grpc.path";
+        String CONFIGURATOR_URL_PROPERTY = "http.url";
         String CONFIGURATOR_USER = "user";
         String CONFIGURATOR_PASSWORD = "password";
         String CONFIGURATOR_ROCKS_DB_PATH = "rocks.db.path";

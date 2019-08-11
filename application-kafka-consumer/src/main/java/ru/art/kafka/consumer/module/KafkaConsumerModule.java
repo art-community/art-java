@@ -20,6 +20,7 @@ import lombok.Getter;
 import ru.art.core.module.Module;
 import ru.art.core.module.ModuleState;
 import ru.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration;
+import ru.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration.KafkaConsumerModuleDefaultConfiguration;
 import ru.art.kafka.consumer.registry.KafkaStreamsRegistry;
 import ru.art.kafka.consumer.specification.KafkaConsumerServiceSpecification;
 import static java.util.stream.Collectors.toList;
@@ -42,13 +43,11 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
             .filter(service -> service.getServiceTypes().contains(KAFKA_CONSUMER_SERVICE_TYPE))
             .map(service -> (KafkaConsumerServiceSpecification) service)
             .collect(toList()));
-    @Getter(lazy = true, value = PRIVATE)
-    private static final KafkaConsumerModuleConfiguration kafkaConsumerModule = context().getModule(KAFKA_CONSUMER_MODULE_ID, new KafkaConsumerModule());
     private String id = KAFKA_CONSUMER_MODULE_ID;
-    private KafkaConsumerModuleConfiguration defaultConfiguration = null;
+    private KafkaConsumerModuleConfiguration defaultConfiguration = new KafkaConsumerModuleDefaultConfiguration();
 
     public static KafkaConsumerModuleConfiguration kafkaConsumerModule() {
-        return getKafkaConsumerModule();
+        return context().getModule(KAFKA_CONSUMER_MODULE_ID, new KafkaConsumerModule());
     }
 
     public static List<KafkaConsumerServiceSpecification> kafkaConsumerServices() {
@@ -56,6 +55,6 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
     }
 
     public static KafkaStreamsRegistry kafkaStreamsRegistry() {
-        return getKafkaConsumerModule().getKafkaStreamsConfiguration().getKafkaStreamsRegistry();
+        return kafkaConsumerModule().getKafkaStreamsConfiguration().getKafkaStreamsRegistry();
     }
 }

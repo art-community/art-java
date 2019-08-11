@@ -125,7 +125,7 @@ public class RemoteSchedulerServiceSpecification implements Specification, HttpS
             .requestMapper(taskIdMapper.getToModel())
             .listen(cancel_PATH)
 
-            .serve(remoteSchedulerModule().getHttpPath());
+            .serve(remoteSchedulerModule().getPath());
 
     private final GrpcService grpcService = grpcService()
             .method(ADD_DEFERRED_TASK, grpcMethod()

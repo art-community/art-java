@@ -39,17 +39,13 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
             .filter(service -> service.getServiceTypes().contains(HTTP_SERVICE_TYPE))
             .map(service -> (HttpServiceSpecification) service)
             .collect(toList());
-    @Getter(lazy = true, value = PRIVATE)
-    private final static HttpServerModuleConfiguration httpServerModule = context().getModule(HTTP_SERVER_MODULE_ID, new HttpServerModule());
-    @Getter
     private final HttpServerModuleConfiguration defaultConfiguration = new HttpServerModuleConfiguration.HttpServerModuleDefaultConfiguration();
-    @Getter
     private final HttpServerModuleState state = new HttpServerModuleState();
 
     private final String id = HTTP_SERVER_MODULE_ID;
 
     public static HttpServerModuleConfiguration httpServerModule() {
-        return getHttpServerModule();
+        return context().getModule(HTTP_SERVER_MODULE_ID, new HttpServerModule());
     }
 
     public static List<HttpServiceSpecification> httpServices() {

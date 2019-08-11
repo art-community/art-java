@@ -32,7 +32,6 @@ public class LoggingModule implements Module<LoggingModuleConfiguration, ModuleS
         install();
     }
 
-    @Getter
     private final LoggingModuleConfiguration defaultConfiguration = new LoggingModuleDefaultConfiguration();
     private final String id = LOGGING_MODULE_ID;
 

@@ -26,7 +26,6 @@ import ru.art.grpc.server.specification.GrpcServiceSpecification;
 import ru.art.http.server.model.HttpService;
 import ru.art.http.server.specification.HttpServiceSpecification;
 import ru.art.service.exception.UnknownServiceMethodException;
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_PATH;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_SERVICE_ID;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.*;
 import static ru.art.configurator.api.mapping.ConfigurationMapping.configurationMapper;
@@ -44,6 +43,7 @@ import static ru.art.grpc.server.model.GrpcService.grpcService;
 import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVICE_TYPE;
 import static ru.art.http.server.model.HttpService.httpService;
+import static ru.art.http.server.module.HttpServerModule.httpServerModule;
 import static ru.art.service.constants.RequestValidationPolicy.NOT_NULL;
 import static ru.art.service.constants.RequestValidationPolicy.VALIDATABLE;
 import java.util.List;
@@ -116,7 +116,7 @@ public class ConfiguratorServiceSpecification implements HttpServiceSpecificatio
             .produces(applicationJsonUtf8())
             .listen(UPLOAD_MODULE_PATH)
 
-            .serve(CONFIGURATOR_PATH);
+            .serve(httpServerModule().getPath());
 
     private final GrpcService grpcService = grpcService()
             .method(GET_PROTOBUF_CONFIG, grpcMethod()

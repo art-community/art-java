@@ -35,7 +35,6 @@ import ru.art.metrics.module.MetricsModule;
 import ru.art.rocks.db.module.RocksDbModule;
 import ru.art.service.ServiceModule;
 import static java.util.UUID.randomUUID;
-import static lombok.AccessLevel.PRIVATE;
 import static ru.art.config.ConfigProvider.config;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.CONFIGURATOR_MODULE_ID;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
@@ -52,9 +51,6 @@ import static ru.art.service.ServiceModule.serviceModule;
 
 @Getter
 public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguration, ModuleState> {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final ConfiguratorModuleConfiguration configuratorModule = context().getModule(CONFIGURATOR_MODULE_ID, new ConfiguratorModule());
-
     private final ConfiguratorModuleConfiguration defaultConfiguration = new ConfiguratorModuleConfiguration();
     private final String id = CONFIGURATOR_MODULE_ID;
 
@@ -82,7 +78,7 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
     }
 
     public static ConfiguratorModuleConfiguration configuratorModule() {
-        return getConfiguratorModule();
+        return context().getModule(CONFIGURATOR_MODULE_ID, new ConfiguratorModule());
     }
 
     public static void main(String[] args) {
