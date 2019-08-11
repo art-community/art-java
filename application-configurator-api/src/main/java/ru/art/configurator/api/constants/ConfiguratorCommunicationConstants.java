@@ -16,6 +16,6 @@
 
 package ru.art.configurator.api.constants;
 
-public interface ConfiguratorProxyServiceConstants {
+public interface ConfiguratorCommunicationConstants {
     String CONFIGURATOR_COMMUNICATION_SERVICE_ID = "CONFIGURATOR_COMMUNICATION_SERVICE";
 }

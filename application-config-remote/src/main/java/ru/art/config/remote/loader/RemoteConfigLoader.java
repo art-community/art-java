@@ -22,7 +22,7 @@ import ru.art.entity.Entity;
 import ru.art.service.ServiceController;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.CONFIGURATION_IS_EMPTY;
-import static ru.art.configurator.api.constants.ConfiguratorProxyServiceConstants.CONFIGURATOR_COMMUNICATION_SERVICE_ID;
+import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.CONFIGURATOR_COMMUNICATION_SERVICE_ID;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.GET_PROTOBUF_CONFIG;
 import static ru.art.entity.Entity.entityBuilder;
 import static ru.art.logging.LoggingModule.loggingModule;

@@ -16,7 +16,6 @@
 
 package ru.art.configurator.module;
 
-import io.advantageous.config.Config;
 import lombok.Getter;
 import ru.art.config.module.ConfigModule;
 import ru.art.configurator.configuration.*;
@@ -35,9 +34,9 @@ import ru.art.metrics.http.specification.MetricServiceSpecification;
 import ru.art.metrics.module.MetricsModule;
 import ru.art.rocks.db.module.RocksDbModule;
 import ru.art.service.ServiceModule;
+import static java.util.UUID.randomUUID;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.config.ConfigProvider.config;
-import static ru.art.config.constants.ConfigType.YAML;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.CONFIGURATOR_MODULE_ID;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.HTTP_SERVER_BOOTSTRAP_THREAD;
@@ -45,6 +44,7 @@ import static ru.art.configurator.service.UserService.register;
 import static ru.art.core.configuration.ContextInitialConfiguration.ApplicationContextConfiguration;
 import static ru.art.core.context.Context.context;
 import static ru.art.core.context.Context.initContext;
+import static ru.art.core.extension.ExceptionExtensions.ifException;
 import static ru.art.core.extension.ThreadExtensions.thread;
 import static ru.art.grpc.server.GrpcServer.grpcServer;
 import static ru.art.http.server.HttpServer.httpServer;
@@ -91,7 +91,8 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
 
     @Override
     public void onLoad() {
-        Config config;
-        register((config = config(CONFIGURATOR_SECTION_ID, YAML).asYamlConfig()).getString(CONFIGURATOR_USER), config.getString(CONFIGURATOR_PASSWORD));
+        String userName = ifException(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_USER), randomUUID().toString());
+        String password = ifException(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_PASSWORD), randomUUID().toString());
+        register(userName, password);
     }
 }

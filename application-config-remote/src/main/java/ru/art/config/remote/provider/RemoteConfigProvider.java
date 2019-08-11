@@ -23,7 +23,7 @@ import static java.util.Objects.isNull;
 import static ru.art.config.constants.ConfigType.REMOTE_ENTITY_CONFIG;
 import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.MODULE_ID_IS_EMPTY;
 import static ru.art.config.remote.loader.RemoteConfigLoader.loadRemoteConfig;
-import static ru.art.configurator.api.constants.ConfiguratorProxyServiceConstants.CONFIGURATOR_COMMUNICATION_SERVICE_ID;
+import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.CONFIGURATOR_COMMUNICATION_SERVICE_ID;
 import static ru.art.core.context.Context.contextConfiguration;
 import static ru.art.entity.Entity.entityBuilder;
 import static ru.art.service.ServiceModule.serviceModule;

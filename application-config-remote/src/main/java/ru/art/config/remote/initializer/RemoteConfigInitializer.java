@@ -19,7 +19,7 @@ package ru.art.config.remote.initializer;
 import ru.art.config.Config;
 import ru.art.config.module.ConfigModule;
 import ru.art.config.remote.specification.RemoteConfigServiceSpecification;
-import ru.art.configurator.api.specification.ConfiguratorProxyServiceSpecification;
+import ru.art.configurator.api.specification.ConfiguratorCommunicationSpecification;
 import ru.art.core.context.Context;
 import ru.art.grpc.client.module.GrpcClientModule;
 import ru.art.logging.LoggingModule;
@@ -45,7 +45,7 @@ public interface RemoteConfigInitializer {
         }
         serviceModule()
                 .getServiceRegistry()
-                .registerService(new ConfiguratorProxyServiceSpecification(applicationConfig.getString(CONFIGURATOR_HOST), applicationConfig.getInt(CONFIGURATOR_PORT)))
+                .registerService(new ConfiguratorCommunicationSpecification(applicationConfig.getString(CONFIGURATOR_HOST), applicationConfig.getInt(CONFIGURATOR_PORT)))
                 .registerService(new RemoteConfigServiceSpecification());
         return context;
     }

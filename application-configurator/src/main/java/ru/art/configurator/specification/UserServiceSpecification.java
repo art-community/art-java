@@ -20,6 +20,7 @@ import lombok.Getter;
 import ru.art.http.server.model.HttpService;
 import ru.art.http.server.specification.HttpServiceSpecification;
 import ru.art.service.exception.UnknownServiceMethodException;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_PATH;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.CHECK_TOKEN;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.LOGIN;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.USER_SERVICE_ID;
@@ -56,7 +57,7 @@ public class UserServiceSpecification implements HttpServiceSpecification {
             .responseMapper(boolMapper.getFromModel())
             .listen(CHECK_TOKEN_PATH)
 
-            .serve(HTTP_PATH);
+            .serve(CONFIGURATOR_PATH);
 
     @Override
     public <P, R> R executeMethod(String methodId, P request) {

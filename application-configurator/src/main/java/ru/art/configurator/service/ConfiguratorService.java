@@ -27,7 +27,7 @@ import static ru.art.configurator.api.entity.Configuration.ConfigurationBuilder;
 import static ru.art.configurator.api.entity.Configuration.builder;
 import static ru.art.configurator.constants.ConfiguratorDbConstants.APPLICATION;
 import static ru.art.configurator.dao.ConfiguratorDao.*;
-import static ru.art.configurator.factory.RemoteConfigProxyServiceSpecificationsFactory.createRemoteConfigProxySpecs;
+import static ru.art.configurator.factory.RemoteConfigCommunicationSpecificationsFactory.createRemoteConfigProxySpecs;
 import static ru.art.configurator.provider.ApplicationModulesParametersProvider.getApplicationModuleParameters;
 import static ru.art.entity.Entity.entityBuilder;
 import java.util.Set;

@@ -32,7 +32,7 @@ import static ru.art.http.constants.HttpCommonConstants.HTTP_SCHEME;
 import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
 import java.util.Set;
 
-public interface RemoteConfigProxyServiceSpecificationsFactory {
+public interface RemoteConfigCommunicationSpecificationsFactory {
     @SneakyThrows
     static Set<RemoteConfigCommunicationSpecification> createRemoteConfigProxySpecs(ApplicationModuleParameters parameters, ModuleKey moduleKey) {
         URIBuilder uriBuilder = new URIBuilder();

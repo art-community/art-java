@@ -48,6 +48,10 @@ public interface LoggingModuleConfiguration extends ModuleConfiguration {
         private final SocketAppenderConfiguration socketAppenderConfiguration = loadSocketAppenderCurrentConfiguration();
         private final Set<LoggingMode> loggingModes = loadLoggingModes();
 
+        protected LoggingModuleDefaultConfiguration() {
+            refresh();
+        }
+
         @Override
         public Logger getLogger(String topic) {
             return LogManager.getLogger(topic);

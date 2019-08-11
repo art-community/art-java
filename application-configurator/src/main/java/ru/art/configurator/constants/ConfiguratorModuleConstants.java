@@ -26,7 +26,6 @@ public interface ConfiguratorModuleConstants {
 
     String APPLICATION_BALANCER_HOST_CONFIG_KEY = "balancer.host";
     String APPLICATION_BALANCER_PORT_CONFIG_KEY = "balancer.port";
-    String HTTP_PATH = "/configurator";
     String APPLICATION_MODULE_GRPC_PATH_CONFIG_KEY = "protobuf.server.path";
     String TOKEN_COOKIE = "TOKEN";
     String LOGIN_PATH = "/login";

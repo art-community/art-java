@@ -19,18 +19,24 @@ package ru.art.configurator.configuration;
 import lombok.Getter;
 import org.zalando.logbook.Logbook;
 import ru.art.configurator.dao.UserDao;
+import ru.art.core.constants.StringConstants;
+import ru.art.http.constants.HttpCommonConstants;
 import ru.art.http.mapper.HttpContentMapper;
 import ru.art.http.mime.MimeType;
 import ru.art.http.server.HttpServerModuleConfiguration.HttpServerModuleDefaultConfiguration;
 import ru.art.http.server.interceptor.CookieInterceptor;
 import ru.art.http.server.interceptor.HttpServerInterceptor;
 import static ru.art.config.ConfigProvider.config;
-import static ru.art.config.constants.ConfigType.YAML;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.AUTHORIZATION_CHECKING_URLS;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_PATH;
+import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.TOKEN_COOKIE;
 import static ru.art.configurator.http.content.mapping.ConfiguratorHttpContentMapping.configureContentMappers;
+import static ru.art.core.constants.NetworkConstants.LOCALHOST;
+import static ru.art.core.constants.StringConstants.COLON;
+import static ru.art.core.constants.StringConstants.SCHEME_DELIMITER;
+import static ru.art.core.extension.ExceptionExtensions.ifException;
 import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
+import static ru.art.http.constants.HttpCommonConstants.HTTP_SCHEME;
 import static ru.art.http.constants.HttpStatus.UNAUTHORIZED;
 import static ru.art.http.server.HttpServerModuleConfiguration.initializeWebServerInterceptors;
 import static ru.art.http.server.HttpServerModuleConfiguration.logbookWithoutWebLogs;
@@ -44,18 +50,19 @@ import java.util.Map;
 @Getter
 public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefaultConfiguration {
     private final Map<MimeType, HttpContentMapper> contentMappers = configureContentMappers(super.getContentMappers());
-    private final int port = config(CONFIGURATOR_SECTION_ID, YAML).asYamlConfig().getInt(CONFIGURATOR_HTTP_PORT_PROPERTY);
+    private final int port = ifException(() -> config(CONFIGURATOR_SECTION_ID).getInt(CONFIGURATOR_HTTP_PORT_PROPERTY), super.getPort());
+    @Getter(lazy = true)
+    private final Logbook logbook = logbookWithoutMetricsLogs(logbookWithoutWebLogs()).build();
+    @Getter(lazy = true)
+    private final String path = ifException(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_WEB_URL_PROPERTY), CONFIGURATOR_PATH);
     @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
     private final List<HttpServerInterceptor> requestInterceptors = initializeRequestInterceptors(super.getRequestInterceptors());
     @Getter(lazy = true)
     private final HttpWebConfiguration webConfiguration = HttpWebConfiguration.builder()
-            .resourceBufferSize(DEFAULT_BUFFER_SIZE)
-            .templateResourceVariables(URL_TEMPLATE_VARIABLE, (url) -> config(CONFIGURATOR_SECTION_ID).asYamlConfig().getString(CONFIGURATOR_WEB_URL_PROPERTY))
+            .templateResourceVariables(URL_TEMPLATE_VARIABLE, (url) -> ifException(() ->
+                            config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_WEB_URL_PROPERTY),
+                    HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST + COLON + port + CONFIGURATOR_PATH))
             .build();
-    @Getter(lazy = true)
-    private final Logbook logbook = logbookWithoutMetricsLogs(logbookWithoutWebLogs()).build();
-    @Getter(lazy = true)
-    private final String path = config(CONFIGURATOR_SECTION_ID).asYamlConfig().getString(CONFIGURATOR_WEB_URL_PROPERTY);
 
     private static List<HttpServerInterceptor> initializeRequestInterceptors(List<HttpServerInterceptor> superInterceptors) {
         List<HttpServerInterceptor> httpServerInterceptors = dynamicArrayOf(initializeWebServerInterceptors(superInterceptors));

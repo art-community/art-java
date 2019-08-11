@@ -1,5 +1,0 @@
-# http server config
-http:
-  server:
-    port: 12000
-    path: "/executor"

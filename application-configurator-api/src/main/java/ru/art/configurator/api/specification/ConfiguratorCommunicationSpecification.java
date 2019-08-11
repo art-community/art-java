@@ -24,7 +24,7 @@ import ru.art.grpc.client.communicator.GrpcCommunicator;
 import ru.art.grpc.client.specification.GrpcCommunicationSpecification;
 import ru.art.service.exception.UnknownServiceMethodException;
 import static java.lang.System.getProperty;
-import static ru.art.configurator.api.constants.ConfiguratorProxyServiceConstants.CONFIGURATOR_COMMUNICATION_SERVICE_ID;
+import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.CONFIGURATOR_COMMUNICATION_SERVICE_ID;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_PATH;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_SERVICE_ID;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.GET_PROTOBUF_CONFIG;
@@ -41,7 +41,7 @@ import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator;
 
 @Getter
 @AllArgsConstructor
-public class ConfiguratorProxyServiceSpecification implements GrpcCommunicationSpecification {
+public class ConfiguratorCommunicationSpecification implements GrpcCommunicationSpecification {
     private final String host;
     private final Integer port;
     private final String path = CONFIGURATOR_PATH;

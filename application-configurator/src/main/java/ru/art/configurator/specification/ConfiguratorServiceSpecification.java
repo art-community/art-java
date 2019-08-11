@@ -26,6 +26,7 @@ import ru.art.grpc.server.specification.GrpcServiceSpecification;
 import ru.art.http.server.model.HttpService;
 import ru.art.http.server.specification.HttpServiceSpecification;
 import ru.art.service.exception.UnknownServiceMethodException;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_PATH;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_SERVICE_ID;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.*;
 import static ru.art.configurator.api.mapping.ConfigurationMapping.configurationMapper;
@@ -115,7 +116,7 @@ public class ConfiguratorServiceSpecification implements HttpServiceSpecificatio
             .produces(applicationJsonUtf8())
             .listen(UPLOAD_MODULE_PATH)
 
-            .serve(HTTP_PATH);
+            .serve(CONFIGURATOR_PATH);
 
     private final GrpcService grpcService = grpcService()
             .method(GET_PROTOBUF_CONFIG, grpcMethod()
