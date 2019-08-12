@@ -16,6 +16,7 @@
 
 package ru.art.rsocket.server;
 
+import io.rsocket.RSocketFactory;
 import io.rsocket.transport.netty.server.CloseableChannel;
 import io.rsocket.transport.netty.server.TcpServerTransport;
 import io.rsocket.transport.netty.server.WebsocketServerTransport;
@@ -68,8 +69,11 @@ public class RsocketServer {
     }
 
     private Mono<CloseableChannel> createServer() {
-        ServerTransportAcceptor acceptor = receive()
-                .resume()
+        RSocketFactory.ServerRSocketFactory socketFactory = receive();
+        if (rsocketModule().isResumableAcceptor()) {
+            socketFactory = socketFactory.resume();
+        }
+        ServerTransportAcceptor acceptor = socketFactory
                 .acceptor((setup, sendingSocket) -> just(new RsocketAcceptor(sendingSocket, setup)));
         switch (transport) {
             case TCP:
