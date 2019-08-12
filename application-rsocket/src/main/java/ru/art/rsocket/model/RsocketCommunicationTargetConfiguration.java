@@ -39,4 +39,6 @@ public class RsocketCommunicationTargetConfiguration {
     private final RsocketTransport transport = TCP;
     @Builder.Default
     private final RsocketDataFormat dataFormat = rsocketModule().getDefaultDataFormat();
+    @Builder.Default
+    private final boolean resumable = true;
 }

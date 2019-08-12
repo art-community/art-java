@@ -32,6 +32,7 @@ import ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport;
 import ru.art.rsocket.exception.RsocketClientException;
 import ru.art.rsocket.model.RsocketCommunicationTargetConfiguration;
 import ru.art.service.model.ServiceResponse;
+import static io.rsocket.RSocketFactory.ClientRSocketFactory;
 import static io.rsocket.RSocketFactory.connect;
 import static java.text.MessageFormat.format;
 import static java.util.Objects.isNull;
@@ -47,7 +48,7 @@ import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.
 import static ru.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE;
 import static ru.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
-import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.*;
+import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.rsocketCommunicationTarget;
 import static ru.art.rsocket.reader.RsocketPayloadReader.readPayload;
 import static ru.art.rsocket.selector.RsocketDataFormatMimeTypeConverter.toMimeType;
 import static ru.art.rsocket.writer.ServiceRequestPayloadWriter.writeServiceRequestPayload;
@@ -68,11 +69,13 @@ public class RsocketCommunicator {
 
     private RsocketCommunicator(RsocketCommunicationTargetConfiguration configuration) {
         dataFormat = configuration.dataFormat();
+        ClientRSocketFactory factory = connect();
+        if (configuration.resumable()) {
+            factory = factory.resume();
+        }
         switch (configuration.transport()) {
             case TCP:
-                socket = connect()
-                        .resume()
-                        .dataMimeType(toMimeType(configuration.dataFormat()))
+                socket = factory.dataMimeType(toMimeType(configuration.dataFormat()))
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
                         .transport(TcpClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .start()
@@ -81,8 +84,7 @@ public class RsocketCommunicator {
                                 .info(RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE));
                 return;
             case WEB_SOCKET:
-                socket = connect()
-                        .resume()
+                socket = factory
                         .dataMimeType(toMimeType(configuration.dataFormat()))
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
                         .transport(WebsocketClientTransport.create(configuration.host(), configuration.tcpPort()))
