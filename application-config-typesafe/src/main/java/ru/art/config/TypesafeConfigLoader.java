@@ -31,14 +31,14 @@ import static ru.art.config.TypesafeConfigLoaderConstants.DEFAULT_TYPESAFE_CONFI
 import static ru.art.config.TypesafeConfigLoadingExceptionMessages.CONFIG_FILE_NOT_FOUND;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.SystemProperties.CONFIG_FILE_PATH_PROPERTY;
-import static ru.art.core.wrapper.ExceptionWrapper.wrap;
+import static ru.art.core.wrapper.ExceptionWrapper.wrapException;
 import java.io.*;
 import java.net.URL;
 
 class TypesafeConfigLoader {
     static Config loadTypeSafeConfig(String configId, ConfigSyntax configSyntax) {
         ConfigParseOptions options = defaults().setSyntax(configSyntax == JSON ? JSON : CONF);
-        com.typesafe.config.Config typeSafeConfig = parseReader(wrap(() -> loadConfigReader(configSyntax), TypesafeConfigLoadingException::new), options);
+        com.typesafe.config.Config typeSafeConfig = parseReader(wrapException(() -> loadConfigReader(configSyntax), TypesafeConfigLoadingException::new), options);
         return fromTypeSafeConfig(typeSafeConfig).getConfig(configId);
     }
 

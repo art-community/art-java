@@ -23,21 +23,50 @@ import static java.util.Objects.isNull;
 import static ru.art.core.constants.ExceptionMessages.EXCEPTION_WRAPPER_ACTION_IS_NULL;
 import static ru.art.core.constants.ExceptionMessages.EXCEPTION_WRAPPER_FACTORY_IS_NULL;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public interface ExceptionWrapper {
     @SneakyThrows
-    static void wrap(Runnable action) {
+    static void wrapException(Runnable action) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         action.run();
     }
 
     @SneakyThrows
-    static <T> T wrap(Callable<T> action) {
+    static <T> T wrapException(Callable<T> action) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         return action.call();
     }
 
-    static void wrap(Runnable action, ExceptionFactory<?> exceptionFactory) {
+    static void ignoreException(Runnable action) {
+        if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
+        try {
+            action.run();
+        } catch (Exception e) {
+            //ignore
+        }
+    }
+
+    static void ignoreException(Runnable action, Consumer<Exception> onException) {
+        if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
+        try {
+            action.run();
+        } catch (Exception e) {
+            onException.accept(e);
+        }
+    }
+
+    static <T> T ignoreException(Callable<T> action, Function<Exception, T> onException) {
+        if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
+        try {
+            return action.call();
+        } catch (Exception e) {
+            return onException.apply(e);
+        }
+    }
+
+    static void wrapException(Runnable action, ExceptionFactory<?> exceptionFactory) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         if (isNull(exceptionFactory)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_FACTORY_IS_NULL);
         try {
@@ -47,7 +76,7 @@ public interface ExceptionWrapper {
         }
     }
 
-    static <T> T wrap(Callable<T> action, ExceptionFactory<?> exceptionFactory) {
+    static <T> T wrapException(Callable<T> action, ExceptionFactory<?> exceptionFactory) {
         try {
             return action.call();
         } catch (Exception e) {

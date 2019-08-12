@@ -26,14 +26,14 @@ import static ru.art.config.YamlLoadingExceptionMessages.CONFIG_FILE_WAS_NOT_FOU
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.SystemProperties.CONFIG_FILE_PATH_PROPERTY;
 import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.wrapper.ExceptionWrapper.wrap;
+import static ru.art.core.wrapper.ExceptionWrapper.wrapException;
 import java.io.*;
 import java.net.URL;
 
 class YamlConfigLoader {
     static Config loadYamlConfig(String configId) {
-        Reader reader = wrap(() -> new BufferedReader(new InputStreamReader(loadConfigInputStream(), contextConfiguration().getCharset())), YamlLoadingException::new);
-        return loadFromObject(wrap(() -> new YamlReader(reader).read(), YamlLoadingException::new)).getConfig(configId);
+        Reader reader = wrapException(() -> new BufferedReader(new InputStreamReader(loadConfigInputStream(), contextConfiguration().getCharset())), YamlLoadingException::new);
+        return loadFromObject(wrapException(() -> new YamlReader(reader).read(), YamlLoadingException::new)).getConfig(configId);
     }
 
     private static InputStream loadConfigInputStream() throws IOException {

@@ -32,7 +32,7 @@ import static ru.art.logging.LoggingModule.loggingModule;
 import static ru.art.service.ServiceModule.serviceModule;
 
 public interface RemoteConfigInitializer {
-    static Context useRemoteConfiguration(Context context) {
+    static Context useRemoteConfigurations(Context context) {
         context.loadModule(new LoggingModule())
                 .loadModule(new ServiceModule())
                 .loadModule(new ConfigModule())
