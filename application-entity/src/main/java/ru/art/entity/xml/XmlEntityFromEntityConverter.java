@@ -92,13 +92,10 @@ public final class XmlEntityFromEntityConverter {
         if (isNull(value)) {
             return;
         }
-        Collection<Value> elements = cast(value.getElements());
+        Collection<?> elements = cast(value.getElements());
         int index = 0;
-        for (Value element : elements) {
-            switch (element.getType()) {
-                case ENTITY:
-                    builder.child(fromEntityAsTags((Entity) element));
-                    break;
+        for (Object element : elements) {
+            switch (value.getElementsType()) {
                 case STRING:
                 case LONG:
                 case DOUBLE:
@@ -107,14 +104,34 @@ public final class XmlEntityFromEntityConverter {
                 case BOOL:
                 case BYTE:
                     builder.child().tag(element.toString()).build();
+                    continue;
+                case ENTITY:
+                case COLLECTION:
+                case MAP:
+                case STRING_PARAMETERS_MAP:
+                case VALUE:
+                    break;
+            }
+            Value elementValue = (Value) element;
+            switch (elementValue.getType()) {
+                case ENTITY:
+                    builder.child(fromEntityAsTags((Entity) elementValue));
+                    break;
+                case STRING:
+                case LONG:
+                case DOUBLE:
+                case FLOAT:
+                case INT:
+                case BOOL:
+                case BYTE:
                     break;
                 case COLLECTION:
                     builder = builder.child();
-                    addCollectionValue(builder, (CollectionValue) element);
+                    addCollectionValue(builder, (CollectionValue) elementValue);
                     builder = builder.build();
                     break;
                 case STRING_PARAMETERS_MAP:
-                    builder.children(((StringParametersMap) element)
+                    builder.children(((StringParametersMap) elementValue)
                             .getParameters()
                             .entrySet()
                             .stream()
@@ -123,7 +140,7 @@ public final class XmlEntityFromEntityConverter {
                     break;
                 case MAP:
                     builder = builder.child();
-                    addMapValue(builder, (MapValue) element);
+                    addMapValue(builder, (MapValue) elementValue);
                     builder = builder.build();
                     break;
             }
