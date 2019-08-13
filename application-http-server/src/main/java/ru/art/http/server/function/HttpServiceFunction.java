@@ -16,6 +16,8 @@
 
 package ru.art.http.server.function;
 
+import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.constants.MimeToContentTypeMapper;
@@ -50,17 +52,17 @@ public class HttpServiceFunction {
         return this;
     }
 
-    public HttpServiceFunction responseMapper(ValueFromModelMapper responseMapper) {
+    public <ResponseType> HttpServiceFunction responseMapper(ValueFromModelMapper<ResponseType, ? extends Value> responseMapper) {
         httpMethodBuilder.responseMapper(responseMapper);
         return this;
     }
 
-    public HttpServiceFunction requestMapper(ValueToModelMapper requestMapper) {
+    public <RequestType> HttpServiceFunction requestMapper(ValueToModelMapper<RequestType, ? extends Value> requestMapper) {
         httpMethodBuilder.requestMapper(requestMapper);
         return this;
     }
 
-    public HttpServiceFunction exceptionMapper(ValueFromModelMapper exceptionMapper) {
+    public HttpServiceFunction exceptionMapper(ValueFromModelMapper<Throwable, ? extends Value> exceptionMapper) {
         httpMethodBuilder.exceptionMapper(exceptionMapper);
         return this;
     }
@@ -111,7 +113,7 @@ public class HttpServiceFunction {
                 .registerService(new HttpFunctionalServiceSpecification(httpMethodBuilder.listen(path).serve(EMPTY_STRING), function));
     }
 
-    public<RequestType> void consume(Consumer<RequestType> consumer) {
+    public <RequestType> void consume(Consumer<RequestType> consumer) {
         handle(request -> {
             consumer.accept(cast(request));
             return null;
@@ -120,6 +122,32 @@ public class HttpServiceFunction {
 
     public <ResponseType> void produce(Supplier<ResponseType> producer) {
         handle(request -> producer.get());
+    }
+
+
+    public HttpServiceFunction addRequestValueInterceptor(ValueInterceptor interceptor) {
+        httpMethodBuilder.addRequestValueInterceptor(interceptor);
+        return this;
+    }
+
+    public HttpServiceFunction addResponseValueInterceptor(ValueInterceptor interceptor) {
+        httpMethodBuilder.addResponseValueInterceptor(interceptor);
+        return this;
+    }
+
+    public HttpServiceFunction exceptionValueInterceptor(ValueInterceptor interceptor) {
+        httpMethodBuilder.addExceptionValueInterceptor(interceptor);
+        return this;
+    }
+
+    public HttpServiceFunction checkedResponse() {
+        httpMethodBuilder.checkedResponse();
+        return this;
+    }
+
+    public HttpServiceFunction uncheckedResponse() {
+        httpMethodBuilder.uncheckedResponse();
+        return this;
     }
 
     public static HttpServiceFunction httpGet(String path) {
@@ -177,4 +205,5 @@ public class HttpServiceFunction {
         httpServiceFunction.httpMethodBuilder = (HttpMethodBuilderImplementation) httpService().options(EXECUTE_HTTP_FUNCTION);
         return httpServiceFunction;
     }
+
 }

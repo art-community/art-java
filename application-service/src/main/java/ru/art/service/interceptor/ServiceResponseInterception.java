@@ -24,23 +24,23 @@ import java.util.function.BiConsumer;
 
 @FunctionalInterface
 public interface ServiceResponseInterception {
-    static ServiceResponseInterception interceptAndContinue(BiConsumer<ServiceRequest<?>, ServiceResponse<?>> runnable) {
+    static ServiceResponseInterception interceptAndContinue(BiConsumer<ServiceRequest<?>, ServiceResponse<?>> consumer) {
         return (request, response) -> {
-            runnable.accept(request, response);
+            consumer.accept(request, response);
             return nextInterceptor(request, response);
         };
     }
 
-    static ServiceResponseInterception interceptAndCall(BiConsumer<ServiceRequest<?>, ServiceResponse<?>> runnable) {
+    static ServiceResponseInterception interceptAndCall(BiConsumer<ServiceRequest<?>, ServiceResponse<?>> consumer) {
         return (request, response) -> {
-            runnable.accept(request, response);
+            consumer.accept(request, response);
             return processHandling(request, response);
         };
     }
 
-    static ServiceResponseInterception interceptAndReturn(BiConsumer<ServiceRequest<?>, ServiceResponse<?>> runnable) {
+    static ServiceResponseInterception interceptAndReturn(BiConsumer<ServiceRequest<?>, ServiceResponse<?>> consumer) {
         return (request, response) -> {
-            runnable.accept(request, response);
+            consumer.accept(request, response);
             return stopHandling(request, response);
         };
     }

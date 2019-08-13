@@ -30,7 +30,7 @@ public class KafkaProducerModule implements Module<KafkaProducerModuleConfigurat
     private final KafkaProducerModuleConfiguration defaultConfiguration = new KafkaProducerDefaultModuleConfiguration();
 
     public static KafkaProducerModuleConfiguration kafkaProducerModule() {
-        return context().getModule(KAFKA_PRODUCER_MODULE_ID, new KafkaProducerModule());
+        return context().getModule(KAFKA_PRODUCER_MODULE_ID, KafkaProducerModule::new);
     }
 
 }

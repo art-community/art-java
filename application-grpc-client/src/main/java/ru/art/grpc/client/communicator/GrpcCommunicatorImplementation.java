@@ -18,6 +18,8 @@ package ru.art.grpc.client.communicator;
 
 import io.grpc.ClientInterceptor;
 import ru.art.core.validator.BuilderValidator;
+import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.grpc.client.handler.GrpcCommunicationCompletionHandler;
@@ -74,13 +76,13 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     }
 
     @Override
-    public GrpcCommunicator requestMapper(ValueFromModelMapper mapper) {
+    public <RequestType> GrpcCommunicator requestMapper(ValueFromModelMapper<RequestType, ? extends Value> mapper) {
         configuration.setRequestMapper(validator.notNullField(cast(mapper), "requestMapper"));
         return this;
     }
 
     @Override
-    public GrpcCommunicator responseMapper(ValueToModelMapper mapper) {
+    public <ResponseType> GrpcCommunicator responseMapper(ValueToModelMapper<ResponseType, ? extends Value> mapper) {
         configuration.setResponseMapper(validator.notNullField(cast(mapper), "responseMapper"));
         return this;
     }
@@ -127,6 +129,18 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
         validator.validate();
         configuration.validateRequiredFields();
         return GrpcCommunicationExecutor.execute(configuration);
+    }
+
+    @Override
+    public GrpcCommunicator addRequestValueInterceptor(ValueInterceptor interceptor) {
+        configuration.getRequestValueInterceptors().add(validator.notNullField(interceptor, "requestValueInterceptor"));
+        return this;
+    }
+
+    @Override
+    public GrpcCommunicator addResponseValueInterceptor(ValueInterceptor interceptor) {
+        configuration.getResponseValueInterceptors().add(validator.notNullField(interceptor, "responseValueInterceptor"));
+        return this;
     }
 
     @Override

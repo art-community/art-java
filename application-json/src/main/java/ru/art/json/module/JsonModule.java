@@ -30,6 +30,6 @@ public class JsonModule implements Module<JsonModuleConfiguration, ModuleState> 
     private final String id = JSON_MODULE_ID;
 
     public static JsonModuleConfiguration jsonModule() {
-        return context().getModule(JSON_MODULE_ID, new JsonModule());
+        return context().getModule(JSON_MODULE_ID, JsonModule::new);
     }
 }

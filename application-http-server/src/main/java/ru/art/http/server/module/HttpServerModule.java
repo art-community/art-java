@@ -45,7 +45,7 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
     private final String id = HTTP_SERVER_MODULE_ID;
 
     public static HttpServerModuleConfiguration httpServerModule() {
-        return context().getModule(HTTP_SERVER_MODULE_ID, new HttpServerModule());
+        return context().getModule(HTTP_SERVER_MODULE_ID, HttpServerModule::new);
     }
 
     public static List<HttpServiceSpecification> httpServices() {
@@ -53,6 +53,6 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
     }
 
     public static HttpServerModuleState httpServerModuleState() {
-        return context().getModuleState(HTTP_SERVER_MODULE_ID, new HttpServerModule());
+        return context().getModuleState(HTTP_SERVER_MODULE_ID, HttpServerModule::new);
     }
 }

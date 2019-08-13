@@ -31,6 +31,6 @@ public class GrpcClientModule implements Module<GrpcClientModuleConfiguration, M
     private final GrpcClientModuleConfiguration defaultConfiguration = new GrpcClientModuleDefaultConfiguration();
 
     public static GrpcClientModuleConfiguration grpcClientModule() {
-        return context().getModule(GRPC_CLIENT_MODULE_ID, new GrpcClientModule());
+        return context().getModule(GRPC_CLIENT_MODULE_ID, GrpcClientModule::new);
     }
 }

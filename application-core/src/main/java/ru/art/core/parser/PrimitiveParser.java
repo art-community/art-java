@@ -86,7 +86,7 @@ public interface PrimitiveParser {
         }
         try {
             return parseDouble(str);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return orElse;
         }
     }
@@ -97,7 +97,7 @@ public interface PrimitiveParser {
         }
         try {
             return parseInt(str);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return orElse;
         }
     }
@@ -108,7 +108,7 @@ public interface PrimitiveParser {
         }
         try {
             return parseLong(str);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return orElse;
         }
     }
@@ -119,7 +119,7 @@ public interface PrimitiveParser {
         }
         try {
             return parseBoolean(str);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return orElse;
         }
     }
@@ -130,7 +130,7 @@ public interface PrimitiveParser {
         }
         try {
             return parseDouble(str);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return orElse;
         }
     }
@@ -141,7 +141,7 @@ public interface PrimitiveParser {
         }
         try {
             return parseInt(str);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return orElse;
         }
     }
@@ -152,7 +152,7 @@ public interface PrimitiveParser {
         }
         try {
             return parseLong(str);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return orElse;
         }
     }
@@ -163,7 +163,7 @@ public interface PrimitiveParser {
         }
         try {
             return parseBoolean(str);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return orElse;
         }
     }
@@ -175,7 +175,7 @@ public interface PrimitiveParser {
         }
         try {
             return parseBoolean(str);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return null;
         }
     }
@@ -186,7 +186,7 @@ public interface PrimitiveParser {
         }
         try {
             return parseDouble(str);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return null;
         }
     }
@@ -197,7 +197,7 @@ public interface PrimitiveParser {
         }
         try {
             return parseInt(str);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return null;
         }
     }
@@ -208,7 +208,7 @@ public interface PrimitiveParser {
         }
         try {
             return parseLong(str);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return null;
         }
     }

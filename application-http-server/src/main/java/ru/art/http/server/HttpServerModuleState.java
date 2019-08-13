@@ -27,7 +27,7 @@ public class HttpServerModuleState implements ModuleState {
     @Setter
     private HttpServer server;
 
-    HttpRequestContext getRequestContext() {
+    public HttpRequestContext getRequestContext() {
         return requestContext.get();
     }
 

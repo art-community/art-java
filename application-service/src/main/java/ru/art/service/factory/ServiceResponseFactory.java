@@ -33,7 +33,7 @@ public interface ServiceResponseFactory {
         return ServiceResponse.<T>builder().command(command).serviceException(exception).build();
     }
 
-    static <T> ServiceResponse<T> errorResponse(ServiceMethodCommand command, String errorCode, Exception e) {
+    static <T> ServiceResponse<T> errorResponse(ServiceMethodCommand command, String errorCode, Throwable e) {
         return ServiceResponse.<T>builder().command(command).serviceException(new ServiceExecutionException(command, errorCode, e)).build();
     }
 

@@ -47,7 +47,7 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
     private KafkaConsumerModuleConfiguration defaultConfiguration = new KafkaConsumerModuleDefaultConfiguration();
 
     public static KafkaConsumerModuleConfiguration kafkaConsumerModule() {
-        return context().getModule(KAFKA_CONSUMER_MODULE_ID, new KafkaConsumerModule());
+        return context().getModule(KAFKA_CONSUMER_MODULE_ID, KafkaConsumerModule::new);
     }
 
     public static List<KafkaConsumerServiceSpecification> kafkaConsumerServices() {

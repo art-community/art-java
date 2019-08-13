@@ -51,7 +51,7 @@ public interface TaskExecutionActions {
                     .requestMapper(Caster::cast)
                     .execute(task.getExecutableRequest());
             handleDeferredTaskCompletion(task, response);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             handleDeferredTaskError(e, task);
         }
     }
@@ -67,7 +67,7 @@ public interface TaskExecutionActions {
                     .requestMapper(Caster::cast)
                     .execute(task.getExecutableRequest());
             handlePeriodicTaskCompletion(task, response);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             handlePeriodicTaskError(e, task);
         }
     }
@@ -83,12 +83,12 @@ public interface TaskExecutionActions {
                     .requestMapper(Caster::cast)
                     .execute(process.getExecutableRequest());
             handleInfinityProcessCompletion(process, response);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             handleInfinityProcessError(e, process);
         }
     }
 
-    static void handlePeriodicTaskError(Exception error, PeriodicTask task) {
+    static void handlePeriodicTaskError(Throwable error, PeriodicTask task) {
         loggingModule().getLogger().error(format(TASK_FAILED_MESSAGE, task), error);
         handlePeriodicTaskAction(task);
     }

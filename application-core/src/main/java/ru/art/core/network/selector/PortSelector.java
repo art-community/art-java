@@ -82,7 +82,7 @@ public interface PortSelector {
                             .createServerSocket(port, 1, getByName(LOCALHOST))
                             .close();
                     return true;
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     return false;
                 }
             }
@@ -94,7 +94,7 @@ public interface PortSelector {
                 try {
                     new DatagramSocket(port, getByName(LOCALHOST)).close();
                     return true;
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     return false;
                 }
             }

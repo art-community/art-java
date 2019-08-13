@@ -137,7 +137,7 @@ public interface FileExtensions {
     static byte[] readFileBytesQuietly(Path path, int bufferSize) {
         try {
             return readFileBytes(path, bufferSize);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return EMPTY_BYTES;
         }
     }

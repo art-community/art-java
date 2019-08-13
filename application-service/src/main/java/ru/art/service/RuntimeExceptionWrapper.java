@@ -26,7 +26,7 @@ public class RuntimeExceptionWrapper extends ServiceExecutionExceptionWrapper {
     public <RequestType, ResponseType> ServiceResponse<ResponseType> wrapServiceExecution(ServiceMethodCommand command, RequestType request) {
         try {
             return previousWrapper.wrapServiceExecution(command, request);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return ServiceResponseFactory.errorResponse(command, ServiceErrorCodes.UNDECLARED_INTERNAL_ERROR, e);
         }
     }

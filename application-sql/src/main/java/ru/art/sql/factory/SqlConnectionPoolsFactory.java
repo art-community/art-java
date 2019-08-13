@@ -100,7 +100,7 @@ public interface SqlConnectionPoolsFactory {
         try {
             forName(driveClassName);
             return new DefaultConfiguration().set(new HikariDataSource(config));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new SqlModuleException(e);
         }
     }
@@ -109,7 +109,7 @@ public interface SqlConnectionPoolsFactory {
         try {
             forName(driveClassName);
             return new DefaultConfiguration().set(new DataSource(config));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new SqlModuleException(e);
         }
     }

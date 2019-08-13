@@ -54,7 +54,7 @@ public class GrpcServlet {
     private String extractServletName(String path) {
         try {
             return path.substring(path.lastIndexOf(DOT));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new GrpcException(format(UNABLE_TO_EXTRACT_SERVLET_NAME, path));
         }
     }

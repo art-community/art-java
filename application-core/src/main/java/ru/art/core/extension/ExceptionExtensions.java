@@ -28,7 +28,7 @@ public interface ExceptionExtensions {
         if (isNull(operation)) return EMPTY_STRING;
         try {
             return operation.call();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return EMPTY_STRING;
         }
     }
@@ -37,7 +37,7 @@ public interface ExceptionExtensions {
         if (isNull(operation)) return null;
         try {
             return operation.call();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return null;
         }
     }
@@ -46,7 +46,7 @@ public interface ExceptionExtensions {
         requireNonNull(operation);
         try {
             return operation.call();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return value;
         }
     }
@@ -57,7 +57,7 @@ public interface ExceptionExtensions {
             T result = operation.call();
             if (isEmpty(result)) return value;
             return result;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return value;
         }
     }
@@ -72,10 +72,10 @@ public interface ExceptionExtensions {
         return value;
     }
 
-    static <T> T wrapException(Callable<T> action, Function<Exception, RuntimeException> exceptionFactory) {
+    static <T> T wrapException(Callable<T> action, Function<Throwable, RuntimeException> exceptionFactory) {
         try {
             return action.call();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw exceptionFactory.apply(e);
         }
     }

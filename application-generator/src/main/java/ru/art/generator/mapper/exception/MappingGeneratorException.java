@@ -39,7 +39,7 @@ public class MappingGeneratorException extends RuntimeException {
      * @param message - message's details.
      * @param cause
      */
-    public MappingGeneratorException(String message, Exception cause) {
+    public MappingGeneratorException(String message, Throwable cause) {
         super(message, cause);
     }
 

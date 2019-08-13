@@ -51,10 +51,6 @@ public class HttpServerInterceptor {
 
 
     public InterceptionStrategy intercept(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            return interception.intercept(request, response);
-        } catch (Exception e) {
-            throw new HttpServerException(e);
-        }
+        return interception.intercept(request, response);
     }
 }

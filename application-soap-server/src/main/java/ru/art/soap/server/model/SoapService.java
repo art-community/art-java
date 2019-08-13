@@ -49,7 +49,7 @@ public class SoapService {
         private XmlEntityToModelMapper<?> requestMapper;
         private XmlEntityFromModelMapper<?> responseMapper;
         @Singular("faultMapper")
-        private Map<Class<? extends Exception>, XmlEntityFromModelMapper<?>> faultMapping;
+        private Map<Class<? extends Throwable>, XmlEntityFromModelMapper<?>> faultMapping;
         private String methodId;
     }
 

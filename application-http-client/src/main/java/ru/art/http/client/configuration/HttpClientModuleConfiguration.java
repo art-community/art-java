@@ -139,7 +139,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                         clientBuilder.setSSLHostnameVerifier(allowAll);
                     }
                     clientBuilder.setSSLContext(custom().loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray()).build());
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
                 }
             }
@@ -168,7 +168,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                         clientBuilder.setSSLHostnameVerifier(allowAll);
                     }
                     clientBuilder.setSSLContext(custom().loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray()).build());
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
                 }
             }
@@ -182,7 +182,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                 keyStoreInputStream = new FileInputStream(new File(getSslKeyStoreFilePath()));
                 keyStore.load(keyStoreInputStream, getSslKeyStorePassword().toCharArray());
                 return keyStore;
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
             } finally {
                 if (nonNull(keyStoreInputStream)) {

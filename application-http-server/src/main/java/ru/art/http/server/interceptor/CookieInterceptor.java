@@ -19,6 +19,7 @@ package ru.art.http.server.interceptor;
 import lombok.Builder;
 import lombok.Singular;
 import ru.art.core.constants.InterceptionStrategy;
+import ru.art.http.server.exception.HttpServerException;
 import static java.util.Arrays.stream;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -47,17 +48,21 @@ public class CookieInterceptor implements HttpServerInterception {
     private final String errorContent;
 
     @Override
-    public InterceptionStrategy intercept(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public InterceptionStrategy intercept(HttpServletRequest request, HttpServletResponse response) {
         if (checkingUrls.stream().noneMatch(url -> request.getRequestURI().contains(url)) || request.getMethod().equals(OPTIONS.name()) || hasTokenCookie(request)) {
             return NEXT_INTERCEPTOR;
         }
         response.setCharacterEncoding(contextConfiguration().getCharset().name());
         response.setHeader(CONTENT_TYPE, TEXT_HTML_UTF_8.toString());
         response.setStatus(errorStatus);
-        if (isNotEmpty(errorContent)) {
-            response.getOutputStream().write(errorContent.getBytes());
+        try {
+            if (isNotEmpty(errorContent)) {
+                response.getOutputStream().write(errorContent.getBytes());
+            }
+            response.getOutputStream().close();
+        } catch (Throwable e) {
+            throw new HttpServerException(e);
         }
-        response.getOutputStream().close();
         return NEXT_INTERCEPTOR;
     }
 

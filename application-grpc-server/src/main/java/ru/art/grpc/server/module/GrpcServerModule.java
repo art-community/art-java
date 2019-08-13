@@ -31,10 +31,10 @@ public class GrpcServerModule implements Module<GrpcServerModuleConfiguration, G
     private final GrpcServerModuleConfiguration defaultConfiguration = new GrpcServerModuleDefaultConfiguration();
 
     public static GrpcServerModuleConfiguration grpcServerModule() {
-        return context().getModule(GRPC_SERVER_MODULE_ID, new GrpcServerModule());
+        return context().getModule(GRPC_SERVER_MODULE_ID, GrpcServerModule::new);
     }
 
     public static GrpcServerModuleState grpcServerModuleState() {
-        return context().getModuleState(GRPC_SERVER_MODULE_ID, new GrpcServerModule());
+        return context().getModuleState(GRPC_SERVER_MODULE_ID, GrpcServerModule::new);
     }
 }

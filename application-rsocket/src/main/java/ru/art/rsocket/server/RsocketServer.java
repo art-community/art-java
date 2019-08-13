@@ -124,7 +124,7 @@ public class RsocketServer {
             }
             new RsocketServer(transport).await();
             logger.info(format(RSOCKET_RESTARTED_MESSAGE, currentTimeMillis() - millis));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error(RSOCKET_RESTART_FAILED);
         }
 

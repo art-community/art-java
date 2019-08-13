@@ -20,6 +20,8 @@ import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.nio.client.HttpAsyncClient;
+import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.client.handler.HttpCommunicationCancellationHandler;
@@ -46,7 +48,7 @@ public interface HttpCommunicator {
 
     HttpCommunicator ignoreResponseContentType();
 
-    HttpCommunicator responseMapper(ValueToModelMapper responseMapper);
+    <ResponseType> HttpCommunicator responseMapper(ValueToModelMapper<ResponseType, ? extends Value> responseMapper);
 
     HttpCommunicator config(RequestConfig requestConfig);
 
@@ -82,7 +84,7 @@ public interface HttpCommunicator {
 
     HttpCommunicator produces(MimeToContentTypeMapper requestContentTypeMapper);
 
-    HttpCommunicator requestMapper(ValueFromModelMapper requestMapper);
+    <RequestType> HttpCommunicator requestMapper(ValueFromModelMapper<RequestType, ? extends Value> requestMapper);
 
     HttpCommunicator chunked();
 
@@ -93,6 +95,10 @@ public interface HttpCommunicator {
     <RequestType, ResponseType> Optional<ResponseType> execute(RequestType request);
 
     <ResponseType> Optional<ResponseType> execute();
+
+    HttpCommunicator addRequestValueInterceptor(ValueInterceptor interceptor);
+
+    HttpCommunicator addResponseValueInterceptor(ValueInterceptor interceptor);
 
     HttpAsynchronousCommunicator asynchronous();
 

@@ -56,7 +56,7 @@ public class HttpClientsFactory {
                     clientBuilder.setSSLHostnameVerifier(allowAll);
                 }
                 clientBuilder.setSSLContext(custom().loadKeyMaterial(loadKeyStore(configuration), configuration.getSslKeyStorePassword().toCharArray()).build());
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
             }
         }
@@ -86,7 +86,7 @@ public class HttpClientsFactory {
                     clientBuilder.setSSLHostnameVerifier(allowAll);
                 }
                 clientBuilder.setSSLContext(custom().loadKeyMaterial(loadKeyStore(configuration), configuration.getSslKeyStorePassword().toCharArray()).build());
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
             }
         }
@@ -100,7 +100,7 @@ public class HttpClientsFactory {
             keyStoreInputStream = new FileInputStream(new File(configuration.getSslKeyStoreFilePath()));
             keyStore.load(keyStoreInputStream, configuration.getSslKeyStorePassword().toCharArray());
             return keyStore;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
         } finally {
             if (nonNull(keyStoreInputStream)) {

@@ -32,11 +32,11 @@ public class ServiceModule implements Module<ServiceModuleConfiguration, Service
     private final String id = SERVICE_MODULE_ID;
 
     public static ServiceModuleConfiguration serviceModule() {
-        return context().getModule(SERVICE_MODULE_ID, new ServiceModule());
+        return context().getModule(SERVICE_MODULE_ID, ServiceModule::new);
     }
 
     public static ServiceModuleState serviceModuleState() {
-        return context().getModuleState(SERVICE_MODULE_ID, new ServiceModule());
+        return context().getModuleState(SERVICE_MODULE_ID, ServiceModule::new);
     }
 
     @Override

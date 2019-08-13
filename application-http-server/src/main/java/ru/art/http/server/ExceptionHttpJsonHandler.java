@@ -31,13 +31,15 @@ import static ru.art.http.server.module.HttpServerModule.httpServerModuleState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-class ExceptionHttpJsonHandler implements HttpExceptionHandler<Exception> {
+class ExceptionHttpJsonHandler implements HttpExceptionHandler<Throwable> {
     @Override
-    public void handle(Exception exception, HttpServletRequest request, HttpServletResponse response) {
+    public void handle(Throwable exception, HttpServletRequest request, HttpServletResponse response) {
         String error = format(EXCEPTION_HANDLING_ERROR_RESPONSE, exception.getMessage());
         response.setHeader(CONTENT_TYPE, APPLICATION_JSON_UTF8.toString());
         response.setStatus(SC_INTERNAL_SERVER_ERROR);
         HttpRequestContext requestContext = httpServerModuleState().getRequestContext();
-        writeResponseBody(response, error.getBytes(isNull(requestContext) ? contextConfiguration().getCharset() : getOrElse(requestContext.getAcceptCharset(), contextConfiguration().getCharset())));
+        writeResponseBody(response, error.getBytes(isNull(requestContext) ?
+                contextConfiguration().getCharset() :
+                getOrElse(requestContext.getAcceptCharset(), contextConfiguration().getCharset())));
     }
 }

@@ -17,7 +17,7 @@
 package ru.art.rocks.db.exception;
 
 public class RocksDbOperationException extends RuntimeException {
-    public RocksDbOperationException(String message, Exception exception) {
+    public RocksDbOperationException(String message, Throwable exception) {
         super(message, exception);
     }
 }

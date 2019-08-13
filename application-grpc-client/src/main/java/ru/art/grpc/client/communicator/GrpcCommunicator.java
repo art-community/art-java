@@ -17,6 +17,8 @@
 package ru.art.grpc.client.communicator;
 
 import io.grpc.ClientInterceptor;
+import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.grpc.client.handler.GrpcCommunicationCompletionHandler;
@@ -46,9 +48,9 @@ public interface GrpcCommunicator {
 
     GrpcCommunicator methodId(String id);
 
-    GrpcCommunicator requestMapper(ValueFromModelMapper mapper);
+    <RequestType> GrpcCommunicator requestMapper(ValueFromModelMapper<RequestType, ? extends Value> mapper);
 
-    GrpcCommunicator responseMapper(ValueToModelMapper mapper);
+    <ResponseType> GrpcCommunicator responseMapper(ValueToModelMapper<ResponseType, ? extends Value> mapper);
 
     GrpcCommunicator deadlineTimeout(long timeout);
 
@@ -63,6 +65,10 @@ public interface GrpcCommunicator {
     <ResponseType> ServiceResponse<ResponseType> execute();
 
     <RequestType, ResponseType> ServiceResponse<ResponseType> execute(RequestType request);
+
+    GrpcCommunicator addRequestValueInterceptor(ValueInterceptor interceptor);
+
+    GrpcCommunicator addResponseValueInterceptor(ValueInterceptor interceptor);
 
     interface GrpcAsynchronousCommunicator {
         <RequestType, ResponseType> GrpcAsynchronousCommunicator completionHandler(GrpcCommunicationCompletionHandler<RequestType, ResponseType> completionHandler);

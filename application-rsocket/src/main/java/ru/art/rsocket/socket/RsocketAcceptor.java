@@ -37,6 +37,7 @@ import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.REACTIVE;
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.STRAIGHT;
+import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
 import static ru.art.rsocket.model.RsocketRequestContext.fromPayload;
 import static ru.art.rsocket.module.RsocketModule.rsocketModuleState;
 import static ru.art.rsocket.selector.RsocketDataFormatMimeTypeConverter.fromMimeType;
@@ -52,19 +53,22 @@ public class RsocketAcceptor extends AbstractRSocket {
 
     @Override
     public Mono<Void> fireAndForget(Payload payload) {
-        executeServiceMethodUnchecked(fromPayload(payload, fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType())).getRequest());
+        RsocketDataFormat dataFormat = fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType());
+        executeServiceMethodUnchecked(fromPayload(payload, dataFormat).getRequest());
         return never();
     }
 
     @Override
     public Mono<Payload> requestResponse(Payload payload) {
-        RsocketRequestContext context = fromPayload(payload, fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType()));
+        RsocketDataFormat dataFormat = fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType());
+        RsocketRequestContext context = fromPayload(payload, dataFormat);
         ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(context.getRequest());
         RsocketService.RsocketMethod rsocketMethod = context.getRsocketReactiveMethods().getRsocketMethod();
         ValueFromModelMapper<?, ?> responseMapper = rsocketMethod.responseMapper();
         return context.getRsocketReactiveMethods().getReactiveMethod().responseProcessingMode() == STRAIGHT ?
-                Mono.just(writeServiceResponse(responseMapper, serviceResponse, getOrElse(rsocketMethod.overrideResponseDataFormat(), fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType())))) :
-                writeResponseReactive(rsocketMethod.responseMapper(), cast(serviceResponse), fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType())).next();
+                Mono.just(writeServiceResponse(responseMapper, serviceResponse,
+                        getOrElse(rsocketMethod.overrideResponseDataFormat(), dataFormat))) :
+                writeResponseReactive(rsocketMethod.responseMapper(), cast(serviceResponse), dataFormat).next();
     }
 
     @Override
@@ -80,20 +84,29 @@ public class RsocketAcceptor extends AbstractRSocket {
 
     @Override
     public Flux<Payload> requestChannel(Publisher<Payload> payloads) {
+        RsocketDataFormat dataFormat = fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType());
         return from(payloads)
-                .map(payload -> RsocketRequestReactiveContext.fromPayload(payload, fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType())))
+                .map(payload -> RsocketRequestReactiveContext.fromPayload(payload, dataFormat))
                 .filter(context -> nonNull(context.getRsocketReactiveMethods().getRsocketMethod()))
                 .filter(context -> nonNull(context.getRsocketReactiveMethods().getReactiveMethod()))
-                .filter(context -> context.getRsocketReactiveMethods().getReactiveMethod().requestProcessingMode() == REACTIVE)
-                .filter(context -> context.getRsocketReactiveMethods().getReactiveMethod().responseProcessingMode() == REACTIVE)
-                .groupBy(RsocketRequestReactiveContext::getRsocketReactiveGroupKey, serviceModule().getServiceRegistry().getServices().size())
+                .filter(context -> context.getRsocketReactiveMethods()
+                        .getReactiveMethod()
+                        .requestProcessingMode() == REACTIVE)
+                .filter(context -> context.getRsocketReactiveMethods()
+                        .getReactiveMethod()
+                        .responseProcessingMode() == REACTIVE)
+                .groupBy(RsocketRequestReactiveContext::getRsocketReactiveGroupKey, serviceModule()
+                        .getServiceRegistry()
+                        .getServices()
+                        .size())
                 .map(RsocketReactivePreparedResponse::fromGroupedFlux)
-                .flatMap(preparedResponse -> writeResponseReactive(preparedResponse.getResponseMapper(), executeServiceMethodUnchecked(preparedResponse.getServiceRequest()), fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType())));
+                .flatMap(preparedResponse -> writeResponseReactive(preparedResponse.getResponseMapper(), executeServiceMethodUnchecked(preparedResponse.getServiceRequest()), dataFormat));
     }
 
     @Override
     public Mono<Void> metadataPush(Payload payload) {
-        executeServiceMethodUnchecked(fromPayload(payload, fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType())).getRequest());
+        RsocketDataFormat dataFormat = fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType());
+        executeServiceMethodUnchecked(fromPayload(payload, dataFormat).getRequest());
         return never();
     }
 

@@ -40,11 +40,11 @@ public interface SoapExecutionService {
         SoapOperation soapOperation = operationServiceSpecifications.get(request.getOperationId());
         Object requestObject = soapOperation.getRequestMapper().map(request.getEntity());
         Object responseObject;
-        Map<Class<? extends Exception>, XmlEntityFromModelMapper<?>> errorsMap = soapOperation.getFaultMapping();
+        Map<Class<? extends Throwable>, XmlEntityFromModelMapper<?>> errorsMap = soapOperation.getFaultMapping();
         try {
             responseObject = soapServiceSpecification.executeMethod(soapOperation.getMethodId(), requestObject);
             return cast(SoapResponse.builder().xmlEntity(soapOperation.getResponseMapper().map(cast(responseObject))).build());
-        } catch (Exception exception) {
+        } catch (Throwable exception) {
             XmlEntityFromModelMapper<?> faultMapper;
             if (isNotEmpty(faultMapper = errorsMap.get(exception.getClass()))) {
                 return cast(SoapResponse.builder().xmlEntity(faultMapper.map(cast(exception))).build());

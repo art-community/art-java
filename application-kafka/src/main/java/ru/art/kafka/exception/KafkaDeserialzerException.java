@@ -17,7 +17,7 @@
 package ru.art.kafka.exception;
 
 public class KafkaDeserialzerException extends RuntimeException {
-    public KafkaDeserialzerException(Exception e) {
+    public KafkaDeserialzerException(Throwable e) {
         super(e);
     }
 }

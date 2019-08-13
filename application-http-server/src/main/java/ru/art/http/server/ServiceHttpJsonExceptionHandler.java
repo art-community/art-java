@@ -47,7 +47,7 @@ class ServiceHttpJsonExceptionHandler implements HttpExceptionHandler<ServiceExe
             HttpContentMapper contentMapper = httpServerModule().getContentMappers().get(APPLICATION_JSON_UTF8);
             byte[] bodyBytes = contentMapper.getToContent().mapToBytes(serviceExecutionExceptionMapper.map(exception), APPLICATION_JSON_UTF8, charset);
             writeResponseBody(response, bodyBytes);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             String error = format(SERVICE_EXCEPTION_HANDLING_ERROR_RESPONSE, exception.getErrorCode(), exception.getErrorMessage());
             writeResponseBody(response, error.getBytes(charset));
         }

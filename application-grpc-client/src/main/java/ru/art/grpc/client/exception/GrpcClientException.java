@@ -21,7 +21,7 @@ public class GrpcClientException extends RuntimeException {
         super(message);
     }
 
-    public GrpcClientException(Exception e) {
+    public GrpcClientException(Throwable e) {
         super(e);
     }
 }

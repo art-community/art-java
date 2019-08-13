@@ -32,7 +32,7 @@ public class RemoteSchedulerModule implements Module<RemoteSchedulerModuleConfig
     private RemoteSchedulerModuleState state = new RemoteSchedulerModuleState();
 
     public static RemoteSchedulerModuleConfiguration remoteSchedulerModule() {
-        return context().getModule(REMOTE_SCHEDULER_MODULE_ID, new RemoteSchedulerModule());
+        return context().getModule(REMOTE_SCHEDULER_MODULE_ID, RemoteSchedulerModule::new);
     }
 
     public static RemoteSchedulerModuleState remoteSchedulerModuleState() {

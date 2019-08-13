@@ -77,7 +77,7 @@ public class GrpcServer {
             protobufServer.server.start();
             logger.info(format(GRPC_STARTED_MESSAGE, currentTimeMillis() - millis));
             grpcServerModuleState().setServer(protobufServer);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new GrpcServerException(GRPC_SERVER_INITIALIZATION_FAILED, e);
         }
         return protobufServer;
@@ -100,7 +100,7 @@ public class GrpcServer {
     public void await() {
         try {
             server.awaitTermination();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new GrpcServerException(GRPC_SERVER_AWAITING_FAILED, e);
         }
     }
@@ -111,7 +111,7 @@ public class GrpcServer {
             server.shutdownNow();
             grpcServer();
             logger.info(format(GRPC_RESTARTED_MESSAGE, currentTimeMillis() - millis));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error(GRPC_SERVER_RESTART_FAILED);
         }
     }

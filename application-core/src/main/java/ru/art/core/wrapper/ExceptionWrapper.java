@@ -43,25 +43,25 @@ public interface ExceptionWrapper {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             action.run();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             //ignore
         }
     }
 
-    static void ignoreException(Runnable action, Consumer<Exception> onException) {
+    static void ignoreException(Runnable action, Consumer<Throwable> onException) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             action.run();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             onException.accept(e);
         }
     }
 
-    static <T> T ignoreException(Callable<T> action, Function<Exception, T> onException) {
+    static <T> T ignoreException(Callable<T> action, Function<Throwable, T> onException) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             return action.call();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return onException.apply(e);
         }
     }
@@ -71,7 +71,7 @@ public interface ExceptionWrapper {
         if (isNull(exceptionFactory)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_FACTORY_IS_NULL);
         try {
             action.run();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw exceptionFactory.create(e);
         }
     }
@@ -79,7 +79,7 @@ public interface ExceptionWrapper {
     static <T> T wrapException(Callable<T> action, ExceptionFactory<?> exceptionFactory) {
         try {
             return action.call();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw exceptionFactory.create(e);
         }
     }

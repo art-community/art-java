@@ -56,18 +56,10 @@ public class HttpClientInterceptor {
     }
 
     public InterceptionStrategy interceptRequest(HttpUriRequest request) {
-        try {
-            return requestInterception.intercept(request);
-        } catch (Exception e) {
-            throw new HttpClientException(e);
-        }
+        return requestInterception.intercept(request);
     }
 
     public InterceptionStrategy interceptResponse(HttpUriRequest request, HttpResponse response) {
-        try {
-            return responseInterception.intercept(request, response);
-        } catch (Exception e) {
-            throw new HttpClientException(e);
-        }
+        return responseInterception.intercept(request, response);
     }
 }

@@ -39,7 +39,7 @@ public class HttpServiceSpecGeneratorException extends RuntimeException {
      * @param message - message's details.
      * @param cause
      */
-    public HttpServiceSpecGeneratorException(String message, Exception cause) {
+    public HttpServiceSpecGeneratorException(String message, Throwable cause) {
         super(message, cause);
     }
 

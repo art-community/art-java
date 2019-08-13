@@ -29,6 +29,6 @@ public class SchedulerModule implements Module<SchedulerModuleConfiguration, Mod
     private final String id = SCHEDULER_MODULE_ID;
 
     public static SchedulerModuleConfiguration schedulerModule() {
-        return context().getModule(SCHEDULER_MODULE_ID, new SchedulerModule());
+        return context().getModule(SCHEDULER_MODULE_ID, SchedulerModule::new);
     }
 }

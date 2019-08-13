@@ -30,6 +30,6 @@ public class HttpClientModule implements Module<HttpClientModuleConfiguration, M
     private final String id = HTTP_CLIENT_MODULE_ID;
 
     public static HttpClientModuleConfiguration httpClientModule() {
-        return context().getModule(HTTP_CLIENT_MODULE_ID, new HttpClientModule());
+        return context().getModule(HTTP_CLIENT_MODULE_ID, HttpClientModule::new);
     }
 }

@@ -110,16 +110,16 @@ class HttpServiceServlet extends HttpServlet {
             }
             HttpBodyDescriptor.writeResponseBody(response, responseBody);
             clearServiceCallLoggingParameters();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             handleException(request, response, e);
             clearServiceCallLoggingParameters();
         }
     }
 
-    private void handleException(HttpServletRequest request, HttpServletResponse response, Exception exception) {
+    private void handleException(HttpServletRequest request, HttpServletResponse response, Throwable exception) {
         loggingModule().getLogger(HttpServiceServlet.class).error(HTTP_REQUEST_HANDLING_EXCEPTION_MESSAGE, exception);
-        Class exceptionClass = exception.getClass();
-        HttpExceptionHandler<Exception> exceptionExceptionHandler = cast(httpServerModule().getExceptionHandlers().get(exceptionClass));
+        Class<? extends Throwable> exceptionClass = exception.getClass();
+        HttpExceptionHandler<Throwable> exceptionExceptionHandler = cast(httpServerModule().getExceptionHandlers().get(exceptionClass));
         if (isNull(exceptionExceptionHandler)) {
             exceptionExceptionHandler = cast(httpServerModule().getExceptionHandlers().get(Exception.class));
         }

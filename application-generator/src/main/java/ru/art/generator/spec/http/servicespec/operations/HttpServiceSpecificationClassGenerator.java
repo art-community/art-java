@@ -103,7 +103,7 @@ public interface HttpServiceSpecificationClassGenerator {
             throw new HttpServiceSpecGeneratorException(format(UNABLE_TO_WRITE_TO_FILE, service.getSimpleName() + SPECIFICATION), e);
         } catch (NullPointerException e) {
             throw new HttpServiceSpecGeneratorException(format(UNABLE_TO_FIND_A_PATH_FOR_CLASS, service.getSimpleName()), e);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new HttpServiceSpecGeneratorException(format(UNABLE_TO_CREATE_FILE_UNKNOWN_ERROR, service.getSimpleName(), e.getClass().getSimpleName()), e);
         }
     }
@@ -133,7 +133,7 @@ public interface HttpServiceSpecificationClassGenerator {
                     .build();
         } catch (ExecuteMethodGenerationException | SpecificationTypeDefinitionException e) {
             throw new HttpServiceSpecGeneratorException(e.getMessage(), e);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new HttpServiceSpecGeneratorException(format(UNABLE_TO_GENERATE_SPECIFICATION, serviceClass.getSimpleName(), e.getClass().getSimpleName()), e);
         }
     }

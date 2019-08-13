@@ -40,7 +40,7 @@ public class ServiceExecutionExceptionWrapper {
             return wrapServiceExecution(command, request.getRequestData());
         } catch (ServiceExecutionException e) {
             return errorResponse(command, e);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return errorResponse(command, ServiceErrorCodes.UNCAUGHT_INTERNAL_ERROR, e);
         }
     }

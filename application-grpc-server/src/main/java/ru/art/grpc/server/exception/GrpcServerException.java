@@ -17,7 +17,7 @@
 package ru.art.grpc.server.exception;
 
 public class GrpcServerException extends RuntimeException {
-    public GrpcServerException(String message, Exception e) {
+    public GrpcServerException(String message, Throwable e) {
         super(message, e);
     }
 }

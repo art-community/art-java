@@ -116,7 +116,8 @@ class HttpServerRequestHandler {
                 HttpContentMapper contentMapper = httpServerModule().getContentMappers().get(requestContentType);
                 Value value = contentMapper
                         .getFromContent()
-                        .mapFromBytes(readRequestBody(request), requestContentType, getOrElse(requestContentType.getCharset(), contextConfiguration().getCharset()));
+                        .mapFromBytes(readRequestBody(request), requestContentType,
+                                getOrElse(requestContentType.getCharset(), contextConfiguration().getCharset()));
                 if (isNull(value)) return null;
                 putIfNotNull(REQUEST_VALUE_KEY, value);
                 serviceModuleState().setRequestValue(value);

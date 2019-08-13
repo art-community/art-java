@@ -30,7 +30,7 @@ public class MetricsModule implements Module<MetricModuleConfiguration, ModuleSt
     private final String id = METRICS_MODULE_ID;
 
     public static MetricModuleConfiguration metricsModule() {
-        return context().getModule(METRICS_MODULE_ID, new MetricsModule());
+        return context().getModule(METRICS_MODULE_ID, MetricsModule::new);
     }
 
     @Override

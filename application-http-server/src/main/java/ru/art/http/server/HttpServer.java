@@ -99,7 +99,7 @@ public class HttpServer {
             httpServer.start();
             httpServerModuleState().setServer(httpServer);
             return httpServer;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new HttpServerException(TOMCAT_INITIALIZATION_FAILED, e);
         }
     }
@@ -132,7 +132,7 @@ public class HttpServer {
             tomcat.stop();
             httpServer();
             logger.info(format(TOMCAT_RESTARTED_MESSAGE, currentTimeMillis() - millis));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.error(TOMCAT_RESTART_FAILED);
         }
     }
@@ -205,7 +205,7 @@ public class HttpServer {
                     .uri(path.toString())
                     .build();
             logger.info(format(HTTP_SERVICE_REGISTERING_MESSAGE, buildUrl(urlInfo), serviceSpec.getServiceId(), methods.keySet()));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new HttpServerException(e);
         }
 

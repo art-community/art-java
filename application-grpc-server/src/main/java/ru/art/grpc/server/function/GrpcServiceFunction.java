@@ -16,13 +16,15 @@
 
 package ru.art.grpc.server.function;
 
+import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.grpc.server.model.GrpcService;
 import ru.art.grpc.server.model.GrpcService.GrpcMethod;
 import ru.art.service.constants.RequestValidationPolicy;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.EXECUTE_GRPC_FUNCTION;
+import static ru.art.grpc.server.model.GrpcService.*;
 import static ru.art.service.ServiceModule.serviceModule;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -36,12 +38,12 @@ public class GrpcServiceFunction {
         this.serviceId = serviceId;
     }
 
-    public GrpcServiceFunction responseMapper(ValueFromModelMapper responseMapper) {
+    public <ResponseType> GrpcServiceFunction responseMapper(ValueFromModelMapper<ResponseType, ? extends Value> responseMapper) {
         grpcMethod.responseMapper(responseMapper);
         return this;
     }
 
-    public GrpcServiceFunction requestMapper(ValueToModelMapper requestMapper) {
+    public <RequestType> GrpcServiceFunction requestMapper(ValueToModelMapper<RequestType, ? extends Value> requestMapper) {
         grpcMethod.requestMapper(requestMapper);
         return this;
     }
@@ -51,13 +53,25 @@ public class GrpcServiceFunction {
         return this;
     }
 
+    public GrpcServiceFunction addRequestValueInterceptor(ValueInterceptor interceptor) {
+        grpcMethod.requestValueInterceptor(interceptor);
+        return this;
+    }
+
+    public GrpcServiceFunction addResponseValueInterceptor(ValueInterceptor interceptor) {
+        grpcMethod.responseValueInterceptor(interceptor);
+        return this;
+    }
+
     public <RequestType, ResponseType> void handle(Function<RequestType, ResponseType> function) {
         serviceModule()
                 .getServiceRegistry()
-                .registerService(new GrpcFunctionalServiceSpecification(serviceId, GrpcService.grpcService().method(EXECUTE_GRPC_FUNCTION, grpcMethod).serve(), function));
+                .registerService(new GrpcFunctionalServiceSpecification(serviceId, grpcService()
+                        .method(EXECUTE_GRPC_FUNCTION, grpcMethod)
+                        .serve(), function));
     }
 
-    public<RequestType> void consume(Consumer<RequestType> consumer) {
+    public <RequestType> void consume(Consumer<RequestType> consumer) {
         handle(request -> {
             consumer.accept(cast(request));
             return null;

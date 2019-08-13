@@ -35,7 +35,7 @@ public interface HttpBodyDescriptor {
             for (int n = inputStream.read(buf); n != -1; n = inputStream.read(buf)) {
                 os.write(buf, 0, n);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             loggingModule()
                     .getLogger(HttpBodyDescriptor.class)
                     .error(REQUEST_BODY_READING_EXCEPTION, e);
@@ -47,7 +47,7 @@ public interface HttpBodyDescriptor {
     static void writeResponseBody(HttpServletResponse response, byte[] body) {
         try {
             response.getOutputStream().write(body);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             loggingModule()
                     .getLogger(HttpBodyDescriptor.class)
                     .error(REQUEST_BODY_WRITING_EXCEPTION, e);

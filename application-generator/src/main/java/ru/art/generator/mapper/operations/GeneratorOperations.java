@@ -80,7 +80,7 @@ public interface GeneratorOperations {
                     .addField(generateToModelBlock(clazz, jarPathToMain))
                     .addField(generateFromModelBlock(clazz, jarPathToMain))
                     .build();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new MappingGeneratorException(format(UNABLE_TO_GENERATE_INTERFACE, clazz.getSimpleName(), e.getClass().getSimpleName()), e);
         }
     }
@@ -136,7 +136,7 @@ public interface GeneratorOperations {
             throw new MappingGeneratorException(format(UNABLE_TO_CREATE_MAPPER, clazz.getSimpleName() + MAPPER), e);
         } catch (NullPointerException e) {
             throw new MappingGeneratorException(format(UNABLE_TO_FIND_A_PATH_FOR_CLASS, clazz.getSimpleName()), e);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new MappingGeneratorException(format(UNABLE_TO_CREATE_MAPPER_UNKNOWN_ERROR, clazz.getSimpleName()), e);
         }
     }
@@ -210,7 +210,7 @@ public interface GeneratorOperations {
             throw new MappingGeneratorException(format(UNABLE_TO_CREATE_REQ_RES_MAPPER, newClassName), e);
         } catch (NullPointerException e) {
             throw new MappingGeneratorException(format(UNABLE_TO_FIND_A_PATH_FOR_CLASS, request.getSimpleName()), e);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new MappingGeneratorException(format(UNABLE_TO_CREATE_MAPPER_UNKNOWN_ERROR, request.getSimpleName()), e);
         }
     }

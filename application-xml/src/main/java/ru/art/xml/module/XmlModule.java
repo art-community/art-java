@@ -30,6 +30,6 @@ public class XmlModule implements Module<XmlModuleConfiguration, ModuleState> {
     private final String id = XML_MODULE_ID;
 
     public static XmlModuleConfiguration xmlModule() {
-        return context().getModule(XML_MODULE_ID, new XmlModule());
+        return context().getModule(XML_MODULE_ID, XmlModule::new);
     }
 }

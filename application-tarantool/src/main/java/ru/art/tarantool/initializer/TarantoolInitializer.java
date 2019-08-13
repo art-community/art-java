@@ -82,7 +82,7 @@ public class TarantoolInitializer {
                 connectToTarantool(instanceId);
                 return;
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             if (instanceMode == LOCAL && !isWindows()) {
                 logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
                 startTarantool(instanceId);
@@ -188,7 +188,7 @@ public class TarantoolInitializer {
             loggingModule()
                     .getLogger(TarantoolInitializer.class)
                     .info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new TarantoolInitializationException(e);
         }
     }

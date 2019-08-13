@@ -49,10 +49,10 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
     }
 
     public static TarantoolModuleConfiguration tarantoolModule() {
-        return context().getModule(TARANTOOL_MODULE_ID, new TarantoolModule());
+        return context().getModule(TARANTOOL_MODULE_ID, TarantoolModule::new);
     }
 
     public static TarantoolModuleState tarantoolModuleState() {
-        return context().getModuleState(TARANTOOL_MODULE_ID, new TarantoolModule());
+        return context().getModuleState(TARANTOOL_MODULE_ID, TarantoolModule::new);
     }
 }

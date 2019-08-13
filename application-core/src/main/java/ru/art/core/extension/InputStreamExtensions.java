@@ -93,7 +93,7 @@ public interface InputStreamExtensions {
     static byte[] toByteArraySafety(InputStream is) {
         try {
             return toByteArray(is);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             return EMPTY_BYTES;
         }
@@ -106,7 +106,7 @@ public interface InputStreamExtensions {
     static String toString(InputStream is) {
         try {
             return toString(is, contextConfiguration().getCharset());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             return EMPTY_STRING;
         }

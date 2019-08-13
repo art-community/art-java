@@ -39,7 +39,7 @@ public final class TarantoolFunctionCaller {
             List<?> result = cast(client.syncOps().call(functionName));
             logFunctionCall(functionName, result, CALLED_FUNCTION);
             return result;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logException(functionName, e);
             throw new TarantoolExecutionException(e);
         }
@@ -51,7 +51,7 @@ public final class TarantoolFunctionCaller {
             List<?> result = cast(client.syncOps().call(functionName, args.toArray(new Object[0])));
             logFunctionCall(functionName, result, CALLED_FUNCTION);
             return result;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logException(functionName, e);
             throw new TarantoolExecutionException(e);
         }
@@ -71,7 +71,7 @@ public final class TarantoolFunctionCaller {
                         throw new TarantoolExecutionException(e);
                     });
 
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logException(functionName, e);
             throw new TarantoolExecutionException(e);
         }
@@ -86,7 +86,7 @@ public final class TarantoolFunctionCaller {
                 .trace(format(callingState, functionName, arguments));
     }
 
-    private static void logException(String functionName, Exception e) {
+    private static void logException(String functionName, Throwable e) {
         if (!tarantoolModule().isEnableTracing()) {
             return;
         }

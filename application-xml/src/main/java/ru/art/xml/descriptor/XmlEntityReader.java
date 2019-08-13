@@ -50,7 +50,7 @@ public class XmlEntityReader {
             XMLStreamReader parser = xmlInputFactory.createXMLStreamReader(is);
             XmlEntityBuilder root = getRootElement(parser);
             return root.create();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new XmlMappingException(e);
         }
     }

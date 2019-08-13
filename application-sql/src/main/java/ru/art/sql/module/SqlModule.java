@@ -33,7 +33,7 @@ public class SqlModule implements Module<SqlModuleConfiguration, ModuleState> {
     private final SqlModuleConfiguration defaultConfiguration = new SqlModuleDefaultConfiguration();
 
     public static SqlModuleConfiguration sqlModule() {
-        return context().getModule(SQL_MODULE_ID, new SqlModule());
+        return context().getModule(SQL_MODULE_ID, SqlModule::new);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class SqlModule implements Module<SqlModuleConfiguration, ModuleState> {
         try {
             forName(sqlModule().getDbProvider().getDriverClassName());
             sqlModule().getJooqConfiguration().set(dataSource);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new SqlModuleException(e);
         }
 

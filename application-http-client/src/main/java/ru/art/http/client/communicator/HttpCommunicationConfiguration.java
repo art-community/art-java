@@ -23,6 +23,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.nio.client.HttpAsyncClient;
 import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.client.handler.HttpCommunicationCancellationHandler;
@@ -69,4 +70,7 @@ class HttpCommunicationConfiguration {
     private boolean ignoreResponseContentType;
     private HttpClient syncClient;
     private HttpAsyncClient asyncClient;
+    private final List<ValueInterceptor> requestValueInterceptors = linkedListOf();
+    private final List<ValueInterceptor> responseValueInterceptors = linkedListOf();
+    private final List<ValueInterceptor> exceptionValueInterceptors = linkedListOf();
 }

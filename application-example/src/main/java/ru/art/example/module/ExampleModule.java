@@ -46,11 +46,11 @@ public class ExampleModule implements Module<ExampleModuleConfiguration, Example
     private final String id = EXAMPLE_MODULE_ID;
 
     public static ExampleModuleConfiguration exampleModule() {
-        return context().getModule(EXAMPLE_MODULE_ID, new ExampleModule());
+        return context().getModule(EXAMPLE_MODULE_ID, ExampleModule::new);
     }
 
     public static ExampleModuleState exampleState() {
-        return context().getModuleState(EXAMPLE_MODULE_ID, new ExampleModule());
+        return context().getModuleState(EXAMPLE_MODULE_ID, ExampleModule::new);
     }
 
     public static void main(String[] args) {

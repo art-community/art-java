@@ -21,14 +21,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.grpc.client.exception.GrpcClientException;
 import ru.art.grpc.client.handler.GrpcCommunicationCompletionHandler;
 import ru.art.grpc.client.handler.GrpcCommunicationExceptionHandler;
-import static java.util.Collections.emptyList;
 import static lombok.AccessLevel.PACKAGE;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.factory.CollectionsFactory.linkedListOf;
 import static ru.art.grpc.client.constants.GrpcClientExceptionMessages.INVALID_GRPC_COMMUNICATION_CONFIGURATION;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -49,7 +50,7 @@ public class GrpcCommunicationConfiguration {
     private ValueToModelMapper<?, ? extends Value> responseMapper;
     private GrpcCommunicationCompletionHandler<?, ?> completionHandler;
     private GrpcCommunicationExceptionHandler<?> exceptionHandler;
-    private List<ClientInterceptor> interceptors = emptyList();
+    private List<ClientInterceptor> interceptors = linkedListOf();
     private Executor overrideExecutor;
     @ToString.Include
     private Object request;
@@ -57,6 +58,8 @@ public class GrpcCommunicationConfiguration {
     private long deadlineTimeout;
     @ToString.Include
     private boolean useSecuredTransport;
+    private final List<ValueInterceptor> requestValueInterceptors = linkedListOf();
+    private final List<ValueInterceptor> responseValueInterceptors = linkedListOf();
 
     void validateRequiredFields() {
         boolean serviceIdIsEmpty = isEmpty(serviceId);

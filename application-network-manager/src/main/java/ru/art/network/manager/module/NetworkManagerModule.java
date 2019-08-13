@@ -40,11 +40,11 @@ public class NetworkManagerModule implements Module<NetworkManagerModuleConfigur
     private final String id = NETWORK_MANAGER_MODULE_ID;
 
     public static NetworkManagerModuleConfiguration networkManagerModule() {
-        return context().getModule(NETWORK_MANAGER_MODULE_ID, new NetworkManagerModule());
+        return context().getModule(NETWORK_MANAGER_MODULE_ID, NetworkManagerModule::new);
     }
 
     public static NetworkManagerModuleState networkManagerModuleState() {
-        return context().getModuleState(NETWORK_MANAGER_MODULE_ID, new NetworkManagerModule());
+        return context().getModuleState(NETWORK_MANAGER_MODULE_ID, NetworkManagerModule::new);
     }
 
     @Override

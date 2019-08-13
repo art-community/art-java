@@ -46,7 +46,7 @@ public interface DateExtensions {
     static Date tryParse(String dateTimeString, SimpleDateFormat format, Date orElse) {
         try {
             return format.parse(dateTimeString);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return orElse;
         }
     }
@@ -68,7 +68,7 @@ public interface DateExtensions {
     static String tryFormat(Date dateTime, SimpleDateFormat format, String orElse) {
         try {
             return format.format(dateTime);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return orElse;
         }
     }

@@ -69,7 +69,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
 
     List<HttpServerInterceptor> getResponseInterceptors();
 
-    <T extends Exception> Map<Class<T>, HttpExceptionHandler<T>> getExceptionHandlers();
+    <T extends Throwable> Map<Class<T>, HttpExceptionHandler<T>> getExceptionHandlers();
 
     int getRequestBodyBufferSize();
 
@@ -128,7 +128,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<HttpServerInterceptor> responseInterceptors = linkedListOf();
         private final boolean ignoreAcceptHeader = false;
-        private final Map<? extends Class<? extends Exception>, ? extends HttpExceptionHandler<? extends Exception>> exceptionHandlers =
+        private final Map<? extends Class<? extends Throwable>, ? extends HttpExceptionHandler<? extends Throwable>> exceptionHandlers =
                 mapOf(Exception.class, new ExceptionHttpJsonHandler())
                         .add(cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler()));
         private final HttpWebConfiguration webConfiguration = HttpWebConfiguration.builder().webUrl(DEFAULT_WEB_URL).build();
@@ -137,7 +137,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
             return linkedListOf(intercept(new HttpServerLoggingInterception()), intercept(new HttpWebInterception()));
         }
 
-        public <T extends Exception> Map<Class<T>, HttpExceptionHandler<T>> getExceptionHandlers() {
+        public <T extends Throwable> Map<Class<T>, HttpExceptionHandler<T>> getExceptionHandlers() {
             return cast(exceptionHandlers);
         }
     }

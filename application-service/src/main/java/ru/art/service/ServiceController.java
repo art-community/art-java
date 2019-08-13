@@ -27,6 +27,7 @@ import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.constants.DateConstants.YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT;
 import static ru.art.core.constants.InterceptionStrategy.PROCESS_HANDLING;
 import static ru.art.core.constants.InterceptionStrategy.STOP_HANDLING;
+import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
 import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static ru.art.logging.ThreadContextExtensions.putIfNotNull;
 import static ru.art.service.ServiceModule.serviceModule;
@@ -79,11 +80,12 @@ public interface ServiceController {
         ServiceInterceptionResult serviceInterceptionResult;
         if (nonNull((serviceInterceptionResult = beforeServiceExecution(service, request)).getResponse()))
             return cast(serviceInterceptionResult.getResponse());
-        ServiceResponse<ResponseType> response = service.getExceptionWrapper().executeServiceWrapped(request.getServiceMethodCommand(), serviceInterceptionResult.getRequest());
+        ServiceRequest<?> requestAfterInterception = serviceInterceptionResult.getRequest();
+        ServiceResponse<ResponseType> response = service.getExceptionWrapper().executeServiceWrapped(requestAfterInterception.getServiceMethodCommand(), requestAfterInterception);
         Date endTime = new Date();
         putIfNotNull(EXECUTION_TIME_KEY, endTime.getTime() - startTime.getTime());
         putIfNotNull(REQUEST_END_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT.format(endTime));
-        return cast(afterServiceExecution(request, service, response).getResponse());
+        return cast(getOrElse(afterServiceExecution(request, service, response).getResponse(), response));
     }
 
     static <RequestType> ServiceInterceptionResult beforeServiceExecution(Specification service, ServiceRequest<RequestType> request) {

@@ -21,7 +21,7 @@ public class TarantoolInitializationException extends RuntimeException {
         super(message);
     }
 
-    public TarantoolInitializationException(Exception e) {
+    public TarantoolInitializationException(Throwable e) {
         super(e);
     }
 }

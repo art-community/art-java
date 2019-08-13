@@ -36,6 +36,6 @@ public class LoggingModule implements Module<LoggingModuleConfiguration, ModuleS
     private final String id = LOGGING_MODULE_ID;
 
     public static LoggingModuleConfiguration loggingModule() {
-        return context().getModule(LOGGING_MODULE_ID, new LoggingModule());
+        return context().getModule(LOGGING_MODULE_ID, LoggingModule::new);
     }
 }

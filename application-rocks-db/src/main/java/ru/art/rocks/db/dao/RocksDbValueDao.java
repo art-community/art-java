@@ -76,7 +76,7 @@ public interface RocksDbValueDao {
         if (isEmpty(bytes)) return empty();
         try {
             return ofNullable(readProtobuf(parseFrom(bytes)));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new RocksDbOperationException(PROTOBUF_PARSING_ERROR, e);
         }
     }

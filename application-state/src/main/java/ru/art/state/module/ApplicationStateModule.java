@@ -44,11 +44,11 @@ public class ApplicationStateModule implements Module<ApplicationStateModuleConf
     private final ApplicationStateModuleConfiguration defaultConfiguration = new ApplicationStateModuleDefaultConfiguration();
 
     public static ApplicationStateModuleConfiguration applicationStateModule() {
-        return context().getModule(APPLICATION_STATE_MODULE_ID, new ApplicationStateModule());
+        return context().getModule(APPLICATION_STATE_MODULE_ID, ApplicationStateModule::new);
     }
 
     public static ApplicationState applicationState() {
-        return context().getModuleState(APPLICATION_STATE_MODULE_ID, new ApplicationStateModule());
+        return context().getModuleState(APPLICATION_STATE_MODULE_ID, ApplicationStateModule::new);
     }
 
     public static void main(String[] args) {

@@ -25,7 +25,7 @@ import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import java.util.Properties;
 
 @Getter
-@Builder(buildMethodName = "producerConfiguration")
+@Builder(builderMethodName = "producerConfiguration")
 public class KafkaProducerConfiguration {
     /**
      * @return clientId - identifies producer application

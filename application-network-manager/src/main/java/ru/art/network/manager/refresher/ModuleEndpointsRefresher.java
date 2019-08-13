@@ -39,7 +39,7 @@ public interface ModuleEndpointsRefresher {
                             .build())
                     .map(ClusterProfileResponse::getModuleEndpointStates)
                     .ifPresent(networkManagerModuleState().getClusterState()::updateModuleEndpoints);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             loggingModule()
                     .getLogger(ModuleEndpointsRefresher.class)
                     .error(REFRESHING_UPDATE, e);

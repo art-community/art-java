@@ -76,7 +76,7 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
     }
 
     public static ConfiguratorModuleConfiguration configuratorModule() {
-        return context().getModule(CONFIGURATOR_MODULE_ID, new ConfiguratorModule());
+        return context().getModule(CONFIGURATOR_MODULE_ID, ConfiguratorModule::new);
     }
 
     public static void main(String[] args) {

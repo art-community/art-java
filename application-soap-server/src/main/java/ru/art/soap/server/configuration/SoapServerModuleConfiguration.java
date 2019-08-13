@@ -25,9 +25,9 @@ import static ru.art.soap.server.constans.SoapServerModuleConstants.ResponseFaul
 import static ru.art.soap.server.mapper.SoapMapper.soapResponseFaultMapper;
 
 public interface SoapServerModuleConfiguration extends ModuleConfiguration {
-    <T extends Exception> T getDefaultFaultResponse();
+    <T extends Throwable> T getDefaultFaultResponse();
 
-    <T extends Exception> XmlEntityFromModelMapper<T> getDefaultFaultMapper();
+    <T extends Throwable> XmlEntityFromModelMapper<T> getDefaultFaultMapper();
 
     class SoapServerModuleDefaultConfiguration implements SoapServerModuleConfiguration {
         private SoapFault defaultFaultResponse = SoapFault.builder()
@@ -36,11 +36,11 @@ public interface SoapServerModuleConfiguration extends ModuleConfiguration {
                 .build();
         private XmlEntityFromModelMapper<SoapFault> defaultFaultMapper = soapResponseFaultMapper;
 
-        public <T extends Exception> T  getDefaultFaultResponse() {
+        public <T extends Throwable> T  getDefaultFaultResponse() {
             return cast(this.defaultFaultResponse);
         }
 
-        public <T extends Exception> XmlEntityFromModelMapper<T>  getDefaultFaultMapper() {
+        public <T extends Throwable> XmlEntityFromModelMapper<T>  getDefaultFaultMapper() {
             return cast(this.defaultFaultMapper);
         }
     }

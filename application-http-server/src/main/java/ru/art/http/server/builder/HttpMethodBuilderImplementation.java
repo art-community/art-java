@@ -17,12 +17,14 @@
 package ru.art.http.server.builder;
 
 import lombok.RequiredArgsConstructor;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.constants.HttpMethodType;
 import ru.art.http.constants.HttpRequestDataSource;
 import ru.art.http.constants.MimeToContentTypeMapper;
 import ru.art.http.server.builder.HttpServiceBuilder.*;
+import ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode;
 import ru.art.http.server.exception.HttpServerException;
 import ru.art.http.server.interceptor.HttpServerInterceptor;
 import ru.art.http.server.model.HttpService;
@@ -38,6 +40,8 @@ import static ru.art.core.factory.CollectionsFactory.setOf;
 import static ru.art.http.constants.HttpExceptionsMessages.*;
 import static ru.art.http.constants.HttpRequestDataSource.*;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.HTTP_METHOD_LISTENING_PATH_IS_EMPTY;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode.CHECKED;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode.UNCHECKED;
 import static ru.art.service.constants.RequestValidationPolicy.NON_VALIDATABLE;
 import java.util.List;
 import java.util.Set;
@@ -64,20 +68,10 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
     private boolean ignoreRequestAcceptType;
     private boolean ignoreRequestContentType;
     private boolean overrideResponseContentType;
-
-    @Override
-    public HttpMethodBuilder addRequestInterceptor(HttpServerInterceptor interceptor) {
-        if (isNull(interceptor)) throw new HttpServerException(REQUEST_INTERCEPTOR_IS_NULL);
-        requestInterceptors.add(interceptor);
-        return this;
-    }
-
-    @Override
-    public HttpMethodBuilder addResponseInterceptor(HttpServerInterceptor interceptor) {
-        if (isNull(interceptor)) throw new HttpServerException(RESPONSE_INTERCEPTOR_IS_NULL);
-        responseInterceptors.add(interceptor);
-        return this;
-    }
+    private HttpResponseHandlingMode responseHandlingMode = CHECKED;
+    private final List<ValueInterceptor> requestValueInterceptors = linkedListOf();
+    private final List<ValueInterceptor> responseValueInterceptors = linkedListOf();
+    private final List<ValueInterceptor> exceptionValueInterceptors = linkedListOf();
 
     @Override
     public HttpServiceBuilder listen(String path) {
@@ -101,7 +95,26 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
                 .ignoreRequestAcceptType(ignoreRequestAcceptType)
                 .ignoreRequestContentType(ignoreRequestContentType)
                 .overrideResponseContentType(overrideResponseContentType)
+                .responseHandlingMode(responseHandlingMode)
+                .requestValueInterceptors(requestValueInterceptors)
+                .responseValueInterceptors(responseValueInterceptors)
+                .exceptionValueInterceptors(exceptionValueInterceptors)
                 .build());
+    }
+
+
+    @Override
+    public HttpMethodBuilder addRequestInterceptor(HttpServerInterceptor interceptor) {
+        if (isNull(interceptor)) throw new HttpServerException(REQUEST_INTERCEPTOR_IS_NULL);
+        requestInterceptors.add(interceptor);
+        return this;
+    }
+
+    @Override
+    public HttpMethodBuilder addResponseInterceptor(HttpServerInterceptor interceptor) {
+        if (isNull(interceptor)) throw new HttpServerException(RESPONSE_INTERCEPTOR_IS_NULL);
+        responseInterceptors.add(interceptor);
+        return this;
     }
 
     @Override
@@ -154,6 +167,18 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
     }
 
     @Override
+    public HttpMethodBuilder checkedResponse() {
+        this.responseHandlingMode = CHECKED;
+        return this;
+    }
+
+    @Override
+    public HttpMethodBuilder uncheckedResponse() {
+        this.responseHandlingMode = UNCHECKED;
+        return this;
+    }
+
+    @Override
     public HttpMethodResponseBuilder produces(MimeToContentTypeMapper mimeType) {
         if (isNull(mimeType)) throw new HttpServerException(RESPONSE_CONTENT_TYPE_IS_NULL);
         this.producesMimeType = mimeType;
@@ -190,6 +215,27 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
     public HttpMethodBuilder exceptionMapper(ValueFromModelMapper exceptionMapper) {
         if (isNull(exceptionMapper)) throw new HttpServerException(EXCEPTION_MAPPER_IS_NULL);
         this.exceptionMapper = exceptionMapper;
+        return this;
+    }
+
+    @Override
+    public HttpMethodBuilder addRequestValueInterceptor(ValueInterceptor interceptor) {
+        if (isNull(interceptor)) throw new HttpServerException(REQUEST_VALUE_INTERCEPTOR);
+        requestValueInterceptors.add(interceptor);
+        return this;
+    }
+
+    @Override
+    public HttpMethodBuilder addResponseValueInterceptor(ValueInterceptor interceptor) {
+        if (isNull(interceptor)) throw new HttpServerException(RESPONSE_VALUE_INTERCEPTOR);
+        responseValueInterceptors.add(interceptor);
+        return this;
+    }
+
+    @Override
+    public HttpMethodBuilder addExceptionValueInterceptor(ValueInterceptor interceptor) {
+        if (isNull(interceptor)) throw new HttpServerException(EXCEPTION_VALUE_INTERCEPTOR);
+        exceptionValueInterceptors.add(interceptor);
         return this;
     }
 }

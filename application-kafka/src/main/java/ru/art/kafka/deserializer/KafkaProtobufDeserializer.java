@@ -33,7 +33,7 @@ public class KafkaProtobufDeserializer implements Deserializer<Value> {
     public Value deserialize(String topic, byte[] data) {
         try {
             return readProtobuf(parseFrom(data));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new KafkaDeserialzerException(e);
         }
     }

@@ -26,6 +26,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.art.core.validator.BuilderValidator;
 import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport;
@@ -42,6 +43,7 @@ import static reactor.core.publisher.Flux.from;
 import static reactor.core.publisher.Mono.just;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.factory.CollectionsFactory.linkedListOf;
 import static ru.art.logging.LoggingModule.loggingModule;
 import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.INVALID_RSOCKET_COMMUNICATION_CONFIGURATION;
 import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.UNSUPPORTED_TRANSPORT;
@@ -53,6 +55,7 @@ import static ru.art.rsocket.reader.RsocketPayloadReader.readPayload;
 import static ru.art.rsocket.selector.RsocketDataFormatMimeTypeConverter.toMimeType;
 import static ru.art.rsocket.writer.ServiceRequestPayloadWriter.writeServiceRequestPayload;
 import static ru.art.service.mapping.ServiceResponseMapping.toServiceResponse;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -66,6 +69,8 @@ public class RsocketCommunicator {
     private ValueToModelMapper responseMapper;
     private RsocketDataFormat dataFormat;
     private final BuilderValidator validator = new BuilderValidator(RsocketCommunicator.class.getName());
+    private List<ValueInterceptor> requestValueInterceptors = linkedListOf();
+    private List<ValueInterceptor> responseValueInterceptors = linkedListOf();
 
     private RsocketCommunicator(RsocketCommunicationTargetConfiguration configuration) {
         dataFormat = configuration.dataFormat();
@@ -127,12 +132,22 @@ public class RsocketCommunicator {
         return this;
     }
 
-    public RsocketCommunicator requestMapper(ValueFromModelMapper requestMapper) {
+    public RsocketCommunicator addRequestValueInterceptor(ValueInterceptor interceptor) {
+        requestValueInterceptors.add(validator.notNullField(interceptor, "requestValueInterceptor"));
+        return this;
+    }
+
+    public RsocketCommunicator addResponseValueInterceptor(ValueInterceptor interceptor) {
+        responseValueInterceptors.add(validator.notNullField(interceptor, "responseValueInterceptor"));
+        return this;
+    }
+
+    public <RequestType> RsocketCommunicator requestMapper(ValueFromModelMapper<RequestType, ? extends Value> requestMapper) {
         this.requestMapper = validator.notEmptyField(requestMapper, "requestMapper");
         return this;
     }
 
-    public RsocketCommunicator responseMapper(ValueToModelMapper responseMapper) {
+    public <ResponseType> RsocketCommunicator responseMapper(ValueToModelMapper<ResponseType, ? extends Value> responseMapper) {
         this.responseMapper = validator.notEmptyField(responseMapper, "responseMapper");
         return this;
     }

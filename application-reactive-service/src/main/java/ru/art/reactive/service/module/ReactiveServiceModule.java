@@ -30,6 +30,6 @@ public class ReactiveServiceModule implements Module<ReactiveServiceModuleConfig
     private final String id = REACTIVE_SERVICE_MODULE_ID;
 
     public static ReactiveServiceModuleConfiguration reactiveServiceModule() {
-        return context().getModule(REACTIVE_SERVICE_MODULE_ID, new ReactiveServiceModule());
+        return context().getModule(REACTIVE_SERVICE_MODULE_ID, ReactiveServiceModule::new);
     }
 }

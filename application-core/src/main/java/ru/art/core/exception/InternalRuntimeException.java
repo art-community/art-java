@@ -21,7 +21,7 @@ public class InternalRuntimeException extends RuntimeException {
         super(message);
     }
 
-    public InternalRuntimeException(Exception e) {
+    public InternalRuntimeException(Throwable e) {
         super(e);
     }
 }

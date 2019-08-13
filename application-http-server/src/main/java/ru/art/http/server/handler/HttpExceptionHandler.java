@@ -20,6 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @FunctionalInterface
-public interface HttpExceptionHandler<T extends Exception> {
+public interface HttpExceptionHandler<T extends Throwable> {
     void handle(T exception, HttpServletRequest request, HttpServletResponse response);
 }

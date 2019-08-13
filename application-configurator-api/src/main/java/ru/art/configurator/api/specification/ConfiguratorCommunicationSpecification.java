@@ -58,7 +58,7 @@ public class ConfiguratorCommunicationSpecification implements GrpcCommunication
     private Configuration getConfiguration() {
         try {
             return getOrElse((Configuration) getGetProtobufConfig().execute(moduleKey).getResponseData(), Configuration.builder().build());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return Configuration.builder()
                     .configuration(entityBuilder().build())
                     .build();

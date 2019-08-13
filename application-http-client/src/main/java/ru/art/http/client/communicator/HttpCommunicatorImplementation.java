@@ -21,6 +21,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.nio.client.HttpAsyncClient;
 import ru.art.core.validator.BuilderValidator;
+import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.client.communicator.HttpCommunicator.HttpAsynchronousCommunicator;
@@ -120,7 +122,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     }
 
     @Override
-    public HttpCommunicator requestMapper(ValueFromModelMapper requestMapper) {
+    public <RequestType> HttpCommunicator requestMapper(ValueFromModelMapper<RequestType, ? extends Value> requestMapper) {
         configuration.setRequestMapper(validator.notNullField(cast(requestMapper), "requestMapper"));
         return this;
     }
@@ -144,7 +146,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     }
 
     @Override
-    public HttpCommunicator responseMapper(ValueToModelMapper responseMapper) {
+    public <ResponseType> HttpCommunicator responseMapper(ValueToModelMapper<ResponseType, ? extends Value> responseMapper) {
         configuration.setResponseMapper(validator.notNullField(cast(responseMapper), "responseMapper"));
         return this;
 
@@ -215,6 +217,18 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     @Override
     public HttpCommunicator requestEncoding(String encoding) {
         configuration.setRequestContentEncoding(emptyIfNull(encoding));
+        return this;
+    }
+
+    @Override
+    public HttpCommunicator addRequestValueInterceptor(ValueInterceptor interceptor) {
+        configuration.getRequestValueInterceptors().add(validator.notNullField(interceptor, "requestValueInterceptor"));
+        return this;
+    }
+
+    @Override
+    public HttpCommunicator addResponseValueInterceptor(ValueInterceptor interceptor) {
+        configuration.getResponseValueInterceptors().add(validator.notNullField(interceptor, "responseValueInterceptor"));
         return this;
     }
 

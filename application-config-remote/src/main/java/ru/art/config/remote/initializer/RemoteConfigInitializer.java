@@ -16,6 +16,7 @@
 
 package ru.art.config.remote.initializer;
 
+import lombok.experimental.UtilityClass;
 import ru.art.config.Config;
 import ru.art.config.module.ConfigModule;
 import ru.art.config.remote.specification.RemoteConfigServiceSpecification;
@@ -28,22 +29,27 @@ import static ru.art.config.ConfigProvider.config;
 import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS;
 import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.LocalConfigKeys.*;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
+import static ru.art.core.context.Context.withContext;
 import static ru.art.logging.LoggingModule.loggingModule;
 import static ru.art.service.ServiceModule.serviceModule;
 
-public interface RemoteConfigInitializer {
-    static Context useRemoteConfigurations(Context context) {
-        context.loadModule(new LoggingModule())
+@UtilityClass
+public class RemoteConfigInitializer {
+    public static void useRemoteConfigurations(Context context) {
+        withContext(context.loadModule(new LoggingModule())
                 .loadModule(new ServiceModule())
                 .loadModule(new ConfigModule())
-                .loadModule(new GrpcClientModule());
+                .loadModule(new GrpcClientModule()), RemoteConfigInitializer::applyRemoteConfigurable);
+    }
+
+    private static void applyRemoteConfigurable(Context context) {
         try {
             Config localConfig = config(EMPTY_STRING);
             if (!localConfig.hasPath(CONFIGURATOR_HOST) ||
                     !localConfig.hasPath(CONFIGURATOR_PORT) ||
                     !localConfig.hasPath(CONFIGURATOR_PATH)) {
                 loggingModule().getLogger(RemoteConfigInitializer.class).warn(CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS);
-                return context;
+                return;
             }
             String configuratorHost = localConfig.getString(CONFIGURATOR_HOST);
             Integer configuratorPort = localConfig.getInt(CONFIGURATOR_PORT);
@@ -52,10 +58,8 @@ public interface RemoteConfigInitializer {
                     .getServiceRegistry()
                     .registerService(new ConfiguratorCommunicationSpecification(configuratorHost, configuratorPort, configuratorPath))
                     .registerService(new RemoteConfigServiceSpecification());
-            return context;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             loggingModule().getLogger(RemoteConfigInitializer.class).warn(CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS, e);
-            return context;
         }
     }
 }

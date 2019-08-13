@@ -19,6 +19,7 @@ package ru.art.http.server.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.constants.HttpMethodType;
@@ -30,7 +31,6 @@ import ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandli
 import ru.art.http.server.interceptor.HttpServerInterceptor;
 import ru.art.http.server.path.HttpPath;
 import ru.art.service.constants.RequestValidationPolicy;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode.CHECKED;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +56,9 @@ public class HttpService {
         private final ValueToModelMapper requestMapper;
         private final ValueFromModelMapper responseMapper;
         private final ValueFromModelMapper exceptionMapper;
+        private final List<ValueInterceptor> requestValueInterceptors;
+        private final List<ValueInterceptor> responseValueInterceptors;
+        private final List<ValueInterceptor> exceptionValueInterceptors;
         private final List<HttpServerInterceptor> requestInterceptors;
         private final List<HttpServerInterceptor> responseInterceptors;
         private final RequestValidationPolicy requestValidationPolicy;
@@ -64,8 +67,7 @@ public class HttpService {
         private final boolean ignoreRequestAcceptType;
         private final boolean ignoreRequestContentType;
         private final boolean overrideResponseContentType;
-        @Builder.Default
-        private final HttpResponseHandlingMode responseHandlingMode = CHECKED;
+        private final HttpResponseHandlingMode responseHandlingMode;
     }
 
     @Getter

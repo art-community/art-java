@@ -40,11 +40,11 @@ public class RocksDbModule implements Module<RocksDbModuleConfiguration, RocksDb
     private RocksDbModuleState state;
 
     public static RocksDbModuleConfiguration rocksDbModule() {
-        return context().getModule(ROCKS_DB_MODULE_ID, new RocksDbModule());
+        return context().getModule(ROCKS_DB_MODULE_ID, RocksDbModule::new);
     }
 
     public static RocksDbModuleState rocksDbModuleState() {
-        return context().getModuleState(ROCKS_DB_MODULE_ID, new RocksDbModule());
+        return context().getModuleState(ROCKS_DB_MODULE_ID, RocksDbModule::new);
     }
 
     @Override

@@ -30,6 +30,6 @@ public class SoapClientModule implements Module<SoapClientModuleConfiguration, M
     private final SoapClientModuleConfiguration defaultConfiguration = new SoapClientModuleDefaultConfiguration();
 
     public static SoapClientModuleConfiguration soapClientModule() {
-        return context().getModule(SOAP_CLIENT_MODULE_ID, new SoapClientModule());
+        return context().getModule(SOAP_CLIENT_MODULE_ID, SoapClientModule::new);
     }
 }

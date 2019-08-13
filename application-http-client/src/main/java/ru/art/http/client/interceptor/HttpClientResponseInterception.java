@@ -45,5 +45,5 @@ public interface HttpClientResponseInterception {
         };
     }
 
-    InterceptionStrategy intercept(HttpUriRequest request, HttpResponse response) throws Exception;
+    InterceptionStrategy intercept(HttpUriRequest request, HttpResponse response);
 }

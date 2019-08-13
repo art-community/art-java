@@ -16,6 +16,8 @@
 
 package ru.art.rsocket.function;
 
+import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode;
@@ -41,18 +43,29 @@ public class RsocketServiceFunction {
         this.serviceId = serviceId;
     }
 
-    public RsocketServiceFunction responseMapper(ValueFromModelMapper responseMapper) {
-        rsocketMethod.responseMapper(responseMapper);
-        return this;
-    }
 
     public RsocketServiceFunction overrideResponseDataFormat(RsocketDataFormat dataFormat) {
         rsocketMethod.overrideResponseDataFormat(dataFormat);
         return this;
     }
 
-    public RsocketServiceFunction requestMapper(ValueToModelMapper requestMapper) {
+    public <ResponseType> RsocketServiceFunction responseMapper(ValueFromModelMapper<ResponseType, ? extends Value> responseMapper) {
+        rsocketMethod.responseMapper(responseMapper);
+        return this;
+    }
+
+    public <RequestMapper> RsocketServiceFunction requestMapper(ValueToModelMapper<RequestMapper, ? extends Value> requestMapper) {
         rsocketMethod.requestMapper(requestMapper);
+        return this;
+    }
+
+    public RsocketServiceFunction addRequestValueInterceptor(ValueInterceptor interceptor) {
+        rsocketMethod.requestValueInterceptors().add(interceptor);
+        return this;
+    }
+
+    public RsocketServiceFunction addResponseValueInterceptor(ValueInterceptor interceptor) {
+        rsocketMethod.responseValueInterceptors().add(interceptor);
         return this;
     }
 

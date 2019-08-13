@@ -21,7 +21,7 @@ class TypesafeConfigLoadingException extends RuntimeException {
         super(message);
     }
 
-    TypesafeConfigLoadingException(Exception e) {
+    TypesafeConfigLoadingException(Throwable e) {
         super(e);
     }
 }

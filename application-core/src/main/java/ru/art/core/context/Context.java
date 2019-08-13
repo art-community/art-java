@@ -40,6 +40,8 @@ import static ru.art.core.factory.CollectionsFactory.mapOf;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class Context {
     private static final ReentrantLock lock = new ReentrantLock();
@@ -95,7 +97,8 @@ public class Context {
         ReentrantLock lock = Context.lock;
         lock.lock();
         long oldContextLastActionTimestamp = INSTANCE.lastActionTimestamp;
-        INSTANCE = new Context(contextInitialConfiguration, context().modules);
+        final Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules = INSTANCE.modules;
+        INSTANCE = new Context(contextInitialConfiguration, modules);
         INSTANCE.refreshAndReloadModules();
         out.println(format(CONTEXT_RELOADED_MESSAGE, currentTimeMillis() - oldContextLastActionTimestamp));
         INSTANCE.lastActionTimestamp = currentTimeMillis();
@@ -118,6 +121,90 @@ public class Context {
 
     public static ContextInitialConfiguration contextConfiguration() {
         return context().initialConfiguration;
+    }
+
+    public static void withContext(Context context, Consumer<Context> action) {
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = context;
+        lock.unlock();
+        action.accept(INSTANCE);
+        lock.lock();
+        INSTANCE = currentContext;
+        lock.unlock();
+    }
+
+    public static void withContext(ContextInitialConfiguration contextInitialConfiguration, Consumer<Context> action) {
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = new Context(contextInitialConfiguration);
+        action.accept(INSTANCE);
+        INSTANCE = currentContext;
+        lock.unlock();
+    }
+
+    public static void withModules(Consumer<Context> action, Module<?, ?>... modules) {
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = new Context();
+        for (Module<?, ?> module : modules) {
+            INSTANCE.loadModule(module);
+        }
+        lock.unlock();
+        action.accept(INSTANCE);
+        lock.lock();
+        INSTANCE = currentContext;
+        lock.unlock();
+    }
+
+    public static void withModules(ContextInitialConfiguration contextInitialConfiguration, Consumer<Context> action, Module<?, ?>... modules) {
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = new Context(contextInitialConfiguration);
+        for (Module<?, ?> module : modules) {
+            INSTANCE.loadModule(module);
+        }
+        lock.unlock();
+        action.accept(INSTANCE);
+        lock.lock();
+        INSTANCE = currentContext;
+        lock.unlock();
+    }
+
+    @SafeVarargs
+    public static void withModules(Consumer<Context> action, Supplier<Module<?, ?>>... modules) {
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = new Context();
+        for (Supplier<Module<?, ?>> module : modules) {
+            INSTANCE.loadModule(module.get());
+        }
+        lock.unlock();
+        action.accept(INSTANCE);
+        lock.lock();
+        INSTANCE = currentContext;
+        lock.unlock();
+    }
+
+    @SafeVarargs
+    public static void withModules(ContextInitialConfiguration contextInitialConfiguration, Consumer<Context> action, Supplier<Module<?, ?>>... modules) {
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = new Context(contextInitialConfiguration);
+        for (Supplier<Module<?, ?>> module : modules) {
+            INSTANCE.loadModule(module.get());
+        }
+        lock.unlock();
+        action.accept(INSTANCE);
+        lock.lock();
+        INSTANCE = currentContext;
+        lock.unlock();
     }
 
     public <C extends ModuleConfiguration, S extends ModuleState> C getModule(String moduleId, Module<C, S> toLoadIfNotExists) {
@@ -153,6 +240,42 @@ public class Context {
         }
         loadModule(toLoadIfNotExists, toLoadIfNotExists.getDefaultConfiguration());
         return cast(toLoadIfNotExists.getState());
+    }
+
+    public <C extends ModuleConfiguration, S extends ModuleState> C getModule(String moduleId, Supplier<Module<C, S>> toLoadIfNotExists) {
+        if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
+        PreconfiguredModuleProvider preconfiguredModulesProvider;
+        if (nonNull(moduleContainer)) {
+            return cast(moduleContainer.getConfiguration());
+        }
+        C configuration;
+        Module<C, S> module = toLoadIfNotExists.get();
+        if (nonNull(preconfiguredModulesProvider = contextConfiguration().getPreconfiguredModulesProvider())) {
+            configuration = cast(preconfiguredModulesProvider.getModuleConfiguration(moduleId).orElse(module.getDefaultConfiguration()));
+            loadModule(module, configuration);
+            return cast(configuration);
+        }
+        loadModule(module, (configuration = module.getDefaultConfiguration()));
+        return cast(configuration);
+    }
+
+    public <C extends ModuleConfiguration, S extends ModuleState> S getModuleState(String moduleId, Supplier<Module<C, S>> toLoadIfNotExists) {
+        if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
+        PreconfiguredModuleProvider preconfiguredModulesProvider;
+        if (nonNull(moduleContainer)) {
+            return cast(moduleContainer.getModule().getState());
+        }
+        Module<C, S> module = toLoadIfNotExists.get();
+        if (nonNull(preconfiguredModulesProvider = contextConfiguration().getPreconfiguredModulesProvider())) {
+            C configuration = cast(preconfiguredModulesProvider.getModuleConfiguration(moduleId)
+                    .orElse(module.getDefaultConfiguration()));
+            loadModule(module, configuration);
+            return cast(module.getState());
+        }
+        loadModule(module, module.getDefaultConfiguration());
+        return cast(module.getState());
     }
 
     public <C extends ModuleConfiguration, S extends ModuleState> Context loadModule(Module<C, S> module) {
@@ -267,4 +390,5 @@ public class Context {
     private void unloadModules() {
         modules.values().forEach(module -> module.getModule().onUnload());
     }
+
 }

@@ -25,10 +25,10 @@ import java.util.function.Function;
 
 @RequiredArgsConstructor
 public class CauseHandler {
-    private final Exception outer;
+    private final Throwable outer;
     private Object result;
 
-    public static CauseHandler handleCause(Exception outer) {
+    public static CauseHandler handleCause(Throwable outer) {
         return new CauseHandler(outer);
     }
 

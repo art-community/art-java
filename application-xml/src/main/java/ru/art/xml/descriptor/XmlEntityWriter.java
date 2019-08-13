@@ -61,14 +61,14 @@ public class XmlEntityWriter {
             xmlStreamWriter = xmlOutputFactory.createXMLStreamWriter(os, UTF_8.name());
             writeAllElements(xmlStreamWriter, xmlEntity);
             return os.toString();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new XmlMappingException(e);
         } finally {
             if (nonNull(xmlStreamWriter)) {
                 try {
                     xmlStreamWriter.flush();
                     xmlStreamWriter.close();
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     loggingModule().getLogger(XmlEntityWriter.class).error(XML_GENERATOR_CLOSING_ERROR, e);
                 }
             }

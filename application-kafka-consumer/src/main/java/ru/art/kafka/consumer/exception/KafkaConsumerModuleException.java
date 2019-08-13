@@ -21,7 +21,7 @@ public class KafkaConsumerModuleException extends RuntimeException {
         super(message);
     }
 
-    public KafkaConsumerModuleException(Exception e) {
+    public KafkaConsumerModuleException(Throwable e) {
         super(e);
     }
 }

@@ -85,7 +85,7 @@ class HttpCommunicationExecutor {
                 if (strategy == STOP_HANDLING) return null;
             }
             return parseResponse(configuration, httpResponse);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new HttpClientException(e);
         }
     }
@@ -192,7 +192,7 @@ class HttpCommunicationExecutor {
                 if (nonNull(responseHandler)) {
                     responseHandler.completed(ofNullable(cast(request)), ofNullable(cast(parseResponse(configuration, result))));
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 HttpCommunicationExceptionHandler<?> exceptionHandler = configuration.getExceptionHandler();
                 if (nonNull(exceptionHandler)) {
                     exceptionHandler.failed(ofNullable(cast(request)), e);

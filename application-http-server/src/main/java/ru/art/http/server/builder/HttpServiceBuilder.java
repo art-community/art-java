@@ -16,6 +16,7 @@
 
 package ru.art.http.server.builder;
 
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.constants.MimeToContentTypeMapper;
@@ -58,6 +59,12 @@ public interface HttpServiceBuilder {
         HttpMethodBuilder addResponseInterceptor(HttpServerInterceptor interceptor);
 
         HttpMethodBuilder exceptionMapper(ValueFromModelMapper exceptionMapper);
+
+        HttpMethodBuilder addRequestValueInterceptor(ValueInterceptor interceptor);
+
+        HttpMethodBuilder addResponseValueInterceptor(ValueInterceptor interceptor);
+
+        HttpMethodBuilder addExceptionValueInterceptor(ValueInterceptor exceptionMapper);
     }
 
     interface HttpMethodWithParamsBuilder extends HttpMethodBuilder, HttpMethodResponseBuilder {
@@ -90,5 +97,9 @@ public interface HttpServiceBuilder {
         HttpMethodResponseBuilder ignoreRequestAcceptType();
 
         HttpMethodResponseBuilder overrideResponseContentType();
+
+        HttpMethodBuilder checkedResponse();
+
+        HttpMethodBuilder uncheckedResponse();
     }
 }

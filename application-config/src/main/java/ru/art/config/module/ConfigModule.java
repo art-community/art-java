@@ -30,6 +30,6 @@ public class ConfigModule implements Module<ConfigModuleConfiguration, ModuleSta
     private final String id = CONFIG_MODULE_ID;
 
     public static ConfigModuleConfiguration configModule() {
-        return context().getModule(CONFIG_MODULE_ID, new ConfigModule());
+        return context().getModule(CONFIG_MODULE_ID, ConfigModule::new);
     }
 }
