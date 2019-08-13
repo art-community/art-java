@@ -58,8 +58,8 @@ public class GrpcCommunicationConfiguration {
     private long deadlineTimeout;
     @ToString.Include
     private boolean useSecuredTransport;
-    private final List<ValueInterceptor> requestValueInterceptors = linkedListOf();
-    private final List<ValueInterceptor> responseValueInterceptors = linkedListOf();
+    private List<ValueInterceptor> requestValueInterceptors = linkedListOf();
+    private List<ValueInterceptor> responseValueInterceptors = linkedListOf();
 
     void validateRequiredFields() {
         boolean serviceIdIsEmpty = isEmpty(serviceId);

@@ -40,15 +40,15 @@ public class GrpcService {
         private ValueToModelMapper requestMapper;
         private ValueFromModelMapper responseMapper;
         private RequestValidationPolicy validationPolicy;
-        private final List<ValueInterceptor> requestValueInterceptors = linkedListOf();
-        private final List<ValueInterceptor> responseValueInterceptors = linkedListOf();
+        private List<ValueInterceptor> requestValueInterceptors = linkedListOf();
+        private List<ValueInterceptor> responseValueInterceptors = linkedListOf();
 
-        public GrpcMethod requestValueInterceptor(ValueInterceptor interceptor) {
+        public GrpcMethod addRequestValueInterceptor(ValueInterceptor interceptor) {
             requestValueInterceptors.add(interceptor);
             return this;
         }
 
-        public GrpcMethod responseValueInterceptor(ValueInterceptor interceptor) {
+        public GrpcMethod addResponseValueInterceptor(ValueInterceptor interceptor) {
             responseValueInterceptors.add(interceptor);
             return this;
         }

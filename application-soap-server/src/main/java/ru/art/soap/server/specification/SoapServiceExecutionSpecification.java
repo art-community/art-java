@@ -45,7 +45,7 @@ public class SoapServiceExecutionSpecification implements HttpServiceSpecificati
     private final HttpService httpService = addExecuteSoapServiceOperation(httpService())
             .get(GET_SERVICE_WSDL)
             .responseMapper(stringMapper.getFromModel())
-            .listen(soapServiceSpecification.getSoapService().getListeningPath())
+            .listen(soapServiceSpecification.getSoapService().getPath())
 
             .serve(EMPTY_STRING);
 
@@ -65,7 +65,7 @@ public class SoapServiceExecutionSpecification implements HttpServiceSpecificati
         }
         return methodResponseBuilder.produces(soapService.getProduces().toHttpMimeToContentTypeMapper())
                 .responseMapper(soapResponseFromModelMapper)
-                .listen(soapService.getListeningPath());
+                .listen(soapService.getPath());
     }
 
     @Override

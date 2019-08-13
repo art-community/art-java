@@ -65,6 +65,8 @@ import static ru.art.service.interceptor.ServiceExecutionInterceptor.interceptRe
 import static ru.art.service.interceptor.ServiceExecutionInterceptor.interceptResponse;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.SOAP_SERVICE_TYPE;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.WSDL_EXTENSION;
+import static ru.art.soap.server.model.SoapService.SoapOperation.soapOperation;
+import static ru.art.soap.server.model.SoapService.soapService;
 import java.util.List;
 
 
@@ -150,16 +152,14 @@ public class ExampleServiceSpecification implements HttpServiceSpecification, Gr
             .serve();
 
     //todo soap specification
-    private final SoapService soapService = SoapService.builder()
-            .soapOperation(EXAMPLE_OPERATION, SoapService.SoapOperation.builder()
-                    .methodId(REQUEST_RESPONSE_HANDLING_EXAMPLE)
-                    //.requestMapper(toCaseNotificationRequest)
-                    //.responseMapper(FromCaseNotificationResponse)
-                    .build())
-            .listeningPath(configString(SOAP_SECTION, EXAMPLE_SOAP_SERVICE_PATH))
-            .serviceUrl(configString(HTTP_SERVER_SECTION_ID, URL) + configString(SOAP_SECTION, EXAMPLE_SOAP_SERVICE_PATH))
+    private final SoapService soapService = soapService()
+            .operation(EXAMPLE_OPERATION, soapOperation()
+                    .methodId(REQUEST_RESPONSE_HANDLING_EXAMPLE))
+            //.requestMapper(toCaseNotificationRequest)
+            //.responseMapper(FromCaseNotificationResponse))
+            .wsdlServiceUrl(configString(HTTP_SERVER_SECTION_ID, URL) + configString(SOAP_SECTION, EXAMPLE_SOAP_SERVICE_PATH))
             .wsdlResourcePath(configString(SOAP_SECTION, EXAMPLE_SOAP_SERVICE_PATH) + WSDL_EXTENSION)
-            .build();
+            .serve(configString(SOAP_SECTION, EXAMPLE_SOAP_SERVICE_PATH));
 
 
     private final List<String> serviceTypes = fixedArrayOf(GRPC_SERVICE_TYPE, HTTP_SERVICE_TYPE, SOAP_SERVICE_TYPE);

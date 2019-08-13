@@ -43,7 +43,17 @@ public class RsocketService {
         private ValueFromModelMapper<?, ?> responseMapper;
         private RequestValidationPolicy validationPolicy = NON_VALIDATABLE;
         private RsocketDataFormat overrideResponseDataFormat;
-        private final List<ValueInterceptor> requestValueInterceptors = linkedListOf();
-        private final List<ValueInterceptor> responseValueInterceptors = linkedListOf();
+        private List<ValueInterceptor> requestValueInterceptors = linkedListOf();
+        private List<ValueInterceptor> responseValueInterceptors = linkedListOf();
+
+        public RsocketMethod addRequestValueInterceptor(ValueInterceptor interceptor) {
+            requestValueInterceptors.add(interceptor);
+            return this;
+        }
+
+        public RsocketMethod addResponseValueInterceptor(ValueInterceptor interceptor) {
+            responseValueInterceptors.add(interceptor);
+            return this;
+        }
     }
 }

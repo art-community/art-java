@@ -54,12 +54,12 @@ public class GrpcServiceFunction {
     }
 
     public GrpcServiceFunction addRequestValueInterceptor(ValueInterceptor interceptor) {
-        grpcMethod.requestValueInterceptor(interceptor);
+        grpcMethod.addRequestValueInterceptor(interceptor);
         return this;
     }
 
     public GrpcServiceFunction addResponseValueInterceptor(ValueInterceptor interceptor) {
-        grpcMethod.responseValueInterceptor(interceptor);
+        grpcMethod.addResponseValueInterceptor(interceptor);
         return this;
     }
 

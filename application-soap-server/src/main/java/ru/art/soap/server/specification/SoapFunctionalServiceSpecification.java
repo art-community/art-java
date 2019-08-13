@@ -14,26 +14,25 @@
  *    limitations under the License.
  */
 
-package ru.art.http.server.function;
+package ru.art.soap.server.specification;
 
 import lombok.Getter;
-import ru.art.http.server.model.HttpService;
-import ru.art.http.server.specification.HttpServiceSpecification;
+import ru.art.soap.server.model.SoapService;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.constants.CharConstants.UNDERSCORE;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVICE_TYPE;
+import static ru.art.soap.server.constans.SoapServerModuleConstants.SOAP_SERVICE_TYPE;
 import java.util.function.Function;
 
 @Getter
-public class HttpFunctionalServiceSpecification implements HttpServiceSpecification {
+public class SoapFunctionalServiceSpecification implements SoapServiceSpecification {
     private final String serviceId;
-    private final HttpService httpService;
+    private final SoapService soapService;
     private final Function<?, ?> function;
 
-    HttpFunctionalServiceSpecification(HttpService httpService, Function<?, ?> function) {
-        this.httpService = httpService;
+    public SoapFunctionalServiceSpecification(SoapService soapService, Function<?, ?> function) {
+        this.serviceId = SOAP_SERVICE_TYPE + UNDERSCORE + soapService.getPath();
+        this.soapService = soapService;
         this.function = function;
-        serviceId = HTTP_SERVICE_TYPE + UNDERSCORE + httpService.getPath();
     }
 
     @Override

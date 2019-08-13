@@ -33,6 +33,7 @@ public interface SoapServerModuleConstants {
     String WSDL_EXTENSION = ".wsdl";
     String SOAP_SERVICE_URL = "serviceUrl";
     String SOAP_SERVICE_TYPE = "SOAP";
+    String EXECUTE_SOAP_FUNCTION = "EXECUTE_SOAP_FUNCTION";
 
     interface ResponseFaultConstants {
         String UNEXPECTED_ERROR = "UNEXPECTED_ERROR";

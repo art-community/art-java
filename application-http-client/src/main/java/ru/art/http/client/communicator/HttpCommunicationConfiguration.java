@@ -46,11 +46,11 @@ import java.util.Map;
 @Getter(value = PACKAGE)
 @Setter(value = PACKAGE)
 class HttpCommunicationConfiguration {
-    private final List<String> pathParameters = linkedListOf();
-    private final Map<String, String> queryParameters = mapOf();
-    private final List<HttpClientInterceptor> requestInterceptors = linkedListOf();
-    private final List<HttpClientInterceptor> responseInterceptors = linkedListOf();
-    private final Map<String, String> headers = mapOf();
+    private List<String> pathParameters = linkedListOf();
+    private Map<String, String> queryParameters = mapOf();
+    private List<HttpClientInterceptor> requestInterceptors = linkedListOf();
+    private List<HttpClientInterceptor> responseInterceptors = linkedListOf();
+    private Map<String, String> headers = mapOf();
     private String url;
     private HttpMethodType methodType = GET;
     private ValueFromModelMapper<?, ? extends Value> requestMapper;
@@ -70,7 +70,7 @@ class HttpCommunicationConfiguration {
     private boolean ignoreResponseContentType;
     private HttpClient syncClient;
     private HttpAsyncClient asyncClient;
-    private final List<ValueInterceptor> requestValueInterceptors = linkedListOf();
-    private final List<ValueInterceptor> responseValueInterceptors = linkedListOf();
-    private final List<ValueInterceptor> exceptionValueInterceptors = linkedListOf();
+    private List<ValueInterceptor> requestValueInterceptors = linkedListOf();
+    private List<ValueInterceptor> responseValueInterceptors = linkedListOf();
+    private List<ValueInterceptor> exceptionValueInterceptors = linkedListOf();
 }
