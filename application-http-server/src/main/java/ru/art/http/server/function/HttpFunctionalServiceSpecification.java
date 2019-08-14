@@ -20,8 +20,7 @@ import lombok.Getter;
 import ru.art.http.server.model.HttpService;
 import ru.art.http.server.specification.HttpServiceSpecification;
 import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.StringConstants.CLOSING_BRACES;
-import static ru.art.core.constants.StringConstants.OPENING_BRACKET;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVICE_TYPE;
 import java.util.function.Function;
 
@@ -32,7 +31,7 @@ public class HttpFunctionalServiceSpecification implements HttpServiceSpecificat
     private final Function<?, ?> function;
 
     HttpFunctionalServiceSpecification(HttpService httpService, Function<?, ?> function) {
-        this.serviceId = HTTP_SERVICE_TYPE + OPENING_BRACKET + httpService.getHttpMethods().get(0).getPath() + CLOSING_BRACES;
+        this.serviceId = HTTP_SERVICE_TYPE + OPENING_BRACKET + httpService.getHttpMethods().get(0).getPath() + CLOSING_BRACKET;
         this.httpService = httpService;
         this.function = function;
     }

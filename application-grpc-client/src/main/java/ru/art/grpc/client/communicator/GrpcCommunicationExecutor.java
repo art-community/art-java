@@ -31,7 +31,6 @@ import static java.util.Objects.nonNull;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
 import static ru.art.core.extension.StringExtensions.emptyIfNull;
 import static ru.art.grpc.client.communicator.GrpcServiceResponseExtractor.extractServiceResponse;
 import static ru.art.grpc.client.module.GrpcClientModule.grpcClientModule;
@@ -50,7 +49,7 @@ class GrpcCommunicationExecutor {
         long deadlineTimeout = configuration.getDeadlineTimeout();
         GrpcServletBlockingStub stub = new GrpcServlet().newBlockingStub(channelBuilder.build(), emptyIfNull(configuration.getPath()))
                 .withDeadlineAfter(deadlineTimeout > 0L ? deadlineTimeout : grpcClientModule().getTimeout(), MILLISECONDS)
-                .withInterceptors(ifEmpty(configuration.getInterceptors(), grpcClientModule().getInterceptors()).toArray(new ClientInterceptor[0]));
+                .withInterceptors(configuration.getInterceptors().toArray(new ClientInterceptor[0]));
         Executor executor;
         if (nonNull(executor = configuration.getOverrideExecutor()) || nonNull(executor = grpcClientModule().getOverridingExecutor())) {
             stub = stub.withExecutor(executor);

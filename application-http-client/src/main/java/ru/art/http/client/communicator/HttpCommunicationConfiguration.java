@@ -48,8 +48,8 @@ import java.util.Map;
 class HttpCommunicationConfiguration {
     private List<String> pathParameters = linkedListOf();
     private Map<String, String> queryParameters = mapOf();
-    private List<HttpClientInterceptor> requestInterceptors = linkedListOf();
-    private List<HttpClientInterceptor> responseInterceptors = linkedListOf();
+    private List<HttpClientInterceptor> requestInterceptors = httpClientModule().getRequestInterceptors();
+    private List<HttpClientInterceptor> responseInterceptors = httpClientModule().getResponseInterceptors();
     private Map<String, String> headers = mapOf();
     private String url;
     private HttpMethodType methodType = GET;

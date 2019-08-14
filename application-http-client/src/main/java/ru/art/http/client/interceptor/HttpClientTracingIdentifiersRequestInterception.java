@@ -24,7 +24,7 @@ import static ru.art.core.constants.InterceptionStrategy.NEXT_INTERCEPTOR;
 import static ru.art.http.client.constants.HttpClientModuleConstants.TRACE_ID_HEADER;
 import static ru.art.logging.LoggingModuleConstants.LoggingParameters.TRACE_ID_KEY;
 
-public class HttpClientTracingRequestInterception implements HttpClientRequestInterception {
+public class HttpClientTracingIdentifiersRequestInterception implements HttpClientRequestInterception {
     @Override
     public InterceptionStrategy intercept(HttpUriRequest request) {
         String traceId = get(TRACE_ID_KEY);

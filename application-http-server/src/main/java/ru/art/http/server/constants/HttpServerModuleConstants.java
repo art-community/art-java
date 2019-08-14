@@ -44,7 +44,7 @@ public interface HttpServerModuleConstants {
     }
 
     interface HttpWebUiServiceConstants {
-        String SERVICE_ID = "HTTP_WEB_UI_SERVICE";
+        String HTTP_WEB_UI_SERVICE = "HTTP_WEB_UI_SERVICE";
         int DEFAULT_BUFFER_SIZE = 4096;
         String DEFAULT_WEB_URL = "http://localhost/index.html";
         String INDEX_HTML = "index.html";

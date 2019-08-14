@@ -34,7 +34,7 @@ import org.zalando.logbook.httpclient.LogbookHttpRequestInterceptor;
 import org.zalando.logbook.httpclient.LogbookHttpResponseInterceptor;
 import ru.art.http.client.exception.HttpClientException;
 import ru.art.http.client.interceptor.HttpClientInterceptor;
-import ru.art.http.client.interceptor.HttpClientTracingRequestInterception;
+import ru.art.http.client.interceptor.HttpClientTracingIdentifiersRequestInterception;
 import ru.art.http.client.model.HttpCommunicationTargetConfiguration;
 import ru.art.http.configuration.HttpModuleConfiguration;
 import static java.security.KeyStore.getInstance;
@@ -110,7 +110,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         private final ConnectionConfig connectionConfig = ConnectionConfig.DEFAULT;
         private final IOReactorConfig ioReactorConfig = IOReactorConfig.DEFAULT;
         private final HttpVersion httpVersion = HTTP_1_1;
-        private final List<HttpClientInterceptor> requestInterceptors = linkedListOf(interceptRequest(new HttpClientTracingRequestInterception()));
+        private final List<HttpClientInterceptor> requestInterceptors = linkedListOf(interceptRequest(new HttpClientTracingIdentifiersRequestInterception()));
         private final List<HttpClientInterceptor> responseInterceptors = linkedListOf();
         private final int responseBodyBufferSize = RESPONSE_BUFFER_DEFAULT_SIZE;
         private final boolean ssl = false;

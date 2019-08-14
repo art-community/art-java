@@ -16,19 +16,21 @@
 
 package ru.art.soap.server.specification;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ru.art.http.server.builder.HttpServiceBuilder;
 import ru.art.http.server.model.HttpService;
 import ru.art.http.server.specification.HttpServiceSpecification;
 import ru.art.service.exception.UnknownServiceMethodException;
 import ru.art.soap.server.model.SoapService;
+import static java.util.Objects.isNull;
 import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.constants.StringConstants.UNDERSCORE;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.entity.PrimitiveMapping.stringMapper;
-import static ru.art.http.server.builder.HttpServiceBuilder.*;
+import static ru.art.http.server.builder.HttpServiceBuilder.HttpMethodResponseBuilder;
+import static ru.art.http.server.builder.HttpServiceBuilder.HttpMethodWithBodyBuilder;
 import static ru.art.http.server.model.HttpService.httpService;
+import static ru.art.service.ServiceModule.serviceModule;
+import static ru.art.service.ServiceModuleConfiguration.ServiceRegistry;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
 import static ru.art.soap.server.mapper.SoapMapper.soapRequestToModelMapper;
 import static ru.art.soap.server.mapper.SoapMapper.soapResponseFromModelMapper;
@@ -36,11 +38,10 @@ import static ru.art.soap.server.service.SoapExecutionService.executeSoapService
 import static ru.art.soap.server.service.SoapExecutionService.getWsdl;
 
 @Getter
-@AllArgsConstructor
 public class SoapServiceExecutionSpecification implements HttpServiceSpecification {
     private final SoapServiceSpecification soapServiceSpecification;
     @Getter(lazy = true)
-    private final String serviceId = soapServiceSpecification.getServiceId() + UNDERSCORE + SOAP_EXECUTION_SERVICE_TYPE;
+    private final String serviceId = SOAP_EXECUTION_SERVICE_TYPE + OPENING_BRACKET + soapServiceSpecification.getServiceId() + CLOSING_BRACKET;
     @Getter(lazy = true)
     private final HttpService httpService = addExecuteSoapServiceOperation(httpService())
             .get(GET_SERVICE_WSDL)
@@ -48,6 +49,15 @@ public class SoapServiceExecutionSpecification implements HttpServiceSpecificati
             .listen(soapServiceSpecification.getSoapService().getPath())
 
             .serve(EMPTY_STRING);
+
+    public SoapServiceExecutionSpecification(SoapServiceSpecification soapServiceSpecification) {
+        this.soapServiceSpecification = soapServiceSpecification;
+        ServiceRegistry serviceRegistry = serviceModule().getServiceRegistry();
+        if (isNull(serviceRegistry.getService(soapServiceSpecification.getServiceId()))) {
+            serviceRegistry.registerService(soapServiceSpecification);
+        }
+    }
+
 
     @SuppressWarnings("all")
     private HttpServiceBuilder addExecuteSoapServiceOperation(HttpServiceBuilder builder) {

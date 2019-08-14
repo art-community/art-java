@@ -83,7 +83,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
 
     boolean isAllowCasualMultipartParsing();
 
-    boolean isEnableMetricsMonitoring();
+    boolean isEnableMetrics();
 
     HttpWebConfiguration getWebConfiguration();
 
@@ -113,7 +113,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
 
     @Getter
     class HttpServerModuleDefaultConfiguration extends HttpModuleDefaultConfiguration implements HttpServerModuleConfiguration {
-        private final boolean enableMetricsMonitoring = true;
+        private final boolean enableMetrics = true;
         private final boolean allowCasualMultipartParsing = true;
         private final int maxThreadsCount = DEFAULT_THREAD_POOL_SIZE;
         private final int minSpareThreadsCount = DEFAULT_THREAD_POOL_SIZE;
@@ -128,13 +128,12 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<HttpServerInterceptor> responseInterceptors = linkedListOf();
         private final boolean ignoreAcceptHeader = false;
-        private final Map<? extends Class<? extends Throwable>, ? extends HttpExceptionHandler<? extends Throwable>> exceptionHandlers =
-                mapOf(Exception.class, new ExceptionHttpJsonHandler())
-                        .add(cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler()));
+        private final Map<? extends Class<? extends Throwable>, ? extends HttpExceptionHandler<? extends Throwable>> exceptionHandlers = mapOf(Exception.class, new ExceptionHttpJsonHandler())
+                .add(cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler()));
         private final HttpWebConfiguration webConfiguration = HttpWebConfiguration.builder().webUrl(DEFAULT_WEB_URL).build();
 
         private static List<HttpServerInterceptor> initializeInterceptors() {
-            return linkedListOf(intercept(new HttpServerLoggingInterception()), intercept(new HttpWebInterception()));
+            return linkedListOf(intercept(new HttpServerTracingIdentifierInterception()), intercept(new HttpWebInterception()));
         }
 
         public <T extends Throwable> Map<Class<T>, HttpExceptionHandler<T>> getExceptionHandlers() {

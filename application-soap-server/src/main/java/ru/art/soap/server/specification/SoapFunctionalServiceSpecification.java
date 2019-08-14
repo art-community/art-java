@@ -30,7 +30,7 @@ public class SoapFunctionalServiceSpecification implements SoapServiceSpecificat
     private final Function<?, ?> function;
 
     public SoapFunctionalServiceSpecification(SoapService soapService, Function<?, ?> function) {
-        this.serviceId = SOAP_SERVICE_TYPE + OPENING_BRACKET + soapService.getPath().toUpperCase().replace(SLASH, UNDERSCORE) + CLOSING_BRACKET;
+        this.serviceId = SOAP_SERVICE_TYPE + OPENING_BRACKET + soapService.getPath() + CLOSING_BRACKET;
         this.soapService = soapService;
         this.function = function;
     }

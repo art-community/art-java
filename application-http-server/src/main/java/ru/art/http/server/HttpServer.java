@@ -235,7 +235,7 @@ public class HttpServer {
         initializeInterceptors();
         Context context = createContext();
         registerInterceptors(context);
-        if (httpServerModule().isEnableMetricsMonitoring()) {
+        if (httpServerModule().isEnableMetrics()) {
             bindHttpMetrics(context.getManager());
         }
         tomcat.start();

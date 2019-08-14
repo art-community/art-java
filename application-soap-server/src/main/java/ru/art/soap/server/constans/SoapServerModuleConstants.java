@@ -33,11 +33,15 @@ public interface SoapServerModuleConstants {
     String WSDL_EXTENSION = ".wsdl";
     String SOAP_SERVICE_URL = "serviceUrl";
     String SOAP_SERVICE_TYPE = "SOAP_SERVICE";
-    String SOAP_EXECUTION_SERVICE_TYPE = "SOAP_EXECUTION";
+    String SOAP_EXECUTION_SERVICE_TYPE = "SOAP_EXECUTION_SERVICE";
     String EXECUTE_SOAP_FUNCTION = "EXECUTE_SOAP_FUNCTION";
 
     interface ResponseFaultConstants {
         String UNEXPECTED_ERROR = "UNEXPECTED_ERROR";
         String UNEXPECTED_ERROR_TEXT = "Unexpected Error";
+        String WSDL_ERROR = "WSDL_ERROR";
+        String WSDL_RESOURCE_PATH_IS_EMPTY = "WSDL resource path is empty";
+        String WSDL_SERVICE_URL_IS_EMPTY = "WSDL service url is empty";
+        String WSDL_IS_EMPTY = "WSDL is empty";
     }
 }

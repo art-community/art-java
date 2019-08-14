@@ -64,9 +64,6 @@ class HttpCommunicationExecutor {
     static <ResponseType> ResponseType executeHttpRequest(HttpCommunicationConfiguration configuration) {
         HttpUriRequest request = buildRequest(configuration);
         List<HttpClientInterceptor> requestInterceptors = configuration.getRequestInterceptors();
-        if (isEmpty(requestInterceptors)) {
-            requestInterceptors = httpClientModule().getRequestInterceptors();
-        }
         for (HttpClientInterceptor requestInterceptor : requestInterceptors) {
             InterceptionStrategy strategy = requestInterceptor.interceptRequest(request);
             if (strategy == PROCESS_HANDLING) break;
@@ -76,9 +73,6 @@ class HttpCommunicationExecutor {
             HttpClient client = getOrElse(configuration.getSyncClient(), httpClientModule().getClient());
             HttpResponse httpResponse = client.execute(request);
             List<HttpClientInterceptor> responseInterceptors = configuration.getResponseInterceptors();
-            if (isEmpty(responseInterceptors)) {
-                responseInterceptors = httpClientModule().getResponseInterceptors();
-            }
             for (HttpClientInterceptor responseInterceptor : responseInterceptors) {
                 InterceptionStrategy strategy = responseInterceptor.interceptResponse(request, httpResponse);
                 if (strategy == PROCESS_HANDLING) break;
@@ -93,9 +87,6 @@ class HttpCommunicationExecutor {
     static void executeAsynchronousHttpRequest(HttpCommunicationConfiguration configuration) {
         HttpUriRequest httpUriRequest = buildRequest(configuration);
         List<HttpClientInterceptor> requestInterceptors = configuration.getRequestInterceptors();
-        if (isEmpty(requestInterceptors)) {
-            requestInterceptors = httpClientModule().getRequestInterceptors();
-        }
         for (HttpClientInterceptor requestInterceptor : requestInterceptors) {
             InterceptionStrategy strategy = requestInterceptor.interceptRequest(httpUriRequest);
             if (strategy == PROCESS_HANDLING) break;
@@ -179,9 +170,6 @@ class HttpCommunicationExecutor {
         @Override
         public void completed(HttpResponse result) {
             List<HttpClientInterceptor> responseInterceptors = configuration.getResponseInterceptors();
-            if (isEmpty(responseInterceptors)) {
-                responseInterceptors = httpClientModule().getResponseInterceptors();
-            }
             for (HttpClientInterceptor responseInterceptor : responseInterceptors) {
                 InterceptionStrategy strategy = responseInterceptor.interceptResponse(httpUriRequest, result);
                 if (strategy == PROCESS_HANDLING) break;

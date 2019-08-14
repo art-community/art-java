@@ -18,8 +18,6 @@ package ru.art.state.module;
 
 import lombok.Getter;
 import ru.art.core.module.Module;
-import ru.art.http.server.specification.HttpWebUiServiceSpecification;
-import ru.art.metrics.http.specification.MetricServiceSpecification;
 import ru.art.state.ApplicationState;
 import ru.art.state.configuration.ApplicationStateModuleConfiguration;
 import ru.art.state.configuration.ApplicationStateModuleConfiguration.ApplicationStateModuleDefaultConfiguration;
@@ -60,9 +58,7 @@ public class ApplicationStateModule implements Module<ApplicationStateModuleConf
         useAgileConfigurations(APPLICATION_STATE_MODULE_ID);
         serviceModule().getServiceRegistry()
                 .registerService(new NetworkServiceSpecification())
-                .registerService(new LockServiceSpecification())
-                .registerService(new HttpWebUiServiceSpecification())
-                .registerService(new MetricServiceSpecification());
+                .registerService(new LockServiceSpecification());
         applicationState().setCluster(loadCluster());
         asynchronousPeriod(commonTask(NetworkService::removeDeadEndpoints), ofSeconds(applicationStateModule().getModuleEndpointCheckRateSeconds()));
         httpServerInSeparatedThread();

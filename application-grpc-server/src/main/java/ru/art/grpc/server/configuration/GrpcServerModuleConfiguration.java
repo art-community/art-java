@@ -47,6 +47,8 @@ public interface GrpcServerModuleConfiguration extends ModuleConfiguration {
 
     int getPort();
 
+    boolean isEnableTracing();
+
     @Getter
     @AllArgsConstructor
     class GrpcServerSecurityConfiguration {
@@ -61,9 +63,17 @@ public interface GrpcServerModuleConfiguration extends ModuleConfiguration {
         private final Executor overridingExecutor = newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
         private final GrpcServerSecurityConfiguration securityConfiguration = null;
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
-        private final List<ServerInterceptor> interceptors = linkedListOf(new GrpcServerLoggingInterceptor());
+        private final List<ServerInterceptor> interceptors = initializeInterceptors();
         private final int maxInboundMessageSize = DEFAULT_MAX_INBOUND_MESSAGE_SIZE;
         private final int handshakeTimeout = DEFAULT_HANDSHAKE_TIMEOUT;
         private final int port = findAvailableTcpPort();
+        private final boolean enableTracing = true;
+
+        private List<ServerInterceptor> initializeInterceptors() {
+            if (enableTracing) {
+                return linkedListOf(new GrpcServerLoggingInterceptor());
+            }
+            return linkedListOf();
+        }
     }
 }

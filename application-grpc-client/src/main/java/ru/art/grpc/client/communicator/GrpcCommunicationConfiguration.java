@@ -31,6 +31,7 @@ import static lombok.AccessLevel.PACKAGE;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.linkedListOf;
 import static ru.art.grpc.client.constants.GrpcClientExceptionMessages.INVALID_GRPC_COMMUNICATION_CONFIGURATION;
+import static ru.art.grpc.client.module.GrpcClientModule.grpcClientModule;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -50,7 +51,7 @@ public class GrpcCommunicationConfiguration {
     private ValueToModelMapper<?, ? extends Value> responseMapper;
     private GrpcCommunicationCompletionHandler<?, ?> completionHandler;
     private GrpcCommunicationExceptionHandler<?> exceptionHandler;
-    private List<ClientInterceptor> interceptors = linkedListOf();
+    private List<ClientInterceptor> interceptors = grpcClientModule().getInterceptors();
     private Executor overrideExecutor;
     @ToString.Include
     private Object request;

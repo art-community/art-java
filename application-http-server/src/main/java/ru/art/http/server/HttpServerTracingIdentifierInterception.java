@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 
-public class HttpServerLoggingInterception implements HttpServerInterception {
+public class HttpServerTracingIdentifierInterception implements HttpServerInterception {
     @Override
     public InterceptionStrategy intercept(HttpServletRequest request, HttpServletResponse response) {
         Enumeration<String> traceIdHeader = request.getHeaders(TRACE_ID_HEADER);
