@@ -18,10 +18,12 @@ package ru.art.soap.server.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import ru.art.entity.XmlEntity;
 
-@Builder
 @Getter
+@Builder
+@ToString
 public class SoapResponse {
     private final XmlEntity xmlEntity;
 }

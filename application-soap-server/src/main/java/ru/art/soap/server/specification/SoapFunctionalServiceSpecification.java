@@ -19,8 +19,7 @@ package ru.art.soap.server.specification;
 import lombok.Getter;
 import ru.art.soap.server.model.SoapService;
 import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.StringConstants.SLASH;
-import static ru.art.core.constants.StringConstants.UNDERSCORE;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.SOAP_SERVICE_TYPE;
 import java.util.function.Function;
 
@@ -31,7 +30,7 @@ public class SoapFunctionalServiceSpecification implements SoapServiceSpecificat
     private final Function<?, ?> function;
 
     public SoapFunctionalServiceSpecification(SoapService soapService, Function<?, ?> function) {
-        this.serviceId = SOAP_SERVICE_TYPE + UNDERSCORE + soapService.getPath().toUpperCase().replace(SLASH, UNDERSCORE);
+        this.serviceId = SOAP_SERVICE_TYPE + OPENING_BRACKET + soapService.getPath().toUpperCase().replace(SLASH, UNDERSCORE) + CLOSING_BRACKET;
         this.soapService = soapService;
         this.function = function;
     }
