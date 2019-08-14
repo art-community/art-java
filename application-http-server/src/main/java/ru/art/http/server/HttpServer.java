@@ -144,6 +144,9 @@ public class HttpServer {
             logger.info(HTTP_SERVICES_CANCELED);
             return ctx;
         }
+        if (httpServerModule().isEnableMetrics()) {
+            bindHttpMetrics(ctx.getManager());
+        }
         registerHttpServices(ctx);
         return ctx;
     }
@@ -235,9 +238,6 @@ public class HttpServer {
         initializeInterceptors();
         Context context = createContext();
         registerInterceptors(context);
-        if (httpServerModule().isEnableMetrics()) {
-            bindHttpMetrics(context.getManager());
-        }
         tomcat.start();
         logger.info(format(TOMCAT_STARTED_MESSAGE, currentTimeMillis() - creationTimestamp));
     }

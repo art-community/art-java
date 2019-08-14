@@ -53,11 +53,12 @@ public class HttpWebUiServiceSpecification implements HttpServiceSpecification {
     private final String renderPath;
     private final String imagePath;
     private final String serviceId = HTTP_WEB_UI_SERVICE;
+    @Getter(lazy = true)
     private final HttpService httpService = httpService()
 
             .get(RENDER)
             .fromPathParameters(RESOURCE)
-            .requestMapper((StringParametersMapToModelMapper<String>) value -> value.getParameter(RESOURCE))
+            .requestMapper((StringParametersMapToModelMapper<String>) resource -> resource.getParameter(RESOURCE))
             .overrideResponseContentType()
             .responseMapper(stringMapper.getFromModel())
             .addRequestInterceptor(intercept(interceptAndContinue(((request, response) -> response.setContentType(extractTypeByFile(request.getRequestURI()))))))
@@ -65,7 +66,7 @@ public class HttpWebUiServiceSpecification implements HttpServiceSpecification {
 
             .get(IMAGE)
             .fromPathParameters(RESOURCE)
-            .requestMapper((StringParametersMapToModelMapper<String>) value -> value.getParameter(RESOURCE))
+            .requestMapper((StringParametersMapToModelMapper<String>) image -> image.getParameter(RESOURCE))
             .produces(imagePng())
             .ignoreRequestAcceptType()
             .responseMapper(image -> byteCollection((byte[]) image))
