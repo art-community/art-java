@@ -16,18 +16,32 @@
 
 package ru.art.config.extensions.activator;
 
+import lombok.experimental.UtilityClass;
 import ru.art.config.extensions.provider.AgileConfigurationProvider;
 import ru.art.core.configuration.ContextInitialConfiguration.ApplicationContextConfiguration;
 import ru.art.core.context.Context;
+import static ru.art.config.remote.provider.RemoteConfigProvider.useRemoteConfigurations;
 import static ru.art.core.constants.ContextConstants.DEFAULT_MAIN_MODULE_ID;
+import static ru.art.core.context.Context.contextConfiguration;
 import static ru.art.core.context.Context.initContext;
 
-public interface AgileConfigurationsActivator {
-    static Context useAgileConfigurations(String mainModuleId) {
+@UtilityClass
+public class AgileConfigurationsActivator {
+    public static Context useAgileConfigurations(String mainModuleId) {
         return initContext(new ApplicationContextConfiguration(mainModuleId, new AgileConfigurationProvider()));
     }
 
-    static Context useAgileConfigurations() {
-        return initContext(new ApplicationContextConfiguration(DEFAULT_MAIN_MODULE_ID, new AgileConfigurationProvider()));
+    public static Context useAgileConfigurations() {
+        return useAgileConfigurations(DEFAULT_MAIN_MODULE_ID);
+    }
+
+    public static Context useRemoteAgileConfigurations(String mainModuleId) {
+        Context context = initContext(new ApplicationContextConfiguration(mainModuleId, new AgileConfigurationProvider()));
+        useRemoteConfigurations(contextConfiguration());
+        return context;
+    }
+
+    public static Context useRemoteAgileConfigurations() {
+        return useRemoteAgileConfigurations(DEFAULT_MAIN_MODULE_ID);
     }
 }

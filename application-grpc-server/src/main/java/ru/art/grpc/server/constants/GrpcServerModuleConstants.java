@@ -20,7 +20,7 @@ public interface GrpcServerModuleConstants {
     String GRPC_SERVER_MODULE_ID = "GRPC_SERVER_MODULE";
     String EXECUTE_GRPC_FUNCTION = "EXECUTE_GRPC_FUNCTION";
     String DEFAULT_MODULE_PATH = "/module";
-    String GRPC_SERVICE_TYPE = "GRPC";
+    String GRPC_SERVICE_TYPE = "GRPC_SERVICE";
     String PROTOBUF_ERROR_MESSAGE = "ERROR_MESSAGE";
     String RESPONSE_OK = "OK";
     String TRACE_ID_HEADER = "TRACE_ID";

@@ -22,7 +22,7 @@ public interface RsocketModuleConstants {
     String SERVICE_ID = "serviceId";
     String METHOD_ID = "methodId";
     String REQUEST_DATA = "requestData";
-    String RSOCKET_SERVICE_TYPE = "RSOCKET";
+    String RSOCKET_SERVICE_TYPE = "RSOCKET_SERVICE";
     String RSOCKET_COMMUNICATION_SERVICE_TYPE = "RSOCKET_COMMUNICATION";
     String RSOCKET_COMMUNICATION_TARGET_CONFIGURATION_NOT_FOUND = "RSocket communication target configuration was not found for serviceId: ''{0}''";
     String RSOCKET_SERVER_THREAD = "rsocket-server-bootstrap-thread";

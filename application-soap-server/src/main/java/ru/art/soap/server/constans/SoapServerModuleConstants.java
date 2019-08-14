@@ -32,7 +32,8 @@ public interface SoapServerModuleConstants {
     String NAMESPACE = "http://schemas.xmlsoap.org/soap/envelope/";
     String WSDL_EXTENSION = ".wsdl";
     String SOAP_SERVICE_URL = "serviceUrl";
-    String SOAP_SERVICE_TYPE = "SOAP";
+    String SOAP_SERVICE_TYPE = "SOAP_SERVICE";
+    String SOAP_EXECUTION_SERVICE_TYPE = "SOAP_EXECUTION";
     String EXECUTE_SOAP_FUNCTION = "EXECUTE_SOAP_FUNCTION";
 
     interface ResponseFaultConstants {

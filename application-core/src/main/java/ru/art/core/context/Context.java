@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Context {
@@ -51,22 +52,19 @@ public class Context {
     private Long lastActionTimestamp = currentTimeMillis();
 
     private Context() {
-        out.println(ADK_BANNER);
         if (initialConfiguration.isUnloadModulesOnShutdown()) {
             getRuntime().addShutdownHook(new Thread(this::unloadModules));
         }
     }
 
-    private Context(ContextInitialConfiguration initialConfiguration) {
-        out.println(ADK_BANNER);
+    public Context(ContextInitialConfiguration initialConfiguration) {
         this.initialConfiguration = initialConfiguration;
         if (initialConfiguration.isUnloadModulesOnShutdown()) {
             getRuntime().addShutdownHook(new Thread(this::unloadModules));
         }
     }
 
-    private Context(ContextInitialConfiguration contextInitialConfiguration, Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules) {
-        out.println(ADK_BANNER);
+    public Context(ContextInitialConfiguration contextInitialConfiguration, Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules) {
         this.initialConfiguration = contextInitialConfiguration;
         this.modules = modules;
         if (initialConfiguration.isUnloadModulesOnShutdown()) {
@@ -77,16 +75,11 @@ public class Context {
     public static Context initContext(ContextInitialConfiguration contextInitialConfiguration) {
         if (isNull(contextInitialConfiguration))
             throw new ContextInitializationException(CONTEXT_INITIAL_CONFIGURATION_IS_NULL);
-        Context localInstance = INSTANCE;
-        if (isNull(localInstance)) {
-            ReentrantLock lock = Context.lock;
-            lock.lock();
-            localInstance = INSTANCE;
-            if (isNull(localInstance)) {
-                INSTANCE = new Context(contextInitialConfiguration);
-            }
-            lock.unlock();
-        }
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        INSTANCE = new Context(contextInitialConfiguration);
+        out.println(ADK_BANNER);
+        lock.unlock();
         return INSTANCE;
     }
 
@@ -205,6 +198,98 @@ public class Context {
         lock.lock();
         INSTANCE = currentContext;
         lock.unlock();
+    }
+
+    public static <T> T withContext(Context context, Function<Context, T> action) {
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = context;
+        lock.unlock();
+        T result = action.apply(INSTANCE);
+        lock.lock();
+        INSTANCE = currentContext;
+        lock.unlock();
+        return result;
+    }
+
+    public static <T> T withContext(ContextInitialConfiguration contextInitialConfiguration, Function<Context, T> action) {
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = new Context(contextInitialConfiguration);
+        lock.unlock();
+        T result = action.apply(INSTANCE);
+        lock.lock();
+        INSTANCE = currentContext;
+        lock.unlock();
+        return result;
+    }
+
+    public static <T> T withModules(Function<Context, T> action, Module<?, ?>... modules) {
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = new Context();
+        for (Module<?, ?> module : modules) {
+            INSTANCE.loadModule(module);
+        }
+        lock.unlock();
+        T result = action.apply(INSTANCE);
+        lock.lock();
+        INSTANCE = currentContext;
+        lock.unlock();
+        return result;
+    }
+
+    public static <T> T withModules(ContextInitialConfiguration contextInitialConfiguration, Function<Context, T> action, Module<?, ?>... modules) {
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = new Context(contextInitialConfiguration);
+        for (Module<?, ?> module : modules) {
+            INSTANCE.loadModule(module);
+        }
+        lock.unlock();
+        T result = action.apply(INSTANCE);
+        lock.lock();
+        INSTANCE = currentContext;
+        lock.unlock();
+        return result;
+    }
+
+    @SafeVarargs
+    public static <T> T withModules(Function<Context, T> action, Supplier<Module<?, ?>>... modules) {
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = new Context();
+        for (Supplier<Module<?, ?>> module : modules) {
+            INSTANCE.loadModule(module.get());
+        }
+        lock.unlock();
+        T result = action.apply(INSTANCE);
+        lock.lock();
+        INSTANCE = currentContext;
+        lock.unlock();
+        return result;
+    }
+
+    @SafeVarargs
+    public static <T> T withModules(ContextInitialConfiguration contextInitialConfiguration, Function<Context, T> action, Supplier<Module<?, ?>>... modules) {
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = new Context(contextInitialConfiguration);
+        for (Supplier<Module<?, ?>> module : modules) {
+            INSTANCE.loadModule(module.get());
+        }
+        lock.unlock();
+        T result = action.apply(INSTANCE);
+        lock.lock();
+        INSTANCE = currentContext;
+        lock.unlock();
+        return result;
     }
 
     public <C extends ModuleConfiguration, S extends ModuleState> C getModule(String moduleId, Module<C, S> toLoadIfNotExists) {

@@ -40,7 +40,7 @@ import static ru.art.soap.server.service.SoapExecutionService.getWsdl;
 public class SoapServiceExecutionSpecification implements HttpServiceSpecification {
     private final SoapServiceSpecification soapServiceSpecification;
     @Getter(lazy = true)
-    private final String serviceId = soapServiceSpecification.getServiceId() + UNDERSCORE + SOAP_SERVICE_TYPE;
+    private final String serviceId = soapServiceSpecification.getServiceId() + UNDERSCORE + SOAP_EXECUTION_SERVICE_TYPE;
     @Getter(lazy = true)
     private final HttpService httpService = addExecuteSoapServiceOperation(httpService())
             .get(GET_SERVICE_WSDL)

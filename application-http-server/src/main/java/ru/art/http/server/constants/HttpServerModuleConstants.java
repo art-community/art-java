@@ -17,7 +17,7 @@
 package ru.art.http.server.constants;
 
 public interface HttpServerModuleConstants {
-    String HTTP_SERVICE_TYPE = "HTTP";
+    String HTTP_SERVICE_TYPE = "HTTP_SERVICE";
     String EXECUTE_HTTP_FUNCTION = "EXECUTE_HTTP_FUNCTION";
     String HTTP_SERVER_MODULE_ID = "HTTP_SERVER_MODULE";
     String DEFAULT_MODULE_PATH = "/module";

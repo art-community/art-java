@@ -22,6 +22,7 @@ import ru.art.entity.mapper.ValueToModelMapper.XmlEntityToModelMapper;
 import ru.art.service.constants.RequestValidationPolicy;
 import ru.art.soap.content.mapper.SoapMimeToContentTypeMapper;
 import ru.art.soap.server.specification.SoapFunctionalServiceSpecification;
+import ru.art.soap.server.specification.SoapServiceExecutionSpecification;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.service.ServiceModule.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.EXECUTE_SOAP_FUNCTION;
@@ -117,9 +118,9 @@ public class SoapServiceFunction {
     public <RequestType, ResponseType> void handle(Function<RequestType, ResponseType> function) {
         serviceModule()
                 .getServiceRegistry()
-                .registerService(new SoapFunctionalServiceSpecification(soapService
+                .registerService(new SoapServiceExecutionSpecification(new SoapFunctionalServiceSpecification(soapService
                         .operation(operationId, soapOperation)
-                        .serve(path), function));
+                        .serve(path), function)));
     }
 
     public <RequestType> void consume(Consumer<RequestType> consumer) {
