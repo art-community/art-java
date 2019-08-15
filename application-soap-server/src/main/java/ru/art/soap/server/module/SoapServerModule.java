@@ -30,7 +30,7 @@ public class SoapServerModule implements Module<SoapServerModuleConfiguration, M
     @Getter(lazy = true, value = PRIVATE)
     private final static SoapServerModuleConfiguration soapServerModule = context().getModule(SOAP_SERVER_MODULE_ID, SoapServerModule::new);
     private final String id = SOAP_SERVER_MODULE_ID;
-    private SoapServerModuleConfiguration defaultConfiguration = new SoapServerModuleDefaultConfiguration();
+    private final SoapServerModuleConfiguration defaultConfiguration = new SoapServerModuleDefaultConfiguration();
 
     public static SoapServerModuleConfiguration soapServerModule() {
         return getSoapServerModule();
