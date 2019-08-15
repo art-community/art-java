@@ -49,7 +49,7 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
     private static final KafkaConsumerModuleConfiguration kafkaConsumerModule = context()
             .getModule(KAFKA_CONSUMER_MODULE_ID, KafkaConsumerModule::new);
     private String id = KAFKA_CONSUMER_MODULE_ID;
-    private KafkaConsumerModuleConfiguration defaultConfiguration = null;
+    private KafkaConsumerModuleConfiguration defaultConfiguration = KafkaConsumerModuleConfiguration.DEFAULT_CONFIGURATION;
 
     public static KafkaConsumerModuleConfiguration kafkaConsumerModule() {
         if (insideDefaultContext()) {

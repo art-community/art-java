@@ -22,7 +22,7 @@ import static java.time.Duration.ofSeconds;
 import java.time.Duration;
 
 public interface KafkaConsumerModuleConstants {
-    String KAFKA_CONSUMER_MODULE_ID = "KAFKA_CONSUMER_MODULE_ID";
+    String KAFKA_CONSUMER_MODULE_ID = "KAFKA_CONSUMER_MODULE";
     String KAFKA_CONSUMER_SERVICE_TYPE = "KAFKA_CONSUMER";
     String DEFAULT_KAFKA_SERVICE_ID = "KAFKA_SERVICE";
     String DEFAULT_KAFKA_GROUP_ID = "KAFKA_GROUP";
