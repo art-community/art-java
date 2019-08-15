@@ -85,29 +85,29 @@ art {
     
   //For using ART mappers and specifications generator
   generator {
-    packageName = "<path to application main package (parent of 'model' and/or 'service' packages)>"
+    //packageName = "<path to application main package (parent of 'model' and/or 'service' packages)>"
   }
 
   // For using web (sources need to be placed in src/main/web (by default) 
-  web()
+  //web()
   
   // For using Groovy 
-  groovy()
+  //groovy()
 
   // For using Kotlin 
-  kotlin()
+  //kotlin()
 
   // For using Scala 
-  scala()
+  //scala()
   
   // For using BDD Spock Framework  
-  spockFramework()
+  //spockFramework()
 
   // For using JMH  
-  jmh()
+  //jmh()
 
   // For using Gatling  
-  gatling()
+  //gatling()
  }
 ```
 ## Requirements
