@@ -85,7 +85,7 @@ art {
     
   //For using ART mappers and specifications generator
   generator {
-    packageName = "<path to application main package (parent of 'model' and/or 'service' packages>"
+    packageName = "<path to application main package (parent of 'model' and/or 'service' packages)>"
   }
 
   // For using web (sources need to be placed in src/main/web (by default) 
