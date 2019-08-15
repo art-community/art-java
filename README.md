@@ -73,20 +73,20 @@ art {
       // For using kafka consumer and producer
       //kafka()            
 
-      dataFormats {
+     // dataFormats {
           // Includes by default if using grpc/rsocket/remote configuration modules
-          protobuf()
+         // protobuf()
           // Includes by default if using rsocket/http modules
-          json()
+         // json()
           // Includes by default if using rsocket/soap modules
-          xml()
-      }            
+        //  xml()
+     // }            
   }*/  
     
   //For using ART mappers and specifications generator
-  generator {
+  //generator {
     //packageName = "<path to application main package (parent of 'model' and/or 'service' packages)>"
-  }
+  //}
 
   // For using web (sources need to be placed in src/main/web (by default) 
   //web()
