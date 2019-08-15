@@ -22,6 +22,7 @@ public interface RsocketConfigKeys {
     String RSOCKET_SECTION_ID = "rsocket";
     String RSOCKET_BALANCER_SECTION_ID = "rsocket.balancer";
     String RSOCKET_ACCEPTOR_SECTION_ID = "rsocket.acceptor";
+    String RSOCKET_COMMUNICATION_SECTION_ID = "rsocket.communication";
     String TCP_PORT = "tcpPort";
     String WEB_SOCKET_PORT = "webSocketPort";
     String DEFAULT_DATA_FORMAT = "defaultDataFormat";
