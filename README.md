@@ -29,22 +29,22 @@ art {
       kit()    
     
       // For using protocols
-      protocols {
-          grpcServer()
-          grpcCommunication()
-          httpServer()
-          httpCommunication()
-          rsocket()
-          soapServer()
-          soapCommunication()
-      }
+      //protocols {
+          //grpcServer()
+          //grpcCommunication()
+          //httpServer()
+          //httpCommunication()
+          //rsocket()
+          //soapServer()
+          //soapCommunication()
+      //}
       
       // For using databases
-      db {
-          sql()
-          tarantool()
-          rocksdb()
-      }   
+      //db {
+          //sql()
+          //tarantool()
+          //rocksdb()
+      //}   
       
       // For using file configurations
       //localConfigurationManagement()
