@@ -16,19 +16,10 @@
  * limitations under the License.
  */
 
-package ru.art.json.configuration;
+package ru.art.soap.server.exception;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
-
-public interface JsonModuleConfiguration extends ModuleConfiguration {
-    ObjectMapper getObjectMapper();
-
-    JsonModuleConfiguration DEFAULT_CONFIGURATION = new JsonModuleDefaultConfiguration();
-
-    class JsonModuleDefaultConfiguration implements JsonModuleConfiguration {
-        @Getter
-        private final ObjectMapper objectMapper = new ObjectMapper();
+public class SoapServerException extends RuntimeException {
+    public SoapServerException(String message) {
+        super(message);
     }
 }

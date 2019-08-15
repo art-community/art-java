@@ -25,15 +25,19 @@ import ru.art.core.module.Module;
 import ru.art.core.module.ModuleState;
 import static ru.art.config.constants.ConfigModuleConstants.CONFIG_MODULE_ID;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 
 @Getter
 public class ConfigModule implements Module<ConfigModuleConfiguration, ModuleState> {
     @Getter(lazy = true)
     private static final ConfigModuleConfiguration configModule = context().getModule(CONFIG_MODULE_ID, ConfigModule::new);
-    private final ConfigModuleConfiguration defaultConfiguration = new ConfigModuleDefaultConfiguration();
+    private final ConfigModuleConfiguration defaultConfiguration = ConfigModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
     private final String id = CONFIG_MODULE_ID;
 
     public static ConfigModuleConfiguration configModule() {
+        if (insideDefaultContext()) {
+            return ConfigModuleConfiguration.DEFAULT_CONFIGURATION;
+        }
         return getConfigModule();
     }
 }

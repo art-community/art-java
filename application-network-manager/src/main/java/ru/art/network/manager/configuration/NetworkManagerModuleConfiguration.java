@@ -41,8 +41,10 @@ public interface NetworkManagerModuleConfiguration extends ModuleConfiguration {
 
     int getStatePort();
 
-    @Getter
-    class NetworkManagerModuleDefaultConfiguration implements NetworkManagerModuleConfiguration {
+    NetworkManagerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new NetworkManagerModuleDefaultConfiguration();
+
+	@Getter
+	class NetworkManagerModuleDefaultConfiguration implements NetworkManagerModuleConfiguration {
         private final BalancerMode balancerMode = ROUND_ROBIN;
         private final long refreshRateSeconds = 5;
         private final long connectionPingRateSeconds = 5;

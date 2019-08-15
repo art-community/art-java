@@ -26,6 +26,7 @@ import static java.util.logging.LogManager.getLogManager;
 import static lombok.AccessLevel.PRIVATE;
 import static org.slf4j.bridge.SLF4JBridgeHandler.install;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 import static ru.art.logging.LoggingModuleConstants.LOGGING_MODULE_ID;
 
 @Getter
@@ -33,7 +34,7 @@ public class LoggingModule implements Module<LoggingModuleConfiguration, ModuleS
     @Getter(lazy = true, value = PRIVATE)
     private static final LoggingModuleConfiguration loggingModule = context().getModule(LOGGING_MODULE_ID, LoggingModule::new);
     private final String id = LOGGING_MODULE_ID;
-    private final LoggingModuleConfiguration defaultConfiguration = new LoggingModuleDefaultConfiguration();
+    private final LoggingModuleConfiguration defaultConfiguration = LoggingModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
 
     static {
         getLogManager().reset();
@@ -41,6 +42,9 @@ public class LoggingModule implements Module<LoggingModuleConfiguration, ModuleS
     }
 
     public static LoggingModuleConfiguration loggingModule() {
+        if (insideDefaultContext()) {
+            return LoggingModuleConfiguration.DEFAULT_CONFIGURATION;
+        }
         return getLoggingModule();
     }
 }

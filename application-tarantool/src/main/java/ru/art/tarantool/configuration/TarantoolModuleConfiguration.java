@@ -47,6 +47,8 @@ public interface TarantoolModuleConfiguration extends ModuleConfiguration {
 
     TarantoolInitializationMode getInitializationMode();
 
+    TarantoolModuleDefaultConfiguration DEFAULT_CONFIGURATION = new TarantoolModuleDefaultConfiguration();
+
     @Getter
     class TarantoolModuleDefaultConfiguration implements TarantoolModuleConfiguration {
         private final Map<String, TarantoolConfiguration> tarantoolConfigurations = mapOf();

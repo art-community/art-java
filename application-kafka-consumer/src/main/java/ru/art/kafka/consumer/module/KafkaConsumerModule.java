@@ -28,6 +28,7 @@ import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.KAFKA_CONSUMER_MODULE_ID;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.KAFKA_CONSUMER_SERVICE_TYPE;
 import static ru.art.service.ServiceModule.serviceModule;
@@ -51,6 +52,9 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
     private KafkaConsumerModuleConfiguration defaultConfiguration = null;
 
     public static KafkaConsumerModuleConfiguration kafkaConsumerModule() {
+        if (insideDefaultContext()) {
+            return KafkaConsumerModuleConfiguration.DEFAULT_CONFIGURATION;
+        }
         return getKafkaConsumerModule();
     }
 

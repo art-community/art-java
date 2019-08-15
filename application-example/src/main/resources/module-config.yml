@@ -1,0 +1,3 @@
+exampleModule:
+  stringConfig: "test"
+  intConfig: 123

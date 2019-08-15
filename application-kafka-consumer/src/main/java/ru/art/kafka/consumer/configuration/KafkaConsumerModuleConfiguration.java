@@ -31,8 +31,10 @@ public interface KafkaConsumerModuleConfiguration extends ModuleConfiguration {
 
     KafkaStreamsConfiguration getKafkaStreamsConfiguration();
 
-    @Getter
-    class KafkaConsumerModuleDefaultConfiguration implements KafkaConsumerModuleConfiguration {
+    KafkaConsumerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new KafkaConsumerModuleDefaultConfiguration();
+
+	@Getter
+	class KafkaConsumerModuleDefaultConfiguration implements KafkaConsumerModuleConfiguration {
         private final boolean enableTracing = false;
         private final KafkaConsumerConfiguration kafkaConsumerConfiguration = new KafkaConsumerDefaultConfiguration();
         private final KafkaStreamsConfiguration kafkaStreamsConfiguration = new KafkaStreamsDefaultConfiguration();

@@ -52,6 +52,8 @@ public interface SqlModuleConfiguration extends ModuleConfiguration {
 
     boolean isEnableMetrics();
 
+    SqlModuleDefaultConfiguration DEFAULT_CONFIGURATION = new SqlModuleDefaultConfiguration();
+
     @Getter
     class SqlModuleDefaultConfiguration implements SqlModuleConfiguration {
         private final Configuration jooqConfiguration = new DefaultConfiguration();

@@ -95,8 +95,10 @@ public interface KafkaConsumerConfiguration {
             throw new KafkaConsumerModuleException("valueDeserializer is empty");
     }
 
-    @Getter
-    class KafkaConsumerDefaultConfiguration implements KafkaConsumerConfiguration {
+    KafkaConsumerDefaultConfiguration defaultConfiguration = new KafkaConsumerDefaultConfiguration();
+
+	@Getter
+	class KafkaConsumerDefaultConfiguration implements KafkaConsumerConfiguration {
         private final ExecutorService executor = newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
         private final String serviceId = DEFAULT_KAFKA_SERVICE_ID;
         private final Duration duration = DEFAULT_DURATION;

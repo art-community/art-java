@@ -105,6 +105,8 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         return exceptionIfNull(getCommunicationTargets().get(serviceId), new HttpClientException(format(HTTP_COMMUNICATION_TARGET_NOT_FOUND, serviceId))).toBuilder().build();
     }
 
+    HttpClientModuleDefaultConfiguration DEFAULT_CONFIGURATION = new HttpClientModuleDefaultConfiguration();
+
     @Getter
     class HttpClientModuleDefaultConfiguration extends HttpModuleDefaultConfiguration implements HttpClientModuleConfiguration {
         private final RequestConfig requestConfig = RequestConfig.DEFAULT;

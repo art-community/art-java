@@ -88,7 +88,7 @@ class HttpServerRequestHandler {
             return mapResponseObject(responseData, cast(responseMapper));
         }
         ValueFromModelMapper exceptionMapper;
-        if (isNull(exceptionMapper = httpMethod.getExceptionMapper())) return EMPTY_BYTES;
+        if (isNull(exceptionMapper = httpMethod.getExceptionMapper())) throw response.getServiceException();
         return mapResponseObject(response.getServiceException(), cast(exceptionMapper));
     }
 

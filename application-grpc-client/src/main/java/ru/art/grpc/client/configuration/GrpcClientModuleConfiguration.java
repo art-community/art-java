@@ -55,8 +55,10 @@ public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
         return exceptionIfNull(getCommunicationTargets().get(serviceId), new GrpcClientException(format(GRPC_COMMUNICATION_TARGET_CONFIGURATION_NOT_FOUND, serviceId))).toBuilder().build();
     }
 
-    @Getter
-    class GrpcClientModuleDefaultConfiguration implements GrpcClientModuleConfiguration {
+    GrpcClientModuleDefaultConfiguration DEFAULT_CONFIGURATION = new GrpcClientModuleDefaultConfiguration();
+
+	@Getter
+	class GrpcClientModuleDefaultConfiguration implements GrpcClientModuleConfiguration {
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ClientInterceptor> interceptors = linkedListOf(new GrpcClientTracingInterceptor());
         private final long timeout = DEFAULT_TIMEOUT;

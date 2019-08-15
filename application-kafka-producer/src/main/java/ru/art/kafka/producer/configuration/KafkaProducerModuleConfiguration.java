@@ -21,6 +21,8 @@ package ru.art.kafka.producer.configuration;
 import ru.art.core.module.ModuleConfiguration;
 
 public interface KafkaProducerModuleConfiguration extends ModuleConfiguration {
+    KafkaProducerModuleConfiguration DEFAULT_CONFIGURATION = new KafkaProducerDefaultModuleConfiguration();
+
     class KafkaProducerDefaultModuleConfiguration implements KafkaProducerModuleConfiguration {
 
     }

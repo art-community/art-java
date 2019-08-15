@@ -32,8 +32,10 @@ public interface ReactiveServiceModuleConfiguration extends ModuleConfiguration 
 
     List<ResponseInterceptor> getResponseInterceptors();
 
-    @Getter
-    class ReactiveServiceModuleDefaultConfiguration implements ReactiveServiceModuleConfiguration {
+    ReactiveServiceModuleDefaultConfiguration DEFAULT_CONFIGURATION = new ReactiveServiceModuleDefaultConfiguration();
+
+	@Getter
+	class ReactiveServiceModuleDefaultConfiguration implements ReactiveServiceModuleConfiguration {
         private final List<RequestInterceptor> requestInterceptors = linkedListOf(interceptRequest(new ReactiveServiceLoggingInterception()),
                 interceptRequest(new ReactiveServiceValidationInterception()));
         private final List<ResponseInterceptor> responseInterceptors = cast(linkedListOf(interceptResponse(new ReactiveServiceLoggingInterception())));

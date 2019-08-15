@@ -113,6 +113,8 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
                 .add(IMAGE_GIF, WEB_RESOURCE);
     }
 
+    HttpServerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new HttpServerModuleDefaultConfiguration();
+
     @Getter
     class HttpServerModuleDefaultConfiguration extends HttpModuleDefaultConfiguration implements HttpServerModuleConfiguration {
         private final boolean enableMetrics = true;
@@ -130,7 +132,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<HttpServerInterceptor> responseInterceptors = linkedListOf();
         private final boolean ignoreAcceptHeader = false;
-        private final Map<? extends Class<? extends Throwable>, ? extends HttpExceptionHandler<? extends Throwable>> exceptionHandlers = mapOf(Exception.class, new ExceptionHttpJsonHandler())
+        private final Map<? extends Class<? extends Throwable>, ? extends HttpExceptionHandler<? extends Throwable>> exceptionHandlers = mapOf(Throwable.class, new ExceptionHttpJsonHandler())
                 .add(cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler()));
         private final HttpWebConfiguration webConfiguration = HttpWebConfiguration.builder().webUrl(DEFAULT_WEB_URL).build();
 

@@ -502,4 +502,17 @@ public class Context {
         }
         return DEFAULT_INSTANCE;
     }
+
+    public static boolean insideDefaultContext() {
+        return INSTANCE == DEFAULT_INSTANCE;
+    }
+
+    public static <C extends ModuleConfiguration> C constructInsideDefaultContext(Supplier<C> constructor) {
+        return withContext(defaultContext(), (Function<Context, C>) context -> constructor.get());
+    }
+
+    public static <C extends ModuleConfiguration> C constructInsideDefaultContext(ContextInitialConfiguration configuration, Supplier<C> constructor) {
+        initDefaultContext(configuration);
+        return withContext(defaultContext(), (Function<Context, C>) context -> constructor.get());
+    }
 }

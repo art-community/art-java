@@ -28,6 +28,7 @@ import static java.util.Map.Entry;
 import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TARANTOOL_MODULE_ID;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.ON_MODULE_LOAD;
 
@@ -38,7 +39,7 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
     @Getter(lazy = true, value = PRIVATE)
     private final static TarantoolModuleState tarantoolModuleState = context().getModuleState(TARANTOOL_MODULE_ID, TarantoolModule::new);
     private final String id = TARANTOOL_MODULE_ID;
-    private final TarantoolModuleConfiguration defaultConfiguration = new TarantoolModuleDefaultConfiguration();
+    private final TarantoolModuleConfiguration defaultConfiguration = TarantoolModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
     private final TarantoolModuleState state = new TarantoolModuleState();
 
     @Override
@@ -55,6 +56,9 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
     }
 
     public static TarantoolModuleConfiguration tarantoolModule() {
+        if (insideDefaultContext()) {
+            return TarantoolModuleConfiguration.DEFAULT_CONFIGURATION;
+        }
         return getTarantoolModule();
     }
 

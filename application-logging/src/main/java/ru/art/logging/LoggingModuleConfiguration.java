@@ -43,8 +43,10 @@ public interface LoggingModuleConfiguration extends ModuleConfiguration {
 
     SocketAppenderConfiguration getSocketAppenderConfiguration();
 
-    @Getter
-    class LoggingModuleDefaultConfiguration implements LoggingModuleConfiguration {
+    LoggingModuleDefaultConfiguration DEFAULT_CONFIGURATION = new LoggingModuleDefaultConfiguration();
+
+	@Getter
+	class LoggingModuleDefaultConfiguration implements LoggingModuleConfiguration {
         private final Logger logger = LogManager.getLogger(LoggingModuleConfiguration.class);
         private final Level level = loadLoggingLevel();
         private final SocketAppenderConfiguration socketAppenderConfiguration = loadSocketAppenderCurrentConfiguration();

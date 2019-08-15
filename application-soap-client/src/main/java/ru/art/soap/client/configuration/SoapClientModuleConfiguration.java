@@ -31,8 +31,10 @@ public interface SoapClientModuleConfiguration extends ModuleConfiguration {
 
     String getBodyNamespace();
 
-    @Getter
-    class SoapClientModuleDefaultConfiguration implements SoapClientModuleConfiguration {
+    SoapClientModuleDefaultConfiguration DEFAULT_CONFIGURATION = new SoapClientModuleDefaultConfiguration();
+
+	@Getter
+	class SoapClientModuleDefaultConfiguration implements SoapClientModuleConfiguration {
         private final String envelopePrefix = SOAP_ENVELOPE_DEFAULT_PREFIX;
         private final String envelopeNamespace = SOAP_ENVELOPE_DEFAULT_NAMESPACE;
         private final String bodyPrefix = SOAP_BODY_DEFAULT_PREFIX;

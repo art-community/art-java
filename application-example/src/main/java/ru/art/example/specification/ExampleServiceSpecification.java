@@ -41,8 +41,8 @@ import ru.art.service.model.ServiceExecutionConfiguration;
 import ru.art.soap.server.model.SoapService;
 import ru.art.soap.server.specification.SoapServiceSpecification;
 import static ru.art.config.extensions.ConfigExtensions.configString;
-import static ru.art.config.extensions.http.HttpConfigKeys.HTTP_SERVER_SECTION_ID;
 import static ru.art.core.caster.Caster.cast;
+import static ru.art.core.constants.StringConstants.SLASH;
 import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
 import static ru.art.core.factory.CollectionsFactory.linkedListOf;
 import static ru.art.example.api.constants.ExampleApiConstants.EXAMPLE_SERVICE_ID;
@@ -52,7 +52,8 @@ import static ru.art.example.api.constants.ExampleApiConstants.SoapConstants.EXA
 import static ru.art.example.api.mapping.ExampleRequestResponseMapper.ExampleRequestMapper.toExampleRequest;
 import static ru.art.example.api.mapping.ExampleRequestResponseMapper.ExampleResponseMapper.fromExampleResponse;
 import static ru.art.example.api.mapping.ExampleStateModelMapper.fromExampleStateModel;
-import static ru.art.example.constants.ExampleAppModuleConstants.ConfigKeys.*;
+import static ru.art.example.constants.ExampleAppModuleConstants.ConfigKeys.EXAMPLE_SOAP_SERVICE_PATH;
+import static ru.art.example.constants.ExampleAppModuleConstants.ConfigKeys.SOAP_SECTION;
 import static ru.art.example.service.ExampleService.*;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.GRPC_SERVICE_TYPE;
 import static ru.art.grpc.server.model.GrpcService.GrpcMethod.grpcMethod;
@@ -66,7 +67,6 @@ import static ru.art.service.constants.ServiceExecutionFeatureTarget.SERVICE;
 import static ru.art.service.interceptor.ServiceExecutionInterceptor.interceptRequest;
 import static ru.art.service.interceptor.ServiceExecutionInterceptor.interceptResponse;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.SOAP_SERVICE_TYPE;
-import static ru.art.soap.server.constans.SoapServerModuleConstants.WSDL_EXTENSION;
 import static ru.art.soap.server.model.SoapService.SoapOperation.soapOperation;
 import static ru.art.soap.server.model.SoapService.soapService;
 import java.util.List;
@@ -157,11 +157,7 @@ public class ExampleServiceSpecification implements HttpServiceSpecification, Gr
     private final SoapService soapService = soapService()
             .operation(EXAMPLE_OPERATION, soapOperation()
                     .methodId(REQUEST_RESPONSE_HANDLING_EXAMPLE))
-            //.requestMapper(toCaseNotificationRequest)
-            //.responseMapper(FromCaseNotificationResponse))
-            .wsdlServiceUrl(configString(HTTP_SERVER_SECTION_ID, URL) + configString(SOAP_SECTION, EXAMPLE_SOAP_SERVICE_PATH))
-            .wsdlResourcePath(configString(SOAP_SECTION, EXAMPLE_SOAP_SERVICE_PATH) + WSDL_EXTENSION)
-            .serve(configString(SOAP_SECTION, EXAMPLE_SOAP_SERVICE_PATH));
+            .serve(configString(SOAP_SECTION, EXAMPLE_SOAP_SERVICE_PATH, SLASH));
 
 
     private final List<String> serviceTypes = fixedArrayOf(GRPC_SERVICE_TYPE, HTTP_SERVICE_TYPE, SOAP_SERVICE_TYPE);

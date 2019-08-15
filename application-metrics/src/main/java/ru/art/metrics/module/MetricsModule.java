@@ -22,9 +22,9 @@ import lombok.Getter;
 import ru.art.core.module.Module;
 import ru.art.core.module.ModuleState;
 import ru.art.metrics.configuration.MetricModuleConfiguration;
-import ru.art.metrics.configuration.MetricModuleConfiguration.MetricModuleDefaultConfiguration;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 import static ru.art.metrics.constants.MetricsModuleConstants.METRICS_MODULE_ID;
 
 @Getter
@@ -32,9 +32,12 @@ public class MetricsModule implements Module<MetricModuleConfiguration, ModuleSt
     @Getter(lazy = true, value = PRIVATE)
     private static final MetricModuleConfiguration metricsModule = context().getModule(METRICS_MODULE_ID, MetricsModule::new);
     private final String id = METRICS_MODULE_ID;
-    private final MetricModuleConfiguration defaultConfiguration = new MetricModuleDefaultConfiguration();
+    private final MetricModuleConfiguration defaultConfiguration = MetricModuleConfiguration.DEFAULT_CONFIGURATION;
 
     public static MetricModuleConfiguration metricsModule() {
+        if (insideDefaultContext()) {
+            return MetricModuleConfiguration.DEFAULT_CONFIGURATION;
+        }
         return getMetricsModule();
     }
 

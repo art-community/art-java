@@ -27,6 +27,7 @@ import ru.art.sql.exception.SqlModuleException;
 import static java.lang.Class.forName;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 import static ru.art.sql.constants.SqlModuleConstants.SQL_MODULE_ID;
 import javax.sql.DataSource;
 
@@ -35,9 +36,12 @@ public class SqlModule implements Module<SqlModuleConfiguration, ModuleState> {
     @Getter(lazy = true, value = PRIVATE)
     private static final SqlModuleConfiguration sqlModule = context().getModule(SQL_MODULE_ID, SqlModule::new);
     private final String id = SQL_MODULE_ID;
-    private final SqlModuleConfiguration defaultConfiguration = new SqlModuleDefaultConfiguration();
+    private final SqlModuleConfiguration defaultConfiguration = SqlModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
 
     public static SqlModuleConfiguration sqlModule() {
+        if (insideDefaultContext()) {
+            return SqlModuleConfiguration.DEFAULT_CONFIGURATION;
+        }
         return getSqlModule();
     }
 

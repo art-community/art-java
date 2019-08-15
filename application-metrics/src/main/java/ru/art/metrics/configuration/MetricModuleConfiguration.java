@@ -39,6 +39,8 @@ public interface MetricModuleConfiguration extends ModuleConfiguration {
 
     PrometheusMeterRegistry getPrometheusMeterRegistry();
 
+    MetricModuleDefaultConfiguration DEFAULT_CONFIGURATION = new MetricModuleDefaultConfiguration();
+
     @Getter
     class MetricModuleDefaultConfiguration implements MetricModuleConfiguration {
         private final Set<MeterBinder> meterBinders = setOf(new ClassLoaderMetrics(),

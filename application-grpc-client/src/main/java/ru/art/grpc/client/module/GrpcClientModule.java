@@ -25,6 +25,7 @@ import ru.art.grpc.client.configuration.GrpcClientModuleConfiguration;
 import ru.art.grpc.client.constants.GrpcClientModuleConstants;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 import static ru.art.grpc.client.configuration.GrpcClientModuleConfiguration.GrpcClientModuleDefaultConfiguration;
 import static ru.art.grpc.client.constants.GrpcClientModuleConstants.GRPC_CLIENT_MODULE_ID;
 
@@ -33,9 +34,12 @@ public class GrpcClientModule implements Module<GrpcClientModuleConfiguration, M
     @Getter(lazy = true, value = PRIVATE)
     private static final GrpcClientModuleConfiguration grpcModule = context().getModule(GRPC_CLIENT_MODULE_ID, GrpcClientModule::new);
     private final String id = GrpcClientModuleConstants.GRPC_CLIENT_MODULE_ID;
-    private final GrpcClientModuleConfiguration defaultConfiguration = new GrpcClientModuleDefaultConfiguration();
+    private final GrpcClientModuleConfiguration defaultConfiguration = GrpcClientModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
 
     public static GrpcClientModuleConfiguration grpcClientModule() {
+        if (insideDefaultContext()) {
+            return GrpcClientModuleConfiguration.DEFAULT_CONFIGURATION;
+        }
         return getGrpcModule();
     }
 }

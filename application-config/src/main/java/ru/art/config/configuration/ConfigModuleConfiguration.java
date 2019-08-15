@@ -29,8 +29,10 @@ public interface ConfigModuleConfiguration extends ModuleConfiguration {
 
     int getCacheUpdateIntervalSeconds();
 
-    @Getter
-    class ConfigModuleDefaultConfiguration implements ConfigModuleConfiguration {
+    ConfigModuleDefaultConfiguration DEFAULT_CONFIGURATION = new ConfigModuleDefaultConfiguration();
+
+	@Getter
+	class ConfigModuleDefaultConfiguration implements ConfigModuleConfiguration {
         private final ConfigType moduleConfigType = YAML;
         private final int cacheUpdateIntervalSeconds = DEFAULT_CACHE_UPDATE_INTERVAL_SECONDS;
     }

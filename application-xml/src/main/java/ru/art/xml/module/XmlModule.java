@@ -25,6 +25,7 @@ import ru.art.xml.configuration.XmlModuleConfiguration;
 import ru.art.xml.configuration.XmlModuleConfiguration.XmlModuleDefaultConfiguration;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 import static ru.art.xml.constants.XmlModuleConstants.XML_MODULE_ID;
 
 @Getter
@@ -32,10 +33,12 @@ public class XmlModule implements Module<XmlModuleConfiguration, ModuleState> {
     @Getter(lazy = true, value = PRIVATE)
     private final static XmlModuleConfiguration xmlModule = context().getModule(XML_MODULE_ID, XmlModule::new);
     private final String id = XML_MODULE_ID;
-    private final XmlModuleConfiguration defaultConfiguration = new XmlModuleDefaultConfiguration();
-
+    private final XmlModuleConfiguration defaultConfiguration = XmlModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
 
     public static XmlModuleConfiguration xmlModule() {
+        if (insideDefaultContext()) {
+            return XmlModuleConfiguration.DEFAULT_CONFIGURATION;
+        }
         return getXmlModule();
     }
 }

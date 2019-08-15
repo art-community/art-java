@@ -59,18 +59,17 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
 
     public static void startConfigurator() {
         ApplicationContextConfiguration configuration = new ApplicationContextConfiguration(CONFIGURATOR_MODULE_ID);
-        withContext(defaultContext(configuration), context -> );
         initContext(configuration)
                 .loadModule(new ConfigModule())
                 .loadModule(new JsonModule())
                 .loadModule(new LoggingModule())
                 .loadModule(new ServiceModule())
-                .loadModule(new RocksDbModule(), new ConfiguratorRocksDbConfiguration())
-                .loadModule(new HttpServerModule(), new ConfiguratorHttpServerConfiguration())
-                .loadModule(new GrpcServerModule(), new ConfiguratorGrpcServerConfiguration())
-                .loadModule(new MetricsModule(), new ConfiguratorMetricsConfiguration())
+                .loadModule(new RocksDbModule(), constructInsideDefaultContext(configuration, ConfiguratorRocksDbConfiguration::new))
+                .loadModule(new HttpServerModule(), constructInsideDefaultContext(configuration, ConfiguratorHttpServerConfiguration::new))
+                .loadModule(new GrpcServerModule(), constructInsideDefaultContext(configuration, ConfiguratorGrpcServerConfiguration::new))
+                .loadModule(new MetricsModule(), constructInsideDefaultContext(configuration, ConfiguratorMetricsConfiguration::new))
                 .loadModule(new GrpcClientModule())
-                .loadModule(new HttpClientModule(), new ConfiguratorHttpClientConfiguration())
+                .loadModule(new HttpClientModule(), constructInsideDefaultContext(configuration, ConfiguratorHttpClientConfiguration::new))
                 .loadModule(new ConfiguratorModule());
         String httpPath = httpServerModule().getPath();
         serviceModule()

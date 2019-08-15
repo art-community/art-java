@@ -61,8 +61,10 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
 
     BulkheadRegistry getBulkheadRegistry();
 
-    @Getter
-    class ServiceModuleDefaultConfiguration implements ServiceModuleConfiguration {
+    ServiceModuleDefaultConfiguration DEFAULT_CONFIGURATION = new ServiceModuleDefaultConfiguration();
+
+	@Getter
+	class ServiceModuleDefaultConfiguration implements ServiceModuleConfiguration {
         private final ServiceRegistry serviceRegistry = new ServiceRegistry();
         private final CircuitBreakerRegistry circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
         private final RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.ofDefaults();

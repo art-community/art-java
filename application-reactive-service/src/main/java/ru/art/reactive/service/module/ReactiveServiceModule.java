@@ -24,6 +24,7 @@ import ru.art.core.module.ModuleState;
 import ru.art.reactive.service.configuration.ReactiveServiceModuleConfiguration;
 import ru.art.reactive.service.configuration.ReactiveServiceModuleConfiguration.ReactiveServiceModuleDefaultConfiguration;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.REACTIVE_SERVICE_MODULE_ID;
 
 @Getter
@@ -32,9 +33,12 @@ public class ReactiveServiceModule implements Module<ReactiveServiceModuleConfig
     private static final ReactiveServiceModuleConfiguration reactiveServiceModule = context()
             .getModule(REACTIVE_SERVICE_MODULE_ID, ReactiveServiceModule::new);
     private final String id = REACTIVE_SERVICE_MODULE_ID;
-    private final ReactiveServiceModuleConfiguration defaultConfiguration = new ReactiveServiceModuleDefaultConfiguration();
+    private final ReactiveServiceModuleConfiguration defaultConfiguration = ReactiveServiceModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
 
     public static ReactiveServiceModuleConfiguration reactiveServiceModule() {
+        if (insideDefaultContext()) {
+            return ReactiveServiceModuleConfiguration.DEFAULT_CONFIGURATION;
+        }
         return getReactiveServiceModule();
     }
 }

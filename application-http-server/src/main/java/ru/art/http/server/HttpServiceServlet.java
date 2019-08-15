@@ -123,7 +123,7 @@ class HttpServiceServlet extends HttpServlet {
         Class<? extends Throwable> exceptionClass = exception.getClass();
         HttpExceptionHandler<Throwable> exceptionExceptionHandler = cast(httpServerModule().getExceptionHandlers().get(exceptionClass));
         if (isNull(exceptionExceptionHandler)) {
-            exceptionExceptionHandler = cast(httpServerModule().getExceptionHandlers().get(Exception.class));
+            exceptionExceptionHandler = cast(httpServerModule().getExceptionHandlers().get(Throwable.class));
         }
         if (isNull(exceptionExceptionHandler)) throw new HttpServerException(exception);
         exceptionExceptionHandler.handle(exception, request, response);

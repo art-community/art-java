@@ -24,6 +24,7 @@ import ru.art.service.state.ServiceModuleState;
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.logging.log4j.ThreadContext.put;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 import static ru.art.logging.LoggingModuleConstants.LoggingParameters.REQUEST_ID_KEY;
 import static ru.art.service.constants.ServiceModuleConstants.DEFAULT_REQUEST_ID;
 import static ru.art.service.constants.ServiceModuleConstants.SERVICE_MODULE_ID;
@@ -35,10 +36,13 @@ public class ServiceModule implements Module<ServiceModuleConfiguration, Service
     @Getter(lazy = true, value = PRIVATE)
     private static final ServiceModuleState serviceModuleState = context().getModuleState(SERVICE_MODULE_ID, ServiceModule::new);
     private final String id = SERVICE_MODULE_ID;
-    private final ServiceModuleConfiguration defaultConfiguration = new ServiceModuleConfiguration.ServiceModuleDefaultConfiguration();
+    private final ServiceModuleConfiguration defaultConfiguration = ServiceModuleConfiguration.ServiceModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
     private final ServiceModuleState state = new ServiceModuleState();
 
     public static ServiceModuleConfiguration serviceModule() {
+        if (insideDefaultContext()) {
+            return ServiceModuleConfiguration.DEFAULT_CONFIGURATION;
+        }
         return getServiceModule();
     }
 

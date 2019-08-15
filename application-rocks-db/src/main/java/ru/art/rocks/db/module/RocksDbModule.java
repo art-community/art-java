@@ -32,6 +32,7 @@ import static lombok.AccessLevel.PRIVATE;
 import static org.rocksdb.RocksDB.loadLibrary;
 import static org.rocksdb.RocksDB.open;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 import static ru.art.rocks.db.constants.RocksDbExceptionMessages.OPEN_ERROR;
 import static ru.art.rocks.db.constants.RocksDbModuleConstants.ROCKS_DB_MODULE_ID;
 
@@ -43,10 +44,13 @@ public class RocksDbModule implements Module<RocksDbModuleConfiguration, RocksDb
     @Getter(lazy = true, value = PRIVATE)
     private final static RocksDbModuleState rocksDbModuleState = context().getModuleState(ROCKS_DB_MODULE_ID, RocksDbModule::new);
     private final String id = ROCKS_DB_MODULE_ID;
-    private final RocksDbModuleConfiguration defaultConfiguration = new RocksDbModuleDefaultConfiguration();
+    private final RocksDbModuleConfiguration defaultConfiguration = RocksDbModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
     private RocksDbModuleState state;
 
     public static RocksDbModuleConfiguration rocksDbModule() {
+        if (insideDefaultContext()) {
+            return RocksDbModuleConfiguration.DEFAULT_CONFIGURATION;
+        }
         return getRocksDbModule();
     }
 

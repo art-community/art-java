@@ -59,8 +59,10 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
                 .build();
     }
 
-    @Getter
-    class RsocketModuleDefaultConfiguration implements RsocketModuleConfiguration {
+    RsocketModuleDefaultConfiguration DEFAULT_CONFIGURATION = new RsocketModuleDefaultConfiguration();
+
+	@Getter
+	class RsocketModuleDefaultConfiguration implements RsocketModuleConfiguration {
         private final RsocketDataFormat defaultDataFormat = PROTOBUF;
         private final String acceptorHost = BROADCAST_IP_ADDRESS;
         private final int acceptorTcpPort = findAvailableTcpPort();

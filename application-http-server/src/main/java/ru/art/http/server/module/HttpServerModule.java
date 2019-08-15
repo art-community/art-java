@@ -26,6 +26,7 @@ import ru.art.http.server.specification.HttpServiceSpecification;
 import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVER_MODULE_ID;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVICE_TYPE;
 import static ru.art.service.ServiceModule.serviceModule;
@@ -44,10 +45,13 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
     @Getter(lazy = true, value = PRIVATE)
     private final static HttpServerModuleConfiguration httpServerModule = context().getModule(HTTP_SERVER_MODULE_ID, HttpServerModule::new);
     private final String id = HTTP_SERVER_MODULE_ID;
-    private final HttpServerModuleConfiguration defaultConfiguration = new HttpServerModuleConfiguration.HttpServerModuleDefaultConfiguration();
+    private final HttpServerModuleConfiguration defaultConfiguration = HttpServerModuleConfiguration.DEFAULT_CONFIGURATION;
     private final HttpServerModuleState state = new HttpServerModuleState();
 
     public static HttpServerModuleConfiguration httpServerModule() {
+        if (insideDefaultContext()) {
+            return HttpServerModuleConfiguration.DEFAULT_CONFIGURATION;
+        }
         return getHttpServerModule();
     }
 

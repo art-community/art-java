@@ -31,6 +31,8 @@ public interface SoapServerModuleConfiguration extends ModuleConfiguration {
 
     <T extends Throwable> XmlEntityFromModelMapper<T> getDefaultFaultMapper();
 
+    SoapServerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new SoapServerModuleDefaultConfiguration();
+
     class SoapServerModuleDefaultConfiguration implements SoapServerModuleConfiguration {
         private SoapFault defaultFaultResponse = SoapFault.builder()
                 .codeValue(UNEXPECTED_ERROR)
@@ -38,11 +40,11 @@ public interface SoapServerModuleConfiguration extends ModuleConfiguration {
                 .build();
         private XmlEntityFromModelMapper<SoapFault> defaultFaultMapper = soapResponseFaultMapper;
 
-        public <T extends Throwable> T  getDefaultFaultResponse() {
+        public <T extends Throwable> T getDefaultFaultResponse() {
             return cast(this.defaultFaultResponse);
         }
 
-        public <T extends Throwable> XmlEntityFromModelMapper<T>  getDefaultFaultMapper() {
+        public <T extends Throwable> XmlEntityFromModelMapper<T> getDefaultFaultMapper() {
             return cast(this.defaultFaultMapper);
         }
     }

@@ -33,8 +33,10 @@ public interface RocksDbModuleConfiguration extends ModuleConfiguration {
 
     boolean isEnableTracing();
 
-    @Getter
-    class RocksDbModuleDefaultConfiguration implements RocksDbModuleConfiguration {
+    RocksDbModuleDefaultConfiguration DEFAULT_CONFIGURATION = new RocksDbModuleDefaultConfiguration();
+
+	@Getter
+	class RocksDbModuleDefaultConfiguration implements RocksDbModuleConfiguration {
         private final String path = new File(DEFAULT_PATH_TO_DB).getAbsolutePath();
         private final boolean enableTracing = false;
         private final Options options = new Options()

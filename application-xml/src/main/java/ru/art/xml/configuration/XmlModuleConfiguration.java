@@ -28,6 +28,8 @@ public interface XmlModuleConfiguration extends ModuleConfiguration {
 
     XMLOutputFactory getXmlOutputFactory();
 
+    XmlModuleDefaultConfiguration DEFAULT_CONFIGURATION = new XmlModuleDefaultConfiguration();
+
     @Getter
     class XmlModuleDefaultConfiguration implements XmlModuleConfiguration {
         private final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();

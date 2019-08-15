@@ -26,8 +26,10 @@ public interface SchedulerModuleConfiguration extends ModuleConfiguration {
 
     PeriodicExecutor getPeriodicExecutor();
 
-    @Getter
-    class SchedulerModuleDefaultConfiguration implements SchedulerModuleConfiguration {
+    SchedulerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new SchedulerModuleDefaultConfiguration();
+
+	@Getter
+	class SchedulerModuleDefaultConfiguration implements SchedulerModuleConfiguration {
         private DeferredExecutor deferredExecutor = DeferredExecutorImpl.builder().withExceptionHandler(new DeferredExecutorExceptionHandler()).build();
         private PeriodicExecutor periodicExecutor = new PeriodicExecutor(DeferredExecutorImpl.builder().withExceptionHandler(new DeferredExecutorExceptionHandler()).build());
     }

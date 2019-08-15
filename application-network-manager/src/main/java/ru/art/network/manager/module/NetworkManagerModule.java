@@ -29,6 +29,7 @@ import ru.art.state.api.communication.grpc.NetworkServiceProxySpecification;
 import static java.time.Duration.of;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 import static ru.art.network.manager.configuration.NetworkManagerModuleConfiguration.NetworkManagerModuleDefaultConfiguration;
 import static ru.art.network.manager.constants.NetworkManagerModuleConstants.NETWORK_MANAGER_MODULE_ID;
 import static ru.art.service.ServiceModule.serviceModule;
@@ -44,10 +45,13 @@ public class NetworkManagerModule implements Module<NetworkManagerModuleConfigur
     private static final NetworkManagerModuleState networkManagerModuleState = context()
             .getModuleState(NETWORK_MANAGER_MODULE_ID, NetworkManagerModule::new);
     private final String id = NETWORK_MANAGER_MODULE_ID;
-    private final NetworkManagerModuleConfiguration defaultConfiguration = new NetworkManagerModuleDefaultConfiguration();
+    private final NetworkManagerModuleConfiguration defaultConfiguration = NetworkManagerModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
     private final NetworkManagerModuleState state = new NetworkManagerModuleState();
 
     public static NetworkManagerModuleConfiguration networkManagerModule() {
+        if (insideDefaultContext()) {
+            return NetworkManagerModuleConfiguration.DEFAULT_CONFIGURATION;
+        }
         return getNetworkManagerModule();
     }
 

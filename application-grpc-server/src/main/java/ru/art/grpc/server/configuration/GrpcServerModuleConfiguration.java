@@ -58,8 +58,10 @@ public interface GrpcServerModuleConfiguration extends ModuleConfiguration {
         private File privateKeyFile;
     }
 
-    @Getter
-    class GrpcServerModuleDefaultConfiguration implements GrpcServerModuleConfiguration {
+    GrpcServerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new GrpcServerModuleDefaultConfiguration();
+
+	@Getter
+	class GrpcServerModuleDefaultConfiguration implements GrpcServerModuleConfiguration {
         private final String path = DEFAULT_MODULE_PATH;
         private final boolean executeServiceInTransportThread = false;
         private final Executor overridingExecutor = newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
