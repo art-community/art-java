@@ -40,7 +40,7 @@ import java.util.Set;
 @SuppressWarnings("Duplicates")
 public class TarantoolSpaceConfiguration {
     private final String spaceName;
-    @Singular
+    @Singular("format")
     private Set<Format> formats;
     private Integer id;
     private Boolean temporary;

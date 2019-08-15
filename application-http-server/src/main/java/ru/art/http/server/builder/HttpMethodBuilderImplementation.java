@@ -82,7 +82,7 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
         return serviceConfigBuilder.add(HttpService.HttpMethod.builder()
                 .methodId(methodId)
                 .path(HttpPath.builder().contextPath(path)
-                        .pathParameters(getOrElse(pathParams, emptySet()))
+                        .parameters(getOrElse(pathParams, emptySet()))
                         .build())
                 .methodType(type)
                 .requestDataSource(requestDataResource)

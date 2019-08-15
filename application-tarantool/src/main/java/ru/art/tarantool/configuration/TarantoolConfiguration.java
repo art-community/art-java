@@ -34,6 +34,6 @@ public class TarantoolConfiguration {
     private TarantoolInitialConfiguration initialConfiguration;
     @Builder.Default
     private final TarantoolInstanceMode instanceMode = LOCAL;
-    @Singular("entityFieldsMappings")
+    @Singular("entityFieldsMapping")
     private final Map<String, TarantoolEntityFieldsMapping> entityFieldsMappings;
 }

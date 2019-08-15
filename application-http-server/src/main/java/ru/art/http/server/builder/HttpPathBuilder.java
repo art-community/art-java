@@ -24,7 +24,7 @@ public interface HttpPathBuilder {
     static HttpPath buildHttpPath(String serviceContextPath, HttpPath methodPath) {
         return HttpPath.builder()
                 .contextPath(serviceContextPath + methodPath.getContextPath())
-                .pathParameters(methodPath.getPathParameters())
+                .parameters(methodPath.getParameters())
                 .build();
     }
 }

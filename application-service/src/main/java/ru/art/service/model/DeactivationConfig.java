@@ -27,6 +27,6 @@ import java.util.List;
 @Getter
 public class DeactivationConfig {
     private boolean deactivated;
-    @Singular
+    @Singular("deactivateMethod")
     private List<String> deactivatedMethods;
 }

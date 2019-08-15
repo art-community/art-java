@@ -34,8 +34,8 @@ import java.util.Set;
 @Builder
 public class HttpPath {
     private final String contextPath;
-    @Singular
-    private final Set<String> pathParameters;
+    @Singular("parameter")
+    private final Set<String> parameters;
 
     @Override
     public String toString() {
@@ -43,9 +43,9 @@ public class HttpPath {
     }
 
     private String buildPathParams() {
-        if (isEmpty(pathParameters)) return EMPTY_STRING;
+        if (isEmpty(parameters)) return EMPTY_STRING;
         StringBuilder path = new StringBuilder(StringConstants.SLASH);
-        Iterator<String> parametersIt = pathParameters.iterator();
+        Iterator<String> parametersIt = parameters.iterator();
         while (parametersIt.hasNext()) {
             path.append(COLON).append(parametersIt.next());
             if (parametersIt.hasNext()) {

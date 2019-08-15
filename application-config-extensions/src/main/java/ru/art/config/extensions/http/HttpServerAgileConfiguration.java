@@ -66,7 +66,7 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
         String webUrl = emptyIfException(() -> configString(HTTP_SERVER_SECTION_ID, WEB_URL));
         webConfiguration = isEmpty(webUrl) ? super.getWebConfiguration() : HttpWebConfiguration.builder()
                 .webUrl(webUrl)
-                .templateResourceVariables(URL_TEMPLATE_VARIABLE, variable -> webUrl)
+                .templateResourceVariable(URL_TEMPLATE_VARIABLE, variable -> webUrl)
                 .build();
         int newPort = configInt(HTTP_SERVER_SECTION_ID, PORT, super.getPort());
         boolean restart = port != newPort;

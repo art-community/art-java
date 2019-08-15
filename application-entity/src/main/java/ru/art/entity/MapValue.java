@@ -31,7 +31,7 @@ import java.util.Map;
 @EqualsAndHashCode
 public class MapValue implements Value {
     private final ValueType type = ValueType.MAP;
-    @Singular
+    @Singular("element")
     private final Map<? extends Value, ? extends Value> elements;
 
     @Override

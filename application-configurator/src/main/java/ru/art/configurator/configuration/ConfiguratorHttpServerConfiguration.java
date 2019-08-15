@@ -57,7 +57,7 @@ public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefault
     private final String path = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_HTTP_PATH_PROPERTY), DEFAULT_CONFIGURATOR_PATH);
     private final List<HttpServerInterceptor> requestInterceptors = initializeRequestInterceptors(super.getRequestInterceptors());
     private final HttpWebConfiguration webConfiguration = HttpWebConfiguration.builder()
-            .templateResourceVariables(URL_TEMPLATE_VARIABLE, (url) -> ifExceptionOrEmpty(() ->
+            .templateResourceVariable(URL_TEMPLATE_VARIABLE, (url) -> ifExceptionOrEmpty(() ->
                             config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_URL_PROPERTY),
                     HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST + COLON + port + path))
             .build();
@@ -65,8 +65,8 @@ public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefault
     private static List<HttpServerInterceptor> initializeRequestInterceptors(List<HttpServerInterceptor> superInterceptors) {
         List<HttpServerInterceptor> httpServerInterceptors = dynamicArrayOf(initializeWebServerInterceptors(superInterceptors));
         httpServerInterceptors.add(intercept(CookieInterceptor.builder()
-                .checkingUrls(AUTHORIZATION_CHECKING_URLS)
-                .cookieValue(TOKEN_COOKIE, UserDao::getToken)
+                .urls(AUTHORIZATION_CHECKING_URLS)
+                .cookie(TOKEN_COOKIE, UserDao::getToken)
                 .errorStatus(UNAUTHORIZED.getCode())
                 .errorContent(getStringResource(INDEX_HTML))
                 .build()));

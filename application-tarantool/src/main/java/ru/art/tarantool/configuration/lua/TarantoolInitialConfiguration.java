@@ -48,7 +48,7 @@ public class TarantoolInitialConfiguration {
     private Long memtexMaxTupleSize;
     private Long memtxMemory;
     private Integer slabAllocFactor;
-    @Singular
+    @Singular("option")
     private Map<String, Object> options;
 
     public String toLua() {

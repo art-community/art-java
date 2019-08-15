@@ -30,11 +30,11 @@ import java.util.Map;
 @Getter
 @Builder
 public class HttpRequestContext {
-    @Singular
+    @Singular("header")
     private final Map<String, String> headers;
-    @Singular
+    @Singular("cookie")
     private final List<Cookie> cookies;
-    @Singular
+    @Singular("part")
     private final Map<String, MultiPartContext> parts;
 
     private final String acceptLanguages;

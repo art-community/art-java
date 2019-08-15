@@ -27,7 +27,7 @@ import java.util.Map;
 @Getter
 @Builder
 public class MultiPartContext {
-    @Singular
+    @Singular("header")
     private final Map<String, String> headers;
     private final MimeType contentType;
     private final MimeType acceptType;

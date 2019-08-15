@@ -183,7 +183,7 @@ public class HttpServer {
             Wrapper defaultServlet = ctx.createWrapper();
             String servletName = DEFAULT_SERVLET + path.getContextPath();
             StringBuilder servletPath = new StringBuilder().append(path.getContextPath());
-            if (!path.getPathParameters().isEmpty()) {
+            if (!path.getParameters().isEmpty()) {
                 servletPath.append(SLASH).append(WILDCARD);
             }
             defaultServlet.setName(servletName);

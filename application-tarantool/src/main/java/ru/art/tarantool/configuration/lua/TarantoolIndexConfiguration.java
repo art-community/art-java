@@ -41,7 +41,7 @@ import java.util.Set;
 public class TarantoolIndexConfiguration {
     private final String indexName;
     private final String spaceName;
-    @Singular
+    @Singular("part")
     private Set<Part> parts;
     private TarantoolIndexType type;
     private Integer id;

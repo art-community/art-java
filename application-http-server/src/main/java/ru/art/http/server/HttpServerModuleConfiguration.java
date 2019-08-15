@@ -93,7 +93,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
     @Builder
     class HttpWebConfiguration {
         private final String webUrl;
-        @Singular("templateResourceVariables")
+        @Singular("templateResourceVariable")
         private final Map<String, Function<String, String>> templateResourceVariables;
         @Singular("resourcePathMapping")
         private final Map<String, Function<String, String>> resourcePathMapping;

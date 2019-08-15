@@ -13,74 +13,87 @@ plugins {
     id("io.github.art.project") version "1.0.62"
 }
 
-   art {
-        idea()
-        lombok()
-        tests()
-        
-        // Modules that includes into result project *.jar 
-        // Alternatives: providedModules (not included into jar)  and 
-        // testModules (use in tests sources)
-        /*embeddedModules {
-            // For using protocols
-            protocols {
-                grpcServer()
-                grpcCommunication()
-                httpServer()
-                httpCommunication()
-                rsocket()
-                soapServer()
-                soapCommunication()
-            }
-            
-            // For using databases
-            db {
-                sql()
-                tarantool()
-                rocksdb()
-            }   
-            
-            // For using file configurations
-            //localConfigurationManagement()
-            
-            // For using remote configurations    
-            //remoteConfigurationManagement()
+art {
+  idea()
+  lombok()
+  tests()
+  
+  // Modules that includes into result project *.jar 
+  // Alternatives: providedModules (not included into jar)  and 
+  // testModules (use in tests sources)
+  /*embeddedModules {
+      // For sepcify version
+      useVersion("1.+") //or useVersion() without argments. Then will be used "latest" version
 
-            // For using file and configurations    
-            //configurationManagement()
+      // For full kit of modules 
+      kit()    
+    
+      // For using protocols
+      protocols {
+          grpcServer()
+          grpcCommunication()
+          httpServer()
+          httpCommunication()
+          rsocket()
+          soapServer()
+          soapCommunication()
+      }
+      
+      // For using databases
+      db {
+          sql()
+          tarantool()
+          rocksdb()
+      }   
+      
+      // For using file configurations
+      //localConfigurationManagement()
+      
+      // For using remote configurations    
+      //remoteConfigurationManagement()
 
-            // For using local scheduler
-            //localScheduling()
-            
-            // For using remote scheduler
-            //remoteScheduling()
+      // For using file and configurations    
+      //configurationManagement()
 
-            // For using local and remote scheduler
-            //scheduling()
-            
-            // For using kafka consumer
-            //kafkaConsumer()            
-            
-            // For using kafka producer
-            //producer()            
-            
-            // For using kafka consumer and producer
-            //kafka()            
+      // For using local scheduler
+      //localScheduling()
+      
+      // For using remote scheduler
+      //remoteScheduling()
 
-            dataFormats {
-                // Includes by default if using grpc/rsocket/remote configuration modules
-                protobuf()
-                // Includes by default if using rsocket/http modules
-                json()
-                // Includes by default if using rsocket/soap modules
-                xml()
-            }            
-        }*/  
-    }
+      // For using local and remote scheduler
+      //scheduling()
+      
+      // For using kafka consumer
+      //kafkaConsumer()            
+      
+      // For using kafka producer
+      //producer()            
+      
+      // For using kafka consumer and producer
+      //kafka()            
+
+      dataFormats {
+          // Includes by default if using grpc/rsocket/remote configuration modules
+          protobuf()
+          // Includes by default if using rsocket/http modules
+          json()
+          // Includes by default if using rsocket/soap modules
+          xml()
+      }            
+  }*/  
+    
+  // If using web (sources need to be placed in src/main/web) 
+  web()
+  
+    // If using web technologies 
+  web()
+ }
 ```
 ## Requirements
 
 - Java 8 - heavy dependence on Java 8 functional APIs
+- If working with web - installed nodejs and npm
 - If using tarantool - installed tarantool
 - If using kafka - installed kafka
 - If using sql - installed SQL db

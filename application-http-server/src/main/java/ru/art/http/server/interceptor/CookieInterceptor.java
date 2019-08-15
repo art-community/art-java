@@ -42,16 +42,16 @@ import java.util.function.Supplier;
 
 @Builder
 public class CookieInterceptor implements HttpServerInterception {
-    @Singular
-    private final Set<String> checkingUrls;
-    @Singular
-    private final Map<String, Supplier<String>> cookieValues;
+    @Singular("url")
+    private final Set<String> urls;
+    @Singular("cookie")
+    private final Map<String, Supplier<String>> coockies;
     private final int errorStatus;
     private final String errorContent;
 
     @Override
     public InterceptionStrategy intercept(HttpServletRequest request, HttpServletResponse response) {
-        if (checkingUrls.stream().noneMatch(url -> request.getRequestURI().contains(url)) || request.getMethod().equals(OPTIONS.name()) || hasTokenCookie(request)) {
+        if (urls.stream().noneMatch(url -> request.getRequestURI().contains(url)) || request.getMethod().equals(OPTIONS.name()) || hasTokenCookie(request)) {
             return NEXT_INTERCEPTOR;
         }
         response.setCharacterEncoding(contextConfiguration().getCharset().name());
@@ -79,7 +79,7 @@ public class CookieInterceptor implements HttpServerInterception {
     }
 
     private boolean filterCookie(Cookie cookie) {
-        Supplier<String> supplier = cookieValues.get(cookie.getName());
+        Supplier<String> supplier = coockies.get(cookie.getName());
         if (isNull(supplier)) return false;
         return cookie.getValue().equalsIgnoreCase(supplier.get());
     }

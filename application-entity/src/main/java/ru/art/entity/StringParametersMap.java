@@ -33,7 +33,7 @@ import java.util.Map;
 @EqualsAndHashCode
 public class StringParametersMap implements Value {
     private final ValueType type = STRING_PARAMETERS_MAP;
-    @Singular
+    @Singular("parameter")
     private Map<String, String> parameters;
 
     public String getParameter(String key) {

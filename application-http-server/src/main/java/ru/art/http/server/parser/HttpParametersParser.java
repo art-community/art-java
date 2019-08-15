@@ -48,7 +48,7 @@ public interface HttpParametersParser {
         String[] pathParameterValues = pathParameterString.split(SLASH);
         if (isEmpty(pathParameterValues) || pathParameterValues.length == 1)
             return StringParametersMap.builder().build();
-        Set<String> pathParameterNames = methodConfig.getPath().getPathParameters();
+        Set<String> pathParameterNames = methodConfig.getPath().getParameters();
         int pathParameterIndex = 1;
         MapBuilder<String, String> pathParameters = mapOf();
         for (String name : pathParameterNames) {
