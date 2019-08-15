@@ -23,7 +23,7 @@ art {
   // testModules (use in tests sources)
   /*embeddedModules {
       // For specify version
-      useVersion("1.+") //or useVersion() without argments. Then will be used "latest" version
+      useVersion("1.+") //or useVersion() without arguments. Then will be used "1.+" version as default
 
       // For full kit of modules 
       kit()    
