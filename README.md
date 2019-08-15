@@ -75,11 +75,11 @@ art {
 
      // dataFormats {
           // Includes by default if using grpc/rsocket/remote configuration modules
-         // protobuf()
+          //protobuf()
           // Includes by default if using rsocket/http modules
-         // json()
+          //json()
           // Includes by default if using rsocket/soap modules
-        //  xml()
+          //xml()
      // }            
   }*/  
     
