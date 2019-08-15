@@ -24,7 +24,6 @@ import ru.art.config.remote.specification.RemoteConfigServiceSpecification;
 import ru.art.configurator.api.specification.ConfiguratorCommunicationSpecification;
 import ru.art.core.configuration.ContextInitialConfiguration;
 import ru.art.core.context.Context;
-import ru.art.core.exception.InternalRuntimeException;
 import ru.art.grpc.client.module.GrpcClientModule;
 import ru.art.logging.LoggingModule;
 import ru.art.service.ServiceModule;
@@ -36,7 +35,8 @@ import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.LocalCo
 import static ru.art.config.remote.loader.RemoteConfigLoader.loadRemoteConfig;
 import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.CONFIGURATOR_COMMUNICATION_SERVICE_ID;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.context.Context.*;
+import static ru.art.core.context.Context.contextConfiguration;
+import static ru.art.core.context.Context.withContext;
 import static ru.art.entity.Entity.entityBuilder;
 import static ru.art.logging.LoggingModule.loggingModule;
 import static ru.art.service.ServiceModule.serviceModule;
@@ -58,7 +58,7 @@ public class RemoteConfigProvider {
 
     public static Config remoteConfig() {
         if (isNull(PRELOADED_CONTEXT)) {
-            throw new InternalRuntimeException(PRELOADED_CONTEXT_NOT_INITIALIZED);
+            return new Config(entityBuilder().build(), REMOTE_ENTITY_CONFIG);
         }
         return withContext(PRELOADED_CONTEXT, RemoteConfigProvider::getRemoteConfig);
     }

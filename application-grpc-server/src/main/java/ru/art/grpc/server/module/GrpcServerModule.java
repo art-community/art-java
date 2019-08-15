@@ -26,9 +26,13 @@ import static ru.art.grpc.server.constants.GrpcServerModuleConstants.GRPC_SERVER
 
 @Getter
 public class GrpcServerModule implements Module<GrpcServerModuleConfiguration, GrpcServerModuleState> {
-    private final GrpcServerModuleState state = new GrpcServerModuleState();
+    @Getter(lazy = true, value = PRIVATE)
+    private final static GrpcServerModuleConfiguration grpcServerModule = context().getModule(GRPC_SERVER_MODULE_ID, GrpcServerModule::new);
+    @Getter(lazy = true, value = PRIVATE)
+    private final static GrpcServerModuleState grpcServerModuleState = context().getModuleState(GRPC_SERVER_MODULE_ID, GrpcServerModule::new);
     private final String id = GRPC_SERVER_MODULE_ID;
     private final GrpcServerModuleConfiguration defaultConfiguration = new GrpcServerModuleDefaultConfiguration();
+    private final GrpcServerModuleState state = new GrpcServerModuleState();
 
     public static GrpcServerModuleConfiguration grpcServerModule() {
         return context().getModule(GRPC_SERVER_MODULE_ID, GrpcServerModule::new);

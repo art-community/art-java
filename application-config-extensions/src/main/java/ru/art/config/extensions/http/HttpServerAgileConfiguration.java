@@ -22,6 +22,7 @@ import ru.art.core.mime.MimeType;
 import ru.art.http.mapper.HttpContentMapper;
 import ru.art.http.server.HttpServerModuleConfiguration.HttpServerModuleDefaultConfiguration;
 import ru.art.http.server.specification.HttpWebUiServiceSpecification;
+import ru.art.metrics.http.specification.MetricServiceSpecification;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.http.HttpConfigKeys.*;
@@ -50,6 +51,7 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
     private int minSpareThreadsCount;
     private HttpWebConfiguration webConfiguration;
     private boolean enableTracing;
+    private boolean enableMetrics;
 
     public HttpServerAgileConfiguration() {
         refresh();
@@ -58,6 +60,7 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
     @Override
     public void refresh() {
         enableTracing = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_TRACING, super.isEnableTracing());
+        enableMetrics = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_METRICS, super.isEnableMetrics());
         String webUrl = emptyIfException(() -> configString(HTTP_SERVER_SECTION_ID, WEB_URL));
         webConfiguration = isEmpty(webUrl) ? super.getWebConfiguration() : HttpWebConfiguration.builder()
                 .webUrl(webUrl)
@@ -77,6 +80,9 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
         minSpareThreadsCount = newMinSpareThreadsCount;
         if (isNotEmpty(webUrl)) {
             serviceModule().getServiceRegistry().registerService(new HttpWebUiServiceSpecification(path, path + IMAGE_PATH));
+        }
+        if (enableMetrics) {
+            serviceModule().getServiceRegistry().registerService(new MetricServiceSpecification(path));
         }
         if (restart && context().hasModule(HTTP_SERVER_MODULE_ID)) {
             httpServerModuleState().getServer().restart();

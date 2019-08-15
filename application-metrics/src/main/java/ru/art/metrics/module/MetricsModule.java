@@ -27,7 +27,6 @@ import static ru.art.metrics.constants.MetricsModuleConstants.METRICS_MODULE_ID;
 @Getter
 public class MetricsModule implements Module<MetricModuleConfiguration, ModuleState> {
     private final MetricModuleConfiguration defaultConfiguration = new MetricModuleDefaultConfiguration();
-    private final String id = METRICS_MODULE_ID;
 
     public static MetricModuleConfiguration metricsModule() {
         return context().getModule(METRICS_MODULE_ID, MetricsModule::new);

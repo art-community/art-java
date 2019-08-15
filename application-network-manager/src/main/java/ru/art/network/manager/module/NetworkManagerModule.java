@@ -35,9 +35,15 @@ import static ru.art.task.deferred.executor.SchedulerModuleActions.asynchronousP
 
 @Getter
 public class NetworkManagerModule implements Module<NetworkManagerModuleConfiguration, NetworkManagerModuleState> {
+    @Getter(lazy = true)
+    private static final NetworkManagerModuleConfiguration networkManagerModule = context()
+            .getModule(NETWORK_MANAGER_MODULE_ID, NetworkManagerModule::new);
+    @Getter(lazy = true)
+    private static final NetworkManagerModuleState networkManagerModuleState = context()
+            .getModuleState(NETWORK_MANAGER_MODULE_ID, NetworkManagerModule::new);
+    private final String id = NETWORK_MANAGER_MODULE_ID;
     private final NetworkManagerModuleConfiguration defaultConfiguration = new NetworkManagerModuleDefaultConfiguration();
     private final NetworkManagerModuleState state = new NetworkManagerModuleState();
-    private final String id = NETWORK_MANAGER_MODULE_ID;
 
     public static NetworkManagerModuleConfiguration networkManagerModule() {
         return context().getModule(NETWORK_MANAGER_MODULE_ID, NetworkManagerModule::new);

@@ -26,7 +26,6 @@ import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVER_MODULE_ID;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVICE_TYPE;
-import static ru.art.metrics.module.MetricsModule.metricsModule;
 import static ru.art.service.ServiceModule.serviceModule;
 import java.util.List;
 
@@ -43,8 +42,6 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
     private final HttpServerModuleConfiguration defaultConfiguration = new HttpServerModuleConfiguration.HttpServerModuleDefaultConfiguration();
     private final HttpServerModuleState state = new HttpServerModuleState();
 
-    private final String id = HTTP_SERVER_MODULE_ID;
-
     public static HttpServerModuleConfiguration httpServerModule() {
         return context().getModule(HTTP_SERVER_MODULE_ID, HttpServerModule::new);
     }
@@ -55,10 +52,5 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
 
     public static HttpServerModuleState httpServerModuleState() {
         return context().getModuleState(HTTP_SERVER_MODULE_ID, HttpServerModule::new);
-    }
-
-    @Override
-    public void onLoad() {
-        metricsModule();
     }
 }

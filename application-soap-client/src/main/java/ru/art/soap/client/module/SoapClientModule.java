@@ -26,6 +26,8 @@ import static ru.art.soap.client.constants.SoapClientModuleConstants.SOAP_CLIENT
 
 @Getter
 public class SoapClientModule implements Module<SoapClientModuleConfiguration, ModuleState> {
+    @Getter(lazy = true, value = PRIVATE)
+    private static final SoapClientModuleConfiguration soapClientModule = context().getModule(SOAP_CLIENT_MODULE_ID, SoapClientModule::new);
     private final String id = SOAP_CLIENT_MODULE_ID;
     private final SoapClientModuleConfiguration defaultConfiguration = new SoapClientModuleDefaultConfiguration();
 

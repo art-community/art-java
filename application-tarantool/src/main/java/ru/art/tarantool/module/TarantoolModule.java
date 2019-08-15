@@ -30,9 +30,12 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIniti
 
 @Getter
 public class TarantoolModule implements Module<TarantoolModuleConfiguration, TarantoolModuleState> {
+    @Getter(lazy = true, value = PRIVATE)
+    private final static TarantoolModuleConfiguration tarantoolModule = context().getModule(TARANTOOL_MODULE_ID, TarantoolModule::new);
+    @Getter(lazy = true, value = PRIVATE)
+    private final static TarantoolModuleState tarantoolModuleState = context().getModuleState(TARANTOOL_MODULE_ID, TarantoolModule::new);
     private final String id = TARANTOOL_MODULE_ID;
     private final TarantoolModuleConfiguration defaultConfiguration = new TarantoolModuleDefaultConfiguration();
-    @Getter(lazy = true)
     private final TarantoolModuleState state = new TarantoolModuleState();
 
     @Override

@@ -43,6 +43,9 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
             .filter(service -> service.getServiceTypes().contains(KAFKA_CONSUMER_SERVICE_TYPE))
             .map(service -> (KafkaConsumerServiceSpecification) service)
             .collect(toList()));
+    @Getter(lazy = true, value = PRIVATE)
+    private static final KafkaConsumerModuleConfiguration kafkaConsumerModule = context()
+            .getModule(KAFKA_CONSUMER_MODULE_ID, KafkaConsumerModule::new);
     private String id = KAFKA_CONSUMER_MODULE_ID;
     private KafkaConsumerModuleConfiguration defaultConfiguration = new KafkaConsumerModuleDefaultConfiguration();
 

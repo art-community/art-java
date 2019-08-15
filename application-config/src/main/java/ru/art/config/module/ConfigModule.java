@@ -26,6 +26,8 @@ import static ru.art.core.context.Context.context;
 
 @Getter
 public class ConfigModule implements Module<ConfigModuleConfiguration, ModuleState> {
+    @Getter(lazy = true)
+    private static final ConfigModuleConfiguration configModule = context().getModule(CONFIG_MODULE_ID, ConfigModule::new);
     private final ConfigModuleConfiguration defaultConfiguration = new ConfigModuleDefaultConfiguration();
     private final String id = CONFIG_MODULE_ID;
 

@@ -16,6 +16,7 @@
 
 package ru.art.metrics.http.specification;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import ru.art.http.server.model.HttpService;
 import ru.art.http.server.specification.HttpServiceSpecification;
@@ -24,7 +25,6 @@ import static java.util.Collections.emptyList;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.entity.PrimitiveMapping.stringMapper;
 import static ru.art.http.server.model.HttpService.httpService;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
 import static ru.art.metrics.constants.MetricsModuleConstants.*;
 import static ru.art.metrics.http.constants.MetricsModuleHttpConstants.METRICS_CONTENT_TYPE;
 import static ru.art.metrics.module.MetricsModule.metricsModule;
@@ -33,17 +33,19 @@ import static ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInt
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class MetricServiceSpecification implements HttpServiceSpecification {
+    private final String path;
     private final String serviceId = METRICS_SERVICE_ID;
     private final List<RequestInterceptor> requestInterceptors = emptyList();
     private final List<ResponseInterceptor> responseInterceptors = emptyList();
-
+    @Getter(lazy = true)
     private final HttpService httpService = httpService()
             .get(METRICS_METHOD_ID)
             .produces(METRICS_CONTENT_TYPE)
             .responseMapper(stringMapper.getFromModel())
             .listen(METRICS_PATH)
-            .serve(httpServerModule().getPath());
+            .serve(path);
 
     @Override
     public <P, R> R executeMethod(String methodId, P request) {

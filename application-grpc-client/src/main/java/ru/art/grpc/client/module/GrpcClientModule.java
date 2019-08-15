@@ -21,16 +21,19 @@ import ru.art.core.module.Module;
 import ru.art.core.module.ModuleState;
 import ru.art.grpc.client.configuration.GrpcClientModuleConfiguration;
 import ru.art.grpc.client.constants.GrpcClientModuleConstants;
+import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
 import static ru.art.grpc.client.configuration.GrpcClientModuleConfiguration.GrpcClientModuleDefaultConfiguration;
 import static ru.art.grpc.client.constants.GrpcClientModuleConstants.GRPC_CLIENT_MODULE_ID;
 
 @Getter
 public class GrpcClientModule implements Module<GrpcClientModuleConfiguration, ModuleState> {
+    @Getter(lazy = true, value = PRIVATE)
+    private static final GrpcClientModuleConfiguration grpcModule = context().getModule(GRPC_CLIENT_MODULE_ID, GrpcClientModule::new);
     private final String id = GrpcClientModuleConstants.GRPC_CLIENT_MODULE_ID;
     private final GrpcClientModuleConfiguration defaultConfiguration = new GrpcClientModuleDefaultConfiguration();
 
     public static GrpcClientModuleConfiguration grpcClientModule() {
-        return context().getModule(GRPC_CLIENT_MODULE_ID, GrpcClientModule::new);
+        return getGrpcModule();
     }
 }

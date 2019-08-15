@@ -26,6 +26,10 @@ import static ru.art.rsocket.constants.RsocketModuleConstants.RSOCKET_MODULE_ID;
 
 @Getter
 public class RsocketModule implements Module<RsocketModuleConfiguration, RsocketModuleState> {
+    @Getter(lazy = true)
+    private static final RsocketModuleConfiguration rsocketModule = context().getModule(RSOCKET_MODULE_ID, RsocketModule::new);
+    @Getter(lazy = true)
+    private static final RsocketModuleState rsocketModuleState = context().getModuleState(RSOCKET_MODULE_ID, RsocketModule::new);
     private final String id = RSOCKET_MODULE_ID;
     private final RsocketModuleConfiguration defaultConfiguration = new RsocketModuleDefaultConfiguration();
     private final RsocketModuleState state = new RsocketModuleState();

@@ -23,6 +23,7 @@ public interface CommonConfigKeys {
     String URL = "url";
     String TARGETS = "targets";
     String ENABLE_TRACING = "enableTracing";
+    String ENABLE_METRICS = "enableMetrics";
     String THREAD_POOL_SIZE = "threadPoolSize";
     String TIMEOUT_MILLIS = "connectTimeout";
 }

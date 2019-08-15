@@ -17,7 +17,7 @@
 package ru.art.config.extensions.network;
 
 import lombok.Getter;
-import ru.art.network.manager.configuration.NetworkManagerModuleConfiguration.NetworkManagerModuleDefaultConfiguration;
+import ru.art.network.manager.configuration.NetworkManagerModuleConfiguration.*;
 import ru.art.network.manager.constants.NetworkManagerModuleConstants.BalancerMode;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.network.NetworkManagerConfigKeys.*;

@@ -25,8 +25,10 @@ import static ru.art.task.deferred.executor.SchedulerModuleConstants.SCHEDULER_M
 
 @Getter
 public class SchedulerModule implements Module<SchedulerModuleConfiguration, ModuleState> {
-    private final SchedulerModuleConfiguration defaultConfiguration = new SchedulerModuleDefaultConfiguration();
+    @Getter(lazy = true, value = PRIVATE)
+    private final static SchedulerModuleConfiguration schedulerModule = context().getModule(SCHEDULER_MODULE_ID, SchedulerModule::new);
     private final String id = SCHEDULER_MODULE_ID;
+    private final SchedulerModuleConfiguration defaultConfiguration = new SchedulerModuleDefaultConfiguration();
 
     public static SchedulerModuleConfiguration schedulerModule() {
         return context().getModule(SCHEDULER_MODULE_ID, SchedulerModule::new);

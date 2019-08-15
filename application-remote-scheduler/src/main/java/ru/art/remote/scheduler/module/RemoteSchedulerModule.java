@@ -20,6 +20,7 @@ import lombok.Getter;
 import ru.art.core.module.Module;
 import ru.art.remote.scheduler.configuration.RemoteSchedulerModuleConfiguration;
 import ru.art.remote.scheduler.state.RemoteSchedulerModuleState;
+import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
 import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.REMOTE_SCHEDULER_MODULE_ID;
 import static ru.art.remote.scheduler.controller.PoolController.fillAllPools;
@@ -27,16 +28,22 @@ import static ru.art.remote.scheduler.controller.PoolController.startPoolRefresh
 
 @Getter
 public class RemoteSchedulerModule implements Module<RemoteSchedulerModuleConfiguration, RemoteSchedulerModuleState> {
-    private final RemoteSchedulerModuleConfiguration defaultConfiguration = new RemoteSchedulerModuleConfiguration();
+    @Getter(lazy = true, value = PRIVATE)
+    private static final RemoteSchedulerModuleConfiguration remoteModule = context()
+            .getModule(REMOTE_SCHEDULER_MODULE_ID, RemoteSchedulerModule::new);
+    @Getter(lazy = true, value = PRIVATE)
+    private static final RemoteSchedulerModuleState remoteModuleState = context()
+            .getModuleState(REMOTE_SCHEDULER_MODULE_ID, RemoteSchedulerModule::new);
     private final String id = REMOTE_SCHEDULER_MODULE_ID;
+    private final RemoteSchedulerModuleConfiguration defaultConfiguration = new RemoteSchedulerModuleConfiguration();
     private RemoteSchedulerModuleState state = new RemoteSchedulerModuleState();
 
     public static RemoteSchedulerModuleConfiguration remoteSchedulerModule() {
-        return context().getModule(REMOTE_SCHEDULER_MODULE_ID, RemoteSchedulerModule::new);
+        return getRemoteModule();
     }
 
     public static RemoteSchedulerModuleState remoteSchedulerModuleState() {
-        return  context().getModuleState(REMOTE_SCHEDULER_MODULE_ID, new RemoteSchedulerModule());
+        return getRemoteModuleState();
     }
 
     public static void startRemoteScheduler() {

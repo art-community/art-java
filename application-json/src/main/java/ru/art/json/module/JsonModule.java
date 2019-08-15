@@ -26,8 +26,10 @@ import static ru.art.json.constants.JsonModuleConstants.JSON_MODULE_ID;
 
 @Getter
 public class JsonModule implements Module<JsonModuleConfiguration, ModuleState> {
-    private final JsonModuleConfiguration defaultConfiguration = new JsonModuleDefaultConfiguration();
+    @Getter(lazy = true, value = PRIVATE)
+    private final static JsonModuleConfiguration jsonModule = context().getModule(JSON_MODULE_ID, JsonModule::new);
     private final String id = JSON_MODULE_ID;
+    private final JsonModuleConfiguration defaultConfiguration = new JsonModuleDefaultConfiguration();
 
     public static JsonModuleConfiguration jsonModule() {
         return context().getModule(JSON_MODULE_ID, JsonModule::new);

@@ -18,12 +18,8 @@ package ru.art.config.extensions.metrics;
 
 import lombok.Getter;
 import ru.art.metrics.configuration.MetricModuleConfiguration.MetricModuleDefaultConfiguration;
-import ru.art.metrics.http.specification.MetricServiceSpecification;
-import static ru.art.service.ServiceModule.serviceModule;
 
 @Getter
 public class MetricsAgileConfiguration extends MetricModuleDefaultConfiguration {
-    public MetricsAgileConfiguration() {
-        serviceModule().getServiceRegistry().registerService(new MetricServiceSpecification());
-    }
+
 }

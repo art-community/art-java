@@ -46,13 +46,15 @@ import static ru.art.core.extension.ExceptionExtensions.ifExceptionOrEmpty;
 import static ru.art.grpc.server.GrpcServer.grpcServer;
 import static ru.art.http.server.HttpServer.httpServerInSeparatedThread;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.HttpPath.IMAGE_PATH;
-import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.http.server.module.HttpServerModule.httpServerModule;
 import static ru.art.service.ServiceModule.serviceModule;
 
 @Getter
 public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguration, ModuleState> {
-    private final ConfiguratorModuleConfiguration defaultConfiguration = new ConfiguratorModuleConfiguration();
+    @Getter(lazy = true)
+    private static final ConfiguratorModuleConfiguration configuratorModule = context().getModule(CONFIGURATOR_MODULE_ID, ConfiguratorModule::new);
     private final String id = CONFIGURATOR_MODULE_ID;
+    private final ConfiguratorModuleConfiguration defaultConfiguration = new ConfiguratorModuleConfiguration();
 
     public static void startConfigurator() {
         initContext(new ApplicationContextConfiguration(CONFIGURATOR_MODULE_ID))
@@ -67,18 +69,19 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
                 .loadModule(new ConfiguratorModule())
                 .loadModule(new GrpcClientModule())
                 .loadModule(new HttpClientModule(), new ConfiguratorHttpClientConfiguration());
+        String httpPath = httpServerModule().getPath();
         serviceModule()
                 .getServiceRegistry()
                 .registerService(new ConfiguratorServiceSpecification())
-                .registerService(new HttpWebUiServiceSpecification(httpServerModule().getPath(), httpServerModule().getPath() + IMAGE_PATH))
+                .registerService(new HttpWebUiServiceSpecification(httpPath, httpPath + IMAGE_PATH))
                 .registerService(new UserServiceSpecification())
-                .registerService(new MetricServiceSpecification());
+                .registerService(new MetricServiceSpecification(httpPath));
         httpServerInSeparatedThread();
         grpcServer().await();
     }
 
     public static ConfiguratorModuleConfiguration configuratorModule() {
-        return context().getModule(CONFIGURATOR_MODULE_ID, ConfiguratorModule::new);
+        return getConfiguratorModule();
     }
 
     public static void main(String[] args) {

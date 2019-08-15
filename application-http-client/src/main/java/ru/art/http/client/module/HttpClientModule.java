@@ -26,8 +26,10 @@ import static ru.art.http.client.constants.HttpClientModuleConstants.HTTP_CLIENT
 
 @Getter
 public class HttpClientModule implements Module<HttpClientModuleConfiguration, ModuleState> {
-    private final HttpClientModuleConfiguration defaultConfiguration = new HttpClientModuleDefaultConfiguration();
+    @Getter(lazy = true, value = PRIVATE)
+    private static final HttpClientModuleConfiguration httpClientModule = context().getModule(HTTP_CLIENT_MODULE_ID, HttpClientModule::new);
     private final String id = HTTP_CLIENT_MODULE_ID;
+    private final HttpClientModuleConfiguration defaultConfiguration = new HttpClientModuleDefaultConfiguration();
 
     public static HttpClientModuleConfiguration httpClientModule() {
         return context().getModule(HTTP_CLIENT_MODULE_ID, HttpClientModule::new);

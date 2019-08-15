@@ -33,8 +33,8 @@ import static ru.art.service.ServiceModule.serviceModule;
 
 @Getter
 public class ModuleExecutorModule implements Module<ModuleConfiguration, ModuleState> {
-    private final ModuleConfiguration defaultConfiguration = null;
     private final String id = MODULE_EXECUTOR_MODULE_ID;
+    private final ModuleConfiguration defaultConfiguration = null;
 
     public static void startModuleExecutor() {
         useAgileConfigurations(MODULE_EXECUTOR_MODULE_ID);
