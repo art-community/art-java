@@ -22,7 +22,7 @@ art {
   // Alternatives: providedModules (not included into jar)  and 
   // testModules (use in tests sources)
   /*embeddedModules {
-      // For sepcify version
+      // For specify version
       useVersion("1.+") //or useVersion() without argments. Then will be used "latest" version
 
       // For full kit of modules 
@@ -83,11 +83,31 @@ art {
       }            
   }*/  
     
-  // If using web (sources need to be placed in src/main/web) 
+  //For using ART mappers and specifications generator
+  generator {
+    packageName = "<path to application main package (parent of 'model' and/or 'service' packages>"
+  }
+
+  // For using web (sources need to be placed in src/main/web (by default) 
   web()
   
-    // If using web technologies 
-  web()
+  // For using Groovy 
+  groovy()
+
+  // For using Kotlin 
+  kotlin()
+
+  // For using Scala 
+  scala()
+  
+  // For using BDD Spock Framework  
+  spockFramework()
+
+  // For using JMH  
+  jmh()
+
+  // For using Gatling  
+  gatling()
  }
 ```
 ## Requirements
