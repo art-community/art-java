@@ -32,11 +32,13 @@ import ru.art.service.ServiceModule;
 import static java.util.Objects.isNull;
 import static ru.art.config.ConfigProvider.config;
 import static ru.art.config.constants.ConfigType.REMOTE_ENTITY_CONFIG;
-import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.*;
+import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS;
 import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.LocalConfigKeys.*;
+import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.MODULE_ID_IS_EMPTY;
 import static ru.art.config.remote.loader.RemoteConfigLoader.loadRemoteConfig;
 import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.CONFIGURATOR_COMMUNICATION_SERVICE_ID;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
+import static ru.art.core.context.Context.*;
 import static ru.art.core.context.Context.contextConfiguration;
 import static ru.art.core.context.Context.withContext;
 import static ru.art.entity.Entity.entityBuilder;
@@ -45,13 +47,13 @@ import static ru.art.service.ServiceModule.serviceModule;
 
 public class RemoteConfigProvider {
     private static final ConfigCacheContainer CONFIG_CACHE_CONTAINER = new ConfigCacheContainer();
-    private static Context PRELOADED_CONTEXT;
+
+    public static void useRemoteConfigurations() {
+        withContext(defaultContext(), RemoteConfigProvider::applyRemoteConfiguration);
+    }
 
     public static void useRemoteConfigurations(ContextInitialConfiguration contextInitialConfiguration) {
-        withContext(PRELOADED_CONTEXT = new Context(contextInitialConfiguration).loadModule(new LoggingModule())
-                .loadModule(new ServiceModule())
-                .loadModule(new ConfigModule())
-                .loadModule(new GrpcClientModule()), RemoteConfigProvider::applyRemoteConfiguration);
+        withContext(defaultContext(), RemoteConfigProvider::applyRemoteConfiguration);
     }
 
     public static Config remoteConfig(String sectionId) {
@@ -59,10 +61,7 @@ public class RemoteConfigProvider {
     }
 
     public static Config remoteConfig() {
-        if (isNull(PRELOADED_CONTEXT)) {
-            return new Config(entityBuilder().build(), REMOTE_ENTITY_CONFIG);
-        }
-        return withContext(PRELOADED_CONTEXT, RemoteConfigProvider::getRemoteConfig);
+        return withContext(defaultContext(), RemoteConfigProvider::getRemoteConfig);
     }
 
     private static Config getRemoteConfig(Context context) {

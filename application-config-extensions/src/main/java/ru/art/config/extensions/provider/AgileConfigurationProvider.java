@@ -34,6 +34,8 @@ import ru.art.core.provider.PreconfiguredModuleProvider;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static ru.art.core.caster.Caster.cast;
+import static ru.art.core.context.Context.defaultContext;
+import static ru.art.core.context.Context.withContext;
 import static ru.art.grpc.client.constants.GrpcClientModuleConstants.GRPC_CLIENT_MODULE_ID;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.GRPC_SERVER_MODULE_ID;
 import static ru.art.http.client.constants.HttpClientModuleConstants.HTTP_CLIENT_MODULE_ID;
@@ -50,6 +52,12 @@ import java.util.Optional;
 public class AgileConfigurationProvider implements PreconfiguredModuleProvider {
     @Override
     public <T extends ModuleConfiguration> Optional<T> getModuleConfiguration(String moduleId) {
+        return withContext(defaultContext(), context -> {
+            return getConfiguration(moduleId);
+        });
+    }
+
+    private static <T extends ModuleConfiguration> Optional<T> getConfiguration(String moduleId) {
         switch (moduleId) {
             case LOGGING_MODULE_ID:
                 return of(cast(new LoggingAgileConfiguration()));

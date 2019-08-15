@@ -24,13 +24,15 @@ import ru.art.core.configuration.ContextInitialConfiguration.ApplicationContextC
 import ru.art.core.context.Context;
 import static ru.art.config.remote.provider.RemoteConfigProvider.useRemoteConfigurations;
 import static ru.art.core.constants.ContextConstants.DEFAULT_MAIN_MODULE_ID;
-import static ru.art.core.context.Context.contextConfiguration;
+import static ru.art.core.context.Context.defaultContext;
 import static ru.art.core.context.Context.initContext;
 
 @UtilityClass
 public class AgileConfigurationsActivator {
     public static Context useAgileConfigurations(String mainModuleId) {
-        return initContext(new ApplicationContextConfiguration(mainModuleId, new AgileConfigurationProvider()));
+        ApplicationContextConfiguration configuration = new ApplicationContextConfiguration(mainModuleId, new AgileConfigurationProvider());
+        defaultContext(configuration);
+        return initContext(configuration);
     }
 
     public static Context useAgileConfigurations() {
@@ -38,8 +40,10 @@ public class AgileConfigurationsActivator {
     }
 
     public static Context useRemoteAgileConfigurations(String mainModuleId) {
-        Context context = initContext(new ApplicationContextConfiguration(mainModuleId, new AgileConfigurationProvider()));
-        useRemoteConfigurations(contextConfiguration());
+        ApplicationContextConfiguration configuration = new ApplicationContextConfiguration(mainModuleId, new AgileConfigurationProvider());
+        defaultContext(configuration);
+        Context context = initContext(configuration);
+        useRemoteConfigurations(configuration);
         return context;
     }
 

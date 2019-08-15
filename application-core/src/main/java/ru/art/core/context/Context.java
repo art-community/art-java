@@ -37,7 +37,7 @@ import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.ExceptionMessages.*;
 import static ru.art.core.constants.LoggingMessages.*;
-import static ru.art.core.constants.StringConstants.ADK_BANNER;
+import static ru.art.core.constants.StringConstants.ART_BANNER;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +48,7 @@ import java.util.function.Supplier;
 
 public class Context {
     private static final ReentrantLock lock = new ReentrantLock();
+    private static volatile Context DEFAULT_INSTANCE;
     private static volatile Context INSTANCE;
     private Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules = mapOf();
     private ContextInitialConfiguration initialConfiguration = new ContextInitialDefaultConfiguration();
@@ -80,7 +81,7 @@ public class Context {
         ReentrantLock lock = Context.lock;
         lock.lock();
         INSTANCE = new Context(contextInitialConfiguration);
-        out.println(ADK_BANNER);
+        out.println(ART_BANNER);
         lock.unlock();
         return INSTANCE;
     }
@@ -478,4 +479,27 @@ public class Context {
         modules.values().forEach(module -> module.getModule().onUnload());
     }
 
+    public static Context initDefaultContext(ContextInitialConfiguration contextInitialConfiguration) {
+        if (isNull(contextInitialConfiguration))
+            throw new ContextInitializationException(CONTEXT_INITIAL_CONFIGURATION_IS_NULL);
+        ReentrantLock lock = Context.lock;
+        lock.lock();
+        DEFAULT_INSTANCE = new Context(contextInitialConfiguration);
+        lock.unlock();
+        return DEFAULT_INSTANCE;
+    }
+
+    public static Context defaultContext() {
+        Context localInstance = DEFAULT_INSTANCE;
+        if (isNull(localInstance)) {
+            ReentrantLock lock = Context.lock;
+            lock.lock();
+            localInstance = DEFAULT_INSTANCE;
+            if (isNull(localInstance)) {
+                DEFAULT_INSTANCE = new Context();
+            }
+            lock.unlock();
+        }
+        return DEFAULT_INSTANCE;
+    }
 }

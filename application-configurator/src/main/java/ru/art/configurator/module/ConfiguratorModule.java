@@ -42,8 +42,7 @@ import static ru.art.configurator.constants.ConfiguratorModuleConstants.CONFIGUR
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
 import static ru.art.configurator.service.UserService.register;
 import static ru.art.core.configuration.ContextInitialConfiguration.ApplicationContextConfiguration;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.initContext;
+import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.ExceptionExtensions.ifExceptionOrEmpty;
 import static ru.art.grpc.server.GrpcServer.grpcServer;
 import static ru.art.http.server.HttpServer.httpServerInSeparatedThread;
@@ -59,7 +58,9 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
     private final ConfiguratorModuleConfiguration defaultConfiguration = new ConfiguratorModuleConfiguration();
 
     public static void startConfigurator() {
-        initContext(new ApplicationContextConfiguration(CONFIGURATOR_MODULE_ID))
+        ApplicationContextConfiguration configuration = new ApplicationContextConfiguration(CONFIGURATOR_MODULE_ID);
+        withContext(defaultContext(configuration), context -> );
+        initContext(configuration)
                 .loadModule(new ConfigModule())
                 .loadModule(new JsonModule())
                 .loadModule(new LoggingModule())
@@ -68,9 +69,9 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
                 .loadModule(new HttpServerModule(), new ConfiguratorHttpServerConfiguration())
                 .loadModule(new GrpcServerModule(), new ConfiguratorGrpcServerConfiguration())
                 .loadModule(new MetricsModule(), new ConfiguratorMetricsConfiguration())
-                .loadModule(new ConfiguratorModule())
                 .loadModule(new GrpcClientModule())
-                .loadModule(new HttpClientModule(), new ConfiguratorHttpClientConfiguration());
+                .loadModule(new HttpClientModule(), new ConfiguratorHttpClientConfiguration())
+                .loadModule(new ConfiguratorModule());
         String httpPath = httpServerModule().getPath();
         serviceModule()
                 .getServiceRegistry()

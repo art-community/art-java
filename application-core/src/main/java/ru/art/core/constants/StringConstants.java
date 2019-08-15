@@ -23,23 +23,7 @@ import java.util.regex.Pattern;
 
 public interface StringConstants {
     // @formatter:off
-    String ADK_BANNER =
-                    "\033[1;31m               AAA                    DDDDDDDDDDDDD             KKKKKKKKK    KKKKKKK\033[0m\n" +
-                    "\033[0;32m              A:::A                   D::::::::::::DDD          K:::::::K    K:::::K\033[0m\n" +
-                    "\033[1;33m             A:::::A                  D:::::::::::::::DD        K:::::::K    K:::::K\033[0m\n" +
-                    "\033[0;34m            A:::::::A                 DDD:::::DDDDD:::::D       K:::::::K   K::::::K\033[0m\n" +
-                    "\033[1;35m           A:::::::::A                  D:::::D    D:::::D      KK::::::K  K:::::KKK\033[0m\n" +
-                    "\033[0;36m          A:::::A:::::A                 D:::::D     D:::::D       K:::::K K:::::K   \033[0m\n" +
-                    "\033[1;37m         A:::::A A:::::A                D:::::D     D:::::D       K::::::K:::::K    \033[0m\n" +
-                    "\033[1;31m        A:::::A   A:::::A               D:::::D     D:::::D       K:::::::::::K     \033[0m\n" +
-                    "\033[0;32m       A:::::A     A:::::A              D:::::D     D:::::D       K:::::::::::K     \033[0m\n" +
-                    "\033[1;33m      A:::::AAAAAAAAA:::::A             D:::::D     D:::::D       K::::::K:::::K    \033[0m\n" +
-                    "\033[0;34m     A:::::::::::::::::::::A            D:::::D     D:::::D       K:::::K K:::::K   \033[0m\n" +
-                    "\033[1;35m    A:::::AAAAAAAAAAAAA:::::A           D:::::D    D:::::D      KK::::::K  K:::::KKK\033[0m\n" +
-                    "\033[0;36m   A:::::A             A:::::A        DDD:::::DDDDD:::::D       K:::::::K   K::::::K\033[0m\n" +
-                    "\033[1;37m  A:::::A               A:::::A       D:::::::::::::::DD        K:::::::K    K:::::K\033[0m\n" +
-                    "\033[0;31m A:::::A                 A:::::A      D::::::::::::DDD          K:::::::K    K:::::K\033[0m\n" +
-                    "\033[1;32mAAAAAAA                   AAAAAAA     DDDDDDDDDDDDD             KKKKKKKKK    KKKKKKK\033[0m";
+    String ART_BANNER = "";
     String TRUE_NUMERIC = "1";
     String FALSE_NUMERIC = "0";
     String SLASH = "/";
