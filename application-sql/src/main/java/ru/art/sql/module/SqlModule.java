@@ -23,17 +23,20 @@ import ru.art.sql.configuration.SqlModuleConfiguration;
 import ru.art.sql.configuration.SqlModuleConfiguration.SqlModuleDefaultConfiguration;
 import ru.art.sql.exception.SqlModuleException;
 import static java.lang.Class.forName;
+import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
 import static ru.art.sql.constants.SqlModuleConstants.SQL_MODULE_ID;
 import javax.sql.DataSource;
 
 @Getter
 public class SqlModule implements Module<SqlModuleConfiguration, ModuleState> {
+    @Getter(lazy = true, value = PRIVATE)
+    private static final SqlModuleConfiguration sqlModule = context().getModule(SQL_MODULE_ID, SqlModule::new);
     private final String id = SQL_MODULE_ID;
     private final SqlModuleConfiguration defaultConfiguration = new SqlModuleDefaultConfiguration();
 
     public static SqlModuleConfiguration sqlModule() {
-        return context().getModule(SQL_MODULE_ID, SqlModule::new);
+        return getSqlModule();
     }
 
     @Override
@@ -50,7 +53,7 @@ public class SqlModule implements Module<SqlModuleConfiguration, ModuleState> {
         try {
             forName(sqlModule().getDbProvider().getDriverClassName());
             sqlModule().getJooqConfiguration().set(dataSource);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new SqlModuleException(e);
         }
 

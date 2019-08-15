@@ -20,6 +20,7 @@ import lombok.Getter;
 import ru.art.core.module.Module;
 import ru.art.core.module.ModuleState;
 import ru.art.task.deferred.executor.SchedulerModuleConfiguration.SchedulerModuleDefaultConfiguration;
+import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
 import static ru.art.task.deferred.executor.SchedulerModuleConstants.SCHEDULER_MODULE_ID;
 
@@ -31,6 +32,6 @@ public class SchedulerModule implements Module<SchedulerModuleConfiguration, Mod
     private final SchedulerModuleConfiguration defaultConfiguration = new SchedulerModuleDefaultConfiguration();
 
     public static SchedulerModuleConfiguration schedulerModule() {
-        return context().getModule(SCHEDULER_MODULE_ID, SchedulerModule::new);
+        return getSchedulerModule();
     }
 }

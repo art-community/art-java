@@ -26,6 +26,7 @@ import ru.art.rocks.db.exception.RocksDbOperationException;
 import ru.art.rocks.db.state.RocksDbModuleState;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static lombok.AccessLevel.PRIVATE;
 import static org.rocksdb.RocksDB.loadLibrary;
 import static org.rocksdb.RocksDB.open;
 import static ru.art.core.context.Context.context;
@@ -44,11 +45,11 @@ public class RocksDbModule implements Module<RocksDbModuleConfiguration, RocksDb
     private RocksDbModuleState state;
 
     public static RocksDbModuleConfiguration rocksDbModule() {
-        return context().getModule(ROCKS_DB_MODULE_ID, RocksDbModule::new);
+        return getRocksDbModule();
     }
 
     public static RocksDbModuleState rocksDbModuleState() {
-        return context().getModuleState(ROCKS_DB_MODULE_ID, RocksDbModule::new);
+        return getRocksDbModuleState();
     }
 
     @Override

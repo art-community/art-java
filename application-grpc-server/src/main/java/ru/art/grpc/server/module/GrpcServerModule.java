@@ -20,6 +20,7 @@ import lombok.Getter;
 import ru.art.core.module.Module;
 import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration;
 import ru.art.grpc.server.state.GrpcServerModuleState;
+import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
 import static ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.GrpcServerModuleDefaultConfiguration;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.GRPC_SERVER_MODULE_ID;
@@ -35,10 +36,10 @@ public class GrpcServerModule implements Module<GrpcServerModuleConfiguration, G
     private final GrpcServerModuleState state = new GrpcServerModuleState();
 
     public static GrpcServerModuleConfiguration grpcServerModule() {
-        return context().getModule(GRPC_SERVER_MODULE_ID, GrpcServerModule::new);
+        return getGrpcServerModule();
     }
 
     public static GrpcServerModuleState grpcServerModuleState() {
-        return context().getModuleState(GRPC_SERVER_MODULE_ID, GrpcServerModule::new);
+        return getGrpcServerModuleState();
     }
 }

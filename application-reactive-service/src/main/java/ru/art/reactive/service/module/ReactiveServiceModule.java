@@ -33,6 +33,6 @@ public class ReactiveServiceModule implements Module<ReactiveServiceModuleConfig
     private final ReactiveServiceModuleConfiguration defaultConfiguration = new ReactiveServiceModuleDefaultConfiguration();
 
     public static ReactiveServiceModuleConfiguration reactiveServiceModule() {
-        return context().getModule(REACTIVE_SERVICE_MODULE_ID, ReactiveServiceModule::new);
+        return getReactiveServiceModule();
     }
 }

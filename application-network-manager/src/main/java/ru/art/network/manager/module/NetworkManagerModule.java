@@ -46,11 +46,11 @@ public class NetworkManagerModule implements Module<NetworkManagerModuleConfigur
     private final NetworkManagerModuleState state = new NetworkManagerModuleState();
 
     public static NetworkManagerModuleConfiguration networkManagerModule() {
-        return context().getModule(NETWORK_MANAGER_MODULE_ID, NetworkManagerModule::new);
+        return getNetworkManagerModule();
     }
 
     public static NetworkManagerModuleState networkManagerModuleState() {
-        return context().getModuleState(NETWORK_MANAGER_MODULE_ID, NetworkManagerModule::new);
+        return getNetworkManagerModuleState();
     }
 
     @Override

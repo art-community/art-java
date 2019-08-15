@@ -21,16 +21,20 @@ import ru.art.core.module.Module;
 import ru.art.core.module.ModuleState;
 import ru.art.kafka.producer.configuration.KafkaProducerModuleConfiguration;
 import ru.art.kafka.producer.configuration.KafkaProducerModuleConfiguration.KafkaProducerDefaultModuleConfiguration;
+import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
 import static ru.art.kafka.producer.constants.KafkaProducerModuleConstants.KAFKA_PRODUCER_MODULE_ID;
 
 @Getter
 public class KafkaProducerModule implements Module<KafkaProducerModuleConfiguration, ModuleState> {
+    @Getter(lazy = true, value = PRIVATE)
+    private static final KafkaProducerModuleConfiguration kafkaProducerModule = context()
+            .getModule(KAFKA_PRODUCER_MODULE_ID, new KafkaProducerModule());
     private final String id = KAFKA_PRODUCER_MODULE_ID;
     private final KafkaProducerModuleConfiguration defaultConfiguration = new KafkaProducerDefaultModuleConfiguration();
 
     public static KafkaProducerModuleConfiguration kafkaProducerModule() {
-        return context().getModule(KAFKA_PRODUCER_MODULE_ID, KafkaProducerModule::new);
+        return getKafkaProducerModule();
     }
 
 }

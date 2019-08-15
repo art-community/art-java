@@ -35,10 +35,10 @@ public class RsocketModule implements Module<RsocketModuleConfiguration, Rsocket
     private final RsocketModuleState state = new RsocketModuleState();
 
     public static RsocketModuleConfiguration rsocketModule() {
-        return context().getModule(RSOCKET_MODULE_ID, RsocketModule::new);
+        return getRsocketModule();
     }
 
     public static RsocketModuleState rsocketModuleState() {
-        return context().getModuleState(RSOCKET_MODULE_ID, RsocketModule::new);
+        return getRsocketModuleState();
     }
 }

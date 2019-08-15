@@ -52,11 +52,11 @@ public class ApplicationStateModule implements Module<ApplicationStateModuleConf
     private final ApplicationState state = new ApplicationState();
 
     public static ApplicationStateModuleConfiguration applicationStateModule() {
-        return context().getModule(APPLICATION_STATE_MODULE_ID, ApplicationStateModule::new);
+        return getApplicationStateModule();
     }
 
     public static ApplicationState applicationState() {
-        return context().getModuleState(APPLICATION_STATE_MODULE_ID, ApplicationStateModule::new);
+        return getApplicationState();
     }
 
     public static void main(String[] args) {
@@ -69,7 +69,9 @@ public class ApplicationStateModule implements Module<ApplicationStateModuleConf
         String httpPath = httpServerModule().getPath();
         serviceModule().getServiceRegistry()
                 .registerService(new NetworkServiceSpecification())
-                .registerService(new LockServiceSpecification());
+                .registerService(new LockServiceSpecification())
+                .registerService(new HttpWebUiServiceSpecification(httpPath, httpPath + IMAGE))
+                .registerService(new MetricServiceSpecification(httpPath));
         applicationState().setCluster(loadCluster());
         asynchronousPeriod(commonTask(NetworkService::removeDeadEndpoints), ofSeconds(applicationStateModule().getModuleEndpointCheckRateSeconds()));
         httpServerInSeparatedThread();

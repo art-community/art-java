@@ -20,6 +20,7 @@ import lombok.Getter;
 import ru.art.core.module.Module;
 import ru.art.core.module.ModuleState;
 import ru.art.json.configuration.JsonModuleConfiguration;
+import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
 import static ru.art.json.configuration.JsonModuleConfiguration.JsonModuleDefaultConfiguration;
 import static ru.art.json.constants.JsonModuleConstants.JSON_MODULE_ID;
@@ -32,6 +33,6 @@ public class JsonModule implements Module<JsonModuleConfiguration, ModuleState> 
     private final JsonModuleConfiguration defaultConfiguration = new JsonModuleDefaultConfiguration();
 
     public static JsonModuleConfiguration jsonModule() {
-        return context().getModule(JSON_MODULE_ID, JsonModule::new);
+        return getJsonModule();
     }
 }

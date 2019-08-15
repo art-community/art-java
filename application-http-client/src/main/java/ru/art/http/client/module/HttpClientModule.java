@@ -20,6 +20,7 @@ import lombok.Getter;
 import ru.art.core.module.Module;
 import ru.art.core.module.ModuleState;
 import ru.art.http.client.configuration.HttpClientModuleConfiguration;
+import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
 import static ru.art.http.client.configuration.HttpClientModuleConfiguration.HttpClientModuleDefaultConfiguration;
 import static ru.art.http.client.constants.HttpClientModuleConstants.HTTP_CLIENT_MODULE_ID;
@@ -32,6 +33,6 @@ public class HttpClientModule implements Module<HttpClientModuleConfiguration, M
     private final HttpClientModuleConfiguration defaultConfiguration = new HttpClientModuleDefaultConfiguration();
 
     public static HttpClientModuleConfiguration httpClientModule() {
-        return context().getModule(HTTP_CLIENT_MODULE_ID, HttpClientModule::new);
+        return getHttpClientModule();
     }
 }

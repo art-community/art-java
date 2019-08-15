@@ -53,11 +53,11 @@ public class ExampleModule implements Module<ExampleModuleConfiguration, Example
     private final ExampleModuleState state = new ExampleModuleState();
 
     public static ExampleModuleConfiguration exampleModule() {
-        return context().getModule(EXAMPLE_MODULE_ID, ExampleModule::new);
+        return getExampleModule();
     }
 
     public static ExampleModuleState exampleState() {
-        return context().getModuleState(EXAMPLE_MODULE_ID, ExampleModule::new);
+        return getExampleState();
     }
 
     public static void main(String[] args) {
@@ -72,7 +72,7 @@ public class ExampleModule implements Module<ExampleModuleConfiguration, Example
                 .registerService(new MetricServiceSpecification(httpServerModule().getPath()))
                 .registerService(new ExampleServiceGrpcCommunicationSpecification())
                 .registerService(new ExampleServiceHttpCommunicationSpecification());
-        httpServerInSeparatedThread();
+        thread(HTTP_SERVER_BOOTSTRAP_THREAD, () -> httpServer().await());
         grpcServer().await();
     }
 }

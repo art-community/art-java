@@ -24,6 +24,7 @@ import ru.art.tarantool.initializer.TarantoolInitializer;
 import ru.art.tarantool.state.TarantoolModuleState;
 import static java.util.Map.Entry;
 import static java.util.Objects.nonNull;
+import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.context.Context.context;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TARANTOOL_MODULE_ID;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.ON_MODULE_LOAD;
@@ -52,10 +53,10 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
     }
 
     public static TarantoolModuleConfiguration tarantoolModule() {
-        return context().getModule(TARANTOOL_MODULE_ID, TarantoolModule::new);
+        return getTarantoolModule();
     }
 
     public static TarantoolModuleState tarantoolModuleState() {
-        return context().getModuleState(TARANTOOL_MODULE_ID, TarantoolModule::new);
+        return getTarantoolModuleState();
     }
 }
