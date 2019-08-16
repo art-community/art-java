@@ -33,6 +33,7 @@ env:
 
 script:
   - chmod 777 ci/travis.sh
+  - chmod 777 gradlew
   - ci/travis.sh
 
 before_cache:
