@@ -45,7 +45,7 @@ public class CookieInterceptor implements HttpServerInterception {
     @Singular("url")
     private final Set<String> urls;
     @Singular("cookie")
-    private final Map<String, Supplier<String>> coockies;
+    private final Map<String, Supplier<String>> cookies;
     private final int errorStatus;
     private final String errorContent;
 
@@ -79,7 +79,7 @@ public class CookieInterceptor implements HttpServerInterception {
     }
 
     private boolean filterCookie(Cookie cookie) {
-        Supplier<String> supplier = coockies.get(cookie.getName());
+        Supplier<String> supplier = cookies.get(cookie.getName());
         if (isNull(supplier)) return false;
         return cookie.getValue().equalsIgnoreCase(supplier.get());
     }

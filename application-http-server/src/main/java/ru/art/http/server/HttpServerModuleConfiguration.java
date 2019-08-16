@@ -103,7 +103,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         private final Set<String> templatingResourceExtensions = setOf(HTML, WSDL);
         @Builder.Default
         private final Set<String> availableResourceExtensions = setOf(WEBP, JPEG, PNG, CSS, MAP, JS, HTML, WSDL);
-        @Builder.Default
+        @Singular("logbookResponseBodyReplacer")
         private final Map<MimeType, String> logbookResponseBodyReplacers = mapOf(TEXT_HTML, WEB_RESOURCE)
                 .add(TEXT_JS, WEB_RESOURCE)
                 .add(TEXT_CSS, WEB_RESOURCE)
@@ -111,6 +111,13 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
                 .add(IMAGE_PNG, WEB_RESOURCE)
                 .add(IMAGE_JPEG, WEB_RESOURCE)
                 .add(IMAGE_GIF, WEB_RESOURCE);
+        @Singular("accessControlParameter")
+        private final Map<String, String> accessControlParameters = mapOf(ACCESS_CONTROL_ALLOW_METHODS_KEY, ACCESS_CONTROL_ALLOW_METHODS_VALUE)
+                .add(ACCESS_CONTROL_ALLOW_HEADERS_KEY, ACCESS_CONTROL_ALLOW_HEADERS_VALUE)
+                .add(ACCESS_CONTROL_MAX_AGE_HEADERS_KEY, ACCESS_CONTROL_MAX_AGE_HEADERS_VALUE)
+                .add(ACCESS_CONTROL_ALLOW_CREDENTIALS_KEY, ACCESS_CONTROL_ALLOW_CREDENTIALS_VALUE);
+        @Builder.Default
+        private final boolean allowOriginParameterFromRequest = true;
     }
 
     HttpServerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new HttpServerModuleDefaultConfiguration();
@@ -132,9 +139,10 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<HttpServerInterceptor> responseInterceptors = linkedListOf();
         private final boolean ignoreAcceptHeader = false;
-        private final Map<? extends Class<? extends Throwable>, ? extends HttpExceptionHandler<? extends Throwable>> exceptionHandlers = mapOf(Throwable.class, new ExceptionHttpJsonHandler())
-                .add(cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler()));
         private final HttpWebConfiguration webConfiguration = HttpWebConfiguration.builder().webUrl(DEFAULT_WEB_URL).build();
+        private final Map<? extends Class<? extends Throwable>, ? extends HttpExceptionHandler<? extends Throwable>> exceptionHandlers =
+                mapOf(Throwable.class, new ExceptionHttpJsonHandler())
+                        .add(cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler()));
 
         private static List<HttpServerInterceptor> initializeInterceptors() {
             return linkedListOf(intercept(new HttpServerTracingIdentifierInterception()), intercept(new HttpWebInterception()));
