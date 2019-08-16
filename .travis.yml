@@ -1,0 +1,41 @@
+#
+# ART Java
+#
+# Copyright 2019 ART
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+---
+language: java
+
+dist: trusty
+
+matrix:
+  include:
+    - jdk: oraclejdk8
+
+env:
+  global:
+    - secure: "kAMnLufad9Jf54Soni6u1G58L9pUGzTepu/TQ2obq13TCTlSov+uV7tOhNDr0z18gA0MJlXOlqlXCGBXZIRT2+glaIjzpOJhJErS8K4NBrDqcIc79HQyX1vJX8/GJyV4spH04Mj4iTxK4Fl6r7sKCRMvSrsFxDl6LdxfoDG4GSKZqf17lGnoJZ85wbhpEi/4l79eRWzC3B5FF+dyuuSBpxO41sU36Iw90FBXTlijO1CCTEKdS2qBlJB0Dkck5Cea3qT1h1c2lveU5lnMmymatFGtu8RaS3FsaxWDDf2JHm02d8asEJNY5k6/P5Plq8w7BhPpZMhEoWBYcxEGZeUzGPa024FBBclCq3FscNBCern+CE+npzt/jjfGcsDynLTizCs9Uifx8ohRwdBFKCdNkzm4k4LqRmqOYR1Ei4hvJPjf8sT+pdGRyUwf+eq0sB4T109ufRqMHlHssSP5If4CQY8FH8NIrGjVEiR70WCWCvLcu/PDPhFLYx6C8oBgqM16j9znULh61fkVqyaw6YtiMb7sTlzOCw/EJfgBVJhdepAX8WNjNth1NUPK7wEz4JRZIVzNbPQfTYnJNMcnbEORS2tHaMAw5WElsVu/3oZMZuazHxERuZeDZTuVczRBo/5sRAGE5rh685nLBxHrz3FM7xaO+Zak5wKFR/36gMGohgA="
+    - secure: "XbXE7H+xK/V5SZaAbGbJuxNpgAkMMRG9Vb3fIeke54XBnCbtFwXtbU0Pcb+FWVHSmlKb4rdiMuL5Yweyo+eghyt7vf7CDzlBZlZcbHdfahVNgDzE72e4SYcCH1M3FKgay7l7wIqaiUaxkB9zmSoIqdjmbAmBGSakKPuSbkT3WFgqX+bNQxv+pBYrC8bj9YBeHWgaNcz4NSStXNkU/REkIuFoD6WVCBFmGI2UpGGCx0xtmSj65bcV/bltj0s3rUpH2KZce50f9fJl6N1ksFArg2t3xJ4CUvrFvKnwnTcrPzHmV4FMQ6bir0OngoS7/pv7bXgcTQTCidsNExb9V0NDKF0I5bOBLVK3Qk5vwi3LXtSoHnsSCJX6oGQJMqjsspHefq0N/ZH7EN5Dk71zDQxdq5H/kg/ZCXv5UGvPczTcW/Eqg3OB4a3eMnNwU6PlZU3/wzVjSOFm7x8PmpvChnUmzmTAFeNdELLES+WaTjhn8gojznz5DqCRo2XmrOOx2pgvztUsxJzq0u7txe89hK7P3skMaIgRmYJHVS2wQDItgfyM/hPxPq/umX64NkNBHalnzydXLIPJjo0piw4jvWHXmw+rpJ991VKTYzcifh1LYgOWH3eudb/s0kD4ZOJHHXX5Ftt1Gsiwc5GspjVFVPgXsycwC/cPLHkOiyhXMjivNU0="
+
+script: ci/travis.sh
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
