@@ -26,10 +26,6 @@ matrix:
     - jdk: oraclejdk8
       node_js: 10
 
-env:
-  global:
-    - secure: "jHH8YgmrwuuTh9YjZdVQl78+F3BAh8pGApDwvY3V8aGPl4DqfTONoBOdXywYn7+lZDdqvgX1c9CszLeMVD6FPVDgdiQJZzFYp0ZT37av9/2uh0tiOUk0XRylMU8QImUN/E9P28hX71av5TBVtCkJE0R+t/BzDOdNJZ8CkxWanlSIT3ugEJV/Fr/fANzEQIMPuKdZx+TNgUMzUI5jF/ADqS1myBR602h1frkzbQTlf2bjemlPhlNPgueUgDzvLPfSz8TQ01wQ15cshg3L+A0ypzKimfH3h2rvGoRjloLtmmhanbn4B8EXLbdYkhsi8p4LnYgkQ7CN95Te81dj3g7JL/FieI0I41Cxed7Qa4W2A+0AnmOTnpJ1C3r7PbqL9l0EQiQxM/Z4//vGt5bJkT09EDhIna164gpHosITfrq4mFMD1cfjapO3VEgmiOCzYSKbnd8HCkp+y8nnP85R0+YKIdO98HZVmDWjbDWoagUYidcAHr5wAd/0xxTdEQl6i9EfMKJ5YejOxn8Q8gkYLGq0Ij1TcuSwFjKuru7PikVaoBt8ACdSe9I2QqRooblQ/tOXG3DRQAACmpz5a3BanRi6cAELTy12oajYIxDipC+PNHwNS/zIJ5+k3eVMvhXlxpRPmCL9pckoo3bLo6QKoJfTBTuHN6f+UdA87pOPnNMd5YY="
-
 before_install:
   - chmod 777 ci/travis.sh
   - chmod 777 gradlew
