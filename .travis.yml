@@ -32,7 +32,7 @@ env:
     - secure: "fgGhQvG3PA1bvbx3DSXuY4EeaNGXRbuut/fJ8RB/FbxnnLJtIllid4Rk2yNUGxbor7JrcM2JGBvttMNSwwsBre83Rd28At4iWZrSIlxdVm0Cn23XdmZ+LMv+OyuO890eYSjw7EF3u8Qsl5+m1zxV7+2HUEe/wVUoEEWZCWiJxNAIRbCPpwbJGL8UxMj8tttPtRvumAJEwloNxU0kzf2PJG1y05tnq+g9ap/eEuFgIpJowaHfSVmhg5hAX1w/TOSnu/x4WKHpPZPHSqed1WsmvgtGBX/zoCrBgITCFW2eeW2VeUdwYWax3lf/wYABJ6L12cB6A/ZYR6wIsNED8fB2mVxoA3+7EyIkkECqn4HvcCJGHqYldic3dhU5vxhNv/x/TdQzhv5349JNoSPnQO9D/R/5c3VLIu5a9bNEwPPVvnPQMk6VblcoOdMhWzMpJGBm69n+1yCaG1pFRRsU3muYF8FWI/Sc5LAdleouilJNpZBlxnPo8upD0cKEC83OpGHVNkYaT/qzmSTnFBUrZ0y5jIA8wy78zB7yeEnF/Yx3i3f/G9ilpMcyUOZI0GejAHh+RSy6DHQ/wW3SweVUi3A3Antvj53TZCcAtuAMjeMC3IcAyIzE3QQ5AtlpwHYAIYn/E3X+edk3NVt807NDyed7TVR9EPzCc9t0ar0KqN0j43M="
 
 script:
-  - chmod=+x ci/travis.sh
+  - chmod 777 ci/travis.sh
   - ci/travis.sh
 
 before_cache:
