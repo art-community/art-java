@@ -50,9 +50,6 @@ gradle-app.setting
 hs_err_pid*
 *.iml
 .idea/
-gradlew
-gradlew.bat
-gradle-wrapper.properties
 /build
 build
 dist
@@ -60,3 +57,4 @@ package-lock.json
 node_modules
 .cache
 rocks.db/
+!gradle/wrapper/gradle-wrapper.jar
