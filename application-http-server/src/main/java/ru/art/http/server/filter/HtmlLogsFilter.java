@@ -19,7 +19,7 @@
 package ru.art.http.server.filter;
 
 import org.zalando.logbook.RawHttpResponse;
-import static org.apache.logging.log4j.ThreadContext.isEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
 import static ru.art.core.mime.MimeType.valueOf;
 import static ru.art.http.server.module.HttpServerModule.httpServerModule;
@@ -28,8 +28,8 @@ public interface HtmlLogsFilter {
     static String replaceWebResponseBody(RawHttpResponse response) {
         //Attention! Dont change this to EMPTY_STRING or something like it. Logbook check filter result and if it null, then filter is not applying.
         String contentType = response.getContentType();
-        if (isEmpty()) {
-            return contentType;
+        if (isEmpty(contentType)) {
+            return null;
         }
         return getOrElse(httpServerModule()
                 .getWebConfiguration()
