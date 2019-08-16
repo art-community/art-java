@@ -44,6 +44,8 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
             .collect(toList());
     @Getter(lazy = true, value = PRIVATE)
     private final static HttpServerModuleConfiguration httpServerModule = context().getModule(HTTP_SERVER_MODULE_ID, HttpServerModule::new);
+    @Getter(lazy = true, value = PRIVATE)
+    private final static HttpServerModuleState httpServerModuleState = context().getModuleState(HTTP_SERVER_MODULE_ID, HttpServerModule::new);
     private final String id = HTTP_SERVER_MODULE_ID;
     private final HttpServerModuleConfiguration defaultConfiguration = HttpServerModuleConfiguration.DEFAULT_CONFIGURATION;
     private final HttpServerModuleState state = new HttpServerModuleState();
@@ -60,6 +62,6 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
     }
 
     public static HttpServerModuleState httpServerModuleState() {
-        return context().getModuleState(HTTP_SERVER_MODULE_ID, HttpServerModule::new);
+        return getHttpServerModuleState();
     }
 }
