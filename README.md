@@ -4,6 +4,8 @@ ART is a kit of modules for developing multifunctional applications.
 
 
 ## Build and Binaries
+![Build Status](https://travis-ci.com/art-community/ART.svg)
+
 Releases are available via Maven Central.
 
 Example:
