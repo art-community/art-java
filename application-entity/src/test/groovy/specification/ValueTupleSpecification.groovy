@@ -46,8 +46,8 @@ class ValueTupleSpecification extends Specification {
 
         when:
         def tuple = writeTuple entity
-        println "Сущность: $entity"
-        println "Кортеж: $tuple"
+        println "Entity: $entity"
+        println "Tuple: $tuple"
 
         then:
         entity == readTuple(tuple)
@@ -71,9 +71,9 @@ class ValueTupleSpecification extends Specification {
         def result = PlainTupleWriter.writeTuple entity
         def tuple = result.tuple
         def schemaTuple = result.schema.toTuple()
-        println "Сущность: $entity"
-        println "Схема: $schemaTuple"
-        println "Кортеж: $tuple"
+        println "Entity: $entity"
+        println "Schema: $schemaTuple"
+        println "Tuple: $tuple"
 
         then:
         entity == PlainTupleReader.readTuple(tuple, fromTuple(schemaTuple))
