@@ -67,16 +67,15 @@ public class GrpcCommunicationConfiguration {
     void validateRequiredFields() {
         boolean serviceIdIsEmpty = isEmpty(serviceId);
         boolean methodIdIsEmpty = isEmpty(methodId);
-        if (serviceIdIsEmpty || methodIdIsEmpty) {
-            String message = INVALID_GRPC_COMMUNICATION_CONFIGURATION;
-            if (serviceIdIsEmpty) {
-                message += "serviceId,";
-            }
-            if (methodIdIsEmpty) {
-                message += "methodId";
-            }
-            throw new GrpcClientException(message);
+        if (!serviceIdIsEmpty && !methodIdIsEmpty) {
+            return;
         }
-
+        if (serviceIdIsEmpty && methodIdIsEmpty) {
+            throw new GrpcClientException(INVALID_GRPC_COMMUNICATION_CONFIGURATION + "serviceId,methodId");
+        }
+        if (serviceIdIsEmpty) {
+            throw new GrpcClientException(INVALID_GRPC_COMMUNICATION_CONFIGURATION + "serviceId");
+        }
+        throw new GrpcClientException("methodId");
     }
 }

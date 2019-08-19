@@ -48,7 +48,6 @@ import static java.util.stream.Collectors.*;
 import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
 import static ru.art.core.constants.InterceptionStrategy.*;
 import static ru.art.core.constants.NetworkConstants.BROADCAST_IP_ADDRESS;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.contextConfiguration;
 import static ru.art.core.extension.EqualsCheckingExtensions.ifNotEquals;
@@ -98,7 +97,7 @@ public class HttpServer {
     public static HttpServer httpServer() {
         try {
             HttpServer httpServer = new HttpServer(new Tomcat());
-            httpServer.start();
+            httpServer.startup();
             httpServerModuleState().setServer(httpServer);
             return httpServer;
         } catch (Throwable e) {
@@ -202,7 +201,9 @@ public class HttpServer {
         try {
             UrlInfo urlInfo = UrlInfo.builder()
                     .port(httpServerModule().getPort())
-                    .serverName(httpServerModule().getHost().equals(BROADCAST_IP_ADDRESS) || httpServerModule().getHost().equals(LOCALHOST) ? contextConfiguration().getIpAddress() : httpServerModule().getHost())
+                    .serverName(BROADCAST_IP_ADDRESS.equals(httpServerModule().getHost())
+                            ? contextConfiguration().getIpAddress()
+                            : httpServerModule().getHost())
                     .scheme(HTTP_SCHEME)
                     .uri(path.toString())
                     .build();
@@ -231,7 +232,7 @@ public class HttpServer {
         return serviceSpec.getHttpService().getPath();
     }
 
-    private void start() throws LifecycleException {
+    private void startup() throws LifecycleException {
         getLogManager().reset();
         configureConnector();
         initializeInterceptors();

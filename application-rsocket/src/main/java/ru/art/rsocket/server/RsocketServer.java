@@ -35,7 +35,6 @@ import static java.text.MessageFormat.format;
 import static java.util.Objects.nonNull;
 import static reactor.core.publisher.Mono.just;
 import static ru.art.core.constants.NetworkConstants.BROADCAST_IP_ADDRESS;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST;
 import static ru.art.core.context.Context.contextConfiguration;
 import static ru.art.core.extension.ThreadExtensions.thread;
 import static ru.art.logging.LoggingModule.loggingModule;
@@ -79,9 +78,15 @@ public class RsocketServer {
                 .acceptor((setup, sendingSocket) -> just(new RsocketAcceptor(sendingSocket, setup)));
         switch (transport) {
             case TCP:
-                return acceptor.transport(TcpServerTransport.create(rsocketModule().getAcceptorHost(), rsocketModule().getAcceptorTcpPort())).start().onTerminateDetach();
+                return acceptor.transport(TcpServerTransport.create(rsocketModule().getAcceptorHost(),
+                        rsocketModule().getAcceptorTcpPort()))
+                        .start()
+                        .onTerminateDetach();
             case WEB_SOCKET:
-                return acceptor.transport(WebsocketServerTransport.create(rsocketModule().getAcceptorHost(), rsocketModule().getAcceptorWebSocketPort())).start().onTerminateDetach();
+                return acceptor.transport(WebsocketServerTransport.create(rsocketModule().getAcceptorHost(),
+                        rsocketModule().getAcceptorWebSocketPort()))
+                        .start()
+                        .onTerminateDetach();
         }
         throw new RsocketServerException(format(UNSUPPORTED_TRANSPORT, transport));
     }
@@ -106,15 +111,19 @@ public class RsocketServer {
                 .stream()
                 .filter(entry -> entry.getValue().getServiceTypes().contains(RSOCKET_SERVICE_TYPE))
                 .forEach(entry -> logger.info(format(RSOCKET_LOADED_SERVICE_MESSAGE,
-                        rsocketModule().getAcceptorHost().equals(BROADCAST_IP_ADDRESS) ||
-                                rsocketModule().getAcceptorHost().equals(LOCALHOST) ?
-                                contextConfiguration().getIpAddress() :
-                                rsocketModule().getAcceptorHost(),
-                        transport == TCP ? rsocketModule().getAcceptorTcpPort() : rsocketModule().getAcceptorWebSocketPort(),
+                        rsocketModule().getAcceptorHost().equals(BROADCAST_IP_ADDRESS)
+                                ? contextConfiguration().getIpAddress()
+                                : rsocketModule().getAcceptorHost(),
+                        transport == TCP
+                                ? rsocketModule().getAcceptorTcpPort()
+                                : rsocketModule().getAcceptorWebSocketPort(),
                         entry.getKey(),
                         ((RsocketServiceSpecification) entry.getValue()).getRsocketService().getRsocketMethods().keySet()))))
                 .subscribe(channel -> logger
-                        .info(format(transport == TCP ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE, currentTimeMillis() - timestamp)));
+                        .info(format(transport == TCP
+                                        ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE
+                                        : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE,
+                                currentTimeMillis() - timestamp)));
     }
 
     public void restart() {

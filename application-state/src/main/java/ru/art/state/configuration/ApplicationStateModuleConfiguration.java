@@ -28,6 +28,8 @@ public interface ApplicationStateModuleConfiguration extends ModuleConfiguration
 
     long getModuleEndpointLifeTimeMinutes();
 
+    ApplicationStateModuleDefaultConfiguration DEFAULT_CONFIGURATION = new ApplicationStateModuleDefaultConfiguration();
+
     @Getter
     class ApplicationStateModuleDefaultConfiguration implements ApplicationStateModuleConfiguration {
         private final long moduleEndpointCheckRateSeconds = DEFAULT_MODULE_ENDPOINT_CHECK_RATE_SECONDS;

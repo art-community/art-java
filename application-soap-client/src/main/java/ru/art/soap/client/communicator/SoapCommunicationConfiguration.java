@@ -75,19 +75,27 @@ class SoapCommunicationConfiguration {
         boolean urlIsEmpty = isEmpty(url);
         boolean operationIdIsEmpty = isEmpty(operationId);
         boolean operationNamespaceIsEmpty = isEmpty(operationNamespace);
-        if (urlIsEmpty || operationIdIsEmpty || operationNamespaceIsEmpty) {
-            String message = INVALID_SOAP_COMMUNICATION_CONFIGURATION;
-            if (urlIsEmpty) {
-                message += "url,";
-            }
-            if (operationIdIsEmpty) {
-                message += "operationId,";
-            }
-            if (operationNamespaceIsEmpty) {
-                message += "operationNamespace";
-            }
-            throw new SoapClientModuleException(message);
+        if (!urlIsEmpty && !operationIdIsEmpty && !operationNamespaceIsEmpty) {
+            return;
         }
-
+        if (urlIsEmpty && operationIdIsEmpty && operationNamespaceIsEmpty) {
+            throw new SoapClientModuleException(INVALID_SOAP_COMMUNICATION_CONFIGURATION + "url, operationId, operationNamespace");
+        }
+        if (urlIsEmpty && operationIdIsEmpty) {
+            throw new SoapClientModuleException(INVALID_SOAP_COMMUNICATION_CONFIGURATION + "url, operationId");
+        }
+        if (urlIsEmpty && operationNamespaceIsEmpty) {
+            throw new SoapClientModuleException(INVALID_SOAP_COMMUNICATION_CONFIGURATION + "url, operationNamespace");
+        }
+        if (urlIsEmpty) {
+            throw new SoapClientModuleException(INVALID_SOAP_COMMUNICATION_CONFIGURATION + "url");
+        }
+        if (operationIdIsEmpty && operationNamespaceIsEmpty) {
+            throw new SoapClientModuleException(INVALID_SOAP_COMMUNICATION_CONFIGURATION + "operationId, operationNamespace");
+        }
+        if (operationIdIsEmpty) {
+            throw new SoapClientModuleException(INVALID_SOAP_COMMUNICATION_CONFIGURATION + "operationId");
+        }
+        throw new SoapClientModuleException("operationNamespace");
     }
 }

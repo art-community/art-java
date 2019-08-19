@@ -31,11 +31,13 @@ import ru.art.state.specification.NetworkServiceSpecification;
 import static java.time.Duration.ofSeconds;
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations;
 import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.insideDefaultContext;
 import static ru.art.grpc.server.GrpcServer.grpcServer;
 import static ru.art.http.server.HttpServer.httpServerInSeparatedThread;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.Methods.IMAGE;
 import static ru.art.http.server.module.HttpServerModule.httpServerModule;
 import static ru.art.service.ServiceModule.serviceModule;
+import static ru.art.state.configuration.ApplicationStateModuleConfiguration.DEFAULT_CONFIGURATION;
 import static ru.art.state.constants.StateModuleConstants.APPLICATION_STATE_MODULE_ID;
 import static ru.art.state.dao.ClusterDao.loadCluster;
 import static ru.art.task.deferred.executor.IdentifiedRunnableFactory.commonTask;
@@ -54,6 +56,9 @@ public class ApplicationStateModule implements Module<ApplicationStateModuleConf
     private final ApplicationState state = new ApplicationState();
 
     public static ApplicationStateModuleConfiguration applicationStateModule() {
+        if (insideDefaultContext()) {
+            return DEFAULT_CONFIGURATION;
+        }
         return getApplicationStateModule();
     }
 

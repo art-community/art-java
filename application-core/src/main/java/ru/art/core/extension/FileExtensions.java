@@ -18,6 +18,7 @@
 
 package ru.art.core.extension;
 
+import lombok.experimental.UtilityClass;
 import ru.art.core.exception.InternalRuntimeException;
 import static java.lang.System.arraycopy;
 import static java.nio.ByteBuffer.allocateDirect;
@@ -26,37 +27,42 @@ import static java.nio.channels.FileChannel.open;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardOpenOption.*;
+import static java.util.Objects.isNull;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
 import static ru.art.core.constants.BufferConstants.DEFAULT_BUFFER_SIZE;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
 import static ru.art.core.context.Context.contextConfiguration;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
-public interface FileExtensions {
+@UtilityClass
+public class FileExtensions {
     static String readFile(String path) {
         return readFile(get(path), DEFAULT_BUFFER_SIZE);
     }
 
-    static String readFileQuietly(String path) {
+    public static String readFileQuietly(String path) {
         return readFileQuietly(get(path), DEFAULT_BUFFER_SIZE);
     }
 
-    static String readFile(Path path) {
+    public static String readFile(Path path) {
         return readFile(path, DEFAULT_BUFFER_SIZE);
     }
 
-    static String readFileQuietly(Path path) {
+    public static String readFileQuietly(Path path) {
         return readFileQuietly(path, DEFAULT_BUFFER_SIZE);
     }
 
-    static String readFile(String path, int bufferSize) {
+    public static String readFile(String path, int bufferSize) {
         return readFile(get(path), bufferSize);
     }
 
-    static String readFile(Path path, int bufferSize) {
+    public static String readFile(Path path, int bufferSize) {
         ByteBuffer buffer = allocateDirect(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
         try {
@@ -72,7 +78,7 @@ public interface FileExtensions {
         return result.toString();
     }
 
-    static String readFileQuietly(Path path, int bufferSize) {
+    public static String readFileQuietly(Path path, int bufferSize) {
         ByteBuffer buffer = allocateDirect(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
         try {
@@ -89,27 +95,27 @@ public interface FileExtensions {
     }
 
 
-    static byte[] readFileBytes(String path) {
+    public static byte[] readFileBytes(String path) {
         return readFileBytes(get(path), DEFAULT_BUFFER_SIZE);
     }
 
-    static byte[] readFileBytesQuietly(String path) {
+    public static byte[] readFileBytesQuietly(String path) {
         return readFileBytesQuietly(get(path), DEFAULT_BUFFER_SIZE);
     }
 
-    static byte[] readFileBytes(Path path) {
+    public static byte[] readFileBytes(Path path) {
         return readFileBytes(path, DEFAULT_BUFFER_SIZE);
     }
 
-    static byte[] readFileBytesQuietly(Path path) {
+    public static byte[] readFileBytesQuietly(Path path) {
         return readFileBytesQuietly(path, DEFAULT_BUFFER_SIZE);
     }
 
-    static byte[] readFileBytes(String path, int bufferSize) {
+    public static byte[] readFileBytes(String path, int bufferSize) {
         return readFileBytes(get(path), bufferSize);
     }
 
-    static byte[] readFileBytes(Path path, int bufferSize) {
+    public static byte[] readFileBytes(Path path, int bufferSize) {
         ByteBuffer buffer = allocateDirect(bufferSize);
         byte[] result = EMPTY_BYTES;
         try {
@@ -136,7 +142,7 @@ public interface FileExtensions {
         return result;
     }
 
-    static byte[] readFileBytesQuietly(Path path, int bufferSize) {
+    public static byte[] readFileBytesQuietly(Path path, int bufferSize) {
         try {
             return readFileBytes(path, bufferSize);
         } catch (Throwable e) {
@@ -145,32 +151,32 @@ public interface FileExtensions {
     }
 
 
-    static void writeFile(String path, String content) {
+    public static void writeFile(String path, String content) {
         writeFile(get(path), content);
     }
 
-    static void writeFileQuietly(String path, String content) {
+    public static void writeFileQuietly(String path, String content) {
         writeFileQuietly(get(path), content);
     }
 
-    static void writeFile(Path path, String content) {
+    public static void writeFile(Path path, String content) {
         writeFileQuietly(path, content.getBytes());
     }
 
-    static void writeFileQuietly(Path path, String content) {
+    public static void writeFileQuietly(Path path, String content) {
         writeFileQuietly(path, content.getBytes());
     }
 
 
-    static void writeFile(String path, byte[] content) {
+    public static void writeFile(String path, byte[] content) {
         writeFile(get(path), content);
     }
 
-    static void writeFileQuietly(String path, byte[] content) {
+    public static void writeFileQuietly(String path, byte[] content) {
         writeFileQuietly(get(path), content);
     }
 
-    static void writeFile(Path path, byte[] content) {
+    public static void writeFile(Path path, byte[] content) {
         ByteBuffer byteBuffer = wrap(content);
         try {
             createDirectories(path.getParent());
@@ -182,7 +188,7 @@ public interface FileExtensions {
         }
     }
 
-    static void writeFileQuietly(Path path, byte[] content) {
+    public static void writeFileQuietly(Path path, byte[] content) {
         ByteBuffer byteBuffer = wrap(content);
         try {
             createDirectories(path.getParent());
@@ -192,5 +198,32 @@ public interface FileExtensions {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static boolean deleteFileRecursive(String path) {
+        return deleteFileRecursive(Paths.get(path));
+    }
+
+    public static boolean deleteFileRecursive(Path path) {
+        return deleteFileRecursive(path.toFile());
+    }
+
+    @SuppressWarnings("all")
+    public static boolean deleteFileRecursive(File file) {
+        if (isNull(file) || !file.exists()) {
+            return true;
+        }
+        if (file.isFile()) {
+            return file.delete();
+        }
+        File[] children = file.listFiles();
+        if (isEmpty(children)) {
+            return file.delete();
+        }
+        for (File child : children) {
+            deleteFileRecursive(child);
+        }
+        return file.delete();
     }
 }

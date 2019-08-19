@@ -20,10 +20,13 @@ package ru.art.kafka.producer.configuration;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.Serializer;
 import ru.art.kafka.producer.exception.KafkaProducerConfigurationException;
+import ru.art.kafka.serializer.KafkaProtobufSerializer;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import java.util.List;
 import java.util.Properties;
 
 @Getter
@@ -42,33 +45,31 @@ public class KafkaProducerConfiguration {
     /**
      * @return list ip-address and port kafka brokers
      */
-    private final String bootstrapServers;
+    @Singular("broker")
+    private final List<String> brokers;
 
     /**
      * @return Serializer for key
      */
-    private final Serializer<?> keySerializer;
+    @Builder.Default
+    private final Serializer<?> keySerializer = new KafkaProtobufSerializer();
 
     /**
      * @return Serializer for value
      */
-    private final Serializer valueSerializer;
+    @Builder.Default
+    private final Serializer<?> valueSerializer = new KafkaProtobufSerializer();
 
     /**
      * @return Quantity resend any record whose send fails with a potentially temporary error
      */
-    private final int retries;
-
-    /**
-     * @return Quantity resend any record whose send fails with a potentially temporary error for single connection
-     */
-    private final int maxAttemptPerSingleConnection;
+    private final Integer retries;
 
     /**
      * @return timeout in milliseconds for an upper bound on the time to report success or
      * failure for method {@link org.apache.kafka.clients.producer.KafkaProducer#send(ProducerRecord)}
      */
-    private final int deliveryTimeout;
+    private final Integer deliveryTimeout;
 
     /**
      * Default value null
@@ -76,13 +77,12 @@ public class KafkaProducerConfiguration {
      * @return Other properties for kafka producer
      * Read more http://kafka.apache.org/documentation/
      */
-    private final Properties otherProperties;
+    @Builder.Default
+    private final Properties additionalProperties = new Properties();
 
     public void validate() {
         if (isEmpty(getTopic())) throw new KafkaProducerConfigurationException("topic is empty");
         if (isEmpty(getClientId())) throw new KafkaProducerConfigurationException("clientId is empty");
-        if (isEmpty(getBootstrapServers())) throw new KafkaProducerConfigurationException("bootstrapServer is empty");
-        if (isEmpty(getKeySerializer())) throw new KafkaProducerConfigurationException("keySerializer is empty");
-        if (isEmpty(getValueSerializer())) throw new KafkaProducerConfigurationException("valueSerializer is empty");
+        if (isEmpty(getBrokers())) throw new KafkaProducerConfigurationException("brokers are empty");
     }
 }

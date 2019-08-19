@@ -21,6 +21,7 @@ package ru.art.core.mime;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ru.art.core.exception.InvalidMimeTypeException;
+import static java.lang.Float.parseFloat;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import static java.nio.charset.Charset.forName;
 import static java.text.MessageFormat.format;
@@ -43,6 +44,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
+import java.util.function.Function;
 
 @Getter
 @RequiredArgsConstructor(access = PRIVATE)
@@ -179,12 +181,12 @@ public class MimeType implements Comparable<MimeType> {
     }
 
     public Charset getCharset() {
-        return doIfNotNull(getParameter(PARAM_CHARSET), charset -> forName(unquote(charset)));
+        return doIfNotNull(getParameter(PARAM_CHARSET), (Function<String, Charset>) charset -> forName(unquote(charset)));
     }
 
     public float getQValue() {
         String qStr = getParameter(PARAM_Q);
-        return qStr != null ? Float.valueOf(unquote(qStr)) : 1.f;
+        return qStr != null ? parseFloat(unquote(qStr)) : 1.f;
     }
 
     public String getParameter(String name) {

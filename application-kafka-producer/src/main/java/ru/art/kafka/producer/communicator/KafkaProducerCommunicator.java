@@ -22,11 +22,14 @@ import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import ru.art.kafka.producer.configuration.KafkaProducerConfiguration;
-import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
-import static org.apache.kafka.clients.CommonClientConfigs.CLIENT_ID_CONFIG;
+import static java.lang.String.join;
+import static org.apache.kafka.clients.CommonClientConfigs.*;
+import static org.apache.kafka.clients.producer.ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG;
 import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
+import static ru.art.core.constants.StringConstants.COMMA;
+import static ru.art.core.extension.NullCheckingExtensions.doIfNotNull;
 import java.util.Properties;
+import java.util.function.Consumer;
 
 /**
  * The wrapper for KafkaProducer API
@@ -37,6 +40,7 @@ import java.util.Properties;
 public class KafkaProducerCommunicator<KeyType, ValueType> {
     private final String topic;
     private final KafkaProducer<KeyType, ValueType> kafkaProducer;
+    private final KafkaProducerConfiguration configuration;
     private Callback callback;
 
     /**
@@ -47,10 +51,14 @@ public class KafkaProducerCommunicator<KeyType, ValueType> {
      */
     private KafkaProducerCommunicator(KafkaProducerConfiguration configuration) {
         configuration.validate();
-        Properties properties = ifEmpty(configuration.getOtherProperties(), new Properties());
-        properties.put(BOOTSTRAP_SERVERS_CONFIG, configuration.getBootstrapServers());
+        Properties properties = new Properties();
+        properties.put(BOOTSTRAP_SERVERS_CONFIG, join(COMMA, configuration.getBrokers()));
         properties.put(CLIENT_ID_CONFIG, configuration.getClientId());
+        doIfNotNull(configuration.getRetries(), (Consumer<Integer>) retries -> properties.put(RETRIES_CONFIG, retries));
+        doIfNotNull(configuration.getDeliveryTimeout(), (Consumer<Integer>) timeout -> properties.put(DELIVERY_TIMEOUT_MS_CONFIG, timeout));
+        properties.putAll(configuration.getAdditionalProperties());
         this.topic = configuration.getTopic();
+        this.configuration = configuration;
         this.kafkaProducer = new KafkaProducer<>(properties, cast(configuration.getKeySerializer()), cast(configuration.getValueSerializer()));
     }
 
@@ -58,10 +66,10 @@ public class KafkaProducerCommunicator<KeyType, ValueType> {
         return new KafkaProducerCommunicator<>(configuration);
     }
 
-    public void pushKafkaRecord(KeyType key, ValueType value) {
+    public KafkaProducerCommunicator<KeyType, ValueType> pushKafkaRecord(KeyType key, ValueType value) {
         ProducerRecord<KeyType, ValueType> producerRecord = new ProducerRecord<>(topic, key, value);
         kafkaProducer.send(producerRecord, callback);
-        kafkaProducer.close();
+        return new KafkaProducerCommunicator<>(configuration);
     }
 
     public KafkaProducerCommunicator<KeyType, ValueType> prepareCallbackWrapper(Callback callback) {

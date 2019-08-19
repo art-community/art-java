@@ -16,16 +16,24 @@
  * limitations under the License.
  */
 
-package ru.art.kafka.consumer.container;
+art {
+    providedModules {
+        applicationCore()
+        applicationEntity()
+        applicationLogging()
+    }
+}
 
-import lombok.Builder;
-import lombok.Getter;
-import org.apache.kafka.streams.kstream.KStream;
-import ru.art.kafka.consumer.configuration.KafkaStreamConfiguration;
+configurations {
+    with(embedded.get()) {
+        exclude("org.slf4j", "slf4j-api")
+        exclude("org.slf4j", "slf4j-log4j12")
+        exclude("org.slf4j", "jul-to-slf4j")
+    }
+}
 
-@Getter
-@Builder(builderMethodName = "streamContainer", buildMethodName = "assemble")
-public class KafkaStreamContainer {
-    private final KafkaStreamConfiguration configuration;
-    private final KStream<?, ?> stream;
+dependencies {
+    with(art.externalDependencyVersionsConfiguration) {
+        embedded("org.apache.kafka", "kafka_2.12", kafkaVersion)
+    }
 }

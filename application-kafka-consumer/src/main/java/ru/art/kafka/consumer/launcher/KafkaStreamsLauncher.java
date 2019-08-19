@@ -24,11 +24,11 @@ import static ru.art.kafka.consumer.module.KafkaConsumerModule.kafkaStreamsRegis
 
 
 public interface KafkaStreamsLauncher {
-    static void startKafkaStreams() {
+    static void launchKafkaStreams() {
         kafkaStreamsRegistry().getRegistry().values().forEach(KafkaStreams::start);
     }
 
-    static void startKafkaStreams(KafkaStreamsRegistry registry) {
+    static void launchKafkaStreams(KafkaStreamsRegistry registry) {
         registry.getRegistry().values().forEach(KafkaStreams::start);
     }
 }

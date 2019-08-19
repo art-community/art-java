@@ -29,6 +29,7 @@ import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.context.Context.context;
 import static ru.art.core.context.Context.insideDefaultContext;
+import static ru.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration.*;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.KAFKA_CONSUMER_MODULE_ID;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.KAFKA_CONSUMER_SERVICE_TYPE;
 import static ru.art.service.ServiceModule.serviceModule;
@@ -49,11 +50,11 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
     private static final KafkaConsumerModuleConfiguration kafkaConsumerModule = context()
             .getModule(KAFKA_CONSUMER_MODULE_ID, KafkaConsumerModule::new);
     private String id = KAFKA_CONSUMER_MODULE_ID;
-    private KafkaConsumerModuleConfiguration defaultConfiguration = KafkaConsumerModuleConfiguration.DEFAULT_CONFIGURATION;
+    private KafkaConsumerModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
 
     public static KafkaConsumerModuleConfiguration kafkaConsumerModule() {
         if (insideDefaultContext()) {
-            return KafkaConsumerModuleConfiguration.DEFAULT_CONFIGURATION;
+            return DEFAULT_CONFIGURATION;
         }
         return getKafkaConsumerModule();
     }

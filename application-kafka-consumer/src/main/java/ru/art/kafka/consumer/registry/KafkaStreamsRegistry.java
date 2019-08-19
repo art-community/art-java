@@ -23,10 +23,11 @@ import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.logging.log4j.Logger;
+import ru.art.kafka.consumer.configuration.KafkaStreamConfiguration;
 import ru.art.kafka.consumer.container.KafkaStreamContainer;
+import static java.lang.String.*;
 import static org.apache.kafka.streams.StreamsConfig.*;
-import static ru.art.core.constants.StringConstants.COLON;
-import static ru.art.core.constants.StringConstants.SPACE;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.kafka.consumer.module.KafkaConsumerModule.kafkaConsumerModule;
 import static ru.art.logging.LoggingModule.loggingModule;
@@ -39,7 +40,7 @@ public class KafkaStreamsRegistry {
     private final Map<String, KafkaStreams> registry = mapOf();
     private static final Logger logger = loggingModule().getLogger(KafkaStreamsRegistry.class);
 
-    public static KStream<?, ?> withTracing(KStream<?, ?> stream) {
+    public static <K, V> KStream<K, V> withTracing(KStream<K, V> stream) {
         if (!kafkaConsumerModule().isEnableTracing()) {
             return stream;
         }
@@ -47,29 +48,33 @@ public class KafkaStreamsRegistry {
     }
 
     @SuppressWarnings("Duplicates")
-    public KafkaStreamsRegistry registerStream(String appId, Function<StreamsBuilder, KafkaStreamContainer> streamCreator) {
+    public KafkaStreamsRegistry registerStream(String applicationId, Function<StreamsBuilder, KafkaStreamContainer> streamCreator) {
         StreamsBuilder builder = new StreamsBuilder();
         Properties properties = new Properties();
         KafkaStreamContainer streamContainer = streamCreator.apply(builder);
-        properties.put(APPLICATION_ID_CONFIG, appId);
-        properties.put(BOOTSTRAP_SERVERS_CONFIG, streamContainer.getConfiguration().getBootstrapServers());
-        properties.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, streamContainer.getConfiguration().getKeySerde().getClass());
-        properties.put(DEFAULT_VALUE_SERDE_CLASS_CONFIG, streamContainer.getConfiguration().getValueSerde().getClass());
-        properties.putAll(streamContainer.getConfiguration().getKafkaProperties());
-        registry.put(appId, new KafkaStreams(builder.build(), properties));
+        KafkaStreamConfiguration configuration = streamContainer.getConfiguration();
+        configuration.validate();
+        properties.put(APPLICATION_ID_CONFIG, applicationId);
+        properties.put(BOOTSTRAP_SERVERS_CONFIG, join(COMMA, configuration.getBrokers()));
+        properties.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, configuration.getKeySerde().getClass());
+        properties.put(DEFAULT_VALUE_SERDE_CLASS_CONFIG, configuration.getValueSerde().getClass());
+        properties.putAll(configuration.getAdditionalProperties());
+        registry.put(applicationId, new KafkaStreams(builder.build(), properties));
         return this;
     }
 
     @SuppressWarnings("Duplicates")
-    public KafkaStreamsRegistry registerStream(String appId, String topic, Function<KStream<?, ?>, KafkaStreamContainer> streamCreator) {
+    public <K, V> KafkaStreamsRegistry registerStream(String appId, String topic, Function<KStream<K, V>, KafkaStreamContainer> streamCreator) {
         StreamsBuilder builder = new StreamsBuilder();
         Properties properties = new Properties();
         KafkaStreamContainer streamContainer = streamCreator.apply(withTracing(builder.stream(topic)));
+        KafkaStreamConfiguration configuration = streamContainer.getConfiguration();
+        configuration.validate();
         properties.put(APPLICATION_ID_CONFIG, appId);
-        properties.put(BOOTSTRAP_SERVERS_CONFIG, streamContainer.getConfiguration().getBootstrapServers());
-        properties.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, streamContainer.getConfiguration().getKeySerde().getClass());
-        properties.put(DEFAULT_VALUE_SERDE_CLASS_CONFIG, streamContainer.getConfiguration().getValueSerde().getClass());
-        properties.putAll(streamContainer.getConfiguration().getKafkaProperties());
+        properties.put(BOOTSTRAP_SERVERS_CONFIG, join(COMMA, configuration.getBrokers()));
+        properties.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, configuration.getKeySerde().getClass());
+        properties.put(DEFAULT_VALUE_SERDE_CLASS_CONFIG, configuration.getValueSerde().getClass());
+        properties.putAll(configuration.getAdditionalProperties());
         registry.put(appId, new KafkaStreams(builder.build(), properties));
         return this;
     }
