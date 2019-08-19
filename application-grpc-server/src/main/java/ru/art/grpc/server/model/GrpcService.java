@@ -32,7 +32,7 @@ import java.util.Map;
 @Builder(builderMethodName = "grpcService", buildMethodName = "serve")
 public class GrpcService {
     @Singular("method")
-    private Map<String, GrpcMethod> methods;
+    private final Map<String, GrpcMethod> methods;
 
     @Getter
     @Setter

@@ -39,6 +39,7 @@ import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.LOCAL;
 import static ru.art.tarantool.model.TarantoolEntityFieldsMapping.entityFieldsMapping;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -63,12 +64,12 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
         initializationMode = super.getInitializationMode();
         initializationMode = ifException(() -> TarantoolInitializationMode.valueOf(configString(TARANTOOL_SECTION_ID, INITIALIZATION_MODE).toUpperCase()), initializationMode);
         TarantoolLocalConfiguration defaultLocalConfiguration = super.getLocalConfiguration();
-        String executable = defaultLocalConfiguration.getExecutable();
-        executable = configString(TARANTOOL_LOCAL_SECTION_ID, EXECUTABLE, executable);
+        List<String> executableApplicationName = defaultLocalConfiguration.getExecutableCommand();
+        executableApplicationName = configStringList(TARANTOOL_LOCAL_SECTION_ID, EXECUTABLE_COMMAND, executableApplicationName);
         String workingDirectory = defaultLocalConfiguration.getWorkingDirectory();
         workingDirectory = configString(TARANTOOL_LOCAL_SECTION_ID, WORKING_DIRECTORY, workingDirectory);
         localConfiguration = TarantoolLocalConfiguration.builder()
-                .executable(executable)
+                .executableCommand(executableApplicationName)
                 .workingDirectory(workingDirectory)
                 .build();
         Function<Config, TarantoolConfiguration> mapper = config -> TarantoolConfiguration.builder()
@@ -79,7 +80,6 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
                         .password(ifExceptionOrEmpty(() -> config.getString(CONNECTION_SECTION_ID + DOT + PASSWORD), EMPTY_STRING))
                         .build())
                 .initialConfiguration(TarantoolInitialConfiguration.builder()
-                        .port(DEFAULT_TARANTOOL_PORT)
                         .background(nullIfException(() -> config.getBool(INITIAL_SECTION_ID + DOT + BACKGROUND)))
                         .customProcTitle(nullIfException(() -> config.getString(INITIAL_SECTION_ID + DOT + CUSTOM_PROC_TITLE)))
                         .memtxDir(nullIfException(() -> config.getString(INITIAL_SECTION_ID + DOT + MEMTX_DIR)))

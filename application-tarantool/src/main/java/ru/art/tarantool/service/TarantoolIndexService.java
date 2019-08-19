@@ -28,7 +28,7 @@ import static ru.art.tarantool.configuration.lua.TarantoolIndexConfiguration.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.DROP;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.RENAME;
 import static ru.art.tarantool.executor.TarantoolLuaExecutor.evaluateLuaScript;
-import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState;
+import static ru.art.tarantool.module.TarantoolModule.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class TarantoolIndexService {

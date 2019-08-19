@@ -27,7 +27,7 @@ import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Paths.get;
 import static java.nio.file.StandardOpenOption.*;
 import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
-import static ru.art.core.constants.BufferConstants.MAX_BUFFER_SIZE;
+import static ru.art.core.constants.BufferConstants.DEFAULT_BUFFER_SIZE;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
 import static ru.art.core.context.Context.contextConfiguration;
 import java.io.IOException;
@@ -37,19 +37,19 @@ import java.nio.file.Path;
 
 public interface FileExtensions {
     static String readFile(String path) {
-        return readFile(get(path), MAX_BUFFER_SIZE);
+        return readFile(get(path), DEFAULT_BUFFER_SIZE);
     }
 
     static String readFileQuietly(String path) {
-        return readFileQuietly(get(path), MAX_BUFFER_SIZE);
+        return readFileQuietly(get(path), DEFAULT_BUFFER_SIZE);
     }
 
     static String readFile(Path path) {
-        return readFile(path, MAX_BUFFER_SIZE);
+        return readFile(path, DEFAULT_BUFFER_SIZE);
     }
 
     static String readFileQuietly(Path path) {
-        return readFileQuietly(path, MAX_BUFFER_SIZE);
+        return readFileQuietly(path, DEFAULT_BUFFER_SIZE);
     }
 
     static String readFile(String path, int bufferSize) {
@@ -90,19 +90,19 @@ public interface FileExtensions {
 
 
     static byte[] readFileBytes(String path) {
-        return readFileBytes(get(path), MAX_BUFFER_SIZE);
+        return readFileBytes(get(path), DEFAULT_BUFFER_SIZE);
     }
 
     static byte[] readFileBytesQuietly(String path) {
-        return readFileBytesQuietly(get(path), MAX_BUFFER_SIZE);
+        return readFileBytesQuietly(get(path), DEFAULT_BUFFER_SIZE);
     }
 
     static byte[] readFileBytes(Path path) {
-        return readFileBytes(path, MAX_BUFFER_SIZE);
+        return readFileBytes(path, DEFAULT_BUFFER_SIZE);
     }
 
     static byte[] readFileBytesQuietly(Path path) {
-        return readFileBytesQuietly(path, MAX_BUFFER_SIZE);
+        return readFileBytesQuietly(path, DEFAULT_BUFFER_SIZE);
     }
 
     static byte[] readFileBytes(String path, int bufferSize) {

@@ -34,7 +34,7 @@ import java.util.Map;
 public class StringParametersMap implements Value {
     private final ValueType type = STRING_PARAMETERS_MAP;
     @Singular("parameter")
-    private Map<String, String> parameters;
+    private final Map<String, String> parameters;
 
     public String getParameter(String key) {
         return parameters.get(key);

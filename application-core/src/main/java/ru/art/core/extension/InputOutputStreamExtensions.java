@@ -18,17 +18,22 @@
 
 package ru.art.core.extension;
 
+import static ru.art.core.constants.BufferConstants.DEFAULT_BUFFER_SIZE;
 import static ru.art.core.constants.StreamConstants.EOF;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public interface InputOutputStreamExtensions {
-    static void transferBytes(InputStream bufferedInputStream, OutputStream outputStream, int bufferSize) throws IOException {
+    static void transferBytes(InputStream inputStream, OutputStream outputStream, int bufferSize) throws IOException {
         byte[] bytes = new byte[bufferSize];
         int readChars;
-        while ((readChars = bufferedInputStream.read(bytes)) != EOF) {
+        while ((readChars = inputStream.read(bytes)) != EOF) {
             outputStream.write(bytes, 0, readChars);
         }
+    }
+
+    static void transferBytes(InputStream inputStream, OutputStream outputStream) throws IOException {
+        transferBytes(inputStream, outputStream, DEFAULT_BUFFER_SIZE);
     }
 }
