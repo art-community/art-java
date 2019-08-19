@@ -30,8 +30,7 @@ public interface TarantoolConfigKeys {
     String PROBE_CONNECTION_TIMEOUT = "probeConnectionTimeout";
     String CONNECTION_TIMEOUT = "connectionTimeout";
     String INITIALIZATION_MODE = "initializationMode";
-    String EXECUTABLE_APPLICATION_NAME = "executableApplicationName";
-    String STARTUP_TIMEOUT_SECONDS = "startupTimeoutSeconds";
+    String EXECUTABLE = "executable";
     String WORKING_DIRECTORY = "workingDirectory";
     String USERNAME = "username";
     String PASSWORD = "password";
