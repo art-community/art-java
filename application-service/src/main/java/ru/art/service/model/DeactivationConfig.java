@@ -21,12 +21,12 @@ package ru.art.service.model;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
-import java.util.List;
+import java.util.Set;
 
 @Builder
 @Getter
 public class DeactivationConfig {
     private boolean deactivated;
     @Singular("deactivateMethod")
-    private List<String> deactivatedMethods;
+    private final Set<String> deactivatedMethods;
 }

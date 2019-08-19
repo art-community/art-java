@@ -19,8 +19,10 @@
 package ru.art.core.wrapper;
 
 import lombok.SneakyThrows;
+import ru.art.core.callable.ExceptionCallable;
 import ru.art.core.exception.InternalRuntimeException;
 import ru.art.core.factory.ExceptionFactory;
+import ru.art.core.runnable.ExceptionRunnable;
 import static java.util.Objects.isNull;
 import static ru.art.core.constants.ExceptionMessages.EXCEPTION_WRAPPER_ACTION_IS_NULL;
 import static ru.art.core.constants.ExceptionMessages.EXCEPTION_WRAPPER_FACTORY_IS_NULL;
@@ -41,7 +43,7 @@ public interface ExceptionWrapper {
         return action.call();
     }
 
-    static void ignoreException(Runnable action) {
+    static void ignoreException(ExceptionRunnable action) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             action.run();
@@ -50,7 +52,7 @@ public interface ExceptionWrapper {
         }
     }
 
-    static void ignoreException(Runnable action, Consumer<Throwable> onException) {
+    static void ignoreException(ExceptionRunnable action, Consumer<Throwable> onException) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             action.run();
@@ -59,7 +61,7 @@ public interface ExceptionWrapper {
         }
     }
 
-    static <T> T ignoreException(Callable<T> action, Function<Throwable, T> onException) {
+    static <T> T ignoreException(ExceptionCallable<T> action, Function<Throwable, T> onException) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             return action.call();

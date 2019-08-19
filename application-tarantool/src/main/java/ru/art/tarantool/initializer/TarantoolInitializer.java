@@ -28,6 +28,7 @@ import ru.art.tarantool.configuration.TarantoolLocalConfiguration;
 import ru.art.tarantool.exception.TarantoolConnectionException;
 import ru.art.tarantool.exception.TarantoolInitializationException;
 import static java.io.File.separator;
+import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Paths.get;
 import static java.text.MessageFormat.format;
 import static java.util.Objects.isNull;
@@ -35,8 +36,10 @@ import static org.apache.logging.log4j.io.IoBuilder.forLogger;
 import static org.jtwig.JtwigTemplate.classpathTemplate;
 import static ru.art.core.constants.StringConstants.COLON;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.determinant.SystemDeterminant.isWindows;
+import static ru.art.core.converter.WslPathConverter.convertToWslPath;
 import static ru.art.core.extension.FileExtensions.writeFile;
+import static ru.art.core.extension.InputOutputStreamExtensions.transferBytes;
+import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
 import static ru.art.core.jar.JarExtensions.extractCurrentJarEntry;
 import static ru.art.core.jar.JarExtensions.insideJar;
 import static ru.art.logging.LoggingModule.loggingModule;
@@ -55,9 +58,11 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.CONF
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.USER;
 import static ru.art.tarantool.module.TarantoolModule.tarantoolModule;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.List;
 
 public class TarantoolInitializer {
     private final static OutputStream TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM = forLogger(loggingModule()
@@ -83,14 +88,14 @@ public class TarantoolInitializer {
                 return;
             }
         } catch (Throwable e) {
-            if (instanceMode == LOCAL && !isWindows()) {
+            if (instanceMode == LOCAL) {
                 logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
                 startTarantool(instanceId);
             }
             connectToTarantool(instanceId);
             return;
         }
-        if (instanceMode == LOCAL && !isWindows()) {
+        if (instanceMode == LOCAL) {
             logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
             startTarantool(instanceId);
         }
@@ -108,8 +113,9 @@ public class TarantoolInitializer {
             }
             TarantoolConnectionConfiguration connectionConfiguration = configuration.getConnectionConfiguration();
             TarantoolLocalConfiguration localConfiguration = tarantoolModule().getLocalConfiguration();
-            String luaConfiguration = configuration.getInitialConfiguration().toLua();
+            String luaConfiguration = configuration.getInitialConfiguration().toLua(connectionConfiguration.getPort());
             Path luaConfigurationPath = get(getLuaScriptPath(localConfiguration, CONFIGURATION));
+            createDirectories(get(localConfiguration.getWorkingDirectory() + separator + LUA));
             writeFile(luaConfigurationPath, luaConfiguration);
             String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
             loggingModule()
@@ -131,7 +137,7 @@ public class TarantoolInitializer {
                             instanceId,
                             address,
                             userConfigurationPath.toAbsolutePath()));
-            String executable = localConfiguration.getExecutable();
+            List<String> executableCommand = localConfiguration.getExecutableCommand();
             if (insideJar()) {
                 extractCurrentJarEntry(LUA_REGEX, getLuaScriptPath(localConfiguration, EMPTY_STRING));
                 loggingModule()
@@ -139,11 +145,12 @@ public class TarantoolInitializer {
                         .info(format(EXTRACT_TARANTOOL_LUA_SCRIPTS,
                                 instanceId,
                                 address,
-                                localConfiguration.getWorkingDirectory() + separator + LUA));
+                                localConfiguration.getWorkingDirectory()) + separator + LUA);
 
-                String initializationScriptPath = getLuaScriptPath(localConfiguration, INITIALIZATION);
+                executableCommand = dynamicArrayOf(executableCommand);
+                executableCommand.add(convertToWslPath(getLuaScriptPath(localConfiguration, INITIALIZATION)));
                 new ProcessExecutor()
-                        .command(executable, initializationScriptPath)
+                        .command(executableCommand)
                         .directory(new File(localConfiguration.getWorkingDirectory()))
                         .redirectOutput(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                         .redirectError(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
@@ -160,9 +167,14 @@ public class TarantoolInitializer {
             if (isNull(initializationResource)) {
                 throw new TarantoolInitializationException(format(TARANTOOL_INITIALIZATION_SCRIP_NOT_EXISTS, instanceId));
             }
-
+            FileOutputStream outputStream = new FileOutputStream(new File(getLuaScriptPath(localConfiguration, INITIALIZATION)));
+            transferBytes(initializationResource.openStream(), outputStream);
+            outputStream.flush();
+            outputStream.close();
+            executableCommand = dynamicArrayOf(executableCommand);
+            executableCommand.add(convertToWslPath(getLuaScriptPath(localConfiguration, INITIALIZATION)));
             new ProcessExecutor()
-                    .command(executable, initializationResource.getFile())
+                    .command(executableCommand)
                     .directory(new File(localConfiguration.getWorkingDirectory()))
                     .redirectOutput(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                     .redirectError(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)

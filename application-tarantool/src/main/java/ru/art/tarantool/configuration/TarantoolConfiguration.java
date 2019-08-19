@@ -30,8 +30,10 @@ import java.util.Map;
 @Getter
 @Builder
 public class TarantoolConfiguration {
-    private TarantoolConnectionConfiguration connectionConfiguration;
-    private TarantoolInitialConfiguration initialConfiguration;
+    @Builder.Default
+    private TarantoolConnectionConfiguration connectionConfiguration = TarantoolConnectionConfiguration.builder().build();
+    @Builder.Default
+    private TarantoolInitialConfiguration initialConfiguration = TarantoolInitialConfiguration.builder().build();
     @Builder.Default
     private final TarantoolInstanceMode instanceMode = LOCAL;
     @Singular("entityFieldsMapping")

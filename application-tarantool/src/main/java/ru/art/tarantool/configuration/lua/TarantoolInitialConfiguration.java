@@ -23,7 +23,6 @@ import lombok.Getter;
 import lombok.Singular;
 import org.jtwig.JtwigModel;
 import static org.jtwig.JtwigTemplate.classpathTemplate;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.DEFAULT_TARANTOOL_PORT;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.JTW_EXTENSION;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.CONFIGURATION;
@@ -33,8 +32,6 @@ import java.util.Map;
 @Builder
 @SuppressWarnings("Duplicates")
 public class TarantoolInitialConfiguration {
-    @Builder.Default
-    private final Integer port = DEFAULT_TARANTOOL_PORT;
     private Boolean background;
     private String customProcTitle;
     private String memtxDir;
@@ -49,9 +46,9 @@ public class TarantoolInitialConfiguration {
     private Long memtxMemory;
     private Integer slabAllocFactor;
     @Singular("option")
-    private Map<String, Object> options;
+    private final Map<String, Object> options;
 
-    public String toLua() {
+    public String toLua(int port) {
         JtwigModel model = new JtwigModel()
                 .with(LISTEN, port)
                 .with(BACKGROUND, background)

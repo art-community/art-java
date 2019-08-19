@@ -19,5 +19,5 @@
 package ru.art.core.constants;
 
 public interface BufferConstants {
-    int MAX_BUFFER_SIZE = 8192;
+    int DEFAULT_BUFFER_SIZE = 8192;
 }

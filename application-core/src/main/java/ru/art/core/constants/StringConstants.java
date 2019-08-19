@@ -28,6 +28,7 @@ public interface StringConstants {
     String FALSE_NUMERIC = "0";
     String SLASH = "/";
     String BACKWARD_SLASH = "\\";
+    String BACKWARD_SLASH_REGEX = "\\\\";
     String DOUBLE_QUOTES = "\"";
     String WILDCARD = "*";
     String EMPTY_STRING = "";
@@ -62,4 +63,8 @@ public interface StringConstants {
     String DOUBLE_TABULATION = "\t\t";
     String DOLLAR = "$";
     String AT_SIGN = "@";
+    String WINDOWS_DISK_PATH_SLASH = ":/";
+    String WINDOWS_DISK_PATH_BACKWARD_SLASH = ":\\";
+    String WINDOWS_DISK_PATH_BACKWARD_SLASH_REGEX = ":\\\\";
+    String WSL_DISK_PREFIX = "/mnt/";
 }

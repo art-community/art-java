@@ -58,3 +58,5 @@ node_modules
 .cache
 rocks.db/
 !gradle/wrapper/gradle-wrapper.jar
+*.snap
+*.xlog

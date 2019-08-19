@@ -20,11 +20,17 @@ package ru.art.tarantool.constants;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import static ru.art.core.constants.SystemConstants.WSL;
+import static ru.art.core.determinant.SystemDeterminant.isWindows;
+import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
 import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
+import java.util.List;
 
 public interface TarantoolModuleConstants {
     String TARANTOOL_MODULE_ID = "TARANTOOL_MODULE";
-    String DEFAULT_TARANTOOL_EXECUTABLE = "/usr/bin/tarantool";
+    List<String> DEFAULT_TARANTOOL_EXECUTABLE_COMMAND = isWindows()
+            ? fixedArrayOf(WSL, "/usr/bin/tarantool")
+            : fixedArrayOf("/usr/bin/tarantool");
     int DEFAULT_TARANTOOL_PROBE_CONNECTION_TIMEOUT = 3 * 1000;
     int DEFAULT_TARANTOOL_CONNECTION_TIMEOUT = DEFAULT_TARANTOOL_PROBE_CONNECTION_TIMEOUT * 20;
     int DEFAULT_TARANTOOL_PORT = findAvailableTcpPort();
@@ -57,7 +63,6 @@ public interface TarantoolModuleConstants {
     }
 
     interface Directories {
-        String BIN = "bin";
         String LUA = "lua";
     }
 
@@ -76,7 +81,7 @@ public interface TarantoolModuleConstants {
         String WRITING_TARANTOOL_CONFIGURATION = "Writing Tarantool ''{0}'' address ''{1}'' configuration:\n\t{2}\nto file ''{3}''";
         String EVALUATING_LUA_SCRIPT = "Evaluating lua script:\n\t{0}";
         String EXTRACT_TARANTOOL_LUA_SCRIPTS = "Extract Tarantool ''{0}'' with address''{1}'' lua scripts to ''{2}''";
-        String WRITING_TARANTOOL_USER_CONFIGURATION = "Writing Tarantool ''{0}'' with address = ''{1}'' user configuration to file ''{1}''";
+        String WRITING_TARANTOOL_USER_CONFIGURATION = "Writing Tarantool ''{0}'' with address = ''{1}'' user configuration to file ''{2}''";
         String UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP = "Unable to connect to tarantool ''{0}'' with address ''{1}'' on startup. Therefore, we will try to run the tarantool";
         String CALLING_FUNCTION = "Calling tarantool function ''{0}'' with arguments: {1}";
         String CALLED_FUNCTION = "Called tarantool function ''{0}'' with result: {1}";

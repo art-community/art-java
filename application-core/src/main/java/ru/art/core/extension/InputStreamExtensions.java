@@ -24,7 +24,7 @@ import static java.nio.ByteBuffer.allocateDirect;
 import static java.nio.channels.Channels.newChannel;
 import static java.util.Collections.emptyList;
 import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
-import static ru.art.core.constants.BufferConstants.MAX_BUFFER_SIZE;
+import static ru.art.core.constants.BufferConstants.DEFAULT_BUFFER_SIZE;
 import static ru.art.core.constants.StreamConstants.EOF;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
 import static ru.art.core.context.Context.contextConfiguration;
@@ -63,7 +63,7 @@ public interface InputStreamExtensions {
     }
 
     static byte[] toByteArray(InputStream is) {
-        return toByteArray(is, MAX_BUFFER_SIZE);
+        return toByteArray(is, DEFAULT_BUFFER_SIZE);
     }
 
     static byte[] toByteArray(InputStream is, int bufferSize) {
