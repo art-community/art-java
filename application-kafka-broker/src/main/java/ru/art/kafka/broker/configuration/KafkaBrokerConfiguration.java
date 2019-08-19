@@ -18,11 +18,10 @@ package ru.art.kafka.broker.configuration;
 
 import lombok.Builder;
 import lombok.Getter;
-import static java.io.File.separator;
-import static java.nio.file.Paths.get;
 import static ru.art.core.constants.NetworkConstants.LOCALHOST;
-import static ru.art.core.constants.StringConstants.*;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
+import static ru.art.core.constants.StringConstants.COLON;
+import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.DEFAULT_BROKER_PORT;
+import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.DEFAULT_ZOOKEEPER_PORT;
 import java.util.Properties;
 
 @Getter
@@ -33,17 +32,7 @@ public class KafkaBrokerConfiguration {
     @Builder.Default
     private final Properties additionalProperties = new Properties();
     @Builder.Default
-    private final String hostName = LOCALHOST;
-    @Builder.Default
     private final int port = DEFAULT_BROKER_PORT;
     @Builder.Default
-    private final int brokerId = 1;
-    @Builder.Default
-    private final String logsDirectory = get(EMPTY_STRING).toAbsolutePath() + separator + DEFAULT_KAFKA_LOGS_DIRECTORY;
-    @Builder.Default
-    private final int logFlushIntervalMessages = 1;
-    @Builder.Default
-    private final boolean autoCreateTopic = true;
-    @Builder.Default
-    private final int replicationFactor = 1;
+    private final short replicationFactor = 1;
 }

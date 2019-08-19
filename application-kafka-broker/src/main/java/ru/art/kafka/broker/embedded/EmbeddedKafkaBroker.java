@@ -25,10 +25,10 @@ import ru.art.kafka.broker.configuration.ZookeeperConfiguration;
 import scala.collection.immutable.List;
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.kafka.common.utils.Time.SYSTEM;
+import static ru.art.core.constants.StringConstants.COLON;
 import static ru.art.core.extension.ThreadExtensions.thread;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.KAFKA_BOOTSTRAP_THREAD;
+import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
 import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.KafkaProperties.*;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode;
 import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode.ON_KAFKA_BROKER_INITIALIZATION;
 import static ru.art.kafka.broker.embedded.EmbeddedZookeeper.startupZookeeper;
 import static ru.art.kafka.broker.module.KafkaBrokerModule.kafkaBrokerModule;
@@ -48,12 +48,7 @@ public class EmbeddedKafkaBroker {
         }
         Properties properties = new Properties();
         properties.put(ZOOKEEPER_CONNECT, kafkaBrokerConfiguration.getZookeeperConnection());
-        properties.put(BROKER_ID,  kafkaBrokerConfiguration.getBrokerId());
-        properties.put(HOST_NAME, kafkaBrokerConfiguration.getHostName());
-        properties.put(PORT,  kafkaBrokerConfiguration.getPort());
-        properties.put(LOG_DIR, kafkaBrokerConfiguration.getLogsDirectory());
-        properties.put(LOG_FLUSH_INTERVAL_MESSAGES, kafkaBrokerConfiguration.getLogFlushIntervalMessages());
-        properties.put(AUTO_CREATE_TOPICS_ENABLE,  kafkaBrokerConfiguration.isAutoCreateTopic());
+        properties.put(LISTENERS,  PLAINTEXT + COLON + kafkaBrokerConfiguration.getPort());
         properties.put(OFFSETS_TOPIC_REPLICATION_FACTOR,  kafkaBrokerConfiguration.getReplicationFactor());
         properties.putAll(kafkaBrokerConfiguration.getAdditionalProperties());
         KafkaServer kafkaServer = new KafkaServer(new KafkaConfig(properties), SYSTEM, empty(), List.empty());
@@ -68,7 +63,7 @@ public class EmbeddedKafkaBroker {
 
 
     public static void startupKafkaBroker(KafkaBrokerConfiguration configuration) {
-        startupKafkaBroker(configuration, kafkaBrokerModule().getZookeeperConfiguration(), ON_KAFKA_BROKER_INITIALIZATION);
+        startupKafkaBroker(configuration, kafkaBrokerModule().getZookeeperConfiguration(), kafkaBrokerModule().getZookeeperInitializationMode());
     }
 
     public static void startupKafkaBroker() {
