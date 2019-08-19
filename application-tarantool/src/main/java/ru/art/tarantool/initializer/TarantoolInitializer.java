@@ -27,9 +27,7 @@ import ru.art.tarantool.configuration.TarantoolConnectionConfiguration;
 import ru.art.tarantool.configuration.TarantoolLocalConfiguration;
 import ru.art.tarantool.exception.TarantoolConnectionException;
 import ru.art.tarantool.exception.TarantoolInitializationException;
-import ru.art.tarantool.module.TarantoolModule;
 import static java.io.File.separator;
-import static java.lang.Thread.sleep;
 import static java.nio.file.Paths.get;
 import static java.text.MessageFormat.format;
 import static java.util.Objects.isNull;
@@ -44,9 +42,9 @@ import static ru.art.core.jar.JarExtensions.insideJar;
 import static ru.art.logging.LoggingModule.loggingModule;
 import static ru.art.tarantool.connector.TarantoolConnector.connectToTarantool;
 import static ru.art.tarantool.connector.TarantoolConnector.tryConnectToTarantool;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.Directories.BIN;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Directories.LUA;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.CONFIGURATION_IS_NULL;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.TARANTOOL_INITIALIZATION_SCRIP_NOT_EXISTS;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Scripts.INITIALIZATION;
@@ -133,23 +131,8 @@ public class TarantoolInitializer {
                             instanceId,
                             address,
                             userConfigurationPath.toAbsolutePath()));
-            URL tarantoolExecutableResource = TarantoolModule.class
-                    .getClassLoader()
-                    .getResource(localConfiguration.getExecutableApplicationName());
-            if (isNull(tarantoolExecutableResource)) {
-                throw new TarantoolInitializationException(format(TARANTOOL_EXECUTABLE_NOT_EXISTS, instanceId));
-            }
-
+            String executable = localConfiguration.getExecutable();
             if (insideJar()) {
-                extractCurrentJarEntry(localConfiguration.getExecutableApplicationName(), getBinaryPath(localConfiguration, EMPTY_STRING));
-                loggingModule()
-                        .getLogger()
-                        .info(format(EXTRACT_TARANTOOL_EXECUTABLE,
-                                instanceId,
-                                address,
-                                localConfiguration.getExecutableApplicationName(),
-                                getBinaryPath(localConfiguration, EMPTY_STRING)));
-
                 extractCurrentJarEntry(LUA_REGEX, getLuaScriptPath(localConfiguration, EMPTY_STRING));
                 loggingModule()
                         .getLogger()
@@ -158,15 +141,13 @@ public class TarantoolInitializer {
                                 address,
                                 localConfiguration.getWorkingDirectory() + separator + LUA));
 
-                String binaryPath = getBinaryPath(localConfiguration, localConfiguration.getExecutableApplicationName());
                 String initializationScriptPath = getLuaScriptPath(localConfiguration, INITIALIZATION);
                 new ProcessExecutor()
-                        .command(binaryPath, initializationScriptPath)
+                        .command(executable, initializationScriptPath)
                         .directory(new File(localConfiguration.getWorkingDirectory()))
                         .redirectOutput(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                         .redirectError(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                         .start();
-                sleep(localConfiguration.getStartupTimeoutSeconds());
                 loggingModule()
                         .getLogger()
                         .info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
@@ -181,12 +162,11 @@ public class TarantoolInitializer {
             }
 
             new ProcessExecutor()
-                    .command(tarantoolExecutableResource.getPath(), initializationResource.getFile())
+                    .command(executable, initializationResource.getFile())
                     .directory(new File(localConfiguration.getWorkingDirectory()))
                     .redirectOutput(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                     .redirectError(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                     .start();
-            sleep(localConfiguration.getStartupTimeoutSeconds());
             loggingModule()
                     .getLogger(TarantoolInitializer.class)
                     .info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
@@ -197,9 +177,5 @@ public class TarantoolInitializer {
 
     private static String getLuaScriptPath(TarantoolLocalConfiguration localConfiguration, String scriptName) {
         return localConfiguration.getWorkingDirectory() + separator + LUA + separator + scriptName;
-    }
-
-    private static String getBinaryPath(TarantoolLocalConfiguration localConfiguration, String binaryName) {
-        return localConfiguration.getWorkingDirectory() + separator + BIN + separator + binaryName;
     }
 }
