@@ -37,6 +37,8 @@ art {
         applicationSoapClient()
         applicationSoapServer()
         applicationNetworkManager()
+        applicationKafkaClient()
+        applicationKafkaBroker()
         applicationKafkaConsumer()
         applicationKafkaProducer()
         applicationReactiveService()

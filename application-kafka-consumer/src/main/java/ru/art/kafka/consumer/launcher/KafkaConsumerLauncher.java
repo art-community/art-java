@@ -33,40 +33,43 @@ import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.StringConstants.COMMA;
 import static ru.art.kafka.consumer.module.KafkaConsumerModule.kafkaConsumerModule;
 import static ru.art.kafka.consumer.module.KafkaConsumerModule.kafkaConsumerServices;
+import static ru.art.service.ServiceController.executeServiceMethod;
 import java.util.List;
 import java.util.Properties;
 
 @UtilityClass
 public class KafkaConsumerLauncher {
-    public static void launchKafkaConsumer() {
+    public static void launchKafkaConsumer(String serviceId) {
         KafkaConsumerModuleConfiguration moduleConfiguration = kafkaConsumerModule();
         if (isEmpty(moduleConfiguration.getKafkaConsumerConfiguration())) {
             return;
         }
-        awaitKafkaConsumer(moduleConfiguration.getKafkaConsumerConfiguration());
+        awaitKafkaConsumer(moduleConfiguration.getKafkaConsumerConfiguration(), serviceId);
     }
 
-    private static void awaitKafkaConsumer(KafkaConsumerConfiguration configuration) {
-        configuration.getExecutor().submit(() -> {
-            List<KafkaConsumerServiceSpecification> kafkaConsumerServiceSpecifications = kafkaConsumerServices();
-            Deserializer<Object> keyDeserializer = configuration.getKeyDeserializer();
-            Deserializer<Object> valueDeserializer = configuration.getValueDeserializer();
-            KafkaConsumer<?, ?> consumer = new KafkaConsumer<>(createProperties(configuration), keyDeserializer, valueDeserializer);
-            consumer.subscribe(configuration.getTopics());
-            try {
-                //noinspection InfiniteLoopStatement
-                while (true) {
-                    ConsumerRecords<?, ?> poll = consumer.poll(configuration.getDuration());
-                    for (ConsumerRecord<?, ?> record : poll) {
-                        kafkaConsumerServiceSpecifications.stream()
-                                .filter(specification -> specification.getServiceId().equals(configuration.getServiceId()))
-                                .forEach(specification -> specification.executeMethod(record.topic(), record));
-                    }
+    private static void awaitKafkaConsumer(KafkaConsumerConfiguration configuration, String serviceId) {
+        configuration.getExecutor().submit(() -> startKafkaConsumer(configuration, serviceId));
+    }
+
+    private static void startKafkaConsumer(KafkaConsumerConfiguration configuration, String serviceId) {
+        List<KafkaConsumerServiceSpecification> kafkaConsumerServiceSpecifications = kafkaConsumerServices();
+        Deserializer<Object> keyDeserializer = configuration.getKeyDeserializer();
+        Deserializer<Object> valueDeserializer = configuration.getValueDeserializer();
+        KafkaConsumer<?, ?> consumer = new KafkaConsumer<>(createProperties(configuration), keyDeserializer, valueDeserializer);
+        consumer.subscribe(configuration.getTopics());
+        try {
+            //noinspection InfiniteLoopStatement
+            while (true) {
+                ConsumerRecords<?, ?> poll = consumer.poll(configuration.getPollTimeout());
+                for (ConsumerRecord<?, ?> record : poll) {
+                    kafkaConsumerServiceSpecifications.stream()
+                            .filter(specification -> specification.getServiceId().equals(serviceId))
+                            .forEach(specification -> executeServiceMethod(serviceId, record.topic(), record));
                 }
-            } finally {
-                consumer.close();
             }
-        });
+        } finally {
+            consumer.close();
+        }
     }
 
     private static Properties createProperties(KafkaConsumerConfiguration configuration) {

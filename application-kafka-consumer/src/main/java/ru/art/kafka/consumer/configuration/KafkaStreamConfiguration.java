@@ -38,6 +38,11 @@ public class KafkaStreamConfiguration {
     private final List<String> brokers;
 
     /**
+     * @return List topics name
+     */
+    private final String topic;
+
+    /**
      * deserializer for key
      */
     @Builder.Default
@@ -59,5 +64,6 @@ public class KafkaStreamConfiguration {
 
     public void validate() {
         if (isEmpty(brokers)) throw new KafkaConsumerModuleException("brokers are empty");
+        if (isEmpty(topic)) throw new KafkaConsumerModuleException("topic is empty");
     }
 }
