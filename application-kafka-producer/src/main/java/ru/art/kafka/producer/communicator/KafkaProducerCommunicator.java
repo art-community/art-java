@@ -28,6 +28,7 @@ import static org.apache.kafka.clients.producer.ProducerConfig.DELIVERY_TIMEOUT_
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.constants.StringConstants.COMMA;
 import static ru.art.core.extension.NullCheckingExtensions.doIfNotNull;
+import static ru.art.kafka.producer.module.KafkaProducerModule.kafkaProducerModule;
 import java.util.Properties;
 import java.util.function.Consumer;
 
@@ -55,7 +56,7 @@ public class KafkaProducerCommunicator<KeyType, ValueType> {
         properties.put(BOOTSTRAP_SERVERS_CONFIG, join(COMMA, configuration.getBrokers()));
         properties.put(CLIENT_ID_CONFIG, configuration.getClientId());
         doIfNotNull(configuration.getRetries(), (Consumer<Integer>) retries -> properties.put(RETRIES_CONFIG, retries));
-        doIfNotNull(configuration.getDeliveryTimeout(), (Consumer<Integer>) timeout -> properties.put(DELIVERY_TIMEOUT_MS_CONFIG, timeout));
+        doIfNotNull(configuration.getDeliveryTimeout(), (Consumer<Long>) timeout -> properties.put(DELIVERY_TIMEOUT_MS_CONFIG, timeout));
         properties.putAll(configuration.getAdditionalProperties());
         this.topic = configuration.getTopic();
         this.configuration = configuration;
@@ -64,6 +65,10 @@ public class KafkaProducerCommunicator<KeyType, ValueType> {
 
     public static <KeyType, ValueType> KafkaProducerCommunicator<KeyType, ValueType> kafkaProducerCommunicator(KafkaProducerConfiguration configuration) {
         return new KafkaProducerCommunicator<>(configuration);
+    }
+
+    public static <KeyType, ValueType> KafkaProducerCommunicator<KeyType, ValueType> kafkaProducerCommunicator(String clientId) {
+        return kafkaProducerCommunicator(kafkaProducerModule().getProducerConfigurations().get(clientId));
     }
 
     public KafkaProducerCommunicator<KeyType, ValueType> pushKafkaRecord(KeyType key, ValueType value) {

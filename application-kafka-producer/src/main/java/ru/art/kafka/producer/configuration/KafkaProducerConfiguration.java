@@ -69,7 +69,7 @@ public class KafkaProducerConfiguration {
      * @return timeout in milliseconds for an upper bound on the time to report success or
      * failure for method {@link org.apache.kafka.clients.producer.KafkaProducer#send(ProducerRecord)}
      */
-    private final Integer deliveryTimeout;
+    private final Long deliveryTimeout;
 
     /**
      * Default value null

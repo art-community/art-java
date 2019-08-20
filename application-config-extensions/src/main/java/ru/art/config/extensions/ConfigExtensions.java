@@ -21,6 +21,8 @@ package ru.art.config.extensions;
 import lombok.experimental.UtilityClass;
 import ru.art.config.Config;
 import ru.art.config.exception.ConfigException;
+import static java.util.Collections.emptyMap;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static ru.art.config.ConfigProvider.config;
 import static ru.art.config.constants.ConfigExceptionMessages.SECTION_ID_IS_EMPTY;
@@ -31,6 +33,8 @@ import static ru.art.core.constants.StringConstants.EMPTY_STRING;
 import static ru.art.core.extension.ExceptionExtensions.ifExceptionOrEmpty;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @UtilityClass
@@ -231,6 +235,10 @@ public class ConfigExtensions {
         return configMap(path).entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> configMapper.apply(entry.getValue())));
     }
 
+    public static <T> Map<String, T> configMap(String path, BiFunction<String, Config, T> configMapper) {
+        return configMap(path).entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> configMapper.apply(entry.getKey(), entry.getValue())));
+    }
+
     @SuppressWarnings("Duplicates")
     public static Map<String, Config> configMap(String path) {
         Config remoteConfig = remoteConfig();
@@ -260,6 +268,10 @@ public class ConfigExtensions {
         return ifExceptionOrEmpty(() -> configMap(path, configMapper), defaultValues);
     }
 
+    public static <T> Map<String, T> configMap(String path, BiFunction<String, Config, T> configMapper, Map<String, T> defaultValues) {
+        return ifExceptionOrEmpty(() -> configMap(path, configMapper), defaultValues);
+    }
+
     public static <T> Map<String, T> configMap(String sectionId, String path, Function<Config, T> configMapper, Map<String, T> defaultValues) {
         return ifExceptionOrEmpty(() -> configMap(sectionId, path, configMapper), defaultValues);
     }
@@ -275,5 +287,15 @@ public class ConfigExtensions {
         Config remoteConfig = remoteConfig();
         if (Config.isNotEmpty(remoteConfig)) return remoteConfig.asEntityConfig().getFields().containsKey(path);
         return config(EMPTY_STRING).hasPath(path);
+    }
+
+
+    public static Properties configProperties(String sectionId, String key) {
+        Properties additionalProperties = new Properties();
+        additionalProperties.putAll(configMap(sectionId, key, propertyConfig -> propertyConfig
+                .getKeys()
+                .stream()
+                .collect(toMap(identity(), propertyConfig::getString)), emptyMap()));
+        return additionalProperties;
     }
 }

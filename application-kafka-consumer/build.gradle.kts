@@ -22,7 +22,7 @@ art {
         applicationEntity()
         applicationLogging()
         applicationService()
-        applicationKafka()
+        applicationKafkaClient()
     }
 }
 

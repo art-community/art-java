@@ -29,12 +29,15 @@ import static java.text.MessageFormat.format;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static ru.art.config.constants.ConfigExceptionMessages.*;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 @Getter
@@ -328,6 +331,7 @@ public class Config {
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
     }
+
     @SuppressWarnings("unchecked")
     public Set<String> getKeys(String path) {
         switch (configType) {
@@ -382,5 +386,15 @@ public class Config {
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
+    }
+
+    public Properties getProperties(String path) {
+        if (!hasPath(path)) {
+            return new Properties();
+        }
+        Properties additionalProperties = new Properties();
+        additionalProperties.putAll(getKeys(path).stream()
+                .collect(toMap(identity(), this::getString)));
+        return additionalProperties;
     }
 }

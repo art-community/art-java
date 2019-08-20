@@ -1,3 +1,18 @@
+kafka:
+  broker:
+    port: 19092
+  consumer:
+    enableTracing: true
+    streams:
+      stream:
+        brokers:
+          - 1.1.1.2:19092
+        topic: topic
+  producers:
+    producer:
+      brokers:
+        - 1.1.1.2:19092
+      topic: topic
 tarantool:
   enableTracing: true
   configurations:
