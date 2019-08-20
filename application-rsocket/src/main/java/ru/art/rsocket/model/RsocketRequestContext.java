@@ -56,7 +56,8 @@ public class RsocketRequestContext {
         RsocketReactiveMethods rsocketServiceMethods = fromCommand(command);
         ValueToModelMapper<?, ?> requestMapper;
         Value requestDataValue;
-        if (isNull(requestMapper = rsocketServiceMethods.getRsocketMethod().requestMapper()) || isEmpty(requestDataValue = serviceRequestEntity.getValue(REQUEST_DATA))) {
+        if (isNull(requestMapper = rsocketServiceMethods.getRsocketMethod().requestMapper()) ||
+                isEmpty(requestDataValue = serviceRequestEntity.getValue(REQUEST_DATA))) {
             return RsocketRequestContext.builder()
                     .request(newServiceRequest(command, rsocketServiceMethods.getRsocketMethod().validationPolicy()))
                     .rsocketReactiveMethods(rsocketServiceMethods)

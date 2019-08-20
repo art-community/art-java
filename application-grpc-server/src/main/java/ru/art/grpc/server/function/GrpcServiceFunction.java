@@ -18,6 +18,7 @@
 
 package ru.art.grpc.server.function;
 
+import ru.art.entity.Entity;
 import ru.art.entity.Value;
 import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
@@ -55,12 +56,12 @@ public class GrpcServiceFunction {
         return this;
     }
 
-    public GrpcServiceFunction addRequestValueInterceptor(ValueInterceptor interceptor) {
+    public GrpcServiceFunction addRequestValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
         grpcMethod.addRequestValueInterceptor(interceptor);
         return this;
     }
 
-    public GrpcServiceFunction addResponseValueInterceptor(ValueInterceptor interceptor) {
+    public GrpcServiceFunction addResponseValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
         grpcMethod.addResponseValueInterceptor(interceptor);
         return this;
     }

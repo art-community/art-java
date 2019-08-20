@@ -70,16 +70,13 @@ public interface ServiceResponseMapping {
 
     static <V> ValueFromModelMapper.EntityFromModelMapper<ServiceResponse<V>> fromServiceResponse(final ValueFromModelMapper<V, ? extends Value> responseDataMapper) {
         return response -> {
-            ServiceMethodCommand serviceMethodCommand = response.getCommand();
-            if (isNull(serviceMethodCommand)) throw new ServiceMappingException(SERVICE_COMMAND_IS_NULL);
-            String serviceId = serviceMethodCommand.getServiceId();
-            if (isNull(serviceId)) throw new ServiceMappingException(SERVICE_ID_IS_NULL);
-            String methodId = serviceMethodCommand.getMethodId();
-            if (isNull(methodId)) throw new ServiceMappingException(METHOD_ID_IS_NULL);
-            Entity.EntityBuilder entityBuilder = entityBuilder()
+            ServiceMethodCommand serviceMethodCommand;
+            Entity.EntityBuilder entityBuilder = isNull(serviceMethodCommand = response.getCommand())
+                    ? entityBuilder()
+                    : entityBuilder()
                     .entityField(SERVICE_METHOD_COMMAND, entityBuilder()
-                            .stringField(SERVICE_ID, serviceId)
-                            .stringField(METHOD_ID, methodId)
+                            .stringField(SERVICE_ID, serviceMethodCommand.getServiceId())
+                            .stringField(METHOD_ID, serviceMethodCommand.getMethodId())
                             .build());
             ServiceExecutionException serviceException = response.getServiceException();
             if (nonNull(responseDataMapper)) {

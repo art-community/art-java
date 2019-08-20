@@ -23,10 +23,10 @@ import io.grpc.ManagedChannelBuilder;
 import lombok.NoArgsConstructor;
 import ru.art.entity.Value;
 import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.grpc.servlet.GrpcRequest;
 import ru.art.grpc.servlet.GrpcResponse;
 import ru.art.grpc.servlet.GrpcServlet;
 import ru.art.grpc.servlet.GrpcServlet.GrpcServletBlockingStub;
+import ru.art.service.model.ServiceMethodCommand;
 import ru.art.service.model.ServiceResponse;
 import static io.grpc.ManagedChannelBuilder.forTarget;
 import static java.util.Objects.nonNull;
@@ -38,6 +38,8 @@ import static ru.art.grpc.client.communicator.GrpcServiceResponseExtractor.extra
 import static ru.art.grpc.client.module.GrpcClientModule.grpcClientModule;
 import static ru.art.grpc.servlet.GrpcRequest.newBuilder;
 import static ru.art.protobuf.descriptor.ProtobufEntityWriter.writeProtobuf;
+import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
+import static ru.art.service.mapping.ServiceRequestMapping.fromServiceRequest;
 import java.util.concurrent.Executor;
 
 @NoArgsConstructor(access = PRIVATE)
@@ -56,15 +58,19 @@ class GrpcCommunicationExecutor {
         if (nonNull(executor = configuration.getOverrideExecutor()) || nonNull(executor = grpcClientModule().getOverridingExecutor())) {
             stub = stub.withExecutor(executor);
         }
-        GrpcRequest.Builder grpcRequestBuilder = newBuilder()
-                .setServiceId(configuration.getServiceId())
-                .setMethodId(configuration.getMethodId());
+        ServiceMethodCommand serviceMethodCommand = new ServiceMethodCommand(configuration.getServiceId(), configuration.getMethodId());
         ValueFromModelMapper<?, ? extends Value> requestMapper;
         Object request;
         if (nonNull(requestMapper = configuration.getRequestMapper()) && nonNull(request = configuration.getRequest())) {
-            grpcRequestBuilder.setRequestData(writeProtobuf(requestMapper.map(cast(request))));
+            newServiceRequest(serviceMethodCommand, request);
+            GrpcResponse response = stub.executeService(newBuilder()
+                    .setServiceRequest(writeProtobuf(fromServiceRequest(cast(requestMapper)).map(newServiceRequest(serviceMethodCommand))))
+                    .build());
+            return extractServiceResponse(configuration, response);
         }
-        GrpcResponse response = stub.executeService(grpcRequestBuilder.build());
+        GrpcResponse response = stub.executeService(newBuilder()
+                .setServiceRequest(writeProtobuf(fromServiceRequest().map(newServiceRequest(serviceMethodCommand))))
+                .build());
         return extractServiceResponse(configuration, response);
     }
 }

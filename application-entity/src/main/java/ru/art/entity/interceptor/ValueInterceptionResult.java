@@ -26,33 +26,49 @@ import static ru.art.core.constants.InterceptionStrategy.*;
 
 @Getter
 @Builder(builderMethodName = "valueInterceptionResult")
-public class ValueInterceptionResult {
+public class ValueInterceptionResult<InValue extends Value, OutValue extends Value> {
     @Builder.Default
     private final InterceptionStrategy nextInterceptionStrategy = NEXT_INTERCEPTOR;
-    private final Value inValue;
-    private final Value outValue;
+    private final InValue inValue;
+    private final OutValue outValue;
 
-    public static  ValueInterceptionResult nextInterceptor(Value inValue) {
-        return valueInterceptionResult().inValue(inValue).outValue(inValue).build();
+    public static <InValue extends Value> ValueInterceptionResult<InValue, InValue> nextInterceptor(InValue inValue) {
+        return ValueInterceptionResult.<InValue, InValue>valueInterceptionResult().inValue(inValue).outValue(inValue).build();
     }
 
-    public static  ValueInterceptionResult nextInterceptor(Value inValue, Value outValue) {
-        return valueInterceptionResult().inValue(inValue).outValue(outValue).build();
+    public static <InValue extends Value, OutValue extends Value> ValueInterceptionResult<InValue, OutValue> nextInterceptor(InValue inValue, OutValue outValue) {
+        return ValueInterceptionResult.<InValue, OutValue>valueInterceptionResult().inValue(inValue).outValue(outValue).build();
     }
 
-    public static  ValueInterceptionResult processHandling(Value inValue) {
-        return valueInterceptionResult().inValue(inValue).outValue(inValue).nextInterceptionStrategy(PROCESS_HANDLING).build();
+    public static <InValue extends Value> ValueInterceptionResult<InValue, InValue> processHandling(InValue inValue) {
+        return ValueInterceptionResult.<InValue, InValue>valueInterceptionResult()
+                .inValue(inValue)
+                .outValue(inValue)
+                .nextInterceptionStrategy(PROCESS_HANDLING)
+                .build();
     }
 
-    public static  ValueInterceptionResult processHandling(Value inValue, Value outValue) {
-        return valueInterceptionResult().inValue(inValue).nextInterceptionStrategy(PROCESS_HANDLING).outValue(outValue).build();
+    public static <InValue extends Value, OutValue extends Value> ValueInterceptionResult<InValue, OutValue> processHandling(InValue inValue, OutValue outValue) {
+        return ValueInterceptionResult.<InValue, OutValue>valueInterceptionResult()
+                .inValue(inValue)
+                .nextInterceptionStrategy(PROCESS_HANDLING)
+                .outValue(outValue)
+                .build();
     }
 
-    public static  ValueInterceptionResult stopHandling(Value inValue) {
-        return valueInterceptionResult().inValue(inValue).outValue(inValue).nextInterceptionStrategy(STOP_HANDLING).build();
+    public static <InValue extends Value> ValueInterceptionResult<InValue, InValue> stopHandling(InValue inValue) {
+        return ValueInterceptionResult.<InValue, InValue>valueInterceptionResult()
+                .inValue(inValue)
+                .outValue(inValue)
+                .nextInterceptionStrategy(STOP_HANDLING)
+                .build();
     }
 
-    public static  ValueInterceptionResult stopHandling(Value inValue, Value outValue) {
-        return valueInterceptionResult().inValue(inValue).nextInterceptionStrategy(STOP_HANDLING).outValue(outValue).build();
+    public static <InValue extends Value, OutValue extends Value> ValueInterceptionResult<InValue, OutValue> stopHandling(InValue inValue, OutValue outValue) {
+        return ValueInterceptionResult.<InValue, OutValue>valueInterceptionResult()
+                .inValue(inValue)
+                .nextInterceptionStrategy(STOP_HANDLING)
+                .outValue(outValue)
+                .build();
     }
 }

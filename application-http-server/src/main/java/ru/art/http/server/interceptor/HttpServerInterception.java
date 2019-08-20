@@ -26,23 +26,23 @@ import java.util.function.BiConsumer;
 
 @FunctionalInterface
 public interface HttpServerInterception {
-    static HttpServerInterception interceptAndContinue(BiConsumer<HttpServletRequest, HttpServletResponse> runnable) {
+    static HttpServerInterception interceptAndContinue(BiConsumer<HttpServletRequest, HttpServletResponse> consumer) {
         return (request, response) -> {
-            runnable.accept(request, response);
+            consumer.accept(request, response);
             return NEXT_INTERCEPTOR;
         };
     }
 
-    static HttpServerInterception interceptAndCall(BiConsumer<HttpServletRequest, HttpServletResponse> runnable) {
+    static HttpServerInterception interceptAndCall(BiConsumer<HttpServletRequest, HttpServletResponse> consumer) {
         return (request, response) -> {
-            runnable.accept(request, response);
+            consumer.accept(request, response);
             return PROCESS_HANDLING;
         };
     }
 
-    static HttpServerInterception interceptAndReturn(BiConsumer<HttpServletRequest, HttpServletResponse> runnable) {
+    static HttpServerInterception interceptAndReturn(BiConsumer<HttpServletRequest, HttpServletResponse> consumer) {
         return (request, response) -> {
-            runnable.accept(request, response);
+            consumer.accept(request, response);
             return STOP_HANDLING;
         };
     }

@@ -22,24 +22,24 @@ import ru.art.entity.Value;
 import static ru.art.entity.interceptor.ValueInterceptionResult.*;
 import java.util.function.Consumer;
 
-public interface ValueInterceptor {
-    ValueInterceptionResult intercept(Value value);
+public interface ValueInterceptor<InValue extends Value, OutValue extends Value> {
+    ValueInterceptionResult<InValue, OutValue> intercept(InValue value);
 
-    static ValueInterceptor interceptAndContinue(Consumer<Value> consumer) {
+    static <InValue extends Value> ValueInterceptor<InValue, InValue> interceptAndContinue(Consumer<InValue> consumer) {
         return value -> {
             consumer.accept(value);
             return nextInterceptor(value);
         };
     }
 
-    static ValueInterceptor interceptAndCall(Consumer<Value> consumer) {
+    static <InValue extends Value> ValueInterceptor<InValue, InValue> interceptAndCall(Consumer<InValue> consumer) {
         return value -> {
             consumer.accept(value);
             return processHandling(value);
         };
     }
 
-    static ValueInterceptor interceptAndReturn(Consumer<Value> consumer) {
+    static <InValue extends Value> ValueInterceptor<InValue, InValue> interceptAndReturn(Consumer<InValue> consumer) {
         return value -> {
             consumer.accept(value);
             return stopHandling(value);

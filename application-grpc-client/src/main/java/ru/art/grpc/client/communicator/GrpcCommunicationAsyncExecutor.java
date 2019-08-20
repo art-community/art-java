@@ -25,9 +25,10 @@ import lombok.NoArgsConstructor;
 import ru.art.entity.Value;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.grpc.client.exception.GrpcClientException;
-import ru.art.grpc.servlet.GrpcRequest;
 import ru.art.grpc.servlet.GrpcResponse;
 import ru.art.grpc.servlet.GrpcServlet;
+import ru.art.service.model.ServiceMethodCommand;
+import ru.art.service.model.ServiceRequest;
 import static com.google.common.util.concurrent.Futures.addCallback;
 import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 import static io.grpc.ManagedChannelBuilder.forTarget;
@@ -45,6 +46,8 @@ import static ru.art.grpc.client.constants.GrpcClientExceptionMessages.RESPONSE_
 import static ru.art.grpc.client.module.GrpcClientModule.grpcClientModule;
 import static ru.art.grpc.servlet.GrpcRequest.newBuilder;
 import static ru.art.protobuf.descriptor.ProtobufEntityWriter.writeProtobuf;
+import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
+import static ru.art.service.mapping.ServiceRequestMapping.fromServiceRequest;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.concurrent.Executor;
 
@@ -64,15 +67,15 @@ class GrpcCommunicationAsyncExecutor {
         if (nonNull(executor = configuration.getOverrideExecutor()) || nonNull(executor = grpcClientModule().getOverridingExecutor())) {
             stub = stub.withExecutor(executor);
         }
-        GrpcRequest.Builder grpcRequestBuilder = newBuilder()
-                .setServiceId(configuration.getServiceId())
-                .setMethodId(configuration.getMethodId());
-        ValueFromModelMapper<?, ? extends Value> requestMapper;
+        ValueFromModelMapper<?, ? extends Value> requestMapper = configuration.getRequestMapper();
+        ServiceMethodCommand serviceMethodCommand = new ServiceMethodCommand(configuration.getServiceId(), configuration.getMethodId());
         Object request;
-        if (nonNull(requestMapper = configuration.getRequestMapper()) && nonNull(request = configuration.getRequest())) {
-            grpcRequestBuilder.setRequestData(writeProtobuf(requestMapper.map(cast(request))));
-        }
-        addCallback(stub.executeService(grpcRequestBuilder.build()), new FutureCallback<GrpcResponse>() {
+        ServiceRequest<Object> serviceRequest = isNull(request = configuration.getRequest())
+                ? newServiceRequest(serviceMethodCommand)
+                : newServiceRequest(serviceMethodCommand, request);
+        addCallback(stub.executeService(newBuilder()
+                .setServiceRequest(writeProtobuf(fromServiceRequest(cast(requestMapper)).map(cast(serviceRequest))))
+                .build()), new FutureCallback<GrpcResponse>() {
             @Override
             public void onSuccess(GrpcResponse response) {
                 if (isNull(response)) {

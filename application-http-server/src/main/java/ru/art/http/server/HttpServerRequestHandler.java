@@ -93,7 +93,7 @@ class HttpServerRequestHandler {
             }
         }
         ValueToModelMapper<?, Value> requestMapper = cast(httpMethod.getRequestMapper());
-        ServiceRequest<?> serviceRequest = isNull(requestDataResource) || isNull(requestValue)
+        ServiceRequest<?> serviceRequest = isNull(requestDataResource) || isNull(requestValue) || isNull(requestMapper)
                 ? newServiceRequest(command)
                 : newServiceRequest(command, requestMapper.map(requestValue), httpMethod.getRequestValidationPolicy());
         ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);
@@ -143,7 +143,6 @@ class HttpServerRequestHandler {
         }
         if (isNull(responseValue)) return EMPTY_BYTES;
         return contentMapper.getToContent().mapToBytes(responseValue, responseContentType, acceptCharset);
-
     }
 
     private static Value mapResponseObject(Object object, ValueFromModelMapper<?, ? extends Value> mapper) {
@@ -154,7 +153,6 @@ class HttpServerRequestHandler {
 
     private static Value parseRequestValue(HttpServletRequest request, HttpMethod methodConfig) {
         MimeType requestContentType = httpServerModuleState().getRequestContext().getContentType();
-        ValueToModelMapper<?, ? extends Value> requestMapper = cast(methodConfig.getRequestMapper());
         switch (methodConfig.getRequestDataSource()) {
             case BODY:
                 if (httpServerModuleState().getRequestContext().isHasContent()) return null;

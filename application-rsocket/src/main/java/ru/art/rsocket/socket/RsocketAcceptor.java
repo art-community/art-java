@@ -34,6 +34,7 @@ import ru.art.rsocket.state.RsocketModuleState.CurrentRsocketState;
 import ru.art.service.model.ServiceResponse;
 import static java.util.Objects.nonNull;
 import static reactor.core.publisher.Flux.from;
+import static reactor.core.publisher.Mono.*;
 import static reactor.core.publisher.Mono.never;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
@@ -67,10 +68,9 @@ public class RsocketAcceptor extends AbstractRSocket {
         ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(context.getRequest());
         RsocketService.RsocketMethod rsocketMethod = context.getRsocketReactiveMethods().getRsocketMethod();
         ValueFromModelMapper<?, ?> responseMapper = rsocketMethod.responseMapper();
-        return context.getRsocketReactiveMethods().getReactiveMethod().responseProcessingMode() == STRAIGHT ?
-                Mono.just(writeServiceResponse(responseMapper, serviceResponse,
-                        getOrElse(rsocketMethod.overrideResponseDataFormat(), dataFormat))) :
-                writeResponseReactive(rsocketMethod.responseMapper(), cast(serviceResponse), dataFormat).next();
+        return context.getRsocketReactiveMethods().getReactiveMethod().responseProcessingMode() == STRAIGHT
+                ? just(writeServiceResponse(responseMapper, serviceResponse, getOrElse(rsocketMethod.overrideResponseDataFormat(), dataFormat)))
+                : writeResponseReactive(rsocketMethod.responseMapper(), cast(serviceResponse), dataFormat).next();
     }
 
     @Override
@@ -102,7 +102,9 @@ public class RsocketAcceptor extends AbstractRSocket {
                         .getServices()
                         .size())
                 .map(RsocketReactivePreparedResponse::fromGroupedFlux)
-                .flatMap(preparedResponse -> writeResponseReactive(preparedResponse.getResponseMapper(), executeServiceMethodUnchecked(preparedResponse.getServiceRequest()), dataFormat));
+                .flatMap(preparedResponse -> writeResponseReactive(preparedResponse.getResponseMapper(),
+                        executeServiceMethodUnchecked(preparedResponse.getServiceRequest()),
+                        dataFormat));
     }
 
     @Override

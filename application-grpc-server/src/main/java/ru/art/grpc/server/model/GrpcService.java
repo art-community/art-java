@@ -20,6 +20,7 @@ package ru.art.grpc.server.model;
 
 import lombok.*;
 import lombok.experimental.Accessors;
+import ru.art.entity.Entity;
 import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
@@ -42,15 +43,15 @@ public class GrpcService {
         private ValueToModelMapper requestMapper;
         private ValueFromModelMapper responseMapper;
         private RequestValidationPolicy validationPolicy;
-        private List<ValueInterceptor> requestValueInterceptors = linkedListOf();
-        private List<ValueInterceptor> responseValueInterceptors = linkedListOf();
+        private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = linkedListOf();
+        private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = linkedListOf();
 
-        public GrpcMethod addRequestValueInterceptor(ValueInterceptor interceptor) {
+        public GrpcMethod addRequestValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
             requestValueInterceptors.add(interceptor);
             return this;
         }
 
-        public GrpcMethod addResponseValueInterceptor(ValueInterceptor interceptor) {
+        public GrpcMethod addResponseValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
             responseValueInterceptors.add(interceptor);
             return this;
         }
