@@ -72,7 +72,6 @@ class HttpCommunicationConfiguration {
     private boolean ignoreResponseContentType;
     private HttpClient syncClient;
     private HttpAsyncClient asyncClient;
-    private List<ValueInterceptor> requestValueInterceptors = linkedListOf();
-    private List<ValueInterceptor> responseValueInterceptors = linkedListOf();
-    private List<ValueInterceptor> exceptionValueInterceptors = linkedListOf();
+    private List<ValueInterceptor<Value, Value>> requestValueInterceptors = linkedListOf();
+    private List<ValueInterceptor<Value, Value>> responseValueInterceptors = linkedListOf();
 }

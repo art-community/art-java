@@ -98,9 +98,9 @@ public interface HttpCommunicator {
 
     <ResponseType> Optional<ResponseType> execute();
 
-    HttpCommunicator addRequestValueInterceptor(ValueInterceptor interceptor);
+    HttpCommunicator addRequestValueInterceptor(ValueInterceptor<Value, Value> interceptor);
 
-    HttpCommunicator addResponseValueInterceptor(ValueInterceptor interceptor);
+    HttpCommunicator addResponseValueInterceptor(ValueInterceptor<Value, Value> interceptor);
 
     HttpAsynchronousCommunicator asynchronous();
 

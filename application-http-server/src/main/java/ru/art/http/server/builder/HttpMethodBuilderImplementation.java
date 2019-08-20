@@ -19,6 +19,7 @@
 package ru.art.http.server.builder;
 
 import lombok.RequiredArgsConstructor;
+import ru.art.entity.Value;
 import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
@@ -71,9 +72,9 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
     private boolean ignoreRequestContentType;
     private boolean overrideResponseContentType;
     private HttpResponseHandlingMode responseHandlingMode = CHECKED;
-    private final List<ValueInterceptor> requestValueInterceptors = linkedListOf();
-    private final List<ValueInterceptor> responseValueInterceptors = linkedListOf();
-    private final List<ValueInterceptor> exceptionValueInterceptors = linkedListOf();
+    private final List<ValueInterceptor<Value, Value>> requestValueInterceptors = linkedListOf();
+    private final List<ValueInterceptor<Value, Value>> responseValueInterceptors = linkedListOf();
+    private final List<ValueInterceptor<Value, Value>> exceptionValueInterceptors = linkedListOf();
 
     @Override
     public HttpServiceBuilder listen(String path) {
@@ -221,21 +222,21 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
     }
 
     @Override
-    public HttpMethodBuilder addRequestValueInterceptor(ValueInterceptor interceptor) {
+    public HttpMethodBuilder addRequestValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         if (isNull(interceptor)) throw new HttpServerException(REQUEST_VALUE_INTERCEPTOR);
         requestValueInterceptors.add(interceptor);
         return this;
     }
 
     @Override
-    public HttpMethodBuilder addResponseValueInterceptor(ValueInterceptor interceptor) {
+    public HttpMethodBuilder addResponseValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         if (isNull(interceptor)) throw new HttpServerException(RESPONSE_VALUE_INTERCEPTOR);
         responseValueInterceptors.add(interceptor);
         return this;
     }
 
     @Override
-    public HttpMethodBuilder addExceptionValueInterceptor(ValueInterceptor interceptor) {
+    public HttpMethodBuilder addExceptionValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         if (isNull(interceptor)) throw new HttpServerException(EXCEPTION_VALUE_INTERCEPTOR);
         exceptionValueInterceptors.add(interceptor);
         return this;

@@ -20,6 +20,7 @@ package ru.art.test.specification.http
 
 import ru.art.core.caster.Caster
 import ru.art.entity.Entity
+import ru.art.logging.LoggingValueInterceptor
 import spock.lang.Specification
 
 import static java.util.Objects.isNull
@@ -45,6 +46,8 @@ class HttpSpecification extends Specification {
                 .fromBody()
                 .consumesMimeType(applicationJsonUtf8())
                 .producesMimeType(applicationJsonUtf8())
+                .addRequestValueInterceptor(new LoggingValueInterceptor())
+                .addResponseValueInterceptor(new LoggingValueInterceptor())
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
                 .handle { request -> concat(request as Entity, response) }
@@ -58,6 +61,8 @@ class HttpSpecification extends Specification {
                 .responseMapper(Caster.&cast)
                 .consumes(applicationJsonUtf8())
                 .produces(applicationJsonUtf8())
+                .addRequestValueInterceptor(new LoggingValueInterceptor())
+                .addResponseValueInterceptor(new LoggingValueInterceptor())
         def response = communicator.execute()
 
         then:
@@ -71,6 +76,8 @@ class HttpSpecification extends Specification {
                 .responseMapper(Caster.&cast)
                 .consumes(applicationJsonUtf8())
                 .produces(applicationJsonUtf8())
+                .addRequestValueInterceptor(new LoggingValueInterceptor())
+                .addResponseValueInterceptor(new LoggingValueInterceptor())
         response = communicator.execute(request)
 
         then:
@@ -84,6 +91,8 @@ class HttpSpecification extends Specification {
                 .responseMapper(Caster.&cast)
                 .consumes(applicationJsonUtf8())
                 .produces(applicationJsonUtf8())
+                .addRequestValueInterceptor(new LoggingValueInterceptor())
+                .addResponseValueInterceptor(new LoggingValueInterceptor())
         def asyncResponse = null
         communicator.asynchronous()
                 .exceptionHandler { println it }
@@ -103,6 +112,8 @@ class HttpSpecification extends Specification {
                 .responseMapper(Caster.&cast)
                 .consumes(applicationJsonUtf8())
                 .produces(applicationJsonUtf8())
+                .addRequestValueInterceptor(new LoggingValueInterceptor())
+                .addResponseValueInterceptor(new LoggingValueInterceptor())
         def asyncResponseWithReq = null
         communicator.asynchronous()
                 .exceptionHandler { println it }

@@ -30,7 +30,10 @@ import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.zalando.logbook.httpclient.LogbookHttpAsyncResponseConsumer;
 import ru.art.core.constants.InterceptionStrategy;
+import ru.art.core.mime.MimeType;
 import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptionResult;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.client.exception.HttpClientException;
@@ -40,7 +43,6 @@ import ru.art.http.client.handler.HttpCommunicationResponseHandler;
 import ru.art.http.client.interceptor.HttpClientInterceptor;
 import ru.art.http.constants.MimeToContentTypeMapper;
 import ru.art.http.mapper.HttpContentMapper;
-import ru.art.core.mime.MimeType;
 import static java.text.MessageFormat.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -65,6 +67,9 @@ import java.util.List;
 class HttpCommunicationExecutor {
     static <ResponseType> ResponseType executeHttpRequest(HttpCommunicationConfiguration configuration) {
         HttpUriRequest request = buildRequest(configuration);
+        if (isNull(request)) {
+            return null;
+        }
         List<HttpClientInterceptor> requestInterceptors = configuration.getRequestInterceptors();
         for (HttpClientInterceptor requestInterceptor : requestInterceptors) {
             InterceptionStrategy strategy = requestInterceptor.interceptRequest(request);
@@ -88,6 +93,9 @@ class HttpCommunicationExecutor {
 
     static void executeAsynchronousHttpRequest(HttpCommunicationConfiguration configuration) {
         HttpUriRequest httpUriRequest = buildRequest(configuration);
+        if (isNull(httpUriRequest)) {
+            return;
+        }
         List<HttpClientInterceptor> requestInterceptors = configuration.getRequestInterceptors();
         for (HttpClientInterceptor requestInterceptor : requestInterceptors) {
             InterceptionStrategy strategy = requestInterceptor.interceptRequest(httpUriRequest);
@@ -123,6 +131,21 @@ class HttpCommunicationExecutor {
             return requestBuilder.build();
         }
         Value requestValue = requestMapper.map(configuration.getRequest());
+        List<ValueInterceptor<Value, Value>> requestValueInterceptors = configuration.getRequestValueInterceptors();
+        for (ValueInterceptor<Value, Value> requestValueInterceptor : requestValueInterceptors) {
+            ValueInterceptionResult<Value, Value> result = requestValueInterceptor.intercept(requestValue);
+            if (isNull(result)) {
+                break;
+            }
+            requestValue = result.getOutValue();
+            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                break;
+            }
+            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                return null;
+            }
+        }
+
         HttpContentMapper contentMapper = httpClientModule()
                 .getContentMappers()
                 .get(producesMimeType);
@@ -157,10 +180,24 @@ class HttpCommunicationExecutor {
         if (isNull(contentMapper)) {
             throw new HttpClientException(format(RESPONSE_CONTENT_TYPE_NOT_SUPPORTED, responseContentType.toString()));
         }
-        Value responseBodyValue = contentMapper.getFromContent().mapFromBytes(bytes, responseContentType, configuration.getRequestContentCharset());
+        Value responseValue = contentMapper.getFromContent().mapFromBytes(bytes, responseContentType, configuration.getRequestContentCharset());
+        List<ValueInterceptor<Value, Value>> responseValueInterceptors = configuration.getResponseValueInterceptors();
+        for (ValueInterceptor<Value, Value> responseValueInterceptor : responseValueInterceptors) {
+            ValueInterceptionResult<Value, Value> result = responseValueInterceptor.intercept(responseValue);
+            if (isNull(result)) {
+                break;
+            }
+            responseValue = result.getOutValue();
+            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                break;
+            }
+            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                return null;
+            }
+        }
         ValueToModelMapper<Object, ? extends Value> responseMapper = cast(configuration.getResponseMapper());
-        if (isNull(responseBodyValue) || isNull(responseMapper)) return null;
-        return cast(responseMapper.map(cast(responseBodyValue)));
+        if (isNull(responseValue) || isNull(responseMapper)) return null;
+        return cast(responseMapper.map(cast(responseValue)));
     }
 
     @AllArgsConstructor(access = PACKAGE)

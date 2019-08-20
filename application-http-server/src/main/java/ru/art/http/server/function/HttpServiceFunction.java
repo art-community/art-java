@@ -127,17 +127,17 @@ public class HttpServiceFunction {
     }
 
 
-    public HttpServiceFunction addRequestValueInterceptor(ValueInterceptor interceptor) {
+    public HttpServiceFunction addRequestValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         httpMethodBuilder.addRequestValueInterceptor(interceptor);
         return this;
     }
 
-    public HttpServiceFunction addResponseValueInterceptor(ValueInterceptor interceptor) {
+    public HttpServiceFunction addResponseValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         httpMethodBuilder.addResponseValueInterceptor(interceptor);
         return this;
     }
 
-    public HttpServiceFunction exceptionValueInterceptor(ValueInterceptor interceptor) {
+    public HttpServiceFunction exceptionValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         httpMethodBuilder.addExceptionValueInterceptor(interceptor);
         return this;
     }

@@ -19,10 +19,9 @@
 package ru.art.http.server;
 
 import lombok.AllArgsConstructor;
+import ru.art.core.mime.MimeType;
 import ru.art.http.constants.HttpMethodType;
 import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.core.mime.MimeType;
-import ru.art.http.server.body.descriptor.HttpBodyDescriptor;
 import ru.art.http.server.context.HttpRequestContext;
 import ru.art.http.server.context.HttpRequestContext.HttpRequestContextBuilder;
 import ru.art.http.server.context.MultiPartContext;
@@ -50,12 +49,13 @@ import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
 import static ru.art.core.extension.StringExtensions.emptyIfNull;
 import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
+import static ru.art.core.mime.MimeType.valueOf;
 import static ru.art.http.constants.HttpHeaders.*;
 import static ru.art.http.constants.HttpMethodType.OPTIONS;
 import static ru.art.http.constants.HttpMethodType.resolve;
 import static ru.art.http.constants.HttpMimeTypes.ALL;
-import static ru.art.core.mime.MimeType.valueOf;
 import static ru.art.http.server.HttpServerRequestHandler.executeHttpService;
+import static ru.art.http.server.body.descriptor.HttpBodyDescriptor.writeResponseBody;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
 import static ru.art.http.server.constants.HttpServerLoggingMessages.HTTP_REQUEST_HANDLING_EXCEPTION_MESSAGE;
 import static ru.art.http.server.constants.HttpServerLoggingMessages.HTTP_SERVLET_EVENT;
@@ -85,7 +85,10 @@ class HttpServiceServlet extends HttpServlet {
         HttpMethodType httpMethodType = resolve(request.getMethod());
         HttpServletCommand command = commands.get(httpMethodType);
         if (OPTIONS == httpMethodType) {
-            response.setHeader(ALLOW, commands.values().stream().map(method -> method.getHttpMethod().getMethodType().name()).collect(joining(COMMA)));
+            response.setHeader(ALLOW, commands.values()
+                    .stream()
+                    .map(method -> method.getHttpMethod().getMethodType().name())
+                    .collect(joining(COMMA)));
             response.setStatus(SC_OK);
             clearServiceCallLoggingParameters();
             return;
@@ -110,7 +113,7 @@ class HttpServiceServlet extends HttpServlet {
             if (!command.getHttpMethod().isOverrideResponseContentType()) {
                 response.addHeader(CONTENT_TYPE, httpServerModuleState().getRequestContext().getAcceptType().toString());
             }
-            HttpBodyDescriptor.writeResponseBody(response, responseBody);
+            writeResponseBody(response, responseBody);
             clearServiceCallLoggingParameters();
         } catch (Throwable e) {
             handleException(request, response, e);

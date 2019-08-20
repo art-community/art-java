@@ -223,13 +223,13 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     }
 
     @Override
-    public HttpCommunicator addRequestValueInterceptor(ValueInterceptor interceptor) {
+    public HttpCommunicator addRequestValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         configuration.getRequestValueInterceptors().add(validator.notNullField(interceptor, "requestValueInterceptor"));
         return this;
     }
 
     @Override
-    public HttpCommunicator addResponseValueInterceptor(ValueInterceptor interceptor) {
+    public HttpCommunicator addResponseValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         configuration.getResponseValueInterceptors().add(validator.notNullField(interceptor, "responseValueInterceptor"));
         return this;
     }

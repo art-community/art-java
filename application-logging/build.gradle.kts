@@ -19,6 +19,7 @@
 art {
     providedModules {
         applicationCore()
+        applicationEntity()
     }
 }
 
