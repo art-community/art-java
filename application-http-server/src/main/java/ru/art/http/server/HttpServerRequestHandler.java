@@ -31,11 +31,13 @@ import ru.art.http.constants.HttpRequestDataSource;
 import ru.art.http.mapper.HttpContentMapper;
 import ru.art.http.server.exception.HttpServerException;
 import ru.art.http.server.model.HttpService.HttpMethod;
+import ru.art.service.exception.ServiceExecutionException;
 import ru.art.service.model.ServiceMethodCommand;
 import ru.art.service.model.ServiceRequest;
 import ru.art.service.model.ServiceResponse;
 import static java.text.MessageFormat.format;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
@@ -87,7 +89,7 @@ class HttpServerRequestHandler {
             }
             if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
                 if (isNull(result.getOutValue())) return EMPTY_BYTES;
-              return contentMapper.getToContent().mapToBytes(result.getOutValue(), responseContentType, acceptCharset);
+                return contentMapper.getToContent().mapToBytes(result.getOutValue(), responseContentType, acceptCharset);
             }
         }
         ValueToModelMapper<?, Value> requestMapper = cast(httpMethod.getRequestMapper());
@@ -95,19 +97,38 @@ class HttpServerRequestHandler {
                 ? newServiceRequest(command)
                 : newServiceRequest(command, requestMapper.map(requestValue), httpMethod.getRequestValidationPolicy());
         ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);
-        Value responseValue;
+        Value responseValue = null;
+        ServiceExecutionException serviceException = serviceResponse.getServiceException();
         switch (httpMethod.getResponseHandlingMode()) {
             case UNCHECKED:
-                responseValue = mapServiceResponse(httpMethod, serviceResponse);
+                responseValue = mapResponseObject(serviceResponse, fromServiceResponse(cast(httpMethod.getResponseMapper())));
                 break;
             case CHECKED:
-                responseValue = mapExtractedServiceResponse(httpMethod, serviceResponse);
+                if (isNull(serviceException)) {
+                    Object responseData = serviceResponse.getResponseData();
+                    if (nonNull(responseData)) {
+                        ValueFromModelMapper responseMapper;
+                        if (nonNull(responseMapper = httpMethod.getResponseMapper())) {
+                            responseValue = mapResponseObject(responseData, cast(responseMapper));
+                            break;
+                        }
+                    }
+                    break;
+                }
+                ValueFromModelMapper exceptionMapper;
+                if (isNull(exceptionMapper = httpMethod.getExceptionMapper())) {
+                    throw serviceException;
+                }
+                responseValue = mapResponseObject(serviceException, cast(exceptionMapper));
                 break;
             default:
                 throw new HttpServerException(HTTP_RESPONSE_MODE_IS_NULL);
         }
-        for (ValueInterceptor responseValueInterceptors : httpMethod.getResponseValueInterceptors()) {
-            ValueInterceptionResult result = responseValueInterceptors.intercept(responseValue);
+        List<ValueInterceptor> responseValueInterceptors = isNull(serviceException)
+                ? httpMethod.getResponseValueInterceptors()
+                : httpMethod.getExceptionValueInterceptors();
+        for (ValueInterceptor responseValueInterceptor : responseValueInterceptors) {
+            ValueInterceptionResult result = responseValueInterceptor.intercept(responseValue);
             if (isNull(result)) {
                 break;
             }
@@ -123,23 +144,6 @@ class HttpServerRequestHandler {
         if (isNull(responseValue)) return EMPTY_BYTES;
         return contentMapper.getToContent().mapToBytes(responseValue, responseContentType, acceptCharset);
 
-    }
-
-    private static Value mapExtractedServiceResponse(HttpMethod httpMethod, ServiceResponse<?> response) {
-        if (isNull(response.getServiceException())) {
-            Object responseData = response.getResponseData();
-            if (isNull(responseData)) return null;
-            ValueFromModelMapper responseMapper;
-            if (isNull(responseMapper = httpMethod.getResponseMapper())) return null;
-            return mapResponseObject(responseData, cast(responseMapper));
-        }
-        ValueFromModelMapper exceptionMapper;
-        if (isNull(exceptionMapper = httpMethod.getExceptionMapper())) throw response.getServiceException();
-        return mapResponseObject(response.getServiceException(), cast(exceptionMapper));
-    }
-
-    private static Value mapServiceResponse(HttpMethod httpMethod, ServiceResponse<?> response) {
-        return mapResponseObject(response, fromServiceResponse(cast(httpMethod.getResponseMapper())));
     }
 
     private static Value mapResponseObject(Object object, ValueFromModelMapper<?, ? extends Value> mapper) {
