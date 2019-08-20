@@ -2,10 +2,11 @@
 
 ART is a kit of modules for developing multifunctional applications.
 
+## Badges
+![Build Status](https://travis-ci.com/art-community/ART.svg)
+[![CodeFactor](https://www.codefactor.io/repository/github/art-community/art/badge)](https://www.codefactor.io/repository/github/art-community/art)
 
 ## Build and Binaries
-![Build Status](https://travis-ci.com/art-community/ART.svg)
-
 Releases are available via Maven Central.
 
 Example:
