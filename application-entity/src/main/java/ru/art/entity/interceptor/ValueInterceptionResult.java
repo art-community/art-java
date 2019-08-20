@@ -30,10 +30,10 @@ public class ValueInterceptionResult {
     @Builder.Default
     private final InterceptionStrategy nextInterceptionStrategy = NEXT_INTERCEPTOR;
     private final Value inValue;
-    private Value outValue;
+    private final Value outValue;
 
     public static  ValueInterceptionResult nextInterceptor(Value inValue) {
-        return valueInterceptionResult().inValue(inValue).build();
+        return valueInterceptionResult().inValue(inValue).outValue(inValue).build();
     }
 
     public static  ValueInterceptionResult nextInterceptor(Value inValue, Value outValue) {
@@ -41,7 +41,7 @@ public class ValueInterceptionResult {
     }
 
     public static  ValueInterceptionResult processHandling(Value inValue) {
-        return valueInterceptionResult().inValue(inValue).nextInterceptionStrategy(PROCESS_HANDLING).build();
+        return valueInterceptionResult().inValue(inValue).outValue(inValue).nextInterceptionStrategy(PROCESS_HANDLING).build();
     }
 
     public static  ValueInterceptionResult processHandling(Value inValue, Value outValue) {
@@ -49,7 +49,7 @@ public class ValueInterceptionResult {
     }
 
     public static  ValueInterceptionResult stopHandling(Value inValue) {
-        return valueInterceptionResult().inValue(inValue).nextInterceptionStrategy(STOP_HANDLING).build();
+        return valueInterceptionResult().inValue(inValue).outValue(inValue).nextInterceptionStrategy(STOP_HANDLING).build();
     }
 
     public static  ValueInterceptionResult stopHandling(Value inValue, Value outValue) {

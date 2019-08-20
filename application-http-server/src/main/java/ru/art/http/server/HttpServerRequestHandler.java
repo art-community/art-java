@@ -19,14 +19,16 @@
 package ru.art.http.server;
 
 import lombok.NoArgsConstructor;
+import ru.art.core.mime.MimeType;
 import ru.art.entity.Entity;
 import ru.art.entity.StringParametersMap;
 import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptionResult;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.constants.HttpRequestDataSource;
 import ru.art.http.mapper.HttpContentMapper;
-import ru.art.core.mime.MimeType;
 import ru.art.http.server.exception.HttpServerException;
 import ru.art.http.server.model.HttpService.HttpMethod;
 import ru.art.service.model.ServiceMethodCommand;
@@ -38,6 +40,8 @@ import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
+import static ru.art.core.constants.InterceptionStrategy.PROCESS_HANDLING;
+import static ru.art.core.constants.InterceptionStrategy.STOP_HANDLING;
 import static ru.art.core.context.Context.contextConfiguration;
 import static ru.art.core.extension.InputStreamExtensions.toByteList;
 import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
@@ -60,6 +64,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
 
@@ -67,24 +72,65 @@ import java.util.List;
 class HttpServerRequestHandler {
     static byte[] executeHttpService(ServiceMethodCommand command, HttpServletRequest request, HttpMethod httpMethod) {
         HttpRequestDataSource requestDataResource = httpMethod.getRequestDataSource();
-        ServiceRequest<?> serviceRequest = isNull(requestDataResource) ?
-                newServiceRequest(command) :
-                createServiceRequest(command, request, httpMethod);
+        Value requestValue = parseRequestValue(request, httpMethod);
+        MimeType responseContentType = httpServerModuleState().getRequestContext().getAcceptType();
+        HttpContentMapper contentMapper = httpServerModule().getContentMappers().get(responseContentType);
+        Charset acceptCharset = httpServerModuleState().getRequestContext().getAcceptCharset();
+        for (ValueInterceptor requestValueInterceptor : httpMethod.getRequestValueInterceptors()) {
+            ValueInterceptionResult result = requestValueInterceptor.intercept(requestValue);
+            if (isNull(result)) {
+                break;
+            }
+            requestValue = result.getOutValue();
+            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                break;
+            }
+            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                if (isNull(result.getOutValue())) return EMPTY_BYTES;
+              return contentMapper.getToContent().mapToBytes(result.getOutValue(), responseContentType, acceptCharset);
+            }
+        }
+        ValueToModelMapper<?, Value> requestMapper = cast(httpMethod.getRequestMapper());
+        ServiceRequest<?> serviceRequest = isNull(requestDataResource) || isNull(requestValue)
+                ? newServiceRequest(command)
+                : newServiceRequest(command, requestMapper.map(requestValue), httpMethod.getRequestValidationPolicy());
+        ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);
+        Value responseValue;
         switch (httpMethod.getResponseHandlingMode()) {
             case UNCHECKED:
-                return mapServiceResponse(httpMethod, executeServiceMethodUnchecked(serviceRequest));
+                responseValue = mapServiceResponse(httpMethod, serviceResponse);
+                break;
             case CHECKED:
-                return mapExtractedServiceResponse(httpMethod, executeServiceMethodUnchecked(serviceRequest));
+                responseValue = mapExtractedServiceResponse(httpMethod, serviceResponse);
+                break;
+            default:
+                throw new HttpServerException(HTTP_RESPONSE_MODE_IS_NULL);
         }
-        throw new HttpServerException(HTTP_RESPONSE_MODE_IS_NULL);
+        for (ValueInterceptor responseValueInterceptors : httpMethod.getResponseValueInterceptors()) {
+            ValueInterceptionResult result = responseValueInterceptors.intercept(responseValue);
+            if (isNull(result)) {
+                break;
+            }
+            responseValue = result.getOutValue();
+            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                break;
+            }
+            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                if (isNull(result.getOutValue())) return EMPTY_BYTES;
+                return contentMapper.getToContent().mapToBytes(result.getOutValue(), responseContentType, acceptCharset);
+            }
+        }
+        if (isNull(responseValue)) return EMPTY_BYTES;
+        return contentMapper.getToContent().mapToBytes(responseValue, responseContentType, acceptCharset);
+
     }
 
-    private static byte[] mapExtractedServiceResponse(HttpMethod httpMethod, ServiceResponse<?> response) {
+    private static Value mapExtractedServiceResponse(HttpMethod httpMethod, ServiceResponse<?> response) {
         if (isNull(response.getServiceException())) {
             Object responseData = response.getResponseData();
-            if (isNull(responseData)) return EMPTY_BYTES;
+            if (isNull(responseData)) return null;
             ValueFromModelMapper responseMapper;
-            if (isNull(responseMapper = httpMethod.getResponseMapper())) return EMPTY_BYTES;
+            if (isNull(responseMapper = httpMethod.getResponseMapper())) return null;
             return mapResponseObject(responseData, cast(responseMapper));
         }
         ValueFromModelMapper exceptionMapper;
@@ -92,24 +138,17 @@ class HttpServerRequestHandler {
         return mapResponseObject(response.getServiceException(), cast(exceptionMapper));
     }
 
-    private static byte[] mapServiceResponse(HttpMethod httpMethod, ServiceResponse<?> response) {
+    private static Value mapServiceResponse(HttpMethod httpMethod, ServiceResponse<?> response) {
         return mapResponseObject(response, fromServiceResponse(cast(httpMethod.getResponseMapper())));
     }
 
-    private static byte[] mapResponseObject(Object object, ValueFromModelMapper<?, ? extends Value> mapper) {
+    private static Value mapResponseObject(Object object, ValueFromModelMapper<?, ? extends Value> mapper) {
         MimeType responseContentType = httpServerModuleState().getRequestContext().getAcceptType();
         HttpContentMapper contentMapper = httpServerModule().getContentMappers().get(responseContentType);
-        Value responseEntity = mapper.map(cast(object));
-        if (isNull(responseEntity)) return EMPTY_BYTES;
-        return contentMapper.getToContent().mapToBytes(responseEntity, responseContentType, httpServerModuleState().getRequestContext().getAcceptCharset());
+        return mapper.map(cast(object));
     }
 
-    private static ServiceRequest<?> createServiceRequest(ServiceMethodCommand command, HttpServletRequest httpRequest, HttpMethod methodConfig) {
-        Object requestData = parseRequestData(httpRequest, methodConfig);
-        return newServiceRequest(command, requestData, methodConfig.getRequestValidationPolicy());
-    }
-
-    private static Object parseRequestData(HttpServletRequest request, HttpMethod methodConfig) {
+    private static Value parseRequestValue(HttpServletRequest request, HttpMethod methodConfig) {
         MimeType requestContentType = httpServerModuleState().getRequestContext().getContentType();
         ValueToModelMapper<?, ? extends Value> requestMapper = cast(methodConfig.getRequestMapper());
         switch (methodConfig.getRequestDataSource()) {
@@ -123,23 +162,23 @@ class HttpServerRequestHandler {
                 if (isNull(value)) return null;
                 putIfNotNull(REQUEST_VALUE_KEY, value);
                 serviceModuleState().setRequestValue(value);
-                return requestMapper.map(cast(value));
+                return value;
             case PATH_PARAMETERS:
                 StringParametersMap pathParameters = parsePathParameters(request, methodConfig);
                 putIfNotNull(REQUEST_VALUE_KEY, pathParameters);
                 serviceModuleState().setRequestValue(pathParameters);
-                return requestMapper.map(cast(pathParameters));
+                return pathParameters;
             case QUERY_PARAMETERS:
                 StringParametersMap queryParameters = parseQueryParameters(request);
                 putIfNotNull(REQUEST_VALUE_KEY, queryParameters);
                 serviceModuleState().setRequestValue(queryParameters);
-                return requestMapper.map(cast(queryParameters));
+                return queryParameters;
             case MULTIPART:
                 Entity multipartEntity = readMultiParts(request);
                 if (isNull(multipartEntity) || multipartEntity.isEmpty()) return null;
                 putIfNotNull(REQUEST_VALUE_KEY, multipartEntity);
                 serviceModuleState().setRequestValue(multipartEntity);
-                return requestMapper.map(cast(multipartEntity));
+                return multipartEntity;
             default:
                 throw new HttpServerException(format(UNKNOWN_HTTP_REQUEST_DATA_SOURCE, methodConfig.getRequestDataSource()));
         }
