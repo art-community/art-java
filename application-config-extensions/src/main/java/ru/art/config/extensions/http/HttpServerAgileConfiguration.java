@@ -19,12 +19,15 @@
 package ru.art.config.extensions.http;
 
 import lombok.Getter;
+import org.apache.http.entity.ContentType;
 import org.zalando.logbook.Logbook;
 import ru.art.core.mime.MimeType;
+import ru.art.http.constants.MimeToContentTypeMapper;
 import ru.art.http.mapper.HttpContentMapper;
 import ru.art.http.server.HttpServerModuleConfiguration.HttpServerModuleDefaultConfiguration;
 import ru.art.http.server.specification.HttpWebUiServiceSpecification;
 import ru.art.metrics.http.specification.MetricServiceSpecification;
+import static org.apache.http.entity.ContentType.getByMimeType;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.http.HttpConfigKeys.*;
@@ -34,6 +37,7 @@ import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
 import static ru.art.core.context.Context.context;
 import static ru.art.core.extension.ExceptionExtensions.emptyIfException;
+import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
 import static ru.art.http.server.HttpServerModuleConfiguration.logbookWithoutWebLogs;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVER_MODULE_ID;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.HttpPath.IMAGE_PATH;
@@ -52,8 +56,11 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
     private int maxThreadsCount;
     private int minSpareThreadsCount;
     private HttpWebConfiguration webConfiguration;
-    private boolean enableTracing;
+    private boolean enableRawDataTracing;
+    private boolean enableValueTracing;
     private boolean enableMetrics;
+    private MimeToContentTypeMapper defaultConsumesMimeType;
+    private MimeToContentTypeMapper defaultProducesMimeType;
 
     public HttpServerAgileConfiguration() {
         refresh();
@@ -61,7 +68,22 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
 
     @Override
     public void refresh() {
-        enableTracing = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_TRACING, super.isEnableTracing());
+        MimeToContentTypeMapper defaultConsumesMimeType = super.getDefaultConsumesMimeType();
+        String defaultConsumesMimeTypeString = configString(HTTP_COMMUNICATION_SECTION_ID, DEFAULT_CONSUMES_MIME_TYPE,
+                defaultConsumesMimeType.getMimeType().toString());
+        MimeType consumesMimeType = MimeType.valueOf(defaultConsumesMimeTypeString);
+        ContentType consumesContentType = getOrElse(getByMimeType(defaultConsumesMimeTypeString), defaultConsumesMimeType.getContentType());
+        this.defaultConsumesMimeType = new MimeToContentTypeMapper(consumesMimeType, consumesContentType);
+
+        MimeToContentTypeMapper defaultProducesMimeType = super.getDefaultProducesMimeType();
+        String defaultProducesMimeTypeString = configString(HTTP_COMMUNICATION_SECTION_ID, DEFAULT_CONSUMES_MIME_TYPE,
+                defaultProducesMimeType.getMimeType().toString());
+        MimeType producesMimeType = MimeType.valueOf(defaultProducesMimeTypeString);
+        ContentType producesContentType = getOrElse(getByMimeType(defaultProducesMimeTypeString), defaultProducesMimeType.getContentType());
+        this.defaultProducesMimeType = new MimeToContentTypeMapper(producesMimeType, producesContentType);
+
+        enableRawDataTracing = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
+        enableValueTracing = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         enableMetrics = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_METRICS, super.isEnableMetrics());
         String webUrl = emptyIfException(() -> configString(HTTP_SERVER_SECTION_ID, WEB_URL));
         webConfiguration = isEmpty(webUrl) ? super.getWebConfiguration() : HttpWebConfiguration.builder()

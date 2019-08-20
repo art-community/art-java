@@ -65,8 +65,8 @@ public class HttpService {
         private final List<HttpServerInterceptor> requestInterceptors;
         private final List<HttpServerInterceptor> responseInterceptors;
         private final RequestValidationPolicy requestValidationPolicy;
-        private final MimeToContentTypeMapper consumesContentType;
-        private final MimeToContentTypeMapper producesContentType;
+        private final MimeToContentTypeMapper consumesMimeType;
+        private final MimeToContentTypeMapper producesMimeType;
         private final boolean ignoreRequestAcceptType;
         private final boolean ignoreRequestContentType;
         private final boolean overrideResponseContentType;

@@ -119,7 +119,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public HttpCommunicator produces(MimeToContentTypeMapper requestContentTypeMapper) {
-        configuration.setProducesContentType(validator.notNullField(requestContentTypeMapper, "requestContentTypeMapper"));
+        configuration.setProducesMimeType(validator.notNullField(requestContentTypeMapper, "requestContentTypeMapper"));
         return this;
     }
 
@@ -137,7 +137,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public HttpCommunicator consumes(MimeToContentTypeMapper responseContentTypeMapper) {
-        configuration.setConsumesContentType(validator.notNullField(responseContentTypeMapper, "responseContentTypeMapper"));
+        configuration.setConsumesMimeType(validator.notNullField(responseContentTypeMapper, "responseContentTypeMapper"));
         return this;
     }
 

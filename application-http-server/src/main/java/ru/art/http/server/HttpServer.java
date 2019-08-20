@@ -166,13 +166,13 @@ public class HttpServer {
             if (registeredServletPaths.contains(method.getPath().getContextPath())) {
                 continue;
             }
-            MimeToContentTypeMapper consumesContentType = method.getConsumesContentType();
-            MimeToContentTypeMapper producesContentType = method.getProducesContentType();
-            if (nonNull(consumesContentType) && !httpServerModule().getContentMappers().containsKey(consumesContentType.getMimeType())) {
-                throw new HttpServerException(format(CONSUMES_CONTENT_TYPE_NOT_SUPPORTED, consumesContentType));
+            MimeToContentTypeMapper consumesMimeType = method.getConsumesMimeType();
+            MimeToContentTypeMapper producesMimeType = method.getProducesMimeType();
+            if (nonNull(consumesMimeType) && !httpServerModule().getContentMappers().containsKey(consumesMimeType.getMimeType())) {
+                throw new HttpServerException(format(CONSUMES_CONTENT_TYPE_NOT_SUPPORTED, consumesMimeType));
             }
-            if (nonNull(producesContentType) && !httpServerModule().getContentMappers().containsKey(producesContentType.getMimeType())) {
-                throw new HttpServerException(format(PRODUCES_CONTENT_TYPE_NOT_SUPPORTED, producesContentType));
+            if (nonNull(producesMimeType) && !httpServerModule().getContentMappers().containsKey(producesMimeType.getMimeType())) {
+                throw new HttpServerException(format(PRODUCES_CONTENT_TYPE_NOT_SUPPORTED, producesMimeType));
             }
             HttpPath path = buildHttpPath(extractHttpServicePath(serviceSpec), method.getPath());
             if (cancelablePaths.contains(path.toString())) {
@@ -219,8 +219,8 @@ public class HttpServer {
                 .stream()
                 .collect(toMap(Map.Entry::getKey, methodEntry -> HttpServletCommand.builder()
                         .path(path.getContextPath())
-                        .consumesContentType(methodEntry.getValue().getConsumesContentType())
-                        .producesContentType(methodEntry.getValue().getProducesContentType())
+                        .consumesMimeType(methodEntry.getValue().getConsumesMimeType())
+                        .producesMimeType(methodEntry.getValue().getProducesMimeType())
                         .ignoreRequestAcceptType(methodEntry.getValue().isIgnoreRequestAcceptType())
                         .ignoreRequestContentType(methodEntry.getValue().isIgnoreRequestContentType())
                         .serviceId(serviceId)
@@ -281,13 +281,13 @@ public class HttpServer {
             if (interceptor.getInterceptor().getStrategy() == PROCESS_HANDLING) break;
             if (interceptor.getInterceptor().getStrategy() == STOP_HANDLING) {
                 cancelablePaths.add(interceptor.getPath());
-                if (httpServerModule().isEnableTracing()) {
+                if (httpServerModule().isEnableRawDataTracing()) {
                     addLoggingFilter(context);
                 }
                 return;
             }
         }
-        if (httpServerModule().isEnableTracing()) {
+        if (httpServerModule().isEnableRawDataTracing()) {
             addLoggingFilter(context);
         }
         order = 0;
@@ -355,7 +355,8 @@ public class HttpServer {
         def.setFilter((request, response, chain) -> {
             InterceptionStrategy strategy = lastRequestInterceptionResult.get();
             if (isNull(strategy) || strategy == NEXT_INTERCEPTOR) {
-                lastRequestInterceptionResult.set(serverPathInterceptor.getInterceptor().intercept((HttpServletRequest) request, (HttpServletResponse) response));
+                lastRequestInterceptionResult
+                        .set(serverPathInterceptor.getInterceptor().intercept((HttpServletRequest) request, (HttpServletResponse) response));
                 chain.doFilter(request, response);
                 return;
             }
@@ -379,7 +380,8 @@ public class HttpServer {
             InterceptionStrategy strategy = lastResponseInterceptionResult.get();
             if (isNull(strategy) || strategy == NEXT_INTERCEPTOR) {
                 chain.doFilter(request, response);
-                lastResponseInterceptionResult.set(serverInterceptor.getInterceptor().intercept((HttpServletRequest) request, (HttpServletResponse) response));
+                lastResponseInterceptionResult
+                        .set(serverInterceptor.getInterceptor().intercept((HttpServletRequest) request, (HttpServletResponse) response));
                 return;
             }
             if (strategy == PROCESS_HANDLING) {

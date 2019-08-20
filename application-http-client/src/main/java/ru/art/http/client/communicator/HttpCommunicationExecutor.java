@@ -104,7 +104,7 @@ class HttpCommunicationExecutor {
         }
         HttpAsyncClient client = getOrElse(configuration.getAsyncClient(), httpClientModule().getAsyncClient());
         HttpAsyncClientCallback callback = new HttpAsyncClientCallback(configuration.getRequest(), httpUriRequest, configuration);
-        if (httpClientModule().isEnableTracing()) {
+        if (httpClientModule().isEnableRawDataTracing()) {
             LogbookHttpAsyncResponseConsumer<HttpResponse> logbookConsumer = new LogbookHttpAsyncResponseConsumer<>(createConsumer());
             client.execute(create(httpUriRequest), logbookConsumer, callback);
             return;
@@ -123,11 +123,11 @@ class HttpCommunicationExecutor {
             return requestBuilder.build();
         }
         ValueFromModelMapper<Object, ? extends Value> requestMapper = cast(configuration.getRequestMapper());
-        MimeToContentTypeMapper producesContentType;
+        MimeToContentTypeMapper consumesMimeTypeMapper;
         MimeType producesMimeType;
         if (isNull(requestMapper)
-                || isNull(producesContentType = configuration.getProducesContentType())
-                || isNull(producesMimeType = producesContentType.getMimeType())) {
+                || isNull(consumesMimeTypeMapper = configuration.getProducesMimeType())
+                || isNull(producesMimeType = consumesMimeTypeMapper.getMimeType())) {
             return requestBuilder.build();
         }
         Value requestValue = requestMapper.map(configuration.getRequest());
@@ -157,7 +157,7 @@ class HttpCommunicationExecutor {
             return requestBuilder.build();
         }
         EntityBuilder entityBuilder = EntityBuilder.create().setBinary(payload)
-                .setContentType(producesContentType.getContentType())
+                .setContentType(consumesMimeTypeMapper.getContentType())
                 .setContentEncoding(configuration.getRequestContentEncoding());
         if (configuration.isGzipCompressedBody()) entityBuilder.gzipCompress();
         if (configuration.isChunkedBody()) entityBuilder.chunked();
@@ -167,9 +167,9 @@ class HttpCommunicationExecutor {
     private static <ResponseType> ResponseType parseResponse(HttpCommunicationConfiguration configuration, HttpResponse httpResponse) {
         byte[] bytes = readResponseBody(httpResponse.getEntity());
         if (isEmpty(bytes)) return null;
-        MimeToContentTypeMapper consumesContentType = configuration.getConsumesContentType();
+        MimeToContentTypeMapper consumesMimeTypeMapper = configuration.getConsumesMimeType();
         MimeType consumesMimeType;
-        if (isNull(consumesContentType) || isNull(consumesMimeType = consumesContentType.getMimeType())) return null;
+        if (isNull(consumesMimeTypeMapper) || isNull(consumesMimeType = consumesMimeTypeMapper.getMimeType())) return null;
         Header contentType = httpResponse.getEntity().getContentType();
         MimeType responseContentType = isNull(contentType) || configuration.isIgnoreResponseContentType()
                 ? consumesMimeType

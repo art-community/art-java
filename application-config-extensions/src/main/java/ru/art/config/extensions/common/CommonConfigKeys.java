@@ -25,6 +25,8 @@ public interface CommonConfigKeys {
     String URL = "url";
     String TARGETS = "targets";
     String ENABLE_TRACING = "enableTracing";
+    String ENABLE_RAW_DATA_TRACING = "enableRawDataTracing";
+    String ENABLE_VALUE_TRACING = "enableValueTracing";
     String ENABLE_METRICS = "enableMetrics";
     String THREAD_POOL_SIZE = "threadPoolSize";
     String TIMEOUT_MILLIS = "connectTimeout";

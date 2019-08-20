@@ -158,7 +158,7 @@ public class GrpcServletContainer extends GrpcServlet {
                         return;
                     }
                     GrpcResponse grpcResponse = newBuilder()
-                            .setServiceResponse(writeProtobuf(fromServiceResponse(responseMapper).map(cast(result.getOutValue()))))
+                            .setServiceResponse(writeProtobuf(result.getOutValue()))
                             .build();
                     responseObserver.onNext(grpcResponse);
                     responseObserver.onCompleted();

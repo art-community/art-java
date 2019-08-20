@@ -27,8 +27,8 @@ import ru.art.http.server.model.HttpService;
 @Builder
 class HttpServletCommand {
     private final String path;
-    private final MimeToContentTypeMapper consumesContentType;
-    private final MimeToContentTypeMapper producesContentType;
+    private final MimeToContentTypeMapper consumesMimeType;
+    private final MimeToContentTypeMapper producesMimeType;
     private final boolean ignoreRequestContentType;
     private final boolean ignoreRequestAcceptType;
     private final HttpService.HttpMethod httpMethod;

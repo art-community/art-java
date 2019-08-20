@@ -21,11 +21,14 @@ package ru.art.config.extensions.http;
 import lombok.Getter;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.SocketConfig;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
+import ru.art.core.mime.MimeType;
 import ru.art.http.client.configuration.HttpClientModuleConfiguration.HttpClientModuleDefaultConfiguration;
 import ru.art.http.client.model.HttpCommunicationTargetConfiguration;
+import ru.art.http.constants.MimeToContentTypeMapper;
 import ru.art.http.mapper.HttpContentMapper;
-import ru.art.core.mime.MimeType;
+import static org.apache.http.entity.ContentType.getByMimeType;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.http.HttpConfigKeys.*;
@@ -41,7 +44,6 @@ import java.util.Map;
 @Getter
 public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfiguration {
     private final Map<MimeType, HttpContentMapper> contentMappers = configureHttpContentMappers(super.getContentMappers());
-    private boolean enableTracing;
     private RequestConfig requestConfig;
     private SocketConfig socketConfig;
     private IOReactorConfig ioReactorConfig;
@@ -53,6 +55,10 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
     private String sslKeyStoreType;
     private String sslKeyStoreFilePath;
     private String sslKeyStorePassword;
+    private boolean enableRawDataTracing;
+    private boolean enableValueTracing;
+    private MimeToContentTypeMapper defaultConsumesMimeType;
+    private MimeToContentTypeMapper defaultProducesMimeType;
 
     public HttpClientAgileConfiguration() {
         refresh();
@@ -60,7 +66,22 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
 
     @Override
     public void refresh() {
-        enableTracing = configBoolean(HTTP_COMMUNICATION_SECTION_ID, ENABLE_TRACING, super.isEnableTracing());
+        MimeToContentTypeMapper defaultConsumesMimeType = super.getDefaultConsumesMimeType();
+        String defaultConsumesMimeTypeString = configString(HTTP_COMMUNICATION_SECTION_ID, DEFAULT_CONSUMES_MIME_TYPE,
+                defaultConsumesMimeType.getMimeType().toString());
+        MimeType consumesMimeType = MimeType.valueOf(defaultConsumesMimeTypeString);
+        ContentType consumesContentType = getOrElse(getByMimeType(defaultConsumesMimeTypeString), defaultConsumesMimeType.getContentType());
+        this.defaultConsumesMimeType = new MimeToContentTypeMapper(consumesMimeType, consumesContentType);
+
+        MimeToContentTypeMapper defaultProducesMimeType = super.getDefaultProducesMimeType();
+        String defaultProducesMimeTypeString = configString(HTTP_COMMUNICATION_SECTION_ID, DEFAULT_CONSUMES_MIME_TYPE,
+                defaultProducesMimeType.getMimeType().toString());
+        MimeType producesMimeType = MimeType.valueOf(defaultProducesMimeTypeString);
+        ContentType producesContentType = getOrElse(getByMimeType(defaultProducesMimeTypeString), defaultProducesMimeType.getContentType());
+        this.defaultProducesMimeType = new MimeToContentTypeMapper(producesMimeType, producesContentType);
+
+        enableRawDataTracing = configBoolean(HTTP_COMMUNICATION_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
+        enableValueTracing = configBoolean(HTTP_COMMUNICATION_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         balancerHost = configString(HTTP_BALANCER_SECTION_ID, HOST, super.getBalancerHost());
         balancerPort = configInt(HTTP_BALANCER_SECTION_ID, PORT, super.getBalancerPort());
         communicationTargets = configMap(HTTP_COMMUNICATION_SECTION_ID, TARGETS, config -> HttpCommunicationTargetConfiguration.builder()
@@ -72,13 +93,15 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
                 .requestConfig(RequestConfig.custom()
                         .setConnectTimeout(getOrElse(config.getInt(CONNECTION_TIMEOUT), super.getRequestConfig().getConnectTimeout()))
                         .setSocketTimeout(getOrElse(config.getInt(SOCKET_TIMEOUT), super.getRequestConfig().getSocketTimeout()))
-                        .setConnectionRequestTimeout(getOrElse(config.getInt(CONNECTION_REQUEST_TIMEOUT), super.getRequestConfig().getConnectionRequestTimeout()))
+                        .setConnectionRequestTimeout(getOrElse(config.getInt(CONNECTION_REQUEST_TIMEOUT),
+                                super.getRequestConfig().getConnectionRequestTimeout()))
                         .build())
                 .build(), super.getCommunicationTargets());
         int socketTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, SOCKET_TIMEOUT, RequestConfig.DEFAULT.getSocketTimeout());
         int connectionTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, CONNECTION_TIMEOUT, DEFAULT_TIMEOUT);
         int soTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, SO_TIMEOUT, SocketConfig.DEFAULT.getSoTimeout());
-        int connectionRequestTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, CONNECTION_REQUEST_TIMEOUT, RequestConfig.DEFAULT.getConnectionRequestTimeout());
+        int connectionRequestTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, CONNECTION_REQUEST_TIMEOUT,
+                RequestConfig.DEFAULT.getConnectionRequestTimeout());
         int ioReactorThreadCount = configInt(HTTP_COMMUNICATION_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE);
         ioReactorConfig = IOReactorConfig.custom()
                 .setIoThreadCount(ioReactorThreadCount)
@@ -92,7 +115,8 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
                 .setSoTimeout(soTimeout)
                 .build();
         ssl = configBoolean(HTTP_COMMUNICATION_SECTION_ID, SSL, super.isSsl());
-        disableSslHostNameVerification = configBoolean(HTTP_COMMUNICATION_SECTION_ID, IS_DISABLE_SSL_HOST_NAME_VERIFICATION, super.isDisableSslHostNameVerification());
+        disableSslHostNameVerification = configBoolean(HTTP_COMMUNICATION_SECTION_ID, IS_DISABLE_SSL_HOST_NAME_VERIFICATION,
+                super.isDisableSslHostNameVerification());
         sslKeyStoreType = configString(HTTP_COMMUNICATION_SECTION_ID, SSL_KEY_STORE_TYPE, super.getSslKeyStoreType());
         sslKeyStoreFilePath = configString(HTTP_COMMUNICATION_SECTION_ID, SSL_KEY_STORE_FILE_PATH, super.getSslKeyStoreFilePath());
         sslKeyStorePassword = configString(HTTP_COMMUNICATION_SECTION_ID, SSL_KEY_STORE_PASSWORD, super.getSslKeyStorePassword());

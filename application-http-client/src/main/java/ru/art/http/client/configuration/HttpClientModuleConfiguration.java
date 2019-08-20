@@ -50,7 +50,7 @@ import static ru.art.core.constants.StringConstants.EMPTY_STRING;
 import static ru.art.core.extension.ExceptionExtensions.exceptionIfNull;
 import static ru.art.core.factory.CollectionsFactory.linkedListOf;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.HTTP_COMMUNICATION_TARGET_NOT_FOUND;
-import static ru.art.http.client.constants.HttpClientExceptionMessages.HTTP_SAL_CONFIGURATION_FAILED;
+import static ru.art.http.client.constants.HttpClientExceptionMessages.HTTP_SSL_CONFIGURATION_FAILED;
 import static ru.art.http.client.constants.HttpClientModuleConstants.RESPONSE_BUFFER_DEFAULT_SIZE;
 import static ru.art.http.client.interceptor.HttpClientInterceptor.interceptRequest;
 import static ru.art.http.constants.HttpCommonConstants.DEFAULT_HTTP_PORT;
@@ -102,7 +102,8 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
     Map<String, HttpCommunicationTargetConfiguration> getCommunicationTargets();
 
     default HttpCommunicationTargetConfiguration getCommunicationTargetConfiguration(String serviceId) {
-        return exceptionIfNull(getCommunicationTargets().get(serviceId), new HttpClientException(format(HTTP_COMMUNICATION_TARGET_NOT_FOUND, serviceId))).toBuilder().build();
+        return exceptionIfNull(getCommunicationTargets().get(serviceId),
+                new HttpClientException(format(HTTP_COMMUNICATION_TARGET_NOT_FOUND, serviceId))).toBuilder().build();
     }
 
     HttpClientModuleDefaultConfiguration DEFAULT_CONFIGURATION = new HttpClientModuleDefaultConfiguration();
@@ -114,7 +115,8 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         private final ConnectionConfig connectionConfig = ConnectionConfig.DEFAULT;
         private final IOReactorConfig ioReactorConfig = IOReactorConfig.DEFAULT;
         private final HttpVersion httpVersion = HTTP_1_1;
-        private final List<HttpClientInterceptor> requestInterceptors = linkedListOf(interceptRequest(new HttpClientTracingIdentifiersRequestInterception()));
+        private final List<HttpClientInterceptor> requestInterceptors =
+                linkedListOf(interceptRequest(new HttpClientTracingIdentifiersRequestInterception()));
         private final List<HttpClientInterceptor> responseInterceptors = linkedListOf();
         private final int responseBodyBufferSize = RESPONSE_BUFFER_DEFAULT_SIZE;
         private final boolean ssl = false;
@@ -142,12 +144,14 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                         HostnameVerifier allowAll = (hostName, session) -> true;
                         clientBuilder.setSSLHostnameVerifier(allowAll);
                     }
-                    clientBuilder.setSSLContext(custom().loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray()).build());
+                    clientBuilder.setSSLContext(custom()
+                            .loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray())
+                            .build());
                 } catch (Throwable e) {
-                    throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
+                    throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
                 }
             }
-            if (isEnableTracing()) {
+            if (this.isEnableRawDataTracing()) {
                 clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()));
             }
             CloseableHttpAsyncClient client = clientBuilder.build();
@@ -161,7 +165,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                     .setDefaultRequestConfig(getRequestConfig())
                     .setDefaultConnectionConfig(getConnectionConfig())
                     .setDefaultSocketConfig(getSocketConfig());
-            if (isEnableTracing()) {
+            if (this.isEnableRawDataTracing()) {
                 clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()))
                         .addInterceptorLast(new LogbookHttpResponseInterceptor());
             }
@@ -171,9 +175,11 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                         HostnameVerifier allowAll = (hostName, session) -> true;
                         clientBuilder.setSSLHostnameVerifier(allowAll);
                     }
-                    clientBuilder.setSSLContext(custom().loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray()).build());
+                    clientBuilder.setSSLContext(custom()
+                            .loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray())
+                            .build());
                 } catch (Throwable e) {
-                    throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
+                    throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
                 }
             }
             return clientBuilder.build();
@@ -187,7 +193,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                 keyStore.load(keyStoreInputStream, getSslKeyStorePassword().toCharArray());
                 return keyStore;
             } catch (Throwable e) {
-                throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
+                throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
             } finally {
                 if (nonNull(keyStoreInputStream)) {
                     try {
@@ -195,7 +201,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                     } catch (IOException e) {
                         loggingModule()
                                 .getLogger(HttpClientModuleConfiguration.class)
-                                .error(HTTP_SAL_CONFIGURATION_FAILED, e);
+                                .error(HTTP_SSL_CONFIGURATION_FAILED, e);
                     }
                 }
             }

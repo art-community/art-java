@@ -48,5 +48,5 @@ public class HttpClientConfiguration {
     @Builder.Default
     private final String sslKeyStorePassword = httpClientModule().getSslKeyStorePassword();
     @Builder.Default
-    private final boolean enableTracing = false;
+    private final boolean enableRawDataTracing = httpClientModule().isEnableRawDataTracing();
 }

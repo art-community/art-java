@@ -20,32 +20,58 @@ package ru.art.http.configuration;
 
 import lombok.Getter;
 import org.zalando.logbook.Logbook;
+import ru.art.core.mime.MimeType;
 import ru.art.core.module.ModuleConfiguration;
+import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptor;
+import ru.art.http.constants.MimeToContentTypeMapper;
 import ru.art.http.logger.ZalangoLogbookLogWriter;
 import ru.art.http.mapper.HttpContentMapper;
 import ru.art.http.mapper.HttpTextPlainMapper;
-import ru.art.core.mime.MimeType;
+import ru.art.logging.LoggingValueInterceptor;
+import static ru.art.core.factory.CollectionsFactory.linkedListOf;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.http.constants.HttpMimeTypes.ALL;
+import static ru.art.http.constants.MimeToContentTypeMapper.*;
+import java.util.List;
 import java.util.Map;
 
 public interface HttpModuleConfiguration extends ModuleConfiguration {
-    boolean isEnableTracing();
+    boolean isEnableRawDataTracing();
 
-    @SuppressWarnings("EmptyMethod")
-    boolean isEnableMetricsMonitoring();
+    boolean isEnableValueTracing();
 
     Map<MimeType, HttpContentMapper> getContentMappers();
 
     Logbook getLogbook();
 
+    List<ValueInterceptor<Value, Value>> getRequestValueInterceptors();
+
+    List<ValueInterceptor<Value, Value>> getResponseValueInterceptors();
+
+    MimeToContentTypeMapper getDefaultConsumesMimeType();
+
+    MimeToContentTypeMapper getDefaultProducesMimeType();
+
     @Getter
     class HttpModuleDefaultConfiguration implements HttpModuleConfiguration {
-        private final boolean enableTracing = true;
+        private final boolean enableRawDataTracing = true;
+        private final boolean enableValueTracing = true;
         private final boolean enableMetricsMonitoring = true;
+        private final MimeToContentTypeMapper defaultConsumesMimeType = applicationJsonUtf8();
+        private final MimeToContentTypeMapper defaultProducesMimeType = applicationJsonUtf8();
         private final HttpTextPlainMapper textPlainMapper = new HttpTextPlainMapper();
-        private final Map<MimeType, HttpContentMapper> contentMappers = mapOf(ALL, new HttpContentMapper(new HttpTextPlainMapper(), new HttpTextPlainMapper()));
+        private final Map<MimeType, HttpContentMapper> contentMappers =
+                mapOf(ALL, new HttpContentMapper(new HttpTextPlainMapper(), new HttpTextPlainMapper()));
+        @Getter(lazy = true)
+        private final List<ValueInterceptor<Value, Value>> requestValueInterceptors = initializeValueInterceptors();
+        @Getter(lazy = true)
+        private final List<ValueInterceptor<Value, Value>> responseValueInterceptors = initializeValueInterceptors();
         @Getter(lazy = true)
         private final Logbook logbook = Logbook.builder().writer(new ZalangoLogbookLogWriter()).build();
+
+        private List<ValueInterceptor<Value, Value>> initializeValueInterceptors() {
+            return isEnableValueTracing() ? linkedListOf(new LoggingValueInterceptor()) : linkedListOf();
+        }
     }
 }

@@ -176,17 +176,17 @@ class HttpServiceServlet extends HttpServlet {
 
     private void calculateAcceptType(HttpServletCommand command, HttpServletRequest request, HttpRequestContextBuilder requestContextBuilder) {
         if (command.isIgnoreRequestAcceptType()) {
-            requestContextBuilder.acceptType(getProducesContentTypeChecked(command));
+            requestContextBuilder.acceptType(getProducesMimeTypeChecked(command));
             return;
         }
         String acceptTypeHeader = request.getHeader(ACCEPT);
         if (isEmpty(acceptTypeHeader)) {
-            requestContextBuilder.acceptType(getProducesContentTypeChecked(command));
+            requestContextBuilder.acceptType(getProducesMimeTypeChecked(command));
             return;
         }
         String[] acceptTypesStr = emptyIfNull(acceptTypeHeader).split(COMMA);
         if (isEmpty(acceptTypesStr)) {
-            requestContextBuilder.acceptType(getProducesContentTypeChecked(command));
+            requestContextBuilder.acceptType(getProducesMimeTypeChecked(command));
             return;
         }
         List<MimeType> acceptTypes = sortMimeTypes(acceptTypesStr);
@@ -206,17 +206,17 @@ class HttpServiceServlet extends HttpServlet {
     private void calculateContentType(HttpServletCommand command, HttpServletRequest request, HttpRequestContextBuilder requestContextBuilder) {
         if (request.getContentLength() == EMPTY_HTTP_CONTENT_LENGTH) return;
         if (command.isIgnoreRequestContentType()) {
-            requestContextBuilder.contentType(getConsumesContentTypeChecked(command));
+            requestContextBuilder.contentType(getConsumesMimeTypeChecked(command));
             return;
         }
         String contentTypeHeader = request.getContentType();
         if (isEmpty(contentTypeHeader)) {
-            requestContextBuilder.contentType(getConsumesContentTypeChecked(command));
+            requestContextBuilder.contentType(getConsumesMimeTypeChecked(command));
             return;
         }
         String[] contentTypesStr = emptyIfNull(contentTypeHeader).split(COMMA);
         if (isEmpty(contentTypesStr)) {
-            requestContextBuilder.contentType(getConsumesContentTypeChecked(command));
+            requestContextBuilder.contentType(getConsumesMimeTypeChecked(command));
             return;
         }
         List<MimeType> contentTypes = sortMimeTypes(contentTypesStr);
@@ -233,17 +233,17 @@ class HttpServiceServlet extends HttpServlet {
         }
     }
 
-    private MimeType getConsumesContentTypeChecked(HttpServletCommand command) {
+    private MimeType getConsumesMimeTypeChecked(HttpServletCommand command) {
         MimeToContentTypeMapper type;
-        if (isNull(type = command.getConsumesContentType())) {
+        if (isNull(type = command.getConsumesMimeType())) {
             return ALL;
         }
         return type.getMimeType();
     }
 
-    private MimeType getProducesContentTypeChecked(HttpServletCommand command) {
+    private MimeType getProducesMimeTypeChecked(HttpServletCommand command) {
         MimeToContentTypeMapper type;
-        if (isNull(type = command.getProducesContentType())) {
+        if (isNull(type = command.getConsumesMimeType())) {
             return ALL;
         }
         return type.getMimeType();

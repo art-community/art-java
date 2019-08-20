@@ -40,7 +40,6 @@ import static ru.art.core.factory.CollectionsFactory.linkedListOf;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.http.client.module.HttpClientModule.httpClientModule;
 import static ru.art.http.constants.HttpMethodType.GET;
-import static ru.art.http.constants.MimeToContentTypeMapper.*;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
@@ -65,13 +64,13 @@ class HttpCommunicationConfiguration {
     private boolean gzipCompressedBody;
     private RequestConfig requestConfig = httpClientModule().getRequestConfig();
     private HttpVersion httpProtocolVersion = httpClientModule().getHttpVersion();
-    private MimeToContentTypeMapper producesContentType = all();
-    private MimeToContentTypeMapper consumesContentType = all();
+    private MimeToContentTypeMapper producesMimeType = httpClientModule().getDefaultProducesMimeType();
+    private MimeToContentTypeMapper consumesMimeType = httpClientModule().getDefaultConsumesMimeType();
     private Charset requestContentCharset = contextConfiguration().getCharset();
     private String requestContentEncoding = contextConfiguration().getCharset().name();
     private boolean ignoreResponseContentType;
     private HttpClient syncClient;
     private HttpAsyncClient asyncClient;
-    private List<ValueInterceptor<Value, Value>> requestValueInterceptors = linkedListOf();
-    private List<ValueInterceptor<Value, Value>> responseValueInterceptors = linkedListOf();
+    private List<ValueInterceptor<Value, Value>> requestValueInterceptors = httpClientModule().getRequestValueInterceptors();
+    private List<ValueInterceptor<Value, Value>> responseValueInterceptors = httpClientModule().getResponseValueInterceptors();
 }
