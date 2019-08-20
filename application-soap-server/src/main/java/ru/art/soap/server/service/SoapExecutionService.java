@@ -32,6 +32,9 @@ import ru.art.soap.server.model.SoapResponse;
 import ru.art.soap.server.model.SoapService;
 import ru.art.soap.server.model.SoapService.SoapOperation;
 import ru.art.soap.server.specification.SoapServiceSpecification;
+
+import java.util.Map;
+
 import static java.util.Objects.nonNull;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
@@ -43,7 +46,6 @@ import static ru.art.soap.server.constans.SoapServerModuleConstants.ResponseFaul
 import static ru.art.soap.server.constans.SoapServerModuleConstants.SOAP_SERVICE_URL;
 import static ru.art.soap.server.module.SoapServerModule.soapServerModule;
 import static ru.art.soap.server.normalizer.WsdlPathNormalizer.normalizeUrlPath;
-import java.util.Map;
 
 @UtilityClass
 public class SoapExecutionService {
@@ -91,12 +93,11 @@ public class SoapExecutionService {
 
     public static String getWsdl(SoapServiceSpecification soapServiceSpecification) {
         SoapService soapService = soapServiceSpecification.getSoapService();
-        Map<String, SoapOperation> operationServiceSpecifications = soapService.getSoapOperations();
-        String wsdlResourcePath = soapServiceSpecification.getSoapService().getWsdlResourcePath();
-        String wsdlServiceUrl = soapServiceSpecification.getSoapService().getWsdlServiceUrl();
+        String wsdlResourcePath = soapService.getWsdlResourcePath();
         if (isEmpty(wsdlResourcePath)) {
             throw new SoapServerException(WSDL_RESOURCE_PATH_IS_EMPTY);
         }
+        String wsdlServiceUrl = soapService.getWsdlServiceUrl();
         if (isEmpty(wsdlServiceUrl)) {
             throw new SoapServerException(WSDL_SERVICE_URL_IS_EMPTY);
         }
