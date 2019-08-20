@@ -202,7 +202,7 @@ public class FileExtensions {
 
 
     public static boolean deleteFileRecursive(String path) {
-        return deleteFileRecursive(Paths.get(path));
+        return deleteFileRecursive(get(path));
     }
 
     public static boolean deleteFileRecursive(Path path) {
