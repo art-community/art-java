@@ -91,9 +91,8 @@ public class SoapExecutionService {
 
     public static String getWsdl(SoapServiceSpecification soapServiceSpecification) {
         SoapService soapService = soapServiceSpecification.getSoapService();
-        Map<String, SoapOperation> operationServiceSpecifications = soapService.getSoapOperations();
-        String wsdlResourcePath = soapServiceSpecification.getSoapService().getWsdlResourcePath();
-        String wsdlServiceUrl = soapServiceSpecification.getSoapService().getWsdlServiceUrl();
+        String wsdlResourcePath = soapService.getWsdlResourcePath();
+        String wsdlServiceUrl = soapService.getWsdlServiceUrl();
         if (isEmpty(wsdlResourcePath)) {
             throw new SoapServerException(WSDL_RESOURCE_PATH_IS_EMPTY);
         }
