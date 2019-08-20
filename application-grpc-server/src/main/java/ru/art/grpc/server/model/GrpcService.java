@@ -25,7 +25,7 @@ import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.service.constants.RequestValidationPolicy;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
+import static ru.art.grpc.server.module.GrpcServerModule.grpcServerModule;
 import java.util.List;
 import java.util.Map;
 
@@ -43,8 +43,8 @@ public class GrpcService {
         private ValueToModelMapper requestMapper;
         private ValueFromModelMapper responseMapper;
         private RequestValidationPolicy validationPolicy;
-        private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = linkedListOf();
-        private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = linkedListOf();
+        private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = grpcServerModule().getRequestValueInterceptors();
+        private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = grpcServerModule().getResponseValueInterceptors();
 
         public GrpcMethod addRequestValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
             requestValueInterceptors.add(interceptor);

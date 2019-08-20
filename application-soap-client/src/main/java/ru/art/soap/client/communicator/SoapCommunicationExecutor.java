@@ -30,6 +30,7 @@ import static ru.art.http.constants.HttpHeaders.CONTENT_TYPE;
 import static ru.art.soap.client.communicator.SoapEntityMapping.soapRequestFromModel;
 import static ru.art.soap.client.communicator.SoapEntityMapping.soapResponseToModel;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @NoArgsConstructor(access = PACKAGE)
 class SoapCommunicationExecutor {
@@ -58,7 +59,7 @@ class SoapCommunicationExecutor {
                 .execute(configuration.getRequest());
     }
 
-    static void executeAsynchronous(SoapCommunicationConfiguration configuration) {
+    static <ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronous(SoapCommunicationConfiguration configuration) {
         HttpCommunicator httpCommunicator = httpCommunicator(configuration.getUrl());
         configuration.getRequestInterceptors().forEach(httpCommunicator::addRequestInterceptor);
         configuration.getRequestInterceptors().forEach(httpCommunicator::addResponseInterceptor);
@@ -75,7 +76,7 @@ class SoapCommunicationExecutor {
         if (nonNull(requestMapper)) {
             httpCommunicator = httpCommunicator.requestMapper(requestMapper);
         }
-        httpCommunicator.config(configuration.getRequestConfig())
+        return httpCommunicator.config(configuration.getRequestConfig())
                 .consumes(configuration.getConsumesMimeType().toHttpMimeToContentTypeMapper())
                 .post()
                 .requestEncoding(configuration.getRequestBodyEncoding())

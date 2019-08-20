@@ -43,6 +43,7 @@ import static java.security.KeyStore.getInstance;
 import static java.text.MessageFormat.format;
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.nonNull;
+import static java.util.concurrent.ForkJoinPool.commonPool;
 import static org.apache.http.HttpVersion.HTTP_1_1;
 import static org.apache.http.ssl.SSLContexts.custom;
 import static ru.art.core.constants.NetworkConstants.LOCALHOST;
@@ -62,11 +63,12 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
     HttpClient getClient();
 
-    HttpAsyncClient getAsyncClient();
+    HttpAsyncClient getAsynchronousClient();
 
     RequestConfig getRequestConfig();
 
@@ -98,6 +100,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
 
     int getBalancerPort();
 
+    Executor getAsynchronousFuturesExecutor();
 
     Map<String, HttpCommunicationTargetConfiguration> getCommunicationTargets();
 
@@ -110,6 +113,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
 
     @Getter
     class HttpClientModuleDefaultConfiguration extends HttpModuleDefaultConfiguration implements HttpClientModuleConfiguration {
+        private final Executor asynchronousFuturesExecutor = commonPool();
         private final RequestConfig requestConfig = RequestConfig.DEFAULT;
         private final SocketConfig socketConfig = SocketConfig.DEFAULT;
         private final ConnectionConfig connectionConfig = ConnectionConfig.DEFAULT;
@@ -130,7 +134,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         @Getter(lazy = true)
         private final HttpClient client = createHttpClient();
         @Getter(lazy = true)
-        private final HttpAsyncClient asyncClient = createAsyncHttpClient();
+        private final HttpAsyncClient asynchronousClient = createAsyncHttpClient();
 
         @SuppressWarnings({"Duplicates", "WeakerAccess"})
         protected CloseableHttpAsyncClient createAsyncHttpClient() {

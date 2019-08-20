@@ -31,6 +31,7 @@ import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
 import static ru.art.rsocket.constants.RsocketModuleConstants.REACTIVE_SERVICE_EXCEPTION_ERROR_CODE;
 import static ru.art.rsocket.writer.RsocketPayloadWriter.writePayload;
+import static ru.art.service.factory.ServiceResponseFactory.okResponse;
 import static ru.art.service.mapping.ServiceResponseMapping.fromServiceResponse;
 
 public interface ServiceResponsePayloadWriter {
@@ -44,10 +45,8 @@ public interface ServiceResponsePayloadWriter {
         return isNull(serviceResponse) || isNull(responseMapper) || isNull(serviceResponse.getResponseData()) ?
                 never() :
                 from(cast(serviceResponse.getResponseData()))
-                        .map(response -> writePayload(fromServiceResponse(responseMapper).map(cast(ServiceResponse.builder()
-                                .command(serviceResponse.getCommand())
-                                .responseData(response)
-                                .build())), dataFormat))
+                        .map(response -> writePayload(fromServiceResponse(responseMapper)
+                                .map(cast(okResponse(serviceResponse.getCommand(), response))), dataFormat))
                         .onErrorResume(error -> just(writePayload(fromServiceResponse(responseMapper).map(cast(ServiceResponse.builder()
                                 .command(serviceResponse.getCommand())
                                 .serviceException(new ServiceExecutionException(serviceResponse.getCommand(), REACTIVE_SERVICE_EXCEPTION_ERROR_CODE, error))

@@ -59,8 +59,8 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
     private boolean enableRawDataTracing;
     private boolean enableValueTracing;
     private boolean enableMetrics;
-    private MimeToContentTypeMapper defaultConsumesMimeType;
-    private MimeToContentTypeMapper defaultProducesMimeType;
+    private MimeToContentTypeMapper consumesMimeTypeMapper;
+    private MimeToContentTypeMapper producesMimeTypeMapper;
 
     public HttpServerAgileConfiguration() {
         refresh();
@@ -68,19 +68,19 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
 
     @Override
     public void refresh() {
-        MimeToContentTypeMapper defaultConsumesMimeType = super.getDefaultConsumesMimeType();
-        String defaultConsumesMimeTypeString = configString(HTTP_COMMUNICATION_SECTION_ID, DEFAULT_CONSUMES_MIME_TYPE,
-                defaultConsumesMimeType.getMimeType().toString());
-        MimeType consumesMimeType = MimeType.valueOf(defaultConsumesMimeTypeString);
-        ContentType consumesContentType = getOrElse(getByMimeType(defaultConsumesMimeTypeString), defaultConsumesMimeType.getContentType());
-        this.defaultConsumesMimeType = new MimeToContentTypeMapper(consumesMimeType, consumesContentType);
+        MimeToContentTypeMapper consumesMimeTypeMapper = super.getConsumesMimeTypeMapper();
+        String consumesMimeTypeString = configString(HTTP_COMMUNICATION_SECTION_ID, CONSUMES_MIME_TYPE,
+                consumesMimeTypeMapper.getMimeType().toString());
+        MimeType consumesMimeType = MimeType.valueOf(consumesMimeTypeString);
+        ContentType consumesContentType = getOrElse(getByMimeType(consumesMimeTypeString), consumesMimeTypeMapper.getContentType());
+        this.consumesMimeTypeMapper = new MimeToContentTypeMapper(consumesMimeType, consumesContentType);
 
-        MimeToContentTypeMapper defaultProducesMimeType = super.getDefaultProducesMimeType();
-        String defaultProducesMimeTypeString = configString(HTTP_COMMUNICATION_SECTION_ID, DEFAULT_CONSUMES_MIME_TYPE,
-                defaultProducesMimeType.getMimeType().toString());
-        MimeType producesMimeType = MimeType.valueOf(defaultProducesMimeTypeString);
-        ContentType producesContentType = getOrElse(getByMimeType(defaultProducesMimeTypeString), defaultProducesMimeType.getContentType());
-        this.defaultProducesMimeType = new MimeToContentTypeMapper(producesMimeType, producesContentType);
+        MimeToContentTypeMapper producesMimeTypeMapper = super.getProducesMimeTypeMapper();
+        String producesMimeTypeString = configString(HTTP_COMMUNICATION_SECTION_ID, PRODUCES_MIME_TYPE,
+                producesMimeTypeMapper.getMimeType().toString());
+        MimeType producesMimeType = MimeType.valueOf(producesMimeTypeString);
+        ContentType producesContentType = getOrElse(getByMimeType(producesMimeTypeString), producesMimeTypeMapper.getContentType());
+        this.producesMimeTypeMapper = new MimeToContentTypeMapper(producesMimeType, producesContentType);
 
         enableRawDataTracing = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
         enableValueTracing = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());

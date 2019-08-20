@@ -61,8 +61,8 @@ public class SoapExecutionService {
             String serviceId = soapServiceSpecification.getServiceId();
             String methodId = soapOperation.methodId();
             RequestValidationPolicy validationPolicy = soapOperation.validationPolicy();
-            ServiceMethodCommand serviceMethodCommand = new ServiceMethodCommand(serviceId, methodId);
-            ServiceRequest<?> serviceRequest = new ServiceRequest<>(serviceMethodCommand, validationPolicy, requestObject);
+            ServiceMethodCommand command = new ServiceMethodCommand(serviceId, methodId);
+            ServiceRequest<?> serviceRequest = new ServiceRequest<>(command, validationPolicy, requestObject);
             ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);
             ServiceExecutionException exception;
             if (nonNull(exception = serviceResponse.getServiceException())) {

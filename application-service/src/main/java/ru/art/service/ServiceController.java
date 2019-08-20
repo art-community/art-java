@@ -18,7 +18,6 @@
 
 package ru.art.service;
 
-import ru.art.service.exception.ServiceExecutionException;
 import ru.art.service.interceptor.ServiceExecutionInterceptor.RequestInterceptor;
 import ru.art.service.model.*;
 import static java.text.MessageFormat.format;
@@ -37,6 +36,7 @@ import static ru.art.service.ServiceResponseDataExtractor.extractResponseDataChe
 import static ru.art.service.constants.ServiceErrorCodes.INTERNAL_ERROR;
 import static ru.art.service.constants.ServiceExceptionsMessages.SERVICE_WITH_ID_NOT_EXISTS;
 import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
+import static ru.art.service.factory.ServiceResponseFactory.errorResponse;
 import static ru.art.service.factory.ServiceResponseFactory.okResponse;
 import static ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
 import static ru.art.service.model.ServiceInterceptionResult.nextInterceptor;
@@ -76,14 +76,17 @@ public interface ServiceController {
         Specification service = serviceModule()
                 .getServiceRegistry()
                 .getService(request.getServiceMethodCommand().getServiceId());
-        if (isNull(service)) return ServiceResponse.<ResponseType>builder()
-                .serviceException(new ServiceExecutionException(request.getServiceMethodCommand(), INTERNAL_ERROR, format(SERVICE_WITH_ID_NOT_EXISTS, request.getServiceMethodCommand().getServiceId())))
-                .build();
+        if (isNull(service)) {
+            String errorMessage = format(SERVICE_WITH_ID_NOT_EXISTS, request.getServiceMethodCommand().getServiceId());
+            return errorResponse(request.getServiceMethodCommand(), INTERNAL_ERROR, errorMessage);
+        }
         ServiceInterceptionResult serviceInterceptionResult;
         if (nonNull((serviceInterceptionResult = beforeServiceExecution(service, request)).getResponse()))
             return cast(serviceInterceptionResult.getResponse());
         ServiceRequest<?> requestAfterInterception = serviceInterceptionResult.getRequest();
-        ServiceResponse<ResponseType> response = service.getExceptionWrapper().executeServiceWrapped(requestAfterInterception.getServiceMethodCommand(), requestAfterInterception);
+        ServiceResponse<ResponseType> response = service
+                .getExceptionWrapper()
+                .executeServiceWrapped(requestAfterInterception.getServiceMethodCommand(), requestAfterInterception);
         Date endTime = new Date();
         putIfNotNull(EXECUTION_TIME_KEY, endTime.getTime() - startTime.getTime());
         putIfNotNull(REQUEST_END_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT.format(endTime));

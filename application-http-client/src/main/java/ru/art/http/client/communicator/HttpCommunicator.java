@@ -34,6 +34,8 @@ import ru.art.http.client.model.HttpCommunicationTargetConfiguration;
 import ru.art.http.constants.MimeToContentTypeMapper;
 import java.nio.charset.Charset;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public interface HttpCommunicator {
     static HttpCommunicator httpCommunicator(String url) {
@@ -107,14 +109,16 @@ public interface HttpCommunicator {
     interface HttpAsynchronousCommunicator {
         HttpAsynchronousCommunicator client(HttpAsyncClient client);
 
+        HttpAsynchronousCommunicator asynchronousFuturesExecutor(Executor executor);
+
         <RequestType, ResponseType> HttpAsynchronousCommunicator completionHandler(HttpCommunicationResponseHandler<RequestType, ResponseType> handler);
 
         <RequestType> HttpAsynchronousCommunicator exceptionHandler(HttpCommunicationExceptionHandler<RequestType> handler);
 
         <RequestType> HttpAsynchronousCommunicator cancellationHandler(HttpCommunicationCancellationHandler<RequestType> handler);
 
-        <RequestType> void executeAsynchronous(RequestType request);
+        <RequestType, ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronous(RequestType request);
 
-        void executeAsynchronous();
+        <ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronous();
     }
 }

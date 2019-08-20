@@ -20,9 +20,11 @@ package ru.art.tarantool.configuration;
 
 import lombok.Builder;
 import lombok.Getter;
+import static java.io.File.separator;
 import static java.nio.file.Paths.get;
 import static ru.art.core.constants.StringConstants.EMPTY_STRING;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.DEFAULT_TARANTOOL_EXECUTABLE_COMMAND;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TARANTOOL;
 import java.util.List;
 
 @Getter
@@ -31,5 +33,7 @@ public class TarantoolLocalConfiguration {
     @Builder.Default
     private final List<String> executableCommand = DEFAULT_TARANTOOL_EXECUTABLE_COMMAND;
     @Builder.Default
-    private final String workingDirectory = get(EMPTY_STRING).toAbsolutePath().toString();
+    private final String workingDirectory = get(EMPTY_STRING).toAbsolutePath().toString()
+            + separator
+            + TARANTOOL;
 }

@@ -43,6 +43,7 @@ import static ru.art.http.constants.HttpMethodType.GET;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 @Getter(value = PACKAGE)
 @Setter(value = PACKAGE)
@@ -56,7 +57,7 @@ class HttpCommunicationConfiguration {
     private HttpMethodType methodType = GET;
     private ValueFromModelMapper<?, ? extends Value> requestMapper;
     private ValueToModelMapper<?, ? extends Value> responseMapper;
-    private HttpCommunicationResponseHandler<?, ?> responseHandler;
+    private HttpCommunicationResponseHandler<?, ?> completionHandler;
     private HttpCommunicationExceptionHandler<?> exceptionHandler;
     private HttpCommunicationCancellationHandler<?> cancellationHandler;
     private Object request;
@@ -64,13 +65,14 @@ class HttpCommunicationConfiguration {
     private boolean gzipCompressedBody;
     private RequestConfig requestConfig = httpClientModule().getRequestConfig();
     private HttpVersion httpProtocolVersion = httpClientModule().getHttpVersion();
-    private MimeToContentTypeMapper producesMimeType = httpClientModule().getDefaultProducesMimeType();
-    private MimeToContentTypeMapper consumesMimeType = httpClientModule().getDefaultConsumesMimeType();
+    private MimeToContentTypeMapper producesMimeType = httpClientModule().getProducesMimeTypeMapper();
+    private MimeToContentTypeMapper consumesMimeType = httpClientModule().getConsumesMimeTypeMapper();
     private Charset requestContentCharset = contextConfiguration().getCharset();
     private String requestContentEncoding = contextConfiguration().getCharset().name();
     private boolean ignoreResponseContentType;
-    private HttpClient syncClient;
-    private HttpAsyncClient asyncClient;
+    private HttpClient synchronousClient;
+    private HttpAsyncClient asynchronousClient;
+    private Executor asynchronousFuturesExecutor = httpClientModule().getAsynchronousFuturesExecutor();
     private List<ValueInterceptor<Value, Value>> requestValueInterceptors = httpClientModule().getRequestValueInterceptors();
     private List<ValueInterceptor<Value, Value>> responseValueInterceptors = httpClientModule().getResponseValueInterceptors();
 }

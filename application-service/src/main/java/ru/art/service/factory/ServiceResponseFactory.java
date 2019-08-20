@@ -27,6 +27,14 @@ public interface ServiceResponseFactory {
         return ServiceResponse.<T>builder().command(command).build();
     }
 
+    static <T> ServiceResponse<T> errorResponse(String errorCode, String errorMessage) {
+        return ServiceResponse.<T>builder().serviceException(new ServiceExecutionException(errorCode, errorMessage)).build();
+    }
+
+    static <T> ServiceResponse<T> errorResponse(String errorCode, Throwable e) {
+        return ServiceResponse.<T>builder().serviceException(new ServiceExecutionException(errorCode, e)).build();
+    }
+
     static <T> ServiceResponse<T> errorResponse(ServiceMethodCommand command, String errorCode, String errorMessage) {
         return ServiceResponse.<T>builder().command(command).serviceException(new ServiceExecutionException(command, errorCode, errorMessage)).build();
     }

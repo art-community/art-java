@@ -21,12 +21,16 @@ package ru.art.grpc.client.configuration;
 import io.grpc.ClientInterceptor;
 import lombok.Getter;
 import ru.art.core.module.ModuleConfiguration;
+import ru.art.entity.Entity;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.grpc.client.exception.GrpcClientException;
+import ru.art.grpc.client.interceptor.GrpcClientLoggingInterceptor;
 import ru.art.grpc.client.interceptor.GrpcClientTracingInterceptor;
 import ru.art.grpc.client.model.GrpcCommunicationTargetConfiguration;
+import ru.art.logging.LoggingValueInterceptor;
 import static java.text.MessageFormat.format;
 import static java.util.Collections.emptyMap;
-import static java.util.concurrent.Executors.newFixedThreadPool;
+import static java.util.concurrent.ForkJoinPool.commonPool;
 import static ru.art.core.constants.NetworkConstants.LOCALHOST;
 import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
 import static ru.art.core.extension.ExceptionExtensions.exceptionIfNull;
@@ -37,6 +41,7 @@ import static ru.art.grpc.client.constants.GrpcClientModuleConstants.DEFAULT_TIM
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
 
 public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
     List<ClientInterceptor> getInterceptors();
@@ -49,22 +54,52 @@ public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
 
     int getBalancerPort();
 
+    Executor getAsynchronousFuturesExecutor();
+
     Map<String, GrpcCommunicationTargetConfiguration> getCommunicationTargets();
 
+    boolean isEnableRawDataTracing();
+
+    boolean isEnableValueTracing();
+
+    List<ValueInterceptor<Entity, Entity>> getRequestValueInterceptors();
+
+    List<ValueInterceptor<Entity, Entity>> getResponseValueInterceptors();
+
     default GrpcCommunicationTargetConfiguration getCommunicationTargetConfiguration(String serviceId) {
-        return exceptionIfNull(getCommunicationTargets().get(serviceId), new GrpcClientException(format(GRPC_COMMUNICATION_TARGET_CONFIGURATION_NOT_FOUND, serviceId))).toBuilder().build();
+        return exceptionIfNull(getCommunicationTargets().get(serviceId),
+                new GrpcClientException(format(GRPC_COMMUNICATION_TARGET_CONFIGURATION_NOT_FOUND, serviceId))).toBuilder().build();
     }
 
     GrpcClientModuleDefaultConfiguration DEFAULT_CONFIGURATION = new GrpcClientModuleDefaultConfiguration();
 
-	@Getter
-	class GrpcClientModuleDefaultConfiguration implements GrpcClientModuleConfiguration {
+    @Getter
+    class GrpcClientModuleDefaultConfiguration implements GrpcClientModuleConfiguration {
+        private final boolean enableRawDataTracing = true;
+        private final boolean enableValueTracing = true;
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
-        private final List<ClientInterceptor> interceptors = linkedListOf(new GrpcClientTracingInterceptor());
+        private final List<ClientInterceptor> interceptors = initializeInterceptors();
+        private final Executor asynchronousFuturesExecutor = commonPool();
         private final long timeout = DEFAULT_TIMEOUT;
-        private final Executor overridingExecutor = newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
+        private final Executor overridingExecutor = new ForkJoinPool(DEFAULT_THREAD_POOL_SIZE);
         private final String balancerHost = LOCALHOST;
         private final int balancerPort = DEFAULT_GRPC_PORT;
         private final Map<String, GrpcCommunicationTargetConfiguration> communicationTargets = emptyMap();
+        @Getter(lazy = true)
+        private final List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = initializeValueInterceptors();
+        @Getter(lazy = true)
+        private final List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = initializeValueInterceptors();
+
+        private List<ClientInterceptor> initializeInterceptors() {
+            List<ClientInterceptor> interceptors = linkedListOf(new GrpcClientTracingInterceptor());
+            if (isEnableRawDataTracing()) {
+                interceptors.add(new GrpcClientLoggingInterceptor());
+            }
+            return interceptors;
+        }
+
+        private List<ValueInterceptor<Entity, Entity>> initializeValueInterceptors() {
+            return isEnableValueTracing() ? linkedListOf(new LoggingValueInterceptor<>()) : linkedListOf();
+        }
     }
 }

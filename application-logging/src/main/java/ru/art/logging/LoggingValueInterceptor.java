@@ -22,16 +22,22 @@ import ru.art.entity.Value;
 import ru.art.entity.interceptor.ValueInterceptionResult;
 import ru.art.entity.interceptor.ValueInterceptor;
 import static java.text.MessageFormat.format;
+import static org.apache.logging.log4j.ThreadContext.remove;
+import static ru.art.core.caster.Caster.cast;
 import static ru.art.entity.interceptor.ValueInterceptionResult.nextInterceptor;
 import static ru.art.logging.LoggingModule.*;
+import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static ru.art.logging.LoggingModuleConstants.VALUE_LOG_MESSAGE;
+import static ru.art.logging.ThreadContextExtensions.*;
 
-public class LoggingValueInterceptor implements ValueInterceptor<Value, Value> {
+public class LoggingValueInterceptor<InValue extends Value, OutValue extends Value> implements ValueInterceptor<InValue, OutValue> {
     @Override
-    public ValueInterceptionResult<Value, Value> intercept(Value value) {
+    public ValueInterceptionResult<InValue, OutValue> intercept(Value value) {
+        putIfNotNull(REQUEST_VALUE_KEY, value);
         loggingModule()
                 .getLogger(LoggingValueInterceptor.class)
                 .info(format(VALUE_LOG_MESSAGE, value));
-        return nextInterceptor(value);
+        remove(REQUEST_VALUE_KEY);
+        return cast(nextInterceptor(value));
     }
 }

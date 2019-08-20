@@ -43,6 +43,7 @@ import static ru.art.http.client.module.HttpClientModule.httpClientModule;
 import static ru.art.soap.client.module.SoapClientModule.soapClientModule;
 import java.nio.charset.Charset;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 
 public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsynchronousCommunicator {
@@ -65,8 +66,8 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
     }
 
     @Override
-    public SoapCommunicator client(HttpClient syncClient) {
-        configuration.setHttpClient(validator.notEmptyField(syncClient, "syncClient"));
+    public SoapCommunicator client(HttpClient synchronousClient) {
+        configuration.setHttpClient(validator.notEmptyField(synchronousClient, "synchronousClient"));
         return this;
     }
 
@@ -173,8 +174,8 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
     }
 
     @Override
-    public SoapAsynchronousCommunicator client(HttpAsyncClient asyncClient) {
-        configuration.setAsynchronousHttpClient(validator.notNullField(asyncClient, "asynchronousClient"));
+    public SoapAsynchronousCommunicator client(HttpAsyncClient asynchronousClient) {
+        configuration.setAsynchronousHttpClient(validator.notNullField(asynchronousClient, "asynchronousClient"));
         return this;
     }
 
@@ -202,10 +203,10 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
     }
 
     @Override
-    public <RequestType> void executeAsynchronous(RequestType request) {
+    public <RequestType, ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronous(RequestType request) {
         configuration.setRequest(validator.notNullField(request, "request"));
         validator.validate();
         configuration.validateRequiredFields();
-        SoapCommunicationExecutor.executeAsynchronous(configuration);
+        return SoapCommunicationExecutor.executeAsynchronous(configuration);
     }
 }

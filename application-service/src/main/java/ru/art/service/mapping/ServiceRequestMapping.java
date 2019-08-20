@@ -51,7 +51,9 @@ public interface ServiceRequestMapping {
             String methodId = serviceMethodCommandEntity.getString(METHOD_ID);
             if (isNull(methodId)) throw new ServiceMappingException(METHOD_ID_IS_NULL);
             String validationPolicyAsString = value.getString(VALIDATION_POLICY);
-            RequestValidationPolicy requestValidationPolicy = isEmpty(validationPolicyAsString) ? NON_VALIDATABLE : RequestValidationPolicy.valueOf(validationPolicyAsString);
+            RequestValidationPolicy requestValidationPolicy = isEmpty(validationPolicyAsString)
+                    ? NON_VALIDATABLE :
+                    RequestValidationPolicy.valueOf(validationPolicyAsString);
             D requestData = isNull(requestDataMapper) ? null : value.getValue(REQUEST_DATA, requestDataMapper);
             return new ServiceRequest<>(new ServiceMethodCommand(serviceId, methodId), requestValidationPolicy, requestData);
         };
@@ -59,11 +61,11 @@ public interface ServiceRequestMapping {
 
     static <D> ValueFromModelMapper.EntityFromModelMapper<ServiceRequest<D>> fromServiceRequest(final ValueFromModelMapper<D, Value> requestDataMapper) {
         return model -> {
-            ServiceMethodCommand serviceMethodCommand = model.getServiceMethodCommand();
-            if (isNull(serviceMethodCommand)) throw new ServiceMappingException(SERVICE_COMMAND_IS_NULL);
-            String serviceId = serviceMethodCommand.getServiceId();
+            ServiceMethodCommand command = model.getServiceMethodCommand();
+            if (isNull(command)) throw new ServiceMappingException(SERVICE_COMMAND_IS_NULL);
+            String serviceId = command.getServiceId();
             if (isNull(serviceId)) throw new ServiceMappingException(SERVICE_ID_IS_NULL);
-            String methodId = serviceMethodCommand.getMethodId();
+            String methodId = command.getMethodId();
             if (isNull(methodId)) throw new ServiceMappingException(METHOD_ID_IS_NULL);
             RequestValidationPolicy validationPolicy = isNull(validationPolicy = model.getValidationPolicy()) ? NON_VALIDATABLE : validationPolicy;
             return entityBuilder()

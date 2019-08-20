@@ -19,6 +19,7 @@
 package ru.art.grpc.client.communicator;
 
 import io.grpc.ClientInterceptor;
+import ru.art.entity.Entity;
 import ru.art.entity.Value;
 import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
@@ -27,6 +28,7 @@ import ru.art.grpc.client.handler.GrpcCommunicationCompletionHandler;
 import ru.art.grpc.client.handler.GrpcCommunicationExceptionHandler;
 import ru.art.grpc.client.model.GrpcCommunicationTargetConfiguration;
 import ru.art.service.model.ServiceResponse;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 public interface GrpcCommunicator {
@@ -68,17 +70,19 @@ public interface GrpcCommunicator {
 
     <RequestType, ResponseType> ServiceResponse<ResponseType> execute(RequestType request);
 
-    GrpcCommunicator addRequestValueInterceptor(ValueInterceptor interceptor);
+    GrpcCommunicator addRequestValueInterceptor(ValueInterceptor<Entity, Entity> interceptor);
 
-    GrpcCommunicator addResponseValueInterceptor(ValueInterceptor interceptor);
+    GrpcCommunicator addResponseValueInterceptor(ValueInterceptor<Entity, Entity> interceptor);
 
     interface GrpcAsynchronousCommunicator {
+        GrpcAsynchronousCommunicator asynchronousFuturesExecutor(Executor executor);
+
         <RequestType, ResponseType> GrpcAsynchronousCommunicator completionHandler(GrpcCommunicationCompletionHandler<RequestType, ResponseType> completionHandler);
 
         <RequestType> GrpcAsynchronousCommunicator exceptionHandler(GrpcCommunicationExceptionHandler<RequestType> errorHandler);
 
-        void executeAsynchronous();
+        <ResponseType> CompletableFuture<ServiceResponse<ResponseType>> executeAsynchronous();
 
-        <RequestType> void executeAsynchronous(RequestType request);
+        <RequestType, ResponseType> CompletableFuture<ServiceResponse<ResponseType>> executeAsynchronous(RequestType request);
     }
 }

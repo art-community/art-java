@@ -21,7 +21,6 @@ package ru.art.http.server;
 import lombok.NoArgsConstructor;
 import ru.art.core.mime.MimeType;
 import ru.art.entity.Entity;
-import ru.art.entity.StringParametersMap;
 import ru.art.entity.Value;
 import ru.art.entity.interceptor.ValueInterceptionResult;
 import ru.art.entity.interceptor.ValueInterceptor;
@@ -55,10 +54,7 @@ import static ru.art.http.server.module.HttpServerModule.httpServerModuleState;
 import static ru.art.http.server.parser.HttpParametersParser.parsePathParameters;
 import static ru.art.http.server.parser.HttpParametersParser.parseQueryParameters;
 import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.logging.ThreadContextExtensions.putIfNotNull;
 import static ru.art.service.ServiceController.executeServiceMethodUnchecked;
-import static ru.art.service.ServiceModule.serviceModuleState;
-import static ru.art.service.constants.ServiceModuleConstants.REQUEST_VALUE_KEY;
 import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
 import static ru.art.service.mapping.ServiceResponseMapping.fromServiceResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -163,24 +159,14 @@ class HttpServerRequestHandler {
                         .mapFromBytes(readRequestBody(request), requestContentType,
                                 getOrElse(requestContentType.getCharset(), contextConfiguration().getCharset()));
                 if (isNull(value)) return null;
-                putIfNotNull(REQUEST_VALUE_KEY, value);
-                serviceModuleState().setRequestValue(value);
                 return value;
             case PATH_PARAMETERS:
-                StringParametersMap pathParameters = parsePathParameters(request, methodConfig);
-                putIfNotNull(REQUEST_VALUE_KEY, pathParameters);
-                serviceModuleState().setRequestValue(pathParameters);
-                return pathParameters;
+                return parsePathParameters(request, methodConfig);
             case QUERY_PARAMETERS:
-                StringParametersMap queryParameters = parseQueryParameters(request);
-                putIfNotNull(REQUEST_VALUE_KEY, queryParameters);
-                serviceModuleState().setRequestValue(queryParameters);
-                return queryParameters;
+                return parseQueryParameters(request);
             case MULTIPART:
                 Entity multipartEntity = readMultiParts(request);
                 if (isNull(multipartEntity) || multipartEntity.isEmpty()) return null;
-                putIfNotNull(REQUEST_VALUE_KEY, multipartEntity);
-                serviceModuleState().setRequestValue(multipartEntity);
                 return multipartEntity;
             default:
                 throw new HttpServerException(format(UNKNOWN_HTTP_REQUEST_DATA_SOURCE, methodConfig.getRequestDataSource()));

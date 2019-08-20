@@ -18,17 +18,5 @@
 
 package ru.art.grpc.client.communicator;
 
-import ru.art.entity.Entity;
-import ru.art.grpc.servlet.GrpcResponse;
-import ru.art.service.model.ServiceResponse;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.entity.Value.asEntity;
-import static ru.art.protobuf.descriptor.ProtobufEntityReader.readProtobuf;
-import static ru.art.service.mapping.ServiceResponseMapping.toServiceResponse;
-
 public interface GrpcServiceResponseExtractor {
-    static <ResponseType> ServiceResponse<ResponseType> extractServiceResponse(GrpcCommunicationConfiguration configuration, GrpcResponse response) {
-        Entity serviceResponseEntity = asEntity(readProtobuf(response.getServiceResponse()));
-        return cast(toServiceResponse(cast(configuration.getResponseMapper())).map(serviceResponseEntity));
-    }
 }

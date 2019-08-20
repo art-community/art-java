@@ -32,7 +32,7 @@ import ru.art.logging.LoggingValueInterceptor;
 import static ru.art.core.factory.CollectionsFactory.linkedListOf;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.http.constants.HttpMimeTypes.ALL;
-import static ru.art.http.constants.MimeToContentTypeMapper.*;
+import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
 import java.util.List;
 import java.util.Map;
 
@@ -49,17 +49,17 @@ public interface HttpModuleConfiguration extends ModuleConfiguration {
 
     List<ValueInterceptor<Value, Value>> getResponseValueInterceptors();
 
-    MimeToContentTypeMapper getDefaultConsumesMimeType();
+    MimeToContentTypeMapper getConsumesMimeTypeMapper();
 
-    MimeToContentTypeMapper getDefaultProducesMimeType();
+    MimeToContentTypeMapper getProducesMimeTypeMapper();
 
     @Getter
     class HttpModuleDefaultConfiguration implements HttpModuleConfiguration {
         private final boolean enableRawDataTracing = true;
         private final boolean enableValueTracing = true;
         private final boolean enableMetricsMonitoring = true;
-        private final MimeToContentTypeMapper defaultConsumesMimeType = applicationJsonUtf8();
-        private final MimeToContentTypeMapper defaultProducesMimeType = applicationJsonUtf8();
+        private final MimeToContentTypeMapper consumesMimeTypeMapper = applicationJsonUtf8();
+        private final MimeToContentTypeMapper producesMimeTypeMapper = applicationJsonUtf8();
         private final HttpTextPlainMapper textPlainMapper = new HttpTextPlainMapper();
         private final Map<MimeType, HttpContentMapper> contentMappers =
                 mapOf(ALL, new HttpContentMapper(new HttpTextPlainMapper(), new HttpTextPlainMapper()));
@@ -71,7 +71,7 @@ public interface HttpModuleConfiguration extends ModuleConfiguration {
         private final Logbook logbook = Logbook.builder().writer(new ZalangoLogbookLogWriter()).build();
 
         private List<ValueInterceptor<Value, Value>> initializeValueInterceptors() {
-            return isEnableValueTracing() ? linkedListOf(new LoggingValueInterceptor()) : linkedListOf();
+            return isEnableValueTracing() ? linkedListOf(new LoggingValueInterceptor<>()) : linkedListOf();
         }
     }
 }

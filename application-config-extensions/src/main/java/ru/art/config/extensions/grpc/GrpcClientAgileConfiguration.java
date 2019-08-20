@@ -21,7 +21,6 @@ package ru.art.config.extensions.grpc;
 import lombok.Getter;
 import ru.art.grpc.client.configuration.GrpcClientModuleConfiguration.GrpcClientModuleDefaultConfiguration;
 import ru.art.grpc.client.model.GrpcCommunicationTargetConfiguration;
-import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.stream.Collectors.toMap;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
@@ -33,6 +32,7 @@ import static ru.art.core.extension.ExceptionExtensions.ifException;
 import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
 
 
 @Getter
@@ -42,6 +42,8 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
     private String balancerHost;
     private int balancerPort;
     private Map<String, GrpcCommunicationTargetConfiguration> communicationTargets;
+    private boolean enableRawDataTracing;
+    private boolean enableValueTracing;
 
     public GrpcClientAgileConfiguration() {
         refresh();
@@ -49,8 +51,10 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
 
     @Override
     public void refresh() {
+        enableRawDataTracing = configBoolean(GRPC_SERVER_CONFIG_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
+        enableValueTracing = configBoolean(GRPC_SERVER_CONFIG_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         timeout = configLong(GRPC_COMMUNICATION_SECTION_ID, TIMEOUT_MILLIS, super.getTimeout());
-        overridingExecutor = newFixedThreadPool(configInt(GRPC_COMMUNICATION_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE));
+        overridingExecutor = new ForkJoinPool(configInt(GRPC_COMMUNICATION_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE));
         balancerHost = configString(GRPC_BALANCER_SECTION_ID, HOST, super.getBalancerHost());
         balancerPort = configInt(GRPC_BALANCER_SECTION_ID, PORT, super.getBalancerPort());
         communicationTargets = ifException(() -> configMap(GRPC_COMMUNICATION_SECTION_ID, TARGETS).entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> GrpcCommunicationTargetConfiguration.builder()

@@ -21,10 +21,8 @@ package ru.art.grpc.server.servlet;
 import io.grpc.stub.StreamObserver;
 import lombok.Getter;
 import ru.art.entity.Entity;
-import ru.art.entity.Value;
 import ru.art.entity.interceptor.ValueInterceptionResult;
 import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper.EntityToModelMapper;
 import ru.art.grpc.server.exception.GrpcServletException;
 import ru.art.grpc.server.model.GrpcService.GrpcMethod;
@@ -58,11 +56,11 @@ import static ru.art.logging.LoggingModuleConstants.DEFAULT_REQUEST_ID;
 import static ru.art.logging.LoggingModuleConstants.LoggingParameters.REQUEST_ID_KEY;
 import static ru.art.logging.LoggingParametersManager.clearServiceCallLoggingParameters;
 import static ru.art.logging.LoggingParametersManager.putServiceCallLoggingParameters;
-import static ru.art.logging.ThreadContextExtensions.putIfNotNull;
 import static ru.art.protobuf.descriptor.ProtobufEntityReader.readProtobuf;
 import static ru.art.protobuf.descriptor.ProtobufEntityWriter.writeProtobuf;
 import static ru.art.service.ServiceController.executeServiceMethodUnchecked;
-import static ru.art.service.constants.ServiceModuleConstants.REQUEST_VALUE_KEY;
+import static ru.art.service.factory.ServiceResponseFactory.errorResponse;
+import static ru.art.service.factory.ServiceResponseFactory.okResponse;
 import static ru.art.service.mapping.ServiceRequestMapping.toServiceRequest;
 import static ru.art.service.mapping.ServiceResponseMapping.fromServiceResponse;
 import java.util.Map;
@@ -85,11 +83,11 @@ public class GrpcServletContainer extends GrpcServlet {
 
         @Override
         public void executeService(GrpcRequest grpcRequest, StreamObserver<GrpcResponse> responseObserver) {
-            ServiceMethodCommand serviceMethodCommand = toServiceRequest()
+            ServiceMethodCommand command = toServiceRequest()
                     .map(asEntity(readProtobuf(grpcRequest.getServiceRequest())))
                     .getServiceMethodCommand();
-            String serviceId = serviceMethodCommand.getServiceId();
-            String serviceMethodId = serviceId + DOT + serviceMethodCommand.getMethodId() + BRACKETS;
+            String serviceId = command.getServiceId();
+            String serviceMethodId = serviceId + DOT + command.getMethodId() + BRACKETS;
             clearServiceCallLoggingParameters();
             putServiceCallLoggingParameters(ServiceCallLoggingParameters.builder()
                     .serviceId(serviceId)
@@ -98,32 +96,27 @@ public class GrpcServletContainer extends GrpcServlet {
                     .loggingEventType(GRPC_LOGGING_EVENT)
                     .build());
             try {
-                executeServiceChecked(grpcRequest, responseObserver);
+                executeServiceChecked(grpcRequest, command, responseObserver);
                 clearServiceCallLoggingParameters();
             } catch (Throwable e) {
                 loggingModule()
                         .getLogger(GrpcServletContainer.class)
                         .error(GRPC_SERVICE_EXCEPTION, e);
                 responseObserver.onNext(newBuilder()
-                        .setServiceResponse(writeProtobuf(fromServiceResponse().map(ServiceResponse.builder()
-                                .command(serviceMethodCommand)
-                                .serviceException(new ServiceExecutionException(serviceMethodCommand, GRPC_SERVLET_ERROR, e))
-                                .build())))
+                        .setServiceResponse(writeProtobuf(fromServiceResponse().map(errorResponse(command, GRPC_SERVLET_ERROR, e))))
                         .build());
                 responseObserver.onCompleted();
                 clearServiceCallLoggingParameters();
             }
         }
 
-        void executeServiceChecked(GrpcRequest grpcRequest, StreamObserver<GrpcResponse> responseObserver) {
+        void executeServiceChecked(GrpcRequest grpcRequest, ServiceMethodCommand command, StreamObserver<GrpcResponse> responseObserver) {
             if (isNull(grpcRequest) || isNull(responseObserver)) {
                 throw new GrpcServletException(GRPC_SERVLET_INPUT_PARAMETERS_NULL);
             }
             Entity serviceRequestEntity = asEntity(readProtobuf(grpcRequest.getServiceRequest()));
-            putIfNotNull(REQUEST_VALUE_KEY, serviceRequestEntity);
-            ServiceMethodCommand serviceMethodCommand = toServiceRequest().map(asEntity(serviceRequestEntity)).getServiceMethodCommand();
-            String serviceId = serviceMethodCommand.getServiceId();
-            String serviceMethodId = serviceId + DOT + serviceMethodCommand.getMethodId() + BRACKETS;
+            String serviceId = command.getServiceId();
+            String serviceMethodId = command.getMethodId();
             GrpcServiceSpecification service = services.get(serviceId);
             if (isNull(service)) {
                 sendServiceNotExistsError(responseObserver, serviceId);
@@ -139,7 +132,6 @@ public class GrpcServletContainer extends GrpcServlet {
                 sendMethodNotExistsError(responseObserver, serviceMethodId);
                 return;
             }
-            ValueFromModelMapper<?, ? extends Value> responseMapper = cast(grpcMethod.responseMapper());
             for (ValueInterceptor<Entity, Entity> requestValueInterceptor : grpcMethod.requestValueInterceptors()) {
                 ValueInterceptionResult<Entity, Entity> result = requestValueInterceptor.intercept(serviceRequestEntity);
                 if (isNull(result)) {
@@ -150,16 +142,14 @@ public class GrpcServletContainer extends GrpcServlet {
                     break;
                 }
                 if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
-                    if (isNull(result.getOutValue()) || isNull(responseMapper)) {
+                    if (isNull(result.getOutValue())) {
                         responseObserver.onNext(newBuilder()
-                                .setServiceResponse(writeProtobuf(fromServiceResponse().map(ServiceResponse.builder().build())))
+                                .setServiceResponse(writeProtobuf(fromServiceResponse().map(okResponse(command))))
                                 .build());
                         responseObserver.onCompleted();
                         return;
                     }
-                    GrpcResponse grpcResponse = newBuilder()
-                            .setServiceResponse(writeProtobuf(result.getOutValue()))
-                            .build();
+                    GrpcResponse grpcResponse = newBuilder().setServiceResponse(writeProtobuf(result.getOutValue())).build();
                     responseObserver.onNext(grpcResponse);
                     responseObserver.onCompleted();
                     return;
@@ -172,7 +162,7 @@ public class GrpcServletContainer extends GrpcServlet {
             Entity serviceResponseEntity = fromServiceResponse.map(serviceResponse);
             ServiceExecutionException serviceException = serviceResponse.getServiceException();
             for (ValueInterceptor<Entity, Entity> responseValueInterceptor : grpcMethod.responseValueInterceptors()) {
-                ValueInterceptionResult<Entity, Entity> result = responseValueInterceptor.intercept(serviceRequestEntity);
+                ValueInterceptionResult<Entity, Entity> result = responseValueInterceptor.intercept(serviceResponseEntity);
                 if (isNull(result)) {
                     break;
                 }
@@ -207,9 +197,7 @@ public class GrpcServletContainer extends GrpcServlet {
                     .getLogger(GrpcServletContainer.class)
                     .error(errorMessage);
             responseObserver.onNext(newBuilder()
-                    .setServiceResponse(writeProtobuf(fromServiceResponse().map(ServiceResponse.builder()
-                            .serviceException(new ServiceExecutionException(GRPC_SERVICE_NOT_EXISTS_CODE, errorMessage))
-                            .build())))
+                    .setServiceResponse(writeProtobuf(fromServiceResponse().map(errorResponse(GRPC_SERVICE_NOT_EXISTS_CODE, errorMessage))))
                     .build());
             responseObserver.onCompleted();
         }
@@ -220,9 +208,7 @@ public class GrpcServletContainer extends GrpcServlet {
                     .getLogger(GrpcServletContainer.class)
                     .error(errorMessage);
             responseObserver.onNext(newBuilder()
-                    .setServiceResponse(writeProtobuf(fromServiceResponse().map(ServiceResponse.builder()
-                            .serviceException(new ServiceExecutionException(GRPC_METHOD_NOT_EXISTS_CODE, errorMessage))
-                            .build())))
+                    .setServiceResponse(writeProtobuf(fromServiceResponse().map(errorResponse(GRPC_METHOD_NOT_EXISTS_CODE, errorMessage))))
                     .build());
             responseObserver.onCompleted();
         }

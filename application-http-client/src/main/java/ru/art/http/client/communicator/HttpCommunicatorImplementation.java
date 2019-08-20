@@ -48,6 +48,8 @@ import static ru.art.http.client.module.HttpClientModule.httpClientModule;
 import static ru.art.http.constants.HttpMethodType.*;
 import java.nio.charset.Charset;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsynchronousCommunicator {
     private final BuilderValidator validator = new BuilderValidator(HttpCommunicator.class.getName());
@@ -131,7 +133,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public HttpCommunicator client(HttpClient client) {
-        configuration.setSyncClient(validator.notNullField(getOrElse(client, httpClientModule().getClient()), "syncClient"));
+        configuration.setSynchronousClient(validator.notNullField(getOrElse(client, httpClientModule().getClient()), "synchronousClient"));
         return this;
     }
 
@@ -250,13 +252,19 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public HttpAsynchronousCommunicator client(HttpAsyncClient client) {
-        configuration.setAsyncClient(validator.notNullField(client, "asyncClient"));
+        configuration.setAsynchronousClient(validator.notNullField(client, "asynchronousClient"));
+        return this;
+    }
+
+    @Override
+    public HttpAsynchronousCommunicator asynchronousFuturesExecutor(Executor executor) {
+        configuration.setAsynchronousFuturesExecutor(validator.notNullField(executor, "asynchronousFuturesExecutor"));
         return this;
     }
 
     @Override
     public <RequestType, ResponseType> HttpAsynchronousCommunicator completionHandler(HttpCommunicationResponseHandler<RequestType, ResponseType> handler) {
-        configuration.setResponseHandler(validator.notNullField(handler, "responseHandler"));
+        configuration.setCompletionHandler(validator.notNullField(handler, "responseHandler"));
         return this;
     }
 
@@ -273,10 +281,10 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     }
 
     @Override
-    public <RequestType> void executeAsynchronous(RequestType request) {
+    public <RequestType, ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronous(RequestType request) {
         configuration.setRequest(validator.notNullField(request, "request"));
         validator.validate();
-        executeAsynchronousHttpRequest(configuration);
+        return executeAsynchronousHttpRequest(configuration);
     }
 
     @Override
@@ -285,8 +293,8 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     }
 
     @Override
-    public void executeAsynchronous() {
+    public <ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronous() {
         validator.validate();
-        executeAsynchronousHttpRequest(configuration);
+        return executeAsynchronousHttpRequest(configuration);
     }
 }

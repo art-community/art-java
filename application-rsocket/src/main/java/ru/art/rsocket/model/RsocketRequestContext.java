@@ -33,14 +33,11 @@ import static reactor.core.publisher.Flux.just;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.entity.Value.asEntity;
-import static ru.art.logging.ThreadContextExtensions.putIfNotNull;
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.REACTIVE;
 import static ru.art.rsocket.constants.RsocketModuleConstants.REQUEST_DATA;
 import static ru.art.rsocket.extractor.EntityServiceCommandExtractor.extractServiceMethodCommand;
 import static ru.art.rsocket.model.RsocketReactiveMethods.fromCommand;
 import static ru.art.rsocket.reader.RsocketPayloadReader.readPayload;
-import static ru.art.service.ServiceModule.serviceModuleState;
-import static ru.art.service.constants.ServiceModuleConstants.REQUEST_VALUE_KEY;
 import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
 
 @Getter
@@ -63,8 +60,6 @@ public class RsocketRequestContext {
                     .rsocketReactiveMethods(rsocketServiceMethods)
                     .build();
         }
-        putIfNotNull(REQUEST_VALUE_KEY, requestDataValue);
-        serviceModuleState().setRequestValue(requestDataValue);
         Object requestData = requestMapper.map(cast(requestDataValue));
 
         ReactiveService.ReactiveMethod reactiveMethod = rsocketServiceMethods.getReactiveMethod();

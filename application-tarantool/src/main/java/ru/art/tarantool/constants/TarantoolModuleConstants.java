@@ -27,6 +27,7 @@ import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
 import java.util.List;
 
 public interface TarantoolModuleConstants {
+    String TARANTOOL = "tarantool";
     String TARANTOOL_MODULE_ID = "TARANTOOL_MODULE";
     List<String> DEFAULT_TARANTOOL_EXECUTABLE_COMMAND = isWindows()
             ? fixedArrayOf(WSL, "/usr/bin/tarantool")

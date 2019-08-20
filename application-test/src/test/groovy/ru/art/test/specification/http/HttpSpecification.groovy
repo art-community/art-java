@@ -22,7 +22,6 @@ import ru.art.core.caster.Caster
 import ru.art.entity.Entity
 import spock.lang.Specification
 
-import static java.util.Objects.isNull
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.core.constants.NetworkConstants.LOCALHOST
 import static ru.art.entity.Entity.concat
@@ -75,14 +74,10 @@ class HttpSpecification extends Specification {
                 .post()
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-        def asyncResponse = null
-        communicator.asynchronous()
+        def asyncResponse = communicator.asynchronous()
                 .exceptionHandler { println it }
-                .completionHandler { req, resp -> asyncResponse = resp }
                 .executeAsynchronous()
-        while (isNull(asyncResponse)) {
-
-        }
+                .get()
 
         then:
         asyncResponse.get() == this.response
@@ -92,15 +87,10 @@ class HttpSpecification extends Specification {
                 .post()
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-        def asyncResponseWithReq = null
-        communicator.asynchronous()
+        def asyncResponseWithReq =  communicator.asynchronous()
                 .exceptionHandler { println it }
-                .completionHandler { req, resp -> asyncResponseWithReq = resp }
                 .executeAsynchronous(request)
-        while (isNull(asyncResponseWithReq)) {
-
-        }
-
+                .get()
         then:
         (asyncResponseWithReq.get() as Entity) == concat(request, this.response)
     }
