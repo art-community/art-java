@@ -32,9 +32,6 @@ import ru.art.soap.server.model.SoapResponse;
 import ru.art.soap.server.model.SoapService;
 import ru.art.soap.server.model.SoapService.SoapOperation;
 import ru.art.soap.server.specification.SoapServiceSpecification;
-
-import java.util.Map;
-
 import static java.util.Objects.nonNull;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
@@ -46,15 +43,15 @@ import static ru.art.soap.server.constans.SoapServerModuleConstants.ResponseFaul
 import static ru.art.soap.server.constans.SoapServerModuleConstants.SOAP_SERVICE_URL;
 import static ru.art.soap.server.module.SoapServerModule.soapServerModule;
 import static ru.art.soap.server.normalizer.WsdlPathNormalizer.normalizeUrlPath;
+import java.util.Map;
 
 @UtilityClass
 public class SoapExecutionService {
-    public static <RequestType, ResponseType> ResponseType executeSoapService(SoapServiceSpecification soapServiceSpecification, RequestType soapRequest) {
+    public static SoapResponse executeSoapService(SoapServiceSpecification soapServiceSpecification, SoapRequest soapRequest) {
         SoapService soapService = soapServiceSpecification.getSoapService();
         Map<String, SoapOperation> operationServiceSpecifications = soapService.getSoapOperations();
-        SoapRequest request = cast(soapRequest);
-        SoapOperation soapOperation = operationServiceSpecifications.get(request.getOperationId());
-        Object requestObject = soapOperation.requestMapper().map(request.getEntity());
+        SoapOperation soapOperation = operationServiceSpecifications.get(soapRequest.getOperationId());
+        Object requestObject = soapOperation.requestMapper().map(soapRequest.getEntity());
         Object responseObject;
         Map<Class<? extends Throwable>, XmlEntityFromModelMapper<?>> faultMapping = soapOperation.faultMapping();
         try {
@@ -68,26 +65,26 @@ public class SoapExecutionService {
             if (nonNull(exception = serviceResponse.getServiceException())) {
                 XmlEntityFromModelMapper<?> faultMapper;
                 if (isNotEmpty(faultMapper = faultMapping.get(((Throwable) exception).getClass()))) {
-                    return cast(SoapResponse.builder().xmlEntity(faultMapper.map(cast((Throwable) exception))).build());
+                    return SoapResponse.builder().xmlEntity(faultMapper.map(cast((Throwable) exception))).build();
                 }
                 if (isNotEmpty(faultMapper = soapService.getDefaultFaultMapper())) {
-                    return cast(SoapResponse.builder().xmlEntity(cast(faultMapper.map(cast(soapService.getDefaultFaultResponse())))).build());
+                    return SoapResponse.builder().xmlEntity(cast(faultMapper.map(cast(soapService.getDefaultFaultResponse())))).build();
                 }
                 faultMapper = soapServerModule().getDefaultFaultMapper();
-                return cast(SoapResponse.builder().xmlEntity(faultMapper.map(cast(soapServerModule().getDefaultFaultResponse()))).build());
+                return SoapResponse.builder().xmlEntity(faultMapper.map(cast(soapServerModule().getDefaultFaultResponse()))).build();
             }
             responseObject = serviceResponse.getResponseData();
-            return cast(SoapResponse.builder().xmlEntity(soapOperation.responseMapper().map(cast(responseObject))).build());
+            return SoapResponse.builder().xmlEntity(soapOperation.responseMapper().map(cast(responseObject))).build();
         } catch (Throwable exception) {
             XmlEntityFromModelMapper<?> faultMapper;
             if (isNotEmpty(faultMapper = faultMapping.get(exception.getClass()))) {
-                return cast(SoapResponse.builder().xmlEntity(faultMapper.map(cast(exception))).build());
+                return SoapResponse.builder().xmlEntity(faultMapper.map(cast(exception))).build();
             }
             if (isNotEmpty(faultMapper = soapService.getDefaultFaultMapper())) {
-                return cast(SoapResponse.builder().xmlEntity(cast(faultMapper.map(cast(soapService.getDefaultFaultResponse())))).build());
+                return SoapResponse.builder().xmlEntity(cast(faultMapper.map(cast(soapService.getDefaultFaultResponse())))).build();
             }
             faultMapper = soapServerModule().getDefaultFaultMapper();
-            return cast(SoapResponse.builder().xmlEntity(faultMapper.map(cast(soapServerModule().getDefaultFaultResponse()))).build());
+            return SoapResponse.builder().xmlEntity(faultMapper.map(cast(soapServerModule().getDefaultFaultResponse()))).build();
         }
     }
 

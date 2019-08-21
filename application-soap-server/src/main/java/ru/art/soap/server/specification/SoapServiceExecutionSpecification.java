@@ -36,8 +36,10 @@ import static ru.art.service.ServiceModuleConfiguration.ServiceRegistry;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
 import static ru.art.soap.server.mapper.SoapMapper.soapRequestToModelMapper;
 import static ru.art.soap.server.mapper.SoapMapper.soapResponseFromModelMapper;
+import static ru.art.soap.server.model.SoapService.SoapOperation;
 import static ru.art.soap.server.service.SoapExecutionService.executeSoapService;
 import static ru.art.soap.server.service.SoapExecutionService.getWsdl;
+import java.util.Collection;
 
 @Getter
 public class SoapServiceExecutionSpecification implements HttpServiceSpecification {
@@ -64,17 +66,26 @@ public class SoapServiceExecutionSpecification implements HttpServiceSpecificati
     @SuppressWarnings("all")
     private HttpServiceBuilder addExecuteSoapServiceOperation(HttpServiceBuilder builder) {
         SoapService soapService = soapServiceSpecification.getSoapService();
+        soapService.getRequestInterceptors().forEach(builder::addRequestInterceptor);
+        soapService.getResponseInterceptors().forEach(builder::addResponseInterceptor);
         HttpMethodWithBodyBuilder methodWithBodyBuilder = builder.post(EXECUTE_SOAP_SERVICE)
                 .consumes(soapService.getConsumes().toHttpMimeToContentTypeMapper());
-        if (soapServiceSpecification.getSoapService().isIgnoreRequestContentType()) {
+        if (soapService.isIgnoreRequestContentType()) {
             methodWithBodyBuilder = methodWithBodyBuilder.ignoreRequestContentType();
         }
-        HttpMethodResponseBuilder methodResponseBuilder = methodWithBodyBuilder
+        final HttpMethodResponseBuilder methodResponseBuilder = methodWithBodyBuilder
                 .fromBody()
                 .requestMapper(soapRequestToModelMapper);
-        if (soapServiceSpecification.getSoapService().isIgnoreRequestAcceptType()) {
-            methodResponseBuilder = methodResponseBuilder.ignoreRequestAcceptType();
+        if (soapService.isIgnoreRequestAcceptType()) {
+            methodResponseBuilder.ignoreRequestAcceptType();
         }
+        Collection<SoapOperation> soapOperations = soapService.getSoapOperations().values();
+        soapOperations.forEach(operation -> operation.requestInterceptors().forEach(methodResponseBuilder::addRequestInterceptor));
+        soapOperations.forEach(operation -> operation.responseInterceptors().forEach(methodResponseBuilder::addResponseInterceptor));
+        soapOperations.forEach(operation -> operation.requestValueInterceptors()
+                .forEach(interceptor -> methodResponseBuilder.addRequestValueInterceptor(cast(interceptor))));
+        soapOperations.forEach(operation -> operation.responseValueInterceptors()
+                .forEach(interceptor -> methodResponseBuilder.addResponseValueInterceptor(cast(interceptor))));
         return methodResponseBuilder.produces(soapService.getProduces().toHttpMimeToContentTypeMapper())
                 .responseMapper(soapResponseFromModelMapper)
                 .listen(soapService.getPath());

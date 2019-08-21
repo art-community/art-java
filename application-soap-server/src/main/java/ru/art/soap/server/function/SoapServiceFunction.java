@@ -18,18 +18,20 @@
 
 package ru.art.soap.server.function;
 
+import ru.art.entity.XmlEntity;
 import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper.XmlEntityToModelMapper;
+import ru.art.http.server.interceptor.HttpServerInterceptor;
 import ru.art.service.constants.RequestValidationPolicy;
 import ru.art.soap.content.mapper.SoapMimeToContentTypeMapper;
 import ru.art.soap.server.specification.SoapFunctionalServiceSpecification;
 import ru.art.soap.server.specification.SoapServiceExecutionSpecification;
 import static ru.art.core.caster.Caster.cast;
-import static ru.art.service.ServiceModule.*;
+import static ru.art.service.ServiceModule.serviceModule;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.EXECUTE_SOAP_FUNCTION;
 import static ru.art.soap.server.model.SoapService.*;
-import static ru.art.soap.server.model.SoapService.SoapOperation.*;
+import static ru.art.soap.server.model.SoapService.SoapOperation.soapOperation;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -46,6 +48,17 @@ public class SoapServiceFunction {
         this.operationId = operationId;
         soapOperation = soapOperation().methodId(EXECUTE_SOAP_FUNCTION);
     }
+
+    public SoapServiceFunction addRequestInterceptor(HttpServerInterceptor interceptor) {
+        soapService.addRequestInterceptor(interceptor);
+        return this;
+    }
+
+    public SoapServiceFunction addResponseInterceptor(HttpServerInterceptor interceptor) {
+        soapService.addResponseInterceptor(interceptor);
+        return this;
+    }
+
 
     public SoapServiceFunction wsdlServiceUrl(String serviceUrl) {
         soapService.wsdlServiceUrl(serviceUrl);
@@ -107,12 +120,22 @@ public class SoapServiceFunction {
         return this;
     }
 
-    public SoapServiceFunction addRequestValueInterceptor(ValueInterceptor interceptor) {
+    public SoapServiceFunction addOperationRequestInterceptor(HttpServerInterceptor interceptor) {
+        soapOperation.addRequestInterceptor(interceptor);
+        return this;
+    }
+
+    public SoapServiceFunction addOperationResponseInterceptor(HttpServerInterceptor interceptor) {
+        soapOperation.addResponseInterceptor(interceptor);
+        return this;
+    }
+
+    public SoapServiceFunction addRequestValueInterceptor(ValueInterceptor<XmlEntity, XmlEntity> interceptor) {
         soapOperation.addRequestValueInterceptor(interceptor);
         return this;
     }
 
-    public SoapServiceFunction addResponseValueInterceptor(ValueInterceptor interceptor) {
+    public SoapServiceFunction addResponseValueInterceptor(ValueInterceptor<XmlEntity, XmlEntity> interceptor) {
         soapOperation.addResponseValueInterceptor(interceptor);
         return this;
     }

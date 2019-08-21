@@ -20,9 +20,11 @@ package ru.art.soap.server.model;
 
 import lombok.*;
 import lombok.experimental.Accessors;
+import ru.art.entity.XmlEntity;
 import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper.XmlEntityToModelMapper;
+import ru.art.http.server.interceptor.HttpServerInterceptor;
 import ru.art.service.constants.RequestValidationPolicy;
 import ru.art.soap.content.mapper.SoapMimeToContentTypeMapper;
 import static java.lang.Integer.MAX_VALUE;
@@ -45,6 +47,9 @@ public class SoapService {
     private XmlEntityFromModelMapper<?> defaultFaultMapper;
     private final SoapMimeToContentTypeMapper consumes;
     private final SoapMimeToContentTypeMapper produces;
+    private List<HttpServerInterceptor> requestInterceptors;
+    private List<HttpServerInterceptor> responseInterceptors;
+
 
     public static SoapServiceBuilder soapService() {
         return new SoapServiceBuilder();
@@ -58,8 +63,10 @@ public class SoapService {
         private XmlEntityToModelMapper<?> requestMapper;
         private XmlEntityFromModelMapper<?> responseMapper;
         private RequestValidationPolicy validationPolicy = RequestValidationPolicy.NON_VALIDATABLE;
-        private List<ValueInterceptor> requestValueInterceptors = linkedListOf();
-        private List<ValueInterceptor> responseValueInterceptors = linkedListOf();
+        private List<HttpServerInterceptor> requestInterceptors = linkedListOf();
+        private List<HttpServerInterceptor> responseInterceptors = linkedListOf();
+        private List<ValueInterceptor<XmlEntity, XmlEntity>> requestValueInterceptors = linkedListOf();
+        private List<ValueInterceptor<XmlEntity, XmlEntity>> responseValueInterceptors = linkedListOf();
         private Map<Class<? extends Throwable>, XmlEntityFromModelMapper<?>> faultMapping = mapOf();
         private String methodId;
 
@@ -68,12 +75,22 @@ public class SoapService {
             return this;
         }
 
-        public SoapOperation addRequestValueInterceptor(ValueInterceptor interceptor) {
+        public SoapOperation addRequestInterceptor(HttpServerInterceptor interceptor) {
+            requestInterceptors.add(interceptor);
+            return this;
+        }
+
+        public SoapOperation addResponseInterceptor(HttpServerInterceptor interceptor) {
+            responseInterceptors.add(interceptor);
+            return this;
+        }
+
+        public SoapOperation addRequestValueInterceptor(ValueInterceptor<XmlEntity, XmlEntity> interceptor) {
             requestValueInterceptors.add(interceptor);
             return this;
         }
 
-        public SoapOperation addResponseValueInterceptor(ValueInterceptor interceptor) {
+        public SoapOperation addResponseValueInterceptor(ValueInterceptor<XmlEntity, XmlEntity> interceptor) {
             responseValueInterceptors.add(interceptor);
             return this;
         }
@@ -91,6 +108,8 @@ public class SoapService {
         private XmlEntityFromModelMapper<?> defaultFaultMapper;
         private SoapMimeToContentTypeMapper consumes = textXml();
         private SoapMimeToContentTypeMapper produces = textXml();
+        private List<HttpServerInterceptor> requestInterceptors = linkedListOf();
+        private List<HttpServerInterceptor> responseInterceptors = linkedListOf();
 
         public SoapServiceBuilder operation(@NonNull String operationKey, @NonNull SoapOperation operationValue) {
             if (this.soapOperations$key == null) {
@@ -99,6 +118,16 @@ public class SoapService {
             }
             this.soapOperations$key.add(operationKey);
             this.soapOperations$value.add(operationValue);
+            return this;
+        }
+
+        public SoapServiceBuilder addRequestInterceptor(HttpServerInterceptor interceptor) {
+            requestInterceptors.add(interceptor);
+            return this;
+        }
+
+        public SoapServiceBuilder addResponseInterceptor(HttpServerInterceptor interceptor) {
+            responseInterceptors.add(interceptor);
             return this;
         }
 
@@ -170,7 +199,9 @@ public class SoapService {
                     ignoreRequestContentType,
                     defaultFaultMapper,
                     consumes,
-                    produces);
+                    produces,
+                    requestInterceptors,
+                    responseInterceptors);
         }
     }
 }
