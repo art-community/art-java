@@ -55,8 +55,8 @@ public interface HttpModuleConfiguration extends ModuleConfiguration {
 
     @Getter
     class HttpModuleDefaultConfiguration implements HttpModuleConfiguration {
-        private final boolean enableRawDataTracing = true;
-        private final boolean enableValueTracing = true;
+        private final boolean enableRawDataTracing = false;
+        private final boolean enableValueTracing = false;
         private final boolean enableMetricsMonitoring = true;
         private final MimeToContentTypeMapper consumesMimeTypeMapper = applicationJsonUtf8();
         private final MimeToContentTypeMapper producesMimeTypeMapper = applicationJsonUtf8();

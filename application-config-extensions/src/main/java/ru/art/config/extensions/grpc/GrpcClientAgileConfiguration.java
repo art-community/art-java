@@ -51,8 +51,8 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
 
     @Override
     public void refresh() {
-        enableRawDataTracing = configBoolean(GRPC_SERVER_CONFIG_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
-        enableValueTracing = configBoolean(GRPC_SERVER_CONFIG_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
+        enableRawDataTracing = configBoolean(GRPC_COMMUNICATION_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
+        enableValueTracing = configBoolean(GRPC_COMMUNICATION_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         timeout = configLong(GRPC_COMMUNICATION_SECTION_ID, TIMEOUT_MILLIS, super.getTimeout());
         overridingExecutor = new ForkJoinPool(configInt(GRPC_COMMUNICATION_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE));
         balancerHost = configString(GRPC_BALANCER_SECTION_ID, HOST, super.getBalancerHost());

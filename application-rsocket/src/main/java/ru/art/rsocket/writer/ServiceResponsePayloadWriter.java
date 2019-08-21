@@ -37,11 +37,12 @@ import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.constants.InterceptionStrategy.PROCESS_HANDLING;
 import static ru.art.core.constants.InterceptionStrategy.STOP_HANDLING;
 import static ru.art.rsocket.constants.RsocketModuleConstants.REACTIVE_SERVICE_EXCEPTION_ERROR_CODE;
+import static ru.art.rsocket.processor.ResponseValueInterceptorProcessor.processResponseValueInterceptors;
 import static ru.art.rsocket.writer.RsocketPayloadWriter.writePayload;
 import static ru.art.service.factory.ServiceResponseFactory.okResponse;
 import static ru.art.service.mapping.ServiceResponseMapping.fromServiceResponse;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @UtilityClass
 public class ServiceResponsePayloadWriter {
@@ -76,8 +77,9 @@ public class ServiceResponsePayloadWriter {
                 never() :
                 from(cast(serviceResponse.getResponseData()))
                         .map(response -> fromServiceResponse(responseMapper).map(cast(okResponse(serviceResponse.getCommand(), response))))
-                        .map(responseValue -> processResponseValueInterceptors(rsocketMethod, responseValue))
-                        .filter(Objects::nonNull)
+                        .map(responseValue -> processResponseValueInterceptors(responseValue, rsocketMethod.responseValueInterceptors()))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
                         .map(responseValue -> writePayload(responseValue, dataFormat))
                         .onErrorResume(error -> just(writePayload(fromServiceResponse(responseMapper)
                                 .map(cast(ServiceResponse.builder()
@@ -87,21 +89,4 @@ public class ServiceResponsePayloadWriter {
                                         .build())), dataFormat)));
     }
 
-    private static Entity processResponseValueInterceptors(RsocketMethod rsocketMethod, Entity responseValue) {
-        List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = rsocketMethod.responseValueInterceptors();
-        for (ValueInterceptor<Entity, Entity> responseValueInterceptor : responseValueInterceptors) {
-            ValueInterceptionResult<Entity, Entity> result = responseValueInterceptor.intercept(responseValue);
-            if (isNull(result)) {
-                break;
-            }
-            responseValue = result.getOutValue();
-            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
-                break;
-            }
-            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
-                return result.getOutValue();
-            }
-        }
-        return responseValue;
-    }
 }

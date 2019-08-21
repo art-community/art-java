@@ -75,8 +75,8 @@ public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
 
     @Getter
     class GrpcClientModuleDefaultConfiguration implements GrpcClientModuleConfiguration {
-        private final boolean enableRawDataTracing = true;
-        private final boolean enableValueTracing = true;
+        private final boolean enableRawDataTracing = false;
+        private final boolean enableValueTracing = false;
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ClientInterceptor> interceptors = initializeInterceptors();
         private final Executor asynchronousFuturesExecutor = commonPool();

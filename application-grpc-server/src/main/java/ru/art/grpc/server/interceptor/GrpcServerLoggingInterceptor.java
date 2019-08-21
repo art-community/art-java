@@ -18,12 +18,10 @@
 
 package ru.art.grpc.server.interceptor;
 
+import io.grpc.*;
+import io.grpc.ForwardingServerCall.SimpleForwardingServerCall;
 import io.grpc.ForwardingServerCallListener.SimpleForwardingServerCallListener;
-import io.grpc.Metadata;
-import io.grpc.ServerCall;
 import io.grpc.ServerCall.Listener;
-import io.grpc.ServerCallHandler;
-import io.grpc.ServerInterceptor;
 import org.apache.logging.log4j.Logger;
 import ru.art.logging.ProtocolCallLoggingParameters;
 import static io.grpc.Metadata.ASCII_STRING_MARSHALLER;
@@ -54,10 +52,29 @@ public class GrpcServerLoggingInterceptor implements ServerInterceptor {
                 .requestId(randomUUID().toString())
                 .traceId(isEmpty(traceIdHeader) ? randomUUID().toString() : traceIdHeader)
                 .build());
-        return new SimpleForwardingServerCallListener<ReqT>(serverCallHandler.startCall(serverCall, metadata)) {
+        logger.info(format(GRPC_ON_REQUEST_HEADERS, emptyIfNull(metadata.toString())));
+        return new SimpleForwardingServerCallListener<ReqT>(serverCallHandler.startCall(new SimpleForwardingServerCall<ReqT, RespT>(serverCall) {
+            @Override
+            public void sendMessage(RespT message) {
+                logger.info(format(GRPC_ON_RESPONSE_MESSAGE, emptyIfNull(message)));
+                super.sendMessage(message);
+            }
+
+            @Override
+            public void sendHeaders(Metadata headers) {
+                logger.info(format(GRPC_ON_RESPONSE_HEADERS, emptyIfNull(metadata.toString())));
+                super.sendHeaders(headers);
+            }
+
+            @Override
+            public void close(Status status, Metadata trailers) {
+                logger.info(format(GRPC_ON_CLOSE, emptyIfNull(metadata.toString())));
+                super.close(status, trailers);
+            }
+        }, metadata)) {
             @Override
             public void onMessage(ReqT message) {
-                logger.trace(format(GRPC_ON_MESSAGE, emptyIfNull(message)));
+                logger.info(format(GRPC_ON_REQUEST_MESSAGE, emptyIfNull(message)));
                 super.onMessage(message);
             }
 

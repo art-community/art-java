@@ -48,14 +48,16 @@ import static reactor.core.publisher.Mono.just;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
+import static ru.art.entity.Value.asEntity;
 import static ru.art.logging.LoggingModule.loggingModule;
 import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.INVALID_RSOCKET_COMMUNICATION_CONFIGURATION;
 import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.UNSUPPORTED_TRANSPORT;
 import static ru.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE;
 import static ru.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
-import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.*;
+import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.rsocketCommunicationTarget;
 import static ru.art.rsocket.module.RsocketModule.rsocketModule;
+import static ru.art.rsocket.processor.ResponseValueInterceptorProcessor.processResponseValueInterceptors;
 import static ru.art.rsocket.reader.RsocketPayloadReader.readPayload;
 import static ru.art.rsocket.selector.RsocketDataFormatMimeTypeConverter.toMimeType;
 import static ru.art.rsocket.writer.ServiceRequestPayloadWriter.writeServiceRequestPayload;
@@ -172,8 +174,8 @@ public class RsocketCommunicator {
         validator.validate();
         validateRequiredFields();
         return socket.flatMap(rsocket -> rsocket
-                .fireAndForget(writeServiceRequestPayload(fromServiceRequest().map(newServiceRequest(command)),
-                        requestValueInterceptors, dataFormat)));
+                .fireAndForget(writeServiceRequestPayload(fromServiceRequest()
+                        .map(newServiceRequest(command)), requestValueInterceptors, dataFormat)));
     }
 
     public <ResponseType> Mono<ServiceResponse<ResponseType>> execute() {
@@ -184,6 +186,9 @@ public class RsocketCommunicator {
                 .requestResponse(writeServiceRequestPayload(fromServiceRequest().map(newServiceRequest(command)),
                         requestValueInterceptors, dataFormat)))
                 .map(responsePayload -> ofNullable(readPayload(responsePayload, dataFormat)))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(responseValue -> processResponseValueInterceptors(asEntity(responseValue), responseValueInterceptors))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue))));
@@ -204,6 +209,9 @@ public class RsocketCommunicator {
                 .map(responsePayload -> ofNullable(readPayload(responsePayload, dataFormat)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
+                .map(responseValue -> processResponseValueInterceptors(asEntity(responseValue), responseValueInterceptors))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue))));
     }
 
@@ -212,7 +220,7 @@ public class RsocketCommunicator {
         validateRequiredFields();
         ValueFromModelMapper<?, ? extends Value> requestModelMapper = cast(requestMapper);
         Payload requestPayload = writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
-                .map(newServiceRequest(command)), requestValueInterceptors, dataFormat);
+                .map(newServiceRequest(command, request)), requestValueInterceptors, dataFormat);
         return socket.flatMap(rsocket -> rsocket.fireAndForget(requestPayload));
     }
 
@@ -223,10 +231,13 @@ public class RsocketCommunicator {
         ValueFromModelMapper<?, ? extends Value> requestModelMapper = cast(requestMapper);
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
         Payload requestPayload = writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
-                .map(newServiceRequest(command)), requestValueInterceptors, dataFormat);
+                .map(newServiceRequest(command, request)), requestValueInterceptors, dataFormat);
         Mono<Payload> requestResponse = socket.flatMap(rsocket -> rsocket.requestResponse(requestPayload));
         return requestResponse
                 .map(responsePayload -> ofNullable(readPayload(responsePayload, dataFormat)))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(responseValue -> processResponseValueInterceptors(asEntity(responseValue), responseValueInterceptors))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue))));
@@ -239,12 +250,15 @@ public class RsocketCommunicator {
         ValueFromModelMapper<?, ? extends Value> requestModelMapper = cast(requestMapper);
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
         Payload requestPayload = writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
-                .map(newServiceRequest(command)), requestValueInterceptors, dataFormat);
+                .map(newServiceRequest(command, request)), requestValueInterceptors, dataFormat);
         if (isNull(responseModelMapper)) {
             return empty();
         }
         return socket.flatMapMany(rsocket -> rsocket.requestStream(requestPayload)
                 .map(responsePayload -> ofNullable(readPayload(responsePayload, dataFormat)))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(responseValue -> processResponseValueInterceptors(asEntity(responseValue), responseValueInterceptors))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue)))));
@@ -261,8 +275,11 @@ public class RsocketCommunicator {
         return socket.flatMapMany(rsocket -> rsocket.requestChannel(from(request)
                 .filter(Objects::nonNull)
                 .map(requestData -> writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
-                        .map(newServiceRequest(command)), requestValueInterceptors, dataFormat)))
+                        .map(newServiceRequest(command, requestData)), requestValueInterceptors, dataFormat)))
                 .map(requestPayload -> ofNullable(readPayload(requestPayload, dataFormat)))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(responseValue -> processResponseValueInterceptors(asEntity(responseValue), responseValueInterceptors))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue)))));

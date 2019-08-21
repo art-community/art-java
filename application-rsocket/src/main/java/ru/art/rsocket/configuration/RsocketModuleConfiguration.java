@@ -90,8 +90,8 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
         private final int balancerTcpPort = DEFAULT_RSOCKET_TCP_PORT;
         private final int balancerWebSocketPort = DEFAULT_RSOCKET_WEB_SOCKET_PORT;
         private final boolean resumableAcceptor = true;
-        private final boolean enableRawDataTracing = true;
-        private final boolean enableValueTracing = true;
+        private final boolean enableRawDataTracing = false;
+        private final boolean enableValueTracing = false;
         @Getter(lazy = true)
         private final List<RSocketInterceptor> requesterInterceptors = initializeInterceptors();
         @Getter(lazy = true)

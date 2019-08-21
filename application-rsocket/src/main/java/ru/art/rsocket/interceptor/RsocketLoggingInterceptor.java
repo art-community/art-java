@@ -28,7 +28,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.annotation.NonNull;
 import static java.text.MessageFormat.format;
-import static reactor.core.publisher.Flux.*;
+import static reactor.core.publisher.Flux.from;
 import static ru.art.logging.LoggingModule.loggingModule;
 import static ru.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 

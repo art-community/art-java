@@ -22,8 +22,7 @@ import lombok.Getter;
 import ru.art.rsocket.configuration.RsocketModuleConfiguration.RsocketModuleDefaultConfiguration;
 import ru.art.rsocket.model.RsocketCommunicationTargetConfiguration;
 import static ru.art.config.extensions.ConfigExtensions.*;
-import static ru.art.config.extensions.common.CommonConfigKeys.HOST;
-import static ru.art.config.extensions.common.CommonConfigKeys.TARGETS;
+import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.rsocket.RsocketConfigKeys.*;
 import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
 import static ru.art.core.context.Context.context;
@@ -45,6 +44,8 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
     private int balancerTcpPort;
     private int balancerWebSocketPort;
     private Map<String, RsocketCommunicationTargetConfiguration> communicationTargets;
+    private boolean enableRawDataTracing;
+    private boolean enableValueTracing;
 
     public RsocketAgileConfiguration() {
         refresh();
@@ -52,6 +53,8 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
 
     @Override
     public void refresh() {
+        enableRawDataTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
+        enableValueTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         dataFormat = ifException(() -> RsocketDataFormat.valueOf(configString(RSOCKET_SECTION_ID, DATA_FORMAT).toUpperCase()), super.getDataFormat());
         String newAcceptorHost = configString(RSOCKET_ACCEPTOR_SECTION_ID, HOST, super.getAcceptorHost());
         boolean restart = !acceptorHost.equals(newAcceptorHost);

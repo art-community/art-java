@@ -60,6 +60,7 @@ import static ru.art.logging.LoggingParametersManager.putServiceCallLoggingParam
 import static ru.art.protobuf.descriptor.ProtobufEntityReader.readProtobuf;
 import static ru.art.protobuf.descriptor.ProtobufEntityWriter.writeProtobuf;
 import static ru.art.service.ServiceController.executeServiceMethodUnchecked;
+import static ru.art.service.constants.RequestValidationPolicy.NON_VALIDATABLE;
 import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
 import static ru.art.service.factory.ServiceResponseFactory.errorResponse;
 import static ru.art.service.factory.ServiceResponseFactory.okResponse;
@@ -161,8 +162,8 @@ public class GrpcServletContainer extends GrpcServlet {
             EntityToModelMapper<ServiceRequest<?>> toServiceRequest = cast(toServiceRequest(cast(grpcMethod.requestMapper())));
             ServiceRequest<?> mappedServiceRequest = toServiceRequest.map(asEntity(serviceRequestEntity));
             ServiceRequest<?> serviceRequest = isEmpty(serviceRequestEntity.getValue(REQUEST_DATA)) || isNull(grpcMethod.requestMapper())
-                    ? newServiceRequest(command, grpcMethod.validationPolicy())
-                    : newServiceRequest(command, mappedServiceRequest.getRequestData(), grpcMethod.validationPolicy());
+                    ? newServiceRequest(command, getOrElse(grpcMethod.validationPolicy(), NON_VALIDATABLE))
+                    : newServiceRequest(command, mappedServiceRequest.getRequestData(), getOrElse(grpcMethod.validationPolicy(), NON_VALIDATABLE));
             ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);
             EntityFromModelMapper<ServiceResponse<?>> fromServiceResponse = cast(fromServiceResponse(cast(grpcMethod.responseMapper())));
             Entity serviceResponseEntity = fromServiceResponse.map(serviceResponse);

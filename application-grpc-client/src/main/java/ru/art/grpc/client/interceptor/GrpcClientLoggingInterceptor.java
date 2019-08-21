@@ -19,46 +19,62 @@
 package ru.art.grpc.client.interceptor;
 
 import io.grpc.*;
+import org.apache.logging.log4j.Logger;
 import static java.text.MessageFormat.format;
 import static ru.art.grpc.client.constants.GrpcClientModuleConstants.*;
 import static ru.art.logging.LoggingModule.loggingModule;
+import javax.annotation.Nullable;
 
 public class GrpcClientLoggingInterceptor implements ClientInterceptor {
+
+    private final Logger logger = loggingModule()
+            .getLogger(GrpcClientLoggingInterceptor.class);
+
     @Override
     public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(MethodDescriptor<ReqT, RespT> methodDescriptor, CallOptions callOptions, Channel channel) {
         return new ForwardingClientCall.SimpleForwardingClientCall<ReqT, RespT>(channel.newCall(methodDescriptor, callOptions)) {
+            @Override
+            public void sendMessage(ReqT message) {
+                logger.info(format(GRPC_ON_REQUEST_MESSAGE, message));
+                super.sendMessage(message);
+            }
+
+            @Override
+            public void cancel(@Nullable String message, @Nullable Throwable cause) {
+                logger.error(format(GRPC_ON_CANCEL, message, cause));
+                super.cancel(message, cause);
+            }
+
+            @Override
+            public void halfClose() {
+                logger.info(GRPC_ON_HALF_CLOSE);
+                super.halfClose();
+            }
+
             @Override
             public void start(Listener<RespT> responseListener, Metadata headers) {
                 super.start(new Listener<RespT>() {
                     @Override
                     public void onHeaders(Metadata headers) {
-                        loggingModule()
-                                .getLogger(GrpcClientLoggingInterceptor.class)
-                                .info(format(GRPC_ON_HEADERS, headers.toString()));
+                        logger.info(format(GRPC_ON_RESPONSE_HEADERS, headers.toString()));
                         responseListener.onHeaders(headers);
                     }
 
                     @Override
                     public void onMessage(RespT message) {
-                        loggingModule()
-                                .getLogger(GrpcClientLoggingInterceptor.class)
-                                .trace(format(GRPC_ON_MESSAGE, message));
+                        logger.info(format(GRPC_ON_RESPONSE_MESSAGE, message));
                         responseListener.onMessage(message);
                     }
 
                     @Override
                     public void onClose(Status status, Metadata trailers) {
-                        loggingModule()
-                                .getLogger(GrpcClientLoggingInterceptor.class)
-                                .info(format(GRPC_ON_CLOSE, status.toString(), trailers.toString()));
+                        logger.info(format(GRPC_ON_CLOSE, status.toString(), trailers.toString()));
                         responseListener.onClose(status, trailers);
                     }
 
                     @Override
                     public void onReady() {
-                        loggingModule()
-                                .getLogger(GrpcClientLoggingInterceptor.class)
-                                .info(GRPC_ON_READY);
+                        logger.info(GRPC_ON_READY);
                         responseListener.onReady();
                     }
                 }, headers);

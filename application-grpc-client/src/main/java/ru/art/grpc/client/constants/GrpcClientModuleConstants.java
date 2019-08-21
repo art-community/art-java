@@ -24,9 +24,11 @@ public interface GrpcClientModuleConstants {
     String TRACE_ID_HEADER = "TRACE_ID";
     long DEFAULT_TIMEOUT = 10000L;
     int DEFAULT_GRPC_PORT = 8000;
-    String GRPC_ON_HEADERS = "GRPC onHeaders() headers: ''{0}''";
-    String GRPC_ON_MESSAGE = "GRPC onMessage() message:\n''{0}''";
     String GRPC_ON_CLOSE = "GRPC onClose() status: ''{0}'', metadata: ''{1}''";
     String GRPC_ON_READY = "GRPC onReady()";
-
+    String GRPC_ON_REQUEST_MESSAGE = "GRPC onMessage() request message:\n''{0}''";
+    String GRPC_ON_RESPONSE_MESSAGE = "GRPC onMessage() response message:\n''{0}''";
+    String GRPC_ON_HALF_CLOSE = "GRPC onHalfClose()";
+    String GRPC_ON_CANCEL = "GRPC onCancel() message: ''{0}'', cause: ''{1}''";
+    String GRPC_ON_RESPONSE_HEADERS = "GRPC onHeaders() response headers: ''{0}''";
 }

@@ -80,8 +80,8 @@ public interface GrpcServerModuleConfiguration extends ModuleConfiguration {
         private final int maxInboundMessageSize = DEFAULT_MAX_INBOUND_MESSAGE_SIZE;
         private final int handshakeTimeout = DEFAULT_HANDSHAKE_TIMEOUT;
         private final int port = findAvailableTcpPort();
-        private final boolean enableRawDataTracing = true;
-        private final boolean enableValueTracing = true;
+        private final boolean enableRawDataTracing = false;
+        private final boolean enableValueTracing = false;
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = initializeValueInterceptors();
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
