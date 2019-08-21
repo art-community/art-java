@@ -31,7 +31,7 @@ import static ru.art.core.caster.Caster.cast;
 import static ru.art.service.ServiceModule.serviceModule;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.EXECUTE_SOAP_FUNCTION;
 import static ru.art.soap.server.model.SoapService.*;
-import static ru.art.soap.server.model.SoapService.SoapOperation.soapOperation;
+import static ru.art.soap.server.model.SoapService.SoapOperation.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
