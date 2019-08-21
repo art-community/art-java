@@ -18,11 +18,8 @@
 
 package ru.art.configurator.api.entity;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import ru.art.entity.Entity;
+import lombok.*;
+import ru.art.entity.*;
 
 @Getter
 @Builder

@@ -18,22 +18,21 @@
 
 package ru.art.example.api.communication.grpc;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
-import ru.art.example.api.handler.ExampleServiceHandlers;
-import ru.art.grpc.client.communicator.GrpcCommunicator;
-import ru.art.grpc.client.communicator.GrpcCommunicator.GrpcAsynchronousCommunicator;
-import ru.art.grpc.client.specification.GrpcCommunicationSpecification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.example.api.constants.ExampleApiConstants.EXAMPLE_GRPC_COMMUNICATION_SERVICE_ID;
-import static ru.art.example.api.constants.ExampleApiConstants.EXAMPLE_SERVICE_ID;
+import lombok.*;
+import lombok.experimental.*;
+import ru.art.example.api.handler.*;
+import ru.art.grpc.client.communicator.*;
+import ru.art.grpc.client.communicator.GrpcCommunicator.*;
+import ru.art.grpc.client.specification.*;
+import ru.art.service.exception.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.example.api.constants.ExampleApiConstants.*;
 import static ru.art.example.api.constants.ExampleApiConstants.Methods.*;
-import static ru.art.example.api.mapping.ExampleRequestResponseMapper.ExampleRequestMapper.fromExampleRequest;
-import static ru.art.example.api.mapping.ExampleRequestResponseMapper.ExampleResponseMapper.toExampleResponse;
-import static ru.art.example.api.mapping.ExampleStateModelMapper.toExampleStateModel;
-import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator;
+import static ru.art.example.api.mapping.ExampleRequestResponseMapper.ExampleRequestMapper.*;
+import static ru.art.example.api.mapping.ExampleRequestResponseMapper.ExampleResponseMapper.*;
+import static ru.art.example.api.mapping.ExampleStateModelMapper.*;
+import static ru.art.grpc.client.communicator.GrpcCommunicator.*;
 
 /**
  * Protobuf Proxy specification is made for preparing protobuf clients for calling external module

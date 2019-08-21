@@ -18,25 +18,24 @@
 
 package ru.art.example.api.communication.http;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
-import ru.art.example.api.interceptor.http.ExampleHttpClientInterception;
-import ru.art.http.client.communicator.HttpCommunicator;
-import ru.art.http.client.specification.HttpCommunicationSpecification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.extension.OptionalExtensions.unwrap;
-import static ru.art.example.api.constants.ExampleApiConstants.EXAMPLE_HTTP_COMMUNICATION_SERVICE_ID;
-import static ru.art.example.api.constants.ExampleApiConstants.EXAMPLE_SERVICE_ID;
+import lombok.*;
+import lombok.experimental.*;
+import ru.art.example.api.interceptor.http.*;
+import ru.art.http.client.communicator.*;
+import ru.art.http.client.specification.*;
+import ru.art.service.exception.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.extension.OptionalExtensions.*;
+import static ru.art.example.api.constants.ExampleApiConstants.*;
 import static ru.art.example.api.constants.ExampleApiConstants.Methods.*;
 import static ru.art.example.api.constants.ExampleApiConstants.Paths.*;
-import static ru.art.example.api.mapping.ExampleRequestResponseMapper.ExampleRequestMapper.fromExampleRequest;
-import static ru.art.example.api.mapping.ExampleRequestResponseMapper.ExampleResponseMapper.toExampleResponse;
-import static ru.art.example.api.mapping.ExampleStateModelMapper.toExampleStateModel;
-import static ru.art.http.client.communicator.HttpCommunicator.httpCommunicator;
-import static ru.art.http.client.interceptor.HttpClientInterceptor.interceptRequest;
-import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
+import static ru.art.example.api.mapping.ExampleRequestResponseMapper.ExampleRequestMapper.*;
+import static ru.art.example.api.mapping.ExampleRequestResponseMapper.ExampleResponseMapper.*;
+import static ru.art.example.api.mapping.ExampleStateModelMapper.*;
+import static ru.art.http.client.communicator.HttpCommunicator.*;
+import static ru.art.http.client.interceptor.HttpClientInterceptor.*;
+import static ru.art.http.constants.MimeToContentTypeMapper.*;
 
 /**
  * Http Communication specification is made for preparing http clients for calling external module

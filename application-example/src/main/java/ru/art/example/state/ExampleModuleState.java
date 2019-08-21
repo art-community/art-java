@@ -18,8 +18,8 @@
 
 package ru.art.example.state;
 
-import ru.art.core.module.ModuleState;
-import java.util.concurrent.atomic.AtomicInteger;
+import ru.art.core.module.*;
+import java.util.concurrent.atomic.*;
 
 /**
  * State is needed for store some static constants,

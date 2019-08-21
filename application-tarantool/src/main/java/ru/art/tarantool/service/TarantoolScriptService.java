@@ -18,14 +18,14 @@
 
 package ru.art.tarantool.service;
 
-import lombok.NoArgsConstructor;
-import ru.art.tarantool.configuration.lua.TarantoolCommonScriptConfiguration;
-import ru.art.tarantool.configuration.lua.TarantoolValueScriptConfiguration;
-import static lombok.AccessLevel.PRIVATE;
+import lombok.*;
+import ru.art.tarantool.configuration.lua.*;
+
+import static lombok.AccessLevel.*;
 import static ru.art.tarantool.configuration.lua.TarantoolCommonScriptConfiguration.*;
 import static ru.art.tarantool.configuration.lua.TarantoolValueScriptConfiguration.*;
-import static ru.art.tarantool.executor.TarantoolLuaExecutor.evaluateLuaScript;
-import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState;
+import static ru.art.tarantool.executor.TarantoolLuaExecutor.*;
+import static ru.art.tarantool.module.TarantoolModule.*;
 
 @NoArgsConstructor(access = PRIVATE)
 @SuppressWarnings("Duplicates")

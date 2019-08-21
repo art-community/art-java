@@ -18,10 +18,9 @@
 
 package ru.art.task.deferred.executor;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import ru.art.core.identified.UniqueIdentified;
-import java.util.concurrent.Callable;
+import lombok.*;
+import ru.art.core.identified.*;
+import java.util.concurrent.*;
 
 @Getter
 @AllArgsConstructor

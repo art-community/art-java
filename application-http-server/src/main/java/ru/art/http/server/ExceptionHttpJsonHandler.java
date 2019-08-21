@@ -18,20 +18,20 @@
 
 package ru.art.http.server;
 
-import ru.art.http.server.context.HttpRequestContext;
-import ru.art.http.server.handler.HttpExceptionHandler;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.http.constants.HttpHeaders.CONTENT_TYPE;
-import static ru.art.http.constants.HttpMimeTypes.APPLICATION_JSON_UTF8;
-import static ru.art.http.server.body.descriptor.HttpBodyDescriptor.writeResponseBody;
-import static ru.art.http.server.constants.HttpExceptionResponses.EXCEPTION_HANDLING_ERROR_RESPONSE;
-import static ru.art.http.server.module.HttpServerModule.httpServerModuleState;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import ru.art.http.server.context.*;
+import ru.art.http.server.handler.*;
+import javax.servlet.http.*;
+
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static javax.servlet.http.HttpServletResponse.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.http.constants.HttpHeaders.*;
+import static ru.art.http.constants.HttpMimeTypes.*;
+import static ru.art.http.server.body.descriptor.HttpBodyDescriptor.*;
+import static ru.art.http.server.constants.HttpExceptionResponses.*;
+import static ru.art.http.server.module.HttpServerModule.*;
 
 class ExceptionHttpJsonHandler implements HttpExceptionHandler<Throwable> {
     @Override

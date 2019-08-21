@@ -18,27 +18,25 @@
 
 package ru.art.kafka.consumer.registry;
 
-import lombok.Getter;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.logging.log4j.Logger;
-import ru.art.kafka.consumer.configuration.KafkaStreamConfiguration;
-import ru.art.kafka.consumer.container.KafkaStreamContainer;
-import static java.lang.String.join;
+import lombok.*;
+import org.apache.kafka.streams.*;
+import org.apache.kafka.streams.kstream.*;
+import org.apache.logging.log4j.*;
+import ru.art.kafka.consumer.configuration.*;
+import ru.art.kafka.consumer.container.*;
+import java.util.*;
+import java.util.function.*;
+
+import static java.lang.String.*;
 import static java.text.MessageFormat.format;
 import static org.apache.kafka.streams.StreamsConfig.*;
-import static org.apache.logging.log4j.ThreadContext.remove;
-import static ru.art.core.constants.StringConstants.COMMA;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
-import static ru.art.kafka.consumer.module.KafkaConsumerModule.kafkaConsumerModule;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.logging.ThreadContextExtensions.putIfNotNull;
-import java.util.Map;
-import java.util.Properties;
-import java.util.function.Function;
+import static org.apache.logging.log4j.ThreadContext.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.logging.ThreadContextExtensions.*;
 
 @Getter
 public class KafkaStreamsRegistry {

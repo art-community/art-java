@@ -18,14 +18,13 @@
 
 package ru.art.core.extension;
 
-import ru.art.core.callable.ExceptionCallable;
-import ru.art.core.runnable.ExceptionRunnable;
-import static java.util.Objects.isNull;
-import static java.util.Objects.requireNonNull;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import ru.art.core.callable.*;
+import ru.art.core.runnable.*;
+import java.util.function.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
 
 public interface ExceptionExtensions {
     static String emptyIfException(ExceptionCallable<String> operation) {

@@ -18,21 +18,19 @@
 
 package ru.art.metrics.configurator;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jvm.CachedThreadStatesGaugeSet;
-import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
-import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
-import io.micrometer.prometheus.PrometheusConfig;
-import io.micrometer.prometheus.PrometheusMeterRegistry;
-import io.prometheus.client.CollectorRegistry;
-import io.prometheus.client.dropwizard.DropwizardExports;
-import static io.github.resilience4j.metrics.CircuitBreakerMetrics.ofCircuitBreakerRegistry;
-import static io.github.resilience4j.metrics.RateLimiterMetrics.ofRateLimiterRegistry;
-import static io.github.resilience4j.metrics.RetryMetrics.ofRetryRegistry;
-import static io.micrometer.prometheus.PrometheusConfig.DEFAULT;
-import static java.util.concurrent.TimeUnit.SECONDS;
+import com.codahale.metrics.*;
+import com.codahale.metrics.jvm.*;
+import io.micrometer.prometheus.*;
+import io.prometheus.client.*;
+import io.prometheus.client.dropwizard.*;
+
+import static io.github.resilience4j.metrics.CircuitBreakerMetrics.*;
+import static io.github.resilience4j.metrics.RateLimiterMetrics.*;
+import static io.github.resilience4j.metrics.RetryMetrics.*;
+import static io.micrometer.prometheus.PrometheusConfig.*;
+import static java.util.concurrent.TimeUnit.*;
 import static ru.art.metrics.constants.MetricsModuleConstants.*;
-import static ru.art.service.ServiceModule.serviceModule;
+import static ru.art.service.ServiceModule.*;
 
 public interface PrometheusRegistryConfigurator {
     @SuppressWarnings("Duplicates")

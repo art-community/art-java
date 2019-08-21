@@ -18,9 +18,10 @@
 
 package ru.art.entity.constants;
 
-import ru.art.entity.exception.ValueMappingException;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
+import ru.art.entity.exception.*;
+
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
 
 public enum ValueType {

@@ -18,32 +18,26 @@
 
 package ru.art.http.client.communicator;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.nio.client.HttpAsyncClient;
+import lombok.*;
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.config.*;
+import org.apache.http.nio.client.*;
 import ru.art.entity.Value;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.http.client.handler.HttpCommunicationCancellationHandler;
-import ru.art.http.client.handler.HttpCommunicationExceptionHandler;
-import ru.art.http.client.handler.HttpCommunicationResponseHandler;
-import ru.art.http.client.interceptor.HttpClientInterceptor;
-import ru.art.http.constants.HttpMethodType;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import static lombok.AccessLevel.PACKAGE;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.http.client.module.HttpClientModule.httpClientModule;
-import static ru.art.http.constants.HttpMethodType.GET;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executor;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.http.client.handler.*;
+import ru.art.http.client.interceptor.*;
+import ru.art.http.constants.*;
+import java.nio.charset.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.http.client.module.HttpClientModule.*;
+import static ru.art.http.constants.HttpMethodType.*;
 
 @Getter(value = PACKAGE)
 @Setter(value = PACKAGE)

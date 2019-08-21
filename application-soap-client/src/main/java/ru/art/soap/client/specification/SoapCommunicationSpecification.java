@@ -18,10 +18,11 @@
 
 package ru.art.soap.client.specification;
 
-import ru.art.http.client.specification.HttpCommunicationSpecification;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.soap.client.constants.SoapClientModuleConstants.SOAP_COMMUNICATION_SERVICE_TYPE;
-import java.util.List;
+import ru.art.http.client.specification.*;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.soap.client.constants.SoapClientModuleConstants.*;
 
 public interface SoapCommunicationSpecification extends HttpCommunicationSpecification {
     @Override

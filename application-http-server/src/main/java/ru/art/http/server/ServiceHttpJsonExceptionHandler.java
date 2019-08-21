@@ -18,25 +18,24 @@
 
 package ru.art.http.server;
 
-import ru.art.http.constants.HttpHeaders;
-import ru.art.http.mapper.HttpContentMapper;
-import ru.art.http.server.context.HttpRequestContext;
-import ru.art.http.server.handler.HttpExceptionHandler;
-import ru.art.service.exception.ServiceExecutionException;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.http.constants.HttpMimeTypes.APPLICATION_JSON_UTF8;
-import static ru.art.http.constants.HttpStatus.INTERNAL_SERVER_ERROR;
-import static ru.art.http.server.body.descriptor.HttpBodyDescriptor.writeResponseBody;
-import static ru.art.http.server.constants.HttpExceptionResponses.SERVICE_EXCEPTION_HANDLING_ERROR_RESPONSE;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
-import static ru.art.http.server.module.HttpServerModule.httpServerModuleState;
-import static ru.art.service.mapping.ServiceEntitiesMapping.ServiceExecutionExceptionMapping.serviceExecutionExceptionMapper;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.Charset;
+import ru.art.http.constants.*;
+import ru.art.http.mapper.*;
+import ru.art.http.server.context.*;
+import ru.art.http.server.handler.*;
+import ru.art.service.exception.*;
+import javax.servlet.http.*;
+import java.nio.charset.*;
+
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.http.constants.HttpMimeTypes.*;
+import static ru.art.http.constants.HttpStatus.*;
+import static ru.art.http.server.body.descriptor.HttpBodyDescriptor.*;
+import static ru.art.http.server.constants.HttpExceptionResponses.*;
+import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.service.mapping.ServiceEntitiesMapping.ServiceExecutionExceptionMapping.*;
 
 class ServiceHttpJsonExceptionHandler implements HttpExceptionHandler<ServiceExecutionException> {
     @Override

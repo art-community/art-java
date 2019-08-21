@@ -18,14 +18,13 @@
 
 package ru.art.kafka.producer.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleState;
-import ru.art.kafka.producer.configuration.KafkaProducerModuleConfiguration;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.kafka.producer.constants.KafkaProducerModuleConstants.KAFKA_PRODUCER_MODULE_ID;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.kafka.producer.configuration.*;
+
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.kafka.producer.constants.KafkaProducerModuleConstants.*;
 
 @Getter
 public class KafkaProducerModule implements Module<KafkaProducerModuleConfiguration, ModuleState> {

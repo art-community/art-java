@@ -18,32 +18,25 @@
 
 package ru.art.logging;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.Layout;
+import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.core.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.appender.ConsoleAppender;
-import org.apache.logging.log4j.core.appender.SocketAppender;
-import org.apache.logging.log4j.core.config.AppenderRef;
-import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.LoggerConfig;
-import static java.lang.Integer.parseInt;
-import static java.lang.System.getProperty;
-import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toSet;
-import static org.apache.logging.log4j.Level.INFO;
-import static org.apache.logging.log4j.LogManager.getContext;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.core.factory.CollectionsFactory.setOf;
+import org.apache.logging.log4j.core.*;
+import org.apache.logging.log4j.core.appender.*;
+import org.apache.logging.log4j.core.config.*;
+import java.io.*;
+import java.util.*;
+
+import static java.lang.Integer.*;
+import static java.lang.System.*;
+import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
+import static org.apache.logging.log4j.Level.*;
+import static org.apache.logging.log4j.LogManager.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.logging.LoggingModuleConstants.*;
-import static ru.art.logging.LoggingModuleConstants.LoggingMode.CONSOLE;
-import static ru.art.logging.LoggingModuleConstants.LoggingMode.SOCKET;
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import static ru.art.logging.LoggingModuleConstants.LoggingMode.*;
 
 public interface LoggerConfigurationService {
     static void updateSocketAppender(SocketAppenderConfiguration socketAppenderConfiguration) {

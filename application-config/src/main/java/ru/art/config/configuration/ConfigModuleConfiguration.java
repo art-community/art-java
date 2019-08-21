@@ -18,11 +18,12 @@
 
 package ru.art.config.configuration;
 
-import lombok.Getter;
-import ru.art.config.constants.ConfigType;
-import ru.art.core.module.ModuleConfiguration;
-import static ru.art.config.constants.ConfigModuleConstants.DEFAULT_CACHE_UPDATE_INTERVAL_SECONDS;
-import static ru.art.config.constants.ConfigType.YAML;
+import lombok.*;
+import ru.art.config.constants.*;
+import ru.art.core.module.*;
+
+import static ru.art.config.constants.ConfigModuleConstants.*;
+import static ru.art.config.constants.ConfigType.*;
 
 public interface ConfigModuleConfiguration extends ModuleConfiguration {
     ConfigType getModuleConfigType();

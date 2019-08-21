@@ -18,14 +18,13 @@
 
 package ru.art.http.server.builder;
 
-import ru.art.entity.Value;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.http.server.interceptor.HttpServerInterceptor;
-import ru.art.http.server.model.HttpService;
-import ru.art.service.constants.RequestValidationPolicy;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.http.constants.*;
+import ru.art.http.server.interceptor.*;
+import ru.art.http.server.model.*;
+import ru.art.service.constants.*;
 
 public interface HttpServiceBuilder {
     HttpMethodWithBodyBuilder get(String methodId);

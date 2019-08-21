@@ -18,7 +18,7 @@
 
 package ru.art.xml.rules.builder;
 
-import java.util.Collection;
+import java.util.*;
 
 public interface XmlEntityRuleBuilder {
     XmlEntityRuleBuilder input(String oldValue);

@@ -18,13 +18,13 @@
 
 package ru.art.tarantool.constants;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import static ru.art.core.constants.SystemConstants.WSL;
-import static ru.art.core.determinant.SystemDeterminant.isWindows;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
-import java.util.List;
+import lombok.*;
+import java.util.*;
+
+import static ru.art.core.constants.SystemConstants.*;
+import static ru.art.core.determinant.SystemDeterminant.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.core.network.selector.PortSelector.*;
 
 public interface TarantoolModuleConstants {
     String TARANTOOL = "tarantool";

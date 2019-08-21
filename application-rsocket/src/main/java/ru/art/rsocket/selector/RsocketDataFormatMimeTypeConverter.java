@@ -18,17 +18,17 @@
 
 package ru.art.rsocket.selector;
 
-import lombok.NoArgsConstructor;
-import ru.art.core.mime.MimeType;
+import lombok.*;
+import ru.art.core.mime.*;
+
 import static io.rsocket.metadata.WellKnownMimeType.*;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.SLASH;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.rsocket.constants.RsocketModuleConstants.BINARY_MIME_TYPE;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
+import static lombok.AccessLevel.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*;
-import static ru.art.rsocket.module.RsocketModule.rsocketModule;
+import static ru.art.rsocket.module.RsocketModule.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public class RsocketDataFormatMimeTypeConverter {

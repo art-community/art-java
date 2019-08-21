@@ -18,27 +18,22 @@
 
 package ru.art.config;
 
-import groovy.util.ConfigObject;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import ru.art.config.constants.ConfigType;
-import ru.art.config.exception.ConfigException;
-import ru.art.core.checker.CheckerForEmptiness;
-import ru.art.entity.Entity;
-import static java.text.MessageFormat.format;
-import static java.util.Collections.emptyList;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
+import groovy.util.*;
+import lombok.*;
+import ru.art.config.constants.*;
+import ru.art.config.exception.*;
+import ru.art.core.checker.*;
+import ru.art.entity.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static java.util.Collections.*;
+import static java.util.Objects.*;
+import static java.util.function.Function.*;
+import static java.util.stream.Collectors.*;
 import static ru.art.config.constants.ConfigExceptionMessages.*;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.constants.StringConstants.*;
 
 @Getter
 @AllArgsConstructor

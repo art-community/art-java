@@ -18,33 +18,26 @@
 
 package ru.art.core.context;
 
-import ru.art.core.configuration.ContextInitialConfiguration;
-import ru.art.core.configuration.ContextInitialConfiguration.ContextInitialDefaultConfiguration;
-import ru.art.core.configurator.ModuleConfigurator;
-import ru.art.core.exception.ContextInitializationException;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.core.module.ModuleContainer;
-import ru.art.core.module.ModuleState;
-import ru.art.core.provider.PreconfiguredModuleProvider;
-import static java.lang.Runtime.getRuntime;
-import static java.lang.System.currentTimeMillis;
-import static java.lang.System.out;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import ru.art.core.configuration.*;
+import ru.art.core.configuration.ContextInitialConfiguration.*;
+import ru.art.core.configurator.*;
+import ru.art.core.exception.*;
+import ru.art.core.module.*;
+import ru.art.core.provider.*;
+import java.util.*;
+import java.util.concurrent.locks.*;
+import java.util.function.*;
+
+import static java.lang.Runtime.*;
+import static java.lang.System.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ExceptionMessages.*;
 import static ru.art.core.constants.LoggingMessages.*;
-import static ru.art.core.constants.StringConstants.ART_BANNER;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 
 public class Context {
     private static final ReentrantLock lock = new ReentrantLock();

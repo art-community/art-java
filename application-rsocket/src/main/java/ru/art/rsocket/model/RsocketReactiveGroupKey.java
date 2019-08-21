@@ -18,11 +18,9 @@
 
 package ru.art.rsocket.model;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import ru.art.rsocket.service.RsocketService;
-import ru.art.service.model.ServiceMethodCommand;
+import lombok.*;
+import ru.art.rsocket.service.*;
+import ru.art.service.model.*;
 
 @Getter
 @Builder

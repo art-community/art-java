@@ -18,14 +18,13 @@
 
 package ru.art.config.module;
 
-import lombok.Getter;
-import ru.art.config.configuration.ConfigModuleConfiguration;
-import ru.art.config.configuration.ConfigModuleConfiguration.ConfigModuleDefaultConfiguration;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleState;
-import static ru.art.config.constants.ConfigModuleConstants.CONFIG_MODULE_ID;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
+import lombok.*;
+import ru.art.config.configuration.*;
+import ru.art.config.configuration.ConfigModuleConfiguration.*;
+import ru.art.core.module.*;
+
+import static ru.art.config.constants.ConfigModuleConstants.*;
+import static ru.art.core.context.Context.*;
 
 @Getter
 public class ConfigModule implements Module<ConfigModuleConfiguration, ModuleState> {

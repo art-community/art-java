@@ -18,11 +18,11 @@
 
 package ru.art.http.server.interceptor;
 
-import ru.art.core.constants.InterceptionStrategy;
+import ru.art.core.constants.*;
+import javax.servlet.http.*;
+import java.util.function.*;
+
 import static ru.art.core.constants.InterceptionStrategy.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.function.BiConsumer;
 
 @FunctionalInterface
 public interface HttpServerInterception {

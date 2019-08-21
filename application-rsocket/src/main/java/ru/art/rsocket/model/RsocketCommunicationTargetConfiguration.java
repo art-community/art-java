@@ -18,17 +18,14 @@
 
 package ru.art.rsocket.model;
 
-import io.rsocket.plugins.RSocketInterceptor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Singular;
-import lombok.experimental.Accessors;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.TCP;
-import static ru.art.rsocket.module.RsocketModule.rsocketModule;
-import java.util.List;
+import io.rsocket.plugins.*;
+import lombok.*;
+import lombok.experimental.*;
+import java.util.*;
+
+import static ru.art.rsocket.constants.RsocketModuleConstants.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.*;
+import static ru.art.rsocket.module.RsocketModule.*;
 
 @Getter
 @Accessors(fluent = true)

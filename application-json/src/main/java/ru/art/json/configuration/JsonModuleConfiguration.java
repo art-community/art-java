@@ -18,9 +18,9 @@
 
 package ru.art.json.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
+import com.fasterxml.jackson.databind.*;
+import lombok.*;
+import ru.art.core.module.*;
 
 public interface JsonModuleConfiguration extends ModuleConfiguration {
     ObjectMapper getObjectMapper();

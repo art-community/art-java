@@ -18,20 +18,18 @@
 
 package ru.art.sql.configuration;
 
-import com.zaxxer.hikari.HikariConfig;
-import lombok.Getter;
-import org.apache.tomcat.jdbc.pool.PoolConfiguration;
-import org.apache.tomcat.jdbc.pool.PoolProperties;
-import org.jooq.Configuration;
-import org.jooq.impl.DefaultConfiguration;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.sql.constants.ConnectionPoolType;
-import ru.art.sql.constants.DbProvider;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.sql.constants.ConnectionPoolType.TOMCAT;
-import static ru.art.sql.constants.DbProvider.POSTGRES;
-import static ru.art.sql.factory.SqlConnectionPoolsFactory.createHikariPoolConfig;
-import static ru.art.sql.factory.SqlConnectionPoolsFactory.createTomcatPoolConfig;
+import com.zaxxer.hikari.*;
+import lombok.*;
+import org.apache.tomcat.jdbc.pool.*;
+import org.jooq.*;
+import org.jooq.impl.*;
+import ru.art.core.module.*;
+import ru.art.sql.constants.*;
+
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.sql.constants.ConnectionPoolType.*;
+import static ru.art.sql.constants.DbProvider.*;
+import static ru.art.sql.factory.SqlConnectionPoolsFactory.*;
 
 public interface SqlModuleConfiguration extends ModuleConfiguration {
     Configuration getJooqConfiguration();

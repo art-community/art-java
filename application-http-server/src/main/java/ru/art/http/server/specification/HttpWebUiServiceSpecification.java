@@ -18,36 +18,31 @@
 
 package ru.art.http.server.specification;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import ru.art.entity.mapper.ValueToModelMapper.StringParametersMapToModelMapper;
-import ru.art.http.server.model.HttpService;
-import ru.art.service.ServiceLoggingInterception;
-import ru.art.service.exception.UnknownServiceMethodException;
-import ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
-import ru.art.service.model.ServiceInterceptionResult;
-import ru.art.service.model.ServiceRequest;
-import ru.art.service.model.ServiceResponse;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
-import static ru.art.entity.CollectionValuesFactory.byteCollection;
-import static ru.art.entity.PrimitiveMapping.stringMapper;
-import static ru.art.http.constants.MimeToContentTypeMapper.imagePng;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.HTTP_WEB_UI_SERVICE;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.HttpParameters.RESOURCE;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.Methods.IMAGE;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.Methods.RENDER;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.WEB_RESOURCE;
-import static ru.art.http.server.extractor.HttpWebResponseContentTypeExtractor.extractTypeByFile;
-import static ru.art.http.server.interceptor.HttpServerInterception.interceptAndContinue;
-import static ru.art.http.server.interceptor.HttpServerInterceptor.intercept;
-import static ru.art.http.server.model.HttpService.httpService;
-import static ru.art.http.server.service.HttpWebResourceService.getBinaryResource;
-import static ru.art.http.server.service.HttpWebResourceService.getStringResource;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.interceptResponse;
-import static ru.art.service.model.ServiceInterceptionResult.nextInterceptor;
-import java.util.List;
+import lombok.*;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+import ru.art.http.server.model.*;
+import ru.art.service.*;
+import ru.art.service.exception.*;
+import ru.art.service.interceptor.ServiceExecutionInterceptor.*;
+import ru.art.service.model.*;
+import java.util.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.entity.CollectionValuesFactory.*;
+import static ru.art.entity.PrimitiveMapping.*;
+import static ru.art.http.constants.MimeToContentTypeMapper.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.HttpParameters.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.Methods.*;
+import static ru.art.http.server.extractor.HttpWebResponseContentTypeExtractor.*;
+import static ru.art.http.server.interceptor.HttpServerInterception.*;
+import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
+import static ru.art.http.server.model.HttpService.*;
+import static ru.art.http.server.service.HttpWebResourceService.*;
+import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
+import static ru.art.service.model.ServiceInterceptionResult.*;
 
 @Getter
 @AllArgsConstructor

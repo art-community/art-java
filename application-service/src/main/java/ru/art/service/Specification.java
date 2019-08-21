@@ -18,18 +18,16 @@
 
 package ru.art.service;
 
-import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import io.github.resilience4j.ratelimiter.RateLimiterConfig;
-import io.github.resilience4j.retry.RetryConfig;
-import ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
+import io.github.resilience4j.circuitbreaker.*;
+import io.github.resilience4j.ratelimiter.*;
+import io.github.resilience4j.retry.*;
+import ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import ru.art.service.model.*;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.service.ServiceModule.serviceModule;
-import static ru.art.service.constants.ServiceModuleConstants.DEFAULT_SERVICE_TYPE;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.RequestInterceptor;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.service.ServiceModule.*;
+import static ru.art.service.constants.ServiceModuleConstants.*;
 
 public interface Specification {
     String getServiceId();

@@ -18,18 +18,14 @@
 
 package ru.art.grpc.client.communicator;
 
-import io.grpc.ClientInterceptor;
-import ru.art.entity.Entity;
-import ru.art.entity.Value;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.grpc.client.handler.GrpcCommunicationCompletionHandler;
-import ru.art.grpc.client.handler.GrpcCommunicationExceptionHandler;
-import ru.art.grpc.client.model.GrpcCommunicationTargetConfiguration;
-import ru.art.service.model.ServiceResponse;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import io.grpc.*;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.grpc.client.handler.*;
+import ru.art.grpc.client.model.*;
+import ru.art.service.model.*;
+import java.util.concurrent.*;
 
 public interface GrpcCommunicator {
     static GrpcCommunicator grpcCommunicator(GrpcCommunicationTargetConfiguration targetConfiguration) {

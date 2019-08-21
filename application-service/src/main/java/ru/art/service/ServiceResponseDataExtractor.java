@@ -18,10 +18,11 @@
 
 package ru.art.service;
 
-import lombok.NoArgsConstructor;
-import ru.art.service.model.ServiceResponse;
-import static java.util.Objects.nonNull;
-import static lombok.AccessLevel.PRIVATE;
+import lombok.*;
+import ru.art.service.model.*;
+
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
 
 @NoArgsConstructor(access = PRIVATE)
 class ServiceResponseDataExtractor {

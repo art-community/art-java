@@ -18,27 +18,35 @@
 
 package ru.art.entity;
 
-import lombok.Getter;
-import ru.art.core.checker.CheckerForEmptiness;
-import ru.art.entity.constants.CollectionMode;
-import ru.art.entity.constants.ValueType;
-import ru.art.entity.constants.ValueType.CollectionElementsType;
-import ru.art.entity.exception.ValueMappingException;
-import static java.text.MessageFormat.format;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
-import static java.util.Objects.isNull;
-import static ru.art.core.caster.Caster.cast;
+import lombok.*;
+import ru.art.core.checker.*;
+import ru.art.entity.constants.*;
+import ru.art.entity.constants.ValueType.*;
+import ru.art.entity.exception.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static java.util.Collections.*;
+import static java.util.Objects.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.ArrayConstants.*;
-import static ru.art.core.constants.StringConstants.COMMA;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.extension.StringExtensions.emptyIfNull;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.constants.CollectionMode.COLLECTION;
-import static ru.art.entity.constants.CollectionMode.PRIMITIVE_ARRAY;
+import static ru.art.entity.constants.CollectionMode.*;
 import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.BOOL;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.BYTE;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.DOUBLE;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.ENTITY;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.FLOAT;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.INT;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.LONG;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.MAP;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING_PARAMETERS_MAP;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.*;
-import java.util.*;
 
 @Getter
 public class CollectionValue<T> implements Value {

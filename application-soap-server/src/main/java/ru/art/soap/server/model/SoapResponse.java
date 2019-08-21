@@ -18,10 +18,8 @@
 
 package ru.art.soap.server.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
-import ru.art.entity.XmlEntity;
+import lombok.*;
+import ru.art.entity.*;
 
 @Getter
 @Builder

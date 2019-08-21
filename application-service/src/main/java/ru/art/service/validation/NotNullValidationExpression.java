@@ -18,8 +18,8 @@
 
 package ru.art.service.validation;
 
-import static java.text.MessageFormat.format;
-import static ru.art.service.constants.ServiceExceptionsMessages.NULL_VALIDATION_ERROR;
+import static java.text.MessageFormat.*;
+import static ru.art.service.constants.ServiceExceptionsMessages.*;
 
 class NotNullValidationExpression extends ValidationExpression<Object> {
     @Override

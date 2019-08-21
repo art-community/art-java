@@ -18,18 +18,17 @@
 
 package ru.art.sql.factory;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import org.apache.tomcat.jdbc.pool.DataSource;
-import org.apache.tomcat.jdbc.pool.PoolProperties;
-import org.jooq.Configuration;
-import org.jooq.impl.DefaultConfiguration;
-import ru.art.sql.exception.SqlModuleException;
-import ru.art.sql.model.DbConnectionProperties;
-import static java.lang.Class.forName;
-import static ru.art.metrics.module.MetricsModule.metricsModule;
-import static ru.art.sql.constants.SqlModuleConstants.ConfigurationDefaults.DEFAULT_CONNECTION_TEST_QUERY;
-import static ru.art.sql.module.SqlModule.sqlModule;
+import com.zaxxer.hikari.*;
+import org.apache.tomcat.jdbc.pool.*;
+import org.jooq.*;
+import org.jooq.impl.*;
+import ru.art.sql.exception.*;
+import ru.art.sql.model.*;
+
+import static java.lang.Class.*;
+import static ru.art.metrics.module.MetricsModule.*;
+import static ru.art.sql.constants.SqlModuleConstants.ConfigurationDefaults.*;
+import static ru.art.sql.module.SqlModule.*;
 
 public interface SqlConnectionPoolsFactory {
     static HikariConfig createHikariPoolConfig() {

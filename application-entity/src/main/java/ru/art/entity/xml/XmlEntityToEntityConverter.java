@@ -18,26 +18,23 @@
 
 package ru.art.entity.xml;
 
-import lombok.NoArgsConstructor;
-import ru.art.entity.Entity;
-import ru.art.entity.StringParametersMap;
+import lombok.*;
 import ru.art.entity.Value;
-import ru.art.entity.XmlEntity;
-import static java.util.Collections.emptyList;
+import ru.art.entity.*;
+import java.util.*;
+
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.caster.Caster.cast;
+import static lombok.AccessLevel.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.extension.CollectionExtensions.areAllUnique;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
-import static ru.art.entity.CollectionValuesFactory.valueCollection;
-import static ru.art.entity.Entity.EntityBuilder;
-import static ru.art.entity.Entity.entityBuilder;
-import static ru.art.entity.PrimitivesFactory.stringPrimitive;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.extension.CollectionExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.entity.CollectionValuesFactory.*;
+import static ru.art.entity.Entity.*;
+import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.entity.Value.isEmpty;
-import java.util.List;
-import java.util.Map;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class XmlEntityToEntityConverter {

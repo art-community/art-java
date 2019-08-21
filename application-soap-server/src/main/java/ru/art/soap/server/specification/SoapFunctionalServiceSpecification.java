@@ -18,12 +18,13 @@
 
 package ru.art.soap.server.specification;
 
-import lombok.Getter;
-import ru.art.soap.server.model.SoapService;
-import static ru.art.core.caster.Caster.cast;
+import lombok.*;
+import ru.art.soap.server.model.*;
+import java.util.function.*;
+
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.soap.server.constans.SoapServerModuleConstants.SOAP_SERVICE_TYPE;
-import java.util.function.Function;
+import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
 
 @Getter
 public class SoapFunctionalServiceSpecification implements SoapServiceSpecification {

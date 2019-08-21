@@ -18,31 +18,25 @@
 
 package ru.art.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import ru.art.core.checker.CheckerForEmptiness;
-import ru.art.entity.constants.ValueType;
-import ru.art.entity.exception.ValueMappingException;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
+import lombok.*;
+import ru.art.core.checker.*;
+import ru.art.entity.constants.*;
+import ru.art.entity.exception.*;
+import ru.art.entity.mapper.*;
+import java.text.*;
+import java.util.*;
+
 import static java.util.Collections.*;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.DateConstants.YYYY_MM_DD_T_HH_MM_SS_24H_SSS_Z_DASH_FORMAT;
-import static ru.art.core.constants.StringConstants.ESCAPED_DOT;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.core.factory.CollectionsFactory.queueOf;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.constants.DateConstants.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
 import static ru.art.entity.Value.*;
-import static ru.art.entity.constants.ValueMappingExceptionMessages.MAPPER_IS_NULL;
-import static ru.art.entity.constants.ValueMappingExceptionMessages.UNABLE_TO_PARSE_DATE;
-import static ru.art.entity.constants.ValueType.CollectionElementsType;
-import static ru.art.entity.constants.ValueType.ENTITY;
-import java.text.ParseException;
-import java.util.*;
+import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
+import static ru.art.entity.constants.ValueType.*;
 
 @Getter
 @ToString

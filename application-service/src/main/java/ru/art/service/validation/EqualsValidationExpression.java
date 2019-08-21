@@ -18,9 +18,10 @@
 
 package ru.art.service.validation;
 
-import lombok.AllArgsConstructor;
-import static java.text.MessageFormat.format;
-import static ru.art.service.constants.ServiceExceptionsMessages.NOT_EQUALS_VALIDATION_ERROR;
+import lombok.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.service.constants.ServiceExceptionsMessages.*;
 
 @AllArgsConstructor
 class EqualsValidationExpression extends ValidationExpression<Object> {

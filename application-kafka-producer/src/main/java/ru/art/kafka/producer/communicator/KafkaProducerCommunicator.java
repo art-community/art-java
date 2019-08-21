@@ -18,19 +18,20 @@
 
 package ru.art.kafka.producer.communicator;
 
-import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import ru.art.kafka.producer.configuration.KafkaProducerConfiguration;
-import static java.lang.String.join;
-import static org.apache.kafka.clients.CommonClientConfigs.*;
-import static org.apache.kafka.clients.producer.ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.StringConstants.COMMA;
-import static ru.art.core.extension.NullCheckingExtensions.doIfNotNull;
-import static ru.art.kafka.producer.module.KafkaProducerModule.kafkaProducerModule;
-import java.util.Properties;
-import java.util.function.Consumer;
+import org.apache.kafka.clients.producer.*;
+import ru.art.kafka.producer.configuration.*;
+import java.util.*;
+import java.util.function.*;
+
+import static java.lang.String.*;
+import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
+import static org.apache.kafka.clients.CommonClientConfigs.CLIENT_ID_CONFIG;
+import static org.apache.kafka.clients.CommonClientConfigs.RETRIES_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.kafka.producer.module.KafkaProducerModule.*;
 
 /**
  * The wrapper for KafkaProducer API

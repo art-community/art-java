@@ -18,23 +18,21 @@
 
 package ru.art.http.configuration;
 
-import lombok.Getter;
-import org.zalando.logbook.Logbook;
-import ru.art.core.mime.MimeType;
-import ru.art.core.module.ModuleConfiguration;
+import lombok.*;
+import org.zalando.logbook.*;
+import ru.art.core.mime.*;
+import ru.art.core.module.*;
 import ru.art.entity.Value;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.http.logger.ZalangoLogbookLogWriter;
-import ru.art.http.mapper.HttpContentMapper;
-import ru.art.http.mapper.HttpTextPlainMapper;
-import ru.art.logging.LoggingValueInterceptor;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.http.constants.HttpMimeTypes.ALL;
-import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
-import java.util.List;
-import java.util.Map;
+import ru.art.entity.interceptor.*;
+import ru.art.http.constants.*;
+import ru.art.http.logger.*;
+import ru.art.http.mapper.*;
+import ru.art.logging.*;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.http.constants.HttpMimeTypes.*;
+import static ru.art.http.constants.MimeToContentTypeMapper.*;
 
 public interface HttpModuleConfiguration extends ModuleConfiguration {
     boolean isEnableRawDataTracing();

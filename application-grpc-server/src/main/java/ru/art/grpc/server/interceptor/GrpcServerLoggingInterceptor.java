@@ -18,24 +18,24 @@
 
 package ru.art.grpc.server.interceptor;
 
+import io.grpc.ForwardingServerCall.*;
+import io.grpc.ForwardingServerCallListener.*;
 import io.grpc.*;
-import io.grpc.ForwardingServerCall.SimpleForwardingServerCall;
-import io.grpc.ForwardingServerCallListener.SimpleForwardingServerCallListener;
-import io.grpc.ServerCall.Listener;
-import org.apache.logging.log4j.Logger;
-import ru.art.logging.ProtocolCallLoggingParameters;
-import static io.grpc.Metadata.ASCII_STRING_MARSHALLER;
-import static io.grpc.Metadata.Key.of;
-import static java.lang.System.getProperty;
-import static java.text.MessageFormat.format;
-import static java.util.UUID.randomUUID;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.extension.StringExtensions.emptyIfNull;
+import io.grpc.ServerCall.*;
+import org.apache.logging.log4j.*;
+import ru.art.logging.*;
+
+import static io.grpc.Metadata.*;
+import static io.grpc.Metadata.Key.*;
+import static java.lang.System.*;
+import static java.text.MessageFormat.*;
+import static java.util.UUID.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.grpc.server.constants.GrpcServerLoggingMessages.*;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.logging.LoggingParametersManager.clearProtocolLoggingParameters;
-import static ru.art.logging.LoggingParametersManager.putProtocolCallLoggingParameters;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.logging.LoggingParametersManager.*;
 
 public class GrpcServerLoggingInterceptor implements ServerInterceptor {
     private final Logger logger = loggingModule().getLogger(GrpcServerLoggingInterceptor.class);

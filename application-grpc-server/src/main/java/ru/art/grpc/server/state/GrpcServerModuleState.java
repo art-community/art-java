@@ -18,10 +18,9 @@
 
 package ru.art.grpc.server.state;
 
-import lombok.Getter;
-import lombok.Setter;
-import ru.art.core.module.ModuleState;
-import ru.art.grpc.server.GrpcServer;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.grpc.server.*;
 
 @Getter
 @Setter

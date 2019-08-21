@@ -18,9 +18,8 @@
 
 package ru.art.example.factory;
 
-import ru.art.example.api.model.ExampleModel;
-import ru.art.example.api.model.ExampleRequest;
-import java.util.ArrayList;
+import ru.art.example.api.model.*;
+import java.util.*;
 
 /**
  * This is request factory

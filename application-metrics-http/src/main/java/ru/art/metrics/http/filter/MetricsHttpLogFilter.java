@@ -18,11 +18,12 @@
 
 package ru.art.metrics.http.filter;
 
-import org.zalando.logbook.Logbook;
-import org.zalando.logbook.LogbookCreator.Builder;
-import ru.art.http.logger.ZalangoLogbookLogWriter;
-import static org.zalando.logbook.Conditions.exclude;
-import static ru.art.metrics.constants.MetricsModuleConstants.METRICS_PATH;
+import org.zalando.logbook.*;
+import org.zalando.logbook.LogbookCreator.*;
+import ru.art.http.logger.*;
+
+import static org.zalando.logbook.Conditions.*;
+import static ru.art.metrics.constants.MetricsModuleConstants.*;
 
 public interface MetricsHttpLogFilter {
     static Builder logbookWithoutMetricsLogs(Builder builder) {

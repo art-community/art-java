@@ -18,17 +18,17 @@
 
 package ru.art.http.server.parser;
 
-import ru.art.core.factory.CollectionsFactory.MapBuilder;
-import ru.art.entity.StringParametersMap;
-import ru.art.http.server.model.HttpService;
-import static java.util.stream.Collectors.toMap;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.SLASH;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
-import java.util.Set;
+import ru.art.core.factory.CollectionsFactory.*;
+import ru.art.entity.*;
+import ru.art.http.server.model.*;
+import javax.servlet.http.*;
+import java.util.*;
+
+import static java.util.stream.Collectors.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 
 public interface HttpParametersParser {
     static StringParametersMap parseQueryParameters(HttpServletRequest request) {

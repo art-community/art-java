@@ -18,9 +18,7 @@
 
 package ru.art.configurator.api.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Getter
 @RequiredArgsConstructor

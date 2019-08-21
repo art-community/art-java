@@ -18,16 +18,16 @@
 
 package ru.art.logging;
 
-import ru.art.entity.Value;
-import ru.art.entity.interceptor.ValueInterceptionResult;
-import ru.art.entity.interceptor.ValueInterceptor;
-import static java.text.MessageFormat.format;
-import static org.apache.logging.log4j.ThreadContext.remove;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.entity.interceptor.ValueInterceptionResult.nextInterceptor;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+
+import static java.text.MessageFormat.*;
+import static org.apache.logging.log4j.ThreadContext.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.entity.interceptor.ValueInterceptionResult.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
-import static ru.art.logging.LoggingModuleConstants.VALUE_LOG_MESSAGE;
+import static ru.art.logging.LoggingModuleConstants.*;
 import static ru.art.logging.ThreadContextExtensions.*;
 
 public class LoggingValueInterceptor<InValue extends Value, OutValue extends Value> implements ValueInterceptor<InValue, OutValue> {

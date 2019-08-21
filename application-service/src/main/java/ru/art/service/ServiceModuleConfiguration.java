@@ -18,28 +18,24 @@
 
 package ru.art.service;
 
-import io.github.resilience4j.bulkhead.BulkheadRegistry;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
-import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
-import io.github.resilience4j.retry.RetryRegistry;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.service.interceptor.ServiceExecutionInterceptor.RequestInterceptor;
-import ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
-import ru.art.service.interceptor.ServiceValidationInterception;
-import ru.art.service.validation.Validator;
-import static java.text.MessageFormat.format;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.service.ServiceExceptionWrapperBuilder.exceptionWrapperBuilder;
-import static ru.art.service.constants.ServiceLoggingMessages.SERVICE_REGISTRATION_MESSAGE;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.interceptRequest;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.interceptResponse;
-import java.util.List;
-import java.util.Map;
+import io.github.resilience4j.bulkhead.*;
+import io.github.resilience4j.circuitbreaker.*;
+import io.github.resilience4j.ratelimiter.*;
+import io.github.resilience4j.retry.*;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.service.interceptor.ServiceExecutionInterceptor.*;
+import ru.art.service.interceptor.*;
+import ru.art.service.validation.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.service.ServiceExceptionWrapperBuilder.*;
+import static ru.art.service.constants.ServiceLoggingMessages.*;
+import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 
 
 public interface ServiceModuleConfiguration extends ModuleConfiguration {

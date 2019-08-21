@@ -18,13 +18,12 @@
 
 package ru.art.config.extensions.rocks;
 
-import lombok.Getter;
-import ru.art.rocks.db.configuration.RocksDbModuleConfiguration.RocksDbModuleDefaultConfiguration;
-import static ru.art.config.extensions.ConfigExtensions.configBoolean;
-import static ru.art.config.extensions.ConfigExtensions.configString;
-import static ru.art.config.extensions.common.CommonConfigKeys.ENABLE_TRACING;
-import static ru.art.config.extensions.common.CommonConfigKeys.PATH;
-import static ru.art.config.extensions.rocks.RocksDbConfigKeys.ROCKS_DB_SECTION_ID;
+import lombok.*;
+import ru.art.rocks.db.configuration.RocksDbModuleConfiguration.*;
+
+import static ru.art.config.extensions.ConfigExtensions.*;
+import static ru.art.config.extensions.common.CommonConfigKeys.*;
+import static ru.art.config.extensions.rocks.RocksDbConfigKeys.*;
 
 @Getter
 public class RocksDbAgileConfiguration extends RocksDbModuleDefaultConfiguration {

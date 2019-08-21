@@ -18,18 +18,23 @@
 
 package ru.art.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import ru.art.entity.constants.ValueType;
-import ru.art.entity.constants.ValueType.PrimitiveType;
-import ru.art.entity.exception.ValueMappingException;
-import static java.util.Objects.isNull;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.extension.StringExtensions.emptyIfNull;
-import static ru.art.entity.constants.ValueMappingExceptionMessages.NOT_PRIMITIVE_TYPE;
-import static ru.art.entity.constants.ValueType.PrimitiveType.*;
-import java.text.MessageFormat;
+import lombok.*;
+import ru.art.entity.constants.*;
+import ru.art.entity.constants.ValueType.*;
+import ru.art.entity.exception.*;
+import java.text.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.StringExtensions.*;
+import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
+import static ru.art.entity.constants.ValueType.PrimitiveType.BOOL;
+import static ru.art.entity.constants.ValueType.PrimitiveType.BYTE;
+import static ru.art.entity.constants.ValueType.PrimitiveType.DOUBLE;
+import static ru.art.entity.constants.ValueType.PrimitiveType.FLOAT;
+import static ru.art.entity.constants.ValueType.PrimitiveType.INT;
+import static ru.art.entity.constants.ValueType.PrimitiveType.LONG;
+import static ru.art.entity.constants.ValueType.PrimitiveType.STRING;
 
 
 @Getter

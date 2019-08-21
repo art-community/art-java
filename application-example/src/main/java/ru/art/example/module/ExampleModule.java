@@ -18,24 +18,24 @@
 
 package ru.art.example.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.example.api.communication.grpc.ExampleServiceGrpcCommunicationSpecification;
-import ru.art.example.api.communication.http.ExampleServiceHttpCommunicationSpecification;
-import ru.art.example.configuration.ExampleModuleConfiguration;
-import ru.art.example.configuration.ExampleModuleConfiguration.ExampleModuleDefaultConfiguration;
-import ru.art.example.specification.ExampleServiceSpecification;
-import ru.art.example.state.ExampleModuleState;
-import ru.art.soap.server.specification.SoapServiceExecutionSpecification;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.extension.ThreadExtensions.thread;
-import static ru.art.example.constants.ExampleAppModuleConstants.EXAMPLE_MODULE_ID;
-import static ru.art.example.constants.ExampleAppModuleConstants.HTTP_SERVER_BOOTSTRAP_THREAD;
-import static ru.art.grpc.server.GrpcServer.grpcServer;
-import static ru.art.http.server.HttpServer.httpServer;
-import static ru.art.service.ServiceModule.serviceModule;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.example.api.communication.grpc.*;
+import ru.art.example.api.communication.http.*;
+import ru.art.example.configuration.*;
+import ru.art.example.configuration.ExampleModuleConfiguration.*;
+import ru.art.example.specification.*;
+import ru.art.example.state.*;
+import ru.art.soap.server.specification.*;
+
+import static lombok.AccessLevel.*;
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.ThreadExtensions.*;
+import static ru.art.example.constants.ExampleAppModuleConstants.*;
+import static ru.art.grpc.server.GrpcServer.*;
+import static ru.art.http.server.HttpServer.*;
+import static ru.art.service.ServiceModule.*;
 
 /**
  * Module class is a main class where all needed modules are loading

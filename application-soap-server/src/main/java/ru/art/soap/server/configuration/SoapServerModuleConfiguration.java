@@ -18,13 +18,13 @@
 
 package ru.art.soap.server.configuration;
 
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
-import ru.art.soap.server.model.SoapFault;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.soap.server.constans.SoapServerModuleConstants.ResponseFaultConstants.UNEXPECTED_ERROR;
-import static ru.art.soap.server.constans.SoapServerModuleConstants.ResponseFaultConstants.UNEXPECTED_ERROR_TEXT;
-import static ru.art.soap.server.mapper.SoapMapper.soapResponseFaultMapper;
+import ru.art.core.module.*;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.soap.server.model.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.soap.server.constans.SoapServerModuleConstants.ResponseFaultConstants.*;
+import static ru.art.soap.server.mapper.SoapMapper.*;
 
 public interface SoapServerModuleConfiguration extends ModuleConfiguration {
     <T extends Throwable> T getDefaultFaultResponse();

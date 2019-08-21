@@ -18,21 +18,21 @@
 
 package ru.art.config.extensions.grpc;
 
-import lombok.Getter;
-import ru.art.grpc.client.configuration.GrpcClientModuleConfiguration.GrpcClientModuleDefaultConfiguration;
-import ru.art.grpc.client.model.GrpcCommunicationTargetConfiguration;
-import static java.util.stream.Collectors.toMap;
+import lombok.*;
+import ru.art.grpc.client.configuration.GrpcClientModuleConfiguration.*;
+import ru.art.grpc.client.model.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+import static java.util.stream.Collectors.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.grpc.GrpcConfigKeys.*;
-import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
-import static ru.art.core.constants.StringConstants.SLASH;
-import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
-import static ru.art.core.extension.ExceptionExtensions.ifException;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.constants.ThreadConstants.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
 
 
 @Getter

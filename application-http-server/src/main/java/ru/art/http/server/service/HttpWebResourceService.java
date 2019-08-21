@@ -18,28 +18,23 @@
 
 package ru.art.http.server.service;
 
-import org.jtwig.JtwigModel;
-import org.jtwig.JtwigTemplate;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.jtwig.JtwigTemplate.inlineTemplate;
-import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.extension.InputOutputStreamExtensions.transferBytes;
-import static ru.art.http.server.constants.HttpServerExceptionMessages.RESOURCE_ERROR;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.INDEX_HTML;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
-import static ru.art.logging.LoggingModule.loggingModule;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Map;
-import java.util.function.Function;
+import org.jtwig.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.function.*;
+
+import static java.util.Objects.*;
+import static org.jtwig.JtwigTemplate.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.ArrayConstants.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.InputOutputStreamExtensions.*;
+import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.*;
+import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.logging.LoggingModule.*;
 
 public interface HttpWebResourceService {
     static String getStringResource(final String resource) {

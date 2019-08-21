@@ -19,11 +19,12 @@
 package ru.art.tarantool.configuration.lua;
 
 import lombok.*;
-import org.jtwig.JtwigModel;
-import static org.jtwig.JtwigTemplate.classpathTemplate;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.JTW_EXTENSION;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.SPACE_NAME;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.SIMPLE_VALUE;
+import org.jtwig.*;
+
+import static org.jtwig.JtwigTemplate.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
 
 @Getter
 @EqualsAndHashCode

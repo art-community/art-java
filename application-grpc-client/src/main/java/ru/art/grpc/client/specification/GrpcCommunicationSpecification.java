@@ -18,12 +18,13 @@
 
 package ru.art.grpc.client.specification;
 
-import ru.art.grpc.client.model.GrpcCommunicationTargetConfiguration;
-import ru.art.service.Specification;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.grpc.client.constants.GrpcClientModuleConstants.GRPC_COMMUNICATION_SERVICE_TYPE;
-import static ru.art.grpc.client.module.GrpcClientModule.grpcClientModule;
-import java.util.List;
+import ru.art.grpc.client.model.*;
+import ru.art.service.*;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.grpc.client.constants.GrpcClientModuleConstants.*;
+import static ru.art.grpc.client.module.GrpcClientModule.*;
 
 public interface GrpcCommunicationSpecification extends Specification {
     default GrpcCommunicationTargetConfiguration communicationTarget(String serviceId) {

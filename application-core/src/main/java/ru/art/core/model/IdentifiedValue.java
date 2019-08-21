@@ -18,8 +18,7 @@
 
 package ru.art.core.model;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @Builder

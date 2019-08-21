@@ -19,22 +19,18 @@
 package ru.art.state.service;
 
 import ru.art.state.api.model.*;
-import static java.lang.System.currentTimeMillis;
-import static java.time.Duration.ofMillis;
-import static java.time.Duration.ofMinutes;
-import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toMap;
-import static ru.art.core.factory.CollectionsFactory.setOf;
-import static ru.art.state.api.model.ModuleNetworkResponse.fromNetwork;
-import static ru.art.state.dao.ClusterDao.saveCluster;
-import static ru.art.state.module.ApplicationStateModule.applicationState;
-import static ru.art.state.module.ApplicationStateModule.applicationStateModule;
-import java.time.Duration;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
+import java.time.*;
+import java.util.*;
+import java.util.function.*;
+
+import static java.lang.System.*;
+import static java.time.Duration.*;
+import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.state.api.model.ModuleNetworkResponse.*;
+import static ru.art.state.dao.ClusterDao.*;
+import static ru.art.state.module.ApplicationStateModule.*;
 
 public interface NetworkService {
     static ClusterProfileResponse getClusterProfile(ClusterProfileRequest request) {

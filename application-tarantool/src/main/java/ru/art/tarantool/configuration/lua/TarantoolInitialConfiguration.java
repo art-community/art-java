@@ -18,15 +18,14 @@
 
 package ru.art.tarantool.configuration.lua;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-import org.jtwig.JtwigModel;
-import static org.jtwig.JtwigTemplate.classpathTemplate;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.JTW_EXTENSION;
+import lombok.*;
+import org.jtwig.*;
+import java.util.*;
+
+import static org.jtwig.JtwigTemplate.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.CONFIGURATION;
-import java.util.Map;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
 
 @Getter
 @Builder

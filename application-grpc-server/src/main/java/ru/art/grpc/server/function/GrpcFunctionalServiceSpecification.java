@@ -18,12 +18,12 @@
 
 package ru.art.grpc.server.function;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import ru.art.grpc.server.model.GrpcService;
-import ru.art.grpc.server.specification.GrpcServiceSpecification;
-import static ru.art.core.caster.Caster.cast;
-import java.util.function.Function;
+import lombok.*;
+import ru.art.grpc.server.model.*;
+import ru.art.grpc.server.specification.*;
+import java.util.function.*;
+
+import static ru.art.core.caster.Caster.*;
 
 @Getter
 @RequiredArgsConstructor

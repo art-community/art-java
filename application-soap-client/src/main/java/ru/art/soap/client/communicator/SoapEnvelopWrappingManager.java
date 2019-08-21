@@ -18,17 +18,16 @@
 
 package ru.art.soap.client.communicator;
 
-import lombok.NoArgsConstructor;
-import ru.art.entity.XmlEntity;
-import ru.art.soap.client.exception.SoapClientModuleException;
-import static lombok.AccessLevel.PACKAGE;
+import lombok.*;
+import ru.art.entity.*;
+import ru.art.soap.client.exception.*;
+import java.util.*;
+
+import static lombok.AccessLevel.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.entity.XmlEntity.xmlEntityBuilder;
-import static ru.art.soap.client.constants.SoapClientModuleConstants.SOAP_BODY_TAG;
-import static ru.art.soap.client.constants.SoapClientModuleConstants.SOAP_ENVELOPE_TAG;
-import static ru.art.soap.client.constants.SoapClientModuleExceptionMessages.SOAP_RESPONSE_HAS_NOT_BODY;
-import static ru.art.soap.client.constants.SoapClientModuleExceptionMessages.SOAP_RESPONSE_HAS_NOT_ENVELOPE;
-import java.util.List;
+import static ru.art.entity.XmlEntity.*;
+import static ru.art.soap.client.constants.SoapClientModuleConstants.*;
+import static ru.art.soap.client.constants.SoapClientModuleExceptionMessages.*;
 
 @NoArgsConstructor(access = PACKAGE)
 class SoapEnvelopWrappingManager {

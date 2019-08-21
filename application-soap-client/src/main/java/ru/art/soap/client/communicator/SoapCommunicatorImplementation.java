@@ -18,33 +18,30 @@
 
 package ru.art.soap.client.communicator;
 
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.nio.client.HttpAsyncClient;
-import ru.art.core.validator.BuilderValidator;
-import ru.art.entity.XmlEntity;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.http.client.handler.HttpCommunicationCancellationHandler;
-import ru.art.http.client.handler.HttpCommunicationExceptionHandler;
-import ru.art.http.client.handler.HttpCommunicationResponseHandler;
-import ru.art.http.client.interceptor.HttpClientInterceptor;
-import ru.art.http.client.model.HttpCommunicationTargetConfiguration;
-import ru.art.soap.client.communicator.SoapCommunicator.SoapAsynchronousCommunicator;
-import ru.art.soap.content.mapper.SoapMimeToContentTypeMapper;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.constants.StringConstants.COLON;
-import static ru.art.core.constants.StringConstants.SCHEME_DELIMITER;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.core.extension.StringExtensions.emptyIfNull;
-import static ru.art.http.client.module.HttpClientModule.httpClientModule;
-import static ru.art.soap.client.module.SoapClientModule.soapClientModule;
-import java.nio.charset.Charset;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.config.*;
+import org.apache.http.nio.client.*;
+import ru.art.core.validator.*;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.http.client.handler.*;
+import ru.art.http.client.interceptor.*;
+import ru.art.http.client.model.*;
+import ru.art.soap.client.communicator.SoapCommunicator.*;
+import ru.art.soap.content.mapper.*;
+import java.nio.charset.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.core.extension.StringExtensions.*;
+import static ru.art.http.client.module.HttpClientModule.*;
+import static ru.art.soap.client.module.SoapClientModule.*;
 
 
 public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsynchronousCommunicator {

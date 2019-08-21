@@ -19,19 +19,22 @@
 package ru.art.tarantool.configuration.lua;
 
 import lombok.*;
-import org.jtwig.JtwigModel;
-import static java.util.stream.Collectors.joining;
-import static org.jtwig.JtwigTemplate.classpathTemplate;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import org.jtwig.*;
+import java.util.*;
+
+import static java.util.stream.Collectors.*;
+import static org.jtwig.JtwigTemplate.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.CharConstants.EQUAL;
 import static ru.art.core.constants.CharConstants.SINGLE_QUOTE;
-import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.constants.StringConstants.CLOSING_BRACES;
+import static ru.art.core.constants.StringConstants.COMMA;
+import static ru.art.core.constants.StringConstants.OPENING_BRACES;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.UNSIGNED;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.USER;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
-import java.util.Set;
 
 @Getter
 @Builder

@@ -18,7 +18,7 @@
 
 package ru.art.service.validation;
 
-import ru.art.service.exception.ValidationException;
+import ru.art.service.exception.*;
 
 public class Validator {
     @SafeVarargs

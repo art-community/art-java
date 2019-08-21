@@ -18,8 +18,8 @@
 
 package ru.art.task.deferred.executor;
 
-import static java.util.UUID.randomUUID;
-import static ru.art.task.deferred.executor.SchedulerModuleConstants.COMMON_TASK;
+import static java.util.UUID.*;
+import static ru.art.task.deferred.executor.SchedulerModuleConstants.*;
 
 public interface IdentifiedRunnableFactory {
     static IdentifiedRunnable uniqueTask(Runnable runnable) {

@@ -18,9 +18,8 @@
 
 package ru.art.service.factory;
 
-import ru.art.service.exception.ServiceExecutionException;
-import ru.art.service.model.ServiceMethodCommand;
-import ru.art.service.model.ServiceResponse;
+import ru.art.service.exception.*;
+import ru.art.service.model.*;
 
 public interface ServiceResponseFactory {
     static <T> ServiceResponse<T> okResponse(ServiceMethodCommand command) {

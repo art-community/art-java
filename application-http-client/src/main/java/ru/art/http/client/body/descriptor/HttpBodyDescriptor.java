@@ -18,14 +18,14 @@
 
 package ru.art.http.client.body.descriptor;
 
-import org.apache.http.HttpEntity;
-import ru.art.http.client.module.HttpClientModule;
-import static java.util.Objects.isNull;
-import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
-import static ru.art.http.client.constants.HttpClientExceptionMessages.REQUEST_BODY_READING_EXCEPTION;
-import static ru.art.logging.LoggingModule.loggingModule;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import org.apache.http.*;
+import ru.art.http.client.module.*;
+import java.io.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.constants.ArrayConstants.*;
+import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
+import static ru.art.logging.LoggingModule.*;
 
 public interface HttpBodyDescriptor {
     static byte[] readResponseBody(HttpEntity responseEntity) {

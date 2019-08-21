@@ -18,11 +18,11 @@
 
 package ru.art.xml.rules.builder;
 
-import lombok.RequiredArgsConstructor;
-import ru.art.xml.constants.XmlEntityMappingTargets;
-import static ru.art.core.factory.CollectionsFactory.setOf;
-import java.util.Collection;
-import java.util.Set;
+import lombok.*;
+import ru.art.xml.constants.*;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
 
 @RequiredArgsConstructor
 class XmlEntityRuleBuilderImpl implements XmlEntityRuleBuilder {

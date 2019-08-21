@@ -18,10 +18,10 @@
 
 package ru.art.entity.interceptor;
 
-import lombok.Builder;
-import lombok.Getter;
-import ru.art.core.constants.InterceptionStrategy;
+import lombok.*;
+import ru.art.core.constants.*;
 import ru.art.entity.Value;
+
 import static ru.art.core.constants.InterceptionStrategy.*;
 
 @Getter

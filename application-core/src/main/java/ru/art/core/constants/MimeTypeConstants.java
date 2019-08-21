@@ -18,10 +18,11 @@
 
 package ru.art.core.constants;
 
-import lombok.NoArgsConstructor;
-import static lombok.AccessLevel.PRIVATE;
+import lombok.*;
+import java.util.*;
+
+import static lombok.AccessLevel.*;
 import static ru.art.core.constants.CharConstants.*;
-import java.util.BitSet;
 
 @NoArgsConstructor(access = PRIVATE)
 public class MimeTypeConstants {

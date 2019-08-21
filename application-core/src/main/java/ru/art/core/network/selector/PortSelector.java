@@ -18,19 +18,17 @@
 
 package ru.art.core.network.selector;
 
-import static java.lang.String.format;
-import static java.lang.System.currentTimeMillis;
-import static java.net.InetAddress.getByName;
-import static javax.net.ServerSocketFactory.getDefault;
-import static ru.art.core.constants.ExceptionMessages.COULD_NOT_FIND_AVAILABLE_PORTS_IN_THE_RANGE;
-import static ru.art.core.constants.ExceptionMessages.COULD_NOT_FIND_AVAILABLE_PORT_AFTER_ATTEMPTS;
+import java.net.*;
+import java.util.*;
+
+import static java.lang.String.*;
+import static java.lang.System.*;
+import static java.net.InetAddress.*;
+import static javax.net.ServerSocketFactory.*;
+import static ru.art.core.constants.ExceptionMessages.*;
 import static ru.art.core.constants.NetworkConstants.*;
-import static ru.art.core.factory.CollectionsFactory.treeOf;
-import static ru.art.core.network.selector.PortSelector.SocketType.TCP;
-import static ru.art.core.network.selector.PortSelector.SocketType.UDP;
-import java.net.DatagramSocket;
-import java.util.Random;
-import java.util.Set;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.core.network.selector.PortSelector.SocketType.*;
 
 public interface PortSelector {
     Random RANDOM = new Random(currentTimeMillis());

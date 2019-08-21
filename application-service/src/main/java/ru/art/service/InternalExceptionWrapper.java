@@ -18,11 +18,11 @@
 
 package ru.art.service;
 
-import ru.art.service.constants.ServiceErrorCodes;
-import ru.art.service.exception.ServiceInternalException;
-import ru.art.service.model.ServiceMethodCommand;
-import ru.art.service.model.ServiceResponse;
-import static ru.art.service.factory.ServiceResponseFactory.errorResponse;
+import ru.art.service.constants.*;
+import ru.art.service.exception.*;
+import ru.art.service.model.*;
+
+import static ru.art.service.factory.ServiceResponseFactory.*;
 
 public class InternalExceptionWrapper extends ServiceExecutionExceptionWrapper {
 

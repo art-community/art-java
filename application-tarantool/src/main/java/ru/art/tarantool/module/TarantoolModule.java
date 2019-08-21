@@ -18,19 +18,19 @@
 
 package ru.art.tarantool.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.tarantool.configuration.TarantoolModuleConfiguration;
-import ru.art.tarantool.configuration.TarantoolModuleConfiguration.TarantoolModuleDefaultConfiguration;
-import ru.art.tarantool.initializer.TarantoolInitializer;
-import ru.art.tarantool.state.TarantoolModuleState;
-import static java.util.Map.Entry;
-import static java.util.Objects.nonNull;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TARANTOOL_MODULE_ID;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.ON_MODULE_LOAD;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.tarantool.configuration.*;
+import ru.art.tarantool.configuration.TarantoolModuleConfiguration.*;
+import ru.art.tarantool.initializer.*;
+import ru.art.tarantool.state.*;
+
+import static java.util.Map.*;
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.*;
 
 @Getter
 public class TarantoolModule implements Module<TarantoolModuleConfiguration, TarantoolModuleState> {

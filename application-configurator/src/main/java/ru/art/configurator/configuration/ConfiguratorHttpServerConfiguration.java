@@ -18,36 +18,31 @@
 
 package ru.art.configurator.configuration;
 
-import lombok.Getter;
-import org.zalando.logbook.Logbook;
-import ru.art.configurator.dao.UserDao;
-import ru.art.http.mapper.HttpContentMapper;
-import ru.art.core.mime.MimeType;
-import ru.art.http.server.HttpServerModuleConfiguration.HttpServerModuleDefaultConfiguration;
-import ru.art.http.server.interceptor.CookieInterceptor;
-import ru.art.http.server.interceptor.HttpServerInterceptor;
-import static ru.art.config.ConfigProvider.config;
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.DEFAULT_CONFIGURATOR_PATH;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.AUTHORIZATION_CHECKING_URLS;
+import lombok.*;
+import org.zalando.logbook.*;
+import ru.art.configurator.dao.*;
+import ru.art.core.mime.*;
+import ru.art.http.mapper.*;
+import ru.art.http.server.HttpServerModuleConfiguration.*;
+import ru.art.http.server.interceptor.*;
+import java.util.*;
+
+import static ru.art.config.ConfigProvider.*;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
+import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.TOKEN_COOKIE;
-import static ru.art.configurator.http.content.mapping.ConfiguratorHttpContentMapping.configureContentMappers;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST;
-import static ru.art.core.constants.StringConstants.COLON;
-import static ru.art.core.constants.StringConstants.SCHEME_DELIMITER;
-import static ru.art.core.extension.ExceptionExtensions.ifExceptionOrEmpty;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
-import static ru.art.http.constants.HttpCommonConstants.HTTP_SCHEME;
-import static ru.art.http.constants.HttpStatus.UNAUTHORIZED;
-import static ru.art.http.server.HttpServerModuleConfiguration.initializeWebServerInterceptors;
-import static ru.art.http.server.HttpServerModuleConfiguration.logbookWithoutWebLogs;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.INDEX_HTML;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.URL_TEMPLATE_VARIABLE;
-import static ru.art.http.server.interceptor.HttpServerInterceptor.intercept;
-import static ru.art.http.server.service.HttpWebResourceService.getStringResource;
-import static ru.art.metrics.http.filter.MetricsHttpLogFilter.logbookWithoutMetricsLogs;
-import java.util.List;
-import java.util.Map;
+import static ru.art.configurator.http.content.mapping.ConfiguratorHttpContentMapping.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.http.constants.HttpCommonConstants.*;
+import static ru.art.http.constants.HttpStatus.*;
+import static ru.art.http.server.HttpServerModuleConfiguration.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.*;
+import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
+import static ru.art.http.server.service.HttpWebResourceService.*;
+import static ru.art.metrics.http.filter.MetricsHttpLogFilter.*;
 
 @Getter
 public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefaultConfiguration {

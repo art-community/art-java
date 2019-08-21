@@ -18,33 +18,27 @@
 
 package ru.art.json.descriptor;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import ru.art.entity.CollectionValue;
-import ru.art.entity.Entity;
+import com.fasterxml.jackson.core.*;
+import lombok.*;
 import ru.art.entity.Value;
-import ru.art.json.exception.JsonMappingException;
+import ru.art.entity.*;
+import ru.art.json.exception.*;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+
 import static com.fasterxml.jackson.core.JsonToken.*;
-import static java.util.Objects.isNull;
+import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.SizesConstants.INT_MAX_CHARACTER_SIZE;
-import static ru.art.core.constants.SizesConstants.LONG_MAX_CHARACTER_SIZE;
-import static ru.art.core.extension.FileExtensions.readFile;
-import static ru.art.core.extension.StringExtensions.emptyIfNull;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
+import static ru.art.core.constants.SizesConstants.*;
+import static ru.art.core.extension.FileExtensions.*;
+import static ru.art.core.extension.StringExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
-import static ru.art.entity.Entity.EntityBuilder;
-import static ru.art.entity.Entity.entityBuilder;
+import static ru.art.entity.Entity.*;
 import static ru.art.entity.PrimitivesFactory.*;
-import static ru.art.json.constants.JsonMappingExceptionMessages.JSON_FACTORY_IS_NULL;
-import static ru.art.json.module.JsonModule.jsonModule;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.List;
+import static ru.art.json.constants.JsonMappingExceptionMessages.*;
+import static ru.art.json.module.JsonModule.*;
 
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

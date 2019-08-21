@@ -18,9 +18,8 @@
 
 package ru.art.sql.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import ru.art.sql.constants.DbProvider;
+import lombok.*;
+import ru.art.sql.constants.*;
 
 @Getter
 @Builder

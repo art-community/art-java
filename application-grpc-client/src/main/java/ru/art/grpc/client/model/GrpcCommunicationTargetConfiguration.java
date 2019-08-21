@@ -18,11 +18,10 @@
 
 package ru.art.grpc.client.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-import static ru.art.grpc.client.module.GrpcClientModule.grpcClientModule;
+import lombok.*;
+import lombok.experimental.*;
+
+import static ru.art.grpc.client.module.GrpcClientModule.*;
 
 @Getter
 @Accessors(fluent = true)

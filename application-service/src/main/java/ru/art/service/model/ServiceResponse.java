@@ -18,11 +18,8 @@
 
 package ru.art.service.model;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import ru.art.service.exception.ServiceExecutionException;
+import lombok.*;
+import ru.art.service.exception.*;
 
 @Getter
 @Builder

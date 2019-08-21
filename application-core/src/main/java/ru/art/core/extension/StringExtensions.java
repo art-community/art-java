@@ -18,14 +18,12 @@
 
 package ru.art.core.extension;
 
-import ru.art.core.constants.StringConstants;
-import static java.util.Objects.isNull;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.constants.StringConstants.NULL_STRING;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
+import ru.art.core.constants.*;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
 
 public interface StringExtensions {
     static String collectionToDelimitedString(Collection<?> coll, String delim, String prefix, String suffix) {

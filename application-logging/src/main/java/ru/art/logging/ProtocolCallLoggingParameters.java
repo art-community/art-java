@@ -18,8 +18,7 @@
 
 package ru.art.logging;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @Builder

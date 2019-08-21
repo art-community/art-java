@@ -19,20 +19,20 @@
 package ru.art.soap.server.model;
 
 import lombok.*;
-import lombok.experimental.Accessors;
-import ru.art.entity.XmlEntity;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper.XmlEntityToModelMapper;
-import ru.art.http.server.interceptor.HttpServerInterceptor;
-import ru.art.service.constants.RequestValidationPolicy;
-import ru.art.soap.content.mapper.SoapMimeToContentTypeMapper;
-import static java.lang.Integer.MAX_VALUE;
+import lombok.experimental.*;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+import ru.art.http.server.interceptor.*;
+import ru.art.service.constants.*;
+import ru.art.soap.content.mapper.*;
+import java.util.*;
+
+import static java.lang.Integer.*;
 import static java.util.Collections.*;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.soap.content.mapper.SoapMimeToContentTypeMapper.textXml;
-import java.util.List;
-import java.util.Map;
+import static ru.art.soap.content.mapper.SoapMimeToContentTypeMapper.*;
 
 @Getter
 @AllArgsConstructor

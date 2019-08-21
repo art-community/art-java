@@ -18,15 +18,13 @@
 
 package ru.art.state.api.model;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import static java.util.Objects.nonNull;
-import static ru.art.core.factory.CollectionsFactory.concurrentHashMap;
-import static ru.art.state.api.model.ClusterProfile.clusterProfileOf;
-import static ru.art.state.api.model.ModuleNetwork.moduleNetworkOf;
-import java.util.Map;
+import lombok.*;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.state.api.model.ClusterProfile.*;
+import static ru.art.state.api.model.ModuleNetwork.*;
 
 @Getter
 @Builder

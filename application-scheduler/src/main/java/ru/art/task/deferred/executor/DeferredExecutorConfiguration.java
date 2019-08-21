@@ -18,7 +18,7 @@
 
 package ru.art.task.deferred.executor;
 
-import java.lang.Thread.UncaughtExceptionHandler;
+import java.lang.Thread.*;
 
 /**
  * Конфигурация для {@link DeferredExecutorImpl} и {@link DeferredEventObserver}

@@ -18,9 +18,9 @@
 
 package ru.art.task.deferred.executor;
 
-import lombok.AllArgsConstructor;
-import java.util.concurrent.Callable;
-import java.util.function.Consumer;
+import lombok.*;
+import java.util.concurrent.*;
+import java.util.function.*;
 
 @AllArgsConstructor
 class NotifiedCallable<T> implements Callable<T> {

@@ -18,18 +18,17 @@
 
 package ru.art.sql.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleState;
-import ru.art.sql.configuration.SqlModuleConfiguration;
-import ru.art.sql.configuration.SqlModuleConfiguration.SqlModuleDefaultConfiguration;
-import ru.art.sql.exception.SqlModuleException;
-import static java.lang.Class.forName;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.sql.constants.SqlModuleConstants.SQL_MODULE_ID;
-import javax.sql.DataSource;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.sql.configuration.*;
+import ru.art.sql.configuration.SqlModuleConfiguration.*;
+import ru.art.sql.exception.*;
+import javax.sql.*;
+
+import static java.lang.Class.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.sql.constants.SqlModuleConstants.*;
 
 @Getter
 public class SqlModule implements Module<SqlModuleConfiguration, ModuleState> {

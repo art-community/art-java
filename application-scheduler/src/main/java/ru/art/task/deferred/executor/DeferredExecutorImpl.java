@@ -18,15 +18,14 @@
 
 package ru.art.task.deferred.executor;
 
-import static java.lang.Integer.MAX_VALUE;
-import static java.time.LocalDateTime.now;
-import static java.util.Objects.isNull;
-import static ru.art.task.deferred.executor.DeferredExecutionExceptionMessages.DEFERRED_TASK_IS_NULL;
-import static ru.art.task.deferred.executor.DeferredExecutionExceptionMessages.DEFERRED_TASK_TRIGGER_TIME_IS_NULL;
-import java.time.LocalDateTime;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.locks.ReentrantLock;
+import java.time.*;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.*;
+
+import static java.lang.Integer.*;
+import static java.time.LocalDateTime.*;
+import static java.util.Objects.*;
+import static ru.art.task.deferred.executor.DeferredExecutionExceptionMessages.*;
 
 /**
  * Реализация ключевого компонента проекта. Описание функций: {@link DeferredExecutor}

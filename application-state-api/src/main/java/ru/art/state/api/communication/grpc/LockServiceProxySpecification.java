@@ -18,17 +18,17 @@
 
 package ru.art.state.api.communication.grpc;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
-import ru.art.grpc.client.communicator.GrpcCommunicator;
-import ru.art.grpc.client.specification.GrpcCommunicationSpecification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator;
-import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.LOCK_SERVICE_ID;
-import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.Methods.LOCK;
-import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.Methods.UNLOCK;
-import static ru.art.state.api.mapping.LockRequestMapper.fromLockRequest;
+import lombok.*;
+import lombok.experimental.*;
+import ru.art.grpc.client.communicator.*;
+import ru.art.grpc.client.specification.*;
+import ru.art.service.exception.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.grpc.client.communicator.GrpcCommunicator.*;
+import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.*;
+import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.Methods.*;
+import static ru.art.state.api.mapping.LockRequestMapper.*;
 
 @Getter
 public class LockServiceProxySpecification implements GrpcCommunicationSpecification {

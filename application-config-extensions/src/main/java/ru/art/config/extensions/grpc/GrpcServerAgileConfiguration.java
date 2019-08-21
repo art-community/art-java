@@ -18,20 +18,18 @@
 
 package ru.art.config.extensions.grpc;
 
-import lombok.Getter;
-import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.GrpcServerModuleDefaultConfiguration;
-import static java.util.Objects.isNull;
+import lombok.*;
+import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.*;
+import java.util.concurrent.*;
+
+import static java.util.Objects.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
-import static ru.art.config.extensions.grpc.GrpcConfigKeys.GRPC_SERVER_CONFIG_SECTION_ID;
-import static ru.art.config.extensions.grpc.GrpcConfigKeys.HANDSHAKE_TIMEOUT;
-import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
-import static ru.art.core.context.Context.context;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.GRPC_SERVER_MODULE_ID;
-import static ru.art.grpc.server.module.GrpcServerModule.grpcServerModuleState;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ThreadPoolExecutor;
+import static ru.art.config.extensions.grpc.GrpcConfigKeys.*;
+import static ru.art.core.constants.ThreadConstants.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
+import static ru.art.grpc.server.module.GrpcServerModule.*;
 
 @Getter
 public class GrpcServerAgileConfiguration extends GrpcServerModuleDefaultConfiguration {

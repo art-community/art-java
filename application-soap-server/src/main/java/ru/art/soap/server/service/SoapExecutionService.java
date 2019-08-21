@@ -18,32 +18,28 @@
 
 package ru.art.soap.server.service;
 
-import lombok.experimental.UtilityClass;
-import ru.art.core.factory.CollectionsFactory.MapBuilder;
-import ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
-import ru.art.service.constants.RequestValidationPolicy;
-import ru.art.service.exception.ServiceExecutionException;
-import ru.art.service.model.ServiceMethodCommand;
-import ru.art.service.model.ServiceRequest;
-import ru.art.service.model.ServiceResponse;
-import ru.art.soap.server.exception.SoapServerException;
-import ru.art.soap.server.model.SoapRequest;
-import ru.art.soap.server.model.SoapResponse;
-import ru.art.soap.server.model.SoapService;
-import ru.art.soap.server.model.SoapService.SoapOperation;
-import ru.art.soap.server.specification.SoapServiceSpecification;
-import static java.util.Objects.nonNull;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.http.server.service.HttpWebResourceService.getStringResource;
-import static ru.art.service.ServiceController.executeServiceMethodUnchecked;
+import lombok.experimental.*;
+import ru.art.core.factory.CollectionsFactory.*;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.service.constants.*;
+import ru.art.service.exception.*;
+import ru.art.service.model.*;
+import ru.art.soap.server.exception.*;
+import ru.art.soap.server.model.*;
+import ru.art.soap.server.model.SoapService.*;
+import ru.art.soap.server.specification.*;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.http.server.service.HttpWebResourceService.*;
+import static ru.art.service.ServiceController.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.ResponseFaultConstants.*;
-import static ru.art.soap.server.constans.SoapServerModuleConstants.SOAP_SERVICE_URL;
-import static ru.art.soap.server.module.SoapServerModule.soapServerModule;
-import static ru.art.soap.server.normalizer.WsdlPathNormalizer.normalizeUrlPath;
-import java.util.Map;
+import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
+import static ru.art.soap.server.module.SoapServerModule.*;
+import static ru.art.soap.server.normalizer.WsdlPathNormalizer.*;
 
 @UtilityClass
 public class SoapExecutionService {

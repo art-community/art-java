@@ -18,11 +18,11 @@
 
 package ru.art.configurator.api.mapping;
 
-import ru.art.configurator.api.entity.UserRequest;
-import ru.art.configurator.api.entity.UserResponse;
-import ru.art.entity.mapper.ValueFromModelMapper.EntityFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper.EntityToModelMapper;
-import static ru.art.entity.Entity.entityBuilder;
+import ru.art.configurator.api.entity.*;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+
+import static ru.art.entity.Entity.*;
 
 public interface UserMapping {
     EntityToModelMapper<UserRequest> userRequestToModelMapper = value -> new UserRequest(value.getString("username"), value.getString("password"));

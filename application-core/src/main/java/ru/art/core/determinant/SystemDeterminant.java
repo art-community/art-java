@@ -18,11 +18,12 @@
 
 package ru.art.core.determinant;
 
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import static java.lang.System.*;
-import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.*;
 import static ru.art.core.constants.SystemNamePatterns.*;
-import static ru.art.core.constants.SystemProperties.OS_NAME_PROPERTY;
+import static ru.art.core.constants.SystemProperties.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class SystemDeterminant {

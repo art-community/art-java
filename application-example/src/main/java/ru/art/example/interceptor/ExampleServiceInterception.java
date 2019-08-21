@@ -18,14 +18,12 @@
 
 package ru.art.example.interceptor;
 
-import ru.art.service.interceptor.ServiceRequestInterception;
-import ru.art.service.interceptor.ServiceResponseInterception;
-import ru.art.service.model.ServiceInterceptionResult;
-import ru.art.service.model.ServiceRequest;
-import ru.art.service.model.ServiceResponse;
-import static ru.art.example.module.ExampleModule.exampleState;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.service.model.ServiceInterceptionResult.nextInterceptor;
+import ru.art.service.interceptor.*;
+import ru.art.service.model.*;
+
+import static ru.art.example.module.ExampleModule.*;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.service.model.ServiceInterceptionResult.*;
 
 /**
  * Interceptor can do some logic before service method execution

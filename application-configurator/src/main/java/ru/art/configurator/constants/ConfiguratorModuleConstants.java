@@ -18,8 +18,9 @@
 
 package ru.art.configurator.constants;
 
-import static ru.art.core.factory.CollectionsFactory.setOf;
-import java.util.Set;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
 
 public interface ConfiguratorModuleConstants {
     String CONFIGURATOR_MODULE_ID = "CONFIGURATOR_MODULE";

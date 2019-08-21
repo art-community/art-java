@@ -18,23 +18,21 @@
 
 package ru.art.tarantool.connector;
 
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.tarantool.*;
-import ru.art.tarantool.configuration.TarantoolConfiguration;
-import ru.art.tarantool.configuration.TarantoolConnectionConfiguration;
-import ru.art.tarantool.exception.TarantoolConnectionException;
-import ru.art.tarantool.initializer.TarantoolInitializer;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.constants.StringConstants.COLON;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.CONFIGURATION_IS_NULL;
+import ru.art.tarantool.configuration.*;
+import ru.art.tarantool.exception.*;
+import ru.art.tarantool.initializer.*;
+
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.logging.LoggingModule.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_CONNECT_TO_TARANTOOL;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.TARANTOOL_SUCCESSFULLY_CONNECTED;
-import static ru.art.tarantool.module.TarantoolModule.tarantoolModule;
-import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
+import static ru.art.tarantool.module.TarantoolModule.*;
 
 @SuppressWarnings("Duplicates")
 @NoArgsConstructor(access = PRIVATE)

@@ -18,14 +18,13 @@
 
 package ru.art.tarantool.configuration;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-import ru.art.tarantool.configuration.lua.TarantoolInitialConfiguration;
-import ru.art.tarantool.model.TarantoolEntityFieldsMapping;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.LOCAL;
-import java.util.Map;
+import lombok.*;
+import ru.art.tarantool.configuration.lua.*;
+import ru.art.tarantool.model.*;
+import java.util.*;
+
+import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.*;
 
 @Getter
 @Builder

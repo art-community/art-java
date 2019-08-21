@@ -18,24 +18,20 @@
 
 package ru.art.http.client.communicator;
 
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.nio.client.HttpAsyncClient;
-import ru.art.entity.Value;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.http.client.handler.HttpCommunicationCancellationHandler;
-import ru.art.http.client.handler.HttpCommunicationExceptionHandler;
-import ru.art.http.client.handler.HttpCommunicationResponseHandler;
-import ru.art.http.client.interceptor.HttpClientInterceptor;
-import ru.art.http.client.model.HttpCommunicationTargetConfiguration;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import java.nio.charset.Charset;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.config.*;
+import org.apache.http.nio.client.*;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.http.client.handler.*;
+import ru.art.http.client.interceptor.*;
+import ru.art.http.client.model.*;
+import ru.art.http.constants.*;
+import java.nio.charset.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 public interface HttpCommunicator {
     static HttpCommunicator httpCommunicator(String url) {

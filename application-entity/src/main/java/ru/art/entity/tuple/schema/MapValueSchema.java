@@ -18,22 +18,17 @@
 
 package ru.art.entity.tuple.schema;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import ru.art.entity.MapValue;
-import ru.art.entity.Primitive;
-import ru.art.entity.Value;
-import ru.art.entity.constants.ValueType;
-import ru.art.entity.exception.ValueMappingException;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
+import lombok.*;
+import ru.art.entity.*;
+import ru.art.entity.constants.*;
+import ru.art.entity.exception.*;
+import java.util.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Value.*;
-import static ru.art.entity.constants.ValueMappingExceptionMessages.VALUE_TYPE_IS_NULL;
-import static ru.art.entity.constants.ValueType.MAP;
-import static ru.art.entity.constants.ValueType.asPrimitiveType;
-import java.util.List;
-import java.util.Objects;
+import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
+import static ru.art.entity.constants.ValueType.*;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)

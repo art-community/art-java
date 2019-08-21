@@ -18,13 +18,11 @@
 
 package ru.art.example.api.mapping;
 
-import ru.art.entity.Entity;
-import ru.art.entity.XmlEntity;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper.XmlEntityToModelMapper;
-import ru.art.example.api.model.ExampleModel;
+import ru.art.entity.*;
+import ru.art.entity.mapper.*;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+import ru.art.example.api.model.*;
 
 public interface ExampleModelMapper {
     String exampleModel = "exampleModel";

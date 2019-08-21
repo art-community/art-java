@@ -18,32 +18,30 @@
 
 package ru.art.grpc.server;
 
-import io.grpc.Server;
-import io.grpc.ServerBuilder;
-import lombok.AllArgsConstructor;
-import org.apache.logging.log4j.Logger;
-import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.GrpcServerSecurityConfiguration;
-import ru.art.grpc.server.exception.GrpcServerException;
-import ru.art.grpc.server.servlet.GrpcServletContainer;
-import ru.art.grpc.server.specification.GrpcServiceSpecification;
-import static io.grpc.ServerBuilder.forPort;
-import static java.lang.System.currentTimeMillis;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.nonNull;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.extension.ThreadExtensions.thread;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
+import io.grpc.*;
+import lombok.*;
+import org.apache.logging.log4j.*;
+import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.*;
+import ru.art.grpc.server.exception.*;
+import ru.art.grpc.server.servlet.*;
+import ru.art.grpc.server.specification.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+import static io.grpc.ServerBuilder.*;
+import static java.lang.System.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static java.util.concurrent.TimeUnit.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.ThreadExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.grpc.server.constants.GrpcServerExceptionMessages.*;
 import static ru.art.grpc.server.constants.GrpcServerLoggingMessages.*;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.GRPC_SERVER_THREAD;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.GRPC_SERVICE_TYPE;
-import static ru.art.grpc.server.module.GrpcServerModule.grpcServerModule;
-import static ru.art.grpc.server.module.GrpcServerModule.grpcServerModuleState;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.service.ServiceModule.serviceModule;
-import java.util.Map;
-import java.util.concurrent.Executor;
+import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
+import static ru.art.grpc.server.module.GrpcServerModule.*;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.service.ServiceModule.*;
 
 @AllArgsConstructor
 public class GrpcServer {

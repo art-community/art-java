@@ -18,7 +18,7 @@
 
 package ru.art.soap.server.normalizer;
 
-import static ru.art.core.constants.CharConstants.SLASH;
+import static ru.art.core.constants.CharConstants.*;
 
 public interface WsdlPathNormalizer {
     static String normalizeUrlPath(String path) {

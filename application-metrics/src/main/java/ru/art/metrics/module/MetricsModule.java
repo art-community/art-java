@@ -18,14 +18,13 @@
 
 package ru.art.metrics.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleState;
-import ru.art.metrics.configuration.MetricModuleConfiguration;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.metrics.constants.MetricsModuleConstants.METRICS_MODULE_ID;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.metrics.configuration.*;
+
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.metrics.constants.MetricsModuleConstants.*;
 
 @Getter
 public class MetricsModule implements Module<MetricModuleConfiguration, ModuleState> {

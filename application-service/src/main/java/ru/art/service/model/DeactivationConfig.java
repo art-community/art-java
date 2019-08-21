@@ -18,10 +18,8 @@
 
 package ru.art.service.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-import java.util.Set;
+import lombok.*;
+import java.util.*;
 
 @Builder
 @Getter

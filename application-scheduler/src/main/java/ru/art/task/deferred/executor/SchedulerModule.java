@@ -18,14 +18,13 @@
 
 package ru.art.task.deferred.executor;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleState;
-import ru.art.task.deferred.executor.SchedulerModuleConfiguration.SchedulerModuleDefaultConfiguration;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.task.deferred.executor.SchedulerModuleConstants.SCHEDULER_MODULE_ID;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.task.deferred.executor.SchedulerModuleConfiguration.*;
+
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.task.deferred.executor.SchedulerModuleConstants.*;
 
 @Getter
 public class SchedulerModule implements Module<SchedulerModuleConfiguration, ModuleState> {

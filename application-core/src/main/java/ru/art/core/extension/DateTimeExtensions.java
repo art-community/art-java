@@ -18,10 +18,11 @@
 
 package ru.art.core.extension;
 
-import static java.time.Instant.ofEpochMilli;
-import static java.time.ZoneId.systemDefault;
-import static java.util.Objects.isNull;
-import java.time.LocalDateTime;
+import java.time.*;
+
+import static java.time.Instant.*;
+import static java.time.ZoneId.*;
+import static java.util.Objects.*;
 
 public interface DateTimeExtensions {
     static long toMillis(LocalDateTime dateTime) {

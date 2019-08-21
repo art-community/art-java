@@ -18,10 +18,9 @@
 
 package ru.art.state.api.mapping;
 
-import ru.art.entity.Entity;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.state.api.model.ModuleConnectionRequest;
+import ru.art.entity.*;
+import ru.art.entity.mapper.*;
+import ru.art.state.api.model.*;
 
 public interface ModuleConnectionRequestMapper {
     ValueToModelMapper<ModuleConnectionRequest, Entity> toModuleConnectionRequest = entity -> ModuleConnectionRequest.builder()

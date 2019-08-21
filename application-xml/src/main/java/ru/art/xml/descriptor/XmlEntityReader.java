@@ -18,28 +18,26 @@
 
 package ru.art.xml.descriptor;
 
-import lombok.NoArgsConstructor;
-import ru.art.entity.XmlEntity;
-import ru.art.entity.XmlEntity.XmlEntityBuilder;
-import ru.art.xml.exception.XmlMappingException;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.emptyMap;
-import static java.util.Objects.isNull;
+import lombok.*;
+import ru.art.entity.*;
+import ru.art.entity.XmlEntity.*;
+import ru.art.xml.exception.*;
+import javax.xml.stream.*;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+
+import static java.nio.charset.StandardCharsets.*;
+import static java.util.Collections.*;
+import static java.util.Objects.*;
 import static javax.xml.stream.XMLStreamConstants.*;
-import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.extension.FileExtensions.readFile;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.entity.XmlEntity.xmlEntityBuilder;
+import static ru.art.core.extension.FileExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.entity.XmlEntity.*;
 import static ru.art.xml.constants.XmlMappingExceptionMessages.*;
-import static ru.art.xml.module.XmlModule.xmlModule;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.Map;
+import static ru.art.xml.module.XmlModule.*;
 
 
 @NoArgsConstructor(access = PRIVATE)

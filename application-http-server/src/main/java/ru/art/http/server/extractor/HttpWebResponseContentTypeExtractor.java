@@ -19,8 +19,8 @@
 package ru.art.http.server.extractor;
 
 
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.DOT;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.ResourceExtensions.*;
 

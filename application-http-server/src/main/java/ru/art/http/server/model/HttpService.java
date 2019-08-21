@@ -18,24 +18,17 @@
 
 package ru.art.http.server.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import ru.art.entity.Value;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.http.constants.HttpMethodType;
-import ru.art.http.constants.HttpRequestDataSource;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.http.server.builder.HttpServiceBuilder;
-import ru.art.http.server.builder.HttpServiceBuilderImplementation;
-import ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode;
-import ru.art.http.server.interceptor.HttpServerInterceptor;
-import ru.art.http.server.path.HttpPath;
-import ru.art.service.constants.RequestValidationPolicy;
-import java.util.List;
-import java.util.Map;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.http.constants.*;
+import ru.art.http.server.builder.*;
+import ru.art.http.server.constants.HttpServerModuleConstants.*;
+import ru.art.http.server.interceptor.*;
+import ru.art.http.server.path.*;
+import ru.art.service.constants.*;
+import java.util.*;
 
 @Getter
 @AllArgsConstructor

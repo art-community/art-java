@@ -18,7 +18,7 @@
 
 package ru.art.config.remote.service;
 
-import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.*;
 
 public interface RemoteConfigService {
     static void applyConfiguration() {

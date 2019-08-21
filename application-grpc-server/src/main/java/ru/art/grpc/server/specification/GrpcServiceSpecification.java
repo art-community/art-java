@@ -18,11 +18,12 @@
 
 package ru.art.grpc.server.specification;
 
-import ru.art.grpc.server.constants.GrpcServerModuleConstants;
-import ru.art.grpc.server.model.GrpcService;
-import ru.art.service.Specification;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import java.util.List;
+import ru.art.grpc.server.constants.*;
+import ru.art.grpc.server.model.*;
+import ru.art.service.*;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
 
 public interface GrpcServiceSpecification extends Specification {
     GrpcService getGrpcService();

@@ -18,11 +18,9 @@
 
 package ru.art.kafka.consumer.configuration;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-import ru.art.kafka.consumer.registry.KafkaStreamsRegistry;
-import java.util.Map;
+import lombok.*;
+import ru.art.kafka.consumer.registry.*;
+import java.util.*;
 
 public interface KafkaStreamsConfiguration {
     Map<String, KafkaStreamConfiguration> getKafkaStreamConfigurations();

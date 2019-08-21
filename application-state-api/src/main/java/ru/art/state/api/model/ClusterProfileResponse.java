@@ -18,12 +18,10 @@
 
 package ru.art.state.api.model;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import java.util.Map;
+import lombok.*;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
 
 @Getter
 @Builder

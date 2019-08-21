@@ -18,22 +18,20 @@
 
 package ru.art.kafka.consumer.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleState;
-import ru.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration;
-import ru.art.kafka.consumer.registry.KafkaStreamsRegistry;
-import ru.art.kafka.consumer.specification.KafkaConsumerServiceSpecification;
-import static java.util.stream.Collectors.toList;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.kafka.consumer.configuration.*;
+import ru.art.kafka.consumer.registry.*;
+import ru.art.kafka.consumer.specification.*;
+import java.util.*;
+
+import static java.util.stream.Collectors.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.context.Context.*;
 import static ru.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration.*;
-import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.KAFKA_CONSUMER_MODULE_ID;
-import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.KAFKA_CONSUMER_SERVICE_TYPE;
-import static ru.art.service.ServiceModule.serviceModule;
-import java.util.List;
+import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
+import static ru.art.service.ServiceModule.*;
 
 @Getter
 public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfiguration, ModuleState> {

@@ -18,34 +18,29 @@
 
 package ru.art.http.server;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-import org.zalando.logbook.Logbook;
-import org.zalando.logbook.LogbookCreator;
-import ru.art.http.configuration.HttpModuleConfiguration;
-import ru.art.http.logger.ZalangoLogbookLogWriter;
-import ru.art.core.mime.MimeType;
-import ru.art.http.server.filter.HtmlLogsFilter;
-import ru.art.http.server.handler.HttpExceptionHandler;
-import ru.art.http.server.interceptor.HttpServerInterceptor;
-import ru.art.http.server.interceptor.HttpWebInterception;
-import ru.art.service.exception.ServiceExecutionException;
-import static org.zalando.logbook.RawResponseFilters.replaceBody;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.NetworkConstants.BROADCAST_IP_ADDRESS;
-import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
+import lombok.*;
+import org.zalando.logbook.*;
+import ru.art.core.mime.*;
+import ru.art.http.configuration.*;
+import ru.art.http.logger.*;
+import ru.art.http.server.filter.*;
+import ru.art.http.server.handler.*;
+import ru.art.http.server.interceptor.*;
+import ru.art.service.exception.*;
+import java.util.*;
+import java.util.function.*;
+
+import static org.zalando.logbook.RawResponseFilters.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.core.constants.ThreadConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
+import static ru.art.core.network.selector.PortSelector.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.ResourceExtensions.*;
-import static ru.art.http.server.interceptor.HttpServerInterceptor.intercept;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
+import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
 
 public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
     static List<HttpServerInterceptor> initializeWebServerInterceptors(List<HttpServerInterceptor> parents) {

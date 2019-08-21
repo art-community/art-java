@@ -18,20 +18,16 @@
 
 package ru.art.rocks.db.dao;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
-import static java.util.Objects.isNull;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.TRUE_NUMERIC;
+import java.util.*;
+import java.util.function.*;
+
+import static java.util.Collections.*;
+import static java.util.Objects.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.rocks.db.constants.RocksDbModuleConstants.ROCKS_DB_LIST_DELIMITER;
-import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.delete;
-import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.getString;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
+import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
+import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
 
 @SuppressWarnings("Duplicates")
 public interface RocksDbCollectionDao {

@@ -18,29 +18,23 @@
 
 package ru.art.http.client.factory;
 
-import lombok.experimental.UtilityClass;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.zalando.logbook.httpclient.LogbookHttpRequestInterceptor;
-import org.zalando.logbook.httpclient.LogbookHttpResponseInterceptor;
-import ru.art.http.client.configuration.HttpClientModuleConfiguration;
-import ru.art.http.client.exception.HttpClientException;
-import ru.art.http.client.model.HttpClientConfiguration;
-import static java.security.KeyStore.getInstance;
-import static java.util.Objects.nonNull;
-import static org.apache.http.ssl.SSLContexts.custom;
-import static ru.art.http.client.constants.HttpClientExceptionMessages.HTTP_SSL_CONFIGURATION_FAILED;
-import static ru.art.http.client.module.HttpClientModule.httpClientModule;
-import static ru.art.logging.LoggingModule.loggingModule;
-import javax.net.ssl.HostnameVerifier;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.security.KeyStore;
+import lombok.experimental.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.nio.client.*;
+import org.zalando.logbook.httpclient.*;
+import ru.art.http.client.configuration.*;
+import ru.art.http.client.exception.*;
+import ru.art.http.client.model.*;
+import javax.net.ssl.*;
+import java.io.*;
+import java.security.*;
+
+import static java.security.KeyStore.*;
+import static java.util.Objects.*;
+import static org.apache.http.ssl.SSLContexts.*;
+import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
+import static ru.art.http.client.module.HttpClientModule.*;
+import static ru.art.logging.LoggingModule.*;
 
 @UtilityClass
 public class HttpClientsFactory {

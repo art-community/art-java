@@ -18,28 +18,29 @@
 
 package ru.art.config.extensions.http;
 
-import lombok.Getter;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.config.SocketConfig;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.nio.reactor.IOReactorConfig;
-import ru.art.core.mime.MimeType;
-import ru.art.http.client.configuration.HttpClientModuleConfiguration.HttpClientModuleDefaultConfiguration;
-import ru.art.http.client.model.HttpCommunicationTargetConfiguration;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.http.mapper.HttpContentMapper;
-import static org.apache.http.entity.ContentType.getByMimeType;
+import lombok.*;
+import org.apache.http.client.config.*;
+import org.apache.http.config.*;
+import org.apache.http.entity.*;
+import org.apache.http.impl.nio.reactor.*;
+import ru.art.core.mime.*;
+import ru.art.http.client.configuration.HttpClientModuleConfiguration.*;
+import ru.art.http.client.model.*;
+import ru.art.http.constants.*;
+import ru.art.http.mapper.*;
+import java.util.*;
+
+import static org.apache.http.entity.ContentType.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.http.HttpConfigKeys.*;
-import static ru.art.config.extensions.http.HttpContentMappersConfigurator.configureHttpContentMappers;
-import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
-import static ru.art.core.constants.StringConstants.SLASH;
-import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.http.client.constants.HttpClientModuleConstants.DEFAULT_TIMEOUT;
-import static ru.art.http.constants.HttpCommonConstants.HTTP_SCHEME;
-import java.util.Map;
+import static ru.art.config.extensions.http.HttpContentMappersConfigurator.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.constants.ThreadConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.http.client.constants.HttpClientModuleConstants.*;
+import static ru.art.http.constants.HttpCommonConstants.*;
 
 @Getter
 public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfiguration {

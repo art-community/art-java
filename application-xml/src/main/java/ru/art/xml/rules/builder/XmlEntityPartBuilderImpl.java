@@ -18,9 +18,10 @@
 
 package ru.art.xml.rules.builder;
 
-import lombok.RequiredArgsConstructor;
-import ru.art.xml.constants.XmlEntityMappingTargets;
-import static ru.art.core.factory.CollectionsFactory.setOf;
+import lombok.*;
+import ru.art.xml.constants.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.xml.constants.XmlEntityMappingTargets.*;
 
 @RequiredArgsConstructor

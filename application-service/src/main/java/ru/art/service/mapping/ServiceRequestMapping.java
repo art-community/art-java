@@ -18,20 +18,17 @@
 
 package ru.art.service.mapping;
 
-import ru.art.entity.Entity;
-import ru.art.entity.Value;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.service.constants.RequestValidationPolicy;
-import ru.art.service.exception.ServiceMappingException;
-import ru.art.service.model.ServiceMethodCommand;
-import ru.art.service.model.ServiceRequest;
-import static java.util.Objects.isNull;
+import ru.art.entity.*;
+import ru.art.entity.mapper.*;
+import ru.art.service.constants.*;
+import ru.art.service.exception.*;
+import ru.art.service.model.*;
+
+import static java.util.Objects.*;
 import static org.apache.logging.log4j.core.util.Assert.isEmpty;
-import static ru.art.entity.Entity.entityBuilder;
-import static ru.art.entity.mapper.ValueMapper.mapper;
-import static ru.art.service.constants.RequestValidationPolicy.NON_VALIDATABLE;
+import static ru.art.entity.Entity.*;
+import static ru.art.entity.mapper.ValueMapper.*;
+import static ru.art.service.constants.RequestValidationPolicy.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;
 
 public interface ServiceRequestMapping {

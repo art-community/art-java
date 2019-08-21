@@ -18,8 +18,9 @@
 
 package ru.art.service.validation;
 
-import static ru.art.core.caster.Caster.cast;
-import java.util.List;
+import java.util.*;
+
+import static ru.art.core.caster.Caster.*;
 
 public interface ValidationExpressions {
     static <T> ValidationExpression<T> notNull() {

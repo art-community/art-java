@@ -18,38 +18,32 @@
 
 package ru.art.http.server.builder;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import ru.art.entity.Value;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.http.constants.HttpMethodType;
-import ru.art.http.constants.HttpRequestDataSource;
-import ru.art.http.constants.MimeToContentTypeMapper;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.http.constants.*;
 import ru.art.http.server.builder.HttpServiceBuilder.*;
-import ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode;
-import ru.art.http.server.exception.HttpServerException;
-import ru.art.http.server.interceptor.HttpServerInterceptor;
-import ru.art.http.server.model.HttpService;
-import ru.art.http.server.path.HttpPath;
-import ru.art.service.constants.RequestValidationPolicy;
-import static java.util.Collections.emptySet;
-import static java.util.Objects.isNull;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.SLASH;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
-import static ru.art.core.factory.CollectionsFactory.setOf;
+import ru.art.http.server.constants.HttpServerModuleConstants.*;
+import ru.art.http.server.exception.*;
+import ru.art.http.server.interceptor.*;
+import ru.art.http.server.model.*;
+import ru.art.http.server.path.*;
+import ru.art.service.constants.*;
+import java.util.*;
+
+import static java.util.Collections.*;
+import static java.util.Objects.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.constants.HttpExceptionsMessages.*;
 import static ru.art.http.constants.HttpRequestDataSource.*;
-import static ru.art.http.server.constants.HttpServerExceptionMessages.HTTP_METHOD_LISTENING_PATH_IS_EMPTY;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode.CHECKED;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode.UNCHECKED;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
-import static ru.art.service.constants.RequestValidationPolicy.NON_VALIDATABLE;
-import java.util.List;
-import java.util.Set;
+import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode.*;
+import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.service.constants.RequestValidationPolicy.*;
 
 @RequiredArgsConstructor
 public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
@@ -74,9 +68,9 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
     private boolean ignoreRequestContentType;
     private boolean overrideResponseContentType;
     private HttpResponseHandlingMode responseHandlingMode = CHECKED;
-    @Getter(lazy = true)
+    @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
     private final List<ValueInterceptor<Value, Value>> requestValueInterceptors = httpServerModule().getRequestValueInterceptors();
-    @Getter(lazy = true)
+    @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
     private final List<ValueInterceptor<Value, Value>> responseValueInterceptors = httpServerModule().getResponseValueInterceptors();
     private final List<ValueInterceptor<Value, Value>> exceptionValueInterceptors = linkedListOf();
 

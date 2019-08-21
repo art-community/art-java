@@ -18,21 +18,17 @@
 
 package ru.art.metrics.configuration;
 
-import io.github.mweirauch.micrometer.jvm.extras.ProcessMemoryMetrics;
-import io.github.mweirauch.micrometer.jvm.extras.ProcessThreadMetrics;
-import io.micrometer.core.instrument.binder.MeterBinder;
-import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
-import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
-import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
-import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics;
-import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
-import io.micrometer.core.instrument.binder.system.UptimeMetrics;
-import io.micrometer.prometheus.PrometheusMeterRegistry;
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
-import static io.micrometer.prometheus.PrometheusConfig.DEFAULT;
-import static ru.art.core.factory.CollectionsFactory.setOf;
-import java.util.Set;
+import io.github.mweirauch.micrometer.jvm.extras.*;
+import io.micrometer.core.instrument.binder.*;
+import io.micrometer.core.instrument.binder.jvm.*;
+import io.micrometer.core.instrument.binder.system.*;
+import io.micrometer.prometheus.*;
+import lombok.*;
+import ru.art.core.module.*;
+import java.util.*;
+
+import static io.micrometer.prometheus.PrometheusConfig.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 
 public interface MetricModuleConfiguration extends ModuleConfiguration {
     Set<MeterBinder> getMeterBinders();

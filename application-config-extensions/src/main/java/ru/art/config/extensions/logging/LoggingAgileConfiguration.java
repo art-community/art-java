@@ -18,13 +18,13 @@
 
 package ru.art.config.extensions.logging;
 
-import lombok.Getter;
-import org.apache.logging.log4j.Level;
-import ru.art.logging.LoggingModuleConfiguration.LoggingModuleDefaultConfiguration;
-import static ru.art.config.extensions.ConfigExtensions.configString;
-import static ru.art.config.extensions.logging.LoggingConfigKeys.LEVEL;
-import static ru.art.config.extensions.logging.LoggingConfigKeys.LOGGING_SECTION_ID;
-import static ru.art.core.extension.ExceptionExtensions.ifException;
+import lombok.*;
+import org.apache.logging.log4j.*;
+import ru.art.logging.LoggingModuleConfiguration.*;
+
+import static ru.art.config.extensions.ConfigExtensions.*;
+import static ru.art.config.extensions.logging.LoggingConfigKeys.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
 
 @Getter
 public class LoggingAgileConfiguration extends LoggingModuleDefaultConfiguration {

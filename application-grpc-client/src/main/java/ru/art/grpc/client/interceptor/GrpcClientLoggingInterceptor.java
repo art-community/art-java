@@ -19,11 +19,12 @@
 package ru.art.grpc.client.interceptor;
 
 import io.grpc.*;
-import org.apache.logging.log4j.Logger;
-import static java.text.MessageFormat.format;
+import org.apache.logging.log4j.*;
+import javax.annotation.*;
+
+import static java.text.MessageFormat.*;
 import static ru.art.grpc.client.constants.GrpcClientModuleConstants.*;
-import static ru.art.logging.LoggingModule.loggingModule;
-import javax.annotation.Nullable;
+import static ru.art.logging.LoggingModule.*;
 
 public class GrpcClientLoggingInterceptor implements ClientInterceptor {
 

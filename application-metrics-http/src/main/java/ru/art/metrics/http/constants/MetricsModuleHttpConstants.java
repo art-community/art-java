@@ -18,10 +18,11 @@
 
 package ru.art.metrics.http.constants;
 
-import org.apache.http.entity.ContentType;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.core.mime.MimeType;
-import static io.prometheus.client.exporter.common.TextFormat.CONTENT_TYPE_004;
+import org.apache.http.entity.*;
+import ru.art.core.mime.*;
+import ru.art.http.constants.*;
+
+import static io.prometheus.client.exporter.common.TextFormat.*;
 
 public interface MetricsModuleHttpConstants {
     MimeToContentTypeMapper METRICS_CONTENT_TYPE = new MimeToContentTypeMapper(MimeType.valueOf(CONTENT_TYPE_004), ContentType.parse(CONTENT_TYPE_004));

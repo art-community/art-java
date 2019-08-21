@@ -18,19 +18,17 @@
 
 package ru.art.http.server.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.http.server.HttpServerModuleConfiguration;
-import ru.art.http.server.HttpServerModuleState;
-import ru.art.http.server.specification.HttpServiceSpecification;
-import static java.util.stream.Collectors.toList;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVER_MODULE_ID;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVICE_TYPE;
-import static ru.art.service.ServiceModule.serviceModule;
-import java.util.List;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.http.server.*;
+import ru.art.http.server.specification.*;
+import java.util.*;
+
+import static java.util.stream.Collectors.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.*;
+import static ru.art.service.ServiceModule.*;
 
 @Getter
 public class HttpServerModule implements Module<HttpServerModuleConfiguration, HttpServerModuleState> {

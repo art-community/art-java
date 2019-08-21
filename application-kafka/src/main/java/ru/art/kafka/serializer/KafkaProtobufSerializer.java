@@ -18,10 +18,11 @@
 
 package ru.art.kafka.serializer;
 
-import org.apache.kafka.common.serialization.Serializer;
-import ru.art.entity.Value;
-import static ru.art.protobuf.descriptor.ProtobufEntityWriter.writeProtobuf;
-import java.util.Map;
+import org.apache.kafka.common.serialization.*;
+import ru.art.entity.*;
+import java.util.*;
+
+import static ru.art.protobuf.descriptor.ProtobufEntityWriter.*;
 
 public class KafkaProtobufSerializer implements Serializer<Value> {
     @Override

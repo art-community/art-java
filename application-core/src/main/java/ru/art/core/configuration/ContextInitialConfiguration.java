@@ -18,24 +18,21 @@
 
 package ru.art.core.configuration;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import ru.art.core.context.Context;
-import ru.art.core.network.provider.IpAddressProvider;
-import ru.art.core.provider.PreconfiguredModuleProvider;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Locale.Category.FORMAT;
-import static java.util.Locale.getDefault;
-import static java.util.Optional.ofNullable;
-import static ru.art.core.constants.ContextConstants.DEFAULT_MAIN_MODULE_ID;
-import static ru.art.core.constants.ContextConstants.DEFAULT_MODULE_JAR;
-import java.io.File;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
-import java.util.Locale;
+import lombok.*;
+import ru.art.core.context.*;
+import ru.art.core.network.provider.*;
+import ru.art.core.provider.*;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.*;
+import java.security.*;
+import java.util.*;
+
+import static java.nio.charset.StandardCharsets.*;
+import static java.util.Locale.Category.*;
+import static java.util.Locale.*;
+import static java.util.Optional.*;
+import static ru.art.core.constants.ContextConstants.*;
 
 public interface ContextInitialConfiguration {
     String getMainModuleId();

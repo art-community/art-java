@@ -18,30 +18,30 @@
 
 package ru.art.state.specification;
 
-import lombok.Getter;
-import ru.art.grpc.server.model.GrpcService;
-import ru.art.grpc.server.specification.GrpcServiceSpecification;
-import ru.art.http.server.model.HttpService;
-import ru.art.http.server.specification.HttpServiceSpecification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.entity.CollectionMapping.stringCollectionMapper;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.GRPC_SERVICE_TYPE;
-import static ru.art.grpc.server.model.GrpcService.GrpcMethod.grpcMethod;
-import static ru.art.grpc.server.model.GrpcService.grpcService;
-import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVICE_TYPE;
-import static ru.art.http.server.model.HttpService.httpService;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
-import static ru.art.service.constants.RequestValidationPolicy.VALIDATABLE;
-import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.LOCK_SERVICE_ID;
+import lombok.*;
+import ru.art.grpc.server.model.*;
+import ru.art.grpc.server.specification.*;
+import ru.art.http.server.model.*;
+import ru.art.http.server.specification.*;
+import ru.art.service.exception.*;
+import java.util.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.entity.CollectionMapping.*;
+import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
+import static ru.art.grpc.server.model.GrpcService.GrpcMethod.*;
+import static ru.art.grpc.server.model.GrpcService.*;
+import static ru.art.http.constants.MimeToContentTypeMapper.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.*;
+import static ru.art.http.server.model.HttpService.*;
+import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.service.constants.RequestValidationPolicy.*;
+import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.*;
 import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.Methods.*;
 import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.Paths.*;
-import static ru.art.state.api.mapping.LockRequestMapper.toLockRequest;
-import static ru.art.state.service.LockService.lock;
-import static ru.art.state.service.LockService.unlock;
-import java.util.List;
+import static ru.art.state.api.mapping.LockRequestMapper.*;
+import static ru.art.state.service.LockService.*;
 
 @Getter
 public class LockServiceSpecification implements HttpServiceSpecification, GrpcServiceSpecification {

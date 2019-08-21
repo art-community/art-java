@@ -18,10 +18,11 @@
 
 package ru.art.network.manager.state;
 
-import lombok.Getter;
-import ru.art.core.module.ModuleState;
-import static ru.art.network.manager.balancer.Balancer.balancerOf;
-import static ru.art.network.manager.module.NetworkManagerModule.networkManagerModule;
+import lombok.*;
+import ru.art.core.module.*;
+
+import static ru.art.network.manager.balancer.Balancer.*;
+import static ru.art.network.manager.module.NetworkManagerModule.*;
 
 @Getter
 public class NetworkManagerModuleState implements ModuleState {

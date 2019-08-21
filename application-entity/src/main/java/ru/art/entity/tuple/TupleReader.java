@@ -18,22 +18,21 @@
 
 package ru.art.entity.tuple;
 
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.art.entity.*;
-import ru.art.entity.StringParametersMap.StringParametersMapBuilder;
-import ru.art.entity.constants.ValueType;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.caster.Caster.cast;
+import ru.art.entity.Value;
+import ru.art.entity.StringParametersMap.*;
+import ru.art.entity.constants.*;
+import java.util.*;
+
+import static lombok.AccessLevel.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
-import static ru.art.entity.CollectionValuesFactory.valueCollection;
-import static ru.art.entity.Entity.EntityBuilder;
-import static ru.art.entity.Entity.entityBuilder;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.entity.CollectionValuesFactory.*;
+import static ru.art.entity.Entity.*;
 import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.entity.Value.isPrimitiveType;
-import static ru.art.entity.constants.ValueType.values;
-import java.util.List;
 
 @NoArgsConstructor(access = PRIVATE)
 public class TupleReader {
@@ -43,7 +42,7 @@ public class TupleReader {
             return readPrimitive(ValueType.values()[(Integer) tuple.get(0)], tuple.get(1));
         }
         int type = (Integer) tuple.get(0);
-        switch (values()[type]) {
+        switch (ValueType.values()[type]) {
             case ENTITY:
                 return readEntity(tuple.subList(1, tuple.size())).value;
             case COLLECTION:

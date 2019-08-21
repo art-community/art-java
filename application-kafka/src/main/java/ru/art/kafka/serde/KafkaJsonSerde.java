@@ -18,13 +18,11 @@
 
 package ru.art.kafka.serde;
 
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serializer;
-import ru.art.entity.Value;
-import ru.art.kafka.serializer.KafkaJsonSerializer;
+import org.apache.kafka.common.serialization.*;
+import ru.art.entity.*;
 import ru.art.kafka.deserializer.*;
-import java.util.Map;
+import ru.art.kafka.serializer.*;
+import java.util.*;
 
 public class KafkaJsonSerde implements Serde<Value> {
     @Override

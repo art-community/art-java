@@ -18,11 +18,12 @@
 
 package ru.art.http.server.filter;
 
-import org.zalando.logbook.RawHttpResponse;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.core.mime.MimeType.valueOf;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
+import org.zalando.logbook.*;
+
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.core.mime.MimeType.*;
+import static ru.art.http.server.module.HttpServerModule.*;
 
 public interface HtmlLogsFilter {
     static String replaceWebResponseBody(RawHttpResponse response) {

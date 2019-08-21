@@ -18,18 +18,19 @@
 
 package ru.art.http.server.builder;
 
-import lombok.RequiredArgsConstructor;
-import ru.art.http.server.constants.HttpServerExceptionMessages;
-import ru.art.http.server.exception.HttpServerException;
-import ru.art.http.server.interceptor.HttpServerInterceptor;
-import ru.art.http.server.model.HttpService;
-import static java.util.Objects.isNull;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
-import static ru.art.http.constants.HttpExceptionsMessages.REQUEST_INTERCEPTOR_IS_NULL;
+import lombok.*;
+import ru.art.http.server.constants.*;
+import ru.art.http.server.exception.*;
+import ru.art.http.server.interceptor.*;
+import ru.art.http.server.model.*;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.http.constants.HttpExceptionsMessages.*;
 import static ru.art.http.constants.HttpMethodType.*;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class HttpServiceBuilderImplementation implements HttpServiceBuilder {

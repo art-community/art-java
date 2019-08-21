@@ -18,10 +18,11 @@
 
 package ru.art.core.module;
 
-import ru.art.core.exception.InternalRuntimeException;
-import ru.art.core.identified.UniqueIdentified;
-import static java.text.MessageFormat.format;
-import static ru.art.core.constants.ExceptionMessages.MODULE_HAS_NOT_STATE;
+import ru.art.core.exception.*;
+import ru.art.core.identified.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.core.constants.ExceptionMessages.*;
 
 public interface Module<C extends ModuleConfiguration, S extends ModuleState> extends UniqueIdentified {
     default void onLoad() {

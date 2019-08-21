@@ -18,9 +18,8 @@
 
 package ru.art.task.deferred.executor;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import ru.art.core.identified.UniqueIdentified;
+import lombok.*;
+import ru.art.core.identified.*;
 
 @Getter
 @AllArgsConstructor

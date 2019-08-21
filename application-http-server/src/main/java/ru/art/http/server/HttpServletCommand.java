@@ -18,10 +18,9 @@
 
 package ru.art.http.server;
 
-import lombok.Builder;
-import lombok.Getter;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.http.server.model.HttpService;
+import lombok.*;
+import ru.art.http.constants.*;
+import ru.art.http.server.model.*;
 
 @Getter
 @Builder

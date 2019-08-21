@@ -18,15 +18,14 @@
 
 package ru.art.example.api.mapping;
 
-import ru.art.entity.Entity;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper.XmlEntityToModelMapper;
-import ru.art.example.api.model.ExampleRequest;
-import ru.art.example.api.model.ExampleResponse;
-import static ru.art.entity.XmlEntity.xmlEntityBuilder;
-import static ru.art.example.api.mapping.ExampleModelMapper.fromExampleModelXml;
+import ru.art.entity.*;
+import ru.art.entity.mapper.*;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+import ru.art.example.api.model.*;
+
+import static ru.art.entity.XmlEntity.*;
+import static ru.art.example.api.mapping.ExampleModelMapper.*;
 
 public interface ExampleRequestResponseMapper {
     interface ExampleRequestMapper {

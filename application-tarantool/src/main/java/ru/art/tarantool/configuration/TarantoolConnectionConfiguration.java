@@ -18,11 +18,10 @@
 
 package ru.art.tarantool.configuration;
 
-import lombok.Builder;
-import lombok.Getter;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.DEFAULT_TARANTOOL_PORT;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.DEFAULT_TARANTOOL_USERNAME;
+import lombok.*;
+
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 
 @Getter
 @Builder

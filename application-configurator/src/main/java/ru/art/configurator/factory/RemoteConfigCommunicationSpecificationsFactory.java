@@ -18,21 +18,22 @@
 
 package ru.art.configurator.factory;
 
-import lombok.SneakyThrows;
-import org.apache.http.client.utils.URIBuilder;
-import ru.art.config.remote.api.specification.RemoteConfigCommunicationSpecification;
-import ru.art.configurator.api.entity.ModuleKey;
-import ru.art.configurator.provider.ApplicationModulesParametersProvider.ApplicationModuleParameters;
-import static java.lang.Integer.valueOf;
-import static java.util.Collections.emptySet;
-import static java.util.stream.Collectors.toSet;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.GRPC_INSTANCES;
+import lombok.*;
+import org.apache.http.client.utils.*;
+import ru.art.config.remote.api.specification.*;
+import ru.art.configurator.api.entity.*;
+import ru.art.configurator.provider.ApplicationModulesParametersProvider.*;
+import java.util.*;
+
+import static java.lang.Integer.*;
+import static java.util.Collections.*;
+import static java.util.stream.Collectors.*;
+import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.entity.Value.asCollection;
-import static ru.art.http.client.communicator.HttpCommunicator.httpCommunicator;
-import static ru.art.http.constants.HttpCommonConstants.HTTP_SCHEME;
-import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
-import java.util.Set;
+import static ru.art.entity.Value.*;
+import static ru.art.http.client.communicator.HttpCommunicator.*;
+import static ru.art.http.constants.HttpCommonConstants.*;
+import static ru.art.http.constants.MimeToContentTypeMapper.*;
 
 public interface RemoteConfigCommunicationSpecificationsFactory {
     @SneakyThrows

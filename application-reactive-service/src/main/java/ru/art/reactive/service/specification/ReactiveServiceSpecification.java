@@ -18,14 +18,14 @@
 
 package ru.art.reactive.service.specification;
 
-import ru.art.reactive.service.model.ReactiveService;
-import ru.art.service.Specification;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.REACTIVE_SERVICE_TYPE;
-import static ru.art.reactive.service.module.ReactiveServiceModule.reactiveServiceModule;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.RequestInterceptor;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
-import java.util.List;
+import ru.art.reactive.service.model.*;
+import ru.art.service.*;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.*;
+import static ru.art.reactive.service.module.ReactiveServiceModule.*;
+import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 
 public interface ReactiveServiceSpecification extends Specification {
     ReactiveService getReactiveService();

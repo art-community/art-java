@@ -18,24 +18,21 @@
 
 package ru.art.config.extensions;
 
-import lombok.experimental.UtilityClass;
-import ru.art.config.Config;
-import ru.art.config.exception.ConfigException;
-import static java.util.Collections.emptyMap;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
-import static ru.art.config.ConfigProvider.config;
-import static ru.art.config.constants.ConfigExceptionMessages.SECTION_ID_IS_EMPTY;
-import static ru.art.config.remote.provider.RemoteConfigProvider.remoteConfig;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.DOT;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.extension.ExceptionExtensions.ifExceptionOrEmpty;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import lombok.experimental.*;
+import ru.art.config.*;
+import ru.art.config.exception.*;
+import java.util.*;
+import java.util.function.*;
+
+import static java.util.Collections.*;
+import static java.util.function.Function.*;
+import static java.util.stream.Collectors.*;
+import static ru.art.config.ConfigProvider.*;
+import static ru.art.config.constants.ConfigExceptionMessages.*;
+import static ru.art.config.remote.provider.RemoteConfigProvider.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
 
 @UtilityClass
 public class ConfigExtensions {

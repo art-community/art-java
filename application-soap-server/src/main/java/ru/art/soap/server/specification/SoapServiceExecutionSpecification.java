@@ -18,28 +18,26 @@
 
 package ru.art.soap.server.specification;
 
-import lombok.Getter;
-import ru.art.http.server.builder.HttpServiceBuilder;
-import ru.art.http.server.model.HttpService;
-import ru.art.http.server.specification.HttpServiceSpecification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import ru.art.soap.server.model.SoapService;
-import static java.util.Objects.isNull;
-import static ru.art.core.caster.Caster.cast;
+import lombok.*;
+import ru.art.http.server.builder.*;
+import ru.art.http.server.model.*;
+import ru.art.http.server.specification.*;
+import ru.art.service.exception.*;
+import ru.art.soap.server.model.*;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.entity.PrimitiveMapping.stringMapper;
-import static ru.art.http.server.builder.HttpServiceBuilder.HttpMethodResponseBuilder;
-import static ru.art.http.server.builder.HttpServiceBuilder.HttpMethodWithBodyBuilder;
-import static ru.art.http.server.model.HttpService.httpService;
-import static ru.art.service.ServiceModule.serviceModule;
-import static ru.art.service.ServiceModuleConfiguration.ServiceRegistry;
+import static ru.art.entity.PrimitiveMapping.*;
+import static ru.art.http.server.builder.HttpServiceBuilder.*;
+import static ru.art.http.server.model.HttpService.*;
+import static ru.art.service.ServiceModule.*;
+import static ru.art.service.ServiceModuleConfiguration.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
-import static ru.art.soap.server.mapper.SoapMapper.soapRequestToModelMapper;
-import static ru.art.soap.server.mapper.SoapMapper.soapResponseFromModelMapper;
-import static ru.art.soap.server.model.SoapService.SoapOperation;
-import static ru.art.soap.server.service.SoapExecutionService.executeSoapService;
-import static ru.art.soap.server.service.SoapExecutionService.getWsdl;
-import java.util.Collection;
+import static ru.art.soap.server.mapper.SoapMapper.*;
+import static ru.art.soap.server.model.SoapService.*;
+import static ru.art.soap.server.service.SoapExecutionService.*;
 
 @Getter
 public class SoapServiceExecutionSpecification implements HttpServiceSpecification {

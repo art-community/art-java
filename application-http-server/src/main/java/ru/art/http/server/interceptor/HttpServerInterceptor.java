@@ -18,16 +18,15 @@
 
 package ru.art.http.server.interceptor;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import ru.art.core.constants.InterceptionStrategy;
-import ru.art.http.server.exception.HttpServerException;
-import static java.util.Objects.isNull;
-import static lombok.AccessLevel.PRIVATE;
+import lombok.*;
+import ru.art.core.constants.*;
+import ru.art.http.server.exception.*;
+import javax.servlet.http.*;
+
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
 import static ru.art.core.constants.InterceptionStrategy.*;
-import static ru.art.http.server.constants.HttpServerExceptionMessages.INTERCEPTION_IS_NULL;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
 
 
 @Getter
