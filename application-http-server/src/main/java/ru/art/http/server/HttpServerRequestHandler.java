@@ -26,6 +26,7 @@ import ru.art.entity.interceptor.ValueInterceptionResult;
 import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
+import ru.art.http.constants.HttpRequestDataSource;
 import ru.art.http.mapper.HttpContentMapper;
 import ru.art.http.server.exception.HttpServerException;
 import ru.art.http.server.model.HttpService.HttpMethod;
@@ -150,7 +151,11 @@ class HttpServerRequestHandler {
 
     private static Value parseRequestValue(HttpServletRequest request, HttpMethod methodConfig) {
         MimeType requestContentType = httpServerModuleState().getRequestContext().getContentType();
-        switch (methodConfig.getRequestDataSource()) {
+        HttpRequestDataSource requestDataSource;
+        if (isNull(requestDataSource = methodConfig.getRequestDataSource())) {
+            return null;
+        }
+        switch (requestDataSource) {
             case BODY:
                 if (httpServerModuleState().getRequestContext().isHasContent()) return null;
                 HttpContentMapper contentMapper = httpServerModule().getContentMappers().get(requestContentType);
