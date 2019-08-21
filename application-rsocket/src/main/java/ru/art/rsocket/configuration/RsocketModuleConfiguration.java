@@ -18,19 +18,26 @@
 
 package ru.art.rsocket.configuration;
 
+import io.rsocket.plugins.RSocketInterceptor;
 import lombok.Getter;
 import ru.art.core.module.ModuleConfiguration;
-import ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
+import ru.art.entity.Entity;
+import ru.art.entity.interceptor.ValueInterceptor;
+import ru.art.logging.LoggingValueInterceptor;
+import ru.art.rsocket.constants.RsocketModuleConstants.*;
 import ru.art.rsocket.exception.RsocketClientException;
+import ru.art.rsocket.interceptor.RsocketLoggingInterceptor;
 import ru.art.rsocket.model.RsocketCommunicationTargetConfiguration;
 import static java.text.MessageFormat.format;
 import static ru.art.core.constants.NetworkConstants.BROADCAST_IP_ADDRESS;
 import static ru.art.core.constants.NetworkConstants.LOCALHOST;
 import static ru.art.core.extension.ExceptionExtensions.exceptionIfNull;
+import static ru.art.core.factory.CollectionsFactory.linkedListOf;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.PROTOBUF;
+import java.util.List;
 import java.util.Map;
 
 public interface RsocketModuleConfiguration extends ModuleConfiguration {
@@ -48,9 +55,17 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
 
     boolean isResumableAcceptor();
 
-    RsocketDataFormat getDefaultDataFormat();
+    RsocketDataFormat getDataFormat();
 
     Map<String, RsocketCommunicationTargetConfiguration> getCommunicationTargets();
+
+    boolean isEnableRawDataTracing();
+
+    boolean isEnableValueTracing();
+
+    List<RSocketInterceptor> getResponderInterceptors();
+
+    List<RSocketInterceptor> getRequesterInterceptors();
 
     default RsocketCommunicationTargetConfiguration getCommunicationTargetConfiguration(String serviceId) {
         return exceptionIfNull(getCommunicationTargets().get(serviceId),
@@ -61,9 +76,13 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
 
     RsocketModuleDefaultConfiguration DEFAULT_CONFIGURATION = new RsocketModuleDefaultConfiguration();
 
-	@Getter
-	class RsocketModuleDefaultConfiguration implements RsocketModuleConfiguration {
-        private final RsocketDataFormat defaultDataFormat = PROTOBUF;
+    List<ValueInterceptor<Entity, Entity>> getRequestValueInterceptors();
+
+    List<ValueInterceptor<Entity, Entity>> getResponseValueInterceptors();
+
+    @Getter
+    class RsocketModuleDefaultConfiguration implements RsocketModuleConfiguration {
+        private final RsocketDataFormat dataFormat = PROTOBUF;
         private final String acceptorHost = BROADCAST_IP_ADDRESS;
         private final int acceptorTcpPort = findAvailableTcpPort();
         private final int acceptorWebSocketPort = findAvailableTcpPort();
@@ -71,6 +90,25 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
         private final int balancerTcpPort = DEFAULT_RSOCKET_TCP_PORT;
         private final int balancerWebSocketPort = DEFAULT_RSOCKET_WEB_SOCKET_PORT;
         private final boolean resumableAcceptor = true;
+        private final boolean enableRawDataTracing = true;
+        private final boolean enableValueTracing = true;
+        @Getter(lazy = true)
+        private final List<RSocketInterceptor> requesterInterceptors = initializeInterceptors();
+        @Getter(lazy = true)
+        private final List<RSocketInterceptor> responderInterceptors = initializeInterceptors();
+        @Getter(lazy = true)
+        private final List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = initializeValueInterceptors();
+        @Getter(lazy = true)
+        private final List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = initializeValueInterceptors();
+
+        private List<RSocketInterceptor> initializeInterceptors() {
+            return isEnableRawDataTracing() ? linkedListOf(new RsocketLoggingInterceptor()) : linkedListOf();
+        }
+
+        private List<ValueInterceptor<Entity, Entity>> initializeValueInterceptors() {
+            return isEnableValueTracing() ? linkedListOf(new LoggingValueInterceptor<>()) : linkedListOf();
+        }
+
         private final Map<String, RsocketCommunicationTargetConfiguration> communicationTargets = mapOf();
     }
 }

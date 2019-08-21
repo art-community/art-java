@@ -23,17 +23,22 @@ import lombok.Builder;
 import lombok.Getter;
 import ru.art.entity.Entity;
 import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptionResult;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.service.model.ServiceMethodCommand;
 import static java.util.Objects.isNull;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.constants.InterceptionStrategy.PROCESS_HANDLING;
+import static ru.art.core.constants.InterceptionStrategy.STOP_HANDLING;
 import static ru.art.entity.Value.asEntity;
 import static ru.art.rsocket.constants.RsocketModuleConstants.REQUEST_DATA;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
-import static ru.art.rsocket.extractor.EntityServiceCommandExtractor.extractServiceMethodCommand;
 import static ru.art.rsocket.model.RsocketReactiveMethods.fromCommand;
 import static ru.art.rsocket.reader.RsocketPayloadReader.readPayload;
+import static ru.art.service.mapping.ServiceRequestMapping.toServiceRequest;
+import java.util.List;
 
 @Getter
 @Builder
@@ -41,20 +46,45 @@ public class RsocketRequestReactiveContext {
     private final Object requestData;
     private final RsocketReactiveGroupKey rsocketReactiveGroupKey;
     private final RsocketReactiveMethods rsocketReactiveMethods;
+    @Builder.Default
+    private final boolean stopHandling = false;
+    @Builder.Default
+    private Entity alternativeResponse;
 
     @SuppressWarnings("Duplicates")
     public static RsocketRequestReactiveContext fromPayload(Payload payload, RsocketDataFormat dataFormat) {
-        Entity serviceRequestEntity = asEntity(readPayload(payload, dataFormat));
-        ServiceMethodCommand command = extractServiceMethodCommand(serviceRequestEntity);
+        Entity requestValue = asEntity(readPayload(payload, dataFormat));
+        ServiceMethodCommand command = toServiceRequest().map(requestValue).getServiceMethodCommand();
         RsocketReactiveMethods rsocketServiceMethods = fromCommand(command);
+        List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = rsocketServiceMethods.getRsocketMethod().requestValueInterceptors();
+        for (ValueInterceptor<Entity, Entity> requestValueInterceptor : requestValueInterceptors) {
+            ValueInterceptionResult<Entity, Entity> result = requestValueInterceptor.intercept(requestValue);
+            if (isNull(result)) {
+                break;
+            }
+            requestValue = result.getOutValue();
+            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                break;
+            }
+            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                if (isNull(result.getOutValue())) {
+                    return RsocketRequestReactiveContext.builder().stopHandling(true).build();
+                }
+                return RsocketRequestReactiveContext.builder()
+                        .alternativeResponse(result.getOutValue())
+                        .stopHandling(true)
+                        .build();
+            }
+        }
         ValueToModelMapper<?, ?> requestMapper;
         Value requestDataValue;
-        if (isNull(requestMapper = rsocketServiceMethods.getRsocketMethod().requestMapper()) || isEmpty(requestDataValue = serviceRequestEntity.getValue(REQUEST_DATA))) {
+        if (isNull(requestValue) ||
+                isNull(requestMapper = rsocketServiceMethods.getRsocketMethod().requestMapper()) ||
+                isEmpty(requestDataValue = requestValue.getValue(REQUEST_DATA))) {
             return RsocketRequestReactiveContext.builder()
                     .rsocketReactiveGroupKey(RsocketReactiveGroupKey.builder()
                             .serviceMethodCommand(command)
-                            .responseMapper(rsocketServiceMethods.getRsocketMethod().responseMapper())
-                            .validationPolicy(rsocketServiceMethods.getRsocketMethod().validationPolicy())
+                            .rsocketMethod(rsocketServiceMethods.getRsocketMethod())
                             .build())
                     .rsocketReactiveMethods(rsocketServiceMethods)
                     .build();
@@ -64,8 +94,7 @@ public class RsocketRequestReactiveContext {
                 .requestData(requestData)
                 .rsocketReactiveGroupKey(RsocketReactiveGroupKey.builder()
                         .serviceMethodCommand(command)
-                        .responseMapper(rsocketServiceMethods.getRsocketMethod().responseMapper())
-                        .validationPolicy(rsocketServiceMethods.getRsocketMethod().validationPolicy())
+                        .rsocketMethod(rsocketServiceMethods.getRsocketMethod())
                         .build())
                 .rsocketReactiveMethods(rsocketServiceMethods)
                 .build();

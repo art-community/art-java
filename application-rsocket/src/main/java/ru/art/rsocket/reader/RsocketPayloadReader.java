@@ -46,6 +46,6 @@ public class RsocketPayloadReader {
             case XML:
                 return readXml(wrapException(payload::getDataUtf8, RsocketServerException::new));
         }
-        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDefaultDataFormat()));
+        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDataFormat()));
     }
 }

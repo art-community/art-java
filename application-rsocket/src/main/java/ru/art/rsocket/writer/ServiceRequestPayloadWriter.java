@@ -19,17 +19,36 @@
 package ru.art.rsocket.writer;
 
 import io.rsocket.Payload;
-import ru.art.entity.Value;
-import static ru.art.entity.Entity.entityBuilder;
-import static ru.art.rsocket.constants.RsocketModuleConstants.*;
+import ru.art.entity.Entity;
+import ru.art.entity.interceptor.ValueInterceptionResult;
+import ru.art.entity.interceptor.ValueInterceptor;
+import static io.rsocket.util.DefaultPayload.EMPTY_BUFFER;
+import static io.rsocket.util.DefaultPayload.create;
+import static java.util.Objects.isNull;
+import static ru.art.core.constants.InterceptionStrategy.PROCESS_HANDLING;
+import static ru.art.core.constants.InterceptionStrategy.STOP_HANDLING;
+import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
 import static ru.art.rsocket.writer.RsocketPayloadWriter.writePayload;
+import java.util.List;
 
 public interface ServiceRequestPayloadWriter {
-    static Payload writeServiceRequestPayload(String serviceId, String methodId, RsocketDataFormat dataFormat) {
-        return writePayload(entityBuilder().stringField(SERVICE_ID, serviceId).stringField(METHOD_ID, methodId).build(), dataFormat);
-    }
-
-    static Payload writeServiceRequestPayload(String serviceId, String methodId, Value requestData, RsocketDataFormat dataFormat) {
-        return writePayload(entityBuilder().stringField(SERVICE_ID, serviceId).stringField(METHOD_ID, methodId).valueField(REQUEST_DATA, requestData).build(), dataFormat);
+    static Payload writeServiceRequestPayload(Entity requestValue, List<ValueInterceptor<Entity, Entity>> requestValueInterceptors, RsocketDataFormat dataFormat) {
+        for (ValueInterceptor<Entity, Entity> requestValueInterceptor : requestValueInterceptors) {
+            ValueInterceptionResult<Entity, Entity> result = requestValueInterceptor.intercept(requestValue);
+            if (isNull(result)) {
+                break;
+            }
+            requestValue = result.getOutValue();
+            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                break;
+            }
+            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                if (isNull(result.getOutValue())) {
+                    return create(EMPTY_BUFFER);
+                }
+                return writePayload(result.getOutValue(), dataFormat);
+            }
+        }
+        return writePayload(requestValue, dataFormat);
     }
 }

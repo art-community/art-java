@@ -21,8 +21,7 @@ package ru.art.rsocket.model;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.service.constants.RequestValidationPolicy;
+import ru.art.rsocket.service.RsocketService;
 import ru.art.service.model.ServiceMethodCommand;
 
 @Getter
@@ -31,6 +30,5 @@ import ru.art.service.model.ServiceMethodCommand;
 public class RsocketReactiveGroupKey {
     @EqualsAndHashCode.Include
     private final ServiceMethodCommand serviceMethodCommand;
-    private final RequestValidationPolicy validationPolicy;
-    private ValueFromModelMapper<?, ?> responseMapper;
+    private RsocketService.RsocketMethod rsocketMethod;
 }

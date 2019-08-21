@@ -34,18 +34,18 @@ import static ru.art.rsocket.module.RsocketModule.rsocketModule;
 public class RsocketDataFormatMimeTypeConverter {
     public static RsocketDataFormat fromMimeType(String mimeType) {
         if (isEmpty(mimeType)) {
-            return rsocketModule().getDefaultDataFormat();
+            return rsocketModule().getDataFormat();
         }
         MimeType type = MimeType.valueOf(mimeType);
         if (APPLICATION_JSON.getString().equals(type.getType() + SLASH + type.getSubtype())) return JSON;
         if (APPLICATION_PROTOBUF.getString().equals(type.getType() + SLASH + type.getSubtype())) return PROTOBUF;
         if (APPLICATION_XML.getString().equals(type.getType() + SLASH + type.getSubtype())) return XML;
         if (TEXT_XML.getString().equals(type.getType() + SLASH + type.getSubtype())) return XML;
-        return rsocketModule().getDefaultDataFormat();
+        return rsocketModule().getDataFormat();
     }
 
     public static String toMimeType(RsocketDataFormat dataFormat) {
-        switch (getOrElse(dataFormat, rsocketModule().getDefaultDataFormat())) {
+        switch (getOrElse(dataFormat, rsocketModule().getDataFormat())) {
             case PROTOBUF:
                 return APPLICATION_PROTOBUF.getString();
             case JSON:

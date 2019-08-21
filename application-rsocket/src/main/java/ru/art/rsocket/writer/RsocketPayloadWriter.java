@@ -44,6 +44,6 @@ public class RsocketPayloadWriter {
             case XML:
                 return create(writeXml(asXmlEntity(value)));
         }
-        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDefaultDataFormat()));
+        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDataFormat()));
     }
 }

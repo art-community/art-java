@@ -27,6 +27,7 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.art.core.validator.BuilderValidator;
+import ru.art.entity.Entity;
 import ru.art.entity.Value;
 import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
@@ -34,6 +35,7 @@ import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport;
 import ru.art.rsocket.exception.RsocketClientException;
 import ru.art.rsocket.model.RsocketCommunicationTargetConfiguration;
+import ru.art.service.model.ServiceMethodCommand;
 import ru.art.service.model.ServiceResponse;
 import static io.rsocket.RSocketFactory.ClientRSocketFactory;
 import static io.rsocket.RSocketFactory.connect;
@@ -45,17 +47,20 @@ import static reactor.core.publisher.Flux.from;
 import static reactor.core.publisher.Mono.just;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
+import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.logging.LoggingModule.loggingModule;
 import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.INVALID_RSOCKET_COMMUNICATION_CONFIGURATION;
 import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.UNSUPPORTED_TRANSPORT;
 import static ru.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE;
 import static ru.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
-import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.*;
+import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.rsocketCommunicationTarget;
+import static ru.art.rsocket.module.RsocketModule.rsocketModule;
 import static ru.art.rsocket.reader.RsocketPayloadReader.readPayload;
 import static ru.art.rsocket.selector.RsocketDataFormatMimeTypeConverter.toMimeType;
 import static ru.art.rsocket.writer.ServiceRequestPayloadWriter.writeServiceRequestPayload;
+import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
+import static ru.art.service.mapping.ServiceRequestMapping.fromServiceRequest;
 import static ru.art.service.mapping.ServiceResponseMapping.toServiceResponse;
 import java.util.List;
 import java.util.Objects;
@@ -71,8 +76,9 @@ public class RsocketCommunicator {
     private ValueToModelMapper responseMapper;
     private RsocketDataFormat dataFormat;
     private final BuilderValidator validator = new BuilderValidator(RsocketCommunicator.class.getName());
-    private List<ValueInterceptor> requestValueInterceptors = linkedListOf();
-    private List<ValueInterceptor> responseValueInterceptors = linkedListOf();
+    private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = rsocketModule().getRequestValueInterceptors();
+    private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = rsocketModule().getResponseValueInterceptors();
+    private ServiceMethodCommand command;
 
     private RsocketCommunicator(RsocketCommunicationTargetConfiguration configuration) {
         dataFormat = configuration.dataFormat();
@@ -80,6 +86,8 @@ public class RsocketCommunicator {
         if (configuration.resumable()) {
             factory = factory.resume();
         }
+        rsocketModule().getRequesterInterceptors().forEach(factory::addRequesterPlugin);
+        configuration.interceptors().forEach(factory::addRequesterPlugin);
         switch (configuration.transport()) {
             case TCP:
                 socket = factory.dataMimeType(toMimeType(configuration.dataFormat()))
@@ -126,20 +134,26 @@ public class RsocketCommunicator {
 
     public RsocketCommunicator serviceId(String serviceId) {
         this.serviceId = validator.notEmptyField(serviceId, "serviceId");
+        if (isNotEmpty(methodId)) {
+            command = new ServiceMethodCommand(serviceId, methodId);
+        }
         return this;
     }
 
     public RsocketCommunicator methodId(String methodId) {
         this.methodId = validator.notEmptyField(methodId, "methodId");
+        if (isNotEmpty(serviceId)) {
+            command = new ServiceMethodCommand(serviceId, methodId);
+        }
         return this;
     }
 
-    public RsocketCommunicator addRequestValueInterceptor(ValueInterceptor interceptor) {
+    public RsocketCommunicator addRequestValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
         requestValueInterceptors.add(validator.notNullField(interceptor, "requestValueInterceptor"));
         return this;
     }
 
-    public RsocketCommunicator addResponseValueInterceptor(ValueInterceptor interceptor) {
+    public RsocketCommunicator addResponseValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
         responseValueInterceptors.add(validator.notNullField(interceptor, "responseValueInterceptor"));
         return this;
     }
@@ -157,18 +171,22 @@ public class RsocketCommunicator {
     public Mono<Void> call() {
         validator.validate();
         validateRequiredFields();
-        return socket.flatMap(rsocket -> rsocket.fireAndForget(writeServiceRequestPayload(serviceId, methodId, dataFormat)));
+        return socket.flatMap(rsocket -> rsocket
+                .fireAndForget(writeServiceRequestPayload(fromServiceRequest().map(newServiceRequest(command)),
+                        requestValueInterceptors, dataFormat)));
     }
 
     public <ResponseType> Mono<ServiceResponse<ResponseType>> execute() {
         validator.validate();
         validateRequiredFields();
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
-        return socket.flatMap(rsocket -> rsocket.requestResponse(writeServiceRequestPayload(serviceId, methodId, dataFormat))
+        return socket.flatMap(rsocket -> rsocket
+                .requestResponse(writeServiceRequestPayload(fromServiceRequest().map(newServiceRequest(command)),
+                        requestValueInterceptors, dataFormat)))
                 .map(responsePayload -> ofNullable(readPayload(responsePayload, dataFormat)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue)))));
+                .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue))));
     }
 
     public <ResponseType> Flux<ServiceResponse<ResponseType>> stream() {
@@ -176,7 +194,9 @@ public class RsocketCommunicator {
         validateRequiredFields();
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
         Flux<Payload> requestStream = socket
-                .flatMapMany(rsocket -> rsocket.requestStream(writeServiceRequestPayload(serviceId, methodId, dataFormat)));
+                .flatMapMany(rsocket -> rsocket
+                        .requestStream(writeServiceRequestPayload(fromServiceRequest().map(newServiceRequest(command)),
+                                requestValueInterceptors, dataFormat)));
         if (isNull(responseModelMapper)) {
             return empty();
         }
@@ -191,9 +211,8 @@ public class RsocketCommunicator {
         validator.validate();
         validateRequiredFields();
         ValueFromModelMapper<?, ? extends Value> requestModelMapper = cast(requestMapper);
-        Payload requestPayload = isNull(requestModelMapper)
-                ? writeServiceRequestPayload(serviceId, methodId, dataFormat)
-                : writeServiceRequestPayload(serviceId, methodId, requestModelMapper.map(cast(request)), dataFormat);
+        Payload requestPayload = writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
+                .map(newServiceRequest(command)), requestValueInterceptors, dataFormat);
         return socket.flatMap(rsocket -> rsocket.fireAndForget(requestPayload));
     }
 
@@ -203,9 +222,8 @@ public class RsocketCommunicator {
         validateRequiredFields();
         ValueFromModelMapper<?, ? extends Value> requestModelMapper = cast(requestMapper);
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
-        Payload requestPayload = isNull(requestModelMapper)
-                ? writeServiceRequestPayload(serviceId, methodId, dataFormat)
-                : writeServiceRequestPayload(serviceId, methodId, requestModelMapper.map(cast(request)), dataFormat);
+        Payload requestPayload = writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
+                .map(newServiceRequest(command)), requestValueInterceptors, dataFormat);
         Mono<Payload> requestResponse = socket.flatMap(rsocket -> rsocket.requestResponse(requestPayload));
         return requestResponse
                 .map(responsePayload -> ofNullable(readPayload(responsePayload, dataFormat)))
@@ -220,9 +238,8 @@ public class RsocketCommunicator {
         validateRequiredFields();
         ValueFromModelMapper<?, ? extends Value> requestModelMapper = cast(requestMapper);
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
-        Payload requestPayload = isNull(requestModelMapper)
-                ? writeServiceRequestPayload(serviceId, methodId, dataFormat)
-                : writeServiceRequestPayload(serviceId, methodId, requestModelMapper.map(cast(request)), dataFormat);
+        Payload requestPayload = writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
+                .map(newServiceRequest(command)), requestValueInterceptors, dataFormat);
         if (isNull(responseModelMapper)) {
             return empty();
         }
@@ -243,10 +260,9 @@ public class RsocketCommunicator {
         }
         return socket.flatMapMany(rsocket -> rsocket.requestChannel(from(request)
                 .filter(Objects::nonNull)
-                .map(requestPayload -> writeServiceRequestPayload(serviceId, methodId, isNull(requestModelMapper)
-                        ? null :
-                        requestModelMapper.map(cast(requestPayload)), dataFormat)))
-                .map(responsePayload -> ofNullable(readPayload(responsePayload, dataFormat)))
+                .map(requestData -> writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
+                        .map(newServiceRequest(command)), requestValueInterceptors, dataFormat)))
+                .map(requestPayload -> ofNullable(readPayload(requestPayload, dataFormat)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue)))));

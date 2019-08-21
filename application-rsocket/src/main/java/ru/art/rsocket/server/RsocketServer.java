@@ -74,8 +74,8 @@ public class RsocketServer {
         if (rsocketModule().isResumableAcceptor()) {
             socketFactory = socketFactory.resume();
         }
-        ServerTransportAcceptor acceptor = socketFactory
-                .acceptor((setup, sendingSocket) -> just(new RsocketAcceptor(sendingSocket, setup)));
+        rsocketModule().getResponderInterceptors().forEach(socketFactory::addResponderPlugin);
+        ServerTransportAcceptor acceptor = socketFactory.acceptor((setup, sendingSocket) -> just(new RsocketAcceptor(sendingSocket, setup)));
         switch (transport) {
             case TCP:
                 return acceptor.transport(TcpServerTransport.create(rsocketModule().getAcceptorHost(),

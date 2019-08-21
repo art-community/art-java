@@ -18,14 +18,17 @@
 
 package ru.art.rsocket.model;
 
+import io.rsocket.plugins.RSocketInterceptor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.Singular;
 import lombok.experimental.Accessors;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.TCP;
 import static ru.art.rsocket.module.RsocketModule.rsocketModule;
+import java.util.List;
 
 @Getter
 @Accessors(fluent = true)
@@ -40,7 +43,9 @@ public class RsocketCommunicationTargetConfiguration {
     @Builder.Default
     private final RsocketTransport transport = TCP;
     @Builder.Default
-    private final RsocketDataFormat dataFormat = rsocketModule().getDefaultDataFormat();
+    private final RsocketDataFormat dataFormat = rsocketModule().getDataFormat();
     @Builder.Default
     private final boolean resumable = true;
+    @Singular("interceptor")
+    private List<RSocketInterceptor> interceptors;
 }

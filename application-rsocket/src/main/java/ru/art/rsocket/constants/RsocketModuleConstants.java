@@ -63,5 +63,20 @@ public interface RsocketModuleConstants {
         String RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE = "RSocket WebSocket communicator started";
         String RSOCKET_RESTARTED_MESSAGE = "RSocket Server restarted in {0}[ms]";
         String RSOCKET_LOADED_SERVICE_MESSAGE = "RSocket service loaded: ''{0}:{1,number,#}'' - ''{2}''.''{3}''";
+        String RSOCKET_FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget() with request data: ''{0}'' and metadata: ''{1}''";
+        String RSOCKET_FIRE_AND_FORGET_RESPONSE_LOG = "RSocket fireAndForget() completed";
+        String RSOCKET_FIRE_AND_FORGET_EXCEPTION_LOG = "RSocket fireAndForget() failed with exception: ''{0}}''";
+        String RSOCKET_METADATA_PUSH_REQUEST_LOG = "RSocket executing metadataPush() with request data: ''{0}'' and metadata: ''{1}''";
+        String RSOCKET_METADATA_PUSH_RESPONSE_LOG = "RSocket metadataPush() completed";
+        String RSOCKET_METADATA_PUSH_EXCEPTION_LOG = "RSocket metadataPush() failed with exception: ''{0}}''";
+        String RSOCKET_REQUEST_RESPONSE_REQUEST_LOG = "RSocket executing requestResponse() with request data: ''{0}'' and metadata: ''{1}''";
+        String RSOCKET_REQUEST_RESPONSE_RESPONSE_LOG = "RSocket requestResponse() completed with response data: ''{0}'' and metadata: ''{1}''";
+        String RSOCKET_REQUEST_RESPONSE_EXCEPTION_LOG = "RSocket requestResponse() failed with exception: ''{0}}''";
+        String RSOCKET_REQUEST_STREAM_REQUEST_LOG = "RSocket executing requestStream() with request data: ''{0}'' and metadata: ''{1}''";
+        String RSOCKET_REQUEST_STREAM_RESPONSE_LOG = "RSocket requestStream() processed with response data: ''{0}'' and metadata: ''{1}''";
+        String RSOCKET_REQUEST_STREAM_EXCEPTION_LOG = "RSocket requestStream() failed with exception: ''{0}}''";
+        String RSOCKET_REQUEST_CHANNEL_REQUEST_LOG = "RSocket requestChannel() processed with request data: ''{0}'' and metadata: ''{1}''";
+        String RSOCKET_REQUEST_CHANNEL_RESPONSE_LOG = "RSocket requestChannel() processed with response data: ''{0}'' and metadata: ''{1}''";
+        String RSOCKET_REQUEST_CHANNEL_EXCEPTION_LOG = "RSocket requestChannel() failed with exception: ''{0}}''";
     }
 }
