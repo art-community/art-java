@@ -119,7 +119,6 @@ art {
 - Gradle 5.+
 - If working with web - installed nodejs and npm
 - If using tarantool - installed tarantool
-- If using kafka - installed kafka
 - If using sql - installed SQL db
 
 ## Bugs and Feedback
