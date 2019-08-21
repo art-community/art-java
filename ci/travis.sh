@@ -2,7 +2,7 @@
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
     echo -e "Building PR #$TRAVIS_PULL_REQUEST [$TRAVIS_PULL_REQUEST_SLUG/$TRAVIS_PULL_REQUEST_BRANCH => $TRAVIS_REPO_SLUG/$TRAVIS_BRANCH]"
-    ./gradlew build
+    ./gradlew test
 elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" == "" ] && [ "$bintrayUser" != "" ] ; then
     echo -e "Building Snapshot $TRAVIS_REPO_SLUG/$TRAVIS_BRANCH"
     ./gradlew \
@@ -16,5 +16,5 @@ elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" != "" ] && [ "$bin
         bintrayUpload --stacktrace
 else
     echo -e "Building $TRAVIS_REPO_SLUG/$TRAVIS_BRANCH"
-    ./gradlew build
+    ./gradlew test
 fi

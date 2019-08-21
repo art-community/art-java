@@ -30,11 +30,10 @@ tarantool:
   configurations:
     T:
       connection:
-        host: vm-server
+        host: localhost
         port: 3301
         username: user
         password: password
-      instanceMode: remote
       entities:
         DataEntity:
           fields:

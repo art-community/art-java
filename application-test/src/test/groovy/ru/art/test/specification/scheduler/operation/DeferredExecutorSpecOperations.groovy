@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package ru.art.task.deferred.executor.operation
+package ru.art.test.specification.scheduler.operation
 
 import ru.art.task.deferred.executor.DeferredExecutor
-import ru.art.task.deferred.executor.model.DeferredEventResult
+import ru.art.test.specification.scheduler.model.DeferredEventResult
 
 import java.time.LocalDateTime
 import java.util.concurrent.Callable

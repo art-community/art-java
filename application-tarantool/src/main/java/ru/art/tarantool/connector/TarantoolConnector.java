@@ -80,8 +80,9 @@ public final class TarantoolConnector {
         TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
         String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
         SocketChannelProvider socketChannelProvider = new RoundRobinSocketProviderImpl(address);
-        TarantoolClientImpl tarantoolClient = new TarantoolClientImpl(socketChannelProvider, config);
+        TarantoolClientImpl tarantoolClient;
         try {
+            tarantoolClient = new TarantoolClientImpl(socketChannelProvider, config);
             tarantoolClient.waitAlive();
         } catch (Throwable e) {
             throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address), e);
