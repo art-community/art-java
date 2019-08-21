@@ -82,9 +82,9 @@ public interface GrpcServerModuleConfiguration extends ModuleConfiguration {
         private final int port = findAvailableTcpPort();
         private final boolean enableRawDataTracing = true;
         private final boolean enableValueTracing = true;
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = initializeValueInterceptors();
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = initializeValueInterceptors();
 
         private List<ValueInterceptor<Entity, Entity>> initializeValueInterceptors() {

@@ -85,9 +85,9 @@ public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
         private final String balancerHost = LOCALHOST;
         private final int balancerPort = DEFAULT_GRPC_PORT;
         private final Map<String, GrpcCommunicationTargetConfiguration> communicationTargets = emptyMap();
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = initializeValueInterceptors();
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = initializeValueInterceptors();
 
         private List<ClientInterceptor> initializeInterceptors() {

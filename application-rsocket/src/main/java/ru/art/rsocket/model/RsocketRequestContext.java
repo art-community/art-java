@@ -52,7 +52,6 @@ public class RsocketRequestContext {
     private final RsocketReactiveMethods rsocketReactiveMethods;
     @Builder.Default
     private final boolean stopHandling = false;
-    @Builder.Default
     private Entity alternativeResponse;
 
     @SuppressWarnings("Duplicates")

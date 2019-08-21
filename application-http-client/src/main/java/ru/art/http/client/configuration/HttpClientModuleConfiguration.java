@@ -119,8 +119,10 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         private final ConnectionConfig connectionConfig = ConnectionConfig.DEFAULT;
         private final IOReactorConfig ioReactorConfig = IOReactorConfig.DEFAULT;
         private final HttpVersion httpVersion = HTTP_1_1;
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<HttpClientInterceptor> requestInterceptors =
                 linkedListOf(interceptRequest(new HttpClientTracingIdentifiersRequestInterception()));
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<HttpClientInterceptor> responseInterceptors = linkedListOf();
         private final int responseBodyBufferSize = RESPONSE_BUFFER_DEFAULT_SIZE;
         private final boolean ssl = false;

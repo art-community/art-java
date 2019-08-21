@@ -46,6 +46,6 @@ public class RsocketCommunicationTargetConfiguration {
     private final RsocketDataFormat dataFormat = rsocketModule().getDataFormat();
     @Builder.Default
     private final boolean resumable = true;
-    @Singular("interceptor")
-    private List<RSocketInterceptor> interceptors;
+    @Singular
+    private final List<RSocketInterceptor> interceptors;
 }

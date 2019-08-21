@@ -63,9 +63,9 @@ public interface HttpModuleConfiguration extends ModuleConfiguration {
         private final HttpTextPlainMapper textPlainMapper = new HttpTextPlainMapper();
         private final Map<MimeType, HttpContentMapper> contentMappers =
                 mapOf(ALL, new HttpContentMapper(new HttpTextPlainMapper(), new HttpTextPlainMapper()));
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ValueInterceptor<Value, Value>> requestValueInterceptors = initializeValueInterceptors();
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ValueInterceptor<Value, Value>> responseValueInterceptors = initializeValueInterceptors();
         @Getter(lazy = true)
         private final Logbook logbook = Logbook.builder().writer(new ZalangoLogbookLogWriter()).build();
