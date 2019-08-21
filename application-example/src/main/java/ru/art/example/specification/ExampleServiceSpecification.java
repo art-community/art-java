@@ -42,7 +42,6 @@ import ru.art.soap.server.model.SoapService;
 import ru.art.soap.server.specification.SoapServiceSpecification;
 import static ru.art.config.extensions.ConfigExtensions.configString;
 import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.StringConstants.SLASH;
 import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
 import static ru.art.core.factory.CollectionsFactory.linkedListOf;
 import static ru.art.example.api.constants.ExampleApiConstants.EXAMPLE_SERVICE_ID;
@@ -157,7 +156,7 @@ public class ExampleServiceSpecification implements HttpServiceSpecification, Gr
     private final SoapService soapService = soapService()
             .operation(EXAMPLE_OPERATION, soapOperation()
                     .methodId(REQUEST_RESPONSE_HANDLING_EXAMPLE))
-            .serve(configString(SOAP_SECTION, EXAMPLE_SOAP_SERVICE_PATH, SLASH));
+            .serve(configString(SOAP_SECTION, EXAMPLE_SOAP_SERVICE_PATH, httpServerModule().getPath()));
 
 
     private final List<String> serviceTypes = fixedArrayOf(GRPC_SERVICE_TYPE, HTTP_SERVICE_TYPE, SOAP_SERVICE_TYPE);
