@@ -18,45 +18,33 @@
 
 package ru.art.generator.spec.http.proxyspec.operations;
 
-import com.squareup.javapoet.FieldSpec;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.TypeSpec;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import ru.art.generator.spec.common.exception.ExecuteMethodGenerationException;
-import ru.art.generator.spec.common.exception.SpecificationTypeDefinitionException;
-import ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecAnnotations;
-import ru.art.generator.spec.http.proxyspec.exception.HttpProxySpecGeneratorException;
-import ru.art.generator.spec.http.proxyspec.model.HttpProxyMethodsAnnotations;
-import ru.art.generator.spec.http.proxyspec.model.StaticImports;
-import ru.art.http.client.specification.HttpCommunicationSpecification;
-import static java.text.MessageFormat.format;
-import static javax.lang.model.element.Modifier.PUBLIC;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.constants.StringConstants.TABULATION;
-import static ru.art.generator.common.constants.Constants.GENERATED_SUCCESSFULLY;
-import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.BUILD;
-import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.SRC_MAIN_JAVA;
-import static ru.art.generator.common.constants.Constants.START_GENERATING;
+import com.squareup.javapoet.*;
+import lombok.*;
+import ru.art.generator.spec.common.exception.*;
+import ru.art.generator.spec.http.proxyspec.constants.*;
+import ru.art.generator.spec.http.proxyspec.exception.*;
+import ru.art.generator.spec.http.proxyspec.model.*;
+import ru.art.http.client.specification.*;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static javax.lang.model.element.Modifier.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.generator.common.constants.Constants.*;
+import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.*;
 import static ru.art.generator.common.constants.ExceptionConstants.*;
-import static ru.art.generator.common.operations.CommonOperations.defineClassJarPath;
-import static ru.art.generator.common.operations.CommonOperations.printMessage;
-import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.JAVADOC;
-import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.SPECIFICATION;
-import static ru.art.generator.spec.common.constants.SpecExceptionConstants.SpecificationGeneratorExceptions.UNABLE_TO_GENERATE_SPECIFICATION;
-import static ru.art.generator.spec.common.constants.SpecificationType.httpProxySpec;
+import static ru.art.generator.common.operations.CommonOperations.*;
+import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.*;
+import static ru.art.generator.spec.common.constants.SpecExceptionConstants.SpecificationGeneratorExceptions.*;
+import static ru.art.generator.spec.common.constants.SpecificationType.*;
 import static ru.art.generator.spec.common.operations.ConstantsFieldSpecGenerator.*;
-import static ru.art.generator.spec.common.operations.ExecuteMethodGenerator.generateExecuteMethod;
-import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecConstants.PROXY_SPEC;
-import static ru.art.generator.spec.http.proxyspec.operations.HttpProxyAuxiliaryOperations.addStaticImports;
-import static ru.art.generator.spec.http.proxyspec.operations.HttpProxyBlockGenerator.generateCurrentMethodBlock;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static ru.art.generator.spec.common.operations.ExecuteMethodGenerator.*;
+import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecConstants.*;
+import static ru.art.generator.spec.http.proxyspec.operations.HttpProxyAuxiliaryOperations.*;
+import static ru.art.generator.spec.http.proxyspec.operations.HttpProxyBlockGenerator.*;
 
 /**
  * Interface contains operations for HTTP Proxy specification generator.

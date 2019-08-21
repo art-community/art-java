@@ -18,14 +18,11 @@
 
 package ru.art.generator.spec.http.proxyspec.model;
 
-import com.squareup.javapoet.CodeBlock;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecAnnotations;
-
-import java.lang.reflect.Method;
-import java.util.Map;
+import com.squareup.javapoet.*;
+import lombok.*;
+import ru.art.generator.spec.http.proxyspec.constants.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * Data used in generating method's constants' codeblocks and

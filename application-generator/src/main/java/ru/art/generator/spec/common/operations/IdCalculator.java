@@ -18,16 +18,14 @@
 
 package ru.art.generator.spec.common.operations;
 
-import ru.art.generator.spec.common.constants.SpecificationType;
-import static java.io.File.separator;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.constants.StringConstants.UNDERSCORE;
-import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.PathAndPackageConstants.SPEC;
-import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.REGEXP_LOWER_CASE_LETTERS;
-import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.REGEXP_UPPER_CASE_LETTERS;
-import java.util.ArrayList;
-import java.util.List;
+import ru.art.generator.spec.common.constants.*;
+import java.util.*;
+
+import static java.io.File.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.PathAndPackageConstants.*;
+import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.*;
 
 /**
  * Interface contains operations which analyses data.

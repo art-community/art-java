@@ -18,11 +18,9 @@
 
 package ru.art.generator.spec.http.servicespec.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecAnnotations;
-
-import java.util.Map;
+import lombok.*;
+import ru.art.generator.spec.http.servicespec.constants.*;
+import java.util.*;
 
 /**
  * Data used generating httpService constant.

@@ -18,7 +18,7 @@
 
 package ru.art.generator.spec.common.constants;
 
-import static java.io.File.separator;
+import static java.io.File.*;
 
 /**
  * Interface containing constants for all specification's generators.

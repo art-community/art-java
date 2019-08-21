@@ -18,8 +18,7 @@
 
 package ru.art.generator.spec.http.proxyspec.constants;
 
-import ru.art.http.constants.HttpMimeTypes;
-import ru.art.http.constants.MimeToContentTypeMapper;
+import ru.art.http.constants.*;
 
 /**
  * Enum containing all {@link HttpMimeTypes} and theirs {@link MimeToContentTypeMapper} method's names.

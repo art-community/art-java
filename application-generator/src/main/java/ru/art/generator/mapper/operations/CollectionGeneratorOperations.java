@@ -18,25 +18,22 @@
 
 package ru.art.generator.mapper.operations;
 
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.CodeBlock;
-import ru.art.entity.PrimitiveMapping;
-import ru.art.generator.mapper.exception.DefinitionException;
-import ru.art.generator.mapper.exception.InnerClassGenerationException;
-import static com.squareup.javapoet.CodeBlock.of;
-import static java.text.MessageFormat.format;
+import com.squareup.javapoet.*;
+import ru.art.entity.*;
+import ru.art.generator.mapper.exception.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.*;
+
+import static com.squareup.javapoet.CodeBlock.*;
+import static java.text.MessageFormat.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.generator.mapper.constants.Constants.GET;
-import static ru.art.generator.mapper.constants.Constants.MAPPER;
+import static ru.art.generator.mapper.constants.Constants.*;
 import static ru.art.generator.mapper.constants.Constants.SupportedJavaClasses.*;
-import static ru.art.generator.mapper.constants.Constants.SymbolsAndFormatting.PATTERN_FOR_GENERIC_INNER_TYPES;
-import static ru.art.generator.mapper.constants.ExceptionConstants.DefinitionExceptions.UNABLE_TO_DEFINE_GENERIC_TYPE;
+import static ru.art.generator.mapper.constants.Constants.SymbolsAndFormatting.*;
+import static ru.art.generator.mapper.constants.ExceptionConstants.DefinitionExceptions.*;
 import static ru.art.generator.mapper.constants.FromModelConstants.*;
 import static ru.art.generator.mapper.constants.ToModelConstants.*;
-import static ru.art.generator.mapper.operations.CommonOperations.createMapperForInnerClassIfNeeded;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import static ru.art.generator.mapper.operations.CommonOperations.*;
 
 /**
  * Interface containing static methods for generating

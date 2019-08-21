@@ -18,20 +18,19 @@
 
 package ru.art.generator.spec.http.servicespec;
 
-import ru.art.generator.common.annotation.NonGenerated;
-import ru.art.generator.spec.http.servicespec.annotation.HttpService;
-import ru.art.generator.spec.http.servicespec.exception.HttpServiceSpecGeneratorException;
-import static java.text.MessageFormat.format;
+import ru.art.generator.common.annotation.*;
+import ru.art.generator.spec.http.servicespec.annotation.*;
+import ru.art.generator.spec.http.servicespec.exception.*;
+
+import static java.text.MessageFormat.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.generator.common.constants.Constants.GENERATION_COMPLETED;
-import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.MAIN;
-import static ru.art.generator.common.operations.CommonOperations.printError;
-import static ru.art.generator.common.operations.CommonOperations.printMessage;
+import static ru.art.generator.common.constants.Constants.*;
+import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.*;
+import static ru.art.generator.common.operations.CommonOperations.*;
 import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.PathAndPackageConstants.*;
-import static ru.art.generator.spec.common.constants.SpecExceptionConstants.SpecificationGeneratorExceptions.MAIN_ANNOTATION_ABSENT;
-import static ru.art.generator.spec.common.constants.SpecExceptionConstants.SpecificationGeneratorExceptions.SERVICE_MARKED_IS_NON_GENERATED;
-import static ru.art.generator.spec.common.constants.SpecificationType.httpServiceSpec;
-import static ru.art.generator.spec.common.operations.AnnotationsChecker.classHasAnnotation;
+import static ru.art.generator.spec.common.constants.SpecExceptionConstants.SpecificationGeneratorExceptions.*;
+import static ru.art.generator.spec.common.constants.SpecificationType.*;
+import static ru.art.generator.spec.common.operations.AnnotationsChecker.*;
 import static ru.art.generator.spec.http.servicespec.operations.HttpServiceSpecificationClassGenerator.*;
 
 /**

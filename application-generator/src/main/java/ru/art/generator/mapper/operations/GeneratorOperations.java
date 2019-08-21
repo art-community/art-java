@@ -19,43 +19,34 @@
 package ru.art.generator.mapper.operations;
 
 import com.squareup.javapoet.*;
-import ru.art.core.checker.CheckerForEmptiness;
-import ru.art.entity.Entity;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.generator.mapper.annotation.GenerationException;
-import ru.art.generator.mapper.annotation.NonGenerated;
-import ru.art.generator.mapper.exception.DefinitionException;
-import ru.art.generator.mapper.exception.InnerClassGenerationException;
-import ru.art.generator.mapper.exception.MappingGeneratorException;
-import static com.squareup.javapoet.CodeBlock.join;
-import static com.squareup.javapoet.CodeBlock.of;
-import static com.squareup.javapoet.TypeSpec.interfaceBuilder;
-import static java.io.File.separator;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.nonNull;
+import ru.art.core.checker.*;
+import ru.art.entity.*;
+import ru.art.entity.mapper.*;
+import ru.art.generator.mapper.annotation.*;
+import ru.art.generator.mapper.exception.*;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.net.*;
+import java.util.*;
+import java.util.stream.*;
+
+import static com.squareup.javapoet.CodeBlock.*;
+import static com.squareup.javapoet.TypeSpec.*;
+import static java.io.File.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 import static javax.lang.model.element.Modifier.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.generator.mapper.constants.Constants.*;
 import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
 import static ru.art.generator.mapper.constants.Constants.SupportedJavaClasses.*;
-import static ru.art.generator.mapper.constants.Constants.SymbolsAndFormatting.STRING_PATTERN;
+import static ru.art.generator.mapper.constants.Constants.SymbolsAndFormatting.*;
 import static ru.art.generator.mapper.constants.ExceptionConstants.MapperGeneratorExceptions.*;
 import static ru.art.generator.mapper.constants.FromModelConstants.*;
 import static ru.art.generator.mapper.constants.ToModelConstants.*;
 import static ru.art.generator.mapper.operations.CollectionGeneratorOperations.*;
 import static ru.art.generator.mapper.operations.CommonOperations.*;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Interface containing static methods for creating mapper classes,

@@ -18,9 +18,8 @@
 
 package ru.art.generator.spec.http.proxyspec.model;
 
-import com.squareup.javapoet.CodeBlock;
-import lombok.Builder;
-import lombok.Getter;
+import com.squareup.javapoet.*;
+import lombok.*;
 
 /**
  * Data used for filling array of codeblocks in proper order

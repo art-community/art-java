@@ -19,25 +19,24 @@
 package ru.art.generator.spec.common.operations;
 
 import ru.art.generator.spec.common.annotation.*;
-import ru.art.generator.spec.common.constants.SpecificationType;
-import ru.art.generator.spec.common.exception.SpecAnnotationDefinitionException;
-import ru.art.generator.spec.common.exception.SpecificationTypeDefinitionException;
+import ru.art.generator.spec.common.constants.*;
+import ru.art.generator.spec.common.exception.*;
 import ru.art.generator.spec.http.common.annotation.*;
-import ru.art.generator.spec.http.proxyspec.annotation.MethodPath;
-import ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecAnnotations;
-import ru.art.generator.spec.http.proxyspec.exception.HttpProxySpecAnnotationDefinitionException;
-import ru.art.generator.spec.http.servicespec.annotation.HttpService;
-import ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecAnnotations;
-import ru.art.generator.spec.http.servicespec.exception.HttpServiceSpecAnnotationIdentificationException;
-import static java.text.MessageFormat.format;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.METHOD_NAME_STRING;
-import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.UNABLE_TO_DEFINE_ANNOTATION;
-import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.UNABLE_TO_DEFINE_SPECIFICATION_TYPE;
-import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecAnnotations.HTTP_PROXY_SERVICE;
-import static ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecAnnotations.HTTP_SERVICE;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import ru.art.generator.spec.http.proxyspec.annotation.*;
+import ru.art.generator.spec.http.proxyspec.constants.*;
+import ru.art.generator.spec.http.proxyspec.exception.*;
+import ru.art.generator.spec.http.servicespec.annotation.*;
+import ru.art.generator.spec.http.servicespec.constants.*;
+import ru.art.generator.spec.http.servicespec.exception.*;
+import java.lang.annotation.*;
+import java.lang.reflect.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.*;
+import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.*;
+import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecAnnotations.*;
+import static ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecAnnotations.*;
 
 /**
  * Interface containing methods to check annotations for existence.

@@ -31,3 +31,8 @@ dependencies {
     embedded("com.squareup", "javapoet", art.externalDependencyVersionsConfiguration.javaPoetVersion)
     embedded("org.projectlombok","lombok", art.externalDependencyVersionsConfiguration.lombokVersion)
 }
+
+val compileJava: JavaCompile by tasks
+with(compileJava) {
+    this.options.compilerArgs.add("-Xlint:unchecked")
+}
