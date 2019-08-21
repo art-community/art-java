@@ -24,6 +24,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.nio.client.HttpAsyncClient;
 import ru.art.core.validator.BuilderValidator;
 import ru.art.entity.XmlEntity;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.client.handler.HttpCommunicationCancellationHandler;
@@ -147,14 +148,26 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
     }
 
     @Override
-    public SoapCommunicator withRequestInterceptor(HttpClientInterceptor interceptor) {
+    public SoapCommunicator addRequestInterceptor(HttpClientInterceptor interceptor) {
         configuration.getRequestInterceptors().add(validator.notNullField(interceptor, "requestInterceptor"));
         return this;
     }
 
     @Override
-    public SoapCommunicator withResponseInterceptor(HttpClientInterceptor interceptor) {
+    public SoapCommunicator addResponseInterceptor(HttpClientInterceptor interceptor) {
         configuration.getResponseInterceptors().add(validator.notNullField(interceptor, "responseInterceptor"));
+        return this;
+    }
+
+    @Override
+    public SoapCommunicator addRequestValueInterceptor(ValueInterceptor<XmlEntity, XmlEntity> interceptor) {
+        configuration.getRequestValueInterceptors().add(validator.notNullField(interceptor, "requestValueInterceptor"));
+        return this;
+    }
+
+    @Override
+    public SoapCommunicator addResponseValueInterceptor(ValueInterceptor<XmlEntity, XmlEntity> interceptor) {
+        configuration.getResponseValueInterceptors().add(validator.notNullField(interceptor, "responseValueInterceptor"));
         return this;
     }
 

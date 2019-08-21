@@ -114,7 +114,7 @@ public class GrpcServletContainer extends GrpcServlet {
             }
         }
 
-        void executeServiceChecked(GrpcRequest grpcRequest, ServiceMethodCommand command, StreamObserver<GrpcResponse> responseObserver) {
+        private void executeServiceChecked(GrpcRequest grpcRequest, ServiceMethodCommand command, StreamObserver<GrpcResponse> responseObserver) {
             if (isNull(grpcRequest) || isNull(responseObserver)) {
                 throw new GrpcServletException(GRPC_SERVLET_INPUT_PARAMETERS_NULL);
             }
@@ -165,6 +165,32 @@ public class GrpcServletContainer extends GrpcServlet {
                     ? newServiceRequest(command, getOrElse(grpcMethod.validationPolicy(), NON_VALIDATABLE))
                     : newServiceRequest(command, mappedServiceRequest.getRequestData(), getOrElse(grpcMethod.validationPolicy(), NON_VALIDATABLE));
             ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);
+            handleResponse(responseObserver, grpcMethod, serviceResponse);
+        }
+
+        private void sendServiceNotExistsError(StreamObserver<GrpcResponse> responseObserver, String serviceId) {
+            String errorMessage = format(GRPC_SERVICE_NOT_EXISTS_MESSAGE, serviceId);
+            loggingModule()
+                    .getLogger(GrpcServletContainer.class)
+                    .error(errorMessage);
+            responseObserver.onNext(newBuilder()
+                    .setServiceResponse(writeProtobuf(fromServiceResponse().map(errorResponse(GRPC_SERVICE_NOT_EXISTS_CODE, errorMessage))))
+                    .build());
+            responseObserver.onCompleted();
+        }
+
+        private void sendMethodNotExistsError(StreamObserver<GrpcResponse> responseObserver, String methodId) {
+            String errorMessage = format(GRPC_METHOD_NOT_EXISTS_MESSAGE, methodId);
+            loggingModule()
+                    .getLogger(GrpcServletContainer.class)
+                    .error(errorMessage);
+            responseObserver.onNext(newBuilder()
+                    .setServiceResponse(writeProtobuf(fromServiceResponse().map(errorResponse(GRPC_METHOD_NOT_EXISTS_CODE, errorMessage))))
+                    .build());
+            responseObserver.onCompleted();
+        }
+
+        private void handleResponse(StreamObserver<GrpcResponse> responseObserver, GrpcMethod grpcMethod, ServiceResponse<?> serviceResponse) {
             EntityFromModelMapper<ServiceResponse<?>> fromServiceResponse = cast(fromServiceResponse(cast(grpcMethod.responseMapper())));
             Entity serviceResponseEntity = fromServiceResponse.map(serviceResponse);
             ServiceExecutionException serviceException = serviceResponse.getServiceException();
@@ -195,28 +221,6 @@ public class GrpcServletContainer extends GrpcServlet {
                         .error(GRPC_SERVICE_EXCEPTION, serviceException);
             }
             responseObserver.onNext(grpcResponse);
-            responseObserver.onCompleted();
-        }
-
-        private void sendServiceNotExistsError(StreamObserver<GrpcResponse> responseObserver, String serviceId) {
-            String errorMessage = format(GRPC_SERVICE_NOT_EXISTS_MESSAGE, serviceId);
-            loggingModule()
-                    .getLogger(GrpcServletContainer.class)
-                    .error(errorMessage);
-            responseObserver.onNext(newBuilder()
-                    .setServiceResponse(writeProtobuf(fromServiceResponse().map(errorResponse(GRPC_SERVICE_NOT_EXISTS_CODE, errorMessage))))
-                    .build());
-            responseObserver.onCompleted();
-        }
-
-        private void sendMethodNotExistsError(StreamObserver<GrpcResponse> responseObserver, String methodId) {
-            String errorMessage = format(GRPC_METHOD_NOT_EXISTS_MESSAGE, methodId);
-            loggingModule()
-                    .getLogger(GrpcServletContainer.class)
-                    .error(errorMessage);
-            responseObserver.onNext(newBuilder()
-                    .setServiceResponse(writeProtobuf(fromServiceResponse().map(errorResponse(GRPC_METHOD_NOT_EXISTS_CODE, errorMessage))))
-                    .build());
             responseObserver.onCompleted();
         }
     }

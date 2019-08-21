@@ -159,7 +159,6 @@ class HttpCommunicationExecutor {
                 return null;
             }
         }
-
         HttpContentMapper contentMapper = httpClientModule()
                 .getContentMappers()
                 .get(producesMimeType);

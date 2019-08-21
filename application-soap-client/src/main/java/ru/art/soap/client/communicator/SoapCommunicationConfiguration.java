@@ -25,6 +25,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.nio.client.HttpAsyncClient;
 import ru.art.entity.XmlEntity;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.client.handler.HttpCommunicationCancellationHandler;
@@ -69,6 +70,8 @@ class SoapCommunicationConfiguration {
     private HttpCommunicationResponseHandler<?, ?> responseHandler;
     private HttpCommunicationExceptionHandler<?> exceptionHandler;
     private HttpCommunicationCancellationHandler<?> cancellationHandler;
+    private List<ValueInterceptor<XmlEntity, XmlEntity>> requestValueInterceptors = linkedListOf();
+    private List<ValueInterceptor<XmlEntity, XmlEntity>> responseValueInterceptors = linkedListOf();
     private Object request;
 
     void validateRequiredFields() {

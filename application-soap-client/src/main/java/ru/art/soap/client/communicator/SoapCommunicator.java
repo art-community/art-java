@@ -23,6 +23,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.nio.client.HttpAsyncClient;
 import ru.art.entity.XmlEntity;
+import ru.art.entity.interceptor.ValueInterceptor;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.http.client.handler.HttpCommunicationCancellationHandler;
@@ -68,9 +69,13 @@ public interface SoapCommunicator {
 
     SoapCommunicator requestBodyEncoding(String encoding);
 
-    SoapCommunicator withRequestInterceptor(HttpClientInterceptor interceptor);
+    SoapCommunicator addRequestInterceptor(HttpClientInterceptor interceptor);
 
-    SoapCommunicator withResponseInterceptor(HttpClientInterceptor interceptor);
+    SoapCommunicator addResponseInterceptor(HttpClientInterceptor interceptor);
+
+    SoapCommunicator addRequestValueInterceptor(ValueInterceptor<XmlEntity, XmlEntity> interceptor);
+
+    SoapCommunicator addResponseValueInterceptor(ValueInterceptor<XmlEntity, XmlEntity> interceptor);
 
     SoapCommunicator version(HttpVersion httpVersion);
 

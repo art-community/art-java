@@ -117,38 +117,6 @@ class HttpServerRequestHandler {
         return contentMapper.getToContent().mapToBytes(responseValue, responseContentType, acceptCharset);
     }
 
-    private static Value mapResponseValue(HttpMethod httpMethod, ServiceResponse<?> serviceResponse) {
-        ServiceExecutionException serviceException = serviceResponse.getServiceException();
-        switch (httpMethod.getResponseHandlingMode()) {
-            case UNCHECKED:
-                return mapResponseObject(serviceResponse, fromServiceResponse(cast(httpMethod.getResponseMapper())));
-            case CHECKED:
-                if (isNull(serviceException)) {
-                    Object responseData = serviceResponse.getResponseData();
-                    if (nonNull(responseData)) {
-                        ValueFromModelMapper responseMapper;
-                        if (nonNull(responseMapper = httpMethod.getResponseMapper())) {
-                            return mapResponseObject(responseData, cast(responseMapper));
-                        }
-                    }
-                    return null;
-                }
-                ValueFromModelMapper exceptionMapper;
-                if (isNull(exceptionMapper = httpMethod.getExceptionMapper())) {
-                    throw serviceException;
-                }
-                return mapResponseObject(serviceException, cast(exceptionMapper));
-            default:
-                throw new HttpServerException(HTTP_RESPONSE_MODE_IS_NULL);
-        }
-    }
-
-    private static Value mapResponseObject(Object object, ValueFromModelMapper<?, ? extends Value> mapper) {
-        MimeType responseContentType = httpServerModuleState().getRequestContext().getAcceptType();
-        HttpContentMapper contentMapper = httpServerModule().getContentMappers().get(responseContentType);
-        return mapper.map(cast(object));
-    }
-
     private static Value parseRequestValue(HttpServletRequest request, HttpMethod methodConfig) {
         MimeType requestContentType = httpServerModuleState().getRequestContext().getContentType();
         HttpRequestDataSource requestDataSource;
@@ -206,4 +174,37 @@ class HttpServerRequestHandler {
         }
         return entityBuilder.build();
     }
+
+    private static Value mapResponseValue(HttpMethod httpMethod, ServiceResponse<?> serviceResponse) {
+        ServiceExecutionException serviceException = serviceResponse.getServiceException();
+        switch (httpMethod.getResponseHandlingMode()) {
+            case UNCHECKED:
+                return mapResponseObject(serviceResponse, fromServiceResponse(cast(httpMethod.getResponseMapper())));
+            case CHECKED:
+                if (isNull(serviceException)) {
+                    Object responseData = serviceResponse.getResponseData();
+                    if (nonNull(responseData)) {
+                        ValueFromModelMapper responseMapper;
+                        if (nonNull(responseMapper = httpMethod.getResponseMapper())) {
+                            return mapResponseObject(responseData, cast(responseMapper));
+                        }
+                    }
+                    return null;
+                }
+                ValueFromModelMapper exceptionMapper;
+                if (isNull(exceptionMapper = httpMethod.getExceptionMapper())) {
+                    throw serviceException;
+                }
+                return mapResponseObject(serviceException, cast(exceptionMapper));
+            default:
+                throw new HttpServerException(HTTP_RESPONSE_MODE_IS_NULL);
+        }
+    }
+
+    private static Value mapResponseObject(Object object, ValueFromModelMapper<?, ? extends Value> mapper) {
+        MimeType responseContentType = httpServerModuleState().getRequestContext().getAcceptType();
+        HttpContentMapper contentMapper = httpServerModule().getContentMappers().get(responseContentType);
+        return mapper.map(cast(object));
+    }
+
 }

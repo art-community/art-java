@@ -33,12 +33,13 @@ import java.util.List;
 
 public interface ServiceRequestPayloadWriter {
     static Payload writeServiceRequestPayload(Entity requestValue, List<ValueInterceptor<Entity, Entity>> requestValueInterceptors, RsocketDataFormat dataFormat) {
+        Entity requestEntity = requestValue;
         for (ValueInterceptor<Entity, Entity> requestValueInterceptor : requestValueInterceptors) {
-            ValueInterceptionResult<Entity, Entity> result = requestValueInterceptor.intercept(requestValue);
+            ValueInterceptionResult<Entity, Entity> result = requestValueInterceptor.intercept(requestEntity);
             if (isNull(result)) {
                 break;
             }
-            requestValue = result.getOutValue();
+            requestEntity = result.getOutValue();
             if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
                 break;
             }
@@ -49,6 +50,6 @@ public interface ServiceRequestPayloadWriter {
                 return writePayload(result.getOutValue(), dataFormat);
             }
         }
-        return writePayload(requestValue, dataFormat);
+        return writePayload(requestEntity, dataFormat);
     }
 }

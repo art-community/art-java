@@ -103,7 +103,12 @@ class GrpcCommunicationAsyncExecutor {
             }
         }
         ListenableFuture<GrpcResponse> future = stub.executeService(newBuilder().setServiceRequest(writeProtobuf(requestValue)).build());
-        addCallback(future, new FutureCallback<GrpcResponse>() {
+        addCallback(future, createFutureCallback(configuration), configuration.getAsynchronousFuturesExecutor());
+        return supplyAsync(() -> executeGrpcFuture(configuration, future, command), configuration.getAsynchronousFuturesExecutor());
+    }
+
+    private static FutureCallback<GrpcResponse> createFutureCallback(GrpcCommunicationConfiguration configuration) {
+        return new FutureCallback<GrpcResponse>() {
             @Override
             public void onSuccess(GrpcResponse response) {
                 if (isNull(response)) {
@@ -144,8 +149,7 @@ class GrpcCommunicationAsyncExecutor {
                 }
                 configuration.getExceptionHandler().failed(ofNullable(cast(configuration.getRequest())), exception);
             }
-        }, configuration.getAsynchronousFuturesExecutor());
-        return supplyAsync(() -> executeGrpcFuture(configuration, future, command), configuration.getAsynchronousFuturesExecutor());
+        };
     }
 
     private static <ResponseType> ServiceResponse<ResponseType> executeGrpcFuture(GrpcCommunicationConfiguration configuration, ListenableFuture<GrpcResponse> future, ServiceMethodCommand command) {

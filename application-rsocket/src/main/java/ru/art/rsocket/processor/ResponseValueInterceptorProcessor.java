@@ -32,12 +32,13 @@ import java.util.Optional;
 @UtilityClass
 public class ResponseValueInterceptorProcessor {
     public static Optional<Entity> processResponseValueInterceptors(Entity responseValue, List<ValueInterceptor<Entity, Entity>> responseValueInterceptors) {
+        Entity responseEntity = responseValue;
         for (ValueInterceptor<Entity, Entity> responseValueInterceptor : responseValueInterceptors) {
-            ValueInterceptionResult<Entity, Entity> result = responseValueInterceptor.intercept(responseValue);
+            ValueInterceptionResult<Entity, Entity> result = responseValueInterceptor.intercept(responseEntity);
             if (isNull(result)) {
                 break;
             }
-            responseValue = result.getOutValue();
+            responseEntity = result.getOutValue();
             if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
                 break;
             }
@@ -45,6 +46,6 @@ public class ResponseValueInterceptorProcessor {
                 return ofNullable(result.getOutValue());
             }
         }
-        return ofNullable(responseValue);
+        return ofNullable(responseEntity);
     }
 }
