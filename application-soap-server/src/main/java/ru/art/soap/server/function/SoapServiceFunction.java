@@ -18,23 +18,21 @@
 
 package ru.art.soap.server.function;
 
-import ru.art.entity.XmlEntity;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper.XmlEntityToModelMapper;
-import ru.art.http.server.interceptor.HttpServerInterceptor;
-import ru.art.service.constants.RequestValidationPolicy;
-import ru.art.soap.content.mapper.SoapMimeToContentTypeMapper;
-import ru.art.soap.server.specification.SoapFunctionalServiceSpecification;
-import ru.art.soap.server.specification.SoapServiceExecutionSpecification;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.service.ServiceModule.serviceModule;
-import static ru.art.soap.server.constans.SoapServerModuleConstants.EXECUTE_SOAP_FUNCTION;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+import ru.art.http.server.interceptor.*;
+import ru.art.service.constants.*;
+import ru.art.soap.content.mapper.*;
+import ru.art.soap.server.specification.*;
+import java.util.function.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.service.ServiceModule.*;
+import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
 import static ru.art.soap.server.model.SoapService.*;
 import static ru.art.soap.server.model.SoapService.SoapOperation.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class SoapServiceFunction {
     private final SoapServiceBuilder soapService;
