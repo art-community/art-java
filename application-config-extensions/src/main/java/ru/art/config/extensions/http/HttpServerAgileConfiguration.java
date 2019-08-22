@@ -34,15 +34,11 @@ import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.http.HttpConfigKeys.*;
 import static ru.art.config.extensions.http.HttpContentMappersConfigurator.*;
-import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ThreadConstants.*;
 import static ru.art.core.context.Context.*;
-import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.http.server.HttpServerModuleConfiguration.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.HttpPath.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.*;
 import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.metrics.http.filter.MetricsHttpLogFilter.*;
 import static ru.art.service.ServiceModule.*;
@@ -50,17 +46,18 @@ import static ru.art.service.ServiceModule.*;
 @Getter
 public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfiguration {
     private final Map<MimeType, HttpContentMapper> contentMappers = configureHttpContentMappers(super.getContentMappers());
-    private final Logbook logbook = logbookWithoutWebLogs(logbookWithoutMetricsLogs()).build();
+    private final Logbook logbook = logbookWithoutResourceLogs(logbookWithoutMetricsLogs()).build();
     private int port;
     private String path;
     private int maxThreadsCount;
     private int minSpareThreadsCount;
-    private HttpWebConfiguration webConfiguration;
     private boolean enableRawDataTracing;
     private boolean enableValueTracing;
     private boolean enableMetrics;
     private MimeToContentTypeMapper consumesMimeTypeMapper;
     private MimeToContentTypeMapper producesMimeTypeMapper;
+    private String host;
+    private boolean web;
 
     public HttpServerAgileConfiguration() {
         refresh();
@@ -74,22 +71,16 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
         MimeType consumesMimeType = MimeType.valueOf(consumesMimeTypeString);
         ContentType consumesContentType = getOrElse(getByMimeType(consumesMimeTypeString), consumesMimeTypeMapper.getContentType());
         this.consumesMimeTypeMapper = new MimeToContentTypeMapper(consumesMimeType, consumesContentType);
-
         MimeToContentTypeMapper producesMimeTypeMapper = super.getProducesMimeTypeMapper();
         String producesMimeTypeString = configString(HTTP_COMMUNICATION_SECTION_ID, PRODUCES_MIME_TYPE,
                 producesMimeTypeMapper.getMimeType().toString());
         MimeType producesMimeType = MimeType.valueOf(producesMimeTypeString);
         ContentType producesContentType = getOrElse(getByMimeType(producesMimeTypeString), producesMimeTypeMapper.getContentType());
         this.producesMimeTypeMapper = new MimeToContentTypeMapper(producesMimeType, producesContentType);
-
+        web = configBoolean(HTTP_SERVER_SECTION_ID, WEB, super.isWeb());
         enableRawDataTracing = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
         enableValueTracing = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         enableMetrics = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_METRICS, super.isEnableMetrics());
-        String webUrl = emptyIfException(() -> configString(HTTP_SERVER_SECTION_ID, WEB_URL));
-        webConfiguration = isEmpty(webUrl) ? super.getWebConfiguration() : HttpWebConfiguration.builder()
-                .webUrl(webUrl)
-                .templateResourceVariable(URL_TEMPLATE_VARIABLE, variable -> webUrl)
-                .build();
         int newPort = configInt(HTTP_SERVER_SECTION_ID, PORT, super.getPort());
         boolean restart = port != newPort;
         port = newPort;
@@ -99,11 +90,14 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
         int newMaxThreadsCount = configInt(HTTP_SERVER_SECTION_ID, MAX_THREADS_COUNT, DEFAULT_THREAD_POOL_SIZE);
         restart |= newMaxThreadsCount != maxThreadsCount;
         maxThreadsCount = newMaxThreadsCount;
+        String newHost = configString(HTTP_SERVER_SECTION_ID, HOST, super.getHost());
+        restart |= !newHost.equalsIgnoreCase(host);
+        host = newHost;
         int newMinSpareThreadsCount = configInt(HTTP_SERVER_SECTION_ID, MIN_SPARE_THREADS_COUNT, DEFAULT_THREAD_POOL_SIZE);
         restart |= newMinSpareThreadsCount != minSpareThreadsCount;
         minSpareThreadsCount = newMinSpareThreadsCount;
-        if (isNotEmpty(webUrl)) {
-            serviceModule().getServiceRegistry().registerService(new HttpWebUiServiceSpecification(path, path + IMAGE_PATH));
+        if (web) {
+            serviceModule().getServiceRegistry().registerService(new HttpResourceServiceSpecification(path));
         }
         if (enableMetrics) {
             serviceModule().getServiceRegistry().registerService(new MetricServiceSpecification(path));

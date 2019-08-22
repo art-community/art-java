@@ -32,35 +32,28 @@ import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
 import static ru.art.configurator.http.content.mapping.ConfiguratorHttpContentMapping.*;
-import static ru.art.core.constants.NetworkConstants.*;
-import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.http.constants.HttpCommonConstants.*;
 import static ru.art.http.constants.HttpStatus.*;
 import static ru.art.http.server.HttpServerModuleConfiguration.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
 import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
-import static ru.art.http.server.service.HttpWebResourceService.*;
+import static ru.art.http.server.service.HttpResourceService.*;
 import static ru.art.metrics.http.filter.MetricsHttpLogFilter.*;
 
 @Getter
 public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefaultConfiguration {
     private final Map<MimeType, HttpContentMapper> contentMappers = configureContentMappers(super.getContentMappers());
     private final int port = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getInt(CONFIGURATOR_HTTP_PORT_PROPERTY), super.getPort());
-    private final Logbook logbook = logbookWithoutMetricsLogs(logbookWithoutWebLogs()).build();
-    private final String path = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_HTTP_PATH_PROPERTY), DEFAULT_CONFIGURATOR_PATH);
+    private final Logbook logbook = logbookWithoutMetricsLogs(logbookWithoutResourceLogs()).build();
+    private final String path = ifExceptionOrEmpty(() ->
+            config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_HTTP_PATH_PROPERTY), DEFAULT_CONFIGURATOR_PATH);
     private final List<HttpServerInterceptor> requestInterceptors = initializeRequestInterceptors(super.getRequestInterceptors());
-    private final HttpWebConfiguration webConfiguration = HttpWebConfiguration.builder()
-            .templateResourceVariable(URL_TEMPLATE_VARIABLE, (url) -> ifExceptionOrEmpty(() ->
-                            config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_URL_PROPERTY),
-                    HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST + COLON + port + path))
-            .build();
 
     private static List<HttpServerInterceptor> initializeRequestInterceptors(List<HttpServerInterceptor> superInterceptors) {
         List<HttpServerInterceptor> httpServerInterceptors = dynamicArrayOf(initializeWebServerInterceptors(superInterceptors));
         httpServerInterceptors.add(intercept(CookieInterceptor.builder()
-                .urls(AUTHORIZATION_CHECKING_URLS)
+                .paths(AUTHORIZATION_CHECKING_PATHS)
                 .cookie(TOKEN_COOKIE, UserDao::getToken)
                 .errorStatus(UNAUTHORIZED.getCode())
                 .errorContent(getStringResource(INDEX_HTML))

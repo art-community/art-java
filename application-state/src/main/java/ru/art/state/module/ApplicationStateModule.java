@@ -18,30 +18,26 @@
 
 package ru.art.state.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.http.server.specification.HttpWebUiServiceSpecification;
-import ru.art.metrics.http.specification.MetricServiceSpecification;
-import ru.art.state.ApplicationState;
-import ru.art.state.configuration.ApplicationStateModuleConfiguration;
-import ru.art.state.configuration.ApplicationStateModuleConfiguration.ApplicationStateModuleDefaultConfiguration;
-import ru.art.state.service.NetworkService;
-import ru.art.state.specification.LockServiceSpecification;
-import ru.art.state.specification.NetworkServiceSpecification;
-import static java.time.Duration.ofSeconds;
-import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.grpc.server.GrpcServer.grpcServer;
-import static ru.art.http.server.HttpServer.httpServerInSeparatedThread;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.Methods.IMAGE;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
-import static ru.art.service.ServiceModule.serviceModule;
-import static ru.art.state.configuration.ApplicationStateModuleConfiguration.DEFAULT_CONFIGURATION;
-import static ru.art.state.constants.StateModuleConstants.APPLICATION_STATE_MODULE_ID;
-import static ru.art.state.dao.ClusterDao.loadCluster;
-import static ru.art.task.deferred.executor.IdentifiedRunnableFactory.commonTask;
-import static ru.art.task.deferred.executor.SchedulerModuleActions.asynchronousPeriod;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.state.*;
+import ru.art.state.configuration.*;
+import ru.art.state.configuration.ApplicationStateModuleConfiguration.*;
+import ru.art.state.service.*;
+import ru.art.state.specification.*;
+
+import static java.time.Duration.*;
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.grpc.server.GrpcServer.*;
+import static ru.art.http.server.HttpServer.*;
+import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.service.ServiceModule.*;
+import static ru.art.state.configuration.ApplicationStateModuleConfiguration.*;
+import static ru.art.state.constants.StateModuleConstants.*;
+import static ru.art.state.dao.ClusterDao.*;
+import static ru.art.task.deferred.executor.IdentifiedRunnableFactory.*;
+import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
 
 @Getter
 public class ApplicationStateModule implements Module<ApplicationStateModuleConfiguration, ApplicationState> {
@@ -76,9 +72,7 @@ public class ApplicationStateModule implements Module<ApplicationStateModuleConf
         String httpPath = httpServerModule().getPath();
         serviceModule().getServiceRegistry()
                 .registerService(new NetworkServiceSpecification())
-                .registerService(new LockServiceSpecification())
-                .registerService(new HttpWebUiServiceSpecification(httpPath, httpPath + IMAGE))
-                .registerService(new MetricServiceSpecification(httpPath));
+                .registerService(new LockServiceSpecification());
         applicationState().setCluster(loadCluster());
         asynchronousPeriod(commonTask(NetworkService::removeDeadEndpoints), ofSeconds(applicationStateModule().getModuleEndpointCheckRateSeconds()));
         httpServerInSeparatedThread();

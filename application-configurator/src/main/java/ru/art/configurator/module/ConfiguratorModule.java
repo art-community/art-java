@@ -45,7 +45,6 @@ import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.grpc.server.GrpcServer.*;
 import static ru.art.http.server.HttpServer.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.HttpPath.*;
 import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.service.ServiceModule.*;
 
@@ -74,7 +73,7 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
         serviceModule()
                 .getServiceRegistry()
                 .registerService(new ConfiguratorServiceSpecification())
-                .registerService(new HttpWebUiServiceSpecification(httpPath, httpPath + IMAGE_PATH))
+                .registerService(new HttpResourceServiceSpecification(httpPath))
                 .registerService(new UserServiceSpecification())
                 .registerService(new MetricServiceSpecification(httpPath));
         httpServerInSeparatedThread();

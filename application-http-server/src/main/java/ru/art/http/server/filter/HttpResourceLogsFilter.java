@@ -25,15 +25,15 @@ import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.mime.MimeType.*;
 import static ru.art.http.server.module.HttpServerModule.*;
 
-public interface HtmlLogsFilter {
-    static String replaceWebResponseBody(RawHttpResponse response) {
+public interface HttpResourceLogsFilter {
+    static String replaceResponseBody(RawHttpResponse response) {
         //Attention! Dont change this to EMPTY_STRING or something like it. Logbook check filter result and if it null, then filter is not applying.
         String contentType = response.getContentType();
         if (isEmpty(contentType)) {
             return null;
         }
         return getOrElse(httpServerModule()
-                .getWebConfiguration()
+                .getResourceConfiguration()
                 .getLogbookResponseBodyReplacers()
                 .get(valueOf(contentType)), null);
     }

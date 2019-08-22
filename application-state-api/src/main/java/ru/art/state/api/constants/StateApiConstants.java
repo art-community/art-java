@@ -18,6 +18,8 @@
 
 package ru.art.state.api.constants;
 
+import static ru.art.http.constants.HttpCommonConstants.*;
+
 public interface StateApiConstants {
     interface NetworkServiceConstants {
         String NETWORK_SERVICE_ID = "NETWORK_SERVICE";
@@ -33,12 +35,12 @@ public interface StateApiConstants {
         }
 
         interface Paths {
-            String GET_CLUSTER_PROFILE_PATH = "/getClusterProfile";
-            String CONNECT_PATH = "/connect";
-            String INCREMENT_SESSION_PATH = "/sessions/increment";
-            String DECREMENT_SESSION_PATH = "/sessions/decrement";
-            String GET_SESSIONS_PATH = "/sessions";
-            String GET_PROFILES_PATH = "/profiles";
+            String GET_CLUSTER_PROFILE_PATH = API_PATH + "/getClusterProfile";
+            String CONNECT_PATH = API_PATH + "/connect";
+            String INCREMENT_SESSION_PATH = API_PATH + "/sessions/increment";
+            String DECREMENT_SESSION_PATH = API_PATH + "/sessions/decrement";
+            String GET_SESSIONS_PATH = API_PATH + "/sessions";
+            String GET_PROFILES_PATH = API_PATH + "/profiles";
         }
 
         interface PathParameters {
@@ -57,9 +59,9 @@ public interface StateApiConstants {
         }
 
         interface Paths {
-            String LOCK_PATH = "/lock";
-            String UNLOCK_PATH = "/unlock";
-            String GET_CURRENT_LOCKS_PATH = "/getCurrentLocks";
+            String LOCK_PATH = API_PATH + "/lock";
+            String UNLOCK_PATH = API_PATH + "/unlock";
+            String GET_CURRENT_LOCKS_PATH = API_PATH + "/getCurrentLocks";
         }
     }
 }

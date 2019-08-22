@@ -19,6 +19,7 @@
 package ru.art.http.server.specification;
 
 import lombok.*;
+import ru.art.core.caster.*;
 import ru.art.entity.mapper.ValueToModelMapper.*;
 import ru.art.http.server.model.*;
 import ru.art.service.*;
@@ -28,46 +29,41 @@ import ru.art.service.model.*;
 import java.util.*;
 
 import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
-import static ru.art.entity.PrimitiveMapping.*;
-import static ru.art.http.constants.MimeToContentTypeMapper.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.HttpParameters.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.Methods.*;
-import static ru.art.http.server.extractor.HttpWebResponseContentTypeExtractor.*;
+import static ru.art.entity.PrimitivesFactory.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpParameters.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.Methods.*;
+import static ru.art.http.server.extractor.HttpResponseContentTypeExtractor.*;
 import static ru.art.http.server.interceptor.HttpServerInterception.*;
 import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
 import static ru.art.http.server.model.HttpService.*;
-import static ru.art.http.server.service.HttpWebResourceService.*;
+import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.http.server.service.HttpResourceService.*;
 import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import static ru.art.service.model.ServiceInterceptionResult.*;
 
 @Getter
 @AllArgsConstructor
-public class HttpWebUiServiceSpecification implements HttpServiceSpecification {
-    private final String renderPath;
-    private final String imagePath;
-    private final String serviceId = HTTP_WEB_UI_SERVICE;
+public class HttpResourceServiceSpecification implements HttpServiceSpecification {
+    private final String resourcePath;
+    private final String serviceId = HTTP_RESOURCE_SERVICE;
     @Getter(lazy = true)
     private final HttpService httpService = httpService()
 
-            .get(RENDER)
+            .get(GET_RESOURCE)
             .fromPathParameters(RESOURCE)
-            .requestMapper((StringParametersMapToModelMapper<String>) resource -> resource.getParameter(RESOURCE))
+            .requestMapper((StringParametersMapToModelMapper<String>) resource ->
+                    resource.getParameter(RESOURCE))
             .overrideResponseContentType()
-            .responseMapper(stringMapper.getFromModel())
-            .addRequestInterceptor(intercept(interceptAndContinue(((request, response) -> response.setContentType(extractTypeByFile(request.getRequestURI()))))))
-            .listen(renderPath)
-
-            .get(IMAGE)
-            .fromPathParameters(RESOURCE)
-            .requestMapper((StringParametersMapToModelMapper<String>) image -> image.getParameter(RESOURCE))
-            .produces(imagePng())
-            .ignoreRequestAcceptType()
-            .responseMapper(image -> byteCollection((byte[]) image))
-            .listen(imagePath)
+            .responseMapper(Caster::cast)
+            .addRequestInterceptor(intercept(interceptAndContinue(((request, response) ->
+                    response.setContentType(extractTypeByFile(request.getRequestURI()))))))
+            .listen(resourcePath)
 
             .serve(EMPTY_STRING);
 
@@ -79,7 +75,7 @@ public class HttpWebUiServiceSpecification implements HttpServiceSpecification {
                 super.intercept(request, ServiceResponse.builder()
                         .command(response.getCommand())
                         .serviceException(response.getServiceException())
-                        .responseData(WEB_RESOURCE)
+                        .responseData(HTTP_RESOURCE)
                         .build());
                 return nextInterceptor(request, response);
             }
@@ -88,11 +84,17 @@ public class HttpWebUiServiceSpecification implements HttpServiceSpecification {
 
     @Override
     public <P, R> R executeMethod(String methodId, P request) {
-        switch (methodId) {
-            case RENDER:
-                return cast(getStringResource(cast(request)));
-            case IMAGE:
-                return cast(getBinaryResource(cast(request)));
+        if (GET_RESOURCE.equals(methodId)) {
+            String resourcePath = cast(ifEmpty(request, httpServerModule().getResourceConfiguration().getDefaultResource()));
+            if (!resourcePath.contains(DOT)) {
+                return cast(byteCollection(getBinaryResource(resourcePath)));
+            }
+            return cast(httpServerModule()
+                    .getResourceConfiguration()
+                    .getResourceExtensionTypeMappings()
+                    .get(resourcePath.substring(resourcePath.lastIndexOf(DOT)).toLowerCase()) == STRING
+                    ? stringPrimitive(getStringResource(resourcePath))
+                    : byteCollection(getBinaryResource(resourcePath)));
         }
         throw new UnknownServiceMethodException(serviceId, methodId);
     }
