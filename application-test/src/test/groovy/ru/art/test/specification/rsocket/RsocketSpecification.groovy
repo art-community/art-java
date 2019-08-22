@@ -67,10 +67,10 @@ class RsocketSpecification extends Specification {
         def communicator = rsocketCommunicator(LOCALHOST, {
             switch (transport) {
                 case TCP:
-                    rsocketModule().acceptorTcpPort
+                    rsocketModule().serverTcpPort
                     break
                 case WEB_SOCKET:
-                    rsocketModule().acceptorWebSocketPort
+                    rsocketModule().serverWebSocketPort
                     break
             }
         }.call())
@@ -115,10 +115,10 @@ class RsocketSpecification extends Specification {
                 .tcpPort({
                     switch (transport) {
                         case TCP:
-                            rsocketModule().acceptorTcpPort
+                            rsocketModule().serverTcpPort
                             break
                         case WEB_SOCKET:
-                            rsocketModule().acceptorWebSocketPort
+                            rsocketModule().serverWebSocketPort
                             break
                     }
                 }.call())
@@ -175,10 +175,10 @@ class RsocketSpecification extends Specification {
                 .tcpPort({
                     switch (transport) {
                         case TCP:
-                            rsocketModule().acceptorTcpPort
+                            rsocketModule().serverTcpPort
                             break
                         case WEB_SOCKET:
-                            rsocketModule().acceptorWebSocketPort
+                            rsocketModule().serverWebSocketPort
                             break
                     }
                 }.call())
@@ -237,10 +237,10 @@ class RsocketSpecification extends Specification {
                 .tcpPort({
                     switch (transport) {
                         case TCP:
-                            rsocketModule().acceptorTcpPort
+                            rsocketModule().serverTcpPort
                             break
                         case WEB_SOCKET:
-                            rsocketModule().acceptorWebSocketPort
+                            rsocketModule().serverWebSocketPort
                             break
                     }
                 }.call())
