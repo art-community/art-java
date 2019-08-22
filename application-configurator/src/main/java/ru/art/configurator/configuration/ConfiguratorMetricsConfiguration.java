@@ -31,6 +31,6 @@ import static ru.art.metrics.configurator.PrometheusRegistryConfigurator.*;
 
 @Getter
 public class ConfiguratorMetricsConfiguration extends MetricModuleDefaultConfiguration {
-    private final String path = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_HTTP_PATH_PROPERTY), DEFAULT_CONFIGURATOR_PATH);
+    private final String path = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_HTTP_PATH_PROPERTY), CONFIGURATOR_PATH);
     private final PrometheusMeterRegistry prometheusMeterRegistry = prometheusRegistryForApplication(CONFIGURATOR_MODULE_ID);
 }

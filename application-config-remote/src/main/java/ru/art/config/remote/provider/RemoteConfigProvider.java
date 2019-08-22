@@ -43,11 +43,11 @@ public class RemoteConfigProvider {
     private static final ConfigCacheContainer CONFIG_CACHE_CONTAINER = new ConfigCacheContainer();
 
     public static void useRemoteConfigurations() {
-        withContext(defaultContext(), RemoteConfigProvider::applyRemoteConfiguration);
+        withDefaultContext(RemoteConfigProvider::applyRemoteConfiguration);
     }
 
     public static void useRemoteConfigurations(ContextInitialConfiguration contextInitialConfiguration) {
-        withContext(defaultContext(), RemoteConfigProvider::applyRemoteConfiguration);
+        withDefaultContext(RemoteConfigProvider::applyRemoteConfiguration);
     }
 
     public static Config remoteConfig(String sectionId) {
@@ -55,7 +55,7 @@ public class RemoteConfigProvider {
     }
 
     public static Config remoteConfig() {
-        return withContext(defaultContext(), RemoteConfigProvider::getRemoteConfig);
+        return withDefaultContext(RemoteConfigProvider::getRemoteConfig);
     }
 
     private static Config getRemoteConfig(Context context) {

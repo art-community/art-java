@@ -29,6 +29,6 @@ import static ru.art.core.network.selector.PortSelector.*;
 
 @Getter
 public class ConfiguratorGrpcServerConfiguration extends GrpcServerModuleDefaultConfiguration {
-    private final String path = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_GRPC_PATH_PROPERTY), DEFAULT_CONFIGURATOR_PATH);
+    private final String path = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_GRPC_PATH_PROPERTY), CONFIGURATOR_PATH);
     private final int port = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getInt(CONFIGURATOR_GRPC_PORT_PROPERTY), findAvailableTcpPort());
 }

@@ -35,6 +35,7 @@ public interface StateApiConstants {
         }
 
         interface Paths {
+            String STATE_PATH = "/state";
             String GET_CLUSTER_PROFILE_PATH = API_PATH + "/getClusterProfile";
             String CONNECT_PATH = API_PATH + "/connect";
             String INCREMENT_SESSION_PATH = API_PATH + "/sessions/increment";

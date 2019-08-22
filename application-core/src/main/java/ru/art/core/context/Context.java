@@ -43,6 +43,7 @@ public class Context {
     private static final ReentrantLock lock = new ReentrantLock();
     private static volatile Context DEFAULT_INSTANCE;
     private static volatile Context INSTANCE;
+    private static volatile Consumer<Context> OUTSIDE_DEFAULT_CONTEXT_ACTION;
     private Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules = mapOf();
     private ContextInitialConfiguration initialConfiguration = new ContextInitialDefaultConfiguration();
     private Long lastActionTimestamp = currentTimeMillis();
@@ -122,6 +123,13 @@ public class Context {
         lock.lock();
         INSTANCE = currentContext;
         lock.unlock();
+        if (DEFAULT_INSTANCE == context && nonNull(OUTSIDE_DEFAULT_CONTEXT_ACTION)) {
+            OUTSIDE_DEFAULT_CONTEXT_ACTION.accept(INSTANCE);
+        }
+    }
+
+    public static void withDefaultContext(Consumer<Context> action) {
+        withContext(defaultContext(), action);
     }
 
     public static void withContext(ContextInitialConfiguration contextInitialConfiguration, Consumer<Context> action) {
@@ -132,6 +140,10 @@ public class Context {
         action.accept(INSTANCE);
         INSTANCE = currentContext;
         lock.unlock();
+    }
+
+    public static void withDefaultContext(ContextInitialConfiguration contextInitialConfiguration, Consumer<Context> action) {
+        withContext(initDefaultContext(contextInitialConfiguration), action);
     }
 
     public static void withModules(Consumer<Context> action, Module<?, ?>... modules) {
@@ -206,7 +218,14 @@ public class Context {
         lock.lock();
         INSTANCE = currentContext;
         lock.unlock();
+        if (DEFAULT_INSTANCE == context && nonNull(OUTSIDE_DEFAULT_CONTEXT_ACTION)) {
+            OUTSIDE_DEFAULT_CONTEXT_ACTION.accept(INSTANCE);
+        }
         return result;
+    }
+
+    public static <T> T withDefaultContext(Function<Context, T> action) {
+        return withContext(defaultContext(), action);
     }
 
     public static <T> T withContext(ContextInitialConfiguration contextInitialConfiguration, Function<Context, T> action) {
@@ -220,6 +239,10 @@ public class Context {
         INSTANCE = currentContext;
         lock.unlock();
         return result;
+    }
+
+    public static <T> T withDefaultContext(ContextInitialConfiguration contextInitialConfiguration, Function<Context, T> action) {
+        return withContext(initDefaultContext(contextInitialConfiguration), action);
     }
 
     public static <T> T withModules(Function<Context, T> action, Module<?, ?>... modules) {
@@ -509,5 +532,9 @@ public class Context {
     public static <C extends ModuleConfiguration> C constructInsideDefaultContext(ContextInitialConfiguration configuration, Supplier<C> constructor) {
         initDefaultContext(configuration);
         return withContext(defaultContext(), (Function<Context, C>) context -> constructor.get());
+    }
+
+    public static void outsideDefaultContext(Consumer<Context> action) {
+        OUTSIDE_DEFAULT_CONTEXT_ACTION = action;
     }
 }

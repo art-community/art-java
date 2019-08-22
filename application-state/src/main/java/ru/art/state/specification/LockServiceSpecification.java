@@ -35,11 +35,11 @@ import static ru.art.grpc.server.model.GrpcService.*;
 import static ru.art.http.constants.MimeToContentTypeMapper.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 import static ru.art.http.server.model.HttpService.*;
-import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.service.constants.RequestValidationPolicy.*;
 import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.*;
 import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.Methods.*;
 import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.Paths.*;
+import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.Paths.*;
 import static ru.art.state.api.mapping.LockRequestMapper.*;
 import static ru.art.state.service.LockService.*;
 
@@ -69,7 +69,7 @@ public class LockServiceSpecification implements HttpServiceSpecification, GrpcS
             .responseMapper(stringCollectionMapper.getFromModel())
             .listen(GET_CURRENT_LOCKS_PATH)
 
-            .serve(httpServerModule().getPath());
+            .serve(STATE_PATH);
 
     private final GrpcService grpcService = grpcService()
             .method(LOCK, grpcMethod()

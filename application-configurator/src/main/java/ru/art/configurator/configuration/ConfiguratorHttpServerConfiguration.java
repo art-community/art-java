@@ -47,7 +47,7 @@ public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefault
     private final int port = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getInt(CONFIGURATOR_HTTP_PORT_PROPERTY), super.getPort());
     private final Logbook logbook = logbookWithoutMetricsLogs(logbookWithoutResourceLogs()).build();
     private final String path = ifExceptionOrEmpty(() ->
-            config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_HTTP_PATH_PROPERTY), DEFAULT_CONFIGURATOR_PATH);
+            config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_HTTP_PATH_PROPERTY), CONFIGURATOR_PATH);
     private final List<HttpServerInterceptor> requestInterceptors = initializeRequestInterceptors(super.getRequestInterceptors());
 
     private static List<HttpServerInterceptor> initializeRequestInterceptors(List<HttpServerInterceptor> superInterceptors) {

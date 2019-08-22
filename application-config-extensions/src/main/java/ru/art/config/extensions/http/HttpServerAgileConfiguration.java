@@ -39,7 +39,9 @@ import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.http.server.HttpServerModuleConfiguration.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
 import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.metrics.constants.MetricsModuleConstants.*;
 import static ru.art.metrics.http.filter.MetricsHttpLogFilter.*;
 import static ru.art.service.ServiceModule.*;
 
@@ -96,15 +98,19 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
         int newMinSpareThreadsCount = configInt(HTTP_SERVER_SECTION_ID, MIN_SPARE_THREADS_COUNT, DEFAULT_THREAD_POOL_SIZE);
         restart |= newMinSpareThreadsCount != minSpareThreadsCount;
         minSpareThreadsCount = newMinSpareThreadsCount;
-        if (web) {
-            serviceModule().getServiceRegistry().registerService(new HttpResourceServiceSpecification(path));
-        }
-        if (enableMetrics) {
-            serviceModule().getServiceRegistry().registerService(new MetricServiceSpecification(path));
-        }
         if (restart && context().hasModule(HTTP_SERVER_MODULE_ID)) {
             httpServerModuleState().getServer().restart();
         }
+        outsideDefaultContext(context -> registerSpecifications());
     }
 
+    private void registerSpecifications() {
+        if (web && !serviceModule().getServiceRegistry().getServices().containsKey(HTTP_RESOURCE_SERVICE)) {
+            serviceModule().getServiceRegistry().registerService(new HttpResourceServiceSpecification(path));
+        }
+        if (enableMetrics && !serviceModule().getServiceRegistry().getServices().containsKey(METRICS_SERVICE_ID)) {
+            serviceModule().getServiceRegistry().registerService(new MetricServiceSpecification(path));
+        }
+
+    }
 }

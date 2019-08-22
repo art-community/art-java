@@ -20,6 +20,8 @@ package ru.art.state.module;
 
 import lombok.*;
 import ru.art.core.module.*;
+import ru.art.http.server.specification.*;
+import ru.art.metrics.http.specification.*;
 import ru.art.state.*;
 import ru.art.state.configuration.*;
 import ru.art.state.configuration.ApplicationStateModuleConfiguration.*;
@@ -31,8 +33,8 @@ import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.grpc.server.GrpcServer.*;
 import static ru.art.http.server.HttpServer.*;
-import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.service.ServiceModule.*;
+import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.Paths.*;
 import static ru.art.state.configuration.ApplicationStateModuleConfiguration.*;
 import static ru.art.state.constants.StateModuleConstants.*;
 import static ru.art.state.dao.ClusterDao.*;
@@ -69,8 +71,9 @@ public class ApplicationStateModule implements Module<ApplicationStateModuleConf
     @SuppressWarnings("WeakerAccess")
     public static void startApplicationState() {
         useAgileConfigurations(APPLICATION_STATE_MODULE_ID);
-        String httpPath = httpServerModule().getPath();
         serviceModule().getServiceRegistry()
+                .registerService(new MetricServiceSpecification(STATE_PATH))
+                .registerService(new HttpResourceServiceSpecification(STATE_PATH))
                 .registerService(new NetworkServiceSpecification())
                 .registerService(new LockServiceSpecification());
         applicationState().setCluster(loadCluster());

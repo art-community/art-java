@@ -23,8 +23,8 @@ import ru.art.http.server.model.*;
 import ru.art.http.server.specification.*;
 import ru.art.service.exception.*;
 
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.*;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.*;
 import static ru.art.configurator.api.mapping.UserMapping.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.configurator.service.UserService.*;
@@ -32,7 +32,6 @@ import static ru.art.core.caster.Caster.*;
 import static ru.art.entity.PrimitiveMapping.*;
 import static ru.art.http.constants.MimeToContentTypeMapper.*;
 import static ru.art.http.server.model.HttpService.*;
-import static ru.art.http.server.module.HttpServerModule.*;
 
 @Getter
 public class UserServiceSpecification implements HttpServiceSpecification {
@@ -56,7 +55,7 @@ public class UserServiceSpecification implements HttpServiceSpecification {
             .responseMapper(boolMapper.getFromModel())
             .listen(CHECK_TOKEN_PATH)
 
-            .serve(httpServerModule().getPath());
+            .serve(CONFIGURATOR_PATH);
 
     @Override
     public <P, R> R executeMethod(String methodId, P request) {

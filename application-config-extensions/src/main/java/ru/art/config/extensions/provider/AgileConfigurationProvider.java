@@ -55,7 +55,7 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 public class AgileConfigurationProvider implements PreconfiguredModuleProvider {
     @Override
     public <T extends ModuleConfiguration> Optional<T> getModuleConfiguration(String moduleId) {
-        return withContext(defaultContext(), (Function<Context, Optional<T>>) context -> getConfiguration(moduleId));
+        return withDefaultContext((Function<Context, Optional<T>>) context -> getConfiguration(moduleId));
     }
 
     private static <T extends ModuleConfiguration> Optional<T> getConfiguration(String moduleId) {
