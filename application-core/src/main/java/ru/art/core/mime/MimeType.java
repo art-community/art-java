@@ -18,33 +18,33 @@
 
 package ru.art.core.mime;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import ru.art.core.exception.InvalidMimeTypeException;
-import static java.lang.Float.parseFloat;
-import static java.lang.String.CASE_INSENSITIVE_ORDER;
-import static java.nio.charset.Charset.forName;
+import lombok.*;
+import ru.art.core.exception.*;
+import java.nio.charset.*;
+import java.util.*;
+import java.util.function.*;
+
+import static java.lang.Float.*;
+import static java.lang.String.*;
+import static java.nio.charset.Charset.*;
 import static java.text.MessageFormat.format;
-import static java.util.Collections.emptyMap;
-import static java.util.Locale.ENGLISH;
-import static java.util.Objects.isNull;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static java.util.Collections.*;
+import static java.util.Locale.*;
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.CharConstants.DOUBLE_QUOTES;
 import static ru.art.core.constants.CharConstants.SEMICOLON;
 import static ru.art.core.constants.ExceptionMessages.*;
 import static ru.art.core.constants.MimeTypeConstants.*;
+import static ru.art.core.constants.StringConstants.EQUAL;
+import static ru.art.core.constants.StringConstants.PLUS;
+import static ru.art.core.constants.StringConstants.SLASH;
+import static ru.art.core.constants.StringConstants.WILDCARD;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.extension.NullCheckingExtensions.doIfNotNull;
-import static ru.art.core.extension.StringExtensions.isQuotedString;
-import static ru.art.core.extension.StringExtensions.unquote;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import java.nio.charset.Charset;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeSet;
-import java.util.function.Function;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.core.extension.StringExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 
 @Getter
 @RequiredArgsConstructor(access = PRIVATE)

@@ -18,36 +18,30 @@
 
 package ru.art.service;
 
-import lombok.Getter;
-import org.apache.logging.log4j.Logger;
-import ru.art.logging.ServiceCallLoggingParameters;
-import ru.art.service.exception.ServiceExecutionException;
-import ru.art.service.interceptor.ServiceRequestInterception;
-import ru.art.service.interceptor.ServiceResponseInterception;
-import ru.art.service.model.ServiceInterceptionResult;
-import ru.art.service.model.ServiceRequest;
-import ru.art.service.model.ServiceResponse;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.apache.logging.log4j.ThreadContext.get;
-import static org.apache.logging.log4j.ThreadContext.remove;
+import lombok.*;
+import org.apache.logging.log4j.*;
+import ru.art.logging.*;
+import ru.art.service.exception.*;
+import ru.art.service.interceptor.*;
+import ru.art.service.model.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static org.apache.logging.log4j.ThreadContext.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.DOT;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.core.factory.CollectionsFactory.stackOf;
-import static ru.art.logging.LoggingModule.loggingModule;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.logging.LoggingModule.*;
 import static ru.art.logging.LoggingModuleConstants.DEFAULT_REQUEST_ID;
 import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
-import static ru.art.logging.LoggingParametersManager.putServiceCallLoggingParameters;
-import static ru.art.logging.ThreadContextExtensions.putIfNotNull;
-import static ru.art.service.ServiceModule.serviceModule;
+import static ru.art.logging.LoggingParametersManager.*;
+import static ru.art.logging.ThreadContextExtensions.*;
+import static ru.art.service.ServiceModule.*;
 import static ru.art.service.constants.ServiceLoggingMessages.*;
-import static ru.art.service.constants.ServiceModuleConstants.REQUEST_EVENT;
-import static ru.art.service.constants.ServiceModuleConstants.RESPONSE_EVENT;
-import static ru.art.service.model.ServiceInterceptionResult.nextInterceptor;
-import java.util.List;
-import java.util.Stack;
+import static ru.art.service.constants.ServiceModuleConstants.*;
+import static ru.art.service.model.ServiceInterceptionResult.*;
 
 public class ServiceLoggingInterception implements ServiceRequestInterception, ServiceResponseInterception {
     private final static ThreadLocal<Stack<ServiceCallLoggingParameters>> serviceLoggingParameters = new ThreadLocal<>();

@@ -18,17 +18,18 @@
 
 package ru.art.entity.xml;
 
-import lombok.NoArgsConstructor;
-import ru.art.core.checker.CheckerForEmptiness;
+import lombok.*;
+import ru.art.core.checker.*;
+import ru.art.entity.Value;
 import ru.art.entity.*;
-import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toList;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.caster.Caster.cast;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.entity.Value.*;
-import static ru.art.entity.XmlEntity.xmlEntityBuilder;
-import java.util.Collection;
-import java.util.Map;
+import static ru.art.entity.XmlEntity.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class XmlEntityFromEntityConverter {

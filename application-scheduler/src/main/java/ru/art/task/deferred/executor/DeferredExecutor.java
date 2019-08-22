@@ -18,10 +18,8 @@
 
 package ru.art.task.deferred.executor;
 
-import java.time.LocalDateTime;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
+import java.time.*;
+import java.util.concurrent.*;
 
 /**
  * Интерфейс, описывающий ключевой компонент проекта

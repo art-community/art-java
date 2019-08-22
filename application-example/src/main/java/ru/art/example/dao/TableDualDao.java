@@ -18,12 +18,12 @@
 
 package ru.art.example.dao;
 
-import org.jooq.Result;
-import static org.jooq.impl.DSL.using;
-import static ru.art.core.extension.StringExtensions.emptyIfNull;
-import static ru.art.example.constants.ExampleAppModuleConstants.SqlConstants.ONE;
-import static ru.art.example.constants.ExampleAppModuleConstants.SqlConstants.TABLE_DUAL;
-import static ru.art.sql.module.SqlModule.sqlModule;
+import org.jooq.*;
+
+import static org.jooq.impl.DSL.*;
+import static ru.art.core.extension.StringExtensions.*;
+import static ru.art.example.constants.ExampleAppModuleConstants.SqlConstants.*;
+import static ru.art.sql.module.SqlModule.*;
 
 /**
  * Dao is made for exchanging data with database

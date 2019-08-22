@@ -18,12 +18,13 @@
 
 package ru.art.config.extensions.activator;
 
-import lombok.experimental.UtilityClass;
-import ru.art.config.extensions.provider.AgileConfigurationProvider;
-import ru.art.core.configuration.ContextInitialConfiguration.ApplicationContextConfiguration;
-import ru.art.core.context.Context;
-import static ru.art.config.remote.provider.RemoteConfigProvider.useRemoteConfigurations;
-import static ru.art.core.constants.ContextConstants.DEFAULT_MAIN_MODULE_ID;
+import lombok.experimental.*;
+import ru.art.config.extensions.provider.*;
+import ru.art.core.configuration.ContextInitialConfiguration.*;
+import ru.art.core.context.*;
+
+import static ru.art.config.remote.provider.RemoteConfigProvider.*;
+import static ru.art.core.constants.ContextConstants.*;
 import static ru.art.core.context.Context.*;
 
 @UtilityClass

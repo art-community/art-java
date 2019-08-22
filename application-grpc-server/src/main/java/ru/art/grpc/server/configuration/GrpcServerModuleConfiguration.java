@@ -18,19 +18,21 @@
 
 package ru.art.grpc.server.configuration;
 
-import io.grpc.ServerInterceptor;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.grpc.server.interceptor.GrpcServerLoggingInterceptor;
-import static java.util.concurrent.Executors.newFixedThreadPool;
-import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
-import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
+import io.grpc.*;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.grpc.server.interceptor.*;
+import ru.art.logging.*;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+import static ru.art.core.constants.ThreadConstants.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.core.network.selector.PortSelector.*;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.Executor;
 
 public interface GrpcServerModuleConfiguration extends ModuleConfiguration {
     boolean isExecuteServiceInTransportThread();
@@ -49,7 +51,13 @@ public interface GrpcServerModuleConfiguration extends ModuleConfiguration {
 
     int getPort();
 
-    boolean isEnableTracing();
+    boolean isEnableRawDataTracing();
+
+    boolean isEnableValueTracing();
+
+    List<ValueInterceptor<Entity, Entity>> getRequestValueInterceptors();
+
+    List<ValueInterceptor<Entity, Entity>> getResponseValueInterceptors();
 
     @Getter
     @AllArgsConstructor
@@ -60,24 +68,29 @@ public interface GrpcServerModuleConfiguration extends ModuleConfiguration {
 
     GrpcServerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new GrpcServerModuleDefaultConfiguration();
 
-	@Getter
-	class GrpcServerModuleDefaultConfiguration implements GrpcServerModuleConfiguration {
+    @Getter
+    class GrpcServerModuleDefaultConfiguration implements GrpcServerModuleConfiguration {
         private final String path = DEFAULT_MODULE_PATH;
         private final boolean executeServiceInTransportThread = false;
-        private final Executor overridingExecutor = newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
+        private final Executor overridingExecutor = new ForkJoinPool(DEFAULT_THREAD_POOL_SIZE);
         private final GrpcServerSecurityConfiguration securityConfiguration = null;
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ServerInterceptor> interceptors = initializeInterceptors();
         private final int maxInboundMessageSize = DEFAULT_MAX_INBOUND_MESSAGE_SIZE;
         private final int handshakeTimeout = DEFAULT_HANDSHAKE_TIMEOUT;
         private final int port = findAvailableTcpPort();
-        private final boolean enableTracing = true;
+        private final boolean enableRawDataTracing = false;
+        private final boolean enableValueTracing = false;
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+        private final List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = initializeValueInterceptors();
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+        private final List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = initializeValueInterceptors();
 
+        private List<ValueInterceptor<Entity, Entity>> initializeValueInterceptors() {
+            return isEnableValueTracing() ? linkedListOf(new LoggingValueInterceptor<>()) : linkedListOf();
+        }
         private List<ServerInterceptor> initializeInterceptors() {
-            if (enableTracing) {
-                return linkedListOf(new GrpcServerLoggingInterceptor());
-            }
-            return linkedListOf();
+            return isEnableRawDataTracing() ? linkedListOf(new GrpcServerLoggingInterceptor()) : linkedListOf();
         }
     }
 }

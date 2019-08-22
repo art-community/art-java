@@ -18,12 +18,12 @@
 
 package ru.art.example.interceptor.http;
 
-import ru.art.core.constants.InterceptionStrategy;
-import ru.art.http.server.interceptor.HttpServerInterception;
-import static ru.art.core.constants.InterceptionStrategy.NEXT_INTERCEPTOR;
-import static ru.art.logging.LoggingModule.loggingModule;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import ru.art.core.constants.*;
+import ru.art.http.server.interceptor.*;
+import javax.servlet.http.*;
+
+import static ru.art.core.constants.InterceptionStrategy.*;
+import static ru.art.logging.LoggingModule.*;
 
 /**
  * Http interceptors can do some logic before executing http service method and after that

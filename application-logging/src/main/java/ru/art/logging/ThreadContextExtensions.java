@@ -18,8 +18,8 @@
 
 package ru.art.logging;
 
-import static java.util.Objects.isNull;
-import static org.apache.logging.log4j.ThreadContext.put;
+import static java.util.Objects.*;
+import static org.apache.logging.log4j.ThreadContext.*;
 
 public interface ThreadContextExtensions {
     static void putIfNotNull(String key, Object value) {

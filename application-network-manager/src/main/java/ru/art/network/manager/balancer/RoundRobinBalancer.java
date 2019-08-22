@@ -18,15 +18,13 @@
 
 package ru.art.network.manager.balancer;
 
-import lombok.Getter;
-import ru.art.state.api.model.ModuleEndpoint;
-import static java.util.stream.Collectors.toMap;
-import static ru.art.core.factory.CollectionsFactory.concurrentHashMap;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import lombok.*;
+import ru.art.state.api.model.*;
+import java.util.*;
+import java.util.concurrent.atomic.*;
+
+import static java.util.stream.Collectors.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 
 @Getter
 public class RoundRobinBalancer implements Balancer {

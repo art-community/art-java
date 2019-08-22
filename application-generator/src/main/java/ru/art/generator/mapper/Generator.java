@@ -18,24 +18,21 @@
 
 package ru.art.generator.mapper;
 
-import ru.art.generator.mapper.annotation.NonGenerated;
-import ru.art.generator.mapper.exception.MappingGeneratorException;
-import ru.art.generator.mapper.operations.AnalyzingOperations;
-import static java.io.File.separator;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
+import ru.art.generator.mapper.annotation.*;
+import ru.art.generator.mapper.exception.*;
+import ru.art.generator.mapper.operations.*;
+import java.io.*;
+import java.util.*;
+
+import static java.io.File.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
-import static ru.art.generator.mapper.constants.Constants.REQUEST;
-import static ru.art.generator.mapper.constants.Constants.RESPONSE;
-import static ru.art.generator.mapper.operations.AnalyzingOperations.deleteFile;
-import static ru.art.generator.mapper.operations.AnalyzingOperations.getListOfFilesInCompiledPackage;
-import static ru.art.generator.mapper.operations.CommonOperations.printError;
+import static ru.art.generator.mapper.constants.Constants.*;
+import static ru.art.generator.mapper.operations.AnalyzingOperations.*;
+import static ru.art.generator.mapper.operations.CommonOperations.*;
 import static ru.art.generator.mapper.operations.GeneratorOperations.*;
-import java.io.File;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Main class for generating mappers based on classes in package "model".
@@ -134,8 +131,8 @@ public class Generator {
             if (currentModelFileName.contains(REQUEST)) {
                 if (isNotEmpty(files.get(currentModelFileName.replace(REQUEST, RESPONSE)))) {
                     try {
-                        Class request = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING), packageModel);
-                        Class response = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING).replace(REQUEST, RESPONSE), packageModel);
+                        Class<?> request = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING), packageModel);
+                        Class<?> response = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING).replace(REQUEST, RESPONSE), packageModel);
                         if (!request.isAnnotationPresent(NonGenerated.class) &&
                                 !response.isAnnotationPresent(NonGenerated.class) &&
                                 !request.isEnum()) {
@@ -174,7 +171,7 @@ public class Generator {
      * @param currentModelFileName - name of current model file.
      */
     private static void createMapper(String genPackage, String packageModel, String jarPathToMain, String currentModelFileName) {
-        Class clazz = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING), packageModel);
+        Class<?> clazz = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING), packageModel);
         if (!clazz.isAnnotationPresent(NonGenerated.class) && !clazz.isEnum())
             createMapperClass(clazz, genPackage, jarPathToMain);
     }

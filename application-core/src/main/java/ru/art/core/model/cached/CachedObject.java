@@ -18,9 +18,7 @@
 
 package ru.art.core.model.cached;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @EqualsAndHashCode

@@ -18,12 +18,9 @@
 
 package ru.art.service.model;
 
-import io.github.resilience4j.ratelimiter.RateLimiterConfig;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import io.github.resilience4j.ratelimiter.*;
+import lombok.*;
+import lombok.experimental.*;
 
 @Getter
 @NoArgsConstructor

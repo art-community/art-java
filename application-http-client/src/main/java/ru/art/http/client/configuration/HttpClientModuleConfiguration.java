@@ -18,55 +18,47 @@
 
 package ru.art.http.client.configuration;
 
-import lombok.Getter;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.config.ConnectionConfig;
-import org.apache.http.config.SocketConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.apache.http.impl.nio.reactor.IOReactorConfig;
-import org.apache.http.nio.client.HttpAsyncClient;
-import org.zalando.logbook.httpclient.LogbookHttpRequestInterceptor;
-import org.zalando.logbook.httpclient.LogbookHttpResponseInterceptor;
-import ru.art.http.client.exception.HttpClientException;
-import ru.art.http.client.interceptor.HttpClientInterceptor;
-import ru.art.http.client.interceptor.HttpClientTracingIdentifiersRequestInterception;
-import ru.art.http.client.model.HttpCommunicationTargetConfiguration;
-import ru.art.http.configuration.HttpModuleConfiguration;
-import static java.security.KeyStore.getInstance;
-import static java.text.MessageFormat.format;
-import static java.util.Collections.emptyMap;
-import static java.util.Objects.nonNull;
-import static org.apache.http.HttpVersion.HTTP_1_1;
-import static org.apache.http.ssl.SSLContexts.custom;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.extension.ExceptionExtensions.exceptionIfNull;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
-import static ru.art.http.client.constants.HttpClientExceptionMessages.HTTP_COMMUNICATION_TARGET_NOT_FOUND;
-import static ru.art.http.client.constants.HttpClientExceptionMessages.HTTP_SAL_CONFIGURATION_FAILED;
-import static ru.art.http.client.constants.HttpClientModuleConstants.RESPONSE_BUFFER_DEFAULT_SIZE;
-import static ru.art.http.client.interceptor.HttpClientInterceptor.interceptRequest;
-import static ru.art.http.constants.HttpCommonConstants.DEFAULT_HTTP_PORT;
-import static ru.art.logging.LoggingModule.loggingModule;
-import javax.net.ssl.HostnameVerifier;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.security.KeyStore;
-import java.util.List;
-import java.util.Map;
+import lombok.*;
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.config.*;
+import org.apache.http.config.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.nio.client.*;
+import org.apache.http.impl.nio.reactor.*;
+import org.apache.http.nio.client.*;
+import org.zalando.logbook.httpclient.*;
+import ru.art.http.client.exception.*;
+import ru.art.http.client.interceptor.*;
+import ru.art.http.client.model.*;
+import ru.art.http.configuration.*;
+import javax.net.ssl.*;
+import java.io.*;
+import java.security.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+import static java.security.KeyStore.*;
+import static java.text.MessageFormat.*;
+import static java.util.Collections.*;
+import static java.util.Objects.*;
+import static java.util.concurrent.ForkJoinPool.*;
+import static org.apache.http.HttpVersion.*;
+import static org.apache.http.ssl.SSLContexts.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
+import static ru.art.http.client.constants.HttpClientModuleConstants.*;
+import static ru.art.http.client.interceptor.HttpClientInterceptor.*;
+import static ru.art.http.constants.HttpCommonConstants.*;
+import static ru.art.logging.LoggingModule.*;
 
 public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
     HttpClient getClient();
 
-    HttpAsyncClient getAsyncClient();
+    HttpAsyncClient getAsynchronousClient();
 
     RequestConfig getRequestConfig();
 
@@ -98,23 +90,29 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
 
     int getBalancerPort();
 
+    Executor getAsynchronousFuturesExecutor();
 
     Map<String, HttpCommunicationTargetConfiguration> getCommunicationTargets();
 
     default HttpCommunicationTargetConfiguration getCommunicationTargetConfiguration(String serviceId) {
-        return exceptionIfNull(getCommunicationTargets().get(serviceId), new HttpClientException(format(HTTP_COMMUNICATION_TARGET_NOT_FOUND, serviceId))).toBuilder().build();
+        return exceptionIfNull(getCommunicationTargets().get(serviceId),
+                new HttpClientException(format(HTTP_COMMUNICATION_TARGET_NOT_FOUND, serviceId))).toBuilder().build();
     }
 
     HttpClientModuleDefaultConfiguration DEFAULT_CONFIGURATION = new HttpClientModuleDefaultConfiguration();
 
     @Getter
     class HttpClientModuleDefaultConfiguration extends HttpModuleDefaultConfiguration implements HttpClientModuleConfiguration {
+        private final Executor asynchronousFuturesExecutor = commonPool();
         private final RequestConfig requestConfig = RequestConfig.DEFAULT;
         private final SocketConfig socketConfig = SocketConfig.DEFAULT;
         private final ConnectionConfig connectionConfig = ConnectionConfig.DEFAULT;
         private final IOReactorConfig ioReactorConfig = IOReactorConfig.DEFAULT;
         private final HttpVersion httpVersion = HTTP_1_1;
-        private final List<HttpClientInterceptor> requestInterceptors = linkedListOf(interceptRequest(new HttpClientTracingIdentifiersRequestInterception()));
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+        private final List<HttpClientInterceptor> requestInterceptors =
+                linkedListOf(interceptRequest(new HttpClientTracingIdentifiersRequestInterception()));
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<HttpClientInterceptor> responseInterceptors = linkedListOf();
         private final int responseBodyBufferSize = RESPONSE_BUFFER_DEFAULT_SIZE;
         private final boolean ssl = false;
@@ -128,7 +126,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         @Getter(lazy = true)
         private final HttpClient client = createHttpClient();
         @Getter(lazy = true)
-        private final HttpAsyncClient asyncClient = createAsyncHttpClient();
+        private final HttpAsyncClient asynchronousClient = createAsyncHttpClient();
 
         @SuppressWarnings({"Duplicates", "WeakerAccess"})
         protected CloseableHttpAsyncClient createAsyncHttpClient() {
@@ -142,12 +140,14 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                         HostnameVerifier allowAll = (hostName, session) -> true;
                         clientBuilder.setSSLHostnameVerifier(allowAll);
                     }
-                    clientBuilder.setSSLContext(custom().loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray()).build());
+                    clientBuilder.setSSLContext(custom()
+                            .loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray())
+                            .build());
                 } catch (Throwable e) {
-                    throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
+                    throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
                 }
             }
-            if (isEnableTracing()) {
+            if (this.isEnableRawDataTracing()) {
                 clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()));
             }
             CloseableHttpAsyncClient client = clientBuilder.build();
@@ -161,7 +161,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                     .setDefaultRequestConfig(getRequestConfig())
                     .setDefaultConnectionConfig(getConnectionConfig())
                     .setDefaultSocketConfig(getSocketConfig());
-            if (isEnableTracing()) {
+            if (this.isEnableRawDataTracing()) {
                 clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()))
                         .addInterceptorLast(new LogbookHttpResponseInterceptor());
             }
@@ -171,9 +171,11 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                         HostnameVerifier allowAll = (hostName, session) -> true;
                         clientBuilder.setSSLHostnameVerifier(allowAll);
                     }
-                    clientBuilder.setSSLContext(custom().loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray()).build());
+                    clientBuilder.setSSLContext(custom()
+                            .loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray())
+                            .build());
                 } catch (Throwable e) {
-                    throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
+                    throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
                 }
             }
             return clientBuilder.build();
@@ -187,7 +189,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                 keyStore.load(keyStoreInputStream, getSslKeyStorePassword().toCharArray());
                 return keyStore;
             } catch (Throwable e) {
-                throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
+                throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
             } finally {
                 if (nonNull(keyStoreInputStream)) {
                     try {
@@ -195,7 +197,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                     } catch (IOException e) {
                         loggingModule()
                                 .getLogger(HttpClientModuleConfiguration.class)
-                                .error(HTTP_SAL_CONFIGURATION_FAILED, e);
+                                .error(HTTP_SSL_CONFIGURATION_FAILED, e);
                     }
                 }
             }

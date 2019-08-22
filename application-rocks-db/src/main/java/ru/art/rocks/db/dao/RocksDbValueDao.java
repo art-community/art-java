@@ -18,37 +18,28 @@
 
 package ru.art.rocks.db.dao;
 
-import ru.art.entity.CollectionValue;
-import ru.art.entity.Entity;
-import ru.art.entity.Primitive;
-import ru.art.entity.Value;
-import ru.art.rocks.db.bucket.Bucket;
-import ru.art.rocks.db.exception.RocksDbOperationException;
-import static java.util.Collections.emptyMap;
-import static java.util.Objects.isNull;
-import static java.util.Optional.empty;
-import static java.util.Optional.ofNullable;
+import ru.art.entity.*;
+import ru.art.rocks.db.bucket.*;
+import ru.art.rocks.db.exception.*;
+import java.util.*;
+import java.util.Map.*;
+import java.util.function.*;
+
+import static java.util.Collections.*;
+import static java.util.Objects.*;
+import static java.util.Optional.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Value.*;
-import static ru.art.protobuf.descriptor.ProtobufEntityReader.readProtobuf;
-import static ru.art.protobuf.descriptor.ProtobufEntityWriter.writeProtobuf;
-import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue;
-import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.parseFrom;
-import static ru.art.rocks.db.constants.RocksDbExceptionMessages.PROTOBUF_PARSING_ERROR;
-import static ru.art.rocks.db.constants.RocksDbModuleConstants.ROCKS_DB_KEY_DELIMITER;
+import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
+import static ru.art.protobuf.descriptor.ProtobufEntityWriter.*;
+import static ru.art.protobuf.entity.ProtobufValueMessage.*;
+import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.*;
+import static ru.art.rocks.db.constants.RocksDbExceptionMessages.*;
+import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
 import static ru.art.rocks.db.dao.RocksDbCollectionDao.*;
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.add;
-import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.getChar;
-import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.getDouble;
-import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.getLong;
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
 
 public interface RocksDbValueDao {
     static void putAsProtobuf(String name, String id, Value value) {

@@ -18,14 +18,10 @@
 
 package ru.art.generator.spec.http.servicespec.model;
 
-import com.squareup.javapoet.CodeBlock;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
+import com.squareup.javapoet.*;
+import lombok.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * Data used for filling array of codeblocks in proper order

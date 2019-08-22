@@ -18,9 +18,9 @@
 
 package ru.art.config.extensions.service;
 
-import static java.time.Duration.ofNanos;
-import static java.time.Duration.ofSeconds;
-import java.time.Duration;
+import java.time.*;
+
+import static java.time.Duration.*;
 
 interface RateLimiterDefaults {
     Duration DEFAULT_TIMEOUT_DURATION = ofSeconds(5);

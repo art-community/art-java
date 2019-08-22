@@ -18,12 +18,12 @@
 
 package ru.art.entity;
 
-import ru.art.entity.constants.ValueType;
-import ru.art.entity.exception.ValueMappingException;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static ru.art.entity.constants.ValueMappingExceptionMessages.NOT_PRIMITIVE_TYPE;
-import static ru.art.entity.constants.ValueMappingExceptionMessages.PRIMITIVE_TYPE_IS_NULL_DURING_PARSING;
+import ru.art.entity.constants.*;
+import ru.art.entity.exception.*;
+
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
 
 public interface PrimitivesFactory {
     static Primitive stringPrimitive(String value) {

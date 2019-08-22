@@ -18,10 +18,11 @@
 
 package ru.art.http.client.interceptor;
 
-import org.apache.http.client.methods.HttpUriRequest;
-import ru.art.core.constants.InterceptionStrategy;
+import org.apache.http.client.methods.*;
+import ru.art.core.constants.*;
+import java.util.function.*;
+
 import static ru.art.core.constants.InterceptionStrategy.*;
-import java.util.function.Consumer;
 
 @FunctionalInterface
 public interface HttpClientRequestInterception {

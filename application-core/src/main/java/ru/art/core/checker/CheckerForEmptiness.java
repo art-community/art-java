@@ -18,9 +18,9 @@
 
 package ru.art.core.checker;
 
-import static java.util.Objects.isNull;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
+
+import static java.util.Objects.*;
 
 public interface CheckerForEmptiness {
     static <T> boolean isNotEmpty(T val) {

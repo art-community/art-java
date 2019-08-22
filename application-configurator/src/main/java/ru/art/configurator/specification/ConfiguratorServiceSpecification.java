@@ -18,37 +18,34 @@
 
 package ru.art.configurator.specification;
 
-import lombok.Getter;
-import ru.art.configurator.api.entity.Configuration;
-import ru.art.configurator.api.entity.ModuleConfiguration;
-import ru.art.configurator.api.entity.ModuleKey;
-import ru.art.configurator.api.entity.ProfileConfiguration;
-import ru.art.grpc.server.model.GrpcService;
-import ru.art.grpc.server.specification.GrpcServiceSpecification;
-import ru.art.http.server.model.HttpService;
-import ru.art.http.server.specification.HttpServiceSpecification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_SERVICE_ID;
+import lombok.*;
+import ru.art.configurator.api.entity.*;
+import ru.art.grpc.server.model.*;
+import ru.art.grpc.server.specification.*;
+import ru.art.http.server.model.*;
+import ru.art.http.server.specification.*;
+import ru.art.service.exception.*;
+import java.util.*;
+
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.*;
-import static ru.art.configurator.api.mapping.ConfigurationMapping.configurationMapper;
-import static ru.art.configurator.api.mapping.ModuleConfigurationMapping.moduleConfigurationMapper;
-import static ru.art.configurator.api.mapping.ModuleKeyCollectionMapping.moduleKeyCollectionMapper;
-import static ru.art.configurator.api.mapping.ModuleKeyMapping.moduleKeyMapper;
-import static ru.art.configurator.api.mapping.ProfileConfigurationMapping.profileConfigurationMapper;
+import static ru.art.configurator.api.mapping.ConfigurationMapping.*;
+import static ru.art.configurator.api.mapping.ModuleConfigurationMapping.*;
+import static ru.art.configurator.api.mapping.ModuleKeyCollectionMapping.*;
+import static ru.art.configurator.api.mapping.ModuleKeyMapping.*;
+import static ru.art.configurator.api.mapping.ProfileConfigurationMapping.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.configurator.service.ConfiguratorService.*;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.GRPC_SERVICE_TYPE;
-import static ru.art.grpc.server.model.GrpcService.GrpcMethod.grpcMethod;
-import static ru.art.grpc.server.model.GrpcService.grpcService;
-import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVICE_TYPE;
-import static ru.art.http.server.model.HttpService.httpService;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
-import static ru.art.service.constants.RequestValidationPolicy.NOT_NULL;
-import static ru.art.service.constants.RequestValidationPolicy.VALIDATABLE;
-import java.util.List;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
+import static ru.art.grpc.server.model.GrpcService.GrpcMethod.*;
+import static ru.art.grpc.server.model.GrpcService.*;
+import static ru.art.http.constants.MimeToContentTypeMapper.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.*;
+import static ru.art.http.server.model.HttpService.*;
+import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.service.constants.RequestValidationPolicy.*;
 
 @Getter
 public class ConfiguratorServiceSpecification implements HttpServiceSpecification, GrpcServiceSpecification {

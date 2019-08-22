@@ -18,14 +18,11 @@
 
 package ru.art.example.api.model;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import ru.art.service.validation.Validatable;
-import ru.art.service.validation.Validator;
-import static ru.art.service.validation.ValidationExpressions.notNull;
-import java.util.List;
+import lombok.*;
+import ru.art.service.validation.*;
+import java.util.*;
+
+import static ru.art.service.validation.ValidationExpressions.*;
 
 @Getter
 @Builder

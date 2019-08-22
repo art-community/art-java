@@ -18,10 +18,11 @@
 
 package ru.art.kafka.producer.configuration;
 
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import java.util.Map;
+import lombok.*;
+import ru.art.core.module.*;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
 
 public interface KafkaProducerModuleConfiguration extends ModuleConfiguration {
     Map<String, KafkaProducerConfiguration> getProducerConfigurations();

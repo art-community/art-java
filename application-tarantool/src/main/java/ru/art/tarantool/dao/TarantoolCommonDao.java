@@ -18,19 +18,18 @@
 
 package ru.art.tarantool.dao;
 
-import org.tarantool.TarantoolClient;
-import static java.util.Collections.emptySet;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.factory.CollectionsFactory.setOf;
-import static ru.art.tarantool.caller.TarantoolFunctionCaller.callTarantoolFunction;
+import org.tarantool.*;
+import java.util.*;
+
+import static java.util.Collections.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.tarantool.caller.TarantoolFunctionCaller.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.MANUAL;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.SEQUENCE;
-import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState;
-import static ru.art.tarantool.service.TarantoolScriptService.evaluateCommonScript;
-import java.util.List;
-import java.util.Set;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.*;
+import static ru.art.tarantool.module.TarantoolModule.*;
+import static ru.art.tarantool.service.TarantoolScriptService.*;
 
 class TarantoolCommonDao {
     final String instanceId;

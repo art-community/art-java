@@ -18,21 +18,18 @@
 
 package ru.art.kafka.consumer.configuration;
 
-import lombok.Builder;
-import lombok.Getter;
-import org.apache.kafka.common.serialization.Deserializer;
-import ru.art.kafka.deserializer.KafkaProtobufDeserializer;
-import static java.util.Collections.emptySet;
-import static java.util.concurrent.Executors.newFixedThreadPool;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
+import lombok.*;
+import org.apache.kafka.common.serialization.*;
+import ru.art.kafka.deserializer.*;
+import java.time.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+import static java.util.Collections.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.constants.ThreadConstants.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
-import java.time.Duration;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
 public interface KafkaConsumerConfiguration {
     /**
@@ -84,7 +81,7 @@ public interface KafkaConsumerConfiguration {
     @Builder
 	class KafkaConsumerDefaultConfiguration implements KafkaConsumerConfiguration {
         @Builder.Default
-        private final ExecutorService executor = newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
+        private final ExecutorService executor = new ForkJoinPool(DEFAULT_THREAD_POOL_SIZE);
         @Builder.Default
         private final Duration pollTimeout = DEFAULT_DURATION;
         @Builder.Default
@@ -102,7 +99,7 @@ public interface KafkaConsumerConfiguration {
             return cast(keyDeserializer);
         }
 
-        public <ValueDeSerializer> Deserializer<ValueDeSerializer>getValueDeserializer() {
+        public <ValueDeSerializer> Deserializer<ValueDeSerializer> getValueDeserializer() {
             return cast(valueDeserializer);
         }
     }

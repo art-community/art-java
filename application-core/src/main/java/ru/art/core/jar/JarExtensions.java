@@ -18,25 +18,22 @@
 
 package ru.art.core.jar;
 
-import ru.art.core.context.Context;
-import ru.art.core.exception.InternalRuntimeException;
+import ru.art.core.context.*;
+import ru.art.core.exception.*;
+import java.io.*;
+import java.net.*;
+import java.nio.file.*;
+import java.security.*;
+import java.util.*;
+import java.util.zip.*;
+
 import static java.nio.file.Files.*;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static java.util.Objects.nonNull;
-import static java.util.Optional.ofNullable;
-import static java.util.regex.Pattern.compile;
-import static java.util.stream.Collectors.toList;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import static java.nio.file.StandardCopyOption.*;
+import static java.util.Objects.*;
+import static java.util.Optional.*;
+import static java.util.regex.Pattern.*;
+import static java.util.stream.Collectors.*;
+import static ru.art.core.constants.StringConstants.*;
 
 @SuppressWarnings("Duplicates")
 public class JarExtensions {

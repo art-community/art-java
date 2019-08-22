@@ -18,11 +18,11 @@
 
 package ru.art.http.server.builder;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
+
 import static ru.art.core.constants.CharConstants.COLON;
-import static ru.art.core.constants.StringConstants.SCHEME_DELIMITER;
-import static ru.art.http.constants.HttpCommonConstants.DEFAULT_HTTP_PORT;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.http.constants.HttpCommonConstants.*;
 
 public interface HttpUrlBuilder {
     static String buildUrl(UrlInfo info) {

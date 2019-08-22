@@ -18,30 +18,34 @@
 
 package ru.art.config.extensions.http;
 
-import lombok.Getter;
-import org.zalando.logbook.Logbook;
-import ru.art.core.mime.MimeType;
-import ru.art.http.mapper.HttpContentMapper;
-import ru.art.http.server.HttpServerModuleConfiguration.HttpServerModuleDefaultConfiguration;
-import ru.art.http.server.specification.HttpWebUiServiceSpecification;
-import ru.art.metrics.http.specification.MetricServiceSpecification;
+import lombok.*;
+import org.apache.http.entity.*;
+import org.zalando.logbook.*;
+import ru.art.core.mime.*;
+import ru.art.http.constants.*;
+import ru.art.http.mapper.*;
+import ru.art.http.server.HttpServerModuleConfiguration.*;
+import ru.art.http.server.specification.*;
+import ru.art.metrics.http.specification.*;
+import java.util.*;
+
+import static org.apache.http.entity.ContentType.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.http.HttpConfigKeys.*;
-import static ru.art.config.extensions.http.HttpContentMappersConfigurator.configureHttpContentMappers;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.extension.ExceptionExtensions.emptyIfException;
-import static ru.art.http.server.HttpServerModuleConfiguration.logbookWithoutWebLogs;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVER_MODULE_ID;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.HttpPath.IMAGE_PATH;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.URL_TEMPLATE_VARIABLE;
-import static ru.art.http.server.module.HttpServerModule.httpServerModuleState;
-import static ru.art.metrics.http.filter.MetricsHttpLogFilter.logbookWithoutMetricsLogs;
-import static ru.art.service.ServiceModule.serviceModule;
-import java.util.Map;
+import static ru.art.config.extensions.http.HttpContentMappersConfigurator.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.ThreadConstants.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.http.server.HttpServerModuleConfiguration.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.HttpPath.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.*;
+import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.metrics.http.filter.MetricsHttpLogFilter.*;
+import static ru.art.service.ServiceModule.*;
 
 @Getter
 public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfiguration {
@@ -52,8 +56,11 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
     private int maxThreadsCount;
     private int minSpareThreadsCount;
     private HttpWebConfiguration webConfiguration;
-    private boolean enableTracing;
+    private boolean enableRawDataTracing;
+    private boolean enableValueTracing;
     private boolean enableMetrics;
+    private MimeToContentTypeMapper consumesMimeTypeMapper;
+    private MimeToContentTypeMapper producesMimeTypeMapper;
 
     public HttpServerAgileConfiguration() {
         refresh();
@@ -61,7 +68,22 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
 
     @Override
     public void refresh() {
-        enableTracing = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_TRACING, super.isEnableTracing());
+        MimeToContentTypeMapper consumesMimeTypeMapper = super.getConsumesMimeTypeMapper();
+        String consumesMimeTypeString = configString(HTTP_COMMUNICATION_SECTION_ID, CONSUMES_MIME_TYPE,
+                consumesMimeTypeMapper.getMimeType().toString());
+        MimeType consumesMimeType = MimeType.valueOf(consumesMimeTypeString);
+        ContentType consumesContentType = getOrElse(getByMimeType(consumesMimeTypeString), consumesMimeTypeMapper.getContentType());
+        this.consumesMimeTypeMapper = new MimeToContentTypeMapper(consumesMimeType, consumesContentType);
+
+        MimeToContentTypeMapper producesMimeTypeMapper = super.getProducesMimeTypeMapper();
+        String producesMimeTypeString = configString(HTTP_COMMUNICATION_SECTION_ID, PRODUCES_MIME_TYPE,
+                producesMimeTypeMapper.getMimeType().toString());
+        MimeType producesMimeType = MimeType.valueOf(producesMimeTypeString);
+        ContentType producesContentType = getOrElse(getByMimeType(producesMimeTypeString), producesMimeTypeMapper.getContentType());
+        this.producesMimeTypeMapper = new MimeToContentTypeMapper(producesMimeType, producesContentType);
+
+        enableRawDataTracing = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
+        enableValueTracing = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         enableMetrics = configBoolean(HTTP_SERVER_SECTION_ID, ENABLE_METRICS, super.isEnableMetrics());
         String webUrl = emptyIfException(() -> configString(HTTP_SERVER_SECTION_ID, WEB_URL));
         webConfiguration = isEmpty(webUrl) ? super.getWebConfiguration() : HttpWebConfiguration.builder()

@@ -18,8 +18,8 @@
 
 package ru.art.core.provider;
 
-import ru.art.core.module.ModuleConfiguration;
-import java.util.Optional;
+import ru.art.core.module.*;
+import java.util.*;
 
 public interface PreconfiguredModuleProvider {
     <T extends ModuleConfiguration> Optional<T> getModuleConfiguration(String moduleId);

@@ -18,10 +18,11 @@
 
 package ru.art.service.state;
 
-import ru.art.core.module.ModuleState;
-import ru.art.entity.Value;
+import ru.art.core.module.*;
+import ru.art.entity.*;
+import java.util.*;
+
 import static java.util.Optional.*;
-import java.util.Optional;
 
 public class ServiceModuleState implements ModuleState {
     private final ThreadLocal<Value> requestValue = new ThreadLocal<>();

@@ -18,10 +18,10 @@
 
 package ru.art.entity;
 
-import ru.art.entity.constants.ValueType;
-import static java.util.Objects.isNull;
-import static ru.art.entity.constants.ValueType.COLLECTION;
-import static ru.art.entity.constants.ValueType.ENTITY;
+import ru.art.entity.constants.*;
+
+import static java.util.Objects.*;
+import static ru.art.entity.constants.ValueType.*;
 
 public interface Value {
     static Primitive asPrimitive(Value value) {

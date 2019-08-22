@@ -19,12 +19,11 @@
 package ru.art.configurator.api.entity;
 
 import lombok.*;
-import ru.art.configurator.api.exception.ModuleKeyParsingException;
-import static java.lang.String.join;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.constants.StringConstants.COLON;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
+import ru.art.configurator.api.exception.*;
+
+import static java.lang.String.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
 
 @Getter
 @Builder

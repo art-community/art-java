@@ -18,11 +18,10 @@
 
 package ru.art.task.deferred.executor;
 
-import static java.text.MessageFormat.format;
-import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.task.deferred.executor.SchedulerModuleExceptions.EXCEPTION_OCCURRED_DURING;
-import static ru.art.task.deferred.executor.SchedulerModuleExceptions.ExceptionEvent;
+import static java.text.MessageFormat.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.task.deferred.executor.SchedulerModuleExceptions.*;
 
 /**
  * Дефолтный обработчик ошибок выполнения отложенных событей

@@ -35,4 +35,6 @@ public interface HttpConfigKeys {
     String SSL_KEY_STORE_FILE_PATH = "sslKeyStoreFilePath";
     String SSL_KEY_STORE_PASSWORD = "sslKeyStorePassword";
     String SSL_KEY_STORE_TYPE = "sslKeyStoreType";
+    String CONSUMES_MIME_TYPE = "consumesMimeType";
+    String PRODUCES_MIME_TYPE = "producesMimeType";
 }

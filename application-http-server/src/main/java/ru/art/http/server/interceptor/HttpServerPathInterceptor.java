@@ -18,8 +18,7 @@
 
 package ru.art.http.server.interceptor;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @AllArgsConstructor

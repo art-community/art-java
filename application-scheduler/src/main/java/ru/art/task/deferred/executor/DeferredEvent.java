@@ -18,16 +18,14 @@
 
 package ru.art.task.deferred.executor;
 
-import lombok.Getter;
-import static java.lang.System.currentTimeMillis;
-import static java.time.ZoneId.systemDefault;
-import static java.util.Comparator.comparingLong;
-import java.time.LocalDateTime;
-import java.util.concurrent.DelayQueue;
-import java.util.concurrent.Delayed;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.function.ToLongFunction;
+import lombok.*;
+import java.time.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+
+import static java.lang.System.*;
+import static java.time.ZoneId.*;
+import static java.util.Comparator.*;
 
 /**
  * Модель отложенного события

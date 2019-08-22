@@ -18,11 +18,11 @@
 
 package ru.art.service.interceptor;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import ru.art.service.constants.ServiceExceptionsMessages;
-import ru.art.service.exception.ServiceInternalException;
-import static java.util.Objects.isNull;
+import lombok.*;
+import ru.art.service.constants.*;
+import ru.art.service.exception.*;
+
+import static java.util.Objects.*;
 
 public interface ServiceExecutionInterceptor {
     static RequestInterceptor interceptRequest(ServiceRequestInterception interception) {

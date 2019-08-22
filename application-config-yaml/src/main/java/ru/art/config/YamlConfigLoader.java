@@ -18,19 +18,20 @@
 
 package ru.art.config;
 
-import com.esotericsoftware.yamlbeans.YamlReader;
-import io.advantageous.config.Config;
-import static io.advantageous.config.ConfigLoader.loadFromObject;
-import static java.lang.System.getProperty;
-import static java.util.Objects.isNull;
-import static ru.art.config.YamlConfigLoaderConstants.DEFAULT_YAML_CONFIG_FILE_NAME;
-import static ru.art.config.YamlLoadingExceptionMessages.CONFIG_FILE_WAS_NOT_FOUND;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.SystemProperties.CONFIG_FILE_PATH_PROPERTY;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.wrapper.ExceptionWrapper.wrapException;
+import com.esotericsoftware.yamlbeans.*;
+import io.advantageous.config.*;
 import java.io.*;
-import java.net.URL;
+import java.net.*;
+
+import static io.advantageous.config.ConfigLoader.*;
+import static java.lang.System.*;
+import static java.util.Objects.*;
+import static ru.art.config.YamlConfigLoaderConstants.*;
+import static ru.art.config.YamlLoadingExceptionMessages.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.SystemProperties.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.wrapper.ExceptionWrapper.*;
 
 class YamlConfigLoader {
     static Config loadYamlConfig(String configId) {

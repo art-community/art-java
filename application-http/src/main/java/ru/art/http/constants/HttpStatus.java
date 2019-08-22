@@ -18,9 +18,8 @@
 
 package ru.art.http.constants;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
+
 import static ru.art.http.constants.HttpStatus.Series.*;
 
 

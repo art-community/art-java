@@ -60,3 +60,4 @@ rocks.db/
 !gradle/wrapper/gradle-wrapper.jar
 *.snap
 *.xlog
+log.*

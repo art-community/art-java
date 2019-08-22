@@ -19,31 +19,27 @@
 package ru.art.protobuf.descriptor;
 
 import com.google.protobuf.*;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.art.entity.Value;
 import ru.art.entity.*;
-import ru.art.entity.constants.ValueType.CollectionElementsType;
-import ru.art.protobuf.entity.ProtobufValueMessage.ProtobufCollection;
-import ru.art.protobuf.entity.ProtobufValueMessage.ProtobufEntity;
-import ru.art.protobuf.entity.ProtobufValueMessage.ProtobufStringParametersMap;
-import ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue;
-import ru.art.protobuf.exception.ProtobufException;
-import static com.google.protobuf.Any.pack;
-import static com.google.protobuf.ByteString.copyFrom;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.extension.FileExtensions.writeFileQuietly;
+import ru.art.entity.constants.ValueType.*;
+import ru.art.protobuf.entity.ProtobufValueMessage.*;
+import ru.art.protobuf.exception.*;
+import java.nio.file.*;
+import java.util.*;
+
+import static com.google.protobuf.Any.*;
+import static com.google.protobuf.ByteString.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.entity.Value.*;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.BYTE;
-import static ru.art.protobuf.constants.ProtobufExceptionMessages.VALUE_TYPE_NOT_SUPPORTED;
-import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.Type.BYTE_STRING;
+import static ru.art.protobuf.constants.ProtobufExceptionMessages.*;
+import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.Type.*;
 import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.getDefaultInstance;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
 
 @NoArgsConstructor(access = PRIVATE)
 public class ProtobufEntityWriter {

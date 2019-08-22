@@ -18,15 +18,14 @@
 
 package ru.art.entity;
 
-import ru.art.entity.mapper.ValueFromModelMapper.PrimitiveFromModelMapper;
-import ru.art.entity.mapper.ValueMapper;
-import ru.art.entity.mapper.ValueToModelMapper.PrimitiveToModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper.StringDataPrimitiveToModelMapper;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.entity.PrimitivesFactory.primitiveFromString;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.entity.mapper.*;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.entity.constants.ValueType.PrimitiveType.*;
-import static ru.art.entity.mapper.ValueFromModelMapper.StringDataPrimitiveFromModelMapper;
-import static ru.art.entity.mapper.ValueMapper.mapper;
+import static ru.art.entity.mapper.ValueMapper.*;
 
 public interface PrimitiveMapping {
     ValueMapper<String, Primitive> stringMapper = mapper(StringPrimitive.fromModel, StringPrimitive.toModel);

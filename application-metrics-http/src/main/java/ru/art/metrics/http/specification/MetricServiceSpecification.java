@@ -18,21 +18,20 @@
 
 package ru.art.metrics.http.specification;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import ru.art.http.server.model.HttpService;
-import ru.art.http.server.specification.HttpServiceSpecification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import static java.util.Collections.emptyList;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.entity.PrimitiveMapping.stringMapper;
-import static ru.art.http.server.model.HttpService.httpService;
+import lombok.*;
+import ru.art.http.server.model.*;
+import ru.art.http.server.specification.*;
+import ru.art.service.exception.*;
+import java.util.*;
+
+import static java.util.Collections.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.entity.PrimitiveMapping.*;
+import static ru.art.http.server.model.HttpService.*;
 import static ru.art.metrics.constants.MetricsModuleConstants.*;
-import static ru.art.metrics.http.constants.MetricsModuleHttpConstants.METRICS_CONTENT_TYPE;
-import static ru.art.metrics.module.MetricsModule.metricsModule;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.RequestInterceptor;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
-import java.util.List;
+import static ru.art.metrics.http.constants.MetricsModuleHttpConstants.*;
+import static ru.art.metrics.module.MetricsModule.*;
+import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 
 @Getter
 @AllArgsConstructor

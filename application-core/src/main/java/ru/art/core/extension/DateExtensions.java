@@ -18,15 +18,12 @@
 
 package ru.art.core.extension;
 
-import ru.art.core.exception.InternalRuntimeException;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static ru.art.core.context.Context.contextConfiguration;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Optional;
+import ru.art.core.exception.*;
+import java.text.*;
+import java.util.*;
+
+import static java.util.Optional.*;
+import static ru.art.core.context.Context.*;
 
 public interface DateExtensions {
     static Date parse(String template, String dateString) {

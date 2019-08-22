@@ -18,11 +18,10 @@
 
 package ru.art.core.extension;
 
-import static ru.art.core.constants.BufferConstants.DEFAULT_BUFFER_SIZE;
-import static ru.art.core.constants.StreamConstants.EOF;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+
+import static ru.art.core.constants.BufferConstants.*;
+import static ru.art.core.constants.StreamConstants.*;
 
 public interface InputOutputStreamExtensions {
     static void transferBytes(InputStream inputStream, OutputStream outputStream, int bufferSize) throws IOException {

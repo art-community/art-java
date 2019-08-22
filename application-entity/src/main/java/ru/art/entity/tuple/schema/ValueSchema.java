@@ -18,15 +18,14 @@
 
 package ru.art.entity.tuple.schema;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 import ru.art.entity.Value;
-import ru.art.entity.constants.ValueType;
-import static java.util.Objects.isNull;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
-import java.util.List;
+import ru.art.entity.constants.*;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 
 @Getter
 @EqualsAndHashCode

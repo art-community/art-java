@@ -18,13 +18,14 @@
 
 package ru.art.http.server.function;
 
-import lombok.Getter;
-import ru.art.http.server.model.HttpService;
-import ru.art.http.server.specification.HttpServiceSpecification;
-import static ru.art.core.caster.Caster.cast;
+import lombok.*;
+import ru.art.http.server.model.*;
+import ru.art.http.server.specification.*;
+import java.util.function.*;
+
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVICE_TYPE;
-import java.util.function.Function;
+import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 
 @Getter
 public class HttpFunctionalServiceSpecification implements HttpServiceSpecification {

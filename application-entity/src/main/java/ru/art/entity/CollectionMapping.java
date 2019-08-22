@@ -18,9 +18,10 @@
 
 package ru.art.entity;
 
-import ru.art.entity.mapper.ValueMapper;
-import static ru.art.entity.mapper.ValueMapper.mapper;
-import java.util.Collection;
+import ru.art.entity.mapper.*;
+import java.util.*;
+
+import static ru.art.entity.mapper.ValueMapper.*;
 
 public interface CollectionMapping {
     ValueMapper<Collection<String>, CollectionValue<String>> stringCollectionMapper = mapper(CollectionValuesFactory::stringCollection, CollectionValue::getElements);

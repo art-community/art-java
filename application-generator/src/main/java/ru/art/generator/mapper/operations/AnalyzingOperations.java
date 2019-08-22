@@ -18,22 +18,20 @@
 
 package ru.art.generator.mapper.operations;
 
-import ru.art.generator.mapper.Generator;
-import ru.art.generator.mapper.annotation.NonGenerated;
-import ru.art.generator.mapper.exception.DefinitionException;
-import static java.io.File.separator;
-import static java.text.MessageFormat.format;
+import ru.art.generator.mapper.*;
+import ru.art.generator.mapper.annotation.*;
+import ru.art.generator.mapper.exception.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+
+import static java.io.File.*;
+import static java.text.MessageFormat.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.generator.mapper.constants.Constants.*;
 import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
-import static ru.art.generator.mapper.constants.ExceptionConstants.DefinitionExceptions.UNABLE_TO_DEFINE_CLASS;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.List;
-import java.util.Map;
+import static ru.art.generator.mapper.constants.ExceptionConstants.DefinitionExceptions.*;
 
 /**
  * Interface containing static methods for analyzing
@@ -128,7 +126,7 @@ public interface AnalyzingOperations {
             }
             try {
                 path = path.substring(0, path.lastIndexOf(MAIN) + MAIN.length());
-                Class clazz = getClass(path, mappingFile.getName().replace(DOT_CLASS, EMPTY_STRING), packageMapping);
+                Class<?> clazz = getClass(path, mappingFile.getName().replace(DOT_CLASS, EMPTY_STRING), packageMapping);
                 if (!clazz.isAnnotationPresent(NonGenerated.class)) {
                     String pathname = nonCompiledMappingPackagePath
                             + separator

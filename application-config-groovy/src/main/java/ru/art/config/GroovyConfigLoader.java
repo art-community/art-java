@@ -18,17 +18,16 @@
 
 package ru.art.config;
 
-import groovy.util.ConfigObject;
-import groovy.util.ConfigSlurper;
-import static java.lang.System.getProperty;
-import static java.util.Objects.isNull;
-import static ru.art.config.GroovyConfigLoaderConstants.DEFAULT_GROOVY_CONFIG_FILE_NAME;
-import static ru.art.config.GroovyConfigLoadingExceptionMessages.CONFIG_FILE_NOT_FOUND;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.SystemProperties.CONFIG_FILE_PATH_PROPERTY;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import groovy.util.*;
+import java.io.*;
+import java.net.*;
+
+import static java.lang.System.*;
+import static java.util.Objects.*;
+import static ru.art.config.GroovyConfigLoaderConstants.*;
+import static ru.art.config.GroovyConfigLoadingExceptionMessages.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.SystemProperties.*;
 
 interface GroovyConfigLoader {
     static ConfigObject loadGroovyConfig(String configId) {

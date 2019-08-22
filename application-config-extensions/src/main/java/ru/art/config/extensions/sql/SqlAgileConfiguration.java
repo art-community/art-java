@@ -18,15 +18,14 @@
 
 package ru.art.config.extensions.sql;
 
-import lombok.Getter;
-import ru.art.sql.configuration.SqlModuleConfiguration.SqlModuleDefaultConfiguration;
-import ru.art.sql.constants.DbProvider;
-import static ru.art.config.extensions.ConfigExtensions.configBoolean;
-import static ru.art.config.extensions.ConfigExtensions.configString;
-import static ru.art.config.extensions.common.CommonConfigKeys.ENABLE_METRICS;
-import static ru.art.config.extensions.common.CommonConfigKeys.URL;
+import lombok.*;
+import ru.art.sql.configuration.SqlModuleConfiguration.*;
+import ru.art.sql.constants.*;
+
+import static ru.art.config.extensions.ConfigExtensions.*;
+import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.sql.SqlConfigKeys.*;
-import static ru.art.core.extension.ExceptionExtensions.ifException;
+import static ru.art.core.extension.ExceptionExtensions.*;
 
 @Getter
 public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {

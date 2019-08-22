@@ -18,25 +18,21 @@
 
 package ru.art.configurator.specification;
 
-import lombok.Getter;
-import ru.art.http.server.model.HttpService;
-import ru.art.http.server.specification.HttpServiceSpecification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.CHECK_TOKEN;
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.LOGIN;
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.USER_SERVICE_ID;
-import static ru.art.configurator.api.mapping.UserMapping.userRequestToModelMapper;
-import static ru.art.configurator.api.mapping.UserMapping.userResponseFromModelMapper;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.CHECK_TOKEN_PATH;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.LOGIN_PATH;
-import static ru.art.configurator.service.UserService.checkToken;
-import static ru.art.configurator.service.UserService.login;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.entity.PrimitiveMapping.boolMapper;
-import static ru.art.entity.PrimitiveMapping.stringMapper;
-import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
-import static ru.art.http.server.model.HttpService.httpService;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
+import lombok.*;
+import ru.art.http.server.model.*;
+import ru.art.http.server.specification.*;
+import ru.art.service.exception.*;
+
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.*;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
+import static ru.art.configurator.api.mapping.UserMapping.*;
+import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
+import static ru.art.configurator.service.UserService.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.entity.PrimitiveMapping.*;
+import static ru.art.http.constants.MimeToContentTypeMapper.*;
+import static ru.art.http.server.model.HttpService.*;
+import static ru.art.http.server.module.HttpServerModule.*;
 
 @Getter
 public class UserServiceSpecification implements HttpServiceSpecification {

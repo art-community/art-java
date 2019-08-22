@@ -18,13 +18,13 @@
 
 package ru.art.rocks.db.configuration;
 
-import lombok.Getter;
-import org.rocksdb.Options;
-import ru.art.core.module.ModuleConfiguration;
-import static ru.art.rocks.db.constants.RocksDbModuleConstants.DEFAULT_PATH_TO_DB;
-import static ru.art.rocks.db.constants.RocksDbModuleConstants.DefaultOptions.DEFAULT_KEY_PREFIX_BYTES;
-import static ru.art.rocks.db.constants.RocksDbModuleConstants.DefaultOptions.DEFAULT_MERGE_OPERATOR;
-import java.io.File;
+import lombok.*;
+import org.rocksdb.*;
+import ru.art.core.module.*;
+import java.io.*;
+
+import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
+import static ru.art.rocks.db.constants.RocksDbModuleConstants.DefaultOptions.*;
 
 public interface RocksDbModuleConfiguration extends ModuleConfiguration {
     String getPath();

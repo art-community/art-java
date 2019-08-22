@@ -18,34 +18,29 @@
 
 package ru.art.example.service;
 
-import ru.art.entity.Primitive;
-import ru.art.entity.Value;
-import ru.art.example.api.model.ExampleRequest;
-import ru.art.example.api.model.ExampleResponse;
-import ru.art.example.api.model.ExampleStateModel;
-import ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue;
-import static java.time.temporal.ChronoUnit.SECONDS;
-import static ru.art.entity.constants.ValueType.PrimitiveType.INT;
-import static ru.art.example.api.constants.ExampleApiConstants.EXAMPLE_HTTP_COMMUNICATION_SERVICE_ID;
-import static ru.art.example.api.constants.ExampleApiConstants.EXAMPLE_GRPC_COMMUNICATION_SERVICE_ID;
-import static ru.art.example.api.constants.ExampleApiConstants.Methods.REQUEST_RESPONSE_HANDLING_EXAMPLE;
-import static ru.art.example.dao.TableDualDao.testQuery;
-import static ru.art.example.factory.ExampleRequestFactory.getExampleRequest;
-import static ru.art.example.module.ExampleModule.exampleModule;
-import static ru.art.example.module.ExampleModule.exampleState;
-import static ru.art.json.descriptor.JsonEntityReader.readJson;
-import static ru.art.json.descriptor.JsonEntityWriter.writeJson;
-import static ru.art.json.module.JsonModule.jsonModule;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.protobuf.descriptor.ProtobufEntityReader.readProtobuf;
-import static ru.art.protobuf.descriptor.ProtobufEntityWriter.writeProtobuf;
+import ru.art.entity.*;
+import ru.art.example.api.model.*;
+import ru.art.protobuf.entity.ProtobufValueMessage.*;
+import java.time.*;
+import java.util.*;
+
+import static java.time.temporal.ChronoUnit.*;
+import static ru.art.entity.constants.ValueType.PrimitiveType.*;
+import static ru.art.example.api.constants.ExampleApiConstants.*;
+import static ru.art.example.api.constants.ExampleApiConstants.Methods.*;
+import static ru.art.example.dao.TableDualDao.*;
+import static ru.art.example.factory.ExampleRequestFactory.*;
+import static ru.art.example.module.ExampleModule.*;
+import static ru.art.json.descriptor.JsonEntityReader.*;
+import static ru.art.json.descriptor.JsonEntityWriter.*;
+import static ru.art.json.module.JsonModule.*;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
+import static ru.art.protobuf.descriptor.ProtobufEntityWriter.*;
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
-import static ru.art.service.ServiceController.executeServiceMethod;
-import static ru.art.task.deferred.executor.IdentifiedRunnableFactory.uniqueTask;
-import static ru.art.task.deferred.executor.SchedulerModuleActions.asynchronousPeriod;
-import java.time.Duration;
-import java.util.Date;
-import java.util.Optional;
+import static ru.art.service.ServiceController.*;
+import static ru.art.task.deferred.executor.IdentifiedRunnableFactory.*;
+import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
 
 /**
  * ExampleService shows all main features of Application Development Kit

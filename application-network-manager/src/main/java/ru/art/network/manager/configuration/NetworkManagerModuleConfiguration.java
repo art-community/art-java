@@ -18,13 +18,14 @@
 
 package ru.art.network.manager.configuration;
 
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.network.manager.constants.NetworkManagerModuleConstants.BalancerMode;
-import static ru.art.core.constants.StringConstants.SLASH;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.network.manager.constants.NetworkManagerModuleConstants.BalancerMode.ROUND_ROBIN;
-import static ru.art.network.manager.constants.NetworkManagerModuleConstants.DEFAULT_STATE_PORT;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.network.manager.constants.NetworkManagerModuleConstants.*;
+
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.network.manager.constants.NetworkManagerModuleConstants.BalancerMode.*;
+import static ru.art.network.manager.constants.NetworkManagerModuleConstants.*;
 
 public interface NetworkManagerModuleConfiguration extends ModuleConfiguration {
     String getIpAddress();

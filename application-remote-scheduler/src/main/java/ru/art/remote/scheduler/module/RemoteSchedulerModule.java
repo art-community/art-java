@@ -18,15 +18,15 @@
 
 package ru.art.remote.scheduler.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.remote.scheduler.configuration.RemoteSchedulerModuleConfiguration;
-import ru.art.remote.scheduler.state.RemoteSchedulerModuleState;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.context.Context.context;
-import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.REMOTE_SCHEDULER_MODULE_ID;
-import static ru.art.remote.scheduler.controller.PoolController.fillAllPools;
-import static ru.art.remote.scheduler.controller.PoolController.startPoolRefreshingTask;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.remote.scheduler.configuration.*;
+import ru.art.remote.scheduler.state.*;
+
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.*;
+import static ru.art.remote.scheduler.controller.PoolController.*;
 
 @Getter
 public class RemoteSchedulerModule implements Module<RemoteSchedulerModuleConfiguration, RemoteSchedulerModuleState> {

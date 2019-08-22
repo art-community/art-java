@@ -18,22 +18,22 @@
 
 package ru.art.entity.tuple;
 
-import lombok.NoArgsConstructor;
+import lombok.*;
+import ru.art.entity.Value;
 import ru.art.entity.*;
-import ru.art.entity.constants.ValueType;
+import ru.art.entity.constants.*;
 import ru.art.entity.tuple.schema.*;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.caster.Caster.cast;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
-import static ru.art.entity.Entity.EntityBuilder;
-import static ru.art.entity.Entity.entityBuilder;
+import static ru.art.entity.Value.*;
+import static ru.art.entity.Entity.*;
 import static ru.art.entity.PrimitivesFactory.*;
-import static ru.art.entity.Value.isPrimitiveType;
-import java.util.List;
 
 @NoArgsConstructor(access = PRIVATE)
 public class PlainTupleReader {

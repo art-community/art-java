@@ -18,22 +18,18 @@
 
 package ru.art.xml.rules.processor;
 
-import ru.art.entity.XmlEntity;
-import ru.art.entity.XmlEntity.XmlEntityBuilder;
-import ru.art.xml.constants.XmlEntityMappingTargets;
-import ru.art.xml.exception.XmlMappingException;
-import ru.art.xml.rules.builder.XmlEntityMapping;
-import ru.art.xml.rules.builder.XmlEntityMappingBuilder;
-import ru.art.xml.rules.builder.XmlEntityMappingBuilderImpl;
-import ru.art.xml.rules.builder.XmlEntityRule;
+import ru.art.entity.*;
+import ru.art.entity.XmlEntity.*;
+import ru.art.xml.constants.*;
+import ru.art.xml.exception.*;
+import ru.art.xml.rules.builder.*;
+import java.util.*;
+import java.util.Map.*;
+
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.entity.XmlEntity.xmlEntityBuilder;
-import static ru.art.xml.constants.XmlMappingExceptionMessages.XML_ENTITY_IS_NULL;
-import static ru.art.xml.constants.XmlMappingExceptionMessages.XML_MAPPING_RULES_ARE_EMPTY;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.entity.XmlEntity.*;
+import static ru.art.xml.constants.XmlMappingExceptionMessages.*;
 
 public class XmlEntityRulesProcessor {
     public static XmlEntityMappingBuilder xmlMappingBuilder() {

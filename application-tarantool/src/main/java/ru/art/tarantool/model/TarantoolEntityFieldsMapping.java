@@ -18,9 +18,8 @@
 
 package ru.art.tarantool.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import java.util.Map;
+import lombok.*;
+import java.util.*;
 
 @Getter
 @Builder(buildMethodName = "map", builderMethodName = "entityFieldsMapping")

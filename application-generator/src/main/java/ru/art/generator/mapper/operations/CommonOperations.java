@@ -18,19 +18,18 @@
 
 package ru.art.generator.mapper.operations;
 
-import com.squareup.javapoet.ClassName;
-import ru.art.generator.mapper.annotation.NonGenerated;
-import ru.art.generator.mapper.exception.InnerClassGenerationException;
-import static java.text.MessageFormat.format;
-import static ru.art.core.constants.StringConstants.DOT;
-import static ru.art.generator.mapper.constants.Constants.MAPPER;
-import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.MAPPING;
-import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.MODEL;
-import static ru.art.generator.mapper.constants.ExceptionConstants.MapperGeneratorExceptions.UNABLE_TO_CREATE_INNER_CLASS_MAPPER;
-import static ru.art.generator.mapper.operations.GeneratorOperations.createMapperClass;
-import static ru.art.generator.mapper.operations.GeneratorOperations.generatedFiles;
+import com.squareup.javapoet.*;
+import ru.art.generator.mapper.annotation.*;
+import ru.art.generator.mapper.exception.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.generator.mapper.constants.Constants.*;
+import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
+import static ru.art.generator.mapper.constants.ExceptionConstants.MapperGeneratorExceptions.*;
+import static ru.art.generator.mapper.operations.GeneratorOperations.*;
 
 /**
  * Interface containing common static methods which can be used in other operations
@@ -62,7 +61,7 @@ public interface CommonOperations {
      * @param jarPathToMain - classpath from root to main.
      * @return ClassName of new generated class.
      */
-    static ClassName createMapperForInnerClassIfNeeded(Class genClass, String jarPathToMain) {
+    static ClassName createMapperForInnerClassIfNeeded(Class<?> genClass, String jarPathToMain) {
         if (genClass.isEnum()) return ClassName.get(genClass);
         if (!genClass.isAnnotationPresent(NonGenerated.class)) {
             String classPackage = genClass.getName().substring(0, genClass.getName().indexOf(genClass.getSimpleName()) - 1);
@@ -85,7 +84,7 @@ public interface CommonOperations {
      */
     static ClassName createMapperForInnerClassIfNeeded(Field field, String jarPathToMain) {
         ParameterizedType type = (ParameterizedType) field.getGenericType();
-        Class genClass = (Class) type.getActualTypeArguments()[0];
+        Class<?> genClass = (Class) type.getActualTypeArguments()[0];
         if (genClass.isEnum()) return ClassName.get(genClass);
         if (!genClass.isAnnotationPresent(NonGenerated.class)) {
             String classPackage = genClass.getName().substring(0, genClass.getName().indexOf(genClass.getSimpleName()) - 1);

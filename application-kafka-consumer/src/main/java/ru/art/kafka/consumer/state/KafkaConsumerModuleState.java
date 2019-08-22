@@ -16,21 +16,13 @@
  * limitations under the License.
  */
 
-import ru.art.example.module.ExampleModule;
-import static ru.art.core.extension.ThreadExtensions.thread;
-import java.util.concurrent.atomic.AtomicBoolean;
+package ru.art.kafka.consumer.state;
 
-public class ExampleTestInitializer {
-    private static AtomicBoolean EXAMPLE_STARTED = new AtomicBoolean(false);
+import lombok.*;
+import ru.art.core.module.*;
+import java.util.concurrent.atomic.*;
 
-    static void startExample() {
-        if (EXAMPLE_STARTED.get()) return;
-        thread(ExampleModule::startExample);
-        try {
-            Thread.sleep(10000L);
-            EXAMPLE_STARTED.set(true);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
+@Getter
+public class KafkaConsumerModuleState implements ModuleState {
+    private AtomicBoolean consumerStopFlag = new AtomicBoolean(false);
 }

@@ -18,19 +18,16 @@
 
 package ru.art.service;
 
-import lombok.Getter;
-import lombok.Setter;
-import ru.art.service.constants.ServiceErrorCodes;
-import ru.art.service.exception.ServiceExecutionException;
-import ru.art.service.model.ServiceMethodCommand;
-import ru.art.service.model.ServiceRequest;
-import ru.art.service.model.ServiceResponse;
-import static java.util.Objects.isNull;
-import static ru.art.service.ServiceModule.serviceModule;
-import static ru.art.service.constants.ServiceExceptionsMessages.WRAPPER_IS_NULL;
-import static ru.art.service.execution.ServiceExecutor.executeServiceWithConfiguration;
-import static ru.art.service.factory.ServiceResponseFactory.errorResponse;
-import static ru.art.service.factory.ServiceResponseFactory.okResponse;
+import lombok.*;
+import ru.art.service.constants.*;
+import ru.art.service.exception.*;
+import ru.art.service.model.*;
+
+import static java.util.Objects.*;
+import static ru.art.service.ServiceModule.*;
+import static ru.art.service.constants.ServiceExceptionsMessages.*;
+import static ru.art.service.execution.ServiceExecutor.*;
+import static ru.art.service.factory.ServiceResponseFactory.*;
 
 public class ServiceExecutionExceptionWrapper {
     @Getter

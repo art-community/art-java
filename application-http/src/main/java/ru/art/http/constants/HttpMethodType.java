@@ -18,8 +18,9 @@
 
 package ru.art.http.constants;
 
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import java.util.Map;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
 
 public enum HttpMethodType {
     GET,

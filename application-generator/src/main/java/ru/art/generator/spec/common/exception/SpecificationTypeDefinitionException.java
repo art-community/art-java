@@ -18,7 +18,7 @@
 
 package ru.art.generator.spec.common.exception;
 
-import ru.art.generator.spec.common.constants.SpecificationType;
+import ru.art.generator.spec.common.constants.*;
 
 /**
  * Thrown to indicate that some error during specifications's

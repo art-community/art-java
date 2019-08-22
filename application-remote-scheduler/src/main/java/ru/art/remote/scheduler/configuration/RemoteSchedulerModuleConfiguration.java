@@ -18,12 +18,12 @@
 
 package ru.art.remote.scheduler.configuration;
 
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
-import static ru.art.config.extensions.ConfigExtensions.configInt;
-import static ru.art.config.extensions.ConfigExtensions.configString;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST;
-import static ru.art.http.constants.HttpCommonConstants.DEFAULT_HTTP_PORT;
+import lombok.*;
+import ru.art.core.module.*;
+
+import static ru.art.config.extensions.ConfigExtensions.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.http.constants.HttpCommonConstants.*;
 import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.Defaults.*;
 import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.SchedulerConfigKeys.*;
 

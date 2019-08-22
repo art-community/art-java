@@ -19,12 +19,13 @@
 package ru.art.grpc.client.interceptor;
 
 import io.grpc.*;
-import static io.grpc.Metadata.ASCII_STRING_MARSHALLER;
-import static io.grpc.Metadata.Key.of;
-import static org.apache.logging.log4j.ThreadContext.get;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.grpc.client.constants.GrpcClientModuleConstants.TRACE_ID_HEADER;
-import static ru.art.logging.LoggingModuleConstants.LoggingParameters.TRACE_ID_KEY;
+
+import static io.grpc.Metadata.*;
+import static io.grpc.Metadata.Key.*;
+import static org.apache.logging.log4j.ThreadContext.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.grpc.client.constants.GrpcClientModuleConstants.*;
+import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
 
 public class GrpcClientTracingInterceptor implements ClientInterceptor {
     @Override

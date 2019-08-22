@@ -18,16 +18,14 @@
 
 package ru.art.grpc.client.communicator;
 
-import io.grpc.ClientInterceptor;
-import ru.art.entity.Value;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.grpc.client.handler.GrpcCommunicationCompletionHandler;
-import ru.art.grpc.client.handler.GrpcCommunicationExceptionHandler;
-import ru.art.grpc.client.model.GrpcCommunicationTargetConfiguration;
-import ru.art.service.model.ServiceResponse;
-import java.util.concurrent.Executor;
+import io.grpc.*;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.grpc.client.handler.*;
+import ru.art.grpc.client.model.*;
+import ru.art.service.model.*;
+import java.util.concurrent.*;
 
 public interface GrpcCommunicator {
     static GrpcCommunicator grpcCommunicator(GrpcCommunicationTargetConfiguration targetConfiguration) {
@@ -68,17 +66,19 @@ public interface GrpcCommunicator {
 
     <RequestType, ResponseType> ServiceResponse<ResponseType> execute(RequestType request);
 
-    GrpcCommunicator addRequestValueInterceptor(ValueInterceptor interceptor);
+    GrpcCommunicator addRequestValueInterceptor(ValueInterceptor<Entity, Entity> interceptor);
 
-    GrpcCommunicator addResponseValueInterceptor(ValueInterceptor interceptor);
+    GrpcCommunicator addResponseValueInterceptor(ValueInterceptor<Entity, Entity> interceptor);
 
     interface GrpcAsynchronousCommunicator {
+        GrpcAsynchronousCommunicator asynchronousFuturesExecutor(Executor executor);
+
         <RequestType, ResponseType> GrpcAsynchronousCommunicator completionHandler(GrpcCommunicationCompletionHandler<RequestType, ResponseType> completionHandler);
 
         <RequestType> GrpcAsynchronousCommunicator exceptionHandler(GrpcCommunicationExceptionHandler<RequestType> errorHandler);
 
-        void executeAsynchronous();
+        <ResponseType> CompletableFuture<ServiceResponse<ResponseType>> executeAsynchronous();
 
-        <RequestType> void executeAsynchronous(RequestType request);
+        <RequestType, ResponseType> CompletableFuture<ServiceResponse<ResponseType>> executeAsynchronous(RequestType request);
     }
 }

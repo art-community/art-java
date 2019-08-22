@@ -18,18 +18,17 @@
 
 package ru.art.config.cache;
 
-import ru.art.config.Config;
-import ru.art.config.constants.ConfigType;
-import ru.art.core.model.cached.CachedObject;
-import static java.lang.System.currentTimeMillis;
-import static java.util.Calendar.SECOND;
-import static java.util.Calendar.getInstance;
-import static java.util.Objects.isNull;
-import static ru.art.config.module.ConfigModule.configModule;
-import static ru.art.core.constants.StringConstants.DOT;
-import static ru.art.core.factory.CollectionsFactory.concurrentHashMap;
-import java.util.Calendar;
-import java.util.Map;
+import ru.art.config.*;
+import ru.art.config.constants.*;
+import ru.art.core.model.cached.*;
+import java.util.*;
+
+import static java.lang.System.*;
+import static java.util.Calendar.*;
+import static java.util.Objects.*;
+import static ru.art.config.module.ConfigModule.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 
 public class ConfigCacheContainer {
     private final Map<String, CachedObject<Config>> configCache = concurrentHashMap();

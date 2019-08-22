@@ -18,23 +18,20 @@
 
 package ru.art.rocks.db.module;
 
-import lombok.Getter;
-import org.rocksdb.RocksDB;
-import org.rocksdb.RocksDBException;
-import ru.art.core.module.Module;
-import ru.art.rocks.db.configuration.RocksDbModuleConfiguration;
-import ru.art.rocks.db.configuration.RocksDbModuleConfiguration.RocksDbModuleDefaultConfiguration;
-import ru.art.rocks.db.exception.RocksDbOperationException;
-import ru.art.rocks.db.state.RocksDbModuleState;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static lombok.AccessLevel.PRIVATE;
-import static org.rocksdb.RocksDB.loadLibrary;
-import static org.rocksdb.RocksDB.open;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.rocks.db.constants.RocksDbExceptionMessages.OPEN_ERROR;
-import static ru.art.rocks.db.constants.RocksDbModuleConstants.ROCKS_DB_MODULE_ID;
+import lombok.*;
+import org.rocksdb.*;
+import ru.art.core.module.*;
+import ru.art.rocks.db.configuration.*;
+import ru.art.rocks.db.configuration.RocksDbModuleConfiguration.*;
+import ru.art.rocks.db.exception.*;
+import ru.art.rocks.db.state.*;
+
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
+import static org.rocksdb.RocksDB.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.rocks.db.constants.RocksDbExceptionMessages.*;
+import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
 
 
 @Getter

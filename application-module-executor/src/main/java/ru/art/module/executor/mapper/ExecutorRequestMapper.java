@@ -18,8 +18,9 @@
 
 package ru.art.module.executor.mapper;
 
-import ru.art.entity.mapper.ValueToModelMapper.EntityToModelMapper;
-import ru.art.module.executor.model.ExecutionRequest;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+import ru.art.module.executor.model.*;
+
 import static ru.art.module.executor.mapper.ExecutorRequestMapper.Fields.*;
 
 /**

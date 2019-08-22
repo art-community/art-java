@@ -18,23 +18,23 @@
 
 package ru.art.http.xml;
 
-import ru.art.entity.Value;
-import ru.art.http.exception.HttpTextMapperException;
-import ru.art.core.mime.MimeType;
-import static java.util.Objects.isNull;
+import ru.art.core.mime.*;
+import ru.art.entity.*;
+import ru.art.http.exception.*;
+import java.nio.charset.*;
+
+import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
-import static ru.art.entity.Value.asXmlEntity;
-import static ru.art.entity.XmlEntity.xmlEntityBuilder;
-import static ru.art.entity.constants.ValueType.XML_ENTITY;
-import static ru.art.http.constants.HttpExceptionsMessages.CONTENT_TYPE_IS_NULL;
-import static ru.art.http.mapper.HttpContentMapper.HttpContentToValueMapper;
-import static ru.art.http.mapper.HttpContentMapper.HttpEntityToContentMapper;
-import static ru.art.http.xml.HttpXmlMapperConstants.HTTP_XML_MAPPER_SUPPORT_ONLY_XML_ENTITIES;
-import static ru.art.xml.descriptor.XmlEntityReader.readXml;
-import static ru.art.xml.descriptor.XmlEntityWriter.writeXml;
-import static ru.art.xml.module.XmlModule.xmlModule;
-import java.nio.charset.Charset;
+import static ru.art.core.constants.ArrayConstants.*;
+import static ru.art.entity.Value.*;
+import static ru.art.entity.XmlEntity.*;
+import static ru.art.entity.constants.ValueType.*;
+import static ru.art.http.constants.HttpExceptionsMessages.*;
+import static ru.art.http.mapper.HttpContentMapper.*;
+import static ru.art.http.xml.HttpXmlMapperConstants.*;
+import static ru.art.xml.descriptor.XmlEntityReader.*;
+import static ru.art.xml.descriptor.XmlEntityWriter.*;
+import static ru.art.xml.module.XmlModule.*;
 
 public class HttpXmlMapper implements HttpContentToValueMapper, HttpEntityToContentMapper {
     @Override

@@ -18,15 +18,16 @@
 
 package ru.art.core.extension;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.requireNonNull;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import java.util.concurrent.Callable;
-import java.util.function.Function;
+import ru.art.core.callable.*;
+import ru.art.core.runnable.*;
+import java.util.function.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
 
 public interface ExceptionExtensions {
-    static String emptyIfException(Callable<String> operation) {
+    static String emptyIfException(ExceptionCallable<String> operation) {
         if (isNull(operation)) return EMPTY_STRING;
         try {
             return operation.call();
@@ -35,7 +36,7 @@ public interface ExceptionExtensions {
         }
     }
 
-    static <T> T nullIfException(Callable<T> operation) {
+    static <T> T nullIfException(ExceptionCallable<T> operation) {
         if (isNull(operation)) return null;
         try {
             return operation.call();
@@ -44,7 +45,7 @@ public interface ExceptionExtensions {
         }
     }
 
-    static <T> T ifException(Callable<T> operation, T value) {
+    static <T> T ifException(ExceptionCallable<T> operation, T value) {
         requireNonNull(operation);
         try {
             return operation.call();
@@ -53,7 +54,7 @@ public interface ExceptionExtensions {
         }
     }
 
-    static <T> T ifExceptionOrEmpty(Callable<T> operation, T value) {
+    static <T> T ifExceptionOrEmpty(ExceptionCallable<T> operation, T value) {
         requireNonNull(operation);
         try {
             T result = operation.call();
@@ -74,11 +75,27 @@ public interface ExceptionExtensions {
         return value;
     }
 
-    static <T> T wrapException(Callable<T> action, Function<Throwable, RuntimeException> exceptionFactory) {
+    static <T> T wrapException(ExceptionCallable<T> action, Function<Throwable, RuntimeException> exceptionFactory) {
         try {
             return action.call();
         } catch (Throwable e) {
             throw exceptionFactory.apply(e);
+        }
+    }
+
+    static <T, R> R doIfException(ExceptionCallable<R> action, Function<Throwable, R> ifException) {
+        try {
+            return action.call();
+        } catch (Throwable e) {
+            return ifException.apply(e);
+        }
+    }
+
+    static void doIfException(ExceptionRunnable action, Consumer<Throwable> ifException) {
+        try {
+            action.run();
+        } catch (Throwable e) {
+            ifException.accept(e);
         }
     }
 }

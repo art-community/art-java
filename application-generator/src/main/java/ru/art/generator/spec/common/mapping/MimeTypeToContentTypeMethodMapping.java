@@ -18,15 +18,14 @@
 
 package ru.art.generator.spec.common.mapping;
 
-import ru.art.generator.spec.http.common.exception.MimeTypeDefinitionException;
-import ru.art.generator.spec.http.proxyspec.constants.MimeTypes;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.core.mime.MimeType;
-import static java.text.MessageFormat.format;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecConstants.ErrorConstants.UNABLE_TO_DEFINE_MIME_TYPE;
-import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecConstants.ErrorConstants.UNABLE_TO_DEFINE_MIME_TYPE_METHOD;
+import ru.art.core.mime.*;
+import ru.art.generator.spec.http.common.exception.*;
+import ru.art.generator.spec.http.proxyspec.constants.*;
+import ru.art.http.constants.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecConstants.ErrorConstants.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
 
 /**

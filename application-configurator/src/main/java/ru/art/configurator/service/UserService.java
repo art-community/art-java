@@ -18,10 +18,10 @@
 
 package ru.art.configurator.service;
 
-import ru.art.configurator.api.entity.UserRequest;
-import ru.art.configurator.api.entity.UserResponse;
+import ru.art.configurator.api.entity.*;
+
 import static ru.art.configurator.dao.UserDao.*;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 
 public interface UserService {
     static UserResponse login(UserRequest userRequest) {

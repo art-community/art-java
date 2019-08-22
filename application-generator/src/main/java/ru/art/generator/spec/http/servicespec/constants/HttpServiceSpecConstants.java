@@ -18,7 +18,7 @@
 
 package ru.art.generator.spec.http.servicespec.constants;
 
-import ru.art.generator.spec.http.servicespec.operations.HttpServiceSpecificationClassGenerator;
+import ru.art.generator.spec.http.servicespec.operations.*;
 
 /**
  * Interface containing constants for {@link HttpServiceSpecificationClassGenerator}

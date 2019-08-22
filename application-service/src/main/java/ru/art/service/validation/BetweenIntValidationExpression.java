@@ -19,9 +19,10 @@
 package ru.art.service.validation;
 
 
-import lombok.Builder;
-import static java.text.MessageFormat.format;
-import static ru.art.service.constants.ServiceExceptionsMessages.NOT_BETWEEN_VALIDATION_ERROR;
+import lombok.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.service.constants.ServiceExceptionsMessages.*;
 
 @Builder
 class BetweenIntValidationExpression extends ValidationExpression<Integer> {

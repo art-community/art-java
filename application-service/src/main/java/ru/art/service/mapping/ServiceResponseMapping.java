@@ -18,20 +18,16 @@
 
 package ru.art.service.mapping;
 
-import ru.art.entity.Entity;
-import ru.art.entity.Value;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.service.exception.ServiceExecutionException;
-import ru.art.service.exception.ServiceMappingException;
-import ru.art.service.model.ServiceMethodCommand;
-import ru.art.service.model.ServiceResponse;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import ru.art.entity.*;
+import ru.art.entity.mapper.*;
+import ru.art.service.exception.*;
+import ru.art.service.model.*;
+import ru.art.service.model.ServiceResponse.*;
+
+import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.entity.Entity.entityBuilder;
-import static ru.art.entity.mapper.ValueMapper.mapper;
+import static ru.art.entity.Entity.*;
+import static ru.art.entity.mapper.ValueMapper.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;
 
 @SuppressWarnings("Duplicates")
@@ -46,40 +42,40 @@ public interface ServiceResponseMapping {
 
     static <V> ValueToModelMapper.EntityToModelMapper<ServiceResponse<V>> toServiceResponse(final ValueToModelMapper<V, Value> responseDataMapper) {
         return value -> {
-            ServiceResponse.ServiceResponseBuilder<V> serviceResponseBuilder = ServiceResponse.builder();
-            Entity serviceMethodCommandEntity = value.getEntity(SERVICE_METHOD_COMMAND);
-            if (isNull(serviceMethodCommandEntity)) throw new ServiceMappingException(SERVICE_COMMAND_IS_NULL);
-            String serviceId = serviceMethodCommandEntity.getString(SERVICE_ID);
-            if (isNull(serviceId)) throw new ServiceMappingException(SERVICE_ID_IS_NULL);
-            String methodId = serviceMethodCommandEntity.getString(METHOD_ID);
-            if (isNull(methodId)) throw new ServiceMappingException(METHOD_ID_IS_NULL);
-            ServiceMethodCommand serviceMethodCommand = new ServiceMethodCommand(serviceId, methodId);
+            ServiceResponseBuilder<V> serviceResponseBuilder = ServiceResponse.builder();
+            Entity commandEntity = value.getEntity(SERVICE_METHOD_COMMAND);
+            ServiceMethodCommand command = null;
+            if (nonNull(commandEntity)) {
+                String serviceId = commandEntity.getString(SERVICE_ID);
+                String methodId = commandEntity.getString(METHOD_ID);
+                serviceResponseBuilder.command(command = new ServiceMethodCommand(serviceId, methodId));
+            }
             V responseData = isNull(responseDataMapper) ? null : value.getValue(RESPONSE_DATA, responseDataMapper);
-            if (nonNull(responseData))
-                serviceResponseBuilder.command(new ServiceMethodCommand(serviceId, methodId)).responseData(responseData);
+            if (nonNull(responseData)) {
+                serviceResponseBuilder.responseData(responseData);
+            }
             Entity serviceExceptionEntity = value.getEntity(SERVICE_EXECUTION_EXCEPTION);
             if (isNull(serviceExceptionEntity)) {
                 return serviceResponseBuilder.build();
             }
             String errorCode = serviceExceptionEntity.getString(ERROR_CODE);
             if (isEmpty(errorCode)) throw new ServiceMappingException(ERROR_CODE_IS_EMPTY);
-            ServiceExecutionException serviceException = new ServiceExecutionException(serviceMethodCommand, errorCode, serviceExceptionEntity.getString(ERROR_MESSAGE));
+            ServiceExecutionException serviceException = isNull(command)
+                    ? new ServiceExecutionException(errorCode, serviceExceptionEntity.getString(ERROR_MESSAGE))
+                    : new ServiceExecutionException(command, errorCode, serviceExceptionEntity.getString(ERROR_MESSAGE));
             return serviceResponseBuilder.serviceException(serviceException).build();
         };
     }
 
     static <V> ValueFromModelMapper.EntityFromModelMapper<ServiceResponse<V>> fromServiceResponse(final ValueFromModelMapper<V, ? extends Value> responseDataMapper) {
         return response -> {
-            ServiceMethodCommand serviceMethodCommand = response.getCommand();
-            if (isNull(serviceMethodCommand)) throw new ServiceMappingException(SERVICE_COMMAND_IS_NULL);
-            String serviceId = serviceMethodCommand.getServiceId();
-            if (isNull(serviceId)) throw new ServiceMappingException(SERVICE_ID_IS_NULL);
-            String methodId = serviceMethodCommand.getMethodId();
-            if (isNull(methodId)) throw new ServiceMappingException(METHOD_ID_IS_NULL);
-            Entity.EntityBuilder entityBuilder = entityBuilder()
+            ServiceMethodCommand command;
+            Entity.EntityBuilder entityBuilder = isNull(command = response.getCommand())
+                    ? entityBuilder()
+                    : entityBuilder()
                     .entityField(SERVICE_METHOD_COMMAND, entityBuilder()
-                            .stringField(SERVICE_ID, serviceId)
-                            .stringField(METHOD_ID, methodId)
+                            .stringField(SERVICE_ID, command.getServiceId())
+                            .stringField(METHOD_ID, command.getMethodId())
                             .build());
             ServiceExecutionException serviceException = response.getServiceException();
             if (nonNull(responseDataMapper)) {

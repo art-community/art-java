@@ -18,7 +18,7 @@
 
 package ru.art.core.replacer;
 
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 
 public interface Replacer {
     static <T> T replaceWith(T current, T from, T to) {

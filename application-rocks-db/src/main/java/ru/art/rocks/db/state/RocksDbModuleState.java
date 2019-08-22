@@ -18,10 +18,9 @@
 
 package ru.art.rocks.db.state;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.rocksdb.RocksDB;
-import ru.art.core.module.ModuleState;
+import lombok.*;
+import org.rocksdb.*;
+import ru.art.core.module.*;
 
 @Getter
 @AllArgsConstructor

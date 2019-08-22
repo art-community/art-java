@@ -18,13 +18,12 @@
 
 package ru.art.service.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import static java.text.MessageFormat.format;
+import lombok.*;
+
+import static java.text.MessageFormat.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.service.constants.ServiceExceptionsMessages.SERVICE_COMMAND_HAS_WRONG_FORMAT;
-import static ru.art.service.constants.ServiceModuleConstants.SERVICE_COMMAND_REGEX;
+import static ru.art.service.constants.ServiceExceptionsMessages.*;
+import static ru.art.service.constants.ServiceModuleConstants.*;
 
 @Getter
 @AllArgsConstructor

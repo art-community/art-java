@@ -18,24 +18,22 @@
 
 package ru.art.rocks.db.dao;
 
-import org.rocksdb.RocksDBException;
-import org.rocksdb.RocksIterator;
-import ru.art.rocks.db.exception.RocksDbOperationException;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
+import org.rocksdb.*;
+import ru.art.rocks.db.exception.*;
+import java.util.*;
+import java.util.function.*;
+
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 import static java.util.Optional.*;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.logging.LoggingModule.loggingModule;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.ArrayConstants.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.logging.LoggingModule.*;
 import static ru.art.rocks.db.constants.RocksDbExceptionMessages.*;
 import static ru.art.rocks.db.constants.RocksDbLoggingMessages.*;
-import static ru.art.rocks.db.module.RocksDbModule.rocksDbModule;
-import static ru.art.rocks.db.module.RocksDbModule.rocksDbModuleState;
-import java.util.Optional;
-import java.util.function.Function;
+import static ru.art.rocks.db.module.RocksDbModule.*;
 
 @SuppressWarnings("Duplicates")
 public interface RocksDbPrimitiveDao {

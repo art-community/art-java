@@ -18,16 +18,16 @@
 
 package ru.art.http.client.interceptor;
 
-import lombok.Builder;
-import lombok.Getter;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
-import ru.art.core.constants.InterceptionStrategy;
-import ru.art.http.client.constants.HttpClientExceptionMessages;
-import ru.art.http.client.exception.HttpClientException;
-import static java.util.Objects.isNull;
-import static ru.art.http.client.constants.HttpClientExceptionMessages.RESPONSE_INTERCEPTION_IS_NULL;
-import static ru.art.http.client.interceptor.HttpClientRequestInterception.interceptAndContinue;
+import lombok.*;
+import org.apache.http.*;
+import org.apache.http.client.methods.*;
+import ru.art.core.constants.*;
+import ru.art.http.client.constants.*;
+import ru.art.http.client.exception.*;
+
+import static java.util.Objects.*;
+import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
+import static ru.art.http.client.interceptor.HttpClientRequestInterception.*;
 
 
 @Getter

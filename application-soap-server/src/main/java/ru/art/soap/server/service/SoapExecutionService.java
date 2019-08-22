@@ -18,76 +18,69 @@
 
 package ru.art.soap.server.service;
 
-import lombok.experimental.UtilityClass;
-import ru.art.core.factory.CollectionsFactory.MapBuilder;
-import ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
-import ru.art.service.constants.RequestValidationPolicy;
-import ru.art.service.exception.ServiceExecutionException;
-import ru.art.service.model.ServiceMethodCommand;
-import ru.art.service.model.ServiceRequest;
-import ru.art.service.model.ServiceResponse;
-import ru.art.soap.server.exception.SoapServerException;
-import ru.art.soap.server.model.SoapRequest;
-import ru.art.soap.server.model.SoapResponse;
-import ru.art.soap.server.model.SoapService;
-import ru.art.soap.server.model.SoapService.SoapOperation;
-import ru.art.soap.server.specification.SoapServiceSpecification;
+import lombok.experimental.*;
+import ru.art.core.factory.CollectionsFactory.*;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.service.constants.*;
+import ru.art.service.exception.*;
+import ru.art.service.model.*;
+import ru.art.soap.server.exception.*;
+import ru.art.soap.server.model.*;
+import ru.art.soap.server.model.SoapService.*;
+import ru.art.soap.server.specification.*;
+import java.util.*;
 
-import java.util.Map;
-
-import static java.util.Objects.nonNull;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.http.server.service.HttpWebResourceService.getStringResource;
-import static ru.art.service.ServiceController.executeServiceMethodUnchecked;
+import static java.util.Objects.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.http.server.service.HttpWebResourceService.*;
+import static ru.art.service.ServiceController.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.ResponseFaultConstants.*;
-import static ru.art.soap.server.constans.SoapServerModuleConstants.SOAP_SERVICE_URL;
-import static ru.art.soap.server.module.SoapServerModule.soapServerModule;
-import static ru.art.soap.server.normalizer.WsdlPathNormalizer.normalizeUrlPath;
+import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
+import static ru.art.soap.server.module.SoapServerModule.*;
+import static ru.art.soap.server.normalizer.WsdlPathNormalizer.*;
 
 @UtilityClass
 public class SoapExecutionService {
-    public static <RequestType, ResponseType> ResponseType executeSoapService(SoapServiceSpecification soapServiceSpecification, RequestType soapRequest) {
+    public static SoapResponse executeSoapService(SoapServiceSpecification soapServiceSpecification, SoapRequest soapRequest) {
         SoapService soapService = soapServiceSpecification.getSoapService();
         Map<String, SoapOperation> operationServiceSpecifications = soapService.getSoapOperations();
-        SoapRequest request = cast(soapRequest);
-        SoapOperation soapOperation = operationServiceSpecifications.get(request.getOperationId());
-        Object requestObject = soapOperation.requestMapper().map(request.getEntity());
+        SoapOperation soapOperation = operationServiceSpecifications.get(soapRequest.getOperationId());
+        Object requestObject = soapOperation.requestMapper().map(soapRequest.getEntity());
         Object responseObject;
         Map<Class<? extends Throwable>, XmlEntityFromModelMapper<?>> faultMapping = soapOperation.faultMapping();
         try {
             String serviceId = soapServiceSpecification.getServiceId();
             String methodId = soapOperation.methodId();
             RequestValidationPolicy validationPolicy = soapOperation.validationPolicy();
-            ServiceMethodCommand serviceMethodCommand = new ServiceMethodCommand(serviceId, methodId);
-            ServiceRequest<?> serviceRequest = new ServiceRequest<>(serviceMethodCommand, validationPolicy, requestObject);
+            ServiceMethodCommand command = new ServiceMethodCommand(serviceId, methodId);
+            ServiceRequest<?> serviceRequest = new ServiceRequest<>(command, validationPolicy, requestObject);
             ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);
             ServiceExecutionException exception;
             if (nonNull(exception = serviceResponse.getServiceException())) {
                 XmlEntityFromModelMapper<?> faultMapper;
                 if (isNotEmpty(faultMapper = faultMapping.get(((Throwable) exception).getClass()))) {
-                    return cast(SoapResponse.builder().xmlEntity(faultMapper.map(cast((Throwable) exception))).build());
+                    return SoapResponse.builder().xmlEntity(faultMapper.map(cast((Throwable) exception))).build();
                 }
                 if (isNotEmpty(faultMapper = soapService.getDefaultFaultMapper())) {
-                    return cast(SoapResponse.builder().xmlEntity(cast(faultMapper.map(cast(soapService.getDefaultFaultResponse())))).build());
+                    return SoapResponse.builder().xmlEntity(cast(faultMapper.map(cast(soapService.getDefaultFaultResponse())))).build();
                 }
                 faultMapper = soapServerModule().getDefaultFaultMapper();
-                return cast(SoapResponse.builder().xmlEntity(faultMapper.map(cast(soapServerModule().getDefaultFaultResponse()))).build());
+                return SoapResponse.builder().xmlEntity(faultMapper.map(cast(soapServerModule().getDefaultFaultResponse()))).build();
             }
             responseObject = serviceResponse.getResponseData();
-            return cast(SoapResponse.builder().xmlEntity(soapOperation.responseMapper().map(cast(responseObject))).build());
+            return SoapResponse.builder().xmlEntity(soapOperation.responseMapper().map(cast(responseObject))).build();
         } catch (Throwable exception) {
             XmlEntityFromModelMapper<?> faultMapper;
             if (isNotEmpty(faultMapper = faultMapping.get(exception.getClass()))) {
-                return cast(SoapResponse.builder().xmlEntity(faultMapper.map(cast(exception))).build());
+                return SoapResponse.builder().xmlEntity(faultMapper.map(cast(exception))).build();
             }
             if (isNotEmpty(faultMapper = soapService.getDefaultFaultMapper())) {
-                return cast(SoapResponse.builder().xmlEntity(cast(faultMapper.map(cast(soapService.getDefaultFaultResponse())))).build());
+                return SoapResponse.builder().xmlEntity(cast(faultMapper.map(cast(soapService.getDefaultFaultResponse())))).build();
             }
             faultMapper = soapServerModule().getDefaultFaultMapper();
-            return cast(SoapResponse.builder().xmlEntity(faultMapper.map(cast(soapServerModule().getDefaultFaultResponse()))).build());
+            return SoapResponse.builder().xmlEntity(faultMapper.map(cast(soapServerModule().getDefaultFaultResponse()))).build();
         }
     }
 

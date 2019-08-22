@@ -6,23 +6,34 @@ kafka:
     streams:
       stream:
         brokers:
-          - 1.1.1.2:19092
+          - localhost:19092
         topic: topic
   producers:
     producer:
       brokers:
-        - 1.1.1.2:19092
+        - localhost:19092
       topic: topic
+grpc:
+  server:
+    enableRawDataTracing: true
+  communication:
+    enableRawDataTracing: true
+http:
+  server:
+    enableRawDataTracing: true
+  communication:
+    enableRawDataTracing: true
+rsocket:
+  enableRawDataTracing: true
 tarantool:
   enableTracing: true
   configurations:
     T:
       connection:
-        host: vm-server
+        host: localhost
         port: 3301
         username: user
         password: password
-      instanceMode: remote
       entities:
         DataEntity:
           fields:

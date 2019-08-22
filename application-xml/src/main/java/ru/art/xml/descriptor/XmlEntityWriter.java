@@ -18,31 +18,26 @@
 
 package ru.art.xml.descriptor;
 
-import lombok.NoArgsConstructor;
-import ru.art.entity.XmlEntity;
-import ru.art.entity.XmlValue;
-import ru.art.entity.constants.ValueType;
-import ru.art.xml.exception.XmlMappingException;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import lombok.*;
+import ru.art.entity.*;
+import ru.art.entity.constants.*;
+import ru.art.xml.exception.*;
+import javax.xml.stream.*;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+
+import static java.nio.charset.StandardCharsets.*;
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.extension.FileExtensions.writeFileQuietly;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.xml.constants.XmlDocumentConstants.XML_VERSION;
-import static ru.art.xml.constants.XmlLoggingMessages.XML_GENERATOR_CLOSING_ERROR;
-import static ru.art.xml.constants.XmlMappingExceptionMessages.XML_FACTORY_IS_NULL;
-import static ru.art.xml.module.XmlModule.xmlModule;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
+import static ru.art.core.extension.FileExtensions.*;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.xml.constants.XmlDocumentConstants.*;
+import static ru.art.xml.constants.XmlLoggingMessages.*;
+import static ru.art.xml.constants.XmlMappingExceptionMessages.*;
+import static ru.art.xml.module.XmlModule.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public class XmlEntityWriter {

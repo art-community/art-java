@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package ru.art.task.deferred.executor.model
+package ru.art.test.specification.scheduler.model
 
 import java.time.LocalDateTime
 

@@ -18,20 +18,21 @@
 
 package ru.art.module.executor.specification;
 
-import lombok.Getter;
-import ru.art.http.server.model.HttpService;
-import ru.art.http.server.specification.HttpServiceSpecification;
-import ru.art.module.executor.model.ExecutionRequest;
-import ru.art.service.exception.UnknownServiceMethodException;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
-import static ru.art.http.server.model.HttpService.httpService;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
+import lombok.*;
+import ru.art.http.server.model.*;
+import ru.art.http.server.specification.*;
+import ru.art.module.executor.model.*;
+import ru.art.service.exception.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.http.constants.MimeToContentTypeMapper.*;
+import static ru.art.http.server.model.HttpService.*;
+import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.module.executor.constants.ModuleExecutorConstants.ServiceConstants.*;
-import static ru.art.module.executor.mapper.ExecutorRequestMapper.executionRequestToModelMapper;
-import static ru.art.module.executor.mapper.ExecutorResponseMapper.executionResponseFromModelMapper;
-import static ru.art.module.executor.service.ModuleExecutorService.executeModule;
-import static ru.art.service.constants.RequestValidationPolicy.VALIDATABLE;
+import static ru.art.module.executor.mapper.ExecutorRequestMapper.*;
+import static ru.art.module.executor.mapper.ExecutorResponseMapper.*;
+import static ru.art.module.executor.service.ModuleExecutorService.*;
+import static ru.art.service.constants.RequestValidationPolicy.*;
 
 /**
  * Specification with only one method in http server

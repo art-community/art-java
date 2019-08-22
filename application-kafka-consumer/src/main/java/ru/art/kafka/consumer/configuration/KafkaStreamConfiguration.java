@@ -18,15 +18,13 @@
 
 package ru.art.kafka.consumer.configuration;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-import org.apache.kafka.common.serialization.Serde;
-import ru.art.kafka.consumer.exception.KafkaConsumerModuleException;
-import ru.art.kafka.serde.KafkaProtobufSerde;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import java.util.List;
-import java.util.Properties;
+import lombok.*;
+import org.apache.kafka.common.serialization.*;
+import ru.art.kafka.consumer.exception.*;
+import ru.art.kafka.serde.*;
+import java.util.*;
+
+import static ru.art.core.checker.CheckerForEmptiness.*;
 
 @Getter
 @Builder(builderMethodName = "streamConfiguration")

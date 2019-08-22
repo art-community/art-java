@@ -18,13 +18,13 @@
 
 package ru.art.entity.tuple.schema;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import ru.art.entity.StringParametersMap;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
-import static ru.art.entity.constants.ValueType.STRING_PARAMETERS_MAP;
-import java.util.List;
+import lombok.*;
+import ru.art.entity.*;
+import java.util.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.entity.constants.ValueType.*;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)

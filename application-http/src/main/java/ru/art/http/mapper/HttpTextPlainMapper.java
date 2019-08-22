@@ -18,17 +18,17 @@
 
 package ru.art.http.mapper;
 
-import ru.art.entity.Value;
-import ru.art.http.exception.HttpTextMapperException;
-import ru.art.http.mapper.HttpContentMapper.HttpContentToValueMapper;
-import ru.art.http.mapper.HttpContentMapper.HttpEntityToContentMapper;
-import ru.art.core.mime.MimeType;
-import static java.util.Objects.isNull;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
-import static ru.art.entity.PrimitivesFactory.stringPrimitive;
-import static ru.art.http.constants.HttpExceptionsMessages.CONTENT_TYPE_IS_NULL;
-import java.nio.charset.Charset;
+import ru.art.core.mime.*;
+import ru.art.entity.*;
+import ru.art.http.exception.*;
+import ru.art.http.mapper.HttpContentMapper.*;
+import java.nio.charset.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.ArrayConstants.*;
+import static ru.art.entity.PrimitivesFactory.*;
+import static ru.art.http.constants.HttpExceptionsMessages.*;
 
 public class HttpTextPlainMapper implements HttpEntityToContentMapper, HttpContentToValueMapper {
     @Override

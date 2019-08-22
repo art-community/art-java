@@ -18,18 +18,19 @@
 
 package ru.art.tarantool.service;
 
-import lombok.NoArgsConstructor;
-import org.tarantool.TarantoolClient;
-import ru.art.tarantool.configuration.lua.TarantoolSequenceConfiguration;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.tarantool.caller.TarantoolFunctionCaller.callTarantoolFunction;
+import lombok.*;
+import org.tarantool.*;
+import ru.art.tarantool.configuration.lua.*;
+import java.util.*;
+
+import static lombok.AccessLevel.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.tarantool.caller.TarantoolFunctionCaller.*;
 import static ru.art.tarantool.configuration.lua.TarantoolSequenceConfiguration.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static ru.art.tarantool.executor.TarantoolLuaExecutor.evaluateLuaScript;
-import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState;
-import java.util.List;
+import static ru.art.tarantool.executor.TarantoolLuaExecutor.*;
+import static ru.art.tarantool.module.TarantoolModule.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class TarantoolSequenceService {

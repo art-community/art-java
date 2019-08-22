@@ -18,7 +18,7 @@
 
 package ru.art.task.deferred.executor;
 
-import ru.art.task.deferred.executor.SchedulerModuleExceptions.ExceptionEvent;
+import ru.art.task.deferred.executor.SchedulerModuleExceptions.*;
 
 /**
  * Функциональный интерфейс {@link FunctionalInterface} для обработки ошибок

@@ -18,16 +18,14 @@
 
 package ru.art.kafka.producer.configuration;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.Serializer;
-import ru.art.kafka.producer.exception.KafkaProducerConfigurationException;
-import ru.art.kafka.serializer.KafkaProtobufSerializer;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import java.util.List;
-import java.util.Properties;
+import lombok.*;
+import org.apache.kafka.clients.producer.*;
+import org.apache.kafka.common.serialization.*;
+import ru.art.kafka.producer.exception.*;
+import ru.art.kafka.serializer.*;
+import java.util.*;
+
+import static ru.art.core.checker.CheckerForEmptiness.*;
 
 @Getter
 @Builder(builderMethodName = "producerConfiguration")

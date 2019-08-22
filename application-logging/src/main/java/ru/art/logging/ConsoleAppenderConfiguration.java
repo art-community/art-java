@@ -18,9 +18,8 @@
 
 package ru.art.logging;
 
-import lombok.Builder;
-import lombok.Getter;
-import org.apache.logging.log4j.core.Layout;
+import lombok.*;
+import org.apache.logging.log4j.core.*;
 
 @Getter
 @Builder

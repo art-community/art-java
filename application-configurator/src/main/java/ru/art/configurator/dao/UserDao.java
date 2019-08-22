@@ -18,11 +18,10 @@
 
 package ru.art.configurator.dao;
 
-import static java.util.UUID.randomUUID;
-import static ru.art.configurator.constants.ConfiguratorDbConstants.TOKEN_KEY;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.getString;
-import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.put;
+import static java.util.UUID.*;
+import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
 
 public interface UserDao {
     static void saveUser(String username, String password) {

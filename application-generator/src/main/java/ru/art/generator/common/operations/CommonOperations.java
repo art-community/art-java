@@ -19,19 +19,19 @@
 package ru.art.generator.common.operations;
 
 
-import com.squareup.javapoet.CodeBlock;
-import ru.art.generator.exception.NotSupportedTypeForPrimitiveMapperException;
-import ru.art.generator.spec.http.servicespec.exception.HttpServiceSpecGeneratorException;
-import static com.squareup.javapoet.CodeBlock.of;
-import static java.io.File.separator;
-import static java.text.MessageFormat.format;
-import static ru.art.core.constants.StringConstants.DOUBLE_TABULATION;
+import com.squareup.javapoet.*;
+import ru.art.generator.exception.*;
+import ru.art.generator.spec.http.servicespec.exception.*;
+import java.lang.reflect.*;
+
+import static com.squareup.javapoet.CodeBlock.*;
+import static java.io.File.*;
+import static java.text.MessageFormat.*;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.*;
 import static ru.art.generator.common.constants.Constants.PrimitiveMapperConstants.*;
 import static ru.art.generator.common.constants.Constants.SupportedJavaClasses.*;
-import static ru.art.generator.common.constants.ExceptionConstants.NOT_SUPPORTED_TYPE_FOR_PRIMITIVE_MAPPER;
-import static ru.art.generator.common.constants.ExceptionConstants.UNABLE_TO_PARSE_JAR_PATH;
-import java.lang.reflect.Type;
+import static ru.art.generator.common.constants.ExceptionConstants.*;
 
 /**
  * Interface containing common static methods which can be used

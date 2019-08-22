@@ -18,12 +18,11 @@
 
 package ru.art.core.handler;
 
-import lombok.RequiredArgsConstructor;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import lombok.*;
+import java.util.function.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 
 @RequiredArgsConstructor
 public class CauseHandler {

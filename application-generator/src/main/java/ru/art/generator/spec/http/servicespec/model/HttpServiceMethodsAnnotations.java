@@ -18,9 +18,8 @@
 
 package ru.art.generator.spec.http.servicespec.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import ru.art.generator.spec.http.common.model.HttpMethodsAnnotations;
+import lombok.*;
+import ru.art.generator.spec.http.common.model.*;
 
 /**
  * Model for annotations which need to be checked for methods

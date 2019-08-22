@@ -18,12 +18,9 @@
 
 package ru.art.service.model;
 
-import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import io.github.resilience4j.circuitbreaker.*;
+import lombok.*;
+import lombok.experimental.*;
 
 @Getter
 @NoArgsConstructor

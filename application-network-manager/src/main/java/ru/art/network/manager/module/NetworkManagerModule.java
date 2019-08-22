@@ -18,23 +18,22 @@
 
 package ru.art.network.manager.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.network.manager.client.ApplicationStateClient;
-import ru.art.network.manager.configuration.NetworkManagerModuleConfiguration;
-import ru.art.network.manager.refresher.ModuleEndpointsRefresher;
-import ru.art.network.manager.state.NetworkManagerModuleState;
-import ru.art.state.api.communication.grpc.LockServiceProxySpecification;
-import ru.art.state.api.communication.grpc.NetworkServiceProxySpecification;
-import static java.time.Duration.of;
-import static java.time.temporal.ChronoUnit.SECONDS;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.network.manager.configuration.NetworkManagerModuleConfiguration.NetworkManagerModuleDefaultConfiguration;
-import static ru.art.network.manager.constants.NetworkManagerModuleConstants.NETWORK_MANAGER_MODULE_ID;
-import static ru.art.service.ServiceModule.serviceModule;
-import static ru.art.task.deferred.executor.IdentifiedRunnableFactory.commonTask;
-import static ru.art.task.deferred.executor.SchedulerModuleActions.asynchronousPeriod;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.network.manager.client.*;
+import ru.art.network.manager.configuration.*;
+import ru.art.network.manager.refresher.*;
+import ru.art.network.manager.state.*;
+import ru.art.state.api.communication.grpc.*;
+
+import static java.time.Duration.*;
+import static java.time.temporal.ChronoUnit.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.network.manager.configuration.NetworkManagerModuleConfiguration.*;
+import static ru.art.network.manager.constants.NetworkManagerModuleConstants.*;
+import static ru.art.service.ServiceModule.*;
+import static ru.art.task.deferred.executor.IdentifiedRunnableFactory.*;
+import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
 
 @Getter
 public class NetworkManagerModule implements Module<NetworkManagerModuleConfiguration, NetworkManagerModuleState> {

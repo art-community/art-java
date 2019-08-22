@@ -18,13 +18,12 @@
 
 package ru.art.core.network.provider;
 
-import static java.net.NetworkInterface.getNetworkInterfaces;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST_IP_ADDRESS;
-import static ru.art.core.constants.StringConstants.IP_4_REGEX_PATTERN;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
+import java.net.*;
+import java.util.*;
+
+import static java.net.NetworkInterface.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.core.constants.StringConstants.*;
 
 public interface IpAddressProvider {
     static String getIpAddress() {

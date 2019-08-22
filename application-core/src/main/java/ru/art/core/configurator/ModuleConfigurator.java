@@ -18,9 +18,7 @@
 
 package ru.art.core.configurator;
 
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.core.module.ModuleState;
+import ru.art.core.module.*;
 
 @FunctionalInterface
 public interface ModuleConfigurator<C extends ModuleConfiguration, S extends ModuleState> {

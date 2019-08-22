@@ -18,10 +18,9 @@
 
 package ru.art.core.extension;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.*;
+
+import static java.util.Objects.*;
 
 public interface NullCheckingExtensions {
     static <T> T getOrElse(T object, T orElse) {

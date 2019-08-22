@@ -25,5 +25,4 @@ public interface ServiceModuleConstants {
     String REQUEST_EVENT = "serviceRequest";
     String RESPONSE_EVENT = "serviceResponse";
     String DEFAULT_REQUEST_ID = "DEFAULT_REQUEST_ID";
-    String REQUEST_VALUE_KEY = "requestValue";
 }

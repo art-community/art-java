@@ -18,21 +18,20 @@
 
 package ru.art.soap.client.communicator;
 
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.nio.client.HttpAsyncClient;
-import ru.art.entity.XmlEntity;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.http.client.handler.HttpCommunicationCancellationHandler;
-import ru.art.http.client.handler.HttpCommunicationExceptionHandler;
-import ru.art.http.client.handler.HttpCommunicationResponseHandler;
-import ru.art.http.client.interceptor.HttpClientInterceptor;
-import ru.art.http.client.model.HttpCommunicationTargetConfiguration;
-import ru.art.soap.content.mapper.SoapMimeToContentTypeMapper;
-import java.nio.charset.Charset;
-import java.util.Optional;
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.config.*;
+import org.apache.http.nio.client.*;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.http.client.handler.*;
+import ru.art.http.client.interceptor.*;
+import ru.art.http.client.model.*;
+import ru.art.soap.content.mapper.*;
+import java.nio.charset.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 public interface SoapCommunicator {
     static SoapCommunicator soapCommunicator(String endpointUrl) {
@@ -43,7 +42,7 @@ public interface SoapCommunicator {
         return new SoapCommunicatorImplementation(targetConfiguration);
     }
 
-    SoapCommunicator client(HttpClient syncClient);
+    SoapCommunicator client(HttpClient synchronousClient);
 
     SoapCommunicator operationId(String operationId);
 
@@ -67,9 +66,13 @@ public interface SoapCommunicator {
 
     SoapCommunicator requestBodyEncoding(String encoding);
 
-    SoapCommunicator withRequestInterceptor(HttpClientInterceptor interceptor);
+    SoapCommunicator addRequestInterceptor(HttpClientInterceptor interceptor);
 
-    SoapCommunicator withResponseInterceptor(HttpClientInterceptor interceptor);
+    SoapCommunicator addResponseInterceptor(HttpClientInterceptor interceptor);
+
+    SoapCommunicator addRequestValueInterceptor(ValueInterceptor<XmlEntity, XmlEntity> interceptor);
+
+    SoapCommunicator addResponseValueInterceptor(ValueInterceptor<XmlEntity, XmlEntity> interceptor);
 
     SoapCommunicator version(HttpVersion httpVersion);
 
@@ -78,7 +81,7 @@ public interface SoapCommunicator {
     SoapAsynchronousCommunicator asynchronous();
 
     interface SoapAsynchronousCommunicator {
-        SoapAsynchronousCommunicator client(HttpAsyncClient asyncClient);
+        SoapAsynchronousCommunicator client(HttpAsyncClient asynchronousClient);
 
         <RequestType, ResponseType> SoapAsynchronousCommunicator responseHandler(HttpCommunicationResponseHandler<RequestType, ResponseType> handler);
 
@@ -86,6 +89,6 @@ public interface SoapCommunicator {
 
         <RequestType> SoapAsynchronousCommunicator cancellationHandler(HttpCommunicationCancellationHandler<RequestType> handler);
 
-        <RequestType> void executeAsynchronous(RequestType request);
+        <RequestType, ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronous(RequestType request);
     }
 }

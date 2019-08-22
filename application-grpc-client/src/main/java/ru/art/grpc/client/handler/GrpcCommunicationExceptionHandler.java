@@ -18,7 +18,7 @@
 
 package ru.art.grpc.client.handler;
 
-import java.util.Optional;
+import java.util.*;
 
 @FunctionalInterface
 public interface GrpcCommunicationExceptionHandler<RequestType> {

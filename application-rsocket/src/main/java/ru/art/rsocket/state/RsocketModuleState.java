@@ -18,12 +18,10 @@
 
 package ru.art.rsocket.state;
 
-import io.rsocket.RSocket;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import ru.art.core.module.ModuleState;
-import ru.art.rsocket.server.RsocketServer;
+import io.rsocket.*;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.rsocket.server.*;
 
 public class RsocketModuleState implements ModuleState {
     private final ThreadLocal<CurrentRsocketState> currentClientSocket = new ThreadLocal<>();

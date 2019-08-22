@@ -18,13 +18,13 @@
 
 package ru.art.grpc.server.exception;
 
-import io.grpc.Metadata;
-import io.grpc.Metadata.Key;
-import io.grpc.StatusRuntimeException;
-import static io.grpc.Metadata.ASCII_STRING_MARSHALLER;
-import static io.grpc.Metadata.Key.of;
-import static io.grpc.Status.INTERNAL;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.PROTOBUF_ERROR_MESSAGE;
+import io.grpc.*;
+import io.grpc.Metadata.*;
+
+import static io.grpc.Metadata.*;
+import static io.grpc.Metadata.Key.*;
+import static io.grpc.Status.*;
+import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
 
 public class GrpcServletException extends StatusRuntimeException {
     public GrpcServletException(String message) {

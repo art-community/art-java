@@ -18,8 +18,8 @@
 
 package ru.art.grpc.client.handler;
 
-import ru.art.service.model.ServiceResponse;
-import java.util.Optional;
+import ru.art.service.model.*;
+import java.util.*;
 
 @FunctionalInterface
 public interface GrpcCommunicationCompletionHandler<RequestType, ResponseType> {

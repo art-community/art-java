@@ -18,32 +18,26 @@
 
 package ru.art.config.remote.provider;
 
-import ru.art.config.Config;
-import ru.art.config.cache.ConfigCacheContainer;
-import ru.art.config.exception.ConfigException;
-import ru.art.config.module.ConfigModule;
-import ru.art.config.remote.specification.RemoteConfigServiceSpecification;
-import ru.art.configurator.api.specification.ConfiguratorCommunicationSpecification;
-import ru.art.core.configuration.ContextInitialConfiguration;
-import ru.art.core.context.Context;
-import ru.art.grpc.client.module.GrpcClientModule;
-import ru.art.logging.LoggingModule;
-import ru.art.service.ServiceModule;
-import static java.util.Objects.isNull;
-import static ru.art.config.ConfigProvider.config;
-import static ru.art.config.constants.ConfigType.REMOTE_ENTITY_CONFIG;
-import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS;
+import ru.art.config.*;
+import ru.art.config.cache.*;
+import ru.art.config.exception.*;
+import ru.art.config.remote.specification.*;
+import ru.art.configurator.api.specification.*;
+import ru.art.core.configuration.*;
+import ru.art.core.context.*;
+
+import static java.util.Objects.*;
+import static ru.art.config.ConfigProvider.*;
+import static ru.art.config.constants.ConfigType.*;
+import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.*;
 import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.LocalConfigKeys.*;
-import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.MODULE_ID_IS_EMPTY;
-import static ru.art.config.remote.loader.RemoteConfigLoader.loadRemoteConfig;
-import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.CONFIGURATOR_COMMUNICATION_SERVICE_ID;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
+import static ru.art.config.remote.loader.RemoteConfigLoader.*;
+import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.*;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.context.Context.withContext;
-import static ru.art.entity.Entity.entityBuilder;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.service.ServiceModule.serviceModule;
+import static ru.art.entity.Entity.*;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.service.ServiceModule.*;
 
 public class RemoteConfigProvider {
     private static final ConfigCacheContainer CONFIG_CACHE_CONTAINER = new ConfigCacheContainer();

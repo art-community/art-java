@@ -18,11 +18,10 @@
 
 package ru.art.task.deferred.executor;
 
-import static ru.art.task.deferred.executor.SchedulerModule.schedulerModule;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
+import java.time.*;
+import java.util.concurrent.*;
+
+import static ru.art.task.deferred.executor.SchedulerModule.*;
 
 public interface SchedulerModuleActions {
 

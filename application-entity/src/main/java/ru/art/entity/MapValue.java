@@ -18,13 +18,10 @@
 
 package ru.art.entity;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Singular;
-import ru.art.core.checker.CheckerForEmptiness;
-import ru.art.entity.constants.ValueType;
-import java.util.Map;
+import lombok.*;
+import ru.art.core.checker.*;
+import ru.art.entity.constants.*;
+import java.util.*;
 
 @Builder
 @Getter

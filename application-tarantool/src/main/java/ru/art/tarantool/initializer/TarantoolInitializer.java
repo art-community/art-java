@@ -18,51 +18,43 @@
 
 package ru.art.tarantool.initializer;
 
-import org.apache.logging.log4j.Logger;
-import org.jtwig.JtwigModel;
-import org.tarantool.TarantoolClient;
-import org.zeroturnaround.exec.ProcessExecutor;
-import ru.art.tarantool.configuration.TarantoolConfiguration;
-import ru.art.tarantool.configuration.TarantoolConnectionConfiguration;
-import ru.art.tarantool.configuration.TarantoolLocalConfiguration;
-import ru.art.tarantool.exception.TarantoolConnectionException;
-import ru.art.tarantool.exception.TarantoolInitializationException;
-import static java.io.File.separator;
-import static java.nio.file.Files.createDirectories;
-import static java.nio.file.Paths.get;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static org.apache.logging.log4j.io.IoBuilder.forLogger;
-import static org.jtwig.JtwigTemplate.classpathTemplate;
-import static ru.art.core.constants.StringConstants.COLON;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.converter.WslPathConverter.convertToWslPath;
-import static ru.art.core.extension.FileExtensions.writeFile;
-import static ru.art.core.extension.InputOutputStreamExtensions.transferBytes;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
-import static ru.art.core.jar.JarExtensions.extractCurrentJarEntry;
-import static ru.art.core.jar.JarExtensions.insideJar;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.tarantool.connector.TarantoolConnector.connectToTarantool;
-import static ru.art.tarantool.connector.TarantoolConnector.tryConnectToTarantool;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.Directories.LUA;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.CONFIGURATION_IS_NULL;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.TARANTOOL_INITIALIZATION_SCRIP_NOT_EXISTS;
+import org.apache.logging.log4j.*;
+import org.jtwig.*;
+import org.tarantool.*;
+import org.zeroturnaround.exec.*;
+import ru.art.tarantool.configuration.*;
+import ru.art.tarantool.exception.*;
+import java.io.*;
+import java.net.*;
+import java.nio.file.*;
+import java.util.*;
+
+import static java.io.File.*;
+import static java.nio.file.Files.*;
+import static java.nio.file.Paths.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static org.apache.logging.log4j.io.IoBuilder.*;
+import static org.jtwig.JtwigTemplate.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.converter.WslPathConverter.*;
+import static ru.art.core.extension.FileExtensions.*;
+import static ru.art.core.extension.InputOutputStreamExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.core.jar.JarExtensions.*;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.tarantool.connector.TarantoolConnector.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.Directories.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.UNABLE_TO_CONNECT_TO_TARANTOOL;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.Scripts.INITIALIZATION;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.LOCAL;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.PASSWORD;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.USERNAME;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.CONFIGURATION;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.Scripts.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.USER;
-import static ru.art.tarantool.module.TarantoolModule.tarantoolModule;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.List;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
+import static ru.art.tarantool.module.TarantoolModule.*;
 
 public class TarantoolInitializer {
     private final static OutputStream TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM = forLogger(loggingModule()
@@ -89,15 +81,37 @@ public class TarantoolInitializer {
             }
         } catch (Throwable e) {
             if (instanceMode == LOCAL) {
-                logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
+                logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address), e);
                 startTarantool(instanceId);
             }
-            connectToTarantool(instanceId);
-            return;
+            try {
+                TarantoolClient tarantoolClient = tryConnectToTarantool(instanceId);
+                if (tarantoolClient.isAlive()) {
+                    connectToTarantool(instanceId);
+                    return;
+                }
+            } catch (Throwable newTryException) {
+                logger.warn(INSTALL_TARANTOOL_MESSAGE, newTryException);
+                throw newTryException;
+            }
+            logger.warn(INSTALL_TARANTOOL_MESSAGE, e);
+            throw e;
         }
         if (instanceMode == LOCAL) {
             logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
             startTarantool(instanceId);
+            try {
+                TarantoolClient tarantoolClient = tryConnectToTarantool(instanceId);
+                if (tarantoolClient.isAlive()) {
+                    connectToTarantool(instanceId);
+                    return;
+                }
+            } catch (Throwable newTryException) {
+                logger.warn(INSTALL_TARANTOOL_MESSAGE, newTryException);
+                throw newTryException;
+            }
+            logger.warn(INSTALL_TARANTOOL_MESSAGE);
+            throw new TarantoolInitializationException(UNABLE_TO_CONNECT_TO_TARANTOOL);
         }
         connectToTarantool(instanceId);
     }

@@ -18,10 +18,11 @@
 
 package ru.art.kafka.consumer.specification;
 
-import ru.art.service.Specification;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.KAFKA_CONSUMER_SERVICE_TYPE;
-import java.util.List;
+import ru.art.service.*;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
 
 public interface KafkaConsumerServiceSpecification extends Specification {
     @Override

@@ -18,32 +18,25 @@
 
 package ru.art.http.client.factory;
 
-import lombok.NoArgsConstructor;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.zalando.logbook.httpclient.LogbookHttpRequestInterceptor;
-import org.zalando.logbook.httpclient.LogbookHttpResponseInterceptor;
-import ru.art.http.client.configuration.HttpClientModuleConfiguration;
-import ru.art.http.client.exception.HttpClientException;
-import ru.art.http.client.model.HttpClientConfiguration;
-import static java.security.KeyStore.getInstance;
-import static java.util.Objects.nonNull;
-import static lombok.AccessLevel.PRIVATE;
-import static org.apache.http.ssl.SSLContexts.custom;
-import static ru.art.http.client.constants.HttpClientExceptionMessages.HTTP_SAL_CONFIGURATION_FAILED;
-import static ru.art.http.client.module.HttpClientModule.httpClientModule;
-import static ru.art.logging.LoggingModule.loggingModule;
-import javax.net.ssl.HostnameVerifier;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.security.KeyStore;
+import lombok.experimental.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.nio.client.*;
+import org.zalando.logbook.httpclient.*;
+import ru.art.http.client.configuration.*;
+import ru.art.http.client.exception.*;
+import ru.art.http.client.model.*;
+import javax.net.ssl.*;
+import java.io.*;
+import java.security.*;
 
-@NoArgsConstructor(access = PRIVATE)
+import static java.security.KeyStore.*;
+import static java.util.Objects.*;
+import static org.apache.http.ssl.SSLContexts.*;
+import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
+import static ru.art.http.client.module.HttpClientModule.*;
+import static ru.art.logging.LoggingModule.*;
+
+@UtilityClass
 public class HttpClientsFactory {
     @SuppressWarnings("Duplicates")
     public static CloseableHttpAsyncClient createAsyncHttpClient(HttpClientConfiguration configuration) {
@@ -57,12 +50,14 @@ public class HttpClientsFactory {
                     HostnameVerifier allowAll = (hostName, session) -> true;
                     clientBuilder.setSSLHostnameVerifier(allowAll);
                 }
-                clientBuilder.setSSLContext(custom().loadKeyMaterial(loadKeyStore(configuration), configuration.getSslKeyStorePassword().toCharArray()).build());
+                clientBuilder.setSSLContext(custom()
+                        .loadKeyMaterial(loadKeyStore(configuration), configuration.getSslKeyStorePassword().toCharArray())
+                        .build());
             } catch (Throwable e) {
-                throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
+                throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
             }
         }
-        if (configuration.isEnableTracing()) {
+        if (configuration.isEnableRawDataTracing()) {
             clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(httpClientModule().getLogbook()))
                     .addInterceptorLast(new LogbookHttpResponseInterceptor());
         }
@@ -77,7 +72,7 @@ public class HttpClientsFactory {
                 .setDefaultRequestConfig(configuration.getRequestConfig())
                 .setDefaultConnectionConfig(configuration.getConnectionConfig())
                 .setDefaultSocketConfig(configuration.getSocketConfig());
-        if (configuration.isEnableTracing()) {
+        if (configuration.isEnableRawDataTracing()) {
             clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(httpClientModule().getLogbook()))
                     .addInterceptorLast(new LogbookHttpResponseInterceptor());
         }
@@ -87,9 +82,11 @@ public class HttpClientsFactory {
                     HostnameVerifier allowAll = (hostName, session) -> true;
                     clientBuilder.setSSLHostnameVerifier(allowAll);
                 }
-                clientBuilder.setSSLContext(custom().loadKeyMaterial(loadKeyStore(configuration), configuration.getSslKeyStorePassword().toCharArray()).build());
+                clientBuilder.setSSLContext(custom()
+                        .loadKeyMaterial(loadKeyStore(configuration), configuration.getSslKeyStorePassword().toCharArray())
+                        .build());
             } catch (Throwable e) {
-                throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
+                throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
             }
         }
         return clientBuilder.build();
@@ -103,7 +100,7 @@ public class HttpClientsFactory {
             keyStore.load(keyStoreInputStream, configuration.getSslKeyStorePassword().toCharArray());
             return keyStore;
         } catch (Throwable e) {
-            throw new HttpClientException(HTTP_SAL_CONFIGURATION_FAILED, e);
+            throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
         } finally {
             if (nonNull(keyStoreInputStream)) {
                 try {
@@ -111,7 +108,7 @@ public class HttpClientsFactory {
                 } catch (IOException e) {
                     loggingModule()
                             .getLogger(HttpClientModuleConfiguration.class)
-                            .error(HTTP_SAL_CONFIGURATION_FAILED, e);
+                            .error(HTTP_SSL_CONFIGURATION_FAILED, e);
                 }
             }
         }

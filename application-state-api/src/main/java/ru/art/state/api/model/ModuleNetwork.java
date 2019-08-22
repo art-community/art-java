@@ -19,13 +19,11 @@
 package ru.art.state.api.model;
 
 import lombok.*;
-import static java.lang.System.currentTimeMillis;
-import static java.util.Comparator.comparingInt;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.core.factory.CollectionsFactory.priorityQueueOf;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Queue;
+import java.util.*;
+
+import static java.lang.System.*;
+import static java.util.Comparator.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 
 @Getter
 @Builder

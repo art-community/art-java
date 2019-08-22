@@ -18,10 +18,11 @@
 
 package ru.art.grpc.client.exception;
 
-import lombok.Getter;
-import ru.art.grpc.client.communicator.GrpcCommunicationConfiguration;
-import static java.text.MessageFormat.format;
-import static ru.art.grpc.client.constants.GrpcClientExceptionMessages.GRPC_CLIENT_EXCEPTION_MESSAGE;
+import lombok.*;
+import ru.art.grpc.client.communicator.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.grpc.client.constants.GrpcClientExceptionMessages.*;
 
 @Getter
 public class GrpcResponseException extends RuntimeException {

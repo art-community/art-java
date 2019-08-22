@@ -18,27 +18,21 @@
 
 package ru.art.http.server.interceptor;
 
-import lombok.Builder;
-import lombok.Singular;
-import ru.art.core.constants.InterceptionStrategy;
-import ru.art.http.server.exception.HttpServerException;
-import static java.util.Arrays.stream;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.constants.InterceptionStrategy.NEXT_INTERCEPTOR;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.http.constants.HttpHeaders.CONTENT_TYPE;
-import static ru.art.http.constants.HttpMethodType.OPTIONS;
-import static ru.art.http.constants.HttpMimeTypes.TEXT_HTML_UTF_8;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
+import lombok.*;
+import ru.art.core.constants.*;
+import ru.art.http.server.exception.*;
+import javax.servlet.http.*;
+import java.util.*;
+import java.util.function.*;
+
+import static java.util.Arrays.*;
+import static java.util.Objects.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.InterceptionStrategy.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.http.constants.HttpHeaders.*;
+import static ru.art.http.constants.HttpMethodType.*;
+import static ru.art.http.constants.HttpMimeTypes.*;
 
 @Builder
 public class CookieInterceptor implements HttpServerInterception {

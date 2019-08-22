@@ -18,62 +18,52 @@
 
 package ru.art.http.server;
 
-import lombok.AllArgsConstructor;
-import ru.art.http.constants.HttpMethodType;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.core.mime.MimeType;
-import ru.art.http.server.body.descriptor.HttpBodyDescriptor;
-import ru.art.http.server.context.HttpRequestContext;
-import ru.art.http.server.context.HttpRequestContext.HttpRequestContextBuilder;
-import ru.art.http.server.context.MultiPartContext;
-import ru.art.http.server.context.MultiPartContext.MultiPartContextBuilder;
-import ru.art.http.server.exception.HttpServerException;
-import ru.art.http.server.handler.HttpExceptionHandler;
-import ru.art.http.server.model.HttpService;
-import ru.art.logging.ServiceCallLoggingParameters;
-import ru.art.service.model.ServiceMethodCommand;
-import static java.nio.charset.Charset.forName;
-import static java.text.MessageFormat.format;
-import static java.util.Arrays.stream;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static javax.servlet.http.HttpServletResponse.SC_OK;
-import static org.apache.logging.log4j.ThreadContext.get;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.COMMA;
-import static ru.art.core.constants.StringConstants.DOT;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.core.extension.StringExtensions.emptyIfNull;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.http.constants.HttpHeaders.*;
-import static ru.art.http.constants.HttpMethodType.OPTIONS;
-import static ru.art.http.constants.HttpMethodType.resolve;
-import static ru.art.http.constants.HttpMimeTypes.ALL;
-import static ru.art.core.mime.MimeType.valueOf;
-import static ru.art.http.server.HttpServerRequestHandler.executeHttpService;
-import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
-import static ru.art.http.server.constants.HttpServerLoggingMessages.HTTP_REQUEST_HANDLING_EXCEPTION_MESSAGE;
-import static ru.art.http.server.constants.HttpServerLoggingMessages.HTTP_SERVLET_EVENT;
-import static ru.art.http.server.constants.HttpServerModuleConstants.EMPTY_HTTP_CONTENT_LENGTH;
-import static ru.art.http.server.constants.HttpServerModuleConstants.MULTIPART_PATTERN;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
-import static ru.art.http.server.module.HttpServerModule.httpServerModuleState;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.logging.LoggingModuleConstants.DEFAULT_REQUEST_ID;
-import static ru.art.logging.LoggingModuleConstants.LoggingParameters.REQUEST_ID_KEY;
-import static ru.art.logging.LoggingParametersManager.clearServiceCallLoggingParameters;
-import static ru.art.logging.LoggingParametersManager.putServiceCallLoggingParameters;
-import static ru.art.service.ServiceModule.serviceModule;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
+import lombok.*;
+import ru.art.core.mime.*;
+import ru.art.http.constants.*;
+import ru.art.http.server.context.*;
+import ru.art.http.server.context.HttpRequestContext.*;
+import ru.art.http.server.context.MultiPartContext.*;
+import ru.art.http.server.exception.*;
+import ru.art.http.server.handler.*;
+import ru.art.http.server.model.*;
+import ru.art.logging.*;
+import ru.art.service.model.*;
+import javax.servlet.*;
+import javax.servlet.annotation.*;
 import javax.servlet.http.*;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+
+import static java.nio.charset.Charset.*;
+import static java.text.MessageFormat.*;
+import static java.util.Arrays.*;
+import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
+import static javax.servlet.http.HttpServletResponse.*;
+import static org.apache.logging.log4j.ThreadContext.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.core.extension.StringExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.core.mime.MimeType.valueOf;
+import static ru.art.http.constants.HttpHeaders.*;
+import static ru.art.http.constants.HttpMethodType.*;
+import static ru.art.http.constants.HttpMimeTypes.*;
+import static ru.art.http.server.HttpServerRequestHandler.*;
+import static ru.art.http.server.body.descriptor.HttpBodyDescriptor.*;
+import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
+import static ru.art.http.server.constants.HttpServerLoggingMessages.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.*;
+import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.logging.LoggingModuleConstants.*;
+import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
+import static ru.art.logging.LoggingParametersManager.*;
+import static ru.art.service.ServiceModule.*;
 
 @AllArgsConstructor
 @MultipartConfig
@@ -85,7 +75,10 @@ class HttpServiceServlet extends HttpServlet {
         HttpMethodType httpMethodType = resolve(request.getMethod());
         HttpServletCommand command = commands.get(httpMethodType);
         if (OPTIONS == httpMethodType) {
-            response.setHeader(ALLOW, commands.values().stream().map(method -> method.getHttpMethod().getMethodType().name()).collect(joining(COMMA)));
+            response.setHeader(ALLOW, commands.values()
+                    .stream()
+                    .map(method -> method.getHttpMethod().getMethodType().name())
+                    .collect(joining(COMMA)));
             response.setStatus(SC_OK);
             clearServiceCallLoggingParameters();
             return;
@@ -110,7 +103,7 @@ class HttpServiceServlet extends HttpServlet {
             if (!command.getHttpMethod().isOverrideResponseContentType()) {
                 response.addHeader(CONTENT_TYPE, httpServerModuleState().getRequestContext().getAcceptType().toString());
             }
-            HttpBodyDescriptor.writeResponseBody(response, responseBody);
+            writeResponseBody(response, responseBody);
             clearServiceCallLoggingParameters();
         } catch (Throwable e) {
             handleException(request, response, e);
@@ -173,17 +166,17 @@ class HttpServiceServlet extends HttpServlet {
 
     private void calculateAcceptType(HttpServletCommand command, HttpServletRequest request, HttpRequestContextBuilder requestContextBuilder) {
         if (command.isIgnoreRequestAcceptType()) {
-            requestContextBuilder.acceptType(getProducesContentTypeChecked(command));
+            requestContextBuilder.acceptType(getProducesMimeTypeChecked(command));
             return;
         }
         String acceptTypeHeader = request.getHeader(ACCEPT);
         if (isEmpty(acceptTypeHeader)) {
-            requestContextBuilder.acceptType(getProducesContentTypeChecked(command));
+            requestContextBuilder.acceptType(getProducesMimeTypeChecked(command));
             return;
         }
         String[] acceptTypesStr = emptyIfNull(acceptTypeHeader).split(COMMA);
         if (isEmpty(acceptTypesStr)) {
-            requestContextBuilder.acceptType(getProducesContentTypeChecked(command));
+            requestContextBuilder.acceptType(getProducesMimeTypeChecked(command));
             return;
         }
         List<MimeType> acceptTypes = sortMimeTypes(acceptTypesStr);
@@ -203,17 +196,17 @@ class HttpServiceServlet extends HttpServlet {
     private void calculateContentType(HttpServletCommand command, HttpServletRequest request, HttpRequestContextBuilder requestContextBuilder) {
         if (request.getContentLength() == EMPTY_HTTP_CONTENT_LENGTH) return;
         if (command.isIgnoreRequestContentType()) {
-            requestContextBuilder.contentType(getConsumesContentTypeChecked(command));
+            requestContextBuilder.contentType(getConsumesMimeTypeChecked(command));
             return;
         }
         String contentTypeHeader = request.getContentType();
         if (isEmpty(contentTypeHeader)) {
-            requestContextBuilder.contentType(getConsumesContentTypeChecked(command));
+            requestContextBuilder.contentType(getConsumesMimeTypeChecked(command));
             return;
         }
         String[] contentTypesStr = emptyIfNull(contentTypeHeader).split(COMMA);
         if (isEmpty(contentTypesStr)) {
-            requestContextBuilder.contentType(getConsumesContentTypeChecked(command));
+            requestContextBuilder.contentType(getConsumesMimeTypeChecked(command));
             return;
         }
         List<MimeType> contentTypes = sortMimeTypes(contentTypesStr);
@@ -230,17 +223,17 @@ class HttpServiceServlet extends HttpServlet {
         }
     }
 
-    private MimeType getConsumesContentTypeChecked(HttpServletCommand command) {
+    private MimeType getConsumesMimeTypeChecked(HttpServletCommand command) {
         MimeToContentTypeMapper type;
-        if (isNull(type = command.getConsumesContentType())) {
+        if (isNull(type = command.getConsumesMimeType())) {
             return ALL;
         }
         return type.getMimeType();
     }
 
-    private MimeType getProducesContentTypeChecked(HttpServletCommand command) {
+    private MimeType getProducesMimeTypeChecked(HttpServletCommand command) {
         MimeToContentTypeMapper type;
-        if (isNull(type = command.getProducesContentType())) {
+        if (isNull(type = command.getConsumesMimeType())) {
             return ALL;
         }
         return type.getMimeType();

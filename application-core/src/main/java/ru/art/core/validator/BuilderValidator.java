@@ -18,19 +18,17 @@
 
 package ru.art.core.validator;
 
-import lombok.AllArgsConstructor;
-import ru.art.core.checker.CheckerForEmptiness;
-import ru.art.core.exception.BuilderValidationException;
-import static java.text.MessageFormat.format;
-import static ru.art.core.constants.BuilderValidatorErrors.FIELD_MUST_NOT_BE_EMPTY;
-import static ru.art.core.constants.BuilderValidatorErrors.FIELD_MUST_NOT_BE_NULL;
-import static ru.art.core.constants.ExceptionMessages.BUILDER_VALIDATOR_HAS_NEXT_ERRORS;
-import static ru.art.core.constants.StringConstants.COLON;
-import static ru.art.core.constants.StringConstants.NEW_LINE;
-import static ru.art.core.factory.CollectionsFactory.setOf;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Predicate;
+import lombok.*;
+import ru.art.core.checker.*;
+import ru.art.core.exception.*;
+import java.util.*;
+import java.util.function.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.core.constants.BuilderValidatorErrors.*;
+import static ru.art.core.constants.ExceptionMessages.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 
 @AllArgsConstructor
 public class BuilderValidator {

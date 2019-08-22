@@ -18,13 +18,12 @@
 
 package ru.art.service.model;
 
-import io.github.resilience4j.bulkhead.BulkheadConfig;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import io.github.resilience4j.ratelimiter.RateLimiterConfig;
-import io.github.resilience4j.retry.RetryConfig;
-import lombok.Builder;
-import lombok.Getter;
-import ru.art.service.constants.ServiceExecutionFeatureTarget;
+import io.github.resilience4j.bulkhead.*;
+import io.github.resilience4j.circuitbreaker.*;
+import io.github.resilience4j.ratelimiter.*;
+import io.github.resilience4j.retry.*;
+import lombok.*;
+import ru.art.service.constants.*;
 
 @Builder
 public class ServiceExecutionConfiguration {

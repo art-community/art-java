@@ -6,13 +6,9 @@ option java_multiple_files = true;
 package ru.art.grpc.servlet;
 
 message GrpcRequest {
-    string serviceId = 1;
-    string methodId = 2;
-    ru.art.protobuf.entity.ProtobufValue requestData = 3;
+    ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;
 }
 
 message GrpcResponse {
-    string errorCode = 1;
-    ru.art.protobuf.entity.ProtobufValue responseData = 2;
-    string errorMessage = 3;
+    ru.art.protobuf.entity.ProtobufValue serviceResponse = 1;
 }

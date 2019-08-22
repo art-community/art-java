@@ -18,13 +18,11 @@
 
 package ru.art.kafka.serde;
 
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serializer;
-import ru.art.entity.Value;
-import ru.art.kafka.deserializer.KafkaProtobufDeserializer;
-import ru.art.kafka.serializer.KafkaProtobufSerializer;
-import java.util.Map;
+import org.apache.kafka.common.serialization.*;
+import ru.art.entity.*;
+import ru.art.kafka.deserializer.*;
+import ru.art.kafka.serializer.*;
+import java.util.*;
 
 public class KafkaProtobufSerde implements Serde<Value> {
     @Override

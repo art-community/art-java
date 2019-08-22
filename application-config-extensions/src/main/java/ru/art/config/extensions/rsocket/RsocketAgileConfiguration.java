@@ -18,22 +18,21 @@
 
 package ru.art.config.extensions.rsocket;
 
-import lombok.Getter;
-import ru.art.rsocket.configuration.RsocketModuleConfiguration.RsocketModuleDefaultConfiguration;
-import ru.art.rsocket.model.RsocketCommunicationTargetConfiguration;
+import lombok.*;
+import ru.art.rsocket.configuration.RsocketModuleConfiguration.*;
+import ru.art.rsocket.model.*;
+import java.util.*;
+
 import static ru.art.config.extensions.ConfigExtensions.*;
-import static ru.art.config.extensions.common.CommonConfigKeys.HOST;
-import static ru.art.config.extensions.common.CommonConfigKeys.TARGETS;
+import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.rsocket.RsocketConfigKeys.*;
-import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.extension.ExceptionExtensions.ifException;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RSOCKET_MODULE_ID;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
-import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.rsocketCommunicationTarget;
-import static ru.art.rsocket.module.RsocketModule.rsocketModuleState;
-import java.util.Map;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.*;
+import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.*;
+import static ru.art.rsocket.module.RsocketModule.*;
 
 @Getter
 public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration {
@@ -45,6 +44,8 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
     private int balancerTcpPort;
     private int balancerWebSocketPort;
     private Map<String, RsocketCommunicationTargetConfiguration> communicationTargets;
+    private boolean enableRawDataTracing;
+    private boolean enableValueTracing;
 
     public RsocketAgileConfiguration() {
         refresh();
@@ -52,8 +53,9 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
 
     @Override
     public void refresh() {
-        dataFormat = ifException(() -> RsocketDataFormat.valueOf(configString(RSOCKET_SECTION_ID, DEFAULT_DATA_FORMAT).toUpperCase()),
-                super.getDefaultDataFormat());
+        enableRawDataTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
+        enableValueTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
+        dataFormat = ifException(() -> RsocketDataFormat.valueOf(configString(RSOCKET_SECTION_ID, DATA_FORMAT).toUpperCase()), super.getDataFormat());
         String newAcceptorHost = configString(RSOCKET_ACCEPTOR_SECTION_ID, HOST, super.getAcceptorHost());
         boolean restart = !acceptorHost.equals(newAcceptorHost);
         acceptorHost = newAcceptorHost;
@@ -70,7 +72,7 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
                 .host(ifEmpty(config.getString(HOST), balancerHost))
                 .tcpPort(getOrElse(config.getInt(TCP_PORT), balancerTcpPort))
                 .webSocketPort(getOrElse(config.getInt(WEB_SOCKET_PORT), balancerWebSocketPort))
-                .dataFormat(super.getDefaultDataFormat())
+                .dataFormat(super.getDataFormat())
                 .build(), super.getCommunicationTargets());
         if (restart && context().hasModule(RSOCKET_MODULE_ID)) {
             rsocketModuleState().getServer().restart();

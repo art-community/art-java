@@ -18,15 +18,14 @@
 
 package ru.art.module.executor.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.core.module.ModuleState;
-import ru.art.module.executor.specification.ModuleExecutorServiceSpecification;
-import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations;
-import static ru.art.http.server.HttpServer.httpServerInSeparatedThread;
-import static ru.art.module.executor.constants.ModuleExecutorConstants.MODULE_EXECUTOR_MODULE_ID;
-import static ru.art.service.ServiceModule.serviceModule;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.module.executor.specification.*;
+
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.http.server.HttpServer.*;
+import static ru.art.module.executor.constants.ModuleExecutorConstants.*;
+import static ru.art.service.ServiceModule.*;
 
 /**
  * Module class is a main class where all needed modules are loading

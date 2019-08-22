@@ -18,17 +18,17 @@
 
 package ru.art.config;
 
-import com.typesafe.config.ConfigSyntax;
-import lombok.NoArgsConstructor;
-import ru.art.config.constants.ConfigType;
+import com.typesafe.config.*;
+import lombok.*;
+import ru.art.config.constants.*;
 import ru.art.config.exception.ConfigException;
-import static java.text.MessageFormat.format;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.config.GroovyConfigLoader.loadGroovyConfig;
-import static ru.art.config.TypesafeConfigLoader.loadTypeSafeConfig;
-import static ru.art.config.YamlConfigLoader.loadYamlConfig;
-import static ru.art.config.constants.ConfigExceptionMessages.CONFIG_TYPE_IS_NOT_TYPESAFE;
-import static ru.art.config.constants.ConfigExceptionMessages.UNKNOWN_CONFIG_TYPE;
+
+import static java.text.MessageFormat.*;
+import static lombok.AccessLevel.*;
+import static ru.art.config.GroovyConfigLoader.*;
+import static ru.art.config.TypesafeConfigLoader.*;
+import static ru.art.config.YamlConfigLoader.*;
+import static ru.art.config.constants.ConfigExceptionMessages.*;
 
 @NoArgsConstructor(access = PRIVATE)
 class ConfigLoader {

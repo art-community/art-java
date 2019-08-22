@@ -18,32 +18,26 @@
 
 package ru.art.service;
 
-import ru.art.service.exception.ServiceExecutionException;
-import ru.art.service.interceptor.ServiceExecutionInterceptor.RequestInterceptor;
+import ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import ru.art.service.model.*;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static java.util.Optional.ofNullable;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.DateConstants.YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT;
-import static ru.art.core.constants.InterceptionStrategy.PROCESS_HANDLING;
-import static ru.art.core.constants.InterceptionStrategy.STOP_HANDLING;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static java.util.Optional.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.constants.DateConstants.*;
+import static ru.art.core.constants.InterceptionStrategy.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
-import static ru.art.logging.ThreadContextExtensions.putIfNotNull;
-import static ru.art.service.ServiceModule.serviceModule;
-import static ru.art.service.ServiceResponseDataExtractor.extractResponseDataChecked;
-import static ru.art.service.constants.ServiceErrorCodes.INTERNAL_ERROR;
-import static ru.art.service.constants.ServiceExceptionsMessages.SERVICE_WITH_ID_NOT_EXISTS;
-import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
-import static ru.art.service.factory.ServiceResponseFactory.okResponse;
-import static ru.art.service.interceptor.ServiceExecutionInterceptor.ResponseInterceptor;
-import static ru.art.service.model.ServiceInterceptionResult.nextInterceptor;
-import static ru.art.service.model.ServiceInterceptionResult.stopHandling;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import static ru.art.logging.ThreadContextExtensions.*;
+import static ru.art.service.ServiceModule.*;
+import static ru.art.service.ServiceResponseDataExtractor.*;
+import static ru.art.service.constants.ServiceErrorCodes.*;
+import static ru.art.service.constants.ServiceExceptionsMessages.*;
+import static ru.art.service.factory.ServiceRequestFactory.*;
+import static ru.art.service.factory.ServiceResponseFactory.*;
+import static ru.art.service.model.ServiceInterceptionResult.*;
 
 public interface ServiceController {
     static <RequestType, ResponseType> Optional<ResponseType> executeServiceMethod(String serviceId, String methodId, RequestType requestData) {
@@ -76,14 +70,17 @@ public interface ServiceController {
         Specification service = serviceModule()
                 .getServiceRegistry()
                 .getService(request.getServiceMethodCommand().getServiceId());
-        if (isNull(service)) return ServiceResponse.<ResponseType>builder()
-                .serviceException(new ServiceExecutionException(request.getServiceMethodCommand(), INTERNAL_ERROR, format(SERVICE_WITH_ID_NOT_EXISTS, request.getServiceMethodCommand().getServiceId())))
-                .build();
+        if (isNull(service)) {
+            String errorMessage = format(SERVICE_WITH_ID_NOT_EXISTS, request.getServiceMethodCommand().getServiceId());
+            return errorResponse(request.getServiceMethodCommand(), INTERNAL_ERROR, errorMessage);
+        }
         ServiceInterceptionResult serviceInterceptionResult;
         if (nonNull((serviceInterceptionResult = beforeServiceExecution(service, request)).getResponse()))
             return cast(serviceInterceptionResult.getResponse());
         ServiceRequest<?> requestAfterInterception = serviceInterceptionResult.getRequest();
-        ServiceResponse<ResponseType> response = service.getExceptionWrapper().executeServiceWrapped(requestAfterInterception.getServiceMethodCommand(), requestAfterInterception);
+        ServiceResponse<ResponseType> response = service
+                .getExceptionWrapper()
+                .executeServiceWrapped(requestAfterInterception.getServiceMethodCommand(), requestAfterInterception);
         Date endTime = new Date();
         putIfNotNull(EXECUTION_TIME_KEY, endTime.getTime() - startTime.getTime());
         putIfNotNull(REQUEST_END_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT.format(endTime));

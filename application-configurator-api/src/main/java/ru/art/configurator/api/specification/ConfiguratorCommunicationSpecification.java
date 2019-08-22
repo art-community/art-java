@@ -18,27 +18,26 @@
 
 package ru.art.configurator.api.specification;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import ru.art.configurator.api.entity.Configuration;
-import ru.art.configurator.api.entity.ModuleKey;
-import ru.art.grpc.client.communicator.GrpcCommunicator;
-import ru.art.grpc.client.specification.GrpcCommunicationSpecification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import static java.lang.System.getProperty;
-import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.CONFIGURATOR_COMMUNICATION_SERVICE_ID;
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.CONFIGURATOR_SERVICE_ID;
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.GET_PROTOBUF_CONFIG;
-import static ru.art.configurator.api.mapping.ConfigurationMapping.configurationMapper;
-import static ru.art.configurator.api.mapping.ModuleKeyMapping.moduleKeyMapper;
-import static ru.art.core.caster.Caster.cast;
+import lombok.*;
+import ru.art.configurator.api.entity.*;
+import ru.art.grpc.client.communicator.*;
+import ru.art.grpc.client.specification.*;
+import ru.art.service.exception.*;
+
+import static java.lang.System.*;
+import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.*;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.*;
+import static ru.art.configurator.api.mapping.ConfigurationMapping.*;
+import static ru.art.configurator.api.mapping.ModuleKeyMapping.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.ContextConstants.LOCAL_PROFILE;
-import static ru.art.core.constants.SystemProperties.PROFILE_PROPERTY;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.entity.Entity.entityBuilder;
-import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator;
+import static ru.art.core.constants.ContextConstants.*;
+import static ru.art.core.constants.SystemProperties.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.entity.Entity.*;
+import static ru.art.grpc.client.communicator.GrpcCommunicator.*;
 
 @Getter
 @AllArgsConstructor

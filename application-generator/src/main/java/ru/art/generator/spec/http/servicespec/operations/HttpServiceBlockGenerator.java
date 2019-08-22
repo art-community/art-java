@@ -18,45 +18,41 @@
 
 package ru.art.generator.spec.http.servicespec.operations;
 
-import com.squareup.javapoet.CodeBlock;
-import ru.art.generator.exception.NotSupportedTypeForPrimitiveMapperException;
+import com.squareup.javapoet.*;
+import ru.art.generator.exception.*;
 import ru.art.generator.spec.common.annotation.*;
-import ru.art.generator.spec.common.exception.SpecAnnotationDefinitionException;
-import ru.art.generator.spec.common.exception.SpecificationTypeDefinitionException;
+import ru.art.generator.spec.common.exception.*;
 import ru.art.generator.spec.http.common.annotation.*;
-import ru.art.generator.spec.http.common.exception.MimeTypeDefinitionException;
-import ru.art.generator.spec.http.servicespec.annotation.FromMultipart;
-import ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecAnnotations;
-import ru.art.generator.spec.http.servicespec.exception.HttpServiceSpecAnnotationIdentificationException;
+import ru.art.generator.spec.http.common.exception.*;
+import ru.art.generator.spec.http.servicespec.annotation.*;
+import ru.art.generator.spec.http.servicespec.constants.*;
+import ru.art.generator.spec.http.servicespec.exception.*;
 import ru.art.generator.spec.http.servicespec.model.*;
-import static java.text.MessageFormat.format;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
+import java.lang.annotation.*;
+import java.lang.reflect.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.generator.common.constants.Constants.*;
 import static ru.art.generator.common.operations.CommonOperations.*;
 import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.AnnotationParametersToMethods.*;
 import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.*;
-import static ru.art.generator.spec.common.constants.SpecificationType.httpServiceSpec;
-import static ru.art.generator.spec.common.mapping.MimeTypeToContentTypeMethodMapping.getMimeTypeToContentMethod;
-import static ru.art.generator.spec.common.operations.AnnotationsChecker.methodHasAnnotation;
-import static ru.art.generator.spec.common.operations.IdCalculator.getMethodId;
-import static ru.art.generator.spec.http.common.constants.HttpSpecConstants.Errors.NO_HTTP_METHODS_ANNOTATION;
-import static ru.art.generator.spec.http.common.constants.HttpSpecConstants.Errors.UNABLE_TO_GENERATE_BECAUSE_OF_ANNOTATION;
+import static ru.art.generator.spec.common.constants.SpecificationType.*;
+import static ru.art.generator.spec.common.mapping.MimeTypeToContentTypeMethodMapping.*;
+import static ru.art.generator.spec.common.operations.AnnotationsChecker.*;
+import static ru.art.generator.spec.common.operations.IdCalculator.*;
+import static ru.art.generator.spec.http.common.constants.HttpSpecConstants.Errors.*;
 import static ru.art.generator.spec.http.common.constants.HttpSpecConstants.Methods.*;
-import static ru.art.generator.spec.http.common.operations.HttpAnnotationsChecker.amountOfHttpMethodsAnnotations;
+import static ru.art.generator.spec.http.common.operations.HttpAnnotationsChecker.*;
 import static ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecAnnotations.*;
 import static ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecConstants.ExceptionConstants.*;
 import static ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecConstants.Methods.*;
 import static ru.art.generator.spec.http.servicespec.operations.HttpServiceAuxiliaryOperations.*;
-import static ru.art.generator.spec.http.servicespec.operations.HttpServiceSpecificationClassGenerator.methodAnnotations;
-import static ru.art.generator.spec.http.servicespec.operations.HttpServiceSpecificationClassGenerator.methodIds;
+import static ru.art.generator.spec.http.servicespec.operations.HttpServiceSpecificationClassGenerator.*;
 import static ru.art.service.constants.RequestValidationPolicy.NOT_NULL;
 import static ru.art.service.constants.RequestValidationPolicy.VALIDATABLE;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Interface with methods to create httpService constants

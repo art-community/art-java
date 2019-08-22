@@ -18,10 +18,10 @@
 
 package ru.art.config.extensions.http;
 
-import ru.art.config.Config;
-import static ru.art.config.extensions.ConfigExtensions.configInner;
-import static ru.art.config.extensions.http.HttpConfigKeys.HTTP_COMMUNICATION_SECTION_ID;
-import static ru.art.config.extensions.http.HttpConfigKeys.HTTP_SERVER_SECTION_ID;
+import ru.art.config.*;
+
+import static ru.art.config.extensions.ConfigExtensions.*;
+import static ru.art.config.extensions.http.HttpConfigKeys.*;
 
 public interface HttpConfigProvider {
     static Config httpServerConfig() {

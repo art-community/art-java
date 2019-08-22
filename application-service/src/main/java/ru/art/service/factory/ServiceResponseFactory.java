@@ -18,13 +18,20 @@
 
 package ru.art.service.factory;
 
-import ru.art.service.exception.ServiceExecutionException;
-import ru.art.service.model.ServiceMethodCommand;
-import ru.art.service.model.ServiceResponse;
+import ru.art.service.exception.*;
+import ru.art.service.model.*;
 
 public interface ServiceResponseFactory {
     static <T> ServiceResponse<T> okResponse(ServiceMethodCommand command) {
         return ServiceResponse.<T>builder().command(command).build();
+    }
+
+    static <T> ServiceResponse<T> errorResponse(String errorCode, String errorMessage) {
+        return ServiceResponse.<T>builder().serviceException(new ServiceExecutionException(errorCode, errorMessage)).build();
+    }
+
+    static <T> ServiceResponse<T> errorResponse(String errorCode, Throwable e) {
+        return ServiceResponse.<T>builder().serviceException(new ServiceExecutionException(errorCode, e)).build();
     }
 
     static <T> ServiceResponse<T> errorResponse(ServiceMethodCommand command, String errorCode, String errorMessage) {

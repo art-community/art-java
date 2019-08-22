@@ -18,7 +18,7 @@
 
 package ru.art.generator.spec.http.proxyspec.constants;
 
-import ru.art.generator.spec.http.proxyspec.operations.HttpProxySpecificationClassGenerator;
+import ru.art.generator.spec.http.proxyspec.operations.*;
 
 /**
  * Interface containing constants for {@link HttpProxySpecificationClassGenerator}

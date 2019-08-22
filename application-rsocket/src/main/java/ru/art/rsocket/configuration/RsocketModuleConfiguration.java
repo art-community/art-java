@@ -18,20 +18,25 @@
 
 package ru.art.rsocket.configuration;
 
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
-import ru.art.rsocket.exception.RsocketClientException;
-import ru.art.rsocket.model.RsocketCommunicationTargetConfiguration;
-import static java.text.MessageFormat.format;
-import static ru.art.core.constants.NetworkConstants.BROADCAST_IP_ADDRESS;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST;
-import static ru.art.core.extension.ExceptionExtensions.exceptionIfNull;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
+import io.rsocket.plugins.*;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.logging.*;
+import ru.art.rsocket.constants.RsocketModuleConstants.*;
+import ru.art.rsocket.exception.*;
+import ru.art.rsocket.interceptor.*;
+import ru.art.rsocket.model.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.core.network.selector.PortSelector.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.PROTOBUF;
-import java.util.Map;
+import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*;
 
 public interface RsocketModuleConfiguration extends ModuleConfiguration {
     String getAcceptorHost();
@@ -48,9 +53,17 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
 
     boolean isResumableAcceptor();
 
-    RsocketDataFormat getDefaultDataFormat();
+    RsocketDataFormat getDataFormat();
 
     Map<String, RsocketCommunicationTargetConfiguration> getCommunicationTargets();
+
+    boolean isEnableRawDataTracing();
+
+    boolean isEnableValueTracing();
+
+    List<RSocketInterceptor> getResponderInterceptors();
+
+    List<RSocketInterceptor> getRequesterInterceptors();
 
     default RsocketCommunicationTargetConfiguration getCommunicationTargetConfiguration(String serviceId) {
         return exceptionIfNull(getCommunicationTargets().get(serviceId),
@@ -61,9 +74,13 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
 
     RsocketModuleDefaultConfiguration DEFAULT_CONFIGURATION = new RsocketModuleDefaultConfiguration();
 
-	@Getter
-	class RsocketModuleDefaultConfiguration implements RsocketModuleConfiguration {
-        private final RsocketDataFormat defaultDataFormat = PROTOBUF;
+    List<ValueInterceptor<Entity, Entity>> getRequestValueInterceptors();
+
+    List<ValueInterceptor<Entity, Entity>> getResponseValueInterceptors();
+
+    @Getter
+    class RsocketModuleDefaultConfiguration implements RsocketModuleConfiguration {
+        private final RsocketDataFormat dataFormat = PROTOBUF;
         private final String acceptorHost = BROADCAST_IP_ADDRESS;
         private final int acceptorTcpPort = findAvailableTcpPort();
         private final int acceptorWebSocketPort = findAvailableTcpPort();
@@ -71,6 +88,25 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
         private final int balancerTcpPort = DEFAULT_RSOCKET_TCP_PORT;
         private final int balancerWebSocketPort = DEFAULT_RSOCKET_WEB_SOCKET_PORT;
         private final boolean resumableAcceptor = true;
+        private final boolean enableRawDataTracing = false;
+        private final boolean enableValueTracing = false;
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+        private final List<RSocketInterceptor> requesterInterceptors = initializeInterceptors();
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+        private final List<RSocketInterceptor> responderInterceptors = initializeInterceptors();
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+        private final List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = initializeValueInterceptors();
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+        private final List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = initializeValueInterceptors();
+
+        private List<RSocketInterceptor> initializeInterceptors() {
+            return isEnableRawDataTracing() ? linkedListOf(new RsocketLoggingInterceptor()) : linkedListOf();
+        }
+
+        private List<ValueInterceptor<Entity, Entity>> initializeValueInterceptors() {
+            return isEnableValueTracing() ? linkedListOf(new LoggingValueInterceptor<>()) : linkedListOf();
+        }
+
         private final Map<String, RsocketCommunicationTargetConfiguration> communicationTargets = mapOf();
     }
 }

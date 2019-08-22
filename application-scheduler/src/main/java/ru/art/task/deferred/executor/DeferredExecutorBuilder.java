@@ -18,9 +18,9 @@
 
 package ru.art.task.deferred.executor;
 
-import static java.lang.Runtime.getRuntime;
-import static java.lang.Thread.UncaughtExceptionHandler;
-import static java.util.Objects.isNull;
+import static java.lang.Runtime.*;
+import static java.lang.Thread.*;
+import static java.util.Objects.*;
 
 /**
  * Строитель конфигурации для {@link DeferredExecutorImpl} и {@link DeferredEventObserver}

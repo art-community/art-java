@@ -18,8 +18,7 @@
 
 package ru.art.generator.spec.http.common.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Model for annotations which need to be checked for methods

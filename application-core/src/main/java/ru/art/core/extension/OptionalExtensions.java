@@ -18,8 +18,9 @@
 
 package ru.art.core.extension;
 
-import static java.util.Objects.isNull;
-import java.util.Optional;
+import java.util.*;
+
+import static java.util.Objects.*;
 
 public interface OptionalExtensions {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")

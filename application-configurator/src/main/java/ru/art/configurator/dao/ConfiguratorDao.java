@@ -19,19 +19,16 @@
 package ru.art.configurator.dao;
 
 
-import ru.art.configurator.api.entity.Configuration;
-import ru.art.configurator.api.entity.ModuleKey;
-import ru.art.entity.Entity;
-import ru.art.entity.Value;
-import ru.art.rocks.db.dao.RocksDbPrimitiveDao;
-import static java.util.stream.Collectors.toSet;
+import ru.art.configurator.api.entity.*;
+import ru.art.entity.*;
+import ru.art.rocks.db.dao.*;
+import java.util.*;
+
+import static java.util.stream.Collectors.*;
 import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
-import static ru.art.rocks.db.dao.RocksDbCollectionDao.getStringList;
-import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.delete;
-import static ru.art.rocks.db.dao.RocksDbValueDao.getAsProtobuf;
-import static ru.art.rocks.db.dao.RocksDbValueDao.putAsProtobuf;
-import java.util.Optional;
-import java.util.Set;
+import static ru.art.rocks.db.dao.RocksDbCollectionDao.*;
+import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
+import static ru.art.rocks.db.dao.RocksDbValueDao.*;
 
 public interface ConfiguratorDao {
     static void saveConfig(Configuration inputConfiguration) {

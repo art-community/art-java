@@ -19,8 +19,8 @@
 package ru.art.network.manager.interceptor;
 
 import io.grpc.*;
-import static ru.art.network.manager.client.ApplicationStateClient.decrementSession;
-import static ru.art.network.manager.client.ApplicationStateClient.incrementSession;
+
+import static ru.art.network.manager.client.ApplicationStateClient.*;
 
 public class ProtobufServerSessionInterceptor implements ServerInterceptor {
     @Override

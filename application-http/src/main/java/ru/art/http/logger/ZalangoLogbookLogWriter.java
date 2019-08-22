@@ -18,16 +18,13 @@
 
 package ru.art.http.logger;
 
-import org.apache.logging.log4j.Logger;
-import org.zalando.logbook.Correlation;
+import org.apache.logging.log4j.*;
+import org.zalando.logbook.*;
 import org.zalando.logbook.DefaultHttpLogWriter.Level;
-import org.zalando.logbook.HttpLogWriter;
-import org.zalando.logbook.Precorrelation;
-import org.zalando.logbook.RawHttpRequest;
-import static org.zalando.logbook.DefaultHttpLogWriter.Level.INFO;
-import static ru.art.logging.LoggingModule.loggingModule;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
+import java.util.function.*;
+
+import static org.zalando.logbook.DefaultHttpLogWriter.Level.*;
+import static ru.art.logging.LoggingModule.*;
 
 @SuppressWarnings("SameParameterValue")
 public class ZalangoLogbookLogWriter implements HttpLogWriter {

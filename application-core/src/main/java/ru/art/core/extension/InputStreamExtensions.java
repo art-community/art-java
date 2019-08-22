@@ -18,23 +18,23 @@
 
 package ru.art.core.extension;
 
-import ru.art.core.exception.InternalRuntimeException;
-import static java.lang.System.arraycopy;
-import static java.nio.ByteBuffer.allocateDirect;
-import static java.nio.channels.Channels.newChannel;
-import static java.util.Collections.emptyList;
-import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
-import static ru.art.core.constants.BufferConstants.DEFAULT_BUFFER_SIZE;
-import static ru.art.core.constants.StreamConstants.EOF;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.factory.CollectionsFactory.arrayOf;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.charset.Charset;
-import java.util.List;
+import ru.art.core.exception.*;
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.nio.charset.*;
+import java.util.*;
+
+import static java.lang.System.*;
+import static java.nio.ByteBuffer.*;
+import static java.nio.channels.Channels.*;
+import static java.util.Collections.*;
+import static ru.art.core.constants.ArrayConstants.*;
+import static ru.art.core.constants.BufferConstants.*;
+import static ru.art.core.constants.StreamConstants.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 
 public interface InputStreamExtensions {
     static List<Byte> toByteList(InputStream is) {

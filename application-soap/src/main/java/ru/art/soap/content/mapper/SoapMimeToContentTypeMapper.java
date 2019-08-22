@@ -18,13 +18,10 @@
 
 package ru.art.soap.content.mapper;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-import org.apache.http.entity.ContentType;
-import ru.art.http.constants.HttpMimeTypes;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.core.mime.MimeType;
+import lombok.*;
+import org.apache.http.entity.*;
+import ru.art.core.mime.*;
+import ru.art.http.constants.*;
 
 @Getter
 @ToString

@@ -25,6 +25,7 @@ public interface LoggingModuleConstants {
     String ADDRESS = "address";
     String LOG4J2_YAML_FILE = "log4j2.yml";
     String LOG4J2_CONFIGURATION_FILE_PROPERTY = "log4j.configurationFile";
+    String VALUE_LOG_MESSAGE = "Value: ''{0}''";
 
     enum LoggingMode {
         CONSOLE,
@@ -52,5 +53,6 @@ public interface LoggingModuleConstants {
         String SERVICE_TYPES_KEY = "serviceTypes";
         String SERVICE_EVENT_TYPE_KEY = "serviceEventType";
         String APPLICATION_JAR_KEY = "applicationJar";
+        String REQUEST_VALUE_KEY = "requestValue";
     }
 }

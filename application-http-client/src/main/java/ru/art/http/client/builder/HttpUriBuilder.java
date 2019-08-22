@@ -18,12 +18,14 @@
 
 package ru.art.http.client.builder;
 
-import static java.lang.String.join;
-import static java.util.stream.Collectors.joining;
-import static ru.art.core.constants.CharConstants.QUESTION;
+import java.util.*;
+
+import static java.lang.String.*;
+import static java.util.stream.Collectors.*;
+import static ru.art.core.constants.CharConstants.*;
+import static ru.art.core.constants.StringConstants.EQUAL;
+import static ru.art.core.constants.StringConstants.SLASH;
 import static ru.art.core.constants.StringConstants.*;
-import java.util.List;
-import java.util.Map;
 
 public interface HttpUriBuilder {
     static String buildUri(String baseUri, List<String> pathParameters) {

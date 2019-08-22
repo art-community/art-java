@@ -18,26 +18,25 @@
 
 package ru.art.core.extension;
 
-import lombok.experimental.UtilityClass;
-import ru.art.core.exception.InternalRuntimeException;
-import static java.lang.System.arraycopy;
-import static java.nio.ByteBuffer.allocateDirect;
-import static java.nio.ByteBuffer.wrap;
-import static java.nio.channels.FileChannel.open;
-import static java.nio.file.Files.createDirectories;
-import static java.nio.file.Paths.get;
+import lombok.experimental.*;
+import ru.art.core.exception.*;
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.nio.file.*;
+
+import static java.lang.System.*;
+import static java.nio.ByteBuffer.*;
+import static java.nio.channels.FileChannel.*;
+import static java.nio.file.Files.*;
+import static java.nio.file.Paths.*;
 import static java.nio.file.StandardOpenOption.*;
-import static java.util.Objects.isNull;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.ArrayConstants.EMPTY_BYTES;
-import static ru.art.core.constants.BufferConstants.DEFAULT_BUFFER_SIZE;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.context.Context.contextConfiguration;
-import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.file.Path;
+import static java.util.Objects.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.ArrayConstants.*;
+import static ru.art.core.constants.BufferConstants.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.context.Context.*;
 
 @UtilityClass
 public class FileExtensions {

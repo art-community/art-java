@@ -18,14 +18,14 @@
 
 package ru.art.http.server.interceptor;
 
-import ru.art.core.constants.InterceptionStrategy;
-import static ru.art.core.constants.InterceptionStrategy.NEXT_INTERCEPTOR;
-import static ru.art.http.constants.HttpHeaders.ORIGIN;
-import static ru.art.http.server.HttpServerModuleConfiguration.HttpWebConfiguration;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.ACCESS_CONTROL_ALLOW_ORIGIN_KEY;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import ru.art.core.constants.*;
+import javax.servlet.http.*;
+
+import static ru.art.core.constants.InterceptionStrategy.*;
+import static ru.art.http.constants.HttpHeaders.*;
+import static ru.art.http.server.HttpServerModuleConfiguration.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.*;
+import static ru.art.http.server.module.HttpServerModule.*;
 
 public class HttpWebInterception implements HttpServerInterception {
     @Override
