@@ -59,12 +59,12 @@ public class RsocketServiceFunction {
         return this;
     }
 
-    public RsocketServiceFunction addRequestValueInterceptor(ValueInterceptor interceptor) {
+    public RsocketServiceFunction addRequestValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
         rsocketMethod.requestValueInterceptors().add(interceptor);
         return this;
     }
 
-    public RsocketServiceFunction addResponseValueInterceptor(ValueInterceptor interceptor) {
+    public RsocketServiceFunction addResponseValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
         rsocketMethod.responseValueInterceptors().add(interceptor);
         return this;
     }
