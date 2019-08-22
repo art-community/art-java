@@ -36,6 +36,7 @@ import java.util.*;
 
 import static io.rsocket.RSocketFactory.*;
 import static java.text.MessageFormat.*;
+import static java.time.Duration.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static reactor.core.publisher.Flux.empty;
@@ -76,7 +77,8 @@ public class RsocketCommunicator {
         dataFormat = configuration.dataFormat();
         ClientRSocketFactory factory = connect();
         if (configuration.resumable()) {
-            factory = factory.resume();
+            factory = factory.resume()
+                    .resumeSessionDuration(ofMillis(configuration.resumeSessionDurationMillis()));
         }
         rsocketModule().getRequesterInterceptors().forEach(factory::addRequesterPlugin);
         configuration.interceptors().forEach(factory::addRequesterPlugin);
@@ -289,4 +291,5 @@ public class RsocketCommunicator {
         }
         throw new RsocketClientException("methodId");
     }
+
 }

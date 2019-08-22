@@ -58,11 +58,11 @@ class DeferredEventObserver {
 
     void shutdown() {
         threadPool.shutdownNow();
-        if (!configuration.awaitAllTasksTerminationOnShutdown()) {
+        if (!configuration.isAwaitAllTasksTerminationOnShutdown()) {
             return;
         }
         try {
-            threadPool.awaitTermination(configuration.getThreadPoolTerminationTimeoutMillis(), MILLISECONDS);
+            threadPool.awaitTermination(configuration.getThreadPoolTerminationTimeout(), MILLISECONDS);
         } catch (Throwable e) {
             configuration.getExceptionHandler().onException(POOL_SHUTDOWN, e);
         }

@@ -29,5 +29,7 @@ public interface CommonConfigKeys {
     String ENABLE_VALUE_TRACING = "enableValueTracing";
     String ENABLE_METRICS = "enableMetrics";
     String THREAD_POOL_SIZE = "threadPoolSize";
-    String TIMEOUT_MILLIS = "connectTimeout";
+    String TIMEOUT = "timeout";
+    String RESUMABLE = "resumable";
+    String RESUME_SESSION_DURATION = "resumeSessionDuration";
 }

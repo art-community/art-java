@@ -30,6 +30,7 @@ import ru.art.rsocket.specification.*;
 import static io.rsocket.RSocketFactory.*;
 import static java.lang.System.*;
 import static java.text.MessageFormat.*;
+import static java.time.Duration.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Mono.*;
 import static ru.art.core.constants.NetworkConstants.*;
@@ -66,8 +67,8 @@ public class RsocketServer {
 
     private Mono<CloseableChannel> createServer() {
         RSocketFactory.ServerRSocketFactory socketFactory = receive();
-        if (rsocketModule().isResumableAcceptor()) {
-            socketFactory = socketFactory.resume();
+        if (rsocketModule().isResumable()) {
+            socketFactory = socketFactory.resume().resumeSessionDuration(ofMillis(rsocketModule().getResumeSessionDuration()));
         }
         rsocketModule().getResponderInterceptors().forEach(socketFactory::addResponderPlugin);
         ServerTransportAcceptor acceptor = socketFactory.acceptor((setup, sendingSocket) -> just(new RsocketAcceptor(sendingSocket, setup)));

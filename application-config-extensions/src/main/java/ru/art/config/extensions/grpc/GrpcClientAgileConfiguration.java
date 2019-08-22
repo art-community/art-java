@@ -53,7 +53,7 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
     public void refresh() {
         enableRawDataTracing = configBoolean(GRPC_COMMUNICATION_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
         enableValueTracing = configBoolean(GRPC_COMMUNICATION_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
-        timeout = configLong(GRPC_COMMUNICATION_SECTION_ID, TIMEOUT_MILLIS, super.getTimeout());
+        timeout = configLong(GRPC_COMMUNICATION_SECTION_ID, TIMEOUT, super.getTimeout());
         overridingExecutor = new ForkJoinPool(configInt(GRPC_COMMUNICATION_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE));
         balancerHost = configString(GRPC_BALANCER_SECTION_ID, HOST, super.getBalancerHost());
         balancerPort = configInt(GRPC_BALANCER_SECTION_ID, PORT, super.getBalancerPort());
@@ -63,7 +63,7 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
                 .port(getOrElse(entry.getValue().getInt(PORT), balancerPort))
                 .path(getOrElse(entry.getValue().getString(PATH), SLASH))
                 .secured(getOrElse(entry.getValue().getBool(SECURED), false))
-                .timeout(getOrElse(entry.getValue().getLong(TIMEOUT_MILLIS), super.getTimeout()))
+                .timeout(getOrElse(entry.getValue().getLong(TIMEOUT), super.getTimeout()))
                 .url(entry.getValue().getString(URL))
                 .build())), super.getCommunicationTargets());
     }

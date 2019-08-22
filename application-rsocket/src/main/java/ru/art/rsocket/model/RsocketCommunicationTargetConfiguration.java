@@ -42,7 +42,9 @@ public class RsocketCommunicationTargetConfiguration {
     @Builder.Default
     private final RsocketDataFormat dataFormat = rsocketModule().getDataFormat();
     @Builder.Default
-    private final boolean resumable = true;
+    private final boolean resumable = rsocketModule().isResumable();
+    @Builder.Default
+    private final long resumeSessionDurationMillis = rsocketModule().getResumeSessionDuration();
     @Singular
     private final List<RSocketInterceptor> interceptors;
 }
