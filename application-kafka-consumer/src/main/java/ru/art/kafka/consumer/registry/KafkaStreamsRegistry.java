@@ -34,6 +34,7 @@ import static org.apache.logging.log4j.ThreadContext.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
 import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.logging.ThreadContextExtensions.*;

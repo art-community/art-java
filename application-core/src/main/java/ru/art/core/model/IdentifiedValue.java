@@ -23,6 +23,6 @@ import lombok.*;
 @Getter
 @Builder
 public class IdentifiedValue<T> {
-    private String id;
-    private T value;
+    private final String id;
+    private final T value;
 }

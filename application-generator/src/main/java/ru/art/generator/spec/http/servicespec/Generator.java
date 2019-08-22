@@ -82,7 +82,7 @@ public class Generator {
      * @param service        - service interface.
      * @param genPackagePath - path to parent package for service package.
      */
-    public static void performGeneration(String genPackagePath, Class service) {
+    public static void performGeneration(String genPackagePath, Class<?> service) {
         if (!classHasAnnotation(service, HttpService.class, httpServiceSpec)) {
             printError(format(MAIN_ANNOTATION_ABSENT, HttpService.class.getSimpleName(), service.getSimpleName()));
             return;

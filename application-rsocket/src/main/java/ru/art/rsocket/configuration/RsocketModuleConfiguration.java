@@ -90,13 +90,13 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
         private final boolean resumableAcceptor = true;
         private final boolean enableRawDataTracing = false;
         private final boolean enableValueTracing = false;
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<RSocketInterceptor> requesterInterceptors = initializeInterceptors();
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<RSocketInterceptor> responderInterceptors = initializeInterceptors();
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = initializeValueInterceptors();
-        @Getter(lazy = true)
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = initializeValueInterceptors();
 
         private List<RSocketInterceptor> initializeInterceptors() {

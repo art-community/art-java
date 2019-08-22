@@ -61,7 +61,7 @@ public interface CommonOperations {
      * @param jarPathToMain - classpath from root to main.
      * @return ClassName of new generated class.
      */
-    static ClassName createMapperForInnerClassIfNeeded(Class genClass, String jarPathToMain) {
+    static ClassName createMapperForInnerClassIfNeeded(Class<?> genClass, String jarPathToMain) {
         if (genClass.isEnum()) return ClassName.get(genClass);
         if (!genClass.isAnnotationPresent(NonGenerated.class)) {
             String classPackage = genClass.getName().substring(0, genClass.getName().indexOf(genClass.getSimpleName()) - 1);
@@ -84,7 +84,7 @@ public interface CommonOperations {
      */
     static ClassName createMapperForInnerClassIfNeeded(Field field, String jarPathToMain) {
         ParameterizedType type = (ParameterizedType) field.getGenericType();
-        Class genClass = (Class) type.getActualTypeArguments()[0];
+        Class<?> genClass = (Class) type.getActualTypeArguments()[0];
         if (genClass.isEnum()) return ClassName.get(genClass);
         if (!genClass.isAnnotationPresent(NonGenerated.class)) {
             String classPackage = genClass.getName().substring(0, genClass.getName().indexOf(genClass.getSimpleName()) - 1);

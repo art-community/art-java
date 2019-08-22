@@ -24,6 +24,6 @@ import ru.art.core.identified.*;
 @Getter
 @AllArgsConstructor
 public class IdentifiedRunnable implements UniqueIdentified {
-    private String id;
-    private Runnable runnable;
+    private final String id;
+    private final Runnable runnable;
 }

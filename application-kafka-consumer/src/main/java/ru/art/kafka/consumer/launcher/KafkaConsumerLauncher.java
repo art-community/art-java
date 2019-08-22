@@ -39,10 +39,14 @@ public class KafkaConsumerLauncher {
         if (isEmpty(moduleConfiguration.getKafkaConsumerConfiguration())) {
             return;
         }
-        awaitKafkaConsumer(moduleConfiguration.getKafkaConsumerConfiguration(), serviceId);
+        submitKafkaConsumer(moduleConfiguration.getKafkaConsumerConfiguration(), serviceId);
     }
 
-    private static void awaitKafkaConsumer(KafkaConsumerConfiguration configuration, String serviceId) {
+    public static void stopKafkaConsumer() {
+        kafkaConsumerModuleState().getConsumerStopFlag().set(true);
+    }
+
+    private static void submitKafkaConsumer(KafkaConsumerConfiguration configuration, String serviceId) {
         configuration.getExecutor().submit(() -> startKafkaConsumer(configuration, serviceId));
     }
 
@@ -53,8 +57,7 @@ public class KafkaConsumerLauncher {
         KafkaConsumer<?, ?> consumer = new KafkaConsumer<>(createProperties(configuration), keyDeserializer, valueDeserializer);
         consumer.subscribe(configuration.getTopics());
         try {
-            //noinspection InfiniteLoopStatement
-            while (true) {
+            while (!kafkaConsumerModuleState().getConsumerStopFlag().get()) {
                 ConsumerRecords<?, ?> poll = consumer.poll(configuration.getPollTimeout());
                 for (ConsumerRecord<?, ?> record : poll) {
                     kafkaConsumerServiceSpecifications.stream()

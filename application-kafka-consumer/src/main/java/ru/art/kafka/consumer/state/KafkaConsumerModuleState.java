@@ -16,18 +16,13 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationService()
-        applicationHttp()
-        applicationHttpServer()
-        applicationHttpClient()
-    }
-}
+package ru.art.kafka.consumer.state;
 
-dependencies {
-    embedded("com.squareup", "javapoet", art.externalDependencyVersionsConfiguration.javaPoetVersion)
-    embedded("org.projectlombok","lombok", art.externalDependencyVersionsConfiguration.lombokVersion)
+import lombok.*;
+import ru.art.core.module.*;
+import java.util.concurrent.atomic.*;
+
+@Getter
+public class KafkaConsumerModuleState implements ModuleState {
+    private AtomicBoolean consumerStopFlag = new AtomicBoolean(false);
 }
