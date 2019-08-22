@@ -18,42 +18,28 @@
 
 package ru.art.configurator.factory;
 
-import lombok.*;
-import org.apache.http.client.utils.*;
+import lombok.experimental.*;
 import ru.art.config.remote.api.specification.*;
 import ru.art.configurator.api.entity.*;
 import ru.art.configurator.provider.ApplicationModulesParametersProvider.*;
+import ru.art.entity.*;
 import java.util.*;
 
-import static java.lang.Integer.*;
-import static java.util.Collections.*;
-import static java.util.stream.Collectors.*;
+import static java.util.Objects.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
-import static ru.art.core.constants.StringConstants.*;
-import static ru.art.entity.Value.*;
-import static ru.art.http.client.communicator.HttpCommunicator.*;
-import static ru.art.http.constants.HttpCommonConstants.*;
-import static ru.art.http.constants.MimeToContentTypeMapper.*;
+import static ru.art.configurator.dao.ConfiguratorDao.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 
-public interface RemoteConfigCommunicationSpecificationsFactory {
-    @SneakyThrows
-    static Set<RemoteConfigCommunicationSpecification> createRemoteConfigProxySpecs(ApplicationModuleParameters parameters, ModuleKey moduleKey) {
-        URIBuilder uriBuilder = new URIBuilder();
-        String url = uriBuilder
-                .setScheme(HTTP_SCHEME)
-                .setHost(parameters.getBalancerHost())
-                .setPort(parameters.getBalancerPort())
-                .setPath(moduleKey.getModuleId().replaceAll(DASH, UNDERSCORE) + DOT + moduleKey.getProfileId().replaceAll(DASH, UNDERSCORE) + GRPC_INSTANCES)
-                .build()
-                .toString();
-        return httpCommunicator(url)
-                .responseMapper(hosts -> asCollection(hosts).getStringSet())
-                .consumes(applicationJsonUtf8())
-                .get()
-                .<Set<String>>execute()
-                .orElse(emptySet())
-                .stream()
-                .map(host -> new RemoteConfigCommunicationSpecification(host.split(COLON)[0], valueOf(host.split(COLON)[1]), parameters.getPath()))
-                .collect(toSet());
+@UtilityClass
+public class RemoteConfigCommunicationSpecificationsFactory {
+    public static Optional<RemoteConfigCommunicationSpecification> createRemoteConfigCommunicationSpecification(ApplicationModuleParameters parameters, ModuleKey moduleKey) {
+        return getConfig(moduleKey.formatKey())
+                .map(Value::asEntity)
+                .filter(config -> isNotEmpty(config.findString(GRPC_SERVER_HOST)))
+                .filter(config -> nonNull(config.findString(GRPC_SERVER_PORT)))
+                .filter(config -> isNotEmpty(config.findString(GRPC_SERVER_PATH)))
+                .map(config -> new RemoteConfigCommunicationSpecification(config.findString(GRPC_SERVER_HOST),
+                        config.findInt(GRPC_SERVER_PORT),
+                        config.findString(GRPC_SERVER_PATH)));
     }
 }
