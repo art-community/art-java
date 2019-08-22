@@ -34,7 +34,7 @@ import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.http.server.service.HttpWebResourceService.*;
+import static ru.art.http.server.service.HttpResourceService.*;
 import static ru.art.service.ServiceController.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.ResponseFaultConstants.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.*;

@@ -16,20 +16,19 @@
 
 package ru.art.kafka.broker.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.kafka.broker.configuration.KafkaBrokerModuleConfiguration;
-import ru.art.kafka.broker.embedded.EmbeddedKafkaBroker;
-import ru.art.kafka.broker.embedded.EmbeddedZookeeper;
-import ru.art.kafka.broker.state.KafkaBrokerModuleState;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.core.extension.NullCheckingExtensions.doIfNotNull;
-import static ru.art.core.wrapper.ExceptionWrapper.ignoreException;
-import static ru.art.kafka.broker.configuration.KafkaBrokerModuleConfiguration.DEFAULT_CONFIGURATION;
-import static ru.art.kafka.broker.configuration.KafkaBrokerModuleConfiguration.KafkaBrokerModuleDefaultConfiguration;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.KAFKA_BROKER_MODULE_ID;
+import lombok.*;
+import ru.art.core.context.*;
+import ru.art.core.module.*;
+import ru.art.kafka.broker.configuration.*;
+import ru.art.kafka.broker.embedded.*;
+import ru.art.kafka.broker.state.*;
+
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.core.wrapper.ExceptionWrapper.*;
+import static ru.art.kafka.broker.configuration.KafkaBrokerModuleConfiguration.*;
+import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
 
 @Getter
 public class KafkaBrokerModule implements Module<KafkaBrokerModuleConfiguration, KafkaBrokerModuleState> {
@@ -42,7 +41,7 @@ public class KafkaBrokerModule implements Module<KafkaBrokerModuleConfiguration,
     private final KafkaBrokerModuleState state = new KafkaBrokerModuleState();
 
     public static KafkaBrokerModuleConfiguration kafkaBrokerModule() {
-        if (insideDefaultContext()) {
+        if (Context.insideDefaultContext()) {
             return DEFAULT_CONFIGURATION;
         }
         return getKafkaBrokerModule();

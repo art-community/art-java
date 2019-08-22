@@ -19,6 +19,7 @@
 package ru.art.http.constants;
 
 public interface HttpCommonConstants {
+    String API_PATH = "/api";
     String HTTP_SCHEME = "http";
     String HTTPS_SCHEME = "https";
     int DEFAULT_HTTP_PORT = 80;

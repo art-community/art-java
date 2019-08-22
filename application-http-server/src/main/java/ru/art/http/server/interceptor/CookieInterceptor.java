@@ -36,8 +36,8 @@ import static ru.art.http.constants.HttpMimeTypes.*;
 
 @Builder
 public class CookieInterceptor implements HttpServerInterception {
-    @Singular("url")
-    private final Set<String> urls;
+    @Singular("path")
+    private final Set<String> paths;
     @Singular("cookie")
     private final Map<String, Supplier<String>> cookies;
     private final int errorStatus;
@@ -45,7 +45,8 @@ public class CookieInterceptor implements HttpServerInterception {
 
     @Override
     public InterceptionStrategy intercept(HttpServletRequest request, HttpServletResponse response) {
-        if (urls.stream().noneMatch(url -> request.getRequestURI().contains(url)) || request.getMethod().equals(OPTIONS.name()) || hasTokenCookie(request)) {
+        if (paths.stream().noneMatch(url -> request.getRequestURI().contains(url)) ||
+                request.getMethod().equals(OPTIONS.name()) || hasTokenCookie(request)) {
             return NEXT_INTERCEPTOR;
         }
         response.setCharacterEncoding(contextConfiguration().getCharset().name());

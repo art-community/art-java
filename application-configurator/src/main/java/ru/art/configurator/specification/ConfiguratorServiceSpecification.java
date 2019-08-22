@@ -44,7 +44,6 @@ import static ru.art.grpc.server.model.GrpcService.*;
 import static ru.art.http.constants.MimeToContentTypeMapper.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 import static ru.art.http.server.model.HttpService.*;
-import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.service.constants.RequestValidationPolicy.*;
 
 @Getter
@@ -115,7 +114,7 @@ public class ConfiguratorServiceSpecification implements HttpServiceSpecificatio
             .produces(applicationJsonUtf8())
             .listen(UPLOAD_MODULE_PATH)
 
-            .serve(httpServerModule().getPath());
+            .serve(CONFIGURATOR_PATH);
 
     private final GrpcService grpcService = grpcService()
             .method(GET_PROTOBUF_CONFIG, grpcMethod()

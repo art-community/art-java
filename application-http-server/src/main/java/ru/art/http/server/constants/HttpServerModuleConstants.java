@@ -45,13 +45,11 @@ public interface HttpServerModuleConstants {
         CHECKED
     }
 
-    interface HttpWebUiServiceConstants {
-        String HTTP_WEB_UI_SERVICE = "HTTP_WEB_UI_SERVICE";
+    interface HttpResourceServiceConstants {
+        String HTTP_RESOURCE_SERVICE = "HTTP_RESOURCE_SERVICE";
         int DEFAULT_BUFFER_SIZE = 4096;
-        String DEFAULT_WEB_URL = "http://localhost/index.html";
         String INDEX_HTML = "index.html";
-        String URL_TEMPLATE_VARIABLE = "url";
-        String WEB_RESOURCE = "<web-resource>";
+        String HTTP_RESOURCE = "<http-resource>";
         String ACCESS_CONTROL_ALLOW_ORIGIN_KEY = "Access-Control-Allow-Origin";
         String ACCESS_CONTROL_ALLOW_METHODS_KEY = "Access-Control-Allow-Methods";
         String ACCESS_CONTROL_ALLOW_HEADERS_KEY = "Access-Control-Allow-Headers";
@@ -74,16 +72,16 @@ public interface HttpServerModuleConstants {
         }
 
         interface Methods {
-            String RENDER = "render";
-            String IMAGE = "image";
-        }
-
-        interface HttpPath {
-            String IMAGE_PATH = "/image";
+            String GET_RESOURCE = "getResource";
         }
 
         interface HttpParameters {
             String RESOURCE = "resource";
+        }
+
+        enum HttpResourceType {
+            STRING,
+            BINARY
         }
     }
 

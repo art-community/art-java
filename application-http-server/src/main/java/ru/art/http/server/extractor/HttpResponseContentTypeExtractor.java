@@ -22,9 +22,9 @@ package ru.art.http.server.extractor;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.ResourceExtensions.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.ResourceExtensions.*;
 
-public interface HttpWebResponseContentTypeExtractor {
+public interface HttpResponseContentTypeExtractor {
     static String extractTypeByFile(String fileUrl) {
         if (isEmpty(fileUrl)) return ALL.toString();
         if (!fileUrl.contains(DOT)) return TEXT_HTML.toString();

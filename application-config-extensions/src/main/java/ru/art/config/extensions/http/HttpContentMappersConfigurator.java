@@ -34,7 +34,8 @@ public interface HttpContentMappersConfigurator {
         HttpTextPlainMapper textPlainMapper = new HttpTextPlainMapper();
         HttpJsonMapper jsonMapper = new HttpJsonMapper();
         HttpXmlMapper xmlMapper = new HttpXmlMapper();
-        HttpContentMapper bytesContentMapper = new HttpContentMapper(new HttpBytesMapper(), textPlainMapper);
+        HttpBytesMapper bytesMapper = new HttpBytesMapper();
+        HttpContentMapper bytesContentMapper = new HttpContentMapper(bytesMapper, bytesMapper);
         HttpContentMapper textContentMapper = new HttpContentMapper(textPlainMapper, textPlainMapper);
         HttpContentMapper jsonContentMapper = new HttpContentMapper(jsonMapper, jsonMapper);
         HttpContentMapper xmlContentMapper = new HttpContentMapper(xmlMapper, xmlMapper);

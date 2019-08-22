@@ -37,7 +37,6 @@ import static ru.art.grpc.server.model.GrpcService.*;
 import static ru.art.http.constants.MimeToContentTypeMapper.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 import static ru.art.http.server.model.HttpService.*;
-import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.service.constants.RequestValidationPolicy.*;
 import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.Methods.*;
 import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.*;
@@ -99,7 +98,7 @@ public class NetworkServiceSpecification implements HttpServiceSpecification, Gr
             .responseMapper(stringCollectionMapper.getFromModel())
             .listen(GET_PROFILES_PATH)
 
-            .serve(httpServerModule().getPath());
+            .serve(STATE_PATH);
 
     private final GrpcService grpcService = grpcService()
             .method(GET_CLUSTER_PROFILE, grpcMethod()
