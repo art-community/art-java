@@ -328,6 +328,9 @@ public class XmlEntity implements Value {
 
         @SuppressWarnings("Duplicates")
         public XmlEntity create() {
+            if (CheckerForEmptiness.isEmpty(tag)) {
+                throw new XmlEntityCreationException(XML_TAG_IS_EMPTY);
+            }
             XmlEntity entity = new XmlEntity();
             entity.namespace = namespace;
             entity.namespaces = namespaces;
@@ -347,7 +350,7 @@ public class XmlEntity implements Value {
         @SuppressWarnings("Duplicates")
         public XmlEntityBuilder build() {
             if (isNull(tag)) {
-                throw new ValueMappingException(XML_TAG_IS_UNFILLED);
+                throw new XmlEntityCreationException(XML_TAG_IS_EMPTY);
             }
             if (deleteEmptyValueAttribute && CheckerForEmptiness.isEmpty(value.getValue())) {
                 return parent;
