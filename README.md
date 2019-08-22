@@ -4,7 +4,9 @@ ART is a kit of modules for developing multifunctional applications.
 
 ## Badges
 ![Build Status](https://travis-ci.com/art-community/ART.svg)
+![Bintray](https://img.shields.io/bintray/v/art-community/art/io.github.art)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3a5d459c173a4109b2d039c8f7cd3cce)](https://app.codacy.com/app/antonbashir/ART?utm_source=github.com&utm_medium=referral&utm_content=art-community/ART&utm_campaign=Badge_Grade_Dashboard)
+![GitHub repo size](https://img.shields.io/github/repo-size/art-community/art)
 
 ## Build and Binaries
 Releases are available via Maven Central.
