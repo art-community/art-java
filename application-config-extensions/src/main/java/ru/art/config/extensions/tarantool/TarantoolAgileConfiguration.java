@@ -18,30 +18,27 @@
 
 package ru.art.config.extensions.tarantool;
 
-import lombok.Getter;
-import ru.art.config.Config;
-import ru.art.tarantool.configuration.TarantoolConfiguration;
-import ru.art.tarantool.configuration.TarantoolConnectionConfiguration;
-import ru.art.tarantool.configuration.TarantoolLocalConfiguration;
-import ru.art.tarantool.configuration.TarantoolModuleConfiguration.TarantoolModuleDefaultConfiguration;
-import ru.art.tarantool.configuration.lua.TarantoolInitialConfiguration;
-import static java.util.Collections.emptyMap;
+import lombok.*;
+import ru.art.config.*;
+import ru.art.tarantool.configuration.*;
+import ru.art.tarantool.configuration.TarantoolModuleConfiguration.*;
+import ru.art.tarantool.configuration.lua.*;
+import java.util.*;
+import java.util.function.*;
+
+import static java.util.Collections.*;
 import static java.util.function.Function.*;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.tarantool.TarantoolConfigKeys.*;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST;
-import static ru.art.core.constants.StringConstants.DOT;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.LOCAL;
-import static ru.art.tarantool.model.TarantoolEntityFieldsMapping.entityFieldsMapping;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.*;
+import static ru.art.tarantool.model.TarantoolEntityFieldsMapping.*;
 
 @Getter
 public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfiguration {

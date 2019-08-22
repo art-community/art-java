@@ -18,15 +18,14 @@
 
 package ru.art.xml.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleState;
-import ru.art.xml.configuration.XmlModuleConfiguration;
-import ru.art.xml.configuration.XmlModuleConfiguration.XmlModuleDefaultConfiguration;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.xml.constants.XmlModuleConstants.XML_MODULE_ID;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.xml.configuration.*;
+import ru.art.xml.configuration.XmlModuleConfiguration.*;
+
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.xml.constants.XmlModuleConstants.*;
 
 @Getter
 public class XmlModule implements Module<XmlModuleConfiguration, ModuleState> {

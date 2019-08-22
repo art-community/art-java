@@ -18,7 +18,7 @@
 
 package ru.art.entity;
 
-import static ru.art.entity.constants.ValueType.XmlValueType;
+import static ru.art.entity.constants.ValueType.*;
 
 public interface XmlValue<T> {
     T getValue();

@@ -18,14 +18,13 @@
 
 package ru.art.http.constants;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-import org.apache.http.entity.ContentType;
-import ru.art.core.mime.MimeType;
-import static org.apache.http.entity.ContentType.create;
-import static ru.art.core.constants.StringConstants.SLASH;
-import static ru.art.http.constants.HttpMimeTypes.TEXT_XML_WIN_1251;
+import lombok.*;
+import org.apache.http.entity.*;
+import ru.art.core.mime.*;
+
+import static org.apache.http.entity.ContentType.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.http.constants.HttpMimeTypes.*;
 
 @Getter
 @ToString

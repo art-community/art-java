@@ -18,12 +18,19 @@
 
 package ru.art.kafka.producer.configuration;
 
-import ru.art.core.module.ModuleConfiguration;
+import lombok.*;
+import ru.art.core.module.*;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
 
 public interface KafkaProducerModuleConfiguration extends ModuleConfiguration {
+    Map<String, KafkaProducerConfiguration> getProducerConfigurations();
+
     KafkaProducerModuleConfiguration DEFAULT_CONFIGURATION = new KafkaProducerDefaultModuleConfiguration();
 
+    @Getter
     class KafkaProducerDefaultModuleConfiguration implements KafkaProducerModuleConfiguration {
-
+        private final Map<String, KafkaProducerConfiguration> producerConfigurations = mapOf();
     }
 }

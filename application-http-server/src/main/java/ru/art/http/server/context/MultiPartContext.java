@@ -18,11 +18,9 @@
 
 package ru.art.http.server.context;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-import ru.art.core.mime.MimeType;
-import java.util.Map;
+import lombok.*;
+import ru.art.core.mime.*;
+import java.util.*;
 
 @Getter
 @Builder

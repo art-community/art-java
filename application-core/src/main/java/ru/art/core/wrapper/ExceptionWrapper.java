@@ -18,17 +18,16 @@
 
 package ru.art.core.wrapper;
 
-import lombok.SneakyThrows;
-import ru.art.core.callable.ExceptionCallable;
-import ru.art.core.exception.InternalRuntimeException;
-import ru.art.core.factory.ExceptionFactory;
-import ru.art.core.runnable.ExceptionRunnable;
-import static java.util.Objects.isNull;
-import static ru.art.core.constants.ExceptionMessages.EXCEPTION_WRAPPER_ACTION_IS_NULL;
-import static ru.art.core.constants.ExceptionMessages.EXCEPTION_WRAPPER_FACTORY_IS_NULL;
-import java.util.concurrent.Callable;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import lombok.*;
+import ru.art.core.callable.*;
+import ru.art.core.exception.*;
+import ru.art.core.factory.*;
+import ru.art.core.runnable.*;
+import java.util.concurrent.*;
+import java.util.function.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.constants.ExceptionMessages.*;
 
 public interface ExceptionWrapper {
     @SneakyThrows

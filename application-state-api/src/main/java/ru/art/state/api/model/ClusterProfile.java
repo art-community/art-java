@@ -19,10 +19,11 @@
 package ru.art.state.api.model;
 
 import lombok.*;
-import static java.util.Objects.nonNull;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.state.api.model.ModuleNetwork.moduleNetworkOf;
-import java.util.Map;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.state.api.model.ModuleNetwork.*;
 
 @Getter
 @Builder

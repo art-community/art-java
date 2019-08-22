@@ -18,62 +18,48 @@
 
 package ru.art.http.server;
 
-import org.apache.catalina.Context;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.Wrapper;
-import org.apache.catalina.connector.Connector;
-import org.apache.catalina.servlets.DefaultServlet;
-import org.apache.catalina.startup.Tomcat;
-import org.apache.coyote.http2.Http2Protocol;
-import org.apache.logging.log4j.Logger;
-import org.apache.tomcat.util.descriptor.web.FilterDef;
-import org.apache.tomcat.util.descriptor.web.FilterMap;
-import org.zalando.logbook.servlet.LogbookFilter;
-import ru.art.core.constants.InterceptionStrategy;
-import ru.art.http.constants.HttpMethodType;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.http.server.exception.HttpServerException;
-import ru.art.http.server.interceptor.HttpServerInterceptor;
-import ru.art.http.server.interceptor.HttpServerPathInterceptor;
-import ru.art.http.server.model.HttpService;
-import ru.art.http.server.path.HttpPath;
-import ru.art.http.server.specification.HttpServiceSpecification;
-import static java.lang.System.currentTimeMillis;
-import static java.lang.System.getProperty;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static java.util.logging.LogManager.getLogManager;
+import org.apache.catalina.*;
+import org.apache.catalina.connector.*;
+import org.apache.catalina.servlets.*;
+import org.apache.catalina.startup.*;
+import org.apache.coyote.http2.*;
+import org.apache.logging.log4j.*;
+import org.apache.tomcat.util.descriptor.web.*;
+import org.zalando.logbook.servlet.*;
+import ru.art.core.constants.*;
+import ru.art.http.constants.*;
+import ru.art.http.server.exception.*;
+import ru.art.http.server.interceptor.*;
+import ru.art.http.server.model.*;
+import ru.art.http.server.path.*;
+import ru.art.http.server.specification.*;
+import javax.servlet.http.*;
+import java.util.*;
+
+import static java.lang.System.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static java.util.logging.LogManager.*;
 import static java.util.stream.Collectors.*;
-import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.InterceptionStrategy.*;
-import static ru.art.core.constants.NetworkConstants.BROADCAST_IP_ADDRESS;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST;
+import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.extension.EqualsCheckingExtensions.ifNotEquals;
-import static ru.art.core.extension.ThreadExtensions.thread;
-import static ru.art.core.factory.CollectionsFactory.dequeOf;
-import static ru.art.core.factory.CollectionsFactory.setOf;
-import static ru.art.http.constants.HttpCommonConstants.HTTP_SCHEME;
-import static ru.art.http.constants.HttpInterceptorType.AFTER_REQUEST_HANDLING;
-import static ru.art.http.constants.HttpInterceptorType.BEFORE_REQUEST_HANDLING;
-import static ru.art.http.server.HttpMetricsBinder.bindHttpMetrics;
-import static ru.art.http.server.builder.HttpPathBuilder.buildHttpPath;
-import static ru.art.http.server.builder.HttpUrlBuilder.UrlInfo;
-import static ru.art.http.server.builder.HttpUrlBuilder.buildUrl;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.EqualsCheckingExtensions.*;
+import static ru.art.core.extension.ThreadExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.http.constants.HttpCommonConstants.*;
+import static ru.art.http.constants.HttpInterceptorType.*;
+import static ru.art.http.server.HttpMetricsBinder.*;
+import static ru.art.http.server.builder.HttpPathBuilder.*;
+import static ru.art.http.server.builder.HttpUrlBuilder.*;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
 import static ru.art.http.server.constants.HttpServerLoggingMessages.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
-import static ru.art.http.server.model.HttpService.HttpMethod;
-import static ru.art.http.server.model.HttpService.HttpMethodGroup;
+import static ru.art.http.server.model.HttpService.*;
 import static ru.art.http.server.module.HttpServerModule.*;
-import static ru.art.logging.LoggingModule.loggingModule;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Deque;
-import java.util.Map;
-import java.util.Set;
+import static ru.art.logging.LoggingModule.*;
 
 @SuppressWarnings("Duplicates")
 public class HttpServer {
@@ -98,7 +84,7 @@ public class HttpServer {
     public static HttpServer httpServer() {
         try {
             HttpServer httpServer = new HttpServer(new Tomcat());
-            httpServer.start();
+            httpServer.startup();
             httpServerModuleState().setServer(httpServer);
             return httpServer;
         } catch (Throwable e) {
@@ -167,13 +153,13 @@ public class HttpServer {
             if (registeredServletPaths.contains(method.getPath().getContextPath())) {
                 continue;
             }
-            MimeToContentTypeMapper consumesContentType = method.getConsumesContentType();
-            MimeToContentTypeMapper producesContentType = method.getProducesContentType();
-            if (nonNull(consumesContentType) && !httpServerModule().getContentMappers().containsKey(consumesContentType.getMimeType())) {
-                throw new HttpServerException(format(CONSUMES_CONTENT_TYPE_NOT_SUPPORTED, consumesContentType));
+            MimeToContentTypeMapper consumesMimeType = method.getConsumesMimeType();
+            MimeToContentTypeMapper producesMimeType = method.getProducesMimeType();
+            if (nonNull(consumesMimeType) && !httpServerModule().getContentMappers().containsKey(consumesMimeType.getMimeType())) {
+                throw new HttpServerException(format(CONSUMES_CONTENT_TYPE_NOT_SUPPORTED, consumesMimeType));
             }
-            if (nonNull(producesContentType) && !httpServerModule().getContentMappers().containsKey(producesContentType.getMimeType())) {
-                throw new HttpServerException(format(PRODUCES_CONTENT_TYPE_NOT_SUPPORTED, producesContentType));
+            if (nonNull(producesMimeType) && !httpServerModule().getContentMappers().containsKey(producesMimeType.getMimeType())) {
+                throw new HttpServerException(format(PRODUCES_CONTENT_TYPE_NOT_SUPPORTED, producesMimeType));
             }
             HttpPath path = buildHttpPath(extractHttpServicePath(serviceSpec), method.getPath());
             if (cancelablePaths.contains(path.toString())) {
@@ -202,7 +188,9 @@ public class HttpServer {
         try {
             UrlInfo urlInfo = UrlInfo.builder()
                     .port(httpServerModule().getPort())
-                    .serverName(httpServerModule().getHost().equals(BROADCAST_IP_ADDRESS) || httpServerModule().getHost().equals(LOCALHOST) ? contextConfiguration().getIpAddress() : httpServerModule().getHost())
+                    .serverName(BROADCAST_IP_ADDRESS.equals(httpServerModule().getHost())
+                            ? contextConfiguration().getIpAddress()
+                            : httpServerModule().getHost())
                     .scheme(HTTP_SCHEME)
                     .uri(path.toString())
                     .build();
@@ -218,8 +206,8 @@ public class HttpServer {
                 .stream()
                 .collect(toMap(Map.Entry::getKey, methodEntry -> HttpServletCommand.builder()
                         .path(path.getContextPath())
-                        .consumesContentType(methodEntry.getValue().getConsumesContentType())
-                        .producesContentType(methodEntry.getValue().getProducesContentType())
+                        .consumesMimeType(methodEntry.getValue().getConsumesMimeType())
+                        .producesMimeType(methodEntry.getValue().getProducesMimeType())
                         .ignoreRequestAcceptType(methodEntry.getValue().isIgnoreRequestAcceptType())
                         .ignoreRequestContentType(methodEntry.getValue().isIgnoreRequestContentType())
                         .serviceId(serviceId)
@@ -231,7 +219,7 @@ public class HttpServer {
         return serviceSpec.getHttpService().getPath();
     }
 
-    private void start() throws LifecycleException {
+    private void startup() throws LifecycleException {
         getLogManager().reset();
         configureConnector();
         initializeInterceptors();
@@ -280,13 +268,13 @@ public class HttpServer {
             if (interceptor.getInterceptor().getStrategy() == PROCESS_HANDLING) break;
             if (interceptor.getInterceptor().getStrategy() == STOP_HANDLING) {
                 cancelablePaths.add(interceptor.getPath());
-                if (httpServerModule().isEnableTracing()) {
+                if (httpServerModule().isEnableRawDataTracing()) {
                     addLoggingFilter(context);
                 }
                 return;
             }
         }
-        if (httpServerModule().isEnableTracing()) {
+        if (httpServerModule().isEnableRawDataTracing()) {
             addLoggingFilter(context);
         }
         order = 0;
@@ -354,7 +342,8 @@ public class HttpServer {
         def.setFilter((request, response, chain) -> {
             InterceptionStrategy strategy = lastRequestInterceptionResult.get();
             if (isNull(strategy) || strategy == NEXT_INTERCEPTOR) {
-                lastRequestInterceptionResult.set(serverPathInterceptor.getInterceptor().intercept((HttpServletRequest) request, (HttpServletResponse) response));
+                lastRequestInterceptionResult
+                        .set(serverPathInterceptor.getInterceptor().intercept((HttpServletRequest) request, (HttpServletResponse) response));
                 chain.doFilter(request, response);
                 return;
             }
@@ -378,7 +367,8 @@ public class HttpServer {
             InterceptionStrategy strategy = lastResponseInterceptionResult.get();
             if (isNull(strategy) || strategy == NEXT_INTERCEPTOR) {
                 chain.doFilter(request, response);
-                lastResponseInterceptionResult.set(serverInterceptor.getInterceptor().intercept((HttpServletRequest) request, (HttpServletResponse) response));
+                lastResponseInterceptionResult
+                        .set(serverInterceptor.getInterceptor().intercept((HttpServletRequest) request, (HttpServletResponse) response));
                 return;
             }
             if (strategy == PROCESS_HANDLING) {

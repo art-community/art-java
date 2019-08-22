@@ -18,10 +18,10 @@
 
 package ru.art.generator.spec.http.proxyspec.constants;
 
-import ru.art.generator.spec.http.proxyspec.exception.HttpProxySpecAnnotationDefinitionException;
+import ru.art.generator.spec.http.proxyspec.exception.*;
 
-import static java.text.MessageFormat.format;
-import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.UNABLE_TO_DEFINE_ANNOTATION;
+import static java.text.MessageFormat.*;
+import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.*;
 
 /**
  * Annotations for HttpProxyServiceSpecification.

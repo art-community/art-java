@@ -18,16 +18,15 @@
 
 package ru.art.service.interceptor;
 
-import ru.art.service.exception.ValidationException;
-import ru.art.service.model.ServiceInterceptionResult;
-import ru.art.service.model.ServiceRequest;
-import ru.art.service.validation.Validatable;
-import static java.util.Objects.isNull;
-import static ru.art.service.ServiceModule.serviceModule;
-import static ru.art.service.constants.RequestValidationPolicy.NON_VALIDATABLE;
-import static ru.art.service.constants.RequestValidationPolicy.NOT_NULL;
-import static ru.art.service.constants.ServiceExceptionsMessages.REQUEST_DATA_IS_NULL;
-import static ru.art.service.model.ServiceInterceptionResult.nextInterceptor;
+import ru.art.service.exception.*;
+import ru.art.service.model.*;
+import ru.art.service.validation.*;
+
+import static java.util.Objects.*;
+import static ru.art.service.ServiceModule.*;
+import static ru.art.service.constants.RequestValidationPolicy.*;
+import static ru.art.service.constants.ServiceExceptionsMessages.*;
+import static ru.art.service.model.ServiceInterceptionResult.*;
 
 public class ServiceValidationInterception implements ServiceRequestInterception {
     @Override

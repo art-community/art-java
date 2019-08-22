@@ -19,7 +19,7 @@
 package ru.art.service.model;
 
 import lombok.*;
-import ru.art.service.constants.RequestValidationPolicy;
+import ru.art.service.constants.*;
 
 @Getter
 @ToString

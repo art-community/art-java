@@ -18,10 +18,9 @@
 
 package ru.art.xml.configuration;
 
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
+import lombok.*;
+import ru.art.core.module.*;
+import javax.xml.stream.*;
 
 public interface XmlModuleConfiguration extends ModuleConfiguration {
     XMLInputFactory getXmlInputFactory();

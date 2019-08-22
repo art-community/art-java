@@ -18,23 +18,23 @@
 
 package ru.art.http.server.interceptor;
 
-import ru.art.core.constants.InterceptionStrategy;
-import static ru.art.core.constants.InterceptionStrategy.NEXT_INTERCEPTOR;
-import static ru.art.http.constants.HttpHeaders.ORIGIN;
-import static ru.art.http.server.HttpServerModuleConfiguration.HttpWebConfiguration;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.ACCESS_CONTROL_ALLOW_ORIGIN_KEY;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import ru.art.core.constants.*;
+import javax.servlet.http.*;
+
+import static ru.art.core.constants.InterceptionStrategy.*;
+import static ru.art.http.constants.HttpHeaders.*;
+import static ru.art.http.server.HttpServerModuleConfiguration.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
+import static ru.art.http.server.module.HttpServerModule.*;
 
 public class HttpWebInterception implements HttpServerInterception {
     @Override
     public InterceptionStrategy intercept(HttpServletRequest request, HttpServletResponse response) {
-        HttpWebConfiguration webConfiguration = httpServerModule().getWebConfiguration();
-        if (webConfiguration.isAllowOriginParameterFromRequest()) {
+        HttpResourceConfiguration resourceConfiguration = httpServerModule().getResourceConfiguration();
+        if (resourceConfiguration.isAllowOriginParameterFromRequest()) {
             response.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN_KEY, request.getHeader(ORIGIN));
         }
-        webConfiguration
+        resourceConfiguration
                 .getAccessControlParameters()
                 .forEach(response::setHeader);
         return NEXT_INTERCEPTOR;

@@ -16,9 +16,7 @@
  * limitations under the License.
  */
 
-import {
-    GET_CLUSTER_PROFILE_URL, GET_PROFILES_URL,
-} from "../constants/StateApi";
+import {GET_CLUSTER_PROFILE_URL, GET_PROFILES_URL,} from "../constants/StateApi";
 import axios from 'axios';
 import {buildRequest} from "../configuration/HttpRequestConfiguration";
 

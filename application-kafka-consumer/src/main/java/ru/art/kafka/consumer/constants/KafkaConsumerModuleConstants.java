@@ -18,14 +18,16 @@
 
 package ru.art.kafka.consumer.constants;
 
-import static java.time.Duration.ofSeconds;
-import java.time.Duration;
+import java.time.*;
+
+import static java.time.Duration.*;
 
 public interface KafkaConsumerModuleConstants {
     String KAFKA_CONSUMER_MODULE_ID = "KAFKA_CONSUMER_MODULE";
     String KAFKA_CONSUMER_SERVICE_TYPE = "KAFKA_CONSUMER";
-    String DEFAULT_KAFKA_SERVICE_ID = "KAFKA_SERVICE";
     String DEFAULT_KAFKA_GROUP_ID = "KAFKA_GROUP";
-    String DEFAULT_KAFKA_BOOTSTRAP_SERVERS = "localhost:9092";
     Duration DEFAULT_DURATION = ofSeconds(10L);
+    String KAFKA_TRACE_MESSAGE = "Kafka record: key = ''{0}'', value = ''{1}''";
+    String KAFKA_KEY = "KAFKA_RECORD_KEY";
+    String KAFKA_VALUE = "KAFKA_RECORD_VALUE";
 }

@@ -18,10 +18,11 @@
 
 package ru.art.service.validation;
 
-import lombok.AllArgsConstructor;
-import static java.text.MessageFormat.format;
-import static ru.art.service.constants.ServiceExceptionsMessages.NOT_CONTAINS_VALIDATION_ERROR;
-import java.util.List;
+import lombok.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.service.constants.ServiceExceptionsMessages.*;
 
 @AllArgsConstructor
 public class ContainsValidationExpression extends ValidationExpression<Object> {

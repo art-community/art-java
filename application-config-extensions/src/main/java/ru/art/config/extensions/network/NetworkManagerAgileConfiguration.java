@@ -18,12 +18,13 @@
 
 package ru.art.config.extensions.network;
 
-import lombok.Getter;
+import lombok.*;
 import ru.art.network.manager.configuration.NetworkManagerModuleConfiguration.*;
-import ru.art.network.manager.constants.NetworkManagerModuleConstants.BalancerMode;
+import ru.art.network.manager.constants.NetworkManagerModuleConstants.*;
+
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.network.NetworkManagerConfigKeys.*;
-import static ru.art.core.extension.ExceptionExtensions.ifException;
+import static ru.art.core.extension.ExceptionExtensions.*;
 
 @Getter
 public class NetworkManagerAgileConfiguration extends NetworkManagerModuleDefaultConfiguration {

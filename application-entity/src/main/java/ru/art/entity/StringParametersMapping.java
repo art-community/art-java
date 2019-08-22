@@ -18,11 +18,12 @@
 
 package ru.art.entity;
 
-import ru.art.entity.mapper.ValueFromModelMapper.StringParametersMapFromModelMapper;
-import ru.art.entity.mapper.ValueMapper;
-import ru.art.entity.mapper.ValueToModelMapper.StringParametersMapToModelMapper;
-import static ru.art.core.extension.StringExtensions.emptyIfNull;
-import static ru.art.entity.mapper.ValueMapper.mapper;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.entity.mapper.*;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+
+import static ru.art.core.extension.StringExtensions.*;
+import static ru.art.entity.mapper.ValueMapper.*;
 
 public interface StringParametersMapping {
     static ValueMapper<String, StringParametersMap> stringParamToStringMapper(String key) {

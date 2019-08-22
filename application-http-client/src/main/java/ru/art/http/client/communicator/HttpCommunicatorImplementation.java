@@ -18,36 +18,33 @@
 
 package ru.art.http.client.communicator;
 
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.nio.client.HttpAsyncClient;
-import ru.art.core.validator.BuilderValidator;
-import ru.art.entity.Value;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.http.client.communicator.HttpCommunicator.HttpAsynchronousCommunicator;
-import ru.art.http.client.handler.HttpCommunicationCancellationHandler;
-import ru.art.http.client.handler.HttpCommunicationExceptionHandler;
-import ru.art.http.client.handler.HttpCommunicationResponseHandler;
-import ru.art.http.client.interceptor.HttpClientInterceptor;
-import ru.art.http.client.model.HttpCommunicationTargetConfiguration;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import static java.util.Optional.ofNullable;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.constants.StringConstants.COLON;
-import static ru.art.core.constants.StringConstants.SCHEME_DELIMITER;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.core.extension.StringExtensions.emptyIfNull;
-import static ru.art.http.client.communicator.HttpCommunicationExecutor.executeAsynchronousHttpRequest;
-import static ru.art.http.client.communicator.HttpCommunicationExecutor.executeHttpRequest;
-import static ru.art.http.client.module.HttpClientModule.httpClientModule;
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.config.*;
+import org.apache.http.nio.client.*;
+import ru.art.core.validator.*;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.http.client.communicator.HttpCommunicator.*;
+import ru.art.http.client.handler.*;
+import ru.art.http.client.interceptor.*;
+import ru.art.http.client.model.*;
+import ru.art.http.constants.*;
+import java.nio.charset.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+import static java.util.Optional.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.core.extension.StringExtensions.*;
+import static ru.art.http.client.communicator.HttpCommunicationExecutor.*;
+import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpMethodType.*;
-import java.nio.charset.Charset;
-import java.util.Optional;
 
 public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsynchronousCommunicator {
     private final BuilderValidator validator = new BuilderValidator(HttpCommunicator.class.getName());
@@ -119,7 +116,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public HttpCommunicator produces(MimeToContentTypeMapper requestContentTypeMapper) {
-        configuration.setProducesContentType(validator.notNullField(requestContentTypeMapper, "requestContentTypeMapper"));
+        configuration.setProducesMimeType(validator.notNullField(requestContentTypeMapper, "requestContentTypeMapper"));
         return this;
     }
 
@@ -131,13 +128,13 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public HttpCommunicator client(HttpClient client) {
-        configuration.setSyncClient(validator.notNullField(getOrElse(client, httpClientModule().getClient()), "syncClient"));
+        configuration.setSynchronousClient(validator.notNullField(getOrElse(client, httpClientModule().getClient()), "synchronousClient"));
         return this;
     }
 
     @Override
     public HttpCommunicator consumes(MimeToContentTypeMapper responseContentTypeMapper) {
-        configuration.setConsumesContentType(validator.notNullField(responseContentTypeMapper, "responseContentTypeMapper"));
+        configuration.setConsumesMimeType(validator.notNullField(responseContentTypeMapper, "responseContentTypeMapper"));
         return this;
     }
 
@@ -223,13 +220,13 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     }
 
     @Override
-    public HttpCommunicator addRequestValueInterceptor(ValueInterceptor interceptor) {
+    public HttpCommunicator addRequestValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         configuration.getRequestValueInterceptors().add(validator.notNullField(interceptor, "requestValueInterceptor"));
         return this;
     }
 
     @Override
-    public HttpCommunicator addResponseValueInterceptor(ValueInterceptor interceptor) {
+    public HttpCommunicator addResponseValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         configuration.getResponseValueInterceptors().add(validator.notNullField(interceptor, "responseValueInterceptor"));
         return this;
     }
@@ -250,13 +247,19 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public HttpAsynchronousCommunicator client(HttpAsyncClient client) {
-        configuration.setAsyncClient(validator.notNullField(client, "asyncClient"));
+        configuration.setAsynchronousClient(validator.notNullField(client, "asynchronousClient"));
+        return this;
+    }
+
+    @Override
+    public HttpAsynchronousCommunicator asynchronousFuturesExecutor(Executor executor) {
+        configuration.setAsynchronousFuturesExecutor(validator.notNullField(executor, "asynchronousFuturesExecutor"));
         return this;
     }
 
     @Override
     public <RequestType, ResponseType> HttpAsynchronousCommunicator completionHandler(HttpCommunicationResponseHandler<RequestType, ResponseType> handler) {
-        configuration.setResponseHandler(validator.notNullField(handler, "responseHandler"));
+        configuration.setCompletionHandler(validator.notNullField(handler, "responseHandler"));
         return this;
     }
 
@@ -273,10 +276,10 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     }
 
     @Override
-    public <RequestType> void executeAsynchronous(RequestType request) {
+    public <RequestType, ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronous(RequestType request) {
         configuration.setRequest(validator.notNullField(request, "request"));
         validator.validate();
-        executeAsynchronousHttpRequest(configuration);
+        return executeAsynchronousHttpRequest(configuration);
     }
 
     @Override
@@ -285,8 +288,8 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     }
 
     @Override
-    public void executeAsynchronous() {
+    public <ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronous() {
         validator.validate();
-        executeAsynchronousHttpRequest(configuration);
+        return executeAsynchronousHttpRequest(configuration);
     }
 }

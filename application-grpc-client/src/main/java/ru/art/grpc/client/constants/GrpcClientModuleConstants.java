@@ -21,8 +21,14 @@ package ru.art.grpc.client.constants;
 public interface GrpcClientModuleConstants {
     String GRPC_COMMUNICATION_SERVICE_TYPE = "GRPC_COMMUNICATION";
     String GRPC_CLIENT_MODULE_ID = "GRPC_CLIENT_MODULE";
-    String RESPONSE_OK = "OK";
     String TRACE_ID_HEADER = "TRACE_ID";
     long DEFAULT_TIMEOUT = 10000L;
     int DEFAULT_GRPC_PORT = 8000;
+    String GRPC_ON_CLOSE = "GRPC onClose() status: ''{0}'', metadata: ''{1}''";
+    String GRPC_ON_READY = "GRPC onReady()";
+    String GRPC_ON_REQUEST_MESSAGE = "GRPC onMessage() request message:\n''{0}''";
+    String GRPC_ON_RESPONSE_MESSAGE = "GRPC onMessage() response message:\n''{0}''";
+    String GRPC_ON_HALF_CLOSE = "GRPC onHalfClose()";
+    String GRPC_ON_CANCEL = "GRPC onCancel() message: ''{0}'', cause: ''{1}''";
+    String GRPC_ON_RESPONSE_HEADERS = "GRPC onHeaders() response headers: ''{0}''";
 }

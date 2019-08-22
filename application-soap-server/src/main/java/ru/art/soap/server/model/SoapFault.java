@@ -18,8 +18,7 @@
 
 package ru.art.soap.server.model;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Builder
 @Getter

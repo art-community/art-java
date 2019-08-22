@@ -18,12 +18,12 @@
 
 package ru.art.configurator.configuration;
 
-import lombok.Getter;
-import ru.art.rocks.db.configuration.RocksDbModuleConfiguration.RocksDbModuleDefaultConfiguration;
-import static ru.art.config.ConfigProvider.config;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.CONFIGURATOR_ROCKS_DB_PATH;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.CONFIGURATOR_SECTION_ID;
-import static ru.art.core.extension.ExceptionExtensions.ifExceptionOrEmpty;
+import lombok.*;
+import ru.art.rocks.db.configuration.RocksDbModuleConfiguration.*;
+
+import static ru.art.config.ConfigProvider.*;
+import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
 
 @Getter
 public class ConfiguratorRocksDbConfiguration extends RocksDbModuleDefaultConfiguration {

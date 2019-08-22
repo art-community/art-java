@@ -18,36 +18,31 @@
 
 package ru.art.rsocket.server;
 
-import io.rsocket.RSocketFactory;
-import io.rsocket.transport.netty.server.CloseableChannel;
-import io.rsocket.transport.netty.server.TcpServerTransport;
-import io.rsocket.transport.netty.server.WebsocketServerTransport;
-import lombok.Getter;
-import org.apache.logging.log4j.Logger;
-import reactor.core.publisher.Mono;
-import ru.art.rsocket.exception.RsocketServerException;
-import ru.art.rsocket.socket.RsocketAcceptor;
-import ru.art.rsocket.specification.RsocketServiceSpecification;
-import static io.rsocket.RSocketFactory.ServerTransportAcceptor;
-import static io.rsocket.RSocketFactory.receive;
-import static java.lang.System.currentTimeMillis;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.nonNull;
-import static reactor.core.publisher.Mono.just;
-import static ru.art.core.constants.NetworkConstants.BROADCAST_IP_ADDRESS;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.core.extension.ThreadExtensions.thread;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.RSOCKET_RESTART_FAILED;
-import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.UNSUPPORTED_TRANSPORT;
+import io.rsocket.*;
+import io.rsocket.transport.netty.server.*;
+import lombok.*;
+import org.apache.logging.log4j.*;
+import reactor.core.publisher.*;
+import ru.art.rsocket.exception.*;
+import ru.art.rsocket.socket.*;
+import ru.art.rsocket.specification.*;
+
+import static io.rsocket.RSocketFactory.*;
+import static java.lang.System.*;
+import static java.text.MessageFormat.*;
+import static java.time.Duration.*;
+import static java.util.Objects.*;
+import static reactor.core.publisher.Mono.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.ThreadExtensions.*;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.TCP;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.WEB_SOCKET;
-import static ru.art.rsocket.module.RsocketModule.rsocketModule;
-import static ru.art.rsocket.module.RsocketModule.rsocketModuleState;
-import static ru.art.service.ServiceModule.serviceModule;
+import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.*;
+import static ru.art.rsocket.module.RsocketModule.*;
+import static ru.art.service.ServiceModule.*;
 
 public class RsocketServer {
     @Getter
@@ -72,16 +67,22 @@ public class RsocketServer {
 
     private Mono<CloseableChannel> createServer() {
         RSocketFactory.ServerRSocketFactory socketFactory = receive();
-        if (rsocketModule().isResumableAcceptor()) {
-            socketFactory = socketFactory.resume();
+        if (rsocketModule().isResumableServer()) {
+            socketFactory = socketFactory.resume().resumeSessionDuration(ofMillis(rsocketModule().getServerResumeSessionDuration()));
         }
-        ServerTransportAcceptor acceptor = socketFactory
-                .acceptor((setup, sendingSocket) -> just(new RsocketAcceptor(sendingSocket, setup)));
+        rsocketModule().getClientInterceptors().forEach(socketFactory::addResponderPlugin);
+        ServerTransportAcceptor acceptor = socketFactory.acceptor((setup, sendingSocket) -> just(new RsocketAcceptor(sendingSocket, setup)));
         switch (transport) {
             case TCP:
-                return acceptor.transport(TcpServerTransport.create(rsocketModule().getAcceptorHost(), rsocketModule().getAcceptorTcpPort())).start().onTerminateDetach();
+                return acceptor.transport(TcpServerTransport.create(rsocketModule().getServerHost(),
+                        rsocketModule().getServerTcpPort()))
+                        .start()
+                        .onTerminateDetach();
             case WEB_SOCKET:
-                return acceptor.transport(WebsocketServerTransport.create(rsocketModule().getAcceptorHost(), rsocketModule().getAcceptorWebSocketPort())).start().onTerminateDetach();
+                return acceptor.transport(WebsocketServerTransport.create(rsocketModule().getServerHost(),
+                        rsocketModule().getServerWebSocketPort()))
+                        .start()
+                        .onTerminateDetach();
         }
         throw new RsocketServerException(format(UNSUPPORTED_TRANSPORT, transport));
     }
@@ -106,15 +107,19 @@ public class RsocketServer {
                 .stream()
                 .filter(entry -> entry.getValue().getServiceTypes().contains(RSOCKET_SERVICE_TYPE))
                 .forEach(entry -> logger.info(format(RSOCKET_LOADED_SERVICE_MESSAGE,
-                        rsocketModule().getAcceptorHost().equals(BROADCAST_IP_ADDRESS) ||
-                                rsocketModule().getAcceptorHost().equals(LOCALHOST) ?
-                                contextConfiguration().getIpAddress() :
-                                rsocketModule().getAcceptorHost(),
-                        transport == TCP ? rsocketModule().getAcceptorTcpPort() : rsocketModule().getAcceptorWebSocketPort(),
+                        rsocketModule().getServerHost().equals(BROADCAST_IP_ADDRESS)
+                                ? contextConfiguration().getIpAddress()
+                                : rsocketModule().getServerHost(),
+                        transport == TCP
+                                ? rsocketModule().getServerTcpPort()
+                                : rsocketModule().getServerWebSocketPort(),
                         entry.getKey(),
                         ((RsocketServiceSpecification) entry.getValue()).getRsocketService().getRsocketMethods().keySet()))))
                 .subscribe(channel -> logger
-                        .info(format(transport == TCP ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE, currentTimeMillis() - timestamp)));
+                        .info(format(transport == TCP
+                                        ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE
+                                        : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE,
+                                currentTimeMillis() - timestamp)));
     }
 
     public void restart() {

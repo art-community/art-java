@@ -18,34 +18,29 @@
 
 package ru.art.http.server;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-import org.zalando.logbook.Logbook;
-import org.zalando.logbook.LogbookCreator;
-import ru.art.http.configuration.HttpModuleConfiguration;
-import ru.art.http.logger.ZalangoLogbookLogWriter;
-import ru.art.core.mime.MimeType;
-import ru.art.http.server.filter.HtmlLogsFilter;
-import ru.art.http.server.handler.HttpExceptionHandler;
-import ru.art.http.server.interceptor.HttpServerInterceptor;
-import ru.art.http.server.interceptor.HttpWebInterception;
-import ru.art.service.exception.ServiceExecutionException;
-import static org.zalando.logbook.RawResponseFilters.replaceBody;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.NetworkConstants.BROADCAST_IP_ADDRESS;
-import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
+import lombok.*;
+import org.zalando.logbook.*;
+import ru.art.core.mime.*;
+import ru.art.http.configuration.*;
+import ru.art.http.logger.*;
+import ru.art.http.server.filter.*;
+import ru.art.http.server.handler.*;
+import ru.art.http.server.interceptor.*;
+import ru.art.service.exception.*;
+import java.util.*;
+
+import static org.zalando.logbook.RawResponseFilters.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.core.constants.ThreadConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
+import static ru.art.core.network.selector.PortSelector.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.ResourceExtensions.*;
-import static ru.art.http.server.interceptor.HttpServerInterceptor.intercept;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.ResourceExtensions.*;
+import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
 
 public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
     static List<HttpServerInterceptor> initializeWebServerInterceptors(List<HttpServerInterceptor> parents) {
@@ -53,12 +48,12 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         return parents;
     }
 
-    static LogbookCreator.Builder logbookWithoutWebLogs(LogbookCreator.Builder builder) {
-        return builder.rawResponseFilter(replaceBody(HtmlLogsFilter::replaceWebResponseBody)).writer(new ZalangoLogbookLogWriter());
+    static LogbookCreator.Builder logbookWithoutResourceLogs(LogbookCreator.Builder builder) {
+        return builder.rawResponseFilter(replaceBody(HttpResourceLogsFilter::replaceResponseBody)).writer(new ZalangoLogbookLogWriter());
     }
 
-    static LogbookCreator.Builder logbookWithoutWebLogs() {
-        return Logbook.builder().rawResponseFilter(replaceBody(HtmlLogsFilter::replaceWebResponseBody)).writer(new ZalangoLogbookLogWriter());
+    static LogbookCreator.Builder logbookWithoutResourceLogs() {
+        return Logbook.builder().rawResponseFilter(replaceBody(HttpResourceLogsFilter::replaceResponseBody)).writer(new ZalangoLogbookLogWriter());
     }
 
     String getHost();
@@ -87,16 +82,26 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
 
     boolean isEnableMetrics();
 
-    HttpWebConfiguration getWebConfiguration();
+    HttpResourceConfiguration getResourceConfiguration();
+
+    boolean isWeb();
 
     @Getter
     @Builder
-    class HttpWebConfiguration {
-        private final String webUrl;
+    class HttpResourceConfiguration {
         @Singular("templateResourceVariable")
-        private final Map<String, Function<String, String>> templateResourceVariables;
+        private final Map<String, String> templateResourceVariables;
+        @Singular("resourceTypeMapping")
+        private final Map<String, HttpResourceType> resourceExtensionTypeMappings = mapOf(HTML, STRING)
+                .add(WSDL, STRING)
+                .add(CSS, STRING)
+                .add(MAP, STRING)
+                .add(JS, STRING)
+                .add(WEBP, BINARY)
+                .add(JPEG, BINARY)
+                .add(PNG, BINARY);
         @Singular("resourcePathMapping")
-        private final Map<String, Function<String, String>> resourcePathMapping;
+        private final Map<String, String> resourcePathMappings;
         @Builder.Default
         private final int resourceBufferSize = DEFAULT_BUFFER_SIZE;
         @Builder.Default
@@ -104,13 +109,13 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         @Builder.Default
         private final Set<String> availableResourceExtensions = setOf(WEBP, JPEG, PNG, CSS, MAP, JS, HTML, WSDL);
         @Singular("logbookResponseBodyReplacer")
-        private final Map<MimeType, String> logbookResponseBodyReplacers = mapOf(TEXT_HTML, WEB_RESOURCE)
-                .add(TEXT_JS, WEB_RESOURCE)
-                .add(TEXT_CSS, WEB_RESOURCE)
-                .add(IMAGE_WEBP, WEB_RESOURCE)
-                .add(IMAGE_PNG, WEB_RESOURCE)
-                .add(IMAGE_JPEG, WEB_RESOURCE)
-                .add(IMAGE_GIF, WEB_RESOURCE);
+        private final Map<MimeType, String> logbookResponseBodyReplacers = mapOf(TEXT_HTML, HTTP_RESOURCE)
+                .add(TEXT_JS, HTTP_RESOURCE)
+                .add(TEXT_CSS, HTTP_RESOURCE)
+                .add(IMAGE_WEBP, HTTP_RESOURCE)
+                .add(IMAGE_PNG, HTTP_RESOURCE)
+                .add(IMAGE_JPEG, HTTP_RESOURCE)
+                .add(IMAGE_GIF, HTTP_RESOURCE);
         @Singular("accessControlParameter")
         private final Map<String, String> accessControlParameters = mapOf(ACCESS_CONTROL_ALLOW_METHODS_KEY, ACCESS_CONTROL_ALLOW_METHODS_VALUE)
                 .add(ACCESS_CONTROL_ALLOW_HEADERS_KEY, ACCESS_CONTROL_ALLOW_HEADERS_VALUE)
@@ -118,12 +123,15 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
                 .add(ACCESS_CONTROL_ALLOW_CREDENTIALS_KEY, ACCESS_CONTROL_ALLOW_CREDENTIALS_VALUE);
         @Builder.Default
         private final boolean allowOriginParameterFromRequest = true;
+        @Builder.Default
+        private final String defaultResource = INDEX_HTML;
     }
 
     HttpServerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new HttpServerModuleDefaultConfiguration();
 
     @Getter
     class HttpServerModuleDefaultConfiguration extends HttpModuleDefaultConfiguration implements HttpServerModuleConfiguration {
+        private final boolean web = true;
         private final boolean enableMetrics = true;
         private final boolean allowCasualMultipartParsing = true;
         private final int maxThreadsCount = DEFAULT_THREAD_POOL_SIZE;
@@ -139,7 +147,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<HttpServerInterceptor> responseInterceptors = linkedListOf();
         private final boolean ignoreAcceptHeader = false;
-        private final HttpWebConfiguration webConfiguration = HttpWebConfiguration.builder().webUrl(DEFAULT_WEB_URL).build();
+        private final HttpResourceConfiguration resourceConfiguration = HttpResourceConfiguration.builder().build();
         private final Map<? extends Class<? extends Throwable>, ? extends HttpExceptionHandler<? extends Throwable>> exceptionHandlers =
                 mapOf(Throwable.class, new ExceptionHttpJsonHandler())
                         .add(cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler()));

@@ -18,10 +18,9 @@
 
 package ru.art.service;
 
-import ru.art.service.constants.ServiceErrorCodes;
-import ru.art.service.factory.ServiceResponseFactory;
-import ru.art.service.model.ServiceMethodCommand;
-import ru.art.service.model.ServiceResponse;
+import ru.art.service.constants.*;
+import ru.art.service.factory.*;
+import ru.art.service.model.*;
 
 public class NpeWrapper extends ServiceExecutionExceptionWrapper {
 

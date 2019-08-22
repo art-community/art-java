@@ -18,34 +18,34 @@
 
 package ru.art.rsocket.selector;
 
-import lombok.NoArgsConstructor;
-import ru.art.core.mime.MimeType;
+import lombok.*;
+import ru.art.core.mime.*;
+
 import static io.rsocket.metadata.WellKnownMimeType.*;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.SLASH;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.rsocket.constants.RsocketModuleConstants.BINARY_MIME_TYPE;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
+import static lombok.AccessLevel.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*;
-import static ru.art.rsocket.module.RsocketModule.rsocketModule;
+import static ru.art.rsocket.module.RsocketModule.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public class RsocketDataFormatMimeTypeConverter {
     public static RsocketDataFormat fromMimeType(String mimeType) {
         if (isEmpty(mimeType)) {
-            return rsocketModule().getDefaultDataFormat();
+            return rsocketModule().getDataFormat();
         }
         MimeType type = MimeType.valueOf(mimeType);
         if (APPLICATION_JSON.getString().equals(type.getType() + SLASH + type.getSubtype())) return JSON;
         if (APPLICATION_PROTOBUF.getString().equals(type.getType() + SLASH + type.getSubtype())) return PROTOBUF;
         if (APPLICATION_XML.getString().equals(type.getType() + SLASH + type.getSubtype())) return XML;
         if (TEXT_XML.getString().equals(type.getType() + SLASH + type.getSubtype())) return XML;
-        return rsocketModule().getDefaultDataFormat();
+        return rsocketModule().getDataFormat();
     }
 
     public static String toMimeType(RsocketDataFormat dataFormat) {
-        switch (getOrElse(dataFormat, rsocketModule().getDefaultDataFormat())) {
+        switch (getOrElse(dataFormat, rsocketModule().getDataFormat())) {
             case PROTOBUF:
                 return APPLICATION_PROTOBUF.getString();
             case JSON:

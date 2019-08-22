@@ -18,10 +18,9 @@
 
 package ru.art.example.api.mapping;
 
-import ru.art.entity.Entity;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.example.api.model.ExampleStateModel;
+import ru.art.entity.*;
+import ru.art.entity.mapper.*;
+import ru.art.example.api.model.*;
 
 public interface ExampleStateModelMapper {
     String serviceRequests = "serviceRequests";

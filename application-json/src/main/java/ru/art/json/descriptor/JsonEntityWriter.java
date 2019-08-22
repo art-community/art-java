@@ -18,29 +18,27 @@
 
 package ru.art.json.descriptor;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.core.*;
+import lombok.*;
+import ru.art.entity.Value;
 import ru.art.entity.*;
-import ru.art.entity.constants.ValueType.CollectionElementsType;
-import ru.art.json.exception.JsonMappingException;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static ru.art.core.caster.Caster.cast;
+import ru.art.entity.constants.ValueType.*;
+import ru.art.json.exception.*;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.extension.FileExtensions.writeFileQuietly;
-import static ru.art.core.extension.StringExtensions.emptyIfNull;
+import static ru.art.core.extension.FileExtensions.*;
+import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.entity.Value.*;
-import static ru.art.entity.constants.ValueType.asCollectionElementsType;
-import static ru.art.json.constants.JsonLoggingMessages.JSON_GENERATOR_CLOSING_ERROR;
-import static ru.art.json.constants.JsonMappingExceptionMessages.JSON_FACTORY_IS_NULL;
-import static ru.art.json.module.JsonModule.jsonModule;
-import static ru.art.logging.LoggingModule.loggingModule;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.file.Path;
-import java.util.Map;
+import static ru.art.entity.constants.ValueType.*;
+import static ru.art.json.constants.JsonLoggingMessages.*;
+import static ru.art.json.constants.JsonMappingExceptionMessages.*;
+import static ru.art.json.module.JsonModule.*;
+import static ru.art.logging.LoggingModule.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JsonEntityWriter {

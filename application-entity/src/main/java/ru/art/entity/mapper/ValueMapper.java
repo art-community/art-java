@@ -18,14 +18,13 @@
 
 package ru.art.entity.mapper;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 import ru.art.entity.Value;
-import ru.art.entity.exception.ValueMappingException;
-import static java.util.Objects.isNull;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.entity.constants.ValueMappingExceptionMessages.FROM_MODULE_MAPPER_IS_NULL;
-import static ru.art.entity.constants.ValueMappingExceptionMessages.TO_MODULE_MAPPER_IS_NULL;
+import ru.art.entity.exception.*;
+
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
+import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
 
 @Getter
 @AllArgsConstructor(access = PRIVATE)

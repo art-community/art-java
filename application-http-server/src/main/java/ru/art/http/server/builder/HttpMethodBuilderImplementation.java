@@ -18,35 +18,32 @@
 
 package ru.art.http.server.builder;
 
-import lombok.RequiredArgsConstructor;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.http.constants.HttpMethodType;
-import ru.art.http.constants.HttpRequestDataSource;
-import ru.art.http.constants.MimeToContentTypeMapper;
+import lombok.*;
+import ru.art.entity.Value;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.http.constants.*;
 import ru.art.http.server.builder.HttpServiceBuilder.*;
-import ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode;
-import ru.art.http.server.exception.HttpServerException;
-import ru.art.http.server.interceptor.HttpServerInterceptor;
-import ru.art.http.server.model.HttpService;
-import ru.art.http.server.path.HttpPath;
-import ru.art.service.constants.RequestValidationPolicy;
-import static java.util.Collections.emptySet;
-import static java.util.Objects.isNull;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.SLASH;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
-import static ru.art.core.factory.CollectionsFactory.setOf;
+import ru.art.http.server.constants.HttpServerModuleConstants.*;
+import ru.art.http.server.exception.*;
+import ru.art.http.server.interceptor.*;
+import ru.art.http.server.model.*;
+import ru.art.http.server.path.*;
+import ru.art.service.constants.*;
+import java.util.*;
+
+import static java.util.Collections.*;
+import static java.util.Objects.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.constants.HttpExceptionsMessages.*;
 import static ru.art.http.constants.HttpRequestDataSource.*;
-import static ru.art.http.server.constants.HttpServerExceptionMessages.HTTP_METHOD_LISTENING_PATH_IS_EMPTY;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode.CHECKED;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode.UNCHECKED;
-import static ru.art.service.constants.RequestValidationPolicy.NON_VALIDATABLE;
-import java.util.List;
-import java.util.Set;
+import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode.*;
+import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.service.constants.RequestValidationPolicy.*;
 
 @RequiredArgsConstructor
 public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
@@ -65,15 +62,17 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
     private ValueFromModelMapper exceptionMapper;
     private Set<String> pathParams;
     private RequestValidationPolicy requestValidationPolicy;
-    private MimeToContentTypeMapper consumesContentType;
+    private MimeToContentTypeMapper consumesMimeType;
     private MimeToContentTypeMapper producesMimeType;
     private boolean ignoreRequestAcceptType;
     private boolean ignoreRequestContentType;
     private boolean overrideResponseContentType;
     private HttpResponseHandlingMode responseHandlingMode = CHECKED;
-    private final List<ValueInterceptor> requestValueInterceptors = linkedListOf();
-    private final List<ValueInterceptor> responseValueInterceptors = linkedListOf();
-    private final List<ValueInterceptor> exceptionValueInterceptors = linkedListOf();
+    @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+    private final List<ValueInterceptor<Value, Value>> requestValueInterceptors = httpServerModule().getRequestValueInterceptors();
+    @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+    private final List<ValueInterceptor<Value, Value>> responseValueInterceptors = httpServerModule().getResponseValueInterceptors();
+    private final List<ValueInterceptor<Value, Value>> exceptionValueInterceptors = linkedListOf();
 
     @Override
     public HttpServiceBuilder listen(String path) {
@@ -92,14 +91,14 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
                 .requestInterceptors(requestInterceptors)
                 .responseInterceptors(responseInterceptors)
                 .requestValidationPolicy(getOrElse(requestValidationPolicy, NON_VALIDATABLE))
-                .consumesContentType(consumesContentType)
-                .producesContentType(producesMimeType)
+                .consumesMimeType(getOrElse(consumesMimeType, httpServerModule().getConsumesMimeTypeMapper()))
+                .producesMimeType(getOrElse(producesMimeType, httpServerModule().getProducesMimeTypeMapper()))
                 .ignoreRequestAcceptType(ignoreRequestAcceptType)
                 .ignoreRequestContentType(ignoreRequestContentType)
                 .overrideResponseContentType(overrideResponseContentType)
                 .responseHandlingMode(responseHandlingMode)
-                .requestValueInterceptors(requestValueInterceptors)
-                .responseValueInterceptors(responseValueInterceptors)
+                .requestValueInterceptors(getRequestValueInterceptors())
+                .responseValueInterceptors(getResponseValueInterceptors())
                 .exceptionValueInterceptors(exceptionValueInterceptors)
                 .build());
     }
@@ -152,7 +151,7 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
     @Override
     public HttpMethodWithBodyBuilder consumes(MimeToContentTypeMapper mimeType) {
         if (isNull(mimeType)) throw new HttpServerException(REQUEST_CONTENT_TYPE_IS_NULL);
-        this.consumesContentType = mimeType;
+        this.consumesMimeType = mimeType;
         return this;
     }
 
@@ -221,21 +220,21 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
     }
 
     @Override
-    public HttpMethodBuilder addRequestValueInterceptor(ValueInterceptor interceptor) {
+    public HttpMethodBuilder addRequestValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         if (isNull(interceptor)) throw new HttpServerException(REQUEST_VALUE_INTERCEPTOR);
-        requestValueInterceptors.add(interceptor);
+        getRequestValueInterceptors().add(interceptor);
         return this;
     }
 
     @Override
-    public HttpMethodBuilder addResponseValueInterceptor(ValueInterceptor interceptor) {
+    public HttpMethodBuilder addResponseValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         if (isNull(interceptor)) throw new HttpServerException(RESPONSE_VALUE_INTERCEPTOR);
-        responseValueInterceptors.add(interceptor);
+        getResponseValueInterceptors().add(interceptor);
         return this;
     }
 
     @Override
-    public HttpMethodBuilder addExceptionValueInterceptor(ValueInterceptor interceptor) {
+    public HttpMethodBuilder addExceptionValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         if (isNull(interceptor)) throw new HttpServerException(EXCEPTION_VALUE_INTERCEPTOR);
         exceptionValueInterceptors.add(interceptor);
         return this;

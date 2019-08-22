@@ -18,30 +18,28 @@
 
 package ru.art.soap.client.communicator;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.nio.client.HttpAsyncClient;
-import ru.art.entity.XmlEntity;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.http.client.handler.HttpCommunicationCancellationHandler;
-import ru.art.http.client.handler.HttpCommunicationExceptionHandler;
-import ru.art.http.client.handler.HttpCommunicationResponseHandler;
-import ru.art.http.client.interceptor.HttpClientInterceptor;
-import ru.art.soap.client.exception.SoapClientModuleException;
-import ru.art.soap.content.mapper.SoapMimeToContentTypeMapper;
-import static lombok.AccessLevel.PACKAGE;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
-import static ru.art.http.client.module.HttpClientModule.httpClientModule;
-import static ru.art.soap.client.constants.SoapClientModuleExceptionMessages.INVALID_SOAP_COMMUNICATION_CONFIGURATION;
-import static ru.art.soap.client.module.SoapClientModule.soapClientModule;
-import static ru.art.soap.content.mapper.SoapMimeToContentTypeMapper.textXml;
-import java.nio.charset.Charset;
-import java.util.List;
+import lombok.*;
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.config.*;
+import org.apache.http.nio.client.*;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.http.client.handler.*;
+import ru.art.http.client.interceptor.*;
+import ru.art.soap.client.exception.*;
+import ru.art.soap.content.mapper.*;
+import java.nio.charset.*;
+import java.util.*;
+
+import static lombok.AccessLevel.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.http.client.module.HttpClientModule.*;
+import static ru.art.soap.client.constants.SoapClientModuleExceptionMessages.*;
+import static ru.art.soap.client.module.SoapClientModule.*;
+import static ru.art.soap.content.mapper.SoapMimeToContentTypeMapper.*;
 
 @Getter
 @Setter(value = PACKAGE)
@@ -69,25 +67,35 @@ class SoapCommunicationConfiguration {
     private HttpCommunicationResponseHandler<?, ?> responseHandler;
     private HttpCommunicationExceptionHandler<?> exceptionHandler;
     private HttpCommunicationCancellationHandler<?> cancellationHandler;
+    private List<ValueInterceptor<XmlEntity, XmlEntity>> requestValueInterceptors = linkedListOf();
+    private List<ValueInterceptor<XmlEntity, XmlEntity>> responseValueInterceptors = linkedListOf();
     private Object request;
 
     void validateRequiredFields() {
         boolean urlIsEmpty = isEmpty(url);
         boolean operationIdIsEmpty = isEmpty(operationId);
         boolean operationNamespaceIsEmpty = isEmpty(operationNamespace);
-        if (urlIsEmpty || operationIdIsEmpty || operationNamespaceIsEmpty) {
-            String message = INVALID_SOAP_COMMUNICATION_CONFIGURATION;
-            if (urlIsEmpty) {
-                message += "url,";
-            }
-            if (operationIdIsEmpty) {
-                message += "operationId,";
-            }
-            if (operationNamespaceIsEmpty) {
-                message += "operationNamespace";
-            }
-            throw new SoapClientModuleException(message);
+        if (!urlIsEmpty && !operationIdIsEmpty && !operationNamespaceIsEmpty) {
+            return;
         }
-
+        if (urlIsEmpty && operationIdIsEmpty && operationNamespaceIsEmpty) {
+            throw new SoapClientModuleException(INVALID_SOAP_COMMUNICATION_CONFIGURATION + "url, operationId, operationNamespace");
+        }
+        if (urlIsEmpty && operationIdIsEmpty) {
+            throw new SoapClientModuleException(INVALID_SOAP_COMMUNICATION_CONFIGURATION + "url, operationId");
+        }
+        if (urlIsEmpty && operationNamespaceIsEmpty) {
+            throw new SoapClientModuleException(INVALID_SOAP_COMMUNICATION_CONFIGURATION + "url, operationNamespace");
+        }
+        if (urlIsEmpty) {
+            throw new SoapClientModuleException(INVALID_SOAP_COMMUNICATION_CONFIGURATION + "url");
+        }
+        if (operationIdIsEmpty && operationNamespaceIsEmpty) {
+            throw new SoapClientModuleException(INVALID_SOAP_COMMUNICATION_CONFIGURATION + "operationId, operationNamespace");
+        }
+        if (operationIdIsEmpty) {
+            throw new SoapClientModuleException(INVALID_SOAP_COMMUNICATION_CONFIGURATION + "operationId");
+        }
+        throw new SoapClientModuleException("operationNamespace");
     }
 }

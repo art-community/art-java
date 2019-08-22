@@ -18,30 +18,23 @@
 
 package ru.art.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import ru.art.core.checker.CheckerForEmptiness;
-import ru.art.core.extension.StringExtensions;
-import ru.art.entity.constants.ValueType;
-import ru.art.entity.exception.ValueMappingException;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Map.Entry;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static lombok.AccessLevel.PRIVATE;
+import lombok.*;
+import ru.art.core.checker.*;
+import ru.art.core.extension.*;
+import ru.art.entity.constants.*;
+import ru.art.entity.exception.*;
+import java.util.*;
+
+import static java.util.Collections.*;
+import static java.util.Map.*;
+import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
+import static lombok.AccessLevel.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.extension.StringExtensions.emptyIfNull;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.entity.constants.ValueMappingExceptionMessages.XML_TAG_IS_UNFILLED;
-import static ru.art.entity.constants.ValueType.XML_ENTITY;
-import java.util.List;
-import java.util.Map;
+import static ru.art.core.extension.StringExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
+import static ru.art.entity.constants.ValueType.*;
 
 @Getter
 @ToString

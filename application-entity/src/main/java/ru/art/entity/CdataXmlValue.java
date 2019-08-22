@@ -18,10 +18,10 @@
 
 package ru.art.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import static ru.art.entity.constants.ValueType.XmlValueType;
-import static ru.art.entity.constants.ValueType.XmlValueType.CDATA;
+import lombok.*;
+
+import static ru.art.entity.constants.ValueType.*;
+import static ru.art.entity.constants.ValueType.XmlValueType.*;
 
 @Getter
 @AllArgsConstructor

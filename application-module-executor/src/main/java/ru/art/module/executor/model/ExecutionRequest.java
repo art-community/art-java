@@ -18,14 +18,11 @@
 
 package ru.art.module.executor.model;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import ru.art.entity.Value;
-import ru.art.service.validation.Validatable;
-import ru.art.service.validation.Validator;
-import static ru.art.service.validation.ValidationExpressions.notEmptyString;
+import ru.art.service.validation.*;
+
+import static ru.art.service.validation.ValidationExpressions.*;
 
 /**
  * Request with information about calling module

@@ -18,14 +18,14 @@
 
 package ru.art.rocks.db.dao;
 
-import static java.util.Objects.isNull;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ArrayConstants.*;
-import static ru.art.core.constants.StringConstants.TRUE_NUMERIC;
-import static ru.art.rocks.db.constants.RocksDbModuleConstants.ROCKS_DB_LIST_DELIMITER;
-import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.delete;
-import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.getString;
-import java.util.Optional;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
+import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
 
 @SuppressWarnings("Duplicates")
 public interface RocksDbArraysDao {

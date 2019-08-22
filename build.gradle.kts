@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-import com.jfrog.bintray.gradle.BintrayExtension.PackageConfig
+import com.jfrog.bintray.gradle.BintrayExtension.*
 
 plugins {
     `maven-publish`
-    id("io.github.art.project") version "1.0.63"
+    id("io.github.art.project") version "1.0.65"
     id("com.jfrog.bintray") version "1.8.4"
 }
 

@@ -18,29 +18,24 @@
 
 package ru.art.remote.scheduler.controller;
 
-import ru.art.remote.scheduler.api.model.DeferredTask;
-import ru.art.remote.scheduler.api.model.InfinityProcess;
-import ru.art.remote.scheduler.api.model.PeriodicTask;
-import ru.art.service.ServiceController;
+import ru.art.remote.scheduler.api.model.*;
+import ru.art.service.*;
 import ru.art.task.deferred.executor.*;
-import static java.time.Duration.ofMinutes;
-import static java.time.Duration.ofSeconds;
-import static java.time.LocalDateTime.now;
-import static java.util.Collections.emptySet;
+import java.time.*;
+import java.util.*;
+
+import static java.time.Duration.*;
+import static java.time.LocalDateTime.*;
+import static java.util.Collections.*;
 import static ru.art.remote.scheduler.action.TaskExecutionActions.*;
 import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.Methods.GET_ALL_DEFERRED_TASKS;
 import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.Methods.GET_ALL_PERIODIC_TASKS;
-import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.REMOTE_SCHEDULER_SERVICE_ID;
-import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.REFRESH_DEFERRED_TASK_KEY;
-import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.REFRESH_PERIODIC_TASK_KEY;
-import static ru.art.remote.scheduler.module.RemoteSchedulerModule.remoteSchedulerModule;
-import static ru.art.remote.scheduler.module.RemoteSchedulerModule.remoteSchedulerModuleState;
+import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.*;
+import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.*;
+import static ru.art.remote.scheduler.module.RemoteSchedulerModule.*;
 import static ru.art.scheduler.db.adapter.api.constants.SchedulerDbAdapterApiConstants.Methods.GET_ALL_INFINITY_PROCESSES;
-import static ru.art.task.deferred.executor.SchedulerModule.schedulerModule;
-import static ru.art.task.deferred.executor.SchedulerModuleActions.asynchronous;
-import static ru.art.task.deferred.executor.SchedulerModuleActions.asynchronousPeriod;
-import java.time.LocalDateTime;
-import java.util.Set;
+import static ru.art.task.deferred.executor.SchedulerModule.*;
+import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
 
 public interface PoolController {
     static void fillAllPools() {

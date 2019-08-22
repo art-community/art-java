@@ -18,29 +18,25 @@
 
 package ru.art.remote.scheduler.service;
 
-import ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.TaskStatus;
-import ru.art.remote.scheduler.api.exception.IdNotGeneratedException;
+import ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.*;
+import ru.art.remote.scheduler.api.exception.*;
 import ru.art.remote.scheduler.api.model.*;
-import ru.art.scheduler.db.adapter.api.model.UpdateTaskStatusRequest;
-import ru.art.service.ServiceController;
-import ru.art.task.deferred.executor.IdentifiedRunnable;
-import ru.art.task.deferred.executor.SchedulerModuleActions;
-import static java.time.Duration.ofSeconds;
-import static java.time.LocalDateTime.now;
-import static java.util.Collections.emptySet;
-import static ru.art.core.extension.OptionalExtensions.unwrap;
+import ru.art.scheduler.db.adapter.api.model.*;
+import ru.art.service.*;
+import ru.art.task.deferred.executor.*;
+import java.util.*;
+
+import static java.time.Duration.*;
+import static java.time.LocalDateTime.*;
+import static java.util.Collections.*;
+import static ru.art.core.extension.OptionalExtensions.*;
 import static ru.art.remote.scheduler.action.TaskExecutionActions.*;
-import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.TaskStatus.NEW;
-import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.ExceptionMessages.ID_IS_EMPTY;
+import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.TaskStatus.*;
+import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.ExceptionMessages.*;
 import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.ZERO;
-import static ru.art.remote.scheduler.module.RemoteSchedulerModule.remoteSchedulerModule;
-import static ru.art.remote.scheduler.module.RemoteSchedulerModule.remoteSchedulerModuleState;
+import static ru.art.remote.scheduler.module.RemoteSchedulerModule.*;
 import static ru.art.scheduler.db.adapter.api.constants.SchedulerDbAdapterApiConstants.Methods.*;
-import static ru.art.service.ServiceController.executeServiceMethod;
-import static ru.art.task.deferred.executor.SchedulerModuleActions.asynchronous;
-import static ru.art.task.deferred.executor.SchedulerModuleActions.asynchronousPeriod;
-import java.util.Optional;
-import java.util.Set;
+import static ru.art.service.ServiceController.*;
 
 
 public interface RemoteSchedulerService {

@@ -18,13 +18,12 @@
 
 package ru.art.http.client.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.config.ConnectionConfig;
-import org.apache.http.config.SocketConfig;
-import org.apache.http.impl.nio.reactor.IOReactorConfig;
-import static ru.art.http.client.module.HttpClientModule.httpClientModule;
+import lombok.*;
+import org.apache.http.client.config.*;
+import org.apache.http.config.*;
+import org.apache.http.impl.nio.reactor.*;
+
+import static ru.art.http.client.module.HttpClientModule.*;
 
 @Getter
 @Builder
@@ -48,5 +47,5 @@ public class HttpClientConfiguration {
     @Builder.Default
     private final String sslKeyStorePassword = httpClientModule().getSslKeyStorePassword();
     @Builder.Default
-    private final boolean enableTracing = false;
+    private final boolean enableRawDataTracing = httpClientModule().isEnableRawDataTracing();
 }

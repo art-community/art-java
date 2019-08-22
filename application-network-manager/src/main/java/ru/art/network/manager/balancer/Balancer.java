@@ -18,11 +18,10 @@
 
 package ru.art.network.manager.balancer;
 
-import ru.art.network.manager.constants.NetworkManagerModuleConstants.BalancerMode;
-import ru.art.network.manager.exception.UnknownBalancerModeException;
-import ru.art.state.api.model.ModuleEndpoint;
-import java.util.Collection;
-import java.util.Map;
+import ru.art.network.manager.constants.NetworkManagerModuleConstants.*;
+import ru.art.network.manager.exception.*;
+import ru.art.state.api.model.*;
+import java.util.*;
 
 public interface Balancer {
     static Balancer balancerOf(BalancerMode mode) {

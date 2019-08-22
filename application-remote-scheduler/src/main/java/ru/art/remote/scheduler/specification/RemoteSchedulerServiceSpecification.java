@@ -18,42 +18,40 @@
 
 package ru.art.remote.scheduler.specification;
 
-import lombok.Getter;
-import ru.art.grpc.server.model.GrpcService;
-import ru.art.grpc.server.specification.GrpcServiceSpecification;
-import ru.art.http.server.model.HttpService;
-import ru.art.http.server.specification.HttpServiceSpecification;
-import ru.art.remote.scheduler.api.model.DeferredTaskRequest;
-import ru.art.remote.scheduler.api.model.InfinityProcessRequest;
-import ru.art.remote.scheduler.api.model.PeriodicTaskRequest;
-import ru.art.service.Specification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.entity.PrimitiveMapping.stringMapper;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.GRPC_SERVICE_TYPE;
-import static ru.art.grpc.server.model.GrpcService.GrpcMethod.grpcMethod;
-import static ru.art.grpc.server.model.GrpcService.grpcService;
-import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVICE_TYPE;
-import static ru.art.http.server.model.HttpService.httpService;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
+import lombok.*;
+import ru.art.grpc.server.model.*;
+import ru.art.grpc.server.specification.*;
+import ru.art.http.server.model.*;
+import ru.art.http.server.specification.*;
+import ru.art.remote.scheduler.api.model.*;
+import ru.art.service.*;
+import ru.art.service.exception.*;
+import java.util.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.entity.PrimitiveMapping.*;
+import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
+import static ru.art.grpc.server.model.GrpcService.GrpcMethod.*;
+import static ru.art.grpc.server.model.GrpcService.*;
+import static ru.art.http.constants.MimeToContentTypeMapper.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.*;
+import static ru.art.http.server.model.HttpService.*;
+import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.Methods.*;
-import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.REMOTE_SCHEDULER_SERVICE_ID;
-import static ru.art.remote.scheduler.api.mapping.DeferredTaskMappers.DeferredTaskCollectionMapper.deferredTaskCollectionFromModelMapper;
-import static ru.art.remote.scheduler.api.mapping.DeferredTaskMappers.DeferredTaskMapper.deferredTaskFromModelMapper;
-import static ru.art.remote.scheduler.api.mapping.DeferredTaskMappers.DeferredTaskRequestMapper.deferredTaskRequestToModelMapper;
-import static ru.art.remote.scheduler.api.mapping.InfinityProcessMappers.InfinityProcessCollectionMapper.processCollectionFromModelMapper;
-import static ru.art.remote.scheduler.api.mapping.InfinityProcessMappers.InfinityProcessRequestMapper.infinityProcessRequestToModelMapper;
-import static ru.art.remote.scheduler.api.mapping.PeriodicTaskMappers.PeriodicTaskCollectionMapper.periodicTaskCollectionFromModelMapper;
-import static ru.art.remote.scheduler.api.mapping.PeriodicTaskMappers.PeriodicTaskMapper.periodicTaskFromModelMapper;
-import static ru.art.remote.scheduler.api.mapping.PeriodicTaskMappers.PeriodicTaskRequestMapper.periodicTaskRequestToModelMapper;
-import static ru.art.remote.scheduler.api.mapping.TaskIdMapper.taskIdMapper;
+import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.*;
+import static ru.art.remote.scheduler.api.mapping.DeferredTaskMappers.DeferredTaskCollectionMapper.*;
+import static ru.art.remote.scheduler.api.mapping.DeferredTaskMappers.DeferredTaskMapper.*;
+import static ru.art.remote.scheduler.api.mapping.DeferredTaskMappers.DeferredTaskRequestMapper.*;
+import static ru.art.remote.scheduler.api.mapping.InfinityProcessMappers.InfinityProcessCollectionMapper.*;
+import static ru.art.remote.scheduler.api.mapping.InfinityProcessMappers.InfinityProcessRequestMapper.*;
+import static ru.art.remote.scheduler.api.mapping.PeriodicTaskMappers.PeriodicTaskCollectionMapper.*;
+import static ru.art.remote.scheduler.api.mapping.PeriodicTaskMappers.PeriodicTaskMapper.*;
+import static ru.art.remote.scheduler.api.mapping.PeriodicTaskMappers.PeriodicTaskRequestMapper.*;
+import static ru.art.remote.scheduler.api.mapping.TaskIdMapper.*;
 import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.*;
 import static ru.art.remote.scheduler.service.RemoteSchedulerService.*;
-import static ru.art.service.constants.RequestValidationPolicy.NOT_NULL;
-import static ru.art.service.constants.RequestValidationPolicy.VALIDATABLE;
-import java.util.List;
+import static ru.art.service.constants.RequestValidationPolicy.*;
 
 @Getter
 public class RemoteSchedulerServiceSpecification implements Specification, HttpServiceSpecification, GrpcServiceSpecification {

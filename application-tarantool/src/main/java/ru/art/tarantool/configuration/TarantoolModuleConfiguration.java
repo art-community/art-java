@@ -18,21 +18,20 @@
 
 package ru.art.tarantool.configuration;
 
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode;
-import ru.art.tarantool.exception.TarantoolConnectionException;
-import ru.art.tarantool.model.TarantoolEntityFieldsMapping;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.DEFAULT_TARANTOOL_CONNECTION_TIMEOUT;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.DEFAULT_TARANTOOL_PROBE_CONNECTION_TIMEOUT;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.CONFIGURATION_IS_NULL;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.ENTITY_FIELDS_MAPPING_IS_NULL;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.ON_MODULE_LOAD;
-import static ru.art.tarantool.module.TarantoolModule.tarantoolModule;
-import java.util.Map;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.tarantool.constants.TarantoolModuleConstants.*;
+import ru.art.tarantool.exception.*;
+import ru.art.tarantool.model.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.*;
+import static ru.art.tarantool.module.TarantoolModule.*;
 
 public interface TarantoolModuleConfiguration extends ModuleConfiguration {
     Map<String, TarantoolConfiguration> getTarantoolConfigurations();

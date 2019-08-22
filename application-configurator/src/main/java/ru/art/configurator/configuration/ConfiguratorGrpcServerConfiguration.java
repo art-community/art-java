@@ -18,16 +18,17 @@
 
 package ru.art.configurator.configuration;
 
-import lombok.Getter;
-import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.GrpcServerModuleDefaultConfiguration;
-import static ru.art.config.ConfigProvider.config;
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.DEFAULT_CONFIGURATOR_PATH;
+import lombok.*;
+import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.*;
+
+import static ru.art.config.ConfigProvider.*;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
-import static ru.art.core.extension.ExceptionExtensions.ifExceptionOrEmpty;
-import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
+import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.network.selector.PortSelector.*;
 
 @Getter
 public class ConfiguratorGrpcServerConfiguration extends GrpcServerModuleDefaultConfiguration {
-    private final String path = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_GRPC_PATH_PROPERTY), DEFAULT_CONFIGURATOR_PATH);
+    private final String path = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_GRPC_PATH_PROPERTY), CONFIGURATOR_PATH);
     private final int port = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getInt(CONFIGURATOR_GRPC_PORT_PROPERTY), findAvailableTcpPort());
 }

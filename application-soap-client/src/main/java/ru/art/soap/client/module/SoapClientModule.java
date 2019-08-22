@@ -18,15 +18,14 @@
 
 package ru.art.soap.client.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleState;
-import ru.art.soap.client.configuration.SoapClientModuleConfiguration;
-import ru.art.soap.client.configuration.SoapClientModuleConfiguration.SoapClientModuleDefaultConfiguration;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.soap.client.constants.SoapClientModuleConstants.SOAP_CLIENT_MODULE_ID;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.soap.client.configuration.*;
+import ru.art.soap.client.configuration.SoapClientModuleConfiguration.*;
+
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.soap.client.constants.SoapClientModuleConstants.*;
 
 @Getter
 public class SoapClientModule implements Module<SoapClientModuleConfiguration, ModuleState> {

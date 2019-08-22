@@ -18,14 +18,14 @@
 
 package ru.art.logging;
 
-import static org.apache.logging.log4j.ThreadContext.remove;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.constants.DateConstants.YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.contextConfiguration;
+import java.util.*;
+
+import static org.apache.logging.log4j.ThreadContext.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.DateConstants.*;
+import static ru.art.core.context.Context.*;
 import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
-import static ru.art.logging.ThreadContextExtensions.putIfNotNull;
-import java.util.Date;
+import static ru.art.logging.ThreadContextExtensions.*;
 
 public interface LoggingParametersManager {
     static void putApplicationLoggingParameters() {

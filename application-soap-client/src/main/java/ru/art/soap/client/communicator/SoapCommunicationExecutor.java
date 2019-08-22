@@ -18,37 +18,40 @@
 
 package ru.art.soap.client.communicator;
 
-import lombok.NoArgsConstructor;
-import ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper.XmlEntityToModelMapper;
-import ru.art.http.client.communicator.HttpCommunicator;
-import static java.util.Objects.nonNull;
-import static lombok.AccessLevel.PACKAGE;
-import static ru.art.http.client.communicator.HttpCommunicator.httpCommunicator;
-import static ru.art.http.constants.HttpHeaders.ACCEPT;
-import static ru.art.http.constants.HttpHeaders.CONTENT_TYPE;
-import static ru.art.soap.client.communicator.SoapEntityMapping.soapRequestFromModel;
-import static ru.art.soap.client.communicator.SoapEntityMapping.soapResponseToModel;
-import java.util.Optional;
+import lombok.*;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+import ru.art.http.client.communicator.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.http.client.communicator.HttpCommunicator.*;
+import static ru.art.http.constants.HttpHeaders.*;
+import static ru.art.soap.client.communicator.SoapEntityMapping.*;
 
 @NoArgsConstructor(access = PACKAGE)
 class SoapCommunicationExecutor {
     static <ResponseType> Optional<ResponseType> execute(SoapCommunicationConfiguration configuration) {
-        HttpCommunicator httpCommunicator = httpCommunicator(configuration.getUrl());
+        final HttpCommunicator httpCommunicator = httpCommunicator(configuration.getUrl());
         configuration.getRequestInterceptors().forEach(httpCommunicator::addRequestInterceptor);
         configuration.getResponseInterceptors().forEach(httpCommunicator::addResponseInterceptor);
-        httpCommunicator = httpCommunicator
+        configuration.getRequestValueInterceptors().forEach(interceptor -> httpCommunicator.addRequestValueInterceptor(cast(interceptor)));
+        configuration.getResponseValueInterceptors().forEach(interceptor -> httpCommunicator.addResponseValueInterceptor(cast(interceptor)));
+        httpCommunicator
                 .version(configuration.getHttpVersion())
                 .requestCharset(configuration.getRequestCharset())
                 .addHeader(ACCEPT, configuration.getConsumesMimeType().getMimeType().toString())
                 .addHeader(CONTENT_TYPE, configuration.getConsumesMimeType().getMimeType().toString());
         XmlEntityToModelMapper<?> responseMapper = soapResponseToModel(configuration);
         if (nonNull(responseMapper)) {
-            httpCommunicator = httpCommunicator.responseMapper(responseMapper);
+            httpCommunicator.responseMapper(responseMapper);
         }
         XmlEntityFromModelMapper<?> requestMapper = soapRequestFromModel(configuration);
         if (nonNull(requestMapper)) {
-            httpCommunicator = httpCommunicator.requestMapper(requestMapper);
+            httpCommunicator.requestMapper(requestMapper);
         }
         return httpCommunicator.config(configuration.getRequestConfig())
                 .consumes(configuration.getConsumesMimeType().toHttpMimeToContentTypeMapper())
@@ -58,24 +61,26 @@ class SoapCommunicationExecutor {
                 .execute(configuration.getRequest());
     }
 
-    static void executeAsynchronous(SoapCommunicationConfiguration configuration) {
-        HttpCommunicator httpCommunicator = httpCommunicator(configuration.getUrl());
+    static <ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronous(SoapCommunicationConfiguration configuration) {
+        final HttpCommunicator httpCommunicator = httpCommunicator(configuration.getUrl());
         configuration.getRequestInterceptors().forEach(httpCommunicator::addRequestInterceptor);
         configuration.getRequestInterceptors().forEach(httpCommunicator::addResponseInterceptor);
-        httpCommunicator = httpCommunicator
+        configuration.getRequestValueInterceptors().forEach(interceptor -> httpCommunicator.addRequestValueInterceptor(cast(interceptor)));
+        configuration.getResponseValueInterceptors().forEach(interceptor -> httpCommunicator.addResponseValueInterceptor(cast(interceptor)));
+        httpCommunicator
                 .version(configuration.getHttpVersion())
                 .requestCharset(configuration.getRequestCharset())
                 .addHeader(ACCEPT, configuration.getConsumesMimeType().getMimeType().toString())
                 .addHeader(CONTENT_TYPE, configuration.getConsumesMimeType().getMimeType().toString());
         XmlEntityToModelMapper<?> responseMapper = soapResponseToModel(configuration);
         if (nonNull(responseMapper)) {
-            httpCommunicator = httpCommunicator.responseMapper(responseMapper);
+            httpCommunicator.responseMapper(responseMapper);
         }
         XmlEntityFromModelMapper<?> requestMapper = soapRequestFromModel(configuration);
         if (nonNull(requestMapper)) {
-            httpCommunicator = httpCommunicator.requestMapper(requestMapper);
+            httpCommunicator.requestMapper(requestMapper);
         }
-        httpCommunicator.config(configuration.getRequestConfig())
+        return httpCommunicator.config(configuration.getRequestConfig())
                 .consumes(configuration.getConsumesMimeType().toHttpMimeToContentTypeMapper())
                 .post()
                 .requestEncoding(configuration.getRequestBodyEncoding())

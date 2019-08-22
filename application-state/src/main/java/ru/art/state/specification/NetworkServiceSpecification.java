@@ -18,35 +18,35 @@
 
 package ru.art.state.specification;
 
-import lombok.Getter;
-import ru.art.grpc.server.model.GrpcService;
-import ru.art.grpc.server.specification.GrpcServiceSpecification;
-import ru.art.http.server.model.HttpService;
-import ru.art.http.server.specification.HttpServiceSpecification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import ru.art.state.api.mapping.NetworkServicePathParametersMapper;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.entity.CollectionMapping.stringCollectionMapper;
-import static ru.art.entity.PrimitiveMapping.intMapper;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.GRPC_SERVICE_TYPE;
-import static ru.art.grpc.server.model.GrpcService.GrpcMethod.grpcMethod;
-import static ru.art.grpc.server.model.GrpcService.grpcService;
-import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HTTP_SERVICE_TYPE;
-import static ru.art.http.server.model.HttpService.httpService;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
-import static ru.art.service.constants.RequestValidationPolicy.VALIDATABLE;
+import lombok.*;
+import ru.art.grpc.server.model.*;
+import ru.art.grpc.server.specification.*;
+import ru.art.http.server.model.*;
+import ru.art.http.server.specification.*;
+import ru.art.service.exception.*;
+import ru.art.state.api.mapping.*;
+import java.util.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.entity.CollectionMapping.*;
+import static ru.art.entity.PrimitiveMapping.*;
+import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
+import static ru.art.grpc.server.model.GrpcService.GrpcMethod.*;
+import static ru.art.grpc.server.model.GrpcService.*;
+import static ru.art.http.constants.MimeToContentTypeMapper.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.*;
+import static ru.art.http.server.model.HttpService.*;
+import static ru.art.service.constants.RequestValidationPolicy.*;
 import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.Methods.*;
-import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.NETWORK_SERVICE_ID;
-import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.PathParameters.PROFILE;
+import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.*;
+import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.PathParameters.*;
 import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.Paths.*;
-import static ru.art.state.api.mapping.ClusterProfileRequestResponseMapper.ClusterProfileRequestMapper.toClusterProfileRequest;
-import static ru.art.state.api.mapping.ClusterProfileRequestResponseMapper.ClusterProfileResponseMapper.fromClusterProfileResponse;
-import static ru.art.state.api.mapping.ModuleConnectionRequestMapper.toModuleConnectionRequest;
-import static ru.art.state.api.mapping.ModuleEndpointMapper.toModuleEndpoint;
+import static ru.art.state.api.mapping.ClusterProfileRequestResponseMapper.ClusterProfileRequestMapper.*;
+import static ru.art.state.api.mapping.ClusterProfileRequestResponseMapper.ClusterProfileResponseMapper.*;
+import static ru.art.state.api.mapping.ModuleConnectionRequestMapper.*;
+import static ru.art.state.api.mapping.ModuleEndpointMapper.*;
 import static ru.art.state.service.NetworkService.*;
-import java.util.List;
 
 @Getter
 public class NetworkServiceSpecification implements HttpServiceSpecification, GrpcServiceSpecification {
@@ -98,7 +98,7 @@ public class NetworkServiceSpecification implements HttpServiceSpecification, Gr
             .responseMapper(stringCollectionMapper.getFromModel())
             .listen(GET_PROFILES_PATH)
 
-            .serve(httpServerModule().getPath());
+            .serve(STATE_PATH);
 
     private final GrpcService grpcService = grpcService()
             .method(GET_CLUSTER_PROFILE, grpcMethod()

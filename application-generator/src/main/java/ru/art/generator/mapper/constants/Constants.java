@@ -18,7 +18,7 @@
 
 package ru.art.generator.mapper.constants;
 
-import static java.io.File.separator;
+import static java.io.File.*;
 
 /**
  * Interface for common constants of mapper generator

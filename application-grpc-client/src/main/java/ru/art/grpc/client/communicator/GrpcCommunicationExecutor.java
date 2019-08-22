@@ -18,27 +18,34 @@
 
 package ru.art.grpc.client.communicator;
 
-import io.grpc.ClientInterceptor;
-import io.grpc.ManagedChannelBuilder;
-import lombok.NoArgsConstructor;
+import io.grpc.*;
+import lombok.*;
 import ru.art.entity.Value;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.grpc.servlet.GrpcRequest;
-import ru.art.grpc.servlet.GrpcResponse;
-import ru.art.grpc.servlet.GrpcServlet;
-import ru.art.grpc.servlet.GrpcServlet.GrpcServletBlockingStub;
-import ru.art.service.model.ServiceResponse;
-import static io.grpc.ManagedChannelBuilder.forTarget;
-import static java.util.Objects.nonNull;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.extension.StringExtensions.emptyIfNull;
-import static ru.art.grpc.client.communicator.GrpcServiceResponseExtractor.extractServiceResponse;
-import static ru.art.grpc.client.module.GrpcClientModule.grpcClientModule;
-import static ru.art.grpc.servlet.GrpcRequest.newBuilder;
-import static ru.art.protobuf.descriptor.ProtobufEntityWriter.writeProtobuf;
-import java.util.concurrent.Executor;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.grpc.servlet.*;
+import ru.art.grpc.servlet.GrpcServlet.*;
+import ru.art.service.model.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+import static io.grpc.ManagedChannelBuilder.*;
+import static java.util.Objects.*;
+import static java.util.concurrent.TimeUnit.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.constants.InterceptionStrategy.*;
+import static ru.art.core.extension.StringExtensions.*;
+import static ru.art.entity.Value.*;
+import static ru.art.grpc.client.module.GrpcClientModule.*;
+import static ru.art.grpc.servlet.GrpcRequest.*;
+import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
+import static ru.art.protobuf.descriptor.ProtobufEntityWriter.*;
+import static ru.art.service.factory.ServiceRequestFactory.*;
+import static ru.art.service.factory.ServiceResponseFactory.*;
+import static ru.art.service.mapping.ServiceRequestMapping.*;
+import static ru.art.service.mapping.ServiceResponseMapping.*;
 
 @NoArgsConstructor(access = PRIVATE)
 class GrpcCommunicationExecutor {
@@ -56,15 +63,46 @@ class GrpcCommunicationExecutor {
         if (nonNull(executor = configuration.getOverrideExecutor()) || nonNull(executor = grpcClientModule().getOverridingExecutor())) {
             stub = stub.withExecutor(executor);
         }
-        GrpcRequest.Builder grpcRequestBuilder = newBuilder()
-                .setServiceId(configuration.getServiceId())
-                .setMethodId(configuration.getMethodId());
-        ValueFromModelMapper<?, ? extends Value> requestMapper;
+        ServiceMethodCommand command = new ServiceMethodCommand(configuration.getServiceId(), configuration.getMethodId());
+        ValueFromModelMapper<?, ? extends Value> requestMapper = null;
         Object request;
-        if (nonNull(requestMapper = configuration.getRequestMapper()) && nonNull(request = configuration.getRequest())) {
-            grpcRequestBuilder.setRequestData(writeProtobuf(requestMapper.map(cast(request))));
+        ServiceRequest<Object> serviceRequest = isNull(request = configuration.getRequest())
+                || isNull(requestMapper = configuration.getRequestMapper())
+                ? newServiceRequest(command)
+                : newServiceRequest(command, request);
+        Entity requestValue = fromServiceRequest(cast(requestMapper)).map(serviceRequest);
+        List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = configuration.getRequestValueInterceptors();
+        for (ValueInterceptor<Entity, Entity> requestValueInterceptor : requestValueInterceptors) {
+            ValueInterceptionResult<Entity, Entity> result = requestValueInterceptor.intercept(requestValue);
+            if (isNull(result)) {
+                break;
+            }
+            requestValue = result.getOutValue();
+            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                break;
+            }
+            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                return okResponse(command);
+            }
         }
-        GrpcResponse response = stub.executeService(grpcRequestBuilder.build());
-        return extractServiceResponse(configuration, response);
+        GrpcResponse response = stub.executeService(newBuilder()
+                .setServiceRequest(writeProtobuf(requestValue))
+                .build());
+        Entity responseValue = asEntity(readProtobuf(response.getServiceResponse()));
+        List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = configuration.getResponseValueInterceptors();
+        for (ValueInterceptor<Entity, Entity> responseValueInterceptor : responseValueInterceptors) {
+            ValueInterceptionResult<Entity, Entity> result = responseValueInterceptor.intercept(responseValue);
+            if (isNull(result)) {
+                break;
+            }
+            responseValue = result.getOutValue();
+            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                break;
+            }
+            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                return okResponse(command);
+            }
+        }
+        return cast(toServiceResponse(cast(configuration.getResponseMapper())).map(responseValue));
     }
 }

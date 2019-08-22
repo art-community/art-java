@@ -18,19 +18,23 @@
 
 package ru.art.tarantool.constants;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import static ru.art.core.constants.SystemConstants.WSL;
-import static ru.art.core.determinant.SystemDeterminant.isWindows;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
-import java.util.List;
+import lombok.*;
+import java.util.*;
+
+import static ru.art.core.constants.SystemConstants.*;
+import static ru.art.core.determinant.SystemDeterminant.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.core.network.selector.PortSelector.*;
 
 public interface TarantoolModuleConstants {
+    String TARANTOOL = "tarantool";
     String TARANTOOL_MODULE_ID = "TARANTOOL_MODULE";
     List<String> DEFAULT_TARANTOOL_EXECUTABLE_COMMAND = isWindows()
             ? fixedArrayOf(WSL, "/usr/bin/tarantool")
             : fixedArrayOf("/usr/bin/tarantool");
+    String INSTALL_TARANTOOL_MESSAGE = isWindows()
+            ? "Possibly tarantool was not installed. For using tarantool on windows, please install WSL (https://docs.microsoft.com/en-us/windows/wsl/install-win10)\nand then on installed Linux run:\n\nfor Debian:\napt-get update\napt-get install tarantool\n\nfor Ubuntu:\nyum update\nyum install tarantool\n"
+            : "Possibly tarantool was not installed. For using tarantool on Linux run:\n\nfor Debian:\napt-get update\napt-get install tarantool\n\nfor Ubuntu:\nyum update\nyum install tarantool";
     int DEFAULT_TARANTOOL_PROBE_CONNECTION_TIMEOUT = 3 * 1000;
     int DEFAULT_TARANTOOL_CONNECTION_TIMEOUT = DEFAULT_TARANTOOL_PROBE_CONNECTION_TIMEOUT * 20;
     int DEFAULT_TARANTOOL_PORT = findAvailableTcpPort();
@@ -83,6 +87,7 @@ public interface TarantoolModuleConstants {
         String EXTRACT_TARANTOOL_LUA_SCRIPTS = "Extract Tarantool ''{0}'' with address''{1}'' lua scripts to ''{2}''";
         String WRITING_TARANTOOL_USER_CONFIGURATION = "Writing Tarantool ''{0}'' with address = ''{1}'' user configuration to file ''{2}''";
         String UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP = "Unable to connect to tarantool ''{0}'' with address ''{1}'' on startup. Therefore, we will try to run the tarantool";
+        String UNABLE_TO_CONNECT_TO_TARANTOOL= "Unable to connect to tarantool ''{0}'' with address ''{1}'' on startup";
         String CALLING_FUNCTION = "Calling tarantool function ''{0}'' with arguments: {1}";
         String CALLED_FUNCTION = "Called tarantool function ''{0}'' with result: {1}";
         String FAILED_FUNCTION = "Failed to call tarantool function ''{0}''";

@@ -18,12 +18,12 @@
 
 package ru.art.state.service;
 
-import static java.util.Objects.isNull;
-import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.DEFAULT_LOCK;
-import static ru.art.state.module.ApplicationStateModule.applicationState;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.*;
+import java.util.concurrent.locks.*;
+
+import static java.util.Objects.*;
+import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.*;
+import static ru.art.state.module.ApplicationStateModule.*;
 
 public interface LockService {
     static void lock() {

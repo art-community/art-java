@@ -18,7 +18,7 @@
 
 package ru.art.core.extension;
 
-import java.util.Objects;
+import java.util.*;
 
 public interface EqualsCheckingExtensions {
     static <T> T ifEquals(T val, T pattern, T ifEquals) {

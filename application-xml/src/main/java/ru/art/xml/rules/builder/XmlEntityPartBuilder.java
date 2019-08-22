@@ -18,7 +18,7 @@
 
 package ru.art.xml.rules.builder;
 
-import ru.art.xml.constants.XmlEntityMappingTargets;
+import ru.art.xml.constants.*;
 
 public interface XmlEntityPartBuilder {
     XmlEntityRuleBuilder forAttributesValues();

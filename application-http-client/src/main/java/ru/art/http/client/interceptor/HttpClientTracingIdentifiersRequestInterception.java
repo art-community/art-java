@@ -18,13 +18,14 @@
 
 package ru.art.http.client.interceptor;
 
-import org.apache.http.client.methods.HttpUriRequest;
-import ru.art.core.constants.InterceptionStrategy;
-import static org.apache.logging.log4j.ThreadContext.get;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.constants.InterceptionStrategy.NEXT_INTERCEPTOR;
-import static ru.art.http.client.constants.HttpClientModuleConstants.TRACE_ID_HEADER;
-import static ru.art.logging.LoggingModuleConstants.LoggingParameters.TRACE_ID_KEY;
+import org.apache.http.client.methods.*;
+import ru.art.core.constants.*;
+
+import static org.apache.logging.log4j.ThreadContext.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.InterceptionStrategy.*;
+import static ru.art.http.client.constants.HttpClientModuleConstants.*;
+import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
 
 public class HttpClientTracingIdentifiersRequestInterception implements HttpClientRequestInterception {
     @Override

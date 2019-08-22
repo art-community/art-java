@@ -18,9 +18,10 @@
 
 package ru.art.service.validation;
 
-import static java.text.MessageFormat.format;
-import static ru.art.service.constants.ServiceExceptionsMessages.EMPTY_VALIDATION_ERROR;
-import java.util.Map;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.service.constants.ServiceExceptionsMessages.*;
 
 class NotEmptyMapValidationExpression extends ValidationExpression<Map> {
     @Override

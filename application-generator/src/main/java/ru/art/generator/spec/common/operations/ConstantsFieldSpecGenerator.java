@@ -18,21 +18,21 @@
 
 package ru.art.generator.spec.common.operations;
 
-import com.squareup.javapoet.FieldSpec;
-import ru.art.generator.mapper.constants.Constants;
-import ru.art.generator.spec.common.constants.SpecificationType;
-import ru.art.generator.spec.common.exception.SpecificationTypeDefinitionException;
-import ru.art.generator.spec.http.proxyspec.operations.HttpProxySpecificationClassGenerator;
-import ru.art.generator.spec.http.servicespec.operations.HttpServiceSpecificationClassGenerator;
-import static java.text.MessageFormat.format;
+import com.squareup.javapoet.*;
+import ru.art.generator.mapper.constants.*;
+import ru.art.generator.spec.common.constants.*;
+import ru.art.generator.spec.common.exception.*;
+import ru.art.generator.spec.http.proxyspec.operations.*;
+import ru.art.generator.spec.http.servicespec.operations.*;
+import java.util.*;
+import java.util.stream.*;
+
+import static java.text.MessageFormat.*;
 import static javax.lang.model.element.Modifier.*;
-import static ru.art.generator.common.constants.Constants.SymbolsAndFormatting.STRING_PATTERN;
-import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.SERVICE_ID;
-import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.UNABLE_TO_DEFINE_SPECIFICATION_TYPE;
-import static ru.art.generator.spec.common.operations.IdCalculator.getSpecificationId;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import static ru.art.generator.common.constants.Constants.SymbolsAndFormatting.*;
+import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.*;
+import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.*;
+import static ru.art.generator.spec.common.operations.IdCalculator.*;
 
 /**
  * Interface containing common operations for all specification's generators.

@@ -18,10 +18,10 @@
 
 package ru.art.service.interceptor;
 
-import ru.art.service.model.ServiceInterceptionResult;
-import ru.art.service.model.ServiceRequest;
+import ru.art.service.model.*;
+import java.util.function.*;
+
 import static ru.art.service.model.ServiceInterceptionResult.*;
-import java.util.function.Consumer;
 
 @FunctionalInterface
 public interface ServiceRequestInterception {

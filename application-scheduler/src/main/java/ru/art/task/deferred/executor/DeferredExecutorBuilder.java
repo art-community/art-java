@@ -18,9 +18,9 @@
 
 package ru.art.task.deferred.executor;
 
-import static java.lang.Runtime.getRuntime;
-import static java.lang.Thread.UncaughtExceptionHandler;
-import static java.util.Objects.isNull;
+import static java.lang.Runtime.*;
+import static java.lang.Thread.*;
+import static java.util.Objects.*;
 
 /**
  * Строитель конфигурации для {@link DeferredExecutorImpl} и {@link DeferredEventObserver}
@@ -31,7 +31,7 @@ public class DeferredExecutorBuilder {
     private Integer eventsQueueMaxSize;
     private Integer threadPoolCoreSize;
     private Boolean awaitAllTasksTerminationOnShutdown;
-    private Long threadPoolTerminationTimeoutMillis;
+    private Long threadPoolTerminationTimeout;
 
     public DeferredExecutorBuilder withExceptionHandler(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
@@ -58,8 +58,8 @@ public class DeferredExecutorBuilder {
         return this;
     }
 
-    public DeferredExecutorBuilder threadPoolTerminationTimeoutMillis(Long threadPoolTerminationTimeoutMillis) {
-        this.threadPoolTerminationTimeoutMillis = threadPoolTerminationTimeoutMillis;
+    public DeferredExecutorBuilder threadPoolTerminationTimeout(Long threadPoolTerminationTimeout) {
+        this.threadPoolTerminationTimeout = threadPoolTerminationTimeout;
         return this;
     }
 
@@ -70,7 +70,7 @@ public class DeferredExecutorBuilder {
         executorConfiguration.setThreadPoolCoreSize(isNull(threadPoolCoreSize) ? getRuntime().availableProcessors() - 1 : threadPoolCoreSize);
         executorConfiguration.setThreadPoolExceptionHandler(isNull(threadPoolExceptionHandler) ? new DeferredExecutorThreadPoolExceptionHandler() : threadPoolExceptionHandler);
         executorConfiguration.setAwaitAllTasksTerminationOnShutdown(isNull(awaitAllTasksTerminationOnShutdown) ? false : awaitAllTasksTerminationOnShutdown);
-        executorConfiguration.setThreadPoolTerminationTimeoutMillis(isNull(threadPoolTerminationTimeoutMillis) ? DeferredExecutorImpl.DeferredExecutorConstants.DEFAULT_SHUTDOWN_TIMEOUT : threadPoolTerminationTimeoutMillis);
+        executorConfiguration.setThreadPoolTerminationTimeout(isNull(threadPoolTerminationTimeout) ? DeferredExecutorImpl.DeferredExecutorConstants.DEFAULT_SHUTDOWN_TIMEOUT : threadPoolTerminationTimeout);
         return new DeferredExecutorImpl(executorConfiguration);
     }
 }

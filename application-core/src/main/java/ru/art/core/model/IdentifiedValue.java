@@ -18,12 +18,11 @@
 
 package ru.art.core.model;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @Builder
 public class IdentifiedValue<T> {
-    private String id;
-    private T value;
+    private final String id;
+    private final T value;
 }

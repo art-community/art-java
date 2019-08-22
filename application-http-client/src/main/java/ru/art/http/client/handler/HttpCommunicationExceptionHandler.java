@@ -18,7 +18,7 @@
 
 package ru.art.http.client.handler;
 
-import java.util.Optional;
+import java.util.*;
 
 @FunctionalInterface
 public interface HttpCommunicationExceptionHandler<T>  {

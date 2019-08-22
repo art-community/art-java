@@ -18,8 +18,8 @@
 
 package ru.art.task.deferred.executor;
 
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
+import lombok.*;
+import ru.art.core.module.*;
 
 public interface SchedulerModuleConfiguration extends ModuleConfiguration {
     DeferredExecutor getDeferredExecutor();

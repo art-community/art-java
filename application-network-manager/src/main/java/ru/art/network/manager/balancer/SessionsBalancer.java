@@ -18,18 +18,15 @@
 
 package ru.art.network.manager.balancer;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import ru.art.state.api.model.ModuleEndpoint;
-import static java.util.Comparator.comparingInt;
-import static java.util.Map.Entry;
-import static java.util.stream.Collectors.toMap;
-import static ru.art.core.extension.OptionalExtensions.unwrap;
-import static ru.art.core.factory.CollectionsFactory.concurrentHashMap;
-import static ru.art.core.factory.CollectionsFactory.treeOf;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import lombok.*;
+import ru.art.state.api.model.*;
+import java.util.*;
+
+import static java.util.Comparator.*;
+import static java.util.Map.*;
+import static java.util.stream.Collectors.*;
+import static ru.art.core.extension.OptionalExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 
 @Getter
 @RequiredArgsConstructor

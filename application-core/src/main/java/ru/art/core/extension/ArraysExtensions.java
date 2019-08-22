@@ -18,9 +18,9 @@
 
 package ru.art.core.extension;
 
-import static java.lang.System.arraycopy;
-import static java.util.Arrays.copyOf;
-import static java.util.Objects.isNull;
+import static java.lang.System.*;
+import static java.util.Arrays.*;
+import static java.util.Objects.*;
 
 public interface ArraysExtensions {
     static <T> T[] concatArrays(T[] a1, T[] a2) {

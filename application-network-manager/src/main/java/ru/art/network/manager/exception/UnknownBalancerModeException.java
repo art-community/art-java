@@ -18,9 +18,10 @@
 
 package ru.art.network.manager.exception;
 
-import ru.art.network.manager.constants.NetworkManagerModuleConstants.BalancerMode;
-import static java.text.MessageFormat.format;
-import static ru.art.network.manager.constants.NetworkManagerModuleConstants.ExceptionMessages.UNKNOWN_BALANCER_MODE_MESSAGE;
+import ru.art.network.manager.constants.NetworkManagerModuleConstants.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.network.manager.constants.NetworkManagerModuleConstants.ExceptionMessages.*;
 
 public class UnknownBalancerModeException extends RuntimeException {
     public UnknownBalancerModeException(BalancerMode mode) {

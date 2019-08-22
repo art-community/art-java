@@ -18,21 +18,20 @@
 
 package ru.art.state.api.communication.grpc;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
-import ru.art.grpc.client.communicator.GrpcCommunicator;
-import ru.art.grpc.client.specification.GrpcCommunicationSpecification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.entity.PrimitiveMapping.intMapper;
-import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator;
+import lombok.*;
+import lombok.experimental.*;
+import ru.art.grpc.client.communicator.*;
+import ru.art.grpc.client.specification.*;
+import ru.art.service.exception.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.entity.PrimitiveMapping.*;
+import static ru.art.grpc.client.communicator.GrpcCommunicator.*;
 import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.Methods.*;
-import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.NETWORK_COMMUNICATION_SERVICE_ID;
-import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.NETWORK_SERVICE_ID;
-import static ru.art.state.api.mapping.ClusterProfileRequestResponseMapper.ClusterProfileRequestMapper.fromClusterProfileRequest;
-import static ru.art.state.api.mapping.ClusterProfileRequestResponseMapper.ClusterProfileResponseMapper.toClusterProfileResponse;
-import static ru.art.state.api.mapping.ModuleConnectionRequestMapper.fromModuleConnectionRequest;
+import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.*;
+import static ru.art.state.api.mapping.ClusterProfileRequestResponseMapper.ClusterProfileRequestMapper.*;
+import static ru.art.state.api.mapping.ClusterProfileRequestResponseMapper.ClusterProfileResponseMapper.*;
+import static ru.art.state.api.mapping.ModuleConnectionRequestMapper.*;
 
 @Getter
 @RequiredArgsConstructor

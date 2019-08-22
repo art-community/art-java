@@ -18,14 +18,12 @@
 
 package ru.art.service.exception;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import ru.art.service.model.ServiceMethodCommand;
-import static java.text.MessageFormat.format;
-import static ru.art.core.constants.StringConstants.DOT;
-import static ru.art.core.constants.StringConstants.NEW_LINE;
-import static ru.art.service.constants.ServiceExceptionsMessages.SERVICE_EXECUTION_EXCEPTION_MESSAGE;
-import static ru.art.service.constants.ServiceExceptionsMessages.SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE;
+import lombok.*;
+import ru.art.service.model.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.service.constants.ServiceExceptionsMessages.*;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
@@ -37,6 +35,12 @@ public class ServiceExecutionException extends RuntimeException {
         super(errorMessage);
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
+    }
+
+    public ServiceExecutionException(String errorCode, Throwable e) {
+        super(formatErrorMessage(errorCode, e), e);
+        this.errorCode = errorCode;
+        this.errorMessage = e.getMessage();
     }
 
     public ServiceExecutionException(ServiceMethodCommand command, String errorCode, String errorMessage) {
@@ -54,6 +58,10 @@ public class ServiceExecutionException extends RuntimeException {
     private static String formatErrorMessage(ServiceMethodCommand command, String errorCode, Throwable e) {
         return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE, command.getServiceId(), command.getMethodId(),
                 errorCode, e.getMessage(), getStackTrace(e));
+    }
+
+    private static String formatErrorMessage(String errorCode, Throwable e) {
+        return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE_WITHOUT_COMMAND, errorCode, e.getMessage(), getStackTrace(e));
     }
 
     private static String getStackTrace(Throwable e) {

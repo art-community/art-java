@@ -19,10 +19,10 @@
 package ru.art.kafka.consumer.configuration;
 
 
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.kafka.consumer.configuration.KafkaConsumerConfiguration.KafkaConsumerDefaultConfiguration;
-import ru.art.kafka.consumer.configuration.KafkaStreamsConfiguration.KafkaStreamsDefaultConfiguration;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.kafka.consumer.configuration.KafkaConsumerConfiguration.*;
+import ru.art.kafka.consumer.configuration.KafkaStreamsConfiguration.*;
 
 public interface KafkaConsumerModuleConfiguration extends ModuleConfiguration {
     boolean isEnableTracing();
@@ -36,7 +36,7 @@ public interface KafkaConsumerModuleConfiguration extends ModuleConfiguration {
 	@Getter
 	class KafkaConsumerModuleDefaultConfiguration implements KafkaConsumerModuleConfiguration {
         private final boolean enableTracing = false;
-        private final KafkaConsumerConfiguration kafkaConsumerConfiguration = new KafkaConsumerDefaultConfiguration();
-        private final KafkaStreamsConfiguration kafkaStreamsConfiguration = new KafkaStreamsDefaultConfiguration();
+        private final KafkaConsumerConfiguration kafkaConsumerConfiguration = KafkaConsumerDefaultConfiguration.builder().build();
+        private final KafkaStreamsConfiguration kafkaStreamsConfiguration = KafkaStreamsDefaultConfiguration.builder().build();
     }
 }

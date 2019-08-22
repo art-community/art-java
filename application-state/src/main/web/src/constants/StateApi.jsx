@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-import {BASE_URL} from "./Constants";
+import {API_URL} from "./Constants";
 
-export const GET_CLUSTER_PROFILE_URL = (profile) => `${BASE_URL}/state/getClusterProfile/${profile}`;
-export const GET_PROFILES_URL = `${BASE_URL}/state/profiles`;
+export const GET_CLUSTER_PROFILE_URL = (profile) => `${API_URL}/getClusterProfile/${profile}`;
+export const GET_PROFILES_URL = `${API_URL}/profiles`;

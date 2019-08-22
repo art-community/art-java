@@ -18,12 +18,9 @@
 
 package ru.art.service.model;
 
-import io.github.resilience4j.retry.RetryConfig;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import io.github.resilience4j.retry.*;
+import lombok.*;
+import lombok.experimental.*;
 
 @Getter
 @NoArgsConstructor

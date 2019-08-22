@@ -18,17 +18,16 @@
 
 package ru.art.logging;
 
-import lombok.Getter;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.logging.LoggingModuleConstants.LoggingMode;
+import lombok.*;
+import org.apache.logging.log4j.*;
+import ru.art.core.module.*;
+import ru.art.logging.LoggingModuleConstants.*;
+import java.util.*;
+
 import static org.apache.logging.log4j.LogManager.getRootLogger;
-import static org.apache.logging.log4j.core.config.Configurator.setAllLevels;
+import static org.apache.logging.log4j.core.config.Configurator.*;
 import static ru.art.logging.LoggerConfigurationService.*;
-import static ru.art.logging.LoggingModuleConstants.LoggingMode.SOCKET;
-import java.util.Set;
+import static ru.art.logging.LoggingModuleConstants.LoggingMode.*;
 
 public interface LoggingModuleConfiguration extends ModuleConfiguration {
     Logger getLogger();

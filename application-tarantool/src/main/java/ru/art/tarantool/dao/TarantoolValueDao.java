@@ -18,40 +18,37 @@
 
 package ru.art.tarantool.dao;
 
-import org.tarantool.TarantoolClient;
+import org.tarantool.*;
 import ru.art.entity.*;
-import ru.art.tarantool.exception.TarantoolDaoException;
-import ru.art.tarantool.model.TarantoolUpdateFieldOperation;
-import static java.text.MessageFormat.format;
-import static java.util.Arrays.stream;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
-import static java.util.Objects.isNull;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static java.util.stream.Collectors.toList;
-import static ru.art.core.caster.Caster.cast;
+import ru.art.tarantool.exception.*;
+import ru.art.tarantool.model.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static java.util.Arrays.*;
+import static java.util.Collections.*;
+import static java.util.Objects.*;
+import static java.util.Optional.*;
+import static java.util.stream.Collectors.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.entity.Entity.concat;
-import static ru.art.entity.Entity.entityBuilder;
-import static ru.art.entity.Value.*;
-import static ru.art.entity.tuple.PlainTupleReader.readTuple;
-import static ru.art.entity.tuple.PlainTupleWriter.PlainTupleWriterResult;
-import static ru.art.entity.tuple.PlainTupleWriter.writeTuple;
-import static ru.art.entity.tuple.schema.ValueSchema.fromTuple;
-import static ru.art.tarantool.caller.TarantoolFunctionCaller.callTarantoolFunction;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.ENTITY_IS_NULL;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.ENTITY_WITHOUT_ID_FILED;
+import static ru.art.entity.Entity.*;
+import static ru.art.entity.Value.asEntity;
+import static ru.art.entity.Value.asPrimitive;
+import static ru.art.entity.Value.asCollection;
+import static ru.art.entity.Value.asStringParametersMap;
+import static ru.art.entity.Value.asMap;
+import static ru.art.entity.tuple.PlainTupleReader.*;
+import static ru.art.entity.tuple.PlainTupleWriter.*;
+import static ru.art.entity.tuple.schema.ValueSchema.*;
+import static ru.art.tarantool.caller.TarantoolFunctionCaller.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ID_FIELD;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.MANUAL;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.VALUE;
-import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState;
-import static ru.art.tarantool.service.TarantoolScriptService.evaluateValueScript;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.*;
+import static ru.art.tarantool.module.TarantoolModule.*;
+import static ru.art.tarantool.service.TarantoolScriptService.*;
 
 @SuppressWarnings("Duplicates")
 public final class TarantoolValueDao extends TarantoolCommonDao {

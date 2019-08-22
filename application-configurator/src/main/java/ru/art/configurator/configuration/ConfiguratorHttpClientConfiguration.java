@@ -18,12 +18,13 @@
 
 package ru.art.configurator.configuration;
 
-import lombok.Getter;
-import ru.art.http.client.configuration.HttpClientModuleConfiguration.HttpClientModuleDefaultConfiguration;
-import ru.art.http.mapper.HttpContentMapper;
-import ru.art.core.mime.MimeType;
-import static ru.art.configurator.http.content.mapping.ConfiguratorHttpContentMapping.configureContentMappers;
-import java.util.Map;
+import lombok.*;
+import ru.art.core.mime.*;
+import ru.art.http.client.configuration.HttpClientModuleConfiguration.*;
+import ru.art.http.mapper.*;
+import java.util.*;
+
+import static ru.art.configurator.http.content.mapping.ConfiguratorHttpContentMapping.*;
 
 @Getter
 public class ConfiguratorHttpClientConfiguration extends HttpClientModuleDefaultConfiguration {

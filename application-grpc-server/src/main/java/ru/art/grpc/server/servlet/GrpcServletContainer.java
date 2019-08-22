@@ -18,51 +18,46 @@
 
 package ru.art.grpc.server.servlet;
 
-import io.grpc.stub.StreamObserver;
-import lombok.Getter;
-import ru.art.entity.Value;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.grpc.server.exception.GrpcServletException;
-import ru.art.grpc.server.model.GrpcService.GrpcMethod;
-import ru.art.grpc.server.specification.GrpcServiceSpecification;
-import ru.art.grpc.servlet.GrpcRequest;
-import ru.art.grpc.servlet.GrpcResponse;
-import ru.art.grpc.servlet.GrpcServlet;
-import ru.art.logging.ServiceCallLoggingParameters;
-import ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue;
-import ru.art.service.exception.ServiceExecutionException;
-import ru.art.service.model.ServiceMethodCommand;
-import ru.art.service.model.ServiceRequest;
-import ru.art.service.model.ServiceResponse;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.apache.logging.log4j.ThreadContext.get;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.StringConstants.BRACKETS;
-import static ru.art.core.constants.StringConstants.DOT;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.core.extension.StringExtensions.emptyIfNull;
+import io.grpc.stub.*;
+import lombok.*;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+import ru.art.grpc.server.exception.*;
+import ru.art.grpc.server.model.GrpcService.*;
+import ru.art.grpc.server.specification.*;
+import ru.art.grpc.servlet.*;
+import ru.art.logging.*;
+import ru.art.service.exception.*;
+import ru.art.service.model.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static org.apache.logging.log4j.ThreadContext.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.constants.InterceptionStrategy.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.entity.Value.*;
+import static ru.art.entity.mapper.ValueFromModelMapper.*;
 import static ru.art.grpc.server.constants.GrpcServerExceptionMessages.*;
-import static ru.art.grpc.server.constants.GrpcServerLoggingMessages.GRPC_LOGGING_EVENT;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.GRPC_SERVICE_TYPE;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.RESPONSE_OK;
-import static ru.art.grpc.servlet.GrpcResponse.newBuilder;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.logging.LoggingModuleConstants.DEFAULT_REQUEST_ID;
-import static ru.art.logging.LoggingModuleConstants.LoggingParameters.REQUEST_ID_KEY;
-import static ru.art.logging.LoggingParametersManager.clearServiceCallLoggingParameters;
-import static ru.art.logging.LoggingParametersManager.putServiceCallLoggingParameters;
-import static ru.art.logging.ThreadContextExtensions.putIfNotNull;
-import static ru.art.protobuf.descriptor.ProtobufEntityReader.readProtobuf;
-import static ru.art.protobuf.descriptor.ProtobufEntityWriter.writeProtobuf;
-import static ru.art.service.ServiceController.executeServiceMethodUnchecked;
-import static ru.art.service.ServiceModule.serviceModuleState;
-import static ru.art.service.constants.RequestValidationPolicy.NON_VALIDATABLE;
-import static ru.art.service.constants.ServiceModuleConstants.REQUEST_VALUE_KEY;
-import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
-import java.util.Map;
+import static ru.art.grpc.server.constants.GrpcServerLoggingMessages.*;
+import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
+import static ru.art.grpc.servlet.GrpcResponse.*;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.logging.LoggingModuleConstants.*;
+import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
+import static ru.art.logging.LoggingParametersManager.*;
+import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
+import static ru.art.protobuf.descriptor.ProtobufEntityWriter.*;
+import static ru.art.service.ServiceController.*;
+import static ru.art.service.constants.RequestValidationPolicy.*;
+import static ru.art.service.factory.ServiceRequestFactory.*;
+import static ru.art.service.factory.ServiceResponseFactory.*;
+import static ru.art.service.mapping.ServiceRequestMapping.*;
+import static ru.art.service.mapping.ServiceResponseMapping.*;
 
 public class GrpcServletContainer extends GrpcServlet {
     @Getter
@@ -82,111 +77,141 @@ public class GrpcServletContainer extends GrpcServlet {
 
         @Override
         public void executeService(GrpcRequest grpcRequest, StreamObserver<GrpcResponse> responseObserver) {
-            String serviceMethodId = grpcRequest.getServiceId() + DOT + grpcRequest.getMethodId() + BRACKETS;
+            ServiceMethodCommand command = toServiceRequest()
+                    .map(asEntity(readProtobuf(grpcRequest.getServiceRequest())))
+                    .getServiceMethodCommand();
+            String serviceId = command.getServiceId();
+            String serviceMethodId = serviceId + DOT + command.getMethodId() + BRACKETS;
             clearServiceCallLoggingParameters();
             putServiceCallLoggingParameters(ServiceCallLoggingParameters.builder()
-                    .serviceId(grpcRequest.getServiceId())
+                    .serviceId(serviceId)
                     .serviceMethodId(serviceMethodId)
                     .serviceMethodCommand(serviceMethodId + DOT + getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID))
                     .loggingEventType(GRPC_LOGGING_EVENT)
                     .build());
             try {
-                executeServiceChecked(grpcRequest, responseObserver);
+                executeServiceChecked(grpcRequest, command, responseObserver);
                 clearServiceCallLoggingParameters();
             } catch (Throwable e) {
                 loggingModule()
                         .getLogger(GrpcServletContainer.class)
                         .error(GRPC_SERVICE_EXCEPTION, e);
                 responseObserver.onNext(newBuilder()
-                        .setErrorCode(GRPC_SERVLET_ERROR)
-                        .setErrorMessage(getOrElse(e.getMessage(), e.getClass().toString()))
+                        .setServiceResponse(writeProtobuf(fromServiceResponse().map(errorResponse(command, GRPC_SERVLET_ERROR, e))))
                         .build());
                 responseObserver.onCompleted();
                 clearServiceCallLoggingParameters();
             }
         }
 
-        void executeServiceChecked(GrpcRequest grpcRequest, StreamObserver<GrpcResponse> responseObserver) {
+        private void executeServiceChecked(GrpcRequest grpcRequest, ServiceMethodCommand command, StreamObserver<GrpcResponse> responseObserver) {
             if (isNull(grpcRequest) || isNull(responseObserver)) {
                 throw new GrpcServletException(GRPC_SERVLET_INPUT_PARAMETERS_NULL);
             }
-            GrpcServiceSpecification service = services.get(grpcRequest.getServiceId());
+            Entity serviceRequestEntity = asEntity(readProtobuf(grpcRequest.getServiceRequest()));
+            String serviceId = command.getServiceId();
+            String serviceMethodId = command.getMethodId();
+            GrpcServiceSpecification service = services.get(serviceId);
             if (isNull(service)) {
-                sendServiceNotExistsError(responseObserver, grpcRequest.getServiceId());
+                sendServiceNotExistsError(responseObserver, serviceId);
                 return;
             }
             if (!service.getServiceTypes().contains(GRPC_SERVICE_TYPE)) {
-                sendServiceNotExistsError(responseObserver, grpcRequest.getServiceId());
+                sendServiceNotExistsError(responseObserver, serviceId);
                 return;
             }
-            Value requestData = readProtobuf(grpcRequest.getRequestData());
-            Map<String, GrpcMethod> methodsConfig = service.getGrpcService().getMethods();
-            GrpcMethod methodConfig = methodsConfig.get(grpcRequest.getMethodId());
-            if (isNull(methodConfig)) {
-                sendMethodNotExistsError(responseObserver, grpcRequest.getMethodId());
+            Map<String, GrpcMethod> grpcMethods = service.getGrpcService().getMethods();
+            GrpcMethod grpcMethod = grpcMethods.get(serviceMethodId);
+            if (isNull(grpcMethod)) {
+                sendMethodNotExistsError(responseObserver, serviceMethodId);
                 return;
             }
-            ServiceRequest<?> serviceRequest = buildServiceRequest(grpcRequest, requestData, methodConfig);
-            ServiceResponse<?> response = executeServiceMethodUnchecked(serviceRequest);
-            ServiceExecutionException serviceException = response.getServiceException();
-            ValueFromModelMapper<?, ? extends Value> responseMapper = cast(methodConfig.responseMapper());
-            if (nonNull(serviceException)) {
-                loggingModule()
-                        .getLogger(GrpcServletContainer.class)
-                        .error(GRPC_SERVICE_EXCEPTION, serviceException);
-                GrpcResponse.Builder builder = newBuilder()
-                        .setErrorCode(getOrElse(serviceException.getErrorCode(), GRPC_SERVLET_ERROR))
-                        .setErrorMessage(emptyIfNull(serviceException.getErrorMessage()));
-                if (nonNull(responseMapper)) {
-                    builder.setResponseData(writeProtobuf(responseMapper.map(cast(response.getResponseData()))));
+            for (ValueInterceptor<Entity, Entity> requestValueInterceptor : grpcMethod.requestValueInterceptors()) {
+                ValueInterceptionResult<Entity, Entity> result = requestValueInterceptor.intercept(serviceRequestEntity);
+                if (isNull(result)) {
+                    break;
                 }
-                GrpcResponse GrpcResponse = builder.build();
-                responseObserver.onNext(GrpcResponse);
-                responseObserver.onCompleted();
-                return;
+                serviceRequestEntity = result.getOutValue();
+                if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                    break;
+                }
+                if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                    if (isNull(result.getOutValue())) {
+                        responseObserver.onNext(newBuilder()
+                                .setServiceResponse(writeProtobuf(fromServiceResponse().map(okResponse(command))))
+                                .build());
+                        responseObserver.onCompleted();
+                        return;
+                    }
+                    GrpcResponse grpcResponse = newBuilder().setServiceResponse(writeProtobuf(result.getOutValue())).build();
+                    responseObserver.onNext(grpcResponse);
+                    responseObserver.onCompleted();
+                    return;
+                }
             }
-            if (isNull(responseMapper)) {
-                responseObserver.onNext(newBuilder().setErrorCode(RESPONSE_OK).build());
-                responseObserver.onCompleted();
-                return;
-            }
-            ProtobufValue responseDataValue = writeProtobuf(responseMapper.map(cast(response.getResponseData())));
-            responseObserver.onNext(newBuilder().setErrorCode(RESPONSE_OK).setResponseData(responseDataValue).build());
-            responseObserver.onCompleted();
+            EntityToModelMapper<ServiceRequest<?>> toServiceRequest = cast(toServiceRequest(cast(grpcMethod.requestMapper())));
+            ServiceRequest<?> mappedServiceRequest = toServiceRequest.map(asEntity(serviceRequestEntity));
+            ServiceRequest<?> serviceRequest = isEmpty(serviceRequestEntity.getValue(REQUEST_DATA)) || isNull(grpcMethod.requestMapper())
+                    ? newServiceRequest(command, getOrElse(grpcMethod.validationPolicy(), NON_VALIDATABLE))
+                    : newServiceRequest(command, mappedServiceRequest.getRequestData(), getOrElse(grpcMethod.validationPolicy(), NON_VALIDATABLE));
+            ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);
+            handleResponse(responseObserver, grpcMethod, serviceResponse);
         }
 
         private void sendServiceNotExistsError(StreamObserver<GrpcResponse> responseObserver, String serviceId) {
+            String errorMessage = format(GRPC_SERVICE_NOT_EXISTS_MESSAGE, serviceId);
             loggingModule()
                     .getLogger(GrpcServletContainer.class)
-                    .error(format(GRPC_SERVICE_NOT_EXISTS_MESSAGE, serviceId));
-            responseObserver.onNext(newBuilder().setErrorCode(GRPC_SERVICE_NOT_EXISTS_CODE).setErrorMessage(format(GRPC_SERVICE_NOT_EXISTS_MESSAGE, serviceId)).build());
+                    .error(errorMessage);
+            responseObserver.onNext(newBuilder()
+                    .setServiceResponse(writeProtobuf(fromServiceResponse().map(errorResponse(GRPC_SERVICE_NOT_EXISTS_CODE, errorMessage))))
+                    .build());
             responseObserver.onCompleted();
         }
 
         private void sendMethodNotExistsError(StreamObserver<GrpcResponse> responseObserver, String methodId) {
-            String message = format(GRPC_METHOD_NOT_EXISTS_MESSAGE, methodId);
+            String errorMessage = format(GRPC_METHOD_NOT_EXISTS_MESSAGE, methodId);
             loggingModule()
                     .getLogger(GrpcServletContainer.class)
-                    .error(message);
-            responseObserver.onNext(newBuilder().setErrorCode(GRPC_METHOD_NOT_EXISTS_CODE).setErrorMessage(message).build());
+                    .error(errorMessage);
+            responseObserver.onNext(newBuilder()
+                    .setServiceResponse(writeProtobuf(fromServiceResponse().map(errorResponse(GRPC_METHOD_NOT_EXISTS_CODE, errorMessage))))
+                    .build());
             responseObserver.onCompleted();
         }
 
-        private ServiceRequest<?> buildServiceRequest(GrpcRequest GrpcRequest, Value requestData, GrpcMethod methodConfig) {
-            ServiceMethodCommand serviceMethodCommand = new ServiceMethodCommand(GrpcRequest.getServiceId(), GrpcRequest.getMethodId());
-            if (isNull(requestData)) {
-                return newServiceRequest(serviceMethodCommand);
+        private void handleResponse(StreamObserver<GrpcResponse> responseObserver, GrpcMethod grpcMethod, ServiceResponse<?> serviceResponse) {
+            EntityFromModelMapper<ServiceResponse<?>> fromServiceResponse = cast(fromServiceResponse(cast(grpcMethod.responseMapper())));
+            Entity serviceResponseEntity = fromServiceResponse.map(serviceResponse);
+            ServiceExecutionException serviceException = serviceResponse.getServiceException();
+            for (ValueInterceptor<Entity, Entity> responseValueInterceptor : grpcMethod.responseValueInterceptors()) {
+                ValueInterceptionResult<Entity, Entity> result = responseValueInterceptor.intercept(serviceResponseEntity);
+                if (isNull(result)) {
+                    break;
+                }
+                serviceResponseEntity = result.getOutValue();
+                if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                    break;
+                }
+                if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                    if (isNull(result.getOutValue())) {
+                        responseObserver.onNext(newBuilder().setServiceResponse(writeProtobuf(serviceResponseEntity)).build());
+                        responseObserver.onCompleted();
+                        return;
+                    }
+                    responseObserver.onNext(newBuilder().setServiceResponse(writeProtobuf(serviceResponseEntity)).build());
+                    responseObserver.onCompleted();
+                    return;
+                }
             }
-
-            ValueToModelMapper<?, ? extends Value> requestMapper = cast(methodConfig.requestMapper());
-            if (isNull(requestMapper)) {
-                return newServiceRequest(serviceMethodCommand);
+            GrpcResponse grpcResponse = newBuilder().setServiceResponse(writeProtobuf(serviceResponseEntity)).build();
+            if (nonNull(serviceException)) {
+                loggingModule()
+                        .getLogger(GrpcServletContainer.class)
+                        .error(GRPC_SERVICE_EXCEPTION, serviceException);
             }
-
-            putIfNotNull(REQUEST_VALUE_KEY, requestData);
-            serviceModuleState().setRequestValue(requestData);
-            Object request = requestMapper.map(cast(requestData));
-            return newServiceRequest(serviceMethodCommand, request, getOrElse(methodConfig.validationPolicy(), NON_VALIDATABLE));
+            responseObserver.onNext(grpcResponse);
+            responseObserver.onCompleted();
         }
     }
 }

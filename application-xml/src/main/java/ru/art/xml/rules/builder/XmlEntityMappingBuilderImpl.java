@@ -18,14 +18,14 @@
 
 package ru.art.xml.rules.builder;
 
-import ru.art.xml.constants.XmlEntityMappingTargets;
-import ru.art.xml.exception.XmlMappingException;
-import static java.text.MessageFormat.format;
-import static ru.art.core.factory.CollectionsFactory.setOf;
+import ru.art.xml.constants.*;
+import ru.art.xml.exception.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.xml.constants.XmlEntityMappingTargets.*;
-import static ru.art.xml.constants.XmlMappingExceptionMessages.SAME_INPUT_OUTPUT;
-import static ru.art.xml.constants.XmlMappingExceptionMessages.UNEXPECTED_PARSED_PART_IN_RULE;
-import java.util.Set;
+import static ru.art.xml.constants.XmlMappingExceptionMessages.*;
 
 public class XmlEntityMappingBuilderImpl implements XmlEntityMappingBuilder {
     private final Set<XmlEntityRule> attributeValueRules = setOf();

@@ -24,7 +24,6 @@ public interface HttpConfigKeys {
     String HTTP_BALANCER_SECTION_ID = "http.balancer";
     String MAX_THREADS_COUNT = "maxThreadsCount";
     String MIN_SPARE_THREADS_COUNT = "minSpareThreadsCount";
-    String WEB_URL = "webUrl";
     String CONNECTION_TIMEOUT = "connectionTimeout";
     String SO_TIMEOUT = "soTimeout";
     String CONNECTION_REQUEST_TIMEOUT = "connectionRequestTimeout";
@@ -35,4 +34,7 @@ public interface HttpConfigKeys {
     String SSL_KEY_STORE_FILE_PATH = "sslKeyStoreFilePath";
     String SSL_KEY_STORE_PASSWORD = "sslKeyStorePassword";
     String SSL_KEY_STORE_TYPE = "sslKeyStoreType";
+    String CONSUMES_MIME_TYPE = "consumesMimeType";
+    String PRODUCES_MIME_TYPE = "producesMimeType";
+    String WEB = "web";
 }

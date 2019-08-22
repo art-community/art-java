@@ -18,11 +18,10 @@
 
 package ru.art.service.factory;
 
-import ru.art.service.constants.RequestValidationPolicy;
-import ru.art.service.model.ServiceMethodCommand;
-import ru.art.service.model.ServiceRequest;
-import static ru.art.service.constants.RequestValidationPolicy.NON_VALIDATABLE;
-import static ru.art.service.constants.RequestValidationPolicy.NOT_NULL;
+import ru.art.service.constants.*;
+import ru.art.service.model.*;
+
+import static ru.art.service.constants.RequestValidationPolicy.*;
 
 public interface ServiceRequestFactory {
     static <T> ServiceRequest<T> newServiceRequest(ServiceMethodCommand command) {

@@ -18,21 +18,19 @@
 
 package ru.art.http.server;
 
-import ru.art.core.constants.InterceptionStrategy;
-import ru.art.http.server.interceptor.HttpServerInterception;
-import ru.art.logging.ProtocolCallLoggingParameters;
-import static java.lang.System.getProperty;
-import static java.util.UUID.randomUUID;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.constants.InterceptionStrategy.NEXT_INTERCEPTOR;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
+import ru.art.core.constants.*;
+import ru.art.http.server.interceptor.*;
+import ru.art.logging.*;
+import javax.servlet.http.*;
+import java.util.*;
+
+import static java.lang.System.*;
+import static java.util.UUID.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.InterceptionStrategy.*;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
-import static ru.art.logging.LoggingParametersManager.clearProtocolLoggingParameters;
-import static ru.art.logging.LoggingParametersManager.putProtocolCallLoggingParameters;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Enumeration;
+import static ru.art.logging.LoggingParametersManager.*;
 
 public class HttpServerTracingIdentifierInterception implements HttpServerInterception {
     @Override

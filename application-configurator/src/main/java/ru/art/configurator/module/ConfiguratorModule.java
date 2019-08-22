@@ -18,37 +18,35 @@
 
 package ru.art.configurator.module;
 
-import lombok.Getter;
-import ru.art.config.module.ConfigModule;
+import lombok.*;
+import ru.art.config.module.*;
 import ru.art.configurator.configuration.*;
-import ru.art.configurator.specification.ConfiguratorServiceSpecification;
-import ru.art.configurator.specification.UserServiceSpecification;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleState;
-import ru.art.grpc.client.module.GrpcClientModule;
-import ru.art.grpc.server.module.GrpcServerModule;
-import ru.art.http.client.module.HttpClientModule;
-import ru.art.http.server.module.HttpServerModule;
-import ru.art.http.server.specification.HttpWebUiServiceSpecification;
-import ru.art.json.module.JsonModule;
-import ru.art.logging.LoggingModule;
-import ru.art.metrics.http.specification.MetricServiceSpecification;
-import ru.art.metrics.module.MetricsModule;
-import ru.art.rocks.db.module.RocksDbModule;
-import ru.art.service.ServiceModule;
-import static java.util.UUID.randomUUID;
-import static ru.art.config.ConfigProvider.config;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.CONFIGURATOR_MODULE_ID;
+import ru.art.configurator.specification.*;
+import ru.art.core.module.*;
+import ru.art.grpc.client.module.*;
+import ru.art.grpc.server.module.*;
+import ru.art.http.client.module.*;
+import ru.art.http.server.module.*;
+import ru.art.http.server.specification.*;
+import ru.art.json.module.*;
+import ru.art.logging.*;
+import ru.art.metrics.http.specification.*;
+import ru.art.metrics.module.*;
+import ru.art.rocks.db.module.*;
+import ru.art.service.*;
+
+import static java.util.UUID.*;
+import static ru.art.config.ConfigProvider.*;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
+import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
-import static ru.art.configurator.service.UserService.register;
-import static ru.art.core.configuration.ContextInitialConfiguration.ApplicationContextConfiguration;
+import static ru.art.configurator.service.UserService.*;
+import static ru.art.core.configuration.ContextInitialConfiguration.*;
 import static ru.art.core.context.Context.*;
-import static ru.art.core.extension.ExceptionExtensions.ifExceptionOrEmpty;
-import static ru.art.grpc.server.GrpcServer.grpcServer;
-import static ru.art.http.server.HttpServer.httpServerInSeparatedThread;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpWebUiServiceConstants.HttpPath.IMAGE_PATH;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
-import static ru.art.service.ServiceModule.serviceModule;
+import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.grpc.server.GrpcServer.*;
+import static ru.art.http.server.HttpServer.*;
+import static ru.art.service.ServiceModule.*;
 
 @Getter
 public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguration, ModuleState> {
@@ -71,13 +69,12 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
                 .loadModule(new GrpcClientModule())
                 .loadModule(new HttpClientModule(), constructInsideDefaultContext(configuration, ConfiguratorHttpClientConfiguration::new))
                 .loadModule(new ConfiguratorModule());
-        String httpPath = httpServerModule().getPath();
         serviceModule()
                 .getServiceRegistry()
                 .registerService(new ConfiguratorServiceSpecification())
-                .registerService(new HttpWebUiServiceSpecification(httpPath, httpPath + IMAGE_PATH))
+                .registerService(new HttpResourceServiceSpecification(CONFIGURATOR_PATH))
                 .registerService(new UserServiceSpecification())
-                .registerService(new MetricServiceSpecification(httpPath));
+                .registerService(new MetricServiceSpecification(CONFIGURATOR_PATH));
         httpServerInSeparatedThread();
         grpcServer().await();
     }

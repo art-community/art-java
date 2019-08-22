@@ -18,19 +18,17 @@
 
 package ru.art.grpc.server.function;
 
-import ru.art.entity.Value;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.grpc.server.model.GrpcService.GrpcMethod;
-import ru.art.service.constants.RequestValidationPolicy;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.EXECUTE_GRPC_FUNCTION;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.grpc.server.model.GrpcService.*;
+import ru.art.service.constants.*;
+import java.util.function.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
 import static ru.art.grpc.server.model.GrpcService.*;
-import static ru.art.service.ServiceModule.serviceModule;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import static ru.art.service.ServiceModule.*;
 
 public class GrpcServiceFunction {
     private GrpcMethod grpcMethod = GrpcMethod.grpcMethod();
@@ -55,12 +53,12 @@ public class GrpcServiceFunction {
         return this;
     }
 
-    public GrpcServiceFunction addRequestValueInterceptor(ValueInterceptor interceptor) {
+    public GrpcServiceFunction addRequestValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
         grpcMethod.addRequestValueInterceptor(interceptor);
         return this;
     }
 
-    public GrpcServiceFunction addResponseValueInterceptor(ValueInterceptor interceptor) {
+    public GrpcServiceFunction addResponseValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
         grpcMethod.addResponseValueInterceptor(interceptor);
         return this;
     }

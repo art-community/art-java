@@ -18,8 +18,7 @@
 
 package ru.art.generator.spec.http.proxyspec.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Model representing possible imports to be included in file.

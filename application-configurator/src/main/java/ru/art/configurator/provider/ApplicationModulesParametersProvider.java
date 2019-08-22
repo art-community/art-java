@@ -18,19 +18,19 @@
 
 package ru.art.configurator.provider;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import ru.art.configurator.api.entity.ModuleKey;
-import ru.art.entity.Entity;
+import lombok.*;
+import ru.art.configurator.api.entity.*;
 import ru.art.entity.Value;
-import static java.util.Objects.isNull;
-import static java.util.Optional.empty;
-import static ru.art.configurator.constants.ConfiguratorDbConstants.APPLICATION;
+import ru.art.entity.*;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static java.util.Optional.*;
+import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
-import static ru.art.configurator.dao.ConfiguratorDao.getConfig;
+import static ru.art.configurator.dao.ConfiguratorDao.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.entity.Value.asPrimitive;
-import java.util.Optional;
+import static ru.art.entity.Value.*;
 
 public interface ApplicationModulesParametersProvider {
     static Optional<ApplicationModuleParameters> getApplicationModuleParameters(ModuleKey moduleKey) {

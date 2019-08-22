@@ -18,18 +18,18 @@
 
 package ru.art.entity.tuple;
 
-import lombok.NoArgsConstructor;
+import lombok.*;
+import ru.art.entity.Value;
 import ru.art.entity.*;
-import ru.art.entity.constants.ValueType;
-import static java.util.Collections.EMPTY_LIST;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.caster.Caster.cast;
+import ru.art.entity.constants.*;
+import java.util.*;
+
+import static java.util.Collections.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Value.*;
-import java.util.List;
-import java.util.Map;
 
 @NoArgsConstructor(access = PRIVATE)
 public class TupleWriter {

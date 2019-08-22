@@ -18,33 +18,38 @@
 
 package ru.art.config.extensions.rsocket;
 
-import lombok.Getter;
-import ru.art.rsocket.configuration.RsocketModuleConfiguration.RsocketModuleDefaultConfiguration;
-import ru.art.rsocket.model.RsocketCommunicationTargetConfiguration;
+import lombok.*;
+import ru.art.rsocket.configuration.RsocketModuleConfiguration.*;
+import ru.art.rsocket.model.*;
+import java.util.*;
+
 import static ru.art.config.extensions.ConfigExtensions.*;
-import static ru.art.config.extensions.common.CommonConfigKeys.HOST;
-import static ru.art.config.extensions.common.CommonConfigKeys.TARGETS;
+import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.rsocket.RsocketConfigKeys.*;
-import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.extension.ExceptionExtensions.ifException;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RSOCKET_MODULE_ID;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
-import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.rsocketCommunicationTarget;
-import static ru.art.rsocket.module.RsocketModule.rsocketModuleState;
-import java.util.Map;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.*;
+import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.*;
+import static ru.art.rsocket.module.RsocketModule.*;
 
 @Getter
 public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration {
     private RsocketDataFormat dataFormat;
-    private String acceptorHost = super.getAcceptorHost();
-    private int acceptorTcpPort = super.getAcceptorTcpPort();
-    private int acceptorWebSocketPort = super.getAcceptorWebSocketPort();
+    private String serverHost = super.getServerHost();
+    private int serverTcpPort = super.getServerTcpPort();
+    private int serverWebSocketPort = super.getServerWebSocketPort();
     private String balancerHost;
     private int balancerTcpPort;
     private int balancerWebSocketPort;
     private Map<String, RsocketCommunicationTargetConfiguration> communicationTargets;
+    private boolean enableRawDataTracing;
+    private boolean enableValueTracing;
+    private boolean resumableServer;
+    private long serverResumeSessionDuration;
+    private boolean resumableClient;
+    private long clientResumeSessionDuration;
 
     public RsocketAgileConfiguration() {
         refresh();
@@ -52,17 +57,22 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
 
     @Override
     public void refresh() {
-        dataFormat = ifException(() -> RsocketDataFormat.valueOf(configString(RSOCKET_SECTION_ID, DEFAULT_DATA_FORMAT).toUpperCase()),
-                super.getDefaultDataFormat());
-        String newAcceptorHost = configString(RSOCKET_ACCEPTOR_SECTION_ID, HOST, super.getAcceptorHost());
-        boolean restart = !acceptorHost.equals(newAcceptorHost);
-        acceptorHost = newAcceptorHost;
-        int newAcceptorTcpPort = configInt(RSOCKET_ACCEPTOR_SECTION_ID, TCP_PORT, super.getAcceptorTcpPort());
-        restart |= acceptorTcpPort != newAcceptorTcpPort;
-        acceptorTcpPort = newAcceptorTcpPort;
-        int newAcceptorWebSocketPort = configInt(RSOCKET_ACCEPTOR_SECTION_ID, WEB_SOCKET_PORT, super.getAcceptorWebSocketPort());
-        restart |= acceptorWebSocketPort != newAcceptorWebSocketPort;
-        acceptorWebSocketPort = newAcceptorWebSocketPort;
+        resumableServer = configBoolean(RSOCKET_SECTION_ID, RESUMABLE, super.isResumableServer());
+        serverResumeSessionDuration = configLong(RSOCKET_SECTION_ID, RESUME_SESSION_DURATION, super.getServerResumeSessionDuration());
+        resumableClient = configBoolean(RSOCKET_COMMUNICATION_SECTION_ID, RESUMABLE, super.isResumableClient());
+        clientResumeSessionDuration = configLong(RSOCKET_COMMUNICATION_SECTION_ID, RESUME_SESSION_DURATION, super.getClientResumeSessionDuration());
+        enableRawDataTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
+        enableValueTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
+        dataFormat = ifException(() -> RsocketDataFormat.valueOf(configString(RSOCKET_SECTION_ID, DATA_FORMAT).toUpperCase()), super.getDataFormat());
+        String newAcceptorHost = configString(RSOCKET_SERVER_SECTION_ID, HOST, super.getServerHost());
+        boolean restart = !serverHost.equals(newAcceptorHost);
+        serverHost = newAcceptorHost;
+        int newAcceptorTcpPort = configInt(RSOCKET_SERVER_SECTION_ID, TCP_PORT, super.getServerTcpPort());
+        restart |= serverTcpPort != newAcceptorTcpPort;
+        serverTcpPort = newAcceptorTcpPort;
+        int newAcceptorWebSocketPort = configInt(RSOCKET_SERVER_SECTION_ID, WEB_SOCKET_PORT, super.getServerWebSocketPort());
+        restart |= serverWebSocketPort != newAcceptorWebSocketPort;
+        serverWebSocketPort = newAcceptorWebSocketPort;
         balancerHost = configString(RSOCKET_BALANCER_SECTION_ID, HOST, super.getBalancerHost());
         balancerTcpPort = configInt(RSOCKET_BALANCER_SECTION_ID, TCP_PORT, super.getBalancerTcpPort());
         balancerWebSocketPort = configInt(RSOCKET_BALANCER_SECTION_ID, WEB_SOCKET_PORT, super.getBalancerWebSocketPort());
@@ -70,7 +80,9 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
                 .host(ifEmpty(config.getString(HOST), balancerHost))
                 .tcpPort(getOrElse(config.getInt(TCP_PORT), balancerTcpPort))
                 .webSocketPort(getOrElse(config.getInt(WEB_SOCKET_PORT), balancerWebSocketPort))
-                .dataFormat(super.getDefaultDataFormat())
+                .dataFormat(super.getDataFormat())
+                .resumable(config.getBool(RESUMABLE))
+                .resumeSessionDuration(config.getLong(RESUME_SESSION_DURATION))
                 .build(), super.getCommunicationTargets());
         if (restart && context().hasModule(RSOCKET_MODULE_ID)) {
             rsocketModuleState().getServer().restart();

@@ -18,11 +18,11 @@
 
 package ru.art.service.execution;
 
-import ru.art.service.model.ServiceExecutionConfiguration;
-import ru.art.service.model.ServiceMethodCommand;
-import static ru.art.service.ServiceModule.serviceModule;
-import static ru.art.service.constants.ServiceExecutionFeatureTarget.METHOD;
-import java.util.concurrent.Callable;
+import ru.art.service.model.*;
+import java.util.concurrent.*;
+
+import static ru.art.service.ServiceModule.*;
+import static ru.art.service.constants.ServiceExecutionFeatureTarget.*;
 
 public interface ServiceExecutor {
     static <ResponseType> ResponseType executeServiceWithConfiguration(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {

@@ -18,31 +18,26 @@
 
 package ru.art.generator.spec.common.operations;
 
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterSpec;
-import ru.art.generator.spec.common.constants.SpecificationType;
-import ru.art.generator.spec.common.exception.ExecuteMethodGenerationException;
-import ru.art.generator.spec.common.exception.MethodConsumesWithoutParamsException;
-import ru.art.generator.spec.http.proxyspec.model.HttpProxyMethodsAnnotations;
-import ru.art.generator.spec.http.proxyspec.operations.HttpProxyAuxiliaryOperations;
-import ru.art.generator.spec.http.proxyspec.operations.HttpProxySpecificationClassGenerator;
-import ru.art.generator.spec.http.servicespec.model.HttpServiceMethodsAnnotations;
-import ru.art.generator.spec.http.servicespec.operations.HttpServiceAuxiliaryOperations;
-import ru.art.generator.spec.http.servicespec.operations.HttpServiceSpecificationClassGenerator;
-import ru.art.service.Specification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import static com.squareup.javapoet.MethodSpec.methodBuilder;
-import static com.squareup.javapoet.TypeVariableName.get;
-import static java.text.MessageFormat.format;
-import static javax.lang.model.element.Modifier.PUBLIC;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.generator.common.operations.CommonOperations.printError;
+import com.squareup.javapoet.*;
+import ru.art.generator.spec.common.constants.*;
+import ru.art.generator.spec.common.exception.*;
+import ru.art.generator.spec.http.proxyspec.model.*;
+import ru.art.generator.spec.http.proxyspec.operations.*;
+import ru.art.generator.spec.http.servicespec.model.*;
+import ru.art.generator.spec.http.servicespec.operations.*;
+import ru.art.service.*;
+import ru.art.service.exception.*;
+import java.lang.reflect.*;
+
+import static com.squareup.javapoet.MethodSpec.*;
+import static com.squareup.javapoet.TypeVariableName.*;
+import static java.text.MessageFormat.*;
+import static javax.lang.model.element.Modifier.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.generator.common.operations.CommonOperations.*;
 import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.ExecuteMethodConstants.*;
-import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.UNABLE_TO_DEFINE_METHOD;
-import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.UNABLE_TO_DEFINE_SPECIFICATION_TYPE;
-import static ru.art.generator.spec.http.common.operations.HttpAnnotationsChecker.amountOfHttpMethodsAnnotations;
-import static ru.art.generator.spec.http.common.operations.HttpAnnotationsChecker.serviceMethodHasSeveralHttpMethodsAnnotations;
-import java.lang.reflect.Method;
+import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.*;
+import static ru.art.generator.spec.http.common.operations.HttpAnnotationsChecker.*;
 
 /**
  * Interface for executeMethod's generation for each type of specification.

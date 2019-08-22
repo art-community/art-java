@@ -18,8 +18,8 @@
 
 package ru.art.config.extensions.metrics;
 
-import lombok.Getter;
-import ru.art.metrics.configuration.MetricModuleConfiguration.MetricModuleDefaultConfiguration;
+import lombok.*;
+import ru.art.metrics.configuration.MetricModuleConfiguration.*;
 
 @Getter
 public class MetricsAgileConfiguration extends MetricModuleDefaultConfiguration {

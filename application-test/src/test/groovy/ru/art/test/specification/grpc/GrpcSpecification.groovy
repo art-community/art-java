@@ -22,7 +22,6 @@ import ru.art.core.caster.Caster
 import ru.art.entity.Entity
 import spock.lang.Specification
 
-import static java.util.Objects.isNull
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.core.constants.NetworkConstants.LOCALHOST
 import static ru.art.entity.Entity.concat
@@ -62,7 +61,7 @@ class GrpcSpecification extends Specification {
         (response.responseData as Entity) == this.response
 
         when:
-         communicator = grpcCommunicator(LOCALHOST, grpcServerModule().getPort(), grpcServerModule().getPath())
+        communicator = grpcCommunicator(LOCALHOST, grpcServerModule().getPort(), grpcServerModule().getPath())
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
                 .serviceId(serviceId)
@@ -79,16 +78,12 @@ class GrpcSpecification extends Specification {
                 .responseMapper(Caster.&cast)
                 .serviceId(serviceId)
                 .methodId(EXECUTE_GRPC_FUNCTION)
-        def asyncResponse = null
-        communicator.asynchronous()
-                .completionHandler { req, resp -> asyncResponse = resp.responseData }
+        def asyncResponse = communicator.asynchronous()
                 .executeAsynchronous()
-        while (isNull(asyncResponse)) {
-
-        }
+                .get()
 
         then:
-        asyncResponse == this.response
+        asyncResponse.responseData == this.response
 
         when:
         communicator = grpcCommunicator(LOCALHOST, grpcServerModule().getPort(), grpcServerModule().getPath())
@@ -96,15 +91,11 @@ class GrpcSpecification extends Specification {
                 .responseMapper(Caster.&cast)
                 .serviceId(serviceId)
                 .methodId(EXECUTE_GRPC_FUNCTION)
-        def asyncResponseWithReq = null
-        communicator.asynchronous()
-                .completionHandler { req, resp -> asyncResponseWithReq = resp.responseData }
+        def asyncResponseWithReq = communicator.asynchronous()
                 .executeAsynchronous(request)
-        while (isNull(asyncResponseWithReq)) {
-
-        }
+                .get()
 
         then:
-        (asyncResponseWithReq as Entity) == concat(request, this.response)
+        (asyncResponseWithReq.responseData as Entity) == concat(request, this.response)
     }
 }

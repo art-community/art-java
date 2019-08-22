@@ -18,52 +18,74 @@
 
 package ru.art.rsocket.model;
 
-import io.rsocket.Payload;
-import lombok.Builder;
-import lombok.Getter;
-import ru.art.entity.Entity;
+import io.rsocket.*;
+import lombok.*;
 import ru.art.entity.Value;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.reactive.service.model.ReactiveService;
-import ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
-import ru.art.service.model.ServiceMethodCommand;
-import ru.art.service.model.ServiceRequest;
-import static java.util.Objects.isNull;
-import static reactor.core.publisher.Flux.just;
-import static ru.art.core.caster.Caster.cast;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.reactive.service.model.*;
+import ru.art.rsocket.constants.RsocketModuleConstants.*;
+import ru.art.service.model.*;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static reactor.core.publisher.Flux.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.entity.Value.asEntity;
-import static ru.art.logging.ThreadContextExtensions.putIfNotNull;
-import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.REACTIVE;
+import static ru.art.core.constants.InterceptionStrategy.*;
+import static ru.art.entity.Value.*;
+import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.REQUEST_DATA;
-import static ru.art.rsocket.extractor.EntityServiceCommandExtractor.extractServiceMethodCommand;
-import static ru.art.rsocket.model.RsocketReactiveMethods.fromCommand;
-import static ru.art.rsocket.reader.RsocketPayloadReader.readPayload;
-import static ru.art.service.ServiceModule.serviceModuleState;
-import static ru.art.service.constants.ServiceModuleConstants.REQUEST_VALUE_KEY;
-import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
+import static ru.art.rsocket.model.RsocketReactiveMethods.*;
+import static ru.art.rsocket.reader.RsocketPayloadReader.*;
+import static ru.art.service.factory.ServiceRequestFactory.*;
+import static ru.art.service.mapping.ServiceRequestMapping.*;
 
 @Getter
 @Builder
 public class RsocketRequestContext {
     private final ServiceRequest<?> request;
     private final RsocketReactiveMethods rsocketReactiveMethods;
+    @Builder.Default
+    private final boolean stopHandling = false;
+    private Entity alternativeResponse;
 
     @SuppressWarnings("Duplicates")
     public static RsocketRequestContext fromPayload(Payload payload, RsocketDataFormat dataFormat) {
-        Entity serviceRequestEntity = asEntity(readPayload(payload, dataFormat));
-        ServiceMethodCommand command = extractServiceMethodCommand(serviceRequestEntity);
+        Entity requestValue = asEntity(readPayload(payload, dataFormat));
+        ServiceMethodCommand command = toServiceRequest().map(requestValue).getServiceMethodCommand();
         RsocketReactiveMethods rsocketServiceMethods = fromCommand(command);
+        List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = rsocketServiceMethods.getRsocketMethod().requestValueInterceptors();
+        for (ValueInterceptor<Entity, Entity> requestValueInterceptor : requestValueInterceptors) {
+            ValueInterceptionResult<Entity, Entity> result = requestValueInterceptor.intercept(requestValue);
+            if (isNull(result)) {
+                break;
+            }
+            requestValue = result.getOutValue();
+            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                break;
+            }
+            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                if (isNull(result.getOutValue())) {
+                    return RsocketRequestContext.builder().stopHandling(true).build();
+                }
+                return RsocketRequestContext.builder()
+                        .alternativeResponse(result.getOutValue())
+                        .stopHandling(true)
+                        .build();
+            }
+        }
         ValueToModelMapper<?, ?> requestMapper;
         Value requestDataValue;
-        if (isNull(requestMapper = rsocketServiceMethods.getRsocketMethod().requestMapper()) || isEmpty(requestDataValue = serviceRequestEntity.getValue(REQUEST_DATA))) {
+        if (isNull(requestValue) ||
+                isNull(requestMapper = rsocketServiceMethods.getRsocketMethod().requestMapper()) ||
+                isEmpty(requestDataValue = requestValue.getValue(REQUEST_DATA))) {
             return RsocketRequestContext.builder()
                     .request(newServiceRequest(command, rsocketServiceMethods.getRsocketMethod().validationPolicy()))
                     .rsocketReactiveMethods(rsocketServiceMethods)
                     .build();
         }
-        putIfNotNull(REQUEST_VALUE_KEY, requestDataValue);
-        serviceModuleState().setRequestValue(requestDataValue);
         Object requestData = requestMapper.map(cast(requestDataValue));
 
         ReactiveService.ReactiveMethod reactiveMethod = rsocketServiceMethods.getReactiveMethod();

@@ -18,9 +18,8 @@
 
 package ru.art.service;
 
-import static java.util.Objects.isNull;
-import static ru.art.service.constants.ServiceExceptionsMessages.THROWABLE_EXCEPTION_WRAPPER_IS_NULL;
-import static ru.art.service.constants.ServiceExceptionsMessages.WRAPPER_IS_NULL;
+import static java.util.Objects.*;
+import static ru.art.service.constants.ServiceExceptionsMessages.*;
 
 public class ServiceExceptionWrapperBuilder {
     private ServiceExecutionExceptionWrapper exceptionWrapper;

@@ -18,13 +18,12 @@
 
 package ru.art.example.configuration;
 
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
-import static ru.art.config.extensions.ConfigExtensions.configInt;
-import static ru.art.config.extensions.ConfigExtensions.configString;
+import lombok.*;
+import ru.art.core.module.*;
+
+import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.example.constants.ExampleAppModuleConstants.ConfigKeys.*;
-import static ru.art.example.constants.ExampleAppModuleConstants.DefaultConfigValues.DEFAULT_INT_CONFIG;
-import static ru.art.example.constants.ExampleAppModuleConstants.DefaultConfigValues.DEFAULT_STRING_CONFIG;
+import static ru.art.example.constants.ExampleAppModuleConstants.DefaultConfigValues.*;
 
 /**
  * Module configuration

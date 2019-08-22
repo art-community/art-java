@@ -18,11 +18,11 @@
 
 package ru.art.core.parser;
 
-import static java.lang.Boolean.parseBoolean;
-import static java.lang.Double.parseDouble;
-import static java.lang.Integer.parseInt;
-import static java.lang.Long.parseLong;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static java.lang.Boolean.*;
+import static java.lang.Double.*;
+import static java.lang.Integer.*;
+import static java.lang.Long.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 
 public interface PrimitiveParser {
     static double parseOrElse(String str, double orElse) {

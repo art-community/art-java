@@ -18,16 +18,15 @@
 
 package ru.art.logging;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleState;
-import ru.art.logging.LoggingModuleConfiguration.LoggingModuleDefaultConfiguration;
-import static java.util.logging.LogManager.getLogManager;
-import static lombok.AccessLevel.PRIVATE;
-import static org.slf4j.bridge.SLF4JBridgeHandler.install;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.logging.LoggingModuleConstants.LOGGING_MODULE_ID;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.logging.LoggingModuleConfiguration.*;
+
+import static java.util.logging.LogManager.*;
+import static lombok.AccessLevel.*;
+import static org.slf4j.bridge.SLF4JBridgeHandler.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.logging.LoggingModuleConstants.*;
 
 @Getter
 public class LoggingModule implements Module<LoggingModuleConfiguration, ModuleState> {

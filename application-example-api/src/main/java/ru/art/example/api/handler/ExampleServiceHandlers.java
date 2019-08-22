@@ -18,11 +18,11 @@
 
 package ru.art.example.api.handler;
 
-import ru.art.example.api.model.ExampleRequest;
-import ru.art.example.api.model.ExampleResponse;
-import ru.art.service.model.ServiceResponse;
-import static ru.art.logging.LoggingModule.loggingModule;
-import java.util.Optional;
+import ru.art.example.api.model.*;
+import ru.art.service.model.*;
+import java.util.*;
+
+import static ru.art.logging.LoggingModule.*;
 
 
 /**

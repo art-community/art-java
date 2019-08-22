@@ -18,17 +18,18 @@
 
 package ru.art.kafka.consumer.launcher;
 
-import org.apache.kafka.streams.KafkaStreams;
-import ru.art.kafka.consumer.registry.KafkaStreamsRegistry;
-import static ru.art.kafka.consumer.module.KafkaConsumerModule.kafkaStreamsRegistry;
+import org.apache.kafka.streams.*;
+import ru.art.kafka.consumer.registry.*;
+
+import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
 
 
 public interface KafkaStreamsLauncher {
-    static void startKafkaStreams() {
+    static void launchKafkaStreams() {
         kafkaStreamsRegistry().getRegistry().values().forEach(KafkaStreams::start);
     }
 
-    static void startKafkaStreams(KafkaStreamsRegistry registry) {
+    static void launchKafkaStreams(KafkaStreamsRegistry registry) {
         registry.getRegistry().values().forEach(KafkaStreams::start);
     }
 }

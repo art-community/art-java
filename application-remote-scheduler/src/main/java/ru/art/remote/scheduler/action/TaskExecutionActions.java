@@ -18,28 +18,25 @@
 
 package ru.art.remote.scheduler.action;
 
-import ru.art.core.caster.Caster;
-import ru.art.entity.Value;
-import ru.art.remote.scheduler.api.model.DeferredTask;
-import ru.art.remote.scheduler.api.model.InfinityProcess;
-import ru.art.remote.scheduler.api.model.PeriodicTask;
-import ru.art.scheduler.db.adapter.api.model.UpdateTaskExecutionTimeRequest;
-import ru.art.scheduler.db.adapter.api.model.UpdateTaskStatusRequest;
-import ru.art.service.model.ServiceResponse;
-import static java.text.MessageFormat.format;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
-import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator;
-import static ru.art.logging.LoggingModule.loggingModule;
+import ru.art.core.caster.*;
+import ru.art.entity.*;
+import ru.art.remote.scheduler.api.model.*;
+import ru.art.scheduler.db.adapter.api.model.*;
+import ru.art.service.model.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.grpc.client.communicator.GrpcCommunicator.*;
+import static ru.art.logging.LoggingModule.*;
 import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.TaskStatus.*;
 import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.LoggingMessages.*;
-import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.ZERO;
-import static ru.art.remote.scheduler.module.RemoteSchedulerModule.remoteSchedulerModule;
+import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.*;
+import static ru.art.remote.scheduler.module.RemoteSchedulerModule.*;
 import static ru.art.scheduler.db.adapter.api.constants.SchedulerDbAdapterApiConstants.Methods.*;
-import static ru.art.service.ServiceController.executeServiceMethod;
-import static ru.art.task.deferred.executor.SchedulerModuleActions.cancelPeriodicTask;
-import static ru.art.task.deferred.executor.SchedulerModuleActions.removePeriodicTask;
-import java.util.Optional;
+import static ru.art.service.ServiceController.*;
+import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
 
 public interface TaskExecutionActions {
     static void executeDeferredTask(DeferredTask task) {

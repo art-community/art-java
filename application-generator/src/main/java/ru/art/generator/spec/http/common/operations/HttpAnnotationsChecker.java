@@ -19,9 +19,9 @@
 package ru.art.generator.spec.http.common.operations;
 
 import ru.art.generator.spec.http.common.annotation.*;
-import ru.art.generator.spec.http.common.model.HttpMethodsAnnotations;
-import static ru.art.core.constants.StringConstants.AT_SIGN;
-import static ru.art.core.constants.StringConstants.SPACE;
+import ru.art.generator.spec.http.common.model.*;
+
+import static ru.art.core.constants.StringConstants.*;
 
 /**
  * Interface with methods to check annotations's states.

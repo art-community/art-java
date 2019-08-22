@@ -19,15 +19,17 @@
 package ru.art.core.factory;
 
 
-import lombok.NoArgsConstructor;
-import ru.art.core.model.Pair;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import lombok.*;
+import ru.art.core.model.*;
+import java.util.ArrayList;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
+import java.util.concurrent.*;
+import java.util.stream.*;
+
+import static java.util.Arrays.*;
+import static java.util.Collections.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 
 public interface CollectionsFactory {
     static <K, V> MapBuilder<K, V> mapOf(K k, V v) {

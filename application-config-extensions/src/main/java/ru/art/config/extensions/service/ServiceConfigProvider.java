@@ -18,24 +18,23 @@
 
 package ru.art.config.extensions.service;
 
-import io.github.resilience4j.bulkhead.BulkheadConfig;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import io.github.resilience4j.ratelimiter.RateLimiterConfig;
-import io.github.resilience4j.retry.RetryConfig;
-import ru.art.config.Config;
+import io.github.resilience4j.bulkhead.*;
+import io.github.resilience4j.circuitbreaker.*;
+import io.github.resilience4j.ratelimiter.*;
+import io.github.resilience4j.retry.*;
+import ru.art.config.*;
 import ru.art.service.model.*;
-import static io.github.resilience4j.bulkhead.BulkheadConfig.DEFAULT_MAX_CONCURRENT_CALLS;
-import static io.github.resilience4j.bulkhead.BulkheadConfig.DEFAULT_MAX_WAIT_TIME;
+import java.util.*;
+
+import static io.github.resilience4j.bulkhead.BulkheadConfig.*;
 import static io.github.resilience4j.circuitbreaker.CircuitBreakerConfig.*;
-import static io.github.resilience4j.retry.RetryConfig.DEFAULT_MAX_ATTEMPTS;
-import static io.github.resilience4j.retry.RetryConfig.DEFAULT_WAIT_DURATION;
+import static io.github.resilience4j.retry.RetryConfig.*;
 import static java.time.Duration.*;
-import static java.util.Collections.emptyList;
+import static java.util.Collections.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.service.RateLimiterDefaults.*;
 import static ru.art.config.extensions.service.ServiceConfigKeys.*;
-import static ru.art.core.constants.StringConstants.DOT;
-import java.util.List;
+import static ru.art.core.constants.StringConstants.*;
 
 public interface ServiceConfigProvider {
     static CircuitBreakerServiceConfig getCircuitBreakerServiceConfig(String sectionId) {

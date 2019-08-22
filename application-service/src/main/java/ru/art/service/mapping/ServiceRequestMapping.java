@@ -18,20 +18,17 @@
 
 package ru.art.service.mapping;
 
-import ru.art.entity.Entity;
-import ru.art.entity.Value;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.service.constants.RequestValidationPolicy;
-import ru.art.service.exception.ServiceMappingException;
-import ru.art.service.model.ServiceMethodCommand;
-import ru.art.service.model.ServiceRequest;
-import static java.util.Objects.isNull;
+import ru.art.entity.*;
+import ru.art.entity.mapper.*;
+import ru.art.service.constants.*;
+import ru.art.service.exception.*;
+import ru.art.service.model.*;
+
+import static java.util.Objects.*;
 import static org.apache.logging.log4j.core.util.Assert.isEmpty;
-import static ru.art.entity.Entity.entityBuilder;
-import static ru.art.entity.mapper.ValueMapper.mapper;
-import static ru.art.service.constants.RequestValidationPolicy.NON_VALIDATABLE;
+import static ru.art.entity.Entity.*;
+import static ru.art.entity.mapper.ValueMapper.*;
+import static ru.art.service.constants.RequestValidationPolicy.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;
 
 public interface ServiceRequestMapping {
@@ -51,7 +48,9 @@ public interface ServiceRequestMapping {
             String methodId = serviceMethodCommandEntity.getString(METHOD_ID);
             if (isNull(methodId)) throw new ServiceMappingException(METHOD_ID_IS_NULL);
             String validationPolicyAsString = value.getString(VALIDATION_POLICY);
-            RequestValidationPolicy requestValidationPolicy = isEmpty(validationPolicyAsString) ? NON_VALIDATABLE : RequestValidationPolicy.valueOf(validationPolicyAsString);
+            RequestValidationPolicy requestValidationPolicy = isEmpty(validationPolicyAsString)
+                    ? NON_VALIDATABLE :
+                    RequestValidationPolicy.valueOf(validationPolicyAsString);
             D requestData = isNull(requestDataMapper) ? null : value.getValue(REQUEST_DATA, requestDataMapper);
             return new ServiceRequest<>(new ServiceMethodCommand(serviceId, methodId), requestValidationPolicy, requestData);
         };
@@ -59,11 +58,11 @@ public interface ServiceRequestMapping {
 
     static <D> ValueFromModelMapper.EntityFromModelMapper<ServiceRequest<D>> fromServiceRequest(final ValueFromModelMapper<D, Value> requestDataMapper) {
         return model -> {
-            ServiceMethodCommand serviceMethodCommand = model.getServiceMethodCommand();
-            if (isNull(serviceMethodCommand)) throw new ServiceMappingException(SERVICE_COMMAND_IS_NULL);
-            String serviceId = serviceMethodCommand.getServiceId();
+            ServiceMethodCommand command = model.getServiceMethodCommand();
+            if (isNull(command)) throw new ServiceMappingException(SERVICE_COMMAND_IS_NULL);
+            String serviceId = command.getServiceId();
             if (isNull(serviceId)) throw new ServiceMappingException(SERVICE_ID_IS_NULL);
-            String methodId = serviceMethodCommand.getMethodId();
+            String methodId = command.getMethodId();
             if (isNull(methodId)) throw new ServiceMappingException(METHOD_ID_IS_NULL);
             RequestValidationPolicy validationPolicy = isNull(validationPolicy = model.getValidationPolicy()) ? NON_VALIDATABLE : validationPolicy;
             return entityBuilder()

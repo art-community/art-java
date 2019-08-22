@@ -18,12 +18,13 @@
 
 package ru.art.tarantool.configuration;
 
-import lombok.Builder;
-import lombok.Getter;
-import static java.nio.file.Paths.get;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.DEFAULT_TARANTOOL_EXECUTABLE_COMMAND;
-import java.util.List;
+import lombok.*;
+import java.util.*;
+
+import static java.io.File.*;
+import static java.nio.file.Paths.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 
 @Getter
 @Builder
@@ -31,5 +32,7 @@ public class TarantoolLocalConfiguration {
     @Builder.Default
     private final List<String> executableCommand = DEFAULT_TARANTOOL_EXECUTABLE_COMMAND;
     @Builder.Default
-    private final String workingDirectory = get(EMPTY_STRING).toAbsolutePath().toString();
+    private final String workingDirectory = get(EMPTY_STRING).toAbsolutePath().toString()
+            + separator
+            + TARANTOOL;
 }

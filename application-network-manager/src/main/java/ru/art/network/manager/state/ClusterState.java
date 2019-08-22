@@ -18,12 +18,12 @@
 
 package ru.art.network.manager.state;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import ru.art.network.manager.balancer.Balancer;
-import ru.art.state.api.model.ModuleNetworkResponse;
-import static java.util.stream.Collectors.toMap;
-import java.util.Map;
+import lombok.*;
+import ru.art.network.manager.balancer.*;
+import ru.art.state.api.model.*;
+import java.util.*;
+
+import static java.util.stream.Collectors.*;
 
 @Getter
 @RequiredArgsConstructor

@@ -18,10 +18,10 @@
 
 package ru.art.xml.rules.builder;
 
-import lombok.Builder;
-import lombok.Getter;
-import static java.util.Collections.disjoint;
-import java.util.Set;
+import lombok.*;
+import java.util.*;
+
+import static java.util.Collections.*;
 
 @Getter
 @Builder

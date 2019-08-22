@@ -19,10 +19,9 @@
 package ru.art.state.api.model;
 
 import lombok.*;
-import ru.art.service.validation.Validatable;
-import ru.art.service.validation.Validator;
-import static ru.art.service.validation.ValidationExpressions.moreThanInt;
-import static ru.art.service.validation.ValidationExpressions.notEmptyString;
+import ru.art.service.validation.*;
+
+import static ru.art.service.validation.ValidationExpressions.*;
 
 @Getter
 @Builder

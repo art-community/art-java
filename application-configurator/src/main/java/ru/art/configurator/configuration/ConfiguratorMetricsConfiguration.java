@@ -18,18 +18,19 @@
 
 package ru.art.configurator.configuration;
 
-import io.micrometer.prometheus.PrometheusMeterRegistry;
-import lombok.Getter;
-import ru.art.metrics.configuration.MetricModuleConfiguration.MetricModuleDefaultConfiguration;
-import static ru.art.config.ConfigProvider.config;
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.DEFAULT_CONFIGURATOR_PATH;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.CONFIGURATOR_MODULE_ID;
+import io.micrometer.prometheus.*;
+import lombok.*;
+import ru.art.metrics.configuration.MetricModuleConfiguration.*;
+
+import static ru.art.config.ConfigProvider.*;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
+import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
-import static ru.art.core.extension.ExceptionExtensions.ifExceptionOrEmpty;
-import static ru.art.metrics.configurator.PrometheusRegistryConfigurator.prometheusRegistryForApplication;
+import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.metrics.configurator.PrometheusRegistryConfigurator.*;
 
 @Getter
 public class ConfiguratorMetricsConfiguration extends MetricModuleDefaultConfiguration {
-    private final String path = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_HTTP_PATH_PROPERTY), DEFAULT_CONFIGURATOR_PATH);
+    private final String path = ifExceptionOrEmpty(() -> config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_HTTP_PATH_PROPERTY), CONFIGURATOR_PATH);
     private final PrometheusMeterRegistry prometheusMeterRegistry = prometheusRegistryForApplication(CONFIGURATOR_MODULE_ID);
 }

@@ -18,9 +18,9 @@
 
 package ru.art.service.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import ru.art.core.constants.InterceptionStrategy;
+import lombok.*;
+import ru.art.core.constants.*;
+
 import static ru.art.core.constants.InterceptionStrategy.*;
 
 @Getter

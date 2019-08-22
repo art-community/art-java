@@ -18,7 +18,7 @@
 
 package ru.art.task.deferred.executor;
 
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 @AllArgsConstructor
 class NotifiedRunnable implements Runnable {

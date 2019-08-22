@@ -18,7 +18,7 @@
 
 package ru.art.generator.mapper.constants;
 
-import ru.art.entity.mapper.ValueToModelMapper;
+import ru.art.entity.mapper.*;
 
 /**
  * Interface for toModel variable's constants of mapper generator

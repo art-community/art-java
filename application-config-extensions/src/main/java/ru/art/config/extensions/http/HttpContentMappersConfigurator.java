@@ -18,24 +18,24 @@
 
 package ru.art.config.extensions.http;
 
-import ru.art.core.factory.CollectionsFactory.MapBuilder;
-import ru.art.http.json.HttpJsonMapper;
-import ru.art.http.mapper.HttpBytesMapper;
-import ru.art.http.mapper.HttpContentMapper;
-import ru.art.http.mapper.HttpTextPlainMapper;
-import ru.art.core.mime.MimeType;
-import ru.art.http.xml.HttpXmlMapper;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
+import ru.art.core.factory.CollectionsFactory.*;
+import ru.art.core.mime.*;
+import ru.art.http.json.*;
+import ru.art.http.mapper.*;
+import ru.art.http.xml.*;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
-import static ru.art.metrics.http.constants.MetricsModuleHttpConstants.METRICS_CONTENT_TYPE;
-import java.util.Map;
+import static ru.art.metrics.http.constants.MetricsModuleHttpConstants.*;
 
 public interface HttpContentMappersConfigurator {
     static Map<MimeType, HttpContentMapper> configureHttpContentMappers(Map<MimeType, HttpContentMapper> parentMappers) {
         HttpTextPlainMapper textPlainMapper = new HttpTextPlainMapper();
         HttpJsonMapper jsonMapper = new HttpJsonMapper();
         HttpXmlMapper xmlMapper = new HttpXmlMapper();
-        HttpContentMapper bytesContentMapper = new HttpContentMapper(new HttpBytesMapper(), textPlainMapper);
+        HttpBytesMapper bytesMapper = new HttpBytesMapper();
+        HttpContentMapper bytesContentMapper = new HttpContentMapper(bytesMapper, bytesMapper);
         HttpContentMapper textContentMapper = new HttpContentMapper(textPlainMapper, textPlainMapper);
         HttpContentMapper jsonContentMapper = new HttpContentMapper(jsonMapper, jsonMapper);
         HttpContentMapper xmlContentMapper = new HttpContentMapper(xmlMapper, xmlMapper);

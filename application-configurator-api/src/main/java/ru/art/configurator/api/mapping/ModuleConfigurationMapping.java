@@ -18,14 +18,15 @@
 
 package ru.art.configurator.api.mapping;
 
-import ru.art.configurator.api.entity.ModuleConfiguration;
-import ru.art.entity.Entity;
-import ru.art.entity.mapper.ValueFromModelMapper.EntityFromModelMapper;
-import ru.art.entity.mapper.ValueMapper;
-import ru.art.entity.mapper.ValueToModelMapper.EntityToModelMapper;
-import static ru.art.configurator.api.mapping.ModuleKeyMapping.moduleKeyMapper;
-import static ru.art.entity.Entity.entityBuilder;
-import static ru.art.entity.mapper.ValueMapper.mapper;
+import ru.art.configurator.api.entity.*;
+import ru.art.entity.*;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.entity.mapper.*;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+
+import static ru.art.configurator.api.mapping.ModuleKeyMapping.*;
+import static ru.art.entity.Entity.*;
+import static ru.art.entity.mapper.ValueMapper.*;
 
 public interface ModuleConfigurationMapping {
     EntityToModelMapper<ModuleConfiguration> toModel = entity -> ModuleConfiguration.builder()

@@ -18,12 +18,13 @@
 
 package ru.art.example.api.interceptor.http;
 
-import org.apache.http.client.methods.HttpUriRequest;
-import ru.art.core.constants.InterceptionStrategy;
-import ru.art.http.client.interceptor.HttpClientRequestInterception;
-import static ru.art.core.constants.CharConstants.COLON;
-import static ru.art.core.constants.InterceptionStrategy.NEXT_INTERCEPTOR;
-import java.util.Base64;
+import org.apache.http.client.methods.*;
+import ru.art.core.constants.*;
+import ru.art.http.client.interceptor.*;
+import java.util.*;
+
+import static ru.art.core.constants.CharConstants.*;
+import static ru.art.core.constants.InterceptionStrategy.*;
 
 public class ExampleHttpClientInterception implements HttpClientRequestInterception {
 

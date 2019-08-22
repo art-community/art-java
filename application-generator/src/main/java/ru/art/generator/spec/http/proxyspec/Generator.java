@@ -18,20 +18,19 @@
 
 package ru.art.generator.spec.http.proxyspec;
 
-import ru.art.generator.common.annotation.NonGenerated;
-import ru.art.generator.spec.http.proxyspec.annotation.HttpProxyService;
-import ru.art.generator.spec.http.proxyspec.exception.HttpProxySpecGeneratorException;
-import static java.text.MessageFormat.format;
+import ru.art.generator.common.annotation.*;
+import ru.art.generator.spec.http.proxyspec.annotation.*;
+import ru.art.generator.spec.http.proxyspec.exception.*;
+
+import static java.text.MessageFormat.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.generator.common.constants.Constants.GENERATION_COMPLETED;
-import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.MAIN;
-import static ru.art.generator.common.operations.CommonOperations.printError;
-import static ru.art.generator.common.operations.CommonOperations.printMessage;
+import static ru.art.generator.common.constants.Constants.*;
+import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.*;
+import static ru.art.generator.common.operations.CommonOperations.*;
 import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.PathAndPackageConstants.*;
-import static ru.art.generator.spec.common.constants.SpecExceptionConstants.SpecificationGeneratorExceptions.MAIN_ANNOTATION_ABSENT;
-import static ru.art.generator.spec.common.constants.SpecExceptionConstants.SpecificationGeneratorExceptions.SERVICE_MARKED_IS_NON_GENERATED;
-import static ru.art.generator.spec.common.constants.SpecificationType.httpProxySpec;
-import static ru.art.generator.spec.common.operations.AnnotationsChecker.classHasAnnotation;
+import static ru.art.generator.spec.common.constants.SpecExceptionConstants.SpecificationGeneratorExceptions.*;
+import static ru.art.generator.spec.common.constants.SpecificationType.*;
+import static ru.art.generator.spec.common.operations.AnnotationsChecker.*;
 import static ru.art.generator.spec.http.proxyspec.operations.HttpProxySpecificationClassGenerator.*;
 
 /**
@@ -83,7 +82,7 @@ public class Generator {
      * @param service        - service interface.
      * @param genPackagePath - path to parent package for service package.
      */
-    public static void performGeneration(String genPackagePath, Class service) {
+    public static void performGeneration(String genPackagePath, Class<?> service) {
         if (!classHasAnnotation(service, HttpProxyService.class, httpProxySpec)) {
             printError(format(MAIN_ANNOTATION_ABSENT, HttpProxyService.class.getSimpleName(), service.getSimpleName()));
             return;

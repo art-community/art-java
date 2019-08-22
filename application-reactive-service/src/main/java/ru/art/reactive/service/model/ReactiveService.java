@@ -19,10 +19,11 @@
 package ru.art.reactive.service.model;
 
 import lombok.*;
-import lombok.experimental.Accessors;
-import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode;
-import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.STRAIGHT;
-import java.util.Map;
+import lombok.experimental.*;
+import java.util.*;
+
+import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.*;
+import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.*;
 
 @Getter
 @Builder(builderMethodName = "reactiveService", buildMethodName = "serve")

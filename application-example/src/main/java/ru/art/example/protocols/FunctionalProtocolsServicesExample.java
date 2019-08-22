@@ -18,31 +18,30 @@
 
 package ru.art.example.protocols;
 
-import ru.art.core.caster.Caster;
-import ru.art.http.client.model.HttpCommunicationTargetConfiguration;
-import static java.lang.Thread.sleep;
-import static java.util.function.Function.identity;
-import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations;
-import static ru.art.core.context.Context.contextConfiguration;
-import static ru.art.entity.PrimitivesFactory.stringPrimitive;
-import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator;
-import static ru.art.grpc.server.GrpcServer.grpcServerInSeparatedThread;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.EXECUTE_GRPC_FUNCTION;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.GRPC_SERVICE_TYPE;
-import static ru.art.grpc.server.function.GrpcServiceFunction.grpc;
-import static ru.art.grpc.server.module.GrpcServerModule.grpcServerModule;
-import static ru.art.http.client.communicator.HttpCommunicator.httpCommunicator;
-import static ru.art.http.server.HttpServer.httpServerInSeparatedThread;
-import static ru.art.http.server.function.HttpServiceFunction.httpGet;
-import static ru.art.http.server.module.HttpServerModule.httpServerModule;
-import static ru.art.rsocket.communicator.RsocketCommunicator.rsocketCommunicator;
-import static ru.art.rsocket.constants.RsocketModuleConstants.EXECUTE_RSOCKET_FUNCTION;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RSOCKET_SERVICE_TYPE;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.WEB_SOCKET;
-import static ru.art.rsocket.function.RsocketServiceFunction.rsocket;
-import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.rsocketCommunicationTarget;
-import static ru.art.rsocket.module.RsocketModule.rsocketModule;
-import static ru.art.rsocket.server.RsocketServer.rsocketWebSocketServerInSeparatedThread;
+import ru.art.core.caster.*;
+import ru.art.http.client.model.*;
+
+import static java.lang.Thread.*;
+import static java.util.function.Function.*;
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.entity.PrimitivesFactory.*;
+import static ru.art.grpc.client.communicator.GrpcCommunicator.*;
+import static ru.art.grpc.server.GrpcServer.*;
+import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
+import static ru.art.grpc.server.function.GrpcServiceFunction.*;
+import static ru.art.grpc.server.module.GrpcServerModule.*;
+import static ru.art.http.client.communicator.HttpCommunicator.*;
+import static ru.art.http.server.HttpServer.*;
+import static ru.art.http.server.function.HttpServiceFunction.*;
+import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.rsocket.communicator.RsocketCommunicator.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.*;
+import static ru.art.rsocket.function.RsocketServiceFunction.*;
+import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.*;
+import static ru.art.rsocket.module.RsocketModule.*;
+import static ru.art.rsocket.server.RsocketServer.*;
 
 public class FunctionalProtocolsServicesExample {
     public static void main(String[] args) throws InterruptedException {
@@ -86,8 +85,8 @@ public class FunctionalProtocolsServicesExample {
         rsocketWebSocketServerInSeparatedThread();
         sleep(100L);
         rsocketCommunicator(rsocketCommunicationTarget()
-                .host(rsocketModule().getAcceptorHost())
-                .tcpPort(rsocketModule().getAcceptorWebSocketPort())
+                .host(rsocketModule().getServerHost())
+                .tcpPort(rsocketModule().getServerWebSocketPort())
                 .transport(WEB_SOCKET)
                 .build())
                 .serviceId(RSOCKET_SERVICE_TYPE)

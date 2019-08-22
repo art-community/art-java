@@ -18,20 +18,19 @@
 
 package ru.art.grpc.client.communicator;
 
-import io.grpc.ClientInterceptor;
-import ru.art.core.validator.BuilderValidator;
-import ru.art.entity.Value;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.grpc.client.handler.GrpcCommunicationCompletionHandler;
-import ru.art.grpc.client.handler.GrpcCommunicationExceptionHandler;
-import ru.art.grpc.client.model.GrpcCommunicationTargetConfiguration;
-import ru.art.service.model.ServiceResponse;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.constants.StringConstants.COLON;
-import java.util.concurrent.Executor;
+import io.grpc.*;
+import ru.art.core.validator.*;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.grpc.client.handler.*;
+import ru.art.grpc.client.model.*;
+import ru.art.service.model.*;
+import java.util.concurrent.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
 
 public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCommunicator.GrpcAsynchronousCommunicator {
     private final GrpcCommunicationConfiguration configuration = new GrpcCommunicationConfiguration();
@@ -134,14 +133,20 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     }
 
     @Override
-    public GrpcCommunicator addRequestValueInterceptor(ValueInterceptor interceptor) {
+    public GrpcCommunicator addRequestValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
         configuration.getRequestValueInterceptors().add(validator.notNullField(interceptor, "requestValueInterceptor"));
         return this;
     }
 
     @Override
-    public GrpcCommunicator addResponseValueInterceptor(ValueInterceptor interceptor) {
+    public GrpcCommunicator addResponseValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
         configuration.getResponseValueInterceptors().add(validator.notNullField(interceptor, "responseValueInterceptor"));
+        return this;
+    }
+
+    @Override
+    public GrpcAsynchronousCommunicator asynchronousFuturesExecutor(Executor executor) {
+        configuration.setAsynchronousFuturesExecutor(validator.notNullField(executor, "asynchronousFuturesExecutor"));
         return this;
     }
 
@@ -158,17 +163,17 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     }
 
     @Override
-    public void executeAsynchronous() {
+    public <ResponseType> CompletableFuture<ServiceResponse<ResponseType>> executeAsynchronous() {
         validator.validate();
         configuration.validateRequiredFields();
-        GrpcCommunicationAsyncExecutor.execute(configuration);
+        return GrpcCommunicationAsyncExecutor.execute(configuration);
     }
 
     @Override
-    public <RequestType> void executeAsynchronous(RequestType request) {
+    public <RequestType, ResponseType> CompletableFuture<ServiceResponse<ResponseType>> executeAsynchronous(RequestType request) {
         configuration.setRequest(validator.notNullField(request, "request"));
         validator.validate();
         configuration.validateRequiredFields();
-        GrpcCommunicationAsyncExecutor.execute(configuration);
+        return GrpcCommunicationAsyncExecutor.execute(configuration);
     }
 }

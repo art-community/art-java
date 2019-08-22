@@ -18,9 +18,8 @@
 
 package ru.art.core.extension;
 
-import lombok.experimental.UtilityClass;
-import java.util.Collection;
-import java.util.HashSet;
+import lombok.experimental.*;
+import java.util.*;
 
 @UtilityClass
 public final class CollectionExtensions {

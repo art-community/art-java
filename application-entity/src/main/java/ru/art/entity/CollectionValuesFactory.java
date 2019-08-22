@@ -18,10 +18,22 @@
 
 package ru.art.entity;
 
-import ru.art.entity.constants.ValueType.CollectionElementsType;
-import static java.util.Objects.isNull;
+import ru.art.entity.constants.ValueType.*;
+import java.util.*;
+
+import static java.util.Objects.*;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.BOOL;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.BYTE;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.COLLECTION;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.DOUBLE;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.ENTITY;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.FLOAT;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.INT;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.LONG;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.MAP;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING;
+import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING_PARAMETERS_MAP;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.*;
-import java.util.Collection;
 
 public interface CollectionValuesFactory {
     static CollectionValue<String> stringCollection(Collection<String> value) {

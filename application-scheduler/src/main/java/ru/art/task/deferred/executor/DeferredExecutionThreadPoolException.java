@@ -18,7 +18,7 @@
 
 package ru.art.task.deferred.executor;
 
-import lombok.Getter;
+import lombok.*;
 
 /**
  * Исключение, выбрасываемое дефолтным обработчиком ошибок пула потоков отложенных событий

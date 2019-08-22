@@ -16,10 +16,11 @@
 
 package ru.art.core.converter;
 
-import lombok.experimental.UtilityClass;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import lombok.experimental.*;
+
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.determinant.SystemDeterminant.isWindows;
+import static ru.art.core.determinant.SystemDeterminant.*;
 
 @UtilityClass
 public class WslPathConverter {

@@ -18,8 +18,7 @@
 
 package ru.art.sql.constants;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @AllArgsConstructor

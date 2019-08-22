@@ -18,12 +18,12 @@
 
 package ru.art.xml.rules.builder;
 
-import lombok.Getter;
-import ru.art.xml.constants.XmlEntityMappingTargets;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
+import lombok.*;
+import ru.art.xml.constants.*;
+import java.util.*;
+
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.xml.constants.XmlEntityMappingTargets.*;
-import java.util.Map;
-import java.util.Set;
 
 @Getter
 public class XmlEntityMapping {

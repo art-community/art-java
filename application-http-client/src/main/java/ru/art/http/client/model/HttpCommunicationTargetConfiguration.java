@@ -18,13 +18,12 @@
 
 package ru.art.http.client.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-import org.apache.http.client.config.RequestConfig;
-import static ru.art.http.client.module.HttpClientModule.httpClientModule;
-import static ru.art.http.constants.HttpCommonConstants.HTTP_SCHEME;
+import lombok.*;
+import lombok.experimental.*;
+import org.apache.http.client.config.*;
+
+import static ru.art.http.client.module.HttpClientModule.*;
+import static ru.art.http.constants.HttpCommonConstants.*;
 
 @Getter
 @Builder(toBuilder = true)

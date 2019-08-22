@@ -19,16 +19,16 @@
 package ru.art.rsocket.service;
 
 import lombok.*;
-import lombok.experimental.Accessors;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.service.constants.RequestValidationPolicy;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat;
-import static ru.art.service.constants.RequestValidationPolicy.NON_VALIDATABLE;
-import java.util.List;
-import java.util.Map;
+import lombok.experimental.*;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.service.constants.*;
+import java.util.*;
+
+import static ru.art.rsocket.constants.RsocketModuleConstants.*;
+import static ru.art.rsocket.module.RsocketModule.*;
+import static ru.art.service.constants.RequestValidationPolicy.*;
 
 @Getter
 @Builder(builderMethodName = "rsocketService", buildMethodName = "serve")
@@ -45,15 +45,15 @@ public class RsocketService {
         private ValueFromModelMapper<?, ?> responseMapper;
         private RequestValidationPolicy validationPolicy = NON_VALIDATABLE;
         private RsocketDataFormat overrideResponseDataFormat;
-        private List<ValueInterceptor> requestValueInterceptors = linkedListOf();
-        private List<ValueInterceptor> responseValueInterceptors = linkedListOf();
+        private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = rsocketModule().getRequestValueInterceptors();
+        private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = rsocketModule().getResponseValueInterceptors();
 
-        public RsocketMethod addRequestValueInterceptor(ValueInterceptor interceptor) {
+        public RsocketMethod addRequestValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
             requestValueInterceptors.add(interceptor);
             return this;
         }
 
-        public RsocketMethod addResponseValueInterceptor(ValueInterceptor interceptor) {
+        public RsocketMethod addResponseValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
             responseValueInterceptors.add(interceptor);
             return this;
         }

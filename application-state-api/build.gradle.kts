@@ -23,6 +23,7 @@ art {
         applicationLogging()
         applicationService()
         applicationGrpcClient()
+        applicationHttp()
     }
 
     generator {

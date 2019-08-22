@@ -18,21 +18,18 @@
 
 package ru.art.configurator.service;
 
-import ru.art.config.remote.api.specification.RemoteConfigCommunicationSpecification;
-import ru.art.configurator.api.entity.Configuration;
-import ru.art.configurator.api.entity.ModuleConfiguration;
-import ru.art.configurator.api.entity.ModuleKey;
-import ru.art.configurator.api.entity.ProfileConfiguration;
-import ru.art.core.checker.CheckerForEmptiness;
-import ru.art.entity.Value;
-import static ru.art.configurator.api.entity.Configuration.ConfigurationBuilder;
-import static ru.art.configurator.api.entity.Configuration.builder;
-import static ru.art.configurator.constants.ConfiguratorDbConstants.APPLICATION;
+import ru.art.config.remote.api.specification.*;
+import ru.art.configurator.api.entity.*;
+import ru.art.core.checker.*;
+import ru.art.entity.*;
+import java.util.*;
+
+import static ru.art.configurator.api.entity.Configuration.*;
+import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
 import static ru.art.configurator.dao.ConfiguratorDao.*;
-import static ru.art.configurator.factory.RemoteConfigCommunicationSpecificationsFactory.createRemoteConfigProxySpecs;
-import static ru.art.configurator.provider.ApplicationModulesParametersProvider.getApplicationModuleParameters;
-import static ru.art.entity.Entity.entityBuilder;
-import java.util.Set;
+import static ru.art.configurator.factory.RemoteConfigCommunicationSpecificationsFactory.*;
+import static ru.art.configurator.provider.ApplicationModulesParametersProvider.*;
+import static ru.art.entity.Entity.*;
 
 
 public interface ConfiguratorService {
@@ -79,7 +76,7 @@ public interface ConfiguratorService {
     static void applyModuleConfiguration(ModuleKey moduleKey) {
         getApplicationModuleParameters(moduleKey)
                 .filter(CheckerForEmptiness::isNotEmpty)
-                .map(parameters -> createRemoteConfigProxySpecs(parameters, moduleKey))
-                .ifPresent(specs -> specs.forEach(RemoteConfigCommunicationSpecification::applyConfiguration));
+                .flatMap(parameters -> createRemoteConfigCommunicationSpecification(parameters, moduleKey))
+                .ifPresent(RemoteConfigCommunicationSpecification::applyConfiguration);
     }
 }

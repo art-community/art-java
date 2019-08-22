@@ -18,8 +18,7 @@
 
 package ru.art.core.module;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 @AllArgsConstructor

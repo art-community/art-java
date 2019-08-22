@@ -22,13 +22,11 @@ import ru.art.core.caster.Caster
 import ru.art.entity.Entity
 import spock.lang.Specification
 
-import static java.util.Objects.isNull
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.core.constants.NetworkConstants.LOCALHOST
 import static ru.art.entity.Entity.concat
 import static ru.art.entity.Entity.entityBuilder
 import static ru.art.http.client.communicator.HttpCommunicator.httpCommunicator
-import static ru.art.http.constants.MimeToContentTypeMapper.applicationJsonUtf8
 import static ru.art.http.server.HttpServer.httpServerInSeparatedThread
 import static ru.art.http.server.function.HttpServiceFunction.httpPost
 import static ru.art.http.server.module.HttpServerModule.httpServerModule
@@ -43,8 +41,6 @@ class HttpSpecification extends Specification {
         useAgileConfigurations()
         httpPost(listeningPath)
                 .fromBody()
-                .consumesMimeType(applicationJsonUtf8())
-                .producesMimeType(applicationJsonUtf8())
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
                 .handle { request -> concat(request as Entity, response) }
@@ -56,8 +52,6 @@ class HttpSpecification extends Specification {
                 .post()
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .consumes(applicationJsonUtf8())
-                .produces(applicationJsonUtf8())
         def response = communicator.execute()
 
         then:
@@ -69,8 +63,6 @@ class HttpSpecification extends Specification {
                 .post()
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .consumes(applicationJsonUtf8())
-                .produces(applicationJsonUtf8())
         response = communicator.execute(request)
 
         then:
@@ -82,16 +74,10 @@ class HttpSpecification extends Specification {
                 .post()
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .consumes(applicationJsonUtf8())
-                .produces(applicationJsonUtf8())
-        def asyncResponse = null
-        communicator.asynchronous()
+        def asyncResponse = communicator.asynchronous()
                 .exceptionHandler { println it }
-                .completionHandler { req, resp -> asyncResponse = resp }
                 .executeAsynchronous()
-        while (isNull(asyncResponse)) {
-
-        }
+                .get()
 
         then:
         asyncResponse.get() == this.response
@@ -101,17 +87,10 @@ class HttpSpecification extends Specification {
                 .post()
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .consumes(applicationJsonUtf8())
-                .produces(applicationJsonUtf8())
-        def asyncResponseWithReq = null
-        communicator.asynchronous()
+        def asyncResponseWithReq =  communicator.asynchronous()
                 .exceptionHandler { println it }
-                .completionHandler { req, resp -> asyncResponseWithReq = resp }
                 .executeAsynchronous(request)
-        while (isNull(asyncResponseWithReq)) {
-
-        }
-
+                .get()
         then:
         (asyncResponseWithReq.get() as Entity) == concat(request, this.response)
     }

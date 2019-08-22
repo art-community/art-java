@@ -18,7 +18,7 @@
 
 package ru.art.tarantool.dao;
 
-import lombok.experimental.Delegate;
+import lombok.experimental.*;
 
 public class TarantoolDao {
     @Delegate

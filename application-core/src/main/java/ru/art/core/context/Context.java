@@ -18,38 +18,32 @@
 
 package ru.art.core.context;
 
-import ru.art.core.configuration.ContextInitialConfiguration;
-import ru.art.core.configuration.ContextInitialConfiguration.ContextInitialDefaultConfiguration;
-import ru.art.core.configurator.ModuleConfigurator;
-import ru.art.core.exception.ContextInitializationException;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.core.module.ModuleContainer;
-import ru.art.core.module.ModuleState;
-import ru.art.core.provider.PreconfiguredModuleProvider;
-import static java.lang.Runtime.getRuntime;
-import static java.lang.System.currentTimeMillis;
-import static java.lang.System.out;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import ru.art.core.configuration.*;
+import ru.art.core.configuration.ContextInitialConfiguration.*;
+import ru.art.core.configurator.*;
+import ru.art.core.exception.*;
+import ru.art.core.module.*;
+import ru.art.core.provider.*;
+import java.util.*;
+import java.util.concurrent.locks.*;
+import java.util.function.*;
+
+import static java.lang.Runtime.*;
+import static java.lang.System.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ExceptionMessages.*;
 import static ru.art.core.constants.LoggingMessages.*;
-import static ru.art.core.constants.StringConstants.ART_BANNER;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 
 public class Context {
     private static final ReentrantLock lock = new ReentrantLock();
     private static volatile Context DEFAULT_INSTANCE;
     private static volatile Context INSTANCE;
+    private static volatile Consumer<Context> OUTSIDE_DEFAULT_CONTEXT_ACTION;
     private Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules = mapOf();
     private ContextInitialConfiguration initialConfiguration = new ContextInitialDefaultConfiguration();
     private Long lastActionTimestamp = currentTimeMillis();
@@ -119,7 +113,8 @@ public class Context {
         return context().initialConfiguration;
     }
 
-    public static void withContext(Context context, Consumer<Context> action) {
+    public static void withDefaultContext(Consumer<Context> action) {
+        Context context = defaultContext();
         ReentrantLock lock = Context.lock;
         lock.lock();
         Context currentContext = INSTANCE;
@@ -129,81 +124,13 @@ public class Context {
         lock.lock();
         INSTANCE = currentContext;
         lock.unlock();
-    }
-
-    public static void withContext(ContextInitialConfiguration contextInitialConfiguration, Consumer<Context> action) {
-        ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = new Context(contextInitialConfiguration);
-        action.accept(INSTANCE);
-        INSTANCE = currentContext;
-        lock.unlock();
-    }
-
-    public static void withModules(Consumer<Context> action, Module<?, ?>... modules) {
-        ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = new Context();
-        for (Module<?, ?> module : modules) {
-            INSTANCE.loadModule(module);
+        if (nonNull(OUTSIDE_DEFAULT_CONTEXT_ACTION)) {
+            OUTSIDE_DEFAULT_CONTEXT_ACTION.accept(INSTANCE);
         }
-        lock.unlock();
-        action.accept(INSTANCE);
-        lock.lock();
-        INSTANCE = currentContext;
-        lock.unlock();
     }
 
-    public static void withModules(ContextInitialConfiguration contextInitialConfiguration, Consumer<Context> action, Module<?, ?>... modules) {
-        ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = new Context(contextInitialConfiguration);
-        for (Module<?, ?> module : modules) {
-            INSTANCE.loadModule(module);
-        }
-        lock.unlock();
-        action.accept(INSTANCE);
-        lock.lock();
-        INSTANCE = currentContext;
-        lock.unlock();
-    }
-
-    @SafeVarargs
-    public static void withModules(Consumer<Context> action, Supplier<Module<?, ?>>... modules) {
-        ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = new Context();
-        for (Supplier<Module<?, ?>> module : modules) {
-            INSTANCE.loadModule(module.get());
-        }
-        lock.unlock();
-        action.accept(INSTANCE);
-        lock.lock();
-        INSTANCE = currentContext;
-        lock.unlock();
-    }
-
-    @SafeVarargs
-    public static void withModules(ContextInitialConfiguration contextInitialConfiguration, Consumer<Context> action, Supplier<Module<?, ?>>... modules) {
-        ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = new Context(contextInitialConfiguration);
-        for (Supplier<Module<?, ?>> module : modules) {
-            INSTANCE.loadModule(module.get());
-        }
-        lock.unlock();
-        action.accept(INSTANCE);
-        lock.lock();
-        INSTANCE = currentContext;
-        lock.unlock();
-    }
-
-    public static <T> T withContext(Context context, Function<Context, T> action) {
+    public static <T> T withDefaultContext(Function<Context, T> action) {
+        Context context = defaultContext();
         ReentrantLock lock = Context.lock;
         lock.lock();
         Context currentContext = INSTANCE;
@@ -213,85 +140,9 @@ public class Context {
         lock.lock();
         INSTANCE = currentContext;
         lock.unlock();
-        return result;
-    }
-
-    public static <T> T withContext(ContextInitialConfiguration contextInitialConfiguration, Function<Context, T> action) {
-        ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = new Context(contextInitialConfiguration);
-        lock.unlock();
-        T result = action.apply(INSTANCE);
-        lock.lock();
-        INSTANCE = currentContext;
-        lock.unlock();
-        return result;
-    }
-
-    public static <T> T withModules(Function<Context, T> action, Module<?, ?>... modules) {
-        ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = new Context();
-        for (Module<?, ?> module : modules) {
-            INSTANCE.loadModule(module);
+        if (nonNull(OUTSIDE_DEFAULT_CONTEXT_ACTION)) {
+            OUTSIDE_DEFAULT_CONTEXT_ACTION.accept(INSTANCE);
         }
-        lock.unlock();
-        T result = action.apply(INSTANCE);
-        lock.lock();
-        INSTANCE = currentContext;
-        lock.unlock();
-        return result;
-    }
-
-    public static <T> T withModules(ContextInitialConfiguration contextInitialConfiguration, Function<Context, T> action, Module<?, ?>... modules) {
-        ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = new Context(contextInitialConfiguration);
-        for (Module<?, ?> module : modules) {
-            INSTANCE.loadModule(module);
-        }
-        lock.unlock();
-        T result = action.apply(INSTANCE);
-        lock.lock();
-        INSTANCE = currentContext;
-        lock.unlock();
-        return result;
-    }
-
-    @SafeVarargs
-    public static <T> T withModules(Function<Context, T> action, Supplier<Module<?, ?>>... modules) {
-        ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = new Context();
-        for (Supplier<Module<?, ?>> module : modules) {
-            INSTANCE.loadModule(module.get());
-        }
-        lock.unlock();
-        T result = action.apply(INSTANCE);
-        lock.lock();
-        INSTANCE = currentContext;
-        lock.unlock();
-        return result;
-    }
-
-    @SafeVarargs
-    public static <T> T withModules(ContextInitialConfiguration contextInitialConfiguration, Function<Context, T> action, Supplier<Module<?, ?>>... modules) {
-        ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = new Context(contextInitialConfiguration);
-        for (Supplier<Module<?, ?>> module : modules) {
-            INSTANCE.loadModule(module.get());
-        }
-        lock.unlock();
-        T result = action.apply(INSTANCE);
-        lock.lock();
-        INSTANCE = currentContext;
-        lock.unlock();
         return result;
     }
 
@@ -504,15 +355,47 @@ public class Context {
     }
 
     public static boolean insideDefaultContext() {
+        if (INSTANCE == null) return false;
+        if (DEFAULT_INSTANCE == null) return false;
         return INSTANCE == DEFAULT_INSTANCE;
     }
 
     public static <C extends ModuleConfiguration> C constructInsideDefaultContext(Supplier<C> constructor) {
-        return withContext(defaultContext(), (Function<Context, C>) context -> constructor.get());
+        Context context1 = defaultContext();
+        ReentrantLock lock1 = lock;
+        lock1.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = context1;
+        lock1.unlock();
+        C result = ((Function<Context, C>) context -> constructor.get()).apply(INSTANCE);
+        lock1.lock();
+        INSTANCE = currentContext;
+        lock1.unlock();
+        if (DEFAULT_INSTANCE == context1 && nonNull(OUTSIDE_DEFAULT_CONTEXT_ACTION)) {
+            OUTSIDE_DEFAULT_CONTEXT_ACTION.accept(INSTANCE);
+        }
+        return result;
     }
 
     public static <C extends ModuleConfiguration> C constructInsideDefaultContext(ContextInitialConfiguration configuration, Supplier<C> constructor) {
         initDefaultContext(configuration);
-        return withContext(defaultContext(), (Function<Context, C>) context -> constructor.get());
+        Context context1 = defaultContext();
+        ReentrantLock lock1 = lock;
+        lock1.lock();
+        Context currentContext = INSTANCE;
+        INSTANCE = context1;
+        lock1.unlock();
+        C result = ((Function<Context, C>) context -> constructor.get()).apply(INSTANCE);
+        lock1.lock();
+        INSTANCE = currentContext;
+        lock1.unlock();
+        if (DEFAULT_INSTANCE == context1 && nonNull(OUTSIDE_DEFAULT_CONTEXT_ACTION)) {
+            OUTSIDE_DEFAULT_CONTEXT_ACTION.accept(INSTANCE);
+        }
+        return result;
+    }
+
+    public static void outsideDefaultContext(Consumer<Context> action) {
+        OUTSIDE_DEFAULT_CONTEXT_ACTION = action;
     }
 }

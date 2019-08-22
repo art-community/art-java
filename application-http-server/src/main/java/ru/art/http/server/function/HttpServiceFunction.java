@@ -18,22 +18,20 @@
 
 package ru.art.http.server.function;
 
-import ru.art.entity.Value;
-import ru.art.entity.interceptor.ValueInterceptor;
-import ru.art.entity.mapper.ValueFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.http.server.builder.HttpMethodBuilderImplementation;
-import ru.art.http.server.interceptor.HttpServerInterceptor;
-import ru.art.service.constants.RequestValidationPolicy;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.http.server.constants.HttpServerModuleConstants.EXECUTE_HTTP_FUNCTION;
-import static ru.art.http.server.model.HttpService.httpService;
-import static ru.art.service.ServiceModule.serviceModule;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import ru.art.entity.*;
+import ru.art.entity.interceptor.*;
+import ru.art.entity.mapper.*;
+import ru.art.http.constants.*;
+import ru.art.http.server.builder.*;
+import ru.art.http.server.interceptor.*;
+import ru.art.service.constants.*;
+import java.util.function.*;
+
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.*;
+import static ru.art.http.server.model.HttpService.*;
+import static ru.art.service.ServiceModule.*;
 
 public class HttpServiceFunction {
     private String path;
@@ -127,17 +125,17 @@ public class HttpServiceFunction {
     }
 
 
-    public HttpServiceFunction addRequestValueInterceptor(ValueInterceptor interceptor) {
+    public HttpServiceFunction addRequestValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         httpMethodBuilder.addRequestValueInterceptor(interceptor);
         return this;
     }
 
-    public HttpServiceFunction addResponseValueInterceptor(ValueInterceptor interceptor) {
+    public HttpServiceFunction addResponseValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         httpMethodBuilder.addResponseValueInterceptor(interceptor);
         return this;
     }
 
-    public HttpServiceFunction exceptionValueInterceptor(ValueInterceptor interceptor) {
+    public HttpServiceFunction exceptionValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         httpMethodBuilder.addExceptionValueInterceptor(interceptor);
         return this;
     }

@@ -18,14 +18,13 @@
 
 package ru.art.json.module;
 
-import lombok.Getter;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleState;
-import ru.art.json.configuration.JsonModuleConfiguration;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.insideDefaultContext;
-import static ru.art.json.constants.JsonModuleConstants.JSON_MODULE_ID;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.json.configuration.*;
+
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.json.constants.JsonModuleConstants.*;
 
 @Getter
 public class JsonModule implements Module<JsonModuleConfiguration, ModuleState> {

@@ -18,13 +18,12 @@
 
 package ru.art.soap.server.mapper;
 
-import ru.art.entity.XmlEntity;
-import ru.art.soap.server.model.SoapFault;
-import ru.art.soap.server.model.SoapRequest;
-import ru.art.soap.server.model.SoapResponse;
-import static ru.art.entity.XmlEntity.xmlEntityBuilder;
-import static ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
-import static ru.art.entity.mapper.ValueToModelMapper.XmlEntityToModelMapper;
+import ru.art.entity.*;
+import ru.art.soap.server.model.*;
+
+import static ru.art.entity.XmlEntity.*;
+import static ru.art.entity.mapper.ValueFromModelMapper.*;
+import static ru.art.entity.mapper.ValueToModelMapper.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
 
 public interface SoapMapper {

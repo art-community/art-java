@@ -18,41 +18,36 @@
 
 package ru.art.generator.spec.http.servicespec.operations;
 
-import com.squareup.javapoet.CodeBlock;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec.Builder;
-import ru.art.core.caster.Caster;
-import ru.art.entity.PrimitiveMapping;
+import com.squareup.javapoet.*;
+import com.squareup.javapoet.MethodSpec.*;
+import ru.art.core.caster.*;
+import ru.art.entity.*;
 import ru.art.generator.spec.common.annotation.*;
-import ru.art.generator.spec.common.constants.SpecificationType;
-import ru.art.generator.spec.common.exception.MethodConsumesWithoutParamsException;
-import ru.art.generator.spec.common.exception.SpecAnnotationDefinitionException;
-import ru.art.generator.spec.common.exception.SpecificationTypeDefinitionException;
+import ru.art.generator.spec.common.constants.*;
+import ru.art.generator.spec.common.exception.*;
 import ru.art.generator.spec.http.common.annotation.*;
-import ru.art.generator.spec.http.servicespec.annotation.FromMultipart;
-import ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecAnnotations;
-import ru.art.generator.spec.http.servicespec.model.HttpServiceMethodsAnnotations;
-import ru.art.generator.spec.http.servicespec.model.StaticImports;
-import ru.art.http.client.interceptor.HttpClientInterceptor;
-import ru.art.http.constants.MimeToContentTypeMapper;
-import ru.art.service.constants.RequestValidationPolicy;
-import static java.text.MessageFormat.format;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
-import static ru.art.core.constants.StringConstants.WILDCARD;
+import ru.art.generator.spec.http.servicespec.annotation.*;
+import ru.art.generator.spec.http.servicespec.constants.*;
+import ru.art.generator.spec.http.servicespec.model.*;
+import ru.art.http.client.interceptor.*;
+import ru.art.http.constants.*;
+import ru.art.service.constants.*;
+import java.lang.reflect.*;
+import java.util.*;
+
+import static java.text.MessageFormat.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.generator.common.constants.Constants.*;
-import static ru.art.generator.common.operations.CommonOperations.isClassPrimitive;
-import static ru.art.generator.common.operations.CommonOperations.printError;
-import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.CAST;
+import static ru.art.generator.common.operations.CommonOperations.*;
+import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.*;
 import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.ExecuteMethodConstants.*;
-import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.METHOD_NAME_STRING;
-import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.UNABLE_TO_DEFINE_NECESSITY_OF_IMPORT;
-import static ru.art.generator.spec.common.constants.SpecificationType.httpServiceSpec;
-import static ru.art.generator.spec.common.operations.AnnotationsChecker.methodHasAnnotation;
-import static ru.art.generator.spec.http.common.constants.HttpSpecConstants.Errors.METHOD_CONSUMES_WITHOUT_PARAMS;
+import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.*;
+import static ru.art.generator.spec.common.constants.SpecificationType.*;
+import static ru.art.generator.spec.common.operations.AnnotationsChecker.*;
+import static ru.art.generator.spec.http.common.constants.HttpSpecConstants.Errors.*;
 import static ru.art.generator.spec.http.common.constants.HttpSpecConstants.Methods.*;
 import static ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecAnnotations.*;
-import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * Interface contains operations, which helps in specification's parts generation.

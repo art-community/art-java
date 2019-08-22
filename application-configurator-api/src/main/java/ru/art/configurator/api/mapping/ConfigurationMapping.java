@@ -18,12 +18,13 @@
 
 package ru.art.configurator.api.mapping;
 
-import ru.art.configurator.api.entity.Configuration;
-import ru.art.entity.Entity;
-import ru.art.entity.mapper.ValueFromModelMapper.EntityFromModelMapper;
-import ru.art.entity.mapper.ValueMapper;
-import ru.art.entity.mapper.ValueToModelMapper.EntityToModelMapper;
-import static ru.art.entity.mapper.ValueMapper.mapper;
+import ru.art.configurator.api.entity.*;
+import ru.art.entity.*;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.entity.mapper.*;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+
+import static ru.art.entity.mapper.ValueMapper.*;
 
 public interface ConfigurationMapping {
     EntityToModelMapper<Configuration> toModel = entity -> Configuration.builder()
