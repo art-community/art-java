@@ -31,6 +31,7 @@ public interface RsocketModuleConstants {
     String BINARY_MIME_TYPE = "application/binary";
     int DEFAULT_RSOCKET_TCP_PORT = 9000;
     int DEFAULT_RSOCKET_WEB_SOCKET_PORT = 10000;
+    long DEFAULT_RSOCKET_RESUME_SESSION_DURATION = 24 * 60 * 60 * 1000;
     String REACTIVE_SERVICE_EXCEPTION_ERROR_CODE = "REACTIVE_SERVICE_EXCEPTION";
 
     enum RsocketDataFormat {

@@ -46,6 +46,8 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
     private Map<String, RsocketCommunicationTargetConfiguration> communicationTargets;
     private boolean enableRawDataTracing;
     private boolean enableValueTracing;
+    private boolean resumable;
+    private long resumeSessionDuration;
 
     public RsocketAgileConfiguration() {
         refresh();
@@ -53,6 +55,8 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
 
     @Override
     public void refresh() {
+        resumable = configBoolean(RSOCKET_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isResumable());
+        resumeSessionDuration = configLong(RSOCKET_SECTION_ID, RESUME_SESSION_DURATION, super.getResumeSessionDuration());
         enableRawDataTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
         enableValueTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         dataFormat = ifException(() -> RsocketDataFormat.valueOf(configString(RSOCKET_SECTION_ID, DATA_FORMAT).toUpperCase()), super.getDataFormat());

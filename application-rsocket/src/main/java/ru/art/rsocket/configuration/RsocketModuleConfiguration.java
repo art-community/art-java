@@ -51,7 +51,9 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
 
     int getBalancerWebSocketPort();
 
-    boolean isResumableAcceptor();
+    boolean isResumable();
+
+    long getResumeSessionDuration();
 
     RsocketDataFormat getDataFormat();
 
@@ -87,9 +89,10 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
         private final String balancerHost = LOCALHOST;
         private final int balancerTcpPort = DEFAULT_RSOCKET_TCP_PORT;
         private final int balancerWebSocketPort = DEFAULT_RSOCKET_WEB_SOCKET_PORT;
-        private final boolean resumableAcceptor = true;
+        private final boolean resumable = true;
         private final boolean enableRawDataTracing = false;
         private final boolean enableValueTracing = false;
+        private final long resumeSessionDuration = DEFAULT_RSOCKET_RESUME_SESSION_DURATION;
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<RSocketInterceptor> requesterInterceptors = initializeInterceptors();
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
