@@ -39,11 +39,11 @@ import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*;
 
 public interface RsocketModuleConfiguration extends ModuleConfiguration {
-    String getAcceptorHost();
+    String getServerHost();
 
-    int getAcceptorTcpPort();
+    int getServerTcpPort();
 
-    int getAcceptorWebSocketPort();
+    int getServerWebSocketPort();
 
     String getBalancerHost();
 
@@ -51,9 +51,13 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
 
     int getBalancerWebSocketPort();
 
-    boolean isResumable();
+    boolean isResumableServer();
 
-    long getResumeSessionDuration();
+    long getServerResumeSessionDuration();
+
+    boolean isResumableClient();
+
+    long getClientResumeSessionDuration();
 
     RsocketDataFormat getDataFormat();
 
@@ -63,9 +67,9 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
 
     boolean isEnableValueTracing();
 
-    List<RSocketInterceptor> getResponderInterceptors();
+    List<RSocketInterceptor> getClientInterceptors();
 
-    List<RSocketInterceptor> getRequesterInterceptors();
+    List<RSocketInterceptor> getServerInterceptors();
 
     default RsocketCommunicationTargetConfiguration getCommunicationTargetConfiguration(String serviceId) {
         return exceptionIfNull(getCommunicationTargets().get(serviceId),
@@ -83,20 +87,22 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
     @Getter
     class RsocketModuleDefaultConfiguration implements RsocketModuleConfiguration {
         private final RsocketDataFormat dataFormat = PROTOBUF;
-        private final String acceptorHost = BROADCAST_IP_ADDRESS;
-        private final int acceptorTcpPort = findAvailableTcpPort();
-        private final int acceptorWebSocketPort = findAvailableTcpPort();
+        private final String serverHost = BROADCAST_IP_ADDRESS;
+        private final int serverTcpPort = findAvailableTcpPort();
+        private final int serverWebSocketPort = findAvailableTcpPort();
         private final String balancerHost = LOCALHOST;
         private final int balancerTcpPort = DEFAULT_RSOCKET_TCP_PORT;
         private final int balancerWebSocketPort = DEFAULT_RSOCKET_WEB_SOCKET_PORT;
-        private final boolean resumable = true;
+        private final boolean resumableServer = true;
+        private final long serverResumeSessionDuration = DEFAULT_RSOCKET_RESUME_SESSION_DURATION;
+        private final boolean resumableClient = true;
+        private final long clientResumeSessionDuration = DEFAULT_RSOCKET_RESUME_SESSION_DURATION;
         private final boolean enableRawDataTracing = false;
         private final boolean enableValueTracing = false;
-        private final long resumeSessionDuration = DEFAULT_RSOCKET_RESUME_SESSION_DURATION;
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
-        private final List<RSocketInterceptor> requesterInterceptors = initializeInterceptors();
+        private final List<RSocketInterceptor> serverInterceptors = initializeInterceptors();
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
-        private final List<RSocketInterceptor> responderInterceptors = initializeInterceptors();
+        private final List<RSocketInterceptor> clientInterceptors = initializeInterceptors();
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = initializeValueInterceptors();
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))

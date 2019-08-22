@@ -67,20 +67,20 @@ public class RsocketServer {
 
     private Mono<CloseableChannel> createServer() {
         RSocketFactory.ServerRSocketFactory socketFactory = receive();
-        if (rsocketModule().isResumable()) {
-            socketFactory = socketFactory.resume().resumeSessionDuration(ofMillis(rsocketModule().getResumeSessionDuration()));
+        if (rsocketModule().isResumableServer()) {
+            socketFactory = socketFactory.resume().resumeSessionDuration(ofMillis(rsocketModule().getServerResumeSessionDuration()));
         }
-        rsocketModule().getResponderInterceptors().forEach(socketFactory::addResponderPlugin);
+        rsocketModule().getClientInterceptors().forEach(socketFactory::addResponderPlugin);
         ServerTransportAcceptor acceptor = socketFactory.acceptor((setup, sendingSocket) -> just(new RsocketAcceptor(sendingSocket, setup)));
         switch (transport) {
             case TCP:
-                return acceptor.transport(TcpServerTransport.create(rsocketModule().getAcceptorHost(),
-                        rsocketModule().getAcceptorTcpPort()))
+                return acceptor.transport(TcpServerTransport.create(rsocketModule().getServerHost(),
+                        rsocketModule().getServerTcpPort()))
                         .start()
                         .onTerminateDetach();
             case WEB_SOCKET:
-                return acceptor.transport(WebsocketServerTransport.create(rsocketModule().getAcceptorHost(),
-                        rsocketModule().getAcceptorWebSocketPort()))
+                return acceptor.transport(WebsocketServerTransport.create(rsocketModule().getServerHost(),
+                        rsocketModule().getServerWebSocketPort()))
                         .start()
                         .onTerminateDetach();
         }
@@ -107,12 +107,12 @@ public class RsocketServer {
                 .stream()
                 .filter(entry -> entry.getValue().getServiceTypes().contains(RSOCKET_SERVICE_TYPE))
                 .forEach(entry -> logger.info(format(RSOCKET_LOADED_SERVICE_MESSAGE,
-                        rsocketModule().getAcceptorHost().equals(BROADCAST_IP_ADDRESS)
+                        rsocketModule().getServerHost().equals(BROADCAST_IP_ADDRESS)
                                 ? contextConfiguration().getIpAddress()
-                                : rsocketModule().getAcceptorHost(),
+                                : rsocketModule().getServerHost(),
                         transport == TCP
-                                ? rsocketModule().getAcceptorTcpPort()
-                                : rsocketModule().getAcceptorWebSocketPort(),
+                                ? rsocketModule().getServerTcpPort()
+                                : rsocketModule().getServerWebSocketPort(),
                         entry.getKey(),
                         ((RsocketServiceSpecification) entry.getValue()).getRsocketService().getRsocketMethods().keySet()))))
                 .subscribe(channel -> logger

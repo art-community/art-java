@@ -78,9 +78,9 @@ public class RsocketCommunicator {
         ClientRSocketFactory factory = connect();
         if (configuration.resumable()) {
             factory = factory.resume()
-                    .resumeSessionDuration(ofMillis(configuration.resumeSessionDurationMillis()));
+                    .resumeSessionDuration(ofMillis(configuration.resumeSessionDuration()));
         }
-        rsocketModule().getRequesterInterceptors().forEach(factory::addRequesterPlugin);
+        rsocketModule().getServerInterceptors().forEach(factory::addRequesterPlugin);
         configuration.interceptors().forEach(factory::addRequesterPlugin);
         switch (configuration.transport()) {
             case TCP:
