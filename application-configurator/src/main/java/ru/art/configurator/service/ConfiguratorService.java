@@ -76,7 +76,7 @@ public interface ConfiguratorService {
     static void applyModuleConfiguration(ModuleKey moduleKey) {
         getApplicationModuleParameters(moduleKey)
                 .filter(CheckerForEmptiness::isNotEmpty)
-                .map(parameters -> createRemoteConfigProxySpecs(parameters, moduleKey))
-                .ifPresent(specs -> specs.forEach(RemoteConfigCommunicationSpecification::applyConfiguration));
+                .flatMap(parameters -> createRemoteConfigCommunicationSpecification(parameters, moduleKey))
+                .ifPresent(RemoteConfigCommunicationSpecification::applyConfiguration);
     }
 }

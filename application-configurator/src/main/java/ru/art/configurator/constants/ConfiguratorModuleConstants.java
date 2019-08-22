@@ -25,7 +25,9 @@ import static ru.art.http.constants.HttpCommonConstants.*;
 
 public interface ConfiguratorModuleConstants {
     String CONFIGURATOR_MODULE_ID = "CONFIGURATOR_MODULE";
-    String GRPC_INSTANCES = ".grpc.instances";
+    String GRPC_SERVER_HOST = "grpc.server.host";
+    String GRPC_SERVER_PORT = "grpc.server.port";
+    String GRPC_SERVER_PATH = "grpc.server.path";
 
     String APPLICATION_BALANCER_HOST_CONFIG_KEY = "balancer.host";
     String APPLICATION_BALANCER_PORT_CONFIG_KEY = "balancer.port";
