@@ -16,8 +16,6 @@
  * limitations under the License.
  */
 
-let DEFAULT_URL = "http://localhost:11000/configurator";
-
 export const EMPTY_STRING = "";
 export const SLASH = "/";
 export const CONFIGURATOR_PATH = "/configurator";
