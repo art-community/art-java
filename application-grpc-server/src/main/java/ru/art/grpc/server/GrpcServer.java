@@ -87,12 +87,16 @@ public class GrpcServer {
 
     public static GrpcServer grpcServerInSeparatedThread() {
         GrpcServer grpcServer = grpcServer();
-        thread(GRPC_SERVER_THREAD, grpcServer ::await);
+        thread(GRPC_SERVER_THREAD, grpcServer::await);
         return grpcServer;
     }
 
     private static String buildServiceLoadedMessage(GrpcServiceSpecification service) {
-        return format(GRPC_LOADED_SERVICE_MESSAGE, contextConfiguration().getIpAddress(), grpcServerModule().getPort(), grpcServerModule().getPath(), service.getServiceId(), service.getGrpcService().getMethods().keySet().toString());
+        return format(GRPC_LOADED_SERVICE_MESSAGE, contextConfiguration().getIpAddress(),
+                grpcServerModule().getPort(),
+                grpcServerModule().getPath(),
+                service.getServiceId(),
+                service.getGrpcService().getMethods().keySet().toString());
     }
 
     private static void logService(GrpcServiceSpecification specification) {

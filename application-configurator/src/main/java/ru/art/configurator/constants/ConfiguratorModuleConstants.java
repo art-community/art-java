@@ -23,7 +23,6 @@ import java.util.Set;
 
 public interface ConfiguratorModuleConstants {
     String CONFIGURATOR_MODULE_ID = "CONFIGURATOR_MODULE";
-    String HTTP_SERVER_BOOTSTRAP_THREAD = "http-server-bootstrap-thread";
     String GRPC_INSTANCES = ".grpc.instances";
 
     String APPLICATION_BALANCER_HOST_CONFIG_KEY = "balancer.host";

@@ -19,6 +19,7 @@
 art {
     testModules {
         kit()
+        kafkaBroker()
     }
     spockFramework()
 }

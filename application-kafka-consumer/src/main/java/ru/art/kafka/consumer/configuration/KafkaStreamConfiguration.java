@@ -20,42 +20,50 @@ package ru.art.kafka.consumer.configuration;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
 import org.apache.kafka.common.serialization.Serde;
 import ru.art.kafka.consumer.exception.KafkaConsumerModuleException;
+import ru.art.kafka.serde.KafkaProtobufSerde;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.kafka.consumer.module.KafkaConsumerModule.kafkaConsumerModule;
+import java.util.List;
 import java.util.Properties;
 
 @Getter
 @Builder(builderMethodName = "streamConfiguration")
-public class KafkaStreamConfiguration<KeySerde, ValueSerde> {
+public class KafkaStreamConfiguration {
     /**
      * list ip-address and port kafka brokers
      */
-    private final String bootstrapServers;
+    @Singular("broker")
+    private final List<String> brokers;
+
+    /**
+     * @return List topics name
+     */
+    private final String topic;
 
     /**
      * deserializer for key
      */
-    private final Serde<KeySerde> keySerde;
+    @Builder.Default
+    private final Serde<?> keySerde = new KafkaProtobufSerde();
 
     /**
      * @return Deserializer for value
      */
-    private final Serde<ValueSerde> valueSerde;
+    @Builder.Default
+    private final Serde<?> valueSerde = new KafkaProtobufSerde();
 
     /**
      * Default value null
      * Other properties for kafka consumer
      * Read more http://kafka.apache.org/documentation/
      */
-    @Getter(lazy = true)
-    private final Properties kafkaProperties = kafkaConsumerModule().getKafkaStreamsConfiguration().getCustomProperties();
-
+    @Builder.Default
+    private final Properties additionalProperties = new Properties();
 
     public void validate() {
-        if (isEmpty(bootstrapServers)) throw new KafkaConsumerModuleException("bootstrapServer is empty");
-        if (isEmpty(keySerde)) throw new KafkaConsumerModuleException("keySerde is empty");
-        if (isEmpty(valueSerde)) throw new KafkaConsumerModuleException("valueSerde is empty");
+        if (isEmpty(brokers)) throw new KafkaConsumerModuleException("brokers are empty");
+        if (isEmpty(topic)) throw new KafkaConsumerModuleException("topic is empty");
     }
 }

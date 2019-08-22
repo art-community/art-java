@@ -9,7 +9,7 @@ Configuration:
         Charset: "UTF-8"
   Loggers:
     Root:
-      level: trace
+      level: info
       includeLocation: true
       AppenderRef:
         ref: ConsoleAppender

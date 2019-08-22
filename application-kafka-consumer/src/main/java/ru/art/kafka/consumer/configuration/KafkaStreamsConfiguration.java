@@ -18,25 +18,23 @@
 
 package ru.art.kafka.consumer.configuration;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
 import ru.art.kafka.consumer.registry.KafkaStreamsRegistry;
-import java.util.Properties;
+import java.util.Map;
 
 public interface KafkaStreamsConfiguration {
+    Map<String, KafkaStreamConfiguration> getKafkaStreamConfigurations();
 
     KafkaStreamsRegistry getKafkaStreamsRegistry();
 
-    /**
-     * Default value null
-     * Other properties for kafka consumer
-     * Read more http://kafka.apache.org/documentation/
-     */
-    default Properties getCustomProperties() {
-        return new Properties();
-    }
-
-	@Getter
-	class KafkaStreamsDefaultConfiguration implements KafkaStreamsConfiguration {
+    @Getter
+    @Builder
+    class KafkaStreamsDefaultConfiguration implements KafkaStreamsConfiguration {
+        @Builder.Default
         private final KafkaStreamsRegistry kafkaStreamsRegistry = new KafkaStreamsRegistry();
+        @Singular("configuration")
+        private final Map<String, KafkaStreamConfiguration> kafkaStreamConfigurations;
     }
 }

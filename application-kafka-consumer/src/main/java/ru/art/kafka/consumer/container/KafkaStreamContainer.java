@@ -25,7 +25,7 @@ import ru.art.kafka.consumer.configuration.KafkaStreamConfiguration;
 
 @Getter
 @Builder(builderMethodName = "streamContainer", buildMethodName = "assemble")
-public class KafkaStreamContainer<KeySerde, ValueSerde> {
-    private final KafkaStreamConfiguration<KeySerde, ValueSerde> configuration;
-    private final KStream<KeySerde, ValueSerde> stream;
+public class KafkaStreamContainer {
+    private final KafkaStreamConfiguration configuration;
+    private final KStream<?, ?> stream;
 }

@@ -243,7 +243,9 @@ public class RsocketCommunicator {
         }
         return socket.flatMapMany(rsocket -> rsocket.requestChannel(from(request)
                 .filter(Objects::nonNull)
-                .map(requestPayload -> writeServiceRequestPayload(serviceId, methodId, isNull(requestModelMapper) ? null : requestModelMapper.map(cast(requestPayload)), dataFormat)))
+                .map(requestPayload -> writeServiceRequestPayload(serviceId, methodId, isNull(requestModelMapper)
+                        ? null :
+                        requestModelMapper.map(cast(requestPayload)), dataFormat)))
                 .map(responsePayload -> ofNullable(readPayload(responsePayload, dataFormat)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -253,16 +255,15 @@ public class RsocketCommunicator {
     private void validateRequiredFields() {
         boolean serviceIdIsEmpty = isEmpty(serviceId);
         boolean methodIdIsEmpty = isEmpty(methodId);
-        if (serviceIdIsEmpty || methodIdIsEmpty) {
-            String message = INVALID_RSOCKET_COMMUNICATION_CONFIGURATION;
-            if (serviceIdIsEmpty) {
-                message += "serviceId,";
-            }
-            if (methodIdIsEmpty) {
-                message += "methodId";
-            }
-            throw new RsocketClientException(message);
+        if (!serviceIdIsEmpty && !methodIdIsEmpty) {
+            return;
         }
-
+        if (serviceIdIsEmpty && methodIdIsEmpty) {
+            throw new RsocketClientException(INVALID_RSOCKET_COMMUNICATION_CONFIGURATION + "serviceId,methodId");
+        }
+        if (serviceIdIsEmpty) {
+            throw new RsocketClientException(INVALID_RSOCKET_COMMUNICATION_CONFIGURATION + "serviceId");
+        }
+        throw new RsocketClientException("methodId");
     }
 }

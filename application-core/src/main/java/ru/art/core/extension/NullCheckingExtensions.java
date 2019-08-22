@@ -20,6 +20,7 @@ package ru.art.core.extension;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public interface NullCheckingExtensions {
@@ -33,5 +34,11 @@ public interface NullCheckingExtensions {
 
     static <T, R> R doIfNotNull(T val, Function<T, R> action) {
         return nonNull(val) ? action.apply(val) : null;
+    }
+
+    static <T> void doIfNotNull(T val, Consumer<T> consumer) {
+        if (nonNull(val)) {
+            consumer.accept(val);
+        }
     }
 }

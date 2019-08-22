@@ -18,17 +18,18 @@
 
 package ru.art.kafka.consumer.configuration;
 
+import lombok.Builder;
 import lombok.Getter;
 import org.apache.kafka.common.serialization.Deserializer;
 import ru.art.kafka.deserializer.KafkaProtobufDeserializer;
-import ru.art.kafka.consumer.exception.KafkaConsumerModuleException;
 import static java.util.Collections.emptySet;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
+import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
 import java.time.Duration;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -40,14 +41,9 @@ public interface KafkaConsumerConfiguration {
     ExecutorService getExecutor();
 
     /**
-     * @return serviceId - Unique identifier kafka producer in ADK
+     * @return pollTimeout - Timeout for poll data from kafka brokers
      */
-    String getServiceId();
-
-    /**
-     * @return duration - Timeout for poll data from kafka brokers
-     */
-    Duration getDuration();
+    Duration getPollTimeout();
 
     /**
      * @return groupId - A unique string that identifies the producer group this producer belongs to
@@ -62,7 +58,7 @@ public interface KafkaConsumerConfiguration {
     /**
      * @return List ip-address and port kafka brokers
      */
-    String getBootstrapServers();
+    List<String> getBrokers();
 
     /**
      * @return Deserializer for key
@@ -80,32 +76,26 @@ public interface KafkaConsumerConfiguration {
      * @return Other properties for kafka consumer
      * Read more http://kafka.apache.org/documentation/
      */
-    default Properties getOtherProperties() {
+    default Properties getAdditionalProperties() {
         return new Properties();
     }
 
-    default void validate() {
-        if (isEmpty(getServiceId())) throw new KafkaConsumerModuleException("serviceId is empty");
-        if (isEmpty(getTopics())) throw new KafkaConsumerModuleException("topic is empty");
-        if (isEmpty(getBootstrapServers())) throw new KafkaConsumerModuleException("bootstrapServers is empty");
-        if (isEmpty(getDuration())) throw new KafkaConsumerModuleException("duration is empty");
-        if (isEmpty(getGroupId())) throw new KafkaConsumerModuleException("groupId is empty");
-        if (isEmpty(getKeyDeserializer())) throw new KafkaConsumerModuleException("keyDeserializer is empty");
-        if (isEmpty(getValueDeserializer()))
-            throw new KafkaConsumerModuleException("valueDeserializer is empty");
-    }
-
-    KafkaConsumerDefaultConfiguration defaultConfiguration = new KafkaConsumerDefaultConfiguration();
-
 	@Getter
+    @Builder
 	class KafkaConsumerDefaultConfiguration implements KafkaConsumerConfiguration {
+        @Builder.Default
         private final ExecutorService executor = newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
-        private final String serviceId = DEFAULT_KAFKA_SERVICE_ID;
-        private final Duration duration = DEFAULT_DURATION;
+        @Builder.Default
+        private final Duration pollTimeout = DEFAULT_DURATION;
+        @Builder.Default
         private final String groupId = DEFAULT_KAFKA_GROUP_ID;
+        @Builder.Default
         private final Set<String> topics = emptySet();
-        private final String bootstrapServers = DEFAULT_KAFKA_BOOTSTRAP_SERVERS;
+        @Builder.Default
+        private final List<String> brokers = fixedArrayOf();
+        @Builder.Default
         private final Deserializer<?> keyDeserializer = new KafkaProtobufDeserializer();
+        @Builder.Default
         private final Deserializer<?> valueDeserializer = new KafkaProtobufDeserializer();
 
         public <KeyDeserializer> Deserializer<KeyDeserializer> getKeyDeserializer() {

@@ -504,6 +504,8 @@ public class Context {
     }
 
     public static boolean insideDefaultContext() {
+        if (INSTANCE == null) return false;
+        if (DEFAULT_INSTANCE == null) return false;
         return INSTANCE == DEFAULT_INSTANCE;
     }
 
