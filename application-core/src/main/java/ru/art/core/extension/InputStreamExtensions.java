@@ -18,6 +18,7 @@
 
 package ru.art.core.extension;
 
+import lombok.experimental.*;
 import ru.art.core.exception.*;
 import java.io.*;
 import java.nio.*;
@@ -36,8 +37,9 @@ import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 
-public interface InputStreamExtensions {
-    static List<Byte> toByteList(InputStream is) {
+@UtilityClass
+public class InputStreamExtensions {
+    public static List<Byte> toByteList(InputStream is) {
         try {
             List<Byte> byteList = arrayOf(is.available());
             for (int i = is.read(); i != EOF; i = is.read()) {
@@ -49,7 +51,7 @@ public interface InputStreamExtensions {
         }
     }
 
-    static List<Byte> toByteListSafety(InputStream is) {
+    public static List<Byte> toByteListSafety(InputStream is) {
         try {
             List<Byte> byteList = arrayOf(is.available());
             for (int i = is.read(); i != EOF; i = is.read()) {
@@ -62,11 +64,11 @@ public interface InputStreamExtensions {
         }
     }
 
-    static byte[] toByteArray(InputStream is) {
+    public static byte[] toByteArray(InputStream is) {
         return toByteArray(is, DEFAULT_BUFFER_SIZE);
     }
 
-    static byte[] toByteArray(InputStream is, int bufferSize) {
+    public static byte[] toByteArray(InputStream is, int bufferSize) {
         ByteBuffer buffer = allocateDirect(bufferSize);
         byte[] result = EMPTY_BYTES;
         try {
@@ -92,7 +94,7 @@ public interface InputStreamExtensions {
         return result;
     }
 
-    static byte[] toByteArraySafety(InputStream is) {
+    public static byte[] toByteArraySafety(InputStream is) {
         try {
             return toByteArray(is);
         } catch (Throwable e) {
@@ -101,11 +103,11 @@ public interface InputStreamExtensions {
         }
     }
 
-    static String toString(InputStream is, Charset charset) {
+    public static String toString(InputStream is, Charset charset) {
         return new String(toByteArray(is), charset);
     }
 
-    static String toString(InputStream is) {
+    public static String toString(InputStream is) {
         try {
             return toString(is, contextConfiguration().getCharset());
         } catch (Throwable e) {

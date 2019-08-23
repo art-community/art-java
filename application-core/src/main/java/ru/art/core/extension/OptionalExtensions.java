@@ -18,18 +18,20 @@
 
 package ru.art.core.extension;
 
+import lombok.experimental.*;
 import java.util.*;
 
 import static java.util.Objects.*;
 
-public interface OptionalExtensions {
+@UtilityClass
+public class OptionalExtensions {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    static <T> T unwrap(Optional<T> optional) {
+    public static <T> T unwrap(Optional<T> optional) {
         return optional.orElse(null);
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    static boolean isEmpty(Optional<?> optional) {
+    public static boolean isEmpty(Optional<?> optional) {
         return isNull(optional) || !optional.isPresent();
     }
 }

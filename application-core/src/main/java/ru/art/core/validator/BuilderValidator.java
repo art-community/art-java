@@ -32,7 +32,6 @@ import static ru.art.core.factory.CollectionsFactory.*;
 
 @AllArgsConstructor
 public class BuilderValidator {
-    private final String builderName;
     private final Set<BuilderFieldValidationError> validationErrors = setOf();
 
     @SuppressWarnings("WeakerAccess")

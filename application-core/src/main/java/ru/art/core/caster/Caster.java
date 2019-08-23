@@ -18,9 +18,12 @@
 
 package ru.art.core.caster;
 
-public interface Caster {
+import lombok.experimental.*;
+
+@UtilityClass
+public class Caster {
     @SuppressWarnings("unchecked")
-    static <T> T cast(Object obj) {
+    public static <T> T cast(Object obj) {
         return (T) obj;
     }
 }
