@@ -20,6 +20,7 @@ package ru.art.config.extensions.activator;
 
 import lombok.experimental.*;
 import ru.art.config.extensions.provider.*;
+import ru.art.core.annotation.*;
 import ru.art.core.configuration.ContextInitialConfiguration.*;
 import ru.art.core.context.*;
 
@@ -27,6 +28,7 @@ import static ru.art.config.remote.provider.RemoteConfigProvider.*;
 import static ru.art.core.constants.ContextConstants.*;
 import static ru.art.core.context.Context.*;
 
+@PublicApi
 @UtilityClass
 public class AgileConfigurationsActivator {
     public static Context useAgileConfigurations(String mainModuleId) {

@@ -19,16 +19,18 @@
 package ru.art.config.extensions.grpc;
 
 import ru.art.config.*;
+import ru.art.core.annotation.*;
 
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.grpc.GrpcConfigKeys.*;
 
-public interface GrpcConfigProvider {
-    static Config grpcServerConfig() {
+@PublicApi
+public class GrpcConfigProvider {
+    public static Config grpcServerConfig() {
         return configInner(GRPC_SERVER_CONFIG_SECTION_ID);
     }
 
-    static Config grpcCommunicationConfig() {
+    public static Config grpcCommunicationConfig() {
         return configInner(GRPC_COMMUNICATION_SECTION_ID);
     }
 }

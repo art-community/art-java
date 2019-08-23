@@ -16,18 +16,25 @@
 
 package ru.art.config.extensions.kafka;
 
+import lombok.experimental.*;
 import ru.art.config.Config;
+import ru.art.core.annotation.*;
+
 import static ru.art.config.extensions.ConfigExtensions.configInner;
 import static ru.art.config.extensions.kafka.KafkaConfigKeys.*;
 
-public interface KafkaConfigProvider {
-    static Config kafkaBrokerConfig() {
+@PublicApi
+@UtilityClass
+public class KafkaConfigProvider {
+    public static Config kafkaBrokerConfig() {
         return configInner(KAFKA_BROKER_SECTION_ID);
     }
-    static Config kafkaConsumerConfig() {
+
+    public static Config kafkaConsumerConfig() {
         return configInner(KAFKA_CONSUMER_SECTION_ID);
     }
-    static Config kafkaProducerConfig() {
+
+    public static Config kafkaProducerConfig() {
         return configInner(KAFKA_PRODUCERS_SECTION_ID);
     }
 }

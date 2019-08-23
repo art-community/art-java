@@ -22,7 +22,9 @@ import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.*;
 import io.github.resilience4j.ratelimiter.*;
 import io.github.resilience4j.retry.*;
+import lombok.experimental.*;
 import ru.art.config.*;
+import ru.art.core.annotation.*;
 import ru.art.service.model.*;
 import java.util.*;
 
@@ -36,8 +38,10 @@ import static ru.art.config.extensions.service.RateLimiterDefaults.*;
 import static ru.art.config.extensions.service.ServiceConfigKeys.*;
 import static ru.art.core.constants.StringConstants.*;
 
-public interface ServiceConfigProvider {
-    static CircuitBreakerServiceConfig getCircuitBreakerServiceConfig(String sectionId) {
+@PublicApi
+@UtilityClass
+public class ServiceConfigProvider {
+    public static CircuitBreakerServiceConfig getCircuitBreakerServiceConfig(String sectionId) {
         boolean breakable = false;
         CircuitBreakerConfig.Builder circuitBreakerBuilder = CircuitBreakerConfig.custom();
         if (hasPath(sectionId) && (breakable = configBoolean(sectionId, BREAKABLE))) {
@@ -56,7 +60,7 @@ public interface ServiceConfigProvider {
                 .build();
     }
 
-    static RateLimiterServiceConfig getRateLimiterServiceConfig(String sectionId) {
+    public static RateLimiterServiceConfig getRateLimiterServiceConfig(String sectionId) {
         boolean limited = false;
         RateLimiterConfig.Builder rateLimiterConfigBuilder = RateLimiterConfig.custom();
         if (hasPath(sectionId) && (limited = configBoolean(sectionId, LIMITED))) {
@@ -71,7 +75,7 @@ public interface ServiceConfigProvider {
                 .build();
     }
 
-    static BulkheadServiceConfig getBulkheadServiceConfig(String sectionId) {
+    public static BulkheadServiceConfig getBulkheadServiceConfig(String sectionId) {
         boolean bulkheaded = false;
         BulkheadConfig.Builder bulkheadConfigBuilder = BulkheadConfig.custom();
         if (hasPath(sectionId) && (bulkheaded = configBoolean(sectionId, BULKHEADED))) {
@@ -85,7 +89,7 @@ public interface ServiceConfigProvider {
                 .build();
     }
 
-    static RetryServiceConfig getRetryServiceConfig(String sectionId) {
+    public static RetryServiceConfig getRetryServiceConfig(String sectionId) {
         boolean retryable = false;
         RetryConfig.Builder retryConfigBuilder = RetryConfig.custom();
         if (hasPath(sectionId) && (retryable = configBoolean(sectionId, RETRYABLE))) {
@@ -99,7 +103,7 @@ public interface ServiceConfigProvider {
                 .build();
     }
 
-    static DeactivationConfig getServiceDeactivationConfig(String serviceId) {
+    public static DeactivationConfig getServiceDeactivationConfig(String serviceId) {
         if (!hasPath(DEACTIVATION)) return DeactivationConfig.builder().build();
         if (!hasPath(DEACTIVATION, serviceId)) return DeactivationConfig.builder().build();
         boolean deactivated = hasPath(DEACTIVATION, serviceId) || configBoolean(DEACTIVATION, serviceId + DOT + DEACTIVATED);
@@ -109,11 +113,11 @@ public interface ServiceConfigProvider {
         return DeactivationConfig.builder().deactivated(deactivated).deactivatedMethods(deactivatedMethods).build();
     }
 
-    static Config serviceConfig(String serviceId) {
+    public static Config serviceConfig(String serviceId) {
         return configInner(SERVICE).getConfig(serviceId);
     }
 
-    static Config serviceConfig() {
+    public static Config serviceConfig() {
         return configInner(SERVICE);
     }
 }

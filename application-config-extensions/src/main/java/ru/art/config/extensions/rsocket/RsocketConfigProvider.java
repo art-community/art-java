@@ -18,13 +18,17 @@
 
 package ru.art.config.extensions.rsocket;
 
+import lombok.experimental.*;
 import ru.art.config.*;
+import ru.art.core.annotation.*;
 
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.rsocket.RsocketConfigKeys.*;
 
-public interface RsocketConfigProvider {
-    static Config rsocketConfig() {
+@PublicApi
+@UtilityClass
+public class RsocketConfigProvider {
+    public static Config rsocketConfig() {
         return configInner(RSOCKET_SECTION_ID);
     }
 }

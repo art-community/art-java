@@ -18,17 +18,21 @@
 
 package ru.art.config.extensions.http;
 
+import lombok.experimental.*;
 import ru.art.config.*;
+import ru.art.core.annotation.*;
 
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.http.HttpConfigKeys.*;
 
-public interface HttpConfigProvider {
-    static Config httpServerConfig() {
+@PublicApi
+@UtilityClass
+public class HttpConfigProvider {
+    public static Config httpServerConfig() {
         return configInner(HTTP_SERVER_SECTION_ID);
     }
 
-    static Config httpCommunicationConfig() {
+    public static Config httpCommunicationConfig() {
         return configInner(HTTP_COMMUNICATION_SECTION_ID);
     }
 }

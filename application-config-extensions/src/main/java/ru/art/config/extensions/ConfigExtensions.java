@@ -21,6 +21,7 @@ package ru.art.config.extensions;
 import lombok.experimental.*;
 import ru.art.config.*;
 import ru.art.config.exception.*;
+import ru.art.core.annotation.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -34,6 +35,7 @@ import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
 
+@PublicApi
 @UtilityClass
 public class ConfigExtensions {
     public static String configString(String sectionId, String path) {
