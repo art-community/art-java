@@ -32,6 +32,7 @@ import static ru.art.core.factory.CollectionsFactory.*;
 
 @AllArgsConstructor
 public class BuilderValidator {
+    private final String builderName;
     private final Set<BuilderFieldValidationError> validationErrors = setOf();
 
     @SuppressWarnings("WeakerAccess")
@@ -57,7 +58,7 @@ public class BuilderValidator {
     }
 
     private String buildErrorMessage() {
-        StringBuilder stringBuilder = new StringBuilder(BUILDER_VALIDATOR_HAS_NEXT_ERRORS);
+        StringBuilder stringBuilder = new StringBuilder(format(BUILDER_VALIDATOR_HAS_NEXT_ERRORS, builderName));
         validationErrors.forEach(error -> stringBuilder.append(NEW_LINE).append(error));
         return stringBuilder.toString();
     }
