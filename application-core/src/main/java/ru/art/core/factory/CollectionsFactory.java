@@ -169,7 +169,7 @@ public class CollectionsFactory {
     }
 
     @NoArgsConstructor
-    class MapBuilder<K, V> extends LinkedHashMap<K, V> implements Map<K, V> {
+    public class MapBuilder<K, V> extends LinkedHashMap<K, V> implements Map<K, V> {
         MapBuilder(Map<K, V> map) {
             super(map);
         }
