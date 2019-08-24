@@ -41,3 +41,12 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+
+deploy:
+  overwrite: true
+  provider: releases
+  api_key: 36629aca55d89125108c7798a06d07a2f3c4d3e7
+  file_glob: true
+  file: ./**/build/libs/*
+  skip_cleanup: true
+  draft: true
