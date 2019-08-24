@@ -18,6 +18,7 @@
 
 package ru.art.entity;
 
+import lombok.*;
 import ru.art.entity.constants.*;
 
 import static java.util.Objects.*;
