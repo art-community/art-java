@@ -20,7 +20,7 @@ import com.jfrog.bintray.gradle.BintrayExtension.PackageConfig
 
 plugins {
     `maven-publish`
-    id("io.github.art.project") version "1.0.65"
+    id("io.github.art.project") version "1.0.66"
     id("com.jfrog.bintray") version "1.8.4"
 }
 
