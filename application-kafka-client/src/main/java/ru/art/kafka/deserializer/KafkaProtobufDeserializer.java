@@ -37,7 +37,7 @@ public class KafkaProtobufDeserializer implements Deserializer<Value> {
         try {
             return readProtobuf(parseFrom(data));
         } catch (Throwable e) {
-            throw new KafkaDeserialzerException(e);
+            throw new KafkaDeserializerException(e);
         }
     }
 
