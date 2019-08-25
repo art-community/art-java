@@ -30,10 +30,10 @@ import static ru.art.core.caster.Caster.*;
 public class GrpcFunctionalServiceSpecification implements GrpcServiceSpecification {
     private final String serviceId;
     private final GrpcService grpcService;
-    private final Function<?, ?> function;
+    private final Map<String, Function<?, ?>> functions = mapOf();
 
     @Override
     public <P, R> R executeMethod(String methodId, P request) {
-        return cast(function.apply(cast(request)));
+        return cast(functions.get(methodId).apply(cast(request)));
     }
 }
