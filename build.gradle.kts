@@ -17,11 +17,16 @@
  */
 
 import com.jfrog.bintray.gradle.BintrayExtension.PackageConfig
+import groovy.lang.GroovyObject
+import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
+import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 
 plugins {
     `maven-publish`
+    id("com.gradle.build-scan") version "2.0.2"
     id("io.github.art.project") version "1.0.66"
     id("com.jfrog.bintray") version "1.8.4"
+    id("com.jfrog.artifactory") version "4.9.8"
 }
 
 tasks.withType(Wrapper::class.java) {
@@ -32,10 +37,14 @@ val bintrayUser: String? by project
 val bintrayKey: String? by project
 val version: String? by project
 
-allprojects {
-    group = "io.github.art"
-    version = rootProject.version
+group = "io.github.art"
 
+buildScan {
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
+}
+
+subprojects {
     repositories {
         jcenter()
         mavenCentral()
@@ -43,12 +52,17 @@ allprojects {
 
     apply(plugin = "io.github.art.project")
     apply(plugin = "com.jfrog.bintray")
+    apply(plugin = "com.jfrog.artifactory")
     apply(plugin = "maven-publish")
 
-art {
+    art {
         idea()
         lombok()
         tests()
+    }
+
+    if (bintrayUser.isNullOrEmpty() || bintrayKey.isNullOrEmpty()) {
+        return@subprojects
     }
 
     afterEvaluate {
@@ -74,6 +88,23 @@ art {
             }
         }
 
+        artifactory {
+            setContextUrl("https://oss.jfrog.org")
+            publish(delegateClosureOf<PublisherConfig> {
+                repository(delegateClosureOf<GroovyObject> {
+                    setProperty("repoKey", "oss-snapshot-local")
+                    setProperty("username", bintrayUser ?: "")
+                    setProperty("password", bintrayKey ?: "")
+                    setProperty("maven", true)
+                })
+            })
+            val artifactoryPublish: ArtifactoryTask by tasks
+            with(artifactoryPublish) {
+                publications(project.name)
+            }
+            artifactoryPublish.dependsOn(tasks["generatePomFileFor${name.capitalize()}Publication"], jar, sourceJar)
+        }
+
         bintray {
             user = bintrayUser ?: ""
             key = bintrayKey ?: ""
@@ -96,4 +127,6 @@ art {
 
 afterEvaluate {
     tasks["bintrayUpload"].enabled = false
+    tasks["bintrayPublish"].enabled = false
+    tasks["artifactoryPublish"].enabled = false
 }
