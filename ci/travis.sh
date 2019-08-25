@@ -7,7 +7,7 @@ elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" == "" ] && [ "$TRA
     echo -e "Building Snapshot $TRAVIS_REPO_SLUG/$TRAVIS_BRANCH"
     ./gradlew \
         -PbintrayUser="${bintrayUser}" -PbintrayKey="${bintrayKey}" \
-        bintrayUpload --stacktrace
+        artifactoryPublish --stacktrace
 elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" != "" ] ; then
     echo -e "Building Tag $TRAVIS_REPO_SLUG/$TRAVIS_TAG"
     ./gradlew \
