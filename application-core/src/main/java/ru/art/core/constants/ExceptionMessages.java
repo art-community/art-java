@@ -25,7 +25,7 @@ public interface ExceptionMessages {
     String MODULE_ID_IS_NULL = "ModuleId is null";
     String MODULE_HAS_NOT_STATE = "Module ''{0}'' hasn't state";
     String CUSTOM_MODULE_CONFIGURATION_IS_NULL = "CustomModuleConfiguration is null";
-    String BUILDER_VALIDATOR_HAS_NEXT_ERRORS = "Builder validator has next error fields:";
+    String BUILDER_VALIDATOR_HAS_NEXT_ERRORS = "Builder validator for ''{0}'' has next error fields:";
     String COULD_NOT_FIND_AVAILABLE_PORT_AFTER_ATTEMPTS = "Could not find an available %s port in the range [%d, %d] after %d attempts";
     String COULD_NOT_FIND_AVAILABLE_PORTS_IN_THE_RANGE = "Could not find %d available %s ports in the range [%d, %d]";
     String MIME_TYPE_MUST_NOT_BE_EMPTY = "Type must not be empty";

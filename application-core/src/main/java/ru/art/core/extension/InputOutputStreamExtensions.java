@@ -18,13 +18,15 @@
 
 package ru.art.core.extension;
 
+import lombok.experimental.*;
 import java.io.*;
 
 import static ru.art.core.constants.BufferConstants.*;
 import static ru.art.core.constants.StreamConstants.*;
 
-public interface InputOutputStreamExtensions {
-    static void transferBytes(InputStream inputStream, OutputStream outputStream, int bufferSize) throws IOException {
+@UtilityClass
+public class InputOutputStreamExtensions {
+    public static void transferBytes(InputStream inputStream, OutputStream outputStream, int bufferSize) throws IOException {
         byte[] bytes = new byte[bufferSize];
         int readChars;
         while ((readChars = inputStream.read(bytes)) != EOF) {
@@ -32,7 +34,7 @@ public interface InputOutputStreamExtensions {
         }
     }
 
-    static void transferBytes(InputStream inputStream, OutputStream outputStream) throws IOException {
+    public static void transferBytes(InputStream inputStream, OutputStream outputStream) throws IOException {
         transferBytes(inputStream, outputStream, DEFAULT_BUFFER_SIZE);
     }
 }

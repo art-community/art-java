@@ -54,14 +54,14 @@ public class Context {
         }
     }
 
-    public Context(ContextInitialConfiguration initialConfiguration) {
+    private Context(ContextInitialConfiguration initialConfiguration) {
         this.initialConfiguration = initialConfiguration;
         if (initialConfiguration.isUnloadModulesOnShutdown()) {
             getRuntime().addShutdownHook(new Thread(this::unloadModules));
         }
     }
 
-    public Context(ContextInitialConfiguration contextInitialConfiguration, Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules) {
+    private Context(ContextInitialConfiguration contextInitialConfiguration, Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules) {
         this.initialConfiguration = contextInitialConfiguration;
         this.modules = modules;
         if (initialConfiguration.isUnloadModulesOnShutdown()) {

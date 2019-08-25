@@ -18,13 +18,17 @@
 
 package ru.art.config.extensions.sql;
 
+import lombok.experimental.*;
 import ru.art.config.*;
+import ru.art.core.annotation.*;
 
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.sql.SqlConfigKeys.*;
 
-public interface SqlConfigProvider {
-    static Config sqlDbConfig() {
+@PublicApi
+@UtilityClass
+public class SqlConfigProvider {
+    public static Config sqlDbConfig() {
         return configInner(SQL_DB_SECTION_ID);
     }
 }

@@ -16,19 +16,14 @@
  * limitations under the License.
  */
 
-package ru.art.config.extensions.rsocket;
+package ru.art.core.annotation;
 
-import lombok.experimental.*;
-import ru.art.config.*;
-import ru.art.core.annotation.*;
+import java.lang.annotation.*;
 
-import static ru.art.config.extensions.ConfigExtensions.*;
-import static ru.art.config.extensions.rsocket.RsocketConfigKeys.*;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
-@PublicApi
-@UtilityClass
-public class RsocketConfigProvider {
-    public static Config rsocketConfig() {
-        return configInner(RSOCKET_SECTION_ID);
-    }
+@Documented
+@Target(ElementType.TYPE)
+@Retention(SOURCE)
+public @interface PublicApi {
 }

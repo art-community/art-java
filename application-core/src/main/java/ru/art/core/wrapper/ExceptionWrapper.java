@@ -19,6 +19,7 @@
 package ru.art.core.wrapper;
 
 import lombok.*;
+import lombok.experimental.*;
 import ru.art.core.callable.*;
 import ru.art.core.exception.*;
 import ru.art.core.factory.*;
@@ -29,20 +30,21 @@ import java.util.function.*;
 import static java.util.Objects.*;
 import static ru.art.core.constants.ExceptionMessages.*;
 
-public interface ExceptionWrapper {
+@UtilityClass
+public class ExceptionWrapper {
     @SneakyThrows
-    static void wrapException(Runnable action) {
+    public static void wrapException(Runnable action) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         action.run();
     }
 
     @SneakyThrows
-    static <T> T wrapException(Callable<T> action) {
+    public static <T> T wrapException(Callable<T> action) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         return action.call();
     }
 
-    static void ignoreException(ExceptionRunnable action) {
+    public static void ignoreException(ExceptionRunnable action) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             action.run();
@@ -51,7 +53,7 @@ public interface ExceptionWrapper {
         }
     }
 
-    static void ignoreException(ExceptionRunnable action, Consumer<Throwable> onException) {
+    public static void ignoreException(ExceptionRunnable action, Consumer<Throwable> onException) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             action.run();
@@ -60,7 +62,7 @@ public interface ExceptionWrapper {
         }
     }
 
-    static <T> T ignoreException(ExceptionCallable<T> action, Function<Throwable, T> onException) {
+    public static <T> T ignoreException(ExceptionCallable<T> action, Function<Throwable, T> onException) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             return action.call();
@@ -69,7 +71,7 @@ public interface ExceptionWrapper {
         }
     }
 
-    static void wrapException(Runnable action, ExceptionFactory<?> exceptionFactory) {
+    public static void wrapException(Runnable action, ExceptionFactory<?> exceptionFactory) {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         if (isNull(exceptionFactory)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_FACTORY_IS_NULL);
         try {
@@ -79,7 +81,7 @@ public interface ExceptionWrapper {
         }
     }
 
-    static <T> T wrapException(Callable<T> action, ExceptionFactory<?> exceptionFactory) {
+    public static <T> T wrapException(Callable<T> action, ExceptionFactory<?> exceptionFactory) {
         try {
             return action.call();
         } catch (Throwable e) {

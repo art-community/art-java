@@ -18,64 +18,66 @@
 
 package ru.art.core.checker;
 
+import lombok.experimental.*;
 import java.util.*;
 
 import static java.util.Objects.*;
 
-public interface CheckerForEmptiness {
-    static <T> boolean isNotEmpty(T val) {
+@UtilityClass
+public class CheckerForEmptiness {
+    public static <T> boolean isNotEmpty(T val) {
         return !isEmpty(val);
     }
 
-    static <T> boolean isEmpty(T val) {
+    public static <T> boolean isEmpty(T val) {
         return isNull(val) || val.toString().trim().isEmpty();
     }
 
-    static <T> boolean isEmpty(T[] content) {
+    public static <T> boolean isEmpty(T[] content) {
         return isNull(content) || content.length == 0;
     }
 
-    static boolean isEmpty(byte[] content) {
+    public static boolean isEmpty(byte[] content) {
         return isNull(content) || content.length == 0;
     }
 
-    static boolean isEmpty(short[] content) {
+    public static boolean isEmpty(short[] content) {
         return isNull(content) || content.length == 0;
     }
 
-    static boolean isEmpty(int[] content) {
+    public static boolean isEmpty(int[] content) {
         return isNull(content) || content.length == 0;
     }
 
-    static boolean isEmpty(long[] content) {
+    public static boolean isEmpty(long[] content) {
         return isNull(content) || content.length == 0;
     }
 
-    static boolean isEmpty(float[] content) {
+    public static boolean isEmpty(float[] content) {
         return isNull(content) || content.length == 0;
     }
 
-    static boolean isEmpty(double[] content) {
+    public static boolean isEmpty(double[] content) {
         return isNull(content) || content.length == 0;
     }
 
-    static boolean isEmpty(boolean[] content) {
+    public static boolean isEmpty(boolean[] content) {
         return isNull(content) || content.length == 0;
     }
 
-    static boolean isEmpty(char[] content) {
+    public static boolean isEmpty(char[] content) {
         return isNull(content) || content.length == 0;
     }
 
-    static boolean isEmpty(Map<?, ?> map) {
+    public static boolean isEmpty(Map<?, ?> map) {
         return isNull(map) || map.isEmpty();
     }
 
-    static boolean isEmpty(Collection<?> collection) {
+    public static boolean isEmpty(Collection<?> collection) {
         return isNull(collection) || collection.isEmpty();
     }
 
-    static <T> T ifEmpty(T val, T ifEmpty) {
+    public static <T> T ifEmpty(T val, T ifEmpty) {
         return isEmpty(val) ? ifEmpty : val;
     }
 }

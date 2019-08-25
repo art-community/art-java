@@ -18,13 +18,17 @@
 
 package ru.art.config.extensions.network;
 
+import lombok.experimental.*;
 import ru.art.config.*;
+import ru.art.core.annotation.*;
 
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.network.NetworkManagerConfigKeys.*;
 
-public interface NetworkManagerConfigProvider {
-    static Config networkManagerConfig() {
+@PublicApi
+@UtilityClass
+public class NetworkManagerConfigProvider {
+    public static Config networkManagerConfig() {
         return configInner(NETWORK_SECTION_ID);
     }
 }

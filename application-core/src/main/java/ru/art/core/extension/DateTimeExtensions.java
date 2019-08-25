@@ -18,21 +18,23 @@
 
 package ru.art.core.extension;
 
+import lombok.experimental.*;
 import java.time.*;
 
 import static java.time.Instant.*;
 import static java.time.ZoneId.*;
 import static java.util.Objects.*;
 
-public interface DateTimeExtensions {
-    static long toMillis(LocalDateTime dateTime) {
+@UtilityClass
+public class DateTimeExtensions {
+    public static long toMillis(LocalDateTime dateTime) {
         if (isNull(dateTime)) {
             return 0L;
         }
         return dateTime.atZone(systemDefault()).toInstant().toEpochMilli();
     }
 
-    static LocalDateTime fromMillis(long millis) {
+    public static LocalDateTime fromMillis(long millis) {
         return ofEpochMilli(millis).atZone(systemDefault()).toLocalDateTime();
     }
 }

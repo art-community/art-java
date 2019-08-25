@@ -18,14 +18,16 @@
 
 package ru.art.core.extension;
 
+import lombok.experimental.*;
 import java.util.*;
 
-public interface EqualsCheckingExtensions {
-    static <T> T ifEquals(T val, T pattern, T ifEquals) {
+@UtilityClass
+public class EqualsCheckingExtensions {
+    public static <T> T ifEquals(T val, T pattern, T ifEquals) {
         return Objects.equals(val, pattern) ? ifEquals : val;
     }
 
-    static <T> T ifNotEquals(T val, T pattern, T ifNotEquals) {
+    public static <T> T ifNotEquals(T val, T pattern, T ifNotEquals) {
         return !Objects.equals(val, pattern) ? ifNotEquals : val;
     }
 }

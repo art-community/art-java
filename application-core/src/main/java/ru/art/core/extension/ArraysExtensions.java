@@ -18,12 +18,15 @@
 
 package ru.art.core.extension;
 
+import lombok.experimental.*;
+
 import static java.lang.System.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
 
-public interface ArraysExtensions {
-    static <T> T[] concatArrays(T[] a1, T[] a2) {
+@UtilityClass
+public class ArraysExtensions {
+    public static <T> T[] concatArrays(T[] a1, T[] a2) {
         if (isNull(a1) || a1.length == 0) return a2;
         if (isNull(a2) || a2.length == 0) return a1;
         T[] res = copyOf(a1, a1.length + a2.length);
