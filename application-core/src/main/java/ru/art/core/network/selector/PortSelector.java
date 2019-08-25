@@ -18,6 +18,7 @@
 
 package ru.art.core.network.selector;
 
+import lombok.experimental.*;
 import java.net.*;
 import java.util.*;
 
@@ -30,46 +31,47 @@ import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.core.network.selector.PortSelector.SocketType.*;
 
-public interface PortSelector {
-    Random RANDOM = new Random(currentTimeMillis());
+@UtilityClass
+public class PortSelector {
+    private final static Random RANDOM = new Random(currentTimeMillis());
 
-    static int findAvailableTcpPort() {
+    public static int findAvailableTcpPort() {
         return findAvailableTcpPort(PORT_RANGE_MIN);
     }
 
-    static int findAvailableTcpPort(int minPort) {
+    public static int findAvailableTcpPort(int minPort) {
         return findAvailableTcpPort(minPort, PORT_RANGE_MAX);
     }
 
-    static int findAvailableTcpPort(int minPort, int maxPort) {
+    public static int findAvailableTcpPort(int minPort, int maxPort) {
         return TCP.findAvailablePort(minPort, maxPort);
     }
 
-    static Set<Integer> findAvailableTcpPorts(int numRequested) {
+    public static Set<Integer> findAvailableTcpPorts(int numRequested) {
         return findAvailableTcpPorts(numRequested, PORT_RANGE_MIN, PORT_RANGE_MAX);
     }
 
-    static Set<Integer> findAvailableTcpPorts(int numRequested, int minPort, int maxPort) {
+    public static Set<Integer> findAvailableTcpPorts(int numRequested, int minPort, int maxPort) {
         return TCP.findAvailablePorts(numRequested, minPort, maxPort);
     }
 
-    static int findAvailableUdpPort() {
+    public static int findAvailableUdpPort() {
         return findAvailableUdpPort(PORT_RANGE_MIN);
     }
 
-    static int findAvailableUdpPort(int minPort) {
+    public static int findAvailableUdpPort(int minPort) {
         return findAvailableUdpPort(minPort, PORT_RANGE_MAX);
     }
 
-    static int findAvailableUdpPort(int minPort, int maxPort) {
+    public static int findAvailableUdpPort(int minPort, int maxPort) {
         return UDP.findAvailablePort(minPort, maxPort);
     }
 
-    static Set<Integer> findAvailableUdpPorts(int numRequested) {
+    public static Set<Integer> findAvailableUdpPorts(int numRequested) {
         return findAvailableUdpPorts(numRequested, PORT_RANGE_MIN, PORT_RANGE_MAX);
     }
 
-    static Set<Integer> findAvailableUdpPorts(int numRequested, int minPort, int maxPort) {
+    public static Set<Integer> findAvailableUdpPorts(int numRequested, int minPort, int maxPort) {
         return UDP.findAvailablePorts(numRequested, minPort, maxPort);
     }
 

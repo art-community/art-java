@@ -18,8 +18,8 @@
 
 package ru.art.kafka.exception;
 
-public class KafkaDeserialzerException extends RuntimeException {
-    public KafkaDeserialzerException(Throwable e) {
+public class KafkaDeserializerException extends RuntimeException {
+    public KafkaDeserializerException(Throwable e) {
         super(e);
     }
 }

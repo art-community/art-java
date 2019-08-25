@@ -18,6 +18,7 @@
 
 package ru.art.core.extension;
 
+import lombok.experimental.*;
 import ru.art.core.exception.*;
 import java.text.*;
 import java.util.*;
@@ -25,12 +26,13 @@ import java.util.*;
 import static java.util.Optional.*;
 import static ru.art.core.context.Context.*;
 
-public interface DateExtensions {
-    static Date parse(String template, String dateString) {
+@UtilityClass
+public class DateExtensions {
+    public static Date parse(String template, String dateString) {
         return parse(template, dateString, contextConfiguration().getLocale());
     }
 
-    static Date parse(String template, String dateString, Locale locale) {
+    public static Date parse(String template, String dateString, Locale locale) {
         try {
             return new SimpleDateFormat(template, locale).parse(dateString);
         } catch (ParseException e) {
@@ -38,11 +40,11 @@ public interface DateExtensions {
         }
     }
 
-    static Date tryParse(String dateTimeString, SimpleDateFormat format) {
+    public static Date tryParse(String dateTimeString, SimpleDateFormat format) {
         return tryParse(dateTimeString, format, null);
     }
 
-    static Date tryParse(String dateTimeString, SimpleDateFormat format, Date orElse) {
+    public static Date tryParse(String dateTimeString, SimpleDateFormat format, Date orElse) {
         try {
             return format.parse(dateTimeString);
         } catch (Throwable e) {
@@ -50,7 +52,7 @@ public interface DateExtensions {
         }
     }
 
-    static Optional<Date> parseSafety(String template, String dateString, Locale locale) {
+    public static Optional<Date> parseSafety(String template, String dateString, Locale locale) {
         try {
             return of(new SimpleDateFormat(template, locale).parse(dateString));
         } catch (ParseException e) {
@@ -60,11 +62,11 @@ public interface DateExtensions {
     }
 
 
-    static String format(String template, Date date) {
+    public static String format(String template, Date date) {
         return format(template, date, contextConfiguration().getLocale());
     }
 
-    static String tryFormat(Date dateTime, SimpleDateFormat format, String orElse) {
+    public static String tryFormat(Date dateTime, SimpleDateFormat format, String orElse) {
         try {
             return format.format(dateTime);
         } catch (Throwable e) {
@@ -72,11 +74,11 @@ public interface DateExtensions {
         }
     }
 
-    static String tryFormat(Date dateTime, SimpleDateFormat format) {
+    public static String tryFormat(Date dateTime, SimpleDateFormat format) {
         return tryFormat(dateTime, format, null);
     }
 
-    static String format(String template, Date date, Locale locale) {
+    public static String format(String template, Date date, Locale locale) {
         return new SimpleDateFormat(template, locale).format(date);
     }
 }

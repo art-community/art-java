@@ -18,13 +18,17 @@
 
 package ru.art.config.extensions.rocks;
 
+import lombok.experimental.*;
 import ru.art.config.*;
+import ru.art.core.annotation.*;
 
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.rocks.RocksDbConfigKeys.*;
 
-public interface RocksDbConfigProvider {
-    static Config rocksDbConfig() {
+@PublicApi
+@UtilityClass
+public class RocksDbConfigProvider {
+    public static Config rocksDbConfig() {
         return configInner(ROCKS_DB_SECTION_ID);
     }
 }

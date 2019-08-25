@@ -18,63 +18,66 @@
 
 package ru.art.core.parser;
 
+import lombok.experimental.*;
+
 import static java.lang.Boolean.*;
 import static java.lang.Double.*;
 import static java.lang.Integer.*;
 import static java.lang.Long.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 
-public interface PrimitiveParser {
-    static double parseOrElse(String str, double orElse) {
+@UtilityClass
+public class PrimitiveParser {
+    public static double parseOrElse(String str, double orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
         return parseDouble(str);
     }
 
-    static int parseOrElse(String str, int orElse) {
+    public static int parseOrElse(String str, int orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
         return parseInt(str);
     }
 
-    static long parseOrElse(String str, long orElse) {
+    public static long parseOrElse(String str, long orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
         return parseLong(str);
     }
 
-    static boolean parseOrElse(String str, boolean orElse) {
+    public static boolean parseOrElse(String str, boolean orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
         return parseBoolean(str);
     }
 
-    static double parseOrElse(String str, Double orElse) {
+    public static double parseOrElse(String str, Double orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
         return parseDouble(str);
     }
 
-    static int parseOrElse(String str, Integer orElse) {
+    public static int parseOrElse(String str, Integer orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
         return parseInt(str);
     }
 
-    static long parseOrElse(String str, Long orElse) {
+    public static long parseOrElse(String str, Long orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
         return parseLong(str);
     }
 
-    static boolean parseOrElse(String str, Boolean orElse) {
+    public static boolean parseOrElse(String str, Boolean orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
@@ -82,7 +85,7 @@ public interface PrimitiveParser {
     }
 
 
-    static double tryParseOrElse(String str, double orElse) {
+    public static double tryParseOrElse(String str, double orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
@@ -93,7 +96,7 @@ public interface PrimitiveParser {
         }
     }
 
-    static int tryParseOrElse(String str, int orElse) {
+    public static int tryParseOrElse(String str, int orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
@@ -104,7 +107,7 @@ public interface PrimitiveParser {
         }
     }
 
-    static long tryParseOrElse(String str, long orElse) {
+    public static long tryParseOrElse(String str, long orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
@@ -115,7 +118,7 @@ public interface PrimitiveParser {
         }
     }
 
-    static boolean tryParseOrElse(String str, boolean orElse) {
+    public static boolean tryParseOrElse(String str, boolean orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
@@ -126,7 +129,7 @@ public interface PrimitiveParser {
         }
     }
 
-    static double tryParseOrElse(String str, Double orElse) {
+    public static double tryParseOrElse(String str, Double orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
@@ -137,7 +140,7 @@ public interface PrimitiveParser {
         }
     }
 
-    static int tryParseOrElse(String str, Integer orElse) {
+    public static int tryParseOrElse(String str, Integer orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
@@ -148,7 +151,7 @@ public interface PrimitiveParser {
         }
     }
 
-    static long tryParseOrElse(String str, Long orElse) {
+    public static long tryParseOrElse(String str, Long orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
@@ -159,7 +162,7 @@ public interface PrimitiveParser {
         }
     }
 
-    static boolean tryParseOrElse(String str, Boolean orElse) {
+    public static boolean tryParseOrElse(String str, Boolean orElse) {
         if (isEmpty(str)) {
             return orElse;
         }
@@ -171,7 +174,7 @@ public interface PrimitiveParser {
     }
 
 
-    static Boolean tryParseBoolean(String str) {
+    public static Boolean tryParseBoolean(String str) {
         if (isEmpty(str)) {
             return null;
         }
@@ -182,7 +185,7 @@ public interface PrimitiveParser {
         }
     }
 
-    static Double tryParseDouble(String str) {
+    public static Double tryParseDouble(String str) {
         if (isEmpty(str)) {
             return null;
         }
@@ -193,7 +196,7 @@ public interface PrimitiveParser {
         }
     }
 
-    static Integer tryParseInt(String str) {
+    public static Integer tryParseInt(String str) {
         if (isEmpty(str)) {
             return null;
         }
@@ -204,7 +207,7 @@ public interface PrimitiveParser {
         }
     }
 
-    static Long tryParseLong(String str) {
+    public static Long tryParseLong(String str) {
         if (isEmpty(str)) {
             return null;
         }

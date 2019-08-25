@@ -40,7 +40,7 @@ import static ru.art.core.context.Context.*;
 
 @UtilityClass
 public class FileExtensions {
-    static String readFile(String path) {
+    public static String readFile(String path) {
         return readFile(get(path), DEFAULT_BUFFER_SIZE);
     }
 

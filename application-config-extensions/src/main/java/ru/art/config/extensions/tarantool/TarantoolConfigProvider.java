@@ -18,13 +18,17 @@
 
 package ru.art.config.extensions.tarantool;
 
+import lombok.experimental.*;
 import ru.art.config.*;
+import ru.art.core.annotation.*;
 
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.sql.SqlConfigKeys.*;
 
-public interface TarantoolConfigProvider {
-    static Config sqlDbConfig() {
+@PublicApi
+@UtilityClass
+public class TarantoolConfigProvider {
+    public static Config tarantoolConfig() {
         return configInner(SQL_DB_SECTION_ID);
     }
 }

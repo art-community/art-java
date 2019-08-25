@@ -18,24 +18,26 @@
 
 package ru.art.core.extension;
 
+import lombok.experimental.*;
 import java.util.function.*;
 
 import static java.util.Objects.*;
 
-public interface NullCheckingExtensions {
-    static <T> T getOrElse(T object, T orElse) {
+@UtilityClass
+public class NullCheckingExtensions {
+    public static <T> T getOrElse(T object, T orElse) {
         return isNull(object) ? orElse : object;
     }
 
-    static <T> T nullOrElse(Object val, T orElse) {
+    public static <T> T nullOrElse(Object val, T orElse) {
         return isNull(val) ? null : orElse;
     }
 
-    static <T, R> R doIfNotNull(T val, Function<T, R> action) {
+    public static <T, R> R doIfNotNull(T val, Function<T, R> action) {
         return nonNull(val) ? action.apply(val) : null;
     }
 
-    static <T> void doIfNotNull(T val, Consumer<T> consumer) {
+    public static <T> void doIfNotNull(T val, Consumer<T> consumer) {
         if (nonNull(val)) {
             consumer.accept(val);
         }

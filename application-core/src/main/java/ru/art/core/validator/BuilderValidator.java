@@ -58,7 +58,7 @@ public class BuilderValidator {
     }
 
     private String buildErrorMessage() {
-        StringBuilder stringBuilder = new StringBuilder(BUILDER_VALIDATOR_HAS_NEXT_ERRORS);
+        StringBuilder stringBuilder = new StringBuilder(format(BUILDER_VALIDATOR_HAS_NEXT_ERRORS, builderName));
         validationErrors.forEach(error -> stringBuilder.append(NEW_LINE).append(error));
         return stringBuilder.toString();
     }
