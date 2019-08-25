@@ -3,7 +3,7 @@
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
     echo -e "Building PR #$TRAVIS_PULL_REQUEST [$TRAVIS_PULL_REQUEST_SLUG/$TRAVIS_PULL_REQUEST_BRANCH => $TRAVIS_REPO_SLUG/$TRAVIS_BRANCH]"
     ./gradlew test
-elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" == "" ] && ["$TRAVIS_BRANCH" == "latest"]; then
+elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" == "" ] && [ "$TRAVIS_BRANCH" == "latest" ]  ; then
     echo -e "Building Snapshot $TRAVIS_REPO_SLUG/$TRAVIS_BRANCH"
     ./gradlew \
         -PbintrayUser="${bintrayUser}" -PbintrayKey="${bintrayKey}" \
