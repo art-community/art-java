@@ -233,7 +233,7 @@ class HttpServiceServlet extends HttpServlet {
 
     private MimeType getProducesMimeTypeChecked(HttpServletCommand command) {
         MimeToContentTypeMapper type;
-        if (isNull(type = command.getConsumesMimeType())) {
+        if (isNull(type = command.getProducesMimeType())) {
             return ALL;
         }
         return type.getMimeType();
