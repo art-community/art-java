@@ -31,7 +31,6 @@ import static ru.art.entity.Entity.concat
 import static ru.art.entity.Entity.entityBuilder
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.REACTIVE
 import static ru.art.rsocket.communicator.RsocketCommunicator.rsocketCommunicator
-import static ru.art.rsocket.constants.RsocketModuleConstants.EXECUTE_RSOCKET_FUNCTION
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.JSON
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.PROTOBUF
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.TCP
@@ -43,7 +42,7 @@ import static ru.art.rsocket.server.RsocketServer.rsocketTcpServerInSeparatedThr
 import static ru.art.rsocket.server.RsocketServer.rsocketWebSocketServerInSeparatedThread
 
 class RsocketSpecification extends Specification {
-    def serviceId = "TEST_SERVICE"
+    def functionId = "TEST_SERVICE"
     def request = entityBuilder().stringField("request", "request").build()
     def response = entityBuilder().stringField("response", "response").build()
 
@@ -51,7 +50,7 @@ class RsocketSpecification extends Specification {
     "should communicate by rsocket (format = #format, transport = #transport, mode = fireAndForget())"() {
         setup:
         useAgileConfigurations()
-        rsocket(serviceId)
+        rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
                 .handle { request -> concat(request as Entity, response) }
@@ -76,8 +75,7 @@ class RsocketSpecification extends Specification {
         }.call())
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .serviceId(serviceId)
-                .methodId(EXECUTE_RSOCKET_FUNCTION)
+                .functionId(functionId)
 
         when:
         def response = communicator.call().blockOptional()
@@ -97,7 +95,7 @@ class RsocketSpecification extends Specification {
     "should communicate by rsocket (format = #format, transport = #transport, mode = requestResponse())"() {
         setup:
         useAgileConfigurations()
-        rsocket(serviceId)
+        rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
                 .handle { request -> concat(request as Entity, response) }
@@ -127,8 +125,7 @@ class RsocketSpecification extends Specification {
                 .build())
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .serviceId(serviceId)
-                .methodId(EXECUTE_RSOCKET_FUNCTION)
+                .functionId(functionId)
 
         when:
         def response = communicator.execute().block()
@@ -156,7 +153,7 @@ class RsocketSpecification extends Specification {
     "should communicate by rsocket (format = #format, transport = #transport, mode = requestStream())"() {
         setup:
         useAgileConfigurations()
-        rsocket(serviceId)
+        rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
                 .responseProcessingMode(REACTIVE)
@@ -187,8 +184,7 @@ class RsocketSpecification extends Specification {
                 .build())
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .serviceId(serviceId)
-                .methodId(EXECUTE_RSOCKET_FUNCTION)
+                .functionId(functionId)
 
         when:
         def response = communicator.stream().blockFirst()
@@ -216,7 +212,7 @@ class RsocketSpecification extends Specification {
     "should communicate by rsocket (format = #format, transport = #transport, mode = requestChannel())"() {
         setup:
         useAgileConfigurations()
-        rsocket(serviceId)
+        rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
                 .requestProcessingMode(REACTIVE)
@@ -249,8 +245,7 @@ class RsocketSpecification extends Specification {
                 .build())
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .serviceId(serviceId)
-                .methodId(EXECUTE_RSOCKET_FUNCTION)
+                .functionId(functionId)
 
         when:
         def response = communicator.channel(just(request)).blockFirst()

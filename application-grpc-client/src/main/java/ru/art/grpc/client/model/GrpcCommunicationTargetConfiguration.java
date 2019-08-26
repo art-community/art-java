@@ -28,6 +28,8 @@ import static ru.art.grpc.client.module.GrpcClientModule.*;
 @Builder(toBuilder = true)
 public class GrpcCommunicationTargetConfiguration {
     private final String serviceId;
+    private final String methodId;
+    private final String functionId;
     @Builder.Default
     private final String host = grpcClientModule().getBalancerHost();
     @Builder.Default

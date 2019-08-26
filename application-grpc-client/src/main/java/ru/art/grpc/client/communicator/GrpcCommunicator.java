@@ -48,6 +48,8 @@ public interface GrpcCommunicator {
 
     GrpcCommunicator methodId(String id);
 
+    GrpcCommunicator functionId(String id);
+
     <RequestType> GrpcCommunicator requestMapper(ValueFromModelMapper<RequestType, ? extends Value> mapper);
 
     <ResponseType> GrpcCommunicator responseMapper(ValueToModelMapper<ResponseType, ? extends Value> mapper);

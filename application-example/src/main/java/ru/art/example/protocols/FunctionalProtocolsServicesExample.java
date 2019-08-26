@@ -77,7 +77,7 @@ public class FunctionalProtocolsServicesExample {
         sleep(100L);
         System.out.println(grpcCommunicator(contextConfiguration().getIpAddress(), grpcServerModule().getPort(), grpcServerModule().getPath())
                 .serviceId(GRPC_SERVICE_TYPE)
-                .methodId(EXECUTE_GRPC_FUNCTION)
+                .methodId(GRPC_FUNCTION_SERVICE)
                 .requestMapper(Caster::cast)
                 .responseMapper(Caster::cast)
                 .execute(stringPrimitive("\u001B[33mHello, GRPC\u001B[0m")));
@@ -90,7 +90,7 @@ public class FunctionalProtocolsServicesExample {
                 .transport(WEB_SOCKET)
                 .build())
                 .serviceId(RSOCKET_SERVICE_TYPE)
-                .methodId(EXECUTE_RSOCKET_FUNCTION)
+                .methodId(RSOCKET_FUNCTION_SERVICE)
                 .requestMapper(Caster::cast)
                 .responseMapper(Caster::cast)
                 .execute(stringPrimitive("\u001B[34mHello, RSocket\u001B[0m"))

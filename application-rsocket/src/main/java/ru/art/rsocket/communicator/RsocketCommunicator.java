@@ -49,6 +49,7 @@ import static ru.art.entity.Value.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.*;
 import static ru.art.rsocket.module.RsocketModule.*;
 import static ru.art.rsocket.processor.ResponseValueInterceptorProcessor.*;
@@ -139,6 +140,13 @@ public class RsocketCommunicator {
         if (isNotEmpty(serviceId)) {
             command = new ServiceMethodCommand(serviceId, methodId);
         }
+        return this;
+    }
+
+    public RsocketCommunicator functionId(String functionId) {
+        this.serviceId = RSOCKET_FUNCTION_SERVICE;
+        this.methodId = functionId;
+        this.command = new ServiceMethodCommand(serviceId, methodId);
         return this;
     }
 

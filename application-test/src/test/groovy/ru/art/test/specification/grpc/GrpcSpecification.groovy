@@ -28,12 +28,11 @@ import static ru.art.entity.Entity.concat
 import static ru.art.entity.Entity.entityBuilder
 import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator
 import static ru.art.grpc.server.GrpcServer.grpcServerInSeparatedThread
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.EXECUTE_GRPC_FUNCTION
 import static ru.art.grpc.server.function.GrpcServiceFunction.grpc
 import static ru.art.grpc.server.module.GrpcServerModule.grpcServerModule
 
 class GrpcSpecification extends Specification {
-    def serviceId = "TEST_SERVICE"
+    def functionId = "TEST_SERVICE"
     def request = entityBuilder().stringField("request", "request").build()
     def response = entityBuilder().stringField("response", "response").build()
 
@@ -41,7 +40,7 @@ class GrpcSpecification extends Specification {
 
         setup:
         useAgileConfigurations()
-        grpc(serviceId)
+        grpc(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
                 .handle { request -> concat(request as Entity, response) }
@@ -52,8 +51,7 @@ class GrpcSpecification extends Specification {
         def communicator = grpcCommunicator(LOCALHOST, grpcServerModule().getPort(), grpcServerModule().getPath())
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .serviceId(serviceId)
-                .methodId(EXECUTE_GRPC_FUNCTION)
+                .functionId(functionId)
         def response = communicator.execute()
 
         then:
@@ -64,8 +62,7 @@ class GrpcSpecification extends Specification {
         communicator = grpcCommunicator(LOCALHOST, grpcServerModule().getPort(), grpcServerModule().getPath())
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .serviceId(serviceId)
-                .methodId(EXECUTE_GRPC_FUNCTION)
+                .functionId(functionId)
         response = communicator.execute(request)
 
         then:
@@ -76,8 +73,7 @@ class GrpcSpecification extends Specification {
         communicator = grpcCommunicator(LOCALHOST, grpcServerModule().getPort(), grpcServerModule().getPath())
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .serviceId(serviceId)
-                .methodId(EXECUTE_GRPC_FUNCTION)
+                .functionId(functionId)
         def asyncResponse = communicator.asynchronous()
                 .executeAsynchronous()
                 .get()
@@ -89,8 +85,7 @@ class GrpcSpecification extends Specification {
         communicator = grpcCommunicator(LOCALHOST, grpcServerModule().getPort(), grpcServerModule().getPath())
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .serviceId(serviceId)
-                .methodId(EXECUTE_GRPC_FUNCTION)
+                .functionId(functionId)
         def asyncResponseWithReq = communicator.asynchronous()
                 .executeAsynchronous(request)
                 .get()

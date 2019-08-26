@@ -26,9 +26,11 @@ import ru.art.reactive.service.model.*;
 import ru.art.rsocket.constants.RsocketModuleConstants.*;
 import ru.art.rsocket.service.*;
 import ru.art.rsocket.service.RsocketService.*;
+import ru.art.service.*;
 import ru.art.service.constants.*;
 import java.util.function.*;
 
+import static java.util.Objects.isNull;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.reactive.service.model.ReactiveService.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
@@ -37,10 +39,10 @@ import static ru.art.service.ServiceModule.*;
 public class RsocketServiceFunction {
     private RsocketMethod rsocketMethod = RsocketMethod.rsocketMethod();
     private ReactiveMethod reactiveMethod = ReactiveMethod.reactiveMethod();
-    private final String serviceId;
+    private final String functionId;
 
-    private RsocketServiceFunction(String serviceId) {
-        this.serviceId = serviceId;
+    private RsocketServiceFunction(String functionId) {
+        this.functionId = functionId;
     }
 
 
@@ -85,16 +87,15 @@ public class RsocketServiceFunction {
     }
 
     public <RequestType, ResponseType> void handle(Function<RequestType, ResponseType> function) {
-        serviceModule()
-                .getServiceRegistry()
-                .registerService(new RsocketFunctionalServiceSpecification(serviceId,
-                        RsocketService.rsocketService()
-                                .method(EXECUTE_RSOCKET_FUNCTION, rsocketMethod)
-                                .serve(),
-                        ReactiveService.reactiveService()
-                                .method(EXECUTE_RSOCKET_FUNCTION, reactiveMethod)
-                                .serve(),
-                        function));
+        ServiceModuleConfiguration.ServiceRegistry serviceRegistry = serviceModule().getServiceRegistry();
+        RsocketFunctionalServiceSpecification specification = cast(serviceRegistry.getServices().get(RSOCKET_FUNCTION_SERVICE));
+        if (isNull(specification)) {
+            specification = new RsocketFunctionalServiceSpecification();
+            specification.addFunction(functionId, rsocketMethod, reactiveMethod, function);
+            serviceRegistry.registerService(specification);
+            return;
+        }
+        specification.addFunction(functionId, rsocketMethod, reactiveMethod, function);
     }
 
     public <RequestType> void consume(Consumer<RequestType> consumer) {
@@ -108,7 +109,7 @@ public class RsocketServiceFunction {
         handle(request -> producer.get());
     }
 
-    public static RsocketServiceFunction rsocket(String serviceId) {
-        return new RsocketServiceFunction(serviceId);
+    public static RsocketServiceFunction rsocket(String functionId) {
+        return new RsocketServiceFunction(functionId);
     }
 }

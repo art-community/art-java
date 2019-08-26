@@ -31,6 +31,7 @@ import java.util.concurrent.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
+import static ru.art.grpc.client.constants.GrpcClientModuleConstants.GRPC_FUNCTION_SERVICE;
 
 public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCommunicator.GrpcAsynchronousCommunicator {
     private final GrpcCommunicationConfiguration configuration = new GrpcCommunicationConfiguration();
@@ -53,7 +54,14 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     GrpcCommunicatorImplementation(GrpcCommunicationTargetConfiguration targetConfiguration) {
         configuration.setPath(validator.notEmptyField(targetConfiguration.path(), "path"));
         deadlineTimeout(targetConfiguration.timeout());
-        serviceId(targetConfiguration.serviceId());
+        String serviceId = targetConfiguration.serviceId();
+        String methodId = targetConfiguration.methodId();
+        if (isNotEmpty(targetConfiguration.functionId())) {
+            serviceId = GRPC_FUNCTION_SERVICE;
+            methodId = targetConfiguration.functionId();
+        }
+        serviceId(serviceId);
+        methodId(methodId);
         if (targetConfiguration.secured()) {
             secured();
         }
@@ -73,6 +81,13 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     @Override
     public GrpcCommunicator methodId(String id) {
         configuration.setMethodId(validator.notEmptyField(id, "methodId"));
+        return this;
+    }
+
+    @Override
+    public GrpcCommunicator functionId(String id) {
+        configuration.setServiceId(GRPC_FUNCTION_SERVICE);
+        configuration.setMethodId(validator.notEmptyField(id, "functionId"));
         return this;
     }
 
