@@ -64,7 +64,7 @@ Customer entity to customer = MainModule.Customer(id=1, name=Customer, orderIds=
 ## HTTP Serving
 ART providing you functional to serving HTTP requests
 
-```
+```java
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.entity.PrimitiveMapping.StringPrimitive.*;
 import static ru.art.entity.StringParametersMapping.*;
