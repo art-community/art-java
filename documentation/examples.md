@@ -76,7 +76,7 @@ public class MainModule {
         useAgileConfigurations(MainModule.class.getName());
         httpGet("/hello")
                 .fromPathParameters("param")
-                .requestMapper(stringParamToStringMapper("param").getToModel())
+                .requestMapper(stringParameterToStringMapper("param").getToModel())
                 .responseMapper(fromModel)
                 .handle(requestParam -> "<h1>" + requestParam + "</h1>");
         httpServer().await();
