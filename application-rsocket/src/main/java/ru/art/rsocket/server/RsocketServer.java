@@ -29,6 +29,7 @@ import ru.art.rsocket.specification.*;
 
 import static io.rsocket.RSocketFactory.*;
 import static java.lang.System.*;
+import static java.lang.Thread.*;
 import static java.text.MessageFormat.*;
 import static java.time.Duration.*;
 import static java.util.Objects.*;
@@ -120,6 +121,11 @@ public class RsocketServer {
                                         ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE
                                         : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE,
                                 currentTimeMillis() - timestamp)));
+        try {
+            currentThread().join();
+        } catch (InterruptedException e) {
+            throw new RsocketServerException(e);
+        }
     }
 
     public void restart() {

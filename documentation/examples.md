@@ -5,7 +5,7 @@ Value is a universal data model for representing data as JSON/XML/Protobuf/Tuple
 
 For optimization ART ***is not*** using reflection for serialization and deserialization POJOs to/from Value.
 
-Instead of it ART providing ValueMapping API and ValueMapping Generator (from ART application-gradle-plugin).
+Instead of it ART provides ValueMapping API and ValueMapping Generator (from ART application-gradle-plugin).
 
 Code:
 ```java
@@ -62,7 +62,7 @@ Customer entity to customer = MainModule.Customer(id=1, name=Customer, orderIds=
 ```
 
 ## HTTP Serving
-ART providing you functional to serving HTTP requests
+ART provides you functional to serving HTTP requests
 
 ```java
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
@@ -89,7 +89,7 @@ After running this code and open browser on url with path '/hello' from logs you
 <<screen>>
 
 ## HTTP Communication
-ART providing you functional for sending HTTP request
+ART provides you functional for sending HTTP request
 
 ```java
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
@@ -161,14 +161,82 @@ After running this code you could see something like this:
 </html>
 ```
 
-## GRPC Serving
+## GRPC Serving & Communication
+ART provides GRPC functional API to serving and handling GRPC requests
 
-## GRPC Communication
+```java
+import java.util.function.*;
 
-## RSocket Serving
+import static java.lang.Thread.*;
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.entity.PrimitiveMapping.StringPrimitive.*;
+import static ru.art.grpc.client.communicator.GrpcCommunicator.*;
+import static ru.art.grpc.server.GrpcServer.*;
+import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
+import static ru.art.grpc.server.function.GrpcServiceFunction.*;
+import static ru.art.grpc.server.module.GrpcServerModule.*;
 
-## RSocket Communication
+public class MainModule {
+    public static void main(String[] args) throws InterruptedException {
+        useAgileConfigurations();
+        grpc("myFunction")
+                .responseMapper(fromModel)
+                .produce(() -> "Hello, ART!");
+        grpcServerInSeparatedThread();
+        sleep(500L);
+        doIfNotNull(grpcCommunicator(LOCALHOST, grpcServerModule().getPort(), grpcServerModule().getPath())
+                .serviceId("myFunction")
+                .methodId(EXECUTE_GRPC_FUNCTION)
+                .responseMapper(toModel)
+                .execute().getResponseData(), (Consumer<Object>) System.out::println);
+    }
+}
+```
+After running this code you could see something like this
 
+`Hello, ART!`
+
+## RSocket Serving & Communication
+ART provides RSocket functional API to all rsocket methods:
+* fireAndForget
+* requestResponse
+* requestStream
+* requestChannel
+
+```java
+import ru.art.service.model.*;
+
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.entity.PrimitiveMapping.StringPrimitive.*;
+import static ru.art.rsocket.communicator.RsocketCommunicator.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.*;
+import static ru.art.rsocket.function.RsocketServiceFunction.*;
+import static ru.art.rsocket.module.RsocketModule.*;
+import static ru.art.rsocket.server.RsocketServer.*;
+
+public class MainModule {
+    public static void main(String[] args) {
+        useAgileConfigurations();
+        rsocket("myFunction")
+                .responseMapper(fromModel)
+                .produce(() -> "Hello, ART!");
+        rsocketCommunicator(LOCALHOST, rsocketModule().getServerTcpPort())
+                .serviceId("myFunction")
+                .methodId(EXECUTE_RSOCKET_FUNCTION)
+                .responseMapper(toModel)
+                .execute()
+                .map(ServiceResponse::getResponseData)
+                .subscribe(System.out::println);
+        rsocketTcpServer().await();
+    }
+}
+```
+After running this code you could see something like this
+
+`Hello, ART!`
 ## Rocks DB
 
 ## Kafka Embedded Broker
