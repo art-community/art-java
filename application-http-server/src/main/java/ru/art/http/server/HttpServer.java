@@ -92,12 +92,6 @@ public class HttpServer {
         }
     }
 
-    public static HttpServer httpServerInSeparatedThread() {
-        HttpServer httpServer = httpServer();
-        thread(HTTP_SERVER_THREAD, httpServer::await);
-        return httpServer;
-    }
-
     private static Map<String, HttpMethodGroup> groupHttpMethods(HttpService httpService) {
         return httpService
                 .getHttpMethods()

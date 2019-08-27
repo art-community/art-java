@@ -34,7 +34,6 @@ import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.TimeUnit.*;
 import static ru.art.core.context.Context.*;
-import static ru.art.core.extension.ThreadExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.grpc.server.constants.GrpcServerExceptionMessages.*;
 import static ru.art.grpc.server.constants.GrpcServerLoggingMessages.*;
@@ -72,20 +71,14 @@ public class GrpcServer {
                 .forEach(service -> protobufServices.put(service.getServiceId(), service));
         serverBuilder.addService(new GrpcServletContainer(grpcServerModule().getPath(), protobufServices).getServlet());
         serverBuilder.handshakeTimeout(grpcServerModule().getHandshakeTimeout(), SECONDS);
-        GrpcServer protobufServer = new GrpcServer(serverBuilder.build());
+        GrpcServer grpcServer = new GrpcServer(serverBuilder.build());
         try {
-            protobufServer.server.start();
+            grpcServer.server.start();
             logger.info(format(GRPC_STARTED_MESSAGE, currentTimeMillis() - millis));
-            grpcServerModuleState().setServer(protobufServer);
+            grpcServerModuleState().setServer(grpcServer);
         } catch (Throwable e) {
             throw new GrpcServerException(GRPC_SERVER_INITIALIZATION_FAILED, e);
         }
-        return protobufServer;
-    }
-
-    public static GrpcServer grpcServerInSeparatedThread() {
-        GrpcServer grpcServer = grpcServer();
-        thread(GRPC_SERVER_THREAD, grpcServer::await);
         return grpcServer;
     }
 
