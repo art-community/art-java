@@ -20,9 +20,7 @@ package ru.art.rsocket.constants;
 
 public interface RsocketModuleConstants {
     String RSOCKET_MODULE_ID = "RSOCKET_MODULE";
-    String EXECUTE_RSOCKET_FUNCTION = "EXECUTE_RSOCKET_FUNCTION";
-    String SERVICE_ID = "serviceId";
-    String METHOD_ID = "methodId";
+    String RSOCKET_FUNCTION_SERVICE = "RSOCKET_FUNCTION_SERVICE";
     String REQUEST_DATA = "requestData";
     String RSOCKET_SERVICE_TYPE = "RSOCKET_SERVICE";
     String RSOCKET_COMMUNICATION_SERVICE_TYPE = "RSOCKET_COMMUNICATION";

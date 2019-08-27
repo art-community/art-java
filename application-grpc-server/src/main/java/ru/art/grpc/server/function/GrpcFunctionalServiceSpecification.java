@@ -20,20 +20,41 @@ package ru.art.grpc.server.function;
 
 import lombok.*;
 import ru.art.grpc.server.model.*;
+import ru.art.grpc.server.model.GrpcService.*;
 import ru.art.grpc.server.specification.*;
+import java.util.*;
 import java.util.function.*;
 
+import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
+import static ru.art.grpc.server.model.GrpcService.*;
 
 @Getter
 @RequiredArgsConstructor
 public class GrpcFunctionalServiceSpecification implements GrpcServiceSpecification {
-    private final String serviceId;
-    private final GrpcService grpcService;
-    private final Function<?, ?> function;
+    private final String serviceId = GRPC_FUNCTION_SERVICE;
+    private final GrpcServiceBuilder grpcServiceBuilder = grpcService();
+    private final Map<String, Function<?, ?>> functions = mapOf();
+
+    @Override
+    public GrpcService getGrpcService() {
+        return grpcServiceBuilder.serve();
+    }
 
     @Override
     public <P, R> R executeMethod(String methodId, P request) {
+        Function<?, ?> function;
+        if (isNull(function = functions.get(methodId))) {
+            return null;
+        }
         return cast(function.apply(cast(request)));
     }
+
+    void addFunction(String id, GrpcMethod method, Function<?, ?> function) {
+        functions.put(id, function);
+        grpcServiceBuilder.method(id, method);
+    }
+
 }

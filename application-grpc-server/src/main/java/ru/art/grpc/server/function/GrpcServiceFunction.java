@@ -22,20 +22,21 @@ import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
 import ru.art.grpc.server.model.GrpcService.*;
+import ru.art.service.*;
 import ru.art.service.constants.*;
 import java.util.function.*;
 
+import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
-import static ru.art.grpc.server.model.GrpcService.*;
 import static ru.art.service.ServiceModule.*;
 
 public class GrpcServiceFunction {
     private GrpcMethod grpcMethod = GrpcMethod.grpcMethod();
-    private final String serviceId;
+    private final String functionId;
 
-    private GrpcServiceFunction(String serviceId) {
-        this.serviceId = serviceId;
+    private GrpcServiceFunction(String functionId) {
+        this.functionId = functionId;
     }
 
     public <ResponseType> GrpcServiceFunction responseMapper(ValueFromModelMapper<ResponseType, ? extends Value> responseMapper) {
@@ -64,11 +65,15 @@ public class GrpcServiceFunction {
     }
 
     public <RequestType, ResponseType> void handle(Function<RequestType, ResponseType> function) {
-        serviceModule()
-                .getServiceRegistry()
-                .registerService(new GrpcFunctionalServiceSpecification(serviceId, grpcService()
-                        .method(EXECUTE_GRPC_FUNCTION, grpcMethod)
-                        .serve(), function));
+        ServiceModuleConfiguration.ServiceRegistry serviceRegistry = serviceModule().getServiceRegistry();
+        GrpcFunctionalServiceSpecification specification = cast(serviceRegistry.getServices().get(GRPC_FUNCTION_SERVICE));
+        if (isNull(specification)) {
+            specification = new GrpcFunctionalServiceSpecification();
+            specification.addFunction(functionId, grpcMethod, function);
+            serviceRegistry.registerService(specification);
+            return;
+        }
+        specification.addFunction(functionId, grpcMethod, function);
     }
 
     public <RequestType> void consume(Consumer<RequestType> consumer) {
@@ -82,7 +87,7 @@ public class GrpcServiceFunction {
         handle(request -> producer.get());
     }
 
-    public static GrpcServiceFunction grpc(String serviceId) {
-        return new GrpcServiceFunction(serviceId);
+    public static GrpcServiceFunction grpc(String functionId) {
+        return new GrpcServiceFunction(functionId);
     }
 }

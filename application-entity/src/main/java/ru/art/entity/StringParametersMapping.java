@@ -26,31 +26,31 @@ import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.entity.mapper.ValueMapper.*;
 
 public interface StringParametersMapping {
-    static ValueMapper<String, StringParametersMap> stringParamToStringMapper(String key) {
+    static ValueMapper<String, StringParametersMap> stringParameterToStringMapper(String key) {
         return mapper(StringParameterMapping.fromModel(key), StringParameterMapping.toModel(key));
     }
 
-    static ValueMapper<Integer, StringParametersMap> stringParamToIntMapper(String key) {
+    static ValueMapper<Integer, StringParametersMap> stringParameterToIntMapper(String key) {
         return mapper(IntParameterMapping.fromModel(key), IntParameterMapping.toModel(key));
     }
 
-    static ValueMapper<Long, StringParametersMap> stringParamToLongMapper(String key) {
+    static ValueMapper<Long, StringParametersMap> stringParameterToLongMapper(String key) {
         return mapper(LongParameterMapping.fromModel(key), LongParameterMapping.toModel(key));
     }
 
-    static ValueMapper<Double, StringParametersMap> stringParamToDoubleMapper(String key) {
+    static ValueMapper<Double, StringParametersMap> stringParameterToDoubleMapper(String key) {
         return mapper(DoubleParameterMapping.fromModel(key), DoubleParameterMapping.toModel(key));
     }
 
-    static ValueMapper<Boolean, StringParametersMap> stringParamToBoolMapper(String key) {
+    static ValueMapper<Boolean, StringParametersMap> stringParameterToBoolMapper(String key) {
         return mapper(BooleanParameterMapping.fromModel(key), BooleanParameterMapping.toModel(key));
     }
 
-    static ValueMapper<Byte, StringParametersMap> stringParamToByteMapper(String key) {
+    static ValueMapper<Byte, StringParametersMap> stringParameterToByteMapper(String key) {
         return mapper(ByteParameterMapping.fromModel(key), ByteParameterMapping.toModel(key));
     }
 
-    static ValueMapper<Float, StringParametersMap> stringParamToFloatMapper(String key) {
+    static ValueMapper<Float, StringParametersMap> stringParameterToFloatMapper(String key) {
         return mapper(FloatParameterMapping.fromModel(key), FloatParameterMapping.toModel(key));
     }
 

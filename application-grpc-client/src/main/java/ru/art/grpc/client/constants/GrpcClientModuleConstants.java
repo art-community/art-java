@@ -31,4 +31,5 @@ public interface GrpcClientModuleConstants {
     String GRPC_ON_HALF_CLOSE = "GRPC onHalfClose()";
     String GRPC_ON_CANCEL = "GRPC onCancel() message: ''{0}'', cause: ''{1}''";
     String GRPC_ON_RESPONSE_HEADERS = "GRPC onHeaders() response headers: ''{0}''";
+    String GRPC_FUNCTION_SERVICE = "GRPC_FUNCTION_SERVICE";
 }
