@@ -17,6 +17,7 @@
 package ru.art.kafka.broker.configuration;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import static java.io.File.separator;
 import static java.nio.file.Paths.get;
@@ -25,6 +26,7 @@ import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
 
 @Getter
 @Builder
+@EqualsAndHashCode
 public class ZookeeperConfiguration {
     @Builder.Default
     private final String snapshotsDirectory = get(EMPTY_STRING).toAbsolutePath() + separator + DEFAULT_ZOOKEEPER_SNAPSHOTS_DIRECTORY;
