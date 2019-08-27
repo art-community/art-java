@@ -54,7 +54,7 @@ public class MainModule {
         httpGet("/hello")
                 .responseMapper(fromModel)
                 .produce(() -> "<h1>Hello, ART!</h1>");
-        httpServer().await();
+        startHttpServer().await();
     }
 }
 ```

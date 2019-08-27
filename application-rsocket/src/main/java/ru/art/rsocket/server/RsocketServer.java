@@ -48,7 +48,6 @@ import static ru.art.service.ServiceModule.*;
 public class RsocketServer {
     @Getter
     private final Mono<CloseableChannel> channel;
-    private final long timestamp = currentTimeMillis();
     private final RsocketTransport transport;
     private final Logger logger = loggingModule().getLogger(RsocketServer.class);
 
@@ -100,23 +99,33 @@ public class RsocketServer {
     }
 
     public static RsocketServer rsocketTcpServer() {
+        return new RsocketServer(TCP);
+    }
+
+    public static RsocketServer rsocketWebSocketServer() {
+        return new RsocketServer(WEB_SOCKET);
+    }
+
+    public static RsocketServer startRsocketTcpServer() {
         RsocketServer rsocketServer = new RsocketServer(TCP);
         rsocketServer.subscribe();
         return rsocketServer;
     }
 
-    public static RsocketServer rsocketWebSocketServer() {
+    public static RsocketServer startRsocketWebSocketServer() {
         RsocketServer rsocketServer = new RsocketServer(WEB_SOCKET);
         rsocketServer.subscribe();
         return rsocketServer;
     }
 
-    private void subscribe() {
+    public void subscribe() {
+        final long timestamp = currentTimeMillis();
         channel.subscribe(serverChannel -> logger
                 .info(format(transport == TCP
                                 ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE
                                 : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE,
-                        currentTimeMillis() - timestamp)));
+                        currentTimeMillis() - timestamp)))
+                .dispose();
     }
 
     public void await() {
@@ -140,5 +149,11 @@ public class RsocketServer {
             logger.error(RSOCKET_RESTART_FAILED);
         }
 
+    }
+
+    public boolean isWorking() {
+        CloseableChannel blockedChannel = channel.block();
+        if (isNull(blockedChannel)) return false;
+        return !blockedChannel.isDisposed();
     }
 }

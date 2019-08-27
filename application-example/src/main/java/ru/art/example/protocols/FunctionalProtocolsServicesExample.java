@@ -62,7 +62,7 @@ public class FunctionalProtocolsServicesExample {
                 .responseMapper(Caster::cast)
                 .handle(identity());
 
-        httpServer();
+        startHttpServer();
         sleep(100L);
         System.out.println(httpCommunicator(HttpCommunicationTargetConfiguration.builder()
                 .host(httpServerModule().getHost())
@@ -73,7 +73,7 @@ public class FunctionalProtocolsServicesExample {
                 .responseMapper(Caster::cast)
                 .execute(stringPrimitive("\u001B[32mHello, HTTP\u001B[0m")));
 
-        grpcServer();
+        startGrpcServer();
         sleep(100L);
         System.out.println(grpcCommunicator(contextConfiguration().getIpAddress(), grpcServerModule().getPort(), grpcServerModule().getPath())
                 .serviceId(GRPC_SERVICE_TYPE)
@@ -82,7 +82,7 @@ public class FunctionalProtocolsServicesExample {
                 .responseMapper(Caster::cast)
                 .execute(stringPrimitive("\u001B[33mHello, GRPC\u001B[0m")));
 
-        rsocketWebSocketServer();
+        startRsocketWebSocketServer();
         sleep(100L);
         rsocketCommunicator(rsocketCommunicationTarget()
                 .host(rsocketModule().getServerHost())

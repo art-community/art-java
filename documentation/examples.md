@@ -80,7 +80,7 @@ public class MainModule {
                 .requestMapper(stringParameterToStringMapper("param").getToModel())
                 .responseMapper(fromModel)
                 .handle(requestParam -> "<h1>" + requestParam + "</h1>");
-        httpServer().await();
+        startHttpServer().await();
     }
 }
 ```
@@ -186,7 +186,7 @@ public class MainModule {
         grpc("myFunction")
                 .responseMapper(fromModel)
                 .produce(() -> "Hello, ART!");
-        grpcServer();
+        startGrpcServer();
         doIfNotNull(grpcCommunicator(LOCALHOST, grpcServerModule().getPort(), grpcServerModule().getPath())
                 .functionId("myFunction")
                 .responseMapper(toModel)

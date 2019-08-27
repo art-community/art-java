@@ -24,26 +24,26 @@ import java.util.concurrent.CountDownLatch
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.core.constants.StringConstants.UNDERSCORE
 import static ru.art.entity.PrimitivesFactory.stringPrimitive
-import static ru.art.kafka.broker.embedded.EmbeddedKafkaBroker.startupKafkaBroker
-import static ru.art.kafka.consumer.launcher.KafkaStreamsLauncher.launchKafkaStreams
+import static ru.art.kafka.broker.embedded.EmbeddedKafkaBroker.startKafkaBroker
+import static ru.art.kafka.consumer.starter.KafkaStreamsStarter.startKafkaStreams
 import static ru.art.kafka.consumer.module.KafkaConsumerModule.kafkaStreamsRegistry
 import static ru.art.kafka.producer.communicator.KafkaProducerCommunicator.kafkaProducerCommunicator
 
 class KafkaSpecification extends Specification {
     def "Should startup kafka broker and process producing with streaming"() {
         setup:
-        useAgileConfigurations();
+        useAgileConfigurations()
         def result = ""
-        startupKafkaBroker()
+        startKafkaBroker()
 
         when:
-        def latch = new CountDownLatch(1);
+        def latch = new CountDownLatch(1)
         kafkaProducerCommunicator("producer").pushKafkaRecord(stringPrimitive("testKey"), stringPrimitive("testValue"))
         kafkaStreamsRegistry().<Value, Value> registerStream "stream", { stream ->
             stream.peek { key, value -> result = key.toString() + UNDERSCORE + value; latch.countDown() }
         }
-        launchKafkaStreams()
-        latch.await();
+        startKafkaStreams()
+        latch.await()
 
         then:
         result == "testKey_testValue"

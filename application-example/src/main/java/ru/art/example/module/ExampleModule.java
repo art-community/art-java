@@ -71,7 +71,7 @@ public class ExampleModule implements Module<ExampleModuleConfiguration, Example
                 .registerService(new ExampleServiceSpecification())
                 .registerService(new ExampleServiceGrpcCommunicationSpecification())
                 .registerService(new ExampleServiceHttpCommunicationSpecification());
-        thread(HTTP_SERVER_BOOTSTRAP_THREAD, () -> httpServer().await());
-        grpcServer().await();
+        startHttpServer();
+        startGrpcServer().await();
     }
 }

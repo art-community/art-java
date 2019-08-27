@@ -31,6 +31,7 @@ package ru.art.kafka.broker.embedded;/*
  */
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.zookeeper.server.ServerCnxnFactory;
 import org.apache.zookeeper.server.ZooKeeperServer;
 import ru.art.kafka.broker.configuration.ZookeeperConfiguration;
@@ -45,12 +46,13 @@ import static ru.art.kafka.broker.module.KafkaBrokerModule.kafkaBrokerModule;
 import static ru.art.kafka.broker.module.KafkaBrokerModule.kafkaBrokerModuleState;
 import java.nio.file.Path;
 
+@Getter
 @AllArgsConstructor(access = PRIVATE)
 public class EmbeddedZookeeper {
     private final ServerCnxnFactory connectionFactory;
     private final ZookeeperConfiguration configuration;
 
-    public static void startupZookeeper(ZookeeperConfiguration configuration) {
+    public static EmbeddedZookeeper startZookeeper(ZookeeperConfiguration configuration) {
         try {
             ServerCnxnFactory factory = createFactory(configuration.getPort(), configuration.getMaximumConnectedClients());
             Path snapshotsPath = get(configuration.getSnapshotsDirectory());
@@ -58,18 +60,25 @@ public class EmbeddedZookeeper {
             snapshotsPath = createTempDirectory(snapshotsPath, ZOOKEEPER_PREFIX);
             Path logsPath = get(configuration.getLogsDirectory());
             createDirectories(logsPath);
-            kafkaBrokerModuleState().setZookeeper(new EmbeddedZookeeper(factory, configuration));
+            EmbeddedZookeeper zookeeper = new EmbeddedZookeeper(factory, configuration);
+            kafkaBrokerModuleState().setZookeeper(zookeeper);
             factory.startup(new ZooKeeperServer(snapshotsPath.toFile(), logsPath.toFile(), configuration.getTickTime()));
+            return zookeeper;
         } catch (Throwable e) {
             throw new KafkaBrokerModuleException(e);
         }
     }
 
-    public static void startupZookeeper() {
-        startupZookeeper(kafkaBrokerModule().getZookeeperConfiguration());
+    public static void startZookeeper() {
+        startZookeeper(kafkaBrokerModule().getZookeeperConfiguration());
     }
 
     public void shutdown() {
         connectionFactory.shutdown();
+    }
+
+    public void restart() {
+        shutdown();
+        startZookeeper(configuration);
     }
 }
