@@ -238,6 +238,36 @@ After running this code you could see something like this
 
 `Hello, ART!`
 ## Rocks DB
+ART provides API for interact with RocksDB
+
+```java
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.entity.Entity.*;
+import static ru.art.rocks.db.dao.RocksDbCollectionDao.*;
+import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.put;
+import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
+import static ru.art.rocks.db.dao.RocksDbValueDao.*;
+
+public class MainModule {
+    public static void main(String[] args) {
+        put("stringKey", "string");
+        putStrings("stringsKey", fixedArrayOf("string1", "string2"));
+        putAsProtobuf("customer", entityBuilder()
+                .stringField("id", "123")
+                .entityField("order", entityBuilder().intField("price", 123).build())
+                .build());
+        getString("stringKey").ifPresent(string -> System.out.println("String from rocks = " + string));
+        System.out.println("Strings from rocks = " + getStringList("stringsKey"));
+        getAsProtobuf("customer").ifPresent(customer -> System.out.println("Customer from rocks = " + customer));
+    }
+}
+```
+After running this code you could see something like this
+```
+String from rocks = string
+Strings from rocks = [string1, string2]
+Customer from rocks = Entity(fields={id=123, order=Entity(fields={price=123}, fieldNames=[price], type=ENTITY)}, fieldNames=[id, order], type=ENTITY)
+```
 
 ## Kafka Embedded Broker
 
