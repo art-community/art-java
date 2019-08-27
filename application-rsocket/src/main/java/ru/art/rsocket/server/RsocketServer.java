@@ -47,23 +47,15 @@ import static ru.art.service.ServiceModule.*;
 
 public class RsocketServer {
     @Getter
-    private final Mono<CloseableChannel> server;
+    private final Mono<CloseableChannel> channel;
     private final long timestamp = currentTimeMillis();
     private final RsocketTransport transport;
     private final Logger logger = loggingModule().getLogger(RsocketServer.class);
 
     private RsocketServer(RsocketTransport transport) {
         this.transport = transport;
-        this.server = createServer();
+        this.channel = createServer();
         rsocketModuleState().setServer(this);
-    }
-
-    public static RsocketServer rsocketTcpServer() {
-        return new RsocketServer(TCP);
-    }
-
-    public static RsocketServer rsocketWebSocketServer() {
-        return new RsocketServer(WEB_SOCKET);
     }
 
     private Mono<CloseableChannel> createServer() {
@@ -73,35 +65,24 @@ public class RsocketServer {
         }
         rsocketModule().getClientInterceptors().forEach(socketFactory::addResponderPlugin);
         ServerTransportAcceptor acceptor = socketFactory.acceptor((setup, sendingSocket) -> just(new RsocketAcceptor(sendingSocket, setup)));
+        Mono<CloseableChannel> channel;
         switch (transport) {
             case TCP:
-                return acceptor.transport(TcpServerTransport.create(rsocketModule().getServerHost(),
+                channel = acceptor.transport(TcpServerTransport.create(rsocketModule().getServerHost(),
                         rsocketModule().getServerTcpPort()))
                         .start()
                         .onTerminateDetach();
+                break;
             case WEB_SOCKET:
-                return acceptor.transport(WebsocketServerTransport.create(rsocketModule().getServerHost(),
+                channel = acceptor.transport(WebsocketServerTransport.create(rsocketModule().getServerHost(),
                         rsocketModule().getServerWebSocketPort()))
                         .start()
                         .onTerminateDetach();
+                break;
+            default:
+                throw new RsocketServerException(format(UNSUPPORTED_TRANSPORT, transport));
         }
-        throw new RsocketServerException(format(UNSUPPORTED_TRANSPORT, transport));
-    }
-
-    public static RsocketServer rsocketTcpServerInSeparatedThread() {
-        RsocketServer rsocketServer = rsocketTcpServer();
-        thread(RSOCKET_SERVER_THREAD, rsocketServer::await);
-        return rsocketServer;
-    }
-
-    public static RsocketServer rsocketWebSocketServerInSeparatedThread() {
-        RsocketServer rsocketServer = rsocketWebSocketServer();
-        thread(RSOCKET_SERVER_THREAD, rsocketServer::await);
-        return rsocketServer;
-    }
-
-    public void await() {
-        server.doOnSubscribe(subscription -> serviceModule()
+        return channel.doOnSubscribe(subscription -> serviceModule()
                 .getServiceRegistry()
                 .getServices()
                 .entrySet()
@@ -115,12 +96,30 @@ public class RsocketServer {
                                 ? rsocketModule().getServerTcpPort()
                                 : rsocketModule().getServerWebSocketPort(),
                         entry.getKey(),
-                        ((RsocketServiceSpecification) entry.getValue()).getRsocketService().getRsocketMethods().keySet()))))
-                .subscribe(channel -> logger
-                        .info(format(transport == TCP
-                                        ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE
-                                        : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE,
-                                currentTimeMillis() - timestamp)));
+                        ((RsocketServiceSpecification) entry.getValue()).getRsocketService().getRsocketMethods().keySet()))));
+    }
+
+    public static RsocketServer rsocketTcpServer() {
+        RsocketServer rsocketServer = new RsocketServer(TCP);
+        rsocketServer.subscribe();
+        return rsocketServer;
+    }
+
+    public static RsocketServer rsocketWebSocketServer() {
+        RsocketServer rsocketServer = new RsocketServer(WEB_SOCKET);
+        rsocketServer.subscribe();
+        return rsocketServer;
+    }
+
+    private void subscribe() {
+        channel.subscribe(serverChannel -> logger
+                .info(format(transport == TCP
+                                ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE
+                                : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE,
+                        currentTimeMillis() - timestamp)));
+    }
+
+    public void await() {
         try {
             currentThread().join();
         } catch (InterruptedException e) {
@@ -131,11 +130,11 @@ public class RsocketServer {
     public void restart() {
         long millis = currentTimeMillis();
         try {
-            CloseableChannel channel = server.block();
-            if (nonNull(channel)) {
-                channel.dispose();
+            CloseableChannel blockedChannel = this.channel.block();
+            if (nonNull(blockedChannel)) {
+                blockedChannel.dispose();
             }
-            new RsocketServer(transport).await();
+            new RsocketServer(transport).subscribe();
             logger.info(format(RSOCKET_RESTARTED_MESSAGE, currentTimeMillis() - millis));
         } catch (Throwable e) {
             logger.error(RSOCKET_RESTART_FAILED);

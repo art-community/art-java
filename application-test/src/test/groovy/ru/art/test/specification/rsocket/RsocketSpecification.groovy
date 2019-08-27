@@ -38,8 +38,8 @@ import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.W
 import static ru.art.rsocket.function.RsocketServiceFunction.rsocket
 import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.rsocketCommunicationTarget
 import static ru.art.rsocket.module.RsocketModule.rsocketModule
-import static ru.art.rsocket.server.RsocketServer.rsocketTcpServerInSeparatedThread
-import static ru.art.rsocket.server.RsocketServer.rsocketWebSocketServerInSeparatedThread
+import static ru.art.rsocket.server.RsocketServer.rsocketTcpServer
+import static ru.art.rsocket.server.RsocketServer.rsocketWebSocketServer
 
 class RsocketSpecification extends Specification {
     def functionId = "TEST_SERVICE"
@@ -56,10 +56,10 @@ class RsocketSpecification extends Specification {
                 .handle { request -> concat(request as Entity, response) }
         switch (transport) {
             case TCP:
-                rsocketTcpServerInSeparatedThread()
+                rsocketTcpServer()
                 break
             case WEB_SOCKET:
-                rsocketWebSocketServerInSeparatedThread()
+                rsocketWebSocketServer()
                 break
         }
         sleep(500L)
@@ -101,10 +101,10 @@ class RsocketSpecification extends Specification {
                 .handle { request -> concat(request as Entity, response) }
         switch (transport) {
             case TCP:
-                rsocketTcpServerInSeparatedThread()
+                rsocketTcpServer()
                 break
             case WEB_SOCKET:
-                rsocketWebSocketServerInSeparatedThread()
+                rsocketWebSocketServer()
                 break
         }
         sleep(500L)
@@ -160,10 +160,10 @@ class RsocketSpecification extends Specification {
                 .handle { request -> just(concat(request as Entity, response)) }
         switch (transport) {
             case TCP:
-                rsocketTcpServerInSeparatedThread()
+                rsocketTcpServer()
                 break
             case WEB_SOCKET:
-                rsocketWebSocketServerInSeparatedThread()
+                rsocketWebSocketServer()
                 break
         }
         sleep(500L)
@@ -220,10 +220,10 @@ class RsocketSpecification extends Specification {
                 .handle { request -> (request as Flux<Entity>).map { concat(it as Entity, response) } }
         switch (transport) {
             case TCP:
-                rsocketTcpServerInSeparatedThread()
+                rsocketTcpServer()
                 break
             case WEB_SOCKET:
-                rsocketWebSocketServerInSeparatedThread()
+                rsocketWebSocketServer()
                 break
         }
 
