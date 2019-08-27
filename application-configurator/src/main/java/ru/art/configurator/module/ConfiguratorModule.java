@@ -75,7 +75,7 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
                 .registerService(new HttpResourceServiceSpecification(CONFIGURATOR_PATH))
                 .registerService(new UserServiceSpecification())
                 .registerService(new MetricServiceSpecification(CONFIGURATOR_PATH));
-        httpServerInSeparatedThread();
+        httpServer();
         grpcServer().await();
     }
 
