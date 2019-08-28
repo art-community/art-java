@@ -328,7 +328,7 @@ public class XmlEntity implements Value {
 
         @SuppressWarnings("Duplicates")
         public XmlEntity create() {
-            if (CheckerForEmptiness.isEmpty(tag)) {
+            if (CheckerForEmptiness.isEmpty(tag) && CheckerForEmptiness.isEmpty(children)) {
                 throw new XmlEntityCreationException(XML_TAG_IS_EMPTY);
             }
             XmlEntity entity = new XmlEntity();
