@@ -20,9 +20,7 @@ package ru.art.kafka.consumer.configuration;
 
 import lombok.*;
 import org.apache.kafka.common.serialization.*;
-import ru.art.kafka.consumer.exception.*;
 import ru.art.kafka.serde.*;
-import static ru.art.core.checker.CheckerForEmptiness.*;
 import java.util.*;
 
 @Getter
@@ -58,9 +56,4 @@ public class KafkaStreamConfiguration {
      */
     @Builder.Default
     private final Properties additionalProperties = new Properties();
-
-    public void validate() {
-        if (isEmpty(brokers)) throw new KafkaConsumerModuleException("brokers are empty");
-        if (isEmpty(topic)) throw new KafkaConsumerModuleException("topic is empty");
-    }
 }

@@ -23,6 +23,7 @@ import org.apache.kafka.common.serialization.*;
 import ru.art.kafka.deserializer.*;
 import static java.util.Collections.*;
 import static ru.art.core.caster.Caster.*;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.constants.ThreadConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
@@ -42,9 +43,14 @@ public interface KafkaConsumerConfiguration {
     Duration getPollTimeout();
 
     /**
-     * @return groupId - A unique string that identifies the producer group this producer belongs to
+     * @return groupId - A unique string that identifies the consumer group this consumer belongs to
      */
     String getGroupId();
+
+    /**
+     * @return clientId - A unique string that identifies the consumer
+     */
+    String getClientId();
 
     /**
      * @return List topics name
@@ -84,7 +90,9 @@ public interface KafkaConsumerConfiguration {
         @Builder.Default
         private final Duration pollTimeout = DEFAULT_DURATION;
         @Builder.Default
-        private final String groupId = DEFAULT_KAFKA_GROUP_ID;
+        private final String groupId = EMPTY_STRING;
+        @Builder.Default
+        private final String clientId = EMPTY_STRING;
         @Builder.Default
         private final Set<String> topics = emptySet();
         @Builder.Default
