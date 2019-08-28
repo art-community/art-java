@@ -28,9 +28,9 @@ import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
-import static ru.art.entity.Entity.isPrimitiveType;
 import static ru.art.entity.Entity.*;
 import static ru.art.entity.PrimitivesFactory.*;
+import static ru.art.entity.Value.*;
 import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)

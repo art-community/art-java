@@ -32,6 +32,7 @@ import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Entity.*;
+import static ru.art.entity.Value.*;
 import static ru.art.entity.tuple.PlainTupleReader.*;
 import static ru.art.entity.tuple.PlainTupleWriter.*;
 import static ru.art.entity.tuple.schema.ValueSchema.*;
