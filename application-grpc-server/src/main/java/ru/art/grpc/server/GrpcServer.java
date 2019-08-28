@@ -25,6 +25,7 @@ import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.*;
 import ru.art.grpc.server.exception.*;
 import ru.art.grpc.server.servlet.*;
 import ru.art.grpc.server.specification.*;
+
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -48,7 +49,6 @@ public class GrpcServer {
     private final Server server;
 
     public static GrpcServer grpcServer() {
-        long millis = currentTimeMillis();
         ServerBuilder<?> serverBuilder = forPort(grpcServerModule().getPort());
         serverBuilder.maxInboundMessageSize(grpcServerModule().getMaxInboundMessageSize());
         if (grpcServerModule().isExecuteServiceInTransportThread()) {
@@ -72,14 +72,20 @@ public class GrpcServer {
         serverBuilder.addService(new GrpcServletContainer(grpcServerModule().getPath(), protobufServices).getServlet());
         serverBuilder.handshakeTimeout(grpcServerModule().getHandshakeTimeout(), SECONDS);
         GrpcServer grpcServer = new GrpcServer(serverBuilder.build());
+        grpcServerModuleState().setServer(grpcServer);
+        return grpcServer;
+    }
+
+    public static GrpcServer startGrpcServer() {
         try {
+            long timestamp = currentTimeMillis();
+            GrpcServer grpcServer = grpcServer();
             grpcServer.server.start();
-            logger.info(format(GRPC_STARTED_MESSAGE, currentTimeMillis() - millis));
-            grpcServerModuleState().setServer(grpcServer);
+            logger.info(format(GRPC_STARTED_MESSAGE, currentTimeMillis() - timestamp));
+            return grpcServer;
         } catch (Throwable e) {
             throw new GrpcServerException(GRPC_SERVER_INITIALIZATION_FAILED, e);
         }
-        return grpcServer;
     }
 
     private static String buildServiceLoadedMessage(GrpcServiceSpecification service) {
@@ -102,11 +108,16 @@ public class GrpcServer {
         }
     }
 
+    public boolean isWorking() {
+        return !server.isTerminated();
+    }
+
     public void restart() {
         long millis = currentTimeMillis();
         try {
             server.shutdownNow();
-            grpcServer();
+            server.awaitTermination();
+            startGrpcServer();
             logger.info(format(GRPC_RESTARTED_MESSAGE, currentTimeMillis() - millis));
         } catch (Throwable e) {
             logger.error(GRPC_SERVER_RESTART_FAILED);

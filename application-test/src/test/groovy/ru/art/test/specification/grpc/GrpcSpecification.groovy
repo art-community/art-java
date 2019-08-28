@@ -27,7 +27,7 @@ import static ru.art.core.constants.NetworkConstants.LOCALHOST
 import static ru.art.entity.Entity.concat
 import static ru.art.entity.Entity.entityBuilder
 import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator
-import static ru.art.grpc.server.GrpcServer.grpcServer
+import static ru.art.grpc.server.GrpcServer.startGrpcServer
 import static ru.art.grpc.server.function.GrpcServiceFunction.grpc
 import static ru.art.grpc.server.module.GrpcServerModule.grpcServerModule
 
@@ -44,7 +44,7 @@ class GrpcSpecification extends Specification {
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
                 .handle { request -> concat(request as Entity, response) }
-        grpcServer()
+        startGrpcServer()
         sleep(500L)
 
         when:

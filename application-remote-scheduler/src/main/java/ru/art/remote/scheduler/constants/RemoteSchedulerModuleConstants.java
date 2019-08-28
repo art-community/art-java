@@ -35,7 +35,7 @@ public interface RemoteSchedulerModuleConstants {
     String cancel_PATH = "/cancel";
 
     interface LoggingMessages {
-        String TASK_STARTED_MESSAGE = "Task started. Task: ''{0}''";
+        String TASK_STARTED_MESSAGE = "Task isWorking. Task: ''{0}''";
         String PROCESS_STARTED_MESSAGE = "Process was ras. Process: ''{0}''";
         String TASK_COMPLETED_MESSAGE = "Task completed. Task: ''{0}'' completed with response: ''{1}''";
         String TASK_FAILED_MESSAGE = "Task failed. Task: ''{0}''";

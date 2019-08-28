@@ -17,6 +17,7 @@
 package ru.art.kafka.broker.configuration;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import static ru.art.core.constants.NetworkConstants.LOCALHOST;
 import static ru.art.core.constants.StringConstants.COLON;
@@ -26,6 +27,7 @@ import java.util.Properties;
 
 @Getter
 @Builder
+@EqualsAndHashCode
 public class KafkaBrokerConfiguration {
     @Builder.Default
     private final String zookeeperConnection = LOCALHOST + COLON + DEFAULT_ZOOKEEPER_PORT;
