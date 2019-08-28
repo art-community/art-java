@@ -33,6 +33,7 @@ import ru.art.http.server.interceptor.*;
 import ru.art.http.server.model.*;
 import ru.art.http.server.path.*;
 import ru.art.http.server.specification.*;
+
 import javax.servlet.http.*;
 import java.util.*;
 
@@ -68,34 +69,34 @@ public class HttpServer {
     private final Deque<HttpServerPathInterceptor> requestInterceptors;
     private final Deque<HttpServerPathInterceptor> responseInterceptors;
     private final Set<String> cancelablePaths = setOf();
-    private final long creationTimestamp;
     private final Tomcat tomcat;
     private final Logger logger;
 
     private HttpServer(Tomcat tomcat) {
         this.tomcat = tomcat;
         tomcat.setBaseDir(getProperty(TEMP_DIR_KEY));
-        creationTimestamp = currentTimeMillis();
         logger = loggingModule().getLogger(HttpServer.class);
         requestInterceptors = dequeOf();
         responseInterceptors = dequeOf();
+        httpServerModuleState().setServer(this);
     }
 
     public static HttpServer httpServer() {
         try {
-            HttpServer httpServer = new HttpServer(new Tomcat());
-            httpServer.startup();
-            httpServerModuleState().setServer(httpServer);
-            return httpServer;
+            return new HttpServer(new Tomcat());
         } catch (Throwable e) {
             throw new HttpServerException(TOMCAT_INITIALIZATION_FAILED, e);
         }
     }
 
-    public static HttpServer httpServerInSeparatedThread() {
-        HttpServer httpServer = httpServer();
-        thread(HTTP_SERVER_THREAD, httpServer::await);
-        return httpServer;
+    public static HttpServer startHttpServer() {
+        try {
+            HttpServer httpServer = httpServer();
+            httpServer.startup();
+            return httpServer;
+        } catch (Throwable e) {
+            throw new HttpServerException(TOMCAT_INITIALIZATION_FAILED, e);
+        }
     }
 
     private static Map<String, HttpMethodGroup> groupHttpMethods(HttpService httpService) {
@@ -114,11 +115,15 @@ public class HttpServer {
         tomcat.getServer().await();
     }
 
+    public boolean isWorking() {
+        return tomcat.getServer().getState().isAvailable();
+    }
+
     public void restart() {
         long millis = currentTimeMillis();
         try {
             tomcat.stop();
-            httpServer();
+            startHttpServer();
             logger.info(format(TOMCAT_RESTARTED_MESSAGE, currentTimeMillis() - millis));
         } catch (Throwable e) {
             logger.error(TOMCAT_RESTART_FAILED);
@@ -220,6 +225,7 @@ public class HttpServer {
     }
 
     private void startup() throws LifecycleException {
+        final long timestamp = currentTimeMillis();
         getLogManager().reset();
         configureConnector();
         initializeInterceptors();
@@ -229,7 +235,7 @@ public class HttpServer {
             bindHttpMetrics(context.getManager());
         }
         tomcat.start();
-        logger.info(format(TOMCAT_STARTED_MESSAGE, currentTimeMillis() - creationTimestamp));
+        logger.info(format(TOMCAT_STARTED_MESSAGE, currentTimeMillis() - timestamp));
     }
 
     private void configureConnector() {

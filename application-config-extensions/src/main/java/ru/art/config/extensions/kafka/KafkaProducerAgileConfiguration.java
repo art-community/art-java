@@ -22,6 +22,7 @@ import ru.art.kafka.producer.configuration.KafkaProducerConfiguration;
 import ru.art.kafka.producer.configuration.KafkaProducerModuleConfiguration.KafkaProducerDefaultModuleConfiguration;
 import ru.art.kafka.serializer.KafkaJsonSerializer;
 import ru.art.kafka.serializer.KafkaProtobufSerializer;
+
 import static java.lang.Class.forName;
 import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
 import static ru.art.config.extensions.ConfigExtensions.configMap;
@@ -30,11 +31,13 @@ import static ru.art.core.extension.ExceptionExtensions.ifException;
 import static ru.art.kafka.constants.KafkaClientConstants.JSON_KAFKA_FORMAT;
 import static ru.art.kafka.constants.KafkaClientConstants.PROTOBUF_KAFKA_FORMAT;
 import static ru.art.kafka.producer.configuration.KafkaProducerConfiguration.producerConfiguration;
+
 import java.util.Map;
-import java.util.function.Function;
 
 @Getter
 public class KafkaProducerAgileConfiguration extends KafkaProducerDefaultModuleConfiguration {
+    private static final KafkaJsonSerializer KAFKA_JSON_SERIALIZER = new KafkaJsonSerializer();
+    private static final KafkaProtobufSerializer KAFKA_PROTOBUF_SERIALIZER = new KafkaProtobufSerializer();
     private Map<String, KafkaProducerConfiguration> producerConfigurations;
 
     public KafkaProducerAgileConfiguration() {
@@ -43,23 +46,28 @@ public class KafkaProducerAgileConfiguration extends KafkaProducerDefaultModuleC
 
     @Override
     public void refresh() {
-        KafkaJsonSerializer kafkaJsonSerializer = new KafkaJsonSerializer();
-        KafkaProtobufSerializer kafkaProtobufSerializer = new KafkaProtobufSerializer();
-        Function<String, Serializer<?>> serializerProvider = serializerString -> ifException(() -> JSON_KAFKA_FORMAT
+        producerConfigurations = configMap(KAFKA_PRODUCERS_SECTION_ID, (key, config) -> {
+            String serializerString = config.getString(KEY_SERIALIZER_KEY);
+            String serializerString1 = config.getString(VALUE_SERIALIZER_KEY);
+            return producerConfiguration()
+                    .clientId(key)
+                    .topic(config.getString(TOPIC_KEY))
+                    .brokers(config.getStringList(BROKERS_KEY))
+                    .additionalProperties(config.getProperties(ADDITIONAL_PROPERTIES_KEY))
+                    .deliveryTimeout(config.getLong(DELIVERY_TIMEOUT))
+                    .retries(config.getInt(RETRIES))
+                    .keySerializer(ifException(() -> getSerializer(serializerString), KAFKA_PROTOBUF_SERIALIZER))
+                    .valueSerializer(ifException(() -> getSerializer(serializerString1), KAFKA_PROTOBUF_SERIALIZER))
+                    .build();
+        }, super.getProducerConfigurations());
+    }
+
+    private static Serializer<?> getSerializer(String serializerString) throws ClassNotFoundException {
+        return JSON_KAFKA_FORMAT
                 .equalsIgnoreCase(serializerString)
-                ? kafkaJsonSerializer
+                ? KAFKA_JSON_SERIALIZER
                 : PROTOBUF_KAFKA_FORMAT.equalsIgnoreCase(serializerString)
-                ? kafkaProtobufSerializer
-                : serdeFrom(forName(serializerString)).serializer(), kafkaProtobufSerializer);
-        producerConfigurations = configMap(KAFKA_PRODUCERS_SECTION_ID, (key, config) -> producerConfiguration()
-                .clientId(key)
-                .topic(config.getString(TOPIC_KEY))
-                .brokers(config.getStringList(BROKERS_KEY))
-                .additionalProperties(config.getProperties(ADDITIONAL_PROPERTIES_KEY))
-                .deliveryTimeout(config.getLong(DELIVERY_TIMEOUT))
-                .retries(config.getInt(RETRIES))
-                .keySerializer(serializerProvider.apply(config.getString(KEY_SERIALIZER_KEY)))
-                .valueSerializer(serializerProvider.apply(config.getString(VALUE_SERIALIZER_KEY)))
-                .build(), super.getProducerConfigurations());
+                ? KAFKA_PROTOBUF_SERIALIZER
+                : serdeFrom(forName(serializerString)).serializer();
     }
 }

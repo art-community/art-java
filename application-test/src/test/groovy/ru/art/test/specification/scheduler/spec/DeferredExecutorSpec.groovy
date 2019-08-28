@@ -42,7 +42,7 @@ class DeferredExecutorSpec extends Specification {
         def actualResults = new ArrayDeque<DeferredEventResult>()
 
         when:
-        println "Executor started with $eventCount events"
+        println "Executor isWorking with $eventCount events"
         triggerTimes.collect { addEventToExecutor executor, it, actualResults }*.get()
 
         then:
@@ -68,7 +68,7 @@ class DeferredExecutorSpec extends Specification {
         def actualResults = new ArrayDeque<DeferredEventResult>()
 
         when:
-        println "Executor started with $eventCount events"
+        println "Executor isWorking with $eventCount events"
         triggerTimes.collect { addEventToExecutor executor, it, actualResults }*.get()
 
         then:
@@ -95,7 +95,7 @@ class DeferredExecutorSpec extends Specification {
         def actualResults = new ArrayDeque<DeferredEventResult>()
 
         when:
-        println "Executor started with $eventCount events"
+        println "Executor isWorking with $eventCount events"
         runInJoinedThread { triggerTimes.stream().limit(eventCount / 2 as long).map { addEventToExecutor executor, it, actualResults }*.get() }
         runInJoinedThread {
             triggerTimes.stream().skip(eventCount / 2 as long).limit(eventCount / 2 as long).map {
@@ -127,7 +127,7 @@ class DeferredExecutorSpec extends Specification {
         def actualResults = new ArrayDeque<DeferredEventResult>()
 
         when:
-        println "Executor started with $eventCount events"
+        println "Executor isWorking with $eventCount events"
         runInJoinedThread { triggerTimes.stream().limit(eventCount / 2 as long).map { addEventToExecutor executor, it, actualResults }*.get() }
         runInJoinedThread {
             triggerTimes.stream().skip(eventCount / 2 as long).limit(eventCount / 2 as long).map {
@@ -159,7 +159,7 @@ class DeferredExecutorSpec extends Specification {
         def actualResults = new ArrayDeque<DeferredEventResult>()
 
         when:
-        println "Executor started with $eventCount events"
+        println "Executor isWorking with $eventCount events"
         triggerTimes.collect { addEventToExecutor executor, it, actualResults }*.get()
 
         then:
@@ -186,7 +186,7 @@ class DeferredExecutorSpec extends Specification {
         def actualResults = new ArrayDeque<DeferredEventResult>()
 
         when:
-        println "Executor started with ${triggerTimes.size()} events"
+        println "Executor isWorking with ${triggerTimes.size()} events"
         runInJoinedThread { triggerTimes.stream().limit(eventCount / 2 as long).map { addEventToExecutor executor, it, actualResults }*.get() }
         runInJoinedThread {
             triggerTimes.stream().skip(eventCount / 2 as long).limit(eventCount / 2 as long).map {
@@ -220,7 +220,7 @@ class DeferredExecutorSpec extends Specification {
         def actualResults = new ArrayDeque<DeferredEventResult>()
 
         when:
-        println "Executor started with $infinityCount infinity events and $longCount long events"
+        println "Executor isWorking with $infinityCount infinity events and $longCount long events"
         def infinityEvents = infinityEventsTriggerTimes.collect {
             executor.submit createInfinityDeferredEventTask(it, { addEventResult actualResults; actualResults.size() - 1 }), it
         }
@@ -261,7 +261,7 @@ class DeferredExecutorSpec extends Specification {
         def actualResults = new ArrayDeque<DeferredEventResult>()
 
         when:
-        println "Executor started with $eventCount events"
+        println "Executor isWorking with $eventCount events"
         triggerTimes.collect { addEventToExecutorWithReturningValue executor, it, actualResults, expectedValues.poll() }*.get()
 
         then:

@@ -20,17 +20,23 @@ import lombok.Getter;
 import ru.art.kafka.broker.configuration.KafkaBrokerConfiguration;
 import ru.art.kafka.broker.configuration.KafkaBrokerModuleConfiguration.KafkaBrokerModuleDefaultConfiguration;
 import ru.art.kafka.broker.configuration.ZookeeperConfiguration;
+import ru.art.kafka.broker.constants.KafkaBrokerModuleConstants;
 import ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode;
+import ru.art.kafka.broker.module.KafkaBrokerModule;
+
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.PORT;
 import static ru.art.config.extensions.kafka.KafkaConfigKeys.*;
+import static ru.art.core.context.Context.context;
 import static ru.art.core.extension.ExceptionExtensions.ifException;
+import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.KAFKA_BROKER_MODULE_ID;
+import static ru.art.kafka.broker.module.KafkaBrokerModule.*;
 
 @Getter
 public class KafkaBrokerAgileConfiguration extends KafkaBrokerModuleDefaultConfiguration {
-    private ZookeeperConfiguration zookeeperConfiguration;
-    private ZookeeperInitializationMode zookeeperInitializationMode;
-    private KafkaBrokerConfiguration kafkaBrokerConfiguration;
+    private ZookeeperConfiguration zookeeperConfiguration = super.getZookeeperConfiguration();
+    private ZookeeperInitializationMode zookeeperInitializationMode = super.getZookeeperInitializationMode();
+    private KafkaBrokerConfiguration kafkaBrokerConfiguration = super.getKafkaBrokerConfiguration();
 
     public KafkaBrokerAgileConfiguration() {
         refresh();
@@ -38,21 +44,43 @@ public class KafkaBrokerAgileConfiguration extends KafkaBrokerModuleDefaultConfi
 
     @Override
     public void refresh() {
-        ZookeeperConfiguration zookeeperConfiguration = super.getZookeeperConfiguration();
-        this.zookeeperConfiguration = ZookeeperConfiguration.builder()
-                .logsDirectory(configString(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, LOGS_DIRECTORY_KEY, zookeeperConfiguration.getLogsDirectory()))
-                .port(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, PORT, zookeeperConfiguration.getPort()))
-                .tickTime(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, TICK_TIME_KEY, zookeeperConfiguration.getTickTime()))
-                .maximumConnectedClients(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, MAXIMUM_CONNECTED_CLIENTS_KEY, zookeeperConfiguration.getMaximumConnectedClients()))
+        ZookeeperConfiguration defaultZookeeperConfiguration = super.getZookeeperConfiguration();
+        ZookeeperConfiguration newZookeeperConfiguration = ZookeeperConfiguration.builder()
+                .logsDirectory(configString(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, LOGS_DIRECTORY_KEY, defaultZookeeperConfiguration.getLogsDirectory()))
+                .port(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, PORT, defaultZookeeperConfiguration.getPort()))
+                .tickTime(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, TICK_TIME_KEY, defaultZookeeperConfiguration.getTickTime()))
+                .maximumConnectedClients(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, MAXIMUM_CONNECTED_CLIENTS_KEY, defaultZookeeperConfiguration.getMaximumConnectedClients()))
                 .build();
-        zookeeperInitializationMode = ifException(() -> ZookeeperInitializationMode.valueOf(configString(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, INITIALIZATION_MODE_KEY).toUpperCase()), super.getZookeeperInitializationMode());
-        KafkaBrokerConfiguration kafkaBrokerConfiguration = super.getKafkaBrokerConfiguration();
-        this.kafkaBrokerConfiguration = KafkaBrokerConfiguration.builder()
+        boolean restartZookeeper = false;
+        if (!newZookeeperConfiguration.equals(this.zookeeperConfiguration)) {
+            restartZookeeper = true;
+        }
+        this.zookeeperConfiguration = newZookeeperConfiguration;
+        ZookeeperInitializationMode newZookeeperInitializationMode = ifException(() -> ZookeeperInitializationMode.valueOf(configString(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, INITIALIZATION_MODE_KEY).toUpperCase()),
+                super.getZookeeperInitializationMode());
+        if (zookeeperInitializationMode != newZookeeperInitializationMode) {
+            restartZookeeper = true;
+        }
+        this.zookeeperInitializationMode = newZookeeperInitializationMode;
+        KafkaBrokerConfiguration defaultKafkaBrokerConfiguration = super.getKafkaBrokerConfiguration();
+        KafkaBrokerConfiguration newKafkaBrokerConfiguration = KafkaBrokerConfiguration.builder()
                 .additionalProperties(configProperties(KAFKA_BROKER_SECTION_ID, ADDITIONAL_PROPERTIES_KEY))
-                .port(configInt(KAFKA_BROKER_SECTION_ID, PORT, kafkaBrokerConfiguration.getPort()))
-                .replicationFactor(configInt(KAFKA_BROKER_SECTION_ID, REPLICATION_FACTOR_KEY, kafkaBrokerConfiguration.getReplicationFactor())
+                .port(configInt(KAFKA_BROKER_SECTION_ID, PORT, defaultKafkaBrokerConfiguration.getPort()))
+                .replicationFactor(configInt(KAFKA_BROKER_SECTION_ID, REPLICATION_FACTOR_KEY, defaultKafkaBrokerConfiguration.getReplicationFactor())
                         .shortValue())
-                .zookeeperConnection(configString(KAFKA_BROKER_SECTION_ID, ZOOKEEPER_CONNECTION_KEY, kafkaBrokerConfiguration.getZookeeperConnection()))
+                .zookeeperConnection(configString(KAFKA_BROKER_SECTION_ID, ZOOKEEPER_CONNECTION_KEY, defaultKafkaBrokerConfiguration.getZookeeperConnection()))
                 .build();
+        boolean restartBroker = false;
+        if (!newKafkaBrokerConfiguration.equals(this.kafkaBrokerConfiguration)) {
+            restartBroker = true;
+        }
+        this.kafkaBrokerConfiguration = newKafkaBrokerConfiguration;
+        if (context().hasModule(KAFKA_BROKER_MODULE_ID) && restartBroker) {
+            if (restartZookeeper) {
+                kafkaBrokerModuleState().getBroker().restartWithZookeeper();
+                return;
+            }
+            kafkaBrokerModuleState().getBroker().restart();
+        }
     }
 }

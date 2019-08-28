@@ -27,7 +27,7 @@ import static ru.art.core.constants.NetworkConstants.LOCALHOST
 import static ru.art.entity.Entity.concat
 import static ru.art.entity.Entity.entityBuilder
 import static ru.art.http.client.communicator.HttpCommunicator.httpCommunicator
-import static ru.art.http.server.HttpServer.httpServerInSeparatedThread
+import static ru.art.http.server.HttpServer.startHttpServer
 import static ru.art.http.server.function.HttpServiceFunction.httpPost
 import static ru.art.http.server.module.HttpServerModule.httpServerModule
 
@@ -44,7 +44,7 @@ class HttpSpecification extends Specification {
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
                 .handle { request -> concat(request as Entity, response) }
-        httpServerInSeparatedThread()
+        startHttpServer()
         sleep(500L)
 
         when:

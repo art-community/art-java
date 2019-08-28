@@ -50,7 +50,7 @@ public class MainModule {
 }
 ```
 
-After running in output console you could see something like it:
+After running in output console you could see something like this:
 ```
 Customer entity as JSON = {"id":"1","name":"Customer","orderIds":["1","2"]}
 Customer entity as Protobuf = value {
@@ -64,6 +64,7 @@ Customer entity to customer = MainModule.Customer(id=1, name=Customer, orderIds=
 ## HTTP Serving
 ART provides you functional to serving HTTP requests
 
+Code:
 ```java
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.entity.PrimitiveMapping.StringPrimitive.*;
@@ -79,18 +80,19 @@ public class MainModule {
                 .requestMapper(stringParameterToStringMapper("param").getToModel())
                 .responseMapper(fromModel)
                 .handle(requestParam -> "<h1>" + requestParam + "</h1>");
-        httpServer().await();
+        startHttpServer().await();
     }
 }
 ```
 
-After running this code and open browser on url with path '/hello' from logs you could see something like this:
+After running and open browser on url with path '/hello' from logs you could see something like this:
 
 <<screen>>
 
 ## HTTP Communication
 ART provides you functional for sending HTTP request
 
+Code:
 ```java
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.entity.PrimitiveMapping.StringPrimitive.*;
@@ -164,37 +166,36 @@ After running this code you could see something like this:
 ## GRPC Serving & Communication
 ART provides GRPC functional API to serving and handling GRPC requests
 
+Code:
 ```java
-import java.util.function.*;
+import java.util.function.Consumer;
 
-import static java.lang.Thread.*;
-import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
-import static ru.art.core.constants.NetworkConstants.*;
-import static ru.art.core.extension.NullCheckingExtensions.*;
-import static ru.art.entity.PrimitiveMapping.StringPrimitive.*;
-import static ru.art.grpc.client.communicator.GrpcCommunicator.*;
-import static ru.art.grpc.server.GrpcServer.*;
-import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
-import static ru.art.grpc.server.function.GrpcServiceFunction.*;
-import static ru.art.grpc.server.module.GrpcServerModule.*;
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations;
+import static ru.art.core.constants.NetworkConstants.LOCALHOST;
+import static ru.art.core.extension.NullCheckingExtensions.doIfNotNull;
+import static ru.art.entity.PrimitiveMapping.StringPrimitive.fromModel;
+import static ru.art.entity.PrimitiveMapping.StringPrimitive.toModel;
+import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator;
+import static startGrpcServer;
+import static ru.art.grpc.server.function.GrpcServiceFunction.grpc;
+import static ru.art.grpc.server.module.GrpcServerModule.grpcServerModule;
 
 public class MainModule {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         useAgileConfigurations();
         grpc("myFunction")
                 .responseMapper(fromModel)
                 .produce(() -> "Hello, ART!");
-        grpcServerInSeparatedThread();
-        sleep(500L);
+        startGrpcServer();
         doIfNotNull(grpcCommunicator(LOCALHOST, grpcServerModule().getPort(), grpcServerModule().getPath())
-                .serviceId("myFunction")
-                .methodId(EXECUTE_GRPC_FUNCTION)
+                .functionId("myFunction")
                 .responseMapper(toModel)
                 .execute().getResponseData(), (Consumer<Object>) System.out::println);
     }
 }
+
 ```
-After running this code you could see something like this
+After running you could see something like this
 
 `Hello, ART!`
 
@@ -205,6 +206,7 @@ ART provides RSocket functional API to all rsocket methods:
 * requestStream
 * requestChannel
 
+Code:
 ```java
 import ru.art.service.model.*;
 
@@ -223,27 +225,27 @@ public class MainModule {
         rsocket("myFunction")
                 .responseMapper(fromModel)
                 .produce(() -> "Hello, ART!");
+        rsocketTcpServer();
         rsocketCommunicator(LOCALHOST, rsocketModule().getServerTcpPort())
-                .serviceId("myFunction")
-                .methodId(EXECUTE_RSOCKET_FUNCTION)
+                .functionId("myFunction")
                 .responseMapper(toModel)
                 .execute()
                 .map(ServiceResponse::getResponseData)
                 .subscribe(System.out::println);
-        rsocketTcpServer().await();
     }
 }
 ```
-After running this code you could see something like this
+After running you could see something like this
 
 `Hello, ART!`
 ## Rocks DB
 ART provides API for interact with RocksDB
 
+Code:
 ```java
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Entity.*;
-import static ru.art.rocks.db.dao.RocksDbCollectionDao.*;
+import static ru.art.rocks.db.dao.RocksDbCollectionDao.*;G
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.put;
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
 import static ru.art.rocks.db.dao.RocksDbValueDao.*;
@@ -262,16 +264,22 @@ public class MainModule {
     }
 }
 ```
-After running this code you could see something like this
+After running you could see something like this
 ```
 String from rocks = string
 Strings from rocks = [string1, string2]
 Customer from rocks = Entity(fields={id=123, order=Entity(fields={price=123}, fieldNames=[price], type=ENTITY)}, fieldNames=[id, order], type=ENTITY)
 ```
 
-## Kafka Embedded Broker
+## Kafka Embedded Broker, stream & producer
+ART module application-kafka-broker includes Kafka and Zookeeper and provides functional to startup and manage Kafka brokers.
 
-## Kafka Clients: stream & producer
+Also modules application-kafka-consumer and application-kafka-producer provides you API to producing and consuming/streaming kafka messages.
+
+Code:
+```java
+
+```
 
 ## Local Scheduler
 

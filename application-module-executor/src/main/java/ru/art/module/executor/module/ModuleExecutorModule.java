@@ -42,7 +42,7 @@ public class ModuleExecutorModule implements Module<ModuleConfiguration, ModuleS
         serviceModule()
                 .getServiceRegistry()
                 .registerService(new ModuleExecutorServiceSpecification());
-        httpServerInSeparatedThread();
+        startHttpServer();
     }
 
     public static void main(String[] args) {

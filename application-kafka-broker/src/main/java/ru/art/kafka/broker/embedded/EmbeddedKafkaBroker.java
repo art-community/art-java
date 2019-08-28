@@ -18,76 +18,98 @@ package ru.art.kafka.broker.embedded;
 
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
+import kafka.server.RunningAsBroker;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import ru.art.kafka.broker.configuration.KafkaBrokerConfiguration;
 import ru.art.kafka.broker.configuration.ZookeeperConfiguration;
 import scala.collection.immutable.List;
+
+import static java.util.Objects.nonNull;
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.kafka.common.utils.Time.SYSTEM;
 import static ru.art.core.constants.StringConstants.COLON;
 import static ru.art.core.extension.ThreadExtensions.thread;
 import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
 import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.KafkaProperties.*;
+import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode.MANUAL;
 import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode.ON_KAFKA_BROKER_INITIALIZATION;
-import static ru.art.kafka.broker.embedded.EmbeddedZookeeper.startupZookeeper;
+import static ru.art.kafka.broker.embedded.EmbeddedZookeeper.startZookeeper;
 import static ru.art.kafka.broker.module.KafkaBrokerModule.kafkaBrokerModule;
 import static ru.art.kafka.broker.module.KafkaBrokerModule.kafkaBrokerModuleState;
 import static scala.Option.empty;
+
 import java.util.Properties;
 
 @Getter
+@RequiredArgsConstructor(access = PRIVATE)
 @AllArgsConstructor(access = PRIVATE)
 public class EmbeddedKafkaBroker {
-    private final KafkaBrokerConfiguration configuration;
+    private final KafkaBrokerConfiguration kafkaBrokerConfiguration;
+    private final ZookeeperConfiguration zookeeperConfiguration;
+    private final ZookeeperInitializationMode zookeeperInitializationMode;
     private final KafkaServer server;
+    private EmbeddedZookeeper embeddedZookeeper;
 
-    public static void startupKafkaBroker(KafkaBrokerConfiguration kafkaBrokerConfiguration, ZookeeperConfiguration zookeeperConfiguration, ZookeeperInitializationMode zookeeperInitializationMode) {
-        if (zookeeperInitializationMode == ON_KAFKA_BROKER_INITIALIZATION) {
-            startupZookeeper();
-        }
+    public static void startKafkaBroker(KafkaBrokerConfiguration kafkaBrokerConfiguration, ZookeeperConfiguration zookeeperConfiguration, ZookeeperInitializationMode zookeeperInitializationMode) {
         Properties properties = new Properties();
         properties.put(ZOOKEEPER_CONNECT, kafkaBrokerConfiguration.getZookeeperConnection());
-        properties.put(LISTENERS,  PLAINTEXT + COLON + kafkaBrokerConfiguration.getPort());
-        properties.put(OFFSETS_TOPIC_REPLICATION_FACTOR,  kafkaBrokerConfiguration.getReplicationFactor());
+        properties.put(LISTENERS, PLAINTEXT + COLON + kafkaBrokerConfiguration.getPort());
+        properties.put(OFFSETS_TOPIC_REPLICATION_FACTOR, kafkaBrokerConfiguration.getReplicationFactor());
         properties.putAll(kafkaBrokerConfiguration.getAdditionalProperties());
         KafkaServer kafkaServer = new KafkaServer(new KafkaConfig(properties), SYSTEM, empty(), List.empty());
-        EmbeddedKafkaBroker broker = new EmbeddedKafkaBroker(kafkaBrokerConfiguration, kafkaServer);
+        if (zookeeperInitializationMode == ON_KAFKA_BROKER_INITIALIZATION) {
+            EmbeddedKafkaBroker broker = new EmbeddedKafkaBroker(kafkaBrokerConfiguration,
+                    zookeeperConfiguration,
+                    zookeeperInitializationMode,
+                    kafkaServer,
+                    startZookeeper(zookeeperConfiguration));
+            kafkaBrokerModuleState().setBroker(broker);
+            kafkaServer.startup();
+            return;
+        }
+        EmbeddedKafkaBroker broker = new EmbeddedKafkaBroker(kafkaBrokerConfiguration, zookeeperConfiguration, zookeeperInitializationMode, kafkaServer);
         kafkaBrokerModuleState().setBroker(broker);
         kafkaServer.startup();
     }
 
-    public static void startupKafkaBroker(KafkaBrokerConfiguration configuration, ZookeeperInitializationMode zookeeperInitializationMode) {
-        startupKafkaBroker(configuration, kafkaBrokerModule().getZookeeperConfiguration(), zookeeperInitializationMode);
+    public static void startKafkaBroker(KafkaBrokerConfiguration configuration, ZookeeperInitializationMode zookeeperInitializationMode) {
+        startKafkaBroker(configuration, kafkaBrokerModule().getZookeeperConfiguration(), zookeeperInitializationMode);
     }
 
 
-    public static void startupKafkaBroker(KafkaBrokerConfiguration configuration) {
-        startupKafkaBroker(configuration, kafkaBrokerModule().getZookeeperConfiguration(), kafkaBrokerModule().getZookeeperInitializationMode());
+    public static void startKafkaBroker(KafkaBrokerConfiguration configuration) {
+        startKafkaBroker(configuration, kafkaBrokerModule().getZookeeperConfiguration(), kafkaBrokerModule().getZookeeperInitializationMode());
     }
 
-    public static void startupKafkaBroker() {
-        startupKafkaBroker(kafkaBrokerModule().getKafkaBrokerConfiguration());
+    public static void startKafkaBroker() {
+        startKafkaBroker(kafkaBrokerModule().getKafkaBrokerConfiguration());
     }
 
-    public static void kafkaBrokerInSeparateThread(KafkaBrokerConfiguration kafkaBrokerConfiguration, ZookeeperConfiguration zookeeperConfiguration, ZookeeperInitializationMode zookeeperInitializationMode) {
-        thread(KAFKA_BOOTSTRAP_THREAD, () -> startupKafkaBroker(kafkaBrokerConfiguration, zookeeperConfiguration, zookeeperInitializationMode));
-    }
-
-    public static void kafkaBrokerInSeparateThread(KafkaBrokerConfiguration configuration, ZookeeperInitializationMode zookeeperInitializationMode) {
-        thread(KAFKA_BOOTSTRAP_THREAD, () -> startupKafkaBroker(configuration, zookeeperInitializationMode));
-    }
-
-    public static void kafkaBrokerInSeparateThread(KafkaBrokerConfiguration configuration) {
-        thread(KAFKA_BOOTSTRAP_THREAD, () -> startupKafkaBroker(configuration));
-    }
-
-    public static void kafkaBrokerInSeparateThread() {
-        thread(KAFKA_BOOTSTRAP_THREAD, EmbeddedKafkaBroker::startupKafkaBroker);
+    public void await() {
+        server.awaitShutdown();
     }
 
     public void shutdown() {
         server.shutdown();
         server.awaitShutdown();
+    }
+
+    public void restart() {
+        shutdown();
+        startKafkaBroker(kafkaBrokerConfiguration, zookeeperConfiguration, MANUAL);
+    }
+
+    public void restartWithZookeeper() {
+        shutdown();
+        if (nonNull(embeddedZookeeper)) {
+            embeddedZookeeper.restart();
+        }
+        startKafkaBroker(kafkaBrokerConfiguration, zookeeperConfiguration, MANUAL);
+    }
+
+    public boolean isWorking() {
+        return server.brokerState().currentState() == RunningAsBroker.state();
     }
 }

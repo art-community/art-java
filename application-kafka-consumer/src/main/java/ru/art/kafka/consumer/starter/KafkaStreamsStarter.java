@@ -16,20 +16,22 @@
  * limitations under the License.
  */
 
-package ru.art.kafka.consumer.launcher;
+package ru.art.kafka.consumer.starter;
 
+import lombok.experimental.UtilityClass;
 import org.apache.kafka.streams.*;
 import ru.art.kafka.consumer.registry.*;
 
 import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
 
 
-public interface KafkaStreamsLauncher {
-    static void launchKafkaStreams() {
+@UtilityClass
+public class KafkaStreamsStarter{
+    public static void startKafkaStreams() {
         kafkaStreamsRegistry().getRegistry().values().forEach(KafkaStreams::start);
     }
 
-    static void launchKafkaStreams(KafkaStreamsRegistry registry) {
+    public static void startKafkaStreams(KafkaStreamsRegistry registry) {
         registry.getRegistry().values().forEach(KafkaStreams::start);
     }
 }
