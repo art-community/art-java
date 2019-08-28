@@ -39,6 +39,7 @@ import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.http.client.communicator.HttpCommunicationExecutor.*;
+import static ru.art.http.client.model.HttpCommunicationTargetConfiguration.*;
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpMethodType.*;
 import java.nio.charset.*;
@@ -50,7 +51,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     private final HttpCommunicationConfiguration configuration = new HttpCommunicationConfiguration();
 
     HttpCommunicatorImplementation(String url) {
-        this(HttpCommunicationTargetConfiguration.builder().build().url(url));
+        this(httpCommunicationTarget().build().url(url));
     }
 
     HttpCommunicatorImplementation(HttpCommunicationTargetConfiguration targetConfiguration) {

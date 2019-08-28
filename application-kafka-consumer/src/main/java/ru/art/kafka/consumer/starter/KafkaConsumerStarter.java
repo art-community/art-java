@@ -22,11 +22,13 @@ import lombok.experimental.*;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.*;
 import ru.art.kafka.consumer.configuration.*;
+import ru.art.kafka.consumer.exception.*;
 import ru.art.kafka.consumer.specification.*;
 import static java.lang.String.*;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
+import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
 import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
 import static ru.art.service.ServiceController.*;
 import java.util.*;
@@ -70,9 +72,19 @@ public class KafkaConsumerStarter {
     }
 
     private static Properties createProperties(KafkaConsumerConfiguration configuration) {
+        if (isEmpty(configuration.getClientId())) {
+            throw new KafkaConsumerModuleException(CLIENT_ID_IS_EMPTY);
+        }
+        if (isEmpty(configuration.getGroupId())) {
+            throw new KafkaConsumerModuleException(GROUP_ID_IS_EMPTY);
+        }
+        if (isEmpty(configuration.getBrokers())) {
+            throw new KafkaConsumerModuleException(BROKERS_ARE_EMPTY);
+        }
         Properties properties = new Properties();
         properties.put(BOOTSTRAP_SERVERS_CONFIG, join(COMMA, configuration.getBrokers()));
         properties.put(GROUP_ID_CONFIG, configuration.getGroupId());
+        properties.put(CLIENT_ID_CONFIG, configuration.getClientId());
         properties.putAll(configuration.getAdditionalProperties());
         return properties;
     }

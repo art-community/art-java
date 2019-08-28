@@ -24,9 +24,13 @@ import java.time.*;
 public interface KafkaConsumerModuleConstants {
     String KAFKA_CONSUMER_MODULE_ID = "KAFKA_CONSUMER_MODULE";
     String KAFKA_CONSUMER_SERVICE_TYPE = "KAFKA_CONSUMER";
-    String DEFAULT_KAFKA_GROUP_ID = "KAFKA_GROUP";
     Duration DEFAULT_DURATION = ofSeconds(10L);
     String KAFKA_TRACE_MESSAGE = "Kafka record: key = ''{0}'', value = ''{1}''";
     String KAFKA_KEY = "KAFKA_RECORD_KEY";
     String KAFKA_VALUE = "KAFKA_RECORD_VALUE";
+    String TOPIC_IS_EMPTY = "topic is empty";
+    String STREAM_ID_IS_EMPTY = "stream/applicationId is empty";
+    String BROKERS_ARE_EMPTY = "brokers are empty";
+    String CLIENT_ID_IS_EMPTY = "clientId is empty";
+    String GROUP_ID_IS_EMPTY = "groupId is empty";
 }

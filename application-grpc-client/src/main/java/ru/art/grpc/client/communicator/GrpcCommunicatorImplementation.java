@@ -53,14 +53,6 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     GrpcCommunicatorImplementation(GrpcCommunicationTargetConfiguration targetConfiguration) {
         configuration.setPath(validator.notEmptyField(targetConfiguration.path(), "path"));
         deadlineTimeout(targetConfiguration.timeout());
-        String serviceId = targetConfiguration.serviceId();
-        String methodId = targetConfiguration.methodId();
-        if (isNotEmpty(targetConfiguration.functionId())) {
-            serviceId = GRPC_FUNCTION_SERVICE;
-            methodId = targetConfiguration.functionId();
-        }
-        serviceId(serviceId);
-        methodId(methodId);
         if (targetConfiguration.secured()) {
             secured();
         }

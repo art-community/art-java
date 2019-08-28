@@ -24,10 +24,12 @@ import org.apache.kafka.streams.kstream.*;
 import org.apache.logging.log4j.*;
 import ru.art.kafka.consumer.configuration.*;
 import ru.art.kafka.consumer.container.*;
+import ru.art.kafka.consumer.exception.*;
 import static java.lang.String.*;
 import static java.text.MessageFormat.format;
 import static org.apache.kafka.streams.StreamsConfig.*;
 import static org.apache.logging.log4j.ThreadContext.*;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -60,6 +62,7 @@ public class KafkaStreamsRegistry {
 
     @SuppressWarnings("Duplicates")
     public KafkaStreamsRegistry createStream(String streamId, Function<StreamsBuilder, KafkaStreamContainer> streamCreator) {
+        if (isEmpty(streamId)) throw new KafkaConsumerModuleException(STREAM_ID_IS_EMPTY);
         StreamsBuilder builder = new StreamsBuilder();
         Properties properties = new Properties();
         KafkaStreamContainer streamContainer = streamCreator.apply(builder);
@@ -67,7 +70,8 @@ public class KafkaStreamsRegistry {
                 .getKafkaStreamsConfiguration()
                 .getKafkaStreamConfigurations()
                 .get(streamId));
-        configuration.validate();
+        if (isEmpty(configuration.getTopic())) throw new KafkaConsumerModuleException(TOPIC_IS_EMPTY);
+        if (isEmpty(configuration.getBrokers())) throw new KafkaConsumerModuleException(BROKERS_ARE_EMPTY);
         properties.put(APPLICATION_ID_CONFIG, streamId);
         properties.put(BOOTSTRAP_SERVERS_CONFIG, join(COMMA, configuration.getBrokers()));
         properties.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, configuration.getKeySerde().getClass());
@@ -79,6 +83,7 @@ public class KafkaStreamsRegistry {
 
     @SuppressWarnings("Duplicates")
     public <K, V> KafkaStreamsRegistry registerStream(String streamId, Function<KStream<K, V>, KStream<?, ?>> streamCreator) {
+        if (isEmpty(streamId)) throw new KafkaConsumerModuleException(STREAM_ID_IS_EMPTY);
         StreamsBuilder builder = new StreamsBuilder();
         Properties properties = new Properties();
         KafkaStreamConfiguration configuration = kafkaConsumerModule()
@@ -86,7 +91,7 @@ public class KafkaStreamsRegistry {
                 .getKafkaStreamConfigurations()
                 .get(streamId);
         streamCreator.apply(withTracing(builder.stream(configuration.getTopic())));
-        configuration.validate();
+        if (isEmpty(configuration.getBrokers())) throw new KafkaConsumerModuleException(BROKERS_ARE_EMPTY);
         properties.put(APPLICATION_ID_CONFIG, streamId);
         properties.put(BOOTSTRAP_SERVERS_CONFIG, join(COMMA, configuration.getBrokers()));
         properties.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, configuration.getKeySerde().getClass());

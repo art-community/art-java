@@ -21,9 +21,6 @@ package ru.art.config.extensions.grpc;
 import lombok.*;
 import ru.art.grpc.client.configuration.GrpcClientModuleConfiguration.*;
 import ru.art.grpc.client.model.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import static java.util.stream.Collectors.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
@@ -33,6 +30,9 @@ import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.constants.ThreadConstants.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.grpc.client.model.GrpcCommunicationTargetConfiguration.grpcCommunicationTarget;
+import java.util.*;
+import java.util.concurrent.*;
 
 
 @Getter
@@ -57,8 +57,7 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
         overridingExecutor = new ForkJoinPool(configInt(GRPC_COMMUNICATION_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE));
         balancerHost = configString(GRPC_BALANCER_SECTION_ID, HOST, super.getBalancerHost());
         balancerPort = configInt(GRPC_BALANCER_SECTION_ID, PORT, super.getBalancerPort());
-        communicationTargets = ifException(() -> configMap(GRPC_COMMUNICATION_SECTION_ID, TARGETS).entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> GrpcCommunicationTargetConfiguration.builder()
-                .serviceId(entry.getKey())
+        communicationTargets = ifException(() -> configMap(GRPC_COMMUNICATION_SECTION_ID, TARGETS).entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> grpcCommunicationTarget()
                 .host(ifEmpty(entry.getValue().getString(HOST), balancerHost))
                 .port(getOrElse(entry.getValue().getInt(PORT), balancerPort))
                 .path(getOrElse(entry.getValue().getString(PATH), SLASH))
