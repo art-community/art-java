@@ -23,7 +23,6 @@ import ru.art.entity.mapper.*;
 import ru.art.service.constants.*;
 import ru.art.service.exception.*;
 import ru.art.service.model.*;
-
 import static java.util.Objects.*;
 import static org.apache.logging.log4j.core.util.Assert.isEmpty;
 import static ru.art.entity.Entity.*;

@@ -24,9 +24,8 @@ import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
 import ru.art.service.constants.*;
-import java.util.*;
-
 import static ru.art.grpc.server.module.GrpcServerModule.*;
+import java.util.*;
 
 @Getter
 @Builder(builderMethodName = "grpcService", buildMethodName = "serve")

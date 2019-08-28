@@ -21,10 +21,6 @@ package ru.art.generator.mapper.operations;
 import ru.art.generator.mapper.*;
 import ru.art.generator.mapper.annotation.*;
 import ru.art.generator.mapper.exception.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-
 import static java.io.File.*;
 import static java.text.MessageFormat.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -32,6 +28,9 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.generator.mapper.constants.Constants.*;
 import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
 import static ru.art.generator.mapper.constants.ExceptionConstants.DefinitionExceptions.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 /**
  * Interface containing static methods for analyzing

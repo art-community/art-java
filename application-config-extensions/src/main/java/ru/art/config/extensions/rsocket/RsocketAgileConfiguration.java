@@ -21,8 +21,6 @@ package ru.art.config.extensions.rsocket;
 import lombok.*;
 import ru.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import ru.art.rsocket.model.*;
-import java.util.*;
-
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.rsocket.RsocketConfigKeys.*;
@@ -33,6 +31,7 @@ import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.*;
 import static ru.art.rsocket.module.RsocketModule.*;
+import java.util.*;
 
 @Getter
 public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration {

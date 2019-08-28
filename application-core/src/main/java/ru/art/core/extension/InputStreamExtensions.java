@@ -20,12 +20,6 @@ package ru.art.core.extension;
 
 import lombok.experimental.*;
 import ru.art.core.exception.*;
-import java.io.*;
-import java.nio.*;
-import java.nio.channels.*;
-import java.nio.charset.*;
-import java.util.*;
-
 import static java.lang.System.*;
 import static java.nio.ByteBuffer.*;
 import static java.nio.channels.Channels.*;
@@ -36,6 +30,11 @@ import static ru.art.core.constants.StreamConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+import java.nio.charset.*;
+import java.util.*;
 
 @UtilityClass
 public class InputStreamExtensions {

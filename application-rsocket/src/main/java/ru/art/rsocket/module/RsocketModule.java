@@ -22,7 +22,6 @@ import lombok.*;
 import ru.art.core.module.*;
 import ru.art.rsocket.configuration.*;
 import ru.art.rsocket.state.*;
-
 import static ru.art.core.context.Context.*;
 import static ru.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
@@ -38,8 +37,8 @@ public class RsocketModule implements Module<RsocketModuleConfiguration, Rsocket
     private final RsocketModuleState state = new RsocketModuleState();
 
     public static RsocketModuleConfiguration rsocketModule() {
-        if (insideDefaultContext()) {
-            return RsocketModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getRsocketModule();
     }

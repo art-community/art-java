@@ -19,10 +19,9 @@
 package ru.art.core.handler;
 
 import lombok.*;
-import java.util.function.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
+import java.util.function.*;
 
 @RequiredArgsConstructor
 public class CauseHandler {

@@ -22,8 +22,6 @@ import lombok.*;
 import ru.art.entity.constants.*;
 import ru.art.entity.constants.ValueType.*;
 import ru.art.entity.exception.*;
-import java.text.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.StringExtensions.*;
@@ -35,6 +33,7 @@ import static ru.art.entity.constants.ValueType.PrimitiveType.FLOAT;
 import static ru.art.entity.constants.ValueType.PrimitiveType.INT;
 import static ru.art.entity.constants.ValueType.PrimitiveType.LONG;
 import static ru.art.entity.constants.ValueType.PrimitiveType.STRING;
+import java.text.*;
 
 
 @Getter

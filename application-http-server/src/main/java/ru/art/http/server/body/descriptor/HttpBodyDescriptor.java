@@ -19,13 +19,12 @@
 package ru.art.http.server.body.descriptor;
 
 import ru.art.http.server.module.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.io.*;
-
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
 import static ru.art.logging.LoggingModule.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.*;
 
 public interface HttpBodyDescriptor {
     static byte[] readRequestBody(HttpServletRequest request) {

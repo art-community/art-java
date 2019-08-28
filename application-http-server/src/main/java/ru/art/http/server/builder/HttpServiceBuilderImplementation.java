@@ -23,14 +23,13 @@ import ru.art.http.server.constants.*;
 import ru.art.http.server.exception.*;
 import ru.art.http.server.interceptor.*;
 import ru.art.http.server.model.*;
-import java.util.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.constants.HttpExceptionsMessages.*;
 import static ru.art.http.constants.HttpMethodType.*;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class HttpServiceBuilderImplementation implements HttpServiceBuilder {

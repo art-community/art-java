@@ -22,8 +22,6 @@ package ru.art.generator.common.operations;
 import com.squareup.javapoet.*;
 import ru.art.generator.exception.*;
 import ru.art.generator.spec.http.servicespec.exception.*;
-import java.lang.reflect.*;
-
 import static com.squareup.javapoet.CodeBlock.*;
 import static java.io.File.*;
 import static java.text.MessageFormat.*;
@@ -32,6 +30,7 @@ import static ru.art.generator.common.constants.Constants.PathAndPackageConstant
 import static ru.art.generator.common.constants.Constants.PrimitiveMapperConstants.*;
 import static ru.art.generator.common.constants.Constants.SupportedJavaClasses.*;
 import static ru.art.generator.common.constants.ExceptionConstants.*;
+import java.lang.reflect.*;
 
 /**
  * Interface containing common static methods which can be used

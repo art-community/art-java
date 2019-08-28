@@ -20,7 +20,6 @@ package ru.art.generator.spec.http.common.operations;
 
 import ru.art.generator.spec.http.common.annotation.*;
 import ru.art.generator.spec.http.common.model.*;
-
 import static ru.art.core.constants.StringConstants.*;
 
 /**

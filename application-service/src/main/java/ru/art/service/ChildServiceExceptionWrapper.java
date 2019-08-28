@@ -20,7 +20,6 @@ package ru.art.service;
 
 import ru.art.service.exception.*;
 import ru.art.service.model.*;
-
 import static ru.art.service.constants.ServiceErrorCodes.*;
 import static ru.art.service.factory.ServiceResponseFactory.*;
 

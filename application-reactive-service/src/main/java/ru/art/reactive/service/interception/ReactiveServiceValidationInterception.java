@@ -25,7 +25,6 @@ import ru.art.service.exception.*;
 import ru.art.service.interceptor.*;
 import ru.art.service.model.*;
 import ru.art.service.validation.*;
-
 import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
 import static ru.art.core.caster.Caster.*;
@@ -42,7 +41,7 @@ public class ReactiveServiceValidationInterception extends ServiceValidationInte
     public ServiceInterceptionResult intercept(ServiceRequest<?> request) {
         String serviceId = request.getServiceMethodCommand().getServiceId();
         String methodId = request.getServiceMethodCommand().getMethodId();
-        Specification serviceSpecification = serviceModule().getServiceRegistry().getService(serviceId);
+        Specification serviceSpecification = serviceModuleState().getServiceRegistry().getService(serviceId);
 
         if (!serviceSpecification.getServiceTypes().contains(REACTIVE_SERVICE_TYPE)) {
             return super.intercept(request);

@@ -19,13 +19,12 @@
 package ru.art.generator.spec.common.operations;
 
 import ru.art.generator.spec.common.constants.*;
-import java.util.*;
-
 import static java.io.File.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.PathAndPackageConstants.*;
 import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.*;
+import java.util.*;
 
 /**
  * Interface contains operations which analyses data.

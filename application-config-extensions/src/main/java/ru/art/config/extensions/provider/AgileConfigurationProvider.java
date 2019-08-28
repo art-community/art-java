@@ -28,15 +28,10 @@ import ru.art.config.extensions.rocks.*;
 import ru.art.config.extensions.rsocket.*;
 import ru.art.config.extensions.sql.*;
 import ru.art.config.extensions.tarantool.*;
-import ru.art.core.context.*;
 import ru.art.core.module.*;
 import ru.art.core.provider.*;
-import java.util.*;
-import java.util.function.*;
-
 import static java.util.Optional.*;
 import static ru.art.core.caster.Caster.*;
-import static ru.art.core.context.Context.*;
 import static ru.art.grpc.client.constants.GrpcClientModuleConstants.*;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
 import static ru.art.http.client.constants.HttpClientModuleConstants.*;
@@ -51,14 +46,11 @@ import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.sql.constants.SqlModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
+import java.util.*;
 
 public class AgileConfigurationProvider implements PreconfiguredModuleProvider {
     @Override
     public <T extends ModuleConfiguration> Optional<T> getModuleConfiguration(String moduleId) {
-        return withDefaultContext((Function<Context, Optional<T>>) context -> getConfiguration(moduleId));
-    }
-
-    private static <T extends ModuleConfiguration> Optional<T> getConfiguration(String moduleId) {
         switch (moduleId) {
             case LOGGING_MODULE_ID:
                 return of(cast(new LoggingAgileConfiguration()));

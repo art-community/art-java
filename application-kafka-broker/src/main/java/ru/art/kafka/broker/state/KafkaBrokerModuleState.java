@@ -16,11 +16,9 @@
 
 package ru.art.kafka.broker.state;
 
-import lombok.Getter;
-import lombok.Setter;
-import ru.art.core.module.ModuleState;
-import ru.art.kafka.broker.embedded.EmbeddedKafkaBroker;
-import ru.art.kafka.broker.embedded.EmbeddedZookeeper;
+import lombok.*;
+import ru.art.core.module.*;
+import ru.art.kafka.broker.embedded.*;
 
 @Getter
 @Setter

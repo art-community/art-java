@@ -20,7 +20,6 @@ package ru.art.entity;
 
 import ru.art.entity.constants.*;
 import ru.art.entity.exception.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static ru.art.entity.constants.ValueMappingExceptionMessages.*;

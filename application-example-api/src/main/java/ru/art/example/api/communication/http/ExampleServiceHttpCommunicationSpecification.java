@@ -24,7 +24,6 @@ import ru.art.example.api.interceptor.http.*;
 import ru.art.http.client.communicator.*;
 import ru.art.http.client.specification.*;
 import ru.art.service.exception.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.extension.OptionalExtensions.*;
 import static ru.art.example.api.constants.ExampleApiConstants.*;

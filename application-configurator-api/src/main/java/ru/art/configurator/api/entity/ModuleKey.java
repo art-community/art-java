@@ -20,7 +20,6 @@ package ru.art.configurator.api.entity;
 
 import lombok.*;
 import ru.art.configurator.api.exception.*;
-
 import static java.lang.String.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;

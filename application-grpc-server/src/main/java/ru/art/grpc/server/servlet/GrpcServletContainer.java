@@ -30,8 +30,6 @@ import ru.art.grpc.servlet.*;
 import ru.art.logging.*;
 import ru.art.service.exception.*;
 import ru.art.service.model.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static org.apache.logging.log4j.ThreadContext.*;
@@ -58,6 +56,7 @@ import static ru.art.service.factory.ServiceRequestFactory.*;
 import static ru.art.service.factory.ServiceResponseFactory.*;
 import static ru.art.service.mapping.ServiceRequestMapping.*;
 import static ru.art.service.mapping.ServiceResponseMapping.*;
+import java.util.*;
 
 public class GrpcServletContainer extends GrpcServlet {
     @Getter

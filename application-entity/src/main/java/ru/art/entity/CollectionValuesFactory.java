@@ -19,8 +19,6 @@
 package ru.art.entity;
 
 import ru.art.entity.constants.ValueType.*;
-import java.util.*;
-
 import static java.util.Objects.*;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.BOOL;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.BYTE;
@@ -34,6 +32,7 @@ import static ru.art.entity.constants.ValueType.CollectionElementsType.MAP;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING_PARAMETERS_MAP;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.*;
+import java.util.*;
 
 public interface CollectionValuesFactory {
     static CollectionValue<String> stringCollection(Collection<String> value) {

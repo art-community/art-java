@@ -19,7 +19,6 @@
 package ru.art.example.dao;
 
 import org.jooq.*;
-
 import static org.jooq.impl.DSL.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.example.constants.ExampleAppModuleConstants.SqlConstants.*;

@@ -20,7 +20,6 @@ package ru.art.soap.server.mapper;
 
 import ru.art.entity.*;
 import ru.art.soap.server.model.*;
-
 import static ru.art.entity.XmlEntity.*;
 import static ru.art.entity.mapper.ValueFromModelMapper.*;
 import static ru.art.entity.mapper.ValueToModelMapper.*;

@@ -21,8 +21,6 @@ package ru.art.tarantool.model;
 import lombok.*;
 import ru.art.entity.Value;
 import ru.art.tarantool.constants.TarantoolModuleConstants.*;
-import java.util.*;
-
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
@@ -30,6 +28,7 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Entity.*;
 import static ru.art.entity.tuple.PlainTupleWriter.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolOperator.*;
+import java.util.*;
 
 @Getter
 public class TarantoolUpdateFieldOperation {

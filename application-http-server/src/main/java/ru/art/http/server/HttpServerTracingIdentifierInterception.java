@@ -21,9 +21,6 @@ package ru.art.http.server;
 import ru.art.core.constants.*;
 import ru.art.http.server.interceptor.*;
 import ru.art.logging.*;
-import javax.servlet.http.*;
-import java.util.*;
-
 import static java.lang.System.*;
 import static java.util.UUID.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
@@ -31,6 +28,8 @@ import static ru.art.core.constants.InterceptionStrategy.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 import static ru.art.logging.LoggingParametersManager.*;
+import javax.servlet.http.*;
+import java.util.*;
 
 public class HttpServerTracingIdentifierInterception implements HttpServerInterception {
     @Override

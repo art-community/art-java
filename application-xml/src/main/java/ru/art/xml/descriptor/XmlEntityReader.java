@@ -22,11 +22,6 @@ import lombok.*;
 import ru.art.entity.*;
 import ru.art.entity.XmlEntity.*;
 import ru.art.xml.exception.*;
-import javax.xml.stream.*;
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
@@ -38,6 +33,10 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.XmlEntity.*;
 import static ru.art.xml.constants.XmlMappingExceptionMessages.*;
 import static ru.art.xml.module.XmlModule.*;
+import javax.xml.stream.*;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
 
 @NoArgsConstructor(access = PRIVATE)

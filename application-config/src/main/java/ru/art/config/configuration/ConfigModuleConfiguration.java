@@ -21,7 +21,6 @@ package ru.art.config.configuration;
 import lombok.*;
 import ru.art.config.constants.*;
 import ru.art.core.module.*;
-
 import static ru.art.config.constants.ConfigModuleConstants.*;
 import static ru.art.config.constants.ConfigType.*;
 

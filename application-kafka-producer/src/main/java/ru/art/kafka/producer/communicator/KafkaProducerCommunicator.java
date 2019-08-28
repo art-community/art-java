@@ -20,9 +20,6 @@ package ru.art.kafka.producer.communicator;
 
 import org.apache.kafka.clients.producer.*;
 import ru.art.kafka.producer.configuration.*;
-import java.util.*;
-import java.util.function.*;
-
 import static java.lang.String.*;
 import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.clients.CommonClientConfigs.CLIENT_ID_CONFIG;
@@ -32,6 +29,8 @@ import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.kafka.producer.module.KafkaProducerModule.*;
+import java.util.*;
+import java.util.function.*;
 
 /**
  * The wrapper for KafkaProducer API

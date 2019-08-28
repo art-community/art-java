@@ -19,9 +19,6 @@
 package ru.art.core.network.selector;
 
 import lombok.experimental.*;
-import java.net.*;
-import java.util.*;
-
 import static java.lang.String.*;
 import static java.lang.System.*;
 import static java.net.InetAddress.*;
@@ -30,6 +27,8 @@ import static ru.art.core.constants.ExceptionMessages.*;
 import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.core.network.selector.PortSelector.SocketType.*;
+import java.net.*;
+import java.util.*;
 
 @UtilityClass
 public class PortSelector {

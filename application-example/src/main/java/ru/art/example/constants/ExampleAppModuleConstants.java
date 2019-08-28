@@ -19,7 +19,6 @@
 package ru.art.example.constants;
 
 import org.jooq.*;
-
 import static org.jooq.impl.DSL.*;
 
 /**

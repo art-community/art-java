@@ -26,8 +26,6 @@ import ru.art.http.server.specification.*;
 import ru.art.remote.scheduler.api.model.*;
 import ru.art.service.*;
 import ru.art.service.exception.*;
-import java.util.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.PrimitiveMapping.*;
@@ -52,6 +50,7 @@ import static ru.art.remote.scheduler.api.mapping.TaskIdMapper.*;
 import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.*;
 import static ru.art.remote.scheduler.service.RemoteSchedulerService.*;
 import static ru.art.service.constants.RequestValidationPolicy.*;
+import java.util.*;
 
 @Getter
 public class RemoteSchedulerServiceSpecification implements Specification, HttpServiceSpecification, GrpcServiceSpecification {

@@ -20,11 +20,10 @@ package ru.art.rsocket.specification;
 
 import ru.art.rsocket.model.*;
 import ru.art.service.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.module.RsocketModule.*;
+import java.util.*;
 
 public interface RsocketCommunicationSpecification extends Specification {
     default RsocketCommunicationTargetConfiguration communicationTarget(String serviceId) {

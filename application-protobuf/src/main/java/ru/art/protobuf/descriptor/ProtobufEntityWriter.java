@@ -25,9 +25,6 @@ import ru.art.entity.*;
 import ru.art.entity.constants.ValueType.*;
 import ru.art.protobuf.entity.ProtobufValueMessage.*;
 import ru.art.protobuf.exception.*;
-import java.nio.file.*;
-import java.util.*;
-
 import static com.google.protobuf.Any.*;
 import static com.google.protobuf.ByteString.*;
 import static java.text.MessageFormat.*;
@@ -40,6 +37,8 @@ import static ru.art.entity.constants.ValueType.CollectionElementsType.BYTE;
 import static ru.art.protobuf.constants.ProtobufExceptionMessages.*;
 import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.Type.*;
 import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.getDefaultInstance;
+import java.nio.file.*;
+import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public class ProtobufEntityWriter {

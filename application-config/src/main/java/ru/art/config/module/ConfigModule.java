@@ -20,9 +20,8 @@ package ru.art.config.module;
 
 import lombok.*;
 import ru.art.config.configuration.*;
-import ru.art.config.configuration.ConfigModuleConfiguration.*;
 import ru.art.core.module.*;
-
+import static ru.art.config.configuration.ConfigModuleConfiguration.*;
 import static ru.art.config.constants.ConfigModuleConstants.*;
 import static ru.art.core.context.Context.*;
 
@@ -30,12 +29,12 @@ import static ru.art.core.context.Context.*;
 public class ConfigModule implements Module<ConfigModuleConfiguration, ModuleState> {
     @Getter(lazy = true)
     private static final ConfigModuleConfiguration configModule = context().getModule(CONFIG_MODULE_ID, ConfigModule::new);
-    private final ConfigModuleConfiguration defaultConfiguration = ConfigModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
+    private final ConfigModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private final String id = CONFIG_MODULE_ID;
 
     public static ConfigModuleConfiguration configModule() {
-        if (insideDefaultContext()) {
-            return ConfigModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getConfigModule();
     }

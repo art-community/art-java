@@ -37,9 +37,6 @@ import ru.art.http.client.handler.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.constants.*;
 import ru.art.http.mapper.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
@@ -55,6 +52,8 @@ import static ru.art.http.client.body.descriptor.HttpBodyDescriptor.*;
 import static ru.art.http.client.builder.HttpUriBuilder.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
 import static ru.art.http.client.module.HttpClientModule.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 @NoArgsConstructor(access = PACKAGE)
 class HttpCommunicationExecutor {

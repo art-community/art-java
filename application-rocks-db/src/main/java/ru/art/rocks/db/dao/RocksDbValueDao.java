@@ -21,10 +21,6 @@ package ru.art.rocks.db.dao;
 import ru.art.entity.*;
 import ru.art.rocks.db.bucket.*;
 import ru.art.rocks.db.exception.*;
-import java.util.*;
-import java.util.Map.*;
-import java.util.function.*;
-
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
@@ -40,6 +36,9 @@ import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
 import static ru.art.rocks.db.dao.RocksDbCollectionDao.*;
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.add;
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
+import java.util.*;
+import java.util.Map.*;
+import java.util.function.*;
 
 public interface RocksDbValueDao {
     static void putAsProtobuf(String name, String id, Value value) {

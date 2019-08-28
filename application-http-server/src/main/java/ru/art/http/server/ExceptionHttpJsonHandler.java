@@ -20,8 +20,6 @@ package ru.art.http.server;
 
 import ru.art.http.server.context.*;
 import ru.art.http.server.handler.*;
-import javax.servlet.http.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static javax.servlet.http.HttpServletResponse.*;
@@ -32,6 +30,7 @@ import static ru.art.http.constants.HttpMimeTypes.*;
 import static ru.art.http.server.body.descriptor.HttpBodyDescriptor.*;
 import static ru.art.http.server.constants.HttpExceptionResponses.*;
 import static ru.art.http.server.module.HttpServerModule.*;
+import javax.servlet.http.*;
 
 class ExceptionHttpJsonHandler implements HttpExceptionHandler<Throwable> {
     @Override

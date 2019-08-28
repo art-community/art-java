@@ -20,7 +20,6 @@ package ru.art.tarantool.configuration.lua;
 
 import lombok.*;
 import org.jtwig.*;
-
 import static org.jtwig.JtwigTemplate.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;

@@ -21,8 +21,6 @@ package ru.art.tarantool.service;
 import lombok.*;
 import org.tarantool.*;
 import ru.art.tarantool.configuration.lua.*;
-import java.util.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.tarantool.caller.TarantoolFunctionCaller.*;
@@ -30,6 +28,7 @@ import static ru.art.tarantool.configuration.lua.TarantoolSpaceConfiguration.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static ru.art.tarantool.executor.TarantoolLuaExecutor.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
+import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class TarantoolSpaceService {

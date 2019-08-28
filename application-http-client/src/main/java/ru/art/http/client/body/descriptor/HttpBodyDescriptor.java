@@ -20,12 +20,11 @@ package ru.art.http.client.body.descriptor;
 
 import org.apache.http.*;
 import ru.art.http.client.module.*;
-import java.io.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
 import static ru.art.logging.LoggingModule.*;
+import java.io.*;
 
 public interface HttpBodyDescriptor {
     static byte[] readResponseBody(HttpEntity responseEntity) {

@@ -20,7 +20,6 @@ package ru.art.state.configuration;
 
 import lombok.*;
 import ru.art.core.module.*;
-
 import static ru.art.state.constants.StateModuleConstants.*;
 
 public interface ApplicationStateModuleConfiguration extends ModuleConfiguration {

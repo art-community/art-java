@@ -22,7 +22,6 @@ import ru.art.core.mime.*;
 import ru.art.generator.spec.http.common.exception.*;
 import ru.art.generator.spec.http.proxyspec.constants.*;
 import ru.art.http.constants.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecConstants.ErrorConstants.*;

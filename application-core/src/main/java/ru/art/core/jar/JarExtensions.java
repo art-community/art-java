@@ -20,13 +20,6 @@ package ru.art.core.jar;
 
 import ru.art.core.context.*;
 import ru.art.core.exception.*;
-import java.io.*;
-import java.net.*;
-import java.nio.file.*;
-import java.security.*;
-import java.util.*;
-import java.util.zip.*;
-
 import static java.nio.file.Files.*;
 import static java.nio.file.StandardCopyOption.*;
 import static java.util.Objects.*;
@@ -34,6 +27,12 @@ import static java.util.Optional.*;
 import static java.util.regex.Pattern.*;
 import static java.util.stream.Collectors.*;
 import static ru.art.core.constants.StringConstants.*;
+import java.io.*;
+import java.net.*;
+import java.nio.file.*;
+import java.security.*;
+import java.util.*;
+import java.util.zip.*;
 
 @SuppressWarnings("Duplicates")
 public class JarExtensions {

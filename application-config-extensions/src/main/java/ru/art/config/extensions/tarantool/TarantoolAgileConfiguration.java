@@ -23,9 +23,6 @@ import ru.art.config.*;
 import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.configuration.TarantoolModuleConfiguration.*;
 import ru.art.tarantool.configuration.lua.*;
-import java.util.*;
-import java.util.function.*;
-
 import static java.util.Collections.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
@@ -39,6 +36,8 @@ import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.*;
 import static ru.art.tarantool.model.TarantoolEntityFieldsMapping.*;
+import java.util.*;
+import java.util.function.*;
 
 @Getter
 public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfiguration {

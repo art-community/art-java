@@ -16,31 +16,21 @@
 
 package ru.art.kafka.broker.embedded;
 
-import kafka.server.KafkaConfig;
-import kafka.server.KafkaServer;
-import kafka.server.RunningAsBroker;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import ru.art.kafka.broker.configuration.KafkaBrokerConfiguration;
-import ru.art.kafka.broker.configuration.ZookeeperConfiguration;
+import kafka.server.*;
+import lombok.*;
+import ru.art.kafka.broker.configuration.*;
 import scala.collection.immutable.List;
-
-import static java.util.Objects.nonNull;
-import static lombok.AccessLevel.PRIVATE;
-import static org.apache.kafka.common.utils.Time.SYSTEM;
-import static ru.art.core.constants.StringConstants.COLON;
-import static ru.art.core.extension.ThreadExtensions.thread;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
+import static org.apache.kafka.common.utils.Time.*;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.KafkaProperties.*;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode.MANUAL;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode.ON_KAFKA_BROKER_INITIALIZATION;
-import static ru.art.kafka.broker.embedded.EmbeddedZookeeper.startZookeeper;
-import static ru.art.kafka.broker.module.KafkaBrokerModule.kafkaBrokerModule;
-import static ru.art.kafka.broker.module.KafkaBrokerModule.kafkaBrokerModuleState;
-import static scala.Option.empty;
-
-import java.util.Properties;
+import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
+import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode.*;
+import static ru.art.kafka.broker.embedded.EmbeddedZookeeper.*;
+import static ru.art.kafka.broker.module.KafkaBrokerModule.*;
+import static scala.Option.*;
+import java.util.*;
 
 @Getter
 @RequiredArgsConstructor(access = PRIVATE)

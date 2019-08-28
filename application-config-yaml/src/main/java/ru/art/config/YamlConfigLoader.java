@@ -20,9 +20,6 @@ package ru.art.config;
 
 import com.esotericsoftware.yamlbeans.*;
 import io.advantageous.config.*;
-import java.io.*;
-import java.net.*;
-
 import static io.advantageous.config.ConfigLoader.*;
 import static java.lang.System.*;
 import static java.util.Objects.*;
@@ -32,6 +29,8 @@ import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.SystemProperties.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
+import java.io.*;
+import java.net.*;
 
 class YamlConfigLoader {
     static Config loadYamlConfig(String configId) {

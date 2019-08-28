@@ -20,13 +20,12 @@ package ru.art.network.manager.balancer;
 
 import lombok.*;
 import ru.art.state.api.model.*;
-import java.util.*;
-
 import static java.util.Comparator.*;
 import static java.util.Map.*;
 import static java.util.stream.Collectors.*;
 import static ru.art.core.extension.OptionalExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
 
 @Getter
 @RequiredArgsConstructor

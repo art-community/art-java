@@ -21,22 +21,20 @@ package ru.art.reactive.service.module;
 import lombok.*;
 import ru.art.core.module.*;
 import ru.art.reactive.service.configuration.*;
-import ru.art.reactive.service.configuration.ReactiveServiceModuleConfiguration.*;
-
 import static ru.art.core.context.Context.*;
+import static ru.art.reactive.service.configuration.ReactiveServiceModuleConfiguration.*;
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.*;
 
 @Getter
 public class ReactiveServiceModule implements Module<ReactiveServiceModuleConfiguration, ModuleState> {
     @Getter(lazy = true)
-    private static final ReactiveServiceModuleConfiguration reactiveServiceModule = context()
-            .getModule(REACTIVE_SERVICE_MODULE_ID, ReactiveServiceModule::new);
+    private static final ReactiveServiceModuleConfiguration reactiveServiceModule = context().getModule(REACTIVE_SERVICE_MODULE_ID, ReactiveServiceModule::new);
     private final String id = REACTIVE_SERVICE_MODULE_ID;
-    private final ReactiveServiceModuleConfiguration defaultConfiguration = ReactiveServiceModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
+    private final ReactiveServiceModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
 
     public static ReactiveServiceModuleConfiguration reactiveServiceModule() {
-        if (insideDefaultContext()) {
-            return ReactiveServiceModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getReactiveServiceModule();
     }

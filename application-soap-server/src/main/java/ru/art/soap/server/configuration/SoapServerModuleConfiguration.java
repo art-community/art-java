@@ -21,7 +21,6 @@ package ru.art.soap.server.configuration;
 import ru.art.core.module.*;
 import ru.art.entity.mapper.ValueFromModelMapper.*;
 import ru.art.soap.server.model.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.ResponseFaultConstants.*;
 import static ru.art.soap.server.mapper.SoapMapper.*;

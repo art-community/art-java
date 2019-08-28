@@ -28,15 +28,14 @@ import ru.art.generator.spec.http.proxyspec.exception.*;
 import ru.art.generator.spec.http.servicespec.annotation.*;
 import ru.art.generator.spec.http.servicespec.constants.*;
 import ru.art.generator.spec.http.servicespec.exception.*;
-import java.lang.annotation.*;
-import java.lang.reflect.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.*;
 import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.*;
 import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecAnnotations.*;
 import static ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecAnnotations.*;
+import java.lang.annotation.*;
+import java.lang.reflect.*;
 
 /**
  * Interface containing methods to check annotations for existence.

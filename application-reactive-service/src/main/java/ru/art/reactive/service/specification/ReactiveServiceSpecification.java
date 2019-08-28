@@ -20,12 +20,11 @@ package ru.art.reactive.service.specification;
 
 import ru.art.reactive.service.model.*;
 import ru.art.service.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.*;
 import static ru.art.reactive.service.module.ReactiveServiceModule.*;
 import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
+import java.util.*;
 
 public interface ReactiveServiceSpecification extends Specification {
     ReactiveService getReactiveService();

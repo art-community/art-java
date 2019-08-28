@@ -23,12 +23,11 @@ import ru.art.config.remote.api.specification.*;
 import ru.art.configurator.api.entity.*;
 import ru.art.configurator.provider.ApplicationModulesParametersProvider.*;
 import ru.art.entity.*;
-import java.util.*;
-
 import static java.util.Objects.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.configurator.dao.ConfiguratorDao.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
+import java.util.*;
 
 @UtilityClass
 public class RemoteConfigCommunicationSpecificationsFactory {

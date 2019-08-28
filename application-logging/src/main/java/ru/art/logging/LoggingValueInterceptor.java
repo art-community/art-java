@@ -20,7 +20,6 @@ package ru.art.logging;
 
 import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
-
 import static java.text.MessageFormat.*;
 import static org.apache.logging.log4j.ThreadContext.*;
 import static ru.art.core.caster.Caster.*;

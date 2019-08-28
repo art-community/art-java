@@ -21,9 +21,8 @@ package ru.art.grpc.server.specification;
 import ru.art.grpc.server.constants.*;
 import ru.art.grpc.server.model.*;
 import ru.art.service.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
 
 public interface GrpcServiceSpecification extends Specification {
     GrpcService getGrpcService();

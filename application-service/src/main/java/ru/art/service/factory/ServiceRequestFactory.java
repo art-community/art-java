@@ -20,7 +20,6 @@ package ru.art.service.factory;
 
 import ru.art.service.constants.*;
 import ru.art.service.model.*;
-
 import static ru.art.service.constants.RequestValidationPolicy.*;
 
 public interface ServiceRequestFactory {

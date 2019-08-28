@@ -20,9 +20,6 @@ package ru.art.rocks.db.dao;
 
 import org.rocksdb.*;
 import ru.art.rocks.db.exception.*;
-import java.util.*;
-import java.util.function.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
@@ -34,6 +31,8 @@ import static ru.art.logging.LoggingModule.*;
 import static ru.art.rocks.db.constants.RocksDbExceptionMessages.*;
 import static ru.art.rocks.db.constants.RocksDbLoggingMessages.*;
 import static ru.art.rocks.db.module.RocksDbModule.*;
+import java.util.*;
+import java.util.function.*;
 
 @SuppressWarnings("Duplicates")
 public interface RocksDbPrimitiveDao {

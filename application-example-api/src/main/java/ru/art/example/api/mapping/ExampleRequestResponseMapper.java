@@ -23,7 +23,6 @@ import ru.art.entity.mapper.*;
 import ru.art.entity.mapper.ValueFromModelMapper.*;
 import ru.art.entity.mapper.ValueToModelMapper.*;
 import ru.art.example.api.model.*;
-
 import static ru.art.entity.XmlEntity.*;
 import static ru.art.example.api.mapping.ExampleModelMapper.*;
 

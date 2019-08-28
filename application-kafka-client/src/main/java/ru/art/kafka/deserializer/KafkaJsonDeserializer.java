@@ -20,10 +20,9 @@ package ru.art.kafka.deserializer;
 
 import org.apache.kafka.common.serialization.*;
 import ru.art.entity.*;
-import java.util.*;
-
 import static ru.art.core.context.Context.*;
 import static ru.art.json.descriptor.JsonEntityReader.*;
+import java.util.*;
 
 public class KafkaJsonDeserializer implements Deserializer<Value> {
     @Override

@@ -20,7 +20,6 @@ package ru.art.network.manager.state;
 
 import lombok.*;
 import ru.art.core.module.*;
-
 import static ru.art.network.manager.balancer.Balancer.*;
 import static ru.art.network.manager.module.NetworkManagerModule.*;
 

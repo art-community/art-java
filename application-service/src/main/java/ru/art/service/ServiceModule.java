@@ -21,11 +21,11 @@ package ru.art.service;
 import lombok.*;
 import ru.art.core.module.*;
 import ru.art.service.state.*;
-
 import static lombok.AccessLevel.*;
 import static org.apache.logging.log4j.ThreadContext.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
+import static ru.art.service.ServiceModuleConfiguration.*;
 import static ru.art.service.constants.ServiceModuleConstants.*;
 
 @Getter
@@ -35,12 +35,12 @@ public class ServiceModule implements Module<ServiceModuleConfiguration, Service
     @Getter(lazy = true, value = PRIVATE)
     private static final ServiceModuleState serviceModuleState = context().getModuleState(SERVICE_MODULE_ID, ServiceModule::new);
     private final String id = SERVICE_MODULE_ID;
-    private final ServiceModuleConfiguration defaultConfiguration = ServiceModuleConfiguration.ServiceModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
+    private final ServiceModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private final ServiceModuleState state = new ServiceModuleState();
 
     public static ServiceModuleConfiguration serviceModule() {
-        if (insideDefaultContext()) {
-            return ServiceModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getServiceModule();
     }

@@ -20,7 +20,6 @@ package ru.art.example.configuration;
 
 import lombok.*;
 import ru.art.core.module.*;
-
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.example.constants.ExampleAppModuleConstants.ConfigKeys.*;
 import static ru.art.example.constants.ExampleAppModuleConstants.DefaultConfigValues.*;

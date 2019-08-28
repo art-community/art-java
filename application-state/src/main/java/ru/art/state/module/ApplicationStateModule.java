@@ -27,7 +27,6 @@ import ru.art.state.configuration.*;
 import ru.art.state.configuration.ApplicationStateModuleConfiguration.*;
 import ru.art.state.service.*;
 import ru.art.state.specification.*;
-
 import static java.time.Duration.*;
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.core.context.Context.*;
@@ -44,17 +43,15 @@ import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
 @Getter
 public class ApplicationStateModule implements Module<ApplicationStateModuleConfiguration, ApplicationState> {
     @Getter(lazy = true)
-    private final static ApplicationStateModuleConfiguration applicationStateModule = context()
-            .getModule(APPLICATION_STATE_MODULE_ID, ApplicationStateModule::new);
+    private final static ApplicationStateModuleConfiguration applicationStateModule = context().getModule(APPLICATION_STATE_MODULE_ID, ApplicationStateModule::new);
     @Getter(lazy = true)
-    private final static ApplicationState applicationState = context()
-            .getModuleState(APPLICATION_STATE_MODULE_ID, ApplicationStateModule::new);
+    private final static ApplicationState applicationState = context().getModuleState(APPLICATION_STATE_MODULE_ID, ApplicationStateModule::new);
     private final String id = APPLICATION_STATE_MODULE_ID;
     private final ApplicationStateModuleConfiguration defaultConfiguration = new ApplicationStateModuleDefaultConfiguration();
     private final ApplicationState state = new ApplicationState();
 
     public static ApplicationStateModuleConfiguration applicationStateModule() {
-        if (insideDefaultContext()) {
+        if (contextIsNotReady()) {
             return DEFAULT_CONFIGURATION;
         }
         return getApplicationStateModule();
@@ -71,7 +68,7 @@ public class ApplicationStateModule implements Module<ApplicationStateModuleConf
     @SuppressWarnings("WeakerAccess")
     public static void startApplicationState() {
         useAgileConfigurations(APPLICATION_STATE_MODULE_ID);
-        serviceModule().getServiceRegistry()
+        serviceModuleState().getServiceRegistry()
                 .registerService(new MetricServiceSpecification(STATE_PATH))
                 .registerService(new HttpResourceServiceSpecification(STATE_PATH))
                 .registerService(new NetworkServiceSpecification())

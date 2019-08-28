@@ -25,8 +25,6 @@ import ru.art.http.server.model.*;
 import ru.art.http.server.specification.*;
 import ru.art.service.exception.*;
 import ru.art.state.api.mapping.*;
-import java.util.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionMapping.*;
@@ -47,6 +45,7 @@ import static ru.art.state.api.mapping.ClusterProfileRequestResponseMapper.Clust
 import static ru.art.state.api.mapping.ModuleConnectionRequestMapper.*;
 import static ru.art.state.api.mapping.ModuleEndpointMapper.*;
 import static ru.art.state.service.NetworkService.*;
+import java.util.*;
 
 @Getter
 public class NetworkServiceSpecification implements HttpServiceSpecification, GrpcServiceSpecification {

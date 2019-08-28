@@ -21,10 +21,9 @@ package ru.art.http.logger;
 import org.apache.logging.log4j.*;
 import org.zalando.logbook.*;
 import org.zalando.logbook.DefaultHttpLogWriter.Level;
-import java.util.function.*;
-
 import static org.zalando.logbook.DefaultHttpLogWriter.Level.*;
 import static ru.art.logging.LoggingModule.*;
+import java.util.function.*;
 
 @SuppressWarnings("SameParameterValue")
 public class ZalangoLogbookLogWriter implements HttpLogWriter {

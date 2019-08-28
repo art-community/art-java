@@ -22,7 +22,6 @@ import lombok.*;
 import ru.art.http.server.model.*;
 import ru.art.http.server.specification.*;
 import ru.art.service.exception.*;
-
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.*;
 import static ru.art.configurator.api.mapping.UserMapping.*;

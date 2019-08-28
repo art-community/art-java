@@ -21,11 +21,10 @@ package ru.art.rsocket.model;
 import io.rsocket.plugins.*;
 import lombok.*;
 import lombok.experimental.*;
-import java.util.*;
-
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.*;
 import static ru.art.rsocket.module.RsocketModule.*;
+import java.util.*;
 
 @Getter
 @Accessors(fluent = true)

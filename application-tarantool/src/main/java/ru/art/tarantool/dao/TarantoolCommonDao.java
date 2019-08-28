@@ -19,8 +19,6 @@
 package ru.art.tarantool.dao;
 
 import org.tarantool.*;
-import java.util.*;
-
 import static java.util.Collections.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -30,6 +28,7 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
 import static ru.art.tarantool.service.TarantoolScriptService.*;
+import java.util.*;
 
 class TarantoolCommonDao {
     final String instanceId;

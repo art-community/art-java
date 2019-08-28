@@ -20,9 +20,6 @@ package ru.art.config;
 
 import com.typesafe.config.*;
 import io.advantageous.config.Config;
-import java.io.*;
-import java.net.*;
-
 import static com.typesafe.config.ConfigFactory.*;
 import static com.typesafe.config.ConfigParseOptions.*;
 import static com.typesafe.config.ConfigSyntax.*;
@@ -35,6 +32,8 @@ import static ru.art.config.TypesafeConfigLoadingExceptionMessages.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.SystemProperties.*;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
+import java.io.*;
+import java.net.*;
 
 class TypesafeConfigLoader {
     static Config loadTypeSafeConfig(String configId, ConfigSyntax configSyntax) {

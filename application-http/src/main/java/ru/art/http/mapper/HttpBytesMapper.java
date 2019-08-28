@@ -21,14 +21,13 @@ package ru.art.http.mapper;
 import ru.art.core.mime.*;
 import ru.art.entity.*;
 import ru.art.http.exception.*;
-import java.nio.charset.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.entity.CollectionValuesFactory.*;
 import static ru.art.entity.Value.*;
 import static ru.art.http.constants.HttpExceptionsMessages.*;
+import java.nio.charset.*;
 
 public class HttpBytesMapper implements HttpContentMapper.HttpEntityToContentMapper, HttpContentMapper.HttpContentToValueMapper {
     @Override

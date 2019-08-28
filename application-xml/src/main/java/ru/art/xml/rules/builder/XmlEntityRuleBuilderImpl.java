@@ -20,9 +20,8 @@ package ru.art.xml.rules.builder;
 
 import lombok.*;
 import ru.art.xml.constants.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
 
 @RequiredArgsConstructor
 class XmlEntityRuleBuilderImpl implements XmlEntityRuleBuilder {

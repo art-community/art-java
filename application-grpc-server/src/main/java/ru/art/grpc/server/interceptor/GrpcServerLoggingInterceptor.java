@@ -24,7 +24,6 @@ import io.grpc.*;
 import io.grpc.ServerCall.*;
 import org.apache.logging.log4j.*;
 import ru.art.logging.*;
-
 import static io.grpc.Metadata.*;
 import static io.grpc.Metadata.Key.*;
 import static java.lang.System.*;

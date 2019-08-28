@@ -18,9 +18,6 @@
 
 package ru.art.rocks.db.dao;
 
-import java.util.*;
-import java.util.function.*;
-
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
@@ -28,6 +25,8 @@ import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
+import java.util.*;
+import java.util.function.*;
 
 @SuppressWarnings("Duplicates")
 public interface RocksDbCollectionDao {

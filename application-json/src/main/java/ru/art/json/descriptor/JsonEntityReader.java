@@ -23,10 +23,6 @@ import lombok.*;
 import ru.art.entity.Value;
 import ru.art.entity.*;
 import ru.art.json.exception.*;
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-
 import static com.fasterxml.jackson.core.JsonToken.*;
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
@@ -39,6 +35,9 @@ import static ru.art.entity.Entity.*;
 import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.json.constants.JsonMappingExceptionMessages.*;
 import static ru.art.json.module.JsonModule.*;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

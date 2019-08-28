@@ -21,7 +21,6 @@ package ru.art.network.manager.configuration;
 import lombok.*;
 import ru.art.core.module.*;
 import ru.art.network.manager.constants.NetworkManagerModuleConstants.*;
-
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.network.manager.constants.NetworkManagerModuleConstants.BalancerMode.*;

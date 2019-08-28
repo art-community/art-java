@@ -21,13 +21,12 @@ package ru.art.soap.client.communicator;
 import lombok.*;
 import ru.art.entity.*;
 import ru.art.soap.client.exception.*;
-import java.util.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.entity.XmlEntity.*;
 import static ru.art.soap.client.constants.SoapClientModuleConstants.*;
 import static ru.art.soap.client.constants.SoapClientModuleExceptionMessages.*;
+import java.util.*;
 
 @NoArgsConstructor(access = PACKAGE)
 class SoapEnvelopWrappingManager {

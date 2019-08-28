@@ -22,7 +22,6 @@ import lombok.*;
 import reactor.core.publisher.*;
 import ru.art.rsocket.service.*;
 import ru.art.service.model.*;
-
 import static ru.art.service.factory.ServiceRequestFactory.*;
 
 @Getter

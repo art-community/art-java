@@ -26,13 +26,12 @@ import ru.art.http.server.interceptor.*;
 import ru.art.service.constants.*;
 import ru.art.soap.content.mapper.*;
 import ru.art.soap.server.specification.*;
-import java.util.function.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.service.ServiceModule.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
 import static ru.art.soap.server.model.SoapService.*;
 import static ru.art.soap.server.model.SoapService.SoapOperation.*;
+import java.util.function.*;
 
 public class SoapServiceFunction {
     private final SoapServiceBuilder soapService;
@@ -139,8 +138,8 @@ public class SoapServiceFunction {
     }
 
     public <RequestType, ResponseType> void handle(Function<RequestType, ResponseType> function) {
-        serviceModule()
-                .getServiceRegistry()
+        serviceModuleState()
+                    .getServiceRegistry()
                 .registerService(new SoapServiceExecutionSpecification(new SoapFunctionalServiceSpecification(soapService
                         .operation(operationId, soapOperation)
                         .serve(path), function)));

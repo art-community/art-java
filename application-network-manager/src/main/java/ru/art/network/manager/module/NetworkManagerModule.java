@@ -25,7 +25,6 @@ import ru.art.network.manager.configuration.*;
 import ru.art.network.manager.refresher.*;
 import ru.art.network.manager.state.*;
 import ru.art.state.api.communication.grpc.*;
-
 import static java.time.Duration.*;
 import static java.time.temporal.ChronoUnit.*;
 import static ru.art.core.context.Context.*;
@@ -38,18 +37,16 @@ import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
 @Getter
 public class NetworkManagerModule implements Module<NetworkManagerModuleConfiguration, NetworkManagerModuleState> {
     @Getter(lazy = true)
-    private static final NetworkManagerModuleConfiguration networkManagerModule = context()
-            .getModule(NETWORK_MANAGER_MODULE_ID, NetworkManagerModule::new);
+    private static final NetworkManagerModuleConfiguration networkManagerModule = context().getModule(NETWORK_MANAGER_MODULE_ID, NetworkManagerModule::new);
     @Getter(lazy = true)
-    private static final NetworkManagerModuleState networkManagerModuleState = context()
-            .getModuleState(NETWORK_MANAGER_MODULE_ID, NetworkManagerModule::new);
+    private static final NetworkManagerModuleState networkManagerModuleState = context().getModuleState(NETWORK_MANAGER_MODULE_ID, NetworkManagerModule::new);
     private final String id = NETWORK_MANAGER_MODULE_ID;
     private final NetworkManagerModuleConfiguration defaultConfiguration = NetworkManagerModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
     private final NetworkManagerModuleState state = new NetworkManagerModuleState();
 
     public static NetworkManagerModuleConfiguration networkManagerModule() {
-        if (insideDefaultContext()) {
-            return NetworkManagerModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getNetworkManagerModule();
     }
@@ -65,7 +62,7 @@ public class NetworkManagerModule implements Module<NetworkManagerModuleConfigur
         int statePort = networkManagerModule().getStatePort();
         String stateHost = networkManagerModule().getStateHost();
         String statePath = networkManagerModule().getStatePath();
-        serviceModule().getServiceRegistry()
+        serviceModuleState().getServiceRegistry()
                 .registerService(new NetworkServiceProxySpecification(statePath, stateHost, statePort))
                 .registerService(new LockServiceProxySpecification(statePath, stateHost, statePort));
     }

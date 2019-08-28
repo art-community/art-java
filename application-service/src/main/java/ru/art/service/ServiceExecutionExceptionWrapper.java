@@ -22,7 +22,6 @@ import lombok.*;
 import ru.art.service.constants.*;
 import ru.art.service.exception.*;
 import ru.art.service.model.*;
-
 import static java.util.Objects.*;
 import static ru.art.service.ServiceModule.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;
@@ -71,7 +70,7 @@ public class ServiceExecutionExceptionWrapper {
 
 
     public <RequestType, ResponseType> ServiceResponse<ResponseType> wrapServiceExecution(ServiceMethodCommand command, RequestType request) throws Exception {
-        Specification service = serviceModule().getServiceRegistry().getService(command.getServiceId());
+        Specification service = serviceModuleState().getServiceRegistry().getService(command.getServiceId());
         ResponseType responseData = executeServiceWithConfiguration(() -> service.executeMethod(command.getMethodId(), request), command, service.getExecutionConfiguration());
         return okResponse(command, responseData);
     }

@@ -21,10 +21,6 @@ package ru.art.http.server.interceptor;
 import lombok.*;
 import ru.art.core.constants.*;
 import ru.art.http.server.exception.*;
-import javax.servlet.http.*;
-import java.util.*;
-import java.util.function.*;
-
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
@@ -33,6 +29,9 @@ import static ru.art.core.context.Context.*;
 import static ru.art.http.constants.HttpHeaders.*;
 import static ru.art.http.constants.HttpMethodType.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
+import javax.servlet.http.*;
+import java.util.*;
+import java.util.function.*;
 
 @Builder
 public class CookieInterceptor implements HttpServerInterception {

@@ -21,7 +21,6 @@ package ru.art.metrics.http.filter;
 import org.zalando.logbook.*;
 import org.zalando.logbook.LogbookCreator.*;
 import ru.art.http.logger.*;
-
 import static org.zalando.logbook.Conditions.*;
 import static ru.art.metrics.constants.MetricsModuleConstants.*;
 

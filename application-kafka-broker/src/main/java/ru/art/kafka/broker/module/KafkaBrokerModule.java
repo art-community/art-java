@@ -17,12 +17,10 @@
 package ru.art.kafka.broker.module;
 
 import lombok.*;
-import ru.art.core.context.*;
 import ru.art.core.module.*;
 import ru.art.kafka.broker.configuration.*;
 import ru.art.kafka.broker.embedded.*;
 import ru.art.kafka.broker.state.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
@@ -41,7 +39,7 @@ public class KafkaBrokerModule implements Module<KafkaBrokerModuleConfiguration,
     private final KafkaBrokerModuleState state = new KafkaBrokerModuleState();
 
     public static KafkaBrokerModuleConfiguration kafkaBrokerModule() {
-        if (Context.insideDefaultContext()) {
+        if (contextIsNotReady()) {
             return DEFAULT_CONFIGURATION;
         }
         return getKafkaBrokerModule();

@@ -22,9 +22,8 @@ import lombok.*;
 import ru.art.core.mime.*;
 import ru.art.http.client.configuration.HttpClientModuleConfiguration.*;
 import ru.art.http.mapper.*;
-import java.util.*;
-
 import static ru.art.configurator.http.content.mapping.ConfiguratorHttpContentMapping.*;
+import java.util.*;
 
 @Getter
 public class ConfiguratorHttpClientConfiguration extends HttpClientModuleDefaultConfiguration {

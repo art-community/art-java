@@ -27,10 +27,6 @@ import ru.art.generator.spec.http.servicespec.constants.*;
 import ru.art.generator.spec.http.servicespec.exception.*;
 import ru.art.generator.spec.http.servicespec.model.*;
 import ru.art.http.server.specification.*;
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
-
 import static com.squareup.javapoet.CodeBlock.*;
 import static java.text.MessageFormat.*;
 import static javax.lang.model.element.Modifier.*;
@@ -53,6 +49,9 @@ import static ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecCo
 import static ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecConstants.Methods.*;
 import static ru.art.generator.spec.http.servicespec.operations.HttpServiceAuxiliaryOperations.*;
 import static ru.art.generator.spec.http.servicespec.operations.HttpServiceBlockGenerator.*;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * Interface contains operations for HTTP specification generator.

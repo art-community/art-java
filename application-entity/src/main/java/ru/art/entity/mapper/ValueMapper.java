@@ -21,7 +21,6 @@ package ru.art.entity.mapper;
 import lombok.*;
 import ru.art.entity.Value;
 import ru.art.entity.exception.*;
-
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static ru.art.entity.constants.ValueMappingExceptionMessages.*;

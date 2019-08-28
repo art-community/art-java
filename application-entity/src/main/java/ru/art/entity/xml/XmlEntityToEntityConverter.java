@@ -21,8 +21,6 @@ package ru.art.entity.xml;
 import lombok.*;
 import ru.art.entity.Value;
 import ru.art.entity.*;
-import java.util.*;
-
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
@@ -35,6 +33,7 @@ import static ru.art.entity.CollectionValuesFactory.*;
 import static ru.art.entity.Entity.*;
 import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.entity.Value.isEmpty;
+import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class XmlEntityToEntityConverter {

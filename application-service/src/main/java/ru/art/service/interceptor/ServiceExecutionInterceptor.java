@@ -21,7 +21,6 @@ package ru.art.service.interceptor;
 import lombok.*;
 import ru.art.service.constants.*;
 import ru.art.service.exception.*;
-
 import static java.util.Objects.*;
 
 public interface ServiceExecutionInterceptor {

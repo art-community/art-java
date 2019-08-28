@@ -20,10 +20,9 @@ package ru.art.soap.server.specification;
 
 import ru.art.service.*;
 import ru.art.soap.server.model.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
+import java.util.*;
 
 public interface SoapServiceSpecification extends Specification {
     SoapService getSoapService();

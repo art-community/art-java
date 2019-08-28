@@ -17,10 +17,9 @@
 package ru.art.config.extensions.kafka;
 
 import lombok.experimental.*;
-import ru.art.config.Config;
+import ru.art.config.*;
 import ru.art.core.annotation.*;
-
-import static ru.art.config.extensions.ConfigExtensions.configInner;
+import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.kafka.KafkaConfigKeys.*;
 
 @PublicApi

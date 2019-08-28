@@ -21,25 +21,24 @@ package ru.art.sql.module;
 import lombok.*;
 import ru.art.core.module.*;
 import ru.art.sql.configuration.*;
-import ru.art.sql.configuration.SqlModuleConfiguration.*;
 import ru.art.sql.exception.*;
-import javax.sql.*;
-
 import static java.lang.Class.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.sql.configuration.SqlModuleConfiguration.*;
 import static ru.art.sql.constants.SqlModuleConstants.*;
+import javax.sql.*;
 
 @Getter
 public class SqlModule implements Module<SqlModuleConfiguration, ModuleState> {
     @Getter(lazy = true, value = PRIVATE)
     private static final SqlModuleConfiguration sqlModule = context().getModule(SQL_MODULE_ID, SqlModule::new);
     private final String id = SQL_MODULE_ID;
-    private final SqlModuleConfiguration defaultConfiguration = SqlModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
+    private final SqlModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
 
     public static SqlModuleConfiguration sqlModule() {
-        if (insideDefaultContext()) {
-            return SqlModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getSqlModule();
     }
