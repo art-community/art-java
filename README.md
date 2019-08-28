@@ -25,13 +25,13 @@ art {
 // Modules that includes into result project *.jar 
   // Alternatives: providedModules (not included into jar)  and 
   // testModules (use in tests sources)
-  /*embeddedModules {
-      // For specify version or will be used "1.+" version as default 
+  embeddedModules {
+      // For specify version. Default version is "1.+" 
       //useVersion("1.+")
 
       // For full kit of modules 
       kit()    
-  }*/  
+  }  
  }
 ```
 ## Requirements
