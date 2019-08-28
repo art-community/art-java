@@ -27,8 +27,6 @@ import ru.art.http.server.filter.*;
 import ru.art.http.server.handler.*;
 import ru.art.http.server.interceptor.*;
 import ru.art.service.exception.*;
-import java.util.*;
-
 import static org.zalando.logbook.RawResponseFilters.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.NetworkConstants.*;
@@ -41,6 +39,7 @@ import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourc
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.ResourceExtensions.*;
 import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
+import java.util.*;
 
 public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
     static List<HttpServerInterceptor> initializeWebServerInterceptors(List<HttpServerInterceptor> parents) {

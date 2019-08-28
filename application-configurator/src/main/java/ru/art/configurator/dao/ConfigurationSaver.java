@@ -23,14 +23,13 @@ import ru.art.entity.*;
 import ru.art.entity.Value;
 import ru.art.entity.Entity.*;
 import ru.art.rocks.db.dao.*;
-import java.util.*;
-
 import static java.lang.String.*;
 import static lombok.AccessLevel.*;
 import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.entity.constants.ValueType.*;
 import static ru.art.rocks.db.dao.RocksDbValueDao.*;
+import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
 class ConfigurationSaver {

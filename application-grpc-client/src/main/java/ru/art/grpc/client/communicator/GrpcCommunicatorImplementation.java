@@ -26,12 +26,11 @@ import ru.art.entity.mapper.*;
 import ru.art.grpc.client.handler.*;
 import ru.art.grpc.client.model.*;
 import ru.art.service.model.*;
-import java.util.concurrent.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.grpc.client.constants.GrpcClientModuleConstants.GRPC_FUNCTION_SERVICE;
+import static ru.art.grpc.client.constants.GrpcClientModuleConstants.*;
+import java.util.concurrent.*;
 
 public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCommunicator.GrpcAsynchronousCommunicator {
     private final GrpcCommunicationConfiguration configuration = new GrpcCommunicationConfiguration();

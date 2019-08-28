@@ -21,14 +21,13 @@ package ru.art.core.validator;
 import lombok.*;
 import ru.art.core.checker.*;
 import ru.art.core.exception.*;
-import java.util.*;
-import java.util.function.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.core.constants.BuilderValidatorErrors.*;
 import static ru.art.core.constants.ExceptionMessages.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
+import java.util.function.*;
 
 @AllArgsConstructor
 public class BuilderValidator {

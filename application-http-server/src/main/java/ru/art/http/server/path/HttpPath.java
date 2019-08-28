@@ -20,12 +20,11 @@ package ru.art.http.server.path;
 
 import lombok.*;
 import ru.art.core.constants.*;
-import java.util.*;
-
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.CharConstants.SLASH;
 import static ru.art.core.constants.StringConstants.COLON;
 import static ru.art.core.constants.StringConstants.*;
+import java.util.*;
 
 
 @Getter

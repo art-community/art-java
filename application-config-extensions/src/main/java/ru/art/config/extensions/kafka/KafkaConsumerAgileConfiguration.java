@@ -16,43 +16,29 @@
 
 package ru.art.config.extensions.kafka;
 
-import lombok.Getter;
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.Serde;
-import ru.art.kafka.consumer.configuration.KafkaConsumerConfiguration;
-import ru.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration.KafkaConsumerModuleDefaultConfiguration;
-import ru.art.kafka.consumer.configuration.KafkaStreamsConfiguration;
-import ru.art.kafka.deserializer.KafkaJsonDeserializer;
-import ru.art.kafka.deserializer.KafkaProtobufDeserializer;
-import ru.art.kafka.serde.KafkaJsonSerde;
-import ru.art.kafka.serde.KafkaProtobufSerde;
-
-import static java.lang.Class.forName;
-import static java.time.Duration.ofMillis;
-import static java.util.concurrent.Executors.newFixedThreadPool;
-import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
+import lombok.*;
+import org.apache.kafka.common.serialization.*;
+import ru.art.kafka.consumer.configuration.*;
+import ru.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration.*;
+import static java.lang.Class.*;
+import static java.time.Duration.*;
+import static java.util.concurrent.Executors.*;
+import static org.apache.kafka.common.serialization.Serdes.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
-import static ru.art.config.extensions.common.CommonConfigKeys.ENABLE_TRACING;
-import static ru.art.config.extensions.common.CommonConfigKeys.THREAD_POOL_SIZE;
+import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.kafka.KafkaConfigKeys.*;
-import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
-import static ru.art.core.extension.ExceptionExtensions.ifException;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
-import static ru.art.core.factory.CollectionsFactory.setOf;
-import static ru.art.kafka.constants.KafkaClientConstants.JSON_KAFKA_FORMAT;
-import static ru.art.kafka.constants.KafkaClientConstants.PROTOBUF_KAFKA_FORMAT;
-import static ru.art.kafka.consumer.configuration.KafkaConsumerConfiguration.KafkaConsumerDefaultConfiguration;
-import static ru.art.kafka.consumer.configuration.KafkaStreamConfiguration.streamConfiguration;
-import static ru.art.kafka.consumer.configuration.KafkaStreamsConfiguration.KafkaStreamsDefaultConfiguration;
-
-import java.util.function.Function;
+import static ru.art.core.constants.ThreadConstants.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.kafka.constants.KafkaClientConstants.*;
+import static ru.art.kafka.consumer.configuration.KafkaConsumerConfiguration.*;
+import static ru.art.kafka.consumer.configuration.KafkaStreamConfiguration.*;
+import static ru.art.kafka.consumer.configuration.KafkaStreamsConfiguration.*;
+import static ru.art.kafka.instances.KafkaSerdes.*;
+import java.lang.String;
 
 @Getter
 public class KafkaConsumerAgileConfiguration extends KafkaConsumerModuleDefaultConfiguration {
-    private static final KafkaJsonDeserializer KAFKA_JSON_DESERIALIZER = new KafkaJsonDeserializer();
-    private static final KafkaProtobufDeserializer KAFKA_PROTOBUF_DESERIALIZER = new KafkaProtobufDeserializer();
-    private static final KafkaJsonSerde KAFKA_JSON_SERDE = new KafkaJsonSerde();
-    private static final KafkaProtobufSerde KAFKA_PROTOBUF_SERDE = new KafkaProtobufSerde();
     private boolean enableTracing;
     private KafkaConsumerConfiguration kafkaConsumerConfiguration;
     private KafkaStreamsConfiguration kafkaStreamsConfiguration;

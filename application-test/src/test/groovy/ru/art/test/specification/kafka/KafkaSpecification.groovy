@@ -25,8 +25,8 @@ import static ru.art.config.extensions.activator.AgileConfigurationsActivator.us
 import static ru.art.core.constants.StringConstants.UNDERSCORE
 import static ru.art.entity.PrimitivesFactory.stringPrimitive
 import static ru.art.kafka.broker.embedded.EmbeddedKafkaBroker.startKafkaBroker
-import static ru.art.kafka.consumer.starter.KafkaStreamsStarter.startKafkaStreams
 import static ru.art.kafka.consumer.module.KafkaConsumerModule.kafkaStreamsRegistry
+import static ru.art.kafka.consumer.starter.KafkaStreamsStarter.startKafkaStreams
 import static ru.art.kafka.producer.communicator.KafkaProducerCommunicator.kafkaProducerCommunicator
 
 class KafkaSpecification extends Specification {

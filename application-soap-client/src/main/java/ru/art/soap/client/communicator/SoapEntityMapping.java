@@ -23,7 +23,6 @@ import ru.art.entity.*;
 import ru.art.entity.mapper.*;
 import ru.art.entity.mapper.ValueFromModelMapper.*;
 import ru.art.entity.mapper.ValueToModelMapper.*;
-
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;

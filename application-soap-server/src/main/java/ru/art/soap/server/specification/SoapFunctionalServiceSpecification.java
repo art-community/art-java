@@ -20,11 +20,10 @@ package ru.art.soap.server.specification;
 
 import lombok.*;
 import ru.art.soap.server.model.*;
-import java.util.function.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
+import java.util.function.*;
 
 @Getter
 public class SoapFunctionalServiceSpecification implements SoapServiceSpecification {

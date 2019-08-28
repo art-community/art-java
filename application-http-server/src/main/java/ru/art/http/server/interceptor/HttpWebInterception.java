@@ -19,13 +19,12 @@
 package ru.art.http.server.interceptor;
 
 import ru.art.core.constants.*;
-import javax.servlet.http.*;
-
 import static ru.art.core.constants.InterceptionStrategy.*;
 import static ru.art.http.constants.HttpHeaders.*;
 import static ru.art.http.server.HttpServerModuleConfiguration.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
 import static ru.art.http.server.module.HttpServerModule.*;
+import javax.servlet.http.*;
 
 public class HttpWebInterception implements HttpServerInterception {
     @Override

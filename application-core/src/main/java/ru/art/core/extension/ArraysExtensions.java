@@ -19,7 +19,6 @@
 package ru.art.core.extension;
 
 import lombok.experimental.*;
-
 import static java.lang.System.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;

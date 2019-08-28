@@ -21,7 +21,6 @@ package ru.art.generator.spec.http.servicespec;
 import ru.art.generator.common.annotation.*;
 import ru.art.generator.spec.http.servicespec.annotation.*;
 import ru.art.generator.spec.http.servicespec.exception.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.generator.common.constants.Constants.*;

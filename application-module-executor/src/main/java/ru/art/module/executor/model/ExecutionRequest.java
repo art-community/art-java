@@ -21,7 +21,6 @@ package ru.art.module.executor.model;
 import lombok.*;
 import ru.art.entity.Value;
 import ru.art.service.validation.*;
-
 import static ru.art.service.validation.ValidationExpressions.*;
 
 /**

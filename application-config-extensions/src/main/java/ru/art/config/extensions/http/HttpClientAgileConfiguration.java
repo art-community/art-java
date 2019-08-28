@@ -28,8 +28,6 @@ import ru.art.http.client.configuration.HttpClientModuleConfiguration.*;
 import ru.art.http.client.model.*;
 import ru.art.http.constants.*;
 import ru.art.http.mapper.*;
-import java.util.*;
-
 import static org.apache.http.entity.ContentType.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
@@ -41,6 +39,7 @@ import static ru.art.core.constants.ThreadConstants.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.http.client.constants.HttpClientModuleConstants.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
+import java.util.*;
 
 @Getter
 public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfiguration {

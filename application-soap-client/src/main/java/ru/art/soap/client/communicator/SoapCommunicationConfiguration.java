@@ -30,9 +30,6 @@ import ru.art.http.client.handler.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.soap.client.exception.*;
 import ru.art.soap.content.mapper.*;
-import java.nio.charset.*;
-import java.util.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -40,6 +37,8 @@ import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.soap.client.constants.SoapClientModuleExceptionMessages.*;
 import static ru.art.soap.client.module.SoapClientModule.*;
 import static ru.art.soap.content.mapper.SoapMimeToContentTypeMapper.*;
+import java.nio.charset.*;
+import java.util.*;
 
 @Getter
 @Setter(value = PACKAGE)

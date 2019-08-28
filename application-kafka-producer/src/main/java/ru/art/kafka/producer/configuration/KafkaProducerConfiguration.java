@@ -23,9 +23,8 @@ import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.*;
 import ru.art.kafka.producer.exception.*;
 import ru.art.kafka.serializer.*;
-import java.util.*;
-
 import static ru.art.core.checker.CheckerForEmptiness.*;
+import java.util.*;
 
 @Getter
 @Builder(builderMethodName = "producerConfiguration")

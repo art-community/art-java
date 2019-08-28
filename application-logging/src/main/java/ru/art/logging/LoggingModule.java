@@ -20,12 +20,11 @@ package ru.art.logging;
 
 import lombok.*;
 import ru.art.core.module.*;
-import ru.art.logging.LoggingModuleConfiguration.*;
-
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
 import static org.slf4j.bridge.SLF4JBridgeHandler.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.logging.LoggingModuleConfiguration.*;
 import static ru.art.logging.LoggingModuleConstants.*;
 
 @Getter
@@ -33,7 +32,7 @@ public class LoggingModule implements Module<LoggingModuleConfiguration, ModuleS
     @Getter(lazy = true, value = PRIVATE)
     private static final LoggingModuleConfiguration loggingModule = context().getModule(LOGGING_MODULE_ID, LoggingModule::new);
     private final String id = LOGGING_MODULE_ID;
-    private final LoggingModuleConfiguration defaultConfiguration = LoggingModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
+    private final LoggingModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
 
     static {
         getLogManager().reset();
@@ -41,8 +40,8 @@ public class LoggingModule implements Module<LoggingModuleConfiguration, ModuleS
     }
 
     public static LoggingModuleConfiguration loggingModule() {
-        if (insideDefaultContext()) {
-            return LoggingModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getLoggingModule();
     }

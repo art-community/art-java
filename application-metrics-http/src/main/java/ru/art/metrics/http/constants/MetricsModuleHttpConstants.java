@@ -21,7 +21,6 @@ package ru.art.metrics.http.constants;
 import org.apache.http.entity.*;
 import ru.art.core.mime.*;
 import ru.art.http.constants.*;
-
 import static io.prometheus.client.exporter.common.TextFormat.*;
 
 public interface MetricsModuleHttpConstants {

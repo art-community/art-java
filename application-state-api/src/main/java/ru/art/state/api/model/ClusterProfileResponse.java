@@ -19,9 +19,8 @@
 package ru.art.state.api.model;
 
 import lombok.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
 
 @Getter
 @Builder

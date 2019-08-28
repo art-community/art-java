@@ -28,8 +28,6 @@ import ru.art.rsocket.constants.RsocketModuleConstants.*;
 import ru.art.rsocket.exception.*;
 import ru.art.rsocket.interceptor.*;
 import ru.art.rsocket.model.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
@@ -37,6 +35,7 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.core.network.selector.PortSelector.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*;
+import java.util.*;
 
 public interface RsocketModuleConfiguration extends ModuleConfiguration {
     String getServerHost();

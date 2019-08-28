@@ -25,8 +25,6 @@ import ru.art.grpc.server.specification.*;
 import ru.art.http.server.model.*;
 import ru.art.http.server.specification.*;
 import ru.art.service.exception.*;
-import java.util.*;
-
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.*;
 import static ru.art.configurator.api.mapping.ConfigurationMapping.*;
@@ -45,6 +43,7 @@ import static ru.art.http.constants.MimeToContentTypeMapper.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 import static ru.art.http.server.model.HttpService.*;
 import static ru.art.service.constants.RequestValidationPolicy.*;
+import java.util.*;
 
 @Getter
 public class ConfiguratorServiceSpecification implements HttpServiceSpecification, GrpcServiceSpecification {

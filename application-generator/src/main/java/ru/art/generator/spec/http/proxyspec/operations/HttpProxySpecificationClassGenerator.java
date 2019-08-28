@@ -25,10 +25,6 @@ import ru.art.generator.spec.http.proxyspec.constants.*;
 import ru.art.generator.spec.http.proxyspec.exception.*;
 import ru.art.generator.spec.http.proxyspec.model.*;
 import ru.art.http.client.specification.*;
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static javax.lang.model.element.Modifier.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
@@ -45,6 +41,9 @@ import static ru.art.generator.spec.common.operations.ExecuteMethodGenerator.*;
 import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecConstants.*;
 import static ru.art.generator.spec.http.proxyspec.operations.HttpProxyAuxiliaryOperations.*;
 import static ru.art.generator.spec.http.proxyspec.operations.HttpProxyBlockGenerator.*;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * Interface contains operations for HTTP Proxy specification generator.

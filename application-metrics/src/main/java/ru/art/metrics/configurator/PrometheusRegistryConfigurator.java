@@ -23,7 +23,6 @@ import com.codahale.metrics.jvm.*;
 import io.micrometer.prometheus.*;
 import io.prometheus.client.*;
 import io.prometheus.client.dropwizard.*;
-
 import static io.github.resilience4j.metrics.CircuitBreakerMetrics.*;
 import static io.github.resilience4j.metrics.RateLimiterMetrics.*;
 import static io.github.resilience4j.metrics.RetryMetrics.*;

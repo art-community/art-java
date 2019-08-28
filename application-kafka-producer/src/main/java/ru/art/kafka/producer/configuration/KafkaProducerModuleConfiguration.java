@@ -20,9 +20,8 @@ package ru.art.kafka.producer.configuration;
 
 import lombok.*;
 import ru.art.core.module.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
 
 public interface KafkaProducerModuleConfiguration extends ModuleConfiguration {
     Map<String, KafkaProducerConfiguration> getProducerConfigurations();

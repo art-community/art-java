@@ -19,7 +19,6 @@
 package ru.art.entity;
 
 import lombok.*;
-
 import static ru.art.entity.constants.ValueType.*;
 import static ru.art.entity.constants.ValueType.XmlValueType.STRING;
 

@@ -22,17 +22,16 @@ import lombok.*;
 import ru.art.core.context.*;
 import ru.art.core.network.provider.*;
 import ru.art.core.provider.*;
-import java.io.*;
-import java.net.*;
-import java.nio.charset.*;
-import java.security.*;
-import java.util.*;
-
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.Locale.Category.*;
 import static java.util.Locale.*;
 import static java.util.Optional.*;
 import static ru.art.core.constants.ContextConstants.*;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.*;
+import java.security.*;
+import java.util.*;
 
 public interface ContextInitialConfiguration {
     String getMainModuleId();

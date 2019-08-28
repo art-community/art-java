@@ -21,9 +21,8 @@ package ru.art.entity;
 import lombok.*;
 import ru.art.core.checker.*;
 import ru.art.entity.constants.*;
-import java.util.*;
-
 import static ru.art.entity.constants.ValueType.*;
+import java.util.*;
 
 
 @Getter

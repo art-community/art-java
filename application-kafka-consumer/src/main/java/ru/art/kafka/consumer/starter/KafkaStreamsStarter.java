@@ -18,10 +18,9 @@
 
 package ru.art.kafka.consumer.starter;
 
-import lombok.experimental.UtilityClass;
+import lombok.experimental.*;
 import org.apache.kafka.streams.*;
 import ru.art.kafka.consumer.registry.*;
-
 import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
 
 

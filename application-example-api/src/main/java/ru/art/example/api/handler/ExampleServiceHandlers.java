@@ -20,9 +20,8 @@ package ru.art.example.api.handler;
 
 import ru.art.example.api.model.*;
 import ru.art.service.model.*;
-import java.util.*;
-
 import static ru.art.logging.LoggingModule.*;
+import java.util.*;
 
 
 /**

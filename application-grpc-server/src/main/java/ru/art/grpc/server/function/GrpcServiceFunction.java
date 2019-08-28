@@ -22,14 +22,13 @@ import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
 import ru.art.grpc.server.model.GrpcService.*;
-import ru.art.service.*;
 import ru.art.service.constants.*;
-import java.util.function.*;
-
+import ru.art.service.registry.*;
 import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
 import static ru.art.service.ServiceModule.*;
+import java.util.function.*;
 
 public class GrpcServiceFunction {
     private GrpcMethod grpcMethod = GrpcMethod.grpcMethod();
@@ -65,7 +64,7 @@ public class GrpcServiceFunction {
     }
 
     public <RequestType, ResponseType> void handle(Function<RequestType, ResponseType> function) {
-        ServiceModuleConfiguration.ServiceRegistry serviceRegistry = serviceModule().getServiceRegistry();
+        ServiceRegistry serviceRegistry = serviceModuleState().getServiceRegistry();
         GrpcFunctionalServiceSpecification specification = cast(serviceRegistry.getServices().get(GRPC_FUNCTION_SERVICE));
         if (isNull(specification)) {
             specification = new GrpcFunctionalServiceSpecification();

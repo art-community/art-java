@@ -21,7 +21,6 @@ package ru.art.config.extensions.sql;
 import lombok.*;
 import ru.art.sql.configuration.SqlModuleConfiguration.*;
 import ru.art.sql.constants.*;
-
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.sql.SqlConfigKeys.*;

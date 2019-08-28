@@ -19,11 +19,10 @@
 package ru.art.rsocket.specification;
 
 import ru.art.reactive.service.specification.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
+import java.util.*;
 
 public interface RsocketReactiveServiceSpecification extends RsocketServiceSpecification, ReactiveServiceSpecification {
     @Override

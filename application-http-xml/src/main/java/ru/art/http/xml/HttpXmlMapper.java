@@ -21,8 +21,6 @@ package ru.art.http.xml;
 import ru.art.core.mime.*;
 import ru.art.entity.*;
 import ru.art.http.exception.*;
-import java.nio.charset.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.ArrayConstants.*;
@@ -35,6 +33,7 @@ import static ru.art.http.xml.HttpXmlMapperConstants.*;
 import static ru.art.xml.descriptor.XmlEntityReader.*;
 import static ru.art.xml.descriptor.XmlEntityWriter.*;
 import static ru.art.xml.module.XmlModule.*;
+import java.nio.charset.*;
 
 public class HttpXmlMapper implements HttpContentToValueMapper, HttpEntityToContentMapper {
     @Override

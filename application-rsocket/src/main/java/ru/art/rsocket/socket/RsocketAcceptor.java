@@ -25,7 +25,6 @@ import ru.art.rsocket.model.*;
 import ru.art.rsocket.service.*;
 import ru.art.rsocket.state.RsocketModuleState.*;
 import ru.art.service.model.*;
-
 import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.from;
 import static reactor.core.publisher.Mono.just;
@@ -104,8 +103,8 @@ public class RsocketAcceptor extends AbstractRSocket {
                         .filter(context -> context.getRsocketReactiveMethods()
                                 .getReactiveMethod()
                                 .responseProcessingMode() == REACTIVE)
-                        .groupBy(RsocketRequestReactiveContext::getRsocketReactiveGroupKey, serviceModule()
-                                .getServiceRegistry()
+                        .groupBy(RsocketRequestReactiveContext::getRsocketReactiveGroupKey, serviceModuleState()
+                    .getServiceRegistry()
                                 .getServices()
                                 .size())
                         .map(RsocketReactivePreparedResponse::fromGroupedFlux)

@@ -20,10 +20,9 @@ package ru.art.rsocket.specification;
 
 import ru.art.rsocket.service.*;
 import ru.art.service.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
+import java.util.*;
 
 public interface RsocketServiceSpecification extends Specification {
     RsocketService getRsocketService();

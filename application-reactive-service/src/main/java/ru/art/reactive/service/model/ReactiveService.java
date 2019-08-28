@@ -20,10 +20,9 @@ package ru.art.reactive.service.model;
 
 import lombok.*;
 import lombok.experimental.*;
-import java.util.*;
-
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.*;
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.*;
+import java.util.*;
 
 @Getter
 @Builder(builderMethodName = "reactiveService", buildMethodName = "serve")

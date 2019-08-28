@@ -19,10 +19,9 @@
 package ru.art.kafka.consumer.specification;
 
 import ru.art.service.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
+import java.util.*;
 
 public interface KafkaConsumerServiceSpecification extends Specification {
     @Override

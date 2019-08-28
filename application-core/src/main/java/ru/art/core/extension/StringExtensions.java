@@ -20,11 +20,10 @@ package ru.art.core.extension;
 
 import lombok.experimental.*;
 import ru.art.core.constants.*;
-import java.util.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
+import java.util.*;
 
 @UtilityClass
 public class StringExtensions {

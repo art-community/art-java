@@ -21,15 +21,14 @@ package ru.art.generator.mapper.operations;
 import com.squareup.javapoet.*;
 import ru.art.generator.mapper.annotation.*;
 import ru.art.generator.mapper.exception.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.generator.mapper.constants.Constants.*;
 import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
 import static ru.art.generator.mapper.constants.ExceptionConstants.MapperGeneratorExceptions.*;
 import static ru.art.generator.mapper.operations.GeneratorOperations.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.*;
 
 /**
  * Interface containing common static methods which can be used in other operations

@@ -20,7 +20,6 @@ package ru.art.grpc.client.model;
 
 import lombok.*;
 import lombok.experimental.*;
-
 import static ru.art.grpc.client.module.GrpcClientModule.*;
 
 @Getter

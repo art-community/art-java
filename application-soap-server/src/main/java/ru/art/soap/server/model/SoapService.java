@@ -27,12 +27,11 @@ import ru.art.entity.mapper.ValueToModelMapper.*;
 import ru.art.http.server.interceptor.*;
 import ru.art.service.constants.*;
 import ru.art.soap.content.mapper.*;
-import java.util.*;
-
 import static java.lang.Integer.*;
 import static java.util.Collections.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.soap.content.mapper.SoapMimeToContentTypeMapper.*;
+import java.util.*;
 
 @Getter
 @AllArgsConstructor

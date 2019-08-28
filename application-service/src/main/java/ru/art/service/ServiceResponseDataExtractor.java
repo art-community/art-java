@@ -20,7 +20,6 @@ package ru.art.service;
 
 import lombok.*;
 import ru.art.service.model.*;
-
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 

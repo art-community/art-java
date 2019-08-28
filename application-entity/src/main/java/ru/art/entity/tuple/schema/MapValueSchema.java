@@ -22,13 +22,12 @@ import lombok.*;
 import ru.art.entity.*;
 import ru.art.entity.constants.*;
 import ru.art.entity.exception.*;
-import java.util.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Value.*;
 import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
 import static ru.art.entity.constants.ValueType.*;
+import java.util.*;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)

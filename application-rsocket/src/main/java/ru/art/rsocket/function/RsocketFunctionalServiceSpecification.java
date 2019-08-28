@@ -22,15 +22,14 @@ import lombok.*;
 import ru.art.reactive.service.model.*;
 import ru.art.rsocket.service.*;
 import ru.art.rsocket.specification.*;
-import java.util.*;
-import java.util.function.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.reactive.service.model.ReactiveService.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.service.RsocketService.*;
+import java.util.*;
+import java.util.function.*;
 
 @Getter
 public class RsocketFunctionalServiceSpecification implements RsocketReactiveServiceSpecification {

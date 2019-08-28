@@ -22,12 +22,11 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import ru.art.core.module.*;
 import ru.art.logging.LoggingModuleConstants.*;
-import java.util.*;
-
 import static org.apache.logging.log4j.LogManager.getRootLogger;
 import static org.apache.logging.log4j.core.config.Configurator.*;
 import static ru.art.logging.LoggerConfigurationService.*;
 import static ru.art.logging.LoggingModuleConstants.LoggingMode.*;
+import java.util.*;
 
 public interface LoggingModuleConfiguration extends ModuleConfiguration {
     Logger getLogger();

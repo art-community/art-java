@@ -29,15 +29,14 @@ import ru.art.entity.mapper.*;
 import ru.art.http.client.handler.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.constants.*;
-import java.nio.charset.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpMethodType.*;
+import java.nio.charset.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 @Getter(value = PACKAGE)
 @Setter(value = PACKAGE)

@@ -21,15 +21,14 @@ package ru.art.kafka.consumer.configuration;
 import lombok.*;
 import org.apache.kafka.common.serialization.*;
 import ru.art.kafka.deserializer.*;
-import java.time.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import static java.util.Collections.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.ThreadConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
+import java.time.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 public interface KafkaConsumerConfiguration {
     /**

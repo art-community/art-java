@@ -19,7 +19,6 @@
 package ru.art.grpc.client.interceptor;
 
 import io.grpc.*;
-
 import static io.grpc.Metadata.*;
 import static io.grpc.Metadata.Key.*;
 import static org.apache.logging.log4j.ThreadContext.*;

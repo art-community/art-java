@@ -22,7 +22,6 @@ import lombok.*;
 import ru.art.core.module.*;
 import ru.art.remote.scheduler.configuration.*;
 import ru.art.remote.scheduler.state.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.*;
@@ -31,11 +30,9 @@ import static ru.art.remote.scheduler.controller.PoolController.*;
 @Getter
 public class RemoteSchedulerModule implements Module<RemoteSchedulerModuleConfiguration, RemoteSchedulerModuleState> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final RemoteSchedulerModuleConfiguration remoteModule = context()
-            .getModule(REMOTE_SCHEDULER_MODULE_ID, RemoteSchedulerModule::new);
+    private static final RemoteSchedulerModuleConfiguration remoteModule = context().getModule(REMOTE_SCHEDULER_MODULE_ID, RemoteSchedulerModule::new);
     @Getter(lazy = true, value = PRIVATE)
-    private static final RemoteSchedulerModuleState remoteModuleState = context()
-            .getModuleState(REMOTE_SCHEDULER_MODULE_ID, RemoteSchedulerModule::new);
+    private static final RemoteSchedulerModuleState remoteModuleState = context().getModuleState(REMOTE_SCHEDULER_MODULE_ID, RemoteSchedulerModule::new);
     private final String id = REMOTE_SCHEDULER_MODULE_ID;
     private final RemoteSchedulerModuleConfiguration defaultConfiguration = new RemoteSchedulerModuleConfiguration();
     private RemoteSchedulerModuleState state = new RemoteSchedulerModuleState();

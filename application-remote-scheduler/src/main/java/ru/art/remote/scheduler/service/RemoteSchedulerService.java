@@ -24,8 +24,6 @@ import ru.art.remote.scheduler.api.model.*;
 import ru.art.scheduler.db.adapter.api.model.*;
 import ru.art.service.*;
 import ru.art.task.deferred.executor.*;
-import java.util.*;
-
 import static java.time.Duration.*;
 import static java.time.LocalDateTime.*;
 import static java.util.Collections.*;
@@ -37,6 +35,7 @@ import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.Z
 import static ru.art.remote.scheduler.module.RemoteSchedulerModule.*;
 import static ru.art.scheduler.db.adapter.api.constants.SchedulerDbAdapterApiConstants.Methods.*;
 import static ru.art.service.ServiceController.*;
+import java.util.*;
 
 
 public interface RemoteSchedulerService {

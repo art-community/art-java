@@ -35,8 +35,6 @@ import ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import ru.art.service.model.*;
 import ru.art.soap.server.model.*;
 import ru.art.soap.server.specification.*;
-import java.util.*;
-
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -62,6 +60,7 @@ import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
 import static ru.art.soap.server.model.SoapService.SoapOperation.*;
 import static ru.art.soap.server.model.SoapService.*;
+import java.util.*;
 
 
 @ToString

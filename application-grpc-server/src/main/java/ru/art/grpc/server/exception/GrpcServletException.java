@@ -20,7 +20,6 @@ package ru.art.grpc.server.exception;
 
 import io.grpc.*;
 import io.grpc.Metadata.*;
-
 import static io.grpc.Metadata.*;
 import static io.grpc.Metadata.Key.*;
 import static io.grpc.Status.*;

@@ -20,7 +20,6 @@ package ru.art.config.extensions.grpc;
 
 import ru.art.config.*;
 import ru.art.core.annotation.*;
-
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.grpc.GrpcConfigKeys.*;
 

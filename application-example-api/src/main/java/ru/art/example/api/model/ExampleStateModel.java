@@ -20,7 +20,6 @@ package ru.art.example.api.model;
 
 import lombok.*;
 import ru.art.service.validation.*;
-
 import static ru.art.service.validation.ValidationExpressions.*;
 
 @Getter

@@ -19,7 +19,6 @@
 package ru.art.network.manager.interceptor;
 
 import ru.art.http.server.interceptor.*;
-
 import static ru.art.http.server.interceptor.HttpServerInterception.*;
 import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
 import static ru.art.network.manager.client.ApplicationStateClient.*;

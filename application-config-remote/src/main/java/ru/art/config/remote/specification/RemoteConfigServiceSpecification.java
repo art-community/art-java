@@ -22,8 +22,6 @@ import lombok.*;
 import ru.art.grpc.server.model.*;
 import ru.art.grpc.server.specification.*;
 import ru.art.service.exception.*;
-import java.util.*;
-
 import static ru.art.config.remote.api.constants.RemoteConfigApiConstants.Methods.*;
 import static ru.art.config.remote.api.constants.RemoteConfigApiConstants.*;
 import static ru.art.config.remote.service.RemoteConfigService.*;
@@ -31,6 +29,7 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
 import static ru.art.grpc.server.model.GrpcService.GrpcMethod.*;
 import static ru.art.grpc.server.model.GrpcService.*;
+import java.util.*;
 
 @ToString
 @Getter

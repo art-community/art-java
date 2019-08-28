@@ -19,7 +19,6 @@
 package ru.art.configurator.service;
 
 import ru.art.configurator.api.entity.*;
-
 import static ru.art.configurator.dao.UserDao.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 

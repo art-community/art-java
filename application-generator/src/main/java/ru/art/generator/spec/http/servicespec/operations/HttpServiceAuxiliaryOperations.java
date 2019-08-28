@@ -32,9 +32,6 @@ import ru.art.generator.spec.http.servicespec.model.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.constants.*;
 import ru.art.service.constants.*;
-import java.lang.reflect.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -48,6 +45,8 @@ import static ru.art.generator.spec.common.operations.AnnotationsChecker.*;
 import static ru.art.generator.spec.http.common.constants.HttpSpecConstants.Errors.*;
 import static ru.art.generator.spec.http.common.constants.HttpSpecConstants.Methods.*;
 import static ru.art.generator.spec.http.servicespec.constants.HttpServiceSpecAnnotations.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * Interface contains operations, which helps in specification's parts generation.

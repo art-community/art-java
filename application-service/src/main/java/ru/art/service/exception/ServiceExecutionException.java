@@ -20,7 +20,6 @@ package ru.art.service.exception;
 
 import lombok.*;
 import ru.art.service.model.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;

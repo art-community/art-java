@@ -24,8 +24,6 @@ import ru.art.config.constants.*;
 import ru.art.config.exception.*;
 import ru.art.core.checker.*;
 import ru.art.entity.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
@@ -34,6 +32,7 @@ import static java.util.stream.Collectors.*;
 import static ru.art.config.constants.ConfigExceptionMessages.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
+import java.util.*;
 
 @Getter
 @AllArgsConstructor

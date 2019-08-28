@@ -24,10 +24,6 @@ import ru.art.entity.Value;
 import ru.art.entity.*;
 import ru.art.entity.constants.ValueType.*;
 import ru.art.json.exception.*;
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -39,6 +35,9 @@ import static ru.art.json.constants.JsonLoggingMessages.*;
 import static ru.art.json.constants.JsonMappingExceptionMessages.*;
 import static ru.art.json.module.JsonModule.*;
 import static ru.art.logging.LoggingModule.*;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JsonEntityWriter {

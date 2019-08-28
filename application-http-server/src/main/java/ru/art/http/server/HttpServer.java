@@ -33,10 +33,6 @@ import ru.art.http.server.interceptor.*;
 import ru.art.http.server.model.*;
 import ru.art.http.server.path.*;
 import ru.art.http.server.specification.*;
-
-import javax.servlet.http.*;
-import java.util.*;
-
 import static java.lang.System.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -48,7 +44,6 @@ import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.EqualsCheckingExtensions.*;
-import static ru.art.core.extension.ThreadExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
 import static ru.art.http.constants.HttpInterceptorType.*;
@@ -61,6 +56,8 @@ import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 import static ru.art.http.server.model.HttpService.*;
 import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.logging.LoggingModule.*;
+import javax.servlet.http.*;
+import java.util.*;
 
 @SuppressWarnings("Duplicates")
 public class HttpServer {

@@ -18,9 +18,8 @@
 
 package ru.art.kafka.consumer.constants;
 
-import java.time.*;
-
 import static java.time.Duration.*;
+import java.time.*;
 
 public interface KafkaConsumerModuleConstants {
     String KAFKA_CONSUMER_MODULE_ID = "KAFKA_CONSUMER_MODULE";

@@ -20,10 +20,9 @@ package ru.art.http.server.specification;
 
 import ru.art.http.server.model.*;
 import ru.art.service.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
+import java.util.*;
 
 public interface HttpServiceSpecification extends Specification {
     HttpService getHttpService();

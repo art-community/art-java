@@ -21,7 +21,6 @@ package ru.art.config.extensions.logging;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import ru.art.logging.LoggingModuleConfiguration.*;
-
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.logging.LoggingConfigKeys.*;
 import static ru.art.core.extension.ExceptionExtensions.*;

@@ -20,7 +20,6 @@ package ru.art.remote.scheduler.configuration;
 
 import lombok.*;
 import ru.art.core.module.*;
-
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.http.constants.HttpCommonConstants.*;

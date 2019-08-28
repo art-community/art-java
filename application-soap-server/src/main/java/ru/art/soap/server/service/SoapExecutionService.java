@@ -28,8 +28,6 @@ import ru.art.soap.server.exception.*;
 import ru.art.soap.server.model.*;
 import ru.art.soap.server.model.SoapService.*;
 import ru.art.soap.server.specification.*;
-import java.util.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
@@ -40,6 +38,7 @@ import static ru.art.soap.server.constans.SoapServerModuleConstants.ResponseFaul
 import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
 import static ru.art.soap.server.module.SoapServerModule.*;
 import static ru.art.soap.server.normalizer.WsdlPathNormalizer.*;
+import java.util.*;
 
 @UtilityClass
 public class SoapExecutionService {

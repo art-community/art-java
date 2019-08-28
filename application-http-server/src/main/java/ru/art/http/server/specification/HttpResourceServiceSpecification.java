@@ -26,8 +26,6 @@ import ru.art.service.*;
 import ru.art.service.exception.*;
 import ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import ru.art.service.model.*;
-import java.util.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -46,6 +44,7 @@ import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.http.server.service.HttpResourceService.*;
 import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import static ru.art.service.model.ServiceInterceptionResult.*;
+import java.util.*;
 
 @Getter
 @AllArgsConstructor

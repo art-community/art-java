@@ -22,8 +22,6 @@ import lombok.*;
 import ru.art.configurator.api.entity.*;
 import ru.art.entity.Value;
 import ru.art.entity.*;
-import java.util.*;
-
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
@@ -31,6 +29,7 @@ import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.configurator.dao.ConfiguratorDao.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.entity.Value.*;
+import java.util.*;
 
 public interface ApplicationModulesParametersProvider {
     static Optional<ApplicationModuleParameters> getApplicationModuleParameters(ModuleKey moduleKey) {

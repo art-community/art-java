@@ -20,7 +20,6 @@ package ru.art.state.dao;
 
 import ru.art.entity.*;
 import ru.art.state.api.model.*;
-
 import static ru.art.rocks.db.dao.RocksDbValueDao.*;
 import static ru.art.state.api.mapping.ClusterMapper.*;
 import static ru.art.state.constants.StateModuleConstants.DbKeys.*;

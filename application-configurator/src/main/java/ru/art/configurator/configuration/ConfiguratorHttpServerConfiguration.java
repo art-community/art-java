@@ -25,8 +25,6 @@ import ru.art.core.mime.*;
 import ru.art.http.mapper.*;
 import ru.art.http.server.HttpServerModuleConfiguration.*;
 import ru.art.http.server.interceptor.*;
-import java.util.*;
-
 import static ru.art.config.ConfigProvider.*;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
@@ -40,6 +38,7 @@ import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourc
 import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
 import static ru.art.http.server.service.HttpResourceService.*;
 import static ru.art.metrics.http.filter.MetricsHttpLogFilter.*;
+import java.util.*;
 
 @Getter
 public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefaultConfiguration {

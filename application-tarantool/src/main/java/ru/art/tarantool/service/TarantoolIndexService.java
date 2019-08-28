@@ -21,7 +21,6 @@ package ru.art.tarantool.service;
 import lombok.*;
 import org.tarantool.*;
 import ru.art.tarantool.configuration.lua.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.tarantool.caller.TarantoolFunctionCaller.*;

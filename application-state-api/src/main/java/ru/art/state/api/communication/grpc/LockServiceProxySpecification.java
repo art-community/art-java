@@ -23,7 +23,6 @@ import lombok.experimental.*;
 import ru.art.grpc.client.communicator.*;
 import ru.art.grpc.client.specification.*;
 import ru.art.service.exception.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.grpc.client.communicator.GrpcCommunicator.*;
 import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.*;

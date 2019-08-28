@@ -22,12 +22,11 @@ package ru.art.configurator.api.mapping;
 import ru.art.configurator.api.entity.*;
 import ru.art.entity.*;
 import ru.art.entity.mapper.*;
-import java.util.*;
-
 import static java.util.stream.Collectors.*;
 import static ru.art.configurator.api.mapping.ModuleKeyMapping.*;
 import static ru.art.entity.CollectionValuesFactory.*;
 import static ru.art.entity.mapper.ValueMapper.*;
+import java.util.*;
 
 public interface ModuleKeyCollectionMapping {
     ValueToModelMapper<Set<ModuleKey>, CollectionValue<Entity>> toModel = collectionValue -> collectionValue.getEntityList().stream().map(moduleKeyMapper.getToModel()::map).collect(toSet());

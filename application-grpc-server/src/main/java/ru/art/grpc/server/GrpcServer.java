@@ -25,10 +25,6 @@ import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.*;
 import ru.art.grpc.server.exception.*;
 import ru.art.grpc.server.servlet.*;
 import ru.art.grpc.server.specification.*;
-
-import java.util.*;
-import java.util.concurrent.*;
-
 import static io.grpc.ServerBuilder.*;
 import static java.lang.System.*;
 import static java.text.MessageFormat.*;
@@ -42,6 +38,8 @@ import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
 import static ru.art.grpc.server.module.GrpcServerModule.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.service.ServiceModule.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 @AllArgsConstructor
 public class GrpcServer {
@@ -64,7 +62,7 @@ public class GrpcServer {
         }
         grpcServerModule().getInterceptors().forEach(serverBuilder::intercept);
         Map<String, GrpcServiceSpecification> protobufServices = mapOf();
-        serviceModule().getServiceRegistry().getServices().values().stream()
+        serviceModuleState().getServiceRegistry().getServices().values().stream()
                 .filter(serviceSpecification -> serviceSpecification.getServiceTypes().contains(GRPC_SERVICE_TYPE))
                 .map(serviceSpecification -> (GrpcServiceSpecification) serviceSpecification)
                 .peek(GrpcServer::logService)

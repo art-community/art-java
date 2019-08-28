@@ -22,15 +22,14 @@ import lombok.*;
 import ru.art.entity.mapper.ValueFromModelMapper.*;
 import ru.art.entity.mapper.ValueToModelMapper.*;
 import ru.art.http.client.communicator.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.http.client.communicator.HttpCommunicator.*;
 import static ru.art.http.constants.HttpHeaders.*;
 import static ru.art.soap.client.communicator.SoapEntityMapping.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 @NoArgsConstructor(access = PACKAGE)
 class SoapCommunicationExecutor {

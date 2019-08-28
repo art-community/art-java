@@ -21,10 +21,9 @@ package ru.art.xml.module;
 import lombok.*;
 import ru.art.core.module.*;
 import ru.art.xml.configuration.*;
-import ru.art.xml.configuration.XmlModuleConfiguration.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.xml.configuration.XmlModuleConfiguration.*;
 import static ru.art.xml.constants.XmlModuleConstants.*;
 
 @Getter
@@ -32,11 +31,11 @@ public class XmlModule implements Module<XmlModuleConfiguration, ModuleState> {
     @Getter(lazy = true, value = PRIVATE)
     private final static XmlModuleConfiguration xmlModule = context().getModule(XML_MODULE_ID, XmlModule::new);
     private final String id = XML_MODULE_ID;
-    private final XmlModuleConfiguration defaultConfiguration = XmlModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
+    private final XmlModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
 
     public static XmlModuleConfiguration xmlModule() {
-        if (insideDefaultContext()) {
-            return XmlModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getXmlModule();
     }

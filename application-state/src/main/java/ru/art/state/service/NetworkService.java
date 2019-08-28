@@ -19,10 +19,6 @@
 package ru.art.state.service;
 
 import ru.art.state.api.model.*;
-import java.time.*;
-import java.util.*;
-import java.util.function.*;
-
 import static java.lang.System.*;
 import static java.time.Duration.*;
 import static java.util.Objects.*;
@@ -31,6 +27,9 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.state.api.model.ModuleNetworkResponse.*;
 import static ru.art.state.dao.ClusterDao.*;
 import static ru.art.state.module.ApplicationStateModule.*;
+import java.time.*;
+import java.util.*;
+import java.util.function.*;
 
 public interface NetworkService {
     static ClusterProfileResponse getClusterProfile(ClusterProfileRequest request) {

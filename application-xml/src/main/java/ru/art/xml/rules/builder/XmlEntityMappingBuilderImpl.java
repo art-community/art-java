@@ -20,12 +20,11 @@ package ru.art.xml.rules.builder;
 
 import ru.art.xml.constants.*;
 import ru.art.xml.exception.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.xml.constants.XmlEntityMappingTargets.*;
 import static ru.art.xml.constants.XmlMappingExceptionMessages.*;
+import java.util.*;
 
 public class XmlEntityMappingBuilderImpl implements XmlEntityMappingBuilder {
     private final Set<XmlEntityRule> attributeValueRules = setOf();

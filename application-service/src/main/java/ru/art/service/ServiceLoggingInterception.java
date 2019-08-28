@@ -24,8 +24,6 @@ import ru.art.logging.*;
 import ru.art.service.exception.*;
 import ru.art.service.interceptor.*;
 import ru.art.service.model.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static org.apache.logging.log4j.ThreadContext.*;
@@ -42,6 +40,7 @@ import static ru.art.service.ServiceModule.*;
 import static ru.art.service.constants.ServiceLoggingMessages.*;
 import static ru.art.service.constants.ServiceModuleConstants.*;
 import static ru.art.service.model.ServiceInterceptionResult.*;
+import java.util.*;
 
 public class ServiceLoggingInterception implements ServiceRequestInterception, ServiceResponseInterception {
     private final static ThreadLocal<Stack<ServiceCallLoggingParameters>> serviceLoggingParameters = new ThreadLocal<>();
@@ -51,8 +50,8 @@ public class ServiceLoggingInterception implements ServiceRequestInterception, S
     private static void putRequestResponseMetrics(ServiceRequest<?> request, ServiceCallLoggingParameters parameters) {
         putIfNotNull(REQUEST_KEY, request);
         putServiceCallLoggingParameters(parameters);
-        List<String> serviceTypes = serviceModule()
-                .getServiceRegistry()
+        List<String> serviceTypes = serviceModuleState()
+                    .getServiceRegistry()
                 .getService(request.getServiceMethodCommand().getServiceId())
                 .getServiceTypes();
         putIfNotNull(SERVICE_TYPES_KEY, serviceTypes);

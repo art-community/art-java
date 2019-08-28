@@ -23,7 +23,6 @@ import ru.art.configurator.api.entity.*;
 import ru.art.grpc.client.communicator.*;
 import ru.art.grpc.client.specification.*;
 import ru.art.service.exception.*;
-
 import static java.lang.System.*;
 import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.*;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;

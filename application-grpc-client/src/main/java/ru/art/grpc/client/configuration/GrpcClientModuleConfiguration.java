@@ -27,9 +27,6 @@ import ru.art.grpc.client.exception.*;
 import ru.art.grpc.client.interceptor.*;
 import ru.art.grpc.client.model.*;
 import ru.art.logging.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.concurrent.ForkJoinPool.*;
@@ -39,6 +36,8 @@ import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.grpc.client.constants.GrpcClientExceptionMessages.*;
 import static ru.art.grpc.client.constants.GrpcClientModuleConstants.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
     List<ClientInterceptor> getInterceptors();

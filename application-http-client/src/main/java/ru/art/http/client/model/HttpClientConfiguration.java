@@ -22,7 +22,6 @@ import lombok.*;
 import org.apache.http.client.config.*;
 import org.apache.http.config.*;
 import org.apache.http.impl.nio.reactor.*;
-
 import static ru.art.http.client.module.HttpClientModule.*;
 
 @Getter

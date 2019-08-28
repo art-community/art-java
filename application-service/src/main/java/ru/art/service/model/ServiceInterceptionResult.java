@@ -20,7 +20,6 @@ package ru.art.service.model;
 
 import lombok.*;
 import ru.art.core.constants.*;
-
 import static ru.art.core.constants.InterceptionStrategy.*;
 
 @Getter

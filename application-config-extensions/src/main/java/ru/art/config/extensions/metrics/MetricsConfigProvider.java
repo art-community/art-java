@@ -21,7 +21,6 @@ package ru.art.config.extensions.metrics;
 import lombok.experimental.*;
 import ru.art.config.*;
 import ru.art.core.annotation.*;
-
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.metrics.MetricsConfigKeys.*;
 

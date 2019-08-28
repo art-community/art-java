@@ -18,14 +18,13 @@
 
 package ru.art.http.client.builder;
 
-import java.util.*;
-
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 import static ru.art.core.constants.CharConstants.*;
 import static ru.art.core.constants.StringConstants.EQUAL;
 import static ru.art.core.constants.StringConstants.SLASH;
 import static ru.art.core.constants.StringConstants.*;
+import java.util.*;
 
 public interface HttpUriBuilder {
     static String buildUri(String baseUri, List<String> pathParameters) {

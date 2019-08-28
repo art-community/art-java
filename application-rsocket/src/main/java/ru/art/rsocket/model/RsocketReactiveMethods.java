@@ -24,7 +24,6 @@ import ru.art.rsocket.exception.*;
 import ru.art.rsocket.specification.*;
 import ru.art.service.*;
 import ru.art.service.model.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
@@ -43,7 +42,7 @@ public class RsocketReactiveMethods {
     private final ReactiveMethod reactiveMethod;
 
     static RsocketReactiveMethods fromCommand(ServiceMethodCommand command) {
-        Specification specification = serviceModule().getServiceRegistry()
+        Specification specification = serviceModuleState().getServiceRegistry()
                 .getServices()
                 .get(command.getServiceId());
         if (isNull(specification)) {

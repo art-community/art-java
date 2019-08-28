@@ -21,9 +21,6 @@ package ru.art.generator.mapper.operations;
 import com.squareup.javapoet.*;
 import ru.art.entity.*;
 import ru.art.generator.mapper.exception.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.*;
-
 import static com.squareup.javapoet.CodeBlock.*;
 import static java.text.MessageFormat.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -34,6 +31,8 @@ import static ru.art.generator.mapper.constants.ExceptionConstants.DefinitionExc
 import static ru.art.generator.mapper.constants.FromModelConstants.*;
 import static ru.art.generator.mapper.constants.ToModelConstants.*;
 import static ru.art.generator.mapper.operations.CommonOperations.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.*;
 
 /**
  * Interface containing static methods for generating

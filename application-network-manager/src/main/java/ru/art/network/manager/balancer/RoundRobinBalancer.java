@@ -20,11 +20,10 @@ package ru.art.network.manager.balancer;
 
 import lombok.*;
 import ru.art.state.api.model.*;
-import java.util.*;
-import java.util.concurrent.atomic.*;
-
 import static java.util.stream.Collectors.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
+import java.util.concurrent.atomic.*;
 
 @Getter
 public class RoundRobinBalancer implements Balancer {

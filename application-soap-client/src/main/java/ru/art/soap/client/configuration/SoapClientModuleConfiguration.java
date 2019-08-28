@@ -20,7 +20,6 @@ package ru.art.soap.client.configuration;
 
 import lombok.*;
 import ru.art.core.module.*;
-
 import static ru.art.soap.client.constants.SoapClientModuleConstants.*;
 
 public interface SoapClientModuleConfiguration extends ModuleConfiguration {

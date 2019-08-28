@@ -19,7 +19,6 @@
 package ru.art.http.server.filter;
 
 import org.zalando.logbook.*;
-
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.mime.MimeType.*;

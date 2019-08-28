@@ -20,12 +20,11 @@ package ru.art.http.client.specification;
 
 import ru.art.http.client.model.*;
 import ru.art.service.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.client.constants.HttpClientModuleConstants.*;
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
+import java.util.*;
 
 public interface HttpCommunicationSpecification extends Specification {
     default HttpCommunicationTargetConfiguration communicationTarget(String serviceId) {

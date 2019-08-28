@@ -18,10 +18,9 @@
 
 package ru.art.service.validation;
 
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;
+import java.util.*;
 
 class NotEmptyCollectionValidationExpression extends ValidationExpression<Collection> {
     @Override

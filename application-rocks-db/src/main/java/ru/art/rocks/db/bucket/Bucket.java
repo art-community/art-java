@@ -19,10 +19,9 @@
 package ru.art.rocks.db.bucket;
 
 import lombok.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
+import java.util.*;
 
 @Getter
 @RequiredArgsConstructor

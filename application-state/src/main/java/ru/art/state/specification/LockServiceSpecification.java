@@ -24,8 +24,6 @@ import ru.art.grpc.server.specification.*;
 import ru.art.http.server.model.*;
 import ru.art.http.server.specification.*;
 import ru.art.service.exception.*;
-import java.util.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionMapping.*;
@@ -42,6 +40,7 @@ import static ru.art.state.api.constants.StateApiConstants.LockServiceConstants.
 import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.Paths.*;
 import static ru.art.state.api.mapping.LockRequestMapper.*;
 import static ru.art.state.service.LockService.*;
+import java.util.*;
 
 @Getter
 public class LockServiceSpecification implements HttpServiceSpecification, GrpcServiceSpecification {

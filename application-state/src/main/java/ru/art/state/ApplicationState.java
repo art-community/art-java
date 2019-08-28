@@ -21,12 +21,11 @@ package ru.art.state;
 import lombok.*;
 import ru.art.core.module.*;
 import ru.art.state.api.model.*;
-import java.util.*;
-import java.util.concurrent.locks.*;
-
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
+import java.util.concurrent.locks.*;
 
 @Getter
 @Setter

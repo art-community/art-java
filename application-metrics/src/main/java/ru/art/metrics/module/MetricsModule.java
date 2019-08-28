@@ -21,9 +21,9 @@ package ru.art.metrics.module;
 import lombok.*;
 import ru.art.core.module.*;
 import ru.art.metrics.configuration.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.metrics.configuration.MetricModuleConfiguration.*;
 import static ru.art.metrics.constants.MetricsModuleConstants.*;
 
 @Getter
@@ -31,11 +31,11 @@ public class MetricsModule implements Module<MetricModuleConfiguration, ModuleSt
     @Getter(lazy = true, value = PRIVATE)
     private static final MetricModuleConfiguration metricsModule = context().getModule(METRICS_MODULE_ID, MetricsModule::new);
     private final String id = METRICS_MODULE_ID;
-    private final MetricModuleConfiguration defaultConfiguration = MetricModuleConfiguration.DEFAULT_CONFIGURATION;
+    private final MetricModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
 
     public static MetricModuleConfiguration metricsModule() {
-        if (insideDefaultContext()) {
-            return MetricModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getMetricsModule();
     }

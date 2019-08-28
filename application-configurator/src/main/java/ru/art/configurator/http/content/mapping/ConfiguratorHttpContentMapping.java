@@ -22,11 +22,10 @@ import ru.art.core.factory.*;
 import ru.art.core.mime.*;
 import ru.art.http.json.*;
 import ru.art.http.mapper.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
 import static ru.art.metrics.http.constants.MetricsModuleHttpConstants.*;
+import java.util.*;
 
 public interface ConfiguratorHttpContentMapping {
     static Map<MimeType, HttpContentMapper> configureContentMappers(Map<MimeType, HttpContentMapper> parentMappers) {

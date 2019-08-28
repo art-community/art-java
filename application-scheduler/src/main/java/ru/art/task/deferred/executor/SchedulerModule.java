@@ -20,10 +20,9 @@ package ru.art.task.deferred.executor;
 
 import lombok.*;
 import ru.art.core.module.*;
-import ru.art.task.deferred.executor.SchedulerModuleConfiguration.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.task.deferred.executor.SchedulerModuleConfiguration.*;
 import static ru.art.task.deferred.executor.SchedulerModuleConstants.*;
 
 @Getter
@@ -31,11 +30,11 @@ public class SchedulerModule implements Module<SchedulerModuleConfiguration, Mod
     @Getter(lazy = true, value = PRIVATE)
     private final static SchedulerModuleConfiguration schedulerModule = context().getModule(SCHEDULER_MODULE_ID, SchedulerModule::new);
     private final String id = SCHEDULER_MODULE_ID;
-    private final SchedulerModuleConfiguration defaultConfiguration = SchedulerModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
+    private final SchedulerModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
 
     public static SchedulerModuleConfiguration schedulerModule() {
-        if (insideDefaultContext()) {
-            return SchedulerModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getSchedulerModule();
     }

@@ -19,10 +19,6 @@
 package ru.art.http.server.service;
 
 import org.jtwig.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-
 import static java.util.Objects.*;
 import static org.jtwig.JtwigTemplate.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
@@ -33,6 +29,9 @@ import static ru.art.core.extension.InputOutputStreamExtensions.*;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
 import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.logging.LoggingModule.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 public interface HttpResourceService {
     static String getStringResource(final String resource) {

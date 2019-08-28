@@ -18,18 +18,16 @@
 
 package ru.art.config.remote.loader;
 
-import lombok.experimental.UtilityClass;
-import ru.art.configurator.api.entity.Configuration;
-import ru.art.entity.Entity;
-import ru.art.service.ServiceController;
-
-import java.util.Optional;
-
-import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.CONFIGURATION_IS_EMPTY;
-import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.CONFIGURATOR_COMMUNICATION_SERVICE_ID;
-import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.GET_PROTOBUF_CONFIG;
-import static ru.art.entity.Entity.entityBuilder;
-import static ru.art.logging.LoggingModule.loggingModule;
+import lombok.experimental.*;
+import ru.art.configurator.api.entity.*;
+import ru.art.entity.*;
+import ru.art.service.*;
+import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.*;
+import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.*;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.Methods.*;
+import static ru.art.entity.Entity.*;
+import static ru.art.logging.LoggingModule.*;
+import java.util.*;
 
 @UtilityClass
 public class RemoteConfigLoader {

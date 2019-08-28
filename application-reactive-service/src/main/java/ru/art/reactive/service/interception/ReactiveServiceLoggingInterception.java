@@ -24,7 +24,6 @@ import ru.art.reactive.service.specification.*;
 import ru.art.service.*;
 import ru.art.service.model.*;
 import ru.art.service.model.ServiceResponse.*;
-
 import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
 import static ru.art.core.caster.Caster.*;
@@ -38,7 +37,7 @@ public class ReactiveServiceLoggingInterception extends ServiceLoggingIntercepti
     public ServiceInterceptionResult intercept(ServiceRequest<?> request) {
         String serviceId = request.getServiceMethodCommand().getServiceId();
         String methodId = request.getServiceMethodCommand().getMethodId();
-        Specification serviceSpecification = serviceModule().getServiceRegistry().getService(serviceId);
+        Specification serviceSpecification = serviceModuleState().getServiceRegistry().getService(serviceId);
         if (!serviceSpecification.getServiceTypes().contains(REACTIVE_SERVICE_TYPE)) {
             return super.intercept(request);
         }
@@ -63,7 +62,7 @@ public class ReactiveServiceLoggingInterception extends ServiceLoggingIntercepti
     public ServiceInterceptionResult intercept(ServiceRequest<?> request, ServiceResponse<?> response) {
         String serviceId = request.getServiceMethodCommand().getServiceId();
         String methodId = request.getServiceMethodCommand().getMethodId();
-        Specification serviceSpecification = serviceModule().getServiceRegistry().getService(serviceId);
+        Specification serviceSpecification = serviceModuleState().getServiceRegistry().getService(serviceId);
         if (!serviceSpecification.getServiceTypes().contains(REACTIVE_SERVICE_TYPE)) {
             return super.intercept(request, response);
         }

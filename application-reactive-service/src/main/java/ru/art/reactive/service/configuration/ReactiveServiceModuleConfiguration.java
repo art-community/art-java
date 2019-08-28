@@ -21,11 +21,10 @@ package ru.art.reactive.service.configuration;
 import lombok.*;
 import ru.art.core.module.*;
 import ru.art.reactive.service.interception.*;
-import java.util.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
+import java.util.*;
 
 public interface ReactiveServiceModuleConfiguration extends ModuleConfiguration {
     List<RequestInterceptor> getRequestInterceptors();

@@ -19,7 +19,6 @@
 package ru.art.tarantool.configuration;
 
 import lombok.*;
-
 import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 

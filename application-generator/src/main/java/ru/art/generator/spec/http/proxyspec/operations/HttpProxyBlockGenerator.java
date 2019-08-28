@@ -31,10 +31,6 @@ import ru.art.generator.spec.http.proxyspec.annotation.*;
 import ru.art.generator.spec.http.proxyspec.constants.*;
 import ru.art.generator.spec.http.proxyspec.exception.*;
 import ru.art.generator.spec.http.proxyspec.model.*;
-import java.lang.annotation.*;
-import java.lang.reflect.*;
-import java.util.*;
-
 import static com.squareup.javapoet.CodeBlock.*;
 import static java.io.File.*;
 import static java.text.MessageFormat.*;
@@ -58,6 +54,9 @@ import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecConsta
 import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecConstants.*;
 import static ru.art.generator.spec.http.proxyspec.operations.HttpProxyAuxiliaryOperations.*;
 import static ru.art.generator.spec.http.proxyspec.operations.HttpProxySpecificationClassGenerator.*;
+import java.lang.annotation.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * Interface with methods to create block of method's constants

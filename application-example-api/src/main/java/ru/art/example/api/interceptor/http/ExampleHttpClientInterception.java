@@ -21,10 +21,9 @@ package ru.art.example.api.interceptor.http;
 import org.apache.http.client.methods.*;
 import ru.art.core.constants.*;
 import ru.art.http.client.interceptor.*;
-import java.util.*;
-
 import static ru.art.core.constants.CharConstants.*;
 import static ru.art.core.constants.InterceptionStrategy.*;
+import java.util.*;
 
 public class ExampleHttpClientInterception implements HttpClientRequestInterception {
 

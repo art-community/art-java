@@ -21,8 +21,6 @@ package ru.art.tarantool.dao;
 import org.tarantool.*;
 import ru.art.entity.*;
 import ru.art.tarantool.model.*;
-import java.util.*;
-
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.Optional.*;
@@ -37,6 +35,7 @@ import static ru.art.tarantool.caller.TarantoolFunctionCaller.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
 import static ru.art.tarantool.service.TarantoolScriptService.*;
+import java.util.*;
 
 @SuppressWarnings("Duplicates")
 public final class TarantoolIndexDao extends TarantoolCommonDao {

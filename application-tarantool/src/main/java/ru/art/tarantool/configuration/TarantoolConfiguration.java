@@ -21,10 +21,9 @@ package ru.art.tarantool.configuration;
 import lombok.*;
 import ru.art.tarantool.configuration.lua.*;
 import ru.art.tarantool.model.*;
-import java.util.*;
-
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.*;
+import java.util.*;
 
 @Getter
 @Builder

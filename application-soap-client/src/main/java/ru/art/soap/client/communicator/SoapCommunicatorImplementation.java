@@ -31,10 +31,6 @@ import ru.art.http.client.interceptor.*;
 import ru.art.http.client.model.*;
 import ru.art.soap.client.communicator.SoapCommunicator.*;
 import ru.art.soap.content.mapper.*;
-import java.nio.charset.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
@@ -42,6 +38,9 @@ import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.soap.client.module.SoapClientModule.*;
+import java.nio.charset.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 
 public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsynchronousCommunicator {

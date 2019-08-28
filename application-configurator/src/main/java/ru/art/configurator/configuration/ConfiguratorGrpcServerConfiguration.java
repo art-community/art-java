@@ -20,7 +20,6 @@ package ru.art.configurator.configuration;
 
 import lombok.*;
 import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.*;
-
 import static ru.art.config.ConfigProvider.*;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;

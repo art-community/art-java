@@ -19,7 +19,6 @@
 package ru.art.network.manager.selector;
 
 import ru.art.state.api.model.*;
-
 import static ru.art.network.manager.module.NetworkManagerModule.*;
 
 public interface ModuleEndpointSelector {

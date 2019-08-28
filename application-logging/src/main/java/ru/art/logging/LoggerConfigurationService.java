@@ -23,9 +23,6 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.*;
 import org.apache.logging.log4j.core.appender.*;
 import org.apache.logging.log4j.core.config.*;
-import java.io.*;
-import java.util.*;
-
 import static java.lang.Integer.*;
 import static java.lang.System.*;
 import static java.util.Objects.*;
@@ -37,6 +34,8 @@ import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.logging.LoggingModuleConstants.*;
 import static ru.art.logging.LoggingModuleConstants.LoggingMode.*;
+import java.io.*;
+import java.util.*;
 
 public interface LoggerConfigurationService {
     static void updateSocketAppender(SocketAppenderConfiguration socketAppenderConfiguration) {

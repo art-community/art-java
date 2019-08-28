@@ -21,10 +21,9 @@ package ru.art.soap.server.module;
 import lombok.*;
 import ru.art.core.module.*;
 import ru.art.soap.server.configuration.*;
-import ru.art.soap.server.configuration.SoapServerModuleConfiguration.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.soap.server.configuration.SoapServerModuleConfiguration.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
 
 @Getter
@@ -32,11 +31,11 @@ public class SoapServerModule implements Module<SoapServerModuleConfiguration, M
     @Getter(lazy = true, value = PRIVATE)
     private final static SoapServerModuleConfiguration soapServerModule = context().getModule(SOAP_SERVER_MODULE_ID, SoapServerModule::new);
     private final String id = SOAP_SERVER_MODULE_ID;
-    private final SoapServerModuleConfiguration defaultConfiguration = SoapServerModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
+    private final SoapServerModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
 
     public static SoapServerModuleConfiguration soapServerModule() {
-        if (insideDefaultContext()) {
-            return SoapServerModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getSoapServerModule();
     }

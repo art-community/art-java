@@ -19,12 +19,11 @@
 package ru.art.core.network.provider;
 
 import lombok.experimental.*;
-import java.net.*;
-import java.util.*;
-
 import static java.net.NetworkInterface.*;
 import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.core.constants.StringConstants.*;
+import java.net.*;
+import java.util.*;
 
 @UtilityClass
 public class IpAddressProvider {

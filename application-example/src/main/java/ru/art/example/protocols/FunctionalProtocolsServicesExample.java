@@ -20,7 +20,6 @@ package ru.art.example.protocols;
 
 import ru.art.core.caster.*;
 import ru.art.http.client.model.*;
-
 import static java.lang.Thread.*;
 import static java.util.function.Function.*;
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;

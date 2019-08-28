@@ -22,14 +22,13 @@ import lombok.*;
 import org.rocksdb.*;
 import ru.art.core.module.*;
 import ru.art.rocks.db.configuration.*;
-import ru.art.rocks.db.configuration.RocksDbModuleConfiguration.*;
 import ru.art.rocks.db.exception.*;
 import ru.art.rocks.db.state.*;
-
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static org.rocksdb.RocksDB.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.rocks.db.configuration.RocksDbModuleConfiguration.*;
 import static ru.art.rocks.db.constants.RocksDbExceptionMessages.*;
 import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
 
@@ -41,12 +40,12 @@ public class RocksDbModule implements Module<RocksDbModuleConfiguration, RocksDb
     @Getter(lazy = true, value = PRIVATE)
     private final static RocksDbModuleState rocksDbModuleState = context().getModuleState(ROCKS_DB_MODULE_ID, RocksDbModule::new);
     private final String id = ROCKS_DB_MODULE_ID;
-    private final RocksDbModuleConfiguration defaultConfiguration = RocksDbModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
+    private final RocksDbModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private RocksDbModuleState state;
 
     public static RocksDbModuleConfiguration rocksDbModule() {
-        if (insideDefaultContext()) {
-            return RocksDbModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getRocksDbModule();
     }

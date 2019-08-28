@@ -19,10 +19,9 @@
 package ru.art.http.server.interceptor;
 
 import ru.art.core.constants.*;
+import static ru.art.core.constants.InterceptionStrategy.*;
 import javax.servlet.http.*;
 import java.util.function.*;
-
-import static ru.art.core.constants.InterceptionStrategy.*;
 
 @FunctionalInterface
 public interface HttpServerInterception {

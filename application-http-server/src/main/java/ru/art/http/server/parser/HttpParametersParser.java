@@ -21,14 +21,13 @@ package ru.art.http.server.parser;
 import ru.art.core.factory.CollectionsFactory.*;
 import ru.art.entity.*;
 import ru.art.http.server.model.*;
-import javax.servlet.http.*;
-import java.util.*;
-
 import static java.util.stream.Collectors.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import javax.servlet.http.*;
+import java.util.*;
 
 public interface HttpParametersParser {
     static StringParametersMap parseQueryParameters(HttpServletRequest request) {

@@ -27,11 +27,9 @@ import ru.art.example.configuration.ExampleModuleConfiguration.*;
 import ru.art.example.specification.*;
 import ru.art.example.state.*;
 import ru.art.soap.server.specification.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.core.context.Context.*;
-import static ru.art.core.extension.ThreadExtensions.*;
 import static ru.art.example.constants.ExampleAppModuleConstants.*;
 import static ru.art.grpc.server.GrpcServer.*;
 import static ru.art.http.server.HttpServer.*;
@@ -66,7 +64,7 @@ public class ExampleModule implements Module<ExampleModuleConfiguration, Example
 
     public static void startExample() {
         useAgileConfigurations(EXAMPLE_MODULE_ID);
-        serviceModule().getServiceRegistry()
+        serviceModuleState().getServiceRegistry()
                 .registerService(new SoapServiceExecutionSpecification(new ExampleServiceSpecification()))
                 .registerService(new ExampleServiceSpecification())
                 .registerService(new ExampleServiceGrpcCommunicationSpecification())

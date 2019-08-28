@@ -16,20 +16,16 @@
 
 package ru.art.config.extensions.kafka;
 
-import lombok.Getter;
-import ru.art.kafka.broker.configuration.KafkaBrokerConfiguration;
-import ru.art.kafka.broker.configuration.KafkaBrokerModuleConfiguration.KafkaBrokerModuleDefaultConfiguration;
-import ru.art.kafka.broker.configuration.ZookeeperConfiguration;
-import ru.art.kafka.broker.constants.KafkaBrokerModuleConstants;
-import ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode;
-import ru.art.kafka.broker.module.KafkaBrokerModule;
-
+import lombok.*;
+import ru.art.kafka.broker.configuration.*;
+import ru.art.kafka.broker.configuration.KafkaBrokerModuleConfiguration.*;
+import ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
-import static ru.art.config.extensions.common.CommonConfigKeys.PORT;
+import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.kafka.KafkaConfigKeys.*;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.extension.ExceptionExtensions.ifException;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.KAFKA_BROKER_MODULE_ID;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
 import static ru.art.kafka.broker.module.KafkaBrokerModule.*;
 
 @Getter

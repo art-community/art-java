@@ -25,16 +25,15 @@ import org.zalando.logbook.httpclient.*;
 import ru.art.http.client.configuration.*;
 import ru.art.http.client.exception.*;
 import ru.art.http.client.model.*;
-import javax.net.ssl.*;
-import java.io.*;
-import java.security.*;
-
 import static java.security.KeyStore.*;
 import static java.util.Objects.*;
 import static org.apache.http.ssl.SSLContexts.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.logging.LoggingModule.*;
+import javax.net.ssl.*;
+import java.io.*;
+import java.security.*;
 
 @UtilityClass
 public class HttpClientsFactory {

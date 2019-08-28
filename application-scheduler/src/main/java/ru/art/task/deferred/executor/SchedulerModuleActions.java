@@ -18,10 +18,9 @@
 
 package ru.art.task.deferred.executor;
 
+import static ru.art.task.deferred.executor.SchedulerModule.*;
 import java.time.*;
 import java.util.concurrent.*;
-
-import static ru.art.task.deferred.executor.SchedulerModule.*;
 
 public interface SchedulerModuleActions {
 

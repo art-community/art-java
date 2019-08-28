@@ -24,11 +24,10 @@ import ru.art.core.callable.*;
 import ru.art.core.exception.*;
 import ru.art.core.factory.*;
 import ru.art.core.runnable.*;
-import java.util.concurrent.*;
-import java.util.function.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.constants.ExceptionMessages.*;
+import java.util.concurrent.*;
+import java.util.function.*;
 
 @UtilityClass
 public class ExceptionWrapper {

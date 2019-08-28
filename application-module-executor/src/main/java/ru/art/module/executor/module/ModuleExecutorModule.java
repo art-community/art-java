@@ -21,7 +21,6 @@ package ru.art.module.executor.module;
 import lombok.*;
 import ru.art.core.module.*;
 import ru.art.module.executor.specification.*;
-
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.http.server.HttpServer.*;
 import static ru.art.module.executor.constants.ModuleExecutorConstants.*;
@@ -39,8 +38,8 @@ public class ModuleExecutorModule implements Module<ModuleConfiguration, ModuleS
 
     public static void startModuleExecutor() {
         useAgileConfigurations(MODULE_EXECUTOR_MODULE_ID);
-        serviceModule()
-                .getServiceRegistry()
+        serviceModuleState()
+                    .getServiceRegistry()
                 .registerService(new ModuleExecutorServiceSpecification());
         startHttpServer();
     }

@@ -20,10 +20,9 @@ package ru.art.example.interceptor.http;
 
 import ru.art.core.constants.*;
 import ru.art.http.server.interceptor.*;
-import javax.servlet.http.*;
-
 import static ru.art.core.constants.InterceptionStrategy.*;
 import static ru.art.logging.LoggingModule.*;
+import javax.servlet.http.*;
 
 /**
  * Http interceptors can do some logic before executing http service method and after that

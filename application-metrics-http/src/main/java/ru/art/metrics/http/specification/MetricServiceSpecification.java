@@ -22,8 +22,6 @@ import lombok.*;
 import ru.art.http.server.model.*;
 import ru.art.http.server.specification.*;
 import ru.art.service.exception.*;
-import java.util.*;
-
 import static java.util.Collections.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.entity.PrimitiveMapping.*;
@@ -32,6 +30,7 @@ import static ru.art.metrics.constants.MetricsModuleConstants.*;
 import static ru.art.metrics.http.constants.MetricsModuleHttpConstants.*;
 import static ru.art.metrics.module.MetricsModule.*;
 import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
+import java.util.*;
 
 @Getter
 @AllArgsConstructor

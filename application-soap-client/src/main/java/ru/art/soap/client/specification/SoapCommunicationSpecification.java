@@ -19,10 +19,9 @@
 package ru.art.soap.client.specification;
 
 import ru.art.http.client.specification.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.soap.client.constants.SoapClientModuleConstants.*;
+import java.util.*;
 
 public interface SoapCommunicationSpecification extends HttpCommunicationSpecification {
     @Override

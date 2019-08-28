@@ -21,11 +21,10 @@ package ru.art.core.extension;
 import lombok.experimental.*;
 import ru.art.core.callable.*;
 import ru.art.core.runnable.*;
-import java.util.function.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
+import java.util.function.*;
 
 @UtilityClass
 public class ExceptionExtensions {

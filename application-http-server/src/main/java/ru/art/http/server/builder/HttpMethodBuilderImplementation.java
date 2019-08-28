@@ -30,8 +30,6 @@ import ru.art.http.server.interceptor.*;
 import ru.art.http.server.model.*;
 import ru.art.http.server.path.*;
 import ru.art.service.constants.*;
-import java.util.*;
-
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
@@ -44,6 +42,7 @@ import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode.*;
 import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.service.constants.RequestValidationPolicy.*;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class HttpMethodBuilderImplementation implements HttpMethodBuilder,

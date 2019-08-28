@@ -19,12 +19,11 @@
 package ru.art.tarantool.constants;
 
 import lombok.*;
-import java.util.*;
-
 import static ru.art.core.constants.SystemConstants.*;
 import static ru.art.core.determinant.SystemDeterminant.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.core.network.selector.PortSelector.*;
+import java.util.*;
 
 public interface TarantoolModuleConstants {
     String TARANTOOL = "tarantool";

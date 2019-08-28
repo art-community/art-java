@@ -23,15 +23,13 @@ import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.*;
 import ru.art.kafka.consumer.configuration.*;
 import ru.art.kafka.consumer.specification.*;
-
-import java.util.*;
-
 import static java.lang.String.*;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
 import static ru.art.service.ServiceController.*;
+import java.util.*;
 
 @UtilityClass
 public class KafkaConsumerStarter {

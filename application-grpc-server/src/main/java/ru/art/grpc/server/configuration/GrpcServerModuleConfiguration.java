@@ -25,14 +25,13 @@ import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.grpc.server.interceptor.*;
 import ru.art.logging.*;
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import static ru.art.core.constants.ThreadConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.core.network.selector.PortSelector.*;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 public interface GrpcServerModuleConfiguration extends ModuleConfiguration {
     boolean isExecuteServiceInTransportThread();
