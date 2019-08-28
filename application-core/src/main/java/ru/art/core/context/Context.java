@@ -320,11 +320,16 @@ public class Context {
     }
 
     private static void executeOutsideDefaultContextAction() {
+        final ReentrantLock lock = Context.lock;
+        lock.lock();
         if (isNull(OUTSIDE_DEFAULT_CONTEXT_ACTION)) {
+            lock.unlock();
             return;
         }
-        OUTSIDE_DEFAULT_CONTEXT_ACTION.accept(INSTANCE);
+        final Consumer<Context> action = OUTSIDE_DEFAULT_CONTEXT_ACTION;
         OUTSIDE_DEFAULT_CONTEXT_ACTION = null;
+        lock.unlock();
+        action.accept(INSTANCE);
     }
 
     public static <T> T withDefaultContext(Function<Context, T> action) {
