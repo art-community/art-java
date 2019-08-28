@@ -27,6 +27,7 @@ art {
     }
 
     generator {
+        version = rootProject.version as String
         packageName = "ru.art.state.api"
     }
 

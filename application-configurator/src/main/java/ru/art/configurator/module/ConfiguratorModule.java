@@ -22,17 +22,25 @@ import lombok.*;
 import ru.art.config.module.*;
 import ru.art.configurator.configuration.*;
 import ru.art.configurator.specification.*;
+import ru.art.core.configurator.*;
 import ru.art.core.module.*;
 import ru.art.grpc.client.module.*;
+import ru.art.grpc.server.configuration.*;
 import ru.art.grpc.server.module.*;
+import ru.art.grpc.server.state.*;
+import ru.art.http.client.configuration.*;
 import ru.art.http.client.module.*;
+import ru.art.http.server.*;
 import ru.art.http.server.module.*;
 import ru.art.http.server.specification.*;
 import ru.art.json.module.*;
 import ru.art.logging.*;
+import ru.art.metrics.configuration.*;
 import ru.art.metrics.http.specification.*;
 import ru.art.metrics.module.*;
+import ru.art.rocks.db.configuration.*;
 import ru.art.rocks.db.module.*;
+import ru.art.rocks.db.state.*;
 import ru.art.service.*;
 import static java.util.UUID.*;
 import static ru.art.config.ConfigProvider.*;
@@ -61,15 +69,20 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
                 .loadModule(new JsonModule())
                 .loadModule(new LoggingModule())
                 .loadModule(new ServiceModule())
-                .loadModule(new RocksDbModule(), constructInsideDefaultContext(configuration, ConfiguratorRocksDbConfiguration::new))
-                .loadModule(new HttpServerModule(), constructInsideDefaultContext(configuration, ConfiguratorHttpServerConfiguration::new))
-                .loadModule(new GrpcServerModule(), constructInsideDefaultContext(configuration, ConfiguratorGrpcServerConfiguration::new))
-                .loadModule(new MetricsModule(), constructInsideDefaultContext(configuration, ConfiguratorMetricsConfiguration::new))
+                .loadModule(new RocksDbModule(), (ModuleConfigurator<RocksDbModuleConfiguration, RocksDbModuleState>) module ->
+                        new ConfiguratorRocksDbConfiguration())
+                .loadModule(new HttpServerModule(), (ModuleConfigurator<HttpServerModuleConfiguration, HttpServerModuleState>) (module) ->
+                        new ConfiguratorHttpServerConfiguration())
+                .loadModule(new GrpcServerModule(), (ModuleConfigurator<GrpcServerModuleConfiguration, GrpcServerModuleState>) (module) ->
+                        new ConfiguratorGrpcServerConfiguration())
+                .loadModule(new MetricsModule(), (ModuleConfigurator<MetricModuleConfiguration, ModuleState>) (module) ->
+                        new ConfiguratorMetricsConfiguration())
                 .loadModule(new GrpcClientModule())
-                .loadModule(new HttpClientModule(), constructInsideDefaultContext(configuration, ConfiguratorHttpClientConfiguration::new))
+                .loadModule(new HttpClientModule(), (ModuleConfigurator<HttpClientModuleConfiguration, ModuleState>) (module) ->
+                        new ConfiguratorHttpClientConfiguration())
                 .loadModule(new ConfiguratorModule());
         serviceModuleState()
-                    .getServiceRegistry()
+                .getServiceRegistry()
                 .registerService(new ConfiguratorServiceSpecification())
                 .registerService(new HttpResourceServiceSpecification(CONFIGURATOR_PATH))
                 .registerService(new UserServiceSpecification())

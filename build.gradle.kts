@@ -48,6 +48,9 @@ subprojects {
     repositories {
         jcenter()
         mavenCentral()
+        maven {
+            url = uri("https://oss.jfrog.org/oss-snapshot-local")
+        }
     }
 
     apply(plugin = "io.github.art.project")
