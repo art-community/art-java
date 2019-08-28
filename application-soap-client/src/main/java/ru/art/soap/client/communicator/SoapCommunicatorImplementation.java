@@ -36,6 +36,7 @@ import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.extension.StringExtensions.*;
+import static ru.art.http.client.model.HttpCommunicationTargetConfiguration.httpCommunicationTarget;
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.soap.client.module.SoapClientModule.*;
 import java.nio.charset.*;
@@ -48,7 +49,7 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
     private final SoapCommunicationConfiguration configuration = new SoapCommunicationConfiguration();
 
     SoapCommunicatorImplementation(String url) {
-        this(HttpCommunicationTargetConfiguration.builder().build().url(url));
+        this(httpCommunicationTarget().build().url(url));
     }
 
     SoapCommunicatorImplementation(HttpCommunicationTargetConfiguration targetConfiguration) {

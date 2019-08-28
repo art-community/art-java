@@ -19,7 +19,6 @@
 package ru.art.example.protocols;
 
 import ru.art.core.caster.*;
-import ru.art.http.client.model.*;
 import static java.lang.Thread.*;
 import static java.util.function.Function.*;
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
@@ -31,6 +30,7 @@ import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
 import static ru.art.grpc.server.function.GrpcServiceFunction.*;
 import static ru.art.grpc.server.module.GrpcServerModule.*;
 import static ru.art.http.client.communicator.HttpCommunicator.*;
+import static ru.art.http.client.model.HttpCommunicationTargetConfiguration.*;
 import static ru.art.http.server.HttpServer.*;
 import static ru.art.http.server.function.HttpServiceFunction.*;
 import static ru.art.http.server.module.HttpServerModule.*;
@@ -63,7 +63,7 @@ public class FunctionalProtocolsServicesExample {
 
         startHttpServer();
         sleep(100L);
-        System.out.println(httpCommunicator(HttpCommunicationTargetConfiguration.builder()
+        System.out.println(httpCommunicator(httpCommunicationTarget()
                 .host(httpServerModule().getHost())
                 .port(httpServerModule().getPort())
                 .path("/test")

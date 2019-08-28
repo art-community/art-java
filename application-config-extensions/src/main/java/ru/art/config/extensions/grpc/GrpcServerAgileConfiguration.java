@@ -55,7 +55,7 @@ public class GrpcServerAgileConfiguration extends GrpcServerModuleDefaultConfigu
         restart |= !newPath.equals(path);
         path = newPath;
         int newPoolSize = configInt(GRPC_SERVER_CONFIG_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE);
-        restart |= isNull(overridingExecutor) || ((ThreadPoolExecutor) overridingExecutor).getCorePoolSize() != newPoolSize;
+        restart |= isNull(overridingExecutor) || ((ForkJoinPool) overridingExecutor).getParallelism() != newPoolSize;
         overridingExecutor = new ForkJoinPool(newPoolSize);
         enableRawDataTracing = configBoolean(GRPC_SERVER_CONFIG_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
         enableValueTracing = configBoolean(GRPC_SERVER_CONFIG_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());

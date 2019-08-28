@@ -24,6 +24,7 @@ import org.apache.kafka.common.serialization.*;
 import ru.art.kafka.producer.exception.*;
 import ru.art.kafka.serializer.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.kafka.producer.constants.KafkaProducerModuleConstants.*;
 import java.util.*;
 
 @Getter
@@ -78,8 +79,8 @@ public class KafkaProducerConfiguration {
     private final Properties additionalProperties = new Properties();
 
     public void validate() {
-        if (isEmpty(getTopic())) throw new KafkaProducerConfigurationException("topic is empty");
-        if (isEmpty(getClientId())) throw new KafkaProducerConfigurationException("clientId is empty");
-        if (isEmpty(getBrokers())) throw new KafkaProducerConfigurationException("brokers are empty");
+        if (isEmpty(getTopic())) throw new KafkaProducerConfigurationException(TOPIC_IS_EMPTY);
+        if (isEmpty(getClientId())) throw new KafkaProducerConfigurationException(CLIENT_ID_IS_EMPTY);
+        if (isEmpty(getBrokers())) throw new KafkaProducerConfigurationException(BROKERS_ARE_EMPTY);
     }
 }

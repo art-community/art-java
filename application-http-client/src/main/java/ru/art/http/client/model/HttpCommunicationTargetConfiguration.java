@@ -25,11 +25,10 @@ import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
 
 @Getter
-@Builder(toBuilder = true)
 @Accessors(fluent = true)
+@Builder(toBuilder = true, builderMethodName = "httpCommunicationTarget")
 public class HttpCommunicationTargetConfiguration {
     @Setter
-    @Accessors(fluent = true)
     private String url;
     @Setter
     private String path;
