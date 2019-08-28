@@ -38,6 +38,7 @@ import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.constants.ThreadConstants.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.http.client.constants.HttpClientModuleConstants.*;
+import static ru.art.http.client.model.HttpCommunicationTargetConfiguration.httpCommunicationTarget;
 import static ru.art.http.constants.HttpCommonConstants.*;
 import java.util.*;
 
@@ -84,7 +85,7 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
         enableValueTracing = configBoolean(HTTP_COMMUNICATION_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         balancerHost = configString(HTTP_BALANCER_SECTION_ID, HOST, super.getBalancerHost());
         balancerPort = configInt(HTTP_BALANCER_SECTION_ID, PORT, super.getBalancerPort());
-        communicationTargets = configMap(HTTP_COMMUNICATION_SECTION_ID, TARGETS, config -> HttpCommunicationTargetConfiguration.builder()
+        communicationTargets = configMap(HTTP_COMMUNICATION_SECTION_ID, TARGETS, config -> httpCommunicationTarget()
                 .host(ifEmpty(config.getString(HOST), balancerHost))
                 .port(getOrElse(config.getInt(PORT), balancerPort))
                 .path(getOrElse(config.getString(PATH), SLASH))
