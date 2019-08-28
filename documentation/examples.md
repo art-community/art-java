@@ -5,7 +5,7 @@ Value is a universal data model for representing data as JSON/XML/Protobuf/Tuple
 
 For optimization ART ***is not*** using reflection for serialization and deserialization POJOs to/from Value.
 
-Instead of it ART providing ValueMapping API and ValueMapping Generator (from ART application-gradle-plugin).
+Instead of it ART provides ValueMapping API and ValueMapping Generator (from ART application-gradle-plugin).
 
 Code:
 ```java
@@ -50,7 +50,7 @@ public class MainModule {
 }
 ```
 
-After running in output console you could see something like it:
+After running in output console you could see something like this:
 ```
 Customer entity as JSON = {"id":"1","name":"Customer","orderIds":["1","2"]}
 Customer entity as Protobuf = value {
@@ -62,8 +62,9 @@ Customer entity to customer = MainModule.Customer(id=1, name=Customer, orderIds=
 ```
 
 ## HTTP Serving
-ART providing you functional to serving HTTP requests
+ART provides you functional to serving HTTP requests
 
+Code:
 ```java
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.entity.PrimitiveMapping.StringPrimitive.*;
@@ -84,13 +85,14 @@ public class MainModule {
 }
 ```
 
-After running this code and open browser on url with path '/hello' from logs you could see something like this:
+After running and open browser on url with path '/hello' from logs you could see something like this:
 
 <<screen>>
 
 ## HTTP Communication
-ART providing you functional for sending HTTP request
+ART provides you functional for sending HTTP request
 
+Code:
 ```java
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.entity.PrimitiveMapping.StringPrimitive.*;
@@ -161,19 +163,123 @@ After running this code you could see something like this:
 </html>
 ```
 
-## GRPC Serving
+## GRPC Serving & Communication
+ART provides GRPC functional API to serving and handling GRPC requests
 
-## GRPC Communication
+Code:
+```java
+import java.util.function.Consumer;
 
-## RSocket Serving
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations;
+import static ru.art.core.constants.NetworkConstants.LOCALHOST;
+import static ru.art.core.extension.NullCheckingExtensions.doIfNotNull;
+import static ru.art.entity.PrimitiveMapping.StringPrimitive.fromModel;
+import static ru.art.entity.PrimitiveMapping.StringPrimitive.toModel;
+import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator;
+import static startGrpcServer;
+import static ru.art.grpc.server.function.GrpcServiceFunction.grpc;
+import static ru.art.grpc.server.module.GrpcServerModule.grpcServerModule;
 
-## RSocket Communication
+public class MainModule {
+    public static void main(String[] args) {
+        useAgileConfigurations();
+        grpc("myFunction")
+                .responseMapper(fromModel)
+                .produce(() -> "Hello, ART!");
+        grpcServer();
+        doIfNotNull(grpcCommunicator(LOCALHOST, grpcServerModule().getPort(), grpcServerModule().getPath())
+                .functionId("myFunction")
+                .responseMapper(toModel)
+                .execute().getResponseData(), (Consumer<Object>) System.out::println);
+    }
+}
 
+```
+After running you could see something like this
+
+`Hello, ART!`
+
+## RSocket Serving & Communication
+ART provides RSocket functional API to all rsocket methods:
+* fireAndForget
+* requestResponse
+* requestStream
+* requestChannel
+
+Code:
+```java
+import ru.art.service.model.*;
+
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.entity.PrimitiveMapping.StringPrimitive.*;
+import static ru.art.rsocket.communicator.RsocketCommunicator.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.*;
+import static ru.art.rsocket.function.RsocketServiceFunction.*;
+import static ru.art.rsocket.module.RsocketModule.*;
+import static ru.art.rsocket.server.RsocketServer.*;
+
+public class MainModule {
+    public static void main(String[] args) {
+        useAgileConfigurations();
+        rsocket("myFunction")
+                .responseMapper(fromModel)
+                .produce(() -> "Hello, ART!");
+        rsocketTcpServer();
+        rsocketCommunicator(LOCALHOST, rsocketModule().getServerTcpPort())
+                .functionId("myFunction")
+                .responseMapper(toModel)
+                .execute()
+                .map(ServiceResponse::getResponseData)
+                .subscribe(System.out::println);
+    }
+}
+```
+After running you could see something like this
+
+`Hello, ART!`
 ## Rocks DB
+ART provides API for interact with RocksDB
 
-## Kafka Embedded Broker
+Code:
+```java
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.entity.Entity.*;
+import static ru.art.rocks.db.dao.RocksDbCollectionDao.*;G
+import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.put;
+import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
+import static ru.art.rocks.db.dao.RocksDbValueDao.*;
 
-## Kafka Clients: stream & producer
+public class MainModule {
+    public static void main(String[] args) {
+        put("stringKey", "string");
+        putStrings("stringsKey", fixedArrayOf("string1", "string2"));
+        putAsProtobuf("customer", entityBuilder()
+                .stringField("id", "123")
+                .entityField("order", entityBuilder().intField("price", 123).build())
+                .build());
+        getString("stringKey").ifPresent(string -> System.out.println("String from rocks = " + string));
+        System.out.println("Strings from rocks = " + getStringList("stringsKey"));
+        getAsProtobuf("customer").ifPresent(customer -> System.out.println("Customer from rocks = " + customer));
+    }
+}
+```
+After running you could see something like this
+```
+String from rocks = string
+Strings from rocks = [string1, string2]
+Customer from rocks = Entity(fields={id=123, order=Entity(fields={price=123}, fieldNames=[price], type=ENTITY)}, fieldNames=[id, order], type=ENTITY)
+```
+
+## Kafka Embedded Broker, stream & producer
+ART module application-kafka-broker includes Kafka and Zookeeper and provides functional to startup and manage Kafka brokers.
+
+Also modules application-kafka-consumer and application-kafka-producer provides you API to producing and consuming/streaming kafka messages.
+
+Code:
+```java
+
+```
 
 ## Local Scheduler
 

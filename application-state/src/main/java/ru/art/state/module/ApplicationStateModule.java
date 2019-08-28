@@ -78,7 +78,7 @@ public class ApplicationStateModule implements Module<ApplicationStateModuleConf
                 .registerService(new LockServiceSpecification());
         applicationState().setCluster(loadCluster());
         asynchronousPeriod(commonTask(NetworkService::removeDeadEndpoints), ofSeconds(applicationStateModule().getModuleEndpointCheckRateSeconds()));
-        httpServerInSeparatedThread();
+        httpServer();
         grpcServer().await();
     }
 }
