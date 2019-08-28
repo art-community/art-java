@@ -55,7 +55,7 @@ public interface ExampleService {
      * @return ExampleResponse object with response message
      */
     static ExampleResponse requestResponseHandlingExample(ExampleRequest request) {
-        loggingModule().getLogger().info("requestResponseHandlingExample method started");
+        loggingModule().getLogger().info("requestResponseHandlingExample method isWorking");
 
         // getting data from example request
         loggingModule().getLogger().info("Request inner model: " + request.getInnerModel().toString());
@@ -75,7 +75,7 @@ public interface ExampleService {
      * Config values are variables, which can be changed in runtime
      */
     static void usingConfigurationValuesExample() {
-        loggingModule().getLogger().info("usingConfigurationValuesExample method started");
+        loggingModule().getLogger().info("usingConfigurationValuesExample method isWorking");
 
         int intConfigValue = exampleModule().getConfigExampleIntValue();
         String stringConfigValue = exampleModule().getConfigExampleStringValue();
@@ -88,7 +88,7 @@ public interface ExampleService {
      * Method shows how to send soap request
      */
     static void soapClientExample() {
-        loggingModule().getLogger().info("soapClientExample method started");
+        loggingModule().getLogger().info("soapClientExample method isWorking");
         // todo after proxy specification
     }
 
@@ -97,7 +97,7 @@ public interface ExampleService {
      * You should use http communication specification for that
      */
     static void httpClientExample() {
-        loggingModule().getLogger().info("httpClientExample method started");
+        loggingModule().getLogger().info("httpClientExample method isWorking");
 
         // generating request
         ExampleRequest request = getExampleRequest();
@@ -121,7 +121,7 @@ public interface ExampleService {
      * you can call methods of different modules
      */
     static void protobufClientExample() {
-        loggingModule().getLogger().info("protobufClientExample method started");
+        loggingModule().getLogger().info("protobufClientExample method isWorking");
 
         // generating request
         ExampleRequest request = getExampleRequest();
@@ -147,7 +147,7 @@ public interface ExampleService {
      * db queries are moved to dao
      */
     static void sqlExample() {
-        loggingModule().getLogger().info("sqlExample method started");
+        loggingModule().getLogger().info("sqlExample method isWorking");
 
         String testQueryResult = testQuery();
         loggingModule().getLogger().info("Test query result is: " + testQueryResult);
@@ -158,7 +158,7 @@ public interface ExampleService {
      * Adding and getting values
      */
     static void rocksDbExample() {
-        loggingModule().getLogger().info("rocksDbExample method started");
+        loggingModule().getLogger().info("rocksDbExample method isWorking");
 
         // supports primitives and Value
         String key = "key";
@@ -176,7 +176,7 @@ public interface ExampleService {
      * Method shows using of logging module
      */
     static void loggingExample() {
-        loggingModule().getLogger().info("loggingExample method started");
+        loggingModule().getLogger().info("loggingExample method isWorking");
 
         // logging some simple info
         loggingModule().getLogger().info("Info message");
@@ -192,7 +192,7 @@ public interface ExampleService {
      * Method shows how to convert json to Value and backwards
      */
     static void jsonReadWriteExample() {
-        loggingModule().getLogger().info("jsonReadWriteExample method started");
+        loggingModule().getLogger().info("jsonReadWriteExample method isWorking");
 
         String jsonString = "{\"FieldName\" : \"FieldValue\"}";
 
@@ -211,7 +211,7 @@ public interface ExampleService {
      * Method shows how to convert Value to ProtobufValue and backwards
      */
     static void protobufReadWriteExample() {
-        loggingModule().getLogger().info("protobufReadWriteExample method started");
+        loggingModule().getLogger().info("protobufReadWriteExample method isWorking");
 
         Value exampleValue = new Primitive(10, INT);
 
@@ -227,7 +227,7 @@ public interface ExampleService {
      * Method shows how to execute something in other other thread in needed time
      */
     static void asyncTaskExecutingExample() {
-        loggingModule().getLogger().info("asyncTaskExecutingExample method started");
+        loggingModule().getLogger().info("asyncTaskExecutingExample method isWorking");
 
         asynchronousPeriod(uniqueTask(() -> loggingModule()
                         .getLogger()
@@ -241,7 +241,7 @@ public interface ExampleService {
      * @return number of services calls
      */
     static ExampleStateModel getExampleModuleState() {
-        loggingModule().getLogger().info("getExampleModuleState method started");
+        loggingModule().getLogger().info("getExampleModuleState method isWorking");
 
         return ExampleStateModel.builder()
                 .serviceRequests(exampleState().getRequests())

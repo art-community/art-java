@@ -16,13 +16,14 @@
  * limitations under the License.
  */
 
-package ru.art.kafka.consumer.launcher;
+package ru.art.kafka.consumer.starter;
 
 import lombok.experimental.*;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.*;
 import ru.art.kafka.consumer.configuration.*;
 import ru.art.kafka.consumer.specification.*;
+
 import java.util.*;
 
 import static java.lang.String.*;
@@ -33,8 +34,8 @@ import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
 import static ru.art.service.ServiceController.*;
 
 @UtilityClass
-public class KafkaConsumerLauncher {
-    public static void launchKafkaConsumer(String serviceId) {
+public class KafkaConsumerStarter {
+    public static void startKafkaConsumer(String serviceId) {
         KafkaConsumerModuleConfiguration moduleConfiguration = kafkaConsumerModule();
         if (isEmpty(moduleConfiguration.getKafkaConsumerConfiguration())) {
             return;
