@@ -20,9 +20,8 @@ package ru.art.example.api.model;
 
 import lombok.*;
 import ru.art.service.validation.*;
-import java.util.*;
-
 import static ru.art.service.validation.ValidationExpressions.*;
+import java.util.*;
 
 @Getter
 @Builder

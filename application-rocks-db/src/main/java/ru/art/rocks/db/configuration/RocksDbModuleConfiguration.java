@@ -21,10 +21,9 @@ package ru.art.rocks.db.configuration;
 import lombok.*;
 import org.rocksdb.*;
 import ru.art.core.module.*;
-import java.io.*;
-
 import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
 import static ru.art.rocks.db.constants.RocksDbModuleConstants.DefaultOptions.*;
+import java.io.*;
 
 public interface RocksDbModuleConfiguration extends ModuleConfiguration {
     String getPath();

@@ -20,11 +20,10 @@ package ru.art.grpc.client.specification;
 
 import ru.art.grpc.client.model.*;
 import ru.art.service.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.grpc.client.constants.GrpcClientModuleConstants.*;
 import static ru.art.grpc.client.module.GrpcClientModule.*;
+import java.util.*;
 
 public interface GrpcCommunicationSpecification extends Specification {
     default GrpcCommunicationTargetConfiguration communicationTarget(String serviceId) {

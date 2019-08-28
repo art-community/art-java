@@ -22,8 +22,6 @@ import org.tarantool.*;
 import ru.art.entity.*;
 import ru.art.tarantool.exception.*;
 import ru.art.tarantool.model.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
@@ -34,11 +32,6 @@ import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Entity.*;
-import static ru.art.entity.Value.asEntity;
-import static ru.art.entity.Value.asPrimitive;
-import static ru.art.entity.Value.asCollection;
-import static ru.art.entity.Value.asStringParametersMap;
-import static ru.art.entity.Value.asMap;
 import static ru.art.entity.tuple.PlainTupleReader.*;
 import static ru.art.entity.tuple.PlainTupleWriter.*;
 import static ru.art.entity.tuple.schema.ValueSchema.*;
@@ -49,6 +42,7 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
 import static ru.art.tarantool.service.TarantoolScriptService.*;
+import java.util.*;
 
 @SuppressWarnings("Duplicates")
 public final class TarantoolValueDao extends TarantoolCommonDao {

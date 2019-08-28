@@ -19,7 +19,6 @@
 package ru.art.http.server.builder;
 
 import lombok.*;
-
 import static ru.art.core.constants.CharConstants.COLON;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.http.constants.HttpCommonConstants.*;

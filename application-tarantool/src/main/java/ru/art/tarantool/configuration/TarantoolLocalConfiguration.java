@@ -19,12 +19,11 @@
 package ru.art.tarantool.configuration;
 
 import lombok.*;
-import java.util.*;
-
 import static java.io.File.*;
 import static java.nio.file.Paths.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
+import java.util.*;
 
 @Getter
 @Builder

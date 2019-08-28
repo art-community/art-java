@@ -19,7 +19,6 @@
 package ru.art.core.determinant;
 
 import lombok.*;
-
 import static java.lang.System.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.constants.SystemNamePatterns.*;

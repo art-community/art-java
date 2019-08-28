@@ -23,10 +23,6 @@ import lombok.*;
 import ru.art.entity.Value;
 import ru.art.entity.*;
 import ru.art.protobuf.exception.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.stream.*;
-
 import static java.lang.Integer.valueOf;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -41,6 +37,9 @@ import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.protobuf.constants.ProtobufExceptionMessages.*;
 import static ru.art.protobuf.entity.ProtobufValueMessage.*;
 import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.stream.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public class ProtobufEntityReader {

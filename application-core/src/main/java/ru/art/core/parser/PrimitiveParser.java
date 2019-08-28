@@ -19,7 +19,6 @@
 package ru.art.core.parser;
 
 import lombok.experimental.*;
-
 import static java.lang.Boolean.*;
 import static java.lang.Double.*;
 import static java.lang.Integer.*;

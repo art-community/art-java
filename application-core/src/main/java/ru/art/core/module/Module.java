@@ -20,7 +20,6 @@ package ru.art.core.module;
 
 import ru.art.core.exception.*;
 import ru.art.core.identified.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.core.constants.ExceptionMessages.*;
 

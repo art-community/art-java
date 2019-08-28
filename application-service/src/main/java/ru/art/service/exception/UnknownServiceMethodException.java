@@ -19,7 +19,6 @@
 package ru.art.service.exception;
 
 import ru.art.service.constants.*;
-
 import static java.text.MessageFormat.*;
 
 public class UnknownServiceMethodException extends RuntimeException {

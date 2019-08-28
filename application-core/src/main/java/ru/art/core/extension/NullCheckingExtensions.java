@@ -19,9 +19,8 @@
 package ru.art.core.extension;
 
 import lombok.experimental.*;
-import java.util.function.*;
-
 import static java.util.Objects.*;
+import java.util.function.*;
 
 @UtilityClass
 public class NullCheckingExtensions {

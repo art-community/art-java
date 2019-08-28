@@ -19,9 +19,8 @@
 package ru.art.core.extension;
 
 import lombok.experimental.*;
-import java.util.*;
-
 import static java.util.Objects.*;
+import java.util.*;
 
 @UtilityClass
 public class OptionalExtensions {

@@ -20,10 +20,6 @@ package ru.art.core.mime;
 
 import lombok.*;
 import ru.art.core.exception.*;
-import java.nio.charset.*;
-import java.util.*;
-import java.util.function.*;
-
 import static java.lang.Float.*;
 import static java.lang.String.*;
 import static java.nio.charset.Charset.*;
@@ -45,6 +41,9 @@ import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.nio.charset.*;
+import java.util.*;
+import java.util.function.*;
 
 @Getter
 @RequiredArgsConstructor(access = PRIVATE)

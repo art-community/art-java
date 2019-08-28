@@ -21,9 +21,8 @@ package ru.art.network.manager.state;
 import lombok.*;
 import ru.art.network.manager.balancer.*;
 import ru.art.state.api.model.*;
-import java.util.*;
-
 import static java.util.stream.Collectors.*;
+import java.util.*;
 
 @Getter
 @RequiredArgsConstructor

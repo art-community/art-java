@@ -24,12 +24,6 @@ import ru.art.entity.*;
 import ru.art.entity.mapper.*;
 import ru.art.generator.mapper.annotation.*;
 import ru.art.generator.mapper.exception.*;
-import java.io.*;
-import java.lang.reflect.Field;
-import java.net.*;
-import java.util.*;
-import java.util.stream.*;
-
 import static com.squareup.javapoet.CodeBlock.*;
 import static com.squareup.javapoet.TypeSpec.*;
 import static java.io.File.*;
@@ -47,6 +41,11 @@ import static ru.art.generator.mapper.constants.FromModelConstants.*;
 import static ru.art.generator.mapper.constants.ToModelConstants.*;
 import static ru.art.generator.mapper.operations.CollectionGeneratorOperations.*;
 import static ru.art.generator.mapper.operations.CommonOperations.*;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.net.*;
+import java.util.*;
+import java.util.stream.*;
 
 /**
  * Interface containing static methods for creating mapper classes,

@@ -28,11 +28,10 @@ import ru.art.http.constants.*;
 import ru.art.http.logger.*;
 import ru.art.http.mapper.*;
 import ru.art.logging.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
 import static ru.art.http.constants.MimeToContentTypeMapper.*;
+import java.util.*;
 
 public interface HttpModuleConfiguration extends ModuleConfiguration {
     boolean isEnableRawDataTracing();

@@ -27,9 +27,6 @@ import ru.art.entity.mapper.*;
 import ru.art.grpc.servlet.*;
 import ru.art.grpc.servlet.GrpcServlet.*;
 import ru.art.service.model.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import static io.grpc.ManagedChannelBuilder.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.TimeUnit.*;
@@ -46,6 +43,8 @@ import static ru.art.service.factory.ServiceRequestFactory.*;
 import static ru.art.service.factory.ServiceResponseFactory.*;
 import static ru.art.service.mapping.ServiceRequestMapping.*;
 import static ru.art.service.mapping.ServiceResponseMapping.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 @NoArgsConstructor(access = PRIVATE)
 class GrpcCommunicationExecutor {

@@ -24,9 +24,6 @@ import org.apache.kafka.streams.kstream.*;
 import org.apache.logging.log4j.*;
 import ru.art.kafka.consumer.configuration.*;
 import ru.art.kafka.consumer.container.*;
-import java.util.*;
-import java.util.function.*;
-
 import static java.lang.String.*;
 import static java.text.MessageFormat.format;
 import static org.apache.kafka.streams.StreamsConfig.*;
@@ -38,6 +35,8 @@ import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
 import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.logging.ThreadContextExtensions.*;
+import java.util.*;
+import java.util.function.*;
 
 @Getter
 public class KafkaStreamsRegistry {

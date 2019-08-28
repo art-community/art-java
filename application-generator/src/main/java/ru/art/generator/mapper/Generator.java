@@ -21,9 +21,6 @@ package ru.art.generator.mapper;
 import ru.art.generator.mapper.annotation.*;
 import ru.art.generator.mapper.exception.*;
 import ru.art.generator.mapper.operations.*;
-import java.io.*;
-import java.util.*;
-
 import static java.io.File.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -33,6 +30,8 @@ import static ru.art.generator.mapper.constants.Constants.*;
 import static ru.art.generator.mapper.operations.AnalyzingOperations.*;
 import static ru.art.generator.mapper.operations.CommonOperations.*;
 import static ru.art.generator.mapper.operations.GeneratorOperations.*;
+import java.io.*;
+import java.util.*;
 
 /**
  * Main class for generating mappers based on classes in package "model".

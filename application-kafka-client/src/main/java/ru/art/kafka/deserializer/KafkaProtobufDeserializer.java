@@ -21,10 +21,9 @@ package ru.art.kafka.deserializer;
 import org.apache.kafka.common.serialization.*;
 import ru.art.entity.*;
 import ru.art.kafka.exception.*;
-import java.util.*;
-
 import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
 import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.*;
+import java.util.*;
 
 public class KafkaProtobufDeserializer implements Deserializer<Value> {
     @Override

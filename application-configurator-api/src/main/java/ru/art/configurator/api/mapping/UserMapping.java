@@ -21,7 +21,6 @@ package ru.art.configurator.api.mapping;
 import ru.art.configurator.api.entity.*;
 import ru.art.entity.mapper.ValueFromModelMapper.*;
 import ru.art.entity.mapper.ValueToModelMapper.*;
-
 import static ru.art.entity.Entity.*;
 
 public interface UserMapping {

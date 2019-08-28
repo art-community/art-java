@@ -20,9 +20,8 @@ package ru.art.kafka.serializer;
 
 import org.apache.kafka.common.serialization.*;
 import ru.art.entity.*;
-import java.util.*;
-
 import static ru.art.json.descriptor.JsonEntityWriter.*;
+import java.util.*;
 
 public class KafkaJsonSerializer implements Serializer<Value> {
     @Override

@@ -22,13 +22,12 @@ package ru.art.configurator.dao;
 import ru.art.configurator.api.entity.*;
 import ru.art.entity.*;
 import ru.art.rocks.db.dao.*;
-import java.util.*;
-
 import static java.util.stream.Collectors.*;
 import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
 import static ru.art.rocks.db.dao.RocksDbCollectionDao.*;
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
 import static ru.art.rocks.db.dao.RocksDbValueDao.*;
+import java.util.*;
 
 public interface ConfiguratorDao {
     static void saveConfig(Configuration inputConfiguration) {

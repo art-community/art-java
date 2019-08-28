@@ -21,10 +21,9 @@ package ru.art.soap.content.mapper;
 import ru.art.core.mime.*;
 import ru.art.http.mapper.*;
 import ru.art.http.xml.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
+import java.util.*;
 
 public interface HttpSoapMappingConfigurator {
     static Map<MimeType, HttpContentMapper> configureSoapHttpMappers(Map<MimeType, HttpContentMapper> defaultMappers) {

@@ -20,8 +20,6 @@ package ru.art.config.extensions.grpc;
 
 import lombok.*;
 import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.*;
-import java.util.concurrent.*;
-
 import static java.util.Objects.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
@@ -30,6 +28,7 @@ import static ru.art.core.constants.ThreadConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
 import static ru.art.grpc.server.module.GrpcServerModule.*;
+import java.util.concurrent.*;
 
 @Getter
 public class GrpcServerAgileConfiguration extends GrpcServerModuleDefaultConfiguration {

@@ -21,7 +21,6 @@ package ru.art.entity;
 import ru.art.entity.mapper.ValueFromModelMapper.*;
 import ru.art.entity.mapper.*;
 import ru.art.entity.mapper.ValueToModelMapper.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.entity.constants.ValueType.PrimitiveType.*;

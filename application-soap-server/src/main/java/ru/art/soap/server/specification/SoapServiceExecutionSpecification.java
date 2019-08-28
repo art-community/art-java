@@ -23,9 +23,8 @@ import ru.art.http.server.builder.*;
 import ru.art.http.server.model.*;
 import ru.art.http.server.specification.*;
 import ru.art.service.exception.*;
+import ru.art.service.registry.*;
 import ru.art.soap.server.model.*;
-import java.util.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -33,11 +32,11 @@ import static ru.art.entity.PrimitiveMapping.*;
 import static ru.art.http.server.builder.HttpServiceBuilder.*;
 import static ru.art.http.server.model.HttpService.*;
 import static ru.art.service.ServiceModule.*;
-import static ru.art.service.ServiceModuleConfiguration.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.*;
 import static ru.art.soap.server.mapper.SoapMapper.*;
 import static ru.art.soap.server.model.SoapService.*;
 import static ru.art.soap.server.service.SoapExecutionService.*;
+import java.util.*;
 
 @Getter
 public class SoapServiceExecutionSpecification implements HttpServiceSpecification {
@@ -54,7 +53,7 @@ public class SoapServiceExecutionSpecification implements HttpServiceSpecificati
 
     public SoapServiceExecutionSpecification(SoapServiceSpecification soapServiceSpecification) {
         this.soapServiceSpecification = soapServiceSpecification;
-        ServiceRegistry serviceRegistry = serviceModule().getServiceRegistry();
+        ServiceRegistry serviceRegistry = serviceModuleState().getServiceRegistry();
         if (isNull(serviceRegistry.getService(soapServiceSpecification.getServiceId()))) {
             serviceRegistry.registerService(soapServiceSpecification);
         }

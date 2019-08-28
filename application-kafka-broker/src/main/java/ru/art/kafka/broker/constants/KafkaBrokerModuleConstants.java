@@ -16,7 +16,7 @@
 
 package ru.art.kafka.broker.constants;
 
-import static ru.art.core.network.selector.PortSelector.findAvailableTcpPort;
+import static ru.art.core.network.selector.PortSelector.*;
 
 public interface KafkaBrokerModuleConstants {
     String KAFKA_BROKER_MODULE_ID = "KAFKA_BROKER_MODULE";

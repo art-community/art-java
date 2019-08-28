@@ -25,13 +25,12 @@ import ru.art.http.constants.*;
 import ru.art.http.server.builder.*;
 import ru.art.http.server.interceptor.*;
 import ru.art.service.constants.*;
-import java.util.function.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 import static ru.art.http.server.model.HttpService.*;
 import static ru.art.service.ServiceModule.*;
+import java.util.function.*;
 
 public class HttpServiceFunction {
     private String path;
@@ -108,8 +107,8 @@ public class HttpServiceFunction {
     }
 
     public <RequestType, ResponseType> void handle(Function<RequestType, ResponseType> function) {
-        serviceModule()
-                .getServiceRegistry()
+        serviceModuleState()
+                    .getServiceRegistry()
                 .registerService(new HttpFunctionalServiceSpecification(httpMethodBuilder.listen(path).serve(EMPTY_STRING), function));
     }
 

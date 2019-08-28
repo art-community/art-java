@@ -19,13 +19,12 @@
 package ru.art.task.deferred.executor;
 
 import lombok.*;
-import java.time.*;
-import java.util.concurrent.*;
-import java.util.function.*;
-
 import static java.lang.System.*;
 import static java.time.ZoneId.*;
 import static java.util.Comparator.*;
+import java.time.*;
+import java.util.concurrent.*;
+import java.util.function.*;
 
 /**
  * Модель отложенного события

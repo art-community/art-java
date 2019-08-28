@@ -18,9 +18,8 @@
 
 package ru.art.core.constants;
 
-import java.util.regex.*;
-
 import static java.util.regex.Pattern.*;
+import java.util.regex.*;
 
 public interface StringConstants {
     // @formatter:off

@@ -22,11 +22,6 @@ import lombok.*;
 import ru.art.entity.*;
 import ru.art.entity.constants.*;
 import ru.art.xml.exception.*;
-import javax.xml.stream.*;
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
@@ -38,6 +33,10 @@ import static ru.art.xml.constants.XmlDocumentConstants.*;
 import static ru.art.xml.constants.XmlLoggingMessages.*;
 import static ru.art.xml.constants.XmlMappingExceptionMessages.*;
 import static ru.art.xml.module.XmlModule.*;
+import javax.xml.stream.*;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public class XmlEntityWriter {

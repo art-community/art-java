@@ -19,10 +19,9 @@
 package ru.art.core.extension;
 
 import lombok.experimental.*;
-import java.io.*;
-
 import static ru.art.core.constants.BufferConstants.*;
 import static ru.art.core.constants.StreamConstants.*;
+import java.io.*;
 
 @UtilityClass
 public class InputOutputStreamExtensions {

@@ -22,18 +22,18 @@ import lombok.*;
 import ru.art.core.module.*;
 import ru.art.http.server.*;
 import ru.art.http.server.specification.*;
-import java.util.*;
-
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.http.server.HttpServerModuleConfiguration.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 import static ru.art.service.ServiceModule.*;
+import java.util.*;
 
 @Getter
 public class HttpServerModule implements Module<HttpServerModuleConfiguration, HttpServerModuleState> {
     @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}), value = PRIVATE)
-    private final static List<HttpServiceSpecification> httpServices = serviceModule().getServiceRegistry()
+    private final static List<HttpServiceSpecification> httpServices = serviceModuleState().getServiceRegistry()
             .getServices()
             .values()
             .stream()
@@ -45,12 +45,12 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
     @Getter(lazy = true, value = PRIVATE)
     private final static HttpServerModuleState httpServerModuleState = context().getModuleState(HTTP_SERVER_MODULE_ID, HttpServerModule::new);
     private final String id = HTTP_SERVER_MODULE_ID;
-    private final HttpServerModuleConfiguration defaultConfiguration = HttpServerModuleConfiguration.DEFAULT_CONFIGURATION;
+    private final HttpServerModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private final HttpServerModuleState state = new HttpServerModuleState();
 
     public static HttpServerModuleConfiguration httpServerModule() {
-        if (insideDefaultContext()) {
-            return HttpServerModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getHttpServerModule();
     }

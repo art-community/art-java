@@ -20,11 +20,10 @@ package ru.art.entity.tuple.schema;
 
 import lombok.*;
 import ru.art.entity.*;
-import java.util.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.constants.ValueType.*;
+import java.util.*;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)

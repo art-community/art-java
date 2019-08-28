@@ -20,7 +20,6 @@ package ru.art.http.client.interceptor;
 
 import org.apache.http.client.methods.*;
 import ru.art.core.constants.*;
-
 import static org.apache.logging.log4j.ThreadContext.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.InterceptionStrategy.*;

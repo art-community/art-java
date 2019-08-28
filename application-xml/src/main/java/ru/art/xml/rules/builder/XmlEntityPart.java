@@ -19,9 +19,8 @@
 package ru.art.xml.rules.builder;
 
 import lombok.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
 
 @Builder
 @Getter

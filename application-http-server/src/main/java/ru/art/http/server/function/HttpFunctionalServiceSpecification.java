@@ -21,11 +21,10 @@ package ru.art.http.server.function;
 import lombok.*;
 import ru.art.http.server.model.*;
 import ru.art.http.server.specification.*;
-import java.util.function.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
+import java.util.function.*;
 
 @Getter
 public class HttpFunctionalServiceSpecification implements HttpServiceSpecification {

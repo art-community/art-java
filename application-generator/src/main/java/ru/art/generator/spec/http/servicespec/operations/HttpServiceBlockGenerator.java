@@ -28,10 +28,6 @@ import ru.art.generator.spec.http.servicespec.annotation.*;
 import ru.art.generator.spec.http.servicespec.constants.*;
 import ru.art.generator.spec.http.servicespec.exception.*;
 import ru.art.generator.spec.http.servicespec.model.*;
-import java.lang.annotation.*;
-import java.lang.reflect.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -53,6 +49,9 @@ import static ru.art.generator.spec.http.servicespec.operations.HttpServiceAuxil
 import static ru.art.generator.spec.http.servicespec.operations.HttpServiceSpecificationClassGenerator.*;
 import static ru.art.service.constants.RequestValidationPolicy.NOT_NULL;
 import static ru.art.service.constants.RequestValidationPolicy.VALIDATABLE;
+import java.lang.annotation.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * Interface with methods to create httpService constants

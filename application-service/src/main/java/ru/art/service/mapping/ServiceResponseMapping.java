@@ -23,7 +23,6 @@ import ru.art.entity.mapper.*;
 import ru.art.service.exception.*;
 import ru.art.service.model.*;
 import ru.art.service.model.ServiceResponse.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.entity.Entity.*;

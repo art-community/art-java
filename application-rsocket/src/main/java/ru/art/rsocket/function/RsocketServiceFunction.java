@@ -22,19 +22,16 @@ import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
 import ru.art.reactive.service.constants.ReactiveServiceModuleConstants.*;
-import ru.art.reactive.service.model.*;
 import ru.art.rsocket.constants.RsocketModuleConstants.*;
-import ru.art.rsocket.service.*;
 import ru.art.rsocket.service.RsocketService.*;
-import ru.art.service.*;
 import ru.art.service.constants.*;
-import java.util.function.*;
-
-import static java.util.Objects.isNull;
+import ru.art.service.registry.*;
+import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.reactive.service.model.ReactiveService.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.service.ServiceModule.*;
+import java.util.function.*;
 
 public class RsocketServiceFunction {
     private RsocketMethod rsocketMethod = RsocketMethod.rsocketMethod();
@@ -87,7 +84,7 @@ public class RsocketServiceFunction {
     }
 
     public <RequestType, ResponseType> void handle(Function<RequestType, ResponseType> function) {
-        ServiceModuleConfiguration.ServiceRegistry serviceRegistry = serviceModule().getServiceRegistry();
+        ServiceRegistry serviceRegistry = serviceModuleState().getServiceRegistry();
         RsocketFunctionalServiceSpecification specification = cast(serviceRegistry.getServices().get(RSOCKET_FUNCTION_SERVICE));
         if (isNull(specification)) {
             specification = new RsocketFunctionalServiceSpecification();

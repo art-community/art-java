@@ -24,7 +24,6 @@ import org.apache.http.client.methods.*;
 import ru.art.core.constants.*;
 import ru.art.http.client.constants.*;
 import ru.art.http.client.exception.*;
-
 import static java.util.Objects.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
 import static ru.art.http.client.interceptor.HttpClientRequestInterception.*;

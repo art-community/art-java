@@ -24,7 +24,6 @@ import ru.art.entity.*;
 import ru.art.entity.mapper.ValueFromModelMapper.*;
 import ru.art.entity.mapper.*;
 import ru.art.entity.mapper.ValueToModelMapper.*;
-
 import static ru.art.entity.Entity.*;
 import static ru.art.entity.mapper.ValueMapper.*;
 

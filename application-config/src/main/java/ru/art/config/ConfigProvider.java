@@ -23,7 +23,6 @@ import ru.art.config.cache.*;
 import ru.art.config.constants.*;
 import ru.art.config.exception.*;
 import ru.art.core.annotation.*;
-
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static ru.art.config.ConfigLoader.*;

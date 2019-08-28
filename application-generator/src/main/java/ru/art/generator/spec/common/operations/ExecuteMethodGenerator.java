@@ -27,8 +27,6 @@ import ru.art.generator.spec.http.servicespec.model.*;
 import ru.art.generator.spec.http.servicespec.operations.*;
 import ru.art.service.*;
 import ru.art.service.exception.*;
-import java.lang.reflect.*;
-
 import static com.squareup.javapoet.MethodSpec.*;
 import static com.squareup.javapoet.TypeVariableName.*;
 import static java.text.MessageFormat.*;
@@ -38,6 +36,7 @@ import static ru.art.generator.common.operations.CommonOperations.*;
 import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.ExecuteMethodConstants.*;
 import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.*;
 import static ru.art.generator.spec.http.common.operations.HttpAnnotationsChecker.*;
+import java.lang.reflect.*;
 
 /**
  * Interface for executeMethod's generation for each type of specification.

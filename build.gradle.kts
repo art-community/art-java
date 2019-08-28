@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-import com.jfrog.bintray.gradle.BintrayExtension.PackageConfig
-import groovy.lang.GroovyObject
-import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
-import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
+import com.jfrog.bintray.gradle.BintrayExtension.*
+import groovy.lang.*
+import org.jfrog.gradle.plugin.artifactory.dsl.*
+import org.jfrog.gradle.plugin.artifactory.task.*
 
 plugins {
     `maven-publish`

@@ -21,7 +21,6 @@ package ru.art.entity;
 import ru.art.entity.mapper.ValueFromModelMapper.*;
 import ru.art.entity.mapper.*;
 import ru.art.entity.mapper.ValueToModelMapper.*;
-
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.entity.mapper.ValueMapper.*;
 

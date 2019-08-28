@@ -19,7 +19,6 @@
 package ru.art.http.constants;
 
 import lombok.*;
-
 import static ru.art.http.constants.HttpStatus.Series.*;
 
 

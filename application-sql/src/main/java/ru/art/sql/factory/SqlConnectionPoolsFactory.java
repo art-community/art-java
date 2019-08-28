@@ -24,7 +24,6 @@ import org.jooq.*;
 import org.jooq.impl.*;
 import ru.art.sql.exception.*;
 import ru.art.sql.model.*;
-
 import static java.lang.Class.*;
 import static ru.art.metrics.module.MetricsModule.*;
 import static ru.art.sql.constants.SqlModuleConstants.ConfigurationDefaults.*;

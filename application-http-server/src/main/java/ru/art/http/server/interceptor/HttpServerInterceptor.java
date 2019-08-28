@@ -21,12 +21,11 @@ package ru.art.http.server.interceptor;
 import lombok.*;
 import ru.art.core.constants.*;
 import ru.art.http.server.exception.*;
-import javax.servlet.http.*;
-
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.constants.InterceptionStrategy.*;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
+import javax.servlet.http.*;
 
 
 @Getter

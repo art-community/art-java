@@ -23,13 +23,12 @@ import ru.art.entity.XmlEntity.*;
 import ru.art.xml.constants.*;
 import ru.art.xml.exception.*;
 import ru.art.xml.rules.builder.*;
-import java.util.*;
-import java.util.Map.*;
-
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.entity.XmlEntity.*;
 import static ru.art.xml.constants.XmlMappingExceptionMessages.*;
+import java.util.*;
+import java.util.Map.*;
 
 public class XmlEntityRulesProcessor {
     public static XmlEntityMappingBuilder xmlMappingBuilder() {

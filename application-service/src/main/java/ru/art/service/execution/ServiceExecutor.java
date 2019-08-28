@@ -19,10 +19,9 @@
 package ru.art.service.execution;
 
 import ru.art.service.model.*;
-import java.util.concurrent.*;
-
 import static ru.art.service.ServiceModule.*;
 import static ru.art.service.constants.ServiceExecutionFeatureTarget.*;
+import java.util.concurrent.*;
 
 public interface ServiceExecutor {
     static <ResponseType> ResponseType executeServiceWithConfiguration(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {

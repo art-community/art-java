@@ -23,8 +23,6 @@ import ru.art.core.checker.*;
 import ru.art.entity.constants.*;
 import ru.art.entity.constants.ValueType.*;
 import ru.art.entity.exception.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
@@ -47,6 +45,7 @@ import static ru.art.entity.constants.ValueType.CollectionElementsType.MAP;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING_PARAMETERS_MAP;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.*;
+import java.util.*;
 
 @Getter
 public class CollectionValue<T> implements Value {

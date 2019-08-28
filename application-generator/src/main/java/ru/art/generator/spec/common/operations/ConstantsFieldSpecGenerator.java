@@ -24,15 +24,14 @@ import ru.art.generator.spec.common.constants.*;
 import ru.art.generator.spec.common.exception.*;
 import ru.art.generator.spec.http.proxyspec.operations.*;
 import ru.art.generator.spec.http.servicespec.operations.*;
-import java.util.*;
-import java.util.stream.*;
-
 import static java.text.MessageFormat.*;
 import static javax.lang.model.element.Modifier.*;
 import static ru.art.generator.common.constants.Constants.SymbolsAndFormatting.*;
 import static ru.art.generator.spec.common.constants.CommonSpecGeneratorConstants.*;
 import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.*;
 import static ru.art.generator.spec.common.operations.IdCalculator.*;
+import java.util.*;
+import java.util.stream.*;
 
 /**
  * Interface containing common operations for all specification's generators.

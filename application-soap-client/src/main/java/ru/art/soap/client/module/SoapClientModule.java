@@ -21,10 +21,9 @@ package ru.art.soap.client.module;
 import lombok.*;
 import ru.art.core.module.*;
 import ru.art.soap.client.configuration.*;
-import ru.art.soap.client.configuration.SoapClientModuleConfiguration.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.soap.client.configuration.SoapClientModuleConfiguration.*;
 import static ru.art.soap.client.constants.SoapClientModuleConstants.*;
 
 @Getter
@@ -32,11 +31,11 @@ public class SoapClientModule implements Module<SoapClientModuleConfiguration, M
     @Getter(lazy = true, value = PRIVATE)
     private static final SoapClientModuleConfiguration soapClientModule = context().getModule(SOAP_CLIENT_MODULE_ID, SoapClientModule::new);
     private final String id = SOAP_CLIENT_MODULE_ID;
-    private final SoapClientModuleConfiguration defaultConfiguration = SoapClientModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
+    private final SoapClientModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
 
     public static SoapClientModuleConfiguration soapClientModule() {
-        if (insideDefaultContext()) {
-            return SoapClientModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getSoapClientModule();
     }

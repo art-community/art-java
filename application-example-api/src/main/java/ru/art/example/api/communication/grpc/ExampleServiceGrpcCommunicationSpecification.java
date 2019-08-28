@@ -25,7 +25,6 @@ import ru.art.grpc.client.communicator.*;
 import ru.art.grpc.client.communicator.GrpcCommunicator.*;
 import ru.art.grpc.client.specification.*;
 import ru.art.service.exception.*;
-
 import static ru.art.core.caster.Caster.*;
 import static ru.art.example.api.constants.ExampleApiConstants.*;
 import static ru.art.example.api.constants.ExampleApiConstants.Methods.*;

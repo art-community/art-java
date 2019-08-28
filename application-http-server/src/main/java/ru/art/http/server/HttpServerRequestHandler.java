@@ -30,11 +30,6 @@ import ru.art.http.server.exception.*;
 import ru.art.http.server.model.HttpService.*;
 import ru.art.service.exception.*;
 import ru.art.service.model.*;
-import javax.servlet.http.*;
-import java.io.*;
-import java.nio.charset.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
@@ -54,6 +49,10 @@ import static ru.art.logging.LoggingModule.*;
 import static ru.art.service.ServiceController.*;
 import static ru.art.service.factory.ServiceRequestFactory.*;
 import static ru.art.service.mapping.ServiceResponseMapping.*;
+import javax.servlet.http.*;
+import java.io.*;
+import java.nio.charset.*;
+import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
 class HttpServerRequestHandler {

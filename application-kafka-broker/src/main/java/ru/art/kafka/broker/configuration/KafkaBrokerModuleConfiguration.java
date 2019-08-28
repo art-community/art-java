@@ -16,10 +16,10 @@
 
 package ru.art.kafka.broker.configuration;
 
-import lombok.Getter;
-import ru.art.core.module.ModuleConfiguration;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode.ON_KAFKA_BROKER_INITIALIZATION;
+import lombok.*;
+import ru.art.core.module.*;
+import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
+import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode.*;
 
 public interface KafkaBrokerModuleConfiguration extends ModuleConfiguration {
     ZookeeperConfiguration getZookeeperConfiguration();

@@ -30,21 +30,17 @@ package ru.art.kafka.broker.embedded;/*
  *    limitations under the License.
  */
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.apache.zookeeper.server.ServerCnxnFactory;
-import org.apache.zookeeper.server.ZooKeeperServer;
-import ru.art.kafka.broker.configuration.ZookeeperConfiguration;
-import ru.art.kafka.broker.exception.KafkaBrokerModuleException;
-import static java.nio.file.Files.createDirectories;
-import static java.nio.file.Files.createTempDirectory;
-import static java.nio.file.Paths.get;
-import static lombok.AccessLevel.PRIVATE;
-import static org.apache.zookeeper.server.NIOServerCnxnFactory.createFactory;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZOOKEEPER_PREFIX;
-import static ru.art.kafka.broker.module.KafkaBrokerModule.kafkaBrokerModule;
-import static ru.art.kafka.broker.module.KafkaBrokerModule.kafkaBrokerModuleState;
-import java.nio.file.Path;
+import lombok.*;
+import org.apache.zookeeper.server.*;
+import ru.art.kafka.broker.configuration.*;
+import ru.art.kafka.broker.exception.*;
+import static java.nio.file.Files.*;
+import static java.nio.file.Paths.*;
+import static lombok.AccessLevel.*;
+import static org.apache.zookeeper.server.NIOServerCnxnFactory.*;
+import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
+import static ru.art.kafka.broker.module.KafkaBrokerModule.*;
+import java.nio.file.*;
 
 @Getter
 @AllArgsConstructor(access = PRIVATE)

@@ -22,15 +22,14 @@ package ru.art.core.factory;
 import lombok.*;
 import lombok.experimental.*;
 import ru.art.core.model.*;
-import java.util.ArrayList;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.stream.*;
-
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
+import java.util.ArrayList;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.*;
 
 @UtilityClass
 public class CollectionsFactory {

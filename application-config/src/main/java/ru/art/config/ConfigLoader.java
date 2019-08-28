@@ -22,7 +22,6 @@ import com.typesafe.config.*;
 import lombok.*;
 import ru.art.config.constants.*;
 import ru.art.config.exception.ConfigException;
-
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import static ru.art.config.GroovyConfigLoader.*;

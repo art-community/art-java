@@ -21,14 +21,13 @@ package ru.art.http.json;
 import ru.art.core.mime.*;
 import ru.art.entity.*;
 import ru.art.http.mapper.HttpContentMapper.*;
-import java.nio.charset.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.http.constants.HttpExceptionsMessages.*;
 import static ru.art.json.descriptor.JsonEntityReader.*;
 import static ru.art.json.descriptor.JsonEntityWriter.*;
+import java.nio.charset.*;
 
 public class HttpJsonMapper implements HttpEntityToContentMapper, HttpContentToValueMapper {
     @Override

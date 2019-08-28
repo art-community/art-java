@@ -20,7 +20,6 @@ package ru.art.example.interceptor;
 
 import ru.art.service.interceptor.*;
 import ru.art.service.model.*;
-
 import static ru.art.example.module.ExampleModule.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.service.model.ServiceInterceptionResult.*;

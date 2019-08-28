@@ -21,9 +21,6 @@ package ru.art.remote.scheduler.controller;
 import ru.art.remote.scheduler.api.model.*;
 import ru.art.service.*;
 import ru.art.task.deferred.executor.*;
-import java.time.*;
-import java.util.*;
-
 import static java.time.Duration.*;
 import static java.time.LocalDateTime.*;
 import static java.util.Collections.*;
@@ -36,6 +33,8 @@ import static ru.art.remote.scheduler.module.RemoteSchedulerModule.*;
 import static ru.art.scheduler.db.adapter.api.constants.SchedulerDbAdapterApiConstants.Methods.GET_ALL_INFINITY_PROCESSES;
 import static ru.art.task.deferred.executor.SchedulerModule.*;
 import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
+import java.time.*;
+import java.util.*;
 
 public interface PoolController {
     static void fillAllPools() {

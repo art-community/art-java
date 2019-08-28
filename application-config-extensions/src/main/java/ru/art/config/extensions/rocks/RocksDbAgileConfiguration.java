@@ -20,7 +20,6 @@ package ru.art.config.extensions.rocks;
 
 import lombok.*;
 import ru.art.rocks.db.configuration.RocksDbModuleConfiguration.*;
-
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.rocks.RocksDbConfigKeys.*;

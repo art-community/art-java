@@ -19,9 +19,8 @@
 package ru.art.core.checker;
 
 import lombok.experimental.*;
-import java.util.*;
-
 import static java.util.Objects.*;
+import java.util.*;
 
 @UtilityClass
 public class CheckerForEmptiness {

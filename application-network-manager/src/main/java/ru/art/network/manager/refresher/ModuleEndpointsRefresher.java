@@ -20,7 +20,6 @@ package ru.art.network.manager.refresher;
 
 import ru.art.service.*;
 import ru.art.state.api.model.*;
-
 import static java.lang.System.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ContextConstants.*;

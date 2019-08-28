@@ -21,7 +21,6 @@ package ru.art.state.api.mapping;
 import ru.art.entity.*;
 import ru.art.entity.mapper.*;
 import ru.art.state.api.model.*;
-
 import static java.util.Comparator.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 

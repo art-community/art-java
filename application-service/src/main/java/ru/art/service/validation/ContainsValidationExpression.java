@@ -19,10 +19,9 @@
 package ru.art.service.validation;
 
 import lombok.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;
+import java.util.*;
 
 @AllArgsConstructor
 public class ContainsValidationExpression extends ValidationExpression<Object> {

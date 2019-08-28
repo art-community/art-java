@@ -22,14 +22,13 @@ import ru.art.config.remote.api.specification.*;
 import ru.art.configurator.api.entity.*;
 import ru.art.core.checker.*;
 import ru.art.entity.*;
-import java.util.*;
-
 import static ru.art.configurator.api.entity.Configuration.*;
 import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
 import static ru.art.configurator.dao.ConfiguratorDao.*;
 import static ru.art.configurator.factory.RemoteConfigCommunicationSpecificationsFactory.*;
 import static ru.art.configurator.provider.ApplicationModulesParametersProvider.*;
 import static ru.art.entity.Entity.*;
+import java.util.*;
 
 
 public interface ConfiguratorService {

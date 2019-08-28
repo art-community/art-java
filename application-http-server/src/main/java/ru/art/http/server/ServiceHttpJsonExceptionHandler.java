@@ -23,9 +23,6 @@ import ru.art.http.mapper.*;
 import ru.art.http.server.context.*;
 import ru.art.http.server.handler.*;
 import ru.art.service.exception.*;
-import javax.servlet.http.*;
-import java.nio.charset.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static ru.art.core.context.Context.*;
@@ -36,6 +33,8 @@ import static ru.art.http.server.body.descriptor.HttpBodyDescriptor.*;
 import static ru.art.http.server.constants.HttpExceptionResponses.*;
 import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.service.mapping.ServiceEntitiesMapping.ServiceExecutionExceptionMapping.*;
+import javax.servlet.http.*;
+import java.nio.charset.*;
 
 class ServiceHttpJsonExceptionHandler implements HttpExceptionHandler<ServiceExecutionException> {
     @Override

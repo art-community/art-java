@@ -19,7 +19,6 @@
 package ru.art.network.manager.exception;
 
 import ru.art.network.manager.constants.NetworkManagerModuleConstants.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.network.manager.constants.NetworkManagerModuleConstants.ExceptionMessages.*;
 

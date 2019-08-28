@@ -20,7 +20,6 @@ package ru.art.module.executor.mapper;
 
 import ru.art.entity.*;
 import ru.art.entity.mapper.ValueFromModelMapper.*;
-
 import static ru.art.entity.Entity.*;
 import static ru.art.module.executor.mapper.ExecutorResponseMapper.Fields.*;
 

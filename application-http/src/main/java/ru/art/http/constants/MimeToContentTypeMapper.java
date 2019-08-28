@@ -21,7 +21,6 @@ package ru.art.http.constants;
 import lombok.*;
 import org.apache.http.entity.*;
 import ru.art.core.mime.*;
-
 import static org.apache.http.entity.ContentType.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.http.constants.HttpMimeTypes.*;

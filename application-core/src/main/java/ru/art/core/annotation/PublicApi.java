@@ -18,9 +18,8 @@
 
 package ru.art.core.annotation;
 
+import static java.lang.annotation.RetentionPolicy.*;
 import java.lang.annotation.*;
-
-import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 @Documented
 @Target(ElementType.TYPE)

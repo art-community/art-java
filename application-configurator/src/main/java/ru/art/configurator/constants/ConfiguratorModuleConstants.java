@@ -18,10 +18,9 @@
 
 package ru.art.configurator.constants;
 
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
+import java.util.*;
 
 public interface ConfiguratorModuleConstants {
     String CONFIGURATOR_MODULE_ID = "CONFIGURATOR_MODULE";

@@ -20,7 +20,6 @@ package ru.art.http.server;
 
 import io.micrometer.core.instrument.binder.tomcat.*;
 import org.apache.catalina.*;
-
 import static java.util.Collections.*;
 import static ru.art.metrics.module.MetricsModule.*;
 

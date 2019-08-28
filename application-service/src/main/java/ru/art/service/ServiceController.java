@@ -20,8 +20,6 @@ package ru.art.service;
 
 import ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import ru.art.service.model.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
@@ -38,6 +36,7 @@ import static ru.art.service.constants.ServiceExceptionsMessages.*;
 import static ru.art.service.factory.ServiceRequestFactory.*;
 import static ru.art.service.factory.ServiceResponseFactory.*;
 import static ru.art.service.model.ServiceInterceptionResult.*;
+import java.util.*;
 
 public interface ServiceController {
     static <RequestType, ResponseType> Optional<ResponseType> executeServiceMethod(String serviceId, String methodId, RequestType requestData) {
@@ -67,8 +66,8 @@ public interface ServiceController {
     static <RequestType, ResponseType> ServiceResponse<ResponseType> executeServiceMethodUnchecked(ServiceRequest<RequestType> request) {
         Date startTime = new Date();
         putIfNotNull(REQUEST_START_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT.format(startTime));
-        Specification service = serviceModule()
-                .getServiceRegistry()
+        Specification service = serviceModuleState()
+                    .getServiceRegistry()
                 .getService(request.getServiceMethodCommand().getServiceId());
         if (isNull(service)) {
             String errorMessage = format(SERVICE_WITH_ID_NOT_EXISTS, request.getServiceMethodCommand().getServiceId());

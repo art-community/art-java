@@ -23,17 +23,15 @@ import ru.art.entity.Value;
 import ru.art.entity.*;
 import ru.art.entity.constants.*;
 import ru.art.entity.tuple.schema.*;
-import java.util.*;
-
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
-import static ru.art.entity.Value.*;
 import static ru.art.entity.Entity.*;
 import static ru.art.entity.PrimitivesFactory.*;
+import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public class PlainTupleReader {

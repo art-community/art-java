@@ -23,8 +23,6 @@ import ru.art.core.module.*;
 import ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import ru.art.tarantool.exception.*;
 import ru.art.tarantool.model.*;
-import java.util.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -32,6 +30,7 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
+import java.util.*;
 
 public interface TarantoolModuleConfiguration extends ModuleConfiguration {
     Map<String, TarantoolConfiguration> getTarantoolConfigurations();

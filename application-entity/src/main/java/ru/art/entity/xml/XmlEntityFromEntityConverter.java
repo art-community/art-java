@@ -22,14 +22,13 @@ import lombok.*;
 import ru.art.core.checker.*;
 import ru.art.entity.Value;
 import ru.art.entity.*;
-import java.util.*;
-
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.entity.Value.*;
 import static ru.art.entity.XmlEntity.*;
+import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class XmlEntityFromEntityConverter {

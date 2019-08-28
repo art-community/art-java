@@ -24,8 +24,6 @@ import ru.art.config.exception.*;
 import ru.art.config.remote.specification.*;
 import ru.art.configurator.api.specification.*;
 import ru.art.core.configuration.*;
-import ru.art.core.context.*;
-
 import static java.util.Objects.*;
 import static ru.art.config.ConfigProvider.*;
 import static ru.art.config.constants.ConfigType.*;
@@ -43,36 +41,10 @@ public class RemoteConfigProvider {
     private static final ConfigCacheContainer CONFIG_CACHE_CONTAINER = new ConfigCacheContainer();
 
     public static void useRemoteConfigurations() {
-        withDefaultContext(RemoteConfigProvider::applyRemoteConfiguration);
+        useRemoteConfigurations(contextConfiguration());
     }
 
     public static void useRemoteConfigurations(ContextInitialConfiguration contextInitialConfiguration) {
-        withDefaultContext(RemoteConfigProvider::applyRemoteConfiguration);
-    }
-
-    public static Config remoteConfig(String sectionId) {
-        return remoteConfig().getConfig(sectionId);
-    }
-
-    public static Config remoteConfig() {
-        return withDefaultContext(RemoteConfigProvider::getRemoteConfig);
-    }
-
-    private static Config getRemoteConfig(Context context) {
-        if (!serviceModule().getServiceRegistry().getServices().containsKey(CONFIGURATOR_COMMUNICATION_SERVICE_ID)) {
-            return new Config(entityBuilder().build(), REMOTE_ENTITY_CONFIG);
-        }
-
-        String moduleId = contextConfiguration().getMainModuleId();
-
-        if (isNull(moduleId)) throw new ConfigException(MODULE_ID_IS_EMPTY);
-        if (CONFIG_CACHE_CONTAINER.containsConfig(moduleId, REMOTE_ENTITY_CONFIG) && CONFIG_CACHE_CONTAINER.configCacheActualized(moduleId, REMOTE_ENTITY_CONFIG)) {
-            return CONFIG_CACHE_CONTAINER.getConfigFromCache(moduleId, REMOTE_ENTITY_CONFIG);
-        }
-        return CONFIG_CACHE_CONTAINER.putConfigToCache(moduleId, REMOTE_ENTITY_CONFIG, new Config(loadRemoteConfig(), REMOTE_ENTITY_CONFIG));
-    }
-
-    private static void applyRemoteConfiguration(Context context) {
         try {
             Config localConfig = config(EMPTY_STRING);
             if (!localConfig.hasPath(CONFIGURATOR_HOST) ||
@@ -84,13 +56,31 @@ public class RemoteConfigProvider {
             String configuratorHost = localConfig.getString(CONFIGURATOR_HOST);
             Integer configuratorPort = localConfig.getInt(CONFIGURATOR_PORT);
             String configuratorPath = localConfig.getString(CONFIGURATOR_PATH);
-            serviceModule()
+            serviceModuleState()
                     .getServiceRegistry()
                     .registerService(new ConfiguratorCommunicationSpecification(configuratorHost, configuratorPort, configuratorPath))
                     .registerService(new RemoteConfigServiceSpecification());
         } catch (Throwable e) {
             loggingModule().getLogger(RemoteConfigProvider.class).warn(CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS, e);
         }
+    }
+
+    public static Config remoteConfig(String sectionId) {
+        return remoteConfig().getConfig(sectionId);
+    }
+
+    public static Config remoteConfig() {
+        if (!serviceModuleState().getServiceRegistry().getServices().containsKey(CONFIGURATOR_COMMUNICATION_SERVICE_ID)) {
+            return new Config(entityBuilder().build(), REMOTE_ENTITY_CONFIG);
+        }
+
+        String moduleId = contextConfiguration().getMainModuleId();
+
+        if (isNull(moduleId)) throw new ConfigException(MODULE_ID_IS_EMPTY);
+        if (CONFIG_CACHE_CONTAINER.containsConfig(moduleId, REMOTE_ENTITY_CONFIG) && CONFIG_CACHE_CONTAINER.configCacheActualized(moduleId, REMOTE_ENTITY_CONFIG)) {
+            return CONFIG_CACHE_CONTAINER.getConfigFromCache(moduleId, REMOTE_ENTITY_CONFIG);
+        }
+        return CONFIG_CACHE_CONTAINER.putConfigToCache(moduleId, REMOTE_ENTITY_CONFIG, new Config(loadRemoteConfig(), REMOTE_ENTITY_CONFIG));
     }
 
 }

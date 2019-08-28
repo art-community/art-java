@@ -16,14 +16,11 @@
 
 package ru.art.kafka.broker.configuration;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST;
-import static ru.art.core.constants.StringConstants.COLON;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.DEFAULT_BROKER_PORT;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.DEFAULT_ZOOKEEPER_PORT;
-import java.util.Properties;
+import lombok.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
+import java.util.*;
 
 @Getter
 @Builder

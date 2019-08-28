@@ -19,9 +19,8 @@
 package ru.art.entity.interceptor;
 
 import ru.art.entity.*;
-import java.util.function.*;
-
 import static ru.art.entity.interceptor.ValueInterceptionResult.*;
+import java.util.function.*;
 
 public interface ValueInterceptor<InValue extends Value, OutValue extends Value> {
     ValueInterceptionResult<InValue, OutValue> intercept(InValue value);

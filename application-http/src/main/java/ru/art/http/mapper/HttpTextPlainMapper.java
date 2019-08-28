@@ -22,13 +22,12 @@ import ru.art.core.mime.*;
 import ru.art.entity.*;
 import ru.art.http.exception.*;
 import ru.art.http.mapper.HttpContentMapper.*;
-import java.nio.charset.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.http.constants.HttpExceptionsMessages.*;
+import java.nio.charset.*;
 
 public class HttpTextPlainMapper implements HttpEntityToContentMapper, HttpContentToValueMapper {
     @Override

@@ -21,7 +21,6 @@ package ru.art.http.client.model;
 import lombok.*;
 import lombok.experimental.*;
 import org.apache.http.client.config.*;
-
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
 

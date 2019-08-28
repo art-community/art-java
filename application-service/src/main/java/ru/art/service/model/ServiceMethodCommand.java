@@ -19,7 +19,6 @@
 package ru.art.service.model;
 
 import lombok.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;

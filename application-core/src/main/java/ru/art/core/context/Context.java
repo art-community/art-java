@@ -18,41 +18,34 @@
 
 package ru.art.core.context;
 
-import ru.art.core.configuration.ContextInitialConfiguration;
-import ru.art.core.configuration.ContextInitialConfiguration.ContextInitialDefaultConfiguration;
-import ru.art.core.configurator.ModuleConfigurator;
-import ru.art.core.exception.ContextInitializationException;
-import ru.art.core.module.Module;
-import ru.art.core.module.ModuleConfiguration;
-import ru.art.core.module.ModuleContainer;
-import ru.art.core.module.ModuleState;
-import ru.art.core.provider.PreconfiguredModuleProvider;
-import static java.lang.Runtime.getRuntime;
-import static java.lang.System.currentTimeMillis;
-import static java.lang.System.out;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static ru.art.core.caster.Caster.cast;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import ru.art.core.configuration.*;
+import ru.art.core.configuration.ContextInitialConfiguration.*;
+import ru.art.core.configurator.*;
+import ru.art.core.constants.*;
+import ru.art.core.exception.*;
+import ru.art.core.module.*;
+import ru.art.core.provider.*;
+import static java.lang.Runtime.*;
+import static java.lang.System.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.ContextState.*;
 import static ru.art.core.constants.ExceptionMessages.*;
 import static ru.art.core.constants.LoggingMessages.*;
-import static ru.art.core.constants.StringConstants.ART_BANNER;
-import static ru.art.core.factory.CollectionsFactory.mapOf;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
+import java.util.concurrent.locks.*;
+import java.util.function.*;
 
 public class Context {
     private static final ReentrantLock lock = new ReentrantLock();
-    private static volatile Context DEFAULT_INSTANCE;
     private static volatile Context INSTANCE;
-    private static volatile Consumer<Context> OUTSIDE_DEFAULT_CONTEXT_ACTION;
     private Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules = mapOf();
     private ContextInitialConfiguration initialConfiguration = new ContextInitialDefaultConfiguration();
+    private ContextState state = READY;
     private Long lastActionTimestamp = currentTimeMillis();
 
     private Context() {
@@ -129,10 +122,7 @@ public class Context {
         }
         C configuration;
         if (nonNull(preconfiguredModulesProvider = contextConfiguration().getPreconfiguredModulesProvider())) {
-            configuration = cast(preconfiguredModulesProvider.getModuleConfiguration(moduleId)
-                    .orElse(toLoadIfNotExists.getDefaultConfiguration()));
-            loadModule(toLoadIfNotExists, configuration);
-            return cast(configuration);
+            return loadModule(toLoadIfNotExists, preconfiguredModulesProvider);
         }
         loadModule(toLoadIfNotExists, (configuration = toLoadIfNotExists.getDefaultConfiguration()));
         return cast(configuration);
@@ -146,9 +136,7 @@ public class Context {
             return cast(moduleContainer.getModule().getState());
         }
         if (nonNull(preconfiguredModulesProvider = contextConfiguration().getPreconfiguredModulesProvider())) {
-            C configuration = cast(preconfiguredModulesProvider.getModuleConfiguration(moduleId)
-                    .orElse(toLoadIfNotExists.getDefaultConfiguration()));
-            loadModule(toLoadIfNotExists, configuration);
+            loadModule(toLoadIfNotExists, preconfiguredModulesProvider);
             return cast(toLoadIfNotExists.getState());
         }
         loadModule(toLoadIfNotExists, toLoadIfNotExists.getDefaultConfiguration());
@@ -165,9 +153,7 @@ public class Context {
         C configuration;
         Module<C, S> module = toLoadIfNotExists.get();
         if (nonNull(preconfiguredModulesProvider = contextConfiguration().getPreconfiguredModulesProvider())) {
-            configuration = cast(preconfiguredModulesProvider.getModuleConfiguration(moduleId).orElse(module.getDefaultConfiguration()));
-            loadModule(module, configuration);
-            return cast(configuration);
+            return loadModule(module, preconfiguredModulesProvider);
         }
         loadModule(module, (configuration = module.getDefaultConfiguration()));
         return cast(configuration);
@@ -182,10 +168,8 @@ public class Context {
         }
         Module<C, S> module = toLoadIfNotExists.get();
         if (nonNull(preconfiguredModulesProvider = contextConfiguration().getPreconfiguredModulesProvider())) {
-            C configuration = cast(preconfiguredModulesProvider.getModuleConfiguration(moduleId)
-                    .orElse(module.getDefaultConfiguration()));
-            loadModule(module, configuration);
-            return cast(module.getState());
+            loadModule(module, preconfiguredModulesProvider);
+            return module.getState();
         }
         loadModule(module, module.getDefaultConfiguration());
         return cast(module.getState());
@@ -193,29 +177,43 @@ public class Context {
 
     public <C extends ModuleConfiguration, S extends ModuleState> Context loadModule(Module<C, S> module) {
         if (isNull(module)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        state = LOADING_MODULES;
         modules.put(module.getId(), new ModuleContainer<>(module, cast(module.getDefaultConfiguration())));
         out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp));
         module.onLoad();
         lastActionTimestamp = currentTimeMillis();
+        state = READY;
         return this;
     }
 
     public <C extends ModuleConfiguration, S extends ModuleState> Context loadModule(Module<C, S> module, ModuleConfigurator<C, S> moduleConfigurator) {
         if (isNull(module)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        state = LOADING_MODULES;
         modules.put(module.getId(), new ModuleContainer<>(module, cast(moduleConfigurator.configure(module))));
         out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp));
         module.onLoad();
         lastActionTimestamp = currentTimeMillis();
+        state = READY;
         return this;
     }
 
     public <C extends ModuleConfiguration, S extends ModuleState> Context loadModule(Module<C, S> module, C customModuleConfiguration) {
         if (isNull(module)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        state = LOADING_MODULES;
         modules.put(module.getId(), new ModuleContainer<>(module, cast(nonNull(customModuleConfiguration) ? customModuleConfiguration : module.getDefaultConfiguration())));
         module.onLoad();
         out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp));
         lastActionTimestamp = currentTimeMillis();
+        state = READY;
         return this;
+    }
+
+    private <C extends ModuleConfiguration, S extends ModuleState> C loadModule(Module<C, S> module, PreconfiguredModuleProvider preconfiguredModulesProvider) {
+        state = LOADING_MODULES;
+        C configuration = cast(preconfiguredModulesProvider.getModuleConfiguration(module.getId()).orElse(module.getDefaultConfiguration()));
+        loadModule(module, configuration);
+        state = READY;
+        return cast(configuration);
     }
 
     @SuppressWarnings("Duplicates")
@@ -226,9 +224,11 @@ public class Context {
         }
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
         if (isNull(moduleContainer)) return this;
+        state = LOADING_MODULES;
         modules.put(moduleId, moduleContainer.overrideConfiguration(cast(customModuleConfiguration)));
         out.println(format(MODULE_OVERRIDDEN_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
         lastActionTimestamp = currentTimeMillis();
+        state = READY;
         return this;
     }
 
@@ -237,9 +237,11 @@ public class Context {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
         if (isNull(moduleContainer)) return this;
+        state = RELOADING_MODULES;
         moduleContainer.reloadModule();
         out.println(format(MODULE_RELOADED_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
         lastActionTimestamp = currentTimeMillis();
+        state = READY;
         return this;
     }
 
@@ -248,20 +250,24 @@ public class Context {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
         if (isNull(moduleContainer)) return this;
+        state = REFRESHING_MODULES;
         moduleContainer.refreshConfiguration();
         out.println(format(MODULE_REFRESHED_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
         lastActionTimestamp = currentTimeMillis();
+        state = READY;
         return this;
     }
 
     public Context refreshAndReloadModule(String moduleId) {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        state = REFRESHING_AND_RELOADING_MODULES;
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
         if (isNull(moduleContainer)) return this;
         moduleContainer.reloadModule();
         moduleContainer.refreshConfiguration();
         out.println(format(MODULE_REFRESHED_AND_RELOADED_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
         lastActionTimestamp = currentTimeMillis();
+        state = READY;
         return this;
     }
 
@@ -292,123 +298,17 @@ public class Context {
         return modules.containsKey(moduleId);
     }
 
-    public boolean initialized() {
+    public static boolean contextIsNotReady() {
         ReentrantLock lock = Context.lock;
         lock.lock();
         Context instance = INSTANCE;
         lock.unlock();
-        return instance != null;
+        return isNull(instance) || instance.state != READY;
     }
 
     private void unloadModules() {
+        state = UNLOADING_MODULES;
         modules.values().forEach(module -> module.getModule().onUnload());
-    }
-
-
-    public static void withDefaultContext(Consumer<Context> action) {
-        Context context = defaultContext();
-        ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = context;
-        lock.unlock();
-        action.accept(INSTANCE);
-        lock.lock();
-        INSTANCE = currentContext;
-        lock.unlock();
-        executeOutsideDefaultContextAction();
-    }
-
-    private static void executeOutsideDefaultContextAction() {
-        final ReentrantLock lock = Context.lock;
-        lock.lock();
-        if (isNull(OUTSIDE_DEFAULT_CONTEXT_ACTION)) {
-            lock.unlock();
-            return;
-        }
-        final Consumer<Context> action = OUTSIDE_DEFAULT_CONTEXT_ACTION;
-        OUTSIDE_DEFAULT_CONTEXT_ACTION = null;
-        lock.unlock();
-        action.accept(INSTANCE);
-    }
-
-    public static <T> T withDefaultContext(Function<Context, T> action) {
-        Context context = defaultContext();
-        final ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = context;
-        lock.unlock();
-        T result = action.apply(INSTANCE);
-        lock.lock();
-        INSTANCE = currentContext;
-        lock.unlock();
-        executeOutsideDefaultContextAction();
-        return result;
-    }
-
-    public static Context initDefaultContext(ContextInitialConfiguration contextInitialConfiguration) {
-        if (isNull(contextInitialConfiguration))
-            throw new ContextInitializationException(CONTEXT_INITIAL_CONFIGURATION_IS_NULL);
-        ReentrantLock lock = Context.lock;
-        lock.lock();
-        DEFAULT_INSTANCE = new Context(contextInitialConfiguration);
-        lock.unlock();
-        return DEFAULT_INSTANCE;
-    }
-
-    public static Context defaultContext() {
-        Context localInstance = DEFAULT_INSTANCE;
-        if (isNull(localInstance)) {
-            ReentrantLock lock = Context.lock;
-            lock.lock();
-            localInstance = DEFAULT_INSTANCE;
-            if (isNull(localInstance)) {
-                DEFAULT_INSTANCE = new Context();
-            }
-            lock.unlock();
-        }
-        return DEFAULT_INSTANCE;
-    }
-
-    public static boolean insideDefaultContext() {
-        if (INSTANCE == null) return false;
-        if (DEFAULT_INSTANCE == null) return false;
-        return INSTANCE == DEFAULT_INSTANCE;
-    }
-
-    public static <C extends ModuleConfiguration> C constructInsideDefaultContext(Supplier<C> constructor) {
-        Context context = defaultContext();
-        final ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = context;
-        lock.unlock();
-        C result = constructor.get();
-        lock.lock();
-        INSTANCE = currentContext;
-        lock.unlock();
-        executeOutsideDefaultContextAction();
-        return result;
-    }
-
-    public static <C extends ModuleConfiguration> C constructInsideDefaultContext(ContextInitialConfiguration configuration, Supplier<C> constructor) {
-        initDefaultContext(configuration);
-        Context context = defaultContext();
-        final ReentrantLock lock = Context.lock;
-        lock.lock();
-        Context currentContext = INSTANCE;
-        INSTANCE = context;
-        lock.unlock();
-        C result = constructor.get();
-        lock.lock();
-        INSTANCE = currentContext;
-        lock.unlock();
-        executeOutsideDefaultContextAction();
-        return result;
-    }
-
-    public static void outsideDefaultContext(Consumer<Context> action) {
-        OUTSIDE_DEFAULT_CONTEXT_ACTION = action;
+        state = EMPTY;
     }
 }

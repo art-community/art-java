@@ -19,11 +19,10 @@
 package ru.art.state.api.model;
 
 import lombok.*;
-import java.util.*;
-
 import static java.lang.System.*;
 import static java.util.Comparator.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
 
 @Getter
 @Builder

@@ -20,8 +20,6 @@ package ru.art.tarantool.configuration.lua;
 
 import lombok.*;
 import org.jtwig.*;
-import java.util.*;
-
 import static java.util.stream.Collectors.*;
 import static org.jtwig.JtwigTemplate.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
@@ -35,6 +33,7 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolField
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.USER;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
+import java.util.*;
 
 @Getter
 @Builder

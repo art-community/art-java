@@ -27,20 +27,13 @@ import ru.art.core.module.*;
 import ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import ru.art.service.interceptor.*;
 import ru.art.service.validation.*;
-import java.util.*;
-
-import static java.text.MessageFormat.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.logging.LoggingModule.*;
 import static ru.art.service.ServiceExceptionWrapperBuilder.*;
-import static ru.art.service.constants.ServiceLoggingMessages.*;
 import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
+import java.util.*;
 
 
 public interface ServiceModuleConfiguration extends ModuleConfiguration {
-    ServiceRegistry getServiceRegistry();
-
     Validator getValidator();
 
     List<RequestInterceptor> getRequestInterceptors();
@@ -61,7 +54,6 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
 
 	@Getter
 	class ServiceModuleDefaultConfiguration implements ServiceModuleConfiguration {
-        private final ServiceRegistry serviceRegistry = new ServiceRegistry();
         private final CircuitBreakerRegistry circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
         private final RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.ofDefaults();
         private final RetryRegistry retryRegistry = RetryRegistry.ofDefaults();
@@ -79,23 +71,5 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
                 .addExceptionWrapper(new ChildServiceExceptionWrapper())
                 .setThrowableExceptionWrapper(new RuntimeExceptionWrapper())
                 .build();
-    }
-
-    @NoArgsConstructor(access = PRIVATE)
-    class ServiceRegistry {
-        @Getter
-        private final Map<String, Specification> services = mapOf();
-
-        public Specification getService(String serviceId) {
-            return services.get(serviceId);
-        }
-
-        public ServiceRegistry registerService(Specification specification) {
-            loggingModule()
-                    .getLogger(ServiceRegistry.class)
-                    .info(format(SERVICE_REGISTRATION_MESSAGE, specification.getServiceId(), specification.getClass().getName()));
-            services.put(specification.getServiceId(), specification);
-            return this;
-        }
     }
 }

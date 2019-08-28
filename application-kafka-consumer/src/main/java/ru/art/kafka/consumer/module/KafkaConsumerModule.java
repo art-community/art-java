@@ -24,8 +24,6 @@ import ru.art.kafka.consumer.configuration.*;
 import ru.art.kafka.consumer.registry.*;
 import ru.art.kafka.consumer.specification.*;
 import ru.art.kafka.consumer.state.*;
-import java.util.*;
-
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;
@@ -33,12 +31,13 @@ import static ru.art.core.context.Context.*;
 import static ru.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration.*;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
 import static ru.art.service.ServiceModule.*;
+import java.util.*;
 
 @Getter
 public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfiguration, KafkaConsumerModuleState> {
     @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}), value = PRIVATE)
-    private final static List<KafkaConsumerServiceSpecification> kafkaConsumerServices = cast(serviceModule()
-            .getServiceRegistry()
+    private final static List<KafkaConsumerServiceSpecification> kafkaConsumerServices = cast(serviceModuleState()
+                    .getServiceRegistry()
             .getServices()
             .values()
             .stream()
@@ -46,17 +45,15 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
             .map(service -> (KafkaConsumerServiceSpecification) service)
             .collect(toList()));
     @Getter(lazy = true, value = PRIVATE)
-    private static final KafkaConsumerModuleConfiguration kafkaConsumerModule = context()
-            .getModule(KAFKA_CONSUMER_MODULE_ID, KafkaConsumerModule::new);
+    private static final KafkaConsumerModuleConfiguration kafkaConsumerModule = context().getModule(KAFKA_CONSUMER_MODULE_ID, KafkaConsumerModule::new);
     @Getter(lazy = true, value = PRIVATE)
-    private static final KafkaConsumerModuleState kafkaConsumerModuleState = context()
-            .getModuleState(KAFKA_CONSUMER_MODULE_ID, KafkaConsumerModule::new);
+    private static final KafkaConsumerModuleState kafkaConsumerModuleState = context().getModuleState(KAFKA_CONSUMER_MODULE_ID, KafkaConsumerModule::new);
     private final String id = KAFKA_CONSUMER_MODULE_ID;
     private final KafkaConsumerModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private final KafkaConsumerModuleState state = new KafkaConsumerModuleState();
 
     public static KafkaConsumerModuleConfiguration kafkaConsumerModule() {
-        if (insideDefaultContext()) {
+        if (contextIsNotReady()) {
             return DEFAULT_CONFIGURATION;
         }
         return getKafkaConsumerModule();

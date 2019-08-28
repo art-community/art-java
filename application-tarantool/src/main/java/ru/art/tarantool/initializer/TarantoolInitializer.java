@@ -24,11 +24,6 @@ import org.tarantool.*;
 import org.zeroturnaround.exec.*;
 import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.exception.*;
-import java.io.*;
-import java.net.*;
-import java.nio.file.*;
-import java.util.*;
-
 import static java.io.File.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
@@ -55,6 +50,10 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParame
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.USER;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
+import java.io.*;
+import java.net.*;
+import java.nio.file.*;
+import java.util.*;
 
 public class TarantoolInitializer {
     private final static OutputStream TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM = forLogger(loggingModule()

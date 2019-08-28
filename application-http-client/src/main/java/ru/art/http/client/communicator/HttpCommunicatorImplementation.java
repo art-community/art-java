@@ -31,10 +31,6 @@ import ru.art.http.client.handler.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.client.model.*;
 import ru.art.http.constants.*;
-import java.nio.charset.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import static java.util.Optional.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
@@ -45,6 +41,9 @@ import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.http.client.communicator.HttpCommunicationExecutor.*;
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpMethodType.*;
+import java.nio.charset.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsynchronousCommunicator {
     private final BuilderValidator validator = new BuilderValidator(HttpCommunicator.class.getName());

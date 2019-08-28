@@ -19,7 +19,6 @@
 package ru.art.generator.spec.http.servicespec.constants;
 
 import ru.art.generator.spec.http.servicespec.exception.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.generator.spec.common.constants.SpecExceptionConstants.DefinitionExceptions.*;
 

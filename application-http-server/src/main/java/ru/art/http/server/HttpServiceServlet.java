@@ -29,12 +29,6 @@ import ru.art.http.server.handler.*;
 import ru.art.http.server.model.*;
 import ru.art.logging.*;
 import ru.art.service.model.*;
-import javax.servlet.*;
-import javax.servlet.annotation.*;
-import javax.servlet.http.*;
-import java.io.*;
-import java.util.*;
-
 import static java.nio.charset.Charset.*;
 import static java.text.MessageFormat.*;
 import static java.util.Arrays.*;
@@ -64,6 +58,11 @@ import static ru.art.logging.LoggingModuleConstants.*;
 import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static ru.art.logging.LoggingParametersManager.*;
 import static ru.art.service.ServiceModule.*;
+import javax.servlet.*;
+import javax.servlet.annotation.*;
+import javax.servlet.http.*;
+import java.io.*;
+import java.util.*;
 
 @AllArgsConstructor
 @MultipartConfig
@@ -95,7 +94,7 @@ class HttpServiceServlet extends HttpServlet {
                 .serviceMethodId(serviceCommand.toString())
                 .serviceMethodCommand(serviceCommand.toString() + DOT + getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID))
                 .loggingEventType(HTTP_SERVLET_EVENT)
-                .loadedServices(serviceModule().getServiceRegistry().getServices().keySet())
+                .loadedServices(serviceModuleState().getServiceRegistry().getServices().keySet())
                 .build());
         try {
             updateRequestContext(command, request);

@@ -27,8 +27,6 @@ import ru.art.http.mapper.*;
 import ru.art.http.server.HttpServerModuleConfiguration.*;
 import ru.art.http.server.specification.*;
 import ru.art.metrics.http.specification.*;
-import java.util.*;
-
 import static org.apache.http.entity.ContentType.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
@@ -44,6 +42,7 @@ import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.metrics.constants.MetricsModuleConstants.*;
 import static ru.art.metrics.http.filter.MetricsHttpLogFilter.*;
 import static ru.art.service.ServiceModule.*;
+import java.util.*;
 
 @Getter
 public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfiguration {
@@ -101,15 +100,15 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
         if (restart && context().hasModule(HTTP_SERVER_MODULE_ID)) {
             httpServerModuleState().getServer().restart();
         }
-        outsideDefaultContext(context -> registerSpecifications());
+        registerServices();
     }
 
-    private void registerSpecifications() {
-        if (web && !serviceModule().getServiceRegistry().getServices().containsKey(HTTP_RESOURCE_SERVICE)) {
-            serviceModule().getServiceRegistry().registerService(new HttpResourceServiceSpecification(path));
+    private void registerServices() {
+        if (web && !serviceModuleState().getServiceRegistry().getServices().containsKey(HTTP_RESOURCE_SERVICE)) {
+            serviceModuleState().getServiceRegistry().registerService(new HttpResourceServiceSpecification(path));
         }
-        if (enableMetrics && !serviceModule().getServiceRegistry().getServices().containsKey(METRICS_SERVICE_ID)) {
-            serviceModule().getServiceRegistry().registerService(new MetricServiceSpecification(path));
+        if (enableMetrics && !serviceModuleState().getServiceRegistry().getServices().containsKey(METRICS_SERVICE_ID)) {
+            serviceModuleState().getServiceRegistry().registerService(new MetricServiceSpecification(path));
         }
 
     }

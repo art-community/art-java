@@ -22,9 +22,8 @@ import lombok.*;
 import org.apache.kafka.common.serialization.*;
 import ru.art.kafka.consumer.exception.*;
 import ru.art.kafka.serde.*;
-import java.util.*;
-
 import static ru.art.core.checker.CheckerForEmptiness.*;
+import java.util.*;
 
 @Getter
 @Builder(builderMethodName = "streamConfiguration")

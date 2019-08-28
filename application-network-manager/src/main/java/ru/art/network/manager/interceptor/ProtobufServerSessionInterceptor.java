@@ -19,7 +19,6 @@
 package ru.art.network.manager.interceptor;
 
 import io.grpc.*;
-
 import static ru.art.network.manager.client.ApplicationStateClient.*;
 
 public class ProtobufServerSessionInterceptor implements ServerInterceptor {

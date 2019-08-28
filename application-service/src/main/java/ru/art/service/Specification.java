@@ -23,11 +23,10 @@ import io.github.resilience4j.ratelimiter.*;
 import io.github.resilience4j.retry.*;
 import ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import ru.art.service.model.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.service.ServiceModule.*;
 import static ru.art.service.constants.ServiceModuleConstants.*;
+import java.util.*;
 
 public interface Specification {
     String getServiceId();

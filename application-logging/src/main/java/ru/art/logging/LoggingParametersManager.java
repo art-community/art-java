@@ -18,14 +18,13 @@
 
 package ru.art.logging;
 
-import java.util.*;
-
 import static org.apache.logging.log4j.ThreadContext.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.DateConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static ru.art.logging.ThreadContextExtensions.*;
+import java.util.*;
 
 public interface LoggingParametersManager {
     static void putApplicationLoggingParameters() {

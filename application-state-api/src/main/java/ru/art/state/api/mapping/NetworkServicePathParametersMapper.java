@@ -20,7 +20,6 @@ package ru.art.state.api.mapping;
 
 import ru.art.entity.mapper.ValueToModelMapper.*;
 import ru.art.state.api.model.*;
-
 import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.PathParameters.*;
 
 public interface NetworkServicePathParametersMapper {

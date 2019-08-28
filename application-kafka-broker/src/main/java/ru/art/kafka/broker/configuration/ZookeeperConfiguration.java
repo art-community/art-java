@@ -16,12 +16,10 @@
 
 package ru.art.kafka.broker.configuration;
 
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import static java.io.File.separator;
-import static java.nio.file.Paths.get;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
+import lombok.*;
+import static java.io.File.*;
+import static java.nio.file.Paths.*;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
 
 @Getter

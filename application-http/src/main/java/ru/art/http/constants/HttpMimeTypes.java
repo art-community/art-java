@@ -20,7 +20,6 @@ package ru.art.http.constants;
 
 
 import ru.art.core.mime.*;
-
 import static java.nio.charset.Charset.*;
 import static java.nio.charset.StandardCharsets.*;
 import static ru.art.core.constants.StringConstants.*;

@@ -25,10 +25,9 @@ import io.micrometer.core.instrument.binder.system.*;
 import io.micrometer.prometheus.*;
 import lombok.*;
 import ru.art.core.module.*;
-import java.util.*;
-
 import static io.micrometer.prometheus.PrometheusConfig.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
 
 public interface MetricModuleConfiguration extends ModuleConfiguration {
     Set<MeterBinder> getMeterBinders();

@@ -21,11 +21,10 @@ package ru.art.entity.tuple.schema;
 import lombok.*;
 import ru.art.entity.Value;
 import ru.art.entity.constants.*;
-import java.util.*;
-
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
 
 @Getter
 @EqualsAndHashCode

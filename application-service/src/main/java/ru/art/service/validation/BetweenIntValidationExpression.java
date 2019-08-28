@@ -20,7 +20,6 @@ package ru.art.service.validation;
 
 
 import lombok.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;
 

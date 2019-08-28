@@ -32,12 +32,6 @@ import ru.art.http.client.exception.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.client.model.*;
 import ru.art.http.configuration.*;
-import javax.net.ssl.*;
-import java.io.*;
-import java.security.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import static java.security.KeyStore.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
@@ -54,6 +48,11 @@ import static ru.art.http.client.constants.HttpClientModuleConstants.*;
 import static ru.art.http.client.interceptor.HttpClientInterceptor.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
 import static ru.art.logging.LoggingModule.*;
+import javax.net.ssl.*;
+import java.io.*;
+import java.security.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
     HttpClient getClient();

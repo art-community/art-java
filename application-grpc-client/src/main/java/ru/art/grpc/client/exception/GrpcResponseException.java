@@ -20,7 +20,6 @@ package ru.art.grpc.client.exception;
 
 import lombok.*;
 import ru.art.grpc.client.communicator.*;
-
 import static java.text.MessageFormat.*;
 import static ru.art.grpc.client.constants.GrpcClientExceptionMessages.*;
 

@@ -19,15 +19,14 @@
 package ru.art.config;
 
 import groovy.util.*;
-import java.io.*;
-import java.net.*;
-
 import static java.lang.System.*;
 import static java.util.Objects.*;
 import static ru.art.config.GroovyConfigLoaderConstants.*;
 import static ru.art.config.GroovyConfigLoadingExceptionMessages.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.SystemProperties.*;
+import java.io.*;
+import java.net.*;
 
 interface GroovyConfigLoader {
     static ConfigObject loadGroovyConfig(String configId) {

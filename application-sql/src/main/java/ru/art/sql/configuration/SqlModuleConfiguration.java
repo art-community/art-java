@@ -25,7 +25,6 @@ import org.jooq.*;
 import org.jooq.impl.*;
 import ru.art.core.module.*;
 import ru.art.sql.constants.*;
-
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.sql.constants.ConnectionPoolType.*;
 import static ru.art.sql.constants.DbProvider.*;

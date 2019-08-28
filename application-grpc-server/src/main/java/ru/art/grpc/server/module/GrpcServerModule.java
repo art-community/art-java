@@ -22,7 +22,6 @@ import lombok.*;
 import ru.art.core.module.*;
 import ru.art.grpc.server.configuration.*;
 import ru.art.grpc.server.state.*;
-
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.*;
@@ -39,8 +38,8 @@ public class GrpcServerModule implements Module<GrpcServerModuleConfiguration, G
     private final GrpcServerModuleState state = new GrpcServerModuleState();
 
     public static GrpcServerModuleConfiguration grpcServerModule() {
-        if (insideDefaultContext()) {
-            return GrpcServerModuleConfiguration.DEFAULT_CONFIGURATION;
+        if (contextIsNotReady()) {
+            return DEFAULT_CONFIGURATION;
         }
         return getGrpcServerModule();
     }

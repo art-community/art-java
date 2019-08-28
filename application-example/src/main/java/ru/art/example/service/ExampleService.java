@@ -21,9 +21,6 @@ package ru.art.example.service;
 import ru.art.entity.*;
 import ru.art.example.api.model.*;
 import ru.art.protobuf.entity.ProtobufValueMessage.*;
-import java.time.*;
-import java.util.*;
-
 import static java.time.temporal.ChronoUnit.*;
 import static ru.art.entity.constants.ValueType.PrimitiveType.*;
 import static ru.art.example.api.constants.ExampleApiConstants.*;
@@ -41,6 +38,8 @@ import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
 import static ru.art.service.ServiceController.*;
 import static ru.art.task.deferred.executor.IdentifiedRunnableFactory.*;
 import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
+import java.time.*;
+import java.util.*;
 
 /**
  * ExampleService shows all main features of Application Development Kit

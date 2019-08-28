@@ -22,9 +22,6 @@ import lombok.experimental.*;
 import ru.art.config.*;
 import ru.art.config.exception.*;
 import ru.art.core.annotation.*;
-import java.util.*;
-import java.util.function.*;
-
 import static java.util.Collections.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
@@ -34,6 +31,8 @@ import static ru.art.config.remote.provider.RemoteConfigProvider.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
+import java.util.*;
+import java.util.function.*;
 
 @PublicApi
 @UtilityClass

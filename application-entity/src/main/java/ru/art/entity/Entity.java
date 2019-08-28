@@ -23,9 +23,6 @@ import ru.art.core.checker.*;
 import ru.art.entity.constants.*;
 import ru.art.entity.exception.*;
 import ru.art.entity.mapper.*;
-import java.text.*;
-import java.util.*;
-
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
@@ -37,6 +34,8 @@ import static ru.art.entity.CollectionValuesFactory.*;
 import static ru.art.entity.Value.*;
 import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
 import static ru.art.entity.constants.ValueType.*;
+import java.text.*;
+import java.util.*;
 
 @Getter
 @ToString

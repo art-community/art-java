@@ -21,10 +21,9 @@ package ru.art.metrics.http.configurator;
 import ru.art.core.factory.*;
 import ru.art.core.mime.*;
 import ru.art.http.mapper.*;
-import java.util.*;
-
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.metrics.http.constants.MetricsModuleHttpConstants.*;
+import java.util.*;
 
 public interface HttpMetricsMapperConfigurator {
     static Map<MimeType, HttpContentMapper> configureMetricsContentMapper(Map<MimeType, HttpContentMapper> currentMappers) {

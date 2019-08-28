@@ -21,9 +21,6 @@ package ru.art.tarantool.caller;
 import lombok.*;
 import org.tarantool.*;
 import ru.art.tarantool.exception.*;
-import java.util.*;
-import java.util.concurrent.*;
-
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
@@ -32,6 +29,8 @@ import static ru.art.core.caster.Caster.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class TarantoolFunctionCaller {

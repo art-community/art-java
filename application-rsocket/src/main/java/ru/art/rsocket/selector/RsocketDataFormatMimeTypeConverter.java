@@ -20,7 +20,6 @@ package ru.art.rsocket.selector;
 
 import lombok.*;
 import ru.art.core.mime.*;
-
 import static io.rsocket.metadata.WellKnownMimeType.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;

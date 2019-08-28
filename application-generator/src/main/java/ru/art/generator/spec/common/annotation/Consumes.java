@@ -18,9 +18,8 @@
 
 package ru.art.generator.spec.common.annotation;
 
-import java.lang.annotation.*;
-
 import static ru.art.core.constants.StringConstants.*;
+import java.lang.annotation.*;
 
 /**
  * Annotation for specification generator.

@@ -21,7 +21,6 @@ package ru.art.configurator.api.entity;
 import lombok.*;
 import ru.art.entity.*;
 import ru.art.service.validation.*;
-
 import static ru.art.service.validation.ValidationExpressions.*;
 
 @Getter

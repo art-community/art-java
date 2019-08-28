@@ -33,9 +33,6 @@ import ru.art.generator.spec.http.proxyspec.model.*;
 import ru.art.http.client.communicator.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.constants.*;
-import java.lang.reflect.*;
-import java.util.*;
-
 import static java.io.File.*;
 import static java.text.MessageFormat.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
@@ -49,6 +46,8 @@ import static ru.art.generator.spec.http.common.constants.HttpSpecConstants.Erro
 import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecAnnotations.*;
 import static ru.art.generator.spec.http.proxyspec.constants.HttpProxySpecConstants.*;
 import static ru.art.generator.spec.http.proxyspec.operations.HttpProxySpecificationClassGenerator.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * Interface contains operations, which helps in specification's parts generation.
