@@ -160,6 +160,16 @@ public class TarantoolInitializer {
                                 address,
                                 localConfiguration.getWorkingDirectory()) + separator + LUA);
 
+                URL initializationResource = TarantoolInitializer.class
+                        .getClassLoader()
+                        .getResource(INITIALIZATION);
+                if (isNull(initializationResource)) {
+                    throw new TarantoolInitializationException(format(TARANTOOL_INITIALIZATION_SCRIP_NOT_EXISTS, instanceId));
+                }
+                FileOutputStream outputStream = new FileOutputStream(new File(getLuaScriptPath(localConfiguration, INITIALIZATION)));
+                transferBytes(initializationResource.openStream(), outputStream);
+                outputStream.flush();
+                outputStream.close();
                 executableCommand = dynamicArrayOf(executableCommand);
                 executableCommand.add(convertToWslPath(getLuaScriptPath(localConfiguration, INITIALIZATION)));
                 new ProcessExecutor()
