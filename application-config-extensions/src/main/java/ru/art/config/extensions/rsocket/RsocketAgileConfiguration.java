@@ -80,8 +80,8 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
                 .tcpPort(getOrElse(config.getInt(TCP_PORT), balancerTcpPort))
                 .webSocketPort(getOrElse(config.getInt(WEB_SOCKET_PORT), balancerWebSocketPort))
                 .dataFormat(super.getDataFormat())
-                .resumable(config.getBool(RESUMABLE))
-                .resumeSessionDuration(config.getLong(RESUME_SESSION_DURATION))
+                .resumable(getOrElse(config.getBool(RESUMABLE), super.isResumableClient()))
+                .resumeSessionDuration(getOrElse(config.getLong(RESUME_SESSION_DURATION), super.getClientResumeSessionDuration()))
                 .build(), super.getCommunicationTargets());
         if (restart && context().hasModule(RSOCKET_MODULE_ID)) {
             rsocketModuleState().getServer().restart();
