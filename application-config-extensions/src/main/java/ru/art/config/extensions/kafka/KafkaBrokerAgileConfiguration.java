@@ -52,7 +52,8 @@ public class KafkaBrokerAgileConfiguration extends KafkaBrokerModuleDefaultConfi
             restartZookeeper = true;
         }
         this.zookeeperConfiguration = newZookeeperConfiguration;
-        ZookeeperInitializationMode newZookeeperInitializationMode = ifException(() -> ZookeeperInitializationMode.valueOf(configString(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, INITIALIZATION_MODE).toUpperCase()),
+        ZookeeperInitializationMode newZookeeperInitializationMode = ifException(() ->
+                        ZookeeperInitializationMode.valueOf(configString(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, INITIALIZATION_MODE).toUpperCase()),
                 super.getZookeeperInitializationMode());
         if (zookeeperInitializationMode != newZookeeperInitializationMode) {
             restartZookeeper = true;
