@@ -65,8 +65,16 @@ public class EmbeddedZookeeper {
         }
     }
 
-    public static void startZookeeper() {
-        startZookeeper(kafkaBrokerModule().getZookeeperConfiguration());
+    public static EmbeddedZookeeper startZookeeper() {
+        return startZookeeper(kafkaBrokerModule().getZookeeperConfiguration());
+    }
+
+    public void await() {
+        try {
+            connectionFactory.join();
+        } catch (InterruptedException e) {
+            throw new KafkaBrokerModuleException(e);
+        }
     }
 
     public void shutdown() {

@@ -108,7 +108,7 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
         private final List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = initializeValueInterceptors();
 
         private List<RSocketInterceptor> initializeInterceptors() {
-            return linkedListOf(new RsocketLoggingInterceptor(isEnableRawDataTracing()));
+            return linkedListOf(new RsocketLoggingInterceptor(this::isEnableRawDataTracing));
         }
 
         private List<ValueInterceptor<Entity, Entity>> initializeValueInterceptors() {

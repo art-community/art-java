@@ -21,10 +21,10 @@ import lombok.*;
 import ru.art.kafka.broker.configuration.*;
 import scala.collection.immutable.List;
 import static java.util.Objects.*;
+import static kafka.server.KafkaConfig.*;
 import static lombok.AccessLevel.*;
 import static org.apache.kafka.common.utils.Time.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.KafkaProperties.*;
 import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
 import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode.*;
 import static ru.art.kafka.broker.embedded.EmbeddedZookeeper.*;
@@ -42,11 +42,12 @@ public class EmbeddedKafkaBroker {
     private final KafkaServer server;
     private EmbeddedZookeeper embeddedZookeeper;
 
-    public static void startKafkaBroker(KafkaBrokerConfiguration kafkaBrokerConfiguration, ZookeeperConfiguration zookeeperConfiguration, ZookeeperInitializationMode zookeeperInitializationMode) {
+    public static EmbeddedKafkaBroker startKafkaBroker(KafkaBrokerConfiguration kafkaBrokerConfiguration, ZookeeperConfiguration zookeeperConfiguration, ZookeeperInitializationMode zookeeperInitializationMode) {
         Properties properties = new Properties();
-        properties.put(ZOOKEEPER_CONNECT, kafkaBrokerConfiguration.getZookeeperConnection());
-        properties.put(LISTENERS, PLAINTEXT + COLON + kafkaBrokerConfiguration.getPort());
-        properties.put(OFFSETS_TOPIC_REPLICATION_FACTOR, kafkaBrokerConfiguration.getReplicationFactor());
+        properties.put(ZkConnectProp(), kafkaBrokerConfiguration.getZookeeperConnection());
+        properties.put(ListenersProp(), PLAINTEXT + COLON + kafkaBrokerConfiguration.getPort());
+        properties.put(LogDirProp(), kafkaBrokerConfiguration.getLogDirectory());
+        properties.put(OffsetsTopicReplicationFactorProp(), kafkaBrokerConfiguration.getReplicationFactor());
         properties.putAll(kafkaBrokerConfiguration.getAdditionalProperties());
         KafkaServer kafkaServer = new KafkaServer(new KafkaConfig(properties), SYSTEM, empty(), List.empty());
         if (zookeeperInitializationMode == ON_KAFKA_BROKER_INITIALIZATION) {
@@ -57,24 +58,25 @@ public class EmbeddedKafkaBroker {
                     startZookeeper(zookeeperConfiguration));
             kafkaBrokerModuleState().setBroker(broker);
             kafkaServer.startup();
-            return;
+            return broker;
         }
         EmbeddedKafkaBroker broker = new EmbeddedKafkaBroker(kafkaBrokerConfiguration, zookeeperConfiguration, zookeeperInitializationMode, kafkaServer);
         kafkaBrokerModuleState().setBroker(broker);
         kafkaServer.startup();
+        return broker;
     }
 
-    public static void startKafkaBroker(KafkaBrokerConfiguration configuration, ZookeeperInitializationMode zookeeperInitializationMode) {
-        startKafkaBroker(configuration, kafkaBrokerModule().getZookeeperConfiguration(), zookeeperInitializationMode);
+    public static EmbeddedKafkaBroker startKafkaBroker(KafkaBrokerConfiguration configuration, ZookeeperInitializationMode zookeeperInitializationMode) {
+        return startKafkaBroker(configuration, kafkaBrokerModule().getZookeeperConfiguration(), zookeeperInitializationMode);
     }
 
 
-    public static void startKafkaBroker(KafkaBrokerConfiguration configuration) {
-        startKafkaBroker(configuration, kafkaBrokerModule().getZookeeperConfiguration(), kafkaBrokerModule().getZookeeperInitializationMode());
+    public static EmbeddedKafkaBroker startKafkaBroker(KafkaBrokerConfiguration configuration) {
+        return startKafkaBroker(configuration, kafkaBrokerModule().getZookeeperConfiguration(), kafkaBrokerModule().getZookeeperInitializationMode());
     }
 
-    public static void startKafkaBroker() {
-        startKafkaBroker(kafkaBrokerModule().getKafkaBrokerConfiguration());
+    public static EmbeddedKafkaBroker startKafkaBroker() {
+        return startKafkaBroker(kafkaBrokerModule().getKafkaBrokerConfiguration());
     }
 
     public void await() {

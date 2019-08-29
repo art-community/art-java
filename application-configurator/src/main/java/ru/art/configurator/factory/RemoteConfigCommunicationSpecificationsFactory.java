@@ -20,25 +20,13 @@ package ru.art.configurator.factory;
 
 import lombok.experimental.*;
 import ru.art.config.remote.api.specification.*;
-import ru.art.configurator.api.entity.*;
-import ru.art.configurator.provider.ApplicationModulesParametersProvider.*;
-import ru.art.entity.*;
-import static java.util.Objects.*;
-import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
-import static ru.art.configurator.dao.ConfiguratorDao.*;
-import static ru.art.core.checker.CheckerForEmptiness.*;
+import ru.art.configurator.provider.ModulesConnectionParametersProvider.*;
+import static java.util.Optional.*;
 import java.util.*;
 
 @UtilityClass
 public class RemoteConfigCommunicationSpecificationsFactory {
-    public static Optional<RemoteConfigCommunicationSpecification> createRemoteConfigCommunicationSpecification(ApplicationModuleParameters parameters, ModuleKey moduleKey) {
-        return getConfig(moduleKey.formatKey())
-                .map(Value::asEntity)
-                .filter(config -> isNotEmpty(config.findString(GRPC_SERVER_HOST)))
-                .filter(config -> nonNull(config.findString(GRPC_SERVER_PORT)))
-                .filter(config -> isNotEmpty(config.findString(GRPC_SERVER_PATH)))
-                .map(config -> new RemoteConfigCommunicationSpecification(config.findString(GRPC_SERVER_HOST),
-                        config.findInt(GRPC_SERVER_PORT),
-                        config.findString(GRPC_SERVER_PATH)));
+    public static Optional<RemoteConfigCommunicationSpecification> createRemoteConfigCommunicationSpecification(ModuleConnectionParameters parameters) {
+        return of(new RemoteConfigCommunicationSpecification(parameters.getGrpcHost(), parameters.getGrpcPort(), parameters.getGrpcPath()));
     }
 }

@@ -88,6 +88,7 @@ public interface GrpcServerModuleConfiguration extends ModuleConfiguration {
         private List<ValueInterceptor<Entity, Entity>> initializeValueInterceptors() {
             return isEnableValueTracing() ? linkedListOf(new LoggingValueInterceptor<>()) : linkedListOf();
         }
+
         private List<ServerInterceptor> initializeInterceptors() {
             return isEnableRawDataTracing() ? linkedListOf(new GrpcServerLoggingInterceptor()) : linkedListOf();
         }

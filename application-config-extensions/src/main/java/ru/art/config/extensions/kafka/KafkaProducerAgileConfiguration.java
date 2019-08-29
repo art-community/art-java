@@ -42,13 +42,13 @@ public class KafkaProducerAgileConfiguration extends KafkaProducerDefaultModuleC
     @Override
     public void refresh() {
         producerConfigurations = configMap(KAFKA_PRODUCERS_SECTION_ID, (key, config) -> {
-            String keySerializerString = config.getString(KEY_SERIALIZER_KEY);
-            String valueSerializerString = config.getString(VALUE_SERIALIZER_KEY);
+            String keySerializerString = config.getString(KEY_SERIALIZER);
+            String valueSerializerString = config.getString(VALUE_SERIALIZER);
             return producerConfiguration()
                     .clientId(key)
-                    .topic(config.getString(TOPIC_KEY))
-                    .brokers(config.getStringList(BROKERS_KEY))
-                    .additionalProperties(config.getProperties(ADDITIONAL_PROPERTIES_KEY))
+                    .topic(config.getString(TOPIC))
+                    .brokers(config.getStringList(BROKERS))
+                    .additionalProperties(config.getProperties(ADDITIONAL_PROPERTIES))
                     .deliveryTimeout(config.getLong(DELIVERY_TIMEOUT))
                     .retries(config.getInt(RETRIES))
                     .keySerializer(ifException(() -> getSerializer(keySerializerString), KAFKA_PROTOBUF_SERIALIZER))

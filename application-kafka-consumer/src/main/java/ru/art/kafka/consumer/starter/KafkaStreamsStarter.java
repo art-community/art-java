@@ -19,7 +19,6 @@
 package ru.art.kafka.consumer.starter;
 
 import lombok.experimental.*;
-import org.apache.kafka.streams.*;
 import ru.art.kafka.consumer.registry.*;
 import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
 
@@ -27,10 +26,10 @@ import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
 @UtilityClass
 public class KafkaStreamsStarter{
     public static void startKafkaStreams() {
-        kafkaStreamsRegistry().getRegistry().values().forEach(KafkaStreams::start);
+        kafkaStreamsRegistry().getStreams().values().forEach(stream -> stream.getKafkaStreams().start());
     }
 
     public static void startKafkaStreams(KafkaStreamsRegistry registry) {
-        registry.getRegistry().values().forEach(KafkaStreams::start);
+        registry.getStreams().values().forEach(stream -> stream.getKafkaStreams().start());
     }
 }

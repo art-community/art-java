@@ -44,8 +44,6 @@ public interface RsocketModuleConstants {
     }
 
     interface ExceptionMessages {
-        String SERVICE_ID_IS_EMPTY = "Service id in payload is empty";
-        String METHOD_ID_IS_EMPTY = "Method id in payload is empty";
         String SERVICE_NOT_EXISTS = "Service with id ''{0}'' does not exists in service registry";
         String METHOD_NOT_EXISTS = "Rsocket method with id ''{0}'' for service ''{1}'' does not exists in rsocketService";
         String SERVICE_NOT_SUPPORTED_RSOCKET = "Service with id ''{0}'' has not 'RSOCKET' service type";

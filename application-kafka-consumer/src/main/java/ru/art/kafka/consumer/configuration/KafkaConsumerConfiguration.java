@@ -20,94 +20,42 @@ package ru.art.kafka.consumer.configuration;
 
 import lombok.*;
 import org.apache.kafka.common.serialization.*;
-import ru.art.kafka.deserializer.*;
-import static java.util.Collections.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.constants.ThreadConstants.*;
-import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
+import static ru.art.kafka.instances.KafkaSerdes.*;
 import java.time.*;
 import java.util.*;
-import java.util.concurrent.*;
 
-public interface KafkaConsumerConfiguration {
-    /**
-     * @return Executor for multi-thread consumers
-     */
-    ExecutorService getExecutor();
+@Getter
+@Builder
+@EqualsAndHashCode
+public class KafkaConsumerConfiguration {
+    @Builder.Default
+    private final int executorPoolSize = DEFAULT_THREAD_POOL_SIZE;
+    @Builder.Default
+    private final Duration pollTimeout = DEFAULT_DURATION;
+    @Builder.Default
+    private final String groupId = EMPTY_STRING;
+    @Builder.Default
+    private final String clientId = EMPTY_STRING;
+    @Singular("topic")
+    private final Set<String> topics;
+    @Singular("broker")
+    private final Set<String> brokers;
+    @Builder.Default
+    private final Deserializer<?> keyDeserializer = KAFKA_PROTOBUF_DESERIALIZER;
+    @Builder.Default
+    private final Deserializer<?> valueDeserializer = KAFKA_PROTOBUF_DESERIALIZER;
+    @Builder.Default
+    private final Properties additionalProperties = new Properties();
 
-    /**
-     * @return pollTimeout - Timeout for poll data from kafka brokers
-     */
-    Duration getPollTimeout();
-
-    /**
-     * @return groupId - A unique string that identifies the consumer group this consumer belongs to
-     */
-    String getGroupId();
-
-    /**
-     * @return clientId - A unique string that identifies the consumer
-     */
-    String getClientId();
-
-    /**
-     * @return List topics name
-     */
-    Set<String> getTopics();
-
-    /**
-     * @return List ip-address and port kafka brokers
-     */
-    List<String> getBrokers();
-
-    /**
-     * @return Deserializer for key
-     */
-    <KeyDeserializer> Deserializer<KeyDeserializer> getKeyDeserializer();
-
-    /**
-     * @return Deserializer for value
-     */
-    <ValueDeSerializer> Deserializer<ValueDeSerializer> getValueDeserializer();
-
-    /**
-     * Default value null
-     *
-     * @return Other properties for kafka consumer
-     * Read more http://kafka.apache.org/documentation/
-     */
-    default Properties getAdditionalProperties() {
-        return new Properties();
+    public <KeyDeserializer> Deserializer<KeyDeserializer> getKeyDeserializer() {
+        return cast(keyDeserializer);
     }
 
-	@Getter
-    @Builder
-	class KafkaConsumerDefaultConfiguration implements KafkaConsumerConfiguration {
-        @Builder.Default
-        private final ExecutorService executor = new ForkJoinPool(DEFAULT_THREAD_POOL_SIZE);
-        @Builder.Default
-        private final Duration pollTimeout = DEFAULT_DURATION;
-        @Builder.Default
-        private final String groupId = EMPTY_STRING;
-        @Builder.Default
-        private final String clientId = EMPTY_STRING;
-        @Builder.Default
-        private final Set<String> topics = emptySet();
-        @Builder.Default
-        private final List<String> brokers = fixedArrayOf();
-        @Builder.Default
-        private final Deserializer<?> keyDeserializer = new KafkaProtobufDeserializer();
-        @Builder.Default
-        private final Deserializer<?> valueDeserializer = new KafkaProtobufDeserializer();
-
-        public <KeyDeserializer> Deserializer<KeyDeserializer> getKeyDeserializer() {
-            return cast(keyDeserializer);
-        }
-
-        public <ValueDeSerializer> Deserializer<ValueDeSerializer> getValueDeserializer() {
-            return cast(valueDeserializer);
-        }
+    public <ValueDeSerializer> Deserializer<ValueDeSerializer> getValueDeserializer() {
+        return cast(valueDeserializer);
     }
 }
