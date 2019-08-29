@@ -27,10 +27,10 @@ import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
 @UtilityClass
 public class KafkaStreamsStarter{
     public static void startKafkaStreams() {
-        kafkaStreamsRegistry().getRegistry().values().forEach(KafkaStreams::start);
+        kafkaStreamsRegistry().getStreams().values().forEach(KafkaStreams::start);
     }
 
     public static void startKafkaStreams(KafkaStreamsRegistry registry) {
-        registry.getRegistry().values().forEach(KafkaStreams::start);
+        registry.getStreams().values().forEach(KafkaStreams::start);
     }
 }

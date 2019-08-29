@@ -22,26 +22,29 @@ import ru.art.kafka.consumer.configuration.*;
 import ru.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration.*;
 import static java.lang.Class.*;
 import static java.time.Duration.*;
-import static java.util.concurrent.Executors.*;
 import static org.apache.kafka.common.serialization.Serdes.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.kafka.KafkaConfigKeys.*;
 import static ru.art.core.constants.ThreadConstants.*;
+import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.core.wrapper.ExceptionWrapper.*;
 import static ru.art.kafka.constants.KafkaClientConstants.*;
-import static ru.art.kafka.consumer.configuration.KafkaConsumerConfiguration.*;
 import static ru.art.kafka.consumer.configuration.KafkaStreamConfiguration.*;
-import static ru.art.kafka.consumer.configuration.KafkaStreamsConfiguration.*;
+import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
+import static ru.art.kafka.consumer.controller.KafkaConsumerController.*;
+import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
 import static ru.art.kafka.instances.KafkaSerdes.*;
 import java.lang.String;
+import java.util.*;
 
 @Getter
 public class KafkaConsumerAgileConfiguration extends KafkaConsumerModuleDefaultConfiguration {
     private boolean enableTracing;
-    private KafkaConsumerConfiguration kafkaConsumerConfiguration;
-    private KafkaStreamsConfiguration kafkaStreamsConfiguration;
+    private KafkaConsumerConfiguration kafkaConsumerConfiguration = super.getKafkaConsumerConfiguration();
+    private Map<String, KafkaStreamConfiguration> kafkaStreamConfigurations = super.getKafkaStreamConfigurations();
 
     public KafkaConsumerAgileConfiguration() {
         refresh();
@@ -50,28 +53,38 @@ public class KafkaConsumerAgileConfiguration extends KafkaConsumerModuleDefaultC
     @Override
     public void refresh() {
         enableTracing = configBoolean(KAFKA_CONSUMER_SECTION_ID, ENABLE_TRACING, super.isEnableTracing());
-        KafkaConsumerConfiguration kafkaConsumerConfiguration = super.getKafkaConsumerConfiguration();
-        this.kafkaConsumerConfiguration = KafkaConsumerDefaultConfiguration.builder()
-                .brokers(configStringList(KAFKA_CONSUMER_SECTION_ID, BROKERS_KEY, kafkaConsumerConfiguration.getBrokers()))
-                .executor(newFixedThreadPool(configInt(KAFKA_CONSUMER_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE)))
-                .keyDeserializer(ifException(() -> getDeserializer(KEY_DESERIALIZER_KEY), kafkaConsumerConfiguration.getKeyDeserializer()))
-                .valueDeserializer(ifException(() -> getDeserializer(VALUE_DESERIALIZER_KEY), kafkaConsumerConfiguration.getValueDeserializer()))
-                .topics(setOf(configStringList(KAFKA_CONSUMER_SECTION_ID, TOPICS_KEY, fixedArrayOf(kafkaConsumerConfiguration.getTopics()))))
-                .pollTimeout(ofMillis(configLong(KAFKA_CONSUMER_SECTION_ID, POLL_TIMEOUT, kafkaConsumerConfiguration.getPollTimeout().toMillis())))
-                .groupId(configString(KAFKA_CONSUMER_SECTION_ID, GROUP_ID, kafkaConsumerConfiguration.getGroupId()))
+        KafkaConsumerConfiguration defaultKafkaConsumerConfiguration = super.getKafkaConsumerConfiguration();
+        KafkaConsumerConfiguration newKafkaConsumerConfiguration = kafkaConsumerConfiguration = KafkaConsumerConfiguration.builder()
+                .brokers(configStringSet(KAFKA_CONSUMER_SECTION_ID, BROKERS, defaultKafkaConsumerConfiguration.getBrokers()))
+                .executorPoolSize(configInt(KAFKA_CONSUMER_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE))
+                .keyDeserializer(ifException(() -> getDeserializer(KEY_DESERIALIZER), defaultKafkaConsumerConfiguration.getKeyDeserializer()))
+                .valueDeserializer(ifException(() -> getDeserializer(VALUE_DESERIALIZER), defaultKafkaConsumerConfiguration.getValueDeserializer()))
+                .topics(setOf(configStringList(KAFKA_CONSUMER_SECTION_ID, TOPICS, fixedArrayOf(defaultKafkaConsumerConfiguration.getTopics()))))
+                .pollTimeout(ofMillis(configLong(KAFKA_CONSUMER_SECTION_ID, POLL_TIMEOUT, defaultKafkaConsumerConfiguration.getPollTimeout().toMillis())))
+                .groupId(configString(KAFKA_CONSUMER_SECTION_ID, GROUP_ID, defaultKafkaConsumerConfiguration.getGroupId()))
                 .build();
-        this.kafkaStreamsConfiguration = KafkaStreamsDefaultConfiguration.builder()
-                .kafkaStreamsRegistry(super.getKafkaStreamsConfiguration().getKafkaStreamsRegistry())
-                .kafkaStreamConfigurations(configMap(KAFKA_CONSUMER_SECTION_ID, STREAMS_SECTION_ID, streamConfig ->
-                                streamConfiguration()
-                                        .brokers(streamConfig.getStringList(BROKERS_KEY))
-                                        .topic(streamConfig.getString(TOPIC_KEY))
-                                        .additionalProperties(streamConfig.getProperties(ADDITIONAL_PROPERTIES_KEY))
-                                        .keySerde(ifException(() -> getSerde(streamConfig.getString(KEY_SERDE_KEY)), KAFKA_PROTOBUF_SERDE))
-                                        .valueSerde(ifException(() -> getSerde(streamConfig.getString(VALUE_SERDE_KEY)), KAFKA_PROTOBUF_SERDE))
-                                        .build(),
-                        super.getKafkaStreamsConfiguration().getKafkaStreamConfigurations()))
-                .build();
+        Map<String, KafkaStreamConfiguration> newKafkaStreamConfigurations = configMap(KAFKA_CONSUMER_SECTION_ID, STREAMS_SECTION_ID, streamConfig ->
+                streamConfiguration()
+                        .brokers(streamConfig.getStringList(BROKERS))
+                        .topic(streamConfig.getString(TOPIC))
+                        .additionalProperties(streamConfig.getProperties(ADDITIONAL_PROPERTIES))
+                        .keySerde(ifException(() -> getSerde(streamConfig.getString(KEY_SERDE)), KAFKA_PROTOBUF_SERDE))
+                        .valueSerde(ifException(() -> getSerde(streamConfig.getString(VALUE_SERDE)), KAFKA_PROTOBUF_SERDE))
+                        .build(), super.getKafkaStreamConfigurations());
+        if (!kafkaConsumerConfiguration.equals(newKafkaConsumerConfiguration) && context().hasModule(KAFKA_CONSUMER_MODULE_ID)) {
+            kafkaConsumerConfiguration = newKafkaConsumerConfiguration;
+            setOf(kafkaConsumerModuleState()
+                    .getKafkaConsumers()
+                    .keySet())
+                    .forEach(serviceId -> ignoreException(() -> restartKafkaConsumer(serviceId)));
+        }
+        kafkaConsumerConfiguration = newKafkaConsumerConfiguration;
+        if (!kafkaStreamConfigurations.equals(newKafkaStreamConfigurations) && context().hasModule(KAFKA_CONSUMER_MODULE_ID)) {
+            kafkaStreamConfigurations = newKafkaStreamConfigurations;
+            kafkaConsumerModuleState().getKafkaStreamsRegistry().refreshStreams();
+            return;
+        }
+        kafkaStreamConfigurations = newKafkaStreamConfigurations;
     }
 
     private static Serde<?> getSerde(String serdeString) throws ClassNotFoundException {

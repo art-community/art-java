@@ -24,13 +24,13 @@ import java.util.*;
 
 public interface ConfiguratorModuleConstants {
     String CONFIGURATOR_MODULE_ID = "CONFIGURATOR_MODULE";
-    String GRPC_SERVER_HOST = "grpc.server.host";
-    String GRPC_SERVER_PORT = "grpc.server.port";
-    String GRPC_SERVER_PATH = "grpc.server.path";
 
-    String APPLICATION_BALANCER_HOST_CONFIG_KEY = "balancer.host";
-    String APPLICATION_BALANCER_PORT_CONFIG_KEY = "balancer.port";
-    String APPLICATION_MODULE_GRPC_PATH_CONFIG_KEY = "grpc.server.path";
+    String GRPC_SERVER_HOST_KEY = "grpc.server.host";
+    String GRPC_SERVER_PORT_KEY = "grpc.server.port";
+    String GRPC_SERVER_PATH_KEY = "grpc.server.path";
+    String BALANCER_HOST_KEY = "balancer.host";
+    String BALANCER_POT_KEY = "balancer.port";
+
     String TOKEN_COOKIE = "TOKEN";
     String LOGIN_PATH = API_PATH + "/login";
     String CHECK_TOKEN_PATH = API_PATH + "/checkToken";

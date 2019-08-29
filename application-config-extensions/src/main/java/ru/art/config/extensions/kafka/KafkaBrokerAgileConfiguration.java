@@ -42,17 +42,17 @@ public class KafkaBrokerAgileConfiguration extends KafkaBrokerModuleDefaultConfi
     public void refresh() {
         ZookeeperConfiguration defaultZookeeperConfiguration = super.getZookeeperConfiguration();
         ZookeeperConfiguration newZookeeperConfiguration = ZookeeperConfiguration.builder()
-                .logsDirectory(configString(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, LOGS_DIRECTORY_KEY, defaultZookeeperConfiguration.getLogsDirectory()))
+                .logsDirectory(configString(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, LOGS_DIRECTORY, defaultZookeeperConfiguration.getLogsDirectory()))
                 .port(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, PORT, defaultZookeeperConfiguration.getPort()))
-                .tickTime(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, TICK_TIME_KEY, defaultZookeeperConfiguration.getTickTime()))
-                .maximumConnectedClients(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, MAXIMUM_CONNECTED_CLIENTS_KEY, defaultZookeeperConfiguration.getMaximumConnectedClients()))
+                .tickTime(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, TICK_TIME, defaultZookeeperConfiguration.getTickTime()))
+                .maximumConnectedClients(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, MAXIMUM_CONNECTED_CLIENTS, defaultZookeeperConfiguration.getMaximumConnectedClients()))
                 .build();
         boolean restartZookeeper = false;
         if (!newZookeeperConfiguration.equals(this.zookeeperConfiguration)) {
             restartZookeeper = true;
         }
         this.zookeeperConfiguration = newZookeeperConfiguration;
-        ZookeeperInitializationMode newZookeeperInitializationMode = ifException(() -> ZookeeperInitializationMode.valueOf(configString(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, INITIALIZATION_MODE_KEY).toUpperCase()),
+        ZookeeperInitializationMode newZookeeperInitializationMode = ifException(() -> ZookeeperInitializationMode.valueOf(configString(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, INITIALIZATION_MODE).toUpperCase()),
                 super.getZookeeperInitializationMode());
         if (zookeeperInitializationMode != newZookeeperInitializationMode) {
             restartZookeeper = true;
@@ -60,23 +60,22 @@ public class KafkaBrokerAgileConfiguration extends KafkaBrokerModuleDefaultConfi
         this.zookeeperInitializationMode = newZookeeperInitializationMode;
         KafkaBrokerConfiguration defaultKafkaBrokerConfiguration = super.getKafkaBrokerConfiguration();
         KafkaBrokerConfiguration newKafkaBrokerConfiguration = KafkaBrokerConfiguration.builder()
-                .additionalProperties(configProperties(KAFKA_BROKER_SECTION_ID, ADDITIONAL_PROPERTIES_KEY))
+                .additionalProperties(configProperties(KAFKA_BROKER_SECTION_ID, ADDITIONAL_PROPERTIES))
                 .port(configInt(KAFKA_BROKER_SECTION_ID, PORT, defaultKafkaBrokerConfiguration.getPort()))
-                .replicationFactor(configInt(KAFKA_BROKER_SECTION_ID, REPLICATION_FACTOR_KEY, defaultKafkaBrokerConfiguration.getReplicationFactor())
+                .replicationFactor(configInt(KAFKA_BROKER_SECTION_ID, REPLICATION_FACTOR, defaultKafkaBrokerConfiguration.getReplicationFactor())
                         .shortValue())
-                .zookeeperConnection(configString(KAFKA_BROKER_SECTION_ID, ZOOKEEPER_CONNECTION_KEY, defaultKafkaBrokerConfiguration.getZookeeperConnection()))
+                .zookeeperConnection(configString(KAFKA_BROKER_SECTION_ID, ZOOKEEPER_CONNECTION, defaultKafkaBrokerConfiguration.getZookeeperConnection()))
+                .logDirectory(configString(KAFKA_BROKER_SECTION_ID, LOG_DIR, defaultKafkaBrokerConfiguration.getLogDirectory()))
                 .build();
-        boolean restartBroker = false;
-        if (!newKafkaBrokerConfiguration.equals(this.kafkaBrokerConfiguration)) {
-            restartBroker = true;
-        }
-        this.kafkaBrokerConfiguration = newKafkaBrokerConfiguration;
-        if (context().hasModule(KAFKA_BROKER_MODULE_ID) && restartBroker) {
+        if (!newKafkaBrokerConfiguration.equals(this.kafkaBrokerConfiguration) && context().hasModule(KAFKA_BROKER_MODULE_ID)) {
+            this.kafkaBrokerConfiguration = newKafkaBrokerConfiguration;
             if (restartZookeeper) {
                 kafkaBrokerModuleState().getBroker().restartWithZookeeper();
                 return;
             }
             kafkaBrokerModuleState().getBroker().restart();
+            return;
         }
+        this.kafkaBrokerConfiguration = newKafkaBrokerConfiguration;
     }
 }

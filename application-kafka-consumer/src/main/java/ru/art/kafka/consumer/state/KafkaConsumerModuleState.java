@@ -20,9 +20,13 @@ package ru.art.kafka.consumer.state;
 
 import lombok.*;
 import ru.art.core.module.*;
-import java.util.concurrent.atomic.*;
+import ru.art.kafka.consumer.model.*;
+import ru.art.kafka.consumer.registry.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
 
 @Getter
 public class KafkaConsumerModuleState implements ModuleState {
-    private AtomicBoolean consumerStopFlag = new AtomicBoolean(false);
+    private Map<String, ManagedKafkaConsumer> kafkaConsumers = concurrentHashMap();
+    private final KafkaStreamsRegistry kafkaStreamsRegistry = new KafkaStreamsRegistry();
 }

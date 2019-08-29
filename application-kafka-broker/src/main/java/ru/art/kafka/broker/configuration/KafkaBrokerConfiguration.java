@@ -16,6 +16,7 @@
 
 package ru.art.kafka.broker.configuration;
 
+import kafka.server.*;
 import lombok.*;
 import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -34,4 +35,6 @@ public class KafkaBrokerConfiguration {
     private final int port = DEFAULT_BROKER_PORT;
     @Builder.Default
     private final short replicationFactor = 1;
+    @Builder.Default
+    private final String logDirectory = Defaults.LogDir();
 }

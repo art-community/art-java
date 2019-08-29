@@ -20,13 +20,13 @@ package ru.art.configurator.service;
 
 import ru.art.config.remote.api.specification.*;
 import ru.art.configurator.api.entity.*;
+import ru.art.configurator.factory.*;
 import ru.art.core.checker.*;
 import ru.art.entity.*;
 import static ru.art.configurator.api.entity.Configuration.*;
 import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
 import static ru.art.configurator.dao.ConfiguratorDao.*;
-import static ru.art.configurator.factory.RemoteConfigCommunicationSpecificationsFactory.*;
-import static ru.art.configurator.provider.ApplicationModulesParametersProvider.*;
+import static ru.art.configurator.provider.ModulesConnectionParametersProvider.*;
 import static ru.art.entity.Entity.*;
 import java.util.*;
 
@@ -73,9 +73,9 @@ public interface ConfiguratorService {
 
 
     static void applyModuleConfiguration(ModuleKey moduleKey) {
-        getApplicationModuleParameters(moduleKey)
+        getModulesConnectionParameters(moduleKey)
                 .filter(CheckerForEmptiness::isNotEmpty)
-                .flatMap(parameters -> createRemoteConfigCommunicationSpecification(parameters, moduleKey))
+                .flatMap(RemoteConfigCommunicationSpecificationsFactory::createRemoteConfigCommunicationSpecification)
                 .ifPresent(RemoteConfigCommunicationSpecification::applyConfiguration);
     }
 }

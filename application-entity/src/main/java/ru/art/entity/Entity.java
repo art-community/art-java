@@ -280,6 +280,58 @@ public class Entity implements Value {
     }
 
 
+
+    public List<String> findStringSet(String name) {
+        CollectionValue<String> collection = asCollection(find(name));
+        return isNull(collection) ? null : collection.getStringList();
+    }
+
+    public List<Integer> findIntSet(String name) {
+        CollectionValue<Integer> collection = asCollection(find(name));
+        return isNull(collection) ? null : collection.getIntList();
+    }
+
+    public List<Double> findDoubleSet(String name) {
+        CollectionValue<Double> collection = asCollection(find(name));
+        return isNull(collection) ? null : collection.getDoubleList();
+    }
+
+    public Set<Long> findLongSet(String name) {
+        CollectionValue<Long> collection = asCollection(find(name));
+        return isNull(collection) ? null : collection.getLongSet();
+    }
+
+    public Set<Boolean> findBoolSet(String name) {
+        CollectionValue<Integer> collection = asCollection(find(name));
+        return isNull(collection) ? null : collection.getBoolSet();
+    }
+
+    public Set<Float> findFloatSet(String name) {
+        CollectionValue<Float> collection = asCollection(find(name));
+        return isNull(collection) ? null : collection.getFloatSet();
+    }
+
+    public Set<Entity> findEntitySet(String name) {
+        CollectionValue<?> collectionValue = findCollectionValue(name);
+        return isNull(collectionValue) ? emptySet() : collectionValue.getEntitySet();
+    }
+
+    public <T> Set<CollectionValue<T>> findCollectionValueSet(String name) {
+        CollectionValue<?> collectionValue = findCollectionValue(name);
+        return isNull(collectionValue) ? emptySet() : cast(collectionValue.getCollectionsSet());
+    }
+
+    public Set<MapValue> findMapValueSet(String name) {
+        CollectionValue<?> collectionValue = findCollectionValue(name);
+        return isNull(collectionValue) ? emptySet() : collectionValue.getMapValueSet();
+    }
+
+    public Set<StringParametersMap> findStringParametersMapSet(String name) {
+        CollectionValue<?> collectionValue = findCollectionValue(name);
+        return isNull(collectionValue) ? emptySet() : collectionValue.getStringParametersSet();
+    }
+
+
     public <T> List<T> getEntityList(String name, ValueToModelMapper<T, Entity> mapper) {
         CollectionValue<Entity> collectionValue = asCollection(fields.get(name));
         return isNull(collectionValue) ? emptyList() : collectionValue.getEntityList().stream().filter(Objects::nonNull)

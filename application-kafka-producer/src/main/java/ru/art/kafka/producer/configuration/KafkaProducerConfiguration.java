@@ -44,7 +44,7 @@ public class KafkaProducerConfiguration {
      * @return list ip-address and port kafka brokers
      */
     @Singular("broker")
-    private final List<String> brokers;
+    private final Set<String> brokers;
 
     /**
      * @return Serializer for key
