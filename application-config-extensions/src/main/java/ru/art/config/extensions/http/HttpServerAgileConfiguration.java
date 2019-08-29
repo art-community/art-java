@@ -97,10 +97,10 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
         int newMinSpareThreadsCount = configInt(HTTP_SERVER_SECTION_ID, MIN_SPARE_THREADS_COUNT, DEFAULT_THREAD_POOL_SIZE);
         restart |= newMinSpareThreadsCount != minSpareThreadsCount;
         minSpareThreadsCount = newMinSpareThreadsCount;
+        registerServices();
         if (restart && context().hasModule(HTTP_SERVER_MODULE_ID)) {
             httpServerModuleState().getServer().restart();
         }
-        registerServices();
     }
 
     private void registerServices() {

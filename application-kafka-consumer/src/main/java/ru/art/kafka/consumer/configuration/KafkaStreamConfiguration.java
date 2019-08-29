@@ -20,17 +20,18 @@ package ru.art.kafka.consumer.configuration;
 
 import lombok.*;
 import org.apache.kafka.common.serialization.*;
-import ru.art.kafka.serde.*;
+import static ru.art.kafka.instances.KafkaSerdes.*;
 import java.util.*;
 
 @Getter
 @Builder(builderMethodName = "streamConfiguration")
+@EqualsAndHashCode
 public class KafkaStreamConfiguration {
     /**
      * list ip-address and port kafka brokers
      */
     @Singular("broker")
-    private final List<String> brokers;
+    private final Set<String> brokers;
 
     /**
      * @return List topics name
@@ -41,13 +42,13 @@ public class KafkaStreamConfiguration {
      * deserializer for key
      */
     @Builder.Default
-    private final Serde<?> keySerde = new KafkaProtobufSerde();
+    private final Serde<?> keySerde = KAFKA_PROTOBUF_SERDE;
 
     /**
      * @return Deserializer for value
      */
     @Builder.Default
-    private final Serde<?> valueSerde = new KafkaProtobufSerde();
+    private final Serde<?> valueSerde = KAFKA_PROTOBUF_SERDE;
 
     /**
      * Default value null

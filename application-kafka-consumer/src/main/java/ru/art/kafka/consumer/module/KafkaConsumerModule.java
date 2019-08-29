@@ -68,6 +68,6 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
     }
 
     public static KafkaStreamsRegistry kafkaStreamsRegistry() {
-        return getKafkaConsumerModule().getKafkaStreamsConfiguration().getKafkaStreamsRegistry();
+        return getKafkaConsumerModuleState().getKafkaStreamsRegistry();
     }
 }

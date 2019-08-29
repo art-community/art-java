@@ -31,6 +31,7 @@ import static ru.art.config.remote.provider.RemoteConfigProvider.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.setOf;
 import java.util.*;
 import java.util.function.*;
 
@@ -106,6 +107,42 @@ public class ConfigExtensions {
         Config remoteConfig = remoteConfig(sectionId);
         if (Config.isNotEmpty(remoteConfig)) return remoteConfig.getBoolList(path);
         return config(sectionId).getBoolList(path);
+    }
+
+
+    public static Set<String> configStringSet(String sectionId, String path) {
+        if (isEmpty(sectionId)) throw new ConfigException(SECTION_ID_IS_EMPTY);
+        Config remoteConfig = remoteConfig(sectionId);
+        if (Config.isNotEmpty(remoteConfig)) return setOf(remoteConfig.getStringList(path));
+        return setOf(config(sectionId).getStringList(path));
+    }
+
+    public static Set<Integer> configIntSet(String sectionId, String path) {
+        if (isEmpty(sectionId)) throw new ConfigException(SECTION_ID_IS_EMPTY);
+        Config remoteConfig = remoteConfig(sectionId);
+        if (Config.isNotEmpty(remoteConfig)) return setOf(remoteConfig.getIntList(path));
+        return setOf(config(sectionId).getIntList(path));
+    }
+
+    public static Set<Long> configLongSet(String sectionId, String path) {
+        if (isEmpty(sectionId)) throw new ConfigException(SECTION_ID_IS_EMPTY);
+        Config remoteConfig = remoteConfig(sectionId);
+        if (Config.isNotEmpty(remoteConfig)) return setOf(remoteConfig.getLongList(path));
+        return setOf(config(sectionId).getLongList(path));
+    }
+
+    public static Set<Double> configDoubleSet(String sectionId, String path) {
+        if (isEmpty(sectionId)) throw new ConfigException(SECTION_ID_IS_EMPTY);
+        Config remoteConfig = remoteConfig(sectionId);
+        if (Config.isNotEmpty(remoteConfig)) return setOf(remoteConfig.getDoubleList(path));
+        return setOf(config(sectionId).getDoubleList(path));
+    }
+
+    public static Set<Boolean> configBooleanSet(String sectionId, String path) {
+        if (isEmpty(sectionId)) throw new ConfigException(SECTION_ID_IS_EMPTY);
+        Config remoteConfig = remoteConfig(sectionId);
+        if (Config.isNotEmpty(remoteConfig)) return setOf(remoteConfig.getBoolList(path));
+        return setOf(config(sectionId).getBoolList(path));
     }
 
 
@@ -210,6 +247,27 @@ public class ConfigExtensions {
 
     public static List<Boolean> configBooleanList(String sectionId, String path, List<Boolean> defaultValue) {
         return ifExceptionOrEmpty(() -> configBooleanList(sectionId, path), defaultValue);
+    }
+
+
+    public static Set<String> configStringSet(String sectionId, String path, Set<String> defaultValue) {
+        return ifExceptionOrEmpty(() -> configStringSet(sectionId, path), defaultValue);
+    }
+
+    public static Set<Integer> configIntSet(String sectionId, String path, Set<Integer> defaultValue) {
+        return ifExceptionOrEmpty(() -> configIntSet(sectionId, path), defaultValue);
+    }
+
+    public static Set<Double> configDoubleSet(String sectionId, String path, Set<Double> defaultValue) {
+        return ifExceptionOrEmpty(() -> configDoubleSet(sectionId, path), defaultValue);
+    }
+
+    public static Set<Long> configLongSet(String sectionId, String path, Set<Long> defaultValue) {
+        return ifExceptionOrEmpty(() -> configLongSet(sectionId, path), defaultValue);
+    }
+
+    public static Set<Boolean> configBooleanSet(String sectionId, String path, Set<Boolean> defaultValue) {
+        return ifExceptionOrEmpty(() -> configBooleanSet(sectionId, path), defaultValue);
     }
 
 

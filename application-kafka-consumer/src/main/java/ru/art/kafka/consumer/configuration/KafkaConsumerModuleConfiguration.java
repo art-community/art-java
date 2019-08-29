@@ -21,22 +21,22 @@ package ru.art.kafka.consumer.configuration;
 
 import lombok.*;
 import ru.art.core.module.*;
-import ru.art.kafka.consumer.configuration.KafkaConsumerConfiguration.*;
-import ru.art.kafka.consumer.configuration.KafkaStreamsConfiguration.*;
+import static ru.art.core.factory.CollectionsFactory.*;
+import java.util.*;
 
 public interface KafkaConsumerModuleConfiguration extends ModuleConfiguration {
     boolean isEnableTracing();
 
     KafkaConsumerConfiguration getKafkaConsumerConfiguration();
 
-    KafkaStreamsConfiguration getKafkaStreamsConfiguration();
+    Map<String, KafkaStreamConfiguration> getKafkaStreamConfigurations();
 
     KafkaConsumerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new KafkaConsumerModuleDefaultConfiguration();
 
 	@Getter
 	class KafkaConsumerModuleDefaultConfiguration implements KafkaConsumerModuleConfiguration {
         private final boolean enableTracing = false;
-        private final KafkaConsumerConfiguration kafkaConsumerConfiguration = KafkaConsumerDefaultConfiguration.builder().build();
-        private final KafkaStreamsConfiguration kafkaStreamsConfiguration = KafkaStreamsDefaultConfiguration.builder().build();
+        private final KafkaConsumerConfiguration kafkaConsumerConfiguration = KafkaConsumerConfiguration.builder().build();
+        private final Map<String, KafkaStreamConfiguration> kafkaStreamConfigurations = mapOf();
     }
 }
