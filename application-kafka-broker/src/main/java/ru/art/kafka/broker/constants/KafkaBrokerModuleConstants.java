@@ -23,6 +23,7 @@ public interface KafkaBrokerModuleConstants {
     String DEFAULT_ZOOKEEPER_SNAPSHOTS_DIRECTORY = "zookeeper/snapshots";
     String ZOOKEEPER_PREFIX = "zookeeper-";
     String DEFAULT_ZOOKEEPER_LOGS_DIRECTORY = "zookeeper/logs";
+    String DEFAULT_KAFKA_LOG_DIRECTORY = "kafka/logs";
     int DEFAULT_ZOOKEEPER_PORT = findAvailableTcpPort();
     int DEFAULT_BROKER_PORT = findAvailableTcpPort();
     int DEFAULT_ZOOKEEPER_MAXIMUM_CONNECTED_CLIENTS = 1024;

@@ -180,9 +180,9 @@ public class Context {
         state = LOADING_MODULES;
         modules.put(module.getId(), new ModuleContainer<>(module, cast(module.getDefaultConfiguration())));
         out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp));
+        state = READY;
         module.onLoad();
         lastActionTimestamp = currentTimeMillis();
-        state = READY;
         return this;
     }
 
@@ -191,9 +191,9 @@ public class Context {
         state = LOADING_MODULES;
         modules.put(module.getId(), new ModuleContainer<>(module, cast(moduleConfigurator.configure(module))));
         out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp));
+        state = READY;
         module.onLoad();
         lastActionTimestamp = currentTimeMillis();
-        state = READY;
         return this;
     }
 
@@ -201,10 +201,10 @@ public class Context {
         if (isNull(module)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         state = LOADING_MODULES;
         modules.put(module.getId(), new ModuleContainer<>(module, cast(nonNull(customModuleConfiguration) ? customModuleConfiguration : module.getDefaultConfiguration())));
+        state = READY;
         module.onLoad();
         out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp));
         lastActionTimestamp = currentTimeMillis();
-        state = READY;
         return this;
     }
 
