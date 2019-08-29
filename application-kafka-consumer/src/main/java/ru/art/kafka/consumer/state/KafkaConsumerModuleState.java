@@ -27,6 +27,6 @@ import java.util.*;
 
 @Getter
 public class KafkaConsumerModuleState implements ModuleState {
-    private Map<String, ManagedKafkaConsumer> kafkaConsumers = concurrentHashMap();
+    private final Map<String, ManagedKafkaConsumer> kafkaConsumers = concurrentHashMap();
     private final KafkaStreamsRegistry kafkaStreamsRegistry = new KafkaStreamsRegistry();
 }
