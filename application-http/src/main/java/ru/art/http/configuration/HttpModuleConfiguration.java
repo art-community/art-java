@@ -68,7 +68,7 @@ public interface HttpModuleConfiguration extends ModuleConfiguration {
         private final Logbook logbook = Logbook.builder().writer(new ZalangoLogbookLogWriter()).build();
 
         private List<ValueInterceptor<Value, Value>> initializeValueInterceptors() {
-            return linkedListOf(new LoggingValueInterceptor<>(this::isEnableValueTracing));
+            return isEnableValueTracing() ? linkedListOf(new LoggingValueInterceptor<>()) : linkedListOf();
         }
     }
 }
