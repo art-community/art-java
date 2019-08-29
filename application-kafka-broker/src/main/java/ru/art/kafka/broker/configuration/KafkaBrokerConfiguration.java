@@ -16,8 +16,9 @@
 
 package ru.art.kafka.broker.configuration;
 
-import kafka.server.*;
 import lombok.*;
+import static java.io.File.*;
+import static java.nio.file.Paths.*;
 import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
@@ -36,5 +37,5 @@ public class KafkaBrokerConfiguration {
     @Builder.Default
     private final short replicationFactor = 1;
     @Builder.Default
-    private final String logDirectory = Defaults.LogDir();
+    private final String logDirectory = get(EMPTY_STRING).toAbsolutePath() + separator + DEFAULT_KAFKA_LOG_DIRECTORY;
 }
