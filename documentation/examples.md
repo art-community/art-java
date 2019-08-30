@@ -335,7 +335,75 @@ Hello,ART
 ``` 
 
 ## Local Scheduler
+ART provides functional for Scheduling tasks (deferred and periodic) with controlling task execution time and order
+
+Code:
+```java
+import static java.time.Duration.*;
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.core.constants.DateConstants.*;
+import static ru.art.core.extension.DateExtensions.*;
+import static ru.art.task.deferred.executor.IdentifiedRunnableFactory.*;
+import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+public class MainModule {
+    public static void main(String[] args) throws InterruptedException {
+        useAgileConfigurations();
+        CountDownLatch latch = new CountDownLatch(5);
+        asynchronousPeriod(uniqueTask(() -> {
+            System.out.println("Executed at " + format(HH_MM_SS_24H, new Date()));
+            latch.countDown();
+        }), ofSeconds(1));
+        latch.await();
+    }
+}
+```
+After running this code you could see something like this:
+
+```
+Module: 'SCHEDULER_MODULE' was loaded in 257[ms]
+Executed at 16:24:17
+Executed at 16:24:18
+Executed at 16:24:19
+Executed at 16:24:20
+Executed at 16:24:21
+```
 
 ## Tarantool DB
+ART provides API to interact with Tarantool
+
+Code:
+```java
+import ru.art.tarantool.dao.*;
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.entity.Entity.*;
+import static ru.art.tarantool.dao.TarantoolDao.*;
+
+public class MainModule {
+    public static void main(String[] args) {
+        useAgileConfigurations();
+        TarantoolDao tarantool = tarantool("example");
+        tarantool.get("entity", tarantool.put("entity", entityBuilder()
+                .stringField("name", "Customer name")
+                .entityField("order", entityBuilder()
+                        .intField("price", 123)
+                        .build())
+                .build()).getLong("id"))
+                .ifPresent(System.out::println);
+    }
+}
+```
+
+After running this code you could see something like this:
+```
+Module: 'SERVICE_MODULE' was loaded in 144[ms]
+Module: 'CONFIG_MODULE' was loaded in 2[ms]
+Module: 'LOGGING_MODULE' was loaded in 584[ms]
+2019-08-30 16:29:39,074 INFO r.a.t.i.TarantoolInitializer [main] Tarantool 'example' with address 'localhost:3301' successfully connected 
+Module: 'TARANTOOL_MODULE' was loaded in 332[ms]
+Entity(fields={id=2, name=Customer name, order=Entity(fields={price=123}, fieldNames=[price], type=ENTITY)}, fieldNames=[id, name, order], type=ENTITY)
+```
 
 ## Configurations
