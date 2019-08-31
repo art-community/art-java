@@ -19,26 +19,17 @@
 package ru.art.tarantool.constants;
 
 import lombok.*;
-import static ru.art.core.constants.SystemConstants.*;
-import static ru.art.core.determinant.SystemDeterminant.*;
-import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.core.network.selector.PortSelector.*;
-import java.util.*;
 
 public interface TarantoolModuleConstants {
     String TARANTOOL = "tarantool";
     String TARANTOOL_MODULE_ID = "TARANTOOL_MODULE";
-    List<String> DEFAULT_TARANTOOL_EXECUTABLE_COMMAND = isWindows()
-            ? fixedArrayOf(WSL, "/usr/bin/tarantool")
-            : fixedArrayOf("/usr/bin/tarantool");
-    String INSTALL_TARANTOOL_MESSAGE = isWindows()
-            ? "Possibly tarantool was not installed. For using tarantool on windows, please install WSL (https://docs.microsoft.com/en-us/windows/wsl/install-win10)\nand then on installed Linux run:\n\nfor Debian:\napt-get update\napt-get install tarantool\n\nfor Ubuntu:\nyum update\nyum install tarantool\n"
-            : "Possibly tarantool was not installed. For using tarantool on Linux run:\n\nfor Debian:\napt-get update\napt-get install tarantool\n\nfor Ubuntu:\nyum update\nyum install tarantool";
     int DEFAULT_TARANTOOL_PROBE_CONNECTION_TIMEOUT = 3 * 1000;
     int DEFAULT_TARANTOOL_CONNECTION_TIMEOUT = DEFAULT_TARANTOOL_PROBE_CONNECTION_TIMEOUT * 20;
     int DEFAULT_TARANTOOL_PORT = findAvailableTcpPort();
     String DEFAULT_TARANTOOL_USERNAME = "guest";
-    String LUA_REGEX = ".+lua";
+    String LUA_REGEX = ".+\\.lua";
+    String DEFAULT_TARANTOOL_EXECUTABLE = "tarantool";
     String JTW_EXTENSION = ".jtw";
     String IS_NULLABLE = "is_nullable";
     String COLLATION = "collation";
@@ -67,6 +58,7 @@ public interface TarantoolModuleConstants {
 
     interface Directories {
         String LUA = "lua";
+        String BIN = "bin";
     }
 
     interface ExceptionMessages {
@@ -74,6 +66,7 @@ public interface TarantoolModuleConstants {
         String ENTITY_FIELDS_MAPPING_IS_NULL = "Tarantool ''{0}'' entity ''{1}'' fields mapping is null. Please specify it.";
         String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Connection waiting time has passed";
         String TARANTOOL_INITIALIZATION_SCRIP_NOT_EXISTS = "Tarantool ''{0}'' initialization script not exists inside classpath";
+        String TARANTOOL_EXECUTABLE_NOT_EXISTS = "Tarantool ''{0}'' executable ''{1}'' not exists inside classpath";
         String ENTITY_WITHOUT_ID_FILED = "Entity ''{0}'' does not has 'id' long field";
         String ENTITY_IS_NULL = "Entity ''{0}'' is null";
     }
@@ -84,9 +77,10 @@ public interface TarantoolModuleConstants {
         String WRITING_TARANTOOL_CONFIGURATION = "Writing Tarantool ''{0}'' address ''{1}'' configuration:\n\t{2}\nto file ''{3}''";
         String EVALUATING_LUA_SCRIPT = "Evaluating lua script:\n\t{0}";
         String EXTRACT_TARANTOOL_LUA_SCRIPTS = "Extract Tarantool ''{0}'' with address''{1}'' lua scripts to ''{2}''";
+        String EXTRACT_TARANTOOL_BINARY = "Extract Tarantool ''{0}'' with address''{1}'' binary executable to ''{2}''";
         String WRITING_TARANTOOL_USER_CONFIGURATION = "Writing Tarantool ''{0}'' with address = ''{1}'' user configuration to file ''{2}''";
         String UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP = "Unable to connect to tarantool ''{0}'' with address ''{1}'' on startup. Therefore, we will try to run the tarantool";
-        String UNABLE_TO_CONNECT_TO_TARANTOOL= "Unable to connect to tarantool ''{0}'' with address ''{1}'' on startup";
+        String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}'' on startup";
         String CALLING_FUNCTION = "Calling tarantool function ''{0}'' with arguments: {1}";
         String CALLED_FUNCTION = "Called tarantool function ''{0}'' with result: {1}";
         String FAILED_FUNCTION = "Failed to call tarantool function ''{0}''";
