@@ -25,13 +25,11 @@ install:
   - sudo apt-get -y update && sudo apt-get -y install openjdk-8-jdk java-common
   - sudo update-java-alternatives -s java-1.8.0-openjdk-amd64
   - export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-  - sudo export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-  - alias java='/usr/lib/jvm/java-8-openjdk-amd64/bin/java'
-  - sudo alias java='/usr/lib/jvm/java-8-openjdk-amd64/bin/java'
 
 matrix:
   include:
-    node_js: 10
+    - jdk: openjdk8
+      node_js: 10
 
 before_install:
   - chmod 777 ci/travis.sh
