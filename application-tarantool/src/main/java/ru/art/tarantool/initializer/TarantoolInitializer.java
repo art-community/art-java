@@ -164,17 +164,15 @@ public class TarantoolInitializer {
                 instanceId,
                 address,
                 localConfiguration.getWorkingDirectory()) + separator + BIN);
+        String executableFilePath = localConfiguration.getWorkingDirectory()
+                + separator
+                + BIN
+                + separator
+                + localConfiguration.getExecutable();
+        new File(executableFilePath).setExecutable(true);
         List<String> executableCommand = isWindows()
-                ? dynamicArrayOf(WSL, convertToWslPath(localConfiguration.getWorkingDirectory()
-                + separator
-                + BIN
-                + separator
-                + localConfiguration.getExecutable()))
-                : dynamicArrayOf(localConfiguration.getWorkingDirectory()
-                + separator
-                + BIN
-                + separator
-                + localConfiguration.getExecutable());
+                ? dynamicArrayOf(WSL, convertToWslPath(executableFilePath))
+                : dynamicArrayOf(executableFilePath);
         executableCommand.add(convertToWslPath(getLuaScriptPath(localConfiguration, INITIALIZATION)));
         new ProcessExecutor()
                 .command(executableCommand)
@@ -190,6 +188,7 @@ public class TarantoolInitializer {
         if (isNull(executableUrl)) {
             throw new TarantoolInitializationException(format(TARANTOOL_EXECUTABLE_NOT_EXISTS, address, localConfiguration.getExecutable()));
         }
+        new File(executableUrl.getPath()).setExecutable(true);
         List<String> executableCommand;
         executableCommand = isWindows()
                 ? dynamicArrayOf(WSL, convertToWslPath(executableUrl.getPath()))
