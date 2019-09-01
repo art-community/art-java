@@ -169,7 +169,7 @@ public class TarantoolInitializer {
                 + BIN
                 + separator
                 + localConfiguration.getExecutable()))
-                : dynamicArrayOf(BASH, localConfiguration.getWorkingDirectory()
+                : dynamicArrayOf(localConfiguration.getWorkingDirectory()
                 + separator
                 + BIN
                 + separator
@@ -192,7 +192,7 @@ public class TarantoolInitializer {
         List<String> executableCommand;
         executableCommand = isWindows()
                 ? dynamicArrayOf(WSL, convertToWslPath(executableUrl.getPath()))
-                : dynamicArrayOf(BASH, executableUrl.getPath());
+                : dynamicArrayOf(executableUrl.getPath());
         URL initializationScriptUrl = TarantoolInitializer.class.getClassLoader().getResource(INITIALIZATION);
         if (isNull(initializationScriptUrl)) {
             throw new TarantoolInitializationException(format(TARANTOOL_INITIALIZATION_SCRIP_NOT_EXISTS, address));

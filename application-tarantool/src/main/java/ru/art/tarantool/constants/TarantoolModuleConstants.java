@@ -77,7 +77,7 @@ public interface TarantoolModuleConstants {
         String WRITING_TARANTOOL_CONFIGURATION = "Writing Tarantool ''{0}'' address ''{1}'' configuration:\n\t{2}\nto file ''{3}''";
         String EVALUATING_LUA_SCRIPT = "Evaluating lua script:\n\t{0}";
         String EXTRACT_TARANTOOL_LUA_SCRIPTS = "Extract Tarantool ''{0}'' with address''{1}'' lua scripts to ''{2}''";
-        String EXTRACT_TARANTOOL_BINARY = "Extract Tarantool ''{0}'' with address''{1}'' binary executable to ''{2}''";
+        String EXTRACT_TARANTOOL_BINARY = "Extract Tarantool ''{0}'' with address ''{1}'' binary executable to ''{2}''";
         String WRITING_TARANTOOL_USER_CONFIGURATION = "Writing Tarantool ''{0}'' with address = ''{1}'' user configuration to file ''{2}''";
         String UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP = "Unable to connect to tarantool ''{0}'' with address ''{1}'' on startup. Therefore, we will try to run the tarantool";
         String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}'' on startup";
