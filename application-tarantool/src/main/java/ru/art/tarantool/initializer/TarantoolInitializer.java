@@ -167,10 +167,12 @@ public class TarantoolInitializer {
                 ? dynamicArrayOf(WSL, convertToWslPath(localConfiguration.getWorkingDirectory()
                 + separator
                 + BIN
+                + separator
                 + localConfiguration.getExecutable()))
                 : dynamicArrayOf(BASH, localConfiguration.getWorkingDirectory()
                 + separator
                 + BIN
+                + separator
                 + localConfiguration.getExecutable());
         executableCommand.add(convertToWslPath(getLuaScriptPath(localConfiguration, INITIALIZATION)));
         new ProcessExecutor()
