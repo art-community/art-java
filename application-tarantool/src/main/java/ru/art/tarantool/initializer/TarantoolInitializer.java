@@ -24,6 +24,7 @@ import org.tarantool.*;
 import org.zeroturnaround.exec.*;
 import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.exception.*;
+import ru.art.tarantool.module.*;
 import static java.io.File.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
@@ -140,7 +141,7 @@ public class TarantoolInitializer {
                     userConfigurationPath.toAbsolutePath()));
 
             List<String> executableCommand = dynamicArrayOf(localConfiguration.getExecutable());
-            if (insideJar()) {
+            if (insideJar(TarantoolModule.class)) {
                 startTarantoolFromJar(instanceId, localConfiguration, address);
                 return;
             }
@@ -153,8 +154,8 @@ public class TarantoolInitializer {
 
     private static void startTarantoolFromJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException {
         createDirectories(get(localConfiguration.getWorkingDirectory() + separator + BIN));
-        extractCurrentJarEntry(LUA_REGEX, getLuaScriptPath(localConfiguration, EMPTY_STRING));
-        extractCurrentJarEntry(localConfiguration.getExecutable(), localConfiguration.getWorkingDirectory() + separator + BIN);
+        extractCurrentJarEntry(TarantoolModule.class, LUA_REGEX, getLuaScriptPath(localConfiguration, EMPTY_STRING));
+        extractCurrentJarEntry(TarantoolModule.class, localConfiguration.getExecutable(), localConfiguration.getWorkingDirectory() + separator + BIN);
         logger.info(format(EXTRACT_TARANTOOL_LUA_SCRIPTS,
                 instanceId,
                 address,
