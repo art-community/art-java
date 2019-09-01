@@ -25,7 +25,7 @@ art {
     }
     resources {
         resourceDirs.add("src/main/templates")
-        resourceDirs.add("src/main/tarantool")
+        resourceDirs.add("src/main/executable")
         resourceDirs.add("src/main/lua")
     }
 }

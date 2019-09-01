@@ -18,7 +18,6 @@
 
 package ru.art.test.specification.tarantool
 
-
 import ru.art.entity.Entity
 import ru.art.tarantool.configuration.lua.TarantoolIndexConfiguration
 import spock.lang.IgnoreIf
@@ -60,6 +59,8 @@ class TarantoolCrudSpecification extends Specification {
     def "should run CRUD operations with tarantool with preparation steps"() {
         setup:
         useAgileConfigurations()
+        tarantoolModuleState().loadedCommonScripts.clear()
+        tarantoolModuleState().loadedValueScripts.clear()
         createSpace(instanceId, spaceName)
         createSequence(instanceId, sequence)
         createIndex(instanceId, TarantoolIndexConfiguration.builder()
@@ -71,9 +72,9 @@ class TarantoolCrudSpecification extends Specification {
                 .spaceName(spaceName)
                 .indexName(secondaryIndex)
                 .part(TarantoolIndexConfiguration.Part.builder()
-                .fieldNumber(fieldMapping(instanceId, spaceName).map(fieldName))
-                .type(STRING)
-                .build())
+                        .fieldNumber(fieldMapping(instanceId, spaceName).map(fieldName))
+                        .type(STRING)
+                        .build())
                 .build())
 
         when:
@@ -98,19 +99,18 @@ class TarantoolCrudSpecification extends Specification {
         dao.getByIndex(spaceName, secondaryIndex, setOf(entity.getString(fieldName))) == empty()
         dao.len(spaceName) == 0L
 
-
         cleanup:
         dropSpace(instanceId, spaceName)
         dropIndex(instanceId, spaceName, primaryIndex)
         dropIndex(instanceId, spaceName, secondaryIndex)
         dropSequence(instanceId, sequence)
-        tarantoolModuleState().loadedCommonScripts.clear()
-        tarantoolModuleState().loadedValueScripts.clear()
     }
 
     def "should run CRUD operations with tarantool without preparation steps"() {
         setup:
         useAgileConfigurations()
+        tarantoolModuleState().loadedCommonScripts.clear()
+        tarantoolModuleState().loadedValueScripts.clear()
 
         when:
         entity = dao.put(spaceName, entity)
@@ -133,9 +133,9 @@ class TarantoolCrudSpecification extends Specification {
                 .spaceName(spaceName)
                 .indexName(secondaryIndex)
                 .part(TarantoolIndexConfiguration.Part.builder()
-                .fieldNumber(fieldMapping(instanceId, spaceName).map(fieldName))
-                .type(STRING)
-                .build())
+                        .fieldNumber(fieldMapping(instanceId, spaceName).map(fieldName))
+                        .type(STRING)
+                        .build())
                 .build())
 
         then:
@@ -182,7 +182,5 @@ class TarantoolCrudSpecification extends Specification {
         dropIndex(instanceId, spaceName, primaryIndex)
         dropIndex(instanceId, spaceName, secondaryIndex)
         dropSequence(instanceId, sequence)
-        tarantoolModuleState().loadedCommonScripts.clear()
-        tarantoolModuleState().loadedValueScripts.clear()
     }
 }

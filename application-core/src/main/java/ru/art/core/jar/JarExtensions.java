@@ -18,7 +18,6 @@
 
 package ru.art.core.jar;
 
-import ru.art.core.context.*;
 import ru.art.core.exception.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.StandardCopyOption.*;
@@ -36,8 +35,8 @@ import java.util.zip.*;
 
 @SuppressWarnings("Duplicates")
 public class JarExtensions {
-    public static boolean insideJar() {
-        return ofNullable(Context.class.getProtectionDomain())
+    public static boolean insideJar(Class<?> jarMarkerClass) {
+        return ofNullable(jarMarkerClass.getProtectionDomain())
                 .map(ProtectionDomain::getCodeSource)
                 .map(CodeSource::getLocation)
                 .map(URL::getPath)
@@ -47,8 +46,8 @@ public class JarExtensions {
                 .isPresent();
     }
 
-    public static void extractCurrentJar() {
-        ofNullable(Context.class.getProtectionDomain())
+    public static void extractCurrentJar(Class<?> jarMarkerClass) {
+        ofNullable(jarMarkerClass.getProtectionDomain())
                 .map(ProtectionDomain::getCodeSource)
                 .map(CodeSource::getLocation)
                 .map(URL::getPath)
@@ -58,8 +57,8 @@ public class JarExtensions {
                 .ifPresent(JarExtensions::extractJar);
     }
 
-    public static void extractCurrentJar(String directory) {
-        ofNullable(Context.class.getProtectionDomain())
+    public static void extractCurrentJar(Class<?> jarMarkerClass, String directory) {
+        ofNullable(jarMarkerClass.getProtectionDomain())
                 .map(ProtectionDomain::getCodeSource)
                 .map(CodeSource::getLocation)
                 .map(URL::getPath)
@@ -99,8 +98,8 @@ public class JarExtensions {
         }
     }
 
-    public static void extractCurrentJarEntry(String entryRegex) {
-        ofNullable(Context.class.getProtectionDomain())
+    public static void extractCurrentJarEntry(Class<?> jarMarkerClass, String entryRegex) {
+        ofNullable(jarMarkerClass.getProtectionDomain())
                 .map(ProtectionDomain::getCodeSource)
                 .map(CodeSource::getLocation)
                 .map(URL::getPath)
@@ -110,8 +109,8 @@ public class JarExtensions {
                 .ifPresent(jarPath -> extractJarEntry(jarPath, entryRegex, EMPTY_STRING));
     }
 
-    public static void extractCurrentJarEntry(String entryRegex, String directory) {
-        ofNullable(Context.class.getProtectionDomain())
+    public static void extractCurrentJarEntry(Class<?> jarMarkerClass, String entryRegex, String directory) {
+        ofNullable(jarMarkerClass.getProtectionDomain())
                 .map(ProtectionDomain::getCodeSource)
                 .map(CodeSource::getLocation)
                 .map(URL::getPath)
