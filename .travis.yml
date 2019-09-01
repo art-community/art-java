@@ -22,10 +22,7 @@ language: java
 
 matrix:
   include:
-    - jdk:
-        - oraclejdk9
-          oraclejdk10
-          oraclejdk11
+    - jdk: oraclejdk11
       node_js: 10
 
 before_install:
