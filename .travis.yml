@@ -17,13 +17,12 @@
 #
 ---
 
-dist: trusty
+dist: xenial
 install: true
 language: java
 
 matrix:
   include:
-    - jdk: oraclejdk8
       node_js: 10
 
 before_install:
