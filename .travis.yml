@@ -17,7 +17,7 @@
 #
 ---
 
-dist: trusty
+dist: xenial
 install: true
 language: java
 
