@@ -23,13 +23,12 @@ import static java.io.File.*;
 import static java.nio.file.Paths.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
-import java.util.*;
 
 @Getter
 @Builder
 public class TarantoolLocalConfiguration {
     @Builder.Default
-    private final List<String> executableCommand = DEFAULT_TARANTOOL_EXECUTABLE_COMMAND;
+    private final String executable = DEFAULT_TARANTOOL_EXECUTABLE;
     @Builder.Default
     private final String workingDirectory = get(EMPTY_STRING).toAbsolutePath().toString()
             + separator

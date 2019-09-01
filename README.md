@@ -38,7 +38,7 @@ art {
 - Java 8 - heavy dependence on Java 8 functional APIs
 - Gradle 5.+
 - If working with web - installed nodejs and npm
-- If using tarantool - installed tarantool
+- If using tarantool on Windows - installed WSL (Tarantool is not supported on Windows System)
 - If using sql - installed SQL db
 
 ## Bugs and Feedback

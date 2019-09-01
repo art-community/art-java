@@ -16,14 +16,15 @@
 
 package ru.art.kafka.broker.constants;
 
+import static java.io.File.separator;
 import static ru.art.core.network.selector.PortSelector.*;
 
 public interface KafkaBrokerModuleConstants {
     String KAFKA_BROKER_MODULE_ID = "KAFKA_BROKER_MODULE";
-    String DEFAULT_ZOOKEEPER_SNAPSHOTS_DIRECTORY = "zookeeper/snapshots";
+    String DEFAULT_ZOOKEEPER_SNAPSHOTS_DIRECTORY = "zookeeper" + separator + "snapshots";
     String ZOOKEEPER_PREFIX = "zookeeper-";
-    String DEFAULT_ZOOKEEPER_LOGS_DIRECTORY = "zookeeper/logs";
-    String DEFAULT_KAFKA_LOG_DIRECTORY = "kafka/logs";
+    String DEFAULT_ZOOKEEPER_LOGS_DIRECTORY = "zookeeper" + separator + "logs";
+    String DEFAULT_KAFKA_LOG_DIRECTORY = "kafka" + separator + "logs";
     int DEFAULT_ZOOKEEPER_PORT = findAvailableTcpPort();
     int DEFAULT_BROKER_PORT = findAvailableTcpPort();
     int DEFAULT_ZOOKEEPER_MAXIMUM_CONNECTED_CLIENTS = 1024;

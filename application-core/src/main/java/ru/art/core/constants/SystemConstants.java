@@ -18,4 +18,5 @@ package ru.art.core.constants;
 
 public interface SystemConstants {
     String WSL = "wsl";
+    String BASH = "bash";
 }

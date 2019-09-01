@@ -13,9 +13,12 @@ import lombok.*;
 import ru.art.entity.*;
 import ru.art.entity.mapper.ValueFromModelMapper.*;
 import ru.art.entity.mapper.ValueToModelMapper.*;
-import java.util.*;
-
+import ru.art.entity.xml.*;
 import static ru.art.entity.Entity.*;
+import static ru.art.json.descriptor.JsonEntityWriter.*;
+import static ru.art.protobuf.descriptor.ProtobufEntityWriter.*;
+import static ru.art.xml.descriptor.XmlEntityWriter.*;
+import java.util.*;
 
 public class MainModule {
     @Getter
@@ -45,6 +48,7 @@ public class MainModule {
         System.out.println("Customer entity from customer = " + entity);
         System.out.println("Customer entity as JSON = " + writeJson(entity));
         System.out.println("Customer entity as Protobuf = " + writeProtobuf(entity));
+        System.out.println("Customer entity as XML = " + writeXml(XmlEntityFromEntityConverter.fromEntityAsTags(entity)));
         System.out.println("Customer entity to customer = " + toCustomer.map(entity));
     }
 }
@@ -52,12 +56,23 @@ public class MainModule {
 
 After running in output console you could see something like this:
 ```
+Customer = MainModule.Customer(id=1, name=Customer, orderIds=[1, 2])
+Customer entity from customer = Entity(fields={id=1, name=Customer, orderIds=[1, 2]}, fieldNames=[id, name, orderIds], type=ENTITY)
 Customer entity as JSON = {"id":"1","name":"Customer","orderIds":["1","2"]}
 Customer entity as Protobuf = value {
   type_url: "type.googleapis.com/ru.art.protobuf.entity.ProtobufEntity"
   value: "\nI\n\004name\022A\n=\n/type.googleapis.com/google.protobuf.StringValue\022\n\n\bCustomer\020\005\n\315\001\n\borderIds\022\300\001\n\273\001\n=type.googleapis.com/ru.art.protobuf.entity.ProtobufCollection\022z\b\005\022:\n6\n/type.googleapis.com/google.protobuf.StringValue\022\003\n\0011\020\005\022:\n6\n/type.googleapis.com/google.protobuf.StringValue\022\003\n\0012\020\005\020\003\n@\n\002id\022:\n6\n/type.googleapis.com/google.protobuf.StringValue\022\003\n\0011\020\005"
 }
 valueType: ENTITY
+
+Customer entity as XML = <?xml version="1.0" encoding="UTF-8"?>
+
+<id>1</id>
+<name>Customer</name>
+<orderIds>
+<1></1>
+<2></2></orderIds>
+
 Customer entity to customer = MainModule.Customer(id=1, name=Customer, orderIds=[1, 2])
 ```
 
@@ -69,7 +84,7 @@ Code:
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.entity.PrimitiveMapping.StringPrimitive.*;
 import static ru.art.entity.StringParametersMapping.*;
-import static ru.art.http.server.HttpServer.httpServer;
+import static ru.art.http.server.HttpServer.*;
 import static ru.art.http.server.function.HttpServiceFunction.*;
 
 public class MainModule {
@@ -87,7 +102,7 @@ public class MainModule {
 
 After running and open browser on url with path '/hello' from logs you could see something like this:
 
-<<screen>>
+![](https://i.ibb.co/Zx8L6JJ/image.png)
 
 ## HTTP Communication
 ART provides you functional for sending HTTP request
@@ -168,17 +183,15 @@ ART provides GRPC functional API to serving and handling GRPC requests
 
 Code:
 ```java
-import java.util.function.Consumer;
-
-import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST;
-import static ru.art.core.extension.NullCheckingExtensions.doIfNotNull;
-import static ru.art.entity.PrimitiveMapping.StringPrimitive.fromModel;
-import static ru.art.entity.PrimitiveMapping.StringPrimitive.toModel;
-import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator;
-import static startGrpcServer;
-import static ru.art.grpc.server.function.GrpcServiceFunction.grpc;
-import static ru.art.grpc.server.module.GrpcServerModule.grpcServerModule;
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.entity.PrimitiveMapping.StringPrimitive.*;
+import static ru.art.grpc.client.communicator.GrpcCommunicator.*;
+import static ru.art.grpc.server.GrpcServer.*;
+import static ru.art.grpc.server.function.GrpcServiceFunction.*;
+import static ru.art.grpc.server.module.GrpcServerModule.*;
+import java.util.function.*;
 
 public class MainModule {
     public static void main(String[] args) {
@@ -193,7 +206,6 @@ public class MainModule {
                 .execute().getResponseData(), (Consumer<Object>) System.out::println);
     }
 }
-
 ```
 After running you could see something like this
 
@@ -209,12 +221,10 @@ ART provides RSocket functional API to all rsocket methods:
 Code:
 ```java
 import ru.art.service.model.*;
-
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.entity.PrimitiveMapping.StringPrimitive.*;
 import static ru.art.rsocket.communicator.RsocketCommunicator.*;
-import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.function.RsocketServiceFunction.*;
 import static ru.art.rsocket.module.RsocketModule.*;
 import static ru.art.rsocket.server.RsocketServer.*;
@@ -245,10 +255,11 @@ Code:
 ```java
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Entity.*;
-import static ru.art.rocks.db.dao.RocksDbCollectionDao.*;G
+import static ru.art.rocks.db.dao.RocksDbCollectionDao.*;
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.put;
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
 import static ru.art.rocks.db.dao.RocksDbValueDao.*;
+
 
 public class MainModule {
     public static void main(String[] args) {
@@ -278,11 +289,121 @@ Also modules application-kafka-consumer and application-kafka-producer provides 
 
 Code:
 ```java
+import ru.art.entity.*;
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.entity.PrimitivesFactory.*;
+import static ru.art.kafka.broker.embedded.EmbeddedKafkaBroker.*;
+import static ru.art.kafka.broker.module.KafkaBrokerModule.*;
+import static ru.art.kafka.consumer.configuration.KafkaStreamConfiguration.streamConfiguration;
+import static ru.art.kafka.consumer.container.KafkaStreamContainer.streamContainer;
+import static ru.art.kafka.consumer.module.KafkaConsumerModule.kafkaStreamsRegistry;
+import static ru.art.kafka.consumer.starter.KafkaStreamsStarter.startKafkaStreams;
+import static ru.art.kafka.producer.communicator.KafkaProducerCommunicator.*;
+import static ru.art.kafka.producer.configuration.KafkaProducerConfiguration.*;
 
+public class MainModule {
+    public static void main(String[] args) {
+        useAgileConfigurations();
+        startKafkaBroker();
+        kafkaProducerCommunicator(producerConfiguration()
+                .clientId("producer")
+                .topic("topic")
+                .broker(LOCALHOST +
+                        COLON +
+                        kafkaBrokerModule().getKafkaBrokerConfiguration().getPort())
+                .build())
+                .pushKafkaRecord(stringPrimitive("Hello"), stringPrimitive("ART"));
+        kafkaStreamsRegistry().createStream("stream", streamsBuilder -> streamContainer()
+                .configuration(streamConfiguration()
+                        .broker(LOCALHOST +
+                                COLON +
+                                kafkaBrokerModule().getKafkaBrokerConfiguration().getPort())
+                        .build())
+                .stream(streamsBuilder.<Primitive, Primitive>stream("topic")
+                        .peek((key, value) -> System.out.println(key + COMMA + value)))
+                .assemble());
+        startKafkaStreams();
+    }
+}
 ```
 
+After running this code you will se a lot of Kafka logs, and at the end something like this
+```
+Hello,ART
+``` 
+
 ## Local Scheduler
+ART provides functional for Scheduling tasks (deferred and periodic) with controlling task execution time and order
+
+Code:
+```java
+import static java.time.Duration.*;
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.core.constants.DateConstants.*;
+import static ru.art.core.extension.DateExtensions.*;
+import static ru.art.task.deferred.executor.IdentifiedRunnableFactory.*;
+import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
+import java.util.*;
+import java.util.concurrent.*;
+
+public class MainModule {
+    public static void main(String[] args) throws InterruptedException {
+        useAgileConfigurations();
+        CountDownLatch latch = new CountDownLatch(5);
+        asynchronousPeriod(uniqueTask(() -> {
+            System.out.println("Executed at " + format(HH_MM_SS_24H, new Date()));
+            latch.countDown();
+        }), ofSeconds(1));
+        latch.await();
+    }
+}
+```
+After running this code you could see something like this:
+
+```
+Module: 'SCHEDULER_MODULE' was loaded in 257[ms]
+Executed at 16:24:17
+Executed at 16:24:18
+Executed at 16:24:19
+Executed at 16:24:20
+Executed at 16:24:21
+```
 
 ## Tarantool DB
+ART provides API to interact with Tarantool
+
+Code:
+```java
+import ru.art.tarantool.dao.*;
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.entity.Entity.*;
+import static ru.art.tarantool.dao.TarantoolDao.*;
+
+public class MainModule {
+    public static void main(String[] args) {
+        useAgileConfigurations();
+        TarantoolDao tarantool = tarantool("example");
+        tarantool.get("entity", tarantool.put("entity", entityBuilder()
+                .stringField("name", "Customer name")
+                .entityField("order", entityBuilder()
+                        .intField("price", 123)
+                        .build())
+                .build()).getLong("id"))
+                .ifPresent(System.out::println);
+    }
+}
+```
+
+After running this code you could see something like this:
+```
+Module: 'SERVICE_MODULE' was loaded in 144[ms]
+Module: 'CONFIG_MODULE' was loaded in 2[ms]
+Module: 'LOGGING_MODULE' was loaded in 584[ms]
+2019-08-30 16:29:39,074 INFO r.a.t.i.TarantoolInitializer [main] Tarantool 'example' with address 'localhost:3301' successfully connected 
+Module: 'TARANTOOL_MODULE' was loaded in 332[ms]
+Entity(fields={id=2, name=Customer name, order=Entity(fields={price=123}, fieldNames=[price], type=ENTITY)}, fieldNames=[id, name, order], type=ENTITY)
+```
 
 ## Configurations
