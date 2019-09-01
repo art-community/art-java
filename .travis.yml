@@ -29,7 +29,7 @@ install:
 
 matrix:
   include:
-    - jdk: oraclejdk8
+    - jdk: openjdk8
       node_js: 10
 
 before_install:
