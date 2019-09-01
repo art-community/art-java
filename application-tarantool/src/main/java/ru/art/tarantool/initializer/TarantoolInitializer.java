@@ -169,7 +169,9 @@ public class TarantoolInitializer {
                 + BIN
                 + separator
                 + localConfiguration.getExecutable();
-        new File(executableFilePath).setExecutable(true);
+        if (!new File(executableFilePath).setExecutable(true)) {
+            logger.warn(format(FAILED_SET_EXECUTABLE, executableFilePath));
+        }
         List<String> executableCommand = isWindows()
                 ? dynamicArrayOf(WSL, convertToWslPath(executableFilePath))
                 : dynamicArrayOf(executableFilePath);
@@ -188,7 +190,9 @@ public class TarantoolInitializer {
         if (isNull(executableUrl)) {
             throw new TarantoolInitializationException(format(TARANTOOL_EXECUTABLE_NOT_EXISTS, address, localConfiguration.getExecutable()));
         }
-        new File(executableUrl.getPath()).setExecutable(true);
+        if (!new File(executableUrl.getPath()).setExecutable(true)) {
+            logger.warn(format(FAILED_SET_EXECUTABLE, executableUrl.getPath()));
+        }
         List<String> executableCommand;
         executableCommand = isWindows()
                 ? dynamicArrayOf(WSL, convertToWslPath(executableUrl.getPath()))

@@ -54,63 +54,60 @@ class TarantoolCrudSpecification extends Specification {
     def newValue = "Мяу"
 
     def "should run CRUD operations with tarantool with preparation steps"() {
-        try {
-            setup:
-            useAgileConfigurations()
+        setup:
+        useAgileConfigurations()
+        tarantoolModuleState().loadedCommonScripts.clear()
+        tarantoolModuleState().loadedValueScripts.clear()
+        createSpace(instanceId, spaceName)
+        createSequence(instanceId, sequence)
+        createIndex(instanceId, TarantoolIndexConfiguration.builder()
+                .spaceName(spaceName)
+                .indexName(primaryIndex)
+                .sequence(sequence)
+                .build())
+        createIndex(instanceId, TarantoolIndexConfiguration.builder()
+                .spaceName(spaceName)
+                .indexName(secondaryIndex)
+                .part(TarantoolIndexConfiguration.Part.builder()
+                        .fieldNumber(fieldMapping(instanceId, spaceName).map(fieldName))
+                        .type(STRING)
+                        .build())
+                .build())
 
-            createSpace(instanceId, spaceName)
-            createSequence(instanceId, sequence)
-            createIndex(instanceId, TarantoolIndexConfiguration.builder()
-                    .spaceName(spaceName)
-                    .indexName(primaryIndex)
-                    .sequence(sequence)
-                    .build())
-            createIndex(instanceId, TarantoolIndexConfiguration.builder()
-                    .spaceName(spaceName)
-                    .indexName(secondaryIndex)
-                    .part(TarantoolIndexConfiguration.Part.builder()
-                            .fieldNumber(fieldMapping(instanceId, spaceName).map(fieldName))
-                            .type(STRING)
-                            .build())
-                    .build())
+        when:
+        entity = dao.put(spaceName, entity)
 
-            when:
-            entity = dao.put(spaceName, entity)
+        then:
+        dao.selectByIndex(spaceName, secondaryIndex, setOf(entity.getString(fieldName)))
+                .first()
+                .getString(fieldName) == entity.getString(fieldName)
 
-            then:
-            dao.selectByIndex(spaceName, secondaryIndex, setOf(entity.getString(fieldName)))
-                    .first()
-                    .getString(fieldName) == entity.getString(fieldName)
+        when:
+        def newEntity = dao.update(spaceName, setOf(entity.getInt(idField)) as Set<Integer>,
+                assigment(fieldMapping(instanceId, spaceName).map(fieldName), fieldName, stringPrimitive(newValue)))
 
-            when:
-            def newEntity = dao.update(spaceName, setOf(entity.getInt(idField)) as Set<Integer>,
-                    assigment(fieldMapping(instanceId, spaceName).map(fieldName), fieldName, stringPrimitive(newValue)))
+        then:
+        dao.getByIndex(spaceName, secondaryIndex, setOf(newValue)) == newEntity
 
-            then:
-            dao.getByIndex(spaceName, secondaryIndex, setOf(newValue)) == newEntity
+        when:
+        dao.deleteByIndex(spaceName, secondaryIndex, setOf(newValue))
 
-            when:
-            dao.deleteByIndex(spaceName, secondaryIndex, setOf(newValue))
+        then:
+        dao.getByIndex(spaceName, secondaryIndex, setOf(entity.getString(fieldName))) == empty()
+        dao.len(spaceName) == 0L
 
-            then:
-            dao.getByIndex(spaceName, secondaryIndex, setOf(entity.getString(fieldName))) == empty()
-            dao.len(spaceName) == 0L
-
-        } catch(e) {
-            System.err.println(e)
-        }
         cleanup:
         dropSpace(instanceId, spaceName)
         dropIndex(instanceId, spaceName, primaryIndex)
         dropIndex(instanceId, spaceName, secondaryIndex)
         dropSequence(instanceId, sequence)
-        tarantoolModuleState().loadedCommonScripts.clear()
-        tarantoolModuleState().loadedValueScripts.clear()
     }
 
     def "should run CRUD operations with tarantool without preparation steps"() {
         setup:
         useAgileConfigurations()
+        tarantoolModuleState().loadedCommonScripts.clear()
+        tarantoolModuleState().loadedValueScripts.clear()
 
         when:
         entity = dao.put(spaceName, entity)
@@ -133,9 +130,9 @@ class TarantoolCrudSpecification extends Specification {
                 .spaceName(spaceName)
                 .indexName(secondaryIndex)
                 .part(TarantoolIndexConfiguration.Part.builder()
-                .fieldNumber(fieldMapping(instanceId, spaceName).map(fieldName))
-                .type(STRING)
-                .build())
+                        .fieldNumber(fieldMapping(instanceId, spaceName).map(fieldName))
+                        .type(STRING)
+                        .build())
                 .build())
 
         then:
@@ -182,7 +179,5 @@ class TarantoolCrudSpecification extends Specification {
         dropIndex(instanceId, spaceName, primaryIndex)
         dropIndex(instanceId, spaceName, secondaryIndex)
         dropSequence(instanceId, sequence)
-        tarantoolModuleState().loadedCommonScripts.clear()
-        tarantoolModuleState().loadedValueScripts.clear()
     }
 }

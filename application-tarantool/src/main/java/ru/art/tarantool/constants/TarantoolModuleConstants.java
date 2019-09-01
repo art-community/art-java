@@ -84,6 +84,7 @@ public interface TarantoolModuleConstants {
         String CALLING_FUNCTION = "Calling tarantool function ''{0}'' with arguments: {1}";
         String CALLED_FUNCTION = "Called tarantool function ''{0}'' with result: {1}";
         String FAILED_FUNCTION = "Failed to call tarantool function ''{0}''";
+        String FAILED_SET_EXECUTABLE = "Failed apply setExecutable(true) for ''{0}''. Possibly *.jar runner user hasn't permissions to set file as executable";
     }
 
     interface TemplateParameterKeys {
