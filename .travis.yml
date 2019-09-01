@@ -20,14 +20,12 @@
 dist: xenial
 language: java
 install:
-  - sudo apt-get -y remove default-jdk default-jre default-jdk-headless default-jre-headless ca-certificates-java openjdk-11-jdk openjdk-11-jdk-headless openjdk-11-jre openjdk-11-jre-headless
+  - sudo apt-get -y remove default-jdk default-jre default-jdk-headless default-jre-headless ca-certificates-java openjdk-8-jdk openjdk-8-jdk-headless openjdk-8-jre openjdk-8-jre-headless
   - sudo rm -rf /usr/local/lib/jvm
   - sudo apt-get -y update && sudo apt-get -y install openjdk-8-jdk java-common
+  - sudo update-java-alternatives -s java-1.8.0-openjdk-amd64
+  - export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
   - java -version
-
-env:
-  global:
-    - JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
 matrix:
   include:
