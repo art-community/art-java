@@ -54,47 +54,51 @@ class TarantoolCrudSpecification extends Specification {
     def newValue = "Мяу"
 
     def "should run CRUD operations with tarantool with preparation steps"() {
-        setup:
-        useAgileConfigurations()
-        createSpace(instanceId, spaceName)
-        createSequence(instanceId, sequence)
-        createIndex(instanceId, TarantoolIndexConfiguration.builder()
-                .spaceName(spaceName)
-                .indexName(primaryIndex)
-                .sequence(sequence)
-                .build())
-        createIndex(instanceId, TarantoolIndexConfiguration.builder()
-                .spaceName(spaceName)
-                .indexName(secondaryIndex)
-                .part(TarantoolIndexConfiguration.Part.builder()
-                .fieldNumber(fieldMapping(instanceId, spaceName).map(fieldName))
-                .type(STRING)
-                .build())
-                .build())
+        try {
+            setup:
+            useAgileConfigurations()
 
-        when:
-        entity = dao.put(spaceName, entity)
+            createSpace(instanceId, spaceName)
+            createSequence(instanceId, sequence)
+            createIndex(instanceId, TarantoolIndexConfiguration.builder()
+                    .spaceName(spaceName)
+                    .indexName(primaryIndex)
+                    .sequence(sequence)
+                    .build())
+            createIndex(instanceId, TarantoolIndexConfiguration.builder()
+                    .spaceName(spaceName)
+                    .indexName(secondaryIndex)
+                    .part(TarantoolIndexConfiguration.Part.builder()
+                            .fieldNumber(fieldMapping(instanceId, spaceName).map(fieldName))
+                            .type(STRING)
+                            .build())
+                    .build())
 
-        then:
-        dao.selectByIndex(spaceName, secondaryIndex, setOf(entity.getString(fieldName)))
-                .first()
-                .getString(fieldName) == entity.getString(fieldName)
+            when:
+            entity = dao.put(spaceName, entity)
 
-        when:
-        def newEntity = dao.update(spaceName, setOf(entity.getInt(idField)) as Set<Integer>,
-                assigment(fieldMapping(instanceId, spaceName).map(fieldName), fieldName, stringPrimitive(newValue)))
+            then:
+            dao.selectByIndex(spaceName, secondaryIndex, setOf(entity.getString(fieldName)))
+                    .first()
+                    .getString(fieldName) == entity.getString(fieldName)
 
-        then:
-        dao.getByIndex(spaceName, secondaryIndex, setOf(newValue)) == newEntity
+            when:
+            def newEntity = dao.update(spaceName, setOf(entity.getInt(idField)) as Set<Integer>,
+                    assigment(fieldMapping(instanceId, spaceName).map(fieldName), fieldName, stringPrimitive(newValue)))
 
-        when:
-        dao.deleteByIndex(spaceName, secondaryIndex, setOf(newValue))
+            then:
+            dao.getByIndex(spaceName, secondaryIndex, setOf(newValue)) == newEntity
 
-        then:
-        dao.getByIndex(spaceName, secondaryIndex, setOf(entity.getString(fieldName))) == empty()
-        dao.len(spaceName) == 0L
+            when:
+            dao.deleteByIndex(spaceName, secondaryIndex, setOf(newValue))
 
+            then:
+            dao.getByIndex(spaceName, secondaryIndex, setOf(entity.getString(fieldName))) == empty()
+            dao.len(spaceName) == 0L
 
+        } catch(e) {
+            System.err.println(e)
+        }
         cleanup:
         dropSpace(instanceId, spaceName)
         dropIndex(instanceId, spaceName, primaryIndex)
