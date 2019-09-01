@@ -20,15 +20,12 @@
 dist: xenial
 language: java
 
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
-      - oracle-java8-unlimited-jce-policy
-
 matrix:
   include:
-    - jdk: oraclejdk8
+    - jdk:
+        - oraclejdk9
+          oraclejdk10
+          oraclejdk11
       node_js: 10
 
 before_install:
