@@ -18,8 +18,13 @@
 ---
 
 dist: xenial
-install: true
 language: java
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+      - oracle-java8-unlimited-jce-policy
 
 matrix:
   include:
