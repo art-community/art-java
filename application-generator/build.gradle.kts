@@ -24,6 +24,7 @@ art {
         applicationHttp()
         applicationHttpServer()
         applicationHttpClient()
+        applicationXml()
     }
 }
 

@@ -62,18 +62,24 @@ public class XmlEntityReader {
         return readXml(readFile(path));
     }
 
+    public static XmlEntity readXml(File file) {
+        return readXml(readFile(file.getAbsolutePath()));
+    }
+
     private static XmlEntityBuilder getRootElement(XMLStreamReader parser) throws XMLStreamException {
-        if (parser.next() == START_ELEMENT) {
-            String prefix = parser.getPrefix();
-            Map<String, String> attributes = getAttributes(parser);
-            Map<String, String> namespaces = getNamespaces(parser);
-            XmlEntityBuilder rootElement = parseXml(parser);
-            rootElement.stringAttributeFields(attributes);
-            rootElement.namespaceFields(namespaces);
-            rootElement.prefix(prefix);
-            return rootElement;
+        while (parser.next() == COMMENT) {
+            if (!parser.hasNext()) {
+                throw new XmlMappingException(INCORRECT_XML_STRUCTURE);
+            }
         }
-        throw new XmlMappingException(INCORRECT_XML_STRUCTURE);
+        String prefix = parser.getPrefix();
+        Map<String, String> attributes = getAttributes(parser);
+        Map<String, String> namespaces = getNamespaces(parser);
+        XmlEntityBuilder rootElement = parseXml(parser);
+        rootElement.stringAttributeFields(attributes);
+        rootElement.namespaceFields(namespaces);
+        rootElement.prefix(prefix);
+        return rootElement;
     }
 
     private static XmlEntityBuilder parseXml(XMLStreamReader parser) throws XMLStreamException {
