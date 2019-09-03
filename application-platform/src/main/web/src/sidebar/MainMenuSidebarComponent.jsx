@@ -50,7 +50,7 @@ class MainMenuSidebarComponent extends React.Component {
                 icon={'terminal'}
                 onMouseEnter={this.show}>
             </Button>
-            {`ADK ${this.props.action.name}`}
+            {`ART ${this.props.action.name}`}
             <Sidebar
                 as={Menu}
                 animation='push'

@@ -29,9 +29,9 @@ import java.util.*;
 @Builder
 public class TarantoolConfiguration {
     @Builder.Default
-    private TarantoolConnectionConfiguration connectionConfiguration = TarantoolConnectionConfiguration.builder().build();
+    private final TarantoolConnectionConfiguration connectionConfiguration = TarantoolConnectionConfiguration.builder().build();
     @Builder.Default
-    private TarantoolInitialConfiguration initialConfiguration = TarantoolInitialConfiguration.builder().build();
+    private final TarantoolInitialConfiguration initialConfiguration = TarantoolInitialConfiguration.builder().build();
     @Builder.Default
     private final TarantoolInstanceMode instanceMode = LOCAL;
     @Singular("entityFieldsMapping")
