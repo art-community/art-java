@@ -220,6 +220,7 @@ ART provides RSocket functional API to all rsocket methods:
 
 Code:
 ```java
+import ru.art.rsocket.constants.*;
 import ru.art.service.model.*;
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.core.constants.NetworkConstants.*;
@@ -228,20 +229,26 @@ import static ru.art.rsocket.communicator.RsocketCommunicator.*;
 import static ru.art.rsocket.function.RsocketServiceFunction.*;
 import static ru.art.rsocket.module.RsocketModule.*;
 import static ru.art.rsocket.server.RsocketServer.*;
+import java.util.concurrent.*;
 
 public class MainModule {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         useAgileConfigurations();
+        CountDownLatch latch = new CountDownLatch(1);
         rsocket("myFunction")
                 .responseMapper(fromModel)
-                .produce(() -> "Hello, ART!");
-        rsocketTcpServer();
-        rsocketCommunicator(LOCALHOST, rsocketModule().getServerTcpPort())
+                .produce(() -> {
+                    latch.countDown();
+                    return "Hello, ART!";
+                });
+        startRsocketWebSocketServer();
+        rsocketCommunicator(LOCALHOST, rsocketModule().getServerWebSocketPort(), RsocketModuleConstants.RsocketTransport.WEB_SOCKET)
                 .functionId("myFunction")
                 .responseMapper(toModel)
                 .execute()
                 .map(ServiceResponse::getResponseData)
                 .subscribe(System.out::println);
+        latch.await();
     }
 }
 ```
@@ -376,14 +383,33 @@ ART provides API to interact with Tarantool
 
 Code:
 ```java
+import ru.art.config.extensions.tarantool.*;
+import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.dao.*;
+import ru.art.tarantool.module.*;
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
+import static ru.art.core.context.Context.context;
+import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.entity.Entity.*;
 import static ru.art.tarantool.dao.TarantoolDao.*;
+import java.util.*;
 
 public class MainModule {
     public static void main(String[] args) {
         useAgileConfigurations();
+        context().loadModule(new TarantoolModule(), new TarantoolAgileConfiguration() {
+            @Override
+            public Map<String, TarantoolConfiguration> getTarantoolConfigurations() {
+                return mapOf("example", TarantoolConfiguration.builder()
+                        .connectionConfiguration(TarantoolConnectionConfiguration.builder()
+                                .host("localhost")
+                                .port(3301)
+                                .username("user")
+                                .password("password")
+                                .build())
+                        .build());
+            }
+        });
         TarantoolDao tarantool = tarantool("example");
         tarantool.get("entity", tarantool.put("entity", entityBuilder()
                 .stringField("name", "Customer name")
