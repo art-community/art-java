@@ -19,6 +19,9 @@
 package ru.art.tarantool.dao;
 
 import lombok.experimental.*;
+import ru.art.tarantool.configuration.*;
+import ru.art.tarantool.module.*;
+import static ru.art.tarantool.module.TarantoolModule.*;
 
 public class TarantoolDao {
     @Delegate
@@ -32,6 +35,15 @@ public class TarantoolDao {
     }
 
     public static TarantoolDao tarantool(String instanceId) {
+        return new TarantoolDao(instanceId);
+    }
+
+    public static TarantoolDao tarantool(TarantoolConfiguration configuration) {
+        return tarantool(TarantoolModule.class.getSimpleName(), configuration);
+    }
+
+    public static TarantoolDao tarantool(String instanceId, TarantoolConfiguration configuration) {
+        tarantoolModule().getTarantoolConfigurations().putIfAbsent(instanceId, configuration);
         return new TarantoolDao(instanceId);
     }
 }
