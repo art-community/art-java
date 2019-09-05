@@ -397,20 +397,15 @@ import java.util.*;
 public class MainModule {
     public static void main(String[] args) {
         useAgileConfigurations();
-        context().loadModule(new TarantoolModule(), new TarantoolAgileConfiguration() {
-            @Override
-            public Map<String, TarantoolConfiguration> getTarantoolConfigurations() {
-                return mapOf("example", TarantoolConfiguration.builder()
-                        .connectionConfiguration(TarantoolConnectionConfiguration.builder()
-                                .host("localhost")
-                                .port(3301)
-                                .username("user")
-                                .password("password")
-                                .build())
-                        .build());
-            }
-        });
-        TarantoolDao tarantool = tarantool("example");
+        TarantoolDao tarantool = tarantool(TarantoolConfiguration.builder()
+                .connectionConfiguration(TarantoolConnectionConfiguration.builder()
+                        .host("localhost")
+                        .port(3301)
+                        .username("user")
+                        .password("password")
+                        .build())
+                .build());
+>>>>>>> latest
         tarantool.get("entity", tarantool.put("entity", entityBuilder()
                 .stringField("name", "Customer name")
                 .entityField("order", entityBuilder()
