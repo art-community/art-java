@@ -405,7 +405,6 @@ public class MainModule {
                         .password("password")
                         .build())
                 .build());
->>>>>>> latest
         tarantool.get("entity", tarantool.put("entity", entityBuilder()
                 .stringField("name", "Customer name")
                 .entityField("order", entityBuilder()
