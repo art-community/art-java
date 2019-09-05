@@ -14,19 +14,18 @@
  *    limitations under the License.
  */
 
-package ru.art.test.specification.configuration;
+package ru.art.test.specification.configuration
 
-import lombok.*;
-import ru.art.config.constants.*;
-import static ru.art.config.configuration.ConfigModuleConfiguration.*;
 
-@Setter
-@AllArgsConstructor
-public class ConfigModuleConfiguration extends ConfigModuleDefaultConfiguration {
-    private ConfigType configType;
+import ru.art.config.constants.ConfigType
+
+import static ru.art.config.configuration.ConfigModuleConfiguration.ConfigModuleDefaultConfiguration;
+
+class ConfigModuleConfiguration extends ConfigModuleDefaultConfiguration {
+    ConfigType configType
 
     @Override
-    public ConfigType getModuleConfigType() {
+    ConfigType getModuleConfigType() {
         return configType;
     }
 }

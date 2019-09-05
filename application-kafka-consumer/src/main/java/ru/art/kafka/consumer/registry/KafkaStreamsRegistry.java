@@ -108,7 +108,10 @@ public class KafkaStreamsRegistry {
     }
 
     public void refreshStreams() {
-        streams.values().forEach(stream -> ignoreException(() -> stream.getKafkaStreams().close()));
+        streams.values()
+                .stream()
+                .filter(stream -> stream.getKafkaStreams().state().isRunning())
+                .forEach(stream -> ignoreException(() -> stream.getKafkaStreams().close()));
         streams.replaceAll((streamId, stream) -> ManagedKafkaStream.builder()
                 .kafkaStreams(new KafkaStreams(stream.getBuilder().build(), createProperties(streamId, stream.getConfiguration())))
                 .builder(stream.getBuilder())

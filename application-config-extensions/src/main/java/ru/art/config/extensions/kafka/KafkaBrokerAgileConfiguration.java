@@ -20,6 +20,8 @@ import lombok.*;
 import ru.art.kafka.broker.configuration.*;
 import ru.art.kafka.broker.configuration.KafkaBrokerModuleConfiguration.*;
 import ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
+import ru.art.kafka.broker.embedded.*;
+import static java.util.Objects.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.kafka.KafkaConfigKeys.*;
@@ -70,11 +72,16 @@ public class KafkaBrokerAgileConfiguration extends KafkaBrokerModuleDefaultConfi
                 .build();
         if (!newKafkaBrokerConfiguration.equals(this.kafkaBrokerConfiguration) && context().hasModule(KAFKA_BROKER_MODULE_ID)) {
             this.kafkaBrokerConfiguration = newKafkaBrokerConfiguration;
+            EmbeddedKafkaBroker broker = kafkaBrokerModuleState().getBroker();
             if (restartZookeeper) {
-                kafkaBrokerModuleState().getBroker().restartWithZookeeper();
+                if (nonNull(broker) && broker.isWorking()) {
+                    broker.restartWithZookeeper();
+                }
                 return;
             }
-            kafkaBrokerModuleState().getBroker().restart();
+            if (nonNull(broker) && broker.isWorking()) {
+                broker.restart();
+            }
             return;
         }
         this.kafkaBrokerConfiguration = newKafkaBrokerConfiguration;
