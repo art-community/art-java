@@ -376,6 +376,7 @@ ART provides API to interact with Tarantool
 
 Code:
 ```java
+import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.dao.*;
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.entity.Entity.*;
@@ -384,7 +385,14 @@ import static ru.art.tarantool.dao.TarantoolDao.*;
 public class MainModule {
     public static void main(String[] args) {
         useAgileConfigurations();
-        TarantoolDao tarantool = tarantool("example");
+        TarantoolDao tarantool = tarantool(TarantoolConfiguration.builder()
+                .connectionConfiguration(TarantoolConnectionConfiguration.builder()
+                        .host("localhost")
+                        .port(3301)
+                        .username("user")
+                        .password("password")
+                        .build())
+                .build());
         tarantool.get("entity", tarantool.put("entity", entityBuilder()
                 .stringField("name", "Customer name")
                 .entityField("order", entityBuilder()
