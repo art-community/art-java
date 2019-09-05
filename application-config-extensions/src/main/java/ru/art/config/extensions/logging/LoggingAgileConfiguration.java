@@ -35,7 +35,12 @@ public class LoggingAgileConfiguration extends LoggingModuleDefaultConfiguration
 
     @Override
     public void refresh() {
-        level = ifException(() -> Level.getLevel(configString(LOGGING_SECTION_ID, LEVEL).toUpperCase()), super.getLevel());
+        String levelString = configString(LOGGING_SECTION_ID, LEVEL);
+        if (isEmpty(levelString)) {
+            level = super.getLevel();
+            return;
+        }
+        level = ifException(() -> Level.getLevel(levelString.toUpperCase()), super.getLevel());
         super.refresh();
     }
 }

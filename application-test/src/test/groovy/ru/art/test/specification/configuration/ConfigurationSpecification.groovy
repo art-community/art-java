@@ -17,13 +17,7 @@
 package ru.art.test.specification.configuration
 
 import org.apache.logging.log4j.Level
-import ru.art.config.extensions.http.HttpServerAgileConfiguration
-import ru.art.config.extensions.logging.LoggingAgileConfiguration
-import ru.art.config.module.ConfigModule
 import ru.art.http.constants.MimeToContentTypeMapper
-import ru.art.http.server.module.HttpServerModule
-import ru.art.logging.LoggingModule
-import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -31,8 +25,7 @@ import java.util.concurrent.locks.ReentrantLock
 
 import static org.apache.logging.log4j.Level.TRACE
 import static ru.art.config.constants.ConfigType.*
-import static ru.art.config.module.ConfigModule.configModule
-import static ru.art.core.context.Context.context
+import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.http.constants.MimeToContentTypeMapper.imageGif
 import static ru.art.http.constants.MimeToContentTypeMapper.imageJpeg
 import static ru.art.http.server.HttpServerModuleConfiguration.HttpServerModuleDefaultConfiguration
@@ -44,8 +37,6 @@ import static ru.art.test.specification.configuration.ModuleConfigGenerator.writ
 
 class ConfigurationSpecification extends Specification {
     static LOCK = new ReentrantLock()
-    @Shared
-            configType
     def expectedLoggingConfiguration = new LoggingModuleDefaultConfiguration() {
         Level level = TRACE
     }
@@ -68,15 +59,7 @@ class ConfigurationSpecification extends Specification {
         setup:
         LOCK.lock()
         writeModuleConfig(type)
-        configType = type
-        context().modules.clear()
-        def configuration = new ConfigModuleConfiguration(type)
-        context().loadModule(new ConfigModule(), configuration)
-        (configModule() as ConfigModuleConfiguration).setConfigType(type)
-        context().with {
-            loadModule(new LoggingModule(), new LoggingAgileConfiguration())
-            loadModule(new HttpServerModule(), new HttpServerAgileConfiguration())
-        }
+        useAgileConfigurations()
 
         expect:
         loggingModule().with {
