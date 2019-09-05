@@ -49,14 +49,14 @@ export default class MainComponent extends React.Component {
         <main style={margin(30)}>
             <Header textAlign='center' as={'h1'}>
                 <Message color={PRIMARY_COLOR}>
-                    ADK
+                    ART
                 </Message>
             </Header>
             <Header textAlign='center' as={'h2'}>
                 <Message color={SECONDARY_COLOR}>
                     No box. No restrictions. No problems.
                     <br/>
-                    Платформа по управлению ADK приложениями
+                    Платформа по управлению ART приложениями
                 </Message>
             </Header>
             <Grid columns={3} stackable textAlign='center'>
