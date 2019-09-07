@@ -71,8 +71,6 @@ Registered HTTP service method for path: 'http://<your_ip>:<selected_port>/hello
 ![](https://i.ibb.co/x53YDpR/image.png)
 
 ### Next steps
-You can try some ART functional with help of [examples](https://github.com/art-community/ART/wiki/Examples)
+You can try some ART functional with help of [examples](https://github.com/art-community/ART/tree/latest/documentation/examples.md)
 
-To see what use cases  ART is solving see [Use Cases](https://github.com/art-community/ART/wiki/Use-cases)
-
-For any questions look up to [ART Wiki](https://github.com/art-community/ART/wiki)
+To see what use cases  ART is solving see [Use Cases](https://github.com/art-community/ART/tree/latest/documentation/use-cases.md)
