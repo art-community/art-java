@@ -76,6 +76,98 @@ Customer entity as XML = <?xml version="1.0" encoding="UTF-8"?>
 Customer entity to customer = MainModule.Customer(id=1, name=Customer, orderIds=[1, 2])
 ```
 
+Alternative way to handle Value/Pojo mapping looks like this
+```java
+package ru.art.test.specification;
+
+import lombok.*;
+import ru.art.entity.Value;
+import ru.art.entity.*;
+import static java.util.Optional.*;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.extension.OptionalExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.setOf;
+import static ru.art.entity.Entity.*;
+import java.util.*;
+
+public class MainModule {
+    @Getter
+    @ToString
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    static
+    class Data {
+        private final String dataValue;
+    }
+
+    @Getter
+    @ToString
+    @EqualsAndHashCode
+    static
+    class Request {
+        @ToString.Exclude
+        @EqualsAndHashCode.Exclude
+        private final Entity entity;
+        @Getter(lazy = true)
+        private final String id = entity.getString("id");
+        @Getter(lazy = true)
+        private final Data data = unwrap(ofNullable(entity.getEntity("data"))
+                .map(entity -> new Data(entity.getString("dataValue"))));
+
+        Request(Value value) {
+            this.entity = Value.asEntity(value);
+        }
+
+        public Optional<String> getFirstOrder() {
+            List<String> orders = entity.getStringList("orders");
+            if (isEmpty(orders)) return empty();
+            return ofNullable(orders.get(0));
+        }
+    }
+
+    @Getter
+    @ToString
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    static
+    class Response {
+        private final String id;
+
+        public Value toValue() {
+            return entityBuilder().stringField("id", id).build();
+        }
+    }
+
+    public static void main(String[] args) {
+        Value requestEntity = entityBuilder()
+                .stringField("id", "123")
+                .stringCollectionField("orders", setOf("order1", "order2"))
+                .entityField("data", entityBuilder()
+                        .stringField("dataValue", "test")
+                        .build())
+                .build();
+        Request request = new Request(requestEntity);
+        Response response = new Response("456");
+        Value responseEntity = response.toValue();
+        System.out.println("Request entity = " + requestEntity);
+        System.out.println("Request = " + request);
+        request.getFirstOrder().ifPresent(order -> System.out.println("Request first order = " + order));
+        System.out.println("Response = " + response);
+        System.out.println("Response entity = " + responseEntity);
+    }
+}
+```
+
+After running this code you could see somethink like this:
+
+```
+Request entity = Entity(fields={id=123, orders=[order1, order2], data=Entity(fields={dataValue=test}, fieldNames=[dataValue], type=ENTITY)}, fieldNames=[id, orders, data], type=ENTITY)
+Request = MainModule.Request(id=123, data=MainModule.Data(dataValue=test))
+Request first order = order1
+Response = MainModule.Response(id=456)
+Response entity = Entity(fields={id=456}, fieldNames=[id], type=ENTITY)
+```
+
 ## HTTP Serving
 ART provides you functional to serving HTTP requests
 
