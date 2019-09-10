@@ -75,8 +75,10 @@ public class KafkaConsumerAgileConfiguration extends KafkaConsumerModuleDefaultC
             kafkaConsumerConfiguration = newKafkaConsumerConfiguration;
             setOf(kafkaConsumerModuleState()
                     .getKafkaConsumers()
-                    .keySet())
-                    .forEach(serviceId -> ignoreException(() -> restartKafkaConsumer(serviceId)));
+                    .entrySet())
+                    .stream()
+                    .filter(entry -> !entry.getValue().isStopped())
+                    .forEach(entry -> ignoreException(() -> restartKafkaConsumer(entry.getKey())));
         }
         kafkaConsumerConfiguration = newKafkaConsumerConfiguration;
         if (!kafkaStreamConfigurations.equals(newKafkaStreamConfigurations) && context().hasModule(KAFKA_CONSUMER_MODULE_ID)) {

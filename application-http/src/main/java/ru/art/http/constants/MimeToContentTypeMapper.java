@@ -28,7 +28,9 @@ import static ru.art.http.constants.HttpMimeTypes.*;
 @Getter
 @ToString
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MimeToContentTypeMapper {
+    @EqualsAndHashCode.Include
     private MimeType mimeType;
     private ContentType contentType;
 

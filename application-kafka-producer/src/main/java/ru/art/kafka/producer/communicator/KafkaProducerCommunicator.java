@@ -20,7 +20,9 @@ package ru.art.kafka.producer.communicator;
 
 import org.apache.kafka.clients.producer.*;
 import ru.art.kafka.producer.configuration.*;
+import ru.art.kafka.producer.exception.*;
 import static java.lang.String.*;
+import static java.util.Objects.isNull;
 import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.clients.CommonClientConfigs.CLIENT_ID_CONFIG;
 import static org.apache.kafka.clients.CommonClientConfigs.RETRIES_CONFIG;
@@ -28,7 +30,9 @@ import static org.apache.kafka.clients.producer.ProducerConfig.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.kafka.producer.constants.KafkaProducerModuleConstants.KAFKA_PRODUCER_CONFIGURATION_NOT_FOUND;
 import static ru.art.kafka.producer.module.KafkaProducerModule.*;
+import java.text.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -68,13 +72,17 @@ public class KafkaProducerCommunicator<KeyType, ValueType> {
     }
 
     public static <KeyType, ValueType> KafkaProducerCommunicator<KeyType, ValueType> kafkaProducerCommunicator(String clientId) {
-        return kafkaProducerCommunicator(kafkaProducerModule().getProducerConfigurations().get(clientId));
+        KafkaProducerConfiguration configuration = kafkaProducerModule().getProducerConfigurations().get(clientId);
+        if (isNull(configuration)) {
+            throw new KafkaProducerConfigurationException(MessageFormat.format(KAFKA_PRODUCER_CONFIGURATION_NOT_FOUND, clientId));
+        }
+        return kafkaProducerCommunicator(configuration);
     }
 
     public KafkaProducerCommunicator<KeyType, ValueType> pushKafkaRecord(KeyType key, ValueType value) {
         ProducerRecord<KeyType, ValueType> producerRecord = new ProducerRecord<>(topic, key, value);
         kafkaProducer.send(producerRecord, callback);
-        return new KafkaProducerCommunicator<>(configuration);
+        return this;
     }
 
     public KafkaProducerCommunicator<KeyType, ValueType> prepareCallbackWrapper(Callback callback) {

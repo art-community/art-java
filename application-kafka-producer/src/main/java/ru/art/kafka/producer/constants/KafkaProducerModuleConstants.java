@@ -23,4 +23,5 @@ public interface KafkaProducerModuleConstants {
     String TOPIC_IS_EMPTY = "topic is empty";
     String BROKERS_ARE_EMPTY = "brokers are empty";
     String CLIENT_ID_IS_EMPTY = "clientId is empty";
+    String KAFKA_PRODUCER_CONFIGURATION_NOT_FOUND = "Kafka producer configuration was not found for clientId: ''{0}''";
 }
