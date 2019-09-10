@@ -17,6 +17,7 @@
 package ru.art.test.specification.configuration
 
 import org.apache.logging.log4j.Level
+import org.junit.Ignore
 import ru.art.config.module.ConfigModule
 import ru.art.http.constants.MimeToContentTypeMapper
 import ru.art.http.server.module.HttpServerModule
@@ -43,6 +44,7 @@ import static ru.art.test.specification.configuration.Configurations.lazyLogging
 import static ru.art.test.specification.configuration.ModuleConfigGenerator.restoreConfig
 import static ru.art.test.specification.configuration.ModuleConfigGenerator.writeModuleConfig
 
+@Ignore
 class ConfigurationSpecification extends Specification {
     static LOCK = new ReentrantLock()
     def expectedLoggingConfiguration = new LoggingModuleDefaultConfiguration() {
