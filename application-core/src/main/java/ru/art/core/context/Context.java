@@ -309,5 +309,6 @@ public class Context {
     private void unloadModules() {
         state = UNLOADING_MODULES;
         modules.values().forEach(module -> module.getModule().onUnload());
+        modules.clear();
     }
 }

@@ -23,6 +23,8 @@ import org.apache.logging.log4j.*;
 import ru.art.logging.LoggingModuleConfiguration.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.logging.LoggingConfigKeys.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.EMPTY_STRING;
 import static ru.art.core.extension.ExceptionExtensions.*;
 
 @Getter
@@ -35,7 +37,12 @@ public class LoggingAgileConfiguration extends LoggingModuleDefaultConfiguration
 
     @Override
     public void refresh() {
-        level = ifException(() -> Level.getLevel(configString(LOGGING_SECTION_ID, LEVEL).toUpperCase()), super.getLevel());
+        String levelString = configString(LOGGING_SECTION_ID, LEVEL, EMPTY_STRING);
+        if (isEmpty(levelString)) {
+            level = super.getLevel();
+            return;
+        }
+        level = ifException(() -> Level.getLevel(levelString.toUpperCase()), super.getLevel());
         super.refresh();
     }
 }

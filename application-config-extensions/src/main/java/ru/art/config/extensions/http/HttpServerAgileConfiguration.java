@@ -24,9 +24,11 @@ import org.zalando.logbook.*;
 import ru.art.core.mime.*;
 import ru.art.http.constants.*;
 import ru.art.http.mapper.*;
+import ru.art.http.server.*;
 import ru.art.http.server.HttpServerModuleConfiguration.*;
 import ru.art.http.server.specification.*;
 import ru.art.metrics.http.specification.*;
+import static java.util.Objects.*;
 import static org.apache.http.entity.ContentType.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
@@ -99,7 +101,10 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
         minSpareThreadsCount = newMinSpareThreadsCount;
         registerServices();
         if (restart && context().hasModule(HTTP_SERVER_MODULE_ID)) {
-            httpServerModuleState().getServer().restart();
+            HttpServer server = httpServerModuleState().getServer();
+            if (nonNull(server) && server.isWorking()) {
+                server.restart();
+            }
         }
     }
 

@@ -22,7 +22,6 @@ import com.typesafe.config.*;
 import io.advantageous.config.Config;
 import static com.typesafe.config.ConfigFactory.*;
 import static com.typesafe.config.ConfigParseOptions.*;
-import static com.typesafe.config.ConfigSyntax.*;
 import static io.advantageous.konf.typesafe.TypeSafeConfig.*;
 import static java.lang.System.*;
 import static java.text.MessageFormat.*;
@@ -37,18 +36,16 @@ import java.net.*;
 
 class TypesafeConfigLoader {
     static Config loadTypeSafeConfig(String configId, ConfigSyntax configSyntax) {
-        ConfigParseOptions options = defaults().setSyntax(configSyntax == JSON ? JSON : CONF);
-        com.typesafe.config.Config typeSafeConfig = parseReader(wrapException(() -> loadConfigReader(configSyntax), TypesafeConfigLoadingException::new), options);
-        return fromTypeSafeConfig(typeSafeConfig).getConfig(configId);
+        return fromTypeSafeConfig(parseReader(wrapException(() -> loadConfigReader(configSyntax), TypesafeConfigLoadingException::new), defaults().setSyntax(configSyntax))).getConfig(configId);
     }
 
     private static Reader loadConfigReader(ConfigSyntax configSyntax) throws IOException {
         String configFilePath = getProperty(CONFIG_FILE_PATH_PROPERTY);
         File configFile;
         if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists()) {
-            URL configFileUrl = TypesafeConfigLoader.class.getClassLoader().getResource(DEFAULT_TYPESAFE_CONFIG_FILE_NAME);
+            URL configFileUrl = TypesafeConfigLoader.class.getClassLoader().getResource(format(DEFAULT_TYPESAFE_CONFIG_FILE_NAME, configSyntax.toString().toLowerCase()));
             if (isNull(configFileUrl)) {
-                throw new TypesafeConfigLoadingException(format(CONFIG_FILE_NOT_FOUND, configSyntax));
+                throw new TypesafeConfigLoadingException(format(CONFIG_FILE_NOT_FOUND, configSyntax.toString().toLowerCase()));
             }
             return new InputStreamReader(configFileUrl.openStream());
         }
