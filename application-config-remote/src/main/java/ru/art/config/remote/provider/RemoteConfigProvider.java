@@ -40,10 +40,6 @@ import static ru.art.service.ServiceModule.*;
 public class RemoteConfigProvider {
     private static final ConfigCacheContainer CONFIG_CACHE_CONTAINER = new ConfigCacheContainer();
 
-    public static void useRemoteConfigurations() {
-        useRemoteConfigurations(contextConfiguration());
-    }
-
     public static void useRemoteConfigurations(ContextInitialConfiguration contextInitialConfiguration) {
         try {
             Config localConfig = config(EMPTY_STRING);

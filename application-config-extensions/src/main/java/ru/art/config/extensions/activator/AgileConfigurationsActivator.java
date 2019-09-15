@@ -32,21 +32,12 @@ import static ru.art.core.context.Context.*;
 public class AgileConfigurationsActivator {
     public static Context useAgileConfigurations(String mainModuleId) {
         ApplicationContextConfiguration configuration = new ApplicationContextConfiguration(mainModuleId, new AgileConfigurationProvider());
-        return initContext(configuration);
-    }
-
-    public static Context useAgileConfigurations() {
-        return useAgileConfigurations(DEFAULT_MAIN_MODULE_ID);
-    }
-
-    public static Context useRemoteAgileConfigurations(String mainModuleId) {
-        ApplicationContextConfiguration configuration = new ApplicationContextConfiguration(mainModuleId, new AgileConfigurationProvider());
         Context context = initContext(configuration);
         useRemoteConfigurations(configuration);
         return context;
     }
 
-    public static Context useRemoteAgileConfigurations() {
-        return useRemoteAgileConfigurations(DEFAULT_MAIN_MODULE_ID);
+    public static Context useAgileConfigurations() {
+        return useAgileConfigurations(DEFAULT_MAIN_MODULE_ID);
     }
 }
