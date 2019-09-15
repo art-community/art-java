@@ -24,7 +24,7 @@ import org.jfrog.gradle.plugin.artifactory.task.*
 plugins {
     `maven-publish`
     id("com.gradle.build-scan") version "2.0.2"
-    id("io.github.art.project") version "1.0.69"
+    id("io.github.art.project") version "1.0.71"
     id("com.jfrog.bintray") version "1.8.4"
     id("com.jfrog.artifactory") version "4.9.8"
 }
