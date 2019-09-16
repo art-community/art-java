@@ -80,7 +80,7 @@ public class RsocketCommunicator {
             factory = factory.resume()
                     .resumeSessionDuration(ofMillis(configuration.resumeSessionDuration()));
         }
-        rsocketModule().getServerInterceptors().forEach(factory::addRequesterPlugin);
+        rsocketModule().getClientInterceptors().forEach(factory::addRequesterPlugin);
         configuration.interceptors().forEach(factory::addRequesterPlugin);
         switch (configuration.transport()) {
             case TCP:
