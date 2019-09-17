@@ -19,6 +19,7 @@
 package ru.art.config.extensions.grpc;
 
 import lombok.*;
+import ru.art.grpc.server.*;
 import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.*;
 import static java.util.Objects.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
@@ -60,7 +61,10 @@ public class GrpcServerAgileConfiguration extends GrpcServerModuleDefaultConfigu
         enableRawDataTracing = configBoolean(GRPC_SERVER_CONFIG_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
         enableValueTracing = configBoolean(GRPC_SERVER_CONFIG_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         if (restart && context().hasModule(GRPC_SERVER_MODULE_ID)) {
-            grpcServerModuleState().getServer().restart();
+            GrpcServer server = grpcServerModuleState().getServer();
+            if (nonNull(server) && server.isWorking()) {
+                server.restart();
+            }
         }
     }
 }

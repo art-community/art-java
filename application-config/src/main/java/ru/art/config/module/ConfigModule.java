@@ -33,9 +33,6 @@ public class ConfigModule implements Module<ConfigModuleConfiguration, ModuleSta
     private final String id = CONFIG_MODULE_ID;
 
     public static ConfigModuleConfiguration configModule() {
-        if (contextIsNotReady()) {
-            return DEFAULT_CONFIGURATION;
-        }
         return getConfigModule();
     }
 }

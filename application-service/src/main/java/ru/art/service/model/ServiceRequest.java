@@ -23,11 +23,10 @@ import ru.art.service.constants.*;
 
 @Getter
 @ToString
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class ServiceRequest<T> {
-    @EqualsAndHashCode.Include
     private final ServiceMethodCommand serviceMethodCommand;
     private final RequestValidationPolicy validationPolicy;
     private T requestData;
