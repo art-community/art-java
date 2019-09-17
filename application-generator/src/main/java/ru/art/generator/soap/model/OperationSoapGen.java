@@ -14,7 +14,20 @@
  *    limitations under the License.
  */
 
-package ru.art.generator.soap.generator;
+package ru.art.generator.soap.model;
 
-public class ComplexType {
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Singular;
+
+import java.util.List;
+
+@Builder
+@Getter
+public class OperationSoapGen {
+    private String name;
+    private List<Field> input;
+    private List<Field> output;
+    @Singular("addFault")
+    private List<Field> fault;
 }

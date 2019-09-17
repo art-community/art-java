@@ -14,20 +14,27 @@
  *    limitations under the License.
  */
 
-package ru.art.generator.soap.generator;
+package ru.art.generator.soap.model;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
 
-import java.util.List;
-
 @Builder
 @Getter
-public class Operation {
+public class Field {
     private String name;
-    private Field input;
-    private Field output;
-    @Singular("addFault")
-    private List<Field> fault;
+    private String typeName;
+    private Class type;
+    private String namespace;
+    private String prefix;
+    private boolean necessary;
+    private boolean list;
+    private List<Restriction> restrictionList;
+    private String parentName;
+    private String parentPrefix;
+    private String parentNamespace;
+    @Singular("addField")
+    private List<Field> fieldsList;
 }

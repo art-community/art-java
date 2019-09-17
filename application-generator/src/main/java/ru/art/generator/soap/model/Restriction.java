@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package ru.art.generator.soap.generator;
+package ru.art.generator.soap.model;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +22,6 @@ import lombok.Getter;
 @Builder
 @Getter
 public class Restriction {
-    private String operation;
+    private RestrictionOperation operation;
     private String value;
 }
