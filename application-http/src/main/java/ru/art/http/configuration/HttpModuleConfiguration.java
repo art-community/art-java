@@ -55,11 +55,11 @@ public interface HttpModuleConfiguration extends ModuleConfiguration {
         private final boolean enableRawDataTracing = false;
         private final boolean enableValueTracing = false;
         private final boolean enableMetricsMonitoring = true;
-        private final MimeToContentTypeMapper consumesMimeTypeMapper = applicationJsonUtf8();
-        private final MimeToContentTypeMapper producesMimeTypeMapper = applicationJsonUtf8();
+        private final MimeToContentTypeMapper consumesMimeTypeMapper = all();
+        private final MimeToContentTypeMapper producesMimeTypeMapper = all();
         private final HttpTextPlainMapper textPlainMapper = new HttpTextPlainMapper();
-        private final Map<MimeType, HttpContentMapper> contentMappers =
-                mapOf(ALL, new HttpContentMapper(new HttpTextPlainMapper(), new HttpTextPlainMapper()));
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+        private final Map<MimeType, HttpContentMapper> contentMappers = mapOf(ALL, new HttpContentMapper(getTextPlainMapper(), getTextPlainMapper()));
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ValueInterceptor<Value, Value>> requestValueInterceptors = initializeValueInterceptors();
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
