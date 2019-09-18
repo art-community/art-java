@@ -23,7 +23,6 @@ import ru.art.config.cache.*;
 import ru.art.config.exception.*;
 import ru.art.config.remote.specification.*;
 import ru.art.configurator.api.specification.*;
-import ru.art.core.configuration.*;
 import static java.util.Objects.*;
 import static ru.art.config.ConfigProvider.*;
 import static ru.art.config.constants.ConfigType.*;
@@ -41,10 +40,6 @@ public class RemoteConfigProvider {
     private static final ConfigCacheContainer CONFIG_CACHE_CONTAINER = new ConfigCacheContainer();
 
     public static void useRemoteConfigurations() {
-        useRemoteConfigurations(contextConfiguration());
-    }
-
-    public static void useRemoteConfigurations(ContextInitialConfiguration contextInitialConfiguration) {
         try {
             Config localConfig = config(EMPTY_STRING);
             if (!localConfig.hasPath(CONFIGURATOR_HOST) ||

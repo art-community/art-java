@@ -60,7 +60,7 @@ public class RsocketServer {
         if (rsocketModule().isResumableServer()) {
             socketFactory = socketFactory.resume().resumeSessionDuration(ofMillis(rsocketModule().getServerResumeSessionDuration()));
         }
-        rsocketModule().getClientInterceptors().forEach(socketFactory::addResponderPlugin);
+        rsocketModule().getServerInterceptors().forEach(socketFactory::addResponderPlugin);
         ServerTransportAcceptor acceptor = socketFactory.acceptor((setup, sendingSocket) -> just(new RsocketAcceptor(sendingSocket, setup)));
         Mono<CloseableChannel> channel;
         switch (transport) {
