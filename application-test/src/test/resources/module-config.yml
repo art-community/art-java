@@ -20,9 +20,13 @@ grpc:
     enableRawDataTracing: true
 http:
   server:
+    consumesMimeType: application/json
+    producesMimeType: application/json
     enableRawDataTracing: true
   communication:
     enableRawDataTracing: true
+    consumesMimeType: application/json
+    producesMimeType: application/json
 rsocket:
   enableRawDataTracing: true
 tarantool:

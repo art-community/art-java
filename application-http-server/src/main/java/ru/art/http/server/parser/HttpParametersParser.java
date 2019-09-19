@@ -48,11 +48,25 @@ public interface HttpParametersParser {
         if (isEmpty(pathParameterValues) || pathParameterValues.length == 1)
             return StringParametersMap.builder().build();
         Set<String> pathParameterNames = methodConfig.getPath().getParameters();
+        if (isEmpty(pathParameterNames)) {
+            return StringParametersMap.builder().build();
+        }
         int pathParameterIndex = 1;
         MapBuilder<String, String> pathParameters = mapOf();
+        String lastParameter = EMPTY_STRING;
         for (String name : pathParameterNames) {
+            lastParameter = name;
             pathParameters.add(name, pathParameterValues[pathParameterIndex]);
             pathParameterIndex++;
+        }
+        if (isEmpty(lastParameter)) {
+            return StringParametersMap.builder().build();
+        }
+        if (pathParameters.size() < pathParameterIndex) {
+            for (int i = pathParameterIndex; i < pathParameterValues.length; i++) {
+                int index = i;
+                pathParameters.computeIfPresent(lastParameter, (key, value) -> value + SLASH + pathParameterValues[index]);
+            }
         }
         return StringParametersMap.builder()
                 .parameters(cast(pathParameters))

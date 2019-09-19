@@ -20,33 +20,25 @@ package ru.art.config.extensions.activator;
 
 import lombok.experimental.*;
 import ru.art.config.extensions.provider.*;
+import ru.art.config.remote.provider.*;
 import ru.art.core.annotation.*;
 import ru.art.core.configuration.ContextInitialConfiguration.*;
 import ru.art.core.context.*;
-import static ru.art.config.remote.provider.RemoteConfigProvider.*;
 import static ru.art.core.constants.ContextConstants.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.core.wrapper.ExceptionWrapper.*;
 
 @PublicApi
 @UtilityClass
 public class AgileConfigurationsActivator {
     public static Context useAgileConfigurations(String mainModuleId) {
         ApplicationContextConfiguration configuration = new ApplicationContextConfiguration(mainModuleId, new AgileConfigurationProvider());
-        return initContext(configuration);
+        Context context = initContext(configuration);
+        ignoreException(RemoteConfigProvider::useRemoteConfigurations);
+        return context;
     }
 
     public static Context useAgileConfigurations() {
         return useAgileConfigurations(DEFAULT_MAIN_MODULE_ID);
-    }
-
-    public static Context useRemoteAgileConfigurations(String mainModuleId) {
-        ApplicationContextConfiguration configuration = new ApplicationContextConfiguration(mainModuleId, new AgileConfigurationProvider());
-        Context context = initContext(configuration);
-        useRemoteConfigurations(configuration);
-        return context;
-    }
-
-    public static Context useRemoteAgileConfigurations() {
-        return useRemoteAgileConfigurations(DEFAULT_MAIN_MODULE_ID);
     }
 }
