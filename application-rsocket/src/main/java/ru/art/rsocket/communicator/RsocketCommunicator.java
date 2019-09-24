@@ -90,7 +90,7 @@ public class RsocketCommunicator {
                         .start()
                         .doOnSubscribe(subscription -> loggingModule()
                                 .getLogger(RsocketCommunicator.class)
-                                .info(RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE));
+                                .info(format(RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.tcpPort())));
                 return;
             case WEB_SOCKET:
                 socket = factory
@@ -100,7 +100,7 @@ public class RsocketCommunicator {
                         .start()
                         .doOnSubscribe(subscription -> loggingModule()
                                 .getLogger(RsocketCommunicator.class)
-                                .info(RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE));
+                                .info(format(RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.webSocketPort())));
                 return;
         }
         throw new RsocketClientException(format(UNSUPPORTED_TRANSPORT, configuration.transport()));
