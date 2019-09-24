@@ -27,6 +27,7 @@ import static com.fasterxml.jackson.core.JsonToken.*;
 import static java.lang.Integer.*;
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
@@ -35,6 +36,7 @@ import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.json.constants.JsonMappingExceptionMessages.*;
 import static ru.art.json.module.JsonModule.*;
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 
 
