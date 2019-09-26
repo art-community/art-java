@@ -24,9 +24,9 @@ import ru.art.entity.Value;
 import ru.art.entity.*;
 import ru.art.json.exception.*;
 import static com.fasterxml.jackson.core.JsonToken.*;
+import static java.lang.Integer.*;
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.SizesConstants.*;
 import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -57,10 +57,11 @@ public class JsonEntityReader {
                 case VALUE_STRING:
                     return stringPrimitive(parser.getText());
                 case VALUE_NUMBER_INT:
-                    if (nextIsInt(parser)) {
-                        return intPrimitive(parser.getIntValue());
+                    long longValue;
+                    if ((longValue = parser.getLongValue()) < MAX_VALUE) {
+                        return intPrimitive(((Long) longValue).intValue());
                     }
-                    return longPrimitive(parser.getLongValue());
+                    return longPrimitive(longValue);
                 case VALUE_NUMBER_FLOAT:
                     return floatPrimitive(parser.getFloatValue());
                 case VALUE_TRUE:
@@ -135,13 +136,11 @@ public class JsonEntityReader {
     }
 
     private static void parseNumber(EntityBuilder entityBuilder, JsonParser parser, String currentName) throws IOException {
-        if (nextIsInt(parser)) {
-            entityBuilder.intField(currentName, parser.getIntValue());
-            return;
+        long longValue;
+        if ((longValue = parser.getLongValue()) < MAX_VALUE) {
+            entityBuilder.intField(currentName, ((Long) longValue).intValue());
         }
-        if (nextIsLong(parser)) {
-            entityBuilder.longField(currentName, parser.getLongValue());
-        }
+        entityBuilder.longField(currentName, longValue);
     }
 
     private static void parseArray(EntityBuilder entityBuilder, JsonParser parser) throws IOException {
@@ -165,14 +164,11 @@ public class JsonEntityReader {
                 entityBuilder.stringCollectionField(currentName, parseStringArray(parser));
                 return;
             case VALUE_NUMBER_INT:
-                if (nextIsInt(parser)) {
+                if (parser.getLongValue() < MAX_VALUE) {
                     entityBuilder.intCollectionField(currentName, parseIntArray(parser));
                     return;
                 }
-                if (nextIsLong(parser)) {
-                    entityBuilder.longCollectionField(currentName, parseLongArray(parser));
-                    return;
-                }
+                entityBuilder.longCollectionField(currentName, parseLongArray(parser));
                 return;
             case VALUE_NUMBER_FLOAT:
                 entityBuilder.floatCollectionField(currentName, parseFloatArray(parser));
@@ -203,12 +199,10 @@ public class JsonEntityReader {
             case VALUE_STRING:
                 return stringCollection(parseStringArray(parser));
             case VALUE_NUMBER_INT:
-                if (nextIsInt(parser)) {
+                if (parser.getLongValue() < MAX_VALUE) {
                     return intCollection(parseIntArray(parser));
                 }
-                if (nextIsLong(parser)) {
-                    return longCollection(parseLongArray(parser));
-                }
+                return longCollection(parseLongArray(parser));
             case VALUE_NUMBER_FLOAT:
                 return doubleCollection(parseDoubleArray(parser));
             case VALUE_TRUE:
@@ -294,14 +288,5 @@ public class JsonEntityReader {
             currentToken = parser.nextToken();
         } while (!parser.isClosed() && currentToken != END_ARRAY);
         return array;
-    }
-
-
-    private static boolean nextIsInt(JsonParser parser) throws IOException {
-        return parser.getTextLength() <= INT_MAX_CHARACTER_SIZE;
-    }
-
-    private static boolean nextIsLong(JsonParser parser) throws IOException {
-        return parser.getTextLength() <= LONG_MAX_CHARACTER_SIZE;
     }
 }
