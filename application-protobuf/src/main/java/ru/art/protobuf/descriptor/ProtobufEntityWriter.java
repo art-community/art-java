@@ -19,7 +19,7 @@
 package ru.art.protobuf.descriptor;
 
 import com.google.protobuf.*;
-import lombok.*;
+import lombok.experimental.*;
 import ru.art.entity.Value;
 import ru.art.entity.*;
 import ru.art.entity.constants.ValueType.*;
@@ -30,18 +30,34 @@ import static com.google.protobuf.ByteString.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.entity.Value.*;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.BYTE;
 import static ru.art.protobuf.constants.ProtobufExceptionMessages.*;
 import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.Type.*;
 import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.getDefaultInstance;
+import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public class ProtobufEntityWriter {
+    public static byte[] writeProtobufToBytes(Value value) {
+        return writeProtobuf(value).toByteArray();
+    }
+
+    public static void writeProtobuf(Value value, OutputStream outputStream) {
+        try {
+            writeProtobuf(value).writeTo(outputStream);
+        } catch (IOException e) {
+            throw new ProtobufException(e);
+        }
+    }
+
+    public static void writeProtobuf(Value value, Path path) {
+        writeFileQuietly(path, writeProtobuf(value).toByteArray());
+    }
+
     public static ProtobufValue writeProtobuf(Value value) {
         if (isEmpty(value)) return getDefaultInstance();
         switch (value.getType()) {
@@ -95,9 +111,6 @@ public class ProtobufEntityWriter {
         throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, value.getType()));
     }
 
-    public static void writeProtobuf(Value value, Path path) {
-        writeFileQuietly(path, writeProtobuf(value).toByteArray());
-    }
 
     private static ProtobufValue writeMapToProtobuf(MapValue map) {
         Map<String, ProtobufValue> protobufValueMap = map.getElements()

@@ -19,8 +19,7 @@
 package ru.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
-import lombok.*;
-import ru.art.entity.Value;
+import lombok.experimental.*;
 import ru.art.entity.*;
 import ru.art.entity.constants.ValueType.*;
 import ru.art.json.exception.*;
@@ -39,14 +38,29 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class JsonEntityWriter {
-    public static String writeJson(Value value) {
-        return writeJson(jsonModule().getObjectMapper().getFactory(), value);
+    public static byte[] writeJsonToBytes(Value value) {
+        return writeJson(value).getBytes();
+    }
+
+    public static void writeJson(Value value, OutputStream outputStream) {
+        if (isNull(outputStream)) {
+            return;
+        }
+        try {
+            outputStream.write(writeJson(value).getBytes());
+        } catch (IOException e) {
+            throw new JsonMappingException(e);
+        }
     }
 
     public static void writeJson(Value value, Path path) {
         writeFileQuietly(path, writeJson(value));
+    }
+
+    public static String writeJson(Value value) {
+        return writeJson(jsonModule().getObjectMapper().getFactory(), value);
     }
 
     public static String writeJson(JsonFactory jsonFactory, Value value) {
