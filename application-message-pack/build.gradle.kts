@@ -26,5 +26,5 @@ art {
 }
 
 dependencies {
-    embedded("org.msgpack", "msgpack-core", "0.8.+")
+    embedded("org.msgpack", "msgpack-core", art.externalDependencyVersionsConfiguration.messagePackVersion)
 }
