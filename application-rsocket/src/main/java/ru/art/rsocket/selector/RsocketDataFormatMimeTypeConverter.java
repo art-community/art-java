@@ -41,7 +41,7 @@ public class RsocketDataFormatMimeTypeConverter {
         if (APPLICATION_PROTOBUF.getString().equals(type.getType() + SLASH + type.getSubtype())) return PROTOBUF;
         if (APPLICATION_XML.getString().equals(type.getType() + SLASH + type.getSubtype())) return XML;
         if (TEXT_XML.getString().equals(type.getType() + SLASH + type.getSubtype())) return XML;
-        if (mimeType.equalsIgnoreCase(APPLICATION_MESSAGE_PACK.getType() + SLASH + APPLICATION_MESSAGE_PACK.getType())) {
+        if (mimeType.equalsIgnoreCase(APPLICATION_MESSAGE_PACK.getType() + SLASH + APPLICATION_MESSAGE_PACK.getSubtype())) {
             return MESSAGE_PACK;
         }
         return rsocketModule().getDataFormat();
