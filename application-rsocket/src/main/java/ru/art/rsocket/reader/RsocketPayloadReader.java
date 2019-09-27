@@ -18,6 +18,7 @@
 
 package ru.art.rsocket.reader;
 
+import io.netty.buffer.*;
 import io.rsocket.*;
 import lombok.*;
 import ru.art.entity.Value;
@@ -46,7 +47,10 @@ public class RsocketPayloadReader {
             case XML:
                 return readXml(wrapException(payload::getDataUtf8, RsocketServerException::new));
             case MESSAGE_PACK:
-                return readMessagePack(wrapException(() -> payload.getData().array(), RsocketServerException::new));
+                ByteBuf byteBuf = payload.sliceData();
+                byte[] bytes = new byte[byteBuf.readableBytes()];
+                byteBuf.readBytes(bytes);
+                return readMessagePack(bytes);
         }
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDataFormat()));
     }

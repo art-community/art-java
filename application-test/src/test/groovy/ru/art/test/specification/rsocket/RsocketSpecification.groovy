@@ -31,8 +31,7 @@ import static ru.art.entity.Entity.concat
 import static ru.art.entity.Entity.entityBuilder
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.REACTIVE
 import static ru.art.rsocket.communicator.RsocketCommunicator.rsocketCommunicator
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.JSON
-import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.PROTOBUF
+import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.TCP
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.WEB_SOCKET
 import static ru.art.rsocket.function.RsocketServiceFunction.rsocket
@@ -84,11 +83,13 @@ class RsocketSpecification extends Specification {
         response != null
 
         where:
-        format   | transport
-        PROTOBUF | TCP
-        JSON     | TCP
-        PROTOBUF | WEB_SOCKET
-        JSON     | WEB_SOCKET
+        format       | transport
+        PROTOBUF     | TCP
+        JSON         | TCP
+        MESSAGE_PACK | TCP
+        PROTOBUF     | WEB_SOCKET
+        JSON         | WEB_SOCKET
+        MESSAGE_PACK | WEB_SOCKET
     }
 
     @Unroll
@@ -143,10 +144,12 @@ class RsocketSpecification extends Specification {
 
         where:
         format   | transport
-        PROTOBUF | TCP
-        JSON     | TCP
-        PROTOBUF | WEB_SOCKET
-        JSON     | WEB_SOCKET
+        PROTOBUF     | TCP
+        JSON         | TCP
+        MESSAGE_PACK | TCP
+        PROTOBUF     | WEB_SOCKET
+        JSON         | WEB_SOCKET
+        MESSAGE_PACK | WEB_SOCKET
     }
 
     @Unroll
@@ -202,10 +205,12 @@ class RsocketSpecification extends Specification {
 
         where:
         format   | transport
-        PROTOBUF | TCP
-        JSON     | TCP
-        PROTOBUF | WEB_SOCKET
-        JSON     | WEB_SOCKET
+        PROTOBUF     | TCP
+        JSON         | TCP
+        MESSAGE_PACK | TCP
+        PROTOBUF     | WEB_SOCKET
+        JSON         | WEB_SOCKET
+        MESSAGE_PACK | WEB_SOCKET
     }
 
     @Unroll
@@ -257,10 +262,12 @@ class RsocketSpecification extends Specification {
 
         where:
         format   | transport
-        PROTOBUF | TCP
-        JSON     | TCP
-        PROTOBUF | WEB_SOCKET
-        JSON     | WEB_SOCKET
+        PROTOBUF     | TCP
+        JSON         | TCP
+        MESSAGE_PACK | TCP
+        PROTOBUF     | WEB_SOCKET
+        JSON         | WEB_SOCKET
+        MESSAGE_PACK | WEB_SOCKET
     }
 
 }
