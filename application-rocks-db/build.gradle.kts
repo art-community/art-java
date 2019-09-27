@@ -21,8 +21,7 @@ art {
         applicationCore()
         applicationEntity()
         applicationLogging()
-        applicationProtobuf()
-        applicationProtobufGenerated()
+        applicationMessagePack()
     }
 }
 

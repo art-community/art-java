@@ -19,23 +19,142 @@
 package ru.art.message.pack.descriptor;
 
 import lombok.experimental.*;
+import org.msgpack.value.*;
+import ru.art.entity.MapValue;
+import ru.art.entity.Value;
 import ru.art.entity.*;
+import ru.art.message.pack.exception.*;
+import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
+import static org.msgpack.core.MessagePack.*;
+import static ru.art.core.extension.FileExtensions.*;
+import static ru.art.core.extension.InputStreamExtensions.*;
+import static ru.art.entity.CollectionValuesFactory.*;
+import static ru.art.entity.Entity.*;
+import static ru.art.entity.PrimitivesFactory.*;
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 
 
 @UtilityClass
 public class MessagePackEntityReader {
-    public static Value readMessagePack(byte[] bytes) {
-        return null;
-    }
-
     public static Value readMessagePack(InputStream inputStream) {
-        return null;
+        return readMessagePack(toByteArray(inputStream));
     }
 
     public static Value readMessagePack(Path path) {
+        return readMessagePack(readFileBytes(path));
+    }
+
+    public static Value readMessagePack(byte[] bytes) {
+        try {
+            return readValue(newDefaultUnpacker(bytes).unpackValue());
+        } catch (Throwable e) {
+            throw new MessagePackMappingException(e);
+        }
+    }
+
+    private static Value readValue(org.msgpack.value.Value value) {
+        if (isNull(value)) {
+            return null;
+        }
+        switch (value.getValueType()) {
+            case NIL:
+            case EXTENSION:
+                return null;
+            case BOOLEAN:
+                return boolPrimitive(value.asBooleanValue().getBoolean());
+            case INTEGER:
+                IntegerValue integerValue = value.asIntegerValue();
+                if (integerValue.isInByteRange()) {
+                    return bytePrimitive(integerValue.toByte());
+                }
+                if (integerValue.isInIntRange()) {
+                    return intPrimitive(integerValue.toInt());
+                }
+                if (integerValue.isInLongRange()) {
+                    return longPrimitive(integerValue.toLong());
+                }
+            case FLOAT:
+                return doublePrimitive(value.asFloatValue().toDouble());
+            case STRING:
+                return stringPrimitive(value.asStringValue().toString());
+            case BINARY:
+                return byteCollection(value.asBinaryValue().asByteArray());
+            case ARRAY:
+                return readCollectionValue(value.asArrayValue());
+            case MAP:
+                return readMap(value.asMapValue());
+        }
         return null;
     }
 
+    private static Value readMap(org.msgpack.value.MapValue map) {
+        if (map.size() == 0) return entityBuilder().build();
+        if (map.keySet().stream().filter(Objects::nonNull).allMatch(org.msgpack.value.Value::isStringValue)) {
+            EntityBuilder entityBuilder = entityBuilder();
+            for (Map.Entry<org.msgpack.value.Value, org.msgpack.value.Value> entry : map.map().entrySet()) {
+                if (isNull(entry.getKey())) continue;
+                org.msgpack.value.Value value = entry.getValue();
+                if (isNull(value)) continue;
+                String key = entry.getKey().asStringValue().toString();
+                switch (value.getValueType()) {
+                    case BOOLEAN:
+                        entityBuilder.boolField(key, value.asBooleanValue().getBoolean());
+                        break;
+                    case INTEGER:
+                        IntegerValue integerValue = value.asIntegerValue();
+                        if (integerValue.isInByteRange()) {
+                            entityBuilder.byteField(key, integerValue.toByte());
+                        }
+                        if (integerValue.isInIntRange()) {
+                            entityBuilder.intField(key, integerValue.toInt());
+                        }
+                        if (integerValue.isInLongRange()) {
+                            entityBuilder.longField(key, integerValue.toLong());
+                        }
+                        break;
+                    case FLOAT:
+                        entityBuilder.doubleField(key, value.asFloatValue().toDouble());
+                        break;
+                    case STRING:
+                        entityBuilder.stringField(key, value.asStringValue().toString());
+                        break;
+                    case BINARY:
+                        entityBuilder.byteArrayField(key, value.asBinaryValue().asByteArray());
+                        break;
+                    case ARRAY:
+                        entityBuilder.valueField(key, readCollectionValue(value.asArrayValue()));
+                        break;
+                    case MAP:
+                        entityBuilder.valueField(key, readMap(value.asMapValue()));
+                }
+            }
+            return entityBuilder.build();
+        }
+        MapValue.MapValueBuilder mapValueBuilder = MapValue.builder();
+        for (Map.Entry<org.msgpack.value.Value, org.msgpack.value.Value> entry : map.map().entrySet()) {
+            org.msgpack.value.Value key = entry.getKey();
+            org.msgpack.value.Value value = entry.getValue();
+            if (isNull(key)) continue;
+            if (isNull(value)) continue;
+            Value keyValue = readValue(key);
+            if (nonNull(keyValue)) {
+                mapValueBuilder.element(keyValue, readValue(value));
+            }
+        }
+        return mapValueBuilder.build();
+    }
+
+    private static CollectionValue<?> readCollectionValue(ArrayValue array) {
+        if (array.size() == 0) return emptyCollection();
+        return valueCollection(array.list()
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(element -> !element.isNilValue() && !element.isExtensionValue())
+                .map(MessagePackEntityReader::readValue)
+                .filter(Objects::nonNull)
+                .collect(toList()));
+    }
 }

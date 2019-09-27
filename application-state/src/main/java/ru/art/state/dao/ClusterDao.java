@@ -26,11 +26,11 @@ import static ru.art.state.constants.StateModuleConstants.DbKeys.*;
 
 public interface ClusterDao {
     static void saveCluster(Cluster cluster) {
-        putAsProtobuf(CLUSTER, fromCluster.map(cluster));
+        putBinary(CLUSTER, fromCluster.map(cluster));
     }
 
     static Cluster loadCluster() {
-        return getAsProtobuf(CLUSTER)
+        return getBinary(CLUSTER)
                 .map(Value::asEntity)
                 .map(toCluster::map)
                 .orElse(Cluster.builder().build());

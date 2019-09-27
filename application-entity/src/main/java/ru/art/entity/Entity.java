@@ -280,7 +280,6 @@ public class Entity implements Value {
     }
 
 
-
     public List<String> findStringSet(String name) {
         CollectionValue<String> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getStringList();
@@ -642,6 +641,11 @@ public class Entity implements Value {
             return this;
         }
 
+        public EntityBuilder boolCollectionField(String name, Collection<Boolean> value) {
+            fields.put(name, boolCollection(value));
+            return this;
+        }
+
         public EntityBuilder intCollectionField(String name, Collection<Integer> value) {
             fields.put(name, intCollection(value));
             return this;
@@ -668,6 +672,36 @@ public class Entity implements Value {
         }
 
         public EntityBuilder floatCollectionField(String name, Collection<Float> value) {
+            fields.put(name, floatCollection(value));
+            return this;
+        }
+
+        public EntityBuilder boolArrayField(String name, boolean[] value) {
+            fields.put(name, boolCollection(value));
+            return this;
+        }
+
+        public EntityBuilder intArrayField(String name, int[] value) {
+            fields.put(name, intCollection(value));
+            return this;
+        }
+
+        public EntityBuilder longArrayField(String name, long[] value) {
+            fields.put(name, longCollection(value));
+            return this;
+        }
+
+        public EntityBuilder doubleArrayField(String name, double[] value) {
+            fields.put(name, doubleCollection(value));
+            return this;
+        }
+
+        public EntityBuilder byteArrayField(String name, byte[] value) {
+            fields.put(name, byteCollection(value));
+            return this;
+        }
+
+        public EntityBuilder floatArrayField(String name, float[] value) {
             fields.put(name, floatCollection(value));
             return this;
         }
@@ -704,10 +738,6 @@ public class Entity implements Value {
                     .collect(toList()));
         }
 
-        public EntityBuilder boolCollectionField(String name, Collection<Boolean> value) {
-            fields.put(name, boolCollection(value));
-            return this;
-        }
 
         public Entity build() {
             return new Entity(cast(mapOf(fields)));

@@ -21,6 +21,7 @@ art {
         applicationCore()
         applicationLogging()
         applicationEntity()
+        applicationJson()
     }
 }
 

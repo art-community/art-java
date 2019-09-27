@@ -26,6 +26,7 @@ import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
 import static ru.art.json.descriptor.JsonEntityReader.*;
+import static ru.art.message.pack.descriptor.MessagePackEntityReader.*;
 import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
 import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
@@ -44,6 +45,8 @@ public class RsocketPayloadReader {
                 return readJson(wrapException(payload::getDataUtf8, RsocketServerException::new));
             case XML:
                 return readXml(wrapException(payload::getDataUtf8, RsocketServerException::new));
+            case MESSAGE_PACK:
+                return readMessagePack(wrapException(() -> payload.getData().array(), RsocketServerException::new));
         }
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDataFormat()));
     }

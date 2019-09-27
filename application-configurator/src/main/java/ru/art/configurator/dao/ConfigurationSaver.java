@@ -53,7 +53,7 @@ class ConfigurationSaver {
             return;
         }
 
-        putAsProtobuf(profileId, profileConfig);
+        putBinary(profileId, profileConfig);
     }
 
     private static void saveModuleConfiguration(String moduleKey, Entity profileConfigEntity, String profileId) {
@@ -61,6 +61,6 @@ class ConfigurationSaver {
         if (moduleConfig.isEmpty()) {
             return;
         }
-        putAsProtobuf(moduleKey, moduleConfig);
+        putBinary(moduleKey, moduleConfig);
     }
 }

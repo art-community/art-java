@@ -99,6 +99,9 @@ public class JsonEntityWriter {
                     return emptyIfNull(asPrimitive(value).getBool());
                 case BYTE:
                     return emptyIfNull(asPrimitive(value).getByte());
+                case STRING_PARAMETERS_MAP:
+                    writeStringParameters(generator, asStringParametersMap(value));
+                    break;
                 case MAP:
                     writeJsonMap(generator, asMap(value));
             }
@@ -165,9 +168,7 @@ public class JsonEntityWriter {
             writeField(jsonGenerator, field, fields.get(field));
         }
         jsonGenerator.writeEndObject();
-
     }
-
 
     private static void writeArray(JsonGenerator jsonGenerator, String fieldName, CollectionValue<?> array) throws IOException {
         if (isNull(array)) return;
@@ -209,6 +210,9 @@ public class JsonEntityWriter {
                 return;
             case MAP:
                 writeJsonMap(jsonGenerator, name, asMap(value));
+                return;
+            case STRING_PARAMETERS_MAP:
+                writeStringParameters(jsonGenerator, name, asStringParametersMap(value));
                 return;
             case STRING:
             case INT:
@@ -268,6 +272,9 @@ public class JsonEntityWriter {
                 return;
             case VALUE:
                 writeCollectionValue(jsonGenerator, asCollectionElementsType(((Value) value).getType()), value);
+                return;
+            case STRING_PARAMETERS_MAP:
+                writeStringParameters(jsonGenerator, asStringParametersMap(cast(value)));
         }
     }
 
@@ -343,4 +350,25 @@ public class JsonEntityWriter {
                 }
         }
     }
+
+    private static void writeStringParameters(JsonGenerator generator, StringParametersMap stringParametersMap) throws IOException {
+        if (isNull(stringParametersMap)) return;
+        generator.writeStartObject();
+        Map<String, String> parameters = stringParametersMap.getParameters();
+        for (String field : parameters.keySet()) {
+            generator.writeStringField(field, parameters.get(field));
+        }
+        generator.writeEndObject();
+    }
+
+    private static void writeStringParameters(JsonGenerator generator, String name, StringParametersMap stringParametersMap) throws IOException {
+        if (isNull(stringParametersMap)) return;
+        generator.writeObjectFieldStart(name);
+        Map<String, String> parameters = stringParametersMap.getParameters();
+        for (String field : parameters.keySet()) {
+            generator.writeStringField(field, parameters.get(field));
+        }
+        generator.writeEndObject();
+    }
+
 }

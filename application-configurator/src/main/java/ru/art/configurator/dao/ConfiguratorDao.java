@@ -41,7 +41,7 @@ public interface ConfiguratorDao {
             delete(APPLICATION);
             return;
         }
-        putAsProtobuf(APPLICATION, applicationConfig);
+        putBinary(APPLICATION, applicationConfig);
     }
 
     static void saveProfileConfiguration(String profileId, Entity profileConfig) {
@@ -52,7 +52,7 @@ public interface ConfiguratorDao {
         if (getProfileKeys().stream().noneMatch(key -> key.getProfileId().equalsIgnoreCase(profileId))) {
             RocksDbPrimitiveDao.add(PROFILE_KEYS, profileId);
         }
-        putAsProtobuf(profileId, profileConfig);
+        putBinary(profileId, profileConfig);
     }
 
     static void saveModuleConfiguration(ModuleKey moduleKey, Entity moduleConfig) {
@@ -66,11 +66,11 @@ public interface ConfiguratorDao {
         if (getModuleKeys().stream().noneMatch(key -> key.getProfileId().equalsIgnoreCase(moduleKey.getModuleId()))) {
             RocksDbPrimitiveDao.add(MODULE_KEYS, moduleKey.formatKey());
         }
-        putAsProtobuf(moduleKey.formatKey(), moduleConfig);
+        putBinary(moduleKey.formatKey(), moduleConfig);
     }
 
     static Optional<Value> getConfig(String moduleKey) {
-        return getAsProtobuf(moduleKey);
+        return getBinary(moduleKey);
     }
 
     static Set<ModuleKey> getModuleKeys() {
