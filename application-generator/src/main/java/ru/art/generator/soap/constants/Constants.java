@@ -48,4 +48,19 @@ public interface Constants {
         String VALIDATOR_RANGE = "validator.validate($S, $L, $T.$L($T.$L($S), $T.$L($S)));";
         String VALIDATOR_CONTAINS = "validator.validate($S, $L, $T.$L($T.$L($L)));";
     }
+
+    interface SupportJavaType {
+        String STRING = "string";
+        String BOOLEAN = "boolean";
+        String BYTE = "byte";
+        String FLOAT = "float";
+        String DOUBLE = "double";
+        String DECIMAL = "decimal";
+        String LONG = "long";
+        String INT = "int";
+        String INTEGER = "integer";
+        String DATE_TIME = "dateTime";
+        String TIME = "time";
+        String DATE = "date";
+    }
 }

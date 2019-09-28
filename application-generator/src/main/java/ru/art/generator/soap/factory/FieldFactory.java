@@ -1,11 +1,11 @@
 package ru.art.generator.soap.factory;
 
 import static java.util.Objects.isNull;
-import static ru.art.generator.soap.factory.AbstractTypeFactory.getNamespaceByPrefix;
-import static ru.art.generator.soap.factory.AbstractTypeFactory.getTypeByElement;
-import static ru.art.generator.soap.factory.AbstractTypeFactory.getTypeByString;
-import static ru.art.generator.soap.factory.AbstractTypeFactory.getTypeDefinition;
-import static ru.art.generator.soap.factory.AbstractTypeFactory.isObject;
+import static ru.art.generator.soap.factory.TypeFactory.getNamespaceByPrefix;
+import static ru.art.generator.soap.factory.TypeFactory.getTypeByElement;
+import static ru.art.generator.soap.factory.TypeFactory.getTypeByString;
+import static ru.art.generator.soap.factory.TypeFactory.getTypeDefinition;
+import static ru.art.generator.soap.factory.TypeFactory.isObject;
 
 import com.predic8.schema.ComplexContent;
 import com.predic8.schema.ComplexType;
@@ -22,10 +22,12 @@ import com.predic8.xml.util.PrefixedName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.experimental.UtilityClass;
 import ru.art.generator.soap.model.Field;
 import ru.art.generator.soap.model.Field.FieldBuilder;
 
-public abstract class AbstractFieldFactory {
+@UtilityClass
+public class FieldFactory {
 
   private final static String NECESSARY = "1";
   private final static String UNBOUNDED = "unbounded";
@@ -33,7 +35,7 @@ public abstract class AbstractFieldFactory {
   public static List<Field> createFieldsByMessage(String message, Definitions wsdlDefinitions) {
     List<Element> elementList = new ArrayList<>();
     wsdlDefinitions.getMessage(message).getParts().stream().map(Part::getElement).forEach(elementList::add);
-    return elementList.stream().map(AbstractFieldFactory::createFieldByElement).collect(Collectors.toList());
+    return elementList.stream().map(FieldFactory::createFieldByElement).collect(Collectors.toList());
   }
 
   private static Field createFieldByElement(Element element) {
@@ -82,7 +84,7 @@ public abstract class AbstractFieldFactory {
         .namespace(element.getNamespaceUri())
         .fieldsList(
             modelGroup.getParticles().stream().map(schemaComponent -> (Element) schemaComponent)
-                .map(AbstractFieldFactory::createFieldByElement).collect(Collectors.toList())
+                .map(FieldFactory::createFieldByElement).collect(Collectors.toList())
         );
   }
 
@@ -108,7 +110,7 @@ public abstract class AbstractFieldFactory {
         .typeName(restriction.getBase().getLocalPart())
         .restrictionList(
             simpleType.getRestriction().getFacets()
-                .stream().map(AbstractTypeFactory::getRestrictionByFacet)
+                .stream().map(TypeFactory::getRestrictionByFacet)
                 .collect(Collectors.toList())
         );
   }

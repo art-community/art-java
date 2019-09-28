@@ -1,6 +1,6 @@
 package ru.art.generator.soap.service;
 
-import static ru.art.generator.soap.factory.AbstractFieldFactory.createFieldsByMessage;
+import static ru.art.generator.soap.factory.FieldFactory.createFieldsByMessage;
 
 import com.predic8.wsdl.Definitions;
 import com.predic8.wsdl.Operation;
@@ -33,9 +33,11 @@ public class ParserService {
     String outputMessageName = operation.getOutput().getMessage().getName();
 
     List<Field> faultFields = new ArrayList<>();
-    operation.getFaults().stream().map(
-        fault -> createFieldsByMessage(fault.getMessage().getName(), wsdlDefinitions)
-    ).forEach(faultFields::addAll);
+    operation
+        .getFaults()
+        .stream()
+        .map(fault -> createFieldsByMessage(fault.getMessage().getName(), wsdlDefinitions))
+        .forEach(faultFields::addAll);
 
     return OperationSoapGen.builder()
         .name(operation.getName())

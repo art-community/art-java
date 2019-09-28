@@ -6,16 +6,16 @@ import static javax.lang.model.element.Modifier.PUBLIC;
 import static javax.lang.model.element.Modifier.STATIC;
 import static ru.art.core.constants.StringConstants.DOUBLE_TABULATION;
 import static ru.art.core.constants.StringConstants.NEW_LINE;
+import static ru.art.core.extension.StringExtensions.firstLetterToLowerCase;
+import static ru.art.core.extension.StringExtensions.firstLetterToUpperCase;
 import static ru.art.generator.common.constants.Constants.XML_MAPPER;
-import static ru.art.generator.soap.Util.getNameLowerCase;
-import static ru.art.generator.soap.Util.getNameUpperCase;
 import static ru.art.generator.soap.constants.Constants.ToXmlModelConstants.FROM_MODEL;
 import static ru.art.generator.soap.constants.Constants.ToXmlModelConstants.TO_MODEL;
 import static ru.art.generator.soap.constants.Constants.ToXmlModelConstants.XML_ENTITY_FROM_MODEL_MAPPER_LAMBDA_FOR_OPERATION;
 import static ru.art.generator.soap.constants.Constants.ToXmlModelConstants.XML_ENTITY_TO_MODEL_MAPPER_LAMBDA_FOR_OPERATION;
-import static ru.art.generator.soap.factory.AbstractCodeBlockFactory.createModelFromXmlEntity;
-import static ru.art.generator.soap.factory.AbstractCodeBlockFactory.createXmlEntityFromModel;
-import static ru.art.generator.soap.factory.AbstractJavaFileFactory.createJavaFile;
+import static ru.art.generator.soap.factory.CodeBlockFactory.createModelFromXmlEntity;
+import static ru.art.generator.soap.factory.CodeBlockFactory.createXmlEntityFromModel;
+import static ru.art.generator.soap.factory.JavaFileFactory.createJavaFile;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
@@ -80,7 +80,7 @@ public class SourceCodeGenService {
         );
       }
 
-      TypeSpec specOperation = interfaceBuilder(getNameUpperCase(operation.getName())).addModifiers(PUBLIC, STATIC)
+      TypeSpec specOperation = interfaceBuilder(firstLetterToUpperCase(operation.getName())).addModifiers(PUBLIC, STATIC)
           .addFields(fieldSpecList)
           .build();
       createJavaFile(packageString + ".operation", specOperation);
@@ -92,16 +92,16 @@ public class SourceCodeGenService {
 
   private FieldSpec createFieldSpec(ClassName classNameXmlEntity, String lambda, Field field, String postFix, String postFixForCode) {
     ClassName classNameMapper = ClassName
-        .get(packageString + ".mapper." + field.getPrefix(), getNameUpperCase(field.getTypeName()) + postFix);
+        .get(packageString + ".mapper." + field.getPrefix(), firstLetterToUpperCase(field.getTypeName()) + postFix);
     ClassName classNameModel = ClassName
-        .get(packageString + ".model." + field.getPrefix(), getNameUpperCase(field.getTypeName()));
+        .get(packageString + ".model." + field.getPrefix(), firstLetterToUpperCase(field.getTypeName()));
     CodeBlock xmlEntityFromModelCodeBlock = CodeBlock.builder()
         .add(NEW_LINE + DOUBLE_TABULATION + lambda,
-            classNameMapper, getNameLowerCase(field.getName() + postFixForCode))
+            classNameMapper, firstLetterToLowerCase(field.getName() + postFixForCode))
         .build();
     return FieldSpec
         .builder(ParameterizedTypeName.get(classNameXmlEntity, classNameModel),
-            getNameLowerCase(field.getName()) + FROM_MODEL, PUBLIC, STATIC, FINAL)
+            firstLetterToLowerCase(field.getName()) + FROM_MODEL, PUBLIC, STATIC, FINAL)
         .initializer(xmlEntityFromModelCodeBlock)
         .build();
   }

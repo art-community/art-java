@@ -7,12 +7,14 @@ import static javax.lang.model.element.Modifier.PUBLIC;
 import static org.springframework.core.annotation.AnnotationUtils.VALUE;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.StringConstants.NEW_LINE;
-import static ru.art.generator.soap.Util.getNameLowerCase;
-import static ru.art.generator.soap.Util.getNameUpperCase;
+import static ru.art.core.extension.StringExtensions.firstLetterToLowerCase;
+import static ru.art.core.extension.StringExtensions.firstLetterToUpperCase;
+import static ru.art.generator.common.constants.Constants.PathAndPackageConstants.SRC_MAIN_JAVA;
+import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.DOT_MODEL_DOT;
 import static ru.art.generator.soap.constants.Constants.ON_VALIDATING;
 import static ru.art.generator.soap.constants.Constants.ToXmlModelConstants.VALIDATOR;
 import static ru.art.generator.soap.constants.Constants.VALIDATOR_VARIABLE;
-import static ru.art.generator.soap.factory.AbstractTypeFactory.isObject;
+import static ru.art.generator.soap.factory.TypeFactory.isObject;
 
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
@@ -30,6 +32,7 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
+import lombok.experimental.UtilityClass;
 import ru.art.generator.soap.constants.Constants;
 import ru.art.generator.soap.model.Field;
 import ru.art.generator.soap.service.SourceCodeGenService;
@@ -37,7 +40,8 @@ import ru.art.service.validation.Validatable;
 import ru.art.service.validation.ValidationExpressions;
 import ru.art.service.validation.Validator;
 
-public abstract class AbstractJavaFileFactory {
+@UtilityClass
+public class JavaFileFactory {
 
   private static HashMap<String, JavaFile> setJavaFiles = new HashMap<>();
 
@@ -53,7 +57,7 @@ public abstract class AbstractJavaFileFactory {
               .getLocation()
               .getPath()
               .indexOf(Constants.BUILD))
-          .toString() + "src/main/java"));
+          .toString() + SRC_MAIN_JAVA));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -62,7 +66,7 @@ public abstract class AbstractJavaFileFactory {
 
 
   public static JavaFile createJavaFileByField(Field field, String packageString) {
-    TypeSpec.Builder classBuilder = classBuilder(getNameUpperCase(field.getTypeName()));
+    TypeSpec.Builder classBuilder = classBuilder(firstLetterToUpperCase(field.getTypeName()));
     classBuilder.addModifiers(PUBLIC);
     classBuilder.addSuperinterface(Validatable.class);
     classBuilder.addAnnotation(Value.class);
@@ -76,27 +80,28 @@ public abstract class AbstractJavaFileFactory {
     for (Field innerField : field.getFieldsList()) {
       if (isObject(innerField.getType())) {
         checkAndAddJavaClass(innerField, packageString);
-        ClassName className = ClassName.get(packageString + ".model." + innerField.getPrefix(), getNameUpperCase(innerField.getTypeName()));
+        ClassName className = ClassName.get(packageString + ".model." + innerField.getPrefix(), firstLetterToUpperCase(innerField.getTypeName()));
         fieldSpec = innerField.isList()
             ? FieldSpec.builder(ParameterizedTypeName.get(ClassName.get(List.class), className),
-            getNameLowerCase(innerField.getName()), PRIVATE).addAnnotation(addSingularAnnotation(innerField)).build()
-            : FieldSpec.builder(className, getNameLowerCase(innerField.getName()), PRIVATE).build();
+            firstLetterToLowerCase(innerField.getName()), PRIVATE).addAnnotation(addSingularAnnotation(innerField)).build()
+            : FieldSpec.builder(className, firstLetterToLowerCase(innerField.getName()), PRIVATE).build();
       } else {
         fieldSpec = innerField.isList()
             ? FieldSpec.builder(ParameterizedTypeName.get(List.class,
-            AbstractTypeFactory.getTypeByString(innerField.getTypeName())),
-            getNameLowerCase(innerField.getName()),
+            TypeFactory.getTypeByString(innerField.getTypeName())),
+            firstLetterToLowerCase(innerField.getName()),
             PRIVATE).build()
-            : FieldSpec.builder(innerField.getType(), getNameLowerCase(innerField.getName()), PRIVATE).build();
+            : FieldSpec.builder(innerField.getType(), firstLetterToLowerCase(innerField.getName()), PRIVATE).build();
       }
       if (innerField.isNecessary()) {
         methodCodeBlockList
             .add(CodeBlock.builder()
-                .add(VALIDATOR, getNameLowerCase(innerField.getName()), getNameLowerCase(innerField.getName()),
+                .add(VALIDATOR, firstLetterToLowerCase(innerField.getName()), firstLetterToLowerCase(innerField.getName()),
                     ValidationExpressions.class, "notNull()")
                 .build()
             );
       }
+      //ToDo: This code for work with restriction
 //      if (isNotEmpty(innerField.getRestrictionList()) && !innerField.getRestrictionList().isEmpty()) {
 //        Optional<Restriction> minInclusive = innerField.getRestrictionList().stream()
 //            .filter(rest -> rest.getOperation().equals(RestrictionOperation.MAX_EXCLUSIVE)).findFirst();
@@ -133,7 +138,7 @@ public abstract class AbstractJavaFileFactory {
       methodBuilder.addCode(join(methodCodeBlockList, NEW_LINE));
       classBuilder.addMethod(methodBuilder.build());
     }
-    return createJavaFile(packageString + ".model." + field.getPrefix(), classBuilder.build());
+    return createJavaFile(packageString + DOT_MODEL_DOT + field.getPrefix(), classBuilder.build());
   }
 
   private static boolean checkDuplicateCreatedJavaClass(Field field) {

@@ -1,5 +1,18 @@
 package ru.art.generator.soap.factory;
 
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.BOOLEAN;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.BYTE;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.DATE;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.DATE_TIME;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.DECIMAL;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.DOUBLE;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.FLOAT;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.INT;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.INTEGER;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.LONG;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.STRING;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.TIME;
+
 import com.predic8.schema.Element;
 import com.predic8.schema.TypeDefinition;
 import com.predic8.schema.restriction.facet.EnumerationFacet;
@@ -18,38 +31,40 @@ import com.predic8.schema.restriction.facet.WhiteSpaceFacet;
 import groovy.xml.QName;
 import java.util.Date;
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import ru.art.generator.exception.NotFoundPrefixException;
 import ru.art.generator.soap.model.Restriction;
 import ru.art.generator.soap.model.Restriction.RestrictionBuilder;
 import ru.art.generator.soap.model.RestrictionOperation;
 
-public abstract class AbstractTypeFactory {
+@UtilityClass
+public class TypeFactory {
 
   public static Class<? extends Object> getTypeByString(String type) {
     switch (type) {
-      case "string":
+      case STRING:
         return String.class;
-      case "byte":
+      case BYTE:
         return Byte.class;
-      case "boolean":
+      case BOOLEAN:
         return Boolean.class;
-      case "float":
+      case FLOAT:
         return Float.class;
-      case "double":
+      case DOUBLE:
         return Double.class;
-      case "decimal":
+      case DECIMAL:
         return Double.class;
-      case "long":
+      case LONG:
         return Long.class;
-      case "int":
+      case INT:
         return Integer.class;
-      case "integer":
+      case INTEGER:
         return Integer.class;
-      case "dateTime":
+      case DATE_TIME:
         return Date.class;
-      case "time":
+      case TIME:
         return Date.class;
-      case "date":
+      case DATE:
         return Date.class;
       default:
         return Object.class;
