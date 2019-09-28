@@ -698,6 +698,10 @@ public class Entity implements Value {
         }
 
         public <T> EntityBuilder entityCollectionField(String name, Collection<T> collection, ValueFromModelMapper<T, Entity> mapper) {
+            if (isNull(collection)) {
+                entityCollectionField(name, emptyList());
+                return this;
+            }
             return entityCollectionField(name, collection.stream()
                     .filter(Objects::nonNull)
                     .map(mapper::map)
