@@ -1,1 +1,0 @@
-box.cfg {listen = 3301;custom_proc_title = "";memtx_dir = "";vinyl_dir = "";work_dir = "";pid_file = "";}
