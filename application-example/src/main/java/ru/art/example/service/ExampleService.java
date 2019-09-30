@@ -20,7 +20,6 @@ package ru.art.example.service;
 
 import ru.art.entity.*;
 import ru.art.example.api.model.*;
-import ru.art.protobuf.entity.ProtobufValueMessage.*;
 import static java.time.temporal.ChronoUnit.*;
 import static ru.art.entity.constants.ValueType.PrimitiveType.*;
 import static ru.art.example.api.constants.ExampleApiConstants.*;
@@ -215,7 +214,7 @@ public interface ExampleService {
         Value exampleValue = new Primitive(10, INT);
 
         // mapping value to protobufValue
-        ProtobufValue protobufValue = writeProtobuf(exampleValue);
+        com.google.protobuf.Value protobufValue = writeProtobuf(exampleValue);
 
         // mapping protobufValue to value
         Value mappedValue = readProtobuf(protobufValue);
