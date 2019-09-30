@@ -27,10 +27,8 @@ import static java.util.Optional.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Value.*;
-import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
-import static ru.art.protobuf.descriptor.ProtobufEntityWriter.*;
-import static ru.art.protobuf.entity.ProtobufValueMessage.*;
-import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.*;
+import static ru.art.message.pack.descriptor.MessagePackEntityReader.*;
+import static ru.art.message.pack.descriptor.MessagePackEntityWriter.*;
 import static ru.art.rocks.db.constants.RocksDbExceptionMessages.*;
 import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
 import static ru.art.rocks.db.dao.RocksDbCollectionDao.*;
@@ -41,33 +39,32 @@ import java.util.Map.*;
 import java.util.function.*;
 
 public interface RocksDbValueDao {
-    static void putAsProtobuf(String name, String id, Value value) {
+    static void putBinary(String name, String id, Value value) {
         if (isEmpty(name)) return;
         if (isEmpty(id)) return;
         if (isEmpty(value)) return;
         if (getValueIdentifiers(name).contains(id)) {
-            putAsProtobuf(name + ROCKS_DB_KEY_DELIMITER + id, value);
+            putBinary(name + ROCKS_DB_KEY_DELIMITER + id, value);
             return;
         }
         add(name, id);
-        putAsProtobuf(name + ROCKS_DB_KEY_DELIMITER + id, value);
+        putBinary(name + ROCKS_DB_KEY_DELIMITER + id, value);
     }
 
-    static void putAsProtobuf(String entityKey, Value value) {
+    static void putBinary(String entityKey, Value value) {
         if (isEmpty(entityKey)) return;
         if (isEmpty(value)) return;
-        ProtobufValue protobufValue = writeProtobuf(value);
         byte[] keyBytes = entityKey.getBytes();
-        byte[] valueBytes = protobufValue.toByteArray();
+        byte[] valueBytes = writeMessagePack(value);
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
-    static Optional<Value> getAsProtobuf(String entityKey) {
+    static Optional<Value> getBinary(String entityKey) {
         if (isEmpty(entityKey)) return empty();
         byte[] bytes = get(entityKey);
         if (isEmpty(bytes)) return empty();
         try {
-            return ofNullable(readProtobuf(parseFrom(bytes)));
+            return ofNullable(readMessagePack(bytes));
         } catch (Throwable e) {
             throw new RocksDbOperationException(PROTOBUF_PARSING_ERROR, e);
         }

@@ -27,6 +27,7 @@ art {
         applicationProtobufGenerated()
         applicationJson()
         applicationXml()
+        applicationMessagePack()
     }
 }
 

@@ -19,14 +19,13 @@
 package ru.art.protobuf.descriptor;
 
 import com.google.protobuf.*;
-import lombok.*;
+import lombok.experimental.*;
 import ru.art.entity.Value;
 import ru.art.entity.*;
 import ru.art.protobuf.exception.*;
-import static java.lang.Integer.valueOf;
+import static java.lang.Integer.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -37,12 +36,37 @@ import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.protobuf.constants.ProtobufExceptionMessages.*;
 import static ru.art.protobuf.entity.ProtobufValueMessage.*;
 import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.*;
+import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public class ProtobufEntityReader {
+    public static Value readProtobuf(byte[] bytes) {
+        try {
+            return readProtobuf(parseFrom(bytes));
+        } catch (Throwable e) {
+            throw new ProtobufException(e);
+        }
+    }
+
+    public static Value readProtobuf(InputStream inputStream) {
+        try {
+            return readProtobuf(parseFrom(inputStream));
+        } catch (Throwable e) {
+            throw new ProtobufException(e);
+        }
+    }
+
+    public static Value readProtobuf(Path path) {
+        try {
+            return readProtobuf(parseFrom(readFileBytes(path)));
+        } catch (InvalidProtocolBufferException e) {
+            throw new ProtobufException(e);
+        }
+    }
+
     public static Value readProtobuf(ProtobufValue protobufValue) {
         if (isNull(protobufValue) || isNull(protobufValue.getValue())) return null;
         try {
@@ -80,13 +104,6 @@ public class ProtobufEntityReader {
         throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, protobufValue.getValueType()));
     }
 
-    public static Value readProtobuf(Path path) {
-        try {
-            return readProtobuf(parseFrom(readFileBytes(path)));
-        } catch (InvalidProtocolBufferException e) {
-            throw new ProtobufException(e);
-        }
-    }
 
     private static Value readCollectionFromProtobuf(ProtobufCollection protobufCollection) throws InvalidProtocolBufferException {
         switch (protobufCollection.getElementsType()) {

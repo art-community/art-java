@@ -25,6 +25,7 @@ import static lombok.AccessLevel.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.message.pack.constants.MessagePackConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*;
 import static ru.art.rsocket.module.RsocketModule.*;
@@ -40,6 +41,9 @@ public class RsocketDataFormatMimeTypeConverter {
         if (APPLICATION_PROTOBUF.getString().equals(type.getType() + SLASH + type.getSubtype())) return PROTOBUF;
         if (APPLICATION_XML.getString().equals(type.getType() + SLASH + type.getSubtype())) return XML;
         if (TEXT_XML.getString().equals(type.getType() + SLASH + type.getSubtype())) return XML;
+        if (mimeType.equalsIgnoreCase(APPLICATION_MESSAGE_PACK.getType() + SLASH + APPLICATION_MESSAGE_PACK.getSubtype())) {
+            return MESSAGE_PACK;
+        }
         return rsocketModule().getDataFormat();
     }
 
@@ -51,6 +55,8 @@ public class RsocketDataFormatMimeTypeConverter {
                 return APPLICATION_JSON.getString();
             case XML:
                 return APPLICATION_XML.getString();
+            case MESSAGE_PACK:
+                return APPLICATION_MESSAGE_PACK.getType() + SLASH + APPLICATION_MESSAGE_PACK.getSubtype();
         }
         return BINARY_MIME_TYPE;
     }

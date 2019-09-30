@@ -20,17 +20,20 @@ package ru.art.entity;
 
 import lombok.*;
 import ru.art.core.checker.*;
+import ru.art.core.factory.*;
 import ru.art.entity.constants.*;
 import ru.art.entity.constants.ValueType.*;
 import ru.art.entity.exception.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.entity.Value.*;
 import static ru.art.entity.constants.CollectionMode.COLLECTION;
 import static ru.art.entity.constants.CollectionMode.*;
 import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
@@ -40,7 +43,6 @@ import static ru.art.entity.constants.ValueType.CollectionElementsType.DOUBLE;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.ENTITY;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.FLOAT;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.INT;
-import static ru.art.entity.constants.ValueType.CollectionElementsType.LONG;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.MAP;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING_PARAMETERS_MAP;
@@ -88,7 +90,7 @@ public class CollectionValue<T> implements Value {
 
     CollectionValue(long[] longElements) {
         this.longElements = longElements;
-        elementsType = LONG;
+        elementsType = CollectionElementsType.LONG;
         elements = null;
         collectionMode = PRIMITIVE_ARRAY;
     }
@@ -180,9 +182,6 @@ public class CollectionValue<T> implements Value {
 
     public List<Long> getLongList() {
         if (isNull(elementsType)) return emptyList();
-        if (elementsType != LONG) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, LONG.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(longElements)) {
                 return emptyList();
@@ -193,12 +192,31 @@ public class CollectionValue<T> implements Value {
             }
             return list;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return emptyList();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.LONG)
+                    .map(element -> asPrimitive(cast(element)).getLong())
+                    .collect(toList());
+        }
+        if (elementsType != CollectionElementsType.LONG) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.LONG.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return emptyList();
         return cast(getList());
     }
 
     public List<String> getStringList() {
         if (isNull(elementsType)) return emptyList();
+        if (elementsType == VALUE) {
+            if (isEmpty()) return emptyList();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.STRING)
+                    .map(element -> asPrimitive(cast(element)).getString())
+                    .collect(toList());
+        }
         if (elementsType != STRING) {
             throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, STRING.toString(), elementsType.toString()));
         }
@@ -208,9 +226,6 @@ public class CollectionValue<T> implements Value {
 
     public List<Boolean> getBoolList() {
         if (isNull(elementsType)) return emptyList();
-        if (elementsType != BOOL) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(boolElements)) {
                 return emptyList();
@@ -221,15 +236,23 @@ public class CollectionValue<T> implements Value {
             }
             return list;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return emptyList();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.BOOL)
+                    .map(element -> asPrimitive(cast(element)).getBool())
+                    .collect(toList());
+        }
+        if (elementsType != BOOL) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return emptyList();
         return cast(getList());
     }
 
     public List<Integer> getIntList() {
         if (isNull(elementsType)) return emptyList();
-        if (elementsType != INT) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(intElements)) {
                 return emptyList();
@@ -240,15 +263,23 @@ public class CollectionValue<T> implements Value {
             }
             return list;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return emptyList();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.INT)
+                    .map(element -> asPrimitive(cast(element)).getInt())
+                    .collect(toList());
+        }
+        if (elementsType != INT) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return emptyList();
         return cast(getList());
     }
 
     public List<Byte> getByteList() {
         if (isNull(elementsType)) return emptyList();
-        if (elementsType != BYTE) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(byteElements)) {
                 return emptyList();
@@ -259,15 +290,23 @@ public class CollectionValue<T> implements Value {
             }
             return list;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return emptyList();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.BYTE)
+                    .map(element -> asPrimitive(cast(element)).getByte())
+                    .collect(toList());
+        }
+        if (elementsType != BYTE) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return emptyList();
         return cast(getList());
     }
 
     public List<Double> getDoubleList() {
         if (isNull(elementsType)) return emptyList();
-        if (elementsType != DOUBLE) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(doubleElements)) {
                 return emptyList();
@@ -278,15 +317,23 @@ public class CollectionValue<T> implements Value {
             }
             return list;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return emptyList();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.DOUBLE)
+                    .map(element -> asPrimitive(cast(element)).getDouble())
+                    .collect(toList());
+        }
+        if (elementsType != DOUBLE) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return emptyList();
         return cast(getList());
     }
 
     public List<Float> getFloatList() {
         if (isNull(elementsType)) return emptyList();
-        if (elementsType != FLOAT) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, FLOAT.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(floatElements)) {
                 return emptyList();
@@ -296,6 +343,17 @@ public class CollectionValue<T> implements Value {
                 list.add(floatElements);
             }
             return list;
+        }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return emptyList();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.FLOAT)
+                    .map(element -> asPrimitive(cast(element)).getFloat())
+                    .collect(toList());
+        }
+        if (elementsType != FLOAT) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, FLOAT.toString(), elementsType.toString()));
         }
         if (isEmpty()) return emptyList();
         return cast(getList());
@@ -349,9 +407,7 @@ public class CollectionValue<T> implements Value {
 
     public Set<Long> getLongSet() {
         if (isNull(elementsType)) return emptySet();
-        if (elementsType != LONG) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, LONG.toString(), elementsType.toString()));
-        }
+
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(longElements)) {
                 return emptySet();
@@ -362,6 +418,17 @@ public class CollectionValue<T> implements Value {
             }
             return set;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return emptySet();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.LONG)
+                    .map(element -> asPrimitive(cast(element)).getLong())
+                    .collect(toSet());
+        }
+        if (elementsType != CollectionElementsType.LONG) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.LONG.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return emptySet();
         return cast(getSet());
     }
@@ -369,6 +436,13 @@ public class CollectionValue<T> implements Value {
     public Set<String> getStringSet() {
         if (isNull(elementsType)) return emptySet();
         if (isEmpty()) return emptySet();
+        if (elementsType == VALUE) {
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.STRING)
+                    .map(element -> asPrimitive(cast(element)).getString())
+                    .collect(toSet());
+        }
         if (elementsType != STRING) {
             throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, STRING.toString(), elementsType.toString()));
         }
@@ -377,9 +451,6 @@ public class CollectionValue<T> implements Value {
 
     public Set<Boolean> getBoolSet() {
         if (isNull(elementsType)) return emptySet();
-        if (elementsType != BOOL) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(boolElements)) {
                 return emptySet();
@@ -390,15 +461,23 @@ public class CollectionValue<T> implements Value {
             }
             return set;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return emptySet();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.BOOL)
+                    .map(element -> asPrimitive(cast(element)).getBool())
+                    .collect(toSet());
+        }
+        if (elementsType != BOOL) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return emptySet();
         return cast(getSet());
     }
 
     public Set<Integer> getIntSet() {
         if (isNull(elementsType)) return emptySet();
-        if (elementsType != INT) {
-            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(intElements)) {
                 return emptySet();
@@ -409,15 +488,23 @@ public class CollectionValue<T> implements Value {
             }
             return set;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return emptySet();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.INT)
+                    .map(element -> asPrimitive(cast(element)).getInt())
+                    .collect(toSet());
+        }
+        if (elementsType != INT) {
+            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return emptySet();
         return cast(getSet());
     }
 
     public Set<Double> getDoubleSet() {
         if (isNull(elementsType)) return emptySet();
-        if (elementsType != DOUBLE) {
-            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(doubleElements)) {
                 return emptySet();
@@ -428,15 +515,23 @@ public class CollectionValue<T> implements Value {
             }
             return set;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return emptySet();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.DOUBLE)
+                    .map(element -> asPrimitive(cast(element)).getDouble())
+                    .collect(toSet());
+        }
+        if (elementsType != DOUBLE) {
+            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return emptySet();
         return cast(getSet());
     }
 
     public Set<Byte> getByteSet() {
         if (isNull(elementsType)) return emptySet();
-        if (elementsType != BYTE) {
-            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(byteElements)) {
                 return emptySet();
@@ -447,15 +542,23 @@ public class CollectionValue<T> implements Value {
             }
             return set;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return emptySet();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.BYTE)
+                    .map(element -> asPrimitive(cast(element)).getByte())
+                    .collect(toSet());
+        }
+        if (elementsType != BYTE) {
+            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return emptySet();
         return cast(getSet());
     }
 
     public Set<Float> getFloatSet() {
         if (isNull(elementsType)) return emptySet();
-        if (elementsType != FLOAT) {
-            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, FLOAT.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(floatElements)) {
                 return emptySet();
@@ -465,6 +568,17 @@ public class CollectionValue<T> implements Value {
                 set.add(floatElement);
             }
             return set;
+        }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return emptySet();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.FLOAT)
+                    .map(element -> asPrimitive(cast(element)).getFloat())
+                    .collect(toSet());
+        }
+        if (elementsType != FLOAT) {
+            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, FLOAT.toString(), elementsType.toString()));
         }
         if (isEmpty()) return emptySet();
         return cast(getSet());
@@ -518,9 +632,6 @@ public class CollectionValue<T> implements Value {
 
     public Queue<Long> getLongQueue() {
         if (isNull(elementsType)) return queueOf();
-        if (elementsType != LONG) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, LONG.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(longElements)) {
                 return queueOf();
@@ -530,6 +641,17 @@ public class CollectionValue<T> implements Value {
                 queue.add(longElement);
             }
             return queue;
+        }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return queueOf();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.LONG)
+                    .map(element -> asPrimitive(cast(element)).getLong())
+                    .collect(toCollection(CollectionsFactory::queueOf));
+        }
+        if (elementsType != CollectionElementsType.LONG) {
+            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, CollectionElementsType.LONG.toString(), elementsType.toString()));
         }
         if (isEmpty()) return queueOf();
         return cast(getQueue());
@@ -546,9 +668,6 @@ public class CollectionValue<T> implements Value {
 
     public Queue<Boolean> getBoolQueue() {
         if (isNull(elementsType)) return queueOf();
-        if (elementsType != BOOL) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(boolElements)) {
                 return queueOf();
@@ -559,15 +678,23 @@ public class CollectionValue<T> implements Value {
             }
             return queue;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return queueOf();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.BOOL)
+                    .map(element -> asPrimitive(cast(element)).getBool())
+                    .collect(toCollection(CollectionsFactory::queueOf));
+        }
+        if (elementsType != BOOL) {
+            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return queueOf();
         return cast(getQueue());
     }
 
     public Queue<Integer> getIntQueue() {
         if (isNull(elementsType)) return queueOf();
-        if (elementsType != INT) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(intElements)) {
                 return queueOf();
@@ -578,15 +705,23 @@ public class CollectionValue<T> implements Value {
             }
             return queue;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return queueOf();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.INT)
+                    .map(element -> asPrimitive(cast(element)).getInt())
+                    .collect(toCollection(CollectionsFactory::queueOf));
+        }
+        if (elementsType != INT) {
+            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return queueOf();
         return cast(getQueue());
     }
 
     public Queue<Double> getDoubleQueue() {
         if (isNull(elementsType)) return queueOf();
-        if (elementsType != DOUBLE) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(doubleElements)) {
                 return queueOf();
@@ -597,15 +732,24 @@ public class CollectionValue<T> implements Value {
             }
             return queue;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return queueOf();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.DOUBLE)
+                    .map(element -> asPrimitive(cast(element)).getDouble())
+                    .collect(toCollection(CollectionsFactory::queueOf));
+        }
+        if (elementsType != DOUBLE) {
+            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
+        }
+
         if (isEmpty()) return queueOf();
         return cast(getQueue());
     }
 
     public Queue<Byte> getByteQueue() {
         if (isNull(elementsType)) return queueOf();
-        if (elementsType != BYTE) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(byteElements)) {
                 return queueOf();
@@ -616,15 +760,23 @@ public class CollectionValue<T> implements Value {
             }
             return queue;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return queueOf();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.BYTE)
+                    .map(element -> asPrimitive(cast(element)).getByte())
+                    .collect(toCollection(CollectionsFactory::queueOf));
+        }
+        if (elementsType != BYTE) {
+            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return queueOf();
         return cast(getQueue());
     }
 
     public Queue<Float> getFloatQueue() {
         if (isNull(elementsType)) return queueOf();
-        if (elementsType != FLOAT) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, FLOAT.toString(), elementsType.toString()));
-        }
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (CheckerForEmptiness.isEmpty(floatElements)) {
                 return queueOf();
@@ -635,6 +787,17 @@ public class CollectionValue<T> implements Value {
             }
             return queue;
         }
+        if (elementsType == VALUE) {
+            if (isEmpty()) return queueOf();
+            return getList()
+                    .stream()
+                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.FLOAT)
+                    .map(element -> asPrimitive(cast(element)).getFloat())
+                    .collect(toCollection(CollectionsFactory::queueOf));
+        }
+        if (elementsType != FLOAT) {
+            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, FLOAT.toString(), elementsType.toString()));
+        }
         if (isEmpty()) return queueOf();
         return cast(getQueue());
     }
@@ -642,10 +805,21 @@ public class CollectionValue<T> implements Value {
 
     public long[] getLongArray() {
         if (isEmpty()) return EMPTY_LONGS;
-        if (elementsType != LONG) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, LONG.toString(), elementsType.toString()));
-        }
         if (collectionMode == COLLECTION) {
+            if (elementsType == VALUE) {
+                List<T> list = getList();
+                long[] longs = new long[list.size()];
+                for (int i = 0; i < list.size(); i++) {
+                    T value = list.get(i);
+                    if (isPrimitive(cast(value)) && asPrimitive(cast(value)).getPrimitiveType() == PrimitiveType.LONG) {
+                        longs[i] = asPrimitive(cast(value)).getLong();
+                    }
+                }
+                return longs;
+            }
+            if (elementsType != CollectionElementsType.LONG) {
+                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.LONG.toString(), elementsType.toString()));
+            }
             List<T> list = getList();
             long[] longs = new long[list.size()];
             for (int i = 0; i < list.size(); i++) {
@@ -653,15 +827,29 @@ public class CollectionValue<T> implements Value {
             }
             return longs;
         }
+        if (elementsType != CollectionElementsType.LONG) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.LONG.toString(), elementsType.toString()));
+        }
         return longElements;
     }
 
     public boolean[] getBoolArray() {
         if (isEmpty()) return EMPTY_BOOLEANS;
-        if (elementsType != BOOL) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
-        }
         if (collectionMode == COLLECTION) {
+            if (elementsType == VALUE) {
+                List<T> list = getList();
+                boolean[] booleans = new boolean[list.size()];
+                for (int i = 0; i < list.size(); i++) {
+                    T value = list.get(i);
+                    if (isPrimitive(cast(value)) && asPrimitive(cast(value)).getPrimitiveType() == PrimitiveType.BOOL) {
+                        booleans[i] = asPrimitive(cast(value)).getBool();
+                    }
+                }
+                return booleans;
+            }
+            if (elementsType != CollectionElementsType.BOOL) {
+                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.BOOL.toString(), elementsType.toString()));
+            }
             List<T> list = getList();
             boolean[] booleans = new boolean[list.size()];
             for (int i = 0; i < list.size(); i++) {
@@ -669,15 +857,29 @@ public class CollectionValue<T> implements Value {
             }
             return booleans;
         }
+        if (elementsType != CollectionElementsType.LONG) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.BOOL.toString(), elementsType.toString()));
+        }
         return boolElements;
     }
 
     public int[] getIntArray() {
         if (isEmpty()) return EMPTY_INTS;
-        if (elementsType != INT) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
-        }
         if (collectionMode == COLLECTION) {
+            if (elementsType == VALUE) {
+                List<T> list = getList();
+                int[] ints = new int[list.size()];
+                for (int i = 0; i < list.size(); i++) {
+                    T value = list.get(i);
+                    if (isPrimitive(cast(value)) && asPrimitive(cast(value)).getPrimitiveType() == PrimitiveType.INT) {
+                        ints[i] = asPrimitive(cast(value)).getInt();
+                    }
+                }
+                return ints;
+            }
+            if (elementsType != CollectionElementsType.INT) {
+                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.INT.toString(), elementsType.toString()));
+            }
             List<T> list = getList();
             int[] ints = new int[list.size()];
             for (int i = 0; i < list.size(); i++) {
@@ -685,15 +887,29 @@ public class CollectionValue<T> implements Value {
             }
             return ints;
         }
+        if (elementsType != CollectionElementsType.INT) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.INT.toString(), elementsType.toString()));
+        }
         return intElements;
     }
 
     public byte[] getByteArray() {
         if (isEmpty()) return EMPTY_BYTES;
-        if (elementsType != BYTE) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
-        }
         if (collectionMode == COLLECTION) {
+            if (elementsType == VALUE) {
+                List<T> list = getList();
+                byte[] bytes = new byte[list.size()];
+                for (int i = 0; i < list.size(); i++) {
+                    T value = list.get(i);
+                    if (isPrimitive(cast(value)) && asPrimitive(cast(value)).getPrimitiveType() == PrimitiveType.BYTE) {
+                        bytes[i] = asPrimitive(cast(value)).getByte();
+                    }
+                }
+                return bytes;
+            }
+            if (elementsType != CollectionElementsType.BYTE) {
+                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.BYTE.toString(), elementsType.toString()));
+            }
             List<T> list = getList();
             byte[] bytes = new byte[list.size()];
             for (int i = 0; i < list.size(); i++) {
@@ -701,15 +917,29 @@ public class CollectionValue<T> implements Value {
             }
             return bytes;
         }
+        if (elementsType != CollectionElementsType.BYTE) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.BYTE.toString(), elementsType.toString()));
+        }
         return byteElements;
     }
 
     public double[] getDoubleArray() {
         if (isEmpty()) return EMPTY_DOUBLES;
-        if (elementsType != DOUBLE) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
-        }
         if (collectionMode == COLLECTION) {
+            if (elementsType == VALUE) {
+                List<T> list = getList();
+                double[] doubles = new double[list.size()];
+                for (int i = 0; i < list.size(); i++) {
+                    T value = list.get(i);
+                    if (isPrimitive(cast(value)) && asPrimitive(cast(value)).getPrimitiveType() == PrimitiveType.DOUBLE) {
+                        doubles[i] = asPrimitive(cast(value)).getDouble();
+                    }
+                }
+                return doubles;
+            }
+            if (elementsType != CollectionElementsType.DOUBLE) {
+                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.DOUBLE.toString(), elementsType.toString()));
+            }
             List<T> list = getList();
             double[] doubles = new double[list.size()];
             for (int i = 0; i < list.size(); i++) {
@@ -717,21 +947,38 @@ public class CollectionValue<T> implements Value {
             }
             return doubles;
         }
+        if (elementsType != CollectionElementsType.DOUBLE) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.DOUBLE.toString(), elementsType.toString()));
+        }
         return doubleElements;
     }
 
     public float[] getFloatArray() {
         if (isEmpty()) return EMPTY_FLOATS;
-        if (elementsType != FLOAT) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, FLOAT.toString(), elementsType.toString()));
-        }
         if (collectionMode == COLLECTION) {
+            if (elementsType == VALUE) {
+                List<T> list = getList();
+                float[] floats = new float[list.size()];
+                for (int i = 0; i < list.size(); i++) {
+                    T value = list.get(i);
+                    if (isPrimitive(cast(value)) && asPrimitive(cast(value)).getPrimitiveType() == PrimitiveType.FLOAT) {
+                        floats[i] = asPrimitive(cast(value)).getFloat();
+                    }
+                }
+                return floats;
+            }
+            if (elementsType != CollectionElementsType.FLOAT) {
+                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.FLOAT.toString(), elementsType.toString()));
+            }
             List<T> list = getList();
             float[] floats = new float[list.size()];
             for (int i = 0; i < list.size(); i++) {
                 floats[i] = (Float) list.get(i);
             }
             return floats;
+        }
+        if (elementsType != CollectionElementsType.FLOAT) {
+            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, CollectionElementsType.FLOAT.toString(), elementsType.toString()));
         }
         return floatElements;
     }

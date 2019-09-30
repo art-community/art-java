@@ -19,15 +19,16 @@
 package ru.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
-import lombok.*;
-import ru.art.entity.Value;
+import lombok.experimental.*;
 import ru.art.entity.*;
 import ru.art.json.exception.*;
 import static com.fasterxml.jackson.core.JsonToken.*;
 import static java.lang.Integer.*;
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.FileExtensions.*;
+import static ru.art.core.extension.InputStreamExtensions.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
@@ -40,8 +41,24 @@ import java.nio.file.*;
 import java.util.*;
 
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public class JsonEntityReader {
+    public static Value readJson(byte[] jsonBytes) {
+        return readJson(jsonModule().getObjectMapper().getFactory(), new String(jsonBytes, contextConfiguration().getCharset()));
+    }
+
+    public static Value readJson(InputStream inputStream) {
+        return readJson(toByteArray(inputStream));
+    }
+
+    public static Value readJson(Path path) {
+        return readJson(readFile(path));
+    }
+
+    public static Value readJson(String json) {
+        return readJson(jsonModule().getObjectMapper().getFactory(), json);
+    }
+
     public static Value readJson(JsonFactory jsonFactory, String json) {
         if (isNull(jsonFactory)) throw new JsonMappingException(JSON_FACTORY_IS_NULL);
         if (isEmpty(json)) return null;
@@ -80,14 +97,6 @@ public class JsonEntityReader {
         } catch (IOException e) {
             throw new JsonMappingException(e);
         }
-    }
-
-    public static Value readJson(String json) {
-        return readJson(jsonModule().getObjectMapper().getFactory(), json);
-    }
-
-    public static Value readJson(Path path) {
-        return readJson(readFile(path));
     }
 
 

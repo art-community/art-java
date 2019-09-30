@@ -18,13 +18,12 @@
 
 package ru.art.xml.descriptor;
 
-import lombok.*;
+import lombok.experimental.*;
 import ru.art.entity.*;
 import ru.art.entity.constants.*;
 import ru.art.xml.exception.*;
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.FileExtensions.*;
@@ -38,14 +37,29 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public class XmlEntityWriter {
-    public static String writeXml(XmlEntity xmlEntity) throws XmlMappingException {
-        return writeXml(xmlModule().getXmlOutputFactory(), xmlEntity);
+    public static byte[] writeXmlToBytes(XmlEntity xmlEntity) throws XmlMappingException {
+        return writeXml(xmlModule().getXmlOutputFactory(), xmlEntity).getBytes();
+    }
+
+    public static void writeXml(XmlEntity xmlEntity, OutputStream outputStream) throws XmlMappingException {
+        if (isNull(outputStream)) {
+            return;
+        }
+        try {
+            outputStream.write(writeXml(xmlModule().getXmlOutputFactory(), xmlEntity).getBytes());
+        } catch (Throwable e) {
+            throw new XmlMappingException(e);
+        }
     }
 
     public static void writeXml(XmlEntity xmlEntity, Path path) throws XmlMappingException {
         writeFileQuietly(path, writeXml(xmlModule().getXmlOutputFactory(), xmlEntity));
+    }
+
+    public static String writeXml(XmlEntity xmlEntity) throws XmlMappingException {
+        return writeXml(xmlModule().getXmlOutputFactory(), xmlEntity);
     }
 
     public static String writeXml(XMLOutputFactory xmlOutputFactory, XmlEntity xmlEntity) throws XmlMappingException {
