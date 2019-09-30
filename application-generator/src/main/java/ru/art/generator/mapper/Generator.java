@@ -135,13 +135,13 @@ public class Generator {
                 continue;
             }
 
-            Class currentClass = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING), packageModel);
+            Class<?> currentClass = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING), packageModel);
             if (currentClass.isAnnotationPresent(IgnoreGeneration.class) || currentClass.isEnum())
                 continue;
             if (currentModelFileName.contains(REQUEST)) {
                 if (isNotEmpty(files.get(currentModelFileName.replace(REQUEST, RESPONSE)))) {
                     try {
-                        Class response = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING).replace(REQUEST, RESPONSE), packageModel);
+                        Class<?> response = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING).replace(REQUEST, RESPONSE), packageModel);
                         if (!currentClass.isAnnotationPresent(IgnoreGeneration.class) &&
                                 !response.isAnnotationPresent(IgnoreGeneration.class) &&
                                 !currentClass.isEnum()) {
