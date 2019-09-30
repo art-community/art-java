@@ -16,22 +16,15 @@
  * limitations under the License.
  */
 
-package ru.art.generator.spec.http.servicespec.model;
+package ru.art.generator.mapper.annotation;
 
-import com.squareup.javapoet.*;
-import lombok.*;
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.annotation.*;
 
 /**
- * Data used for filling array of codeblocks in proper order
- * for generated httpService constant.
+ * Annotation for mapper generator.
+ * Classes marked with IgnoreGeneration annotation won't be processed by generator.
  */
-@Builder
-@Getter
-@Setter
-public class HttpServiceCodeBlockFillData {
-    List<CodeBlock> codeBlocks;
-    int defaultListenCount;
-    Map<Method, StaticImports> importsForMethods;
+@Target(ElementType.TYPE)
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface IgnoreGeneration {
 }

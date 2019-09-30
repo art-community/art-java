@@ -27,7 +27,8 @@ import ru.art.entity.mapper.*;
  */
 public interface FromModelConstants {
     String FROM_MODEL = "from";
-    String MODEL_TO_ENTITY_LAMBDA = "model -> $T.entityBuilder()";
+    String MODEL_TO_ENTITY_LAMBDA = "model -> isNotEmpty(model) ? $T.entityBuilder()";
+    String DEFAULT_MODEL_BUILDER = ".build() : $T.entityBuilder().build()";
 
     String STRING_FIELD = ".stringField($N, model.$L())";
     String INT_FIELD = ".intField($N, model.$L())";

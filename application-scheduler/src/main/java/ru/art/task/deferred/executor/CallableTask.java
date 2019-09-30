@@ -16,16 +16,15 @@
  * limitations under the License.
  */
 
-package ru.art.generator.spec.http.servicespec.annotation;
+package ru.art.task.deferred.executor;
 
-import java.lang.annotation.*;
+import lombok.*;
+import ru.art.core.identified.*;
+import java.util.function.*;
 
-/**
- * Annotation for specification generator.
- * Class which is marked with HttpService annotation needs HttpServiceSpecification to generate.
- */
-@Target(ElementType.TYPE)
-@Retention(value = RetentionPolicy.RUNTIME)
-public @interface HttpService {
-    String serve();
+@Getter
+@AllArgsConstructor
+public class CallableTask<T> implements UniqueIdentified {
+    private final String id;
+    private final Function<String, T> callable;
 }

@@ -16,19 +16,15 @@
  * limitations under the License.
  */
 
-package ru.art.generator.spec.common.annotation;
+package ru.art.task.deferred.executor;
 
-import java.lang.annotation.*;
+import lombok.*;
+import ru.art.core.identified.*;
+import java.util.function.*;
 
-/**
- * Annotation for specification generator.
- */
-@Target(ElementType.METHOD)
-@Retention(value = RetentionPolicy.RUNTIME)
-public @interface Validatable {
-    boolean httpSpec() default false;
-
-    boolean soapSpec() default false;
-
-    boolean grpcSpec() default false;
+@Getter
+@AllArgsConstructor
+public class RunnableTask implements UniqueIdentified {
+    private final String id;
+    private final Consumer<String> runnable;
 }

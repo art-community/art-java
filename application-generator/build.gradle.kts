@@ -21,9 +21,6 @@ art {
         applicationCore()
         applicationEntity()
         applicationService()
-        applicationHttp()
-        applicationHttpServer()
-        applicationHttpClient()
     }
 }
 

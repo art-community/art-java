@@ -21,7 +21,7 @@ package ru.art.generator.mapper.exception;
 /**
  * Thrown to indicate that error during generation of
  * inner class. Mainly caused by the fact, that class has
- * NonGenerated annotation or is an enum.
+ * IgnoreGeneration annotation or is an enum.
  */
 public class InnerClassGenerationException extends MappingGeneratorException {
     public InnerClassGenerationException(String message) {

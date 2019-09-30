@@ -27,7 +27,7 @@ public interface ExceptionConstants {
         String UNABLE_TO_CREATE_MAPPER = "Unable to create Mapper file ''{0}''";
         String UNABLE_TO_GENERATE_INTERFACE = "Unable to generate interface for type ''{0}'' because of the ''{1}''";
         String UNABLE_TO_FIND_A_PATH_FOR_CLASS = "Unable to find a path for class ''{0}''. Mapper wasn't created.";
-        String UNABLE_TO_CREATE_INNER_CLASS_MAPPER = "Unable to create inner class mapper, because inner class ''{0}'' is an enum or marked as NonGenerated.";
+        String UNABLE_TO_CREATE_INNER_CLASS_MAPPER = "Unable to create inner class mapper, because inner class ''{0}'' is an enum or marked as IgnoreGeneration.";
         String UNABLE_TO_PARSE_JAR_PATH = "Unable to parse jar path for ''{0}''";
         String UNABLE_TO_CREATE_MAPPER_UNKNOWN_ERROR = "Unable to create Mapper file ''{0}'' because of the ''{1}''";
     }
