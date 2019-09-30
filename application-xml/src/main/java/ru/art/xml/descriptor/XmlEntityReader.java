@@ -18,7 +18,7 @@
 
 package ru.art.xml.descriptor;
 
-import lombok.*;
+import lombok.experimental.*;
 import ru.art.entity.*;
 import ru.art.entity.XmlEntity.*;
 import ru.art.xml.exception.*;
@@ -26,9 +26,10 @@ import static java.nio.charset.StandardCharsets.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static javax.xml.stream.XMLStreamConstants.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.FileExtensions.*;
+import static ru.art.core.extension.InputStreamExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.XmlEntity.*;
 import static ru.art.xml.constants.XmlMappingExceptionMessages.*;
@@ -38,9 +39,24 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public class XmlEntityReader {
+    public static XmlEntity readXml(byte[] bytes) {
+        return readXml(new String(bytes, contextConfiguration().getCharset()));
+    }
+
+    public static XmlEntity readXml(InputStream inputStream) {
+        return readXml(toByteArray(inputStream));
+    }
+
+    public static XmlEntity readXml(Path path) {
+        return readXml(readFile(path));
+    }
+
+    public static XmlEntity readXml(String xml) {
+        return readXml(xmlModule().getXmlInputFactory(), xml);
+    }
+
     public static XmlEntity readXml(XMLInputFactory xmlInputFactory, String xml) {
         if (isNull(xmlInputFactory)) throw new XmlMappingException(XML_FACTORY_IS_NULL);
         if (isEmpty(xml)) return xmlEntityBuilder().create();
@@ -54,13 +70,6 @@ public class XmlEntityReader {
         }
     }
 
-    public static XmlEntity readXml(String xml) {
-        return readXml(xmlModule().getXmlInputFactory(), xml);
-    }
-
-    public static XmlEntity readXml(Path path) {
-        return readXml(readFile(path));
-    }
 
     public static XmlEntity readXml(File file) {
         return readXml(readFile(file.getAbsolutePath()));

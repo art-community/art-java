@@ -35,7 +35,8 @@ public interface RsocketModuleConstants {
     enum RsocketDataFormat {
         PROTOBUF,
         JSON,
-        XML
+        XML,
+        MESSAGE_PACK
     }
 
     enum RsocketTransport {

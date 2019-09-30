@@ -85,7 +85,7 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
 
     @Getter
     class RsocketModuleDefaultConfiguration implements RsocketModuleConfiguration {
-        private final RsocketDataFormat dataFormat = PROTOBUF;
+        private final RsocketDataFormat dataFormat = MESSAGE_PACK;
         private final String serverHost = BROADCAST_IP_ADDRESS;
         private final int serverTcpPort = findAvailableTcpPort();
         private final int serverWebSocketPort = findAvailableTcpPort();

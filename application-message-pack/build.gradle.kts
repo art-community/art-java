@@ -16,23 +16,15 @@
  * limitations under the License.
  */
 
-package ru.art.state.dao;
-
-import ru.art.entity.*;
-import ru.art.state.api.model.*;
-import static ru.art.rocks.db.dao.RocksDbValueDao.*;
-import static ru.art.state.api.mapping.ClusterMapper.*;
-import static ru.art.state.constants.StateModuleConstants.DbKeys.*;
-
-public interface ClusterDao {
-    static void saveCluster(Cluster cluster) {
-        putBinary(CLUSTER, fromCluster.map(cluster));
+art {
+    providedModules {
+        applicationCore()
+        applicationLogging()
+        applicationEntity()
+        applicationJson()
     }
+}
 
-    static Cluster loadCluster() {
-        return getBinary(CLUSTER)
-                .map(Value::asEntity)
-                .map(toCluster::map)
-                .orElse(Cluster.builder().build());
-    }
+dependencies {
+    embedded("org.msgpack", "msgpack-core", art.externalDependencyVersionsConfiguration.messagePackVersion)
 }

@@ -41,7 +41,7 @@ public class StringParametersSchema extends ValueSchema {
 
     @Override
     public List<?> toTuple() {
-        List<?> tuple = dynamicArrayOf(getType().name());
+        List<?> tuple = dynamicArrayOf(getType().ordinal());
         tuple.add(cast(stringParametersSchema));
         return tuple;
     }

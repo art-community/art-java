@@ -28,6 +28,7 @@ import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import static ru.art.entity.Value.*;
 import static ru.art.json.descriptor.JsonEntityWriter.*;
+import static ru.art.message.pack.descriptor.MessagePackEntityWriter.*;
 import static ru.art.protobuf.descriptor.ProtobufEntityWriter.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static ru.art.rsocket.module.RsocketModule.*;
@@ -43,6 +44,9 @@ public class RsocketPayloadWriter {
                 return create(writeJson(value));
             case XML:
                 return create(writeXml(asXmlEntity(value)));
+            case MESSAGE_PACK:
+                return create(writeMessagePack(value));
+
         }
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDataFormat()));
     }

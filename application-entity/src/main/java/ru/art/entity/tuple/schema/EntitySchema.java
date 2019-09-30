@@ -50,7 +50,7 @@ public class EntitySchema extends ValueSchema {
 
     @Override
     public List<?> toTuple() {
-        List<?> tuple = dynamicArrayOf(getType().name());
+        List<?> tuple = dynamicArrayOf(getType().ordinal());
         fieldsSchema.stream().map(EntityFieldSchema::toTuple).forEach(value -> tuple.add(cast(value)));
         return tuple;
     }
@@ -80,13 +80,13 @@ public class EntitySchema extends ValueSchema {
 
         public List<?> toTuple() {
             if (isNull(schema)) {
-                return dynamicArrayOf(type.name(), name, emptyList());
+                return dynamicArrayOf(type.ordinal(), name, emptyList());
             }
-            return dynamicArrayOf(type.name(), name, schema.toTuple());
+            return dynamicArrayOf(type.ordinal(), name, schema.toTuple());
         }
 
         public static EntityFieldSchema fromTuple(List<?> tuple) {
-            ValueType type = ValueType.valueOf((String) tuple.get(0));
+            ValueType type = ValueType.values()[((Integer) tuple.get(0))];
             String name = (String) tuple.get(1);
             if (isPrimitiveType(type)) {
                 return new EntityFieldSchema(type, name, new ValueSchema(type));

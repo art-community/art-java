@@ -280,7 +280,6 @@ public class Entity implements Value {
     }
 
 
-
     public List<String> findStringSet(String name) {
         CollectionValue<String> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getStringList();
@@ -625,10 +624,13 @@ public class Entity implements Value {
         }
 
         public EntityBuilder mapField(String name, Map<?, ?> map, ValueFromModelMapper<?, ? extends Value> keyMapper, ValueFromModelMapper<?, ? extends Value> valueMapper) {
+            if (isNull(map)) {
+                mapField(name, emptyMap());
+            }
             Map<? extends Value, ? extends Value> elements = map.entrySet()
                     .stream()
                     .collect(toMap(entry -> keyMapper.map(cast(entry.getKey())), entry -> valueMapper.map(cast(entry.getValue()))));
-            fields.put(name, MapValue.builder().elements(elements).build());
+            mapField(name, elements);
             return this;
         }
 
@@ -639,6 +641,11 @@ public class Entity implements Value {
 
         public EntityBuilder stringParametersField(String name, Map<String, String> stringParametersMap) {
             fields.put(name, StringParametersMap.builder().parameters(stringParametersMap).build());
+            return this;
+        }
+
+        public EntityBuilder boolCollectionField(String name, Collection<Boolean> value) {
+            fields.put(name, boolCollection(value));
             return this;
         }
 
@@ -672,6 +679,36 @@ public class Entity implements Value {
             return this;
         }
 
+        public EntityBuilder boolArrayField(String name, boolean[] value) {
+            fields.put(name, boolCollection(value));
+            return this;
+        }
+
+        public EntityBuilder intArrayField(String name, int[] value) {
+            fields.put(name, intCollection(value));
+            return this;
+        }
+
+        public EntityBuilder longArrayField(String name, long[] value) {
+            fields.put(name, longCollection(value));
+            return this;
+        }
+
+        public EntityBuilder doubleArrayField(String name, double[] value) {
+            fields.put(name, doubleCollection(value));
+            return this;
+        }
+
+        public EntityBuilder byteArrayField(String name, byte[] value) {
+            fields.put(name, byteCollection(value));
+            return this;
+        }
+
+        public EntityBuilder floatArrayField(String name, float[] value) {
+            fields.put(name, floatCollection(value));
+            return this;
+        }
+
         public EntityBuilder entityCollectionField(String name, Collection<Entity> value) {
             fields.put(name, collectionValue(CollectionElementsType.ENTITY, value));
             return this;
@@ -698,16 +735,16 @@ public class Entity implements Value {
         }
 
         public <T> EntityBuilder entityCollectionField(String name, Collection<T> collection, ValueFromModelMapper<T, Entity> mapper) {
+            if (isNull(collection)) {
+                entityCollectionField(name, emptyList());
+                return this;
+            }
             return entityCollectionField(name, collection.stream()
                     .filter(Objects::nonNull)
                     .map(mapper::map)
                     .collect(toList()));
         }
 
-        public EntityBuilder boolCollectionField(String name, Collection<Boolean> value) {
-            fields.put(name, boolCollection(value));
-            return this;
-        }
 
         public Entity build() {
             return new Entity(cast(mapOf(fields)));

@@ -90,13 +90,13 @@ public class CollectionValueSchema extends ValueSchema {
 
     @Override
     public List<?> toTuple() {
-        List<?> tuple = dynamicArrayOf(getType().name(), elementsType.name());
+        List<?> tuple = dynamicArrayOf(getType().ordinal(), elementsType.ordinal());
         elementsSchema.stream().map(ValueSchema::toTuple).forEach(value -> tuple.add(cast(value)));
         return tuple;
     }
 
     public static ValueSchema fromTuple(List<?> tuple) {
-        CollectionValueSchema schema = new CollectionValueSchema(CollectionElementsType.valueOf((String) tuple.get(1)));
+        CollectionValueSchema schema = new CollectionValueSchema(CollectionElementsType.values()[(Integer) tuple.get(1)]);
         tuple.stream()
                 .skip(2)
                 .map(element -> (List<?>) element)
