@@ -53,7 +53,7 @@ public class MapValueSchema extends ValueSchema {
 
     @Override
     public List<?> toTuple() {
-        List<?> tuple = dynamicArrayOf(getType().name());
+        List<?> tuple = dynamicArrayOf(getType().ordinal());
         entriesSchema.stream().map(MapEntrySchema::toTuple).forEach(value -> tuple.add(cast(value)));
         return tuple;
 
@@ -80,16 +80,16 @@ public class MapValueSchema extends ValueSchema {
         private final ValueSchema valueSchema;
 
         List<?> toTuple() {
-            return dynamicArrayOf(keyType.name(), key.getValue(), valueType.name(), valueSchema.toTuple());
+            return dynamicArrayOf(keyType.ordinal(), key.getValue(), valueType.ordinal(), valueSchema.toTuple());
         }
 
         static MapEntrySchema fromTuple(List<?> element) {
-            ValueType keyType = ValueType.valueOf((String) element.get(0));
+            ValueType keyType = ValueType.values()[((Integer) element.get(0))];
             if (!isPrimitiveType(keyType)) {
                 return null;
             }
             Object key = element.get(1);
-            ValueType valueType = ValueType.valueOf((String) element.get(2));
+            ValueType valueType = ValueType.values()[((Integer) element.get(2))];
             if (isPrimitiveType(valueType)) {
                 return new MapEntrySchema(keyType, new Primitive(key, asPrimitiveType(keyType)), valueType, new ValueSchema(valueType));
             }
