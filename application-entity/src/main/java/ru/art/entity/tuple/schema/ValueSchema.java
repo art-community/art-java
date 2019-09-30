@@ -55,7 +55,7 @@ public class ValueSchema {
     }
 
     public List<?> toTuple() {
-        return dynamicArrayOf(type.name());
+        return dynamicArrayOf(type.ordinal());
     }
 
     public static ValueSchema fromTuple(List<?> tuple) {
@@ -64,10 +64,10 @@ public class ValueSchema {
         }
 
         if (tuple.size() == 1) {
-            return new ValueSchema(ValueType.valueOf((String) tuple.get(0)));
+            return new ValueSchema(ValueType.values()[((Integer) tuple.get(0))]);
         }
 
-        ValueType valueType = ValueType.valueOf((String) tuple.get(0));
+        ValueType valueType = ValueType.values()[((Integer) tuple.get(0))];
         if (Value.isPrimitiveType(valueType)) {
             return new ValueSchema(valueType);
         }

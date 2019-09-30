@@ -624,10 +624,13 @@ public class Entity implements Value {
         }
 
         public EntityBuilder mapField(String name, Map<?, ?> map, ValueFromModelMapper<?, ? extends Value> keyMapper, ValueFromModelMapper<?, ? extends Value> valueMapper) {
+            if (isNull(map)) {
+                mapField(name, emptyMap());
+            }
             Map<? extends Value, ? extends Value> elements = map.entrySet()
                     .stream()
                     .collect(toMap(entry -> keyMapper.map(cast(entry.getKey())), entry -> valueMapper.map(cast(entry.getValue()))));
-            fields.put(name, MapValue.builder().elements(elements).build());
+            mapField(name, elements);
             return this;
         }
 
@@ -732,6 +735,10 @@ public class Entity implements Value {
         }
 
         public <T> EntityBuilder entityCollectionField(String name, Collection<T> collection, ValueFromModelMapper<T, Entity> mapper) {
+            if (isNull(collection)) {
+                entityCollectionField(name, emptyList());
+                return this;
+            }
             return entityCollectionField(name, collection.stream()
                     .filter(Objects::nonNull)
                     .map(mapper::map)

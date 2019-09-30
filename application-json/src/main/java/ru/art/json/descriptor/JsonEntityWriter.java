@@ -86,7 +86,7 @@ public class JsonEntityWriter {
                     writeArray(generator, asCollection(value));
                     break;
                 case STRING:
-                    return DOUBLE_QUOTES + emptyIfNull(asPrimitive(value).getString()) + DOUBLE_QUOTES;
+                    return emptyIfNull(asPrimitive(value).getString());
                 case LONG:
                     return emptyIfNull(asPrimitive(value).getLong());
                 case DOUBLE:
