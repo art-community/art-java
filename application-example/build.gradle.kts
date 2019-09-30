@@ -50,6 +50,7 @@ art {
         applicationSoapServer()
         applicationSql()
         applicationRocksDb()
+        applicationMessagePack()
         applicationExampleApi()
         applicationRsocket()
         applicationReactiveService()
