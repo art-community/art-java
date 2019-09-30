@@ -8,15 +8,15 @@ public interface GrpcRequestOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+   * <code>.google.protobuf.Value serviceRequest = 1;</code>
    */
   boolean hasServiceRequest();
   /**
-   * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+   * <code>.google.protobuf.Value serviceRequest = 1;</code>
    */
-  ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue getServiceRequest();
+  com.google.protobuf.Value getServiceRequest();
   /**
-   * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+   * <code>.google.protobuf.Value serviceRequest = 1;</code>
    */
-  ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValueOrBuilder getServiceRequestOrBuilder();
+  com.google.protobuf.ValueOrBuilder getServiceRequestOrBuilder();
 }

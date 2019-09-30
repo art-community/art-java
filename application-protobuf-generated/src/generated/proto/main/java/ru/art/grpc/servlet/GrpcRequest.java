@@ -43,11 +43,11 @@ private static final long serialVersionUID = 0L;
             done = true;
             break;
           case 10: {
-            ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.Builder subBuilder = null;
+            com.google.protobuf.Value.Builder subBuilder = null;
             if (serviceRequest_ != null) {
               subBuilder = serviceRequest_.toBuilder();
             }
-            serviceRequest_ = input.readMessage(ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.parser(), extensionRegistry);
+            serviceRequest_ = input.readMessage(com.google.protobuf.Value.parser(), extensionRegistry);
             if (subBuilder != null) {
               subBuilder.mergeFrom(serviceRequest_);
               serviceRequest_ = subBuilder.buildPartial();
@@ -88,23 +88,23 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int SERVICEREQUEST_FIELD_NUMBER = 1;
-  private ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue serviceRequest_;
+  private com.google.protobuf.Value serviceRequest_;
   /**
-   * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+   * <code>.google.protobuf.Value serviceRequest = 1;</code>
    */
   public boolean hasServiceRequest() {
     return serviceRequest_ != null;
   }
   /**
-   * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+   * <code>.google.protobuf.Value serviceRequest = 1;</code>
    */
-  public ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue getServiceRequest() {
-    return serviceRequest_ == null ? ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.getDefaultInstance() : serviceRequest_;
+  public com.google.protobuf.Value getServiceRequest() {
+    return serviceRequest_ == null ? com.google.protobuf.Value.getDefaultInstance() : serviceRequest_;
   }
   /**
-   * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+   * <code>.google.protobuf.Value serviceRequest = 1;</code>
    */
-  public ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValueOrBuilder getServiceRequestOrBuilder() {
+  public com.google.protobuf.ValueOrBuilder getServiceRequestOrBuilder() {
     return getServiceRequest();
   }
 
@@ -424,29 +424,29 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue serviceRequest_ = null;
+    private com.google.protobuf.Value serviceRequest_ = null;
     private com.google.protobuf.SingleFieldBuilderV3<
-        ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue, ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.Builder, ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValueOrBuilder> serviceRequestBuilder_;
+        com.google.protobuf.Value, com.google.protobuf.Value.Builder, com.google.protobuf.ValueOrBuilder> serviceRequestBuilder_;
     /**
-     * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+     * <code>.google.protobuf.Value serviceRequest = 1;</code>
      */
     public boolean hasServiceRequest() {
       return serviceRequestBuilder_ != null || serviceRequest_ != null;
     }
     /**
-     * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+     * <code>.google.protobuf.Value serviceRequest = 1;</code>
      */
-    public ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue getServiceRequest() {
+    public com.google.protobuf.Value getServiceRequest() {
       if (serviceRequestBuilder_ == null) {
-        return serviceRequest_ == null ? ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.getDefaultInstance() : serviceRequest_;
+        return serviceRequest_ == null ? com.google.protobuf.Value.getDefaultInstance() : serviceRequest_;
       } else {
         return serviceRequestBuilder_.getMessage();
       }
     }
     /**
-     * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+     * <code>.google.protobuf.Value serviceRequest = 1;</code>
      */
-    public Builder setServiceRequest(ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue value) {
+    public Builder setServiceRequest(com.google.protobuf.Value value) {
       if (serviceRequestBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -460,10 +460,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+     * <code>.google.protobuf.Value serviceRequest = 1;</code>
      */
     public Builder setServiceRequest(
-        ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.Builder builderForValue) {
+        com.google.protobuf.Value.Builder builderForValue) {
       if (serviceRequestBuilder_ == null) {
         serviceRequest_ = builderForValue.build();
         onChanged();
@@ -474,13 +474,13 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+     * <code>.google.protobuf.Value serviceRequest = 1;</code>
      */
-    public Builder mergeServiceRequest(ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue value) {
+    public Builder mergeServiceRequest(com.google.protobuf.Value value) {
       if (serviceRequestBuilder_ == null) {
         if (serviceRequest_ != null) {
           serviceRequest_ =
-            ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.newBuilder(serviceRequest_).mergeFrom(value).buildPartial();
+            com.google.protobuf.Value.newBuilder(serviceRequest_).mergeFrom(value).buildPartial();
         } else {
           serviceRequest_ = value;
         }
@@ -492,7 +492,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+     * <code>.google.protobuf.Value serviceRequest = 1;</code>
      */
     public Builder clearServiceRequest() {
       if (serviceRequestBuilder_ == null) {
@@ -506,33 +506,33 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
-     * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+     * <code>.google.protobuf.Value serviceRequest = 1;</code>
      */
-    public ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.Builder getServiceRequestBuilder() {
+    public com.google.protobuf.Value.Builder getServiceRequestBuilder() {
       
       onChanged();
       return getServiceRequestFieldBuilder().getBuilder();
     }
     /**
-     * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+     * <code>.google.protobuf.Value serviceRequest = 1;</code>
      */
-    public ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValueOrBuilder getServiceRequestOrBuilder() {
+    public com.google.protobuf.ValueOrBuilder getServiceRequestOrBuilder() {
       if (serviceRequestBuilder_ != null) {
         return serviceRequestBuilder_.getMessageOrBuilder();
       } else {
         return serviceRequest_ == null ?
-            ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.getDefaultInstance() : serviceRequest_;
+            com.google.protobuf.Value.getDefaultInstance() : serviceRequest_;
       }
     }
     /**
-     * <code>.ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;</code>
+     * <code>.google.protobuf.Value serviceRequest = 1;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
-        ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue, ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.Builder, ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValueOrBuilder> 
+        com.google.protobuf.Value, com.google.protobuf.Value.Builder, com.google.protobuf.ValueOrBuilder> 
         getServiceRequestFieldBuilder() {
       if (serviceRequestBuilder_ == null) {
         serviceRequestBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue, ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.Builder, ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValueOrBuilder>(
+            com.google.protobuf.Value, com.google.protobuf.Value.Builder, com.google.protobuf.ValueOrBuilder>(
                 getServiceRequest(),
                 getParentForChildren(),
                 isClean());

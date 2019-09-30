@@ -23,13 +23,14 @@ import ru.art.kafka.producer.configuration.KafkaProducerModuleConfiguration.*;
 import static java.lang.Class.*;
 import static org.apache.kafka.common.serialization.Serdes.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
+import static ru.art.config.extensions.common.DataFormats.*;
 import static ru.art.config.extensions.kafka.KafkaConfigKeys.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
-import static ru.art.kafka.constants.KafkaClientConstants.*;
 import static ru.art.kafka.instances.KafkaSerdes.*;
 import static ru.art.kafka.producer.configuration.KafkaProducerConfiguration.*;
-import java.util.*;
 import java.lang.String;
+import java.util.*;
 
 @Getter
 public class KafkaProducerAgileConfiguration extends KafkaProducerDefaultModuleConfiguration {
@@ -51,18 +52,26 @@ public class KafkaProducerAgileConfiguration extends KafkaProducerDefaultModuleC
                     .additionalProperties(config.getProperties(ADDITIONAL_PROPERTIES))
                     .deliveryTimeout(config.getLong(DELIVERY_TIMEOUT))
                     .retries(config.getInt(RETRIES))
-                    .keySerializer(ifException(() -> getSerializer(keySerializerString), KAFKA_PROTOBUF_SERIALIZER))
-                    .valueSerializer(ifException(() -> getSerializer(valueSerializerString), KAFKA_PROTOBUF_SERIALIZER))
+                    .keySerializer(ifException(() -> getSerializer(keySerializerString), KAFKA_MESSAGE_PACK_SERIALIZER))
+                    .valueSerializer(ifException(() -> getSerializer(valueSerializerString), KAFKA_MESSAGE_PACK_SERIALIZER))
                     .build();
         }, super.getProducerConfigurations());
     }
 
     private static Serializer<?> getSerializer(String serializerString) throws ClassNotFoundException {
-        return JSON_KAFKA_FORMAT
-                .equalsIgnoreCase(serializerString)
-                ? KAFKA_JSON_SERIALIZER
-                : PROTOBUF_KAFKA_FORMAT.equalsIgnoreCase(serializerString)
-                ? KAFKA_PROTOBUF_SERIALIZER
-                : serdeFrom(forName(serializerString)).serializer();
+        if (isEmpty(serializerString)) {
+            return KAFKA_MESSAGE_PACK_SERIALIZER;
+        }
+        switch (serializerString) {
+            case JSON:
+                return KAFKA_JSON_SERIALIZER;
+            case PROTOBUF:
+                return KAFKA_PROTOBUF_SERIALIZER;
+            case MESSAGE_PACK:
+                return KAFKA_MESSAGE_PACK_SERIALIZER;
+            case XML:
+                return KAFKA_XML_SERIALIZER;
+        }
+        return serdeFrom(forName(serializerString)).serializer();
     }
 }

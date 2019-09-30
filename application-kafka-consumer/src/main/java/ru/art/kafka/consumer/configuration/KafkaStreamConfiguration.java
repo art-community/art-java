@@ -42,13 +42,13 @@ public class KafkaStreamConfiguration {
      * deserializer for key
      */
     @Builder.Default
-    private final Serde<?> keySerde = KAFKA_PROTOBUF_SERDE;
+    private final Serde<?> keySerde = KAFKA_MESSAGE_PACK_SERDE;
 
     /**
      * @return Deserializer for value
      */
     @Builder.Default
-    private final Serde<?> valueSerde = KAFKA_PROTOBUF_SERDE;
+    private final Serde<?> valueSerde = KAFKA_MESSAGE_PACK_SERDE;
 
     /**
      * Default value null

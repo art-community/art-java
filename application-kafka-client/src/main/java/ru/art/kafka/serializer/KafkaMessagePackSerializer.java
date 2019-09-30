@@ -16,21 +16,26 @@
  * limitations under the License.
  */
 
-package ru.art.config.extensions.common;
+package ru.art.kafka.serializer;
 
-public interface CommonConfigKeys {
-    String HOST = "host";
-    String PORT = "port";
-    String PATH = "path";
-    String URL = "url";
-    String TARGETS = "targets";
-    String ENABLE_TRACING = "enableTracing";
-    String ENABLE_RAW_DATA_TRACING = "enableRawDataTracing";
-    String ENABLE_VALUE_TRACING = "enableValueTracing";
-    String ENABLE_METRICS = "enableMetrics";
-    String THREAD_POOL_SIZE = "threadPoolSize";
-    String TIMEOUT = "timeout";
-    String RESUMABLE = "resumable";
-    String RESUME_SESSION_DURATION = "resumeSessionDuration";
+import org.apache.kafka.common.serialization.*;
+import ru.art.entity.*;
+import static ru.art.message.pack.descriptor.MessagePackEntityWriter.*;
+import java.util.*;
 
+public class KafkaMessagePackSerializer implements Serializer<Value> {
+    @Override
+    public void configure(Map<String, ?> configs, boolean isKey) {
+
+    }
+
+    @Override
+    public byte[] serialize(String topic, Value data) {
+        return writeMessagePackToBytes(data);
+    }
+
+    @Override
+    public void close() {
+
+    }
 }

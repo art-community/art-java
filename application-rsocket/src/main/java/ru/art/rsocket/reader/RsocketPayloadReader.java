@@ -29,7 +29,6 @@ import static ru.art.core.wrapper.ExceptionWrapper.*;
 import static ru.art.json.descriptor.JsonEntityReader.*;
 import static ru.art.message.pack.descriptor.MessagePackEntityReader.*;
 import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
-import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.module.RsocketModule.*;
@@ -41,7 +40,7 @@ public class RsocketPayloadReader {
     public static Value readPayload(Payload payload, RsocketDataFormat dataFormat) {
         switch (dataFormat) {
             case PROTOBUF:
-                return readProtobuf(wrapException(() -> parseFrom(payload.getData()), RsocketServerException::new));
+                return readProtobuf(wrapException(() -> com.google.protobuf.Value.parseFrom(payload.getData()), RsocketServerException::new));
             case JSON:
                 return readJson(wrapException(payload::getDataUtf8, RsocketServerException::new));
             case XML:

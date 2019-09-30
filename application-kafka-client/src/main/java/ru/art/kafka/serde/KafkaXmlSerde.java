@@ -16,21 +16,32 @@
  * limitations under the License.
  */
 
-package ru.art.config.extensions.common;
+package ru.art.kafka.serde;
 
-public interface CommonConfigKeys {
-    String HOST = "host";
-    String PORT = "port";
-    String PATH = "path";
-    String URL = "url";
-    String TARGETS = "targets";
-    String ENABLE_TRACING = "enableTracing";
-    String ENABLE_RAW_DATA_TRACING = "enableRawDataTracing";
-    String ENABLE_VALUE_TRACING = "enableValueTracing";
-    String ENABLE_METRICS = "enableMetrics";
-    String THREAD_POOL_SIZE = "threadPoolSize";
-    String TIMEOUT = "timeout";
-    String RESUMABLE = "resumable";
-    String RESUME_SESSION_DURATION = "resumeSessionDuration";
+import org.apache.kafka.common.serialization.*;
+import ru.art.entity.*;
+import ru.art.kafka.deserializer.*;
+import ru.art.kafka.serializer.*;
+import java.util.*;
 
+public class KafkaXmlSerde implements Serde<Value> {
+    @Override
+    public void configure(Map<String, ?> configs, boolean isKey) {
+
+    }
+
+    @Override
+    public void close() {
+
+    }
+
+    @Override
+    public Serializer<Value> serializer() {
+        return new KafkaXmlSerializer();
+    }
+
+    @Override
+    public Deserializer<Value> deserializer() {
+        return new KafkaXmlDeserializer();
+    }
 }

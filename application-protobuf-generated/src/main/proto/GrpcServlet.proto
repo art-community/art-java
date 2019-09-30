@@ -1,14 +1,14 @@
 syntax = "proto3";
 option java_package = "ru.art.grpc.servlet";
-import "Value.proto";
+import "google/protobuf/struct.proto";
 option java_outer_classname = "GrpcServletMessage";
 option java_multiple_files = true;
 package ru.art.grpc.servlet;
 
 message GrpcRequest {
-    ru.art.protobuf.entity.ProtobufValue serviceRequest = 1;
+    google.protobuf.Value serviceRequest = 1;
 }
 
 message GrpcResponse {
-    ru.art.protobuf.entity.ProtobufValue serviceResponse = 1;
+    google.protobuf.Value serviceResponse = 1;
 }

@@ -67,6 +67,11 @@ public interface Value {
         return isCollectionType(value.getType());
     }
 
+    static boolean isXmlEntity(Value value) {
+        if (isNull(value)) return false;
+        return isXmlEntityType(value.getType());
+    }
+
     static boolean isPrimitiveType(ValueType type) {
         if (isNull(type)) return false;
 
@@ -93,6 +98,10 @@ public interface Value {
         return type == COLLECTION;
     }
 
+    static boolean isXmlEntityType(ValueType type) {
+        if (isNull(type)) return false;
+        return type == ENTITY;
+    }
 
     boolean isEmpty();
 

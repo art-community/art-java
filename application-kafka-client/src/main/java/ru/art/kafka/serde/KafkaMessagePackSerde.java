@@ -16,31 +16,32 @@
  * limitations under the License.
  */
 
-package ru.art.kafka.deserializer;
+package ru.art.kafka.serde;
 
 import org.apache.kafka.common.serialization.*;
 import ru.art.entity.*;
-import ru.art.kafka.exception.*;
-import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
+import ru.art.kafka.deserializer.*;
+import ru.art.kafka.serializer.*;
 import java.util.*;
 
-public class KafkaProtobufDeserializer implements Deserializer<Value> {
+public class KafkaMessagePackSerde implements Serde<Value> {
     @Override
     public void configure(Map<String, ?> configs, boolean isKey) {
 
     }
 
     @Override
-    public Value deserialize(String topic, byte[] data) {
-        try {
-            return readProtobuf(com.google.protobuf.Value.parseFrom(data));
-        } catch (Throwable e) {
-            throw new KafkaDeserializerException(e);
-        }
+    public void close() {
+
     }
 
     @Override
-    public void close() {
+    public Serializer<Value> serializer() {
+        return new KafkaMessagePackSerializer();
+    }
 
+    @Override
+    public Deserializer<Value> deserializer() {
+        return new KafkaMessagePackDeserializer();
     }
 }

@@ -31,7 +31,7 @@ public class KafkaJsonSerializer implements Serializer<Value> {
 
     @Override
     public byte[] serialize(String topic, Value data) {
-        return writeJson(data).getBytes();
+        return writeJsonToBytes(data);
     }
 
     @Override
