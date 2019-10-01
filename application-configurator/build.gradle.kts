@@ -39,6 +39,7 @@ art {
         applicationHttpJson()
         applicationHttpServer()
         applicationRocksDb()
+        applicationMessagePack()
         applicationConfiguratorApi()
         applicationConfigRemoteApi()
     }

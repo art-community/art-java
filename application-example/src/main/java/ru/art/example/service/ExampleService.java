@@ -20,7 +20,6 @@ package ru.art.example.service;
 
 import ru.art.entity.*;
 import ru.art.example.api.model.*;
-import ru.art.protobuf.entity.ProtobufValueMessage.*;
 import static java.time.temporal.ChronoUnit.*;
 import static ru.art.entity.constants.ValueType.PrimitiveType.*;
 import static ru.art.example.api.constants.ExampleApiConstants.*;
@@ -36,8 +35,8 @@ import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
 import static ru.art.protobuf.descriptor.ProtobufEntityWriter.*;
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
 import static ru.art.service.ServiceController.*;
-import static ru.art.task.deferred.executor.IdentifiedRunnableFactory.*;
 import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
+import static ru.art.task.deferred.executor.TaskFactory.*;
 import java.time.*;
 import java.util.*;
 
@@ -215,7 +214,7 @@ public interface ExampleService {
         Value exampleValue = new Primitive(10, INT);
 
         // mapping value to protobufValue
-        ProtobufValue protobufValue = writeProtobuf(exampleValue);
+        com.google.protobuf.Value protobufValue = writeProtobuf(exampleValue);
 
         // mapping protobufValue to value
         Value mappedValue = readProtobuf(protobufValue);
@@ -228,7 +227,7 @@ public interface ExampleService {
     static void asyncTaskExecutingExample() {
         loggingModule().getLogger().info("asyncTaskExecutingExample method isWorking");
 
-        asynchronousPeriod(uniqueTask(() -> loggingModule()
+        asynchronousPeriod(uniqueRunnableTask(() -> loggingModule()
                         .getLogger()
                         .info("Asynchronous task was executed at" + new Date().toString())),
                 Duration.of(30, SECONDS));

@@ -39,13 +39,13 @@ public class RsocketPayloadWriter {
     public static Payload writePayload(Value value, RsocketDataFormat dataFormat) {
         switch (dataFormat) {
             case PROTOBUF:
-                return create(writeProtobuf(value).toByteArray());
+                return create(writeProtobufToBytes(value));
             case JSON:
-                return create(writeJson(value));
+                return create(writeJsonToBytes(value));
             case XML:
-                return create(writeXml(asXmlEntity(value)));
+                return create(writeXmlToBytes(asXmlEntity(value)));
             case MESSAGE_PACK:
-                return create(writeMessagePack(value));
+                return create(writeMessagePackToBytes(value));
 
         }
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDataFormat()));

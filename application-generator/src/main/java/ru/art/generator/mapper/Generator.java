@@ -38,12 +38,20 @@ import java.util.*;
  * Name for generating class equals "ModelClassName" + "Mapper".
  * Example of Model mapper:
  * interface ModelMapper {
- * ValueToModelMapper<Model, Entity> toModel = entity -> Model.builder()
- * .build();
- * <p>
- * ValueFromModelMapper<Model, Entity> fromModel = model -> Entity.entityBuilder()
- * .build();
- * }
+ * 		ValueToModelMapper<Model, Entity> toModel = entity -> Model.builder()
+ * 				.build();
+ * 		ValueToModelMapper<Model, Entity> toModel = entity -> isNotEmpty(entity) ? Model.builder()
+ * 	        <fields in here>
+ * 			.build()
+ * 			: Model.builder().build();
+ *
+ * 		ValueFromModelMapper<Model, Entity> fromModel = model -> Entity.entityBuilder()
+ * 				.build();
+ * 		ValueFromModelMapper<Model, Entity> fromModel = model -> isNotEmpty(model) ? Entity.entityBuilder()
+ * 	        <fields in here>
+ * 			.build()
+ * 			: Entity.entityBuilder().build();
+ *  }
  */
 public class Generator {
 
@@ -127,15 +135,17 @@ public class Generator {
                 continue;
             }
 
+            Class<?> currentClass = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING), packageModel);
+            if (currentClass.isAnnotationPresent(IgnoreGeneration.class) || currentClass.isEnum())
+                continue;
             if (currentModelFileName.contains(REQUEST)) {
                 if (isNotEmpty(files.get(currentModelFileName.replace(REQUEST, RESPONSE)))) {
                     try {
-                        Class<?> request = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING), packageModel);
                         Class<?> response = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING).replace(REQUEST, RESPONSE), packageModel);
-                        if (!request.isAnnotationPresent(NonGenerated.class) &&
-                                !response.isAnnotationPresent(NonGenerated.class) &&
-                                !request.isEnum()) {
-                            createRequestResponseMapperClass(request, response, genPackage, jarPathToMain);
+                        if (!currentClass.isAnnotationPresent(IgnoreGeneration.class) &&
+                                !response.isAnnotationPresent(IgnoreGeneration.class) &&
+                                !currentClass.isEnum()) {
+                            createRequestResponseMapperClass(currentClass, response, genPackage, jarPathToMain);
                             modelFileList.set(files.get(currentModelFileName.replace(REQUEST, RESPONSE)), null);
                             files.remove(currentModelFileName);
                             files.remove(currentModelFileName.replace(REQUEST, RESPONSE));
@@ -171,7 +181,7 @@ public class Generator {
      */
     private static void createMapper(String genPackage, String packageModel, String jarPathToMain, String currentModelFileName) {
         Class<?> clazz = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING), packageModel);
-        if (!clazz.isAnnotationPresent(NonGenerated.class) && !clazz.isEnum())
+        if (!clazz.isAnnotationPresent(IgnoreGeneration.class) && !clazz.isEnum())
             createMapperClass(clazz, genPackage, jarPathToMain);
     }
 }

@@ -40,21 +40,21 @@ public interface SchedulerModuleActions {
         return schedulerModule().getDeferredExecutor().execute(task);
     }
 
-    static <EventResultType> Future<? extends EventResultType> asynchronousPeriod(IdentifiedCallable<? extends EventResultType> eventTask,
+    static <EventResultType> Future<? extends EventResultType> asynchronousPeriod(CallableTask<? extends EventResultType> eventTask,
                                                                                   LocalDateTime startTime, Duration duration) {
         return schedulerModule().getPeriodicExecutor().submitPeriodic(eventTask, startTime, duration);
     }
 
-    static <EventResultType> Future<? extends EventResultType> asynchronousPeriod(IdentifiedCallable<? extends EventResultType> eventTask,
+    static <EventResultType> Future<? extends EventResultType> asynchronousPeriod(CallableTask<? extends EventResultType> eventTask,
                                                                                   Duration duration) {
         return schedulerModule().getPeriodicExecutor().submitPeriodic(eventTask, duration);
     }
 
-    static Future<?> asynchronousPeriod(IdentifiedRunnable task, LocalDateTime triggerTime, Duration duration) {
+    static Future<?> asynchronousPeriod(RunnableTask task, LocalDateTime triggerTime, Duration duration) {
         return schedulerModule().getPeriodicExecutor().executePeriodic(task, triggerTime, duration);
     }
 
-    static Future<?> asynchronousPeriod(IdentifiedRunnable task, Duration duration) {
+    static Future<?> asynchronousPeriod(RunnableTask task, Duration duration) {
         return schedulerModule().getPeriodicExecutor().executePeriodic(task, duration);
     }
 

@@ -21,31 +21,24 @@ package ru.art.protobuf.descriptor;
 import com.google.protobuf.*;
 import lombok.experimental.*;
 import ru.art.entity.Value;
-import ru.art.entity.*;
 import ru.art.protobuf.exception.*;
-import static java.lang.Integer.*;
+import static com.google.protobuf.Value.KindCase.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static ru.art.core.caster.Caster.*;
+import static java.util.stream.Collectors.*;
 import static ru.art.core.extension.FileExtensions.*;
-import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
 import static ru.art.entity.Entity.*;
-import static ru.art.entity.MapValue.*;
 import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.protobuf.constants.ProtobufExceptionMessages.*;
-import static ru.art.protobuf.entity.ProtobufValueMessage.*;
-import static ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue.*;
 import java.io.*;
 import java.nio.file.*;
-import java.util.*;
-import java.util.stream.*;
 
 @UtilityClass
 public class ProtobufEntityReader {
     public static Value readProtobuf(byte[] bytes) {
         try {
-            return readProtobuf(parseFrom(bytes));
+            return readProtobuf(com.google.protobuf.Value.parseFrom(bytes));
         } catch (Throwable e) {
             throw new ProtobufException(e);
         }
@@ -53,7 +46,7 @@ public class ProtobufEntityReader {
 
     public static Value readProtobuf(InputStream inputStream) {
         try {
-            return readProtobuf(parseFrom(inputStream));
+            return readProtobuf(com.google.protobuf.Value.parseFrom(inputStream));
         } catch (Throwable e) {
             throw new ProtobufException(e);
         }
@@ -61,153 +54,38 @@ public class ProtobufEntityReader {
 
     public static Value readProtobuf(Path path) {
         try {
-            return readProtobuf(parseFrom(readFileBytes(path)));
+            return readProtobuf(com.google.protobuf.Value.parseFrom(readFileBytes(path)));
         } catch (InvalidProtocolBufferException e) {
             throw new ProtobufException(e);
         }
     }
 
-    public static Value readProtobuf(ProtobufValue protobufValue) {
-        if (isNull(protobufValue) || isNull(protobufValue.getValue())) return null;
-        try {
-            switch (protobufValue.getValueType()) {
-                case NULL:
-                    return null;
-                case STRING:
-                    return stringPrimitive(StringValue.parseFrom(protobufValue.getValue().getValue()).getValue());
-                case LONG:
-                    return longPrimitive(Int64Value.parseFrom(protobufValue.getValue().getValue()).getValue());
-                case DOUBLE:
-                    return doublePrimitive(DoubleValue.parseFrom(protobufValue.getValue().getValue()).getValue());
-                case INT:
-                    return intPrimitive(Int32Value.parseFrom(protobufValue.getValue().getValue()).getValue());
-                case BOOL:
-                    return boolPrimitive(BoolValue.parseFrom(protobufValue.getValue().getValue()).getValue());
-                case BYTE:
-                    return bytePrimitive(valueOf(Int32Value.parseFrom(protobufValue.getValue().getValue()).getValue()).byteValue());
-                case FLOAT:
-                    return floatPrimitive(FloatValue.parseFrom(protobufValue.getValue().getValue()).getValue());
-                case ENTITY:
-                    return readEntityFromProtobuf(ProtobufEntity.parseFrom(protobufValue.getValue().getValue()));
-                case BYTE_STRING:
-                    return byteCollection(protobufValue.getValue().getValue().toByteArray());
-                case COLLECTION:
-                    return readCollectionFromProtobuf(ProtobufCollection.parseFrom(protobufValue.getValue().getValue()));
-                case STRING_PARAMETERS_MAP:
-                    return StringParametersMap.builder().parameters(ProtobufStringParametersMap.parseFrom(protobufValue.getValue().getValue()).getParametersMap()).build();
-                case MAP:
-                    return readMapFromProtobuf(ProtobufEntity.parseFrom(protobufValue.getValue().getValue()));
-            }
-        } catch (InvalidProtocolBufferException e) {
-            throw new ProtobufException(e);
-        }
-        throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, protobufValue.getValueType()));
-    }
-
-
-    private static Value readCollectionFromProtobuf(ProtobufCollection protobufCollection) throws InvalidProtocolBufferException {
-        switch (protobufCollection.getElementsType()) {
-            case NULL:
+    public static Value readProtobuf(com.google.protobuf.Value protobufValue) {
+        if (isNull(protobufValue) || protobufValue.getKindCase() == NULL_VALUE) return null;
+        switch (protobufValue.getKindCase()) {
+            case NUMBER_VALUE:
+                return doublePrimitive(protobufValue.getNumberValue());
+            case STRING_VALUE:
+                return stringPrimitive(protobufValue.getStringValue());
+            case BOOL_VALUE:
+                return boolPrimitive(protobufValue.getBoolValue());
+            case STRUCT_VALUE:
+                return readStructFromProtobuf(protobufValue.getStructValue());
+            case LIST_VALUE:
+                return readCollectionFromProtobuf(protobufValue.getListValue());
+            case KIND_NOT_SET:
                 return null;
-            case VALUE:
-                return valueCollection(readValueCollectionFromProtobuf(protobufCollection));
-            case ENTITY:
-                return entityCollection(readEntityCollectionFromProtobuf(protobufCollection));
-            case COLLECTION:
-                return collectionOfCollections(readCollectionOfCollectionsFromProtobuf(protobufCollection));
-            case STRING_PARAMETERS_MAP:
-                return stringParametersCollection(readStringParametersCollectionFromProtobuf(protobufCollection));
-            case STRING:
-                return stringCollection(readStringCollectionFromProtobuf(protobufCollection));
-            case LONG:
-                return longCollection(readLongCollectionValueFromProtobuf(protobufCollection));
-            case DOUBLE:
-                return doubleCollection(readDoubleCollectionValueFromProtobuf(protobufCollection));
-            case INT:
-                return intCollection(readIntCollectionValueFromProtobuf(protobufCollection));
-            case BOOL:
-                return boolCollection(readBoolCollectionValueFromProtobuf(protobufCollection));
-            case FLOAT:
-                return floatCollection(readFloatCollectionValueFromProtobuf(protobufCollection));
-            case UNRECOGNIZED:
-                break;
         }
-        throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, protobufCollection.getElementsType()));
+        throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, protobufValue.getKindCase()));
     }
 
-    private static Collection<Value> readValueCollectionFromProtobuf(ProtobufCollection protobufCollection) {
-        return cast(protobufCollection.getValuesList().stream().map(ProtobufEntityReader::readProtobuf).collect(Collectors.toList()));
+    private static Value readCollectionFromProtobuf(ListValue protobufCollection) {
+        return valueCollection(protobufCollection.getValuesList().stream().map(ProtobufEntityReader::readProtobuf).collect(toList()));
     }
 
-    private static Collection<Entity> readEntityCollectionFromProtobuf(ProtobufCollection protobufCollection) {
-        return cast(protobufCollection.getValuesList().stream().map(ProtobufEntityReader::readProtobuf).collect(Collectors.toList()));
-    }
-
-    private static Collection<StringParametersMap> readStringParametersCollectionFromProtobuf(ProtobufCollection protobufCollection) {
-        return cast(protobufCollection.getValuesList().stream().map(ProtobufEntityReader::readProtobuf).collect(Collectors.toList()));
-    }
-
-    private static Collection<CollectionValue<?>> readCollectionOfCollectionsFromProtobuf(ProtobufCollection protobufCollection) {
-        return cast(protobufCollection.getValuesList().stream().map(ProtobufEntityReader::readProtobuf).collect(Collectors.toList()));
-    }
-
-    private static Collection<String> readStringCollectionFromProtobuf(ProtobufCollection protobufCollection) throws InvalidProtocolBufferException {
-        List<String> list = dynamicArrayOf();
-        for (ProtobufValue protobufValue : protobufCollection.getValuesList()) {
-            list.add(StringValue.parseFrom(protobufValue.getValue().getValue()).getValue());
-        }
-        return list;
-    }
-
-    private static Collection<Long> readLongCollectionValueFromProtobuf(ProtobufCollection protobufCollection) throws InvalidProtocolBufferException {
-        List<Long> list = dynamicArrayOf();
-        for (ProtobufValue protobufValue : protobufCollection.getValuesList()) {
-            list.add(Int64Value.parseFrom(protobufValue.getValue().getValue()).getValue());
-        }
-        return list;
-    }
-
-    private static Collection<Double> readDoubleCollectionValueFromProtobuf(ProtobufCollection protobufCollection) throws InvalidProtocolBufferException {
-        List<Double> list = dynamicArrayOf();
-        for (ProtobufValue protobufValue : protobufCollection.getValuesList()) {
-            list.add(DoubleValue.parseFrom(protobufValue.getValue().getValue()).getValue());
-        }
-        return list;
-    }
-
-    private static Collection<Float> readFloatCollectionValueFromProtobuf(ProtobufCollection protobufCollection) throws InvalidProtocolBufferException {
-        List<Float> list = dynamicArrayOf();
-        for (ProtobufValue protobufValue : protobufCollection.getValuesList()) {
-            list.add(FloatValue.parseFrom(protobufValue.getValue().getValue()).getValue());
-        }
-        return list;
-    }
-
-    private static Collection<Integer> readIntCollectionValueFromProtobuf(ProtobufCollection protobufCollection) throws InvalidProtocolBufferException {
-        List<Integer> list = dynamicArrayOf();
-        for (ProtobufValue protobufValue : protobufCollection.getValuesList()) {
-            list.add(Int32Value.parseFrom(protobufValue.getValue().getValue()).getValue());
-        }
-        return list;
-    }
-
-    private static Collection<Boolean> readBoolCollectionValueFromProtobuf(ProtobufCollection protobufCollection) throws InvalidProtocolBufferException {
-        List<Boolean> list = dynamicArrayOf();
-        for (ProtobufValue protobufValue : protobufCollection.getValuesList()) {
-            list.add(BoolValue.parseFrom(protobufValue.getValue().getValue()).getValue());
-        }
-        return list;
-    }
-
-    private static Value readEntityFromProtobuf(ProtobufEntity protobufEntity) {
+    private static Value readStructFromProtobuf(Struct protobufEntity) {
         EntityBuilder entityBuilder = entityBuilder();
-        protobufEntity.getValuesMap().forEach((key, value) -> entityBuilder.valueField(key, readProtobuf(value)));
+        protobufEntity.getFieldsMap().forEach((key, value) -> entityBuilder.valueField(key, readProtobuf(value)));
         return entityBuilder.build();
-    }
-
-    private static MapValue readMapFromProtobuf(ProtobufEntity protobufEntity) {
-        MapValueBuilder builder = builder();
-        protobufEntity.getValuesMap().forEach((key, value) -> builder.element(stringPrimitive(key), readProtobuf(value)));
-        return builder.build();
     }
 }

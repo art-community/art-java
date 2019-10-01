@@ -99,11 +99,6 @@ public class JsonEntityWriter {
                     return emptyIfNull(asPrimitive(value).getBool());
                 case BYTE:
                     return emptyIfNull(asPrimitive(value).getByte());
-                case STRING_PARAMETERS_MAP:
-                    writeStringParameters(generator, asStringParametersMap(value));
-                    break;
-                case MAP:
-                    writeJsonMap(generator, asMap(value));
             }
         } catch (IOException e) {
             throw new JsonMappingException(e);
@@ -118,36 +113,6 @@ public class JsonEntityWriter {
             }
         }
         return stringWriter.toString();
-    }
-
-
-    private static void writeJsonMap(JsonGenerator generator, MapValue map) {
-        if (isNull(map)) return;
-        map.getElements()
-                .entrySet()
-                .stream()
-                .filter(entry -> isPrimitive(entry.getKey()))
-                .forEach(entry -> writeJsonMapEntry(generator, entry));
-    }
-
-    private static void writeJsonMap(JsonGenerator jsonGenerator, String name, MapValue mapValue) {
-        if (isNull(mapValue)) return;
-        try {
-            jsonGenerator.writeObjectFieldStart(name);
-            writeJsonMap(jsonGenerator, mapValue);
-            jsonGenerator.writeEndObject();
-        } catch (IOException e) {
-            throw new JsonMappingException(e);
-        }
-    }
-
-
-    private static void writeJsonMapEntry(JsonGenerator generator, Map.Entry<? extends Value, ? extends Value> entry) {
-        try {
-            writeField(generator, emptyIfNull(entry.getKey()), entry.getValue());
-        } catch (IOException e) {
-            throw new JsonMappingException(e);
-        }
     }
 
     private static void writeJsonEntity(JsonGenerator generator, Entity entity) throws IOException {
@@ -208,12 +173,6 @@ public class JsonEntityWriter {
             case COLLECTION:
                 writeArray(jsonGenerator, name, asCollection(value));
                 return;
-            case MAP:
-                writeJsonMap(jsonGenerator, name, asMap(value));
-                return;
-            case STRING_PARAMETERS_MAP:
-                writeStringParameters(jsonGenerator, name, asStringParametersMap(value));
-                return;
             case STRING:
             case INT:
             case DOUBLE:
@@ -272,9 +231,6 @@ public class JsonEntityWriter {
                 return;
             case VALUE:
                 writeCollectionValue(jsonGenerator, asCollectionElementsType(((Value) value).getType()), value);
-                return;
-            case STRING_PARAMETERS_MAP:
-                writeStringParameters(jsonGenerator, asStringParametersMap(cast(value)));
         }
     }
 
@@ -350,25 +306,4 @@ public class JsonEntityWriter {
                 }
         }
     }
-
-    private static void writeStringParameters(JsonGenerator generator, StringParametersMap stringParametersMap) throws IOException {
-        if (isNull(stringParametersMap)) return;
-        generator.writeStartObject();
-        Map<String, String> parameters = stringParametersMap.getParameters();
-        for (String field : parameters.keySet()) {
-            generator.writeStringField(field, parameters.get(field));
-        }
-        generator.writeEndObject();
-    }
-
-    private static void writeStringParameters(JsonGenerator generator, String name, StringParametersMap stringParametersMap) throws IOException {
-        if (isNull(stringParametersMap)) return;
-        generator.writeObjectFieldStart(name);
-        Map<String, String> parameters = stringParametersMap.getParameters();
-        for (String field : parameters.keySet()) {
-            generator.writeStringField(field, parameters.get(field));
-        }
-        generator.writeEndObject();
-    }
-
 }

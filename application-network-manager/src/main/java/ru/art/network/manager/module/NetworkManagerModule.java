@@ -31,7 +31,7 @@ import static ru.art.core.context.Context.*;
 import static ru.art.network.manager.configuration.NetworkManagerModuleConfiguration.*;
 import static ru.art.network.manager.constants.NetworkManagerModuleConstants.*;
 import static ru.art.service.ServiceModule.*;
-import static ru.art.task.deferred.executor.IdentifiedRunnableFactory.*;
+import static ru.art.task.deferred.executor.TaskFactory.*;
 import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
 
 @Getter
@@ -57,8 +57,8 @@ public class NetworkManagerModule implements Module<NetworkManagerModuleConfigur
 
     @Override
     public void onLoad() {
-        asynchronousPeriod(commonTask(ModuleEndpointsRefresher::refreshModuleEndpoints), of(networkManagerModule().getRefreshRateSeconds(), SECONDS));
-        asynchronousPeriod(commonTask(ApplicationStateClient::connect), of(networkManagerModule().getConnectionPingRateSeconds(), SECONDS));
+        asynchronousPeriod(commonRunnableTask(ModuleEndpointsRefresher::refreshModuleEndpoints), of(networkManagerModule().getRefreshRateSeconds(), SECONDS));
+        asynchronousPeriod(commonRunnableTask(ApplicationStateClient::connect), of(networkManagerModule().getConnectionPingRateSeconds(), SECONDS));
         int statePort = networkManagerModule().getStatePort();
         String stateHost = networkManagerModule().getStateHost();
         String statePath = networkManagerModule().getStatePath();

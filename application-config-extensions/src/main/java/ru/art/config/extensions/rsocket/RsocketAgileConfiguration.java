@@ -25,6 +25,7 @@ import ru.art.rsocket.server.*;
 import static java.util.Objects.nonNull;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
+import static ru.art.config.extensions.common.DataFormats.*;
 import static ru.art.config.extensions.rsocket.RsocketConfigKeys.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.context.Context.*;
@@ -64,7 +65,7 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
         clientResumeSessionDuration = configLong(RSOCKET_COMMUNICATION_SECTION_ID, RESUME_SESSION_DURATION, super.getClientResumeSessionDuration());
         enableRawDataTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
         enableValueTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
-        dataFormat = ifException(() -> RsocketDataFormat.valueOf(configString(RSOCKET_SECTION_ID, DATA_FORMAT).toUpperCase()), super.getDataFormat());
+        dataFormat = ifException(() -> parseRsocketDataFormat(configString(RSOCKET_SECTION_ID, DATA_FORMAT).toUpperCase()), super.getDataFormat());
         String newAcceptorHost = configString(RSOCKET_SERVER_SECTION_ID, HOST, super.getServerHost());
         boolean restart = !serverHost.equals(newAcceptorHost);
         serverHost = newAcceptorHost;
@@ -91,5 +92,20 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
                 server.restart();
             }
         }
+    }
+
+    private RsocketDataFormat parseRsocketDataFormat(String format) {
+        if (isEmpty(format)) return super.getDataFormat();
+        switch (format) {
+            case JSON:
+                return RsocketDataFormat.JSON;
+            case PROTOBUF:
+                return RsocketDataFormat.PROTOBUF;
+            case MESSAGE_PACK:
+                return RsocketDataFormat.MESSAGE_PACK;
+            case XML:
+                return RsocketDataFormat.XML;
+        }
+        return super.getDataFormat();
     }
 }

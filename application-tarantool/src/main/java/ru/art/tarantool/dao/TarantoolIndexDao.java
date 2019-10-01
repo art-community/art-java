@@ -52,7 +52,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         }
         List<List<?>> valueTuple = cast(result.get(0));
         List<List<?>> schemaTuple = cast(result.get(1));
-        return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
+        return ofNullable(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
     public Optional<Entity> getByIndex(String spaceName, String indexName) {
@@ -90,7 +90,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         }
         List<List<?>> valueTuple = cast(result.get(0));
         List<List<?>> schemaTuple = cast(result.get(1));
-        return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
+        return ofNullable(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
 
@@ -154,7 +154,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         }
         List<List<?>> valueTuple = cast(result.get(0));
         List<List<?>> schemaTuple = cast(result.get(1));
-        return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
+        return ofNullable(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
     private Optional<Entity> updateWithoutSchema(String spaceName, String indexName, Set<?> keys, List<TarantoolUpdateFieldOperation> operations) {
@@ -170,7 +170,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         }
         List<List<?>> valueTuple = cast(result.get(0));
         List<List<?>> schemaTuple = cast(result.get(1));
-        return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
+        return ofNullable(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
 }

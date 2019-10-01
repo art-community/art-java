@@ -92,7 +92,7 @@ public interface GeneratorOperations {
         for (int i = 0; i < clazz.getClasses().length; i++) {
             if (!clazz.getClasses()[i].getSimpleName().equals(clazz.getSimpleName() + BUILDER) &&
                     !generatedFiles.contains(clazz.getClasses()[i]) &&
-                    !clazz.getClasses()[i].isAnnotationPresent(NonGenerated.class) &&
+                    !clazz.getClasses()[i].isAnnotationPresent(IgnoreGeneration.class) &&
                     !clazz.isEnum()) {
                 createMapperClass(clazz.getClasses()[i], genPackage, jarPathToMain);
             }
@@ -102,6 +102,7 @@ public interface GeneratorOperations {
 
         JavaFile javaFile = JavaFile.builder(genPackage, mapperType)
                 .indent(TABULATION)
+                .addStaticImport(CheckerForEmptiness.class, IS_NOT_EMPTY)
                 .build();
         try {
             URL location = clazz.getProtectionDomain().getCodeSource().getLocation();
@@ -149,7 +150,7 @@ public interface GeneratorOperations {
         for (int i = 0; i < request.getClasses().length; i++) {
             if (!request.getClasses()[i].getSimpleName().equals(request.getSimpleName() + BUILDER) &&
                     !generatedFiles.contains(request.getClasses()[i]) &&
-                    !request.getClasses()[i].isAnnotationPresent(NonGenerated.class) &&
+                    !request.getClasses()[i].isAnnotationPresent(IgnoreGeneration.class) &&
                     !request.isEnum()) {
                 createMapperClass(request.getClasses()[i], genPackage, jarPathToMain);
             }
@@ -157,7 +158,7 @@ public interface GeneratorOperations {
         for (int i = 0; i < response.getClasses().length; i++) {
             if (!response.getClasses()[i].getSimpleName().equals(response.getSimpleName() + BUILDER) &&
                     !generatedFiles.contains(response.getClasses()[i]) &&
-                    !response.getClasses()[i].isAnnotationPresent(NonGenerated.class) &&
+                    !response.getClasses()[i].isAnnotationPresent(IgnoreGeneration.class) &&
                     !response.isEnum()) {
                 createMapperClass(response.getClasses()[i], genPackage, jarPathToMain);
             }
@@ -173,6 +174,7 @@ public interface GeneratorOperations {
         mapper = mapper.toBuilder().addType(requestMapperType).addType(responseMapperType).build();
         JavaFile javaFile = JavaFile.builder(genPackage, mapper)
                 .indent(TABULATION)
+                .addStaticImport(CheckerForEmptiness.class, IS_NOT_EMPTY)
                 .build();
         try {
             StringBuilder requestJarPath = new StringBuilder(request.getProtectionDomain()
@@ -302,7 +304,7 @@ public interface GeneratorOperations {
 
             }
         }
-        codeBlocks.add(of(DOUBLE_TABULATION + BUILD_METHOD));
+        codeBlocks.add(of(DOUBLE_TABULATION + DEFAULT_ENTITY_BUILDER, clazz));
         if (notGeneratedFields.isEmpty())
             return FieldSpec.builder(ParameterizedTypeName.get(ValueToModelMapper.class, clazz, Entity.class), TO_MODEL + clazz.getSimpleName(), PUBLIC, STATIC, FINAL)
                     .initializer(join(codeBlocks, NEW_LINE))
@@ -408,7 +410,7 @@ public interface GeneratorOperations {
             }
         }
 
-        codeBlocks.add(of(DOUBLE_TABULATION + BUILD_METHOD));
+        codeBlocks.add(of(DOUBLE_TABULATION + DEFAULT_MODEL_BUILDER, Entity.class));
         if (notGeneratedFields.isEmpty())
             return FieldSpec.builder(ParameterizedTypeName.get(ValueFromModelMapper.class, clazz, Entity.class), FROM_MODEL + clazz.getSimpleName(), PUBLIC, STATIC, FINAL)
                     .initializer(join(codeBlocks, NEW_LINE))

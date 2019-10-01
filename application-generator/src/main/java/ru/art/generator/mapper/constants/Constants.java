@@ -26,6 +26,7 @@ import static java.io.File.*;
 public interface Constants {
 
     String BUILD_METHOD = ".build()";
+    String IS_NOT_EMPTY = "isNotEmpty";
     String MAPPER = "Mapper";
     String GET = "get";
     String IS = "is";

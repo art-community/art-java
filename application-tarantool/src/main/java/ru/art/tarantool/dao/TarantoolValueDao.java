@@ -115,7 +115,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         }
         List<List<?>> valueTuple = cast(result.get(0));
         List<List<?>> schemaTuple = cast(result.get(1));
-        return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
+        return ofNullable(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
     public Optional<Entity> get(String spaceName, long id) {
@@ -300,7 +300,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         }
         List<List<?>> valueTuple = cast(result.get(0));
         List<List<?>> schemaTuple = cast(result.get(1));
-        return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
+        return ofNullable(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
     public Optional<Entity> delete(String spaceName, long id) {
@@ -359,7 +359,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         }
         List<List<?>> valueTuple = cast(result.get(0));
         List<List<?>> schemaTuple = cast(result.get(1));
-        return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
+        return ofNullable(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
     private Optional<Entity> updateWithoutSchema(String spaceName, Set<?> keys, List<TarantoolUpdateFieldOperation> operations) {
@@ -375,7 +375,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         }
         List<List<?>> valueTuple = cast(result.get(0));
         List<List<?>> schemaTuple = cast(result.get(1));
-        return of(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
+        return ofNullable(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
 

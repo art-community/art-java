@@ -25,8 +25,14 @@ import ru.art.kafka.serializer.*;
 public class KafkaSerdes {
     public static final KafkaJsonDeserializer KAFKA_JSON_DESERIALIZER = new KafkaJsonDeserializer();
     public static final KafkaProtobufDeserializer KAFKA_PROTOBUF_DESERIALIZER = new KafkaProtobufDeserializer();
+    public static final KafkaMessagePackDeserializer KAFKA_MESSAGE_PACK_DESERIALIZER = new KafkaMessagePackDeserializer();
+    public static final KafkaXmlDeserializer KAFKA_XML_DESERIALIZER = new KafkaXmlDeserializer();
     public static final KafkaJsonSerde KAFKA_JSON_SERDE = new KafkaJsonSerde();
     public static final KafkaProtobufSerde KAFKA_PROTOBUF_SERDE = new KafkaProtobufSerde();
+    public static final KafkaMessagePackSerde KAFKA_MESSAGE_PACK_SERDE = new KafkaMessagePackSerde();
+    public static final KafkaXmlSerde KAFKA_XML_SERDE = new KafkaXmlSerde();
     public static final KafkaJsonSerializer KAFKA_JSON_SERIALIZER = new KafkaJsonSerializer();
     public static final KafkaProtobufSerializer KAFKA_PROTOBUF_SERIALIZER = new KafkaProtobufSerializer();
+    public static final KafkaMessagePackSerializer KAFKA_MESSAGE_PACK_SERIALIZER = new KafkaMessagePackSerializer();
+    public static final KafkaXmlSerializer KAFKA_XML_SERIALIZER = new KafkaXmlSerializer();
 }
