@@ -62,7 +62,7 @@ public interface CommonOperations {
      */
     static ClassName createMapperForInnerClassIfNeeded(Class<?> genClass, String jarPathToMain) {
         if (genClass.isEnum()) return ClassName.get(genClass);
-        if (!genClass.isAnnotationPresent(NonGenerated.class)) {
+        if (!genClass.isAnnotationPresent(IgnoreGeneration.class)) {
             String classPackage = genClass.getName().substring(0, genClass.getName().indexOf(genClass.getSimpleName()) - 1);
             String genPackage = classPackage.contains(MODEL) ?
                     classPackage.replace(MODEL, MAPPING) :
@@ -85,7 +85,7 @@ public interface CommonOperations {
         ParameterizedType type = (ParameterizedType) field.getGenericType();
         Class<?> genClass = (Class) type.getActualTypeArguments()[0];
         if (genClass.isEnum()) return ClassName.get(genClass);
-        if (!genClass.isAnnotationPresent(NonGenerated.class)) {
+        if (!genClass.isAnnotationPresent(IgnoreGeneration.class)) {
             String classPackage = genClass.getName().substring(0, genClass.getName().indexOf(genClass.getSimpleName()) - 1);
             String genPackage = classPackage.contains(MODEL) ?
                     classPackage.replace(MODEL, MAPPING) :

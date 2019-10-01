@@ -34,12 +34,12 @@ public final class GrpcServletMessage {
   static {
     java.lang.String[] descriptorData = {
       "\n\021GrpcServlet.proto\022\023ru.art.grpc.servlet" +
-      "\032\013Value.proto\"L\n\013GrpcRequest\022=\n\016serviceR" +
-      "equest\030\001 \001(\0132%.ru.art.protobuf.entity.Pr" +
-      "otobufValue\"N\n\014GrpcResponse\022>\n\017serviceRe" +
-      "sponse\030\001 \001(\0132%.ru.art.protobuf.entity.Pr" +
-      "otobufValueB+\n\023ru.art.grpc.servletB\022Grpc" +
-      "ServletMessageP\001b\006proto3"
+      "\032\034google/protobuf/struct.proto\"=\n\013GrpcRe" +
+      "quest\022.\n\016serviceRequest\030\001 \001(\0132\026.google.p" +
+      "rotobuf.Value\"?\n\014GrpcResponse\022/\n\017service" +
+      "Response\030\001 \001(\0132\026.google.protobuf.ValueB+" +
+      "\n\023ru.art.grpc.servletB\022GrpcServletMessag" +
+      "eP\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -52,7 +52,7 @@ public final class GrpcServletMessage {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          ru.art.protobuf.entity.ProtobufValueMessage.getDescriptor(),
+          com.google.protobuf.StructProto.getDescriptor(),
         }, assigner);
     internal_static_ru_art_grpc_servlet_GrpcRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -66,7 +66,7 @@ public final class GrpcServletMessage {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ru_art_grpc_servlet_GrpcResponse_descriptor,
         new java.lang.String[] { "ServiceResponse", });
-    ru.art.protobuf.entity.ProtobufValueMessage.getDescriptor();
+    com.google.protobuf.StructProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

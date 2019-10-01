@@ -33,6 +33,7 @@ import static ru.art.remote.scheduler.module.RemoteSchedulerModule.*;
 import static ru.art.scheduler.db.adapter.api.constants.SchedulerDbAdapterApiConstants.Methods.GET_ALL_INFINITY_PROCESSES;
 import static ru.art.task.deferred.executor.SchedulerModule.*;
 import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
+import static ru.art.task.deferred.executor.TaskFactory.runnableTask;
 import java.time.*;
 import java.util.*;
 
@@ -48,8 +49,8 @@ public interface PoolController {
                 .withExceptionHandler(new DeferredExecutorExceptionHandler())
                 .build());
 
-        IdentifiedRunnable refreshDeferredTask = new IdentifiedRunnable(REFRESH_DEFERRED_TASK_KEY, PoolController::fillDeferredPool);
-        IdentifiedRunnable refreshPeriodicTask = new IdentifiedRunnable(REFRESH_PERIODIC_TASK_KEY, PoolController::fillPeriodicPool);
+        RunnableTask refreshDeferredTask = runnableTask(REFRESH_DEFERRED_TASK_KEY, taskId -> fillDeferredPool());
+        RunnableTask refreshPeriodicTask = runnableTask(REFRESH_PERIODIC_TASK_KEY, PoolController::fillPeriodicPool);
 
         periodicRefreshExecutor.executePeriodic(refreshDeferredTask, now().plusMinutes(remoteSchedulerModule().getRefreshDeferredPeriodMinutes()), ofMinutes(remoteSchedulerModule().getRefreshDeferredPeriodMinutes()));
         periodicRefreshExecutor.executePeriodic(refreshPeriodicTask, now().plusMinutes(remoteSchedulerModule().getRefreshPeriodicPeriodMinutes()), ofMinutes(remoteSchedulerModule().getRefreshPeriodicPeriodMinutes()));
@@ -72,7 +73,7 @@ public interface PoolController {
         schedulerModule().getPeriodicExecutor().clear();
         Set<PeriodicTask> periodicTasks = ServiceController.<Set<PeriodicTask>>executeServiceMethod(REMOTE_SCHEDULER_SERVICE_ID, GET_ALL_PERIODIC_TASKS).orElse(emptySet());
         for (PeriodicTask task : periodicTasks) {
-            IdentifiedRunnable runnableTask = new IdentifiedRunnable(task.getId(), () -> submitPeriodicTask(task));
+            RunnableTask runnableTask = runnableTask(task.getId(), () -> submitPeriodicTask(task));
             LocalDateTime executionDateTime = task.getExecutionDateTime();
             if (executionDateTime.isBefore(now())) {
                 asynchronousPeriod(runnableTask, ofSeconds(task.getExecutionPeriodSeconds()));
@@ -86,7 +87,7 @@ public interface PoolController {
         remoteSchedulerModuleState().getPeriodicInfinityExecutor().clear();
         Set<InfinityProcess> infinityProcesses = ServiceController.<Set<InfinityProcess>>executeServiceMethod(REMOTE_SCHEDULER_SERVICE_ID, GET_ALL_INFINITY_PROCESSES).orElse(emptySet());
         for (InfinityProcess process : infinityProcesses) {
-            IdentifiedRunnable runnableTask = new IdentifiedRunnable(process.getId(), () -> submitInfinityProcess(process));
+            RunnableTask runnableTask = runnableTask(process.getId(), () -> submitInfinityProcess(process));
             remoteSchedulerModuleState().getPeriodicInfinityExecutor().executePeriodic(runnableTask,
                     LocalDateTime.now().plus(ofSeconds(process.getExecutionDelay())),
                     ofSeconds(process.getExecutionPeriodSeconds()));

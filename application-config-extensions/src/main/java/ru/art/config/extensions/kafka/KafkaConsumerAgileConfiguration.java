@@ -25,13 +25,14 @@ import static java.time.Duration.*;
 import static org.apache.kafka.common.serialization.Serdes.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
+import static ru.art.config.extensions.common.DataFormats.*;
 import static ru.art.config.extensions.kafka.KafkaConfigKeys.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ThreadConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
-import static ru.art.kafka.constants.KafkaClientConstants.*;
 import static ru.art.kafka.consumer.configuration.KafkaStreamConfiguration.*;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
 import static ru.art.kafka.consumer.controller.KafkaConsumerController.*;
@@ -68,8 +69,8 @@ public class KafkaConsumerAgileConfiguration extends KafkaConsumerModuleDefaultC
                         .brokers(streamConfig.getStringList(BROKERS))
                         .topic(streamConfig.getString(TOPIC))
                         .additionalProperties(streamConfig.getProperties(ADDITIONAL_PROPERTIES))
-                        .keySerde(ifException(() -> getSerde(streamConfig.getString(KEY_SERDE)), KAFKA_PROTOBUF_SERDE))
-                        .valueSerde(ifException(() -> getSerde(streamConfig.getString(VALUE_SERDE)), KAFKA_PROTOBUF_SERDE))
+                        .keySerde(ifException(() -> getSerde(streamConfig.getString(KEY_SERDE)), KAFKA_MESSAGE_PACK_SERDE))
+                        .valueSerde(ifException(() -> getSerde(streamConfig.getString(VALUE_SERDE)), KAFKA_MESSAGE_PACK_SERDE))
                         .build(), super.getKafkaStreamConfigurations());
         if (!kafkaConsumerConfiguration.equals(newKafkaConsumerConfiguration) && context().hasModule(KAFKA_CONSUMER_MODULE_ID)) {
             kafkaConsumerConfiguration = newKafkaConsumerConfiguration;
@@ -90,19 +91,38 @@ public class KafkaConsumerAgileConfiguration extends KafkaConsumerModuleDefaultC
     }
 
     private static Serde<?> getSerde(String serdeString) throws ClassNotFoundException {
-        return JSON_KAFKA_FORMAT.equalsIgnoreCase(serdeString)
-                ? KAFKA_JSON_SERDE
-                : PROTOBUF_KAFKA_FORMAT.equalsIgnoreCase(serdeString)
-                ? KAFKA_PROTOBUF_SERDE
-                : serdeFrom(forName(serdeString));
+        if (isEmpty(serdeString)) {
+            return KAFKA_MESSAGE_PACK_SERDE;
+        }
+        switch (serdeString) {
+            case JSON:
+                return KAFKA_JSON_SERDE;
+            case PROTOBUF:
+                return KAFKA_PROTOBUF_SERDE;
+            case MESSAGE_PACK:
+                return KAFKA_MESSAGE_PACK_SERDE;
+            case XML:
+                return KAFKA_XML_SERDE;
+        }
+        return serdeFrom(forName(serdeString));
+
     }
 
-    private static Deserializer<?> getDeserializer(String keyDeserializerKey) throws ClassNotFoundException {
-        String keyDeserializerString = configString(KAFKA_CONSUMER_SECTION_ID, keyDeserializerKey);
-        return JSON_KAFKA_FORMAT.equalsIgnoreCase(keyDeserializerString)
-                ? KAFKA_JSON_DESERIALIZER
-                : PROTOBUF_KAFKA_FORMAT.equalsIgnoreCase(keyDeserializerString)
-                ? KAFKA_PROTOBUF_DESERIALIZER
-                : serdeFrom(forName(keyDeserializerString)).deserializer();
+    private static Deserializer<?> getDeserializer(String deserializerString) throws ClassNotFoundException {
+        if (isEmpty(deserializerString)) {
+            return KAFKA_MESSAGE_PACK_DESERIALIZER;
+        }
+        switch (deserializerString) {
+            case JSON:
+                return KAFKA_JSON_DESERIALIZER;
+            case PROTOBUF:
+                return KAFKA_PROTOBUF_DESERIALIZER;
+            case MESSAGE_PACK:
+                return KAFKA_MESSAGE_PACK_DESERIALIZER;
+            case XML:
+                return KAFKA_XML_DESERIALIZER;
+        }
+        return serdeFrom(forName(deserializerString)).deserializer();
+
     }
 }

@@ -89,7 +89,7 @@ public interface AnalyzingOperations {
     /**
      * Method deleting files in mapping package, which has no equivalent in model package.
      * If model package is empty, deleting mapping package.
-     * Classes marked as @NonGenerated are never automatically deleted.
+     * Classes marked as @IgnoreGeneration are never automatically deleted.
      *
      * @param mappingFilesList - list of files in mapping non-compiled package.
      * @param modelFilesList   - list of files in model non-compiled package.
@@ -101,6 +101,7 @@ public interface AnalyzingOperations {
     static void deleteFile(List<File> mappingFilesList, List<File> modelFilesList, String path, String packageMapping, Map<String, Integer> files) {
         String nonCompiledMappingPackagePath = path.replace(BUILD_CLASSES_JAVA_MAIN, SRC_MAIN_JAVA) + SLASH_MAPPING;
 
+        boolean mappingPackageHasNonGeneratedFiles = false;
         for (File mappingFile : mappingFilesList) {
             boolean modelFileWasDeleted = true;
             //for all model package try to find which files were deleted
@@ -126,18 +127,18 @@ public interface AnalyzingOperations {
             try {
                 path = path.substring(0, path.lastIndexOf(MAIN) + MAIN.length());
                 Class<?> clazz = getClass(path, mappingFile.getName().replace(DOT_CLASS, EMPTY_STRING), packageMapping);
-                if (!clazz.isAnnotationPresent(NonGenerated.class)) {
+                if (!clazz.isAnnotationPresent(IgnoreGeneration.class)) {
                     String pathname = nonCompiledMappingPackagePath
                             + separator
                             + mappingFile.getName().replace(DOT_CLASS, EMPTY_STRING)
                             + DOT_JAVA;
                     new File(pathname).delete();
-                }
+                } else mappingPackageHasNonGeneratedFiles = true;
             } catch (DefinitionException e) {
                 e.printStackTrace();
             }
         }
-        if (modelFilesList.isEmpty()) {
+        if (modelFilesList.isEmpty() && !mappingPackageHasNonGeneratedFiles) {
             File mappingPackage = new File(nonCompiledMappingPackagePath);
             mappingPackage.delete();
         }

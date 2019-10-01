@@ -16,23 +16,15 @@
  * limitations under the License.
  */
 
-package ru.art.generator.mapper.exception;
+package ru.art.generator.mapper.annotation;
+
+import java.lang.annotation.*;
 
 /**
- * Thrown to indicate that error during generation of
- * inner class. Mainly caused by the fact, that class has
- * IgnoreGeneration annotation or is an enum.
+ * Annotation for mapper generator.
+ * Classes marked with IgnoreGeneration annotation won't be processed by generator.
  */
-public class InnerClassGenerationException extends MappingGeneratorException {
-    public InnerClassGenerationException(String message) {
-        super(message);
-    }
-
-    public InnerClassGenerationException(String message, Exception cause) {
-        super(message, cause);
-    }
-
-    public InnerClassGenerationException(Exception cause) {
-        super(cause);
-    }
+@Target(ElementType.TYPE)
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface IgnoreGeneration {
 }

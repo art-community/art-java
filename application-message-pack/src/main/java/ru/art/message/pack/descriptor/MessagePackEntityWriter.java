@@ -33,7 +33,7 @@ import static org.msgpack.value.ValueFactory.MapBuilder;
 import static org.msgpack.value.ValueFactory.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.ArrayConstants.*;
-import static ru.art.core.extension.FileExtensions.*;
+import static ru.art.core.extension.FileExtensions.writeFileQuietly;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Value.*;
 import static ru.art.entity.constants.CollectionMode.*;
@@ -48,31 +48,30 @@ public class MessagePackEntityWriter {
             return;
         }
         try {
-            outputStream.write(writeMessagePack(value));
+            outputStream.write(writeMessagePackToBytes(value));
         } catch (Throwable e) {
             throw new MessagePackMappingException(e);
         }
     }
 
     public static void writeMessagePack(Value value, Path path) {
-        writeFileQuietly(path, writeMessagePack(value));
+        writeFileQuietly(path, writeMessagePackToBytes(value));
     }
 
-    public static byte[] writeMessagePack(Value value) {
+    public static byte[] writeMessagePackToBytes(Value value) {
         if (isEmpty(value)) {
             return EMPTY_BYTES;
         }
         ArrayBufferOutput output = new ArrayBufferOutput();
         try {
-            newDefaultPacker(output).packValue(writeValue(value)).close();
+            newDefaultPacker(output).packValue(writeMessagePack(value)).close();
             return output.toByteArray();
         } catch (Throwable e) {
             throw new MessagePackMappingException(e);
         }
     }
 
-
-    private static org.msgpack.value.Value writeValue(Value value) {
+    public static org.msgpack.value.Value writeMessagePack(Value value) {
         if (isPrimitive(value)) {
             return writePrimitive(asPrimitive(value));
         }
@@ -83,11 +82,10 @@ public class MessagePackEntityWriter {
                 return writeCollectionValue(asCollection(value));
             case MAP:
                 return writeMapValue(asMap(value));
-            case STRING_PARAMETERS_MAP:
-                return writeStringParameters(asStringParametersMap(value));
         }
         return newNil();
     }
+
 
     private static org.msgpack.value.Value writePrimitive(Primitive primitive) {
         if (isEmpty(primitive)) {
@@ -190,17 +188,11 @@ public class MessagePackEntityWriter {
                         .filter(CheckerForEmptiness::isNotEmpty)
                         .map(MessagePackEntityWriter::writeMapValue)
                         .collect(toList()));
-            case STRING_PARAMETERS_MAP:
-                return newArray(collectionValue.getStringParametersList()
-                        .stream()
-                        .filter(CheckerForEmptiness::isNotEmpty)
-                        .map(MessagePackEntityWriter::writeStringParameters)
-                        .collect(toList()));
             case VALUE:
-                return newArray(collectionValue.getStringParametersList()
+                return newArray(collectionValue.getValueList()
                         .stream()
                         .filter(CheckerForEmptiness::isNotEmpty)
-                        .map(MessagePackEntityWriter::writeValue)
+                        .map(MessagePackEntityWriter::writeMessagePack)
                         .collect(toList()));
 
         }
@@ -239,24 +231,14 @@ public class MessagePackEntityWriter {
                 return;
             case MAP:
                 mapBuilder.put(newString(entry.getKey()), writeMapValue(asMap(value)));
-                return;
-            case STRING_PARAMETERS_MAP:
-                mapBuilder.put(newString(entry.getKey()), writeStringParameters(asStringParametersMap(value)));
         }
     }
 
-    private static org.msgpack.value.Value writeStringParameters(StringParametersMap stringParametersMap) {
-        return newMap(stringParametersMap
-                .getParameters()
-                .entrySet()
-                .stream()
-                .collect(toMap(parameter -> newString(parameter.getKey()), parameter -> newString(parameter.getValue()))));
-    }
 
     private static org.msgpack.value.Value writeMapValue(MapValue mapValue) {
         if (isEmpty(mapValue)) {
             return emptyMap();
         }
-        return newMap(mapValue.getElements().entrySet().stream().collect(toMap(entry -> writeValue(entry.getKey()), entry -> writeValue(entry.getValue()))));
+        return newMap(mapValue.getElements().entrySet().stream().collect(toMap(entry -> writeMessagePack(entry.getKey()), entry -> writeMessagePack(entry.getValue()))));
     }
 }

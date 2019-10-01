@@ -35,6 +35,7 @@ import static ru.art.remote.scheduler.constants.RemoteSchedulerModuleConstants.Z
 import static ru.art.remote.scheduler.module.RemoteSchedulerModule.*;
 import static ru.art.scheduler.db.adapter.api.constants.SchedulerDbAdapterApiConstants.Methods.*;
 import static ru.art.service.ServiceController.*;
+import static ru.art.task.deferred.executor.TaskFactory.runnableTask;
 import java.util.*;
 
 
@@ -83,7 +84,7 @@ public interface RemoteSchedulerService {
 
         task.setId(id.get());
 
-        IdentifiedRunnable runnableTask = new IdentifiedRunnable(task.getId(), () -> submitPeriodicTask(task));
+        RunnableTask runnableTask = runnableTask(task.getId(), () -> submitPeriodicTask(task));
         SchedulerModuleActions.asynchronousPeriod(runnableTask, periodicTaskRequest.getExecutionDateTime(), ofSeconds(task.getExecutionPeriodSeconds()));
         return task.getId();
     }
@@ -96,7 +97,7 @@ public interface RemoteSchedulerService {
 
         InfinityProcess infinityProcess = new InfinityProcess(id.get(), request);
 
-        IdentifiedRunnable runnableTask = new IdentifiedRunnable(infinityProcess.getId(), () -> submitInfinityProcess(infinityProcess));
+        RunnableTask runnableTask = runnableTask(infinityProcess.getId(), () -> submitInfinityProcess(infinityProcess));
         remoteSchedulerModuleState().getPeriodicInfinityExecutor().executePeriodic(runnableTask,
                 now().plus(ofSeconds(infinityProcess.getExecutionDelay())),
                 ofSeconds(infinityProcess.getExecutionPeriodSeconds()));

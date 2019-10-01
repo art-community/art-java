@@ -23,7 +23,6 @@ import lombok.experimental.*;
 import ru.art.entity.*;
 import ru.art.json.exception.*;
 import static com.fasterxml.jackson.core.JsonToken.*;
-import static java.lang.Integer.*;
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.context.Context.*;
@@ -74,11 +73,7 @@ public class JsonEntityReader {
                 case VALUE_STRING:
                     return stringPrimitive(parser.getText());
                 case VALUE_NUMBER_INT:
-                    long longValue;
-                    if ((longValue = parser.getLongValue()) < MAX_VALUE) {
-                        return intPrimitive(((Long) longValue).intValue());
-                    }
-                    return longPrimitive(longValue);
+                    return longPrimitive(parser.getLongValue());
                 case VALUE_NUMBER_FLOAT:
                     return floatPrimitive(parser.getFloatValue());
                 case VALUE_TRUE:
@@ -125,7 +120,7 @@ public class JsonEntityReader {
                     entityBuilder.stringField(currentName, parser.getText());
                     break;
                 case VALUE_NUMBER_INT:
-                    parseNumber(entityBuilder, parser, currentName);
+                    entityBuilder.longField(currentName, parser.getLongValue());
                     break;
                 case VALUE_NUMBER_FLOAT:
                     entityBuilder.floatField(currentName, parser.getFloatValue());
@@ -142,14 +137,6 @@ public class JsonEntityReader {
             currentToken = parser.nextToken();
         } while (!parser.isClosed());
         return entityBuilder.build();
-    }
-
-    private static void parseNumber(EntityBuilder entityBuilder, JsonParser parser, String currentName) throws IOException {
-        long longValue;
-        if ((longValue = parser.getLongValue()) < MAX_VALUE) {
-            entityBuilder.intField(currentName, ((Long) longValue).intValue());
-        }
-        entityBuilder.longField(currentName, longValue);
     }
 
     private static void parseArray(EntityBuilder entityBuilder, JsonParser parser) throws IOException {
@@ -173,10 +160,6 @@ public class JsonEntityReader {
                 entityBuilder.stringCollectionField(currentName, parseStringArray(parser));
                 return;
             case VALUE_NUMBER_INT:
-                if (parser.getLongValue() < MAX_VALUE) {
-                    entityBuilder.intCollectionField(currentName, parseIntArray(parser));
-                    return;
-                }
                 entityBuilder.longCollectionField(currentName, parseLongArray(parser));
                 return;
             case VALUE_NUMBER_FLOAT:
@@ -208,9 +191,6 @@ public class JsonEntityReader {
             case VALUE_STRING:
                 return stringCollection(parseStringArray(parser));
             case VALUE_NUMBER_INT:
-                if (parser.getLongValue() < MAX_VALUE) {
-                    return intCollection(parseIntArray(parser));
-                }
                 return longCollection(parseLongArray(parser));
             case VALUE_NUMBER_FLOAT:
                 return doubleCollection(parseDoubleArray(parser));
@@ -250,17 +230,6 @@ public class JsonEntityReader {
         do {
             if (currentToken != VALUE_FALSE && currentToken != VALUE_TRUE) return array;
             array.add(parser.getBooleanValue());
-            currentToken = parser.nextToken();
-        } while (!parser.isClosed() && currentToken != END_ARRAY);
-        return array;
-    }
-
-    private static Collection<Integer> parseIntArray(JsonParser parser) throws IOException {
-        List<Integer> array = dynamicArrayOf();
-        JsonToken currentToken = parser.currentToken();
-        do {
-            if (currentToken != VALUE_NUMBER_INT) return array;
-            array.add(parser.getIntValue());
             currentToken = parser.nextToken();
         } while (!parser.isClosed() && currentToken != END_ARRAY);
         return array;

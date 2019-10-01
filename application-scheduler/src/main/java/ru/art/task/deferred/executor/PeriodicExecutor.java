@@ -33,7 +33,7 @@ public class PeriodicExecutor {
     private final Map<String, Future<?>> executingTasks = concurrentHashMap();
     private final DeferredExecutor deferredExecutor;
 
-    public <EventResultType> Future<? extends EventResultType> submitPeriodic(IdentifiedCallable<EventResultType> task, LocalDateTime startTime, Duration duration) {
+    public <EventResultType> Future<? extends EventResultType> submitPeriodic(CallableTask<EventResultType> task, LocalDateTime startTime, Duration duration) {
         Future<?> future = executingTasks.get(task.getId());
         if (nonNull(future)) {
             return cast(future);
@@ -41,7 +41,7 @@ public class PeriodicExecutor {
         return submit(task, startTime, duration);
     }
 
-    public <EventResultType> Future<? extends EventResultType> submitPeriodic(IdentifiedCallable<EventResultType> task, Duration duration) {
+    public <EventResultType> Future<? extends EventResultType> submitPeriodic(CallableTask<EventResultType> task, Duration duration) {
         Future<?> future = executingTasks.get(task.getId());
         if (nonNull(future)) {
             return cast(future);
@@ -49,7 +49,7 @@ public class PeriodicExecutor {
         return submit(task, duration);
     }
 
-    public Future<?> executePeriodic(IdentifiedRunnable task, LocalDateTime startTime, Duration duration) {
+    public Future<?> executePeriodic(RunnableTask task, LocalDateTime startTime, Duration duration) {
         Future<?> future = executingTasks.get(task.getId());
         if (nonNull(future)) {
             return cast(future);
@@ -57,7 +57,7 @@ public class PeriodicExecutor {
         return execute(task, startTime, duration);
     }
 
-    public Future<?> executePeriodic(IdentifiedRunnable task, Duration duration) {
+    public Future<?> executePeriodic(RunnableTask task, Duration duration) {
         Future<?> future = executingTasks.get(task.getId());
         if (nonNull(future)) {
             return cast(future);
@@ -78,40 +78,40 @@ public class PeriodicExecutor {
         deferredExecutor.clear();
     }
 
-    private <EventResultType> Future<? extends EventResultType> submit(IdentifiedCallable<EventResultType> task, LocalDateTime startTime, Duration duration) {
-        NotifiedCallable<EventResultType> eventTask = new NotifiedCallable<>(task.getCallable(), (notification) -> submitAgain(task, duration));
+    private <EventResultType> Future<? extends EventResultType> submit(CallableTask<EventResultType> task, LocalDateTime startTime, Duration duration) {
+        NotifiedCallable<EventResultType> eventTask = new NotifiedCallable<>(() -> task.getCallable().apply(task.getId()), (notification) -> submitAgain(task, duration));
         Future<? extends EventResultType> future = deferredExecutor.submit(eventTask, startTime);
         executingTasks.put(task.getId(), future);
         return future;
     }
 
-    private <EventResultType> Future<? extends EventResultType> submit(IdentifiedCallable<EventResultType> task, Duration duration) {
-        NotifiedCallable<EventResultType> eventTask = new NotifiedCallable<>(task.getCallable(), (notification) -> submitAgain(task, duration));
+    private <EventResultType> Future<? extends EventResultType> submit(CallableTask<EventResultType> task, Duration duration) {
+        NotifiedCallable<EventResultType> eventTask = new NotifiedCallable<>(() -> task.getCallable().apply(task.getId()), (notification) -> submitAgain(task, duration));
         Future<? extends EventResultType> future = deferredExecutor.submit(eventTask);
         executingTasks.put(task.getId(), future);
         return future;
     }
 
-    private Future<?> execute(IdentifiedRunnable task, LocalDateTime startTime, Duration duration) {
-        Future<?> future = deferredExecutor.execute(new NotifiedRunnable(task.getRunnable(), () -> executeAgain(task, duration)), startTime);
+    private Future<?> execute(RunnableTask task, LocalDateTime startTime, Duration duration) {
+        Future<?> future = deferredExecutor.execute(new NotifiedRunnable(() -> task.getRunnable().accept(task.getId()), () -> executeAgain(task, duration)), startTime);
         executingTasks.put(task.getId(), future);
         return future;
     }
 
-    private Future<?> execute(IdentifiedRunnable task, Duration duration) {
-        Future<?> future = deferredExecutor.execute(new NotifiedRunnable(task.getRunnable(), () -> executeAgain(task, duration)));
+    private Future<?> execute(RunnableTask task, Duration duration) {
+        Future<?> future = deferredExecutor.execute(new NotifiedRunnable(() -> task.getRunnable().accept(task.getId()), () -> executeAgain(task, duration)));
         executingTasks.put(task.getId(), future);
         return future;
     }
 
 
-    private void submitAgain(IdentifiedCallable<?> eventTask, Duration duration) {
+    private void submitAgain(CallableTask<?> eventTask, Duration duration) {
         if (executingTasks.containsKey(eventTask.getId())) {
             submit(eventTask, now().plus(duration), duration);
         }
     }
 
-    private void executeAgain(IdentifiedRunnable task, Duration duration) {
+    private void executeAgain(RunnableTask task, Duration duration) {
         if (executingTasks.containsKey(task.getId())) {
             execute(task, now().plus(duration), duration);
         }

@@ -44,6 +44,7 @@ art {
         applicationMetricsHttp()
         applicationScheduler()
         applicationRocksDb()
+        applicationMessagePack()
         applicationStateApi()
         applicationXml()
         applicationHttpXml()

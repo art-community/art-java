@@ -16,23 +16,15 @@
  * limitations under the License.
  */
 
-package ru.art.generator.mapper.exception;
+package ru.art.task.deferred.executor;
 
-/**
- * Thrown to indicate that error during generation of
- * inner class. Mainly caused by the fact, that class has
- * IgnoreGeneration annotation or is an enum.
- */
-public class InnerClassGenerationException extends MappingGeneratorException {
-    public InnerClassGenerationException(String message) {
-        super(message);
-    }
+import lombok.*;
+import ru.art.core.identified.*;
+import java.util.function.*;
 
-    public InnerClassGenerationException(String message, Exception cause) {
-        super(message, cause);
-    }
-
-    public InnerClassGenerationException(Exception cause) {
-        super(cause);
-    }
+@Getter
+@AllArgsConstructor
+public class RunnableTask implements UniqueIdentified {
+    private final String id;
+    private final Consumer<String> runnable;
 }

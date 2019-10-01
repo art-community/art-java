@@ -16,27 +16,27 @@
  * limitations under the License.
  */
 
-package ru.art.kafka.deserializer;
+package ru.art.kafka.serializer;
 
 import org.apache.kafka.common.serialization.*;
 import ru.art.entity.*;
-import ru.art.kafka.exception.*;
-import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.constants.ArrayConstants.*;
+import static ru.art.entity.Value.*;
+import static ru.art.entity.xml.XmlEntityFromEntityConverter.*;
+import static ru.art.xml.descriptor.XmlEntityWriter.*;
 import java.util.*;
 
-public class KafkaProtobufDeserializer implements Deserializer<Value> {
+public class KafkaXmlSerializer implements Serializer<Value> {
     @Override
     public void configure(Map<String, ?> configs, boolean isKey) {
 
     }
 
     @Override
-    public Value deserialize(String topic, byte[] data) {
-        try {
-            return readProtobuf(com.google.protobuf.Value.parseFrom(data));
-        } catch (Throwable e) {
-            throw new KafkaDeserializerException(e);
-        }
+    public byte[] serialize(String topic, Value data) {
+        if (isEmpty(data)) return EMPTY_BYTES;
+        return isXmlEntity(data) ? writeXmlToBytes(asXmlEntity(data)) : isEntity(data) ? writeXmlToBytes(fromEntityAsTags(asEntity(data))) : EMPTY_BYTES;
     }
 
     @Override

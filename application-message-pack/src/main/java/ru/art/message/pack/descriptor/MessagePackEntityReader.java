@@ -49,13 +49,13 @@ public class MessagePackEntityReader {
 
     public static Value readMessagePack(byte[] bytes) {
         try {
-            return readValue(newDefaultUnpacker(bytes).unpackValue());
+            return readMessagePack(newDefaultUnpacker(bytes).unpackValue());
         } catch (Throwable e) {
             throw new MessagePackMappingException(e);
         }
     }
 
-    private static Value readValue(org.msgpack.value.Value value) {
+    public static Value readMessagePack(org.msgpack.value.Value value) {
         if (isNull(value)) {
             return null;
         }
@@ -139,9 +139,9 @@ public class MessagePackEntityReader {
             org.msgpack.value.Value value = entry.getValue();
             if (isNull(key)) continue;
             if (isNull(value)) continue;
-            Value keyValue = readValue(key);
+            Value keyValue = readMessagePack(key);
             if (nonNull(keyValue)) {
-                mapValueBuilder.element(keyValue, readValue(value));
+                mapValueBuilder.element(keyValue, readMessagePack(value));
             }
         }
         return mapValueBuilder.build();
@@ -153,7 +153,7 @@ public class MessagePackEntityReader {
                 .stream()
                 .filter(Objects::nonNull)
                 .filter(element -> !element.isNilValue() && !element.isExtensionValue())
-                .map(MessagePackEntityReader::readValue)
+                .map(MessagePackEntityReader::readMessagePack)
                 .filter(Objects::nonNull)
                 .collect(toList()));
     }

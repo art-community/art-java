@@ -45,9 +45,9 @@ public class KafkaConsumerConfiguration {
     @Singular("broker")
     private final Set<String> brokers;
     @Builder.Default
-    private final Deserializer<?> keyDeserializer = KAFKA_PROTOBUF_DESERIALIZER;
+    private final Deserializer<?> keyDeserializer = KAFKA_MESSAGE_PACK_DESERIALIZER;
     @Builder.Default
-    private final Deserializer<?> valueDeserializer = KAFKA_PROTOBUF_DESERIALIZER;
+    private final Deserializer<?> valueDeserializer = KAFKA_MESSAGE_PACK_DESERIALIZER;
     @Builder.Default
     private final Properties additionalProperties = new Properties();
 

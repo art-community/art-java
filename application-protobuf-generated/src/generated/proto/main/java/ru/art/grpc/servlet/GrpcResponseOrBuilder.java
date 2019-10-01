@@ -8,15 +8,15 @@ public interface GrpcResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>.ru.art.protobuf.entity.ProtobufValue serviceResponse = 1;</code>
+   * <code>.google.protobuf.Value serviceResponse = 1;</code>
    */
   boolean hasServiceResponse();
   /**
-   * <code>.ru.art.protobuf.entity.ProtobufValue serviceResponse = 1;</code>
+   * <code>.google.protobuf.Value serviceResponse = 1;</code>
    */
-  ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValue getServiceResponse();
+  com.google.protobuf.Value getServiceResponse();
   /**
-   * <code>.ru.art.protobuf.entity.ProtobufValue serviceResponse = 1;</code>
+   * <code>.google.protobuf.Value serviceResponse = 1;</code>
    */
-  ru.art.protobuf.entity.ProtobufValueMessage.ProtobufValueOrBuilder getServiceResponseOrBuilder();
+  com.google.protobuf.ValueOrBuilder getServiceResponseOrBuilder();
 }

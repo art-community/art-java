@@ -16,23 +16,26 @@
  * limitations under the License.
  */
 
-package ru.art.generator.mapper.exception;
+package ru.art.kafka.deserializer;
 
-/**
- * Thrown to indicate that error during generation of
- * inner class. Mainly caused by the fact, that class has
- * IgnoreGeneration annotation or is an enum.
- */
-public class InnerClassGenerationException extends MappingGeneratorException {
-    public InnerClassGenerationException(String message) {
-        super(message);
+import org.apache.kafka.common.serialization.*;
+import ru.art.entity.*;
+import static ru.art.message.pack.descriptor.MessagePackEntityReader.*;
+import java.util.*;
+
+public class KafkaMessagePackDeserializer implements Deserializer<Value> {
+    @Override
+    public void configure(Map<String, ?> configs, boolean isKey) {
+
     }
 
-    public InnerClassGenerationException(String message, Exception cause) {
-        super(message, cause);
+    @Override
+    public Value deserialize(String topic, byte[] data) {
+        return readMessagePack(data);
     }
 
-    public InnerClassGenerationException(Exception cause) {
-        super(cause);
+    @Override
+    public void close() {
+
     }
 }

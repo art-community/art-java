@@ -16,23 +16,32 @@
  * limitations under the License.
  */
 
-package ru.art.generator.mapper.exception;
+package ru.art.kafka.serde;
 
-/**
- * Thrown to indicate that error during generation of
- * inner class. Mainly caused by the fact, that class has
- * IgnoreGeneration annotation or is an enum.
- */
-public class InnerClassGenerationException extends MappingGeneratorException {
-    public InnerClassGenerationException(String message) {
-        super(message);
+import org.apache.kafka.common.serialization.*;
+import ru.art.entity.*;
+import ru.art.kafka.deserializer.*;
+import ru.art.kafka.serializer.*;
+import java.util.*;
+
+public class KafkaXmlSerde implements Serde<Value> {
+    @Override
+    public void configure(Map<String, ?> configs, boolean isKey) {
+
     }
 
-    public InnerClassGenerationException(String message, Exception cause) {
-        super(message, cause);
+    @Override
+    public void close() {
+
     }
 
-    public InnerClassGenerationException(Exception cause) {
-        super(cause);
+    @Override
+    public Serializer<Value> serializer() {
+        return new KafkaXmlSerializer();
+    }
+
+    @Override
+    public Deserializer<Value> deserializer() {
+        return new KafkaXmlDeserializer();
     }
 }

@@ -31,7 +31,7 @@ public class KafkaProtobufSerializer implements Serializer<Value> {
 
     @Override
     public byte[] serialize(String topic, Value data) {
-        return writeProtobuf(data).toByteArray();
+        return writeProtobufToBytes(data);
     }
 
     @Override

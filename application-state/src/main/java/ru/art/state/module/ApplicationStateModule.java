@@ -37,7 +37,7 @@ import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstan
 import static ru.art.state.configuration.ApplicationStateModuleConfiguration.*;
 import static ru.art.state.constants.StateModuleConstants.*;
 import static ru.art.state.dao.ClusterDao.*;
-import static ru.art.task.deferred.executor.IdentifiedRunnableFactory.*;
+import static ru.art.task.deferred.executor.TaskFactory.*;
 import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
 
 @Getter
@@ -74,7 +74,7 @@ public class ApplicationStateModule implements Module<ApplicationStateModuleConf
                 .registerService(new NetworkServiceSpecification())
                 .registerService(new LockServiceSpecification());
         applicationState().setCluster(loadCluster());
-        asynchronousPeriod(commonTask(NetworkService::removeDeadEndpoints), ofSeconds(applicationStateModule().getModuleEndpointCheckRateSeconds()));
+        asynchronousPeriod(commonRunnableTask(NetworkService::removeDeadEndpoints), ofSeconds(applicationStateModule().getModuleEndpointCheckRateSeconds()));
         startHttpServer();
         startGrpcServer().await();
     }
