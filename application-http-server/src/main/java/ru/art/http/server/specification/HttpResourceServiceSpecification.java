@@ -31,10 +31,10 @@ import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
-import static ru.art.entity.PrimitivesFactory.*;
+import static ru.art.entity.PrimitivesFactory.stringPrimitive;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpParameters.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.STRING;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.Methods.*;
 import static ru.art.http.server.extractor.HttpResponseContentTypeExtractor.*;
 import static ru.art.http.server.interceptor.HttpServerInterception.*;
@@ -85,15 +85,15 @@ public class HttpResourceServiceSpecification implements HttpServiceSpecificatio
     public <P, R> R executeMethod(String methodId, P request) {
         if (GET_RESOURCE.equals(methodId)) {
             String resourcePath = cast(ifEmpty(request, httpServerModule().getResourceConfiguration().getDefaultResource()));
-            if (!resourcePath.contains(DOT)) {
-                return cast(byteCollection(getBinaryResource(resourcePath)));
+            if (resourcePath.contains(DOT)) {
+                return cast(httpServerModule()
+                        .getResourceConfiguration()
+                        .getResourceExtensionTypeMappings()
+                        .get(resourcePath.substring(resourcePath.lastIndexOf(DOT)).toLowerCase()) == STRING
+                        ? stringPrimitive(getStringResource(resourcePath))
+                        : byteCollection(getBinaryResource(resourcePath)));
             }
-            return cast(httpServerModule()
-                    .getResourceConfiguration()
-                    .getResourceExtensionTypeMappings()
-                    .get(resourcePath.substring(resourcePath.lastIndexOf(DOT)).toLowerCase()) == STRING
-                    ? stringPrimitive(getStringResource(resourcePath))
-                    : byteCollection(getBinaryResource(resourcePath)));
+            return cast(stringPrimitive(getStringResource(httpServerModule().getResourceConfiguration().getDefaultResource())));
         }
         throw new UnknownServiceMethodException(serviceId, methodId);
     }
