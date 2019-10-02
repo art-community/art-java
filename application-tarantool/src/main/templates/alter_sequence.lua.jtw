@@ -1,3 +1,4 @@
+box.schema.sequence.create('{{ sequenceName }}', { if_not_exists = true });
 box.sequence.{{ sequenceName }}.alter({
         {%- if not (empty(start)) -%}
             start
@@ -17,6 +18,5 @@ box.sequence.{{ sequenceName }}.alter({
         {%- if not (empty(step)) -%}
             step
         {%- endif -%}
-        if_not_exists = true;
     }
 )

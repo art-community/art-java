@@ -37,9 +37,7 @@ import static ru.art.tarantool.model.TarantoolUpdateFieldOperation.*
 import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState
 import static ru.art.tarantool.service.TarantoolIndexService.createIndex
 import static ru.art.tarantool.service.TarantoolIndexService.dropIndex
-import static ru.art.tarantool.service.TarantoolSequenceService.createSequence
 import static ru.art.tarantool.service.TarantoolSequenceService.dropSequence
-import static ru.art.tarantool.service.TarantoolSpaceService.createSpace
 import static ru.art.tarantool.service.TarantoolSpaceService.dropSpace
 
 @IgnoreIf({ getenv('TRAVIS') as boolean })
@@ -61,8 +59,6 @@ class TarantoolCrudSpecification extends Specification {
         useAgileConfigurations()
         tarantoolModuleState().loadedCommonScripts.clear()
         tarantoolModuleState().loadedValueScripts.clear()
-        createSpace(instanceId, spaceName)
-        createSequence(instanceId, sequence)
         createIndex(instanceId, TarantoolIndexConfiguration.builder()
                 .spaceName(spaceName)
                 .indexName(primaryIndex)
