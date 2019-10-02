@@ -1,4 +1,9 @@
-box.space.{{ spaceName }}.index.{{ indexName }}.alter({
+box.schema.space.create('{{ spaceName }}', { if_not_exists = true });
+box.space.{{ spaceName }}:create_index('{{ indexName }}', { if_not_exists = true });
+{%- if not (empty(sequence)) -%}
+    box.schema.sequence.create('{{ sequence }}', { if_not_exists = true });
+{%- endif -%}
+box.space.{{ spaceName }}.index.{{ indexName }}:alter({
         {%- if not (empty(type)) -%}
             type = '{{ type }}';
         {%- endif -%}
@@ -35,6 +40,5 @@ box.space.{{ spaceName }}.index.{{ indexName }}.alter({
         {%- if not (empty(sequence)) -%}
             sequence = {{ sequence }};
         {%- endif -%}
-        if_not_exists = true;
     }
 )
