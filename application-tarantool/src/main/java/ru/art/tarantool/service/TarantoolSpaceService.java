@@ -32,12 +32,7 @@ import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class TarantoolSpaceService {
-    public static void createSpace(String instanceId, String name) {
-        evaluateLuaScript(instanceId, tarantoolSpace(name).toCreateSpaceLua());
-        evaluateLuaScript(instanceId, tarantoolSpace(name).toManageSpaceLua());
-    }
-
-    public static void createSpace(String instanceId, TarantoolSpaceConfiguration configuration) {
+   public static void createSpace(String instanceId, TarantoolSpaceConfiguration configuration) {
         evaluateLuaScript(instanceId, configuration.toCreateSpaceLua());
         evaluateLuaScript(instanceId, configuration.toManageSpaceLua());
     }

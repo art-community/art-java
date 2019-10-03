@@ -33,11 +33,6 @@ import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class TarantoolSequenceService {
-    public static void createSequence(String instanceId, String sequenceName) {
-        evaluateLuaScript(instanceId, tarantoolSequence(sequenceName).toCreateSequenceLua());
-        evaluateLuaScript(instanceId, tarantoolSequence(sequenceName).toManageSequenceLua());
-    }
-
     public static void createSequence(String instanceId, TarantoolSequenceConfiguration sequenceConfiguration) {
         evaluateLuaScript(instanceId, sequenceConfiguration.toCreateSequenceLua());
         evaluateLuaScript(instanceId, sequenceConfiguration.toManageSequenceLua());
