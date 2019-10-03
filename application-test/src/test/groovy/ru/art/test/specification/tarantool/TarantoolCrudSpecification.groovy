@@ -45,6 +45,7 @@ class TarantoolCrudSpecification extends Specification {
     def spaceName = "DataEntity"
     def instanceId = "T"
     def secondaryIndex = "SecondaryIndex"
+    def secondaryIndexId = 1
     def sequence = "DataEntitySequence"
     def primaryIndex = "PrimaryIndex"
     def fieldName = "Data"
@@ -61,12 +62,8 @@ class TarantoolCrudSpecification extends Specification {
         tarantoolModuleState().loadedValueScripts.clear()
         createIndex(instanceId, TarantoolIndexConfiguration.builder()
                 .spaceName(spaceName)
-                .indexName(primaryIndex)
-                .sequence(sequence)
-                .build())
-        createIndex(instanceId, TarantoolIndexConfiguration.builder()
-                .spaceName(spaceName)
                 .indexName(secondaryIndex)
+                .id(secondaryIndexId)
                 .part(TarantoolIndexConfiguration.Part.builder()
                         .fieldNumber(fieldMapping(instanceId, spaceName).map(fieldName))
                         .type(STRING)
