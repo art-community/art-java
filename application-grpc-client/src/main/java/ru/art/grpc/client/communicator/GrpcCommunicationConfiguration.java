@@ -18,20 +18,27 @@
 
 package ru.art.grpc.client.communicator;
 
-import io.grpc.*;
-import lombok.*;
+import io.grpc.ClientInterceptor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import ru.art.entity.Entity;
 import ru.art.entity.Value;
-import ru.art.entity.*;
-import ru.art.entity.interceptor.*;
-import ru.art.entity.mapper.*;
-import ru.art.grpc.client.exception.*;
-import ru.art.grpc.client.handler.*;
-import static lombok.AccessLevel.*;
-import static ru.art.core.checker.CheckerForEmptiness.*;
-import static ru.art.grpc.client.constants.GrpcClientExceptionMessages.*;
-import static ru.art.grpc.client.module.GrpcClientModule.*;
-import java.util.*;
-import java.util.concurrent.*;
+import ru.art.entity.interceptor.ValueInterceptor;
+import ru.art.entity.mapper.ValueFromModelMapper;
+import ru.art.entity.mapper.ValueToModelMapper;
+import ru.art.grpc.client.exception.GrpcClientException;
+import ru.art.grpc.client.handler.GrpcCommunicationCompletionHandler;
+import ru.art.grpc.client.handler.GrpcCommunicationExceptionHandler;
+
+import java.util.List;
+import java.util.concurrent.Executor;
+
+import static lombok.AccessLevel.PACKAGE;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.factory.CollectionsFactory.linkedListOf;
+import static ru.art.grpc.client.constants.GrpcClientExceptionMessages.INVALID_GRPC_COMMUNICATION_CONFIGURATION;
+import static ru.art.grpc.client.module.GrpcClientModule.grpcClientModule;
 
 @Getter(value = PACKAGE)
 @Setter(value = PACKAGE)
@@ -57,8 +64,8 @@ public class GrpcCommunicationConfiguration {
     private long deadlineTimeout;
     @ToString.Include
     private boolean useSecuredTransport;
-    private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = grpcClientModule().getRequestValueInterceptors();
-    private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = grpcClientModule().getResponseValueInterceptors();
+    private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = linkedListOf(grpcClientModule().getRequestValueInterceptors());
+    private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = linkedListOf(grpcClientModule().getResponseValueInterceptors());
     private Executor asynchronousFuturesExecutor = grpcClientModule().getAsynchronousFuturesExecutor();
 
     void validateRequiredFields() {
