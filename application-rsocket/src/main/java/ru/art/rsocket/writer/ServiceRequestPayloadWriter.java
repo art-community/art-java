@@ -44,9 +44,9 @@ public interface ServiceRequestPayloadWriter {
                 if (isNull(result.getOutValue())) {
                     return create(EMPTY_BUFFER);
                 }
-                return writePayload(result.getOutValue(), dataFormat);
+                return writePayloadData(result.getOutValue(), dataFormat);
             }
         }
-        return writePayload(requestEntity, dataFormat);
+        return writePayloadData(requestEntity, dataFormat);
     }
 }

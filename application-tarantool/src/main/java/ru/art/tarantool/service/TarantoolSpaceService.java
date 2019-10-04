@@ -18,10 +18,9 @@
 
 package ru.art.tarantool.service;
 
-import lombok.*;
+import lombok.experimental.*;
 import org.tarantool.*;
 import ru.art.tarantool.configuration.lua.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.tarantool.caller.TarantoolFunctionCaller.*;
 import static ru.art.tarantool.configuration.lua.TarantoolSpaceConfiguration.*;
@@ -30,7 +29,7 @@ import static ru.art.tarantool.executor.TarantoolLuaExecutor.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
 import java.util.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public final class TarantoolSpaceService {
    public static void createSpace(String instanceId, TarantoolSpaceConfiguration configuration) {
         evaluateLuaScript(instanceId, configuration.toCreateSpaceLua());

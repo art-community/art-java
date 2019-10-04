@@ -52,7 +52,7 @@ public class RsocketRequestContext {
 
     @SuppressWarnings("Duplicates")
     public static RsocketRequestContext fromPayload(Payload payload, RsocketDataFormat dataFormat) {
-        Entity requestValue = asEntity(readPayload(payload, dataFormat));
+        Entity requestValue = asEntity(readPayloadData(payload, dataFormat));
         ServiceMethodCommand command = toServiceRequest().map(requestValue).getServiceMethodCommand();
         RsocketReactiveMethods rsocketServiceMethods = fromCommand(command);
         List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = rsocketServiceMethods.getRsocketMethod().requestValueInterceptors();

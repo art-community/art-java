@@ -18,19 +18,17 @@
 
 package ru.art.entity.tuple;
 
-import lombok.*;
-import ru.art.entity.Value;
+import lombok.experimental.*;
 import ru.art.entity.*;
 import ru.art.entity.constants.*;
 import static java.util.Collections.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Value.*;
 import java.util.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public class TupleWriter {
     public static List<?> writeTuple(Value value) {
         if (isEmpty(value)) return EMPTY_LIST;

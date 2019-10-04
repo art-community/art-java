@@ -18,13 +18,12 @@
 
 package ru.art.core.determinant;
 
-import lombok.*;
+import lombok.experimental.*;
 import static java.lang.System.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.constants.SystemNamePatterns.*;
 import static ru.art.core.constants.SystemProperties.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public final class SystemDeterminant {
     private static final String OS = getProperty(OS_NAME_PROPERTY).toLowerCase();
 

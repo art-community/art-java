@@ -21,7 +21,7 @@ art {
         applicationCore()
         applicationEntity()
         applicationService()
-        applicationProtobufGenerated()
+
     }
 }
 

@@ -18,13 +18,12 @@
 
 package ru.art.tarantool.caller;
 
-import lombok.*;
+import lombok.experimental.*;
 import org.tarantool.*;
 import ru.art.tarantool.exception.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
@@ -32,7 +31,7 @@ import static ru.art.tarantool.module.TarantoolModule.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public final class TarantoolFunctionCaller {
     public static List<?> callTarantoolFunction(TarantoolClient client, String functionName) {
         logFunctionCall(functionName, emptyList(), CALLING_FUNCTION);

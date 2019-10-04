@@ -62,7 +62,7 @@ public class RsocketAcceptor extends AbstractRSocket {
         RsocketDataFormat dataFormat = fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType());
         RsocketRequestContext context = fromPayload(payload, dataFormat);
         if (context.isStopHandling()) {
-            return just(writePayload(context.getAlternativeResponse(), dataFormat));
+            return just(writePayloadData(context.getAlternativeResponse(), dataFormat));
         }
         ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(context.getRequest());
         RsocketService.RsocketMethod rsocketMethod = context.getRsocketReactiveMethods().getRsocketMethod();
@@ -76,7 +76,7 @@ public class RsocketAcceptor extends AbstractRSocket {
         RsocketDataFormat dataFormat = fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType());
         RsocketRequestContext context = fromPayload(payload, fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType()));
         if (context.isStopHandling()) {
-            return Flux.just(writePayload(context.getAlternativeResponse(), dataFormat));
+            return Flux.just(writePayloadData(context.getAlternativeResponse(), dataFormat));
         }
         if (context.getRsocketReactiveMethods().getReactiveMethod().responseProcessingMode() == STRAIGHT) {
             return Flux.never();
@@ -93,7 +93,7 @@ public class RsocketAcceptor extends AbstractRSocket {
         return from(payloads)
                 .map(payload -> RsocketRequestReactiveContext.fromPayload(payload, dataFormat))
                 .flatMap(requestReactiveContext -> requestReactiveContext.isStopHandling()
-                        ? Flux.just(writePayload(requestReactiveContext.getAlternativeResponse(), dataFormat))
+                        ? Flux.just(writePayloadData(requestReactiveContext.getAlternativeResponse(), dataFormat))
                         : Flux.just(requestReactiveContext)
                         .filter(context -> nonNull(context.getRsocketReactiveMethods().getRsocketMethod()))
                         .filter(context -> nonNull(context.getRsocketReactiveMethods().getReactiveMethod()))
