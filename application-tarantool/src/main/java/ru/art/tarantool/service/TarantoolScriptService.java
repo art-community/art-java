@@ -18,15 +18,14 @@
 
 package ru.art.tarantool.service;
 
-import lombok.*;
+import lombok.experimental.*;
 import ru.art.tarantool.configuration.lua.*;
-import static lombok.AccessLevel.*;
 import static ru.art.tarantool.configuration.lua.TarantoolCommonScriptConfiguration.*;
 import static ru.art.tarantool.configuration.lua.TarantoolValueScriptConfiguration.*;
 import static ru.art.tarantool.executor.TarantoolLuaExecutor.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 @SuppressWarnings("Duplicates")
 public final class TarantoolScriptService {
     public static void evaluateValueScript(String instanceId, String spaceName) {

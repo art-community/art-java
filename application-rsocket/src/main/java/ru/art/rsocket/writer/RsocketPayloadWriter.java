@@ -19,13 +19,12 @@
 package ru.art.rsocket.writer;
 
 import io.rsocket.*;
-import lombok.*;
-import ru.art.entity.Value;
+import lombok.experimental.*;
+import ru.art.entity.*;
 import ru.art.rsocket.constants.RsocketModuleConstants.*;
 import ru.art.rsocket.exception.*;
 import static io.rsocket.util.DefaultPayload.*;
 import static java.text.MessageFormat.*;
-import static lombok.AccessLevel.*;
 import static ru.art.entity.Value.*;
 import static ru.art.json.descriptor.JsonEntityWriter.*;
 import static ru.art.message.pack.descriptor.MessagePackEntityWriter.*;
@@ -34,9 +33,9 @@ import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.
 import static ru.art.rsocket.module.RsocketModule.*;
 import static ru.art.xml.descriptor.XmlEntityWriter.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public class RsocketPayloadWriter {
-    public static Payload writePayload(Value value, RsocketDataFormat dataFormat) {
+    public static Payload writePayloadData(Value value, RsocketDataFormat dataFormat) {
         switch (dataFormat) {
             case PROTOBUF:
                 return create(writeProtobufToBytes(value));
@@ -46,6 +45,21 @@ public class RsocketPayloadWriter {
                 return create(writeXmlToBytes(asXmlEntity(value)));
             case MESSAGE_PACK:
                 return create(writeMessagePackToBytes(value));
+
+        }
+        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDataFormat()));
+    }
+
+    public static Payload writePayloadMetaData(Value dataValue, Value metadataValue, RsocketDataFormat dataFormat) {
+        switch (dataFormat) {
+            case PROTOBUF:
+                return create(writeProtobufToBytes(dataValue), writeProtobufToBytes(metadataValue));
+            case JSON:
+                return create(writeJsonToBytes(dataValue), writeJsonToBytes(metadataValue));
+            case XML:
+                return create(writeXmlToBytes(asXmlEntity(dataValue)), writeXmlToBytes(asXmlEntity(metadataValue)));
+            case MESSAGE_PACK:
+                return create(writeMessagePackToBytes(dataValue), writeMessagePackToBytes(metadataValue));
 
         }
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDataFormat()));

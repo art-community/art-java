@@ -18,22 +18,20 @@
 
 package ru.art.configurator.dao;
 
-import lombok.*;
+import lombok.experimental.*;
 import ru.art.entity.*;
-import ru.art.entity.Value;
 import ru.art.entity.Entity.*;
 import ru.art.rocks.db.dao.*;
 import static java.lang.String.*;
-import static lombok.AccessLevel.*;
 import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.entity.constants.ValueType.*;
 import static ru.art.rocks.db.dao.RocksDbValueDao.*;
 import java.util.*;
 
-@NoArgsConstructor(access = PRIVATE)
-class ConfigurationSaver {
-    static void saveProfileModulesConfiguration(String profileId, Entity profileConfigEntity) {
+@UtilityClass
+public class ConfigurationSaver {
+    public static void saveProfileModulesConfiguration(String profileId, Entity profileConfigEntity) {
         RocksDbPrimitiveDao.add(PROFILE_KEYS, profileId);
         EntityBuilder profileConfigBuilder = Entity.entityBuilder();
         Set<String> profileFields = profileConfigEntity.getFieldNames();
