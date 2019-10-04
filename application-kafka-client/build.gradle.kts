@@ -23,8 +23,7 @@ art {
         applicationLogging()
         applicationJson()
         applicationProtobuf()
-
-        applicationMessagePack()
+		applicationMessagePack()
         applicationXml()
     }
 }

@@ -34,8 +34,7 @@ art {
         applicationHttpJson()
         applicationHttpServer()
         applicationProtobuf()
-
-        applicationGrpc()
+		applicationGrpc()
         applicationGrpcClient()
         applicationGrpcServer()
         applicationSchedulerDbAdapterApi()

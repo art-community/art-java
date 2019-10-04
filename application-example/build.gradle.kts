@@ -32,8 +32,7 @@ art {
         applicationScheduler()
         applicationConfigExtensions()
         applicationProtobuf()
-
-        applicationGrpc()
+		applicationGrpc()
         applicationGrpcClient()
         applicationGrpcServer()
         applicationJson()

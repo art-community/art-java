@@ -24,8 +24,7 @@ art {
         applicationService()
         applicationReactiveService()
         applicationProtobuf()
-
-        applicationJson()
+		applicationJson()
         applicationXml()
         applicationMessagePack()
     }
