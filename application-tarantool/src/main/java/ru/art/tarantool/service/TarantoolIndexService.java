@@ -31,11 +31,6 @@ import static ru.art.tarantool.module.TarantoolModule.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class TarantoolIndexService {
-    public static void createIndex(String instanceId, String spaceName, String indexName) {
-        evaluateLuaScript(instanceId, tarantoolIndex(indexName, spaceName).toCreateIndexLua());
-        evaluateLuaScript(instanceId, tarantoolIndex(indexName, spaceName).toManageIndexLua());
-    }
-
     public static void createIndex(String instanceId, TarantoolIndexConfiguration configuration) {
         evaluateLuaScript(instanceId, configuration.toCreateIndexLua());
         evaluateLuaScript(instanceId, configuration.toManageIndexLua());

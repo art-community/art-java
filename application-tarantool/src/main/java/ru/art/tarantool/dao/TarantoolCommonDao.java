@@ -73,12 +73,4 @@ class TarantoolCommonDao {
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         callTarantoolFunction(client, TRUNCATE + spaceName);
     }
-
-    public void sequencedId() {
-        idCalculationMode = SEQUENCE;
-    }
-
-    public void manualId() {
-        idCalculationMode = MANUAL;
-    }
 }

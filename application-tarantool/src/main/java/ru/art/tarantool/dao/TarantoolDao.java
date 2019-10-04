@@ -21,6 +21,7 @@ package ru.art.tarantool.dao;
 import lombok.experimental.*;
 import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.module.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
 
 public class TarantoolDao {
@@ -45,5 +46,17 @@ public class TarantoolDao {
     public static TarantoolDao tarantool(String instanceId, TarantoolConfiguration configuration) {
         tarantoolModule().getTarantoolConfigurations().putIfAbsent(instanceId, configuration);
         return new TarantoolDao(instanceId);
+    }
+
+    public TarantoolDao sequencedId() {
+        indexDao.idCalculationMode = SEQUENCE;
+        valueDao.idCalculationMode = SEQUENCE;
+        return this;
+    }
+
+    public TarantoolDao manualId() {
+        indexDao.idCalculationMode = MANUAL;
+        valueDao.idCalculationMode = MANUAL;
+        return this;
     }
 }

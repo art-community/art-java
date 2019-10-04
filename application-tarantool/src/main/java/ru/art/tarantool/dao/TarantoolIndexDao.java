@@ -44,7 +44,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
     }
 
     public Optional<Entity> getByIndex(String spaceName, String indexName, Set<?> keys) {
-        evaluateValueScript(instanceId, spaceName);
+        evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, GET + spaceName + VALUE_POSTFIX + BY + indexName, keys);
         if (isEmpty(result) || result.size() == 1) {
@@ -109,7 +109,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
     }
 
     public long lenByIndex(String spaceName, String indexName) {
-        evaluateValueScript(instanceId, spaceName);
+        evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, LEN + spaceName + VALUES_POSTFIX + BY + indexName);
         if (isEmpty(result)) {
@@ -136,7 +136,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
     }
 
     private Optional<Entity> updateWithSchema(String spaceName, String indexName, Set<?> keys, List<TarantoolUpdateFieldOperation> operations) {
-        evaluateValueScript(instanceId, spaceName);
+        evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         String functionName = UPDATE + spaceName + VALUE_POSTFIX + WITH_SCHEMA_POSTFIX + BY + indexName;
         List<?> valueOperations = operations
@@ -158,7 +158,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
     }
 
     private Optional<Entity> updateWithoutSchema(String spaceName, String indexName, Set<?> keys, List<TarantoolUpdateFieldOperation> operations) {
-        evaluateValueScript(instanceId, spaceName);
+        evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         String functionName = UPDATE + spaceName + VALUE_POSTFIX + BY + indexName;
         List<List<?>> result = cast(callTarantoolFunction(client, functionName, fixedArrayOf(fixedArrayOf(keys), operations
