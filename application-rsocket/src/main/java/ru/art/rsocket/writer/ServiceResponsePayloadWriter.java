@@ -60,12 +60,12 @@ public class ServiceResponsePayloadWriter {
                 if (isNull(result.getOutValue())) {
                     return create(EMPTY_BUFFER);
                 }
-                return writePayload(result.getOutValue(), dataFormat);
+                return writePayloadData(result.getOutValue(), dataFormat);
             }
         }
         return isNull(responseMapper) ?
                 create(EMPTY_BUFFER) :
-                create(writePayload(responseValue, dataFormat));
+                create(writePayloadData(responseValue, dataFormat));
     }
 
     public static Flux<Payload> writeResponseReactive(RsocketMethod rsocketMethod, ServiceResponse<?> serviceResponse, RsocketDataFormat dataFormat) {
@@ -77,8 +77,8 @@ public class ServiceResponsePayloadWriter {
                         .map(responseValue -> processResponseValueInterceptors(responseValue, rsocketMethod.responseValueInterceptors()))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
-                        .map(responseValue -> writePayload(responseValue, dataFormat))
-                        .onErrorResume(error -> just(writePayload(fromServiceResponse(responseMapper)
+                        .map(responseValue -> writePayloadData(responseValue, dataFormat))
+                        .onErrorResume(error -> just(writePayloadData(fromServiceResponse(responseMapper)
                                 .map(cast(ServiceResponse.builder()
                                         .command(serviceResponse.getCommand())
                                         .serviceException(new ServiceExecutionException(serviceResponse.getCommand(),

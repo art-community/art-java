@@ -18,23 +18,20 @@
 
 package ru.art.entity.tuple;
 
-import lombok.*;
-import ru.art.entity.Value;
+import lombok.experimental.*;
 import ru.art.entity.*;
 import ru.art.entity.constants.*;
 import ru.art.entity.tuple.schema.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
 import static ru.art.entity.Entity.*;
 import static ru.art.entity.PrimitivesFactory.*;
-import static ru.art.entity.Value.*;
 import java.util.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public class PlainTupleReader {
     public static Value readTuple(List<?> tuple, ValueSchema schema) {
         if (isEmpty(tuple) || isNull(schema) || isEmpty(schema)) return null;

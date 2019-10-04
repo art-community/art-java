@@ -19,11 +19,11 @@
 package ru.art.entity.tuple;
 
 import lombok.*;
+import lombok.experimental.*;
 import ru.art.entity.Value;
 import ru.art.entity.*;
 import ru.art.entity.tuple.schema.*;
 import static java.util.Collections.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -31,7 +31,7 @@ import static ru.art.entity.Value.*;
 import static ru.art.entity.tuple.schema.ValueSchema.*;
 import java.util.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public class PlainTupleWriter {
     public static PlainTupleWriterResult writeTuple(Value value) {
         ValueSchema schema = fromValue(value);
