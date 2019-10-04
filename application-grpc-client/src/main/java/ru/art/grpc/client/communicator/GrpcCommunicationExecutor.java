@@ -36,7 +36,6 @@ import static ru.art.core.constants.InterceptionStrategy.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.entity.Value.*;
 import static ru.art.grpc.client.module.GrpcClientModule.*;
-import static ru.art.grpc.servlet.GrpcRequest.*;
 import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
 import static ru.art.protobuf.descriptor.ProtobufEntityWriter.*;
 import static ru.art.service.factory.ServiceRequestFactory.*;
@@ -84,10 +83,7 @@ class GrpcCommunicationExecutor {
                 return okResponse(command);
             }
         }
-        GrpcResponse response = stub.executeService(newBuilder()
-                .setServiceRequest(writeProtobuf(requestValue))
-                .build());
-        Entity responseValue = asEntity(readProtobuf(response.getServiceResponse()));
+        Entity responseValue = asEntity(readProtobuf(stub.executeService(writeProtobuf(requestValue))));
         List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = configuration.getResponseValueInterceptors();
         for (ValueInterceptor<Entity, Entity> responseValueInterceptor : responseValueInterceptors) {
             ValueInterceptionResult<Entity, Entity> result = responseValueInterceptor.intercept(responseValue);

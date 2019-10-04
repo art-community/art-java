@@ -27,7 +27,7 @@ art {
         applicationConfigYaml()
         applicationConfigGroovy()
         applicationProtobuf()
-        applicationProtobufGenerated()
+
         applicationGrpc()
         applicationGrpcClient()
         applicationGrpcServer()

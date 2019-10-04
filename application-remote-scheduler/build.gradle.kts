@@ -34,7 +34,7 @@ art {
         applicationHttpJson()
         applicationHttpServer()
         applicationProtobuf()
-        applicationProtobufGenerated()
+
         applicationGrpc()
         applicationGrpcClient()
         applicationGrpcServer()

@@ -23,7 +23,7 @@ art {
         applicationLogging()
         applicationJson()
         applicationProtobuf()
-        applicationProtobufGenerated()
+
         applicationMessagePack()
         applicationXml()
     }

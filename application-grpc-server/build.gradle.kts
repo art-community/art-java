@@ -23,7 +23,7 @@ art {
         applicationLogging()
         applicationService()
         applicationProtobuf()
-        applicationProtobufGenerated()
+
         applicationGrpc()
     }
 }
