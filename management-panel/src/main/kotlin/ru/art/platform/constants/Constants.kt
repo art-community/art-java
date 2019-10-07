@@ -4,7 +4,7 @@ object CommonConstants {
     const val PLATFORM = "platform"
     const val USER = "user"
     const val TOKEN = "token"
-    const val ACCESS_TOKEN = "accessToken"
+    const val TOKEN_LIFE_TIME_DAYS = 1
 }
 
 object DbConstants {
@@ -14,13 +14,18 @@ object DbConstants {
 
 object UserConstants {
     const val SECRET = "=5||4F#6N6mnq+5"
-    const val USERNAME = "username"
+    const val NAME = "name"
     const val PASSWORD = "password"
 }
 
 object ServiceConstants {
     const val REGISTER_USER = "registerUser"
     const val GET_USER = "getUser"
-    const val LOGIN = "login"
-    const val CHECK_TOKEN = "checkToken"
+    const val AUTHORIZE = "authorize"
+    const val AUTHENTICATE = "authenticate"
+}
+
+object ErrorMessages {
+    const val TOKEN_DOES_NOT_EXISTS = "Token does not exists"
+    const val USER_DOES_NOT_EXISTS = "User does not exists"
 }

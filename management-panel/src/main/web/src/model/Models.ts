@@ -10,6 +10,11 @@ interface UserRequest {
     token?: String | null
 }
 
+interface UserAuthorizationRequest {
+    name: String
+    password: String
+}
+
 interface User {
     id: number
     name: String

@@ -4,16 +4,14 @@ import {Box, Button, Container, Grid, TextField, Typography,} from '@material-ui
 import {useHistory} from "react-router-dom";
 import {PROJECT_PATH, REGISTER_PATH, SLASH, TOKEN_COOKIE, USER_STORE} from "../../constants/Constants";
 import {useStore} from "react-hookstore";
-import {normalizeRoutingPath} from "../../normalization/RoutingPathNormalization";
-import {getUser} from "../../api/PlatformApi";
+import {authorize, getUser} from "../../api/PlatformApi";
 // @ts-ignore
-import { useCookie } from "@use-hook/use-cookie";
+import Cookies from "js-cookie";
 
-export function LoginComponent() {
+export function AuthorizationComponent() {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [user, setUser] = useStore(USER_STORE);
-    const [token, setToken] = useCookie(TOKEN_COOKIE);
     const history = useHistory();
     return <Container component={'main'} maxWidth={'xs'}>
         <Grid alignItems="center" style={{minHeight: '100vh'}} container>
@@ -51,10 +49,15 @@ export function LoginComponent() {
                         <Grid item xs={6}>
                             <Button
                                 fullWidth
-                                onClick={() => getUser({name: name, password: password}, user => {
-                                    setUser(user);
-                                    setToken(user.token);
-                                    history.push(normalizeRoutingPath(PROJECT_PATH));
+                                onClick={() => authorize({name: name, password: password}, token => {
+                                    Cookies.set(TOKEN_COOKIE, user.token);
+                                    getUser(token,
+                                        user => {
+                                            setUser(user);
+                                            history.push(SLASH);
+                                        }, () => {
+                                            history.push(REGISTER_PATH);
+                                        })
                                 })}
                                 variant={'contained'}
                                 color={'primary'}>
@@ -64,7 +67,7 @@ export function LoginComponent() {
                         <Grid item xs={6}>
                             <Button
                                 fullWidth
-                                onClick={() => history.push(normalizeRoutingPath(REGISTER_PATH))}
+                                onClick={() => history.push(REGISTER_PATH)}
                                 variant={'contained'}
                                 color={'secondary'}>
                                 Регистрация

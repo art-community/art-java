@@ -3,15 +3,16 @@ import {useState} from 'react';
 import {Box, Button, Container, Grid, TextField, Typography,} from '@material-ui/core';
 import {useHistory} from "react-router";
 import {useStore} from 'react-hookstore';
-import {PROJECT_PATH, SLASH, USER_STORE} from "../../constants/Constants";
-import {normalizeRoutingPath} from "../../normalization/RoutingPathNormalization";
+import {PROJECT_PATH, SLASH, TOKEN_COOKIE, USER_STORE} from "../../constants/Constants";
 import {registerUser} from "../../api/PlatformApi";
+// @ts-ignore
+import Cookies from "js-cookie";
 
 export function RegistrationComponent() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [_, setUser] = useStore(USER_STORE);
+    const [user, setUser] = useStore(USER_STORE);
     const history = useHistory();
     return <Container component={'main'} maxWidth={'xs'}>
         <Grid alignItems="center" style={{minHeight: '100vh'}} container>
@@ -60,7 +61,8 @@ export function RegistrationComponent() {
                     <Button fullWidth
                             onClick={() => registerUser({name: name, email: email, password: password}, user => {
                                 setUser(user);
-                                history.push(normalizeRoutingPath(PROJECT_PATH));
+                                Cookies.set(TOKEN_COOKIE, user.token);
+                                history.push(SLASH);
                             })}
                             variant={'contained'}
                             color={'secondary'}>

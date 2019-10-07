@@ -31,8 +31,8 @@ import static java.util.stream.Collectors.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.entity.Entity.*;
 import static ru.art.entity.Value.*;
+import static ru.art.entity.Entity.*;
 import static ru.art.entity.tuple.PlainTupleReader.*;
 import static ru.art.entity.tuple.PlainTupleWriter.*;
 import static ru.art.entity.tuple.schema.ValueSchema.*;
@@ -90,19 +90,19 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
 
 
     public Entity put(String spaceName, Primitive primitive) {
-        return put(spaceName, 1L, primitive);
+        return put(spaceName, entityBuilder().valueField(VALUE, primitive).build());
     }
 
     public Entity put(String spaceName, CollectionValue<?> collectionValue) {
-        return put(spaceName, 1L, collectionValue);
+        return put(spaceName, entityBuilder().valueField(VALUE, collectionValue).build());
     }
 
     public Entity put(String spaceName, StringParametersMap stringParameters) {
-        return put(spaceName, 1L, stringParameters);
+        return put(spaceName, entityBuilder().valueField(VALUE, stringParameters).build());
     }
 
     public Entity put(String spaceName, MapValue mapValue) {
-        return put(spaceName, 1L, mapValue);
+        return put(spaceName, entityBuilder().valueField(VALUE, mapValue).build());
     }
 
 
@@ -275,19 +275,19 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
 
 
     public Entity insert(String spaceName, Primitive primitive) {
-        return insert(spaceName, 1L, primitive);
+        return put(spaceName, entityBuilder().valueField(VALUE, primitive).build());
     }
 
     public Entity insert(String spaceName, CollectionValue<?> collectionValue) {
-        return insert(spaceName, 1L, collectionValue);
+        return put(spaceName, entityBuilder().valueField(VALUE, collectionValue).build());
     }
 
     public Entity insert(String spaceName, StringParametersMap stringParameters) {
-        return insert(spaceName, 1L, stringParameters);
+        return put(spaceName, entityBuilder().valueField(VALUE, stringParameters).build());
     }
 
     public Entity insert(String spaceName, MapValue mapValue) {
-        return insert(spaceName, 1L, mapValue);
+        return put(spaceName, entityBuilder().valueField(VALUE, mapValue).build());
     }
 
 
