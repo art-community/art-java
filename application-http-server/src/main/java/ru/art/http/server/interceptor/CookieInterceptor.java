@@ -39,27 +39,31 @@ public class CookieInterceptor implements HttpServerInterception {
     private final Set<String> paths;
     @Singular("cookie")
     private final Map<String, Supplier<String>> cookies;
-    private final int errorStatus;
-    private final String errorContent;
+    private final Function<String, Error> errorProvider;
 
     @Override
     public InterceptionStrategy intercept(HttpServletRequest request, HttpServletResponse response) {
         if (paths.stream().noneMatch(url -> request.getRequestURI().contains(url)) ||
-                request.getMethod().equals(OPTIONS.name()) || hasTokenCookie(request)) {
+                request.getMethod().equals(OPTIONS.name()) ||
+                hasTokenCookie(request)) {
             return NEXT_INTERCEPTOR;
         }
-        response.setCharacterEncoding(contextConfiguration().getCharset().name());
-        response.setHeader(CONTENT_TYPE, TEXT_HTML_UTF_8.toString());
-        response.setStatus(errorStatus);
         try {
-            if (isNotEmpty(errorContent)) {
-                response.getOutputStream().write(errorContent.getBytes());
+            if (isNull(errorProvider)) {
+                return NEXT_INTERCEPTOR;
+            }
+            response.setCharacterEncoding(ifEmpty(request.getCharacterEncoding(), contextConfiguration().getCharset().name()));
+            response.setHeader(CONTENT_TYPE, TEXT_HTML_UTF_8.toString());
+            Error error = errorProvider.apply(request.getRequestURI());
+            response.setStatus(error.status);
+            if (isNotEmpty(error.content)) {
+                response.getOutputStream().write(error.content.getBytes());
             }
             response.getOutputStream().close();
+            return NEXT_INTERCEPTOR;
         } catch (Throwable e) {
             throw new HttpServerException(e);
         }
-        return NEXT_INTERCEPTOR;
     }
 
     private boolean hasTokenCookie(HttpServletRequest request) {
@@ -76,5 +80,12 @@ public class CookieInterceptor implements HttpServerInterception {
         Supplier<String> supplier = cookies.get(cookie.getName());
         if (isNull(supplier)) return false;
         return cookie.getValue().equalsIgnoreCase(supplier.get());
+    }
+
+    @Getter
+    @AllArgsConstructor(staticName = "cookieError")
+    public static class Error {
+        private final int status;
+        private final String content;
     }
 }

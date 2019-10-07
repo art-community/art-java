@@ -26,7 +26,7 @@ import io.grpc.stub.*;
 import io.grpc.stub.ServerCalls.*;
 import lombok.*;
 import ru.art.grpc.exception.*;
-import static com.google.protobuf.StructProto.getDescriptor;
+import static com.google.protobuf.StructProto.*;
 import static io.grpc.MethodDescriptor.*;
 import static io.grpc.protobuf.ProtoUtils.*;
 import static io.grpc.stub.ClientCalls.asyncUnaryCall;

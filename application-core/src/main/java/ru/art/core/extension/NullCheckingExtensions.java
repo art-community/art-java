@@ -36,6 +36,10 @@ public class NullCheckingExtensions {
         return nonNull(val) ? action.apply(val) : null;
     }
 
+    public static <T, R> R doIfNotNull(T val, Function<T, R> action, Supplier<R> orElse) {
+        return nonNull(val) ? action.apply(val) : orElse.get();
+    }
+
     public static <T> void doIfNotNull(T val, Consumer<T> consumer) {
         if (nonNull(val)) {
             consumer.accept(val);

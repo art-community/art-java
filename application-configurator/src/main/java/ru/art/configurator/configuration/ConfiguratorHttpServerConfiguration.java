@@ -35,6 +35,7 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.constants.HttpStatus.*;
 import static ru.art.http.server.HttpServerModuleConfiguration.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
+import static ru.art.http.server.interceptor.CookieInterceptor.Error.cookieError;
 import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
 import static ru.art.http.server.service.HttpResourceService.*;
 import static ru.art.metrics.http.filter.MetricsHttpLogFilter.*;
@@ -54,8 +55,7 @@ public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefault
         httpServerInterceptors.add(intercept(CookieInterceptor.builder()
                 .paths(AUTHORIZATION_CHECKING_PATHS)
                 .cookie(TOKEN_COOKIE, UserDao::getToken)
-                .errorStatus(UNAUTHORIZED.getCode())
-                .errorContent(getStringResource(INDEX_HTML))
+                .errorProvider(path -> cookieError(UNAUTHORIZED.getCode(), getStringResource(INDEX_HTML)))
                 .build()));
         return httpServerInterceptors;
     }
