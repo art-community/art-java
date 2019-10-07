@@ -35,8 +35,8 @@ import java.util.function.*;
 public class RsocketFunctionalServiceSpecification implements RsocketReactiveServiceSpecification {
     private final String serviceId = RSOCKET_FUNCTION_SERVICE;
     private final Map<String, Function<?, ?>> functions = mapOf();
-    private final ReactiveServiceBuilder reactiveServiceBuilder = reactiveService();
-    private final RsocketServiceBuilder rsocketServiceBuilder = rsocketService();
+    private final ReactiveService.ReactiveServiceBuilder reactiveServiceBuilder = ReactiveService.reactiveService();
+    private final RsocketService.RsocketServiceBuilder rsocketServiceBuilder = RsocketService.rsocketService();
 
     @Override
     public ReactiveService getReactiveService() {
