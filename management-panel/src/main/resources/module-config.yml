@@ -1,0 +1,17 @@
+http:
+  server:
+    port: 8080
+    path: /platform
+rsocket:
+  server:
+    webSocketPort: 9001
+tarantool:
+  configurations:
+    platform:
+      connection:
+        host: localhost
+        port: 3301
+        username: username
+        password: password
+      instanceMode: local
+
