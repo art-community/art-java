@@ -26,6 +26,7 @@ import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.InputOutputStreamExtensions.*;
+import static ru.art.http.server.HttpServerModuleConfiguration.HttpResourceConfiguration.*;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
 import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.logging.LoggingModule.*;
@@ -151,9 +152,9 @@ public interface HttpResourceService {
     }
 
     static URL mapResourceUrl(String resource) {
-        String resourceMapping = httpServerModule().getResourceConfiguration().getResourcePathMappings().get(resource);
+        HttpResource resourceMapping = httpServerModule().getResourceConfiguration().getResourceMappings().get(resource);
         if (isNotEmpty(resourceMapping)) {
-            resource = resourceMapping;
+            resource = resourceMapping.getPath();
         }
         return HttpResourceService.class.getClassLoader().getResource(resource);
     }
