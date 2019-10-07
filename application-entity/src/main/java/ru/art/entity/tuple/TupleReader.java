@@ -19,6 +19,7 @@
 package ru.art.entity.tuple;
 
 import lombok.*;
+import lombok.experimental.*;
 import ru.art.entity.*;
 import ru.art.entity.Value;
 import ru.art.entity.StringParametersMap.*;
@@ -33,7 +34,7 @@ import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.entity.Value.*;
 import java.util.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public class TupleReader {
     public static Value readTuple(List<?> tuple) {
         if (isEmpty(tuple)) return null;

@@ -20,11 +20,10 @@ package ru.art.rsocket.reader;
 
 import io.netty.buffer.*;
 import io.rsocket.*;
-import lombok.*;
-import ru.art.entity.Value;
+import lombok.experimental.*;
+import ru.art.entity.*;
 import ru.art.rsocket.exception.*;
 import static java.text.MessageFormat.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
 import static ru.art.json.descriptor.JsonEntityReader.*;
 import static ru.art.message.pack.descriptor.MessagePackEntityReader.*;
@@ -34,10 +33,9 @@ import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.module.RsocketModule.*;
 import static ru.art.xml.descriptor.XmlEntityReader.*;
 
-
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public class RsocketPayloadReader {
-    public static Value readPayload(Payload payload, RsocketDataFormat dataFormat) {
+    public static Value readPayloadData(Payload payload, RsocketDataFormat dataFormat) {
         switch (dataFormat) {
             case PROTOBUF:
                 return readProtobuf(wrapException(() -> com.google.protobuf.Value.parseFrom(payload.getData()), RsocketServerException::new));
@@ -47,6 +45,23 @@ public class RsocketPayloadReader {
                 return readXml(wrapException(payload::getDataUtf8, RsocketServerException::new));
             case MESSAGE_PACK:
                 ByteBuf byteBuf = payload.sliceData();
+                byte[] bytes = new byte[byteBuf.readableBytes()];
+                byteBuf.readBytes(bytes);
+                return readMessagePack(bytes);
+        }
+        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDataFormat()));
+    }
+
+    public static Value readPayloadMetaData(Payload payload, RsocketDataFormat dataFormat) {
+        switch (dataFormat) {
+            case PROTOBUF:
+                return readProtobuf(wrapException(() -> com.google.protobuf.Value.parseFrom(payload.getMetadata()), RsocketServerException::new));
+            case JSON:
+                return readJson(wrapException(payload::getMetadataUtf8, RsocketServerException::new));
+            case XML:
+                return readXml(wrapException(payload::getMetadataUtf8, RsocketServerException::new));
+            case MESSAGE_PACK:
+                ByteBuf byteBuf = payload.sliceMetadata();
                 byte[] bytes = new byte[byteBuf.readableBytes()];
                 byteBuf.readBytes(bytes);
                 return readMessagePack(bytes);
