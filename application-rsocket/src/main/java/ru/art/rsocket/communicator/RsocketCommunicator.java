@@ -43,6 +43,7 @@ import static reactor.core.publisher.Mono.just;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Value.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
@@ -69,8 +70,8 @@ public class RsocketCommunicator {
     private ValueToModelMapper responseMapper;
     private RsocketDataFormat dataFormat;
     private final BuilderValidator validator = new BuilderValidator(RsocketCommunicator.class.getName());
-    private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = rsocketModule().getRequestValueInterceptors();
-    private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = rsocketModule().getResponseValueInterceptors();
+    private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = linkedListOf(rsocketModule().getRequestValueInterceptors());
+    private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = linkedListOf(rsocketModule().getResponseValueInterceptors());
     private ServiceMethodCommand command;
 
     private RsocketCommunicator(RsocketCommunicationTargetConfiguration configuration) {
