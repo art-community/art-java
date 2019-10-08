@@ -30,4 +30,5 @@ object ServiceConstants {
 object ErrorMessages {
     const val TOKEN_DOES_NOT_EXISTS = "Token does not exists"
     const val USER_DOES_NOT_EXISTS = "User does not exists"
+    const val INVALID_META_DATA = "Invalid RSocket metadata"
 }
