@@ -1,3 +1,13 @@
+box.schema.space.create('{{ spaceName }}', { if_not_exists = true });
+{%- if not (empty(sequence)) -%}
+    box.schema.sequence.create('{{ sequence }}', { if_not_exists = true });
+{%- endif -%}
+{%- if not (empty(id)) and id > 0 -%}
+    if box.space.{{ spaceName }}.index[0] == nil then
+        box.schema.sequence.create('{{ spaceName }}Sequence', { if_not_exists = true });
+        box.space.{{ spaceName }}:create_index('{{ spaceName }}Index', { sequence = '{{ spaceName }}Sequence'; if_not_exists = true });
+    end;
+{%- endif -%}
 box.space.{{ spaceName }}:create_index('{{ indexName }}', {
         {%- if not (empty(sequence)) -%}
             sequence = '{{ sequence }}';

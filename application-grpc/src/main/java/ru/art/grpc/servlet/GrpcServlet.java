@@ -39,10 +39,10 @@ import static ru.art.grpc.constants.GrpcConstants.*;
 import static ru.art.grpc.constants.GrpcExceptionMessages.*;
 
 public class GrpcServlet {
-    private volatile MethodDescriptor<GrpcRequest, GrpcResponse> methodDescriptor;
+    private volatile MethodDescriptor<com.google.protobuf.Value, com.google.protobuf.Value> methodDescriptor;
     private volatile ServiceDescriptor serviceDescriptor;
 
-    public MethodDescriptor<GrpcRequest, GrpcResponse> getExecuteServiceMethod(String path) {
+    public MethodDescriptor<com.google.protobuf.Value, com.google.protobuf.Value> getExecuteServiceMethod(String path) {
         return getExecuteServiceMethodHelper(path);
     }
 
@@ -54,8 +54,8 @@ public class GrpcServlet {
         }
     }
 
-    private MethodDescriptor<GrpcRequest, GrpcResponse> getExecuteServiceMethodHelper(String path) {
-        MethodDescriptor<GrpcRequest, GrpcResponse> methodDescriptorLocal;
+    private MethodDescriptor<com.google.protobuf.Value, com.google.protobuf.Value> getExecuteServiceMethodHelper(String path) {
+        MethodDescriptor<com.google.protobuf.Value, com.google.protobuf.Value> methodDescriptorLocal;
         if ((methodDescriptorLocal = methodDescriptor) != null) {
             return methodDescriptorLocal;
         }
@@ -63,12 +63,12 @@ public class GrpcServlet {
             if ((methodDescriptorLocal = methodDescriptor) != null) {
                 return methodDescriptorLocal;
             }
-            methodDescriptor = methodDescriptorLocal = MethodDescriptor.<GrpcRequest, GrpcResponse>newBuilder()
+            methodDescriptor = methodDescriptorLocal = MethodDescriptor.<com.google.protobuf.Value, com.google.protobuf.Value>newBuilder()
                     .setType(MethodDescriptor.MethodType.UNARY)
                     .setFullMethodName(generateFullMethodName(path, METHOD_NAME))
                     .setSampledToLocalTracing(true)
-                    .setRequestMarshaller(marshaller(GrpcRequest.getDefaultInstance()))
-                    .setResponseMarshaller(marshaller(GrpcResponse.getDefaultInstance()))
+                    .setRequestMarshaller(marshaller(com.google.protobuf.Value.getDefaultInstance()))
+                    .setResponseMarshaller(marshaller(com.google.protobuf.Value.getDefaultInstance()))
                     .setSchemaDescriptor(new GrpcServletMethodDescriptorSupplier(path))
                     .build();
         }
@@ -109,7 +109,7 @@ public class GrpcServlet {
     public abstract class GrpcServletImplBase implements BindableService {
         private String path;
 
-        public void executeService(GrpcRequest request, StreamObserver<GrpcResponse> responseObserver) {
+        public void executeService(com.google.protobuf.Value request, StreamObserver<com.google.protobuf.Value> responseObserver) {
             asyncUnimplementedUnaryCall(getExecuteServiceMethodHelper(path), responseObserver);
         }
 
@@ -139,7 +139,7 @@ public class GrpcServlet {
             return new GrpcServletStub(channel, callOptions, path);
         }
 
-        public void executeService(GrpcRequest request, StreamObserver<GrpcResponse> responseObserver) {
+        public void executeService(com.google.protobuf.Value request, StreamObserver<com.google.protobuf.Value> responseObserver) {
             asyncUnaryCall(getChannel().newCall(getExecuteServiceMethodHelper(path), getCallOptions()), request, responseObserver);
         }
     }
@@ -162,7 +162,7 @@ public class GrpcServlet {
             return new GrpcServletBlockingStub(channel, callOptions, path);
         }
 
-        public GrpcResponse executeService(GrpcRequest request) {
+        public com.google.protobuf.Value executeService(com.google.protobuf.Value request) {
             return blockingUnaryCall(getChannel(), getExecuteServiceMethodHelper(path), getCallOptions(), request);
         }
     }
@@ -185,7 +185,7 @@ public class GrpcServlet {
             return new GrpcServletFutureStub(channel, callOptions, path);
         }
 
-        public ListenableFuture<GrpcResponse> executeService(GrpcRequest request) {
+        public ListenableFuture<com.google.protobuf.Value> executeService(com.google.protobuf.Value request) {
             return futureUnaryCall(getChannel().newCall(getExecuteServiceMethodHelper(path), getCallOptions()), request);
         }
     }
@@ -200,7 +200,7 @@ public class GrpcServlet {
         @Override
         @java.lang.SuppressWarnings("unchecked")
         public void invoke(RequestType request, StreamObserver<ResponseType> responseObserver) {
-            serviceImpl.executeService((GrpcRequest) request, (StreamObserver<GrpcResponse>) responseObserver);
+            serviceImpl.executeService((com.google.protobuf.Value) request, (StreamObserver<com.google.protobuf.Value>) responseObserver);
         }
 
         @Override

@@ -42,7 +42,6 @@ import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.entity.Value.*;
 import static ru.art.grpc.client.constants.GrpcClientExceptionMessages.*;
 import static ru.art.grpc.client.module.GrpcClientModule.*;
-import static ru.art.grpc.servlet.GrpcRequest.*;
 import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
 import static ru.art.protobuf.descriptor.ProtobufEntityWriter.*;
 import static ru.art.service.factory.ServiceRequestFactory.*;
@@ -91,15 +90,15 @@ class GrpcCommunicationAsyncExecutor {
                 return completedFuture(okResponse(command));
             }
         }
-        ListenableFuture<GrpcResponse> future = stub.executeService(newBuilder().setServiceRequest(writeProtobuf(requestValue)).build());
+        ListenableFuture<com.google.protobuf.Value> future = stub.executeService(writeProtobuf(requestValue));
         addCallback(future, createFutureCallback(configuration), configuration.getAsynchronousFuturesExecutor());
         return supplyAsync(() -> executeGrpcFuture(configuration, future, command), configuration.getAsynchronousFuturesExecutor());
     }
 
-    private static FutureCallback<GrpcResponse> createFutureCallback(GrpcCommunicationConfiguration configuration) {
-        return new FutureCallback<GrpcResponse>() {
+    private static FutureCallback<com.google.protobuf.Value> createFutureCallback(GrpcCommunicationConfiguration configuration) {
+        return new FutureCallback<com.google.protobuf.Value>() {
             @Override
-            public void onSuccess(GrpcResponse response) {
+            public void onSuccess(com.google.protobuf.Value response) {
                 if (isNull(response)) {
                     if (isNull(configuration.getExceptionHandler())) {
                         return;
@@ -110,7 +109,7 @@ class GrpcCommunicationAsyncExecutor {
                 if (isNull(configuration.getCompletionHandler())) {
                     return;
                 }
-                Entity responseValue = asEntity(readProtobuf(response.getServiceResponse()));
+                Entity responseValue = asEntity(readProtobuf(response));
                 List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = configuration.getResponseValueInterceptors();
                 for (ValueInterceptor<Entity, Entity> responseValueInterceptor : responseValueInterceptors) {
                     ValueInterceptionResult<Entity, Entity> result = responseValueInterceptor.intercept(responseValue);
@@ -141,13 +140,13 @@ class GrpcCommunicationAsyncExecutor {
         };
     }
 
-    private static <ResponseType> ServiceResponse<ResponseType> executeGrpcFuture(GrpcCommunicationConfiguration configuration, ListenableFuture<GrpcResponse> future, ServiceMethodCommand command) {
+    private static <ResponseType> ServiceResponse<ResponseType> executeGrpcFuture(GrpcCommunicationConfiguration configuration, ListenableFuture<com.google.protobuf.Value> future, ServiceMethodCommand command) {
         try {
-            GrpcResponse grpcResponse = future.get();
+            com.google.protobuf.Value grpcResponse = future.get();
             if (isNull(grpcResponse)) {
                 return okResponse(command);
             }
-            Entity responseValue = asEntity(readProtobuf(grpcResponse.getServiceResponse()));
+            Entity responseValue = asEntity(readProtobuf(grpcResponse));
             List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = configuration.getResponseValueInterceptors();
             for (ValueInterceptor<Entity, Entity> responseValueInterceptor : responseValueInterceptors) {
                 ValueInterceptionResult<Entity, Entity> result = responseValueInterceptor.intercept(responseValue);

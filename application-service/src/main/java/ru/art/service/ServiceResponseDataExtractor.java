@@ -18,14 +18,13 @@
 
 package ru.art.service;
 
-import lombok.*;
+import lombok.experimental.*;
 import ru.art.service.model.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
 
-@NoArgsConstructor(access = PRIVATE)
-class ServiceResponseDataExtractor {
-    static <T> T extractResponseDataChecked(ServiceResponse<T> response) {
+@UtilityClass
+public class ServiceResponseDataExtractor {
+    public static <T> T extractResponseDataChecked(ServiceResponse<T> response) {
         if (nonNull(response.getServiceException())) {
             return null;
         }

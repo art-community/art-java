@@ -19,19 +19,18 @@
 package ru.art.config;
 
 import com.typesafe.config.*;
-import lombok.*;
+import lombok.experimental.*;
 import ru.art.config.constants.*;
 import ru.art.config.exception.ConfigException;
 import static java.text.MessageFormat.*;
-import static lombok.AccessLevel.*;
 import static ru.art.config.GroovyConfigLoader.*;
 import static ru.art.config.TypesafeConfigLoader.*;
 import static ru.art.config.YamlConfigLoader.*;
 import static ru.art.config.constants.ConfigExceptionMessages.*;
 
-@NoArgsConstructor(access = PRIVATE)
-class ConfigLoader {
-    static Config loadLocalConfig(String configId, ConfigType configType) {
+@UtilityClass
+public class ConfigLoader {
+    public static Config loadLocalConfig(String configId, ConfigType configType) {
         switch (configType) {
             case PROPERTIES:
             case JSON:

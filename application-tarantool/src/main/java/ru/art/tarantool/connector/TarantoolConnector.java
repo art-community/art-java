@@ -18,14 +18,13 @@
 
 package ru.art.tarantool.connector;
 
-import lombok.*;
+import lombok.experimental.*;
 import org.tarantool.*;
 import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.exception.*;
 import ru.art.tarantool.initializer.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_CONNECT_TO_TARANTOOL;
@@ -33,8 +32,7 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessa
 import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
 
-@SuppressWarnings("Duplicates")
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public final class TarantoolConnector {
     public static TarantoolClient connectToTarantool(String instanceId) {
         TarantoolClient connectedClient = tarantoolModuleState().getClients().get(instanceId);

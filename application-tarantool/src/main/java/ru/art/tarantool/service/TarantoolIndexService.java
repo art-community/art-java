@@ -19,6 +19,7 @@
 package ru.art.tarantool.service;
 
 import lombok.*;
+import lombok.experimental.*;
 import org.tarantool.*;
 import ru.art.tarantool.configuration.lua.*;
 import static lombok.AccessLevel.*;
@@ -29,13 +30,8 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static ru.art.tarantool.executor.TarantoolLuaExecutor.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public final class TarantoolIndexService {
-    public static void createIndex(String instanceId, String spaceName, String indexName) {
-        evaluateLuaScript(instanceId, tarantoolIndex(indexName, spaceName).toCreateIndexLua());
-        evaluateLuaScript(instanceId, tarantoolIndex(indexName, spaceName).toManageIndexLua());
-    }
-
     public static void createIndex(String instanceId, TarantoolIndexConfiguration configuration) {
         evaluateLuaScript(instanceId, configuration.toCreateIndexLua());
         evaluateLuaScript(instanceId, configuration.toManageIndexLua());

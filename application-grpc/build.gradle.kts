@@ -20,8 +20,7 @@ art {
     providedModules {
         applicationCore()
         applicationProtobuf()
-        applicationProtobufGenerated()
-    }
+		}
 }
 
 dependencies {

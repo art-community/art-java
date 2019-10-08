@@ -66,6 +66,6 @@ class HttpCommunicationConfiguration {
     private HttpClient synchronousClient;
     private HttpAsyncClient asynchronousClient;
     private Executor asynchronousFuturesExecutor = httpClientModule().getAsynchronousFuturesExecutor();
-    private List<ValueInterceptor<Value, Value>> requestValueInterceptors = httpClientModule().getRequestValueInterceptors();
-    private List<ValueInterceptor<Value, Value>> responseValueInterceptors = httpClientModule().getResponseValueInterceptors();
+    private List<ValueInterceptor<Value, Value>> requestValueInterceptors = linkedListOf();
+    private List<ValueInterceptor<Value, Value>> responseValueInterceptors = linkedListOf();
 }
