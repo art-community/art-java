@@ -4,18 +4,21 @@ import ru.art.config.extensions.activator.AgileConfigurationsActivator.*
 import ru.art.entity.PrimitiveMapping.*
 import ru.art.http.server.HttpServer.*
 import ru.art.http.server.module.*
-import ru.art.platform.api.mapping.UserAuthorizationRequestMapper.*
-import ru.art.platform.api.mapping.UserMapper.*
-import ru.art.platform.api.mapping.UserRegistrationRequestMapper.*
+import ru.art.platform.api.mapping.UserAuthorizationRequestResponseMapper.UserAuthorizationRequestMapper.*
+import ru.art.platform.api.mapping.UserAuthorizationRequestResponseMapper.UserAuthorizationResponseMapper.*
+import ru.art.platform.api.mapping.UserRegistrationRequestResponseMapper.UserRegistrationRequestMapper.*
+import ru.art.platform.api.mapping.UserRegistrationRequestResponseMapper.UserRegistrationResponseMapper.*
 import ru.art.platform.configuration.*
+import ru.art.platform.constants.CommonConstants.NAME_PASSWORD
 import ru.art.platform.constants.CommonConstants.PLATFORM
 import ru.art.platform.constants.CommonConstants.TOKEN
 import ru.art.platform.constants.CommonConstants.USER
+import ru.art.platform.constants.DbConstants.NAME_FIELD_NUM
+import ru.art.platform.constants.DbConstants.PASSWORD_FIELD_NUM
 import ru.art.platform.constants.DbConstants.TOKEN_FIELD_NUM
 import ru.art.platform.constants.DbConstants.TOKEN_INDEX_ID
 import ru.art.platform.constants.ServiceConstants.AUTHENTICATE
 import ru.art.platform.constants.ServiceConstants.AUTHORIZE
-import ru.art.platform.constants.ServiceConstants.GET_USER
 import ru.art.platform.constants.ServiceConstants.REGISTER_USER
 import ru.art.platform.service.*
 import ru.art.rsocket.function.RsocketServiceFunction.*
@@ -45,8 +48,9 @@ object ManagementPanelModule {
         createIndex(PLATFORM, builder()
                 .id(TOKEN_INDEX_ID)
                 .spaceName(USER)
-                .indexName(TOKEN)
-                .part(Part.builder().fieldNumber(TOKEN_FIELD_NUM).type(STRING).build())
+                .indexName(NAME_PASSWORD)
+                .part(Part.builder().fieldNumber(NAME_FIELD_NUM).type(STRING).build())
+                .part(Part.builder().fieldNumber(PASSWORD_FIELD_NUM).type(STRING).build())
                 .build())
         createIndex(PLATFORM, builder()
                 .id(TOKEN_INDEX_ID)
@@ -59,23 +63,17 @@ object ManagementPanelModule {
     private fun registerFunctions() {
         rsocket(REGISTER_USER)
                 .requestMapper(toUserRegistrationRequest)
-                .responseMapper(fromUser)
+                .responseMapper(fromUserRegistrationResponse)
                 .validationPolicy(VALIDATABLE)
                 .handle(UserService::registerUser)
-        rsocket(GET_USER)
-                .requestMapper(stringMapper.toModel)
-                .responseMapper(fromUser)
-                .validationPolicy(VALIDATABLE)
-                .handle(UserService::getUser)
         rsocket(AUTHORIZE)
                 .requestMapper(toUserAuthorizationRequest)
-                .responseMapper(stringMapper.fromModel)
+                .responseMapper(fromUserAuthorizationResponse)
                 .validationPolicy(VALIDATABLE)
                 .handle(UserService::authorize)
         rsocket(AUTHENTICATE)
                 .requestMapper(stringMapper.toModel)
-                .validationPolicy(VALIDATABLE)
-                .handle(UserService::authenticate)
+                .consume(UserService::authenticate)
     }
 
 

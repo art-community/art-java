@@ -2,9 +2,11 @@ package ru.art.platform.service
 
 import com.auth0.jwt.JWT.*
 import com.auth0.jwt.algorithms.Algorithm.*
+import ru.art.core.factory.CollectionsFactory.*
 import ru.art.entity.PrimitivesFactory.*
 import ru.art.platform.api.mapping.UserMapper.*
 import ru.art.platform.api.model.*
+import ru.art.platform.constants.CommonConstants.NAME_PASSWORD
 import ru.art.platform.constants.CommonConstants.PLATFORM
 import ru.art.platform.constants.CommonConstants.TOKEN
 import ru.art.platform.constants.CommonConstants.USER
@@ -18,21 +20,22 @@ import ru.art.tarantool.dao.TarantoolDao.*
 
 
 object UserService {
-    fun registerUser(request: UserRegistrationRequest): User = toUser.map(tarantool(PLATFORM)
-            .insert(USER, fromUser.map(User.builder()
-                    .token(createToken(request.name, request.password))
-                    .email(request.email)
-                    .name(request.name)
-                    .build())))
+    fun registerUser(request: UserRegistrationRequest): UserRegistrationResponse = UserRegistrationResponse.builder()
+            .user(toUser.map(tarantool(PLATFORM)
+                    .insert(USER, fromUser.map(User.builder()
+                            .name(request.name)
+                            .password(request.password)
+                            .email(request.email)
+                            .build()))))
+            .token(createToken(request.name, request.password))
+            .build()
 
-    fun getUser(token: String): User {
-        authenticate(token)
-        return toUser.map(tarantool(PLATFORM)
-                .getByIndex(USER, TOKEN, setOf(token))
-                .orElseThrow { PlatformException(USER_DOES_NOT_EXISTS) })
-    }
-
-    fun authorize(request: UserAuthorizationRequest) = createToken(request.name, request.password).apply { tarantool(PLATFORM).put(TOKEN, stringPrimitive(this)) }
+    fun authorize(request: UserAuthorizationRequest): UserAuthorizationResponse = UserAuthorizationResponse.builder()
+            .user(toUser.map(tarantool(PLATFORM)
+                    .getByIndex(USER, NAME_PASSWORD, fixedArrayOf(request.name, request.password))
+                    .orElseThrow { PlatformException(USER_DOES_NOT_EXISTS) }))
+            .token(tarantool(PLATFORM).put(TOKEN, stringPrimitive(createToken(request.name, request.password))).getString(VALUE))
+            .build()
 
     fun authenticate(token: String) {
         require(HMAC256(SECRET))

@@ -59,9 +59,9 @@ export function RegistrationComponent() {
                 />
                 <Box marginTop={3}>
                     <Button fullWidth
-                            onClick={() => registerUser({name: name, email: email, password: password}, user => {
-                                setUser(user);
-                                Cookies.set(TOKEN_COOKIE, user.token);
+                            onClick={() => registerUser({name: name, email: email, password: password}, response => {
+                                setUser(response.user);
+                                Cookies.set(TOKEN_COOKIE, response.token);
                                 history.push(SLASH);
                             })}
                             variant={'contained'}

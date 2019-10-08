@@ -11,14 +11,13 @@ const connect = async () => new RSocketClient({
 }).connect();
 
 export const executeRequest = async (request: any, onComplete: (data: any) => void, onError: (exception: any) => void = () => {}) => {
-    const [token] = Cookies.get(TOKEN_COOKIE);
     const socket = await connect();
     const response = await socket
         .requestResponse({
             data: encode(request),
-            metadata: encode(createMethodRequest(request.serviceMethodCommand.methodId, token))
+            metadata: encode(createMethodRequest(request.serviceMethodCommand.methodId, Cookies.get(TOKEN_COOKIE)))
         })
-        .map(payload => decode(payload.data as number[]));
+        .map(payload => payload.data != null ? decode(payload.data as number[]) : null);
     if (response.serviceExecutionException) {
         console.error(response.serviceExecutionException);
         onError(response.serviceExecutionException);

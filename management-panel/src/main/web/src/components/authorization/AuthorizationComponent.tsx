@@ -4,7 +4,7 @@ import {Box, Button, Container, Grid, TextField, Typography,} from '@material-ui
 import {useHistory} from "react-router-dom";
 import {PROJECT_PATH, REGISTER_PATH, SLASH, TOKEN_COOKIE, USER_STORE} from "../../constants/Constants";
 import {useStore} from "react-hookstore";
-import {authorize, getUser} from "../../api/PlatformApi";
+import {authorize} from "../../api/PlatformApi";
 // @ts-ignore
 import Cookies from "js-cookie";
 
@@ -49,15 +49,12 @@ export function AuthorizationComponent() {
                         <Grid item xs={6}>
                             <Button
                                 fullWidth
-                                onClick={() => authorize({name: name, password: password}, token => {
-                                    Cookies.set(TOKEN_COOKIE, user.token);
-                                    getUser(token,
-                                        user => {
-                                            setUser(user);
-                                            history.push(SLASH);
-                                        }, () => {
-                                            history.push(REGISTER_PATH);
-                                        })
+                                onClick={() => authorize({name: name, password: password}, response => {
+                                    setUser(response.user);
+                                    Cookies.set(TOKEN_COOKIE, response.token);
+                                    history.push(SLASH);
+                                }, () => {
+                                    history.push(REGISTER_PATH);
                                 })}
                                 variant={'contained'}
                                 color={'primary'}>

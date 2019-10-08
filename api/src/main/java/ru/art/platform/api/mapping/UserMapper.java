@@ -11,23 +11,27 @@ import ru.art.platform.api.model.User;
 public interface UserMapper {
 	String id = "id";
 
-	String token = "token";
-
 	String name = "name";
+
+	String password = "password";
 
 	String email = "email";
 
+	String token = "token";
+
 	ValueToModelMapper<User, Entity> toUser = entity -> isNotEmpty(entity) ? User.builder()
 			.id(entity.getLong(id))
-			.token(entity.getString(token))
 			.name(entity.getString(name))
+			.password(entity.getString(password))
 			.email(entity.getString(email))
+			.token(entity.getString(token))
 			.build() : User.builder().build();
 
 	ValueFromModelMapper<User, Entity> fromUser = model -> isNotEmpty(model) ? Entity.entityBuilder()
 			.longField(id, model.getId())
-			.stringField(token, model.getToken())
 			.stringField(name, model.getName())
+			.stringField(password, model.getPassword())
 			.stringField(email, model.getEmail())
+			.stringField(token, model.getToken())
 			.build() : Entity.entityBuilder().build();
 }

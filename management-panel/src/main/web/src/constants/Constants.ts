@@ -11,8 +11,8 @@ export const MAIN_COMPONENT = 'mainComponent';
 
 export const RSOCKET_FUNCTION = 'RSOCKET_FUNCTION_SERVICE';
 export const REGISTER_USER = 'registerUser';
-export const GET_USER = 'getUser';
 export const AUTHORIZE = 'authorize';
+export const AUTHENTICATE = 'authenticate';
 
 export const USER_STORE = 'user';
 export const TOKEN_COOKIE = 'token';
