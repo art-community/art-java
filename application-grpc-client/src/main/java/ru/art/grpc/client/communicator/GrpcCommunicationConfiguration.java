@@ -28,6 +28,7 @@ import ru.art.grpc.client.exception.*;
 import ru.art.grpc.client.handler.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.grpc.client.constants.GrpcClientExceptionMessages.*;
 import static ru.art.grpc.client.module.GrpcClientModule.*;
 import java.util.*;
@@ -57,8 +58,8 @@ public class GrpcCommunicationConfiguration {
     private long deadlineTimeout;
     @ToString.Include
     private boolean useSecuredTransport;
-    private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = grpcClientModule().getRequestValueInterceptors();
-    private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = grpcClientModule().getResponseValueInterceptors();
+    private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = linkedListOf(grpcClientModule().getRequestValueInterceptors());
+    private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = linkedListOf(grpcClientModule().getResponseValueInterceptors());
     private Executor asynchronousFuturesExecutor = grpcClientModule().getAsynchronousFuturesExecutor();
 
     void validateRequiredFields() {

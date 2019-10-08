@@ -24,6 +24,7 @@ import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
 import ru.art.service.constants.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.module.RsocketModule.*;
 import static ru.art.service.constants.RequestValidationPolicy.*;
@@ -44,8 +45,8 @@ public class RsocketService {
         private ValueFromModelMapper<?, ?> responseMapper;
         private RequestValidationPolicy validationPolicy = NON_VALIDATABLE;
         private RsocketDataFormat overrideResponseDataFormat;
-        private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = rsocketModule().getRequestValueInterceptors();
-        private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = rsocketModule().getResponseValueInterceptors();
+        private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = linkedListOf(rsocketModule().getRequestValueInterceptors());
+        private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = linkedListOf(rsocketModule().getResponseValueInterceptors());
 
         public RsocketMethod addRequestValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
             requestValueInterceptors.add(interceptor);
