@@ -16,8 +16,8 @@ box.space.{{ spaceName }}:create_index('{{ indexName }}', {
     if_not_exists = true
 });
 
-function get{{ spaceName }}ValueBy{{ indexName }}(keys)
-    local tuple = box.space.{{ spaceName }}.index.{{ indexName }}:get(keys);
+function get{{ spaceName }}ValueBy{{ indexName }}(...)
+    local tuple = box.space.{{ spaceName }}.index.{{ indexName }}:get{...};
     if tuple == nil then
         return {}
     end
@@ -30,8 +30,8 @@ function get{{ spaceName }}ValueBy{{ indexName }}(keys)
     }
 end;
 
-function select{{ spaceName }}ValuesBy{{ indexName }}(keys)
-    local tuples = box.space.{{ spaceName }}.index.{{ indexName }}:select(keys);
+function select{{ spaceName }}ValuesBy{{ indexName }}(...)
+    local tuples = box.space.{{ spaceName }}.index.{{ indexName }}:select{...};
     if tuples == nil or #tuples == 0 then
         return {}
     end
@@ -48,8 +48,8 @@ function select{{ spaceName }}ValuesBy{{ indexName }}(keys)
     }
 end;
 
-function delete{{ spaceName }}ValuesBy{{ indexName }}(keys)
-    local tuple = box.space.{{ spaceName }}.index.{{ indexName }}:delete(keys);
+function delete{{ spaceName }}ValuesBy{{ indexName }}(...)
+    local tuple = box.space.{{ spaceName }}.index.{{ indexName }}:delete{...};
     if tuple == nil then
         return {}
     end
@@ -89,8 +89,8 @@ function update{{ spaceName }}ValueWithSchemaBy{{ indexName }}(keys, valueOperat
 end;
 
 
-function count{{ spaceName }}ValuesBy{{ indexName }}(keys)
-    return box.space.{{ spaceName }}.index.{{ indexName }}:count(keys);
+function count{{ spaceName }}ValuesBy{{ indexName }}(...)
+    return box.space.{{ spaceName }}.index.{{ indexName }}:count{...};
 end;
 
 function len{{ spaceName }}ValuesBy{{ indexName }}()
@@ -119,8 +119,8 @@ function insert{{ spaceName }}Value(valueTuple, schemaTuple)
     }
 end;
 
-function get{{ spaceName }}Value(keys)
-    local tuple = box.space.{{ spaceName }}:get(keys);
+function get{{ spaceName }}Value(...)
+    local tuple = box.space.{{ spaceName }}:get{...};
     if tuple == nil then
         return {}
     end
@@ -133,8 +133,8 @@ function get{{ spaceName }}Value(keys)
     }
 end;
 
-function select{{ spaceName }}Values(keys)
-    local tuples = box.space.{{ spaceName }}:select(keys);
+function select{{ spaceName }}Values(...)
+    local tuples = box.space.{{ spaceName }}:select{...};
     if tuples == nil or #tuples == 0 then
         return {};
     end
@@ -151,8 +151,8 @@ function select{{ spaceName }}Values(keys)
     }
 end;
 
-function delete{{ spaceName }}Values(keys)
-    local tuple = box.space.{{ spaceName }}:delete(keys);
+function delete{{ spaceName }}Values(...)
+    local tuple = box.space.{{ spaceName }}:delete{...};
     if tuple == nil then
         return {}
     end

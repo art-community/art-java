@@ -106,7 +106,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
 
-    public Optional<Entity> get(String spaceName, Set<?> keys) {
+    public Optional<Entity> get(String spaceName, Collection<?> keys) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, GET + spaceName + VALUE_POSTFIX, keys);
@@ -159,7 +159,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
 
-    public List<Entity> select(String spaceName, Set<?> keys) {
+    public List<Entity> select(String spaceName, Collection<?> keys) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, SELECT + spaceName + VALUES_POSTFIX, keys));
@@ -184,7 +184,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
 
-    public List<Primitive> selectPrimitives(String spaceName, Set<?> keys) {
+    public List<Primitive> selectPrimitives(String spaceName, Collection<?> keys) {
         return select(spaceName, keys).stream().map(entity -> asPrimitive(entity.getValue(VALUE))).collect(toList());
     }
 
@@ -197,7 +197,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
 
-    public List<CollectionValue<?>> selectCollections(String spaceName, Set<?> keys) {
+    public List<CollectionValue<?>> selectCollections(String spaceName, Collection<?> keys) {
         return select(spaceName, keys).stream().map(entity -> asCollection(entity.getValue(VALUE))).collect(toList());
     }
 
@@ -210,7 +210,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
 
-    public List<StringParametersMap> selectStringParameters(String spaceName, Set<?> keys) {
+    public List<StringParametersMap> selectStringParameters(String spaceName, Collection<?> keys) {
         return select(spaceName, keys).stream().map(entity -> asStringParametersMap(entity.getValue(VALUE))).collect(toList());
     }
 
@@ -223,7 +223,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
 
-    public List<MapValue> selectMaps(String spaceName, Set<?> keys) {
+    public List<MapValue> selectMaps(String spaceName, Collection<?> keys) {
         return select(spaceName, keys).stream().map(entity -> asMap(entity.getValue(VALUE))).collect(toList());
     }
 
@@ -291,7 +291,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
 
-    public Optional<Entity> delete(String spaceName, Set<?> keys) {
+    public Optional<Entity> delete(String spaceName, Collection<?> keys) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, DELETE + spaceName + VALUES_POSTFIX, keys));
@@ -324,7 +324,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
 
-    public Optional<Entity> update(String spaceName, Set<?> keys, TarantoolUpdateFieldOperation... operations) {
+    public Optional<Entity> update(String spaceName, Collection<?> keys, TarantoolUpdateFieldOperation... operations) {
         List<TarantoolUpdateFieldOperation> operationsWithSchema = stream(operations)
                 .filter(operation -> !isEmpty(operation.getSchemaOperation()))
                 .collect(toList());
@@ -341,7 +341,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         return entity;
     }
 
-    private Optional<Entity> updateWithSchema(String spaceName, Set<?> keys, List<TarantoolUpdateFieldOperation> operations) {
+    private Optional<Entity> updateWithSchema(String spaceName, Collection<?> keys, List<TarantoolUpdateFieldOperation> operations) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         String functionName = UPDATE + spaceName + VALUE_POSTFIX + WITH_SCHEMA_POSTFIX;
@@ -362,7 +362,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         return ofNullable(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
-    private Optional<Entity> updateWithoutSchema(String spaceName, Set<?> keys, List<TarantoolUpdateFieldOperation> operations) {
+    private Optional<Entity> updateWithoutSchema(String spaceName, Collection<?> keys, List<TarantoolUpdateFieldOperation> operations) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         String functionName = UPDATE + spaceName + VALUE_POSTFIX;
