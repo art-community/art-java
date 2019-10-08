@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Box, Button, Container, Grid, TextField, Typography,} from '@material-ui/core';
 import {useHistory} from "react-router";
-import {useStore} from 'react-hookstore';
-import {PROJECT_PATH, SLASH, TOKEN_COOKIE, USER_STORE} from "../../constants/Constants";
+import {AUTHORIZED_STORE, PROJECT_PATH, TOKEN_COOKIE} from "../../constants/Constants";
 import {registerUser} from "../../api/PlatformApi";
+import {useStore} from "react-hookstore";
 // @ts-ignore
 import Cookies from "js-cookie";
 
@@ -12,8 +12,22 @@ export function RegistrationComponent() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [user, setUser] = useStore(USER_STORE);
+    const [authorized, setAuthorized] = useState(false);
+    const [authorizedStore, setAuthorizedStore] = useStore(AUTHORIZED_STORE);
     const history = useHistory();
+
+    useEffect(() => {
+        if (authorized) {
+            setAuthorizedStore(true);
+        }
+    });
+
+    const onRegister = () => registerUser({name: name, email: email, password: password}, response => {
+        Cookies.set(TOKEN_COOKIE, response.token);
+        setAuthorized(true);
+        history.push(PROJECT_PATH);
+    });
+
     return <Container component={'main'} maxWidth={'xs'}>
         <Grid alignItems="center" style={{minHeight: '100vh'}} container>
             <form noValidate>
@@ -59,11 +73,7 @@ export function RegistrationComponent() {
                 />
                 <Box marginTop={3}>
                     <Button fullWidth
-                            onClick={() => registerUser({name: name, email: email, password: password}, response => {
-                                setUser(response.user);
-                                Cookies.set(TOKEN_COOKIE, response.token);
-                                history.push(SLASH);
-                            })}
+                            onClick={onRegister}
                             variant={'contained'}
                             color={'secondary'}>
                         Продолжить

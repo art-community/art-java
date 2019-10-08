@@ -18,12 +18,13 @@
 
 import * as ReactDOM from "react-dom";
 import * as React from "react";
-import {MAIN_COMPONENT, USER_STORE} from "./constants/Constants";
+import {AUTHORIZED_STORE, MAIN_COMPONENT} from "./constants/Constants";
 import {RoutingComponent} from "./components/routing/RoutingComponent";
 import {createStore} from "react-hookstore";
 
+createStore(AUTHORIZED_STORE, false);
+
 const main = () => {
-    createStore(USER_STORE, null);
     ReactDOM.render(<RoutingComponent/>, document.getElementById(MAIN_COMPONENT));
 };
 

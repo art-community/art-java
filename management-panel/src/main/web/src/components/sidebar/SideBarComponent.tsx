@@ -11,10 +11,7 @@ export interface SideBarProps {
 const createMenuActions = () => MENU_ACTIONS
     .map(action =>
         <ListItem color={'primary'} button key={action.action}>
-            <Link to="/projects" style={{textDecoration: 'none'}}>
-                <ListItemIcon>{action.icon as ReactElement}</ListItemIcon>
-                <ListItemText primary={action.text}/>
-            </Link>
+
         </ListItem>
     );
 

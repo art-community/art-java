@@ -18,7 +18,6 @@ import ru.art.platform.factory.TokenFactory.createToken
 import ru.art.tarantool.constants.TarantoolModuleConstants.*
 import ru.art.tarantool.dao.TarantoolDao.*
 
-
 object UserService {
     fun registerUser(request: UserRegistrationRequest): UserRegistrationResponse = UserRegistrationResponse.builder()
             .user(toUser.map(tarantool(PLATFORM)
@@ -27,7 +26,7 @@ object UserService {
                             .password(request.password)
                             .email(request.email)
                             .build()))))
-            .token(createToken(request.name, request.password))
+            .token(tarantool(PLATFORM).put(TOKEN, stringPrimitive(createToken(request.name, request.password))).getString(VALUE))
             .build()
 
     fun authorize(request: UserAuthorizationRequest): UserAuthorizationResponse = UserAuthorizationResponse.builder()

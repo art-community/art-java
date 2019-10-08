@@ -10,7 +10,7 @@ const connect = async () => new RSocketClient({
     transport: new RSocketWebSocketClient({url: RSOCKET_URL}, BufferEncoders)
 }).connect();
 
-export const executeRequest = async (request: any, onComplete: (data: any) => void, onError: (exception: any) => void = () => {}) => {
+export const executeRequest = async (request: any) => {
     const socket = await connect();
     const response = await socket
         .requestResponse({
@@ -18,12 +18,14 @@ export const executeRequest = async (request: any, onComplete: (data: any) => vo
             metadata: encode(createMethodRequest(request.serviceMethodCommand.methodId, Cookies.get(TOKEN_COOKIE)))
         })
         .map(payload => payload.data != null ? decode(payload.data as number[]) : null);
-    if (response.serviceExecutionException) {
-        console.error(response.serviceExecutionException);
-        onError(response.serviceExecutionException);
+    if (!response) {
         return
     }
-    onComplete(response.responseData)
+    if (response.serviceExecutionException) {
+        console.error(response.serviceExecutionException);
+        throw response.serviceExecutionException
+    }
+    return response.responseData
 };
 
 export const createServiceMethodRequest = (serviceId: String, methodId: String, requestData: any = null) => ({
@@ -31,7 +33,7 @@ export const createServiceMethodRequest = (serviceId: String, methodId: String, 
     requestData: requestData
 });
 
-export const createMethodRequest = (methodId: String, requestData: any = {}) => ({
+export const createMethodRequest = (methodId: String, requestData: any = null) => ({
     serviceMethodCommand: {serviceId: RSOCKET_FUNCTION, methodId: methodId},
     requestData: requestData
 });

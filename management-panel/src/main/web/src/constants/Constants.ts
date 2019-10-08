@@ -2,7 +2,7 @@ import {orange, purple} from "@material-ui/core/colors";
 
 export const SLASH = '/';
 export const PLATFORM_PATH = '/platform';
-export const LOGIN_PATH = PLATFORM_PATH + '/login';
+export const AUTHORIZE_PATH = PLATFORM_PATH + '/authorize';
 export const REGISTER_PATH = PLATFORM_PATH + '/register';
 export const BUILD_PATH = PLATFORM_PATH + '/build';
 export const PROJECT_PATH = PLATFORM_PATH + '/project';
@@ -14,7 +14,7 @@ export const REGISTER_USER = 'registerUser';
 export const AUTHORIZE = 'authorize';
 export const AUTHENTICATE = 'authenticate';
 
-export const USER_STORE = 'user';
+export const AUTHORIZED_STORE = 'authorized';
 export const TOKEN_COOKIE = 'token';
 
 export const HOST = window.location.hostname;

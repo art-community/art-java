@@ -1,14 +1,17 @@
 import {AUTHENTICATE, AUTHORIZE, REGISTER_USER} from "../constants/Constants";
 import {createMethodRequest, executeRequest} from "./PlatformClient";
 
-export const registerUser = async (requestData: UserRegistrationRequest, onComplete: (user: UserRegistrationResponse) => void) => {
-    await executeRequest(createMethodRequest(REGISTER_USER, requestData), onComplete);
+export const registerUser = (requestData: UserRegistrationRequest, onComplete: (user: UserRegistrationResponse) => void) => {
+    executeRequest(createMethodRequest(REGISTER_USER, requestData))
+        .then(response => onComplete(response));
 };
 
-export const authorize = async (requestData: UserAuthorizationRequest, onComplete: (user: UserAuthorizationResponse) => void, onError: () => void) => {
-    await executeRequest(createMethodRequest(AUTHORIZE, requestData), onComplete, onError);
+export const authorize = (requestData: UserAuthorizationRequest, onComplete: (user: UserAuthorizationResponse) => void, onError: () => void) => {
+    executeRequest(createMethodRequest(AUTHORIZE, requestData))
+        .then(response => onComplete(response))
+        .catch(() => onError());
 };
 
-export const authenticate = async (requestData: string, onComplete: () => void, onError: () => void) => {
-    await executeRequest(createMethodRequest(AUTHENTICATE, requestData), onComplete, onError);
+export const authenticate = (requestData: string, onComplete: () => void, onError: () => void) => {
+    executeRequest(createMethodRequest(AUTHENTICATE, requestData)).then(() => onComplete()).catch(() => onError());
 };

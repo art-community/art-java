@@ -5,8 +5,8 @@ import ru.art.config.extensions.rsocket.*
 import ru.art.core.factory.CollectionsFactory.*
 import ru.art.entity.Value.*
 import ru.art.platform.constants.CommonConstants.TOKEN
-import ru.art.platform.constants.ServiceConstants.AUTHORIZE
 import ru.art.platform.constants.ServiceConstants.AUTHENTICATE
+import ru.art.platform.constants.ServiceConstants.AUTHORIZE
 import ru.art.platform.constants.ServiceConstants.REGISTER_USER
 import ru.art.platform.service.UserService.authenticate
 import ru.art.rsocket.factory.RsocketFunctionPredicateFactory.*
@@ -15,7 +15,9 @@ import ru.art.rsocket.interceptor.RsocketPayloadValueInterceptor.*
 
 class RsocketConfiguration : RsocketAgileConfiguration() {
     override fun getServerInterceptors(): MutableList<RSocketInterceptor> = linkedListOf<RSocketInterceptor>().apply {
-        add(rsocketInterceptor((byRsocketFunction(REGISTER_USER).or(byRsocketFunction(AUTHORIZE)).or(byRsocketFunction(AUTHENTICATE))).negate(),
+        add(rsocketInterceptor((byRsocketFunction(REGISTER_USER)
+                .or(byRsocketFunction(AUTHORIZE))
+                .or(byRsocketFunction(AUTHENTICATE))).negate(),
                 intercept { value -> authenticate(asEntity(value).getString(TOKEN)) }))
     }
 }

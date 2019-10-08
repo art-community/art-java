@@ -20,8 +20,6 @@
     "@types/rsocket-core": "^0.0.2",
     "@types/rsocket-flowable": "^0.0.2",
     "@types/rsocket-websocket-client": "^0.0.2",
-    "@use-hook/use-cookie": "^0.1.4",
-    "axios": "^0.19.0",
     "cook": "^0.5.2",
     "js-cookie": "^2.2.1",
     "material-ui": "^0.20.2",

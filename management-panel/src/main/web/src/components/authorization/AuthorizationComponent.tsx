@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Box, Button, Container, Grid, TextField, Typography,} from '@material-ui/core';
 import {useHistory} from "react-router-dom";
-import {PROJECT_PATH, REGISTER_PATH, SLASH, TOKEN_COOKIE, USER_STORE} from "../../constants/Constants";
+import {AUTHORIZED_STORE, PROJECT_PATH, REGISTER_PATH, TOKEN_COOKIE} from "../../constants/Constants";
 import {useStore} from "react-hookstore";
 import {authorize} from "../../api/PlatformApi";
 // @ts-ignore
@@ -11,8 +11,30 @@ import Cookies from "js-cookie";
 export function AuthorizationComponent() {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
-    const [user, setUser] = useStore(USER_STORE);
+    const [authorized, setAuthorized] = useState(false);
+    const [authorizedStore, setAuthorizedStore] = useStore(AUTHORIZED_STORE);
     const history = useHistory();
+
+    useEffect(() => {
+        if (authorized) {
+            setAuthorizedStore(true);
+        }
+    });
+
+    const handleAuthorize = (response: UserAuthorizationResponse) => {
+        Cookies.set(TOKEN_COOKIE, response.token);
+        setAuthorized(true);
+        history.push(PROJECT_PATH);
+    };
+
+    const handleError = () => {
+        history.push(REGISTER_PATH);
+    };
+
+    const onRegister = () => history.push(REGISTER_PATH);
+
+    const onAuthorize = () => authorize({name: name, password: password}, handleAuthorize, handleError);
+
     return <Container component={'main'} maxWidth={'xs'}>
         <Grid alignItems="center" style={{minHeight: '100vh'}} container>
             <form noValidate>
@@ -49,13 +71,7 @@ export function AuthorizationComponent() {
                         <Grid item xs={6}>
                             <Button
                                 fullWidth
-                                onClick={() => authorize({name: name, password: password}, response => {
-                                    setUser(response.user);
-                                    Cookies.set(TOKEN_COOKIE, response.token);
-                                    history.push(SLASH);
-                                }, () => {
-                                    history.push(REGISTER_PATH);
-                                })}
+                                onClick={onAuthorize}
                                 variant={'contained'}
                                 color={'primary'}>
                                 Войти
@@ -64,7 +80,7 @@ export function AuthorizationComponent() {
                         <Grid item xs={6}>
                             <Button
                                 fullWidth
-                                onClick={() => history.push(REGISTER_PATH)}
+                                onClick={onRegister}
                                 variant={'contained'}
                                 color={'secondary'}>
                                 Регистрация
