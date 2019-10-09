@@ -1,7 +1,7 @@
 box.schema.space.create('{{ spaceName }}', { if_not_exists = true });
 box.schema.space.create('{{ spaceName }}Schema', { if_not_exists = true });
-box.schema.sequence.create('{{ spaceName }}Sequence', { if_not_exists = true });
 if box.space.{{ spaceName }}.index[0] == nil then
+    box.schema.sequence.create('{{ spaceName }}Sequence', { if_not_exists = true });
     box.space.{{ spaceName }}:create_index('{{ spaceName }}Index', { sequence = '{{ spaceName }}Sequence'; if_not_exists = true });
 end
 if box.space.{{ spaceName }}Schema.index[0] == nil then

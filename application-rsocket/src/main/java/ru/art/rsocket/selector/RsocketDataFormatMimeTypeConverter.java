@@ -18,10 +18,9 @@
 
 package ru.art.rsocket.selector;
 
-import lombok.*;
+import lombok.experimental.*;
 import ru.art.core.mime.*;
 import static io.rsocket.metadata.WellKnownMimeType.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
@@ -30,7 +29,7 @@ import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*;
 import static ru.art.rsocket.module.RsocketModule.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public class RsocketDataFormatMimeTypeConverter {
     public static RsocketDataFormat fromMimeType(String mimeType) {
         if (isEmpty(mimeType)) {

@@ -18,17 +18,16 @@
 
 package ru.art.tarantool.executor;
 
-import lombok.*;
+import lombok.experimental.*;
 import ru.art.core.extension.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
 import java.io.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public final class TarantoolLuaExecutor {
     public static void executeLuaScript(String instanceId, String scriptName) {
         String script;
