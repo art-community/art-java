@@ -8,7 +8,7 @@ import {authorize} from "../../api/PlatformApi";
 // @ts-ignore
 import Cookies from "js-cookie";
 
-export function AuthorizationComponent() {
+export const AuthorizationComponent = () => {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [authorized, setAuthorized] = useState(false);
@@ -39,7 +39,7 @@ export function AuthorizationComponent() {
         <Grid alignItems="center" style={{minHeight: '100vh'}} container>
             <form noValidate>
                 <Typography variant="h5" align={"center"} component="h5">
-                    Добро пожаловать в платформу развертки приложений
+                    Добро пожаловать в ART платформу
                 </Typography>
                 <TextField variant={'outlined'}
                            margin={'normal'}
@@ -91,4 +91,4 @@ export function AuthorizationComponent() {
             </form>
         </Grid>
     </Container>
-}
+};

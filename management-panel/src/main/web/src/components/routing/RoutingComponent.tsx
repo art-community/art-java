@@ -1,9 +1,10 @@
 import * as React from "react";
-import {BrowserRouter, BrowserRouter as Router, Route} from 'react-router-dom';
+import {BrowserRouter, Route} from 'react-router-dom';
 import {
     AUTHORIZE_PATH,
     AUTHORIZED_STORE,
     BUILD_PATH,
+    DEPLOY_PATH,
     PROJECT_PATH,
     REGISTER_PATH,
     SLASH,
@@ -21,6 +22,8 @@ import {AuthorizationComponent} from "../authorization/AuthorizationComponent";
 import {RegistrationComponent} from "../registration/RegistrationComponent";
 import {authenticate} from "../../api/PlatformApi";
 import {useStore} from "react-hookstore";
+import {SideBarComponent} from "../sidebar/SideBarComponent";
+import {DeployComponent} from "../deploy/DeployComponent";
 
 export const RoutingComponent = () => {
     const [authorized, setAuthorized] = useStore(AUTHORIZED_STORE);
@@ -47,10 +50,13 @@ export const RoutingComponent = () => {
         <BrowserRouter>
             <Switch>
                 <Route exact path={BUILD_PATH}>
-                    {routePrivateComponent(<BuildComponent/>)}
+                    {routePrivateComponent(<SideBarComponent><BuildComponent/></SideBarComponent>)}
                 </Route>
                 <Route exact path={PROJECT_PATH}>
-                    {routePrivateComponent(<ProjectsComponent/>)}
+                    {routePrivateComponent(<SideBarComponent><ProjectsComponent/></SideBarComponent>)}
+                </Route>
+                <Route exact path={DEPLOY_PATH}>
+                    {routePrivateComponent(<SideBarComponent><DeployComponent/></SideBarComponent>)}
                 </Route>
                 <Route exact path={AUTHORIZE_PATH}>
                     {routePublicComponent(<AuthorizationComponent/>)}

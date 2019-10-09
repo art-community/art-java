@@ -8,7 +8,7 @@ import {useStore} from "react-hookstore";
 // @ts-ignore
 import Cookies from "js-cookie";
 
-export function RegistrationComponent() {
+export const RegistrationComponent = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -82,4 +82,4 @@ export function RegistrationComponent() {
             </form>
         </Grid>
     </Container>
-}
+};

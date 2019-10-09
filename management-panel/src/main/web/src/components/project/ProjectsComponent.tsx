@@ -1,8 +1,10 @@
 import * as React from "react";
-import {Button, Radio} from "@material-ui/core";
-import {SideBarComponent} from "../sidebar/SideBarComponent";
+import {ButtonBase, Grid, Icon, makeStyles, Paper, Typography} from "@material-ui/core";
+import {Apps} from "@material-ui/icons";
 
-export const ProjectsComponent = () =>
-    <SideBarComponent>
-        <Button>Test</Button>
-    </SideBarComponent>;
+export const ProjectsComponent = () => {
+    return <main>
+        <Paper>
+        </Paper>
+    </main>;
+};

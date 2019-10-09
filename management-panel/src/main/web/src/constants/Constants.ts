@@ -5,6 +5,7 @@ export const PLATFORM_PATH = '/platform';
 export const AUTHORIZE_PATH = PLATFORM_PATH + '/authorize';
 export const REGISTER_PATH = PLATFORM_PATH + '/register';
 export const BUILD_PATH = PLATFORM_PATH + '/build';
+export const DEPLOY_PATH = PLATFORM_PATH + '/deploy';
 export const PROJECT_PATH = PLATFORM_PATH + '/project';
 
 export const MAIN_COMPONENT = 'mainComponent';
