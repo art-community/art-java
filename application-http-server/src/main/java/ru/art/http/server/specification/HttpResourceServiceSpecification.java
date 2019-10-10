@@ -94,8 +94,9 @@ public class HttpResourceServiceSpecification implements HttpServiceSpecificatio
                         ? stringPrimitive(getStringResource(resourcePath))
                         : byteCollection(getBinaryResource(resourcePath)));
             }
-            Map<String, HttpResource> resourceMappings = resourceConfiguration.getResourceMappings();
-            HttpResource resource = resourceMappings.getOrDefault(request, resourceConfiguration.getDefaultResource());
+            HttpResource resource = resourceConfiguration
+                    .getResourceMappings()
+                    .getOrDefault(request, resourceConfiguration.getDefaultResource());
             return cast(resource.getType() == STRING ? stringPrimitive(getStringResource(resource.getPath())) : byteCollection(getBinaryResource(resource.getPath())));
         }
         throw new UnknownServiceMethodException(serviceId, methodId);
