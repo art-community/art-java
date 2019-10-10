@@ -26,4 +26,6 @@ public interface RsocketConfigKeys {
     String TCP_PORT = "tcpPort";
     String WEB_SOCKET_PORT = "webSocketPort";
     String DATA_FORMAT = "dataFormat";
+    String RESUMABLE = "resumable";
+    String RESUME_SESSION_DURATION = "resumeSessionDuration";
 }

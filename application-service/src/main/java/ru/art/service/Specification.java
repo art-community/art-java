@@ -18,9 +18,6 @@
 
 package ru.art.service;
 
-import io.github.resilience4j.circuitbreaker.*;
-import io.github.resilience4j.ratelimiter.*;
-import io.github.resilience4j.retry.*;
 import ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import ru.art.service.model.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -50,29 +47,7 @@ public interface Specification {
     }
 
     default ServiceExecutionConfiguration getExecutionConfiguration() {
-        CircuitBreakerServiceConfig circuitBreakerServiceConfig = CircuitBreakerServiceConfig
-                .builder()
-                .breakable(false)
-                .circuitBreakerConfigBuilder(CircuitBreakerConfig.custom())
-                .build();
-
-        RateLimiterServiceConfig rateLimiterServiceConfig = RateLimiterServiceConfig
-                .builder()
-                .limited(false)
-                .rateLimiterConfigBuilder(RateLimiterConfig.custom())
-                .build();
-
-        RetryServiceConfig retryServiceConfig = RetryServiceConfig
-                .builder()
-                .retryable(false)
-                .retryConfigBuilder(RetryConfig.custom())
-                .build();
-
-        return ServiceExecutionConfiguration.builder()
-                .circuitBreakerConfig(circuitBreakerServiceConfig)
-                .rateLimiterConfig(rateLimiterServiceConfig)
-                .retryConfig(retryServiceConfig)
-                .build();
+        return serviceModule().getExecutionConfigurations().getOrDefault(getServiceId(), ServiceExecutionConfiguration.builder().build());
     }
 
     default Map<String, List<RequestInterceptor>> getMethodRequestInterceptors() {

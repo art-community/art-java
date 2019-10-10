@@ -43,7 +43,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         super(instanceId);
     }
 
-    public Optional<Entity> getByIndex(String spaceName, String indexName, Set<?> keys) {
+    public Optional<Entity> getByIndex(String spaceName, String indexName, Collection<?> keys) {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, GET + spaceName + VALUE_POSTFIX + BY + indexName, keys);
@@ -60,7 +60,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
     }
 
 
-    public List<Entity> selectByIndex(String spaceName, String indexName, Set<?> keys) {
+    public List<Entity> selectByIndex(String spaceName, String indexName, Collection<?> keys) {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, SELECT + spaceName + VALUES_POSTFIX + BY + indexName, keys));
@@ -81,7 +81,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
     }
 
 
-    public Optional<Entity> deleteByIndex(String spaceName, String indexName, Set<?> keys) {
+    public Optional<Entity> deleteByIndex(String spaceName, String indexName, Collection<?> keys) {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, DELETE + spaceName + VALUES_POSTFIX + BY + indexName, keys));
@@ -94,7 +94,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
     }
 
 
-    public long countByIndex(String spaceName, String indexName, Set<?> keys) {
+    public long countByIndex(String spaceName, String indexName, Collection<?> keys) {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, COUNT + spaceName + VALUES_POSTFIX + BY + indexName, keys);
@@ -118,7 +118,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         return ((Number) ((List<?>) result.get(0)).get(0)).longValue();
     }
 
-    public Optional<Entity> updateByIndex(String spaceName, String indexName, Set<?> keys, TarantoolUpdateFieldOperation... operations) {
+    public Optional<Entity> updateByIndex(String spaceName, String indexName, Collection<?> keys, TarantoolUpdateFieldOperation... operations) {
         List<TarantoolUpdateFieldOperation> operationsWithSchema = stream(operations)
                 .filter(operation -> !isEmpty(operation.getSchemaOperation()))
                 .collect(toList());
@@ -135,7 +135,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         return entity;
     }
 
-    private Optional<Entity> updateWithSchema(String spaceName, String indexName, Set<?> keys, List<TarantoolUpdateFieldOperation> operations) {
+    private Optional<Entity> updateWithSchema(String spaceName, String indexName, Collection<?> keys, List<TarantoolUpdateFieldOperation> operations) {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         String functionName = UPDATE + spaceName + VALUE_POSTFIX + WITH_SCHEMA_POSTFIX + BY + indexName;
@@ -157,7 +157,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         return ofNullable(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
-    private Optional<Entity> updateWithoutSchema(String spaceName, String indexName, Set<?> keys, List<TarantoolUpdateFieldOperation> operations) {
+    private Optional<Entity> updateWithoutSchema(String spaceName, String indexName, Collection<?> keys, List<TarantoolUpdateFieldOperation> operations) {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         String functionName = UPDATE + spaceName + VALUE_POSTFIX + BY + indexName;

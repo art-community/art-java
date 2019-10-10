@@ -21,6 +21,7 @@ package ru.art.http.server.specification;
 import lombok.*;
 import ru.art.core.caster.*;
 import ru.art.entity.mapper.ValueToModelMapper.*;
+import ru.art.http.server.HttpServerModuleConfiguration.*;
 import ru.art.http.server.model.*;
 import ru.art.service.*;
 import ru.art.service.exception.*;
@@ -31,10 +32,11 @@ import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
-import static ru.art.entity.PrimitivesFactory.stringPrimitive;
+import static ru.art.entity.PrimitivesFactory.*;
+import static ru.art.http.server.HttpServerModuleConfiguration.HttpResourceConfiguration.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpParameters.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.STRING;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.Methods.*;
 import static ru.art.http.server.extractor.HttpResponseContentTypeExtractor.*;
 import static ru.art.http.server.interceptor.HttpServerInterception.*;
@@ -56,12 +58,10 @@ public class HttpResourceServiceSpecification implements HttpServiceSpecificatio
 
             .get(GET_RESOURCE)
             .fromPathParameters(RESOURCE)
-            .requestMapper((StringParametersMapToModelMapper<String>) resource ->
-                    resource.getParameter(RESOURCE))
+            .requestMapper((StringParametersMapToModelMapper<String>) resource -> resource.getParameter(RESOURCE))
             .overrideResponseContentType()
             .responseMapper(Caster::cast)
-            .addRequestInterceptor(intercept(interceptAndContinue(((request, response) ->
-                    response.setContentType(extractTypeByFile(request.getRequestURI()))))))
+            .addRequestInterceptor(intercept(interceptAndContinue(((request, response) -> response.setContentType(extractTypeByFile(request.getRequestURI()))))))
             .listen(resourcePath)
 
             .serve(EMPTY_STRING);
@@ -82,18 +82,22 @@ public class HttpResourceServiceSpecification implements HttpServiceSpecificatio
     }
 
     @Override
+    @SuppressWarnings("All")
     public <P, R> R executeMethod(String methodId, P request) {
         if (GET_RESOURCE.equals(methodId)) {
-            String resourcePath = cast(ifEmpty(request, httpServerModule().getResourceConfiguration().getDefaultResource()));
+            HttpResourceConfiguration resourceConfiguration = httpServerModule().getResourceConfiguration();
+            String resourcePath = ifEmpty(cast(request), resourceConfiguration.getDefaultResource().getPath());
             if (resourcePath.contains(DOT)) {
-                return cast(httpServerModule()
-                        .getResourceConfiguration()
+                return cast(resourceConfiguration
                         .getResourceExtensionTypeMappings()
                         .get(resourcePath.substring(resourcePath.lastIndexOf(DOT)).toLowerCase()) == STRING
                         ? stringPrimitive(getStringResource(resourcePath))
                         : byteCollection(getBinaryResource(resourcePath)));
             }
-            return cast(stringPrimitive(getStringResource(httpServerModule().getResourceConfiguration().getDefaultResource())));
+            HttpResource resource = resourceConfiguration
+                    .getResourceMappings()
+                    .getOrDefault(request, resourceConfiguration.getDefaultResource());
+            return cast(resource.getType() == STRING ? stringPrimitive(getStringResource(resource.getPath())) : byteCollection(getBinaryResource(resource.getPath())));
         }
         throw new UnknownServiceMethodException(serviceId, methodId);
     }
