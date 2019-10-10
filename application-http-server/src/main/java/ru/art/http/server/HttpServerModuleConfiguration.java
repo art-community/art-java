@@ -100,7 +100,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
                 .add(JPEG, BINARY)
                 .add(PNG, BINARY);
         @Singular("resourcePathMapping")
-        private final Map<String, String> resourcePathMappings;
+        private final Map<String, HttpResource> resourceMappings;
         @Builder.Default
         private final int resourceBufferSize = DEFAULT_BUFFER_SIZE;
         @Builder.Default
@@ -123,7 +123,14 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         @Builder.Default
         private final boolean allowOriginParameterFromRequest = true;
         @Builder.Default
-        private final String defaultResource = INDEX_HTML;
+        private final HttpResource defaultResource = new HttpResource(INDEX_HTML, STRING);
+
+        @Getter
+        @AllArgsConstructor
+        public static class HttpResource {
+            String path;
+            HttpResourceType type;
+        }
     }
 
     HttpServerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new HttpServerModuleDefaultConfiguration();

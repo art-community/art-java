@@ -35,22 +35,19 @@ import java.util.function.*;
 
 @Builder
 public class CookieInterceptor implements HttpServerInterception {
-    @Singular("path")
-    private final Set<String> paths;
-    @Singular("cookie")
-    private final Map<String, Supplier<String>> cookies;
+    private final Predicate<String> pathFilter;
+    @Singular("cookieValidator")
+    private final Map<String, Predicate<String>> cookieValidator;
     private final Function<String, Error> errorProvider;
 
     @Override
     public InterceptionStrategy intercept(HttpServletRequest request, HttpServletResponse response) {
-        if (paths.stream().noneMatch(url -> request.getRequestURI().contains(url)) ||
-                request.getMethod().equals(OPTIONS.name()) ||
-                hasTokenCookie(request)) {
+        if (pathFilter.test(request.getRequestURI()) || request.getMethod().equals(OPTIONS.name()) || hasTokenCookie(request)) {
             return NEXT_INTERCEPTOR;
         }
         try {
             if (isNull(errorProvider)) {
-                return NEXT_INTERCEPTOR;
+                return STOP_HANDLING;
             }
             response.setCharacterEncoding(ifEmpty(request.getCharacterEncoding(), contextConfiguration().getCharset().name()));
             response.setHeader(CONTENT_TYPE, TEXT_HTML_UTF_8.toString());
@@ -60,7 +57,7 @@ public class CookieInterceptor implements HttpServerInterception {
                 response.getOutputStream().write(error.content.getBytes());
             }
             response.getOutputStream().close();
-            return NEXT_INTERCEPTOR;
+            return STOP_HANDLING;
         } catch (Throwable e) {
             throw new HttpServerException(e);
         }
@@ -77,9 +74,9 @@ public class CookieInterceptor implements HttpServerInterception {
     }
 
     private boolean filterCookie(Cookie cookie) {
-        Supplier<String> supplier = cookies.get(cookie.getName());
-        if (isNull(supplier)) return false;
-        return cookie.getValue().equalsIgnoreCase(supplier.get());
+        Predicate<String> predicate = cookieValidator.get(cookie.getName());
+        if (isNull(predicate)) return false;
+        return predicate.test(cookie.getValue());
     }
 
     @Getter

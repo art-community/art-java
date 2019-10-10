@@ -43,7 +43,7 @@ public class ServiceConfigProvider {
     public static CircuitBreakerServiceConfig getCircuitBreakerServiceConfig(String sectionId) {
         boolean breakable = false;
         CircuitBreakerConfig.Builder circuitBreakerBuilder = CircuitBreakerConfig.custom();
-        if (hasPath(sectionId) && (breakable = configBoolean(sectionId, BREAKABLE))) {
+        if (hasPath(sectionId) && (breakable = hasPath(sectionId, CIRCUIT_BREAKER))) {
             circuitBreakerBuilder
                     .failureRateThreshold(configDouble(sectionId, FAILURE_RATE_THRESHOLD, DEFAULT_MAX_FAILURE_THRESHOLD).floatValue())
                     .ringBufferSizeInClosedState(configInt(sectionId, RING_BUFFER_SIZE_IN_CLOSED_STATE, DEFAULT_RING_BUFFER_SIZE_IN_CLOSED_STATE))
@@ -62,7 +62,7 @@ public class ServiceConfigProvider {
     public static RateLimiterServiceConfig getRateLimiterServiceConfig(String sectionId) {
         boolean limited = false;
         RateLimiterConfig.Builder rateLimiterConfigBuilder = RateLimiterConfig.custom();
-        if (hasPath(sectionId) && (limited = configBoolean(sectionId, LIMITED))) {
+        if (hasPath(sectionId) && (limited = hasPath(sectionId, RATE_LIMITER))) {
             rateLimiterConfigBuilder
                     .limitForPeriod(configInt(sectionId, LIMIT_FOR_PERIOD, DEFAULT_LIMIT_FOR_PERIOD))
                     .limitRefreshPeriod(ofNanos(configInt(sectionId, LIMIT_REFRESH_PERIOD, DEFAULT_LIMIT_REFRESH_PERIOD.getNano())))
@@ -77,7 +77,7 @@ public class ServiceConfigProvider {
     public static BulkheadServiceConfig getBulkheadServiceConfig(String sectionId) {
         boolean bulkheaded = false;
         BulkheadConfig.Builder bulkheadConfigBuilder = BulkheadConfig.custom();
-        if (hasPath(sectionId) && (bulkheaded = configBoolean(sectionId, BULKHEADED))) {
+        if (hasPath(sectionId) && (bulkheaded = hasPath(sectionId, BULKHEAD))) {
             bulkheadConfigBuilder
                     .maxConcurrentCalls(configInt(sectionId, MAX_CONCURRENT_CALLS, DEFAULT_MAX_CONCURRENT_CALLS))
                     .maxWaitTime(configLong(sectionId, MAX_WAIT_TIME, DEFAULT_MAX_WAIT_TIME));
@@ -91,7 +91,7 @@ public class ServiceConfigProvider {
     public static RetryServiceConfig getRetryServiceConfig(String sectionId) {
         boolean retryable = false;
         RetryConfig.Builder retryConfigBuilder = RetryConfig.custom();
-        if (hasPath(sectionId) && (retryable = configBoolean(sectionId, RETRYABLE))) {
+        if (hasPath(sectionId) && (retryable = hasPath(sectionId, RETRYER))) {
             retryConfigBuilder
                     .maxAttempts(configInt(sectionId, MAX_ATTEMPTS, DEFAULT_MAX_ATTEMPTS))
                     .waitDuration(ofMillis(configLong(sectionId, WAIT_DURATION, DEFAULT_WAIT_DURATION)));

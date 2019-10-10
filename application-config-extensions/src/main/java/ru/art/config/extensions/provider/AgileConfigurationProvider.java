@@ -26,6 +26,7 @@ import ru.art.config.extensions.metrics.*;
 import ru.art.config.extensions.network.*;
 import ru.art.config.extensions.rocks.*;
 import ru.art.config.extensions.rsocket.*;
+import ru.art.config.extensions.service.*;
 import ru.art.config.extensions.sql.*;
 import ru.art.config.extensions.tarantool.*;
 import ru.art.core.module.*;
@@ -44,6 +45,7 @@ import static ru.art.metrics.constants.MetricsModuleConstants.*;
 import static ru.art.network.manager.constants.NetworkManagerModuleConstants.*;
 import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
+import static ru.art.service.constants.ServiceModuleConstants.*;
 import static ru.art.sql.constants.SqlModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import java.util.*;
@@ -80,6 +82,8 @@ public class AgileConfigurationProvider implements PreconfiguredModuleProvider {
                 return of(cast(new KafkaConsumerAgileConfiguration()));
             case KAFKA_PRODUCER_MODULE_ID:
                 return of(cast(new KafkaProducerAgileConfiguration()));
+            case SERVICE_MODULE_ID:
+                return of(cast(new ServiceAgileConfiguration()));
         }
         return empty();
     }
