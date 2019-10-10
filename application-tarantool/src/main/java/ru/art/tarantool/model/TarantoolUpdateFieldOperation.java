@@ -68,8 +68,16 @@ public class TarantoolUpdateFieldOperation {
         return new TarantoolUpdateFieldOperation(ADDITION, fieldNumber, value);
     }
 
+    public static TarantoolUpdateFieldOperation increment(int fieldNumber) {
+        return new TarantoolUpdateFieldOperation(ADDITION, fieldNumber, 1);
+    }
+
     public static TarantoolUpdateFieldOperation subtraction(int fieldNumber, long value) {
         return new TarantoolUpdateFieldOperation(SUBTRACTION, fieldNumber, value);
+    }
+
+    public static TarantoolUpdateFieldOperation decrement(int fieldNumber) {
+        return new TarantoolUpdateFieldOperation(SUBTRACTION, fieldNumber, 1);
     }
 
     public static TarantoolUpdateFieldOperation and(int fieldNumber, long value) {
