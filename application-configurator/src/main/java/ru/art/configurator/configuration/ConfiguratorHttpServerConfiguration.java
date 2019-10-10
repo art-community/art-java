@@ -20,7 +20,6 @@ package ru.art.configurator.configuration;
 
 import lombok.*;
 import org.zalando.logbook.*;
-import ru.art.configurator.dao.*;
 import ru.art.core.mime.*;
 import ru.art.http.mapper.*;
 import ru.art.http.server.HttpServerModuleConfiguration.*;
@@ -29,12 +28,14 @@ import static ru.art.config.ConfigProvider.*;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
+import static ru.art.configurator.dao.UserDao.*;
 import static ru.art.configurator.http.content.mapping.ConfiguratorHttpContentMapping.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.constants.HttpStatus.*;
 import static ru.art.http.server.HttpServerModuleConfiguration.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
+import static ru.art.http.server.interceptor.CookieInterceptor.Error.*;
 import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
 import static ru.art.http.server.service.HttpResourceService.*;
 import static ru.art.metrics.http.filter.MetricsHttpLogFilter.*;
@@ -52,10 +53,9 @@ public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefault
     private static List<HttpServerInterceptor> initializeRequestInterceptors(List<HttpServerInterceptor> superInterceptors) {
         List<HttpServerInterceptor> httpServerInterceptors = dynamicArrayOf(initializeWebServerInterceptors(superInterceptors));
         httpServerInterceptors.add(intercept(CookieInterceptor.builder()
-                .paths(AUTHORIZATION_CHECKING_PATHS)
-                .cookie(TOKEN_COOKIE, UserDao::getToken)
-                .errorStatus(UNAUTHORIZED.getCode())
-                .errorContent(getStringResource(INDEX_HTML))
+                .pathFilter(AUTHORIZATION_CHECKING_PATHS::contains)
+                .cookieValidator(TOKEN_COOKIE, token -> getToken().equalsIgnoreCase(token))
+                .errorProvider(path -> cookieError(UNAUTHORIZED.getCode(), getStringResource(INDEX_HTML)))
                 .build()));
         return httpServerInterceptors;
     }

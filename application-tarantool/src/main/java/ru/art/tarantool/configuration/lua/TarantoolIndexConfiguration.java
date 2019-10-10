@@ -72,8 +72,8 @@ public class TarantoolIndexConfiguration {
                 .with(RUN_COUNT_PER_LEVEL, runCountPerLevel)
                 .with(RUN_SIZE_RATIO, runSizeRatio)
                 .with(SEQUENCE, sequence);
-        if (!isEmpty(parts)) {
-            model.with(PARTS, OPENING_BRACES + parts.stream().map(Part::toString).collect(joining()) + CLOSING_BRACES);
+        if (isNotEmpty(parts)) {
+            model.with(PARTS, OPENING_BRACES + parts.stream().map(Part::toString).collect(joining(COMMA)) + CLOSING_BRACES);
         }
         return classpathTemplate(CREATE_INDEX + JTW_EXTENSION).render(model);
     }
@@ -93,8 +93,8 @@ public class TarantoolIndexConfiguration {
                 .with(RUN_COUNT_PER_LEVEL, runCountPerLevel)
                 .with(RUN_SIZE_RATIO, runSizeRatio)
                 .with(SEQUENCE, sequence);
-        if (!isEmpty(parts)) {
-            model.with(PARTS, OPENING_BRACES + parts.stream().map(Part::toString).collect(joining()) + CLOSING_BRACES);
+        if (isNotEmpty(parts)) {
+            model.with(PARTS, OPENING_BRACES + parts.stream().map(Part::toString).collect(joining(COMMA)) + CLOSING_BRACES);
         }
         return classpathTemplate(ALTER_INDEX + JTW_EXTENSION).render(model);
     }
