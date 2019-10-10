@@ -20,21 +20,16 @@ import * as ReactDOM from "react-dom";
 import * as React from "react";
 import {AUTHORIZED_STORE, MAIN_COMPONENT} from "./constants/Constants";
 import {RoutingComponent} from "./components/routing/RoutingComponent";
-import {createStore} from "react-hookstore";
+import {putStore} from "./store/Store";
 
-createStore(AUTHORIZED_STORE, false);
 
 const main = () => {
+    putStore(AUTHORIZED_STORE, false);
     ReactDOM.render(<RoutingComponent/>, document.getElementById(MAIN_COMPONENT));
 };
 
-declare var module: {
-    hot: {
-        dispose(method ?: () => void): void;
-    };
-};
-
+declare var module: any;
 if (module.hot) {
-    module.hot.dispose(main);
+    module.hot.accept(main);
 }
 main();
