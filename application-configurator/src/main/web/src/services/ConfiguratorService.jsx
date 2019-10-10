@@ -31,7 +31,7 @@ import axios from 'axios';
 import {buildRequest} from "../configuration/HttpRequestConfiguration";
 
 
-export const getProfiles = (onSuccess) => fetch(GET_PROFILES_URL, buildRequest())
+export const getProfiles = (onSuccess) => axios(GET_PROFILES_URL, buildRequest())
     .then(response => response.data)
     .then(data => data.map(element => element.profileId))
     .then(data => onSuccess(data));
