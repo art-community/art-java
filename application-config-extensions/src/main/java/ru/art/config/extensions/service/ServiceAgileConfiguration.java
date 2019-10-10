@@ -20,6 +20,9 @@ public class ServiceAgileConfiguration extends ServiceModuleDefaultConfiguration
     @Override
     public void refresh() {
         executionConfigurations.clear();
+        if (!hasPath(SERVICES)) {
+            return;
+        }
         configMap(SERVICES)
                 .keySet()
                 .forEach(serviceId -> executionConfigurations.put(serviceId,

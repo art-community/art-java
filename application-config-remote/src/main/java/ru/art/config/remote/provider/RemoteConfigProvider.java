@@ -26,10 +26,10 @@ import ru.art.configurator.api.specification.*;
 import static java.util.Objects.*;
 import static ru.art.config.ConfigProvider.*;
 import static ru.art.config.constants.ConfigType.*;
+import static ru.art.config.module.ConfigModule.*;
 import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.*;
 import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.LocalConfigKeys.*;
 import static ru.art.config.remote.loader.RemoteConfigLoader.*;
-import static ru.art.configurator.api.constants.ConfiguratorCommunicationConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.entity.Entity.*;
@@ -55,6 +55,7 @@ public class RemoteConfigProvider {
                     .getServiceRegistry()
                     .registerService(new ConfiguratorCommunicationSpecification(configuratorHost, configuratorPort, configuratorPath))
                     .registerService(new RemoteConfigServiceSpecification());
+            configModuleState().useRemoteConfiguration(true);
         } catch (Throwable e) {
             loggingModule().getLogger(RemoteConfigProvider.class).warn(CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS, e);
         }
@@ -65,7 +66,7 @@ public class RemoteConfigProvider {
     }
 
     public static Config remoteConfig() {
-        if (!serviceModuleState().getServiceRegistry().getServices().containsKey(CONFIGURATOR_COMMUNICATION_SERVICE_ID)) {
+        if (!configModuleState().useRemoteConfiguration()) {
             return new Config(entityBuilder().build(), REMOTE_ENTITY_CONFIG);
         }
 
