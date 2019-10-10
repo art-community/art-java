@@ -24,6 +24,7 @@ import io.github.resilience4j.ratelimiter.*;
 import io.github.resilience4j.retry.*;
 import lombok.*;
 import ru.art.service.constants.*;
+import static ru.art.service.constants.ServiceExecutionFeatureTarget.*;
 
 @Builder
 public class ServiceExecutionConfiguration {
@@ -35,14 +36,14 @@ public class ServiceExecutionConfiguration {
     private final RateLimiterServiceConfig rateLimiterConfig = new RateLimiterServiceConfig();
     @Builder.Default
     private final BulkheadServiceConfig bulkheadConfig = new BulkheadServiceConfig();
-    @Getter
-    private ServiceExecutionFeatureTarget retryTarget;
-    @Getter
-    private ServiceExecutionFeatureTarget circuitBreakTarget;
-    @Getter
-    private ServiceExecutionFeatureTarget rateLimiterTarget;
-    @Getter
-    private ServiceExecutionFeatureTarget bulkheadTarget;
+    @Builder.Default
+    private final ServiceExecutionFeatureTarget retryTarget = METHOD;
+    @Builder.Default
+    private final ServiceExecutionFeatureTarget circuitBreakTarget = METHOD;
+    @Builder.Default
+    private final ServiceExecutionFeatureTarget rateLimiterTarget = METHOD;
+    @Builder.Default
+    private final ServiceExecutionFeatureTarget bulkheadTarget = METHOD;
 
     public boolean isBreakable() {
         return circuitBreakerConfig.isBreakable();
