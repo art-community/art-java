@@ -27,6 +27,7 @@ import ru.art.service.constants.*;
 import static ru.art.service.constants.ServiceExecutionFeatureTarget.*;
 
 @Builder
+@Getter
 public class ServiceExecutionConfiguration {
     @Builder.Default
     private final RetryServiceConfig retryConfig = new RetryServiceConfig();
