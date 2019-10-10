@@ -1,0 +1,51 @@
+{
+  "name": "application-platform-management-panel",
+  "version": "1.0.0",
+  "description": "application-platform Management UI",
+  "repository": {
+    "url": "http://localhost.npm"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@material-ui/core": "^4.4.3",
+    "@material-ui/icons": "^4.4.3",
+    "@material-ui/styles": "^4.4.3",
+    "@material-ui/types": "^4.1.1",
+    "@types/material-ui": "^0.21.7",
+    "@types/msgpack-lite": "^0.1.7",
+    "@types/node": "^12.7.8",
+    "@types/react-dom": "^16.9.1",
+    "@types/react-router": "^5.1.1",
+    "@types/react-router-dom": "^5.1.0",
+    "@types/rsocket-core": "^0.0.2",
+    "@types/rsocket-flowable": "^0.0.2",
+    "@types/rsocket-websocket-client": "^0.0.2",
+    "clsx": "^1.0.4",
+    "cook": "^0.5.2",
+    "js-cookie": "^2.2.1",
+    "msgpack-lite": "^0.1.26",
+    "react": "^15.0.0 || ^16.0.0",
+    "react-dom": "^15.0.0 || ^16.0.0",
+    "react-hookstore": "^1.4.2",
+    "react-router-dom": "^5.1.1",
+    "react-transition-group": "^4.3.0",
+    "rsocket-core": "^0.0.10",
+    "rsocket-websocket-client": "^0.0.10",
+    "typescript": "^3.6.3"
+  },
+  "scripts": {
+    "production": "parcel build src/index.html --public-url /platform",
+    "development": "parcel src/index.html --public-url /platform"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0-0",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-optional-chaining": "^7.6.0",
+    "@babel/plugin-transform-runtime": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.6.0",
+    "babel-plugin-emotion": "^10.0.19",
+    "babel-plugin-transform-runtime": "^6.23.0"
+  }
+}
