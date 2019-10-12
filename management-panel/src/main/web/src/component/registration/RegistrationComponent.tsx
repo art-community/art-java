@@ -20,7 +20,7 @@ export const RegistrationComponent = () => {
         if (authorized) {
             setAuthorizedStore(true);
         }
-    });
+    }, [authorized]);
 
     const onRegister = () => registerUser({name: name, email: email, password: password}, response => {
         Cookies.set(TOKEN_COOKIE, response.token);
@@ -37,10 +37,7 @@ export const RegistrationComponent = () => {
                 <TextField variant={'outlined'}
                            margin={'normal'}
                            required
-                           id={'name'}
                            label={'Имя пользователя'}
-                           name={'name'}
-                           autoComplete={'name'}
                            fullWidth
                            autoFocus
                            value={name}
@@ -50,10 +47,7 @@ export const RegistrationComponent = () => {
                     variant={'outlined'}
                     margin={'normal'}
                     required
-                    id={'email'}
                     label={'Электронная почта'}
-                    name={'email'}
-                    autoComplete={'email'}
                     fullWidth
                     value={email}
                     onChange={event => setEmail(event.target.value)}
@@ -62,10 +56,7 @@ export const RegistrationComponent = () => {
                     variant={'outlined'}
                     margin={'normal'}
                     required
-                    id={'password'}
                     label={'Пароль'}
-                    name={'password'}
-                    autoComplete={'password'}
                     type={'password'}
                     fullWidth
                     value={password}

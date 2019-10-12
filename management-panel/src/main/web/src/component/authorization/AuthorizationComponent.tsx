@@ -19,7 +19,7 @@ export const AuthorizationComponent = () => {
         if (authorized) {
             setAuthorizedStore(true);
         }
-    });
+    }, [authorized]);
 
     const handleAuthorize = (response: UserAuthorizationResponse) => {
         Cookies.set(TOKEN_COOKIE, response.token);
@@ -37,30 +37,27 @@ export const AuthorizationComponent = () => {
 
     return <Container component={'main'} maxWidth={'xs'}>
         <Grid alignItems="center" style={{minHeight: '100vh'}} container>
-            <form noValidate>
+            <form>
                 <Typography variant="h5" align={"center"} component="h5">
                     Добро пожаловать в ART платформу
                 </Typography>
-                <TextField variant={'outlined'}
-                           margin={'normal'}
-                           required
-                           id={'name'}
-                           label={'Имя пользователя'}
-                           name={'name'}
-                           autoComplete={'name'}
-                           fullWidth
-                           autoFocus
-                           value={name}
-                           onChange={event => setName(event.target.value)}
+                <TextField
+                    variant={'outlined'}
+                    margin={'normal'}
+                    required
+                    label={'Имя пользователя'}
+                    autoComplete={'name'}
+                    fullWidth
+                    autoFocus
+                    value={name}
+                    onChange={event => setName(event.target.value)}
                 />
                 <TextField
                     variant={'outlined'}
                     margin={'normal'}
                     required
                     fullWidth
-                    id={'password'}
                     label={'Пароль'}
-                    name={'password'}
                     autoComplete={'password'}
                     type={'password'}
                     value={password}

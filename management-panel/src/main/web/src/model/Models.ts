@@ -1,26 +1,32 @@
 interface UserRegistrationRequest {
-    name: String
-    email: String
-    password: String
+    name: string
+    email: string
+    password: string
 }
 
 interface UserAuthorizationRequest {
-    name: String
-    password: String
+    name: string
+    password: string
 }
 
 interface User {
     id: number
-    name: String
-    email: String
+    name: string
+    email: string
 }
 
 interface UserRegistrationResponse {
     user: User
-    token: String
+    token: string
 }
 
 interface UserAuthorizationResponse {
     user: User
-    token: String
+    token: string
+}
+
+interface Project {
+    name: string
+    url: string
+    technologies: Set<string>
 }

@@ -30,6 +30,11 @@ export const RSOCKET_OPTIONS = {
 };
 
 
+export const TECHNOLOGIES = {
+    gradle: 'Gradle',
+    npm: 'NPM'
+};
+
 export const PRIMARY_MAIN_COLOR = purple["800"];
 export const SECONDARY_MAIN_COLOR = orange["700"];
 

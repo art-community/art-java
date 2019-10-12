@@ -1,17 +1,29 @@
 import {AUTHENTICATE, AUTHORIZE, REGISTER_USER} from "../constants/Constants";
-import {createMethodRequest, executeRequest} from "./PlatformClient";
+import {createMethodRequest, requestResponse} from "./PlatformClient";
 
 export const registerUser = (requestData: UserRegistrationRequest, onComplete: (user: UserRegistrationResponse) => void) => {
-    executeRequest(createMethodRequest(REGISTER_USER, requestData))
+    requestResponse(createMethodRequest(REGISTER_USER, requestData))
         .then(response => onComplete(response));
 };
 
 export const authorize = (requestData: UserAuthorizationRequest, onComplete: (user: UserAuthorizationResponse) => void, onError: () => void) => {
-    executeRequest(createMethodRequest(AUTHORIZE, requestData))
+    requestResponse(createMethodRequest(AUTHORIZE, requestData))
         .then(response => onComplete(response))
         .catch(() => onError());
 };
 
 export const authenticate = (requestData: string, onComplete: () => void, onError: () => void) => {
-    executeRequest(createMethodRequest(AUTHENTICATE, requestData)).then(() => onComplete()).catch(() => onError());
+    requestResponse(createMethodRequest(AUTHENTICATE, requestData)).then(() => onComplete()).catch(() => onError());
+};
+
+export const addProject = (requestData: Project, onComplete: () => void) => {
+
+};
+
+export const getProjects = (onComplete: (projects: Set<Project>) => void) => {
+
+};
+
+export const getTechnologies = (onComplete: (strings: Set<string>) => void) => {
+    onComplete(new Set(['gradle', 'npm']))
 };

@@ -10,7 +10,7 @@ const connect = async () => new RSocketClient({
     transport: new RSocketWebSocketClient({url: RSOCKET_URL}, BufferEncoders)
 }).connect();
 
-export const executeRequest = async (request: any) => {
+export const requestResponse = async (request: any) => {
     const socket = await connect();
     const response = await socket
         .requestResponse({
@@ -28,12 +28,20 @@ export const executeRequest = async (request: any) => {
     return response.responseData
 };
 
-export const createServiceMethodRequest = (serviceId: String, methodId: String, requestData: any = null) => ({
+export const fireAndForget = async (request: any) => {
+    const socket = await connect();
+    socket.fireAndForget({
+        data: encode(request),
+        metadata: encode(createMethodRequest(request.serviceMethodCommand.methodId, Cookies.get(TOKEN_COOKIE)))
+    })
+};
+
+export const createServiceMethodRequest = (serviceId: string, methodId: string, requestData: any = null) => ({
     serviceMethodCommand: {serviceId: serviceId, methodId: methodId},
     requestData: requestData
 });
 
-export const createMethodRequest = (methodId: String, requestData: any = null) => ({
+export const createMethodRequest = (methodId: string, requestData: any = null) => ({
     serviceMethodCommand: {serviceId: RSOCKET_FUNCTION, methodId: methodId},
     requestData: requestData
 });

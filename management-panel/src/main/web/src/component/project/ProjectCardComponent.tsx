@@ -3,6 +3,7 @@ import {
     Card,
     CardContent,
     CardHeader,
+    Chip,
     createStyles,
     IconButton,
     makeStyles,
@@ -16,16 +17,26 @@ import * as React from "react";
 import {useState} from "react";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-    card: {
-        maxWidth: 345
-    },
     avatar: {
         backgroundColor: theme.palette.secondary.main,
     },
+    chip: {
+        margin: theme.spacing(0.5)
+    }
 }));
 
 
-export const ProjectCardComponent = () => {
+interface ProjectCardComponentProps {
+    project: Project,
+    onAction: (action: ProjectCardMenuAction) => void
+}
+
+export enum ProjectCardMenuAction {
+    BUILD,
+    DELETE
+}
+
+export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const styles = useStyles();
@@ -38,11 +49,11 @@ export const ProjectCardComponent = () => {
         setAnchorEl(null);
     };
 
-    return <Card className={styles.card}>
+    return <Card>
         <CardHeader
             avatar={
                 <Avatar className={styles.avatar}>
-                    П
+                    {props.project.name[0]}
                 </Avatar>
             }
             action={
@@ -61,31 +72,39 @@ export const ProjectCardComponent = () => {
                               vertical: 'top',
                           }}
                           onClose={handleClose}
-                          keepMounted
-                          open={open}>
-                        <MenuItem>
-                            <IconButton color={"primary"} onClick={handleClose}>
-                                <BuildOutlined/>
-                            </IconButton>
+                          open={open}
+                          keepMounted>
+                        <MenuItem onClick={handleClose}>
+                            <BuildOutlined color={"primary"}
+                                           onClick={() => props.onAction(ProjectCardMenuAction.BUILD)}/>
                         </MenuItem>
-                        <MenuItem>
-                            <IconButton color={"primary"} onClick={handleClose}>
-                                <DeleteOutlined/>
-                            </IconButton>
+                        <MenuItem onClick={handleClose}>
+                            <DeleteOutlined color={"primary"}
+                                            onClick={() => props.onAction(ProjectCardMenuAction.DELETE)}/>
                         </MenuItem>
                     </Menu>
                 </div>
             }
             title={
-                <Typography color={"primary"}>Проект 1</Typography>
+                <Typography color={"primary"}>
+                    {props.project.name}
+                </Typography>
+            }
+            subheader={
+                <Typography color="textSecondary" variant="body2">
+                    {props.project.url}
+                </Typography>
             }
         >
         </CardHeader>
         <CardContent>
-            <Typography variant="body2" color="textSecondary" component="p">
-                This impressive paella is a perfect party dish and a fun meal to cook together with your
-                guests. Add 1 cup of frozen peas along with the mussels, if you like.
-            </Typography>
+            {Array.from(props.project.technologies)
+                .map(technology => <Chip
+                    key={technology}
+                    label={technology}
+                    className={styles.chip}
+                    variant={"outlined"}
+                    color={"secondary"}/>)}
         </CardContent>
     </Card>
 };
