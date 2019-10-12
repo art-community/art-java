@@ -28,5 +28,4 @@ interface UserAuthorizationResponse {
 interface Project {
     name: string
     url: string
-    technologies: Set<string>
 }

@@ -1,9 +1,7 @@
 import {
     Avatar,
     Card,
-    CardContent,
     CardHeader,
-    Chip,
     createStyles,
     IconButton,
     makeStyles,
@@ -94,17 +92,7 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
                 <Typography color="textSecondary" variant="body2">
                     {props.project.url}
                 </Typography>
-            }
-        >
+            }>
         </CardHeader>
-        <CardContent>
-            {Array.from(props.project.technologies)
-                .map(technology => <Chip
-                    key={technology}
-                    label={technology}
-                    className={styles.chip}
-                    variant={"outlined"}
-                    color={"secondary"}/>)}
-        </CardContent>
     </Card>
 };
