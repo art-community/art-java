@@ -1,74 +1,73 @@
 import * as React from "react";
 import {
-    Box,
-    Container,
-    FormControlLabel,
-    FormLabel,
-    Grid,
-    makeStyles,
-    Paper,
-    Radio,
-    RadioGroup
+    Avatar, Box, Button, ButtonGroup,
+    Card,
+    CardContent,
+    CardHeader,
+    createStyles, Grid,
+    IconButton,
+    makeStyles, Theme,
+    Typography
 } from "@material-ui/core";
-import {useState} from "react";
+import {Add, AddBoxOutlined, MoreVert} from "@material-ui/icons";
 
-const useStyles = makeStyles(theme => ({
-    root: {
-        flexGrow: 1,
+const useStyles = makeStyles((theme: Theme) => createStyles({
+    card: {
+        maxWidth: 345
     },
-    paper: {
-        height: 140,
-        width: 100,
-    },
-    control: {
-        padding: theme.spacing(2),
+    avatar: {
+        backgroundColor: theme.palette.secondary.main,
     },
 }));
 
 export const ProjectsComponent = () => {
-    const [spacing, setSpacing] = useState(2);
-    const classes = useStyles();
-
-    const handleChange = (event: any) => {
-        setSpacing(Number(event.target.value));
-    };
+    const styles = useStyles();
+    const card = <Card className={styles.card} >
+        <CardHeader
+            avatar={
+                <Avatar className={styles.avatar}>
+                    П
+                </Avatar>
+            }
+            action={
+                <IconButton color={"primary"}>
+                    <MoreVert/>
+                </IconButton>
+            }
+            title={
+                <Typography color={"primary"}>Проект 1</Typography>
+            }
+        >
+        </CardHeader>
+        <CardContent >
+            <Typography variant="body2" color="textSecondary" component="p">
+                This impressive paella is a perfect party dish and a fun meal to cook together with your
+                guests. Add 1 cup of frozen peas along with the mussels, if you like.
+            </Typography>
+        </CardContent>
+    </Card>;
 
     return <main>
-        <Grid container className={classes.root} spacing={2}>
-            <Grid item xs={12}>
-                <Grid container justify="center" spacing={spacing}>
-                    {[0, 1, 2].map(value => (
-                        <Grid key={value} item>
-                            <Paper className={classes.paper} />
-                        </Grid>
-                    ))}
+        <Box m={5}>
+            <Box mb={5}>
+                <Button color={"primary"} variant={"outlined"}>
+                    Добавить проект
+                </Button>
+            </Box>
+            <Grid container spacing={10}>
+                <Grid item>
+                    {card}
+                </Grid>
+                <Grid item>
+                    {card}
+                </Grid>
+                <Grid item>
+                    {card}
+                </Grid>
+                <Grid item>
+                    {card}
                 </Grid>
             </Grid>
-            <Grid item xs={12}>
-                <Paper className={classes.control}>
-                    <Grid container>
-                        <Grid item>
-                            <FormLabel>spacing</FormLabel>
-                            <RadioGroup
-                                name="spacing"
-                                aria-label="spacing"
-                                value={spacing.toString()}
-                                onChange={handleChange}
-                                row
-                            >
-                                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(value => (
-                                    <FormControlLabel
-                                        key={value}
-                                        value={value.toString()}
-                                        control={<Radio />}
-                                        label={value.toString()}
-                                    />
-                                ))}
-                            </RadioGroup>
-                        </Grid>
-                    </Grid>
-                </Paper>
-            </Grid>
-        </Grid>
+        </Box>
     </main>;
 };
