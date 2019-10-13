@@ -14,6 +14,9 @@ export const RSOCKET_FUNCTION = 'RSOCKET_FUNCTION_SERVICE';
 export const REGISTER_USER = 'registerUser';
 export const AUTHORIZE = 'authorize';
 export const AUTHENTICATE = 'authenticate';
+export const GET_PROJECTS = 'getProjects';
+export const ADD_PROJECT = 'addProject';
+export const DELETE_PROJECT = 'deleteProject';
 
 export const AUTHORIZED_STORE = 'authorized';
 export const TOKEN_COOKIE = 'token';

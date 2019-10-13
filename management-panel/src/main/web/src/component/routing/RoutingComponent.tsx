@@ -24,7 +24,6 @@ import {authenticate} from "../../api/PlatformApi";
 import {useStore} from "react-hookstore";
 import {SideBarComponent} from "../sidebar/SideBarComponent";
 import {DeployComponent} from "../deploy/DeployComponent";
-import {useEffect} from "react";
 
 export const RoutingComponent = () => {
     const [authorized, setAuthorized] = useStore(AUTHORIZED_STORE);

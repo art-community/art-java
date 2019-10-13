@@ -1,6 +1,7 @@
 import * as React from "react";
 import {useState} from "react";
-import {Box, Button, TextField, Typography} from "@material-ui/core";
+import {Box, Button, TextField, Typography, useTheme} from "@material-ui/core";
+import {addProject} from "../../api/PlatformApi";
 
 interface ProjectAddFormProps {
     onProjectAdd: (project: Project) => void
@@ -9,6 +10,7 @@ interface ProjectAddFormProps {
 export const ProjectAddForm = (props: ProjectAddFormProps) => {
     const [name, setName] = useState("");
     const [url, setUrl] = useState("");
+    const theme = useTheme();
     return <form noValidate>
         <Typography color={"secondary"} variant="h5" component="h5">
             Новый проект
@@ -33,11 +35,11 @@ export const ProjectAddForm = (props: ProjectAddFormProps) => {
             }}
             fullWidth
         />
-        <Box mt={'normal'}>
+        <Box mt={theme.spacing(0.5)}>
             <Button fullWidth
                     variant={'outlined'}
                     color={'primary'}
-                    onClick={() => props.onProjectAdd({name: name, url: url})}>
+                    onClick={() => addProject({name: name, url: url}, props.onProjectAdd)}>
                 Добавить
             </Button>
         </Box>

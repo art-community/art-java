@@ -1,4 +1,11 @@
-import {AUTHENTICATE, AUTHORIZE, REGISTER_USER} from "../constants/Constants";
+import {
+    ADD_PROJECT,
+    AUTHENTICATE,
+    AUTHORIZE,
+    DELETE_PROJECT,
+    GET_PROJECTS,
+    REGISTER_USER
+} from "../constants/Constants";
 import {createMethodRequest, requestResponse} from "./PlatformClient";
 
 export const registerUser = (requestData: UserRegistrationRequest, onComplete: (user: UserRegistrationResponse) => void) => {
@@ -16,14 +23,17 @@ export const authenticate = (requestData: string, onComplete: () => void, onErro
     requestResponse(createMethodRequest(AUTHENTICATE, requestData)).then(() => onComplete()).catch(() => onError());
 };
 
-export const addProject = (requestData: Project, onComplete: () => void) => {
-
+export const addProject = (requestData: ProjectRequest, onComplete: (project: Project) => void) => {
+    requestResponse(createMethodRequest(ADD_PROJECT, requestData))
+        .then(project => onComplete(project))
 };
 
-export const getProjects = (onComplete: (projects: Set<Project>) => void) => {
-
+export const deleteProject = (requestData: number, onComplete: () => void) => {
+    requestResponse(createMethodRequest(DELETE_PROJECT, requestData))
+        .then(() => onComplete())
 };
 
-export const getTechnologies = (onComplete: (strings: Set<string>) => void) => {
-    onComplete(new Set(['gradle', 'npm']))
+export const getProjects = (onComplete: (projects: Map<number, Project>) => void) => {
+    requestResponse(createMethodRequest(GET_PROJECTS))
+        .then((projects: Project[]) => onComplete(projects.groupByIgnoreDuplicates(project => project.id)))
 };

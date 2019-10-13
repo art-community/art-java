@@ -60,3 +60,9 @@ Map.prototype.addValue = function <K, V, R>(this: Map<K, V>, key: K, value: V): 
     this.set(key, value);
     return new Map(this);
 };
+
+Array.prototype.groupByIgnoreDuplicates = function <K, T>(this: Array<T>, functor: (element: T) => K): Map<K, T> {
+    const map = new Map();
+    this.forEach(item => map.set(functor(item), item));
+    return map;
+};

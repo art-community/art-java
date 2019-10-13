@@ -6,15 +6,19 @@ object CommonConstants {
     const val TOKEN = "token"
     const val NAME = "name"
     const val PASSWORD = "password"
+    const val PROJECT = "project"
     const val NAME_PASSWORD = "namePassword"
     const val TOKEN_LIFE_TIME_DAYS = 1
 }
 
 object DbConstants {
-    const val TOKEN_INDEX_ID = 1
-    const val NAME_FIELD_NUM = 2
-    const val PASSWORD_FIELD_NUM = 3
-    const val TOKEN_FIELD_NUM = 2
+    const val USER_TOKEN_INDEX_ID = 1
+    const val USER_NAME_FIELD_NUM = 2
+    const val USER_PASSWORD_FIELD_NUM = 3
+    const val USER_TOKEN_FIELD_NUM = 2
+
+    const val PROJECT_NAME_INDEX_ID = 1
+    const val PROJECT_NAME_FIELD_NUM = 2
 }
 
 object UserConstants {
@@ -25,6 +29,9 @@ object ServiceConstants {
     const val REGISTER_USER = "registerUser"
     const val AUTHORIZE = "authorize"
     const val AUTHENTICATE = "authenticate"
+    const val ADD_PROJECT = "addProject"
+    const val GET_PROJECTS = "getProjects"
+    const val DELETE_PROJECT = "deleteProject"
 }
 
 object ErrorMessages {

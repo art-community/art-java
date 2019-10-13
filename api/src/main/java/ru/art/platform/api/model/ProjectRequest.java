@@ -4,8 +4,7 @@ import lombok.*;
 
 @Value
 @Builder
-public class Project {
-    private final Long id;
+public class ProjectRequest {
     private final String name;
     private final String url;
 }

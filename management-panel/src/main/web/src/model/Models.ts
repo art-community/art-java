@@ -26,6 +26,12 @@ interface UserAuthorizationResponse {
 }
 
 interface Project {
+    id: number
+    name: string
+    url: string
+}
+
+interface ProjectRequest {
     name: string
     url: string
 }
