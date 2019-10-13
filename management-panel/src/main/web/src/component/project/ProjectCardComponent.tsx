@@ -1,9 +1,11 @@
 import {
     Avatar,
-    Card, CardContent,
+    Card,
+    CardContent,
     CardHeader,
     createStyles,
-    IconButton, Link,
+    IconButton,
+    Link,
     makeStyles,
     Menu,
     MenuItem,
@@ -13,6 +15,7 @@ import {
 import {BuildOutlined, DeleteOutlined, MoreVert} from "@material-ui/icons";
 import * as React from "react";
 import {useState} from "react";
+import {ProjectCardComponentProps, ProjectCardMenuAction} from "./props/ProjectComponentsProps";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     avatar: {
@@ -27,25 +30,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 
-interface ProjectCardComponentProps {
-    project: Project,
-    onAction: (action: ProjectCardMenuAction) => void
-}
-
-export enum ProjectCardMenuAction {
-    BUILD,
-    DELETE
-}
-
 export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
     const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
     const open = Boolean(menuAnchor);
     const styles = useStyles();
-
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        setMenuAnchor(event.currentTarget);
-    };
-
     return <Card>
         <CardHeader
             avatar={
@@ -55,7 +43,9 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
             }
             action={
                 <div>
-                    <IconButton color={"primary"} onClick={handleClick}>
+                    <IconButton color={"primary"} onClick={(event: React.MouseEvent<HTMLElement>) => {
+                        setMenuAnchor(event.currentTarget);
+                    }}>
                         <MoreVert/>
                     </IconButton>
                     <Menu anchorEl={menuAnchor}

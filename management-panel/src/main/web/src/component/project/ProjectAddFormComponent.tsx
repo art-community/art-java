@@ -3,14 +3,10 @@ import {useState} from "react";
 import {Box, Button, Grid, IconButton, Popper, TextField, Typography, useTheme} from "@material-ui/core";
 import {addProject} from "../../api/PlatformApi";
 import {ArrowBackOutlined} from "@material-ui/icons";
+import {ProjectComponentsProps} from "./props/ProjectComponentsProps";
 
-interface ProjectAddFormProps {
-    onProjectAdd: (project: Project) => void
 
-    onBack: () => void;
-}
-
-export const ProjectAddFormComponent = (props: ProjectAddFormProps) => {
+export const ProjectAddFormComponent = (props: ProjectComponentsProps) => {
     const [name, setName] = useState("");
     const [gitUrl, setGitUrl] = useState("");
     const [jiraUrl, setJiraUrl] = useState("");
