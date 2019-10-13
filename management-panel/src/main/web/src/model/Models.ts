@@ -28,10 +28,12 @@ interface UserAuthorizationResponse {
 interface Project {
     id: number
     name: string
-    url: string
+    gitUrl: string
+    jiraUrl: string
 }
 
 interface ProjectRequest {
     name: string
-    url: string
+    gitUrl: string
+    jiraUrl?: string
 }

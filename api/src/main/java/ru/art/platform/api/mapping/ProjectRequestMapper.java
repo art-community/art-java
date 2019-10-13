@@ -8,15 +8,19 @@ import static ru.art.core.checker.CheckerForEmptiness.*;
 public interface ProjectRequestMapper {
 	String name = "name";
 
-	String url = "url";
+	String gitUrl = "gitUrl";
+
+	String jiraUrl = "jiraUrl";
 
 	ValueToModelMapper<ProjectRequest, Entity> toProjectRequest = entity -> isNotEmpty(entity) ? ProjectRequest.builder()
 			.name(entity.getString(name))
-			.url(entity.getString(url))
+			.gitUrl(entity.getString(gitUrl))
+			.jiraUrl(entity.getString(jiraUrl))
 			.build() : ProjectRequest.builder().build();
 
 	ValueFromModelMapper<ProjectRequest, Entity> fromProjectRequest = model -> isNotEmpty(model) ? Entity.entityBuilder()
 			.stringField(name, model.getName())
-			.stringField(url, model.getUrl())
+			.stringField(gitUrl, model.getGitUrl())
+			.stringField(jiraUrl, model.getJiraUrl())
 			.build() : Entity.entityBuilder().build();
 }

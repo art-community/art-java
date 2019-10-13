@@ -7,5 +7,6 @@ import lombok.*;
 public class Project {
     private final Long id;
     private final String name;
-    private final String url;
+    private final String gitUrl;
+    private final String jiraUrl;
 }

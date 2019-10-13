@@ -14,37 +14,37 @@
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 300;
-    src: url(Roboto_300_normal.eot); /* {{embedded-opentype-gf-url}} */
+    src: url(Roboto_300_normal.eot); /* {{embedded-opentype-gf-gitUrl}} */
     src: local('☺'),
-        url(Roboto_300_normal.eot?#iefix) format('embedded-opentype'), /* {{embedded-opentype-gf-url}} */
+        url(Roboto_300_normal.eot?#iefix) format('embedded-opentype'), /* {{embedded-opentype-gf-gitUrl}} */
         url(Roboto_300_normal.woff2) format('woff2'), /* http://fonts.gstatic.com/s/roboto/v20/KFOlCnqEu92Fr1MmSU5fBBc4.woff2 */
         url(Roboto_300_normal.woff) format('woff'), /* http://fonts.gstatic.com/s/roboto/v20/KFOlCnqEu92Fr1MmSU5fBBc-.woff */
         url(Roboto_300_normal.ttf) format('truetype'), /* http://fonts.gstatic.com/s/roboto/v20/KFOlCnqEu92Fr1MmSU5fBBc9AMP6lQ.ttf */
-        url(Roboto_300_normal.svg#Roboto_300_normal) format('svg'); /* {{svg-gf-url}} */
+        url(Roboto_300_normal.svg#Roboto_300_normal) format('svg'); /* {{svg-gf-gitUrl}} */
 }
 @font-face {
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 500;
-    src: url(Roboto_500_normal.eot); /* {{embedded-opentype-gf-url}} */
+    src: url(Roboto_500_normal.eot); /* {{embedded-opentype-gf-gitUrl}} */
     src: local('☺'),
-        url(Roboto_500_normal.eot?#iefix) format('embedded-opentype'), /* {{embedded-opentype-gf-url}} */
+        url(Roboto_500_normal.eot?#iefix) format('embedded-opentype'), /* {{embedded-opentype-gf-gitUrl}} */
         url(Roboto_500_normal.woff2) format('woff2'), /* http://fonts.gstatic.com/s/roboto/v20/KFOlCnqEu92Fr1MmEU9fBBc4.woff2 */
         url(Roboto_500_normal.woff) format('woff'), /* http://fonts.gstatic.com/s/roboto/v20/KFOlCnqEu92Fr1MmEU9fBBc-.woff */
         url(Roboto_500_normal.ttf) format('truetype'), /* http://fonts.gstatic.com/s/roboto/v20/KFOlCnqEu92Fr1MmEU9fBBc9AMP6lQ.ttf */
-        url(Roboto_500_normal.svg#Roboto_500_normal) format('svg'); /* {{svg-gf-url}} */
+        url(Roboto_500_normal.svg#Roboto_500_normal) format('svg'); /* {{svg-gf-gitUrl}} */
 }
 @font-face {
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 700;
-    src: url(Roboto_700_normal.eot); /* {{embedded-opentype-gf-url}} */
+    src: url(Roboto_700_normal.eot); /* {{embedded-opentype-gf-gitUrl}} */
     src: local('☺'),
-        url(Roboto_700_normal.eot?#iefix) format('embedded-opentype'), /* {{embedded-opentype-gf-url}} */
+        url(Roboto_700_normal.eot?#iefix) format('embedded-opentype'), /* {{embedded-opentype-gf-gitUrl}} */
         url(Roboto_700_normal.woff2) format('woff2'), /* http://fonts.gstatic.com/s/roboto/v20/KFOlCnqEu92Fr1MmWUlfBBc4.woff2 */
         url(Roboto_700_normal.woff) format('woff'), /* http://fonts.gstatic.com/s/roboto/v20/KFOlCnqEu92Fr1MmWUlfBBc-.woff */
         url(Roboto_700_normal.ttf) format('truetype'), /* http://fonts.gstatic.com/s/roboto/v20/KFOlCnqEu92Fr1MmWUlfBBc9AMP6lQ.ttf */
-        url(Roboto_700_normal.svg#Roboto_700_normal) format('svg'); /* {{svg-gf-url}} */
+        url(Roboto_700_normal.svg#Roboto_700_normal) format('svg'); /* {{svg-gf-gitUrl}} */
 }
 @font-face {
     font-family: 'Material Icons';

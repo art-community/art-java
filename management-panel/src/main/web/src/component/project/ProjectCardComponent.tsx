@@ -1,9 +1,9 @@
 import {
     Avatar,
-    Card,
+    Card, CardContent,
     CardHeader,
     createStyles,
-    IconButton,
+    IconButton, Link,
     makeStyles,
     Menu,
     MenuItem,
@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     },
     chip: {
         margin: theme.spacing(0.5)
+    },
+    link: {
+        margin: theme.spacing(1),
     }
 }));
 
@@ -71,7 +74,7 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
                         <MenuItem onClick={() => {
                             setMenuAnchor(null);
                             props.onAction(ProjectCardMenuAction.BUILD);
-                        } }>
+                        }}>
                             <BuildOutlined color={"primary"}/>
                         </MenuItem>
                         <MenuItem onClick={() => {
@@ -90,9 +93,18 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
             }
             subheader={
                 <Typography color="textSecondary" variant="body2">
-                    {props.project.url}
+                    <Link href={props.project.gitUrl}>
+                        Посмотреть в git репо
+                    </Link>
                 </Typography>
             }>
         </CardHeader>
+        <CardContent>
+            <Typography color="secondary" variant="body2">
+                <Link href={props.project.jiraUrl} className={styles.link}>
+                    Посмотреть в JIRA
+                </Link>
+            </Typography>
+        </CardContent>
     </Card>
 };

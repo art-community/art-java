@@ -2,7 +2,7 @@ import * as React from "react";
 import {useEffect, useState} from "react";
 import {Box, Button, Grid, useTheme} from "@material-ui/core";
 import {ProjectCardComponent, ProjectCardMenuAction} from "./ProjectCardComponent";
-import {ProjectAddForm} from "./ProjectAddForm";
+import {ProjectAddFormComponent} from "./ProjectAddFormComponent";
 import {deleteProject, getProjects} from "../../api/PlatformApi";
 import {GridSpacing} from "@material-ui/core/Grid";
 
@@ -19,12 +19,13 @@ export const ProjectsComponent = () => {
     useEffect(() => getProjects(setProjects), []);
 
     const projectAddForm =
-        <Box m={theme.spacing(0.5)}>
-            <ProjectAddForm onProjectAdd={(project: Project) => {
-                setProjects(projects.addValue(project.id, project));
-                showProjectsGrid()
-            }}/>
-        </Box>;
+            <ProjectAddFormComponent
+                onProjectAdd={(project: Project) => {
+                    setProjects(projects.addValue(project.id, project));
+                    showProjectsGrid()
+                }}
+                onBack={() => showProjectsGrid()}
+            />
 
     const handleAction = (action: ProjectCardMenuAction, project: Project) => {
         switch (+action) {

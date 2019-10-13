@@ -6,5 +6,6 @@ import lombok.*;
 @Builder
 public class ProjectRequest {
     private final String name;
-    private final String url;
+    private final String gitUrl;
+    private final String jiraUrl;
 }

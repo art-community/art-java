@@ -6,7 +6,7 @@ import {ProjectAssemblesComponent} from "./ProjectAssemblesComponent";
 export const BuildComponent = () => {
     const [selectedProject, selectProject] = useState<Project | null>(null);
     if (selectedProject) {
-        return <ProjectAssemblesComponent project={selectedProject}/>
+        return <ProjectAssemblesComponent project={selectedProject} onBack={() => selectProject(null)}/>
     }
     return <SelectProjectComponent onSelect={selectProject}/>;
 };

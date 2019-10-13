@@ -48,4 +48,4 @@ export const SelectProjectComponent = (props: SelectProjectComponentProps) => {
                 </ListItem>)}
         </List>
     </Box>;
-}
+};
