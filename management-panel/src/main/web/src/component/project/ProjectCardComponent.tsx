@@ -35,16 +35,12 @@ export enum ProjectCardMenuAction {
 }
 
 export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
+    const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+    const open = Boolean(menuAnchor);
     const styles = useStyles();
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
+        setMenuAnchor(event.currentTarget);
     };
 
     return <Card>
@@ -59,7 +55,7 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
                     <IconButton color={"primary"} onClick={handleClick}>
                         <MoreVert/>
                     </IconButton>
-                    <Menu anchorEl={anchorEl}
+                    <Menu anchorEl={menuAnchor}
                           getContentAnchorEl={null}
                           anchorOrigin={{
                               horizontal: 'right',
@@ -69,16 +65,20 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
                               horizontal: 'left',
                               vertical: 'top',
                           }}
-                          onClose={handleClose}
+                          onClose={() => setMenuAnchor(null)}
                           open={open}
                           keepMounted>
-                        <MenuItem onClick={handleClose}>
-                            <BuildOutlined color={"primary"}
-                                           onClick={() => props.onAction(ProjectCardMenuAction.BUILD)}/>
+                        <MenuItem onClick={() => {
+                            setMenuAnchor(null);
+                            props.onAction(ProjectCardMenuAction.BUILD);
+                        } }>
+                            <BuildOutlined color={"primary"}/>
                         </MenuItem>
-                        <MenuItem onClick={handleClose}>
-                            <DeleteOutlined color={"primary"}
-                                            onClick={() => props.onAction(ProjectCardMenuAction.DELETE)}/>
+                        <MenuItem onClick={() => {
+                            setMenuAnchor(null);
+                            props.onAction(ProjectCardMenuAction.DELETE)
+                        }}>
+                            <DeleteOutlined color={"primary"}/>
                         </MenuItem>
                     </Menu>
                 </div>

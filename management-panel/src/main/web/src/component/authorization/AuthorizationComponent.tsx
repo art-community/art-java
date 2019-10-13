@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {useEffect, useState} from 'react';
-import {Box, Button, Container, Grid, TextField, Typography,} from '@material-ui/core';
+import {useEffect, useRef, useState} from 'react';
+import {Box, Button, Container, Grid, Popper, TextField, Typography,} from '@material-ui/core';
 import {useHistory} from "react-router-dom";
 import {AUTHORIZED_STORE, PROJECT_PATH, REGISTER_PATH, TOKEN_COOKIE} from "../../constants/Constants";
 import {useStore} from "react-hookstore";
@@ -12,7 +12,9 @@ export const AuthorizationComponent = () => {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [authorized, setAuthorized] = useState(false);
+    const [authorizationFailed, setAuthorizationFailed] = useState(false);
     const [authorizedStore, setAuthorizedStore] = useStore(AUTHORIZED_STORE);
+    const [notAuthorizedMessageAnchor, setNotAuthorizedMessageAnchor] = useState<null | HTMLElement>(null);
     const history = useHistory();
 
     useEffect(() => {
@@ -28,10 +30,10 @@ export const AuthorizationComponent = () => {
     };
 
     const handleError = () => {
-        history.push(REGISTER_PATH);
+        setAuthorizationFailed(true)
     };
 
-    const onRegister = () => history.push(REGISTER_PATH);
+//    const onRegister = () => history.push(REGISTER_PATH);
 
     const onAuthorize = () => authorize({name: name, password: password}, handleAuthorize, handleError);
 
@@ -65,24 +67,32 @@ export const AuthorizationComponent = () => {
                 />
                 <Box marginTop={3}>
                     <Grid container spacing={3}>
-                        <Grid item xs={6}>
-                            <Button
+                        <Grid item xs={12}>
+                            {<Button
+                                ref={ref => setNotAuthorizedMessageAnchor(ref)}
                                 fullWidth
                                 onClick={onAuthorize}
                                 variant={'contained'}
                                 color={'primary'}>
                                 Войти
-                            </Button>
+                            </Button>}
+                            <Popper open={authorizationFailed && Boolean(notAuthorizedMessageAnchor)}
+                                    placement={"top"}
+                                    anchorEl={notAuthorizedMessageAnchor}>
+                                <Typography color={"error"}>
+                                    Пользователь не найден
+                                </Typography>
+                            </Popper>
                         </Grid>
-                        <Grid item xs={6}>
-                            <Button
-                                fullWidth
-                                onClick={onRegister}
-                                variant={'contained'}
-                                color={'secondary'}>
-                                Регистрация
-                            </Button>
-                        </Grid>
+                        {/*<Grid item xs={6}>*/}
+                        {/*    <Button*/}
+                        {/*        fullWidth*/}
+                        {/*        onClick={onRegister}*/}
+                        {/*        variant={'contained'}*/}
+                        {/*        color={'secondary'}>*/}
+                        {/*        Регистрация*/}
+                        {/*    </Button>*/}
+                        {/*</Grid>*/}
                     </Grid>
                 </Box>
             </form>

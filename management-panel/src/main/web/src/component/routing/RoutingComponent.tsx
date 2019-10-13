@@ -6,7 +6,6 @@ import {
     BUILD_PATH,
     DEPLOY_PATH,
     PROJECT_PATH,
-    REGISTER_PATH,
     SLASH,
     TOKEN_COOKIE
 } from "../../constants/Constants";
@@ -19,7 +18,6 @@ import Cookies from "js-cookie"
 import {ProjectsComponent} from "../project/ProjectsComponent";
 import {BuildComponent} from "../build/BuildComponent";
 import {AuthorizationComponent} from "../authorization/AuthorizationComponent";
-import {RegistrationComponent} from "../registration/RegistrationComponent";
 import {authenticate} from "../../api/PlatformApi";
 import {useStore} from "react-hookstore";
 import {SideBarComponent} from "../sidebar/SideBarComponent";
@@ -60,9 +58,6 @@ export const RoutingComponent = () => {
                 </Route>
                 <Route exact path={AUTHORIZE_PATH}>
                     {routePublicComponent(<AuthorizationComponent/>)}
-                </Route>
-                <Route exact path={REGISTER_PATH}>
-                    {routePublicComponent(<RegistrationComponent/>)}
                 </Route>
                 <Route path={SLASH}>
                     <Redirect to={PROJECT_PATH}/>

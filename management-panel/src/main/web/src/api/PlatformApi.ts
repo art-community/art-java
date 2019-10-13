@@ -23,9 +23,10 @@ export const authenticate = (requestData: string, onComplete: () => void, onErro
     requestResponse(createMethodRequest(AUTHENTICATE, requestData)).then(() => onComplete()).catch(() => onError());
 };
 
-export const addProject = (requestData: ProjectRequest, onComplete: (project: Project) => void) => {
+export const addProject = (requestData: ProjectRequest, onComplete: (project: Project) => void, onError: () => void) => {
     requestResponse(createMethodRequest(ADD_PROJECT, requestData))
         .then(project => onComplete(project))
+        .catch(() => onError())
 };
 
 export const deleteProject = (requestData: number, onComplete: () => void) => {

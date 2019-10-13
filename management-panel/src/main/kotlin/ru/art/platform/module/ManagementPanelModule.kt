@@ -9,8 +9,6 @@ import ru.art.platform.api.mapping.ProjectMapper.*
 import ru.art.platform.api.mapping.ProjectRequestMapper.*
 import ru.art.platform.api.mapping.UserAuthorizationRequestResponseMapper.UserAuthorizationRequestMapper.*
 import ru.art.platform.api.mapping.UserAuthorizationRequestResponseMapper.UserAuthorizationResponseMapper.*
-import ru.art.platform.api.mapping.UserRegistrationRequestResponseMapper.UserRegistrationRequestMapper.*
-import ru.art.platform.api.mapping.UserRegistrationRequestResponseMapper.UserRegistrationResponseMapper.*
 import ru.art.platform.configuration.*
 import ru.art.platform.constants.CommonConstants.NAME
 import ru.art.platform.constants.CommonConstants.NAME_PASSWORD
@@ -29,7 +27,6 @@ import ru.art.platform.constants.ServiceConstants.AUTHENTICATE
 import ru.art.platform.constants.ServiceConstants.AUTHORIZE
 import ru.art.platform.constants.ServiceConstants.DELETE_PROJECT
 import ru.art.platform.constants.ServiceConstants.GET_PROJECTS
-import ru.art.platform.constants.ServiceConstants.REGISTER_USER
 import ru.art.platform.service.*
 import ru.art.rsocket.function.RsocketServiceFunction.*
 import ru.art.rsocket.module.*
@@ -77,11 +74,11 @@ object ManagementPanelModule {
     }
 
     private fun registerFunctions() {
-        rsocket(REGISTER_USER)
-                .requestMapper(toUserRegistrationRequest)
-                .responseMapper(fromUserRegistrationResponse)
-                .validationPolicy(VALIDATABLE)
-                .handle(UserService::registerUser)
+//        rsocket(REGISTER_USER)
+//                .requestMapper(toUserRegistrationRequest)
+//                .responseMapper(fromUserRegistrationResponse)
+//                .validationPolicy(VALIDATABLE)
+//                .handle(UserService::registerUser)
         rsocket(AUTHORIZE)
                 .requestMapper(toUserAuthorizationRequest)
                 .responseMapper(fromUserAuthorizationResponse)
