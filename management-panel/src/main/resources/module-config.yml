@@ -1,7 +1,7 @@
 http:
   server:
     port: 8080
-    path: /
+    path: /platform
 rsocket:
   server:
     webSocketPort: 9001
