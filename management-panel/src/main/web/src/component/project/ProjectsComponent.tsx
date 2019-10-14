@@ -6,6 +6,10 @@ import {ProjectAddFormComponent} from "./ProjectAddFormComponent";
 import {deleteProject, getProjects} from "../../api/PlatformApi";
 import {GridSpacing} from "@material-ui/core/Grid";
 import {ProjectCardMenuAction} from "./props/ProjectComponentsProps";
+import {useHistory} from "react-router";
+import {AUTHORIZE_PATH, TOKEN_COOKIE} from "../../constants/Constants";
+// @ts-ignore
+import Cookies from "js-cookie";
 
 enum Mode {
     PROJECTS,
@@ -16,14 +20,19 @@ export const ProjectsComponent = () => {
     const [mode, setMode] = useState(Mode.PROJECTS);
     const theme = useTheme();
     const [projects, setProjects] = useState<Map<number, Project>>(new Map());
-    useEffect(() => getProjects(setProjects), []);
+    const history = useHistory();
+    useEffect(() => getProjects(setProjects, () => {
+        Cookies.remove(TOKEN_COOKIE);
+        history.push(AUTHORIZE_PATH)
+    }), []);
 
     const handleAction = (action: ProjectCardMenuAction, project: Project) => {
         switch (+action) {
             case ProjectCardMenuAction.BUILD :
                 return;
             case ProjectCardMenuAction.DELETE: {
-                deleteProject(project.id, () => setProjects(projects.deleteKey(project.id)));
+                deleteProject(project.id);
+                setProjects(projects.deleteKey(project.id));
                 return;
             }
         }
@@ -54,13 +63,8 @@ export const ProjectsComponent = () => {
         </Grid>
     </Box>;
 
-    const showProjectAddForm = () => {
-        setMode(Mode.ADD_PROJECT)
-    };
-
-    const showProjectsGrid = () => {
-        setMode(Mode.PROJECTS)
-    };
+    const showProjectAddForm = () => setMode(Mode.ADD_PROJECT);
+    const showProjectsGrid = () => setMode(Mode.PROJECTS);
 
     return mode == Mode.PROJECTS ? projectsGrid : projectAddForm
 };

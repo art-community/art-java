@@ -62,3 +62,4 @@ rocks.db/
 *.xlog
 log.*
 !management-panel/src/main/web/src/component/build
+Registrator

@@ -1,46 +1,41 @@
 import * as React from "react";
+import {useEffect, useState} from "react";
 import {BrowserRouter, Route} from 'react-router-dom';
-import {
-    AUTHORIZE_PATH,
-    AUTHORIZED_STORE,
-    BUILD_PATH,
-    DEPLOY_PATH,
-    PROJECT_PATH,
-    SLASH,
-    TOKEN_COOKIE
-} from "../../constants/Constants";
+import {AUTHORIZE_PATH, BUILD_PATH, DEPLOY_PATH, PROJECT_PATH, SLASH, TOKEN_COOKIE} from "../../constants/Constants";
 import {ThemeProvider} from "@material-ui/styles";
 import {CssBaseline} from "@material-ui/core";
 import {DEFAULT_THEME} from "../../theme/Theme";
 import {Redirect, Switch} from "react-router";
-// @ts-ignore
-import Cookies from "js-cookie"
 import {ProjectsComponent} from "../project/ProjectsComponent";
 import {BuildComponent} from "../build/BuildComponent";
 import {AuthorizationComponent} from "../authorization/AuthorizationComponent";
-import {authenticate} from "../../api/PlatformApi";
-import {useStore} from "react-hookstore";
 import {SideBarComponent} from "../sidebar/SideBarComponent";
 import {DeployComponent} from "../deploy/DeployComponent";
+// @ts-ignore
+import Cookies from "js-cookie";
+import {authenticate} from "../../api/PlatformApi";
 
 export const RoutingComponent = () => {
-    const [authorized, setAuthorized] = useStore(AUTHORIZED_STORE);
-    let token = Cookies.get(TOKEN_COOKIE);
+    const [authorized, setAuthorized] = useState(false);
+    useEffect(() => authenticate(Cookies.get(TOKEN_COOKIE), setAuthorized, () => setAuthorized(false)), []);
+
     const routePrivateComponent = (component: any) => {
-        if (token && authorized) {
+        if (Cookies.get(TOKEN_COOKIE) && authorized) {
             return component
         }
-        if (!token) {
-            return <Redirect to={AUTHORIZE_PATH}/>
-        }
-        authenticate(token, () => setAuthorized(true), () => setAuthorized(false));
+        return <Redirect to={AUTHORIZE_PATH}/>
     };
 
     const routePublicComponent = (component: any) => {
-        if (token && authorized) {
+        if (Cookies.get(TOKEN_COOKIE) && authorized) {
             return <Redirect to={PROJECT_PATH}/>
         }
         return component
+    };
+
+    const handleAuthorized = (token: string) => {
+        Cookies.set(TOKEN_COOKIE, token);
+        setAuthorized(true)
     };
 
     return <ThemeProvider theme={DEFAULT_THEME}>
@@ -48,16 +43,16 @@ export const RoutingComponent = () => {
         <BrowserRouter>
             <Switch>
                 <Route exact path={BUILD_PATH}>
-                    {routePrivateComponent(<SideBarComponent><BuildComponent/></SideBarComponent>)}
+                    {() => routePrivateComponent(<SideBarComponent><BuildComponent/></SideBarComponent>)}
                 </Route>
                 <Route exact path={PROJECT_PATH}>
-                    {routePrivateComponent(<SideBarComponent><ProjectsComponent/></SideBarComponent>)}
+                    {() => routePrivateComponent(<SideBarComponent><ProjectsComponent/></SideBarComponent>)}
                 </Route>
                 <Route exact path={DEPLOY_PATH}>
-                    {routePrivateComponent(<SideBarComponent><DeployComponent/></SideBarComponent>)}
+                    {() => routePrivateComponent(<SideBarComponent><DeployComponent/></SideBarComponent>)}
                 </Route>
                 <Route exact path={AUTHORIZE_PATH}>
-                    {routePublicComponent(<AuthorizationComponent/>)}
+                    {() => routePublicComponent(<AuthorizationComponent onAuthorize={handleAuthorized}/>)}
                 </Route>
                 <Route path={SLASH}>
                     <Redirect to={PROJECT_PATH}/>

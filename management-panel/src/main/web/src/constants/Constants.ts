@@ -1,5 +1,7 @@
 import {orange, purple} from "@material-ui/core/colors";
 
+export const EMPTY_RESPONSE = "Response is empty";
+
 export const SLASH = '/';
 export const PLATFORM_PATH = '/platform';
 export const AUTHORIZE_PATH = PLATFORM_PATH + '/authorize';

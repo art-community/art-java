@@ -38,8 +38,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 export const ProjectAssemblesComponent = (props: ProjectAssemblesComponentProps) => {
     const theme = useTheme();
     const styles = useStyles();
-    return <Grid direction="column"
-                 >
+    return <Grid container direction="column">
         <Grid item>
             <IconButton onClick={() => props.onBack()}>
                 <ArrowBackOutlined color={"secondary"}/>

@@ -1,6 +1,6 @@
 import {BufferEncoders, RSocketClient} from "rsocket-core";
 import RSocketWebSocketClient from "rsocket-websocket-client";
-import {RSOCKET_FUNCTION, RSOCKET_OPTIONS, RSOCKET_URL, TOKEN_COOKIE} from "../constants/Constants";
+import {EMPTY_RESPONSE, RSOCKET_FUNCTION, RSOCKET_OPTIONS, RSOCKET_URL, TOKEN_COOKIE} from "../constants/Constants";
 import {decode, encode} from "msgpack-lite";
 // @ts-ignore
 import Cookies from "js-cookie";
@@ -19,7 +19,8 @@ export const requestResponse = async (request: any) => {
         })
         .map(payload => payload.data != null ? decode(payload.data as number[]) : null);
     if (!response) {
-        return
+        console.error(Error(EMPTY_RESPONSE));
+        throw Error(EMPTY_RESPONSE)
     }
     if (response.serviceExecutionException) {
         console.error(response.serviceExecutionException);
@@ -28,12 +29,11 @@ export const requestResponse = async (request: any) => {
     return response.responseData
 };
 
-export const fireAndForget = async (request: any) => {
-    const socket = await connect();
-    socket.fireAndForget({
+export const fireAndForget = (request: any) => {
+    connect().then(socket => socket.fireAndForget({
         data: encode(request),
         metadata: encode(createMethodRequest(request.serviceMethodCommand.methodId, Cookies.get(TOKEN_COOKIE)))
-    })
+    }))
 };
 
 export const createServiceMethodRequest = (serviceId: string, methodId: string, requestData: any = null) => ({

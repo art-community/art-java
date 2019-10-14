@@ -12,19 +12,10 @@ export const RegistrationComponent = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [authorized, setAuthorized] = useState(false);
-    const [authorizedStore, setAuthorizedStore] = useStore(AUTHORIZED_STORE);
     const history = useHistory();
-
-    useEffect(() => {
-        if (authorized) {
-            setAuthorizedStore(true);
-        }
-    }, [authorized]);
 
     const onRegister = () => registerUser({name: name, email: email, password: password}, response => {
         Cookies.set(TOKEN_COOKIE, response.token);
-        setAuthorized(true);
         history.push(PROJECT_PATH);
     });
 

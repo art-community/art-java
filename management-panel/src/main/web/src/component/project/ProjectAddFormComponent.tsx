@@ -13,7 +13,7 @@ export const ProjectAddFormComponent = (props: ProjectComponentsProps) => {
     const [showProjectExistsError, setShowProjectExistsError] = useState(false);
     const [projectExistsErrorMessageAnchor, setProjectExistsErrorMessageAnchor] = useState<null | HTMLElement>(null);
     const theme = useTheme();
-    return <Grid direction={"column"}>
+    return <Grid>
         <Grid item>
             <IconButton onClick={() => props.onBack()}>
                 <ArrowBackOutlined color={"secondary"}/>
