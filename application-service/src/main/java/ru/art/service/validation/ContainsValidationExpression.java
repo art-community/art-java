@@ -25,7 +25,7 @@ import java.util.*;
 
 @AllArgsConstructor
 public class ContainsValidationExpression extends ValidationExpression<Object> {
-    private Collection<Object> values;
+    private Collection<?> values;
 
     @Override
     public boolean evaluate(String fieldName, Object value) {

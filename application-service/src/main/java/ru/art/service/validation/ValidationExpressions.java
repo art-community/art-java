@@ -46,7 +46,7 @@ public interface ValidationExpressions {
         return cast(new EqualsValidationExpression(other));
     }
 
-    static <T> ValidationExpression<T> includedIn(Collection<Object> values) {
+    static <T> ValidationExpression<T> includedIn(Collection<?> values) {
         return cast(new ContainsValidationExpression(values));
     }
 
