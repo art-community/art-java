@@ -3,7 +3,7 @@ import {
     Avatar,
     Box,
     Card, CardContent,
-    CardHeader, Chip,
+    CardHeader, Chip, CircularProgress,
     createStyles,
     Grid,
     IconButton, List, ListItem,
@@ -15,7 +15,7 @@ import {
 import {
     ArrowBackOutlined,
     BuildOutlined, CloseOutlined,
-    DeleteOutlined, DoneOutline, DoneOutlined,
+    DeleteOutlined, DoneOutline, DoneOutlined, HourglassEmptyOutlined,
     MoreVert,
     RefreshOutlined,
     SubjectOutlined
@@ -37,6 +37,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         },
         gridCardContent: {
             margin: 0
+        },
+        icon: {
+            width: 35,
+            height: 35
+        },
+        progress: {
+            color: theme.palette.primary.main,
+            animationDuration: '550ms'
         }
     }),
 );
@@ -61,12 +69,12 @@ export const ProjectAssemblesComponent = (props: ProjectAssemblesComponentProps)
                     </Typography>
                 </Grid>
             </Box>
-            <Grid container direction={"column"} spacing={2}>
+            <Grid container spacing={2}>
                 <Grid item>
                     <Card>
                         <CardHeader
                             avatar={
-                                <DoneOutlined htmlColor={"green"}/>
+                                <DoneOutlined className={styles.icon} htmlColor={"green"}/>
                             }
                             action={
                                 <div>
@@ -112,11 +120,11 @@ export const ProjectAssemblesComponent = (props: ProjectAssemblesComponentProps)
                                 <Grid container item>
                                     <Grid justify={"flex-start"} item xs>
                                         <Typography noWrap color={"primary"}>
-                                            Время:
+                                            Время запуска:
                                         </Typography>
                                     </Grid>
                                     <Grid justify={"flex-end"} item xs>
-                                        <Typography noWrap align={"right"}  color={"secondary"}>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
                                             Вчера в 12:00
                                         </Typography>
                                     </Grid>
@@ -140,7 +148,7 @@ export const ProjectAssemblesComponent = (props: ProjectAssemblesComponentProps)
                                         </Typography>
                                     </Grid>
                                     <Grid justify={"flex-end"} item xs>
-                                        <Typography noWrap align={"right"}  color={"secondary"}>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
                                             1.0.0
                                         </Typography>
                                     </Grid>
@@ -153,7 +161,7 @@ export const ProjectAssemblesComponent = (props: ProjectAssemblesComponentProps)
                     <Card>
                         <CardHeader
                             avatar={
-                                <CloseOutlined htmlColor={"red"}/>
+                                <CloseOutlined className={styles.icon} htmlColor={"red"}/>
                             }
                             action={
                                 <div>
@@ -199,11 +207,11 @@ export const ProjectAssemblesComponent = (props: ProjectAssemblesComponentProps)
                                 <Grid container item>
                                     <Grid justify={"flex-start"} item xs>
                                         <Typography noWrap color={"primary"}>
-                                            Время:
+                                            Время запуска:
                                         </Typography>
                                     </Grid>
                                     <Grid justify={"flex-end"} item xs>
-                                        <Typography noWrap align={"right"}  color={"secondary"}>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
                                             Вчера в 12:00
                                         </Typography>
                                     </Grid>
@@ -227,7 +235,363 @@ export const ProjectAssemblesComponent = (props: ProjectAssemblesComponentProps)
                                         </Typography>
                                     </Grid>
                                     <Grid justify={"flex-end"} item xs>
-                                        <Typography noWrap align={"right"}  color={"secondary"}>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            1.0.0
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item>
+                    <Card>
+                        <CardHeader
+                            avatar={
+                                <CircularProgress   variant="indeterminate"
+                                                    disableShrink
+                                                    size={35}
+                                                    thickness={4}
+                                                    className={styles.progress}/>
+                            }
+                            action={
+                                <div>
+                                    <IconButton color={"primary"} onClick={(event: React.MouseEvent<HTMLElement>) => {
+                                        setMenuAnchor(event.currentTarget);
+                                    }}>
+                                        <MoreVert/>
+                                    </IconButton>
+                                    <Menu anchorEl={menuAnchor}
+                                          getContentAnchorEl={null}
+                                          anchorOrigin={{
+                                              horizontal: 'right',
+                                              vertical: 'bottom',
+                                          }}
+                                          transformOrigin={{
+                                              horizontal: 'left',
+                                              vertical: 'top',
+                                          }}
+                                          onClose={() => setMenuAnchor(null)}
+                                          open={open}
+                                          keepMounted>
+                                        <MenuItem onClick={() => {
+                                            setMenuAnchor(null);
+                                        }}>
+                                            <RefreshOutlined color={"primary"}/>
+                                        </MenuItem>
+                                        <MenuItem onClick={() => {
+                                            setMenuAnchor(null);
+                                        }}>
+                                            <SubjectOutlined color={"primary"}/>
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+                            }
+                            title={
+                                <Typography color={"primary"}>
+                                    Сборка 1
+                                </Typography>
+                            }
+                        />
+                        <CardContent>
+                            <Grid className={styles.gridCardContent} container direction={"column"} spacing={2}>
+                                <Grid container item>
+                                    <Grid justify={"flex-start"} item xs>
+                                        <Typography noWrap color={"primary"}>
+                                            Время запуска:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid justify={"flex-end"} item xs>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            Вчера в 12:00
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Grid container item>
+                                    <Grid justify={"flex-start"} item xs>
+                                        <Typography noWrap color={"primary"}>
+                                            Коммит:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid justify={"flex-end"} item xs>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            тестовый коммит
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Grid container item>
+                                    <Grid justify={"flex-start"} item xs>
+                                        <Typography noWrap color={"primary"}>
+                                            Тег
+                                        </Typography>
+                                    </Grid>
+                                    <Grid justify={"flex-end"} item xs>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            1.0.0
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item>
+                    <Card>
+                        <CardHeader
+                            avatar={
+                                <DoneOutlined className={styles.icon} htmlColor={"green"}/>
+                            }
+                            action={
+                                <div>
+                                    <IconButton color={"primary"} onClick={(event: React.MouseEvent<HTMLElement>) => {
+                                        setMenuAnchor(event.currentTarget);
+                                    }}>
+                                        <MoreVert/>
+                                    </IconButton>
+                                    <Menu anchorEl={menuAnchor}
+                                          getContentAnchorEl={null}
+                                          anchorOrigin={{
+                                              horizontal: 'right',
+                                              vertical: 'bottom',
+                                          }}
+                                          transformOrigin={{
+                                              horizontal: 'left',
+                                              vertical: 'top',
+                                          }}
+                                          onClose={() => setMenuAnchor(null)}
+                                          open={open}
+                                          keepMounted>
+                                        <MenuItem onClick={() => {
+                                            setMenuAnchor(null);
+                                        }}>
+                                            <RefreshOutlined color={"primary"}/>
+                                        </MenuItem>
+                                        <MenuItem onClick={() => {
+                                            setMenuAnchor(null);
+                                        }}>
+                                            <SubjectOutlined color={"primary"}/>
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+                            }
+                            title={
+                                <Typography color={"primary"}>
+                                    Сборка 1
+                                </Typography>
+                            }
+                        />
+                        <CardContent>
+                            <Grid className={styles.gridCardContent} container direction={"column"} spacing={2}>
+                                <Grid container item>
+                                    <Grid justify={"flex-start"} item xs>
+                                        <Typography noWrap color={"primary"}>
+                                            Время запуска:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid justify={"flex-end"} item xs>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            Вчера в 12:00
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Grid container item>
+                                    <Grid justify={"flex-start"} item xs>
+                                        <Typography noWrap color={"primary"}>
+                                            Коммит:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid justify={"flex-end"} item xs>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            тестовый коммит
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Grid container item>
+                                    <Grid justify={"flex-start"} item xs>
+                                        <Typography noWrap color={"primary"}>
+                                            Тег
+                                        </Typography>
+                                    </Grid>
+                                    <Grid justify={"flex-end"} item xs>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            1.0.0
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item>
+                    <Card>
+                        <CardHeader
+                            avatar={
+                                <CloseOutlined className={styles.icon} htmlColor={"red"}/>
+                            }
+                            action={
+                                <div>
+                                    <IconButton color={"primary"} onClick={(event: React.MouseEvent<HTMLElement>) => {
+                                        setMenuAnchor(event.currentTarget);
+                                    }}>
+                                        <MoreVert/>
+                                    </IconButton>
+                                    <Menu anchorEl={menuAnchor}
+                                          getContentAnchorEl={null}
+                                          anchorOrigin={{
+                                              horizontal: 'right',
+                                              vertical: 'bottom',
+                                          }}
+                                          transformOrigin={{
+                                              horizontal: 'left',
+                                              vertical: 'top',
+                                          }}
+                                          onClose={() => setMenuAnchor(null)}
+                                          open={open}
+                                          keepMounted>
+                                        <MenuItem onClick={() => {
+                                            setMenuAnchor(null);
+                                        }}>
+                                            <RefreshOutlined color={"primary"}/>
+                                        </MenuItem>
+                                        <MenuItem onClick={() => {
+                                            setMenuAnchor(null);
+                                        }}>
+                                            <SubjectOutlined color={"primary"}/>
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+                            }
+                            title={
+                                <Typography color={"primary"}>
+                                    Сборка 1
+                                </Typography>
+                            }
+                        />
+                        <CardContent>
+                            <Grid className={styles.gridCardContent} container direction={"column"} spacing={2}>
+                                <Grid container item>
+                                    <Grid justify={"flex-start"} item xs>
+                                        <Typography noWrap color={"primary"}>
+                                            Время запуска:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid justify={"flex-end"} item xs>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            Вчера в 12:00
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Grid container item>
+                                    <Grid justify={"flex-start"} item xs>
+                                        <Typography noWrap color={"primary"}>
+                                            Коммит:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid justify={"flex-end"} item xs>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            тестовый коммит
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Grid container item>
+                                    <Grid justify={"flex-start"} item xs>
+                                        <Typography noWrap color={"primary"}>
+                                            Тег
+                                        </Typography>
+                                    </Grid>
+                                    <Grid justify={"flex-end"} item xs>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            1.0.0
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item>
+                    <Card>
+                        <CardHeader
+                            avatar={
+                                <CircularProgress   variant="indeterminate"
+                                                    disableShrink
+                                                    size={35}
+                                                    thickness={4}
+                                                    className={styles.progress}/>
+                            }
+                            action={
+                                <div>
+                                    <IconButton color={"primary"} onClick={(event: React.MouseEvent<HTMLElement>) => {
+                                        setMenuAnchor(event.currentTarget);
+                                    }}>
+                                        <MoreVert/>
+                                    </IconButton>
+                                    <Menu anchorEl={menuAnchor}
+                                          getContentAnchorEl={null}
+                                          anchorOrigin={{
+                                              horizontal: 'right',
+                                              vertical: 'bottom',
+                                          }}
+                                          transformOrigin={{
+                                              horizontal: 'left',
+                                              vertical: 'top',
+                                          }}
+                                          onClose={() => setMenuAnchor(null)}
+                                          open={open}
+                                          keepMounted>
+                                        <MenuItem onClick={() => {
+                                            setMenuAnchor(null);
+                                        }}>
+                                            <RefreshOutlined color={"primary"}/>
+                                        </MenuItem>
+                                        <MenuItem onClick={() => {
+                                            setMenuAnchor(null);
+                                        }}>
+                                            <SubjectOutlined color={"primary"}/>
+                                        </MenuItem>
+                                    </Menu>
+                                </div>
+                            }
+                            title={
+                                <Typography color={"primary"}>
+                                    Сборка 1
+                                </Typography>
+                            }
+                        />
+                        <CardContent>
+                            <Grid className={styles.gridCardContent} container direction={"column"} spacing={2}>
+                                <Grid container item>
+                                    <Grid justify={"flex-start"} item xs>
+                                        <Typography noWrap color={"primary"}>
+                                            Время запуска:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid justify={"flex-end"} item xs>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            Вчера в 12:00
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Grid container item>
+                                    <Grid justify={"flex-start"} item xs>
+                                        <Typography noWrap color={"primary"}>
+                                            Коммит:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid justify={"flex-end"} item xs>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            тестовый коммит
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                                <Grid container item>
+                                    <Grid justify={"flex-start"} item xs>
+                                        <Typography noWrap color={"primary"}>
+                                            Тег
+                                        </Typography>
+                                    </Grid>
+                                    <Grid justify={"flex-end"} item xs>
+                                        <Typography noWrap align={"right"} color={"secondary"}>
                                             1.0.0
                                         </Typography>
                                     </Grid>
