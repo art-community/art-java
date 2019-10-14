@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {
     Avatar,
     Box,
-    createStyles,
+    createStyles, Grid,
     List,
     ListItem,
     ListItemAvatar,
@@ -40,7 +40,9 @@ export const SelectProjectComponent = (props: SelectProjectComponentProps) => {
     }), []);
 
     return <Box m={theme.spacing(0.5)}>
-        <Typography color={"secondary"}>Выберите проект</Typography>
+        <Typography color={"secondary"} variant="h5" component="h5">
+            Выберите проект
+        </Typography>
         <List>
             {projects.mapValuesToArray(project =>
                 <ListItem

@@ -34,6 +34,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         },
         card: {
             width: '100%'
+        },
+        gridCardContent: {
+            margin: 0
         }
     }),
 );
@@ -53,13 +56,13 @@ export const ProjectAssemblesComponent = (props: ProjectAssemblesComponentProps)
         <Box m={theme.spacing(0.3)}>
             <Box mb={theme.spacing(0.5)}>
                 <Grid item>
-                    <Typography color={"primary"}>
+                    <Typography color={"secondary"} variant="h5" component="h5">
                         Сборки проекта «{props.project.name}‎»
                     </Typography>
                 </Grid>
             </Box>
             <Grid container direction={"column"} spacing={2}>
-                <Grid  item>
+                <Grid item>
                     <Card>
                         <CardHeader
                             avatar={
@@ -105,39 +108,39 @@ export const ProjectAssemblesComponent = (props: ProjectAssemblesComponentProps)
                             }
                         />
                         <CardContent>
-                            <Grid container direction={"column"} spacing={2}>
+                            <Grid className={styles.gridCardContent} container direction={"column"} spacing={2}>
                                 <Grid container item>
                                     <Grid justify={"flex-start"} item xs>
-                                        <Typography color={"primary"}>
+                                        <Typography noWrap color={"primary"}>
                                             Время:
                                         </Typography>
                                     </Grid>
                                     <Grid justify={"flex-end"} item xs>
-                                        <Typography color={"secondary"}>
+                                        <Typography noWrap align={"right"}  color={"secondary"}>
                                             Вчера в 12:00
                                         </Typography>
                                     </Grid>
                                 </Grid>
                                 <Grid container item>
                                     <Grid justify={"flex-start"} item xs>
-                                        <Typography color={"primary"}>
+                                        <Typography noWrap color={"primary"}>
                                             Коммит:
                                         </Typography>
                                     </Grid>
                                     <Grid justify={"flex-end"} item xs>
-                                        <Typography color={"secondary"}>
-                                            awdawd@awdaw
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            тестовый коммит
                                         </Typography>
                                     </Grid>
                                 </Grid>
                                 <Grid container item>
                                     <Grid justify={"flex-start"} item xs>
-                                        <Typography color={"primary"}>
+                                        <Typography noWrap color={"primary"}>
                                             Тег
                                         </Typography>
                                     </Grid>
                                     <Grid justify={"flex-end"} item xs>
-                                        <Typography color={"secondary"}>
+                                        <Typography noWrap align={"right"}  color={"secondary"}>
                                             1.0.0
                                         </Typography>
                                     </Grid>
@@ -191,40 +194,40 @@ export const ProjectAssemblesComponent = (props: ProjectAssemblesComponentProps)
                                 </Typography>
                             }
                         />
-                        <CardContent className={styles.cardContent}>
-                            <Grid container direction={"column"} spacing={2}>
+                        <CardContent>
+                            <Grid className={styles.gridCardContent} container direction={"column"} spacing={2}>
                                 <Grid container item>
                                     <Grid justify={"flex-start"} item xs>
-                                        <Typography color={"primary"}>
+                                        <Typography noWrap color={"primary"}>
                                             Время:
                                         </Typography>
                                     </Grid>
                                     <Grid justify={"flex-end"} item xs>
-                                        <Typography color={"secondary"}>
+                                        <Typography noWrap align={"right"}  color={"secondary"}>
                                             Вчера в 12:00
                                         </Typography>
                                     </Grid>
                                 </Grid>
                                 <Grid container item>
                                     <Grid justify={"flex-start"} item xs>
-                                        <Typography color={"primary"}>
+                                        <Typography noWrap color={"primary"}>
                                             Коммит:
                                         </Typography>
                                     </Grid>
                                     <Grid justify={"flex-end"} item xs>
-                                        <Typography color={"secondary"}>
-                                            awdawd@awdaw
+                                        <Typography noWrap align={"right"} color={"secondary"}>
+                                            тестовый коммит
                                         </Typography>
                                     </Grid>
                                 </Grid>
                                 <Grid container item>
                                     <Grid justify={"flex-start"} item xs>
-                                        <Typography color={"primary"}>
+                                        <Typography noWrap color={"primary"}>
                                             Тег
                                         </Typography>
                                     </Grid>
                                     <Grid justify={"flex-end"} item xs>
-                                        <Typography color={"secondary"}>
+                                        <Typography noWrap align={"right"}  color={"secondary"}>
                                             1.0.0
                                         </Typography>
                                     </Grid>
