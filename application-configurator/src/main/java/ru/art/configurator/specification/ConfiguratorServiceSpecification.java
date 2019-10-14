@@ -113,6 +113,20 @@ public class ConfiguratorServiceSpecification implements HttpServiceSpecificatio
             .produces(applicationJsonUtf8())
             .listen(UPLOAD_MODULE_PATH)
 
+            .post(DELETE_MODULE)
+            .fromBody()
+            .validationPolicy(NOT_NULL)
+            .requestMapper(moduleKeyMapper.getToModel())
+            .produces(applicationJsonUtf8())
+            .listen(DELETE_MODULE_PATH)
+
+            .post(DELETE_PROFILE)
+            .fromBody()
+            .validationPolicy(NOT_NULL)
+            .requestMapper(moduleKeyMapper.getToModel())
+            .produces(applicationJsonUtf8())
+            .listen(DELETE_PROFILE_PATH)
+
             .serve(CONFIGURATOR_PATH);
 
     private final GrpcService grpcService = grpcService()
@@ -150,6 +164,12 @@ public class ConfiguratorServiceSpecification implements HttpServiceSpecificatio
                 return cast(getModules());
             case GET_APPLICATION_CONFIG:
                 return cast(getApplicationConfiguration());
+            case DELETE_MODULE:
+                deleteModuleWithConfiguration((ModuleKey) request);
+                return null;
+            case DELETE_PROFILE:
+                deleteProfileWithConfiguration((ModuleKey) request);
+                return null;
             default:
                 throw new UnknownServiceMethodException(serviceId, methodId);
         }

@@ -71,6 +71,13 @@ public interface ConfiguratorService {
                 .build();
     }
 
+    static void deleteModuleWithConfiguration(ModuleKey moduleKey) {
+        deleteModule(moduleKey.formatKey());
+    }
+
+    static void deleteProfileWithConfiguration(ModuleKey moduleKey) {
+        deleteProfile(moduleKey.getProfileId());
+    }
 
     static void applyModuleConfiguration(ModuleKey moduleKey) {
         getModulesConnectionParameters(moduleKey)
