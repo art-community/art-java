@@ -14,12 +14,15 @@ import {DeployComponent} from "../deploy/DeployComponent";
 // @ts-ignore
 import Cookies from "js-cookie";
 import {authenticate} from "../../api/PlatformApi";
+import {History} from "history"
 
 export const RoutingComponent = () => {
-    const [authorized, setAuthorized] = useState(false);
+    const [authorized, setAuthorized] = useState(true);
+    const [referer, setReferer] = useState(PROJECT_PATH);
     useEffect(() => authenticate(Cookies.get(TOKEN_COOKIE), setAuthorized, () => setAuthorized(false)), []);
 
-    const routePrivateComponent = (component: any) => {
+    const routePrivateComponent = (path: string, component: any) => {
+        setReferer(path);
         if (Cookies.get(TOKEN_COOKIE) && authorized) {
             return component
         }
@@ -28,14 +31,15 @@ export const RoutingComponent = () => {
 
     const routePublicComponent = (component: any) => {
         if (Cookies.get(TOKEN_COOKIE) && authorized) {
-            return <Redirect to={PROJECT_PATH}/>
+            return <Redirect to={referer}/>
         }
         return component
     };
 
-    const handleAuthorized = (token: string) => {
+    const handleAuthorized = (history: History, token: string) => {
         Cookies.set(TOKEN_COOKIE, token);
-        setAuthorized(true)
+        setAuthorized(true);
+        history.push(referer)
     };
 
     return <ThemeProvider theme={DEFAULT_THEME}>
@@ -43,13 +47,14 @@ export const RoutingComponent = () => {
         <BrowserRouter>
             <Switch>
                 <Route exact path={BUILD_PATH}>
-                    {() => routePrivateComponent(<SideBarComponent><BuildComponent/></SideBarComponent>)}
+                    {() => routePrivateComponent(BUILD_PATH, <SideBarComponent><BuildComponent/></SideBarComponent>)}
                 </Route>
                 <Route exact path={PROJECT_PATH}>
-                    {() => routePrivateComponent(<SideBarComponent><ProjectsComponent/></SideBarComponent>)}
+                    {() => routePrivateComponent(PROJECT_PATH,
+                        <SideBarComponent><ProjectsComponent/></SideBarComponent>)}
                 </Route>
                 <Route exact path={DEPLOY_PATH}>
-                    {() => routePrivateComponent(<SideBarComponent><DeployComponent/></SideBarComponent>)}
+                    {() => routePrivateComponent(DEPLOY_PATH, <SideBarComponent><DeployComponent/></SideBarComponent>)}
                 </Route>
                 <Route exact path={AUTHORIZE_PATH}>
                     {() => routePublicComponent(<AuthorizationComponent onAuthorize={handleAuthorized}/>)}

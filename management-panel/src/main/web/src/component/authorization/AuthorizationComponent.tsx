@@ -5,9 +5,11 @@ import {TOKEN_COOKIE} from "../../constants/Constants";
 import {authorize} from "../../api/PlatformApi";
 // @ts-ignore
 import Cookies from "js-cookie";
+import {useHistory} from "react-router";
+import {History} from 'history'
 
 interface AuthorizationComponentProps {
-    onAuthorize: (token: string) => void
+    onAuthorize: (history: History, token: string) => void
 }
 
 export const AuthorizationComponent = (props: AuthorizationComponentProps) => {
@@ -15,8 +17,9 @@ export const AuthorizationComponent = (props: AuthorizationComponentProps) => {
     const [password, setPassword] = useState("");
     const [authorizationFailed, setAuthorizationFailed] = useState(false);
     const [notAuthorizedMessageAnchor, setNotAuthorizedMessageAnchor] = useState<null | HTMLElement>(null);
+    const history = useHistory();
 
-    const handleAuthorize = (response: UserAuthorizationResponse) => props.onAuthorize(response.token);
+    const handleAuthorize = (response: UserAuthorizationResponse) => props.onAuthorize(history, response.token);
 
     const handleError = () => setAuthorizationFailed(true);
 

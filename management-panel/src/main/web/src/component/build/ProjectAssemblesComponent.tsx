@@ -1,6 +1,6 @@
 import * as React from "react";
 import {
-    Box,
+    Box, Card,
     createStyles,
     ExpansionPanel,
     ExpansionPanelDetails,
@@ -53,43 +53,9 @@ export const ProjectAssemblesComponent = (props: ProjectAssemblesComponentProps)
                 </Grid>
             </Box>
             <Grid item>
-                <div className={styles.expansionPanel}>
-                    <ExpansionPanel>
-                        <ExpansionPanelSummary expandIcon={<ExpandMore color={"primary"}/>}>
-                            <DoneOutlined htmlColor={"green"}/>
-                            <Typography className={styles.heading}>Сборка 1</Typography>
-                            <Typography className={styles.heading}>Коммит XXX</Typography>
-                            <Typography className={styles.heading}>Ветка XXX</Typography>
-                            <Typography className={styles.heading}>Тег XXX</Typography>
-                            <IconButton className={styles.iconHeading}>
-                                <RefreshOutlined color={"secondary"}/>
-                            </IconButton>
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
-                            <Typography>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                                sit amet blandit leo lobortis eget.
-                            </Typography>
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                    <ExpansionPanel>
-                        <ExpansionPanelSummary expandIcon={<ExpandMore color={"primary"}/>}>
-                            <DoneOutlined color={"primary"}/>
-                            <Typography>
-                                Сборка 1
-                            </Typography>
-                            <IconButton>
-                                <RefreshOutlined color={"secondary"}/>
-                            </IconButton>
-                        </ExpansionPanelSummary>
-                        <ExpansionPanelDetails>
-                            <Typography>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-                                sit amet blandit leo lobortis eget.
-                            </Typography>
-                        </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                </div>
+               <Card>
+
+               </Card>
             </Grid>
         </Box>
     </Grid>

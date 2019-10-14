@@ -19,7 +19,7 @@ enum Mode {
 export const ProjectsComponent = () => {
     const [mode, setMode] = useState(Mode.PROJECTS);
     const theme = useTheme();
-    const [projects, setProjects] = useState<Map<number, Project>>(new Map());
+    const [projects, setProjects] = useState<Map<number, Project>>(new Map<number, Project>());
     const history = useHistory();
     useEffect(() => getProjects(setProjects, () => {
         Cookies.remove(TOKEN_COOKIE);
@@ -46,6 +46,12 @@ export const ProjectsComponent = () => {
         onBack={() => showProjectsGrid()}
     />;
 
+    const createProjectCards = () => projects.mapValuesToArray(project =>
+        <Grid key={project.name} item>
+            <ProjectCardComponent project={project} onAction={action => handleAction(action, project)}/>
+        </Grid>
+    );
+
     const projectsGrid = <Box m={theme.spacing(0.5)}>
         <Box mb={theme.spacing(0.5)}>
             <Button color={"primary"}
@@ -55,11 +61,7 @@ export const ProjectsComponent = () => {
             </Button>
         </Box>
         <Grid container spacing={theme.spacing(1) as GridSpacing}>
-            {projects.mapValuesToArray(project =>
-                <Grid key={project.name} item>
-                    <ProjectCardComponent project={project} onAction={action => handleAction(action, project)}/>
-                </Grid>
-            )}
+            {createProjectCards()}
         </Grid>
     </Box>;
 

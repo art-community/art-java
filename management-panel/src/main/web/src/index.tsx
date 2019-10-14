@@ -21,6 +21,7 @@ import * as React from "react";
 import {AUTHORIZED_STORE, MAIN_COMPONENT} from "./constants/Constants";
 import {RoutingComponent} from "./component/routing/RoutingComponent";
 import {putStore} from "./store/Store";
+import "./extensions/extensions"
 
 const main = () => {
     putStore(AUTHORIZED_STORE, false);
@@ -32,37 +33,3 @@ if (module.hot) {
     module.hot.accept(main);
 }
 main();
-
-Set.prototype.mapToArray = function <T, R>(this: Set<T>, functor: (value: T) => R): R[] {
-    return Array.from(this).map(functor);
-};
-
-Set.prototype.addValue = function <T>(this: Set<T>, value: T): Set<T> {
-    this.add(value);
-    return new Set(this);
-};
-
-Set.prototype.deleteValue = function <T>(this: Set<T>, value: T): Set<T> {
-    this.delete(value);
-    return new Set(this);
-};
-
-Map.prototype.mapValuesToArray = function <K, V, R>(this: Map<K, V>, functor: (value: V) => R): R[] {
-    return Array.from(this.values()).map(functor);
-};
-
-Map.prototype.deleteKey = function <K, V, R>(this: Map<K, V>, key: K): Map<K, V> {
-    this.delete(key);
-    return new Map(this);
-};
-
-Map.prototype.addValue = function <K, V, R>(this: Map<K, V>, key: K, value: V): Map<K, V> {
-    this.set(key, value);
-    return new Map(this);
-};
-
-Array.prototype.groupByIgnoreDuplicates = function <K, T>(this: Array<T>, functor: (element: T) => K): Map<K, T> {
-    const map = new Map();
-    this.forEach(item => map.set(functor(item), item));
-    return map;
-};
