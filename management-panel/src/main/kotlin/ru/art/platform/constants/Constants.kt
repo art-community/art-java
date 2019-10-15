@@ -49,13 +49,6 @@ object DockerConstants {
     const val DOCKER_URL = "tcp://localhost:2375"
     const val AGENT_IMAGE = "platform/agent:latest"
     val AGENT_CONTAINER_NAME = {projectName: String -> "${projectName.replace(SPACE, EMPTY_STRING)}.$AGENT"}
-
-    enum class ContainerStates {
-        created,
-        restarting,
-        running,
-        paused,
-        exited,
-        dead
-    }
+    const val AGENT_MIN_PORT = 9000
+    const val AGENT_MAX_PORT = 10000
 }

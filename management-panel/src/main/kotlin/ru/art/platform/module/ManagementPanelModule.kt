@@ -107,7 +107,6 @@ object ManagementPanelModule {
                 .consume(ProjectService::deleteProject)
     }
 
-
     private fun startServers() {
         startRsocketWebSocketServer()
         startHttpServer().await()

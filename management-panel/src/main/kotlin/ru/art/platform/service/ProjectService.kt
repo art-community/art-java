@@ -1,6 +1,7 @@
 package ru.art.platform.service
 
 import reactor.core.publisher.*
+import ru.art.core.constants.NetworkConstants.*
 import ru.art.core.network.selector.PortSelector.*
 import ru.art.platform.api.constants.ApIConstants.*
 import ru.art.platform.api.mapping.ProjectMapper.*
@@ -8,6 +9,8 @@ import ru.art.platform.api.mapping.ProjectRequestMapper.*
 import ru.art.platform.api.model.*
 import ru.art.platform.constants.CommonConstants.PLATFORM
 import ru.art.platform.constants.CommonConstants.PROJECT
+import ru.art.platform.constants.DockerConstants.AGENT_MAX_PORT
+import ru.art.platform.constants.DockerConstants.AGENT_MIN_PORT
 import ru.art.platform.service.DockerService.killAgentContainer
 import ru.art.platform.service.DockerService.startAgentContainerIfNeeded
 import ru.art.rsocket.communicator.RsocketCommunicator.*
@@ -17,9 +20,9 @@ import ru.art.tarantool.dao.TarantoolDao.*
 object ProjectService {
     fun addProject(request: ProjectRequest): Flux<Project> {
         val project = toProject.map(tarantool(PLATFORM).put(PROJECT, fromProjectRequest.map(request)))
-        val port = findAvailableTcpPort(9000, 11000)
+        val port = findAvailableTcpPort(AGENT_MIN_PORT, AGENT_MAX_PORT)
         startAgentContainerIfNeeded(project.title, port)
-        return rsocketCommunicator("185.155.19.36", port)
+        return rsocketCommunicator(LOCALHOST, port)
                 .functionId(INITIALIZE_PROJECT)
                 .requestMapper(fromProject)
                 .responseMapper(toProject)

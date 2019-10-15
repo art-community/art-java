@@ -1,5 +1,8 @@
 package ru.art.platform.agent.constants
 
 object CommonConstants {
-    const val PORT_ENV_PROPERTIES = "PORT"
+}
+
+object ErrorMessages {
+    const val PORT_NOT_STATED = "Environment property 'PORT' not stated"
 }
