@@ -5,11 +5,6 @@ http:
 rsocket:
   server:
     webSocketPort: 9001
-  communication:
-    targets:
-      agent:
-        host: 185.155.19.36
-        tcpPort: 9002
 tarantool:
   configurations:
     platform:

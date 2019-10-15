@@ -22,12 +22,14 @@ import com.esotericsoftware.yamlbeans.*;
 import io.advantageous.config.*;
 import static io.advantageous.config.ConfigLoader.*;
 import static java.lang.System.*;
+import static java.nio.file.Paths.*;
 import static java.util.Objects.*;
 import static ru.art.config.YamlConfigLoaderConstants.*;
 import static ru.art.config.YamlLoadingExceptionMessages.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.SystemProperties.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
 import java.io.*;
 import java.net.*;
@@ -41,7 +43,7 @@ class YamlConfigLoader {
     private static InputStream loadConfigInputStream() throws IOException {
         String configFilePath = getProperty(CONFIG_FILE_PATH_PROPERTY);
         File configFile;
-        if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists()) {
+        if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists() || isEmpty(readFile(get(configFile.getAbsolutePath())))) {
             URL configFileUrl = YamlConfigLoader.class.getClassLoader().getResource(DEFAULT_YAML_CONFIG_FILE_NAME);
             if (isNull(configFileUrl)) {
                 throw new YamlLoadingException(CONFIG_FILE_WAS_NOT_FOUND);

@@ -20,11 +20,13 @@ package ru.art.config;
 
 import groovy.util.*;
 import static java.lang.System.*;
+import static java.nio.file.Paths.*;
 import static java.util.Objects.*;
 import static ru.art.config.GroovyConfigLoaderConstants.*;
 import static ru.art.config.GroovyConfigLoadingExceptionMessages.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.SystemProperties.*;
+import static ru.art.core.extension.FileExtensions.*;
 import java.io.*;
 import java.net.*;
 
@@ -33,7 +35,7 @@ interface GroovyConfigLoader {
         String configFilePath = getProperty(CONFIG_FILE_PATH_PROPERTY);
         File configFile;
         URL configFileUrl;
-        if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists()) {
+        if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists() || isEmpty(readFile(get(configFile.getAbsolutePath())))) {
             configFileUrl = GroovyConfigLoader.class.getClassLoader().getResource(DEFAULT_GROOVY_CONFIG_FILE_NAME);
             if (isNull(configFileUrl)) {
                 throw new GroovyConfigLoadingException(CONFIG_FILE_NOT_FOUND);

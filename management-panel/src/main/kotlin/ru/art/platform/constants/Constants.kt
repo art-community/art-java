@@ -1,5 +1,6 @@
 package ru.art.platform.constants
 
+import ru.art.core.constants.StringConstants.*
 import ru.art.platform.constants.CommonConstants.AGENT
 
 object CommonConstants {
@@ -47,7 +48,7 @@ object ErrorMessages {
 object DockerConstants {
     const val DOCKER_URL = "tcp://localhost:2375"
     const val AGENT_IMAGE = "platform/agent:latest"
-    val AGENT_CONTAINER_NAME = {projectName: String -> "$projectName.$AGENT"}
+    val AGENT_CONTAINER_NAME = {projectName: String -> "${projectName.replace(SPACE, EMPTY_STRING)}.$AGENT"}
 
     enum class ContainerStates {
         created,

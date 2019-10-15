@@ -29,7 +29,6 @@ import ru.art.platform.constants.ServiceConstants.AUTHENTICATE
 import ru.art.platform.constants.ServiceConstants.AUTHORIZE
 import ru.art.platform.constants.ServiceConstants.DELETE_PROJECT
 import ru.art.platform.constants.ServiceConstants.GET_PROJECTS
-import ru.art.platform.constants.ServiceConstants.UPDATE_PROJECT
 import ru.art.platform.service.*
 import ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.*
 import ru.art.rsocket.function.RsocketServiceFunction.*
@@ -99,10 +98,6 @@ object ManagementPanelModule {
                 .responseMapper(fromProject)
                 .responseProcessingMode(REACTIVE)
                 .handle<ProjectRequest, Flux<Project>>(ProjectService::addProject)
-        rsocket(UPDATE_PROJECT)
-                .requestMapper(toProject)
-                .validationPolicy(VALIDATABLE)
-                .consume<Project>(ProjectService::updateProject)
         rsocket(GET_PROJECTS)
                 .responseMapper(collectionValueFromModel(fromProject)::map)
                 .produce(ProjectService::getProjects)
