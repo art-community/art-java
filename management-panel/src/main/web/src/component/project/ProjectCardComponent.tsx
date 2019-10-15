@@ -3,7 +3,8 @@ import {
     Card,
     CardContent,
     CardHeader,
-    createStyles, Grid,
+    createStyles,
+    Grid,
     IconButton,
     Link,
     makeStyles,
@@ -12,13 +13,11 @@ import {
     Theme,
     Typography
 } from "@material-ui/core";
-import {BuildOutlined, DeleteOutlined, MoreVert} from "@material-ui/icons";
+import {BuildOutlined, MoreVert} from "@material-ui/icons";
 import * as React from "react";
 import {useState} from "react";
 import {ProjectCardComponentProps, ProjectCardMenuAction} from "./props/ProjectComponentsProps";
-import gradle from "../../images/gradle.png"
-import npm from "../../images/npm.jpg"
-import yarn from "../../images/yarn.jpg"
+import {TECHNOLOGY_IMAGES} from "../../constants/Constants";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     projectAvatar: {
@@ -101,15 +100,9 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
                 </Link>
             </Typography>
             <Grid container spacing={1}>
-                <Grid item>
-                    <Avatar className={styles.technologyAvatar} src={gradle}/>
-                </Grid>
-                <Grid item>
-                    <Avatar className={styles.technologyAvatar} src={npm}/>
-                </Grid>
-                <Grid item>
-                    <Avatar className={styles.technologyAvatar} src={yarn}/>
-                </Grid>
+                {(props.project.technologies ? props.project.technologies : new Set<string>())
+                    .mapToArray(technology => TECHNOLOGY_IMAGES.get(technology))
+                    .map(image => <Grid item><Avatar className={styles.technologyAvatar} src={image}/></Grid>)}
             </Grid>
         </CardContent>
     </Card>

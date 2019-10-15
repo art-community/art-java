@@ -32,6 +32,7 @@ export interface Project {
     title: string
     gitUrl: string
     jiraUrl: string
+    technologies: Set<string>
 }
 
 export interface ProjectRequest {

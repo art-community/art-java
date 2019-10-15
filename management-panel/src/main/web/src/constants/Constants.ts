@@ -1,4 +1,7 @@
 import {orange, purple} from "@material-ui/core/colors";
+import gradle from "../images/gradle.png"
+import npm from "../images/npm.jpg"
+import yarn from "../images/yarn.jpg"
 
 export const EMPTY_RESPONSE = "Response is empty";
 
@@ -48,3 +51,8 @@ export const RU = 'ru-RU';
 
 // language=RegExp
 export const URL_REGEX = '(http[*s]?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';
+
+export const TECHNOLOGY_IMAGES = new Map<string, string>();
+TECHNOLOGY_IMAGES.set("gradle", gradle);
+TECHNOLOGY_IMAGES.set("npm", npm);
+TECHNOLOGY_IMAGES.set("yarn", yarn);
