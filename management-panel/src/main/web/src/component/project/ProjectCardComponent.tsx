@@ -39,23 +39,19 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }));
 
-
 export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
     const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
     const open = Boolean(menuAnchor);
     const styles = useStyles();
 
-    const createProjectCards = () => {
-        if (!props.project.technologies || props.project.technologies.length == 0) {
-            return <></>
-        }
-        return new Set<string>(props.project.technologies)
+    const createProjectCards = () => !props.project.technologies || props.project.technologies.length == 0
+        ? <></>
+        : new Set<string>(props.project.technologies)
             .mapToArray(technology => TECHNOLOGY_IMAGES.get(technology))
             .map(image =>
                 <Grid key={image} item>
                     <Avatar className={styles.technologyAvatar} src={image}/>
                 </Grid>);
-    };
 
     return <Card>
         <CardHeader

@@ -74,11 +74,14 @@ export const ProjectAddComponent = (props: ProjectComponentsProps) => {
                                 onClick={() => {
                                     setShowProjectExistsError(false);
                                     addProject({
-                                        title: title,
-                                        gitUrl: gitUrl,
-                                        jiraUrl: jiraUrl
-                                    }, props.onProject, () => setShowProjectExistsError(true))
-                                }}>
+                                            title: title,
+                                            gitUrl: gitUrl,
+                                            jiraUrl: jiraUrl
+                                        },
+                                        props.onProjectUpdate,
+                                        () => setShowProjectExistsError(true))
+                                }}
+                        >
                             Добавить
                         </Button>
                         <Popper open={showProjectExistsError && Boolean(projectExistsErrorMessageAnchor)}

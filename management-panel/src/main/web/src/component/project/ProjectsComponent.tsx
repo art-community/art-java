@@ -38,7 +38,7 @@ export const ProjectsComponent = () => {
     };
 
     const projectAddForm = <ProjectAddComponent
-        onProject={(project: Project) => {
+        onProjectUpdate={(project: Project) => {
             setProjects(projects.addValue(project.id, project));
             showProjectsGrid()
         }}
@@ -65,6 +65,7 @@ export const ProjectsComponent = () => {
     </Box>;
 
     const showProjectAddForm = () => setMode(Mode.ADD_PROJECT);
+
     const showProjectsGrid = () => setMode(Mode.PROJECTS);
 
     return mode == Mode.PROJECTS ? projectsGrid : projectAddForm

@@ -20,7 +20,6 @@ import {AssemblyState} from "../../model/Models";
 import {DATE_TIME_FORMAT} from "../../constants/Constants";
 import {Moment} from "moment";
 
-
 const useStyles = makeStyles((theme: Theme) => createStyles({
         projectAvatar: {
             backgroundColor: theme.palette.secondary.main,
@@ -93,6 +92,7 @@ export const AssemblyCardComponent = (props: AssemblyCardComponentProps) => {
 
         }
     };
+
     return <Card>
         <CardHeader
             avatar={createAvatar()}

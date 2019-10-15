@@ -5,7 +5,6 @@ export interface AssembliesComponentProps {
     onBack: () => void
 }
 
-
 export interface AssemblyCardComponentProps {
     assembly: Assembly
 }

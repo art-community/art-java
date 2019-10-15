@@ -42,7 +42,7 @@ export interface ProjectRequest {
 }
 
 export interface Assembly {
-    id :number
+    id: number
     title: string
     branch?: string
     commit?: string
@@ -50,6 +50,22 @@ export interface Assembly {
     startDateTime: Moment
     endDateTime?: Moment
     state: AssemblyState
+}
+
+export interface ServiceResponse {
+    serviceMethodCommand: ServiceMethodCommand
+    responseData: any
+    serviceExecutionException: ServiceExecutionException
+}
+
+export interface ServiceExecutionException {
+    errorCode: string
+    errorMessage: string
+}
+
+export interface ServiceMethodCommand {
+    serviceId: string
+    methodId: string
 }
 
 export enum AssemblyState {

@@ -5,22 +5,17 @@ import * as H from 'history';
 import {useHistory} from "react-router";
 import {Build, FeaturedPlayList} from "@material-ui/icons";
 import {BUILD_PATH, PROJECT_PATH} from "../../constants/Constants";
-
-export interface SideBarProps {
-    children: React.ReactNode
-}
-
-const drawerWidth = 160;
+import {SideBarProps} from "./SideBarComponentProps";
 
 const useStyles = makeStyles(theme => ({
     root: {
         display: 'flex',
     },
     drawer: {
-        width: drawerWidth,
+        width: 160,
     },
     drawerPaper: {
-        width: drawerWidth,
+        width: 160,
     }
 }));
 

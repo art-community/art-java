@@ -3,49 +3,52 @@ import RSocketWebSocketClient from "rsocket-websocket-client";
 import {EMPTY_RESPONSE, RSOCKET_FUNCTION, RSOCKET_OPTIONS, RSOCKET_URL, TOKEN_COOKIE} from "../constants/Constants";
 import {decode, encode} from "msgpack-lite";
 import Cookies from "js-cookie";
+import {ServiceResponse} from "../model/Models";
 
 const connect = async () => new RSocketClient({
     setup: RSOCKET_OPTIONS,
     transport: new RSocketWebSocketClient({url: RSOCKET_URL}, BufferEncoders)
 }).connect();
 
-export const requestResponse = async (request: any) => {
-    const socket = await connect();
-    const response = await socket
-        .requestResponse({
-            data: encode(request),
-            metadata: encode(createMethodRequest(request.serviceMethodCommand.methodId, Cookies.get(TOKEN_COOKIE)))
-        })
-        .map(payload => payload.data != null ? decode(payload.data as number[]) : null);
-    if (!response) {
-        console.error(Error(EMPTY_RESPONSE));
-        throw Error(EMPTY_RESPONSE)
-    }
-    if (response.serviceExecutionException) {
-        console.error(response.serviceExecutionException);
-        throw response.serviceExecutionException
-    }
-    return response.responseData
-};
-
-export const requestStream = async (request: any, onNext: (result: any) => void) => {
-    (await connect())
-        .requestStream({
-            data: encode(request),
-            metadata: encode(createMethodRequest(request.serviceMethodCommand.methodId, Cookies.get(TOKEN_COOKIE)))
-        })
-        .map(payload => payload.data != null ? decode(payload.data as number[]) : null)
-        .subscribe(response => {
+export const requestResponse = (request: any, onComplete: (result: any) => void = () => {}, onError: (error: any) => void = () => {}) => {
+    connect()
+        .then(rsocket => rsocket
+            .requestResponse({
+                data: encode(request),
+                metadata: encode(createMethodRequest(request.serviceMethodCommand.methodId, Cookies.get(TOKEN_COOKIE)))
+            })
+            .map(payload => payload.data ? decode(payload.data as number[]) : null))
+        .then((response: ServiceResponse) => {
             if (!response) {
                 console.error(Error(EMPTY_RESPONSE));
-                throw Error(EMPTY_RESPONSE)
+                onError(Error(EMPTY_RESPONSE))
             }
             if (response.serviceExecutionException) {
                 console.error(response.serviceExecutionException);
-                throw response.serviceExecutionException
+                onError(response.serviceExecutionException)
             }
-            onNext(response.responseData)
-        });
+            onComplete(response.responseData);
+        })
+};
+
+export const requestStream = (request: any, onNext: (result: any) => void = () => {}, onError: (error: any) => void = () => {}) => {
+    connect()
+        .then(rsocket => rsocket.requestStream({
+            data: encode(request),
+            metadata: encode(createMethodRequest(request.serviceMethodCommand.methodId, Cookies.get(TOKEN_COOKIE)))
+        }))
+        .then(flux => flux.map(payload => payload.data ? decode(payload.data as number[]) : null)
+            .subscribe(response => {
+                if (!response) {
+                    console.error(Error(EMPTY_RESPONSE));
+                    onError(Error(EMPTY_RESPONSE))
+                }
+                if (response.serviceExecutionException) {
+                    console.error(response.serviceExecutionException);
+                    onError(response.serviceExecutionException)
+                }
+                onNext(response.responseData)
+            }));
 };
 
 export const fireAndForget = (request: any) => {

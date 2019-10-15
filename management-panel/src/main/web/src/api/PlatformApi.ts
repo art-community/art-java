@@ -19,24 +19,19 @@ import {
 import 'moment/locale/ru'
 
 export const registerUser = (requestData: UserRegistrationRequest, onComplete: (user: UserRegistrationResponse) => void) => {
-    requestResponse(createMethodRequest(REGISTER_USER, requestData))
-        .then(onComplete);
+    requestResponse(createMethodRequest(REGISTER_USER, requestData), onComplete);
 };
 
 export const authorize = (requestData: UserAuthorizationRequest, onComplete: (user: UserAuthorizationResponse) => void, onError: () => void) => {
-    requestResponse(createMethodRequest(AUTHORIZE, requestData))
-        .then(onComplete)
-        .catch(onError);
+    requestResponse(createMethodRequest(AUTHORIZE, requestData), onComplete, onError)
 };
 
 export const authenticate = (requestData: string, onComplete: (authorized: boolean) => void, onError: () => void) => {
-    requestResponse(createMethodRequest(AUTHENTICATE, requestData))
-        .then(onComplete)
-        .catch(onError)
+    requestResponse(createMethodRequest(AUTHENTICATE, requestData), onComplete, onError)
 };
 
 export const addProject = (requestData: ProjectRequest, onProjectUpdate: (project: Project) => void, onError: () => void) => {
-    requestStream(createMethodRequest(ADD_PROJECT, requestData), onProjectUpdate).catch(onError)
+    requestStream(createMethodRequest(ADD_PROJECT, requestData), onProjectUpdate, onError)
 };
 
 export const deleteProject = (requestData: number) => {
@@ -44,13 +39,8 @@ export const deleteProject = (requestData: number) => {
 };
 
 export const getProjects = (onComplete: (projects: Map<number, Project>) => void, onError: () => void) => {
-    requestResponse(createMethodRequest(GET_PROJECTS))
-        .then((projects: Project[]) => onComplete(projects.groupByIgnoreDuplicates(project => project.id))
-        )
-        .catch(console.error)
-        .catch(onError)
+    requestResponse(createMethodRequest(GET_PROJECTS), (projects: Project[]) => onComplete(projects.groupByIgnoreDuplicates(project => project.id)), onError);
 };
-
 
 export const getAssemblies = (onComplete: (assemblies: Map<number, Assembly>) => void) => {
 

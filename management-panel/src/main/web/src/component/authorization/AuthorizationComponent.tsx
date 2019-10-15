@@ -3,12 +3,8 @@ import {useState} from 'react';
 import {Box, Button, Container, Grid, Popper, TextField, Typography, useTheme,} from '@material-ui/core';
 import {authorize} from "../../api/PlatformApi";
 import {useHistory} from "react-router";
-import {History} from 'history'
 import {UserAuthorizationResponse} from "../../model/Models";
-
-interface AuthorizationComponentProps {
-    onAuthorize: (history: History, token: string) => void
-}
+import {AuthorizationComponentProps} from "./props/AuthorizationComponentProps";
 
 export const AuthorizationComponent = (props: AuthorizationComponentProps) => {
     const [name, setName] = useState("");

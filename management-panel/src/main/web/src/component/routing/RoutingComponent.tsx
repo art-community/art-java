@@ -41,21 +41,20 @@ export const RoutingComponent = () => {
         history.push(referer)
     };
 
+    const decorateWithSideBar = (component: React.ReactNode) => <SideBarComponent>{component}</SideBarComponent>;
+
     return <ThemeProvider theme={DEFAULT_THEME}>
         <CssBaseline/>
         <BrowserRouter>
             <Switch>
                 <Route exact path={BUILD_PATH}>
-                    {() => routePrivateComponent(BUILD_PATH,
-                        <SideBarComponent><BuildComponent/></SideBarComponent>)}
+                    {() => routePrivateComponent(BUILD_PATH, decorateWithSideBar(<BuildComponent/>))}
                 </Route>
                 <Route exact path={PROJECT_PATH}>
-                    {() => routePrivateComponent(PROJECT_PATH,
-                        <SideBarComponent><ProjectsComponent/></SideBarComponent>)}
+                    {() => routePrivateComponent(PROJECT_PATH, decorateWithSideBar(<ProjectsComponent/>))}
                 </Route>
                 <Route exact path={DEPLOY_PATH}>
-                    {() => routePrivateComponent(DEPLOY_PATH,
-                        <SideBarComponent><DeployComponent/></SideBarComponent>)}
+                    {() => routePrivateComponent(DEPLOY_PATH, decorateWithSideBar(<DeployComponent/>))}
                 </Route>
                 <Route exact path={AUTHORIZE_PATH}>
                     {() => routePublicComponent(<AuthorizationComponent onAuthorize={handleAuthorized}/>)}
