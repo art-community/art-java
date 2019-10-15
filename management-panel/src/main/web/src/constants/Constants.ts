@@ -50,9 +50,11 @@ export const DATE_TIME_FORMAT = "MM-DD-YYYY HH:mm:ss a";
 export const RU = 'ru-RU';
 
 // language=RegExp
-export const URL_REGEX = '(http[*s]?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';
+export const URL_REGEX = "((git|ssh|http(s)?)|(git@[\\w\\.]+))(:(//)?)([\\w\\.@\\:/\\-~]+)(\\.git)(/)?";
 
 export const TECHNOLOGY_IMAGES = new Map<string, string>();
 TECHNOLOGY_IMAGES.set("gradle", gradle);
 TECHNOLOGY_IMAGES.set("npm", npm);
 TECHNOLOGY_IMAGES.set("yarn", yarn);
+
+export const RSOCKET_REQUEST_COUNT =  2147483647;

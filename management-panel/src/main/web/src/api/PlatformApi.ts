@@ -39,7 +39,8 @@ export const deleteProject = (requestData: number) => {
 };
 
 export const getProjects = (onComplete: (projects: Map<number, Project>) => void, onError: () => void) => {
-    requestResponse(createMethodRequest(GET_PROJECTS), (projects: Project[]) => onComplete(projects.groupByIgnoreDuplicates(project => project.id)), onError);
+    requestResponse(createMethodRequest(GET_PROJECTS),
+        (projects: Project[]) => onComplete(projects.groupByIgnoreDuplicates(project => project.id)), onError);
 };
 
 export const getAssemblies = (onComplete: (assemblies: Map<number, Assembly>) => void) => {
