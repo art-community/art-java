@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {useState} from 'react';
-import {Box, Button, Container, Grid, TextField, Typography,} from '@material-ui/core';
+import {Box, Button, Container, Grid, TextField, Typography, useTheme,} from '@material-ui/core';
 import {useHistory} from "react-router";
 import {PROJECT_PATH, TOKEN_COOKIE} from "../../constants/Constants";
 import {registerUser} from "../../api/PlatformApi";
@@ -10,6 +10,7 @@ export const RegistrationComponent = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const theme = useTheme();
     const history = useHistory();
 
     const onRegister = () => registerUser({name: name, email: email, password: password}, response => {
@@ -51,7 +52,7 @@ export const RegistrationComponent = () => {
                     value={password}
                     onChange={event => setPassword(event.target.value)}
                 />
-                <Box marginTop={3}>
+                <Box mt={theme.spacing(0.5)}>
                     <Button fullWidth
                             onClick={onRegister}
                             variant={'contained'}

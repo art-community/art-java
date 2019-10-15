@@ -46,14 +46,16 @@ export const RoutingComponent = () => {
         <BrowserRouter>
             <Switch>
                 <Route exact path={BUILD_PATH}>
-                    {() => routePrivateComponent(BUILD_PATH, <SideBarComponent><BuildComponent/></SideBarComponent>)}
+                    {() => routePrivateComponent(BUILD_PATH,
+                        <SideBarComponent><BuildComponent/></SideBarComponent>)}
                 </Route>
                 <Route exact path={PROJECT_PATH}>
                     {() => routePrivateComponent(PROJECT_PATH,
                         <SideBarComponent><ProjectsComponent/></SideBarComponent>)}
                 </Route>
                 <Route exact path={DEPLOY_PATH}>
-                    {() => routePrivateComponent(DEPLOY_PATH, <SideBarComponent><DeployComponent/></SideBarComponent>)}
+                    {() => routePrivateComponent(DEPLOY_PATH,
+                        <SideBarComponent><DeployComponent/></SideBarComponent>)}
                 </Route>
                 <Route exact path={AUTHORIZE_PATH}>
                     {() => routePublicComponent(<AuthorizationComponent onAuthorize={handleAuthorized}/>)}

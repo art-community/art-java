@@ -10,7 +10,7 @@ export interface SideBarProps {
     children: React.ReactNode
 }
 
-const drawerWidth = 200;
+const drawerWidth = 160;
 
 const useStyles = makeStyles(theme => ({
     root: {

@@ -16,6 +16,7 @@ export const AuthorizationComponent = (props: AuthorizationComponentProps) => {
     const [authorizationFailed, setAuthorizationFailed] = useState(false);
     const [notAuthorizedMessageAnchor, setNotAuthorizedMessageAnchor] = useState<null | HTMLElement>(null);
     const history = useHistory();
+    const theme = useTheme();
 
     const handleAuthorize = (response: UserAuthorizationResponse) => props.onAuthorize(history, response.token);
 
@@ -55,7 +56,7 @@ export const AuthorizationComponent = (props: AuthorizationComponentProps) => {
                     value={password}
                     onChange={event => setPassword(event.target.value)}
                 />
-                <Box marginTop={3}>
+                <Box mt={theme.spacing(0.5)}>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
                             {<Button
