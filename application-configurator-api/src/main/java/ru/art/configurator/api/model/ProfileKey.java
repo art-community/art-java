@@ -26,5 +26,5 @@ import lombok.*;
 @EqualsAndHashCode
 @AllArgsConstructor
 public class ProfileKey {
-    String profileId;
+    private String profileId;
 }
