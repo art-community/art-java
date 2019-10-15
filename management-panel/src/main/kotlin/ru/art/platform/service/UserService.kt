@@ -37,16 +37,12 @@ object UserService {
             .token(tarantool(PLATFORM).put(TOKEN, stringPrimitive(createToken(request.name, request.password))).getString(VALUE))
             .build()
 
-    fun authenticate(token: String): Boolean = try {
+    fun authenticate(token: String) {
         require(HMAC256(SECRET))
                 .withIssuer(PLATFORM)
                 .build()
                 .verify(tarantool(PLATFORM).getByIndex(TOKEN, TOKEN, setOf(token))
                         .map { entity -> entity.getString(VALUE) }
                         .orElseThrow { PlatformException(TOKEN_DOES_NOT_EXISTS) })
-        true
-    } catch (e: Throwable) {
-        loggingModule().getLogger(UserService::class.java).error(e);
-        false
     }
 }

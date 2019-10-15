@@ -26,7 +26,7 @@ export const authorize = (requestData: UserAuthorizationRequest, onComplete: (us
     requestResponse(createMethodRequest(AUTHORIZE, requestData), onComplete, onError)
 };
 
-export const authenticate = (requestData: string, onComplete: (authorized: boolean) => void, onError: () => void) => {
+export const authenticate = (requestData: string, onComplete: () => void, onError: () => void) => {
     requestResponse(createMethodRequest(AUTHENTICATE, requestData), onComplete, onError)
 };
 

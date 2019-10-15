@@ -18,7 +18,10 @@ import {History} from "history"
 export const RoutingComponent = () => {
     const [authorized, setAuthorized] = useState(true);
     const [referer, setReferer] = useState(PROJECT_PATH);
-    useEffect(() => authenticate(Cookies.get(TOKEN_COOKIE) as string, setAuthorized, () => setAuthorized(false)), []);
+    useEffect(() => authenticate(Cookies.get(TOKEN_COOKIE) as string,
+        () => setAuthorized(true),
+        () => setAuthorized(false)),
+        []);
 
     const routePrivateComponent = (path: string, component: any) => {
         setReferer(path);

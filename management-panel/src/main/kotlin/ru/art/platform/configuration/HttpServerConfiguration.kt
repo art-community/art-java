@@ -16,7 +16,7 @@ class HttpServerConfiguration : HttpServerAgileConfiguration() {
     override fun getRequestInterceptors(): MutableList<HttpServerInterceptor> = linkedListOf<HttpServerInterceptor>().apply {
         add(intercept(CookieInterceptor
                 .builder()
-                .cookieValidator(TOKEN, ::authenticate)
+                .cookieValidator(TOKEN) { authenticate(it); true }
                 .pathFilter { path -> !path.contains(METRICS_PATH) }
                 .errorProvider { cookieError(UNAUTHORIZED.code, getStringResource(INDEX_HTML)) }
                 .build()))
