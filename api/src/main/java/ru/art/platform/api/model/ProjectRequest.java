@@ -5,7 +5,7 @@ import lombok.*;
 @Value
 @Builder
 public class ProjectRequest {
-    private final String name;
+    private final String title;
     private final String gitUrl;
     private final String jiraUrl;
 }

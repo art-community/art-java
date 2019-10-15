@@ -1,10 +1,9 @@
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {Box, Button, Container, Grid, TextField, Typography,} from '@material-ui/core';
 import {useHistory} from "react-router";
-import {AUTHORIZED_STORE, PROJECT_PATH, TOKEN_COOKIE} from "../../constants/Constants";
+import {PROJECT_PATH, TOKEN_COOKIE} from "../../constants/Constants";
 import {registerUser} from "../../api/PlatformApi";
-import {useStore} from "react-hookstore";
 // @ts-ignore
 import Cookies from "js-cookie";
 

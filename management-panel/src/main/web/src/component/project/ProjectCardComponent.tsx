@@ -38,7 +38,7 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
         <CardHeader
             avatar={
                 <Avatar className={styles.avatar}>
-                    {props.project.name[0]}
+                    {props.project.title[0]}
                 </Avatar>
             }
             action={
@@ -67,18 +67,12 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
                         }}>
                             <BuildOutlined color={"primary"}/>
                         </MenuItem>
-                        <MenuItem onClick={() => {
-                            setMenuAnchor(null);
-                            props.onAction(ProjectCardMenuAction.DELETE)
-                        }}>
-                            <DeleteOutlined color={"primary"}/>
-                        </MenuItem>
                     </Menu>
                 </div>
             }
             title={
                 <Typography color={"primary"}>
-                    {props.project.name}
+                    {props.project.title}
                 </Typography>
             }
             subheader={

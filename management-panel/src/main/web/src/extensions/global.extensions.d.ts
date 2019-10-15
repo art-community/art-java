@@ -17,3 +17,7 @@ interface Map<K, V> {
 interface Array<T> {
     groupByIgnoreDuplicates<K>(this: Array<T>, functor: (element: T) => K): Map<K, T>;
 }
+
+interface Object {
+    or<T>(this: Object): T;
+}

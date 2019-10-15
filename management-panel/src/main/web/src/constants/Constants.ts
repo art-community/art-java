@@ -34,12 +34,6 @@ export const RSOCKET_OPTIONS = {
     lifetime: 100000
 };
 
-
-export const TECHNOLOGIES = {
-    gradle: 'Gradle',
-    npm: 'NPM'
-};
-
 export const PRIMARY_MAIN_COLOR = purple["800"];
 export const SECONDARY_MAIN_COLOR = orange["700"];
 
@@ -47,3 +41,7 @@ export enum ThemeMode {
     DARK = 'dark',
     LIGHT = 'light'
 }
+
+export const DATE_TIME_FORMAT = "MM-DD-YYYY HH:mm:ss a";
+
+export const RU = 'ru-RU';

@@ -1,12 +1,14 @@
 import * as React from 'react';
 import {useState} from 'react';
-import {Box, Button, Container, Grid, Popper, TextField, Typography,} from '@material-ui/core';
+import {Box, Button, Container, Grid, Popper, TextField, Typography, useTheme,} from '@material-ui/core';
 import {TOKEN_COOKIE} from "../../constants/Constants";
 import {authorize} from "../../api/PlatformApi";
 // @ts-ignore
 import Cookies from "js-cookie";
 import {useHistory} from "react-router";
 import {History} from 'history'
+import {UserAuthorizationResponse} from "../../model/Models";
+import {GridSpacing} from "@material-ui/core/Grid";
 
 interface AuthorizationComponentProps {
     onAuthorize: (history: History, token: string) => void
@@ -18,6 +20,7 @@ export const AuthorizationComponent = (props: AuthorizationComponentProps) => {
     const [authorizationFailed, setAuthorizationFailed] = useState(false);
     const [notAuthorizedMessageAnchor, setNotAuthorizedMessageAnchor] = useState<null | HTMLElement>(null);
     const history = useHistory();
+    const theme = useTheme();
 
     const handleAuthorize = (response: UserAuthorizationResponse) => props.onAuthorize(history, response.token);
 

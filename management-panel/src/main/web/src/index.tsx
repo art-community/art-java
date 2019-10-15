@@ -18,15 +18,11 @@
 
 import * as ReactDOM from "react-dom";
 import * as React from "react";
-import {AUTHORIZED_STORE, MAIN_COMPONENT} from "./constants/Constants";
+import {MAIN_COMPONENT} from "./constants/Constants";
 import {RoutingComponent} from "./component/routing/RoutingComponent";
-import {putStore} from "./store/Store";
 import "./extensions/extensions"
 
-const main = () => {
-    putStore(AUTHORIZED_STORE, false);
-    ReactDOM.render(<RoutingComponent/>, document.getElementById(MAIN_COMPONENT));
-};
+const main = () => ReactDOM.render(<RoutingComponent/>, document.getElementById(MAIN_COMPONENT));
 
 declare var module: any;
 if (module.hot) {

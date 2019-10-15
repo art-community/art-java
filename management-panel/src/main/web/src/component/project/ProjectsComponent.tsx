@@ -2,7 +2,6 @@ import * as React from "react";
 import {useEffect, useState} from "react";
 import {Box, Button, Grid, useTheme} from "@material-ui/core";
 import {ProjectCardComponent} from "./ProjectCardComponent";
-import {ProjectAddFormComponent} from "./ProjectAddFormComponent";
 import {deleteProject, getProjects} from "../../api/PlatformApi";
 import {GridSpacing} from "@material-ui/core/Grid";
 import {ProjectCardMenuAction} from "./props/ProjectComponentsProps";
@@ -10,6 +9,8 @@ import {useHistory} from "react-router";
 import {AUTHORIZE_PATH, TOKEN_COOKIE} from "../../constants/Constants";
 // @ts-ignore
 import Cookies from "js-cookie";
+import {ProjectAddComponent} from "./ProjectAddComponent";
+import {Project} from "../../model/Models";
 
 enum Mode {
     PROJECTS,
@@ -38,7 +39,7 @@ export const ProjectsComponent = () => {
         }
     };
 
-    const projectAddForm = <ProjectAddFormComponent
+    const projectAddForm = <ProjectAddComponent
         onProjectAdd={(project: Project) => {
             setProjects(projects.addValue(project.id, project));
             showProjectsGrid()
@@ -47,7 +48,7 @@ export const ProjectsComponent = () => {
     />;
 
     const createProjectCards = () => projects.mapValuesToArray(project =>
-        <Grid key={project.name} item>
+        <Grid key={project.title} item>
             <ProjectCardComponent project={project} onAction={action => handleAction(action, project)}/>
         </Grid>
     );
@@ -60,7 +61,7 @@ export const ProjectsComponent = () => {
                 Добавить проект
             </Button>
         </Box>
-        <Grid container spacing={theme.spacing(1) as GridSpacing}>
+        <Grid container spacing={3}>
             {createProjectCards()}
         </Grid>
     </Box>;

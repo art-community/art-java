@@ -6,8 +6,8 @@ import {ArrowBackOutlined} from "@material-ui/icons";
 import {ProjectComponentsProps} from "./props/ProjectComponentsProps";
 
 
-export const ProjectAddFormComponent = (props: ProjectComponentsProps) => {
-    const [name, setName] = useState("");
+export const ProjectAddComponent = (props: ProjectComponentsProps) => {
+    const [title, setTitle] = useState("");
     const [gitUrl, setGitUrl] = useState("");
     const [jiraUrl, setJiraUrl] = useState("");
     const [showProjectExistsError, setShowProjectExistsError] = useState(false);
@@ -32,7 +32,7 @@ export const ProjectAddFormComponent = (props: ProjectComponentsProps) => {
                         label={'Имя проекта'}
                         onChange={event => {
                             setShowProjectExistsError(false);
-                            setName(event.target.value)
+                            setTitle(event.target.value)
                         }}
                         fullWidth
                     />
@@ -65,7 +65,7 @@ export const ProjectAddFormComponent = (props: ProjectComponentsProps) => {
                                 onClick={() => {
                                     setShowProjectExistsError(false);
                                     addProject({
-                                            name: name,
+                                            title: title,
                                             gitUrl: gitUrl,
                                             jiraUrl: jiraUrl
                                         },
@@ -78,7 +78,7 @@ export const ProjectAddFormComponent = (props: ProjectComponentsProps) => {
                                 placement={"top"}
                                 anchorEl={projectExistsErrorMessageAnchor}>
                             <Typography color={"error"}>
-                                Проект «{name}‎» уже существует
+                                Проект «{title}‎» уже существует
                             </Typography>
                         </Popper>
                     </Box>

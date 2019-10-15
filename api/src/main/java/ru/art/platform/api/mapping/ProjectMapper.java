@@ -11,7 +11,7 @@ import ru.art.platform.api.model.Project;
 public interface ProjectMapper {
 	String id = "id";
 
-	String name = "name";
+	String title = "title";
 
 	String gitUrl = "gitUrl";
 
@@ -19,14 +19,14 @@ public interface ProjectMapper {
 
 	ValueToModelMapper<Project, Entity> toProject = entity -> isNotEmpty(entity) ? Project.builder()
 			.id(entity.getLong(id))
-			.name(entity.getString(name))
+			.title(entity.getString(title))
 			.gitUrl(entity.getString(gitUrl))
 			.jiraUrl(entity.getString(jiraUrl))
 			.build() : Project.builder().build();
 
 	ValueFromModelMapper<Project, Entity> fromProject = model -> isNotEmpty(model) ? Entity.entityBuilder()
 			.longField(id, model.getId())
-			.stringField(name, model.getName())
+			.stringField(title, model.getTitle())
 			.stringField(gitUrl, model.getGitUrl())
 			.stringField(jiraUrl, model.getJiraUrl())
 			.build() : Entity.entityBuilder().build();

@@ -18,6 +18,7 @@ import {AUTHORIZE_PATH, TOKEN_COOKIE} from "../../constants/Constants";
 import {useHistory} from "react-router";
 // @ts-ignore
 import Cookies from "js-cookie";
+import {Project} from "../../model/Models";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     avatar: {
@@ -50,11 +51,11 @@ export const SelectProjectComponent = (props: SelectProjectComponentProps) => {
                     button
                     onClick={() => props.onSelect(project)}>
                     <ListItemAvatar>
-                        <Avatar className={styles.avatar}>{project.name[0]}
+                        <Avatar className={styles.avatar}>{project.title[0]}
                         </Avatar>
                     </ListItemAvatar>
                     <ListItemText>
-                        <Typography color={"primary"}>{project.name}</Typography>
+                        <Typography color={"primary"}>{project.title}</Typography>
                     </ListItemText>
                 </ListItem>)}
         </List>

@@ -1,39 +1,58 @@
-interface UserRegistrationRequest {
+import { Moment } from "moment";
+
+export interface UserRegistrationRequest {
     name: string
     email: string
     password: string
 }
 
-interface UserAuthorizationRequest {
+export interface UserAuthorizationRequest {
     name: string
     password: string
 }
 
-interface User {
+export interface User {
     id: number
     name: string
     email: string
 }
 
-interface UserRegistrationResponse {
+export interface UserRegistrationResponse {
     user: User
     token: string
 }
 
-interface UserAuthorizationResponse {
+export interface UserAuthorizationResponse {
     user: User
     token: string
 }
 
-interface Project {
+export interface Project {
     id: number
-    name: string
+    title: string
     gitUrl: string
     jiraUrl: string
 }
 
-interface ProjectRequest {
-    name: string
+export interface ProjectRequest {
+    title: string
     gitUrl: string
     jiraUrl?: string
+}
+
+export interface Assembly {
+    id :number
+    title: string
+    branch?: string
+    commit?: string
+    tag?: string
+    startDateTime: Moment
+    endDateTime?: Moment
+    state: AssemblyState
+}
+
+export enum AssemblyState {
+    FAILED,
+    BUILDING,
+    DONE
 }

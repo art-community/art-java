@@ -35,15 +35,8 @@ const actions =
         {
             action: 'BUILD',
             icon: <Build color={'secondary'}/>,
-            text: 'Сборка',
+            text: 'Сборки',
             path: BUILD_PATH
-        },
-        {
-            action: 'DEPLOY',
-            icon: <Whatshot color={'secondary'}/>,
-            text: 'Развертка',
-            path: DEPLOY_PATH
-
         }
     ];
 
