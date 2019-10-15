@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useState} from "react";
 import {SelectProjectComponent} from "./SelectProjectComponent";
-import { AssembliesComponent } from "./AssembliesComponent";
+import {AssembliesComponent} from "./AssembliesComponent";
 import {Project} from "../../model/Models";
 
 export const BuildComponent = () => {

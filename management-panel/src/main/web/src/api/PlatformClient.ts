@@ -2,7 +2,6 @@ import {BufferEncoders, RSocketClient} from "rsocket-core";
 import RSocketWebSocketClient from "rsocket-websocket-client";
 import {EMPTY_RESPONSE, RSOCKET_FUNCTION, RSOCKET_OPTIONS, RSOCKET_URL, TOKEN_COOKIE} from "../constants/Constants";
 import {decode, encode} from "msgpack-lite";
-// @ts-ignore
 import Cookies from "js-cookie";
 
 const connect = async () => new RSocketClient({

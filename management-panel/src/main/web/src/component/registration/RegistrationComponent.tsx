@@ -4,7 +4,6 @@ import {Box, Button, Container, Grid, TextField, Typography,} from '@material-ui
 import {useHistory} from "react-router";
 import {PROJECT_PATH, TOKEN_COOKIE} from "../../constants/Constants";
 import {registerUser} from "../../api/PlatformApi";
-// @ts-ignore
 import Cookies from "js-cookie";
 
 export const RegistrationComponent = () => {

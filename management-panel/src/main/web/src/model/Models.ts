@@ -1,4 +1,4 @@
-import { Moment } from "moment";
+import {Moment} from "moment";
 
 export interface UserRegistrationRequest {
     name: string

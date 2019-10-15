@@ -4,18 +4,18 @@ import {
     AUTHORIZE,
     DELETE_PROJECT,
     GET_PROJECTS,
-    REGISTER_USER, RU
+    REGISTER_USER
 } from "../constants/Constants";
 import {createMethodRequest, fireAndForget, requestResponse} from "./PlatformClient";
 import {
     Assembly,
-    AssemblyState,
     Project,
     ProjectRequest,
     UserAuthorizationRequest,
-    UserAuthorizationResponse, UserRegistrationRequest, UserRegistrationResponse
+    UserAuthorizationResponse,
+    UserRegistrationRequest,
+    UserRegistrationResponse
 } from "../model/Models";
-import moment from "moment"
 import 'moment/locale/ru'
 
 export const registerUser = (requestData: UserRegistrationRequest, onComplete: (user: UserRegistrationResponse) => void) => {
@@ -53,5 +53,9 @@ export const getProjects = (onComplete: (projects: Map<number, Project>) => void
 };
 
 export const getAssemblies = (onComplete: (assemblies: Map<number, Assembly>) => void) => {
+
+};
+
+export const buildProject = () => {
 
 };

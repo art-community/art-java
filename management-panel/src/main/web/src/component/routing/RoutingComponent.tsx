@@ -11,7 +11,6 @@ import {BuildComponent} from "../build/BuildComponent";
 import {AuthorizationComponent} from "../authorization/AuthorizationComponent";
 import {SideBarComponent} from "../sidebar/SideBarComponent";
 import {DeployComponent} from "../deploy/DeployComponent";
-// @ts-ignore
 import Cookies from "js-cookie";
 import {authenticate} from "../../api/PlatformApi";
 import {History} from "history"
@@ -19,7 +18,7 @@ import {History} from "history"
 export const RoutingComponent = () => {
     const [authorized, setAuthorized] = useState(true);
     const [referer, setReferer] = useState(PROJECT_PATH);
-    useEffect(() => authenticate(Cookies.get(TOKEN_COOKIE), setAuthorized, () => setAuthorized(false)), []);
+    useEffect(() => authenticate(Cookies.get(TOKEN_COOKIE) as string, setAuthorized, () => setAuthorized(false)), []);
 
     const routePrivateComponent = (path: string, component: any) => {
         setReferer(path);

@@ -3,11 +3,9 @@ import {useEffect, useState} from "react";
 import {Box, Button, Grid, useTheme} from "@material-ui/core";
 import {ProjectCardComponent} from "./ProjectCardComponent";
 import {deleteProject, getProjects} from "../../api/PlatformApi";
-import {GridSpacing} from "@material-ui/core/Grid";
 import {ProjectCardMenuAction} from "./props/ProjectComponentsProps";
 import {useHistory} from "react-router";
 import {AUTHORIZE_PATH, TOKEN_COOKIE} from "../../constants/Constants";
-// @ts-ignore
 import Cookies from "js-cookie";
 import {ProjectAddComponent} from "./ProjectAddComponent";
 import {Project} from "../../model/Models";

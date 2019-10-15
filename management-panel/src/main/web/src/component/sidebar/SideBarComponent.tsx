@@ -3,8 +3,8 @@ import {ReactElement} from "react";
 import {Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles} from "@material-ui/core";
 import * as H from 'history';
 import {useHistory} from "react-router";
-import {Build, FeaturedPlayList, Whatshot} from "@material-ui/icons";
-import {BUILD_PATH, DEPLOY_PATH, PROJECT_PATH} from "../../constants/Constants";
+import {Build, FeaturedPlayList} from "@material-ui/icons";
+import {BUILD_PATH, PROJECT_PATH} from "../../constants/Constants";
 
 export interface SideBarProps {
     children: React.ReactNode

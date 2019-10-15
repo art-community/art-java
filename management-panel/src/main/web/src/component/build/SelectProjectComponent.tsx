@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {
     Avatar,
     Box,
-    createStyles, Grid,
+    createStyles,
     List,
     ListItem,
     ListItemAvatar,
@@ -16,7 +16,6 @@ import {
 import {getProjects} from "../../api/PlatformApi";
 import {AUTHORIZE_PATH, TOKEN_COOKIE} from "../../constants/Constants";
 import {useHistory} from "react-router";
-// @ts-ignore
 import Cookies from "js-cookie";
 import {Project} from "../../model/Models";
 
