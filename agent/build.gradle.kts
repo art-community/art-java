@@ -5,6 +5,7 @@ art {
     embeddedModules {
         kit()
     }
+    mainClass("ru.art.platform.agent.module.AgentModule")
 }
 
 

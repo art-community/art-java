@@ -1,5 +1,7 @@
 package ru.art.platform.constants
 
+import ru.art.platform.constants.CommonConstants.AGENT
+
 object CommonConstants {
     const val PLATFORM = "platform"
     const val USER = "user"
@@ -33,11 +35,26 @@ object ServiceConstants {
     const val ADD_PROJECT = "addProject"
     const val GET_PROJECTS = "getProjects"
     const val DELETE_PROJECT = "deleteProject"
-    const val PROJECT_INITIALIZATION_STREAM = "projectInitializationStream"
+    const val UPDATE_PROJECT = "updateProject"
 }
 
 object ErrorMessages {
     const val TOKEN_DOES_NOT_EXISTS = "Token does not exists"
     const val USER_DOES_NOT_EXISTS = "User does not exists"
     const val INVALID_META_DATA = "Invalid RSocket metadata"
+}
+
+object DockerConstants {
+    const val DOCKER_URL = "tcp://localhost:2375"
+    const val AGENT_IMAGE = "platform/agent:latest"
+    val AGENT_CONTAINER_NAME = {projectName: String -> "$projectName.$AGENT"}
+
+    enum class ContainerStates {
+        created,
+        restarting,
+        running,
+        paused,
+        exited,
+        dead
+    }
 }

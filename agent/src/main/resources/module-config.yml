@@ -1,4 +1,7 @@
 rsocket:
-  server:
-    tcpPort: 9002
+  communication:
+    targets:
+      managementPanel:
+        host: 185.155.19.36
+        tcpPort: 9001
 
