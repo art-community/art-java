@@ -19,7 +19,7 @@
 package ru.art.configurator.dao;
 
 
-import ru.art.configurator.api.entity.*;
+import ru.art.configurator.api.model.*;
 import ru.art.entity.*;
 import ru.art.rocks.db.dao.*;
 import static java.util.stream.Collectors.*;
@@ -86,25 +86,19 @@ public interface ConfiguratorDao {
         if (isEmpty(moduleKey)) return;
 
         delete(moduleKey);
-        deleteCollectionElement(MODULE_KEYS, moduleKey);
+        removeStringElement(MODULE_KEYS, moduleKey);
     }
 
     static void deleteProfile(String profile) {
         if (isEmpty(profile)) return;
 
         delete(profile);
-        deleteCollectionElement(PROFILE_KEYS, profile);
+        removeStringElement(PROFILE_KEYS, profile);
 
         getStringList((MODULE_KEYS))
                 .stream()
                 .map(ModuleKey::parseKey)
                 .filter(moduleKey -> profile.equals(moduleKey.getProfileId()))
                 .forEach(moduleKey -> deleteModule(moduleKey.formatKey()));
-    }
-
-    static void deleteCollectionElement(String collectionKey, String elementToDelete) {
-        Set<String> moduleKeysForUpdate = getStringSet(collectionKey);
-        moduleKeysForUpdate.remove(elementToDelete);
-        putStrings(collectionKey, moduleKeysForUpdate);
     }
 }

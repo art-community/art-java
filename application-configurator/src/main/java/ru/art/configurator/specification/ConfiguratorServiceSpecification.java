@@ -19,7 +19,7 @@
 package ru.art.configurator.specification;
 
 import lombok.*;
-import ru.art.configurator.api.entity.*;
+import ru.art.configurator.api.model.*;
 import ru.art.grpc.server.model.*;
 import ru.art.grpc.server.specification.*;
 import ru.art.http.server.model.*;
@@ -32,6 +32,7 @@ import static ru.art.configurator.api.mapping.ModuleConfigurationMapping.*;
 import static ru.art.configurator.api.mapping.ModuleKeyCollectionMapping.*;
 import static ru.art.configurator.api.mapping.ModuleKeyMapping.*;
 import static ru.art.configurator.api.mapping.ProfileConfigurationMapping.*;
+import static ru.art.configurator.api.mapping.ProfileKeyMapping.profileKeyMapper;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.configurator.service.ConfiguratorService.*;
 import static ru.art.core.caster.Caster.*;
@@ -123,7 +124,7 @@ public class ConfiguratorServiceSpecification implements HttpServiceSpecificatio
             .post(DELETE_PROFILE)
             .fromBody()
             .validationPolicy(NOT_NULL)
-            .requestMapper(moduleKeyMapper.getToModel())
+            .requestMapper(profileKeyMapper.getToModel())
             .produces(applicationJsonUtf8())
             .listen(DELETE_PROFILE_PATH)
 
@@ -168,7 +169,7 @@ public class ConfiguratorServiceSpecification implements HttpServiceSpecificatio
                 deleteModuleWithConfiguration((ModuleKey) request);
                 return null;
             case DELETE_PROFILE:
-                deleteProfileWithConfiguration((ModuleKey) request);
+                deleteProfileWithConfiguration((ProfileKey) request);
                 return null;
             default:
                 throw new UnknownServiceMethodException(serviceId, methodId);

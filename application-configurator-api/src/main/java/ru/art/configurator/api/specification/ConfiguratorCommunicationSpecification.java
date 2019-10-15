@@ -19,7 +19,8 @@
 package ru.art.configurator.api.specification;
 
 import lombok.*;
-import ru.art.configurator.api.entity.*;
+import ru.art.configurator.api.model.Configuration;
+import ru.art.configurator.api.model.ModuleKey;
 import ru.art.grpc.client.communicator.*;
 import ru.art.grpc.client.specification.*;
 import ru.art.service.exception.*;

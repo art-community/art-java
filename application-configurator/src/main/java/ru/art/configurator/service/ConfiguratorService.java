@@ -19,11 +19,11 @@
 package ru.art.configurator.service;
 
 import ru.art.config.remote.api.specification.*;
-import ru.art.configurator.api.entity.*;
+import ru.art.configurator.api.model.*;
 import ru.art.configurator.factory.*;
 import ru.art.core.checker.*;
 import ru.art.entity.*;
-import static ru.art.configurator.api.entity.Configuration.*;
+import static ru.art.configurator.api.model.Configuration.*;
 import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
 import static ru.art.configurator.dao.ConfiguratorDao.*;
 import static ru.art.configurator.provider.ModulesConnectionParametersProvider.*;
@@ -75,8 +75,8 @@ public interface ConfiguratorService {
         deleteModule(moduleKey.formatKey());
     }
 
-    static void deleteProfileWithConfiguration(ModuleKey moduleKey) {
-        deleteProfile(moduleKey.getProfileId());
+    static void deleteProfileWithConfiguration(ProfileKey profileKey) {
+        deleteProfile(profileKey.getProfileId());
     }
 
     static void applyModuleConfiguration(ModuleKey moduleKey) {
