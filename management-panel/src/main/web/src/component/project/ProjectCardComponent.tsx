@@ -44,6 +44,19 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
     const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
     const open = Boolean(menuAnchor);
     const styles = useStyles();
+
+    const createProjectCards = () => {
+        if (!props.project.technologies || props.project.technologies.length == 0) {
+            return <></>
+        }
+        return new Set<string>(props.project.technologies)
+            .mapToArray(technology => TECHNOLOGY_IMAGES.get(technology))
+            .map(image =>
+                <Grid key={image} item>
+                    <Avatar className={styles.technologyAvatar} src={image}/>
+                </Grid>);
+    };
+
     return <Card>
         <CardHeader
             avatar={
@@ -100,9 +113,7 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
                 </Link>
             </Typography>
             <Grid container spacing={1}>
-                {(props.project.technologies ? props.project.technologies : new Set<string>())
-                    .mapToArray(technology => TECHNOLOGY_IMAGES.get(technology))
-                    .map(image => <Grid item><Avatar className={styles.technologyAvatar} src={image}/></Grid>)}
+                {createProjectCards()}
             </Grid>
         </CardContent>
     </Card>

@@ -28,6 +28,26 @@ export const requestResponse = async (request: any) => {
     return response.responseData
 };
 
+export const requestStream = async (request: any, onNext: (result: any) => void) => {
+    (await connect())
+        .requestStream({
+            data: encode(request),
+            metadata: encode(createMethodRequest(request.serviceMethodCommand.methodId, Cookies.get(TOKEN_COOKIE)))
+        })
+        .map(payload => payload.data != null ? decode(payload.data as number[]) : null)
+        .subscribe(response => {
+            if (!response) {
+                console.error(Error(EMPTY_RESPONSE));
+                throw Error(EMPTY_RESPONSE)
+            }
+            if (response.serviceExecutionException) {
+                console.error(response.serviceExecutionException);
+                throw response.serviceExecutionException
+            }
+            onNext(response.responseData)
+        });
+};
+
 export const fireAndForget = (request: any) => {
     connect().then(socket => socket.fireAndForget({
         data: encode(request),

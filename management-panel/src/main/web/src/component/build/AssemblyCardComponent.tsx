@@ -47,7 +47,7 @@ export const AssemblyCardComponent = (props: AssemblyCardComponentProps) => {
 
     const createAssembleStringAttribute = (name: string, value?: any) =>
         value ?
-            <Grid key={props.assembly.id + name} container item spacing={1}>
+            <Grid key={name} container item spacing={1}>
                 <Grid item xs>
                     <Typography color={"primary"}>
                         {name}:
@@ -63,7 +63,7 @@ export const AssemblyCardComponent = (props: AssemblyCardComponentProps) => {
 
     const createAssembleDateAttribute = (name: string, value?: Moment) =>
         value ?
-            <Grid key={props.assembly.id + name} container item spacing={1}>
+            <Grid key={name} container item spacing={1}>
                 <Grid item xs>
                     <Typography color={"primary"}>
                         {name}:

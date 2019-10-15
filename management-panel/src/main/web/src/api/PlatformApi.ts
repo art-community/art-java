@@ -6,7 +6,7 @@ import {
     GET_PROJECTS,
     REGISTER_USER
 } from "../constants/Constants";
-import {createMethodRequest, fireAndForget, requestResponse} from "./PlatformClient";
+import {createMethodRequest, fireAndForget, requestResponse, requestStream} from "./PlatformClient";
 import {
     Assembly,
     Project,
@@ -35,10 +35,8 @@ export const authenticate = (requestData: string, onComplete: (authorized: boole
         .catch(onError)
 };
 
-export const addProject = (requestData: ProjectRequest, onComplete: (project: Project) => void, onError: () => void) => {
-    requestResponse(createMethodRequest(ADD_PROJECT, requestData))
-        .then(onComplete)
-        .catch(onError)
+export const addProject = (requestData: ProjectRequest, onProjectUpdate: (project: Project) => void, onError: () => void) => {
+    requestStream(createMethodRequest(ADD_PROJECT, requestData), onProjectUpdate).catch(onError)
 };
 
 export const deleteProject = (requestData: number) => {
@@ -47,10 +45,12 @@ export const deleteProject = (requestData: number) => {
 
 export const getProjects = (onComplete: (projects: Map<number, Project>) => void, onError: () => void) => {
     requestResponse(createMethodRequest(GET_PROJECTS))
-        .then((projects: Project[]) => onComplete(projects.groupByIgnoreDuplicates(project => project.id)))
+        .then((projects: Project[]) => onComplete(projects.groupByIgnoreDuplicates(project => project.id))
+        )
         .catch(console.error)
         .catch(onError)
 };
+
 
 export const getAssemblies = (onComplete: (assemblies: Map<number, Assembly>) => void) => {
 

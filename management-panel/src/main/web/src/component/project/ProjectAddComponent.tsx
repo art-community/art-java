@@ -74,12 +74,10 @@ export const ProjectAddComponent = (props: ProjectComponentsProps) => {
                                 onClick={() => {
                                     setShowProjectExistsError(false);
                                     addProject({
-                                            title: title,
-                                            gitUrl: gitUrl,
-                                            jiraUrl: jiraUrl
-                                        },
-                                        props.onProjectAdd,
-                                        () => setShowProjectExistsError(true))
+                                        title: title,
+                                        gitUrl: gitUrl,
+                                        jiraUrl: jiraUrl
+                                    }, props.onProject, () => setShowProjectExistsError(true))
                                 }}>
                             Добавить
                         </Button>

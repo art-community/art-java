@@ -1,0 +1,4 @@
+rsocket:
+  server:
+    tcpPort: 9002
+

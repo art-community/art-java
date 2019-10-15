@@ -1,4 +1,3 @@
-
 import org.gradle.api.JavaVersion.*
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.gradle.internal.os.OperatingSystem as os
@@ -31,6 +30,50 @@ tasks.withType<KotlinCompile> {
 
     kotlinOptions {
         jvmTarget = VERSION_1_8.toString()
+    }
+}
+
+task("stop") {
+    group = "deployment"
+    doLast {
+        exec {
+            commandLine = listOf("docker", "kill", "management-panel")
+        }
+    }
+}
+val DEPLOYMENT_DIRECTORY = "D:\\Development\\Docker\\Volume\\platform\\management-panel"
+task("buildImage") {
+    group = "deployment"
+    dependsOn("build")
+    doLast {
+        copy {
+            from("build/libs")
+            into(DEPLOYMENT_DIRECTORY)
+        }
+        copy {
+            from("src/main/resources")
+            into(DEPLOYMENT_DIRECTORY)
+        }
+        exec {
+            commandLine = listOf("docker", "build", "--rm", "-t", "platform/management-panel:latest", ".")
+        }
+    }
+}
+
+
+task("start") {
+    group = "deployment"
+    doLast {
+        exec {
+            commandLine = listOf("docker",
+                    "run", "-d", "--rm",
+                    "-p", "8080:8080",
+                    "-p", "9001:9001",
+                    "-p", "3301:3301",
+                    "-v", "/host_mnt/d/Development/Docker/Volume/platform/management-panel:/management-panel:rw",
+                    "--name", "management-panel",
+                    "platform/management-panel:latest")
+        }
     }
 }
 

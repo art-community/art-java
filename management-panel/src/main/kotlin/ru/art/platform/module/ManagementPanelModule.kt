@@ -1,5 +1,6 @@
 package ru.art.platform.module
 
+import reactor.core.publisher.*
 import ru.art.config.extensions.activator.AgileConfigurationsActivator.*
 import ru.art.entity.CollectionMapping.*
 import ru.art.entity.PrimitiveMapping.*
@@ -9,6 +10,7 @@ import ru.art.platform.api.mapping.ProjectMapper.*
 import ru.art.platform.api.mapping.ProjectRequestMapper.*
 import ru.art.platform.api.mapping.UserAuthorizationRequestResponseMapper.UserAuthorizationRequestMapper.*
 import ru.art.platform.api.mapping.UserAuthorizationRequestResponseMapper.UserAuthorizationResponseMapper.*
+import ru.art.platform.api.model.*
 import ru.art.platform.configuration.*
 import ru.art.platform.constants.CommonConstants.NAME
 import ru.art.platform.constants.CommonConstants.NAME_PASSWORD
@@ -28,6 +30,7 @@ import ru.art.platform.constants.ServiceConstants.AUTHORIZE
 import ru.art.platform.constants.ServiceConstants.DELETE_PROJECT
 import ru.art.platform.constants.ServiceConstants.GET_PROJECTS
 import ru.art.platform.service.*
+import ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.*
 import ru.art.rsocket.function.RsocketServiceFunction.*
 import ru.art.rsocket.module.*
 import ru.art.rsocket.server.RsocketServer.*
@@ -93,7 +96,8 @@ object ManagementPanelModule {
                 .requestMapper(toProjectRequest)
                 .validationPolicy(VALIDATABLE)
                 .responseMapper(fromProject)
-                .handle(ProjectService::addProject)
+                .responseProcessingMode(REACTIVE)
+                .handle<ProjectRequest, Flux<Project>>(ProjectService::addProject)
         rsocket(GET_PROJECTS)
                 .responseMapper(collectionValueFromModel(fromProject)::map)
                 .produce(ProjectService::getProjects)

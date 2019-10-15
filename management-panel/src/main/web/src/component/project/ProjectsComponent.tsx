@@ -38,7 +38,7 @@ export const ProjectsComponent = () => {
     };
 
     const projectAddForm = <ProjectAddComponent
-        onProjectAdd={(project: Project) => {
+        onProject={(project: Project) => {
             setProjects(projects.addValue(project.id, project));
             showProjectsGrid()
         }}

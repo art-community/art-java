@@ -9,6 +9,7 @@ object CommonConstants {
     const val PROJECT = "project"
     const val NAME_PASSWORD = "namePassword"
     const val TOKEN_LIFE_TIME_DAYS = 1
+    const val AGENT = "agent"
 }
 
 object DbConstants {
@@ -32,6 +33,7 @@ object ServiceConstants {
     const val ADD_PROJECT = "addProject"
     const val GET_PROJECTS = "getProjects"
     const val DELETE_PROJECT = "deleteProject"
+    const val PROJECT_INITIALIZATION_STREAM = "projectInitializationStream"
 }
 
 object ErrorMessages {
