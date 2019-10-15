@@ -4,6 +4,7 @@ import {Box, Button, Grid, IconButton, Popper, TextField, Typography, useTheme} 
 import {addProject} from "../../api/PlatformApi";
 import {ArrowBackOutlined} from "@material-ui/icons";
 import {ProjectComponentsProps} from "./props/ProjectComponentsProps";
+import {URL_REGEX} from "../../constants/Constants";
 
 
 export const ProjectAddComponent = (props: ProjectComponentsProps) => {
@@ -37,6 +38,7 @@ export const ProjectAddComponent = (props: ProjectComponentsProps) => {
                         fullWidth
                     />
                     <TextField
+                        error={Boolean(gitUrl) && !gitUrl.match(URL_REGEX)}
                         variant={'outlined'}
                         margin={'normal'}
                         required
@@ -48,6 +50,7 @@ export const ProjectAddComponent = (props: ProjectComponentsProps) => {
                         fullWidth
                     />
                     <TextField
+                        error={Boolean(jiraUrl) && !jiraUrl.match(URL_REGEX)}
                         variant={'outlined'}
                         margin={'normal'}
                         label={'URL JIRA проекта'}
@@ -59,6 +62,12 @@ export const ProjectAddComponent = (props: ProjectComponentsProps) => {
                     />
                     <Box mt={theme.spacing(0.5)}>
                         <Button fullWidth
+                                disabled={
+                                    !title ||
+                                    !gitUrl ||
+                                    !gitUrl.match(URL_REGEX) ||
+                                    (Boolean(jiraUrl) && !jiraUrl.match(URL_REGEX))
+                                }
                                 ref={ref => setProjectExistsErrorMessageAnchor(ref)}
                                 variant={'outlined'}
                                 color={'primary'}

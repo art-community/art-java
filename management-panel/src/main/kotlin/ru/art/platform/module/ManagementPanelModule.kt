@@ -87,9 +87,11 @@ object ManagementPanelModule {
         rsocket(AUTHENTICATE)
                 .requestMapper(stringMapper.toModel)
                 .responseMapper(boolMapper.fromModel)
+                .validationPolicy(NOT_NULL)
                 .handle(UserService::authenticate)
         rsocket(ADD_PROJECT)
                 .requestMapper(toProjectRequest)
+                .validationPolicy(VALIDATABLE)
                 .responseMapper(fromProject)
                 .handle(ProjectService::addProject)
         rsocket(GET_PROJECTS)
@@ -97,6 +99,7 @@ object ManagementPanelModule {
                 .produce(ProjectService::getProjects)
         rsocket(DELETE_PROJECT)
                 .requestMapper(longMapper.toModel)
+                .validationPolicy(NOT_NULL)
                 .consume(ProjectService::deleteProject)
     }
 

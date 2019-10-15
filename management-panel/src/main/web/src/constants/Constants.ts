@@ -45,3 +45,6 @@ export enum ThemeMode {
 export const DATE_TIME_FORMAT = "MM-DD-YYYY HH:mm:ss a";
 
 export const RU = 'ru-RU';
+
+// language=RegExp
+export const URL_REGEX = '(http[*s]?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?';

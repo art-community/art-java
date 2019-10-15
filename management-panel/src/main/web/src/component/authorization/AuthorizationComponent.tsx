@@ -37,6 +37,7 @@ export const AuthorizationComponent = (props: AuthorizationComponentProps) => {
                     Добро пожаловать в ART платформу
                 </Typography>
                 <TextField
+                    error={Boolean(name) && authorizationFailed}
                     variant={'outlined'}
                     margin={'normal'}
                     required
@@ -48,6 +49,7 @@ export const AuthorizationComponent = (props: AuthorizationComponentProps) => {
                     onChange={event => setName(event.target.value)}
                 />
                 <TextField
+                    error={Boolean(password) && authorizationFailed}
                     variant={'outlined'}
                     margin={'normal'}
                     required
@@ -62,6 +64,7 @@ export const AuthorizationComponent = (props: AuthorizationComponentProps) => {
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
                             {<Button
+                                disabled={!name || !password}
                                 ref={ref => setNotAuthorizedMessageAnchor(ref)}
                                 fullWidth
                                 onClick={onAuthorize}

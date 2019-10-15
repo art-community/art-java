@@ -6,7 +6,6 @@ import {AssemblyCardComponent} from "./AssemblyCardComponent";
 import {AssembliesComponentProps} from "./props/AssemblyComponentsProps";
 import {getAssemblies} from "../../api/PlatformApi";
 import {Assembly} from "../../model/Models";
-import {GridSpacing} from "@material-ui/core/Grid";
 
 export const AssembliesComponent = (props: AssembliesComponentProps) => {
     const theme = useTheme();

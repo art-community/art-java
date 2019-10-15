@@ -22,7 +22,7 @@ import {Moment} from "moment";
 
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-        avatar: {
+        projectAvatar: {
             backgroundColor: theme.palette.secondary.main,
         },
         card: {

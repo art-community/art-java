@@ -3,7 +3,7 @@ import {
     Card,
     CardContent,
     CardHeader,
-    createStyles,
+    createStyles, Grid,
     IconButton,
     Link,
     makeStyles,
@@ -16,10 +16,21 @@ import {BuildOutlined, DeleteOutlined, MoreVert} from "@material-ui/icons";
 import * as React from "react";
 import {useState} from "react";
 import {ProjectCardComponentProps, ProjectCardMenuAction} from "./props/ProjectComponentsProps";
+import gradle from "../../images/gradle.png"
+import npm from "../../images/npm.jpg"
+import yarn from "../../images/yarn.jpg"
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-    avatar: {
+    projectAvatar: {
         backgroundColor: theme.palette.secondary.main,
+    },
+    technologyAvatar: {
+        width: 40,
+        height: 40,
+        "box-shadow": `0 0 7px ${theme.palette.secondary.main}`,
+        padding: 7,
+        margin: 7,
+        border: `1px solid ${theme.palette.secondary.main}`
     },
     chip: {
         margin: theme.spacing(0.5)
@@ -37,7 +48,7 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
     return <Card>
         <CardHeader
             avatar={
-                <Avatar className={styles.avatar}>
+                <Avatar className={styles.projectAvatar}>
                     {props.project.title[0]}
                 </Avatar>
             }
@@ -89,6 +100,17 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
                     Посмотреть в JIRA
                 </Link>
             </Typography>
+            <Grid container spacing={1}>
+                <Grid item>
+                    <Avatar className={styles.technologyAvatar} src={gradle}/>
+                </Grid>
+                <Grid item>
+                    <Avatar className={styles.technologyAvatar} src={npm}/>
+                </Grid>
+                <Grid item>
+                    <Avatar className={styles.technologyAvatar} src={yarn}/>
+                </Grid>
+            </Grid>
         </CardContent>
     </Card>
 };

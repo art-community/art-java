@@ -21,7 +21,7 @@ import Cookies from "js-cookie";
 import {Project} from "../../model/Models";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-    avatar: {
+    projectAvatar: {
         backgroundColor: theme.palette.secondary.main,
     }
 }));
@@ -51,7 +51,7 @@ export const SelectProjectComponent = (props: SelectProjectComponentProps) => {
                     button
                     onClick={() => props.onSelect(project)}>
                     <ListItemAvatar>
-                        <Avatar className={styles.avatar}>{project.title[0]}
+                        <Avatar className={styles.projectAvatar}>{project.title[0]}
                         </Avatar>
                     </ListItemAvatar>
                     <ListItemText>
