@@ -1,14 +1,14 @@
 import {
     ADD_PROJECT,
     AUTHENTICATE,
-    AUTHORIZE,
+    AUTHORIZE, BUILD_PROJECT,
     DELETE_PROJECT,
     GET_PROJECTS,
     REGISTER_USER
 } from "../constants/Constants";
 import {createMethodRequest, fireAndForget, requestResponse, requestStream} from "./PlatformClient";
 import {
-    Assembly,
+    Assembly, BuildRequest,
     Project,
     ProjectRequest,
     UserAuthorizationRequest,
@@ -48,6 +48,6 @@ export const getAssemblies = (onComplete: (assemblies: Map<number, Assembly>) =>
 
 };
 
-export const buildProject = () => {
-
+export const buildProject = (requestData: BuildRequest) => {
+    fireAndForget(createMethodRequest(BUILD_PROJECT, requestData))
 };

@@ -2,7 +2,7 @@ import * as React from "react";
 import {useEffect, useState} from "react";
 import {Box, Button, Grid, useTheme} from "@material-ui/core";
 import {ProjectCardComponent} from "./ProjectCardComponent";
-import {deleteProject, getProjects} from "../../api/PlatformApi";
+import {buildProject, deleteProject, getProjects} from "../../api/PlatformApi";
 import {ProjectCardMenuAction} from "./props/ProjectComponentsProps";
 import {useHistory} from "react-router";
 import {AUTHORIZE_PATH, TOKEN_COOKIE} from "../../constants/Constants";
@@ -28,6 +28,7 @@ export const ProjectsComponent = () => {
     const handleAction = (action: ProjectCardMenuAction, project: Project) => {
         switch (+action) {
             case ProjectCardMenuAction.BUILD :
+                buildProject({projectId: project.id});
                 return;
             case ProjectCardMenuAction.DELETE: {
                 deleteProject(project.id);

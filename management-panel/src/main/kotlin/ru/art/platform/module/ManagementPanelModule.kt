@@ -1,16 +1,16 @@
 package ru.art.platform.module
 
-import reactor.core.publisher.*
 import ru.art.config.extensions.activator.AgileConfigurationsActivator.*
 import ru.art.entity.CollectionMapping.*
 import ru.art.entity.PrimitiveMapping.*
 import ru.art.http.server.HttpServer.*
 import ru.art.http.server.module.*
+import ru.art.platform.api.constants.ApIConstants.*
+import ru.art.platform.api.mapping.BuildRequestMapper.*
 import ru.art.platform.api.mapping.ProjectMapper.*
 import ru.art.platform.api.mapping.ProjectRequestMapper.*
 import ru.art.platform.api.mapping.UserAuthorizationRequestResponseMapper.UserAuthorizationRequestMapper.*
 import ru.art.platform.api.mapping.UserAuthorizationRequestResponseMapper.UserAuthorizationResponseMapper.*
-import ru.art.platform.api.model.*
 import ru.art.platform.configuration.*
 import ru.art.platform.constants.CommonConstants.NAME
 import ru.art.platform.constants.CommonConstants.NAME_PASSWORD
@@ -18,8 +18,10 @@ import ru.art.platform.constants.CommonConstants.PLATFORM
 import ru.art.platform.constants.CommonConstants.PROJECT
 import ru.art.platform.constants.CommonConstants.TOKEN
 import ru.art.platform.constants.CommonConstants.USER
-import ru.art.platform.constants.DbConstants.PROJECT_NAME_FIELD_NUM
-import ru.art.platform.constants.DbConstants.PROJECT_NAME_INDEX_ID
+import ru.art.platform.constants.DbConstants.CONTAINER_PROJECT_TITLE_FIELD_NUM
+import ru.art.platform.constants.DbConstants.CONTAINER_PROJECT_TITLE_INDEX_ID
+import ru.art.platform.constants.DbConstants.PROJECT_TITLE_FIELD_NUM
+import ru.art.platform.constants.DbConstants.PROJECT_TITLE_INDEX_ID
 import ru.art.platform.constants.DbConstants.USER_NAME_FIELD_NUM
 import ru.art.platform.constants.DbConstants.USER_PASSWORD_FIELD_NUM
 import ru.art.platform.constants.DbConstants.USER_TOKEN_FIELD_NUM
@@ -37,6 +39,7 @@ import ru.art.rsocket.server.RsocketServer.*
 import ru.art.service.constants.RequestValidationPolicy.*
 import ru.art.tarantool.configuration.lua.TarantoolIndexConfiguration.*
 import ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.*
+import ru.art.tarantool.dao.*
 import ru.art.tarantool.service.TarantoolIndexService.*
 
 object ManagementPanelModule {
@@ -69,11 +72,18 @@ object ManagementPanelModule {
                 .part(Part.builder().fieldNumber(USER_TOKEN_FIELD_NUM).type(STRING).build())
                 .build())
         createIndex(PLATFORM, builder()
-                .id(PROJECT_NAME_INDEX_ID)
+                .id(PROJECT_TITLE_INDEX_ID)
                 .spaceName(PROJECT)
                 .indexName(NAME)
-                .part(Part.builder().fieldNumber(PROJECT_NAME_FIELD_NUM).type(STRING).build())
+                .part(Part.builder().fieldNumber(PROJECT_TITLE_FIELD_NUM).type(STRING).build())
                 .build())
+        createIndex(PLATFORM, builder()
+                .id(CONTAINER_PROJECT_TITLE_INDEX_ID)
+                .spaceName("container")
+                .indexName("project")
+                .part(Part.builder().fieldNumber(CONTAINER_PROJECT_TITLE_FIELD_NUM).type(STRING).build())
+                .build())
+        TarantoolDao.tarantool("platform").deleteAll("container")
     }
 
     private fun registerFunctions() {
@@ -97,7 +107,11 @@ object ManagementPanelModule {
                 .validationPolicy(VALIDATABLE)
                 .responseMapper(fromProject)
                 .responseProcessingMode(REACTIVE)
-                .handle<ProjectRequest, Flux<Project>>(ProjectService::addProject)
+                .handle(ProjectService::addProject)
+        rsocket(BUILD_PROJECT)
+                .requestMapper(toBuildRequest)
+                .validationPolicy(VALIDATABLE)
+                .consume(ProjectService::buildProject)
         rsocket(GET_PROJECTS)
                 .responseMapper(collectionValueFromModel(fromProject)::map)
                 .produce(ProjectService::getProjects)

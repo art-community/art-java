@@ -4,7 +4,7 @@ import {Box, Button, Grid, IconButton, Typography, useTheme} from "@material-ui/
 import {ArrowBackOutlined} from "@material-ui/icons";
 import {AssemblyCardComponent} from "./AssemblyCardComponent";
 import {AssembliesComponentProps} from "./props/AssemblyComponentsProps";
-import {getAssemblies} from "../../api/PlatformApi";
+import {buildProject, getAssemblies} from "../../api/PlatformApi";
 import {Assembly} from "../../model/Models";
 
 export const AssembliesComponent = (props: AssembliesComponentProps) => {
@@ -33,7 +33,7 @@ export const AssembliesComponent = (props: AssembliesComponentProps) => {
             </Grid>
             <Box mt={theme.spacing(0.5)}>
                 <Grid item>
-                    <Button variant={"outlined"} color={"primary"}>Собрать</Button>
+                    <Button variant={"outlined"} color={"primary"} onClick={() => buildProject({projectId: props.project.id})}>Собрать</Button>
                 </Grid>
             </Box>
         </Box>

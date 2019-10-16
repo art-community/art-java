@@ -4,6 +4,7 @@ import reactor.core.publisher.*
 import reactor.core.publisher.Flux.*
 import ru.art.config.extensions.activator.AgileConfigurationsActivator.*
 import ru.art.platform.agent.configuration.*
+import ru.art.platform.agent.service.*
 import ru.art.platform.agent.service.ProjectService.initializeProject
 import ru.art.platform.agent.state.AgentModuleState.subscribeOnProject
 import ru.art.platform.api.constants.ApIConstants.*
@@ -35,5 +36,8 @@ object AgentModule {
                         initializeProject(project)
                     }
                 }
+        rsocket(BUILD_PROJECT)
+                .requestMapper(toProject)
+                .consume(ProjectService::buildProject)
     }
 }

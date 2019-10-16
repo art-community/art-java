@@ -69,6 +69,10 @@ export interface ServiceMethodCommand {
     methodId: string
 }
 
+export interface BuildRequest {
+    projectId: number
+}
+
 export enum AssemblyState {
     FAILED,
     BUILDING,

@@ -21,8 +21,11 @@ object DbConstants {
     const val USER_PASSWORD_FIELD_NUM = 3
     const val USER_TOKEN_FIELD_NUM = 2
 
-    const val PROJECT_NAME_INDEX_ID = 1
-    const val PROJECT_NAME_FIELD_NUM = 2
+    const val PROJECT_TITLE_INDEX_ID = 1
+    const val PROJECT_TITLE_FIELD_NUM = 2
+
+    const val CONTAINER_PROJECT_TITLE_INDEX_ID = 1
+    const val CONTAINER_PROJECT_TITLE_FIELD_NUM = 2
 }
 
 object UserConstants {
@@ -50,6 +53,7 @@ object LoggingMessages {
     val CREATED_AGENT_CONTAINER = { name: String, id: String -> "Created agent '$name' container with id = $id" }
     val STARTED_AGENT_CONTAINER = { name: String, id: String -> "Started agent '$name' container with id = $id" }
     val CONTAINER_FOR_AGENT_INITIALIZED = { name: String -> "Container for agent '$name' initialized" }
+    val CONTAINER_FOR_AGENT_ALREADY_INITIALIZED = { name: String, id: String -> "Container with id = $id for agent was already '$name' initialized" }
 }
 
 object DockerConstants {
@@ -59,4 +63,13 @@ object DockerConstants {
     const val AGENT_MIN_PORT = 9000
     const val AGENT_MAX_PORT = 10000
     const val AGENT_CONTAINER_WAITING_TIME_SECONDS = 1L
+
+    enum class ContainerState {
+        created,
+        restarting,
+        running,
+        paused,
+        exited,
+        dead
+    }
 }

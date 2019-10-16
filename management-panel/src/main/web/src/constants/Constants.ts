@@ -22,6 +22,7 @@ export const AUTHENTICATE = 'authenticate';
 export const GET_PROJECTS = 'getProjects';
 export const ADD_PROJECT = 'addProject';
 export const DELETE_PROJECT = 'deleteProject';
+export const BUILD_PROJECT = 'buildProject';
 
 export const AUTHORIZED_STORE = 'authorized';
 export const TOKEN_COOKIE = 'token';

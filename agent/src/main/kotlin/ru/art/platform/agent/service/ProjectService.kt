@@ -2,6 +2,7 @@ package ru.art.platform.agent.service
 
 import org.apache.logging.log4j.io.IoBuilder.*
 import org.eclipse.jgit.api.Git.*
+import org.zeroturnaround.exec.*
 import ru.art.logging.LoggingModule.*
 import ru.art.platform.agent.constants.BuildFiles.BUILD_GRADLE
 import ru.art.platform.agent.constants.BuildFiles.BUILD_GRADLE_KTS
@@ -43,5 +44,31 @@ object ProjectService {
                     }
                 }
         emitProjectUpdate(project.toBuilder().technologies(technologies).state(INITIALIZED).build())
+    }
+
+    fun buildProject(project: Project) {
+        val path = get(project.title)
+        createDirectories(path)
+        if (path.toFile().isDirectory && path.toFile().listFiles()?.isNotEmpty() == true) {
+            open(path.toFile())
+                    .pull()
+                    .setRemote("origin")
+                    .setRemoteBranchName("latest")
+                    .call()
+        }
+        else {
+            cloneRepository()
+                    .setURI(project.gitUrl)
+                    .setDirectory(path.toFile())
+                    .call()
+        }
+        ProcessExecutor()
+                .command("gradle", "build")
+                .directory(path.toFile())
+                .redirectOutput(LOGGER_OUTPUT_STREAM)
+                .redirectError(LOGGER_OUTPUT_STREAM)
+                .start()
+                .process
+                .waitFor()
     }
 }

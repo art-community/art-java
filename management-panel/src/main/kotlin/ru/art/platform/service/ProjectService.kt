@@ -14,7 +14,6 @@ import ru.art.platform.constants.CommonConstants.PROJECT
 import ru.art.platform.constants.DockerConstants.AGENT_MAX_PORT
 import ru.art.platform.constants.DockerConstants.AGENT_MIN_PORT
 import ru.art.platform.constants.LoggingMessages.CONTAINER_FOR_AGENT_INITIALIZED
-import ru.art.platform.service.DockerService.removeAgentContainer
 import ru.art.platform.service.DockerService.startAgentContainerIfNeeded
 import ru.art.rsocket.communicator.RsocketCommunicator.*
 import ru.art.tarantool.dao.TarantoolDao.*
@@ -37,13 +36,27 @@ object ProjectService {
                     .stream<Project, Project>(project)
                     .map { response -> response.responseData }
                     .doOnNext { updatedProject -> tarantool(PLATFORM).put(PROJECT, fromProject.map(updatedProject)) }
-                    .doOnComplete { removeAgentContainer(project.title) }
                     .subscribe({ project -> emitter.next(project) }, { error -> emitter.error(error) }, { emitter.complete() })
         }
     }
 
     fun buildProject(request: BuildRequest) {
-
+        val project = tarantool(PLATFORM).get(PROJECT, setOf(request.projectId)).map(toProject::map)
+        if (!project.isPresent) {
+            return
+        }
+        var port = findAvailableTcpPort(AGENT_MIN_PORT, AGENT_MAX_PORT)
+        val foundContainer = tarantool(PLATFORM).getByIndex("container", "project", setOf(project.get().title))
+        if (foundContainer.isPresent) {
+            port = foundContainer.get().getInt("port")
+        }
+        startAgentContainerIfNeeded(project.get().title, port)
+        logger.info(CONTAINER_FOR_AGENT_INITIALIZED(project.get().title))
+        rsocketCommunicator(LOCALHOST, port)
+                .functionId(BUILD_PROJECT)
+                .requestMapper(fromProject)
+                .call(project.get())
+                .subscribe()
     }
 
     fun deleteProject(request: Long) {
