@@ -58,3 +58,6 @@ TECHNOLOGY_IMAGES.set("npm", npm);
 TECHNOLOGY_IMAGES.set("yarn", yarn);
 
 export const RSOCKET_REQUEST_COUNT =  2147483647;
+
+export const NEW = "NEW";
+export const INITIALIZED = "INITIALIZED";

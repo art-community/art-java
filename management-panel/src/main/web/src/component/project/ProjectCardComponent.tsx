@@ -17,7 +17,7 @@ import {BuildOutlined, MoreVert} from "@material-ui/icons";
 import * as React from "react";
 import {useState} from "react";
 import {ProjectCardComponentProps, ProjectCardMenuAction} from "./props/ProjectComponentsProps";
-import {TECHNOLOGY_IMAGES} from "../../constants/Constants";
+import {INITIALIZED, TECHNOLOGY_IMAGES} from "../../constants/Constants";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     projectAvatar: {
@@ -57,17 +57,20 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
         <CardHeader
             avatar={
                 <Avatar className={styles.projectAvatar}>
-                    {props.project.title[0]}
+                    {props.project.title && props.project.title.length > 0 ? props.project.title[0] : ""}
                 </Avatar>
             }
             action={
                 <div>
-                    <IconButton color={"primary"} onClick={(event: React.MouseEvent<HTMLElement>) => {
+                    <IconButton disabled={props.project.state != INITIALIZED}
+                                color={"primary"}
+                                onClick={(event: React.MouseEvent<HTMLElement>) => {
                         setMenuAnchor(event.currentTarget);
                     }}>
                         <MoreVert/>
                     </IconButton>
-                    <Menu anchorEl={menuAnchor}
+                    <Menu
+                        anchorEl={menuAnchor}
                           getContentAnchorEl={null}
                           anchorOrigin={{
                               horizontal: 'right',
@@ -80,7 +83,9 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
                           onClose={() => setMenuAnchor(null)}
                           open={open}
                           keepMounted>
-                        <MenuItem onClick={() => {
+                        <MenuItem
+                            disabled={props.project.state != INITIALIZED}
+                            onClick={() => {
                             setMenuAnchor(null);
                             props.onAction(ProjectCardMenuAction.BUILD);
                         }}>
@@ -95,7 +100,8 @@ export const ProjectCardComponent = (props: ProjectCardComponentProps) => {
                 </Typography>
             }
             subheader={
-                <Typography color="textSecondary" variant="body2">
+                <Typography
+                    color="textSecondary" variant="body2">
                     <Link href={props.project.gitUrl}>
                         Посмотреть в git репо
                     </Link>

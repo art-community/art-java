@@ -11,6 +11,7 @@ import ru.art.platform.agent.constants.Technologies.GRADLE
 import ru.art.platform.agent.constants.Technologies.NPM
 import ru.art.platform.agent.constants.Technologies.YARN
 import ru.art.platform.agent.state.AgentModuleState.emitProjectUpdate
+import ru.art.platform.api.constants.ApIConstants.ProjectState.*
 import ru.art.platform.api.model.*
 import java.nio.file.Files.*
 import java.nio.file.Paths.*
@@ -30,7 +31,6 @@ object ProjectService {
                 .setDirectory(path.toFile())
                 .call()
         val technologies = mutableSetOf<String>()
-        logger.info("Files: ${path.toFile().walkTopDown().toList()}")
         path.toFile()
                 .walkTopDown()
                 .filter { file -> file.isFile }
@@ -42,6 +42,6 @@ object ProjectService {
                         YARN_LOCK_FILES -> technologies += YARN
                     }
                 }
-        emitProjectUpdate(project.toBuilder().technologies(technologies).build())
+        emitProjectUpdate(project.toBuilder().technologies(technologies).state(INITIALIZED).build())
     }
 }

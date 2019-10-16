@@ -40,6 +40,7 @@ export function requestResponse(request: any,
                 console.error(response.serviceExecutionException);
                 onError(response.serviceExecutionException)
             }
+            console.log(response);
             onComplete(response.responseData);
         })
         .catch(error => {

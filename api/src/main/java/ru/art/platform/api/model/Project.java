@@ -1,6 +1,8 @@
 package ru.art.platform.api.model;
 
 import lombok.*;
+import static ru.art.platform.api.constants.ApIConstants.*;
+import static ru.art.platform.api.constants.ApIConstants.ProjectState.*;
 import java.util.*;
 
 @Value
@@ -12,4 +14,6 @@ public class Project {
     private final String jiraUrl;
     @Singular("technology")
     private final Set<String> technologies;
+    @Builder.Default
+    private final ProjectState state = NEW;
 }

@@ -5,4 +5,9 @@ import lombok.experimental.*;
 @UtilityClass
 public class ApIConstants {
     public static final String INITIALIZE_PROJECT = "initializeProject";
+
+    public enum ProjectState {
+        NEW,
+        INITIALIZED
+    }
 }

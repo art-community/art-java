@@ -33,6 +33,7 @@ export interface Project {
     gitUrl: string
     jiraUrl: string
     technologies: string[]
+    state: string
 }
 
 export interface ProjectRequest {

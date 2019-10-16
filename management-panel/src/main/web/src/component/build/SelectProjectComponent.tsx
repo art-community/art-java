@@ -14,7 +14,7 @@ import {
     useTheme
 } from "@material-ui/core";
 import {getProjects} from "../../api/PlatformApi";
-import {AUTHORIZE_PATH, TOKEN_COOKIE} from "../../constants/Constants";
+import {AUTHORIZE_PATH, INITIALIZED, TOKEN_COOKIE} from "../../constants/Constants";
 import {useHistory} from "react-router";
 import Cookies from "js-cookie";
 import {Project} from "../../model/Models";
@@ -42,6 +42,7 @@ export const SelectProjectComponent = (props: SelectProjectComponentProps) => {
         <List>
             {projects.mapValuesToArray(project =>
                 <ListItem
+                    disabled={project.state != INITIALIZED}
                     key={project.id}
                     button
                     onClick={() => props.onSelect(project)}>
