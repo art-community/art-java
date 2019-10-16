@@ -18,16 +18,24 @@
 
 package ru.art.entity.tuple.schema;
 
-import lombok.*;
-import ru.art.entity.*;
-import ru.art.entity.constants.*;
-import ru.art.entity.exception.*;
-import static ru.art.core.caster.Caster.*;
-import static ru.art.core.factory.CollectionsFactory.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import ru.art.entity.MapValue;
+import ru.art.entity.Primitive;
+import ru.art.entity.constants.ValueType;
+import ru.art.entity.exception.ValueMappingException;
+
+import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.nonNull;
+import static ru.art.core.caster.Caster.cast;
+import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
 import static ru.art.entity.Value.*;
-import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
-import static ru.art.entity.constants.ValueType.*;
-import java.util.*;
+import static ru.art.entity.constants.ValueMappingExceptionMessages.VALUE_TYPE_IS_NULL;
+import static ru.art.entity.constants.ValueType.MAP;
+import static ru.art.entity.constants.ValueType.asPrimitiveType;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
@@ -40,6 +48,7 @@ public class MapValueSchema extends ValueSchema {
                 .entrySet()
                 .stream()
                 .filter(entry -> isPrimitive(entry.getKey()))
+                .filter(entry -> nonNull(entry.getValue()))
                 .forEach(entry -> entriesSchema.add(new MapEntrySchema(
                         entry.getKey().getType(),
                         asPrimitive(entry.getKey()),
