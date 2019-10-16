@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT.*
 import com.auth0.jwt.algorithms.Algorithm.*
 import ru.art.core.factory.CollectionsFactory.*
 import ru.art.entity.PrimitivesFactory.*
-import ru.art.logging.LoggingModule.*
 import ru.art.platform.api.mapping.UserMapper.*
 import ru.art.platform.api.model.*
 import ru.art.platform.constants.CommonConstants.NAME_PASSWORD
@@ -37,12 +36,13 @@ object UserService {
             .token(tarantool(PLATFORM).put(TOKEN, stringPrimitive(createToken(request.name, request.password))).getString(VALUE))
             .build()
 
-    fun authenticate(token: String) {
+    fun authenticate(token: String): Boolean {
         require(HMAC256(SECRET))
                 .withIssuer(PLATFORM)
                 .build()
                 .verify(tarantool(PLATFORM).getByIndex(TOKEN, TOKEN, setOf(token))
                         .map { entity -> entity.getString(VALUE) }
                         .orElseThrow { PlatformException(TOKEN_DOES_NOT_EXISTS) })
+        return true
     }
 }

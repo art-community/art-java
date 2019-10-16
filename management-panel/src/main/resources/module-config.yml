@@ -9,7 +9,7 @@ tarantool:
   configurations:
     platform:
       connection:
-        host: 185.155.19.36
+        host: localhost
         port: 3301
         username: username
         password: password

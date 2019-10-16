@@ -36,20 +36,26 @@ object ServiceConstants {
     const val ADD_PROJECT = "addProject"
     const val GET_PROJECTS = "getProjects"
     const val DELETE_PROJECT = "deleteProject"
-    const val UPDATE_PROJECT = "updateProject"
 }
 
 object ErrorMessages {
     const val TOKEN_DOES_NOT_EXISTS = "Token does not exists"
-    const val AUTHENTICATION_FAILED = "Authentication failed"
     const val USER_DOES_NOT_EXISTS = "User does not exists"
     const val INVALID_META_DATA = "Invalid RSocket metadata"
+}
+
+object LoggingMessages {
+    val KILLED_AGENT_CONTAINER = { name: String -> "Killed agent '$name' container" }
+    val REMOVED_AGENT_CONTAINER = { name: String -> "Removed agent '$name' container" }
+    val CREATED_AGENT_CONTAINER = { name: String, id: String -> "Created agent '$name' container with id = $id" }
+    val STARTED_AGENT_CONTAINER = { name: String, id: String -> "Started agent '$name' container with id = $id" }
+    val CONTAINER_FOR_AGENT_INITIALIZED = { name: String -> "Container for agent '$name' initialized" }
 }
 
 object DockerConstants {
     const val DOCKER_URL = "tcp://localhost:2375"
     const val AGENT_IMAGE = "platform/agent:latest"
-    val AGENT_CONTAINER_NAME = {projectName: String -> "${projectName.replace(SPACE, EMPTY_STRING)}.$AGENT"}
+    val AGENT_CONTAINER_NAME = { projectTitle: String -> "${projectTitle.replace(SPACE, EMPTY_STRING)}.$AGENT" }
     const val AGENT_MIN_PORT = 9000
     const val AGENT_MAX_PORT = 10000
 }
