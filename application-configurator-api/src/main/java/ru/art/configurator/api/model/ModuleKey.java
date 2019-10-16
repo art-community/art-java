@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package ru.art.configurator.api.entity;
+package ru.art.configurator.api.model;
 
 import lombok.*;
 import ru.art.configurator.api.exception.*;

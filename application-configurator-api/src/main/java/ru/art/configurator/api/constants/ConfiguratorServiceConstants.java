@@ -36,5 +36,7 @@ public interface ConfiguratorServiceConstants {
         String UPLOAD_PROFILE_CONFIG = "UPLOAD_PROFILE_CONFIG";
         String UPLOAD_MODULE_CONFIG = "UPLOAD_MODULE_CONFIG";
         String GET_APPLICATION_CONFIG = "GET_APPLICATION_CONFIG";
+        String DELETE_MODULE = "DELETE_MODULE";
+        String DELETE_PROFILE = "DELETE_PROFILE";
     }
 }

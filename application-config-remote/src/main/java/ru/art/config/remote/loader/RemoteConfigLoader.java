@@ -19,7 +19,7 @@
 package ru.art.config.remote.loader;
 
 import lombok.experimental.*;
-import ru.art.configurator.api.entity.*;
+import ru.art.configurator.api.model.Configuration;
 import ru.art.entity.*;
 import ru.art.service.*;
 import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.*;
