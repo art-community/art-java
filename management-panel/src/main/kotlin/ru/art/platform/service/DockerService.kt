@@ -9,6 +9,7 @@ import ru.art.core.constants.CharConstants.*
 import ru.art.logging.LoggingModule.*
 import ru.art.platform.api.constants.CommonConstants.*
 import ru.art.platform.constants.DockerConstants.AGENT_CONTAINER_NAME
+import ru.art.platform.constants.DockerConstants.AGENT_CONTAINER_WAITING_TIME_SECONDS
 import ru.art.platform.constants.DockerConstants.AGENT_IMAGE
 import ru.art.platform.constants.DockerConstants.DOCKER_URL
 import ru.art.platform.constants.LoggingMessages.CREATED_AGENT_CONTAINER
@@ -21,7 +22,7 @@ object DockerService {
     private val logger = loggingModule().getLogger(DockerService::class.java)
 
     fun startAgentContainerIfNeeded(projectTitle: String, port: Int): Unit = with(getInstance(DOCKER_URL).build()) {
-        killAgentContainer(projectTitle)
+        removeAgentContainer(projectTitle)
         val containerId = createContainerCmd(AGENT_IMAGE)
                 .withHostConfig(newHostConfig()
                         .withPrivileged(true)
@@ -37,14 +38,14 @@ object DockerService {
         logger.info(STARTED_AGENT_CONTAINER(AGENT_CONTAINER_NAME(projectTitle), containerId))
         WaitContainerResultCallback().
                 let(waitContainerCmd(containerId)::exec)
-                .apply { runCatching { awaitStarted(1, TimeUnit.SECONDS) } }
+                .apply { runCatching { awaitStarted(AGENT_CONTAINER_WAITING_TIME_SECONDS, TimeUnit.SECONDS) } }
     }
 
-    fun killAgentContainer(projectTitle: String): Unit = with(getInstance(DOCKER_URL).build()) {
+    fun removeAgentContainer(projectTitle: String): Unit = with(getInstance(DOCKER_URL).build()) {
         runCatching {
-            killContainerCmd(AGENT_CONTAINER_NAME(projectTitle))
+            killContainerCmd(AGENT_CONTAINER_NAME(projectTitle)).exec()
             logger.info(KILLED_AGENT_CONTAINER(AGENT_CONTAINER_NAME(projectTitle)))
-            removeContainerCmd(AGENT_CONTAINER_NAME(projectTitle))
+            removeContainerCmd(AGENT_CONTAINER_NAME(projectTitle)).exec()
             logger.info(REMOVED_AGENT_CONTAINER(AGENT_CONTAINER_NAME(projectTitle)))
         }
     }

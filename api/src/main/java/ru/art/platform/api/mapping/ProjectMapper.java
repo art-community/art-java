@@ -1,9 +1,12 @@
 package ru.art.platform.api.mapping;
 
-import ru.art.entity.*;
-import ru.art.entity.mapper.*;
-import ru.art.platform.api.model.*;
-import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
+
+import java.lang.String;
+import ru.art.entity.Entity;
+import ru.art.entity.mapper.ValueFromModelMapper;
+import ru.art.entity.mapper.ValueToModelMapper;
+import ru.art.platform.api.model.Project;
 
 public interface ProjectMapper {
 	String id = "id";

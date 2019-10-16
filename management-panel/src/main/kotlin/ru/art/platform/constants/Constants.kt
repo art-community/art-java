@@ -58,4 +58,5 @@ object DockerConstants {
     val AGENT_CONTAINER_NAME = { projectTitle: String -> "${projectTitle.replace(SPACE, EMPTY_STRING)}.$AGENT" }
     const val AGENT_MIN_PORT = 9000
     const val AGENT_MAX_PORT = 10000
+    const val AGENT_CONTAINER_WAITING_TIME_SECONDS = 1L
 }

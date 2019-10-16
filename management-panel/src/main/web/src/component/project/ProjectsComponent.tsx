@@ -23,7 +23,7 @@ export const ProjectsComponent = () => {
     useEffect(() => getProjects(setProjects, () => {
         Cookies.remove(TOKEN_COOKIE);
         history.push(AUTHORIZE_PATH)
-    }), []);
+    }), [mode]);
 
     const handleAction = (action: ProjectCardMenuAction, project: Project) => {
         switch (+action) {
@@ -38,10 +38,7 @@ export const ProjectsComponent = () => {
     };
 
     const projectAddForm = <ProjectAddComponent
-        onProjectUpdate={(project: Project) => {
-            setProjects(projects.addValue(project.id, project));
-            showProjectsGrid()
-        }}
+        onProjectUpdate={(project: Project) => setProjects(projects.addValue(project.id, project))}
         onBack={() => showProjectsGrid()}
     />;
 

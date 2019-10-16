@@ -55,6 +55,9 @@ export function requestStream(request: any,
                               onError: (error: any) => void = () => {
                               },
                               onComplete: () => void = () => {
+                              },
+                              onSubscribe: () => void = () => {
+
                               }) {
     connect()
         .then(rsocket => rsocket.requestStream({
@@ -82,7 +85,10 @@ export function requestStream(request: any,
                         }
                         onNext(response.responseData)
                     },
-                    onSubscribe: (subscription: ISubscription) => subscription.request(RSOCKET_REQUEST_COUNT)
+                    onSubscribe: (subscription: ISubscription) => {
+                        onSubscribe();
+                        subscription.request(RSOCKET_REQUEST_COUNT)
+                    }
                 }
             ))
         .catch(error => {

@@ -2,7 +2,6 @@ import {Project} from "../../../model/Models";
 
 export interface ProjectComponentsProps {
     onProjectUpdate: (project: Project) => void
-
     onBack: () => void;
 }
 

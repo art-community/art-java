@@ -11,7 +11,7 @@ object AgentModuleState {
         projectEmitter[id] = emitter
     }
 
-    fun onProject(project: Project) {
+    fun emitProjectUpdate(project: Project) {
         projectEmitter[project.id]?.next(project)
     }
 }

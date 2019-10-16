@@ -1,11 +1,26 @@
 import * as React from "react";
 import {useState} from "react";
-import {Box, Button, Grid, IconButton, Popper, TextField, Typography, useTheme} from "@material-ui/core";
+import {
+    Box,
+    Button, createStyles,
+    Grid,
+    IconButton,
+    LinearProgress, makeStyles,
+    Popper,
+    TextField, Theme,
+    Typography,
+    useTheme
+} from "@material-ui/core";
 import {addProject} from "../../api/PlatformApi";
 import {ArrowBackOutlined} from "@material-ui/icons";
 import {ProjectComponentsProps} from "./props/ProjectComponentsProps";
 import {URL_REGEX} from "../../constants/Constants";
 
+const useStyles = makeStyles((theme: Theme) => createStyles({
+    progressBar: {
+        marginTop: theme.spacing(2)
+    }
+}));
 
 export const ProjectAddComponent = (props: ProjectComponentsProps) => {
     const [title, setTitle] = useState("");
@@ -13,10 +28,32 @@ export const ProjectAddComponent = (props: ProjectComponentsProps) => {
     const [jiraUrl, setJiraUrl] = useState("");
     const [showProjectExistsError, setShowProjectExistsError] = useState(false);
     const [projectExistsErrorMessageAnchor, setProjectExistsErrorMessageAnchor] = useState<null | HTMLElement>(null);
+    const [waiting, setWaiting] = useState(false);
+    const styles = useStyles();
     const theme = useTheme();
+
+    const handleAddProjectButtonClick = () => {
+        setShowProjectExistsError(false);
+        setWaiting(true);
+        addProject({
+                title: title,
+                gitUrl: gitUrl,
+                jiraUrl: jiraUrl
+            }, (project) => {
+                setWaiting(false);
+                setShowProjectExistsError(false);
+                props.onProjectUpdate(project);
+                props.onBack()
+            },
+            () => {
+                setWaiting(false);
+                setShowProjectExistsError(true);
+            })
+    };
     return <Grid>
         <Grid item>
-            <IconButton onClick={() => props.onBack()}>
+            <IconButton disabled={waiting}
+                        onClick={() => props.onBack()}>
                 <ArrowBackOutlined color={"secondary"}/>
             </IconButton>
         </Grid>
@@ -27,6 +64,7 @@ export const ProjectAddComponent = (props: ProjectComponentsProps) => {
                         Новый проект
                     </Typography>
                     <TextField
+                        disabled={waiting}
                         variant={'outlined'}
                         margin={'normal'}
                         required
@@ -38,6 +76,7 @@ export const ProjectAddComponent = (props: ProjectComponentsProps) => {
                         fullWidth
                     />
                     <TextField
+                        disabled={waiting}
                         error={Boolean(gitUrl) && !gitUrl.match(URL_REGEX)}
                         variant={'outlined'}
                         margin={'normal'}
@@ -50,6 +89,7 @@ export const ProjectAddComponent = (props: ProjectComponentsProps) => {
                         fullWidth
                     />
                     <TextField
+                        disabled={waiting}
                         error={Boolean(jiraUrl) && !jiraUrl.match(URL_REGEX)}
                         variant={'outlined'}
                         margin={'normal'}
@@ -63,6 +103,7 @@ export const ProjectAddComponent = (props: ProjectComponentsProps) => {
                     <Box mt={theme.spacing(0.5)}>
                         <Button fullWidth
                                 disabled={
+                                    waiting ||
                                     !title ||
                                     !gitUrl ||
                                     !gitUrl.match(URL_REGEX) ||
@@ -71,17 +112,7 @@ export const ProjectAddComponent = (props: ProjectComponentsProps) => {
                                 ref={ref => setProjectExistsErrorMessageAnchor(ref)}
                                 variant={'outlined'}
                                 color={'primary'}
-                                onClick={() => {
-                                    setShowProjectExistsError(false);
-                                    addProject({
-                                            title: title,
-                                            gitUrl: gitUrl,
-                                            jiraUrl: jiraUrl
-                                        },
-                                        props.onProjectUpdate,
-                                        () => setShowProjectExistsError(true))
-                                }}
-                        >
+                                onClick={() => handleAddProjectButtonClick()}>
                             Добавить
                         </Button>
                         <Popper open={showProjectExistsError && Boolean(projectExistsErrorMessageAnchor)}
@@ -91,9 +122,12 @@ export const ProjectAddComponent = (props: ProjectComponentsProps) => {
                                 Проект «{title}‎» уже существует
                             </Typography>
                         </Popper>
+                        {waiting
+                            ? <LinearProgress className={styles.progressBar}/>
+                            : <></>}
                     </Box>
                 </Box>
             </form>
         </Grid>
-    </Grid>
+    </Grid>;
 };
