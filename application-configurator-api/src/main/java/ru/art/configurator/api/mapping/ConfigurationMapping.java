@@ -18,7 +18,7 @@
 
 package ru.art.configurator.api.mapping;
 
-import ru.art.configurator.api.entity.*;
+import ru.art.configurator.api.model.Configuration;
 import ru.art.entity.*;
 import ru.art.entity.mapper.ValueFromModelMapper.*;
 import ru.art.entity.mapper.*;

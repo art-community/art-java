@@ -18,19 +18,24 @@
 
 package ru.art.entity.tuple.schema;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import ru.art.entity.Entity;
 import ru.art.entity.Value;
-import ru.art.entity.*;
-import ru.art.entity.constants.*;
-import ru.art.entity.exception.*;
-import static java.util.Collections.*;
-import static java.util.Objects.*;
-import static ru.art.core.caster.Caster.*;
-import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.entity.Value.*;
-import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
-import static ru.art.entity.constants.ValueType.*;
-import java.util.*;
+import ru.art.entity.constants.ValueType;
+import ru.art.entity.exception.ValueMappingException;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.util.Collections.emptyList;
+import static java.util.Objects.isNull;
+import static ru.art.core.caster.Caster.cast;
+import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
+import static ru.art.entity.Value.isPrimitiveType;
+import static ru.art.entity.constants.ValueMappingExceptionMessages.VALUE_TYPE_IS_NULL;
+import static ru.art.entity.constants.ValueType.ENTITY;
 
 @Getter
 public class EntitySchema extends ValueSchema {
@@ -40,7 +45,10 @@ public class EntitySchema extends ValueSchema {
         super(ENTITY);
         Set<? extends Map.Entry<String, ? extends Value>> fields = entity.getFields().entrySet();
         for (Map.Entry<String, ? extends Value> entry : fields) {
-            fieldsSchema.add(new EntityFieldSchema(entry.getValue().getType(), entry.getKey(), fromValue(entry.getValue())));
+            String key = entry.getKey();
+            Value value = entry.getValue();
+            if (isNull(value)) continue;
+            fieldsSchema.add(new EntityFieldSchema(value.getType(), key, fromValue(value)));
         }
     }
 

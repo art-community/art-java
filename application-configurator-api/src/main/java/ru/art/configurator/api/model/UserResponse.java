@@ -16,24 +16,14 @@
  * limitations under the License.
  */
 
-package ru.art.service.validation;
+package ru.art.configurator.api.model;
 
 import lombok.*;
-import static java.text.MessageFormat.*;
-import static ru.art.service.constants.ServiceExceptionsMessages.*;
-import java.util.*;
 
+@Getter
+@RequiredArgsConstructor
 @AllArgsConstructor
-public class ContainsValidationExpression extends ValidationExpression<Object> {
-    private Collection<?> values;
-
-    @Override
-    public boolean evaluate(String fieldName, Object value) {
-        return super.evaluate(fieldName, value) && values.contains(value);
-    }
-
-    @Override
-    public String getValidationErrorMessage() {
-        return format(NOT_CONTAINS_VALIDATION_ERROR, fieldName, value, values.toString());
-    }
+public class UserResponse {
+    private final boolean success;
+    private String token;
 }

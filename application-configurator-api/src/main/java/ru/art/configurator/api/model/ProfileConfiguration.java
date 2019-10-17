@@ -16,14 +16,16 @@
  * limitations under the License.
  */
 
-package ru.art.configurator.api.entity;
+package ru.art.configurator.api.model;
 
 import lombok.*;
+import ru.art.entity.*;
 
 @Getter
-@RequiredArgsConstructor
-@AllArgsConstructor
-public class UserResponse {
-    private final boolean success;
-    private String token;
+@Builder
+@ToString
+@EqualsAndHashCode
+public class ProfileConfiguration {
+    private final String profileId;
+    private final Entity configuration;
 }
