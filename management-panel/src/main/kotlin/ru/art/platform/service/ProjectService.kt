@@ -22,22 +22,20 @@ import ru.art.tarantool.dao.TarantoolDao.*
 object ProjectService {
     private val logger = loggingModule().getLogger(ProjectService::class.java)
 
-    fun addProject(request: ProjectRequest): Flux<Project> {
-        val port = findAvailableTcpPort(AGENT_MIN_PORT, AGENT_MAX_PORT)
+    fun addProject(request: ProjectRequest): Flux<Project> = create<Project> { emitter ->
         val project = toProject.map(tarantool(PLATFORM).put(PROJECT, fromProjectRequest.map(request)))
-        return create<Project> { emitter ->
-            emitter.next(project)
-            startAgentContainerIfNeeded(project.title, port)
-            logger.info(CONTAINER_FOR_AGENT_INITIALIZED(project.title))
-            rsocketCommunicator(LOCALHOST, port)
-                    .functionId(INITIALIZE_PROJECT)
-                    .requestMapper(fromProject)
-                    .responseMapper(toProject)
-                    .stream<Project, Project>(project)
-                    .map { response -> response.responseData }
-                    .doOnNext { updatedProject -> tarantool(PLATFORM).put(PROJECT, fromProject.map(updatedProject)) }
-                    .subscribe({ project -> emitter.next(project) }, { error -> emitter.error(error) }, { emitter.complete() })
-        }
+        emitter.next(project)
+        val port = findAvailableTcpPort(AGENT_MIN_PORT, AGENT_MAX_PORT)
+        startAgentContainerIfNeeded(project.title, port)
+        logger.info(CONTAINER_FOR_AGENT_INITIALIZED(project.title))
+        rsocketCommunicator(LOCALHOST, port)
+                .functionId(INITIALIZE_PROJECT)
+                .requestMapper(fromProject)
+                .responseMapper(toProject)
+                .stream<Project, Project>(project)
+                .map { response -> response.responseData }
+                .doOnNext { updatedProject -> tarantool(PLATFORM).put(PROJECT, fromProject.map(updatedProject)) }
+                .subscribe({ updatedProject -> emitter.next(updatedProject) }, { error -> emitter.error(error) }, { emitter.complete() })
     }
 
     fun buildProject(request: BuildRequest) {
