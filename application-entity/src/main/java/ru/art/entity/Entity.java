@@ -581,7 +581,9 @@ public class Entity implements Value {
         }
 
         public EntityBuilder dateField(String name, Date value) {
-            fields.put(name, PrimitivesFactory.stringPrimitive(YYYY_MM_DD_T_HH_MM_SS_24H_SSS_Z_DASH_FORMAT.format(value)));
+            if (CheckerForEmptiness.isNotEmpty(value)) {
+                fields.put(name, PrimitivesFactory.stringPrimitive(YYYY_MM_DD_T_HH_MM_SS_24H_SSS_Z_DASH_FORMAT.format(value)));
+            }
             return this;
         }
 
