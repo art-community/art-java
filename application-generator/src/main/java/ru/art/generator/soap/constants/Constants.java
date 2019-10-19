@@ -21,6 +21,7 @@ public interface Constants {
     String BUILD = "build";
     String ON_VALIDATING = "onValidating";
     String VALIDATOR_VARIABLE = "validator";
+    String XML_MAPPER = "XmlMapper";
 
     interface ToXmlModelConstants {
         String XML_ENTITY_TO_MODEL_MAPPER_LAMBDA = "xmlEntity -> $T.builder()";
