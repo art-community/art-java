@@ -31,6 +31,7 @@ import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static ru.art.logging.ThreadContextExtensions.*;
 import static ru.art.service.ServiceModule.*;
 import static ru.art.service.ServiceResponseDataExtractor.*;
+import static ru.art.service.constants.RequestValidationPolicy.VALIDATABLE;
 import static ru.art.service.constants.ServiceErrorCodes.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;
 import static ru.art.service.factory.ServiceRequestFactory.*;
@@ -54,6 +55,12 @@ public interface ServiceController {
     static <RequestType, ResponseType> ServiceResponse<ResponseType> executeServiceMethodUnchecked(String serviceId, String methodId, RequestType requestData) {
         ServiceMethodCommand command = new ServiceMethodCommand(serviceId, methodId);
         ServiceRequest<RequestType> request = newServiceRequest(command, requestData);
+        return executeServiceMethodUnchecked(request);
+    }
+
+    static <RequestType, ResponseType> ServiceResponse<ResponseType> executeServiceMethodValidatableUnchecked(String serviceId, String methodId, RequestType requestData) {
+        ServiceMethodCommand command = new ServiceMethodCommand(serviceId, methodId);
+        ServiceRequest<RequestType> request = newServiceRequest(command, requestData, VALIDATABLE);
         return executeServiceMethodUnchecked(request);
     }
 
