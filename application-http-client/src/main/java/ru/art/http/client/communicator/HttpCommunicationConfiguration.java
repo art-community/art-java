@@ -43,8 +43,8 @@ import java.util.concurrent.*;
 class HttpCommunicationConfiguration {
     private List<String> pathParameters = linkedListOf();
     private Map<String, String> queryParameters = mapOf();
-    private List<HttpClientInterceptor> requestInterceptors = httpClientModule().getRequestInterceptors();
-    private List<HttpClientInterceptor> responseInterceptors = httpClientModule().getResponseInterceptors();
+    private List<HttpClientInterceptor> requestInterceptors = linkedListOf(httpClientModule().getRequestInterceptors());
+    private List<HttpClientInterceptor> responseInterceptors = linkedListOf(httpClientModule().getResponseInterceptors());
     private Map<String, String> headers = mapOf();
     private String url;
     private HttpMethodType methodType = GET;
@@ -66,6 +66,6 @@ class HttpCommunicationConfiguration {
     private HttpClient synchronousClient;
     private HttpAsyncClient asynchronousClient;
     private Executor asynchronousFuturesExecutor = httpClientModule().getAsynchronousFuturesExecutor();
-    private List<ValueInterceptor<Value, Value>> requestValueInterceptors = linkedListOf();
-    private List<ValueInterceptor<Value, Value>> responseValueInterceptors = linkedListOf();
+    private List<ValueInterceptor<Value, Value>> requestValueInterceptors = linkedListOf(httpClientModule().getRequestValueInterceptors());
+    private List<ValueInterceptor<Value, Value>> responseValueInterceptors = linkedListOf(httpClientModule().getResponseValueInterceptors());
 }

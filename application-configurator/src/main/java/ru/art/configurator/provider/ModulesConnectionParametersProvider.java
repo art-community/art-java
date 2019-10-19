@@ -19,7 +19,7 @@
 package ru.art.configurator.provider;
 
 import lombok.*;
-import ru.art.configurator.api.entity.*;
+import ru.art.configurator.api.model.ModuleKey;
 import ru.art.entity.Value;
 import ru.art.entity.*;
 import static java.util.Optional.*;
@@ -33,8 +33,8 @@ public interface ModulesConnectionParametersProvider {
         Optional<Entity> applicationConfiguration = getConfig(APPLICATION).filter(Value::isEntity).map(Value::asEntity);
         Optional<Entity> moduleConfiguration = getConfig(moduleKey.formatKey()).filter(Value::isEntity).map(Value::asEntity);
         if (applicationConfiguration.isPresent()) {
-            Optional<String> host = applicationConfiguration.map(configuration -> configuration.getString(BALANCER_HOST_KEY));
-            Optional<Integer> port = applicationConfiguration.map(configuration -> configuration.getInt(BALANCER_POT_KEY));
+            Optional<String> host = applicationConfiguration.map(configuration -> configuration.findString(BALANCER_HOST_KEY));
+            Optional<Integer> port = applicationConfiguration.map(configuration -> configuration.findInt(BALANCER_POT_KEY));
             if (host.isPresent() && port.isPresent()) {
                 return moduleConfiguration
                         .map(configuration -> configuration.findString(GRPC_SERVER_PATH_KEY))

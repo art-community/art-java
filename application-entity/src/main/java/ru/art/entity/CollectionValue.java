@@ -146,7 +146,7 @@ public class CollectionValue<T> implements Value {
 
     public List<MapValue> getMapValueList() {
         if (isNull(elementsType)) return emptyList();
-        if (elementsType != MAP) {
+        if (elementsType != MAP && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, MAP.toString(), elementsType.toString()));
         }
         if (isEmpty()) return emptyList();
@@ -155,7 +155,7 @@ public class CollectionValue<T> implements Value {
 
     public List<CollectionValue<?>> getCollectionsList() {
         if (isNull(elementsType)) return emptyList();
-        if (elementsType != CollectionElementsType.COLLECTION) {
+        if (elementsType != CollectionElementsType.COLLECTION && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, COLLECTION.toString(), elementsType.toString()));
         }
         if (isEmpty()) return emptyList();
@@ -164,7 +164,7 @@ public class CollectionValue<T> implements Value {
 
     public List<StringParametersMap> getStringParametersList() {
         if (isNull(elementsType)) return emptyList();
-        if (elementsType != STRING_PARAMETERS_MAP) {
+        if (elementsType != STRING_PARAMETERS_MAP && elementsType != VALUE)  {
             throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, STRING_PARAMETERS_MAP.toString(), elementsType.toString()));
         }
         if (isEmpty()) return emptyList();
@@ -173,7 +173,7 @@ public class CollectionValue<T> implements Value {
 
     public List<Entity> getEntityList() {
         if (isNull(elementsType)) return emptyList();
-        if (elementsType != ENTITY) {
+        if (elementsType != ENTITY && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, ENTITY.toString(), elementsType.toString()));
         }
         if (isEmpty()) return emptyList();
@@ -362,7 +362,7 @@ public class CollectionValue<T> implements Value {
 
     public Set<StringParametersMap> getStringParametersSet() {
         if (isNull(elementsType)) return emptySet();
-        if (elementsType != STRING_PARAMETERS_MAP) {
+        if (elementsType != STRING_PARAMETERS_MAP && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, STRING_PARAMETERS_MAP.toString(), elementsType.toString()));
         }
         if (isEmpty()) return emptySet();
@@ -371,7 +371,7 @@ public class CollectionValue<T> implements Value {
 
     public Set<MapValue> getMapValueSet() {
         if (isNull(elementsType)) return emptySet();
-        if (elementsType != MAP) {
+        if (elementsType != MAP && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, MAP.toString(), elementsType.toString()));
         }
         if (isEmpty()) return emptySet();
@@ -380,7 +380,7 @@ public class CollectionValue<T> implements Value {
 
     public Set<CollectionValue<?>> getCollectionsSet() {
         if (isNull(elementsType)) return emptySet();
-        if (elementsType != CollectionElementsType.COLLECTION) {
+        if (elementsType != CollectionElementsType.COLLECTION && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, COLLECTION.toString(), elementsType.toString()));
         }
         if (isEmpty()) return emptySet();
@@ -398,7 +398,7 @@ public class CollectionValue<T> implements Value {
 
     public Set<Entity> getEntitySet() {
         if (isNull(elementsType)) return emptySet();
-        if (elementsType != ENTITY) {
+        if (elementsType != ENTITY && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, ENTITY.toString(), elementsType.toString()));
         }
         if (isEmpty()) return emptySet();
@@ -587,7 +587,7 @@ public class CollectionValue<T> implements Value {
 
     public Queue<StringParametersMap> getStringParametersQueue() {
         if (isNull(elementsType)) return queueOf();
-        if (elementsType != STRING_PARAMETERS_MAP) {
+        if (elementsType != STRING_PARAMETERS_MAP && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, STRING_PARAMETERS_MAP.toString(), elementsType.toString()));
         }
         if (isEmpty()) return queueOf();
@@ -596,7 +596,7 @@ public class CollectionValue<T> implements Value {
 
     public Queue<MapValue> getMapValueQueue() {
         if (isNull(elementsType)) return queueOf();
-        if (elementsType != MAP) {
+        if (elementsType != MAP && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, MAP.toString(), elementsType.toString()));
         }
         if (isEmpty()) return queueOf();
@@ -605,7 +605,7 @@ public class CollectionValue<T> implements Value {
 
     public Queue<CollectionValue<?>> getCollectionsQueue() {
         if (isNull(elementsType)) return queueOf();
-        if (elementsType != CollectionElementsType.COLLECTION) {
+        if (elementsType != CollectionElementsType.COLLECTION && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, COLLECTION.toString(), elementsType.toString()));
         }
         if (isEmpty()) return queueOf();
@@ -623,7 +623,7 @@ public class CollectionValue<T> implements Value {
 
     public Queue<Entity> getEntityQueue() {
         if (isNull(elementsType)) return queueOf();
-        if (elementsType != ENTITY) {
+        if (elementsType != ENTITY && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, ENTITY.toString(), elementsType.toString()));
         }
         if (isEmpty()) return queueOf();

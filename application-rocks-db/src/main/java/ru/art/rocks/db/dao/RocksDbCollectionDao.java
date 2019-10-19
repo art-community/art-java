@@ -285,6 +285,48 @@ public interface RocksDbCollectionDao {
         return values;
     }
 
+    static void removeAt(String collectionKey, int index) {
+        List<String> values = getStringList(collectionKey);
+        values.remove(index);
+        putStrings(collectionKey, values);
+    }
+
+    static void removeStringElement(String collectionKey, String element) {
+        Set<String> values = getStringSet(collectionKey);
+        values.remove(element);
+        putStrings(collectionKey, values);
+    }
+
+    static void removeIntElement(String collectionKey, Integer element) {
+        Set<Integer> values = getIntSet(collectionKey);
+        values.remove(element);
+        putInts(collectionKey, values);
+    }
+
+    static void removeDoubleElement(String collectionKey, Double element) {
+        Set<Double> values = getDoubleSet(collectionKey);
+        values.remove(element);
+        putDoubles(collectionKey, values);
+    }
+
+    static void removeCharElement(String collectionKey, Character element) {
+        Set<Character> values = getCharSet(collectionKey);
+        values.remove(element);
+        putChars(collectionKey, values);
+    }
+
+    static void removeBoolElement(String collectionKey, Boolean element) {
+        Set<Boolean> values = getBoolSet(collectionKey);
+        values.remove(element);
+        putBools(collectionKey, values);
+    }
+
+    static void removeLongElement(String collectionKey, Long element) {
+        Set<Long> values = getLongSet(collectionKey);
+        values.remove(element);
+        putLongs(collectionKey, values);
+    }
+
 
     static <T> Set<T> getSet(String key, Function<String, T> mapper) {
         if (isEmpty(mapper)) return emptySet();
