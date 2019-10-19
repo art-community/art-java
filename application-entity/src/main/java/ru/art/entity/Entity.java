@@ -27,6 +27,7 @@ import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.constants.DateConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -581,7 +582,9 @@ public class Entity implements Value {
         }
 
         public EntityBuilder dateField(String name, Date value) {
-            fields.put(name, PrimitivesFactory.stringPrimitive(YYYY_MM_DD_T_HH_MM_SS_24H_SSS_Z_DASH_FORMAT.format(value)));
+            if (isNotEmpty(value)) {
+                fields.put(name, PrimitivesFactory.stringPrimitive(YYYY_MM_DD_T_HH_MM_SS_24H_SSS_Z_DASH_FORMAT.format(value)));
+            }
             return this;
         }
 
