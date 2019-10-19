@@ -62,8 +62,8 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
     private final HttpServiceBuilderImplementation serviceConfigBuilder;
     private final HttpMethodType type;
     private final String methodId;
-    private final List<HttpServerInterceptor> requestInterceptors = linkedListOf();
-    private final List<HttpServerInterceptor> responseInterceptors = linkedListOf();
+    private final List<HttpServerInterceptor> requestInterceptors = linkedListOf(httpServerModule().getRequestInterceptors());
+    private final List<HttpServerInterceptor> responseInterceptors = linkedListOf(httpServerModule().getResponseInterceptors());
     private HttpRequestDataSource requestDataResource;
     private ValueToModelMapper requestMapper;
     private ValueFromModelMapper responseMapper;

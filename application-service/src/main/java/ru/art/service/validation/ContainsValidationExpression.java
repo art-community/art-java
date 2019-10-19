@@ -25,15 +25,15 @@ import java.util.*;
 
 @AllArgsConstructor
 public class ContainsValidationExpression extends ValidationExpression<Object> {
-    private List<Object> objectList;
+    private Collection<?> values;
 
     @Override
     public boolean evaluate(String fieldName, Object value) {
-        return super.evaluate(fieldName, value) && objectList.contains(value);
+        return super.evaluate(fieldName, value) && values.contains(value);
     }
 
     @Override
     public String getValidationErrorMessage() {
-        return format(NOT_CONTAINS_VALIDATION_ERROR, fieldName, value, objectList.toString());
+        return format(NOT_CONTAINS_VALIDATION_ERROR, fieldName, value, values.toString());
     }
 }

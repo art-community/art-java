@@ -16,16 +16,14 @@
  * limitations under the License.
  */
 
-package ru.art.config.extensions.rsocket;
+package ru.art.configurator.api.model;
 
-public interface RsocketConfigKeys {
-    String RSOCKET_SECTION_ID = "rsocket";
-    String RSOCKET_BALANCER_SECTION_ID = "rsocket.balancer";
-    String RSOCKET_SERVER_SECTION_ID = "rsocket.server";
-    String RSOCKET_COMMUNICATION_SECTION_ID = "rsocket.communication";
-    String TCP_PORT = "tcpPort";
-    String WEB_SOCKET_PORT = "webSocketPort";
-    String DATA_FORMAT = "dataFormat";
-    String RESUMABLE = "resumable";
-    String RESUME_SESSION_DURATION = "resumeSessionDuration";
+import lombok.*;
+
+@Getter
+@RequiredArgsConstructor
+@AllArgsConstructor
+public class UserResponse {
+    private final boolean success;
+    private String token;
 }

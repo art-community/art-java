@@ -46,8 +46,8 @@ public interface ValidationExpressions {
         return cast(new EqualsValidationExpression(other));
     }
 
-    static <T> ValidationExpression<T> containsOther(List<Object> list) {
-        return cast(new ContainsValidationExpression(list));
+    static <T> ValidationExpression<T> includedIn(Collection<?> values) {
+        return cast(new ContainsValidationExpression(values));
     }
 
     static <T> ValidationExpression<T> betweenInt(Integer lower, Integer greater) {

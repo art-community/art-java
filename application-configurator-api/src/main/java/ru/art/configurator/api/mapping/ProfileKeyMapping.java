@@ -18,24 +18,23 @@
 
 package ru.art.configurator.api.mapping;
 
-import ru.art.configurator.api.model.ModuleKey;
-import ru.art.entity.*;
-import ru.art.entity.mapper.ValueFromModelMapper.*;
-import ru.art.entity.mapper.*;
-import ru.art.entity.mapper.ValueToModelMapper.*;
-import static ru.art.entity.Entity.*;
-import static ru.art.entity.mapper.ValueMapper.*;
+import ru.art.configurator.api.model.ProfileKey;
+import ru.art.entity.Entity;
+import ru.art.entity.mapper.ValueFromModelMapper.EntityFromModelMapper;
+import ru.art.entity.mapper.ValueMapper;
+import ru.art.entity.mapper.ValueToModelMapper.EntityToModelMapper;
 
-public interface ModuleKeyMapping {
-    EntityToModelMapper<ModuleKey> toModel = entity -> ModuleKey.builder()
+import static ru.art.entity.Entity.entityBuilder;
+import static ru.art.entity.mapper.ValueMapper.mapper;
+
+public interface ProfileKeyMapping {
+    EntityToModelMapper<ProfileKey> toModel = entity -> ProfileKey.builder()
             .profileId(entity.getString("profileId"))
-            .moduleId(entity.getString("moduleId"))
             .build();
 
-    EntityFromModelMapper<ModuleKey> fromModel = entity -> entityBuilder()
+    EntityFromModelMapper<ProfileKey> fromModel = entity -> entityBuilder()
             .stringField("profileId", entity.getProfileId())
-            .stringField("moduleId", entity.getModuleId())
             .build();
 
-    ValueMapper<ModuleKey, Entity> moduleKeyMapper = mapper(fromModel, toModel);
+    ValueMapper<ProfileKey, Entity> profileKeyMapper = mapper(fromModel, toModel);
 }

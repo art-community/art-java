@@ -30,7 +30,6 @@ public interface CommonConfigKeys {
     String ENABLE_METRICS = "enableMetrics";
     String THREAD_POOL_SIZE = "threadPoolSize";
     String TIMEOUT = "timeout";
-    String RESUMABLE = "resumable";
-    String RESUME_SESSION_DURATION = "resumeSessionDuration";
+    String SERVICES = "services";
 
 }

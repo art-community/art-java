@@ -16,16 +16,23 @@
  * limitations under the License.
  */
 
-package ru.art.configurator.api.entity;
+package ru.art.configurator.api.model;
 
 import lombok.*;
 import ru.art.entity.*;
+import ru.art.service.validation.*;
+import static ru.art.service.validation.ValidationExpressions.*;
 
 @Getter
 @Builder
 @ToString
 @EqualsAndHashCode
-public class ModuleConfiguration {
-    private final ModuleKey moduleKey;
+public class Configuration implements Validatable {
     private final Entity configuration;
+
+    @Override
+    public void onValidating(Validator validator) {
+        validator.validate("configuration", configuration, notNull());
+    }
 }
+

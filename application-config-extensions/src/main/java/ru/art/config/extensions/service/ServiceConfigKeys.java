@@ -35,8 +35,8 @@ public interface ServiceConfigKeys {
     String WAIT_DURATION = "waitDuration";
     String MAX_CONCURRENT_CALLS = "maxConcurrentCalls";
     String MAX_WAIT_TIME = "waitDuration";
-    String BREAKABLE = "breakable";
-    String LIMITED = "limited";
-    String BULKHEADED = "bulkheaded";
-    String RETRYABLE = "retryable";
+    String CIRCUIT_BREAKER = "circuitBreaker";
+    String RATE_LIMITER = "rateLimiter";
+    String BULKHEAD = "bulkhead";
+    String RETRYER = "retryer";
 }

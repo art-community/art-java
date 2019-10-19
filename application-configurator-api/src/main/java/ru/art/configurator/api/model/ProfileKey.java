@@ -16,16 +16,15 @@
  * limitations under the License.
  */
 
-package ru.art.configurator.api.entity;
+package ru.art.configurator.api.model;
 
 import lombok.*;
-import ru.art.entity.*;
 
 @Getter
 @Builder
 @ToString
 @EqualsAndHashCode
-public class ProfileConfiguration {
-    private final String profileId;
-    private final Entity configuration;
+@AllArgsConstructor
+public class ProfileKey {
+    private String profileId;
 }
