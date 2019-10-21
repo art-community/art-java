@@ -6,7 +6,7 @@ import static ru.art.generator.soap.service.ParserService.*;
 
 @UtilityClass
 public class SoapGeneratorService {
-    public static void performGeneration(String wsdlUrl, String packagePath, SoapGenerationMode soapGenerationMode) {
-        new SourceCodeGenService(packagePath).sourceGen(parseWsdl(wsdlUrl), soapGenerationMode);
+    public static void performGeneration(String wsdlUrl, String packageName, SoapGenerationMode generationMode) {
+        new SourceCodeGenService(packageName).sourceGen(parseWsdl(wsdlUrl), generationMode);
     }
 }
