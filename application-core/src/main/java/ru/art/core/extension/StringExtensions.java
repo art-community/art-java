@@ -78,13 +78,4 @@ public class StringExtensions {
         return isQuotedString(s) ? s.substring(1, s.length() - 1) : s;
     }
 
-    public static String firstLetterToUpperCase(String name) {
-        return name.substring(0, 1).toUpperCase() + name.substring(1);
-    }
-
-    public static String firstLetterToLowerCase(String name) {
-        return name.substring(0, 1).toLowerCase() + name.substring(1);
-    }
-
-
 }

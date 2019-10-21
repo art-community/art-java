@@ -21,12 +21,10 @@ art {
         applicationCore()
         applicationEntity()
         applicationService()
-        applicationXml()
     }
 }
 
 dependencies {
     embedded("com.squareup", "javapoet", art.externalDependencyVersionsConfiguration.javaPoetVersion)
     embedded("org.projectlombok","lombok", art.externalDependencyVersionsConfiguration.lombokVersion)
-    embedded("org.membrane-soa", "service-proxy-core", "4.6.1")
 }
