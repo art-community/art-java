@@ -53,7 +53,7 @@ public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefault
     private static List<HttpServerInterceptor> initializeRequestInterceptors(List<HttpServerInterceptor> superInterceptors) {
         List<HttpServerInterceptor> httpServerInterceptors = dynamicArrayOf(initializeWebServerInterceptors(superInterceptors));
         httpServerInterceptors.add(intercept(CookieInterceptor.builder()
-                .pathFilter(AUTHORIZATION_CHECKING_PATHS::contains)
+                .pathFilter(path -> !AUTHORIZATION_CHECKING_PATHS.contains(path))
                 .cookieValidator(TOKEN_COOKIE, token -> getToken().equalsIgnoreCase(token))
                 .errorProvider(path -> cookieError(UNAUTHORIZED.getCode(), getStringResource(INDEX_HTML)))
                 .build()));
