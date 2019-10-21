@@ -47,7 +47,8 @@ public interface Constants {
         String SLASH_MODEL = separator + "model";
         String SLASH_MAPPING = separator + "mapping";
         String SRC_MAIN_JAVA = "src" + separator + "main" + separator + "java";
-        String BUILD = "build";
+        String DOT_MAPPER_DOT = ".mapper.";
+        String DOT_MODEL_DOT = ".model.";String BUILD = "build";
         String BUILD_CLASSES_JAVA_MAIN = "build" + separator + "classes" + separator + "java" + separator + "main";
         String DOT_CLASS = ".class";
         String DOT_JAVA = ".java";
