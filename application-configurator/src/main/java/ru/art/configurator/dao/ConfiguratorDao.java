@@ -19,11 +19,12 @@
 package ru.art.configurator.dao;
 
 
-import ru.art.configurator.api.entity.*;
+import ru.art.configurator.api.model.*;
 import ru.art.entity.*;
 import ru.art.rocks.db.dao.*;
 import static java.util.stream.Collectors.*;
 import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.rocks.db.dao.RocksDbCollectionDao.*;
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
 import static ru.art.rocks.db.dao.RocksDbValueDao.*;
@@ -79,5 +80,25 @@ public interface ConfiguratorDao {
 
     static Set<ModuleKey> getProfileKeys() {
         return getStringList((PROFILE_KEYS)).stream().map(ModuleKey::parseKey).collect(toSet());
+    }
+
+    static void deleteModule(String moduleKey) {
+        if (isEmpty(moduleKey)) return;
+
+        delete(moduleKey);
+        removeStringElement(MODULE_KEYS, moduleKey);
+    }
+
+    static void deleteProfile(String profile) {
+        if (isEmpty(profile)) return;
+
+        delete(profile);
+        removeStringElement(PROFILE_KEYS, profile);
+
+        getStringList((MODULE_KEYS))
+                .stream()
+                .map(ModuleKey::parseKey)
+                .filter(moduleKey -> profile.equals(moduleKey.getProfileId()))
+                .forEach(moduleKey -> deleteModule(moduleKey.formatKey()));
     }
 }

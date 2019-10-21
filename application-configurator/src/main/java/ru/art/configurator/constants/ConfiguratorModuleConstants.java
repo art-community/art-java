@@ -51,6 +51,8 @@ public interface ConfiguratorModuleConstants {
     String UPLOAD_APPLICATION_PATH = API_PATH + "/uploadApplication";
     String UPLOAD_PROFILE_PATH = API_PATH + "/uploadProfile";
     String UPLOAD_MODULE_PATH = API_PATH + "/uploadModule";
+    String DELETE_MODULE_PATH = API_PATH + "/deleteModule";
+    String DELETE_PROFILE_PATH = API_PATH + "/deleteProfile";
 
     interface ConfiguratorLocalConfigKeys {
         String CONFIGURATOR_SECTION_ID = "configurator";

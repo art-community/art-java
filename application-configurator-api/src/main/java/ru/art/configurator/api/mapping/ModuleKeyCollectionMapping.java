@@ -18,8 +18,7 @@
 
 package ru.art.configurator.api.mapping;
 
-
-import ru.art.configurator.api.entity.*;
+import ru.art.configurator.api.model.ModuleKey;
 import ru.art.entity.*;
 import ru.art.entity.mapper.*;
 import static java.util.stream.Collectors.*;

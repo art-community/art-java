@@ -16,17 +16,14 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationService()
-        applicationXml()
-    }
-}
+package ru.art.configurator.api.model;
 
-dependencies {
-    embedded("com.squareup", "javapoet", art.externalDependencyVersionsConfiguration.javaPoetVersion)
-    embedded("org.projectlombok","lombok", art.externalDependencyVersionsConfiguration.lombokVersion)
-    embedded("org.membrane-soa", "service-proxy-core", "4.6.1")
+import lombok.*;
+
+@Getter
+@RequiredArgsConstructor
+@AllArgsConstructor
+public class UserResponse {
+    private final boolean success;
+    private String token;
 }

@@ -18,18 +18,23 @@
 
 package ru.art.entity.tuple;
 
-import lombok.*;
-import lombok.experimental.*;
-import ru.art.entity.Value;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.UtilityClass;
 import ru.art.entity.*;
-import ru.art.entity.tuple.schema.*;
-import static java.util.Collections.*;
-import static ru.art.core.caster.Caster.*;
+import ru.art.entity.tuple.schema.ValueSchema;
+
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.emptyList;
+import static java.util.Objects.isNull;
+import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
+import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
 import static ru.art.entity.Value.*;
-import static ru.art.entity.tuple.schema.ValueSchema.*;
-import java.util.*;
+import static ru.art.entity.tuple.schema.ValueSchema.fromValue;
 
 @UtilityClass
 public class PlainTupleWriter {
@@ -43,6 +48,8 @@ public class PlainTupleWriter {
     }
 
     private static List<?> writeComplexTypeValue(Value value) {
+        if (isEmpty(value)) return emptyList();
+
         switch (value.getType()) {
             case ENTITY:
                 return writeEntity(asEntity(value));
@@ -53,6 +60,7 @@ public class PlainTupleWriter {
             case MAP:
                 return writeMap(asMap(value));
         }
+
         return emptyList();
     }
 
@@ -105,12 +113,16 @@ public class PlainTupleWriter {
     private static List<?> writeMap(MapValue mapValue) {
         List<?> tuple = dynamicArrayOf();
         for (Map.Entry<? extends Value, ? extends Value> entry : mapValue.getElements().entrySet()) {
-            if (isPrimitive(entry.getKey())) {
-                if (isPrimitive(entry.getValue())) {
-                    tuple.add(cast(asPrimitive(entry.getValue()).getValue()));
+            Value key = entry.getKey();
+            Value value = entry.getValue();
+            if (isNull(value)) continue;
+
+            if (isPrimitive(key)) {
+                if (isPrimitive(value)) {
+                    tuple.add(cast(asPrimitive(value).getValue()));
                     continue;
                 }
-                tuple.add(cast(writeComplexTypeValue(entry.getValue())));
+                tuple.add(cast(writeComplexTypeValue(value)));
             }
         }
         return tuple;
