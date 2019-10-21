@@ -18,6 +18,7 @@ package ru.art.generator.soap.constants;
 
 public interface Constants {
     String CREATE_METHOD = ".create()";
+    String VALUE = "value";
     String BUILD = "build";
     String ON_VALIDATING = "onValidating";
     String VALIDATOR_VARIABLE = "validator";
@@ -42,9 +43,9 @@ public interface Constants {
         String TO_MODEL = "ToModel";
         String FROM_MODEL = "FromModel";
         String MAP_LIST_TO_MODEL_FOR_COMPLEX_TYPE = ".$L(xmlEntity.getChildren($S).stream().map($T.$N::map).collect($T.toList()))";
-        String MAP_LIST_TO_MODEL_FOR_SIMPLE_TYPE= ".$L(xmlEntity.getChildren($S).stream().map(child -> $L).collect($T.toList()))";
+        String MAP_LIST_TO_MODEL_FOR_SIMPLE_TYPE = ".$L(xmlEntity.getChildren($S).stream().map(child -> $L).collect($T.toList()))";
         String MAP_LIST_TO_XML_FOR_COMPLEX_TYPE = ".children(parameters.get$L().stream().map($T.$N::map).collect($T.toList()))";
-        String MAP_LIST_TO_XML_FOR_SIMPLE_TYPE= ".children(parameters.get$L().stream().map(child -> $T.$N($S, $S, $S, $T.valueOf(child))).collect($T.toList()))";
+        String MAP_LIST_TO_XML_FOR_SIMPLE_TYPE = ".children(parameters.get$L().stream().map(child -> $T.$N($S, $S, $S, $T.valueOf(child))).collect($T.toList()))";
         String VALIDATOR = "validator.validate($S, $L, $T.$L);";
         String VALIDATOR_RANGE = "validator.validate($S, $L, $T.$L($T.$L($S), $T.$L($S)));";
         String VALIDATOR_CONTAINS = "validator.validate($S, $L, $T.$L($T.$L($L)));";

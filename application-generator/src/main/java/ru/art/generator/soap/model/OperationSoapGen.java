@@ -16,11 +16,8 @@
 
 package ru.art.generator.soap.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
-
-import java.util.List;
+import lombok.*;
+import java.util.*;
 
 @Builder
 @Getter

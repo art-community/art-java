@@ -20,7 +20,20 @@ public class SourceCodeGenService {
 
     private final String packageString;
 
-    public void sourceGen(List<OperationSoapGen> operationSoapGenList, ModeGeneration modeGeneration) {
+    private static String getValidatorMethodName(String type) {
+        switch (type) {
+            case "long":
+                return "betweenLong";
+            case "double":
+                return "betweenDouble";
+            case "int":
+                return "betweenInt";
+            default:
+                return "betweenDouble";
+        }
+    }
+
+    public void sourceGen(List<OperationSoapGen> operationSoapGenList, SoapGenerationMode soapGenerationMode) {
         for (OperationSoapGen operation : operationSoapGenList) {
             ClassName classNameXmlEntityToModelMapper = ClassName.get(XmlEntityToModelMapper.class);
             ClassName classNameXmlEntityFromModelMapper = ClassName.get(XmlEntityFromModelMapper.class);
@@ -28,7 +41,7 @@ public class SourceCodeGenService {
             for (Field input : operation.getInput()) {
                 createModelFromXmlEntity(input, packageString);
                 String postFix;
-                if (ModeGeneration.SERVER.equals(modeGeneration)) {
+                if (SoapGenerationMode.SERVER.equals(soapGenerationMode)) {
                     postFix = TO_MODEL;
                 } else {
                     postFix = FROM_MODEL;
@@ -40,7 +53,7 @@ public class SourceCodeGenService {
             for (Field output : operation.getOutput()) {
                 createXmlEntityFromModel(output, packageString);
                 String postFix;
-                if (ModeGeneration.SERVER.equals(modeGeneration)) {
+                if (SoapGenerationMode.SERVER.equals(soapGenerationMode)) {
                     postFix = FROM_MODEL;
                 } else {
                     postFix = TO_MODEL;
@@ -51,7 +64,7 @@ public class SourceCodeGenService {
             }
             for (Field fault : operation.getFault()) {
                 String postFix;
-                if (ModeGeneration.SERVER.equals(modeGeneration)) {
+                if (SoapGenerationMode.SERVER.equals(soapGenerationMode)) {
                     postFix = FROM_MODEL;
                     createXmlEntityFromModel(fault, packageString);
                 } else {
@@ -73,7 +86,6 @@ public class SourceCodeGenService {
         System.out.println("Mappers created successfully");
     }
 
-
     private FieldSpec createFieldSpec(ClassName classNameXmlEntity, String lambda, Field field, String postFix, String postFixForCode) {
         ClassName classNameMapper = ClassName
                 .get(packageString + ".mapper." + field.getPrefix(), firstLetterToUpperCase(field.getTypeName()) + postFix);
@@ -88,20 +100,6 @@ public class SourceCodeGenService {
                         firstLetterToLowerCase(field.getName()) + FROM_MODEL, PUBLIC, STATIC, FINAL)
                 .initializer(xmlEntityFromModelCodeBlock)
                 .build();
-    }
-
-
-    private static String getValidatorMethodName(String type) {
-        switch (type) {
-            case "long":
-                return "betweenLong";
-            case "double":
-                return "betweenDouble";
-            case "int":
-                return "betweenInt";
-            default:
-                return "betweenDouble";
-        }
     }
 
 

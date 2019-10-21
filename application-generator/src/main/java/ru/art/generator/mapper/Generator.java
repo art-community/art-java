@@ -18,6 +18,7 @@
 
 package ru.art.generator.mapper;
 
+import lombok.experimental.*;
 import ru.art.generator.mapper.annotation.*;
 import ru.art.generator.mapper.exception.*;
 import ru.art.generator.mapper.operations.*;
@@ -38,23 +39,23 @@ import java.util.*;
  * Name for generating class equals "ModelClassName" + "Mapper".
  * Example of Model mapper:
  * interface ModelMapper {
- * 		ValueToModelMapper<Model, Entity> toModel = entity -> Model.builder()
- * 				.build();
- * 		ValueToModelMapper<Model, Entity> toModel = entity -> isNotEmpty(entity) ? Model.builder()
- * 	        <fields in here>
- * 			.build()
- * 			: Model.builder().build();
- *
- * 		ValueFromModelMapper<Model, Entity> fromModel = model -> Entity.entityBuilder()
- * 				.build();
- * 		ValueFromModelMapper<Model, Entity> fromModel = model -> isNotEmpty(model) ? Entity.entityBuilder()
- * 	        <fields in here>
- * 			.build()
- * 			: Entity.entityBuilder().build();
- *  }
+ * ValueToModelMapper<Model, Entity> toModel = entity -> Model.builder()
+ * .build();
+ * ValueToModelMapper<Model, Entity> toModel = entity -> isNotEmpty(entity) ? Model.builder()
+ * <fields in here>
+ * .build()
+ * : Model.builder().build();
+ * <p>
+ * ValueFromModelMapper<Model, Entity> fromModel = model -> Entity.entityBuilder()
+ * .build();
+ * ValueFromModelMapper<Model, Entity> fromModel = model -> isNotEmpty(model) ? Entity.entityBuilder()
+ * <fields in here>
+ * .build()
+ * : Entity.entityBuilder().build();
+ * }
  */
+@UtilityClass
 public class Generator {
-
     /**
      * Perform generation of mapping classes basing on model package.
      * Before generating, deleting redundant classes in mapping package.

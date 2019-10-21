@@ -11,7 +11,6 @@ import ru.art.service.validation.*;
 import static com.squareup.javapoet.CodeBlock.*;
 import static com.squareup.javapoet.TypeSpec.*;
 import static javax.lang.model.element.Modifier.*;
-import static org.springframework.core.annotation.AnnotationUtils.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.StringExtensions.*;

@@ -29,4 +29,15 @@ dependencies {
     embedded("com.squareup", "javapoet", art.externalDependencyVersionsConfiguration.javaPoetVersion)
     embedded("org.projectlombok","lombok", art.externalDependencyVersionsConfiguration.lombokVersion)
     embedded("org.membrane-soa", "service-proxy-core", "4.6.1")
+            .exclude("org.springframework")
+            .exclude("com.fasterxml.jackson.core")
+            .exclude("com.fasterxml.jackson.dataformat")
+            .exclude("com.fasterxml.jackson.datatype")
+            .exclude("com.github.fge")
+            .exclude("com.google.guava", "guava")
+            .exclude("org.apache.httpcomponents", "httpclient")
+    embedded("com.google.guava", "guava", art.externalDependencyVersionsConfiguration.guavaVersion)
+    embedded("org.apache.httpcomponents", "httpclient", art.externalDependencyVersionsConfiguration.apacheHttpClientVersion)
+            .exclude("org.apache.httpcomponents", "httpcore")
+
 }
