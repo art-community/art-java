@@ -10,6 +10,7 @@ import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.network.provider.IpAddressProvider.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
 import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.information.constants.InformationModuleConstants.*;
 
 @UtilityClass
 public class HttpInformationCollector {
@@ -22,6 +23,8 @@ public class HttpInformationCollector {
                         .methods(service.getHttpService()
                                 .getHttpMethods()
                                 .stream()
+                                .filter(method -> !INFORMATION_PATH.equals(method.getPath().getContextPath()))
+                                .filter(method -> !STATUS_PATH.equals(method.getPath().getContextPath()))
                                 .map(method -> HttpServiceMethodInformation
                                         .builder()
                                         .id(method.getMethodId())
