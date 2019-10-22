@@ -24,6 +24,11 @@ import ru.art.core.factory.*;
 import ru.art.entity.constants.*;
 import ru.art.entity.constants.ValueType.*;
 import ru.art.entity.exception.*;
+import static java.lang.Boolean.*;
+import static java.lang.Byte.*;
+import static java.lang.Double.*;
+import static java.lang.Float.*;
+import static java.lang.Integer.*;
 import static java.lang.Long.*;
 import static java.text.MessageFormat.*;
 import static java.util.Arrays.*;
@@ -35,7 +40,6 @@ import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.core.parser.PrimitiveParser.*;
 import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.entity.Value.*;
 import static ru.art.entity.constants.CollectionMode.COLLECTION;
@@ -185,6 +189,7 @@ public class CollectionValue<T> implements Value {
         return cast(queueOf((Collection<?>) elements));
     }
 
+    
     public List<Value> getValueList() {
         if (isEmpty()) return emptyList();
         List<Value> list = dynamicArrayOf();
@@ -192,6 +197,7 @@ public class CollectionValue<T> implements Value {
             case STRING:
                 return elements
                         .stream()
+                        .filter(Objects::nonNull)
                         .map(element -> stringPrimitive(cast(element)))
                         .collect(toList());
             case LONG: {
@@ -201,7 +207,10 @@ public class CollectionValue<T> implements Value {
                     }
                     return list;
                 }
-                return elements.stream().map(element -> longPrimitive(((Number) element).longValue())).collect(toList());
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> longPrimitive(((Number) element).longValue()))
+                        .collect(toList());
             }
             case DOUBLE: {
                 if (collectionMode == PRIMITIVE_ARRAY) {
@@ -210,7 +219,10 @@ public class CollectionValue<T> implements Value {
                     }
                     return list;
                 }
-                return elements.stream().map(element -> doublePrimitive(((Number) element).doubleValue())).collect(toList());
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> doublePrimitive(((Number) element).doubleValue()))
+                        .collect(toList());
             }
             case FLOAT: {
                 if (collectionMode == PRIMITIVE_ARRAY) {
@@ -219,7 +231,10 @@ public class CollectionValue<T> implements Value {
                     }
                     return list;
                 }
-                return elements.stream().map(element -> floatPrimitive(((Number) element).floatValue())).collect(toList());
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> floatPrimitive(((Number) element).floatValue()))
+                        .collect(toList());
             }
             case INT: {
                 if (collectionMode == PRIMITIVE_ARRAY) {
@@ -228,7 +243,10 @@ public class CollectionValue<T> implements Value {
                     }
                     return list;
                 }
-                return elements.stream().map(element -> intPrimitive(((Number) element).intValue())).collect(toList());
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> intPrimitive(((Number) element).intValue()))
+                        .collect(toList());
             }
             case BOOL: {
                 if (collectionMode == PRIMITIVE_ARRAY) {
@@ -237,7 +255,10 @@ public class CollectionValue<T> implements Value {
                     }
                     return list;
                 }
-                return elements.stream().map(element -> boolPrimitive(cast(element))).collect(toList());
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> boolPrimitive(cast(element)))
+                        .collect(toList());
             }
             case BYTE: {
                 if (collectionMode == PRIMITIVE_ARRAY) {
@@ -246,7 +267,10 @@ public class CollectionValue<T> implements Value {
                     }
                     return list;
                 }
-                return elements.stream().map(element -> bytePrimitive(((Number) element).byteValue())).collect(toList());
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> bytePrimitive(((Number) element).byteValue()))
+                        .collect(toList());
             }
             case ENTITY:
                 return cast(getEntityList());
@@ -296,6 +320,7 @@ public class CollectionValue<T> implements Value {
 
     public List<Long> getLongList() {
         if (isEmpty()) return emptyList();
+        List<Long> list = dynamicArrayOf();
         switch (elementsType) {
             case VALUE:
                 return elements.stream()
@@ -304,36 +329,117 @@ public class CollectionValue<T> implements Value {
                         .collect(toList());
             case STRING:
                 return elements.stream()
+                        .filter(Objects::nonNull)
                         .map(element -> parseLong(cast(element)))
                         .collect(toList());
-            case LONG:
-                return collectionMode == PRIMITIVE_ARRAY ? arrayOf(longElements) : cast(elements);
-            case DOUBLE:
-                return (collectionMode == PRIMITIVE_ARRAY ? arrayOf(doubleElements).stream() : elements.stream())
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        list.add(element);
+                    }
+                    return list;
+                }
+                return cast(elements);
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        list.add((long) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
                         .map(element -> ((Number) element).longValue())
                         .collect(toList());
-            case FLOAT:
-                return (collectionMode == PRIMITIVE_ARRAY ? arrayOf(floatElements).stream() : elements.stream())
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        list.add((long) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
                         .map(element -> ((Number) element).longValue())
                         .collect(toList());
-            case INT:
-                return (collectionMode == PRIMITIVE_ARRAY ? arrayOf(intElements).stream() : elements.stream())
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        list.add((long) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
                         .map(element -> ((Number) element).longValue())
                         .collect(toList());
-            case BYTE:
-                return (collectionMode == PRIMITIVE_ARRAY ? arrayOf(byteElements).stream() : elements.stream())
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        list.add((long) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
                         .map(element -> ((Number) element).longValue())
                         .collect(toList());
+            }
         }
         throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, LONG.toString(), elementsType.toString()));
     }
 
     public List<String> getStringList() {
         if (isEmpty()) return emptyList();
+        List<String> list = dynamicArrayOf();
         if (collectionMode == PRIMITIVE_ARRAY) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, STRING.toString(), elementsType.toString()));
+            switch (elementsType) {
+                case LONG: {
+                    for (long element : longElements) {
+                        list.add(EMPTY_STRING + element);
+                    }
+                    return list;
+                }
+                case DOUBLE: {
+                    for (double element : doubleElements) {
+                        list.add(EMPTY_STRING + element);
+                    }
+                    return list;
+                }
+                case FLOAT: {
+                    for (float element : floatElements) {
+                        list.add(EMPTY_STRING + element);
+                    }
+                    return list;
+                }
+                case INT: {
+                    for (int element : intElements) {
+                        list.add(EMPTY_STRING + element);
+                    }
+                    return list;
+                }
+                case BOOL: {
+                    for (boolean element : boolElements) {
+                        list.add(EMPTY_STRING + element);
+                    }
+                    return list;
+                }
+                case BYTE: {
+                    for (byte element : byteElements) {
+                        list.add(EMPTY_STRING + element);
+                    }
+                    return list;
+                }
+            }
         }
-        return getList().stream().map(Object::toString).collect(toList());
+        if (elementsType == STRING) {
+            return cast(getList());
+        }
+        return getList().stream().filter(Objects::nonNull).map(Object::toString).collect(toList());
     }
 
     public List<Boolean> getBoolList() {
@@ -352,11 +458,13 @@ public class CollectionValue<T> implements Value {
             case VALUE:
                 return getList()
                         .stream()
+                        .filter(element -> isPrimitive(cast(element)))
                         .map(element -> asPrimitive(cast(element)).getBool())
                         .collect(toList());
             case STRING:
-                return getStringList().stream()
-                        .map(Boolean::parseBoolean)
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseBoolean((cast(element))))
                         .collect(toList());
             case BOOL:
                 return cast(getList());
@@ -366,610 +474,1468 @@ public class CollectionValue<T> implements Value {
 
     public List<Integer> getIntList() {
         if (isEmpty()) return emptyList();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (elementsType != INT) {
-                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
-            }
-            List<Integer> list = dynamicArrayOf();
-            for (int element : intElements) {
-                list.add(element);
-            }
-            return list;
-        }
+        List<Integer> list = dynamicArrayOf();
         switch (elementsType) {
             case VALUE:
-                return getList()
-                        .stream()
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
                         .map(element -> asPrimitive(cast(element)).getInt())
                         .collect(toList());
             case STRING:
-                return getStringList().stream()
-                        .map(Integer::parseInt)
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseInt(cast(element)))
                         .collect(toList());
-            case INT:
-                return cast(getList());
-            case LONG:
-            case DOUBLE:
-            case FLOAT:
-            case BYTE:
-                return getList().stream()
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        list.add((int) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
                         .map(element -> ((Number) element).intValue())
                         .collect(toList());
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        list.add((int) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).intValue())
+                        .collect(toList());
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        list.add((int) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).intValue())
+                        .collect(toList());
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        list.add(element);
+                    }
+                    return list;
+                }
+                return cast(elements);
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        list.add((int) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).intValue())
+                        .collect(toList());
+            }
         }
         throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
     }
 
     public List<Byte> getByteList() {
         if (isEmpty()) return emptyList();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (elementsType != BYTE) {
-                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
-            }
-            List<Byte> list = dynamicArrayOf();
-            for (byte element : byteElements) {
-                list.add(element);
-            }
-            return list;
-        }
+        List<Byte> list = dynamicArrayOf();
         switch (elementsType) {
             case VALUE:
-                return getList()
-                        .stream()
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
                         .map(element -> asPrimitive(cast(element)).getByte())
                         .collect(toList());
             case STRING:
-                return getStringList().stream()
-                        .map(Byte::parseByte)
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseByte(cast(element)))
                         .collect(toList());
-            case BYTE:
-                return cast(getList());
-            case LONG:
-            case DOUBLE:
-            case FLOAT:
-            case INT:
-                return getList().stream()
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        list.add((byte) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
                         .map(element -> ((Number) element).byteValue())
                         .collect(toList());
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        list.add((byte) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).byteValue())
+                        .collect(toList());
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        list.add((byte) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).byteValue())
+                        .collect(toList());
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        list.add((byte) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).byteValue())
+                        .collect(toList());
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        list.add(element);
+                    }
+                    return list;
+                }
+                return cast(elements);
+            }
         }
         throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
     }
 
     public List<Double> getDoubleList() {
         if (isEmpty()) return emptyList();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (elementsType != DOUBLE) {
-                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
-            }
-            List<Double> list = dynamicArrayOf();
-            for (double element : doubleElements) {
-                list.add(element);
-            }
-            return list;
-        }
+        List<Double> list = dynamicArrayOf();
         switch (elementsType) {
             case VALUE:
-                return getList()
-                        .stream()
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
                         .map(element -> asPrimitive(cast(element)).getDouble())
                         .collect(toList());
             case STRING:
-                return getStringList().stream()
-                        .map(Double::parseDouble)
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseDouble(cast(element)))
                         .collect(toList());
-            case DOUBLE:
-                return cast(getList());
-            case LONG:
-            case FLOAT:
-            case INT:
-            case BYTE:
-                return getList().stream()
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        list.add((double) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
                         .map(element -> ((Number) element).doubleValue())
                         .collect(toList());
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        list.add(element);
+                    }
+                    return list;
+                }
+                return cast(elements);
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        list.add((double) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).doubleValue())
+                        .collect(toList());
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        list.add((double) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).doubleValue())
+                        .collect(toList());
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        list.add((double) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).doubleValue())
+                        .collect(toList());
+            }
         }
         throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
     }
 
     public List<Float> getFloatList() {
         if (isEmpty()) return emptyList();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (elementsType != FLOAT) {
-                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, FLOAT.toString(), elementsType.toString()));
-            }
-            List<Float> list = dynamicArrayOf();
-            for (float element : floatElements) {
-                list.add(element);
-            }
-            return list;
-        }
+        List<Float> list = dynamicArrayOf();
         switch (elementsType) {
             case VALUE:
-                return getList()
-                        .stream()
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
                         .map(element -> asPrimitive(cast(element)).getFloat())
                         .collect(toList());
             case STRING:
-                return getStringList().stream()
-                        .map(Float::parseFloat)
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseFloat(cast(element)))
                         .collect(toList());
-            case FLOAT:
-                return cast(getList());
-            case LONG:
-            case DOUBLE:
-            case INT:
-            case BYTE:
-                return getList().stream()
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        list.add((float) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
                         .map(element -> ((Number) element).floatValue())
                         .collect(toList());
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        list.add((float) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).floatValue())
+                        .collect(toList());
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        list.add(element);
+                    }
+                    return list;
+                }
+                return cast(elements);
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        list.add((float) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).floatValue())
+                        .collect(toList());
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        list.add((float) element);
+                    }
+                    return list;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).floatValue())
+                        .collect(toList());
+            }
         }
         throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, FLOAT.toString(), elementsType.toString()));
     }
 
 
-    public Set<StringParametersMap> getStringParametersSet() {
-        if (isNull(elementsType)) return emptySet();
-        if (elementsType != STRING_PARAMETERS_MAP && elementsType != VALUE) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, STRING_PARAMETERS_MAP.toString(), elementsType.toString()));
-        }
+    public Set<Value> getValueSet() {
         if (isEmpty()) return emptySet();
+        Set<Value> Set = setOf();
+        switch (elementsType) {
+            case STRING:
+                return elements
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> stringPrimitive(cast(element)))
+                        .collect(toSet());
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        Set.add(longPrimitive(element));
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> longPrimitive(((Number) element).longValue()))
+                        .collect(toSet());
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        Set.add(doublePrimitive(element));
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> doublePrimitive(((Number) element).doubleValue()))
+                        .collect(toSet());
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        Set.add(floatPrimitive(element));
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> floatPrimitive(((Number) element).floatValue()))
+                        .collect(toSet());
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        Set.add(intPrimitive(element));
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> intPrimitive(((Number) element).intValue()))
+                        .collect(toSet());
+            }
+            case BOOL: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (boolean element : boolElements) {
+                        Set.add(boolPrimitive(element));
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> boolPrimitive(cast(element)))
+                        .collect(toSet());
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        Set.add(bytePrimitive(element));
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> bytePrimitive(((Number) element).byteValue()))
+                        .collect(toSet());
+            }
+            case ENTITY:
+                return cast(getEntitySet());
+            case COLLECTION:
+                return cast(getCollectionsSet());
+            case MAP:
+                return cast(getMapValueSet());
+            case STRING_PARAMETERS_MAP:
+                return cast(getStringParametersSet());
+            case VALUE:
+                return cast(getSet());
+        }
         return cast(getSet());
     }
 
     public Set<MapValue> getMapValueSet() {
-        if (isNull(elementsType)) return emptySet();
-        if (elementsType != MAP && elementsType != VALUE) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, MAP.toString(), elementsType.toString()));
-        }
         if (isEmpty()) return emptySet();
+        if (elementsType != MAP && elementsType != VALUE) {
+            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, MAP.toString(), elementsType.toString()));
+        }
         return cast(getSet());
     }
 
     public Set<CollectionValue<?>> getCollectionsSet() {
-        if (isNull(elementsType)) return emptySet();
-        if (elementsType != CollectionElementsType.COLLECTION && elementsType != VALUE) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, COLLECTION.toString(), elementsType.toString()));
-        }
         if (isEmpty()) return emptySet();
+        if (elementsType != CollectionElementsType.COLLECTION && elementsType != VALUE) {
+            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, COLLECTION.toString(), elementsType.toString()));
+        }
         return cast(getSet());
     }
 
-    public Set<Value> getValueSet() {
-        if (isNull(elementsType)) return emptySet();
-        if (elementsType != VALUE) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, VALUE.toString(), elementsType.toString()));
-        }
+    public Set<StringParametersMap> getStringParametersSet() {
         if (isEmpty()) return emptySet();
+        if (elementsType != STRING_PARAMETERS_MAP && elementsType != VALUE) {
+            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, STRING_PARAMETERS_MAP.toString(), elementsType.toString()));
+        }
         return cast(getSet());
     }
 
     public Set<Entity> getEntitySet() {
-        if (isNull(elementsType)) return emptySet();
-        if (elementsType != ENTITY && elementsType != VALUE) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, ENTITY.toString(), elementsType.toString()));
-        }
         if (isEmpty()) return emptySet();
+        if (elementsType != ENTITY && elementsType != VALUE) {
+            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, ENTITY.toString(), elementsType.toString()));
+        }
         return cast(getSet());
     }
 
     public Set<Long> getLongSet() {
         if (isEmpty()) return emptySet();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (elementsType != LONG) {
-                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, LONG.toString(), elementsType.toString()));
-            }
-            Set<Long> set = setOf();
-            for (long element : longElements) {
-                set.add(element);
-            }
-            return set;
-        }
+        Set<Long> Set = setOf();
         switch (elementsType) {
             case VALUE:
-                return getList()
-                        .stream()
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
                         .map(element -> asPrimitive(cast(element)).getLong())
                         .collect(toSet());
             case STRING:
-                return getStringList().stream()
-                        .map(Long::parseLong)
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseLong(cast(element)))
                         .collect(toSet());
-            case LONG:
-                return cast(getSet());
-            case DOUBLE:
-            case FLOAT:
-            case INT:
-            case BYTE:
-                return getList().stream()
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        Set.add(element);
+                    }
+                    return Set;
+                }
+                return cast(elements);
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        Set.add((long) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
                         .map(element -> ((Number) element).longValue())
                         .collect(toSet());
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        Set.add((long) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).longValue())
+                        .collect(toSet());
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        Set.add((long) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).longValue())
+                        .collect(toSet());
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        Set.add((long) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).longValue())
+                        .collect(toSet());
+            }
         }
-        throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, LONG.toString(), elementsType.toString()));
+        throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, LONG.toString(), elementsType.toString()));
     }
 
     public Set<String> getStringSet() {
         if (isEmpty()) return emptySet();
+        Set<String> Set = setOf();
         if (collectionMode == PRIMITIVE_ARRAY) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, STRING.toString(), elementsType.toString()));
+            switch (elementsType) {
+                case LONG: {
+                    for (long element : longElements) {
+                        Set.add(EMPTY_STRING + element);
+                    }
+                    return Set;
+                }
+                case DOUBLE: {
+                    for (double element : doubleElements) {
+                        Set.add(EMPTY_STRING + element);
+                    }
+                    return Set;
+                }
+                case FLOAT: {
+                    for (float element : floatElements) {
+                        Set.add(EMPTY_STRING + element);
+                    }
+                    return Set;
+                }
+                case INT: {
+                    for (int element : intElements) {
+                        Set.add(EMPTY_STRING + element);
+                    }
+                    return Set;
+                }
+                case BOOL: {
+                    for (boolean element : boolElements) {
+                        Set.add(EMPTY_STRING + element);
+                    }
+                    return Set;
+                }
+                case BYTE: {
+                    for (byte element : byteElements) {
+                        Set.add(EMPTY_STRING + element);
+                    }
+                    return Set;
+                }
+            }
         }
-        return getList().stream().map(Object::toString).collect(toSet());
+        if (elementsType == STRING) {
+            return cast(getSet());
+        }
+        return getSet().stream().filter(Objects::nonNull).map(Object::toString).collect(toSet());
     }
 
     public Set<Boolean> getBoolSet() {
         if (isEmpty()) return emptySet();
         if (collectionMode == PRIMITIVE_ARRAY) {
             if (elementsType != BOOL) {
-                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
+                throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
             }
-            Set<Boolean> set = setOf();
+            Set<Boolean> Set = setOf();
             for (boolean element : boolElements) {
-                set.add(element);
+                Set.add(element);
             }
-            return set;
+            return Set;
         }
         switch (elementsType) {
             case VALUE:
-                return getList()
+                return getSet()
                         .stream()
+                        .filter(element -> isPrimitive(cast(element)))
                         .map(element -> asPrimitive(cast(element)).getBool())
                         .collect(toSet());
             case STRING:
-                return getStringList().stream()
-                        .map(Boolean::parseBoolean)
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseBoolean((cast(element))))
                         .collect(toSet());
             case BOOL:
                 return cast(getSet());
         }
-        throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
+        throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
     }
 
     public Set<Integer> getIntSet() {
         if (isEmpty()) return emptySet();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (elementsType != INT) {
-                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
-            }
-            Set<Integer> set = setOf();
-            for (int element : intElements) {
-                set.add(element);
-            }
-            return set;
-        }
+        Set<Integer> Set = setOf();
         switch (elementsType) {
             case VALUE:
-                return getList()
-                        .stream()
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
                         .map(element -> asPrimitive(cast(element)).getInt())
                         .collect(toSet());
             case STRING:
-                return getStringList().stream()
-                        .map(Integer::parseInt)
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseInt(cast(element)))
                         .collect(toSet());
-            case LONG:
-                return cast(getSet());
-            case DOUBLE:
-            case FLOAT:
-            case INT:
-            case BYTE:
-                return getList().stream()
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        Set.add((int) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
                         .map(element -> ((Number) element).intValue())
                         .collect(toSet());
-        }
-        throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
-    }
-
-    public Set<Double> getDoubleSet() {
-        if (isEmpty()) return emptySet();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (elementsType != DOUBLE) {
-                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
             }
-            Set<Double> set = setOf();
-            for (double element : doubleElements) {
-                set.add(element);
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        Set.add((int) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).intValue())
+                        .collect(toSet());
             }
-            return set;
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        Set.add((int) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).intValue())
+                        .collect(toSet());
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        Set.add(element);
+                    }
+                    return Set;
+                }
+                return cast(elements);
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        Set.add((int) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).intValue())
+                        .collect(toSet());
+            }
         }
-        switch (elementsType) {
-            case VALUE:
-                return getList()
-                        .stream()
-                        .map(element -> asPrimitive(cast(element)).getDouble())
-                        .collect(toSet());
-            case STRING:
-                return getStringList().stream()
-                        .map(Double::parseDouble)
-                        .collect(toSet());
-            case DOUBLE:
-                return cast(getSet());
-            case LONG:
-            case FLOAT:
-            case INT:
-            case BYTE:
-                return getList().stream()
-                        .map(element -> ((Number) element).doubleValue())
-                        .collect(toSet());
-        }
-        throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
+        throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
     }
 
     public Set<Byte> getByteSet() {
         if (isEmpty()) return emptySet();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (elementsType != BYTE) {
-                throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
-            }
-            Set<Byte> set = setOf();
-            for (byte element : byteElements) {
-                set.add(element);
-            }
-            return set;
-        }
+        Set<Byte> Set = setOf();
         switch (elementsType) {
             case VALUE:
-                return elements
-                        .stream()
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
                         .map(element -> asPrimitive(cast(element)).getByte())
                         .collect(toSet());
             case STRING:
                 return elements.stream()
-                        .map(element -> (String) element)
-                        .map(Byte::parseByte)
+                        .filter(Objects::nonNull)
+                        .map(element -> parseByte(cast(element)))
                         .collect(toSet());
-            case BYTE:
-                return cast(getSet());
-            case LONG:
-            case DOUBLE:
-            case FLOAT:
-            case INT:
-                return getList().stream()
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        Set.add((byte) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
                         .map(element -> ((Number) element).byteValue())
                         .collect(toSet());
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        Set.add((byte) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).byteValue())
+                        .collect(toSet());
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        Set.add((byte) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).byteValue())
+                        .collect(toSet());
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        Set.add((byte) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).byteValue())
+                        .collect(toSet());
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        Set.add(element);
+                    }
+                    return Set;
+                }
+                return cast(elements);
+            }
         }
-        throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
+        throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
+    }
+
+    public Set<Double> getDoubleSet() {
+        if (isEmpty()) return emptySet();
+        Set<Double> Set = setOf();
+        switch (elementsType) {
+            case VALUE:
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
+                        .map(element -> asPrimitive(cast(element)).getDouble())
+                        .collect(toSet());
+            case STRING:
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseDouble(cast(element)))
+                        .collect(toSet());
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        Set.add((double) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).doubleValue())
+                        .collect(toSet());
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        Set.add(element);
+                    }
+                    return Set;
+                }
+                return cast(elements);
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        Set.add((double) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).doubleValue())
+                        .collect(toSet());
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        Set.add((double) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).doubleValue())
+                        .collect(toSet());
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        Set.add((double) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).doubleValue())
+                        .collect(toSet());
+            }
+        }
+        throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
     }
 
     public Set<Float> getFloatSet() {
-        if (isNull(elementsType)) return emptySet();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (CheckerForEmptiness.isEmpty(floatElements)) {
-                return emptySet();
-            }
-            Set<Float> set = setOf();
-            for (float floatElement : floatElements) {
-                set.add(floatElement);
-            }
-            return set;
-        }
-        if (elementsType == VALUE) {
-            if (isEmpty()) return emptySet();
-            return getList()
-                    .stream()
-                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.FLOAT)
-                    .map(element -> asPrimitive(cast(element)).getFloat())
-                    .collect(toSet());
-        }
-        if (elementsType != FLOAT) {
-            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, FLOAT.toString(), elementsType.toString()));
-        }
         if (isEmpty()) return emptySet();
-        return cast(getSet());
+        Set<Float> Set = setOf();
+        switch (elementsType) {
+            case VALUE:
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
+                        .map(element -> asPrimitive(cast(element)).getFloat())
+                        .collect(toSet());
+            case STRING:
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseFloat(cast(element)))
+                        .collect(toSet());
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        Set.add((float) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).floatValue())
+                        .collect(toSet());
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        Set.add((float) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).floatValue())
+                        .collect(toSet());
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        Set.add(element);
+                    }
+                    return Set;
+                }
+                return cast(elements);
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        Set.add((float) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).floatValue())
+                        .collect(toSet());
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        Set.add((float) element);
+                    }
+                    return Set;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).floatValue())
+                        .collect(toSet());
+            }
+        }
+        throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, FLOAT.toString(), elementsType.toString()));
     }
 
 
-    public Queue<StringParametersMap> getStringParametersQueue() {
-        if (isNull(elementsType)) return queueOf();
-        if (elementsType != STRING_PARAMETERS_MAP && elementsType != VALUE) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, STRING_PARAMETERS_MAP.toString(), elementsType.toString()));
-        }
+    public Queue<Value> getValueQueue() {
         if (isEmpty()) return queueOf();
+        Queue<Value> Queue = queueOf();
+        switch (elementsType) {
+            case STRING:
+                return elements
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> stringPrimitive(cast(element)))
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        Queue.add(longPrimitive(element));
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> longPrimitive(((Number) element).longValue()))
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        Queue.add(doublePrimitive(element));
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> doublePrimitive(((Number) element).doubleValue()))
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        Queue.add(floatPrimitive(element));
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> floatPrimitive(((Number) element).floatValue()))
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        Queue.add(intPrimitive(element));
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> intPrimitive(((Number) element).intValue()))
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case BOOL: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (boolean element : boolElements) {
+                        Queue.add(boolPrimitive(element));
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> boolPrimitive(cast(element)))
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        Queue.add(bytePrimitive(element));
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> bytePrimitive(((Number) element).byteValue()))
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case ENTITY:
+                return cast(getEntityQueue());
+            case COLLECTION:
+                return cast(getCollectionsQueue());
+            case MAP:
+                return cast(getMapValueQueue());
+            case STRING_PARAMETERS_MAP:
+                return cast(getStringParametersQueue());
+            case VALUE:
+                return cast(getQueue());
+        }
         return cast(getQueue());
     }
 
     public Queue<MapValue> getMapValueQueue() {
-        if (isNull(elementsType)) return queueOf();
+        if (isEmpty()) return queueOf();
         if (elementsType != MAP && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, MAP.toString(), elementsType.toString()));
         }
-        if (isEmpty()) return queueOf();
         return cast(getQueue());
     }
 
     public Queue<CollectionValue<?>> getCollectionsQueue() {
-        if (isNull(elementsType)) return queueOf();
+        if (isEmpty()) return queueOf();
         if (elementsType != CollectionElementsType.COLLECTION && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, COLLECTION.toString(), elementsType.toString()));
         }
-        if (isEmpty()) return queueOf();
         return cast(getQueue());
     }
 
-    public Queue<Value> getValueQueue() {
-        if (isNull(elementsType)) return queueOf();
-        if (elementsType != VALUE) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, VALUE.toString(), elementsType.toString()));
-        }
+    public Queue<StringParametersMap> getStringParametersQueue() {
         if (isEmpty()) return queueOf();
+        if (elementsType != STRING_PARAMETERS_MAP && elementsType != VALUE) {
+            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, STRING_PARAMETERS_MAP.toString(), elementsType.toString()));
+        }
         return cast(getQueue());
     }
 
     public Queue<Entity> getEntityQueue() {
-        if (isNull(elementsType)) return queueOf();
+        if (isEmpty()) return queueOf();
         if (elementsType != ENTITY && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, ENTITY.toString(), elementsType.toString()));
         }
-        if (isEmpty()) return queueOf();
         return cast(getQueue());
     }
 
     public Queue<Long> getLongQueue() {
-        if (isNull(elementsType)) return queueOf();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (CheckerForEmptiness.isEmpty(longElements)) {
-                return queueOf();
-            }
-            Queue<Long> queue = queueOf();
-            for (long longElement : longElements) {
-                queue.add(longElement);
-            }
-            return queue;
-        }
-        if (elementsType == VALUE) {
-            if (isEmpty()) return queueOf();
-            return getList()
-                    .stream()
-                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.LONG)
-                    .map(element -> asPrimitive(cast(element)).getLong())
-                    .collect(toCollection(CollectionsFactory::queueOf));
-        }
-        if (elementsType != LONG) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, LONG.toString(), elementsType.toString()));
-        }
         if (isEmpty()) return queueOf();
-        return cast(getQueue());
+        Queue<Long> Queue = queueOf();
+        switch (elementsType) {
+            case VALUE:
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
+                        .map(element -> asPrimitive(cast(element)).getLong())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            case STRING:
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseLong(cast(element)))
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        Queue.add(element);
+                    }
+                    return Queue;
+                }
+                return cast(elements);
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        Queue.add((long) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).longValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        Queue.add((long) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).longValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        Queue.add((long) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).longValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        Queue.add((long) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).longValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+        }
+        throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, LONG.toString(), elementsType.toString()));
     }
 
     public Queue<String> getStringQueue() {
-        if (isNull(elementsType)) return queueOf();
         if (isEmpty()) return queueOf();
-        if (elementsType != STRING) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, STRING.toString(), elementsType.toString()));
+        Queue<String> Queue = queueOf();
+        if (collectionMode == PRIMITIVE_ARRAY) {
+            switch (elementsType) {
+                case LONG: {
+                    for (long element : longElements) {
+                        Queue.add(EMPTY_STRING + element);
+                    }
+                    return Queue;
+                }
+                case DOUBLE: {
+                    for (double element : doubleElements) {
+                        Queue.add(EMPTY_STRING + element);
+                    }
+                    return Queue;
+                }
+                case FLOAT: {
+                    for (float element : floatElements) {
+                        Queue.add(EMPTY_STRING + element);
+                    }
+                    return Queue;
+                }
+                case INT: {
+                    for (int element : intElements) {
+                        Queue.add(EMPTY_STRING + element);
+                    }
+                    return Queue;
+                }
+                case BOOL: {
+                    for (boolean element : boolElements) {
+                        Queue.add(EMPTY_STRING + element);
+                    }
+                    return Queue;
+                }
+                case BYTE: {
+                    for (byte element : byteElements) {
+                        Queue.add(EMPTY_STRING + element);
+                    }
+                    return Queue;
+                }
+            }
         }
-        return cast(getQueue());
+        if (elementsType == STRING) {
+            return cast(getQueue());
+        }
+        return getQueue().stream().filter(Objects::nonNull).map(Object::toString).collect(toCollection(CollectionsFactory::queueOf));
     }
 
     public Queue<Boolean> getBoolQueue() {
-        if (isNull(elementsType)) return queueOf();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (CheckerForEmptiness.isEmpty(boolElements)) {
-                return queueOf();
-            }
-            Queue<Boolean> queue = queueOf();
-            for (boolean boolElement : boolElements) {
-                queue.add(boolElement);
-            }
-            return queue;
-        }
-        if (elementsType == VALUE) {
-            if (isEmpty()) return queueOf();
-            return getList()
-                    .stream()
-                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.BOOL)
-                    .map(element -> asPrimitive(cast(element)).getBool())
-                    .collect(toCollection(CollectionsFactory::queueOf));
-        }
-        if (elementsType != BOOL) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
-        }
         if (isEmpty()) return queueOf();
-        return cast(getQueue());
+        if (collectionMode == PRIMITIVE_ARRAY) {
+            if (elementsType != BOOL) {
+                throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
+            }
+            Queue<Boolean> Queue = queueOf();
+            for (boolean element : boolElements) {
+                Queue.add(element);
+            }
+            return Queue;
+        }
+        switch (elementsType) {
+            case VALUE:
+                return getQueue()
+                        .stream()
+                        .filter(element -> isPrimitive(cast(element)))
+                        .map(element -> asPrimitive(cast(element)).getBool())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            case STRING:
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseBoolean((cast(element))))
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            case BOOL:
+                return cast(getQueue());
+        }
+        throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, BOOL.toString(), elementsType.toString()));
     }
 
     public Queue<Integer> getIntQueue() {
-        if (isNull(elementsType)) return queueOf();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (CheckerForEmptiness.isEmpty(intElements)) {
-                return queueOf();
-            }
-            Queue<Integer> queue = queueOf();
-            for (int intElement : intElements) {
-                queue.add(intElement);
-            }
-            return queue;
-        }
-        if (elementsType == VALUE) {
-            if (isEmpty()) return queueOf();
-            return getList()
-                    .stream()
-                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.INT)
-                    .map(element -> asPrimitive(cast(element)).getInt())
-                    .collect(toCollection(CollectionsFactory::queueOf));
-        }
-        if (elementsType != INT) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
-        }
         if (isEmpty()) return queueOf();
-        return cast(getQueue());
-    }
-
-    public Queue<Double> getDoubleQueue() {
-        if (isNull(elementsType)) return queueOf();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (CheckerForEmptiness.isEmpty(doubleElements)) {
-                return queueOf();
+        Queue<Integer> Queue = queueOf();
+        switch (elementsType) {
+            case VALUE:
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
+                        .map(element -> asPrimitive(cast(element)).getInt())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            case STRING:
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseInt(cast(element)))
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        Queue.add((int) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).intValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
             }
-            Queue<Double> queue = queueOf();
-            for (double doubleElement : doubleElements) {
-                queue.add(doubleElement);
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        Queue.add((int) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).intValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
             }
-            return queue;
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        Queue.add((int) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).intValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        Queue.add(element);
+                    }
+                    return Queue;
+                }
+                return cast(elements);
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        Queue.add((int) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).intValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
         }
-        if (elementsType == VALUE) {
-            if (isEmpty()) return queueOf();
-            return getList()
-                    .stream()
-                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.DOUBLE)
-                    .map(element -> asPrimitive(cast(element)).getDouble())
-                    .collect(toCollection(CollectionsFactory::queueOf));
-        }
-        if (elementsType != DOUBLE) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
-        }
-
-        if (isEmpty()) return queueOf();
-        return cast(getQueue());
+        throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, INT.toString(), elementsType.toString()));
     }
 
     public Queue<Byte> getByteQueue() {
-        if (isNull(elementsType)) return queueOf();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (CheckerForEmptiness.isEmpty(byteElements)) {
-                return queueOf();
-            }
-            Queue<Byte> queue = queueOf();
-            for (byte byteElement : byteElements) {
-                queue.add(byteElement);
-            }
-            return queue;
-        }
-        if (elementsType == VALUE) {
-            if (isEmpty()) return queueOf();
-            return getList()
-                    .stream()
-                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.BYTE)
-                    .map(element -> asPrimitive(cast(element)).getByte())
-                    .collect(toCollection(CollectionsFactory::queueOf));
-        }
-        if (elementsType != BYTE) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
-        }
         if (isEmpty()) return queueOf();
-        return cast(getQueue());
+        Queue<Byte> Queue = queueOf();
+        switch (elementsType) {
+            case VALUE:
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
+                        .map(element -> asPrimitive(cast(element)).getByte())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            case STRING:
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseByte(cast(element)))
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        Queue.add((byte) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).byteValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        Queue.add((byte) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).byteValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        Queue.add((byte) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).byteValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        Queue.add((byte) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).byteValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        Queue.add(element);
+                    }
+                    return Queue;
+                }
+                return cast(elements);
+            }
+        }
+        throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, BYTE.toString(), elementsType.toString()));
+    }
+
+    public Queue<Double> getDoubleQueue() {
+        if (isEmpty()) return queueOf();
+        Queue<Double> Queue = queueOf();
+        switch (elementsType) {
+            case VALUE:
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
+                        .map(element -> asPrimitive(cast(element)).getDouble())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            case STRING:
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseDouble(cast(element)))
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        Queue.add((double) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).doubleValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        Queue.add(element);
+                    }
+                    return Queue;
+                }
+                return cast(elements);
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        Queue.add((double) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).doubleValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        Queue.add((double) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).doubleValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        Queue.add((double) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).doubleValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+        }
+        throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, DOUBLE.toString(), elementsType.toString()));
     }
 
     public Queue<Float> getFloatQueue() {
-        if (isNull(elementsType)) return queueOf();
-        if (collectionMode == PRIMITIVE_ARRAY) {
-            if (CheckerForEmptiness.isEmpty(floatElements)) {
-                return queueOf();
-            }
-            Queue<Float> queue = queueOf();
-            for (float floatElement : floatElements) {
-                queue.add(floatElement);
-            }
-            return queue;
-        }
-        if (elementsType == VALUE) {
-            if (isEmpty()) return queueOf();
-            return getList()
-                    .stream()
-                    .filter(element -> isPrimitive(cast(element)) && asPrimitive(cast(element)).getPrimitiveType() == PrimitiveType.FLOAT)
-                    .map(element -> asPrimitive(cast(element)).getFloat())
-                    .collect(toCollection(CollectionsFactory::queueOf));
-        }
-        if (elementsType != FLOAT) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, FLOAT.toString(), elementsType.toString()));
-        }
         if (isEmpty()) return queueOf();
-        return cast(getQueue());
+        Queue<Float> Queue = queueOf();
+        switch (elementsType) {
+            case VALUE:
+                return elements.stream()
+                        .filter(element -> isPrimitive(cast(element)))
+                        .map(element -> asPrimitive(cast(element)).getFloat())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            case STRING:
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> parseFloat(cast(element)))
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            case LONG: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (long element : longElements) {
+                        Queue.add((float) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).floatValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case DOUBLE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (double element : doubleElements) {
+                        Queue.add((float) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).floatValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case FLOAT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (float element : floatElements) {
+                        Queue.add(element);
+                    }
+                    return Queue;
+                }
+                return cast(elements);
+            }
+            case INT: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (int element : intElements) {
+                        Queue.add((float) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).floatValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+            case BYTE: {
+                if (collectionMode == PRIMITIVE_ARRAY) {
+                    for (byte element : byteElements) {
+                        Queue.add((float) element);
+                    }
+                    return Queue;
+                }
+                return elements.stream()
+                        .filter(Objects::nonNull)
+                        .map(element -> ((Number) element).floatValue())
+                        .collect(toCollection(CollectionsFactory::queueOf));
+            }
+        }
+        throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, FLOAT.toString(), elementsType.toString()));
     }
 
 
@@ -1010,14 +1976,14 @@ public class CollectionValue<T> implements Value {
                     break;
                 }
             }
+            if (i == 0) return EMPTY_LONGS;
             return copyOf(values, i);
         }
         for (Object element : elements) {
             switch (elementsType) {
                 case STRING:
-                    Long value = tryParseLong(cast(element));
-                    if (nonNull(value)) {
-                        values[i] = value;
+                    if (nonNull(element)) {
+                        values[i] = parseLong(cast(element));
                         i++;
                     }
                     break;
@@ -1039,6 +2005,7 @@ public class CollectionValue<T> implements Value {
                     break;
             }
         }
+        if (i == 0) return EMPTY_LONGS;
         return copyOf(values, i);
     }
 
@@ -1052,9 +2019,8 @@ public class CollectionValue<T> implements Value {
         for (Object element : elements) {
             switch (elementsType) {
                 case STRING:
-                    Boolean value = tryParseBoolean(cast(element));
-                    if (nonNull(value)) {
-                        values[i] = value;
+                    if (nonNull(element)) {
+                        values[i] = parseBoolean(cast(element));
                         i++;
                     }
                     break;
@@ -1066,6 +2032,7 @@ public class CollectionValue<T> implements Value {
                     break;
             }
         }
+        if (i == 0) return EMPTY_BOOLEANS;
         return copyOf(values, i);
     }
 
@@ -1106,14 +2073,14 @@ public class CollectionValue<T> implements Value {
                     break;
                 }
             }
+            if (i == 0) return EMPTY_INTS;
             return copyOf(values, i);
         }
         for (Object element : elements) {
             switch (elementsType) {
                 case STRING:
-                    Integer value = tryParseInt(cast(element));
-                    if (nonNull(value)) {
-                        values[i] = value;
+                    if (nonNull(element)) {
+                        values[i] = parseInt(cast(element));
                         i++;
                     }
                     break;
@@ -1135,6 +2102,7 @@ public class CollectionValue<T> implements Value {
                     break;
             }
         }
+        if (i == 0) return EMPTY_INTS;
         return copyOf(values, i);
     }
 
@@ -1175,14 +2143,14 @@ public class CollectionValue<T> implements Value {
                 case BYTE:
                     return byteElements;
             }
+            if (i == 0) return EMPTY_BYTES;
             return copyOf(values, i);
         }
         for (Object element : elements) {
             switch (elementsType) {
                 case STRING:
-                    Byte value = tryParseByte(cast(element));
-                    if (nonNull(value)) {
-                        values[i] = value;
+                    if (nonNull(element)) {
+                        values[i] = parseByte(cast(element));
                         i++;
                     }
                     break;
@@ -1204,6 +2172,7 @@ public class CollectionValue<T> implements Value {
                     break;
             }
         }
+        if (i == 0) return EMPTY_BYTES;
         return copyOf(values, i);
     }
 
@@ -1224,7 +2193,7 @@ public class CollectionValue<T> implements Value {
                     return doubleElements;
                 case FLOAT: {
                     for (float element : floatElements) {
-                        values[i] = (double) element;
+                        values[i] = element;
                         i++;
                     }
                     break;
@@ -1244,14 +2213,14 @@ public class CollectionValue<T> implements Value {
                     break;
                 }
             }
+            if (i == 0) return EMPTY_DOUBLES;
             return copyOf(values, i);
         }
         for (Object element : elements) {
             switch (elementsType) {
                 case STRING:
-                    Double value = tryParseDouble(cast(element));
-                    if (nonNull(value)) {
-                        values[i] = value;
+                    if (nonNull(element)) {
+                        values[i] = parseDouble(cast(element));
                         i++;
                     }
                     break;
@@ -1273,6 +2242,7 @@ public class CollectionValue<T> implements Value {
                     break;
             }
         }
+        if (i == 0) return EMPTY_DOUBLES;
         return copyOf(values, i);
     }
 
@@ -1313,14 +2283,14 @@ public class CollectionValue<T> implements Value {
                     break;
                 }
             }
+            if (i == 0) return EMPTY_FLOATS;
             return copyOf(values, i);
         }
         for (Object element : elements) {
             switch (elementsType) {
                 case STRING:
-                    Float value = tryParseFloat(cast(element));
-                    if (nonNull(value)) {
-                        values[i] = value;
+                    if (nonNull(element)) {
+                        values[i] = parseFloat(cast(element));
                         i++;
                     }
                     break;
@@ -1342,6 +2312,7 @@ public class CollectionValue<T> implements Value {
                     break;
             }
         }
+        if (i == 0) return EMPTY_FLOATS;
         return copyOf(values, i);
     }
 
