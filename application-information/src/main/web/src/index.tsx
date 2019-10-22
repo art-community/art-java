@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package ru.art.grpc.server.exception;
+import * as ReactDOM from "react-dom";
+import * as React from "react";
+import {MainComponent} from "./component/MainComponent";
 
-public class GrpcServerException extends RuntimeException {
-    public GrpcServerException(String message, Throwable e) {
-        super(message, e);
-    }
+const main = () => ReactDOM.render(<MainComponent/>, document.getElementById('mainComponent'));
 
-    public GrpcServerException(String message) {
-        super(message);
-    }
+declare var module: any;
+if (module.hot) {
+    module.hot.accept(main);
 }
+main();

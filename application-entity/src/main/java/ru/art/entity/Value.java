@@ -72,6 +72,11 @@ public interface Value {
         return isXmlEntityType(value.getType());
     }
 
+    static boolean isMap(Value value) {
+        if (isNull(value)) return false;
+        return isMapType(value.getType());
+    }
+
     static boolean isPrimitiveType(ValueType type) {
         if (isNull(type)) return false;
 
@@ -101,6 +106,11 @@ public interface Value {
     static boolean isXmlEntityType(ValueType type) {
         if (isNull(type)) return false;
         return type == ENTITY;
+    }
+
+    static boolean isMapType(ValueType type) {
+        if (isNull(type)) return false;
+        return type == MAP;
     }
 
     boolean isEmpty();

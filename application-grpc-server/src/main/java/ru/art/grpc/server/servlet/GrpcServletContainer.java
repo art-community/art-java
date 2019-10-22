@@ -116,7 +116,7 @@ public class GrpcServletContainer extends GrpcServlet {
                 sendServiceNotExistsError(responseObserver, serviceId);
                 return;
             }
-            Map<String, GrpcMethod> grpcMethods = service.getGrpcService().getMethods();
+            Map<String, GrpcMethod> grpcMethods = service.getGrpcService().getGrpcMethods();
             GrpcMethod grpcMethod = grpcMethods.get(serviceMethodId);
             if (isNull(grpcMethod)) {
                 sendMethodNotExistsError(responseObserver, serviceMethodId);

@@ -5,9 +5,10 @@ import ru.art.core.module.*;
 import ru.art.information.configuration.*;
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.http.server.HttpServer.*;
 import static ru.art.information.configuration.InformationModuleConfiguration.*;
 import static ru.art.information.constants.InformationModuleConstants.*;
-import static ru.art.information.specification.InformationServiceSpecification.registerInformationService;
+import static ru.art.information.specification.InformationServiceSpecification.*;
 
 @Getter
 public class InformationModule implements Module<InformationModuleConfiguration, ModuleState> {
@@ -23,5 +24,6 @@ public class InformationModule implements Module<InformationModuleConfiguration,
     public static void main(String[] args) {
         useAgileConfigurations();
         registerInformationService();
+        startHttpServer().await();
     }
 }
