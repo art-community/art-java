@@ -28,7 +28,7 @@ public interface ConfiguratorModuleConstants {
     String GRPC_SERVER_HOST_KEY = "grpc.server.host";
     String GRPC_SERVER_PORT_KEY = "grpc.server.port";
     String GRPC_SERVER_PATH_KEY = "grpc.server.path";
-    String BALANCER_HOST_KEY = "balancer.host";
+    String INSTANCES_KEY = "instances";
     String BALANCER_POT_KEY = "balancer.port";
 
     String TOKEN_COOKIE = "TOKEN";
