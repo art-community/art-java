@@ -41,10 +41,4 @@ public interface ValueFromModelMapper<T, V extends Value> extends Serializable {
 
     interface XmlEntityFromModelMapper<T> extends ValueFromModelMapper<T, XmlEntity> {
     }
-
-    public static void main(String[] args) {
-        try {
-        } catch (Exception e) {
-        }
-    }
 }

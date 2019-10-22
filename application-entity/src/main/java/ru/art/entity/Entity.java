@@ -647,6 +647,7 @@ public class Entity implements Value {
             return this;
         }
 
+
         public EntityBuilder boolCollectionField(String name, Collection<Boolean> value) {
             fields.put(name, boolCollection(value));
             return this;
@@ -682,6 +683,7 @@ public class Entity implements Value {
             return this;
         }
 
+
         public EntityBuilder boolArrayField(String name, boolean[] value) {
             fields.put(name, boolCollection(value));
             return this;
@@ -711,6 +713,7 @@ public class Entity implements Value {
             fields.put(name, floatCollection(value));
             return this;
         }
+
 
         public EntityBuilder entityCollectionField(String name, Collection<Entity> value) {
             fields.put(name, collectionValue(CollectionElementsType.ENTITY, value));

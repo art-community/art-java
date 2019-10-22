@@ -21,6 +21,7 @@ package ru.art.core.parser;
 import lombok.experimental.*;
 import static java.lang.Boolean.*;
 import static java.lang.Double.*;
+import static java.lang.Float.*;
 import static java.lang.Integer.*;
 import static java.lang.Long.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
@@ -195,6 +196,17 @@ public class PrimitiveParser {
         }
     }
 
+    public static Float tryParseFloat(String str) {
+        if (isEmpty(str)) {
+            return null;
+        }
+        try {
+            return parseFloat(str);
+        } catch (Throwable e) {
+            return null;
+        }
+    }
+
     public static Integer tryParseInt(String str) {
         if (isEmpty(str)) {
             return null;
@@ -212,6 +224,17 @@ public class PrimitiveParser {
         }
         try {
             return parseLong(str);
+        } catch (Throwable e) {
+            return null;
+        }
+    }
+
+    public static Byte tryParseByte(String str) {
+        if (isEmpty(str)) {
+            return null;
+        }
+        try {
+            return tryParseByte(str);
         } catch (Throwable e) {
             return null;
         }
