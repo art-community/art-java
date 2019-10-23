@@ -4,9 +4,7 @@ import com.squareup.javapoet.*;
 import lombok.Builder;
 import lombok.*;
 import lombok.experimental.*;
-import ru.art.generator.soap.constants.*;
 import ru.art.generator.soap.model.*;
-import ru.art.generator.soap.service.*;
 import ru.art.service.validation.*;
 import static com.squareup.javapoet.CodeBlock.*;
 import static com.squareup.javapoet.TypeSpec.*;
@@ -18,6 +16,7 @@ import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstant
 import static ru.art.generator.soap.constants.Constants.*;
 import static ru.art.generator.soap.constants.Constants.ToXmlModelConstants.*;
 import static ru.art.generator.soap.factory.TypeFactory.*;
+import static ru.art.generator.soap.service.SoapGeneratorService.*;
 import java.io.*;
 import java.util.*;
 
@@ -29,16 +28,7 @@ public class JavaFileFactory {
     public static JavaFile createJavaFile(String packagePath, TypeSpec spec) {
         JavaFile javaFile = JavaFile.builder(packagePath, spec).build();
         try {
-            javaFile.writeTo(new File(SourceCodeGenService.class.getProtectionDomain()
-                    .getCodeSource()
-                    .getLocation()
-                    .getPath()
-                    .subSequence(0, SourceCodeGenService.class.getProtectionDomain()
-                            .getCodeSource()
-                            .getLocation()
-                            .getPath()
-                            .indexOf(Constants.BUILD))
-                    .toString() + SRC_MAIN_JAVA));
+            javaFile.writeTo(new File(SRC_MAIN_JAVA_ABSOLUTE_PATH.get()));
         } catch (IOException e) {
             e.printStackTrace();
         }
