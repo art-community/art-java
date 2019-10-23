@@ -37,7 +37,7 @@
   },
   "scripts": {
     "production": "parcel build src/information.index.html",
-    "development": "parcel src/information.index.html"
+    "development": "parcel src/information.index.dev.html"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
