@@ -19,9 +19,9 @@
 import "./components/main/MainComponent.css"
 import * as ReactDOM from "react-dom";
 import * as React from "react";
-import {MAIN_COMPONENT} from "./constants/Constants";
+import {MAIN_COMPONENT, SLASH} from "./constants/Constants";
 import 'semantic-ui-css/semantic.min.css'
-import {Route, Switch, withRouter} from "react-router";
+import {Redirect, Route, Switch, withRouter} from "react-router";
 import StartComponent from "./components/start/StartComponent";
 import {BrowserRouter} from "react-router-dom";
 import {CONFIGURATOR_ROUTER} from "./constants/Routers";
@@ -31,7 +31,10 @@ const main = () => ReactDOM.render(
     <CookiesProvider>
         <BrowserRouter>
             <Switch>
-                <Route path={CONFIGURATOR_ROUTER} component={withRouter(StartComponent)}/>
+                <Route exact path={CONFIGURATOR_ROUTER} component={withRouter(StartComponent)}/>
+                <Route path={SLASH}>
+                    <Redirect to={CONFIGURATOR_ROUTER}/>
+                </Route>
             </Switch>
         </BrowserRouter>
     </CookiesProvider>, document.getElementById(MAIN_COMPONENT));
