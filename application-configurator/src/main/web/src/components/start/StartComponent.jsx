@@ -18,14 +18,13 @@
 
 import React from 'react';
 import MainComponent from "../main/MainComponent";
-import {CONFIGURATOR_PATH, COOKIE_MAX_AGE, EMPTY_STRING, SLASH, TOKEN_COOKIE} from "../../constants/Constants";
+import {COOKIE_MAX_AGE, EMPTY_STRING, TOKEN_COOKIE} from "../../constants/Constants";
 import {withCookies} from "react-cookie";
 import {checkToken, login} from "../../services/UserService";
 import LoginComponent from "../login/LoginComponent";
 import {Route, Router, Switch} from "react-router";
 import AxiosConfiguration from "../../configuration/AxiosConfiguration";
 import {CONFIGURATOR_ROUTER} from "../../constants/Routers";
-import Redirect from "react-router/Redirect";
 
 class StartComponent extends React.Component {
     state = {username: '', password: '', success: true};

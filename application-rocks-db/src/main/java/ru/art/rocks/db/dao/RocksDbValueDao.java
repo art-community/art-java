@@ -25,6 +25,7 @@ import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.context.Context.contextConfiguration;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Value.*;
 import static ru.art.message.pack.descriptor.MessagePackEntityReader.*;
@@ -54,7 +55,7 @@ public interface RocksDbValueDao {
     static void putBinary(String entityKey, Value value) {
         if (isEmpty(entityKey)) return;
         if (isEmpty(value)) return;
-        byte[] keyBytes = entityKey.getBytes();
+        byte[] keyBytes = entityKey.getBytes(contextConfiguration().getCharset());
         byte[] valueBytes = writeMessagePackToBytes(value);
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }

@@ -18,6 +18,8 @@
 
 package ru.art.configurator.constants;
 
+import static java.util.stream.Collectors.*;
+import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
 import java.util.*;
@@ -25,11 +27,10 @@ import java.util.*;
 public interface ConfiguratorModuleConstants {
     String CONFIGURATOR_MODULE_ID = "CONFIGURATOR_MODULE";
 
-    String GRPC_SERVER_HOST_KEY = "grpc.server.host";
     String GRPC_SERVER_PORT_KEY = "grpc.server.port";
     String GRPC_SERVER_PATH_KEY = "grpc.server.path";
-    String INSTANCES_KEY = "instances";
-    String BALANCER_POT_KEY = "balancer.port";
+
+    String CONFIGURATOR_INDEX_HTML = "configurator.index.html";
 
     String TOKEN_COOKIE = "TOKEN";
     String LOGIN_PATH = API_PATH + "/login";
@@ -41,7 +42,10 @@ public interface ConfiguratorModuleConstants {
             "/modules",
             "/uploadApplication",
             "/uploadProfile",
-            "/uploadModule");
+            "/uploadModule")
+            .stream()
+            .map(path -> CONFIGURATOR_PATH + API_PATH + path)
+            .collect(toSet());
     String UPLOAD_PATH = API_PATH + "/upload";
     String GET_PATH = API_PATH + "/get";
     String GET_APPLICATION_CONFIGURATION_PATH = API_PATH + "/getApplicationConfiguration";

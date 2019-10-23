@@ -19,17 +19,19 @@
 package ru.art.http.server.interceptor;
 
 import lombok.*;
+import lombok.experimental.*;
 import ru.art.core.constants.*;
+import ru.art.core.mime.*;
 import ru.art.http.server.exception.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.InterceptionStrategy.*;
 import static ru.art.core.context.Context.*;
-import static ru.art.http.constants.HttpHeaders.*;
 import static ru.art.http.constants.HttpMethodType.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
 import javax.servlet.http.*;
+import java.nio.charset.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -49,12 +51,13 @@ public class CookieInterceptor implements HttpServerInterception {
             if (isNull(errorProvider)) {
                 return STOP_HANDLING;
             }
-            response.setCharacterEncoding(ifEmpty(request.getCharacterEncoding(), contextConfiguration().getCharset().name()));
-            response.setHeader(CONTENT_TYPE, TEXT_HTML_UTF_8.toString());
             Error error = errorProvider.apply(request.getRequestURI());
+            String charset = error.overrideRequestCharset ? error.charset.name() : ifEmpty(request.getCharacterEncoding(), error.charset.name());
+            response.setCharacterEncoding(charset);
+            response.setContentType(error.contentType.toString());
             response.setStatus(error.status);
             if (isNotEmpty(error.content)) {
-                response.getOutputStream().write(error.content.getBytes());
+                response.getOutputStream().write(error.content.getBytes(charset));
             }
             response.getOutputStream().close();
             return STOP_HANDLING;
@@ -80,9 +83,14 @@ public class CookieInterceptor implements HttpServerInterception {
     }
 
     @Getter
-    @AllArgsConstructor(staticName = "cookieError")
+    @Setter
+    @Accessors(fluent = true)
+    @NoArgsConstructor(staticName = "cookieError")
     public static class Error {
-        private final int status;
-        private final String content;
+        private int status;
+        private String content;
+        private MimeType contentType = TEXT_HTML_UTF_8;
+        private Charset charset = contextConfiguration().getCharset();
+        private boolean overrideRequestCharset = false;
     }
 }

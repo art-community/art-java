@@ -40,7 +40,7 @@ public interface RocksDbPrimitiveDao {
         if (isEmpty(mapper)) return;
         if (isEmpty(key)) return;
         if (isEmpty(value)) return;
-        RocksDbPrimitiveDao.put(key.getBytes(), mapper.apply(value));
+        RocksDbPrimitiveDao.put(key.getBytes(contextConfiguration().getCharset()), mapper.apply(value));
     }
 
     static void put(byte[] key, byte[] value) {
@@ -61,93 +61,93 @@ public interface RocksDbPrimitiveDao {
     static void put(String key, String value) {
         if (isEmpty(key)) return;
         if (isEmpty(value)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = value.getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = value.getBytes(contextConfiguration().getCharset());
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
     static void put(String key, int value) {
         if (isEmpty(key)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = ((Integer) value).toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = ((Integer) value).toString().getBytes(contextConfiguration().getCharset());
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
     static void put(String key, char value) {
         if (isEmpty(key)) return;
-        byte[] keyBytes = key.getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
         byte[] valueBytes = new byte[]{(byte) value};
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
     static void put(String key, double value) {
         if (isEmpty(key)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = ((Double) value).toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = ((Double) value).toString().getBytes(contextConfiguration().getCharset());
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
     static void put(String key, long value) {
         if (isEmpty(key)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = ((Long) value).toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = ((Long) value).toString().getBytes(contextConfiguration().getCharset());
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
     static void put(String key, byte value) {
         if (isEmpty(key)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = ((Byte) value).toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = ((Byte) value).toString().getBytes(contextConfiguration().getCharset());
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
     static void put(String key, boolean value) {
         if (isEmpty(key)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = ((Boolean) value).toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = ((Boolean) value).toString().getBytes(contextConfiguration().getCharset());
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
 
     static void put(String key, Integer value) {
         if (isEmpty(key)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = value.toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = value.toString().getBytes(contextConfiguration().getCharset());
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
     static void put(String key, Character value) {
         if (isEmpty(key)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = value.toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = value.toString().getBytes(contextConfiguration().getCharset());
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
     static void put(String key, Double value) {
         if (isEmpty(key)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = value.toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = value.toString().getBytes(contextConfiguration().getCharset());
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
     static void put(String key, Long value) {
         if (isEmpty(key)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = value.toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = value.toString().getBytes(contextConfiguration().getCharset());
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
     static void put(String key, Byte value) {
         if (isEmpty(key)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = value.toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = value.toString().getBytes(contextConfiguration().getCharset());
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
     static void put(String key, Boolean value) {
         if (isEmpty(key)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = value.toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = value.toString().getBytes(contextConfiguration().getCharset());
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }
 
@@ -156,7 +156,7 @@ public interface RocksDbPrimitiveDao {
         if (isEmpty(mapper)) return;
         if (isEmpty(key)) return;
         if (isNull(value)) return;
-        RocksDbPrimitiveDao.add(key.getBytes(), mapper.apply(value));
+        RocksDbPrimitiveDao.add(key.getBytes(contextConfiguration().getCharset()), mapper.apply(value));
     }
 
     static void add(byte[] key, byte[] value) {
@@ -178,43 +178,43 @@ public interface RocksDbPrimitiveDao {
     static void add(String key, String value) {
         if (isEmpty(key)) return;
         if (isNull(value)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = value.getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = value.getBytes(contextConfiguration().getCharset());
         add(keyBytes, valueBytes);
     }
 
     static void add(String key, int value) {
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = ((Integer) value).toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = ((Integer) value).toString().getBytes(contextConfiguration().getCharset());
         add(keyBytes, valueBytes);
     }
 
     static void add(String key, char value) {
-        byte[] keyBytes = key.getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
         byte[] valueBytes = new byte[]{(byte) value};
         add(keyBytes, valueBytes);
     }
 
     static void add(String key, double value) {
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = ((Double) value).toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = ((Double) value).toString().getBytes(contextConfiguration().getCharset());
         add(keyBytes, valueBytes);
     }
 
     static void add(String key, long value) {
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = ((Long) value).toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = ((Long) value).toString().getBytes(contextConfiguration().getCharset());
         add(keyBytes, valueBytes);
     }
 
     static void add(String key, byte value) {
-        byte[] keyBytes = key.getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
         byte[] valueBytes = new byte[]{value};
         add(keyBytes, valueBytes);
     }
 
     static void add(String key, boolean value) {
-        byte[] keyBytes = key.getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
         byte[] valueBytes = value ? new byte[]{(byte) 1} : new byte[]{(byte) 0};
         add(keyBytes, valueBytes);
     }
@@ -222,47 +222,47 @@ public interface RocksDbPrimitiveDao {
     static void add(String key, Integer value) {
         if (isEmpty(key)) return;
         if (isNull(value)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = value.toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = value.toString().getBytes(contextConfiguration().getCharset());
         add(keyBytes, valueBytes);
     }
 
     static void add(String key, Character value) {
         if (isEmpty(key)) return;
         if (isNull(value)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = value.toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = value.toString().getBytes(contextConfiguration().getCharset());
         add(keyBytes, valueBytes);
     }
 
     static void add(String key, Double value) {
         if (isEmpty(key)) return;
         if (isNull(value)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = value.toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = value.toString().getBytes(contextConfiguration().getCharset());
         add(keyBytes, valueBytes);
     }
 
     static void add(String key, Long value) {
         if (isEmpty(key)) return;
         if (isNull(value)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = value.toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = value.toString().getBytes(contextConfiguration().getCharset());
         add(keyBytes, valueBytes);
     }
 
     static void add(String key, Byte value) {
         if (isEmpty(key)) return;
         if (isNull(value)) return;
-        byte[] keyBytes = key.getBytes();
-        byte[] valueBytes = value.toString().getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
+        byte[] valueBytes = value.toString().getBytes(contextConfiguration().getCharset());
         add(keyBytes, valueBytes);
     }
 
     static void add(String key, Boolean value) {
         if (isEmpty(key)) return;
         if (isNull(value)) return;
-        byte[] keyBytes = key.getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
         byte[] valueBytes = value ? new byte[]{(byte) 1} : new byte[]{(byte) 0};
         add(keyBytes, valueBytes);
     }
@@ -276,7 +276,7 @@ public interface RocksDbPrimitiveDao {
 
     static byte[] get(String key) {
         if (isEmpty(key)) return EMPTY_BYTES;
-        return get(key.getBytes());
+        return get(key.getBytes(contextConfiguration().getCharset()));
     }
 
     static byte[] get(byte[] key) {
@@ -302,7 +302,7 @@ public interface RocksDbPrimitiveDao {
 
     static Optional<String> getString(String key) {
         if (isEmpty(key)) return empty();
-        byte[] keyBytes = key.getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
         byte[] bytes = RocksDbPrimitiveDao.get(keyBytes);
         if (isEmpty(bytes)) return empty();
         return of(new String(bytes, contextConfiguration().getCharset()));
@@ -335,7 +335,7 @@ public interface RocksDbPrimitiveDao {
 
     static void delete(String key) {
         if (isEmpty(key)) return;
-        byte[] keyBytes = key.getBytes();
+        byte[] keyBytes = key.getBytes(contextConfiguration().getCharset());
         RocksDbPrimitiveDao.delete(keyBytes);
     }
 
@@ -361,7 +361,7 @@ public interface RocksDbPrimitiveDao {
         }
 
         RocksIterator iterator = rocksDbModuleState().getDb().newIterator();
-        iterator.seek(prefix.getBytes());
+        iterator.seek(prefix.getBytes(contextConfiguration().getCharset()));
         while (iterator.isValid()) {
             byte[] keyBytes = iterator.key();
             iterator.next();
