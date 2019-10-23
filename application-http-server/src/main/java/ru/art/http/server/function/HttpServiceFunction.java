@@ -41,12 +41,12 @@ public class HttpServiceFunction {
         return this;
     }
 
-    public HttpServiceFunction addReqInterceptor(HttpServerInterceptor interceptor) {
+    public HttpServiceFunction addRequestInterceptor(HttpServerInterceptor interceptor) {
         httpMethodBuilder.addRequestInterceptor(interceptor);
         return this;
     }
 
-    public HttpServiceFunction addRespInterceptor(HttpServerInterceptor interceptor) {
+    public HttpServiceFunction addResponseInterceptor(HttpServerInterceptor interceptor) {
         httpMethodBuilder.addResponseInterceptor(interceptor);
         return this;
     }

@@ -91,7 +91,7 @@ public class GrpcServer {
                 grpcServerModule().getPort(),
                 grpcServerModule().getPath(),
                 service.getServiceId(),
-                service.getGrpcService().getMethods().keySet().toString());
+                service.getGrpcService().getGrpcMethods().keySet().toString());
     }
 
     private static void logService(GrpcServiceSpecification specification) {

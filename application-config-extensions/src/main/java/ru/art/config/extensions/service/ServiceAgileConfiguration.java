@@ -7,6 +7,7 @@ import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.service.ServiceConfigProvider.*;
 import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.ExceptionExtensions.ifException;
 import java.util.*;
 
 @Getter
@@ -20,7 +21,7 @@ public class ServiceAgileConfiguration extends ServiceModuleDefaultConfiguration
     @Override
     public void refresh() {
         executionConfigurations.clear();
-        if (!hasPath(SERVICES)) {
+        if (!ifException(() -> hasPath(SERVICES), false)) {
             return;
         }
         configMap(SERVICES)

@@ -27,16 +27,18 @@ import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static ru.art.core.caster.Caster.*;
-import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.DateConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
+import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.entity.Value.*;
 import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
 import static ru.art.entity.constants.ValueType.*;
 import java.text.*;
 import java.util.*;
+import java.util.stream.*;
 
 @Getter
 @ToString
@@ -128,22 +130,31 @@ public class Entity implements Value {
     }
 
     public StringParametersMap getStringParametersMap(String name) {
-        StringParametersMap map = asStringParametersMap(fields.get(name));
-        return isNull(map) ? null : map;
+        Value value = fields.get(name);
+        if (isEntity(value)) {
+            return asEntity(value).toStringParameters();
+        }
+        return asStringParametersMap(value);
     }
 
     public Map<String, String> getStringParameters(String name) {
-        StringParametersMap map = asStringParametersMap(fields.get(name));
+        StringParametersMap map = getStringParametersMap(name);
         return isNull(map) ? null : map.getParameters();
     }
 
     public MapValue getMapValue(String name) {
-        MapValue map = asMap(fields.get(name));
-        return isNull(map) ? null : map;
+        Value value = fields.get(name);
+        if (isNull(value)) {
+            return null;
+        }
+        if (isEntity(value)) {
+            return asEntity(value).toMap();
+        }
+        return asMap(value);
     }
 
     public <K extends Value, V extends Value> Map<K, V> getMap(String name) {
-        MapValue map = asMap(fields.get(name));
+        MapValue map = getMapValue(name);
         return isNull(map) ? null : cast(map.getElements());
     }
 
@@ -153,7 +164,7 @@ public class Entity implements Value {
         return mapValue
                 .entrySet()
                 .stream()
-                .collect(toMap(entry -> keyMapper.map(cast(entry.getKey())), entry -> valueMapper.map(cast(entry.getValue()))));
+                .collect(Collectors.toMap(entry -> keyMapper.map(cast(entry.getKey())), entry -> valueMapper.map(cast(entry.getValue()))));
     }
 
     public <C> CollectionValue<C> getCollectionValue(String name) {
@@ -222,11 +233,25 @@ public class Entity implements Value {
     }
 
     public MapValue findMapValue(String name) {
-        return asMap(find(name));
+        Value value = find(name);
+        if (isNull(value)) {
+            return null;
+        }
+        if (isEntity(value)) {
+            return asEntity(value).toMap();
+        }
+        return asMap(value);
     }
 
     public StringParametersMap findStringParametersMap(String name) {
-        return asStringParametersMap(find(name));
+        Value value = find(name);
+        if (isNull(value)) {
+            return null;
+        }
+        if (isEntity(value)) {
+            return asEntity(value).toStringParameters();
+        }
+        return asStringParametersMap(value);
     }
 
 
@@ -538,8 +563,29 @@ public class Entity implements Value {
 
 
     public <K, V> Map<K, V> getMap(String name, ValueToModelMapper<Map<K, V>, MapValue> mapper) {
-        MapValue mapValue = asMap(fields.get(name));
+        MapValue mapValue = getMapValue(name);
         return isNull(mapValue) ? emptyMap() : mapper.map(mapValue);
+    }
+
+    public MapValue toMap() {
+        if (isEmpty()) {
+            return MapValue.builder().build();
+        }
+        return MapValue.builder().elements(fields.entrySet()
+                .stream()
+                .collect(Collectors.toMap(entry -> stringPrimitive(entry.getKey()), Map.Entry::getValue)))
+                .build();
+    }
+
+    public StringParametersMap toStringParameters() {
+        if (isEmpty()) {
+            return StringParametersMap.builder().build();
+        }
+        return StringParametersMap.builder().parameters(fields.entrySet()
+                .stream()
+                .filter(entry -> isPrimitive(entry.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> asPrimitive(entry.getValue()).getString())))
+                .build();
     }
 
     @Override
@@ -567,44 +613,44 @@ public class Entity implements Value {
         }
 
         public EntityBuilder intField(String name, Integer value) {
-            fields.put(name, PrimitivesFactory.intPrimitive(value));
+            fields.put(name, intPrimitive(value));
             return this;
         }
 
         public EntityBuilder longField(String name, Long value) {
-            fields.put(name, PrimitivesFactory.longPrimitive(value));
+            fields.put(name, longPrimitive(value));
             return this;
         }
 
         public EntityBuilder stringField(String name, String value) {
-            fields.put(name, PrimitivesFactory.stringPrimitive(value));
+            fields.put(name, stringPrimitive(value));
             return this;
         }
 
         public EntityBuilder dateField(String name, Date value) {
             if (isNotEmpty(value)) {
-                fields.put(name, PrimitivesFactory.stringPrimitive(YYYY_MM_DD_T_HH_MM_SS_24H_SSS_Z_DASH_FORMAT.format(value)));
+                fields.put(name, stringPrimitive(YYYY_MM_DD_T_HH_MM_SS_24H_SSS_Z_DASH_FORMAT.format(value)));
             }
             return this;
         }
 
         public EntityBuilder boolField(String name, Boolean value) {
-            fields.put(name, PrimitivesFactory.boolPrimitive(value));
+            fields.put(name, boolPrimitive(value));
             return this;
         }
 
         public EntityBuilder doubleField(String name, Double value) {
-            fields.put(name, PrimitivesFactory.doublePrimitive(value));
+            fields.put(name, doublePrimitive(value));
             return this;
         }
 
         public EntityBuilder floatField(String name, Float value) {
-            fields.put(name, PrimitivesFactory.floatPrimitive(value));
+            fields.put(name, floatPrimitive(value));
             return this;
         }
 
         public EntityBuilder byteField(String name, Byte value) {
-            fields.put(name, PrimitivesFactory.bytePrimitive(value));
+            fields.put(name, bytePrimitive(value));
             return this;
         }
 
@@ -632,7 +678,7 @@ public class Entity implements Value {
             }
             Map<? extends Value, ? extends Value> elements = map.entrySet()
                     .stream()
-                    .collect(toMap(entry -> keyMapper.map(cast(entry.getKey())), entry -> valueMapper.map(cast(entry.getValue()))));
+                    .collect(Collectors.toMap(entry -> keyMapper.map(cast(entry.getKey())), entry -> valueMapper.map(cast(entry.getValue()))));
             mapField(name, elements);
             return this;
         }
@@ -646,6 +692,7 @@ public class Entity implements Value {
             fields.put(name, StringParametersMap.builder().parameters(stringParametersMap).build());
             return this;
         }
+
 
         public EntityBuilder boolCollectionField(String name, Collection<Boolean> value) {
             fields.put(name, boolCollection(value));
@@ -682,6 +729,7 @@ public class Entity implements Value {
             return this;
         }
 
+
         public EntityBuilder boolArrayField(String name, boolean[] value) {
             fields.put(name, boolCollection(value));
             return this;
@@ -711,6 +759,7 @@ public class Entity implements Value {
             fields.put(name, floatCollection(value));
             return this;
         }
+
 
         public EntityBuilder entityCollectionField(String name, Collection<Entity> value) {
             fields.put(name, collectionValue(CollectionElementsType.ENTITY, value));

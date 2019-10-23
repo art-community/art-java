@@ -31,7 +31,6 @@ public class LambdaGenericParametersExtractor {
         } catch (Throwable throwable) {
             throw new InternalRuntimeException(throwable);
         }
-
     }
 
     private static Class<?> extractClass(String parameterClass) {

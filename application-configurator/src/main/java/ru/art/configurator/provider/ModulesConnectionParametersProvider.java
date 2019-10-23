@@ -19,37 +19,33 @@
 package ru.art.configurator.provider;
 
 import lombok.*;
-import ru.art.configurator.api.model.ModuleKey;
+import ru.art.configurator.api.model.*;
 import ru.art.entity.Value;
 import ru.art.entity.*;
-import static java.util.Optional.*;
-import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
+import static java.util.Collections.*;
+import static java.util.stream.Collectors.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.configurator.dao.ConfiguratorDao.*;
 import java.util.*;
 
 public interface ModulesConnectionParametersProvider {
-    static Optional<ModuleConnectionParameters> getModulesConnectionParameters(ModuleKey moduleKey) {
-        Optional<Entity> applicationConfiguration = getConfig(APPLICATION).filter(Value::isEntity).map(Value::asEntity);
+    static List<ModuleConnectionParameters> getModulesConnectionParameters(ModuleKey moduleKey) {
+        Optional<Entity> profileConfiguration = getConfig(moduleKey.getProfileId()).filter(Value::isEntity).map(Value::asEntity);
         Optional<Entity> moduleConfiguration = getConfig(moduleKey.formatKey()).filter(Value::isEntity).map(Value::asEntity);
-        if (applicationConfiguration.isPresent()) {
-            Optional<String> host = applicationConfiguration.map(configuration -> configuration.findString(BALANCER_HOST_KEY));
-            Optional<Integer> port = applicationConfiguration.map(configuration -> configuration.findInt(BALANCER_POT_KEY));
-            if (host.isPresent() && port.isPresent()) {
-                return moduleConfiguration
-                        .map(configuration -> configuration.findString(GRPC_SERVER_PATH_KEY))
-                        .map(modulePath -> new ModuleConnectionParameters(host.get(), port.get(), modulePath));
-            }
-            return empty();
+        if (!profileConfiguration.isPresent() || !moduleConfiguration.isPresent()) {
+            return emptyList();
         }
-        Optional<String> host = moduleConfiguration.map(configuration -> configuration.findString(GRPC_SERVER_HOST_KEY));
-        Optional<Integer> port = moduleConfiguration.map(configuration -> configuration.findInt(GRPC_SERVER_PORT_KEY));
-        if (host.isPresent() && port.isPresent()) {
-            return moduleConfiguration
-                    .map(configuration -> configuration.getString(GRPC_SERVER_PATH_KEY))
-                    .map(modulePath -> new ModuleConnectionParameters(host.get(), port.get(), modulePath));
+        Optional<Set<String>> hosts = profileConfiguration.map(configuration -> configuration.getStringSet(moduleKey.getModuleId()));
+        Optional<Integer> port = moduleConfiguration.map(config -> config.getInt(GRPC_SERVER_PORT_KEY));
+        Optional<String> path = moduleConfiguration.map(config -> config.getString(GRPC_SERVER_PATH_KEY));
+        if (!hosts.isPresent() || !port.isPresent() || !path.isPresent()) {
+            return emptyList();
         }
-        return empty();
+        return hosts.map(instanceConfig -> instanceConfig
+                .stream()
+                .map(host -> new ModuleConnectionParameters(host, port.get(), path.get()))
+                .collect(toList()))
+                .orElse(emptyList());
     }
 
     @Getter

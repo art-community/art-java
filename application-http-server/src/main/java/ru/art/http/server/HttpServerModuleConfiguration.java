@@ -86,7 +86,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
     boolean isWeb();
 
     @Getter
-    @Builder
+    @Builder(toBuilder = true)
     class HttpResourceConfiguration {
         @Singular("templateResourceVariable")
         private final Map<String, String> templateResourceVariables;
