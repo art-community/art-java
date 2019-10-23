@@ -26,6 +26,7 @@ import static java.nio.charset.StandardCharsets.*;
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.xml.constants.XmlDocumentConstants.*;
@@ -40,7 +41,7 @@ import java.util.*;
 @UtilityClass
 public class XmlEntityWriter {
     public static byte[] writeXmlToBytes(XmlEntity xmlEntity) throws XmlMappingException {
-        return writeXml(xmlModule().getXmlOutputFactory(), xmlEntity).getBytes();
+        return writeXml(xmlModule().getXmlOutputFactory(), xmlEntity).getBytes(contextConfiguration().getCharset());
     }
 
     public static void writeXml(XmlEntity xmlEntity, OutputStream outputStream) throws XmlMappingException {

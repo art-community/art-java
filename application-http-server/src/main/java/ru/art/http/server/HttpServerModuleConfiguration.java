@@ -31,6 +31,7 @@ import static org.zalando.logbook.RawResponseFilters.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.core.constants.ThreadConstants.*;
+import static ru.art.core.context.Context.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.core.network.selector.PortSelector.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
@@ -39,6 +40,7 @@ import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourc
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.ResourceExtensions.*;
 import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
+import java.nio.charset.*;
 import java.util.*;
 
 public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
@@ -123,13 +125,14 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         @Builder.Default
         private final boolean allowOriginParameterFromRequest = true;
         @Builder.Default
-        private final HttpResource defaultResource = new HttpResource(INDEX_HTML, STRING);
+        private final HttpResource defaultResource = new HttpResource(INDEX_HTML, STRING, contextConfiguration().getCharset());
 
         @Getter
         @AllArgsConstructor
         public static class HttpResource {
             String path;
             HttpResourceType type;
+            Charset charset;
         }
     }
 

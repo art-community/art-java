@@ -23,6 +23,7 @@ import org.jtwig.*;
 import ru.art.http.server.HttpServerModuleConfiguration.*;
 import static java.util.Objects.*;
 import static org.jtwig.JtwigTemplate.*;
+import static org.jtwig.environment.EnvironmentConfigurationBuilder.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -34,14 +35,19 @@ import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.logging.LoggingModule.*;
 import java.io.*;
 import java.net.*;
+import java.nio.charset.*;
 
 @UtilityClass
 public class HttpResourceService {
     public static String getStringResource(String resource) {
-        return getStringResource(resource, httpServerModule().getResourceConfiguration());
+        return getStringResource(resource, contextConfiguration().getCharset(), httpServerModule().getResourceConfiguration());
     }
 
     public static String getStringResource(String resource, HttpResourceConfiguration resourceConfiguration) {
+        return getStringResource(resource, contextConfiguration().getCharset(), resourceConfiguration);
+    }
+
+    public static String getStringResource(String resource, Charset charset, HttpResourceConfiguration resourceConfiguration) {
         if (resourceConfiguration.getAvailableResourceExtensions().stream().noneMatch(resource::endsWith)) {
             return EMPTY_STRING;
         }
@@ -50,12 +56,12 @@ public class HttpResourceService {
             return EMPTY_STRING;
         }
         try (InputStream pageStream = resourceUrl.openStream()) {
-            String resourceContent = resolveResourceContent(pageStream, resourceConfiguration);
+            String resourceContent = resolveResourceContent(pageStream, charset, resourceConfiguration);
             for (String extension : resourceConfiguration.getTemplatingResourceExtensions()) {
                 if (resource.endsWith(extension)) {
                     JtwigModel model = new JtwigModel();
                     resourceConfiguration.getTemplateResourceVariables().forEach(model::with);
-                    return inlineTemplate(resourceContent).render(model);
+                    return inlineTemplate(resourceContent, configuration().render().withOutputCharset(charset).and().build()).render(model);
                 }
             }
             return resourceContent;
@@ -90,8 +96,8 @@ public class HttpResourceService {
         return EMPTY_BYTES;
     }
 
-    private static String resolveResourceContent(InputStream pageStream, HttpResourceConfiguration resourceConfiguration) throws IOException {
-        return new String(resolveResourceBinaryContent(pageStream, resourceConfiguration), contextConfiguration().getCharset());
+    private static String resolveResourceContent(InputStream pageStream, Charset charset, HttpResourceConfiguration resourceConfiguration) throws IOException {
+        return new String(resolveResourceBinaryContent(pageStream, resourceConfiguration), charset);
     }
 
     private static byte[] resolveResourceBinaryContent(InputStream pageStream, HttpResourceConfiguration resourceConfiguration) throws IOException {

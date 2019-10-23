@@ -25,8 +25,8 @@
     "semantic-ui-react": "^0.84.0"
   },
   "scripts": {
-    "production": "parcel build src/index.html --public-url /configurator/",
-    "development": "parcel src/index.html --public-url /configurator/"
+    "production": "parcel build src/configurator.index.html --public-url .",
+    "development": "parcel src/configurator.index.dev.html --public-url /configurator/ui"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",

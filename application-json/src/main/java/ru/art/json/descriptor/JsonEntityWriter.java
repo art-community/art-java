@@ -26,6 +26,7 @@ import ru.art.json.exception.*;
 import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.context.Context.contextConfiguration;
 import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.entity.Value.*;
@@ -41,7 +42,7 @@ import java.util.*;
 @UtilityClass
 public class JsonEntityWriter {
     public static byte[] writeJsonToBytes(Value value) {
-        return writeJson(value).getBytes();
+        return writeJson(value).getBytes(contextConfiguration().getCharset());
     }
 
     public static void writeJson(Value value, OutputStream outputStream) {
@@ -49,7 +50,7 @@ public class JsonEntityWriter {
             return;
         }
         try {
-            outputStream.write(writeJson(value).getBytes());
+            outputStream.write(writeJson(value).getBytes(contextConfiguration().getCharset()));
         } catch (IOException e) {
             throw new JsonMappingException(e);
         }
