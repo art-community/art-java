@@ -18,6 +18,7 @@
 
 package ru.art.http.server.service;
 
+import lombok.experimental.*;
 import org.jtwig.*;
 import ru.art.http.server.HttpServerModuleConfiguration.*;
 import static java.util.Objects.*;
@@ -29,12 +30,18 @@ import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.InputOutputStreamExtensions.*;
 import static ru.art.http.server.HttpServerModuleConfiguration.HttpResourceConfiguration.*;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
+import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.logging.LoggingModule.*;
 import java.io.*;
 import java.net.*;
 
-public interface HttpResourceService {
-    static String getStringResource(String resource, HttpResourceConfiguration resourceConfiguration) {
+@UtilityClass
+public class HttpResourceService {
+    public static String getStringResource(String resource) {
+        return getStringResource(resource, httpServerModule().getResourceConfiguration());
+    }
+
+    public static String getStringResource(String resource, HttpResourceConfiguration resourceConfiguration) {
         if (resourceConfiguration.getAvailableResourceExtensions().stream().noneMatch(resource::endsWith)) {
             return EMPTY_STRING;
         }
@@ -60,7 +67,11 @@ public interface HttpResourceService {
         return EMPTY_STRING;
     }
 
-    static byte[] getBinaryResource(String resource, HttpResourceConfiguration resourceConfiguration) {
+    public static byte[] getBinaryResource(String resource) {
+        return getBinaryResource(resource, httpServerModule().getResourceConfiguration());
+    }
+
+    public static byte[] getBinaryResource(String resource, HttpResourceConfiguration resourceConfiguration) {
         if (resourceConfiguration.getAvailableResourceExtensions().stream().noneMatch(resource::endsWith)) {
             return EMPTY_BYTES;
         }
@@ -68,7 +79,7 @@ public interface HttpResourceService {
         return getBinaryResourceContent(resourceUrl, resourceConfiguration);
     }
 
-    static byte[] getBinaryResourceContent(URL resourceUrl, HttpResourceConfiguration resourceConfiguration) {
+    private static byte[] getBinaryResourceContent(URL resourceUrl, HttpResourceConfiguration resourceConfiguration) {
         try (InputStream pageStream = resourceUrl.openStream()) {
             return resolveResourceBinaryContent(pageStream, resourceConfiguration);
         } catch (IOException e) {
@@ -79,18 +90,18 @@ public interface HttpResourceService {
         return EMPTY_BYTES;
     }
 
-    static String resolveResourceContent(InputStream pageStream, HttpResourceConfiguration resourceConfiguration) throws IOException {
+    private static String resolveResourceContent(InputStream pageStream, HttpResourceConfiguration resourceConfiguration) throws IOException {
         return new String(resolveResourceBinaryContent(pageStream, resourceConfiguration), contextConfiguration().getCharset());
     }
 
-    static byte[] resolveResourceBinaryContent(InputStream pageStream, HttpResourceConfiguration resourceConfiguration) throws IOException {
+    private static byte[] resolveResourceBinaryContent(InputStream pageStream, HttpResourceConfiguration resourceConfiguration) throws IOException {
         BufferedInputStream bufferedInputStream = new BufferedInputStream(pageStream);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         transferBytes(bufferedInputStream, byteArrayOutputStream, resourceConfiguration.getResourceBufferSize());
         return byteArrayOutputStream.toByteArray();
     }
 
-    static URL mapResourceUrl(String resource, HttpResourceConfiguration resourceConfiguration) {
+    private static URL mapResourceUrl(String resource, HttpResourceConfiguration resourceConfiguration) {
         HttpResource resourceMapping = resourceConfiguration.getResourceMappings().get(resource);
         if (isNotEmpty(resourceMapping)) {
             resource = resourceMapping.getPath();
