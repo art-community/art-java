@@ -8,4 +8,6 @@ public interface InformationModuleConstants {
     String GRPC_SERVER_WAS_NOT_INITIALIZED = "GRPC Server was not initialized";
     String INFORMATION_MODULE_ID = "INFORMATION_MODULE";
     String INFORMATION_INDEX_HTML = "information.index.html";
+    String HTTP_PATH_VARIABLE =  "httpPath";
+    String MAIN_MODULE_ID_VARIABLE =  "mainModuleId";
 }

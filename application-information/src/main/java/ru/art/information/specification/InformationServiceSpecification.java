@@ -4,6 +4,7 @@ import lombok.experimental.*;
 import ru.art.http.server.HttpServerModuleConfiguration.HttpResourceConfiguration.*;
 import ru.art.http.server.specification.*;
 import ru.art.information.service.*;
+import static ru.art.core.context.Context.*;
 import static ru.art.entity.PrimitiveMapping.*;
 import static ru.art.http.constants.MimeToContentTypeMapper.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;
@@ -19,8 +20,9 @@ public class InformationServiceSpecification {
         serviceModuleState().getServiceRegistry().registerService(new HttpResourceServiceSpecification(httpServerModule().getPath() + INFORMATION_PATH, httpServerModule()
                 .getResourceConfiguration()
                 .toBuilder()
-                .templateResourceVariable("moduleHttpPath", httpServerModule().getPath() + INFORMATION_PATH)
-                .defaultResource(new HttpResource("information.index.html", STRING))
+                .templateResourceVariable(HTTP_PATH_VARIABLE, httpServerModule().getPath() + INFORMATION_PATH)
+                .templateResourceVariable(MAIN_MODULE_ID_VARIABLE, contextConfiguration().getMainModuleId())
+                .defaultResource(new HttpResource(INFORMATION_INDEX_HTML, STRING))
                 .build()));
         httpGet(httpServerModule().getPath() + INFORMATION_API_PATH)
                 .producesMimeType(applicationJsonUtf8())

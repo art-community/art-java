@@ -25,6 +25,7 @@
     "cook": "^0.5.2",
     "images": "^3.0.2",
     "js-cookie": "^2.2.1",
+    "material-ui": "^0.20.2",
     "moment": "^2.24.0",
     "msgpack-lite": "^0.1.26",
     "react": "^15.4.0 || ^16.0.0",
@@ -33,11 +34,12 @@
     "react-router-dom": "^5.1.1",
     "react-transition-group": "^4.3.0",
     "rsocket-core": "^0.0.10",
-    "rsocket-websocket-client": "^0.0.10"
+    "rsocket-websocket-client": "^0.0.10",
+    "react-json-view": "latest"
   },
   "scripts": {
-    "production": "parcel build src/information.index.html",
-    "development": "parcel src/information.index.dev.html"
+    "production": "parcel build src/information.index.html --public-url .",
+    "development": "parcel src/information.index.dev.html --public-url /information/"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
