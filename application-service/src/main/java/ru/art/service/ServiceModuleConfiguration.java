@@ -53,6 +53,8 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
 
     Map<String, ServiceExecutionConfiguration> getExecutionConfigurations();
 
+    Map<String, DeactivationConfig> getDeactivationConfigurations();
+
     ServiceModuleDefaultConfiguration DEFAULT_CONFIGURATION = new ServiceModuleDefaultConfiguration();
 
 
@@ -64,6 +66,7 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
         private final BulkheadRegistry bulkheadRegistry = BulkheadRegistry.ofDefaults();
         private final Validator validator = new Validator();
         private final Map<String, ServiceExecutionConfiguration> executionConfigurations = mapOf();
+        private final Map<String, DeactivationConfig> deactivationConfigurations = mapOf();
         @Getter
         private final List<RequestInterceptor> requestInterceptors = linkedListOf(interceptRequest(new ServiceLoggingInterception()), interceptRequest(new ServiceValidationInterception()));
         @Getter

@@ -4,7 +4,7 @@ import static ru.art.http.constants.HttpCommonConstants.API_PATH;
 
 public interface InformationModuleConstants {
     String INFORMATION_PATH = "/information";
-    String INFORMATION_API_PATH = API_PATH + INFORMATION_PATH;
+    String GET_INFORMATION_PATH = INFORMATION_PATH + API_PATH + "/get";
     String STATUS_PATH = "/status";
     String HTTP_SERVER_WAS_NOT_INITIALIZED = "HTTP Server was not initialized";
     String GRPC_SERVER_WAS_NOT_INITIALIZED = "GRPC Server was not initialized";

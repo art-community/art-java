@@ -19,8 +19,9 @@
 import * as ReactDOM from "react-dom";
 import * as React from "react";
 import {MainComponent} from "./component/MainComponent";
+import {MAIN_COMPONENT} from "./constants/Constants";
 
-const main = () => ReactDOM.render(<MainComponent/>, document.getElementById('mainComponent'));
+const main = () => ReactDOM.render(<MainComponent/>, document.getElementById(MAIN_COMPONENT));
 
 declare var module: any;
 if (module.hot) {

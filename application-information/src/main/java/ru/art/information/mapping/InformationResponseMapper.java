@@ -1,9 +1,12 @@
 package ru.art.information.mapping;
 
-import ru.art.entity.*;
-import ru.art.entity.mapper.*;
-import ru.art.information.model.*;
-import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
+
+import java.lang.String;
+import ru.art.entity.Entity;
+import ru.art.entity.mapper.ValueFromModelMapper;
+import ru.art.entity.mapper.ValueToModelMapper;
+import ru.art.information.model.InformationResponse;
 
 public interface InformationResponseMapper {
 	String grpcInformation = "grpcInformation";

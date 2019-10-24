@@ -19,7 +19,8 @@
 export const EMPTY_STRING = "";
 export const SLASH = "/";
 export const CONFIGURATOR_PATH = "/configurator";
-export const BASE_URL = window.location.href;
+export const WEB_UI_PATH = '/ui';
+export const BASE_URL = window.location.href.split(WEB_UI_PATH)[0];
 export const API_URL = `${BASE_URL}/api`;
 export const MAIN_COMPONENT = 'mainComponent';
 export const TOKEN_COOKIE = 'TOKEN';

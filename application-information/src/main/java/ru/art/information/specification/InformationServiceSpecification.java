@@ -18,14 +18,14 @@ import static ru.art.service.ServiceModule.*;
 @UtilityClass
 public class InformationServiceSpecification {
     public static void registerInformationService() {
-        serviceModuleState().getServiceRegistry().registerService(new HttpResourceServiceSpecification(httpServerModule().getPath() + INFORMATION_PATH, httpServerModule()
+        serviceModuleState().getServiceRegistry().registerService(new HttpResourceServiceSpecification(httpServerModule().getPath() + INFORMATION_PATH + WEB_UI_PATH, httpServerModule()
                 .getResourceConfiguration()
                 .toBuilder()
                 .templateResourceVariable(WEB_UI_PATH_VARIABLE, httpServerModule().getPath() + INFORMATION_PATH)
                 .templateResourceVariable(MAIN_MODULE_ID_VARIABLE, contextConfiguration().getMainModuleId())
                 .defaultResource(new HttpResource(INFORMATION_INDEX_HTML, STRING, contextConfiguration().getCharset()))
                 .build()));
-        httpGet(httpServerModule().getPath() + INFORMATION_API_PATH)
+        httpGet(httpServerModule().getPath() + GET_INFORMATION_PATH)
                 .producesMimeType(applicationJsonUtf8())
                 .consumesMimeType(applicationJsonUtf8())
                 .ignoreRequestContentType()

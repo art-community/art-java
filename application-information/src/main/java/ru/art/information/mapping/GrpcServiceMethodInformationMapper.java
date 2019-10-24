@@ -6,31 +6,23 @@ import java.lang.String;
 import ru.art.entity.Entity;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
-import ru.art.information.model.HttpServiceMethodInformation;
+import ru.art.information.model.GrpcServiceMethodInformation;
 
-public interface HttpServiceMethodInformationMapper {
-	String method = "method";
-
+public interface GrpcServiceMethodInformationMapper {
 	String id = "id";
-
-	String url = "url";
 
 	String exampleRequest = "exampleRequest";
 
 	String exampleResponse = "exampleResponse";
 
-	ValueToModelMapper<HttpServiceMethodInformation, Entity> toHttpServiceMethodInformation = entity -> isNotEmpty(entity) ? HttpServiceMethodInformation.builder()
-			.method(entity.getString(method))
+	ValueToModelMapper<GrpcServiceMethodInformation, Entity> toGrpcServiceMethodInformation = entity -> isNotEmpty(entity) ? GrpcServiceMethodInformation.builder()
 			.id(entity.getString(id))
-			.url(entity.getString(url))
 			.exampleRequest(entity.getString(exampleRequest))
 			.exampleResponse(entity.getString(exampleResponse))
-			.build() : HttpServiceMethodInformation.builder().build();
+			.build() : GrpcServiceMethodInformation.builder().build();
 
-	ValueFromModelMapper<HttpServiceMethodInformation, Entity> fromHttpServiceMethodInformation = model -> isNotEmpty(model) ? Entity.entityBuilder()
-			.stringField(method, model.getMethod())
+	ValueFromModelMapper<GrpcServiceMethodInformation, Entity> fromGrpcServiceMethodInformation = model -> isNotEmpty(model) ? Entity.entityBuilder()
 			.stringField(id, model.getId())
-			.stringField(url, model.getUrl())
 			.stringField(exampleRequest, model.getExampleRequest())
 			.stringField(exampleResponse, model.getExampleResponse())
 			.build() : Entity.entityBuilder().build();
