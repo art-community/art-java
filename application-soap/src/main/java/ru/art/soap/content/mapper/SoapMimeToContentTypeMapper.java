@@ -34,6 +34,10 @@ public class SoapMimeToContentTypeMapper {
         return new SoapMimeToContentTypeMapper(HttpMimeTypes.TEXT_XML, ContentType.TEXT_XML);
     }
 
+    public static SoapMimeToContentTypeMapper textXmlUtf8() {
+        return new SoapMimeToContentTypeMapper(HttpMimeTypes.TEXT_XML_UTF_8, ContentType.TEXT_XML);
+    }
+
     public static SoapMimeToContentTypeMapper applicationXml() {
         return new SoapMimeToContentTypeMapper(HttpMimeTypes.APPLICATION_XML, ContentType.APPLICATION_XML);
     }

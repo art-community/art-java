@@ -20,6 +20,7 @@ package ru.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
 import lombok.experimental.*;
+import ru.art.core.checker.CheckerForEmptiness;
 import ru.art.entity.*;
 import ru.art.entity.constants.ValueType.*;
 import ru.art.json.exception.*;
@@ -227,7 +228,7 @@ public class JsonEntityWriter {
     }
 
     private static void writeField(JsonGenerator jsonGenerator, String name, Primitive value) throws IOException {
-        if (isEmpty(value)) return;
+        if (isEmpty(value) || CheckerForEmptiness.isEmpty(value.getValue())) return;
         switch (value.getType()) {
             case STRING:
                 jsonGenerator.writeStringField(name, value.getString());
