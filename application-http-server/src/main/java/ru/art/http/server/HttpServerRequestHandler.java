@@ -77,10 +77,8 @@ class HttpServerRequestHandler {
             }
         }
         ValueToModelMapper<?, Value> requestMapper;
-        ServiceRequest<?> serviceRequest = isNull(httpMethod.getRequestDataSource()) ||
-                isNull(requestValue) ||
-                isNull(requestMapper = cast(httpMethod.getRequestMapper()))
-                ? newServiceRequest(command)
+        ServiceRequest<?> serviceRequest = isNull(httpMethod.getRequestDataSource()) || isNull(requestMapper = cast(httpMethod.getRequestMapper()))
+                ? newServiceRequest(command, httpMethod.getRequestValidationPolicy())
                 : newServiceRequest(command, requestMapper.map(requestValue), httpMethod.getRequestValidationPolicy());
         ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);
         Value responseValue = mapResponseValue(httpMethod, serviceResponse);

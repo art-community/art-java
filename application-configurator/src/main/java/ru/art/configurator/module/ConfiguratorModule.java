@@ -89,7 +89,7 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
                 .registerService(new HttpResourceServiceSpecification(CONFIGURATOR_PATH + WEB_UI_PATH))
                 .registerService(new UserServiceSpecification())
                 .registerService(new MetricServiceSpecification(CONFIGURATOR_PATH));
-        registerInformationService();
+        registerInformationService(CONFIGURATOR_PATH);
         startHttpServer();
         startGrpcServer().await();
     }

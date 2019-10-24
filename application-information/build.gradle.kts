@@ -35,5 +35,9 @@ art {
 
 dependencies {
     embedded("org.jeasy", "easy-random", "4.+")
+            .exclude("com.fasterxml.jackson.core")
     embedded("org.jeasy", "easy-random-core", "4.+")
+            .exclude("com.fasterxml.jackson.core")
+    embedded("com.fasterxml.jackson.core", "jackson-core", art.externalDependencyVersionsConfiguration.jacksonVersion)
+    embedded("com.fasterxml.jackson.core", "jackson-databind", art.externalDependencyVersionsConfiguration.jacksonVersion)
 }
