@@ -18,22 +18,26 @@
 
 package ru.art.service.validation;
 
-import lombok.*;
+import ru.art.service.constants.*;
 import static java.text.MessageFormat.*;
-import static ru.art.service.constants.ServiceExceptionsMessages.*;
+import static ru.art.service.constants.ValidationExpressionType.*;
 import java.util.*;
 
-@AllArgsConstructor
 public class ContainsValidationExpression extends ValidationExpression<Object> {
-    private Collection<?> values;
+    private List<Object> objectList;
+
+    ContainsValidationExpression(List<Object> objectList) {
+        super(CONTAINS);
+        this.objectList = objectList;
+    }
 
     @Override
     public boolean evaluate(String fieldName, Object value) {
-        return super.evaluate(fieldName, value) && values.contains(value);
+        return super.evaluate(fieldName, value) && objectList.contains(value);
     }
 
     @Override
     public String getValidationErrorMessage() {
-        return format(NOT_CONTAINS_VALIDATION_ERROR, fieldName, value, values.toString());
+        return format(ServiceExceptionsMessages.NOT_CONTAINS_VALIDATION_ERROR, fieldName, value, objectList.toString());
     }
 }

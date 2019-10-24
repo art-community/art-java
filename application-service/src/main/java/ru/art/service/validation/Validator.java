@@ -25,7 +25,7 @@ public class Validator {
     public final <T> Validator validate(String fieldName, T value, ValidationExpression<T>... validationExpressions) {
         for (ValidationExpression<T> validationExpression : validationExpressions) {
             if (!validationExpression.evaluate(fieldName, value)) {
-                throw new ValidationException(validationExpression.getValidationErrorMessage());
+                throw new ValidationException(validationExpression);
             }
         }
         return this;
