@@ -21,7 +21,7 @@ public class InformationServiceSpecification {
         serviceModuleState().getServiceRegistry().registerService(new HttpResourceServiceSpecification(httpServerModule().getPath() + INFORMATION_PATH + WEB_UI_PATH, httpServerModule()
                 .getResourceConfiguration()
                 .toBuilder()
-                .templateResourceVariable(WEB_UI_PATH_VARIABLE, httpServerModule().getPath() + INFORMATION_PATH)
+                .templateResourceVariable(WEB_UI_PATH_VARIABLE, httpServerModule().getPath() + INFORMATION_PATH + WEB_UI_PATH)
                 .templateResourceVariable(MAIN_MODULE_ID_VARIABLE, contextConfiguration().getMainModuleId())
                 .defaultResource(new HttpResource(INFORMATION_INDEX_HTML, STRING, contextConfiguration().getCharset()))
                 .build()));
