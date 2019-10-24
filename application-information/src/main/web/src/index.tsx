@@ -19,8 +19,21 @@
 import * as ReactDOM from "react-dom";
 import * as React from "react";
 import {MainComponent} from "./component/MainComponent";
+import {INFORMATION_WEB_UI_URL, MAIN_COMPONENT, SLASH} from "./constants/Constants";
+import {Redirect, Route, Switch} from "react-router";
+import {BrowserRouter} from "react-router-dom";
 
-const main = () => ReactDOM.render(<MainComponent/>, document.getElementById('mainComponent'));
+const main = () => ReactDOM.render(
+    <BrowserRouter>
+        <Switch>
+            <Route exact path={INFORMATION_WEB_UI_URL}>
+                <MainComponent/>
+            </Route>
+            <Route path={SLASH}>
+                <Redirect to={INFORMATION_WEB_UI_URL}/>
+            </Route>
+        </Switch>
+    </BrowserRouter>, document.getElementById(MAIN_COMPONENT));
 
 declare var module: any;
 if (module.hot) {

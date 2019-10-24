@@ -5,7 +5,6 @@ import ru.art.core.exception.*;
 import static java.lang.Class.*;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
-import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.ReflectionConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import java.lang.invoke.*;
@@ -14,8 +13,8 @@ import java.util.*;
 
 @UtilityClass
 public class LambdaGenericParametersExtractor {
-    public static <T> Class<T> extractFirstLambdaGenericParameters(Object lambda) {
-        return cast(extractLambdaGenericParameters(lambda).get(0));
+    public static <T> Optional<Class<?>> extractFirstLambdaGenericParameters(Object lambda) {
+        return extractLambdaGenericParameters(lambda).stream().findFirst();
     }
 
     public static List<Class<?>> extractLambdaGenericParameters(Object lambda) {
@@ -28,6 +27,21 @@ public class LambdaGenericParametersExtractor {
                     .map(LambdaGenericParametersExtractor::extractClass)
                     .limit(classes.length - 1)
                     .collect(toList());
+        } catch (Throwable throwable) {
+            throw new InternalRuntimeException(throwable);
+        }
+    }
+
+    public static Optional<? extends Class<?>> extractLambdaReturnValue(Object lambda) {
+        try {
+            Method writeReplace = lambda.getClass().getDeclaredMethod(WRITE_REPLACE);
+            writeReplace.setAccessible(true);
+            SerializedLambda serializedLambda = (SerializedLambda) writeReplace.invoke(lambda);
+            String[] classes = serializedLambda.getImplMethodSignature().split(SEMICOLON);
+            return stream(classes)
+                    .map(LambdaGenericParametersExtractor::extractClass)
+                    .skip(classes.length - 1)
+                    .findFirst();
         } catch (Throwable throwable) {
             throw new InternalRuntimeException(throwable);
         }

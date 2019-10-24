@@ -17,17 +17,18 @@ public class HttpInformationCollector {
     public static HttpInformation collectHttpInformation() {
         return HttpInformation.builder().services(httpServices()
                 .stream()
+                .filter(service -> !service.getServiceId().contains(INFORMATION_PATH))
+                .filter(service -> !service.getServiceId().contains(STATUS_PATH))
                 .map(service -> HttpServiceInformation
                         .builder()
                         .id(service.getServiceId())
                         .methods(service.getHttpService()
                                 .getHttpMethods()
                                 .stream()
-                                .filter(method -> !INFORMATION_PATH.equals(method.getPath().getContextPath()))
-                                .filter(method -> !STATUS_PATH.equals(method.getPath().getContextPath()))
                                 .map(method -> HttpServiceMethodInformation
                                         .builder()
                                         .id(method.getMethodId())
+                                        .method(method.getMethodType().toString())
                                         .url(HTTP_SCHEME
                                                 + SCHEME_DELIMITER
                                                 + getIpAddress()

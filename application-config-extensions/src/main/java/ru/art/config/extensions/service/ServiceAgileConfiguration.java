@@ -7,12 +7,13 @@ import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.service.ServiceConfigProvider.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.extension.ExceptionExtensions.ifException;
+import static ru.art.core.extension.ExceptionExtensions.*;
 import java.util.*;
 
 @Getter
 public class ServiceAgileConfiguration extends ServiceModuleDefaultConfiguration {
     private final Map<String, ServiceExecutionConfiguration> executionConfigurations = super.getExecutionConfigurations();
+    private final Map<String, DeactivationConfig> deactivationConfigurations = super.getDeactivationConfigurations();
 
     public ServiceAgileConfiguration() {
         refresh();
@@ -26,12 +27,14 @@ public class ServiceAgileConfiguration extends ServiceModuleDefaultConfiguration
         }
         configMap(SERVICES)
                 .keySet()
-                .forEach(serviceId -> executionConfigurations.put(serviceId,
+                .stream()
+                .peek(serviceId -> executionConfigurations.put(serviceId,
                         ServiceExecutionConfiguration.builder()
                                 .circuitBreakerConfig(getCircuitBreakerServiceConfig(SERVICES + DOT + serviceId))
                                 .rateLimiterConfig(getRateLimiterServiceConfig(SERVICES + DOT + serviceId))
                                 .retryConfig(getRetryServiceConfig(SERVICES + DOT + serviceId))
                                 .bulkheadConfig(getBulkheadServiceConfig(SERVICES + DOT + serviceId))
-                                .build()));
+                                .build()))
+                .forEach(serviceId -> deactivationConfigurations.put(serviceId, getServiceDeactivationConfig(SERVICES + DOT + serviceId)));
     }
 }

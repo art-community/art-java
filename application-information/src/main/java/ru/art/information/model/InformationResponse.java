@@ -8,4 +8,5 @@ public class InformationResponse {
     private final GrpcInformation grpcInformation;
     private final HttpInformation httpInformation;
     private final RsocketInformation rsocketInformation;
+    private final StatusResponse statusResponse;
 }

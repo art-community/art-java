@@ -41,5 +41,6 @@ art {
         applicationMessagePack()
         applicationConfiguratorApi()
         applicationConfigRemoteApi()
+        applicationInformation()
     }
 }

@@ -12,15 +12,19 @@ public interface InformationResponseMapper {
 
 	String rsocketInformation = "rsocketInformation";
 
+	String statusResponse = "statusResponse";
+
 	ValueToModelMapper<InformationResponse, Entity> toInformationResponse = entity -> isNotEmpty(entity) ? InformationResponse.builder()
 			.grpcInformation(entity.getValue(grpcInformation, GrpcInformationMapper.toGrpcInformation))
 			.httpInformation(entity.getValue(httpInformation, HttpInformationMapper.toHttpInformation))
 			.rsocketInformation(entity.getValue(rsocketInformation, RsocketInformationMapper.toRsocketInformation))
+			.statusResponse(entity.getValue(statusResponse, StatusResponseMapper.toStatusResponse))
 			.build() : InformationResponse.builder().build();
 
 	ValueFromModelMapper<InformationResponse, Entity> fromInformationResponse = model -> isNotEmpty(model) ? Entity.entityBuilder()
 			.entityField(grpcInformation, model.getGrpcInformation(), GrpcInformationMapper.fromGrpcInformation)
 			.entityField(httpInformation, model.getHttpInformation(), HttpInformationMapper.fromHttpInformation)
 			.entityField(rsocketInformation, model.getRsocketInformation(), RsocketInformationMapper.fromRsocketInformation)
+			.entityField(statusResponse, model.getStatusResponse(), StatusResponseMapper.fromStatusResponse)
 			.build() : Entity.entityBuilder().build();
 }

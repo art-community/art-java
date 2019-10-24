@@ -52,8 +52,9 @@ import static ru.art.core.configuration.ContextInitialConfiguration.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.grpc.server.GrpcServer.*;
-import static ru.art.http.constants.HttpCommonConstants.WEB_UI_PATH;
+import static ru.art.http.constants.HttpCommonConstants.*;
 import static ru.art.http.server.HttpServer.*;
+import static ru.art.information.specification.InformationServiceSpecification.*;
 import static ru.art.service.ServiceModule.*;
 
 @Getter
@@ -88,6 +89,7 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
                 .registerService(new HttpResourceServiceSpecification(CONFIGURATOR_PATH + WEB_UI_PATH))
                 .registerService(new UserServiceSpecification())
                 .registerService(new MetricServiceSpecification(CONFIGURATOR_PATH));
+        registerInformationService();
         startHttpServer();
         startGrpcServer().await();
     }

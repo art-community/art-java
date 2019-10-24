@@ -27,7 +27,11 @@ public class RsocketModuleState implements ModuleState {
     private final ThreadLocal<CurrentRsocketState> currentClientSocket = new ThreadLocal<>();
     @Getter
     @Setter
-    private RsocketServer server;
+    private RsocketServer tcpServer;
+
+    @Getter
+    @Setter
+    private RsocketServer webSocketServer;
 
     public RsocketModuleState currentRocketState(CurrentRsocketState state) {
         currentClientSocket.set(state);
