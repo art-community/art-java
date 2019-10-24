@@ -1,4 +1,4 @@
-import React, {BaseSyntheticEvent} from "react";
+import React from "react";
 import {
     Box,
     Chip,
@@ -7,15 +7,13 @@ import {
     ExpansionPanelDetails,
     ExpansionPanelSummary,
     Grid,
-    Link,
     makeStyles,
     Typography
 } from "@material-ui/core";
 import {ExpandMore} from "@material-ui/icons";
 import {EntityComponent, EntityType} from "./EntityComponent";
-import {purple500} from "material-ui/styles/colors";
 import {Theme} from "@material-ui/core/styles/createMuiTheme";
-import {GRPC_CHIP_STYLE, HTTP_CHIP_STYLE, RSOCKET_CHIP_STYLE} from "../constants/Constants";
+import {RSOCKET_CHIP_STYLE} from "../constants/Constants";
 import {RsocketServiceMethodInformation} from "../model/Models";
 
 interface RsocketMethodComponentProps {
