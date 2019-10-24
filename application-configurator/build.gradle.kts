@@ -41,9 +41,6 @@ art {
         applicationMessagePack()
         applicationConfiguratorApi()
         applicationConfigRemoteApi()
+        applicationInformation()
     }
-}
-
-dependencies {
-    embedded(project(":application-information"))
 }
