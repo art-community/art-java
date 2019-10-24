@@ -41,6 +41,8 @@ import static ru.art.http.server.HttpServerModuleConfiguration.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
 import static ru.art.http.server.module.HttpServerModule.*;
+import static ru.art.information.constants.InformationModuleConstants.*;
+import static ru.art.information.specification.InformationServiceSpecification.*;
 import static ru.art.metrics.constants.MetricsModuleConstants.*;
 import static ru.art.metrics.http.filter.MetricsHttpLogFilter.*;
 import static ru.art.service.ServiceModule.*;
@@ -115,6 +117,8 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
         if (enableMetrics && !serviceModuleState().getServiceRegistry().getServices().containsKey(METRICS_SERVICE_ID)) {
             serviceModuleState().getServiceRegistry().registerService(new MetricServiceSpecification(path));
         }
-
+        if (serviceModuleState().getServiceRegistry().getServices().keySet().stream().noneMatch(service -> service.contains(INFORMATION_PATH))) {
+            registerInformationService();
+        }
     }
 }

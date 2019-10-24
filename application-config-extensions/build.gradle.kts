@@ -47,5 +47,6 @@ art {
         applicationRocksDb()
         applicationTarantool()
         applicationSoap()
+        applicationInformation()
     }
 }
