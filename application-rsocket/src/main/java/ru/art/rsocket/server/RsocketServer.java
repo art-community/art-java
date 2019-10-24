@@ -22,6 +22,7 @@ import io.rsocket.*;
 import io.rsocket.transport.netty.server.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
+import reactor.core.*;
 import reactor.core.publisher.*;
 import ru.art.rsocket.exception.*;
 import ru.art.rsocket.socket.*;
@@ -45,14 +46,15 @@ import static ru.art.service.ServiceModule.*;
 
 public class RsocketServer {
     @Getter
-    private final Mono<CloseableChannel> channel;
     private final RsocketTransport transport;
+    @Getter
+    private final Mono<CloseableChannel> serverChannel;
+    private Disposable serverDisposable;
     private final Logger logger = loggingModule().getLogger(RsocketServer.class);
 
     private RsocketServer(RsocketTransport transport) {
         this.transport = transport;
-        this.channel = createServer();
-        rsocketModuleState().setServer(this);
+        serverChannel = createServer();
     }
 
     private Mono<CloseableChannel> createServer() {
@@ -69,17 +71,20 @@ public class RsocketServer {
                         rsocketModule().getServerTcpPort()))
                         .start()
                         .onTerminateDetach();
+                rsocketModuleState().setTcpServer(this);
                 break;
             case WEB_SOCKET:
                 channel = acceptor.transport(WebsocketServerTransport.create(rsocketModule().getServerHost(),
                         rsocketModule().getServerWebSocketPort()))
                         .start()
                         .onTerminateDetach();
+                rsocketModuleState().setWebSocketServer(this);
                 break;
             default:
                 throw new RsocketServerException(format(UNSUPPORTED_TRANSPORT, transport));
         }
-        return channel.doOnSubscribe(subscription -> serviceModuleState()
+        return channel
+                .doOnSubscribe(subscription -> serviceModuleState()
                 .getServiceRegistry()
                 .getServices()
                 .entrySet()
@@ -118,7 +123,7 @@ public class RsocketServer {
 
     public void subscribe() {
         final long timestamp = currentTimeMillis();
-        channel.subscribe(serverChannel -> logger
+        serverDisposable = serverChannel.subscribe(serverChannel -> logger
                 .info(format(transport == TCP
                                 ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE
                                 : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE,
@@ -136,9 +141,8 @@ public class RsocketServer {
     public void restart() {
         long millis = currentTimeMillis();
         try {
-            CloseableChannel blockedChannel = this.channel.block();
-            if (nonNull(blockedChannel)) {
-                blockedChannel.dispose();
+            if (nonNull(serverDisposable)) {
+                serverDisposable.dispose();
             }
             new RsocketServer(transport).subscribe();
             logger.info(format(RSOCKET_RESTARTED_MESSAGE, currentTimeMillis() - millis));
@@ -149,8 +153,6 @@ public class RsocketServer {
     }
 
     public boolean isWorking() {
-        CloseableChannel blockedChannel = channel.block();
-        if (isNull(blockedChannel)) return false;
-        return !blockedChannel.isDisposed();
+        return nonNull(serverDisposable);
     }
 }

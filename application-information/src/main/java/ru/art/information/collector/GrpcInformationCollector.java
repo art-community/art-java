@@ -4,6 +4,7 @@ import lombok.experimental.*;
 import ru.art.grpc.server.specification.*;
 import ru.art.information.generator.*;
 import ru.art.information.model.*;
+import static java.util.Objects.isNull;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -17,7 +18,7 @@ import static ru.art.service.ServiceModule.*;
 @UtilityClass
 public class GrpcInformationCollector {
     public static GrpcInformation collectGrpcInformation() {
-        if (!context().hasModule(GRPC_SERVER_MODULE_ID) || !grpcServerModuleState().getServer().isWorking()) {
+        if (!context().hasModule(GRPC_SERVER_MODULE_ID) || isNull(grpcServerModuleState().getServer()) || !grpcServerModuleState().getServer().isWorking()) {
             return null;
         }
         return GrpcInformation.builder()
@@ -25,9 +26,9 @@ public class GrpcInformationCollector {
                 .services(serviceModuleState()
                         .getServiceRegistry()
                         .getServices()
-                        .entrySet()
+                        .values()
                         .stream()
-                        .filter(entry -> entry.getValue().getServiceTypes().contains(GRPC_SERVICE_TYPE))
+                        .filter(service -> service.getServiceTypes().contains(GRPC_SERVICE_TYPE))
                         .map(service -> (GrpcServiceSpecification) service)
                         .map(service -> GrpcServiceInformation
                                 .builder()

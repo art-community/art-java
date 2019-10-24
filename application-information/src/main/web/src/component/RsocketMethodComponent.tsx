@@ -15,18 +15,17 @@ import {ExpandMore} from "@material-ui/icons";
 import {EntityComponent, EntityType} from "./EntityComponent";
 import {purple500} from "material-ui/styles/colors";
 import {Theme} from "@material-ui/core/styles/createMuiTheme";
-import {HTTP_CHIP_STYLE} from "../constants/Constants";
+import {GRPC_CHIP_STYLE, HTTP_CHIP_STYLE, RSOCKET_CHIP_STYLE} from "../constants/Constants";
 
-interface HttpMethodComponentProps {
-    information: HttpServiceMethodInformation
+interface RsocketMethodComponentProps {
+    information: RsocketServiceMethodInformation
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
-    chip: HTTP_CHIP_STYLE
+    chip: RSOCKET_CHIP_STYLE
 }));
 
-export const HttpMethodComponent = (props: HttpMethodComponentProps) => {
-    const preventDefault = (event: BaseSyntheticEvent) => event.preventDefault();
+export const RsocketMethodComponent = (props: RsocketMethodComponentProps) => {
     const styles = useStyles();
     return <ExpansionPanel>
         <ExpansionPanelSummary expandIcon={<ExpandMore/>}>
@@ -40,20 +39,6 @@ export const HttpMethodComponent = (props: HttpMethodComponentProps) => {
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
             <Grid container direction={"column"} spacing={1}>
-                <Grid item container spacing={1}>
-                    <Grid item>
-                        <Chip color={"primary"}
-                              label={<Typography
-                                  variant={"subtitle1"}>{props.information.method}</Typography>}/>
-                    </Grid>
-                    <Grid item>
-                        <Link href={props.information.url} onClick={preventDefault}>
-                            <Typography variant={"h6"} color={"secondary"}>
-                                {props.information.url}
-                            </Typography>
-                        </Link>
-                    </Grid>
-                </Grid>
                 {props.information.exampleRequest
                     ? <Grid item>
                         <EntityComponent type={EntityType.REQUEST} entity={props.information.exampleRequest}/>

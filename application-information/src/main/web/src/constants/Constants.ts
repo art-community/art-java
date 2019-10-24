@@ -1,4 +1,6 @@
 import {orange, purple} from "@material-ui/core/colors";
+import {createStyles, makeStyles, Theme} from "@material-ui/core";
+import {blue500, purple500, red500} from "material-ui/styles/colors";
 
 export const SLASH = '/';
 
@@ -25,3 +27,18 @@ export enum ThemeMode {
     DARK = 'dark',
     LIGHT = 'light'
 }
+
+export const HTTP_CHIP_STYLE = {
+    borderColor: purple500,
+    color: purple500
+};
+
+export const GRPC_CHIP_STYLE = {
+    borderColor: blue500,
+    color: blue500
+};
+
+export const RSOCKET_CHIP_STYLE = {
+    borderColor: red500,
+    color: red500
+};

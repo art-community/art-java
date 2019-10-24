@@ -22,7 +22,7 @@ import lombok.*;
 import ru.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import ru.art.rsocket.model.*;
 import ru.art.rsocket.server.*;
-import static java.util.Objects.nonNull;
+import static java.util.Objects.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.common.DataFormats.*;
@@ -87,7 +87,11 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
                 .resumeSessionDuration(getOrElse(config.getLong(RESUME_SESSION_DURATION), super.getClientResumeSessionDuration()))
                 .build(), super.getCommunicationTargets());
         if (restart && context().hasModule(RSOCKET_MODULE_ID)) {
-            RsocketServer server = rsocketModuleState().getServer();
+            RsocketServer server = rsocketModuleState().getTcpServer();
+            if (nonNull(server) && server.isWorking()) {
+                server.restart();
+            }
+            server = rsocketModuleState().getWebSocketServer();
             if (nonNull(server) && server.isWorking()) {
                 server.restart();
             }
