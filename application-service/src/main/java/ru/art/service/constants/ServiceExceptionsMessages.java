@@ -39,4 +39,6 @@ public interface ServiceExceptionsMessages {
     String SERVICE_ID_IS_NULL = "Service id is null";
     String METHOD_ID_IS_NULL = "Method id is null";
     String ERROR_CODE_IS_EMPTY = "Error code is empty";
+    String REQUEST_DATA_IS_NULL_CODE = "REQUEST_DATA_IS_NULL";
+    String VALIDATION_EXCEPTION_CODE = "VALIDATION_EXCEPTION";
 }
