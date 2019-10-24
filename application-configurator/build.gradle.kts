@@ -43,3 +43,7 @@ art {
         applicationConfigRemoteApi()
     }
 }
+
+dependencies {
+    embedded(project(":application-information"))
+}
