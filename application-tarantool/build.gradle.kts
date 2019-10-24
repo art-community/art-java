@@ -32,16 +32,12 @@ art {
 
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
-        embedded("org.jtwig", "jtwig-web", jtwigVersion)
+            embedded("org.jtwig", "jtwig-core", jtwigVersion)
                 .exclude("com.google.guava", "guava")
-                .exclude("org.parboiled", "parboiled-java")
-                .exclude("org.apache.httpcomponents", "httpclient")
         embedded("org.zeroturnaround", "zt-exec", zeroTurnaroundVersion)
         embedded("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
         embedded("org.tarantool", "connector", tarantoolConnectorVersion)
         embedded("com.google.guava", "guava", guavaVersion)
-        embedded("org.apache.httpcomponents", "httpclient", apacheHttpClientVersion)
-        embedded("org.parboiled", "parboiled-java", "1.3.+")
     }
 }
 configurations {

@@ -35,13 +35,10 @@ dependencies {
                 .exclude("org.parboiled", "parboiled-java")
         embedded("org.apache.tomcat", "tomcat-servlet-api", tomcatVersion)
         embedded("org.zalando", "logbook-servlet", logbookVersion)
-        embedded("org.jtwig", "jtwig-web", jtwigVersion)
+        embedded("org.jtwig", "jtwig-core", jtwigVersion)
                 .exclude("com.google.guava", "guava")
-                .exclude("org.apache.httpcomponents", "httpclient")
-                .exclude("org.parboiled", "parboiled-java")
         embedded("com.google.guava", "guava", guavaVersion)
         embedded("org.apache.httpcomponents", "httpclient", apacheHttpClientVersion)
                 .exclude("org.apache.httpcomponents", "httpcore")
-        embedded("org.parboiled", "parboiled-java", "1.3.+")
     }
 }
