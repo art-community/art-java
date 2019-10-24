@@ -11,6 +11,7 @@ import {
 import {ExpandMore} from "@material-ui/icons";
 import {HttpMethodComponent} from "./HttpMethodComponent";
 import {HTTP_CHIP_STYLE} from "../constants/Constants";
+import {HttpServiceInformation, HttpServiceMethodInformation} from "../model/Models";
 
 interface HttpServiceComponentProps {
     information: HttpServiceInformation

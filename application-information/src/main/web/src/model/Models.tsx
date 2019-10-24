@@ -1,29 +1,29 @@
-interface GrpcInformation {
+export interface GrpcInformation {
     url: string;
     services: { [index: string]: GrpcServiceInformation };
 }
 
-interface GrpcServiceInformation {
+export interface GrpcServiceInformation {
     id: string;
     methods: { [index: string]: GrpcServiceMethodInformation };
 }
 
-interface GrpcServiceMethodInformation {
+export interface GrpcServiceMethodInformation {
     id: string;
     exampleRequest: string;
     exampleResponse: string;
 }
 
-interface HttpInformation {
+export interface HttpInformation {
     services: { [index: string]: HttpServiceInformation };
 }
 
-interface HttpServiceInformation {
+export interface HttpServiceInformation {
     id: string;
     methods: { [index: string]: HttpServiceMethodInformation };
 }
 
-interface HttpServiceMethodInformation {
+export interface HttpServiceMethodInformation {
     method: string;
     id: string;
     url: string;
@@ -31,24 +31,39 @@ interface HttpServiceMethodInformation {
     exampleResponse: string;
 }
 
-interface InformationResponse {
+export interface InformationResponse {
     grpcInformation: GrpcInformation;
     httpInformation: HttpInformation;
     rsocketInformation: RsocketInformation;
+    statusResponse: Status;
 }
 
-interface RsocketInformation {
+export interface Status {
+    http: boolean;
+    grpc: boolean;
+    rsocketTcp: boolean;
+    rsocketWebSocket: boolean;
+}
+
+export const FALSE_STATUS = {
+    http: false,
+    grpc: false,
+    rsocketWebSocket: false,
+    rsocketTcp: false
+};
+
+export interface RsocketInformation {
     webSocketUrl: string;
     tcpUrl: string;
     services: { [index: string]: RsocketServiceInformation };
 }
 
-interface RsocketServiceInformation {
+export interface RsocketServiceInformation {
     id: string;
     methods: { [index: string]: RsocketServiceMethodInformation };
 }
 
-interface RsocketServiceMethodInformation {
+export interface RsocketServiceMethodInformation {
     id: string;
     exampleRequest: string;
     exampleResponse: string;

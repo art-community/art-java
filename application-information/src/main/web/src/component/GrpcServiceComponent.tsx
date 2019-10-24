@@ -14,6 +14,7 @@ import {
 import {ExpandMore} from "@material-ui/icons";
 import {GRPC_CHIP_STYLE} from "../constants/Constants";
 import {GrpcMethodComponent} from "./GrpcMethodComponent";
+import {GrpcInformation, GrpcServiceInformation} from "../model/Models";
 
 interface GrpcServiceComponentProps {
     information: GrpcInformation,

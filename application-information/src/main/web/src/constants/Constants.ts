@@ -1,24 +1,19 @@
 import {orange, purple} from "@material-ui/core/colors";
-import {createStyles, makeStyles, Theme} from "@material-ui/core";
-import {blue500, purple500, red500} from "material-ui/styles/colors";
+import {blue500, green700, purple500, red500, red700} from "material-ui/styles/colors";
 
 export const SLASH = '/';
 
 export const MAIN_COMPONENT = 'mainComponent';
 
 const moduleIdMeta = document.querySelector("meta[name='moduleId']");
+const hrefAttribute = document.querySelector("base");
+const HREF = hrefAttribute ? hrefAttribute.getAttribute("href") : "";
 
 export const MODULE_ID = moduleIdMeta ? moduleIdMeta.getAttribute("content") : "";
 
-export const INFORMATION_PATH = '/information';
-export const API_PATH = '/api';
-export const WEB_UI_PATH = '/ui';
+export const INFORMATION_WEB_UI_URL = HREF ? HREF : "";
 
-export const HOST = window.location.hostname;
-
-export const BASE_URL = window.location.href.split(WEB_UI_PATH)[0];
-
-export const GET_INFORMATION_PATH = "http://localhost:10000/module/information/api/get";
+export const GET_INFORMATION_PATH = `${INFORMATION_WEB_UI_URL.split("/ui")[0]}/api/get`;
 
 export const PRIMARY_MAIN_COLOR = purple["800"];
 export const SECONDARY_MAIN_COLOR = orange["700"];
@@ -41,4 +36,14 @@ export const GRPC_CHIP_STYLE = {
 export const RSOCKET_CHIP_STYLE = {
     borderColor: red500,
     color: red500
+};
+
+export const CHIP_OK_STYLE = {
+    borderColor: green700,
+    color: green700
+};
+
+export const CHIP_NOT_OK_STYLE = {
+    borderColor: red700,
+    color: red700
 };

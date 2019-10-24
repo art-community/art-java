@@ -1,18 +1,30 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {Divider, Grid, Typography} from "@material-ui/core";
+import {Chip, createStyles, Grid, makeStyles, Theme, Typography} from "@material-ui/core";
 import {DEFAULT_THEME} from "../theme/Theme";
 import {ThemeProvider} from "@material-ui/styles";
 import {HttpServiceComponent} from "./HttpServiceComponent";
 import {getInformation} from "../api/InformationApi";
-import {MODULE_ID} from "../constants/Constants";
+import {CHIP_NOT_OK_STYLE, CHIP_OK_STYLE, MODULE_ID} from "../constants/Constants";
 import {GrpServiceComponent} from "./GrpcServiceComponent";
 import {RsocketServiceComponent} from "./RsocketServiceComponent";
+import {
+    FALSE_STATUS,
+    GrpcServiceInformation,
+    HttpServiceInformation,
+    InformationResponse,
+    RsocketServiceInformation
+} from "../model/Models";
+
+const useStyles = makeStyles((theme: Theme) => createStyles({
+    chipOk: CHIP_OK_STYLE,
+    chipNotOk: CHIP_NOT_OK_STYLE
+}));
 
 export const MainComponent = () => {
     const [information, setInformation] = useState({} as InformationResponse);
+    const styles = useStyles();
     useEffect(() => getInformation(information => setInformation(information)), []);
-    console.log(information);
     const httpServices = () => {
         if (information && information.httpInformation && information.httpInformation.services) {
             return Array.from(new Map<string, HttpServiceInformation>(Object.entries(information
@@ -31,7 +43,7 @@ export const MainComponent = () => {
         }
         return []
     };
-      const rsocketServices = () => {
+    const rsocketServices = () => {
         if (information && information.rsocketInformation && information.rsocketInformation.services) {
             return Array.from(new Map<string, RsocketServiceInformation>(Object.entries(information
                 .rsocketInformation
@@ -43,9 +55,41 @@ export const MainComponent = () => {
     return <ThemeProvider theme={DEFAULT_THEME}>
         <Grid container direction={"column"} spacing={1}>
             <Grid item>
-                <Typography variant={"h3"} color={"primary"}>
-                    Информация о модуле {MODULE_ID}
-                </Typography>
+                <Grid alignItems={"center"} container spacing={1}>
+                    <Grid item>
+                        <Typography variant={"h3"} color={"primary"}>
+                            Информация о модуле {MODULE_ID}
+                        </Typography>
+                    </Grid>
+                    {(information.statusResponse || FALSE_STATUS).http
+                        ? <Grid item>
+                            <Chip variant={"outlined"}
+                                  className={styles.chipOk}
+                                  label={<Typography>HTTP</Typography>}/>
+                        </Grid>
+                        : <></>}
+                    {(information.statusResponse || FALSE_STATUS).grpc
+                        ? <Grid item>
+                            <Chip variant={"outlined"}
+                                  className={styles.chipOk}
+                                  label={<Typography>GRPC</Typography>}/>
+                        </Grid>
+                        : <></>}
+                    {(information.statusResponse || FALSE_STATUS).rsocketTcp
+                        ? <Grid item>
+                            <Chip variant={"outlined"}
+                                  className={styles.chipOk}
+                                  label={<Typography>RSocket TCP</Typography>}/>
+                        </Grid>
+                        : <></>}
+                    {(information.statusResponse || FALSE_STATUS).rsocketWebSocket
+                        ? <Grid item>
+                            <Chip variant={"outlined"}
+                                  className={styles.chipOk}
+                                  label={<Typography>RSocket Web Socket</Typography>}/>
+                        </Grid>
+                        : <></>}
+                </Grid>
             </Grid>
             <Grid item>
                 <Grid container direction={"column"} spacing={1}>
@@ -55,11 +99,13 @@ export const MainComponent = () => {
                         </Grid>)}
                     {grpcServices().map(service =>
                         <Grid key={service.id} item>
-                            <GrpServiceComponent information={information.grpcInformation} serviceInformation={service}/>
+                            <GrpServiceComponent information={information.grpcInformation}
+                                                 serviceInformation={service}/>
                         </Grid>)}
                     {rsocketServices().map(service =>
                         <Grid key={service.id} item>
-                            <RsocketServiceComponent information={information.rsocketInformation} serviceInformation={service}/>
+                            <RsocketServiceComponent information={information.rsocketInformation}
+                                                     serviceInformation={service}/>
                         </Grid>)}
                 </Grid>
             </Grid>

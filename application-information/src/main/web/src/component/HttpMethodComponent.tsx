@@ -13,9 +13,9 @@ import {
 } from "@material-ui/core";
 import {ExpandMore} from "@material-ui/icons";
 import {EntityComponent, EntityType} from "./EntityComponent";
-import {purple500} from "material-ui/styles/colors";
 import {Theme} from "@material-ui/core/styles/createMuiTheme";
 import {HTTP_CHIP_STYLE} from "../constants/Constants";
+import {HttpServiceMethodInformation} from "../model/Models";
 
 interface HttpMethodComponentProps {
     information: HttpServiceMethodInformation

@@ -16,6 +16,7 @@ import {EntityComponent, EntityType} from "./EntityComponent";
 import {purple500} from "material-ui/styles/colors";
 import {Theme} from "@material-ui/core/styles/createMuiTheme";
 import {GRPC_CHIP_STYLE, HTTP_CHIP_STYLE} from "../constants/Constants";
+import {GrpcServiceMethodInformation} from "../model/Models";
 
 interface GrpcMethodComponentProps {
     information: GrpcServiceMethodInformation

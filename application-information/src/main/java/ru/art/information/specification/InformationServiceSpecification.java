@@ -5,7 +5,6 @@ import ru.art.http.server.HttpServerModuleConfiguration.HttpResourceConfiguratio
 import ru.art.http.server.specification.*;
 import ru.art.information.service.*;
 import static ru.art.core.context.Context.*;
-import static ru.art.entity.PrimitiveMapping.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
 import static ru.art.http.constants.MimeToContentTypeMapper.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;
@@ -13,6 +12,7 @@ import static ru.art.http.server.function.HttpServiceFunction.*;
 import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.information.constants.InformationModuleConstants.*;
 import static ru.art.information.mapping.InformationResponseMapper.*;
+import static ru.art.information.mapping.StatusResponseMapper.*;
 import static ru.art.service.ServiceModule.*;
 
 @UtilityClass
@@ -33,7 +33,11 @@ public class InformationServiceSpecification {
                 .responseMapper(fromInformationResponse)
                 .produce(InformationService::getInformation);
         httpGet(httpServerModule().getPath() + STATUS_PATH)
-                .responseMapper(boolMapper.getFromModel())
+                .producesMimeType(applicationJsonUtf8())
+                .consumesMimeType(applicationJsonUtf8())
+                .ignoreRequestContentType()
+                .ignoreRequestAcceptType()
+                .responseMapper(fromStatusResponse)
                 .produce(InformationService::getStatus);
     }
 }
