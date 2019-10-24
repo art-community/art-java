@@ -118,7 +118,7 @@ public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfigu
             serviceModuleState().getServiceRegistry().registerService(new MetricServiceSpecification(path));
         }
         if (serviceModuleState().getServiceRegistry().getServices().keySet().stream().noneMatch(service -> service.contains(INFORMATION_PATH))) {
-            registerInformationService();
+            registerInformationService(path);
         }
     }
 }

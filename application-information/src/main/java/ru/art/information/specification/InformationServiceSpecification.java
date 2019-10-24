@@ -17,22 +17,22 @@ import static ru.art.service.ServiceModule.*;
 
 @UtilityClass
 public class InformationServiceSpecification {
-    public static void registerInformationService() {
-        serviceModuleState().getServiceRegistry().registerService(new HttpResourceServiceSpecification(httpServerModule().getPath() + INFORMATION_PATH + WEB_UI_PATH, httpServerModule()
+    public static void registerInformationService(String modulePath) {
+        serviceModuleState().getServiceRegistry().registerService(new HttpResourceServiceSpecification(modulePath + INFORMATION_PATH + WEB_UI_PATH, httpServerModule()
                 .getResourceConfiguration()
                 .toBuilder()
-                .templateResourceVariable(WEB_UI_PATH_VARIABLE, httpServerModule().getPath() + INFORMATION_PATH + WEB_UI_PATH)
+                .templateResourceVariable(WEB_UI_PATH_VARIABLE, modulePath + INFORMATION_PATH + WEB_UI_PATH)
                 .templateResourceVariable(MAIN_MODULE_ID_VARIABLE, contextConfiguration().getMainModuleId())
                 .defaultResource(new HttpResource(INFORMATION_INDEX_HTML, STRING, contextConfiguration().getCharset()))
                 .build()));
-        httpGet(httpServerModule().getPath() + GET_INFORMATION_PATH)
+        httpGet(modulePath + GET_INFORMATION_PATH)
                 .producesMimeType(applicationJsonUtf8())
                 .consumesMimeType(applicationJsonUtf8())
                 .ignoreRequestContentType()
                 .ignoreRequestAcceptType()
                 .responseMapper(fromInformationResponse)
                 .produce(InformationService::getInformation);
-        httpGet(httpServerModule().getPath() + STATUS_PATH)
+        httpGet(modulePath + STATUS_PATH)
                 .producesMimeType(applicationJsonUtf8())
                 .consumesMimeType(applicationJsonUtf8())
                 .ignoreRequestContentType()
