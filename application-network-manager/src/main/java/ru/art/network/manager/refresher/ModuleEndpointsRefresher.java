@@ -40,10 +40,10 @@ public interface ModuleEndpointsRefresher {
                             .build())
                     .map(ClusterProfileResponse::getModuleEndpointStates)
                     .ifPresent(networkManagerModuleState().getClusterState()::updateModuleEndpoints);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             loggingModule()
                     .getLogger(ModuleEndpointsRefresher.class)
-                    .error(REFRESHING_UPDATE, e);
+                    .error(REFRESHING_UPDATE, throwable);
         }
     }
 }

@@ -52,8 +52,8 @@ public class HttpClientsFactory {
                 clientBuilder.setSSLContext(custom()
                         .loadKeyMaterial(loadKeyStore(configuration), configuration.getSslKeyStorePassword().toCharArray())
                         .build());
-            } catch (Throwable e) {
-                throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
+            } catch (Throwable throwable) {
+                throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
             }
         }
         if (configuration.isEnableRawDataTracing()) {
@@ -84,8 +84,8 @@ public class HttpClientsFactory {
                 clientBuilder.setSSLContext(custom()
                         .loadKeyMaterial(loadKeyStore(configuration), configuration.getSslKeyStorePassword().toCharArray())
                         .build());
-            } catch (Throwable e) {
-                throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
+            } catch (Throwable throwable) {
+                throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
             }
         }
         return clientBuilder.build();
@@ -98,16 +98,16 @@ public class HttpClientsFactory {
             keyStoreInputStream = new FileInputStream(new File(configuration.getSslKeyStoreFilePath()));
             keyStore.load(keyStoreInputStream, configuration.getSslKeyStorePassword().toCharArray());
             return keyStore;
-        } catch (Throwable e) {
-            throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
+        } catch (Throwable throwable) {
+            throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
         } finally {
             if (nonNull(keyStoreInputStream)) {
                 try {
                     keyStoreInputStream.close();
-                } catch (IOException e) {
+                } catch (IOException ioException) {
                     loggingModule()
                             .getLogger(HttpClientModuleConfiguration.class)
-                            .error(HTTP_SSL_CONFIGURATION_FAILED, e);
+                            .error(HTTP_SSL_CONFIGURATION_FAILED, ioException);
                 }
             }
         }

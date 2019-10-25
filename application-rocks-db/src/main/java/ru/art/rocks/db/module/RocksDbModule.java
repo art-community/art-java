@@ -59,8 +59,8 @@ public class RocksDbModule implements Module<RocksDbModuleConfiguration, RocksDb
         loadLibrary();
         try {
             state = new RocksDbModuleState(open(rocksDbModule().getOptions(), rocksDbModule().getPath()));
-        } catch (RocksDBException e) {
-            throw new RocksDbOperationException(OPEN_ERROR, e);
+        } catch (RocksDBException throwable) {
+            throw new RocksDbOperationException(OPEN_ERROR, throwable);
         }
     }
 

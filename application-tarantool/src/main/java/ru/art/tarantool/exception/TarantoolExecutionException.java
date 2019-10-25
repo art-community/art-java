@@ -19,7 +19,7 @@
 package ru.art.tarantool.exception;
 
 public class TarantoolExecutionException extends RuntimeException {
-    public TarantoolExecutionException(Throwable e) {
-        super(e);
+    public TarantoolExecutionException(Throwable throwable) {
+        super(throwable);
     }
 }

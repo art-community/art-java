@@ -50,8 +50,8 @@ public class XmlEntityWriter {
         }
         try {
             outputStream.write(writeXml(xmlModule().getXmlOutputFactory(), xmlEntity).getBytes());
-        } catch (Throwable e) {
-            throw new XmlMappingException(e);
+        } catch (Throwable throwable) {
+            throw new XmlMappingException(throwable);
         }
     }
 
@@ -72,15 +72,15 @@ public class XmlEntityWriter {
             xmlStreamWriter = xmlOutputFactory.createXMLStreamWriter(os, UTF_8.name());
             writeAllElements(xmlStreamWriter, xmlEntity);
             return os.toString();
-        } catch (Throwable e) {
-            throw new XmlMappingException(e);
+        } catch (Throwable throwable) {
+            throw new XmlMappingException(throwable);
         } finally {
             if (nonNull(xmlStreamWriter)) {
                 try {
                     xmlStreamWriter.flush();
                     xmlStreamWriter.close();
-                } catch (Throwable e) {
-                    loggingModule().getLogger(XmlEntityWriter.class).error(XML_GENERATOR_CLOSING_ERROR, e);
+                } catch (Throwable throwable) {
+                    loggingModule().getLogger(XmlEntityWriter.class).error(XML_GENERATOR_CLOSING_ERROR, throwable);
                 }
             }
         }

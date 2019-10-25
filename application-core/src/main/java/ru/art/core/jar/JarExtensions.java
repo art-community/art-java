@@ -85,8 +85,8 @@ public class JarExtensions {
                 }
                 copy(jarArchive.getInputStream(entry), entryDestination, REPLACE_EXISTING);
             }
-        } catch (IOException e) {
-            throw new InternalRuntimeException(e);
+        } catch (IOException ioException) {
+            throw new InternalRuntimeException(ioException);
         } finally {
             if (nonNull(jarArchive)) {
                 try {
@@ -142,14 +142,14 @@ public class JarExtensions {
                 }
                 copy(jarArchive.getInputStream(entry), entryDest, REPLACE_EXISTING);
             }
-        } catch (IOException e) {
-            throw new InternalRuntimeException(e);
+        } catch (IOException ioException) {
+            throw new InternalRuntimeException(ioException);
         } finally {
             if (nonNull(jarArchive)) {
                 try {
                     jarArchive.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
                 }
             }
         }

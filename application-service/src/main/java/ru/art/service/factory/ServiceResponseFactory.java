@@ -32,8 +32,8 @@ public class ServiceResponseFactory {
         return ServiceResponse.<T>builder().serviceException(new ServiceExecutionException(errorCode, errorMessage)).build();
     }
 
-    public static <T> ServiceResponse<T> errorResponse(String errorCode, Throwable e) {
-        return ServiceResponse.<T>builder().serviceException(new ServiceExecutionException(errorCode, e)).build();
+    public static <T> ServiceResponse<T> errorResponse(String errorCode, Throwable throwable) {
+        return ServiceResponse.<T>builder().serviceException(new ServiceExecutionException(errorCode, throwable)).build();
     }
 
     public static <T> ServiceResponse<T> errorResponse(ServiceMethodCommand command, String errorCode, String errorMessage) {
@@ -44,8 +44,8 @@ public class ServiceResponseFactory {
         return ServiceResponse.<T>builder().command(command).serviceException(exception).build();
     }
 
-    public static <T> ServiceResponse<T> errorResponse(ServiceMethodCommand command, String errorCode, Throwable e) {
-        return ServiceResponse.<T>builder().command(command).serviceException(new ServiceExecutionException(command, errorCode, e)).build();
+    public static <T> ServiceResponse<T> errorResponse(ServiceMethodCommand command, String errorCode, Throwable throwable) {
+        return ServiceResponse.<T>builder().command(command).serviceException(new ServiceExecutionException(command, errorCode, throwable)).build();
     }
 
     public static <T> ServiceResponse<T> okResponse(ServiceMethodCommand command, T responseData) {

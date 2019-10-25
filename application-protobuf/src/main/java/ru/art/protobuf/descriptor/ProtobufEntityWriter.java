@@ -44,8 +44,8 @@ public class ProtobufEntityWriter {
     public static void writeProtobuf(Value value, OutputStream outputStream) {
         try {
             writeProtobuf(value).writeTo(outputStream);
-        } catch (IOException e) {
-            throw new ProtobufException(e);
+        } catch (IOException ioException) {
+            throw new ProtobufException(ioException);
         }
     }
 

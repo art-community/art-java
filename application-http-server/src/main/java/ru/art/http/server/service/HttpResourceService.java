@@ -65,10 +65,10 @@ public class HttpResourceService {
                 }
             }
             return resourceContent;
-        } catch (IOException e) {
+        } catch (IOException ioException) {
             loggingModule()
                     .getLogger(HttpResourceService.class)
-                    .error(RESOURCE_ERROR, e);
+                    .error(RESOURCE_ERROR, ioException);
         }
         return EMPTY_STRING;
     }
@@ -88,10 +88,10 @@ public class HttpResourceService {
     private static byte[] getBinaryResourceContent(URL resourceUrl, HttpResourceConfiguration resourceConfiguration) {
         try (InputStream pageStream = resourceUrl.openStream()) {
             return resolveResourceBinaryContent(pageStream, resourceConfiguration);
-        } catch (IOException e) {
+        } catch (IOException ioException) {
             loggingModule()
                     .getLogger(HttpResourceService.class)
-                    .error(RESOURCE_ERROR, e);
+                    .error(RESOURCE_ERROR, ioException);
         }
         return EMPTY_BYTES;
     }

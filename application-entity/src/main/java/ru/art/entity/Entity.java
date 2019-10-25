@@ -94,7 +94,7 @@ public class Entity implements Value {
         Primitive primitive = asPrimitive(fields.get(name));
         try {
             return isNull(primitive) ? null : YYYY_MM_DD_T_HH_MM_SS_24H_SSS_Z_DASH_FORMAT.parse(primitive.getString());
-        } catch (ParseException e) {
+        } catch (ParseException throwable) {
             throw new ValueMappingException(UNABLE_TO_PARSE_DATE);
         }
     }

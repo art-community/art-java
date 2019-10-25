@@ -62,8 +62,8 @@ class DeferredEventObserver {
         }
         try {
             threadPool.awaitTermination(configuration.getThreadPoolTerminationTimeout(), MILLISECONDS);
-        } catch (Throwable e) {
-            configuration.getExceptionHandler().onException(POOL_SHUTDOWN, e);
+        } catch (Throwable throwable) {
+            configuration.getExceptionHandler().onException(POOL_SHUTDOWN, throwable);
         }
     }
 
@@ -83,14 +83,14 @@ class DeferredEventObserver {
                     if (nonNull(nextEvent = deferredEvents.peek()) && nextEvent.getTriggerDateTime() == currentEvent.getTriggerDateTime()) {
                         task.join();
                     }
-                } catch (Throwable e) {
-                    configuration.getExceptionHandler().onException(TASK_EXECUTION, e);
+                } catch (Throwable throwable) {
+                    configuration.getExceptionHandler().onException(TASK_EXECUTION, throwable);
                 }
             }
         } catch (InterruptedException ignore) {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer
-        } catch (Throwable e) {
-            configuration.getExceptionHandler().onException(TASK_OBSERVING, e);
+        } catch (Throwable throwable) {
+            configuration.getExceptionHandler().onException(TASK_OBSERVING, throwable);
         }
     }
 

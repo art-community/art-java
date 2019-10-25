@@ -23,11 +23,11 @@ public class HttpClientException extends RuntimeException {
         super(message);
     }
 
-    public HttpClientException(Throwable e) {
-        super(e);
+    public HttpClientException(Throwable throwable) {
+        super(throwable);
     }
 
-    public HttpClientException(String message, Throwable e) {
-        super(message, e);
+    public HttpClientException(String message, Throwable throwable) {
+        super(message, throwable);
     }
 }

@@ -29,8 +29,8 @@ public class InternalExceptionWrapper extends ServiceExecutionExceptionWrapper {
     public <RequestType, ResponseType> ServiceResponse<ResponseType> wrapServiceExecution(ServiceMethodCommand command, RequestType request) throws Exception {
         try {
             return previousWrapper.wrapServiceExecution(command, request);
-        } catch (ServiceInternalException e) {
-            return errorResponse(command, ServiceErrorCodes.INTERNAL_ERROR, e);
+        } catch (ServiceInternalException throwable) {
+            return errorResponse(command, ServiceErrorCodes.INTERNAL_ERROR, throwable);
         }
     }
 }

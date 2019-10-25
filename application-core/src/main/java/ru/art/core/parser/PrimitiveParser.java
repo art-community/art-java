@@ -91,7 +91,7 @@ public class PrimitiveParser {
         }
         try {
             return parseDouble(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return orElse;
         }
     }
@@ -102,7 +102,7 @@ public class PrimitiveParser {
         }
         try {
             return parseInt(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return orElse;
         }
     }
@@ -113,7 +113,7 @@ public class PrimitiveParser {
         }
         try {
             return parseLong(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return orElse;
         }
     }
@@ -124,7 +124,7 @@ public class PrimitiveParser {
         }
         try {
             return parseBoolean(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return orElse;
         }
     }
@@ -135,7 +135,7 @@ public class PrimitiveParser {
         }
         try {
             return parseDouble(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return orElse;
         }
     }
@@ -146,7 +146,7 @@ public class PrimitiveParser {
         }
         try {
             return parseInt(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return orElse;
         }
     }
@@ -157,7 +157,7 @@ public class PrimitiveParser {
         }
         try {
             return parseLong(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return orElse;
         }
     }
@@ -168,7 +168,7 @@ public class PrimitiveParser {
         }
         try {
             return parseBoolean(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return orElse;
         }
     }
@@ -180,7 +180,7 @@ public class PrimitiveParser {
         }
         try {
             return parseBoolean(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return null;
         }
     }
@@ -191,7 +191,7 @@ public class PrimitiveParser {
         }
         try {
             return parseDouble(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return null;
         }
     }
@@ -202,7 +202,7 @@ public class PrimitiveParser {
         }
         try {
             return parseFloat(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return null;
         }
     }
@@ -213,7 +213,7 @@ public class PrimitiveParser {
         }
         try {
             return parseInt(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return null;
         }
     }
@@ -224,7 +224,7 @@ public class PrimitiveParser {
         }
         try {
             return parseLong(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return null;
         }
     }
@@ -235,7 +235,7 @@ public class PrimitiveParser {
         }
         try {
             return tryParseByte(str);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return null;
         }
     }

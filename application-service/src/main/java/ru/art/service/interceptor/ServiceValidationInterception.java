@@ -22,7 +22,6 @@ import ru.art.service.exception.*;
 import ru.art.service.model.*;
 import ru.art.service.validation.*;
 import static java.util.Objects.*;
-import static ru.art.service.ServiceModule.*;
 import static ru.art.service.constants.RequestValidationPolicy.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;
 import static ru.art.service.model.ServiceInterceptionResult.*;
@@ -42,11 +41,12 @@ public class ServiceValidationInterception implements ServiceRequestInterception
                     .build());
         }
         try {
-            ((Validatable) request.getRequestData()).onValidating(serviceModule().getValidator());
-        } catch (Throwable e) {
+            Validatable requestData = (Validatable) request.getRequestData();
+            requestData.onValidating(new Validator(requestData));
+        } catch (Throwable throwable) {
             return stopHandling(request, ServiceResponse.builder()
                     .command(request.getServiceMethodCommand())
-                    .serviceException(new ServiceExecutionException(request.getServiceMethodCommand(), VALIDATION_EXCEPTION_CODE, e))
+                    .serviceException(new ServiceExecutionException(request.getServiceMethodCommand(), VALIDATION_EXCEPTION_CODE, throwable))
                     .build());
         }
         return nextInterceptor(request);

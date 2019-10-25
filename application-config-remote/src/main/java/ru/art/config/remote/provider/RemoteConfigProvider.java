@@ -56,8 +56,8 @@ public class RemoteConfigProvider {
                     .registerService(new ConfiguratorCommunicationSpecification(configuratorHost, configuratorPort, configuratorPath))
                     .registerService(new RemoteConfigServiceSpecification());
             configModuleState().useRemoteConfiguration(true);
-        } catch (Throwable e) {
-            loggingModule().getLogger(RemoteConfigProvider.class).warn(CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS, e);
+        } catch (Throwable throwable) {
+            loggingModule().getLogger(RemoteConfigProvider.class).warn(CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS, throwable);
         }
     }
 

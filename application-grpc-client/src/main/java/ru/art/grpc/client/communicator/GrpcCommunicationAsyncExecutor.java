@@ -162,8 +162,8 @@ class GrpcCommunicationAsyncExecutor {
                 }
             }
             return cast(toServiceResponse(cast(configuration.getResponseMapper())).map(responseValue));
-        } catch (Exception e) {
-            throw new GrpcClientException(e);
+        } catch (Exception throwable) {
+            throw new GrpcClientException(throwable);
         }
     }
 }

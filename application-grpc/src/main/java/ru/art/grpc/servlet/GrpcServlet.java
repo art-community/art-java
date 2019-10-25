@@ -49,7 +49,7 @@ public class GrpcServlet {
     private String extractServletName(String path) {
         try {
             return path.substring(path.lastIndexOf(DOT));
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             throw new GrpcException(format(UNABLE_TO_EXTRACT_SERVLET_NAME, path));
         }
     }

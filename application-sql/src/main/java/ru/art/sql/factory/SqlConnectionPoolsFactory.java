@@ -54,15 +54,15 @@ public interface SqlConnectionPoolsFactory {
         hikariConfig.setJdbcUrl(properties.getUrl());
         hikariConfig.setUsername(properties.getLogin());
         hikariConfig.setPassword(properties.getPassword());
-        hikariConfig.setConnectionTimeout((long) (60 * 1000));
-        hikariConfig.setIdleTimeout((long) (60 * 1000));
-        hikariConfig.setMaxLifetime((long) (60 * 1000));
+        hikariConfig.setConnectionTimeout(60 * 1000);
+        hikariConfig.setIdleTimeout(60 * 1000);
+        hikariConfig.setMaxLifetime(60 * 1000);
         hikariConfig.setMinimumIdle(10);
         hikariConfig.setMaximumPoolSize(50);
         hikariConfig.setAllowPoolSuspension(false);
         hikariConfig.setInitializationFailTimeout(0);
         hikariConfig.setReadOnly(false);
-        hikariConfig.setValidationTimeout((long) (5 * 1000));
+        hikariConfig.setValidationTimeout(5 * 1000);
         hikariConfig.setLeakDetectionThreshold(0);
         hikariConfig.setConnectionTestQuery(DEFAULT_CONNECTION_TEST_QUERY);
 
@@ -100,8 +100,8 @@ public interface SqlConnectionPoolsFactory {
         try {
             forName(driveClassName);
             return new DefaultConfiguration().set(new HikariDataSource(config));
-        } catch (Throwable e) {
-            throw new SqlModuleException(e);
+        } catch (Throwable throwable) {
+            throw new SqlModuleException(throwable);
         }
     }
 
@@ -109,8 +109,8 @@ public interface SqlConnectionPoolsFactory {
         try {
             forName(driveClassName);
             return new DefaultConfiguration().set(new DataSource(config));
-        } catch (Throwable e) {
-            throw new SqlModuleException(e);
+        } catch (Throwable throwable) {
+            throw new SqlModuleException(throwable);
         }
     }
 }

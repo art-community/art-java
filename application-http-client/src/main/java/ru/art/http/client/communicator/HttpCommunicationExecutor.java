@@ -78,8 +78,8 @@ class HttpCommunicationExecutor {
                 if (strategy == STOP_HANDLING) return null;
             }
             return parseResponse(configuration, httpResponse);
-        } catch (Throwable e) {
-            throw new HttpClientException(e);
+        } catch (Throwable throwable) {
+            throw new HttpClientException(throwable);
         }
     }
 
@@ -108,8 +108,8 @@ class HttpCommunicationExecutor {
                 return client.execute(HttpAsyncMethods.create(httpUriRequest), logbookConsumer, callback).get();
             }
             return client.execute(httpUriRequest, callback).get();
-        } catch (Exception e) {
-            throw new HttpClientException(e);
+        } catch (Exception throwable) {
+            throw new HttpClientException(throwable);
         }
     }
 
@@ -220,10 +220,10 @@ class HttpCommunicationExecutor {
                 if (nonNull(completionHandler)) {
                     completionHandler.completed(ofNullable(cast(request)), ofNullable(cast(parseResponse(configuration, result))));
                 }
-            } catch (Throwable e) {
+            } catch (Throwable throwable) {
                 HttpCommunicationExceptionHandler<?> exceptionHandler = configuration.getExceptionHandler();
                 if (nonNull(exceptionHandler)) {
-                    exceptionHandler.failed(ofNullable(cast(request)), e);
+                    exceptionHandler.failed(ofNullable(cast(request)), throwable);
                 }
             }
         }

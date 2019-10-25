@@ -25,5 +25,5 @@ import ru.art.task.deferred.executor.SchedulerModuleExceptions.*;
  */
 @FunctionalInterface
 interface ExceptionHandler {
-    void onException(ExceptionEvent event, Throwable e);
+    void onException(ExceptionEvent event, Throwable throwable);
 }

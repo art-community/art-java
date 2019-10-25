@@ -57,8 +57,8 @@ public class SqlModule implements Module<SqlModuleConfiguration, ModuleState> {
         try {
             forName(sqlModule().getDbProvider().getDriverClassName());
             sqlModule().getJooqConfiguration().set(dataSource);
-        } catch (Exception e) {
-            throw new SqlModuleException(e);
+        } catch (Exception throwable) {
+            throw new SqlModuleException(throwable);
         }
 
     }

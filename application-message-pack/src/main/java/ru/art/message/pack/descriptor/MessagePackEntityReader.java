@@ -50,8 +50,8 @@ public class MessagePackEntityReader {
     public static Value readMessagePack(byte[] bytes) {
         try {
             return readMessagePack(newDefaultUnpacker(bytes).unpackValue());
-        } catch (Throwable e) {
-            throw new MessagePackMappingException(e);
+        } catch (Throwable throwable) {
+            throw new MessagePackMappingException(throwable);
         }
     }
 
