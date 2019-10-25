@@ -36,10 +36,10 @@ public class ServiceExecutionException extends RuntimeException {
         this.errorMessage = errorMessage;
     }
 
-    public ServiceExecutionException(String errorCode, Throwable e) {
-        super(formatErrorMessage(errorCode, e), e);
+    public ServiceExecutionException(String errorCode, Throwable throwable) {
+        super(formatErrorMessage(errorCode, throwable), throwable);
         this.errorCode = errorCode;
-        this.errorMessage = e.getMessage();
+        this.errorMessage = throwable.getMessage();
     }
 
     public ServiceExecutionException(ServiceMethodCommand command, String errorCode, String errorMessage) {
@@ -48,24 +48,24 @@ public class ServiceExecutionException extends RuntimeException {
         this.errorMessage = errorMessage;
     }
 
-    public ServiceExecutionException(ServiceMethodCommand command, String errorCode, Throwable e) {
-        super(formatErrorMessage(command, errorCode, e), e);
+    public ServiceExecutionException(ServiceMethodCommand command, String errorCode, Throwable throwable) {
+        super(formatErrorMessage(command, errorCode, throwable), throwable);
         this.errorCode = errorCode;
-        this.errorMessage = e.getMessage();
+        this.errorMessage = throwable.getMessage();
     }
 
-    private static String formatErrorMessage(ServiceMethodCommand command, String errorCode, Throwable e) {
+    private static String formatErrorMessage(ServiceMethodCommand command, String errorCode, Throwable throwable) {
         return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE, command.getServiceId(), command.getMethodId(),
-                errorCode, e.getMessage(), getStackTrace(e));
+                errorCode, throwable.getMessage(), getStackTrace(throwable));
     }
 
-    private static String formatErrorMessage(String errorCode, Throwable e) {
-        return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE_WITHOUT_COMMAND, errorCode, e.getMessage(), getStackTrace(e));
+    private static String formatErrorMessage(String errorCode, Throwable throwable) {
+        return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE_WITHOUT_COMMAND, errorCode, throwable.getMessage(), getStackTrace(throwable));
     }
 
-    private static String getStackTrace(Throwable e) {
+    private static String getStackTrace(Throwable throwable) {
         StringBuilder errorMessage = new StringBuilder();
-        for (StackTraceElement stackTraceElement : e.getStackTrace()) {
+        for (StackTraceElement stackTraceElement : throwable.getStackTrace()) {
             errorMessage.append(stackTraceElement.getClassName()).append(DOT)
                     .append(stackTraceElement.getMethodName()).append(DOT)
                     .append(stackTraceElement.getLineNumber()).append(NEW_LINE);

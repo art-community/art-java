@@ -28,8 +28,8 @@ class ChildServiceExceptionWrapper extends ServiceExecutionExceptionWrapper {
     public <RequestType, ResponseType> ServiceResponse<ResponseType> wrapServiceExecution(ServiceMethodCommand command, RequestType request) throws Exception {
         try {
             return previousWrapper.wrapServiceExecution(command, request);
-        } catch (ChildServiceException e) {
-            return errorResponse(command, CHILD_SERVICE_ERROR, (ServiceExecutionException) e.getCause());
+        } catch (ChildServiceException throwable) {
+            return errorResponse(command, CHILD_SERVICE_ERROR, throwable.getCause());
         }
     }
 }

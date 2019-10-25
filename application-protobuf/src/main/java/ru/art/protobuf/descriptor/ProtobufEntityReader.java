@@ -39,24 +39,24 @@ public class ProtobufEntityReader {
     public static Value readProtobuf(byte[] bytes) {
         try {
             return readProtobuf(com.google.protobuf.Value.parseFrom(bytes));
-        } catch (Throwable e) {
-            throw new ProtobufException(e);
+        } catch (Throwable throwable) {
+            throw new ProtobufException(throwable);
         }
     }
 
     public static Value readProtobuf(InputStream inputStream) {
         try {
             return readProtobuf(com.google.protobuf.Value.parseFrom(inputStream));
-        } catch (Throwable e) {
-            throw new ProtobufException(e);
+        } catch (Throwable throwable) {
+            throw new ProtobufException(throwable);
         }
     }
 
     public static Value readProtobuf(Path path) {
         try {
             return readProtobuf(com.google.protobuf.Value.parseFrom(readFileBytes(path)));
-        } catch (InvalidProtocolBufferException e) {
-            throw new ProtobufException(e);
+        } catch (InvalidProtocolBufferException throwable) {
+            throw new ProtobufException(throwable);
         }
     }
 

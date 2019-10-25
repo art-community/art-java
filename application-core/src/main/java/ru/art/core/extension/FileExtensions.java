@@ -69,8 +69,8 @@ public class FileExtensions {
                 buffer.flip();
                 result.append(contextConfiguration().getCharset().newDecoder().decode(buffer).toString());
             } while (fileChannel.position() < fileChannel.size());
-        } catch (IOException e) {
-            throw new InternalRuntimeException(e);
+        } catch (IOException ioException) {
+            throw new InternalRuntimeException(ioException);
         }
         return result.toString();
     }
@@ -85,8 +85,8 @@ public class FileExtensions {
                 buffer.flip();
                 result.append(contextConfiguration().getCharset().newDecoder().decode(buffer).toString());
             } while (fileChannel.position() < fileChannel.size());
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
         return result.toString();
     }
@@ -133,8 +133,8 @@ public class FileExtensions {
                 result = newResult;
                 buffer.clear();
             } while (fileChannel.position() < fileChannel.size());
-        } catch (IOException e) {
-            throw new InternalRuntimeException(e);
+        } catch (IOException ioException) {
+            throw new InternalRuntimeException(ioException);
         }
         return result;
     }
@@ -142,7 +142,7 @@ public class FileExtensions {
     public static byte[] readFileBytesQuietly(Path path, int bufferSize) {
         try {
             return readFileBytes(path, bufferSize);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return EMPTY_BYTES;
         }
     }
@@ -180,8 +180,8 @@ public class FileExtensions {
             FileChannel fileChannel = open(path, CREATE, TRUNCATE_EXISTING, WRITE);
             fileChannel.write(byteBuffer);
             fileChannel.close();
-        } catch (IOException e) {
-            throw new InternalRuntimeException(e);
+        } catch (IOException ioException) {
+            throw new InternalRuntimeException(ioException);
         }
     }
 
@@ -192,8 +192,8 @@ public class FileExtensions {
             FileChannel fileChannel = open(path, CREATE, TRUNCATE_EXISTING, WRITE);
             fileChannel.write(byteBuffer);
             fileChannel.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
     }
 

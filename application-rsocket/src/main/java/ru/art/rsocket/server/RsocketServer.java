@@ -133,8 +133,8 @@ public class RsocketServer {
     public void await() {
         try {
             currentThread().join();
-        } catch (InterruptedException e) {
-            throw new RsocketServerException(e);
+        } catch (InterruptedException throwable) {
+            throw new RsocketServerException(throwable);
         }
     }
 
@@ -146,7 +146,7 @@ public class RsocketServer {
             }
             new RsocketServer(transport).subscribe();
             logger.info(format(RSOCKET_RESTARTED_MESSAGE, currentTimeMillis() - millis));
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             logger.error(RSOCKET_RESTART_FAILED);
         }
 

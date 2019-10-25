@@ -72,8 +72,8 @@ public interface GeneratorOperations {
                     .addField(generateToModelBlock(clazz, jarPathToMain))
                     .addField(generateFromModelBlock(clazz, jarPathToMain))
                     .build();
-        } catch (Throwable e) {
-            throw new MappingGeneratorException(format(UNABLE_TO_GENERATE_INTERFACE, clazz.getSimpleName(), e.getClass().getSimpleName()), e);
+        } catch (Throwable throwable) {
+            throw new MappingGeneratorException(format(UNABLE_TO_GENERATE_INTERFACE, clazz.getSimpleName(), throwable.getClass().getSimpleName()), throwable);
         }
     }
 
@@ -123,14 +123,14 @@ public interface GeneratorOperations {
             javaFile.writeTo(new File(jarPathToMain.subSequence(0, jarPathToMain.indexOf(BUILD)).toString() + SRC_MAIN_JAVA));
             generatedFiles.add(clazz);
             printMessage(format(GENERATED_SUCCESSFULLY, clazz.getSimpleName() + MAPPER));
-        } catch (StringIndexOutOfBoundsException e) {
-            throw new MappingGeneratorException(format(UNABLE_TO_PARSE_JAR_PATH, clazz.getSimpleName()), e);
-        } catch (IOException e) {
-            throw new MappingGeneratorException(format(UNABLE_TO_CREATE_MAPPER, clazz.getSimpleName() + MAPPER), e);
-        } catch (NullPointerException e) {
-            throw new MappingGeneratorException(format(UNABLE_TO_FIND_A_PATH_FOR_CLASS, clazz.getSimpleName()), e);
-        } catch (Throwable e) {
-            throw new MappingGeneratorException(format(UNABLE_TO_CREATE_MAPPER_UNKNOWN_ERROR, clazz.getSimpleName()), e);
+        } catch (StringIndexOutOfBoundsException throwable) {
+            throw new MappingGeneratorException(format(UNABLE_TO_PARSE_JAR_PATH, clazz.getSimpleName()), throwable);
+        } catch (IOException ioException) {
+            throw new MappingGeneratorException(format(UNABLE_TO_CREATE_MAPPER, clazz.getSimpleName() + MAPPER), ioException);
+        } catch (NullPointerException throwable) {
+            throw new MappingGeneratorException(format(UNABLE_TO_FIND_A_PATH_FOR_CLASS, clazz.getSimpleName()), throwable);
+        } catch (Throwable throwable) {
+            throw new MappingGeneratorException(format(UNABLE_TO_CREATE_MAPPER_UNKNOWN_ERROR, clazz.getSimpleName()), throwable);
         }
     }
 
@@ -198,14 +198,14 @@ public interface GeneratorOperations {
                     + REQUEST
                     + RESPONSE
                     + MAPPER));
-        } catch (StringIndexOutOfBoundsException e) {
-            throw new MappingGeneratorException(format(UNABLE_TO_PARSE_JAR_PATH, request.getSimpleName()), e);
-        } catch (IOException e) {
-            throw new MappingGeneratorException(format(UNABLE_TO_CREATE_REQ_RES_MAPPER, newClassName), e);
-        } catch (NullPointerException e) {
-            throw new MappingGeneratorException(format(UNABLE_TO_FIND_A_PATH_FOR_CLASS, request.getSimpleName()), e);
-        } catch (Throwable e) {
-            throw new MappingGeneratorException(format(UNABLE_TO_CREATE_MAPPER_UNKNOWN_ERROR, request.getSimpleName()), e);
+        } catch (StringIndexOutOfBoundsException throwable) {
+            throw new MappingGeneratorException(format(UNABLE_TO_PARSE_JAR_PATH, request.getSimpleName()), throwable);
+        } catch (IOException ioException) {
+            throw new MappingGeneratorException(format(UNABLE_TO_CREATE_REQ_RES_MAPPER, newClassName), ioException);
+        } catch (NullPointerException throwable) {
+            throw new MappingGeneratorException(format(UNABLE_TO_FIND_A_PATH_FOR_CLASS, request.getSimpleName()), throwable);
+        } catch (Throwable throwable) {
+            throw new MappingGeneratorException(format(UNABLE_TO_CREATE_MAPPER_UNKNOWN_ERROR, request.getSimpleName()), throwable);
         }
     }
 
@@ -257,49 +257,49 @@ public interface GeneratorOperations {
                 case CLASS_LIST:
                     try {
                         codeBlocks.add(generateToModelForList(field, jarPathToMain));
-                    } catch (DefinitionException | InnerClassGenerationException e) {
+                    } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
-                        printError(e.getMessage());
+                        printError(throwable.getMessage());
                     }
                     break;
                 case CLASS_SET:
                     try {
                         codeBlocks.add(generateToModelForSet(field, jarPathToMain));
-                    } catch (DefinitionException | InnerClassGenerationException e) {
+                    } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
-                        printError(e.getCause() + SPACE + e.getMessage());
+                        printError(throwable.getCause() + SPACE + throwable.getMessage());
                     }
                     break;
                 case CLASS_MAP:
                     try {
                         codeBlocks.add(generateToModelForMap(field, jarPathToMain));
-                    } catch (DefinitionException | InnerClassGenerationException e) {
+                    } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
-                        printError(e.getCause() + SPACE + e.getMessage());
+                        printError(throwable.getCause() + SPACE + throwable.getMessage());
                     }
                     break;
                 case CLASS_QUEUE:
                     try {
                         codeBlocks.add(generateToModelForQueue(field, jarPathToMain));
-                    } catch (DefinitionException | InnerClassGenerationException e) {
+                    } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
-                        printError(e.getCause() + SPACE + e.getMessage());
+                        printError(throwable.getCause() + SPACE + throwable.getMessage());
                     }
                     break;
                 default:
                     if (field.getType().getName().equals(clazz.getName()))
                         try {
                             codeBlocks.add(of(DOUBLE_TABULATION + GET_ENUM_VALUE, field.getName(), clazz, field.getName()));
-                        } catch (DefinitionException | InnerClassGenerationException e) {
+                        } catch (DefinitionException | InnerClassGenerationException throwable) {
                             notGeneratedFields.add(field.getName());
-                            printError(e.getCause() + SPACE + e.getMessage());
+                            printError(throwable.getCause() + SPACE + throwable.getMessage());
                         }
                     else
                         try {
                             codeBlocks.add(generateFromEntityFieldMapperCodeBlock(field.getType(), field.getName(), jarPathToMain));
-                        } catch (DefinitionException | InnerClassGenerationException e) {
+                        } catch (DefinitionException | InnerClassGenerationException throwable) {
                             notGeneratedFields.add(field.getName());
-                            printError(e.getCause() + SPACE + e.getMessage());
+                            printError(throwable.getCause() + SPACE + throwable.getMessage());
                         }
 
             }
@@ -371,41 +371,41 @@ public interface GeneratorOperations {
                 case CLASS_SET:
                     try {
                         codeBlocks.add(generateFromModelForCollection(field, jarPathToMain));
-                    } catch (DefinitionException | InnerClassGenerationException e) {
+                    } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
-                        printError(e.getCause() + SPACE + e.getMessage());
+                        printError(throwable.getCause() + SPACE + throwable.getMessage());
                     }
                     break;
                 case CLASS_MAP:
                     try {
                         codeBlocks.add(generateFromModelForMap(field, jarPathToMain));
-                    } catch (DefinitionException | InnerClassGenerationException e) {
+                    } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
-                        printError(e.getCause() + SPACE + e.getMessage());
+                        printError(throwable.getCause() + SPACE + throwable.getMessage());
                     }
                     break;
                 case CLASS_QUEUE:
                     try {
                         codeBlocks.add(generateFromModelForCollection(field, jarPathToMain));
-                    } catch (DefinitionException | InnerClassGenerationException e) {
+                    } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
-                        printError(e.getCause() + SPACE + e.getMessage());
+                        printError(throwable.getCause() + SPACE + throwable.getMessage());
                     }
                     break;
                 default:
                     if (field.getType().getName().equals(clazz.getName()))
                         try {
                             codeBlocks.add(of(DOUBLE_TABULATION + ENUM_FILED, field.getName(), CheckerForEmptiness.class, EMPTY_IF_NULL, getField));
-                        } catch (DefinitionException | InnerClassGenerationException e) {
+                        } catch (DefinitionException | InnerClassGenerationException throwable) {
                             notGeneratedFields.add(field.getName());
-                            printError(e.getCause() + SPACE + e.getMessage());
+                            printError(throwable.getCause() + SPACE + throwable.getMessage());
                         }
                     else
                         try {
                             codeBlocks.add(generateToEntityFieldMapperCodeBlock(field.getType(), field.getName(), getField, jarPathToMain));
-                        } catch (DefinitionException | InnerClassGenerationException e) {
+                        } catch (DefinitionException | InnerClassGenerationException throwable) {
                             notGeneratedFields.add(field.getName());
-                            printError(e.getCause() + SPACE + e.getMessage());
+                            printError(throwable.getCause() + SPACE + throwable.getMessage());
                         }
             }
         }

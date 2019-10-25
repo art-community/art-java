@@ -23,7 +23,7 @@ public class JsonMappingException extends RuntimeException {
         super(message);
     }
 
-    public JsonMappingException(Throwable e) {
-        super(e);
+    public JsonMappingException(Throwable throwable) {
+        super(throwable);
     }
 }

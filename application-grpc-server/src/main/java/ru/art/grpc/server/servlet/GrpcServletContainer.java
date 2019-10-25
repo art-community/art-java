@@ -90,11 +90,11 @@ public class GrpcServletContainer extends GrpcServlet {
             try {
                 executeServiceChecked(grpcRequest, command, responseObserver);
                 clearServiceCallLoggingParameters();
-            } catch (Throwable e) {
+            } catch (Throwable throwable) {
                 loggingModule()
                         .getLogger(GrpcServletContainer.class)
-                        .error(GRPC_SERVICE_EXCEPTION, e);
-                responseObserver.onNext(writeProtobuf(fromServiceResponse().map(errorResponse(command, GRPC_SERVLET_ERROR, e))));
+                        .error(GRPC_SERVICE_EXCEPTION, throwable);
+                responseObserver.onNext(writeProtobuf(fromServiceResponse().map(errorResponse(command, GRPC_SERVLET_ERROR, throwable))));
                 responseObserver.onCompleted();
                 clearServiceCallLoggingParameters();
             }

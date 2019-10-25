@@ -23,8 +23,8 @@ public class HttpServerException extends RuntimeException {
         super(message);
     }
 
-    public HttpServerException(Throwable e) {
-        super(e);
+    public HttpServerException(Throwable throwable) {
+        super(throwable);
     }
 
     public HttpServerException(String message, Throwable cause) {

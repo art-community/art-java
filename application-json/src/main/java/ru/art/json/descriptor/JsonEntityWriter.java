@@ -20,14 +20,14 @@ package ru.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
 import lombok.experimental.*;
-import ru.art.core.checker.CheckerForEmptiness;
+import ru.art.core.checker.*;
 import ru.art.entity.*;
 import ru.art.entity.constants.ValueType.*;
 import ru.art.json.exception.*;
 import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.context.Context.contextConfiguration;
+import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.entity.Value.*;
@@ -52,8 +52,8 @@ public class JsonEntityWriter {
         }
         try {
             outputStream.write(writeJson(value).getBytes(contextConfiguration().getCharset()));
-        } catch (IOException e) {
-            throw new JsonMappingException(e);
+        } catch (IOException ioException) {
+            throw new JsonMappingException(ioException);
         }
     }
 
@@ -107,15 +107,15 @@ public class JsonEntityWriter {
                 case MAP:
                     writeJsonMap(generator, asMap(value));
             }
-        } catch (IOException e) {
-            throw new JsonMappingException(e);
+        } catch (IOException ioException) {
+            throw new JsonMappingException(ioException);
         } finally {
             if (nonNull(generator)) {
                 try {
                     generator.flush();
                     generator.close();
-                } catch (IOException e) {
-                    loggingModule().getLogger(JsonEntityWriter.class).error(JSON_GENERATOR_CLOSING_ERROR, e);
+                } catch (IOException ioException) {
+                    loggingModule().getLogger(JsonEntityWriter.class).error(JSON_GENERATOR_CLOSING_ERROR, ioException);
                 }
             }
         }
@@ -138,8 +138,8 @@ public class JsonEntityWriter {
             jsonGenerator.writeObjectFieldStart(name);
             writeJsonMap(jsonGenerator, mapValue);
             jsonGenerator.writeEndObject();
-        } catch (IOException e) {
-            throw new JsonMappingException(e);
+        } catch (IOException ioException) {
+            throw new JsonMappingException(ioException);
         }
     }
 
@@ -147,8 +147,8 @@ public class JsonEntityWriter {
     private static void writeJsonMapEntry(JsonGenerator generator, Map.Entry<? extends Value, ? extends Value> entry) {
         try {
             writeField(generator, emptyIfNull(entry.getKey()), entry.getValue());
-        } catch (IOException e) {
-            throw new JsonMappingException(e);
+        } catch (IOException ioException) {
+            throw new JsonMappingException(ioException);
         }
     }
 

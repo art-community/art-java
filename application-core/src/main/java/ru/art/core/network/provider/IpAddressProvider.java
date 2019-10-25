@@ -31,7 +31,7 @@ public class IpAddressProvider {
         Enumeration<NetworkInterface> networkInterfaces;
         try {
             networkInterfaces = getNetworkInterfaces();
-        } catch (SocketException e) {
+        } catch (SocketException throwable) {
             return LOCALHOST_IP_ADDRESS;
         }
         while (networkInterfaces.hasMoreElements()) {

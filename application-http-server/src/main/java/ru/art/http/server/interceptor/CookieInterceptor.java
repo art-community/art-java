@@ -61,8 +61,8 @@ public class CookieInterceptor implements HttpServerInterception {
             }
             response.getOutputStream().close();
             return STOP_HANDLING;
-        } catch (Throwable e) {
-            throw new HttpServerException(e);
+        } catch (Throwable throwable) {
+            throw new HttpServerException(throwable);
         }
     }
 

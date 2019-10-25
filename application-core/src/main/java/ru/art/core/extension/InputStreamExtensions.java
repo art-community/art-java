@@ -45,8 +45,8 @@ public class InputStreamExtensions {
                 byteList.add((byte) i);
             }
             return byteList;
-        } catch (IOException e) {
-            throw new InternalRuntimeException(e);
+        } catch (IOException ioException) {
+            throw new InternalRuntimeException(ioException);
         }
     }
 
@@ -57,8 +57,8 @@ public class InputStreamExtensions {
                 byteList.add((byte) i);
             }
             return byteList;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
             return emptyList();
         }
     }
@@ -87,8 +87,8 @@ public class InputStreamExtensions {
                 result = newResult;
                 buffer.clear();
             }
-        } catch (IOException e) {
-            throw new InternalRuntimeException(e);
+        } catch (IOException ioException) {
+            throw new InternalRuntimeException(ioException);
         }
         return result;
     }
@@ -96,8 +96,8 @@ public class InputStreamExtensions {
     public static byte[] toByteArraySafety(InputStream is) {
         try {
             return toByteArray(is);
-        } catch (Throwable e) {
-            e.printStackTrace();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
             return EMPTY_BYTES;
         }
     }
@@ -109,8 +109,8 @@ public class InputStreamExtensions {
     public static String toString(InputStream is) {
         try {
             return toString(is, contextConfiguration().getCharset());
-        } catch (Throwable e) {
-            e.printStackTrace();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
             return EMPTY_STRING;
         }
     }

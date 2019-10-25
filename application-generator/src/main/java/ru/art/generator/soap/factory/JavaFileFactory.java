@@ -47,8 +47,8 @@ public class JavaFileFactory {
         JavaFile javaFile = JavaFile.builder(packagePath, spec).build();
         try {
             javaFile.writeTo(new File(SRC_MAIN_JAVA_ABSOLUTE_PATH.get()));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
         return javaFile;
     }

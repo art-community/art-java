@@ -23,7 +23,7 @@ package ru.art.task.deferred.executor;
  */
 class DeferredExecutorThreadPoolExceptionHandler implements Thread.UncaughtExceptionHandler {
     @Override
-    public void uncaughtException(Thread t, Throwable e) {
-        throw new DeferredExecutionThreadPoolException(t, e);
+    public void uncaughtException(Thread t, Throwable throwable) {
+        throw new DeferredExecutionThreadPoolException(t, throwable);
     }
 }

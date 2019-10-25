@@ -49,8 +49,8 @@ public class MessagePackEntityWriter {
         }
         try {
             outputStream.write(writeMessagePackToBytes(value));
-        } catch (Throwable e) {
-            throw new MessagePackMappingException(e);
+        } catch (Throwable throwable) {
+            throw new MessagePackMappingException(throwable);
         }
     }
 
@@ -66,8 +66,8 @@ public class MessagePackEntityWriter {
         try {
             newDefaultPacker(output).packValue(writeMessagePack(value)).close();
             return output.toByteArray();
-        } catch (Throwable e) {
-            throw new MessagePackMappingException(e);
+        } catch (Throwable throwable) {
+            throw new MessagePackMappingException(throwable);
         }
     }
 

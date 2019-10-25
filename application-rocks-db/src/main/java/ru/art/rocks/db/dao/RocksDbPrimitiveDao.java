@@ -53,8 +53,8 @@ public interface RocksDbPrimitiveDao {
                         .trace(format(PUT_OPERATION, new String(key, contextConfiguration().getCharset()), new String(value, contextConfiguration().getCharset())));
             }
             rocksDbModuleState().getDb().put(key, value);
-        } catch (RocksDBException e) {
-            throw new RocksDbOperationException(PUT_ERROR, e);
+        } catch (RocksDBException throwable) {
+            throw new RocksDbOperationException(PUT_ERROR, throwable);
         }
     }
 
@@ -170,8 +170,8 @@ public interface RocksDbPrimitiveDao {
                         .trace(format(MERGE_OPERATION, new String(key, contextConfiguration().getCharset()), loggingValue));
             }
             rocksDbModuleState().getDb().merge(key, value);
-        } catch (RocksDBException e) {
-            throw new RocksDbOperationException(MERGE_ERROR, e);
+        } catch (RocksDBException throwable) {
+            throw new RocksDbOperationException(MERGE_ERROR, throwable);
         }
     }
 
@@ -295,8 +295,8 @@ public interface RocksDbPrimitiveDao {
                         .trace(format(GET_END_OPERATION, value, new String(key, contextConfiguration().getCharset())));
             }
             return valueBytes;
-        } catch (RocksDBException e) {
-            throw new RocksDbOperationException(GET_ERROR, e);
+        } catch (RocksDBException throwable) {
+            throw new RocksDbOperationException(GET_ERROR, throwable);
         }
     }
 
@@ -348,8 +348,8 @@ public interface RocksDbPrimitiveDao {
                         .trace(format(DELETE_OPERATION, new String(key, contextConfiguration().getCharset())));
             }
             rocksDbModuleState().getDb().delete(key);
-        } catch (RocksDBException e) {
-            throw new RocksDbOperationException(DELETE_ERROR, e);
+        } catch (RocksDBException throwable) {
+            throw new RocksDbOperationException(DELETE_ERROR, throwable);
         }
     }
 

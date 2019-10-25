@@ -68,7 +68,7 @@ public class ReactiveServiceValidationInterception extends ServiceValidationInte
                 return super.intercept(request);
             case REACTIVE:
                 Flux<?> requestDataStream = from(cast(request.getRequestData()))
-                        .doOnNext(payload -> ((Validatable) payload).onValidating(serviceModule().getValidator()));
+                        .doOnNext(payload -> ((Validatable) payload).onValidating(new Validator(((Validatable) payload))));
                 return nextInterceptor(request, cast(new ServiceRequest<Flux<?>>(request.getServiceMethodCommand(), request.getValidationPolicy(), requestDataStream)));
         }
         return nextInterceptor(request);

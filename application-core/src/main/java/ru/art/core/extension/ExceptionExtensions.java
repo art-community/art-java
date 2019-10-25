@@ -32,7 +32,7 @@ public class ExceptionExtensions {
         if (isNull(operation)) return EMPTY_STRING;
         try {
             return operation.call();
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return EMPTY_STRING;
         }
     }
@@ -41,7 +41,7 @@ public class ExceptionExtensions {
         if (isNull(operation)) return null;
         try {
             return operation.call();
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return null;
         }
     }
@@ -50,7 +50,7 @@ public class ExceptionExtensions {
         requireNonNull(operation);
         try {
             return operation.call();
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return value;
         }
     }
@@ -61,42 +61,42 @@ public class ExceptionExtensions {
             T result = operation.call();
             if (isEmpty(result)) return value;
             return result;
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return value;
         }
     }
 
-    public static <T> T exceptionIfNull(T value, RuntimeException e) {
-        if (isNull(value)) throw e;
+    public static <T> T exceptionIfNull(T value, RuntimeException throwable) {
+        if (isNull(value)) throw throwable;
         return value;
     }
 
-    public static <T> T exceptionIfEmpty(T value, RuntimeException e) {
-        if (isEmpty(value)) throw e;
+    public static <T> T exceptionIfEmpty(T value, RuntimeException throwable) {
+        if (isEmpty(value)) throw throwable;
         return value;
     }
 
     public static <T> T wrapException(ExceptionCallable<T> action, Function<Throwable, RuntimeException> exceptionFactory) {
         try {
             return action.call();
-        } catch (Throwable e) {
-            throw exceptionFactory.apply(e);
+        } catch (Throwable throwable) {
+            throw exceptionFactory.apply(throwable);
         }
     }
 
     public static <T, R> R doIfException(ExceptionCallable<R> action, Function<Throwable, R> ifException) {
         try {
             return action.call();
-        } catch (Throwable e) {
-            return ifException.apply(e);
+        } catch (Throwable throwable) {
+            return ifException.apply(throwable);
         }
     }
 
     public static void doIfException(ExceptionRunnable action, Consumer<Throwable> ifException) {
         try {
             action.run();
-        } catch (Throwable e) {
-            ifException.accept(e);
+        } catch (Throwable throwable) {
+            ifException.accept(throwable);
         }
     }
 }

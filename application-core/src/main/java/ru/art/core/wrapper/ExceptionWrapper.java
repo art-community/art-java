@@ -47,7 +47,7 @@ public class ExceptionWrapper {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             action.run();
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             //ignore
         }
     }
@@ -56,8 +56,8 @@ public class ExceptionWrapper {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             action.run();
-        } catch (Throwable e) {
-            onException.accept(e);
+        } catch (Throwable throwable) {
+            onException.accept(throwable);
         }
     }
 
@@ -65,8 +65,8 @@ public class ExceptionWrapper {
         if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             return action.call();
-        } catch (Throwable e) {
-            return onException.apply(e);
+        } catch (Throwable throwable) {
+            return onException.apply(throwable);
         }
     }
 
@@ -75,16 +75,16 @@ public class ExceptionWrapper {
         if (isNull(exceptionFactory)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_FACTORY_IS_NULL);
         try {
             action.run();
-        } catch (Throwable e) {
-            throw exceptionFactory.create(e);
+        } catch (Throwable throwable) {
+            throw exceptionFactory.create(throwable);
         }
     }
 
     public static <T> T wrapException(Callable<T> action, ExceptionFactory<?> exceptionFactory) {
         try {
             return action.call();
-        } catch (Throwable e) {
-            throw exceptionFactory.create(e);
+        } catch (Throwable throwable) {
+            throw exceptionFactory.create(throwable);
         }
     }
 }

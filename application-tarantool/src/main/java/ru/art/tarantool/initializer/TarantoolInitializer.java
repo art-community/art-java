@@ -80,9 +80,9 @@ public class TarantoolInitializer {
                 connectToTarantool(instanceId);
                 return;
             }
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             if (instanceMode == LOCAL) {
-                logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address), e);
+                logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address), throwable);
                 startTarantool(instanceId);
             }
             TarantoolClient tarantoolClient = tryConnectToTarantool(instanceId);
@@ -90,7 +90,7 @@ public class TarantoolInitializer {
                 connectToTarantool(instanceId);
                 return;
             }
-            throw e;
+            throw throwable;
         }
         if (instanceMode == LOCAL) {
             logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
@@ -147,8 +147,8 @@ public class TarantoolInitializer {
             }
             startTarantoolOutOfJar(instanceId, localConfiguration, address);
 
-        } catch (Throwable e) {
-            throw new TarantoolInitializationException(e);
+        } catch (Throwable throwable) {
+            throw new TarantoolInitializationException(throwable);
         }
     }
 

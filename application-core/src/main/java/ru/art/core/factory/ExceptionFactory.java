@@ -20,5 +20,5 @@ package ru.art.core.factory;
 
 @FunctionalInterface
 public interface ExceptionFactory<T extends RuntimeException> {
-    T create(Throwable e);
+    T create(Throwable throwable);
 }

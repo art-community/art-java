@@ -39,9 +39,9 @@ public final class TarantoolFunctionCaller {
             List<?> result = cast(client.syncOps().call(functionName));
             logFunctionCall(functionName, result, CALLED_FUNCTION);
             return result;
-        } catch (Throwable e) {
-            logException(functionName, e);
-            throw new TarantoolExecutionException(e);
+        } catch (Throwable throwable) {
+            logException(functionName, throwable);
+            throw new TarantoolExecutionException(throwable);
         }
     }
 
@@ -51,9 +51,9 @@ public final class TarantoolFunctionCaller {
             List<?> result = cast(client.syncOps().call(functionName, args.toArray(new Object[0])));
             logFunctionCall(functionName, result, CALLED_FUNCTION);
             return result;
-        } catch (Throwable e) {
-            logException(functionName, e);
-            throw new TarantoolExecutionException(e);
+        } catch (Throwable throwable) {
+            logException(functionName, throwable);
+            throw new TarantoolExecutionException(throwable);
         }
     }
 
@@ -62,18 +62,18 @@ public final class TarantoolFunctionCaller {
         try {
             return ((CompletableFuture<List<?>>) client.asyncOps()
                     .call(functionName, args.toArray(new Object[0])))
-                    .handle((result, e) -> {
-                        if (isNull(e)) {
+                    .handle((result, throwable) -> {
+                        if (isNull(throwable)) {
                             logFunctionCall(functionName, result, CALLED_FUNCTION);
                             return result;
                         }
-                        logException(functionName, (Exception) e);
-                        throw new TarantoolExecutionException(e);
+                        logException(functionName, throwable);
+                        throw new TarantoolExecutionException(throwable);
                     });
 
-        } catch (Throwable e) {
-            logException(functionName, e);
-            throw new TarantoolExecutionException(e);
+        } catch (Throwable throwable) {
+            logException(functionName, throwable);
+            throw new TarantoolExecutionException(throwable);
         }
     }
 
@@ -86,12 +86,12 @@ public final class TarantoolFunctionCaller {
                 .trace(format(callingState, functionName, arguments));
     }
 
-    private static void logException(String functionName, Throwable e) {
+    private static void logException(String functionName, Throwable throwable) {
         if (!tarantoolModule().isEnableTracing()) {
             return;
         }
         loggingModule()
                 .getLogger(TarantoolFunctionCaller.class)
-                .error(format(FAILED_FUNCTION, functionName), e);
+                .error(format(FAILED_FUNCTION, functionName), throwable);
     }
 }

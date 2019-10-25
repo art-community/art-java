@@ -19,7 +19,7 @@
 package ru.art.message.pack.exception;
 
 public class MessagePackMappingException extends RuntimeException {
-    public MessagePackMappingException(Throwable e) {
-        super(e);
+    public MessagePackMappingException(Throwable throwable) {
+        super(throwable);
     }
 }
