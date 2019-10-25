@@ -140,7 +140,6 @@ public class TarantoolInitializer {
                     address,
                     userConfigurationPath.toAbsolutePath()));
 
-            List<String> executableCommand = dynamicArrayOf(localConfiguration.getExecutable());
             if (insideJar(TarantoolModule.class)) {
                 startTarantoolFromJar(instanceId, localConfiguration, address);
                 return;

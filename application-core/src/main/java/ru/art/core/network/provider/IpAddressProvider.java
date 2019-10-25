@@ -47,4 +47,8 @@ public class IpAddressProvider {
         }
         return LOCALHOST_IP_ADDRESS;
     }
+
+    public static String translateLocalHostToIp(String host) {
+        return LOCALHOST.equalsIgnoreCase(host) ? LOCALHOST_IP_ADDRESS : host;
+    }
 }

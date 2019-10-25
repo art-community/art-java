@@ -52,8 +52,9 @@ public final class TarantoolConnector {
         config.password = connectionConfiguration.getPassword();
         String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
         SocketChannelProvider socketChannelProvider = new RoundRobinSocketProviderImpl(address);
-        TarantoolClientImpl tarantoolClient = new TarantoolClientImpl(socketChannelProvider, config);
+        TarantoolClientImpl tarantoolClient;
         try {
+            tarantoolClient = new TarantoolClientImpl(socketChannelProvider, config);
             tarantoolClient.waitAlive();
         } catch (Throwable throwable) {
             throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address), throwable);
@@ -73,6 +74,8 @@ public final class TarantoolConnector {
             throw new TarantoolConnectionException(format(CONFIGURATION_IS_NULL, instanceId));
         }
         TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
+        config.username = connectionConfiguration.getUsername();
+        config.password = connectionConfiguration.getPassword();
         String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
         SocketChannelProvider socketChannelProvider = new RoundRobinSocketProviderImpl(address);
         TarantoolClientImpl tarantoolClient;
