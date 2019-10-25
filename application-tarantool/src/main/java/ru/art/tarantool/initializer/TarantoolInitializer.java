@@ -140,7 +140,6 @@ public class TarantoolInitializer {
                     address,
                     userConfigurationPath.toAbsolutePath()));
 
-            List<String> executableCommand = dynamicArrayOf(localConfiguration.getExecutable());
             if (insideJar(TarantoolModule.class)) {
                 startTarantoolFromJar(instanceId, localConfiguration, address);
                 return;
@@ -185,7 +184,7 @@ public class TarantoolInitializer {
         logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
     }
 
-    private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException {
+    private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException, InterruptedException {
         URL executableUrl = TarantoolInitializer.class.getClassLoader().getResource(localConfiguration.getExecutable());
         if (isNull(executableUrl)) {
             throw new TarantoolInitializationException(format(TARANTOOL_EXECUTABLE_NOT_EXISTS, address, localConfiguration.getExecutable()));
@@ -207,7 +206,9 @@ public class TarantoolInitializer {
                 .directory(new File(localConfiguration.getWorkingDirectory()))
                 .redirectOutput(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .redirectError(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
-                .start();
+                .start()
+                .getProcess()
+                .waitFor();
         logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
     }
 
