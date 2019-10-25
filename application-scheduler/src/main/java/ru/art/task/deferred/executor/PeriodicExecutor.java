@@ -66,11 +66,11 @@ public class PeriodicExecutor {
     }
 
     public boolean cancelPeriodicTask(String taskId) {
-        return removePeriodicTask(taskId).cancel(true);
+        return removePeriodicTask(taskId).map(future -> future.cancel(true)).orElse(false);
     }
 
-    public Future<?> removePeriodicTask(String taskId) {
-        return executingTasks.remove(taskId);
+    public Optional<Future<?>> removePeriodicTask(String taskId) {
+        return Optional.ofNullable(executingTasks.remove(taskId));
     }
 
     public void clear() {
