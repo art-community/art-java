@@ -36,10 +36,10 @@ public class ServiceExecutionExceptionWrapper {
     <RequestType, ResponseType> ServiceResponse<ResponseType> executeServiceWrapped(ServiceMethodCommand command, ServiceRequest<RequestType> request) {
         try {
             return wrapServiceExecution(command, request.getRequestData());
-        } catch (ServiceExecutionException e) {
-            return errorResponse(command, e);
-        } catch (Throwable e) {
-            return errorResponse(command, ServiceErrorCodes.UNCAUGHT_INTERNAL_ERROR, e);
+        } catch (ServiceExecutionException throwable) {
+            return errorResponse(command, throwable);
+        } catch (Throwable throwable) {
+            return errorResponse(command, ServiceErrorCodes.UNCAUGHT_INTERNAL_ERROR, throwable);
         }
     }
 

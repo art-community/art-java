@@ -151,21 +151,21 @@ public class Generator {
                             files.remove(currentModelFileName);
                             files.remove(currentModelFileName.replace(REQUEST, RESPONSE));
                         }
-                    } catch (MappingGeneratorException e) {
-                        printError(e.getMessage());
+                    } catch (MappingGeneratorException exception) {
+                        printError(exception.getMessage());
                     }
                 } else {
                     try {
                         createMapper(genPackage, packageModel, jarPathToMain, currentModelFileName);
-                    } catch (MappingGeneratorException e) {
-                        printError(e.getMessage());
+                    } catch (MappingGeneratorException exception) {
+                        printError(exception.getMessage());
                     }
                 }
             } else {
                 try {
                     createMapper(genPackage, packageModel, jarPathToMain, currentModelFileName);
-                } catch (MappingGeneratorException e) {
-                    printError(e.getMessage());
+                } catch (MappingGeneratorException exception) {
+                    printError(exception.getMessage());
                 }
             }
         }

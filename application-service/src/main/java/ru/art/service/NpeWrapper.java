@@ -28,8 +28,8 @@ public class NpeWrapper extends ServiceExecutionExceptionWrapper {
     public <RequestType, ResponseType> ServiceResponse<ResponseType> wrapServiceExecution(ServiceMethodCommand command, RequestType request) throws Exception {
         try {
             return previousWrapper.wrapServiceExecution(command, request);
-        } catch (NullPointerException e) {
-            return ServiceResponseFactory.errorResponse(command, ServiceErrorCodes.NPE, e);
+        } catch (NullPointerException throwable) {
+            return ServiceResponseFactory.errorResponse(command, ServiceErrorCodes.NPE, throwable);
         }
     }
 }

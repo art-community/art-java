@@ -49,8 +49,8 @@ public interface TaskExecutionActions {
                     .requestMapper(Caster::cast)
                     .execute(task.getExecutableRequest());
             handleDeferredTaskCompletion(task, response);
-        } catch (Throwable e) {
-            handleDeferredTaskError(e, task);
+        } catch (Throwable throwable) {
+            handleDeferredTaskError(throwable, task);
         }
     }
 
@@ -65,8 +65,8 @@ public interface TaskExecutionActions {
                     .requestMapper(Caster::cast)
                     .execute(task.getExecutableRequest());
             handlePeriodicTaskCompletion(task, response);
-        } catch (Throwable e) {
-            handlePeriodicTaskError(e, task);
+        } catch (Throwable throwable) {
+            handlePeriodicTaskError(throwable, task);
         }
     }
 
@@ -81,8 +81,8 @@ public interface TaskExecutionActions {
                     .requestMapper(Caster::cast)
                     .execute(process.getExecutableRequest());
             handleInfinityProcessCompletion(process, response);
-        } catch (Throwable e) {
-            handleInfinityProcessError(e, process);
+        } catch (Throwable throwable) {
+            handleInfinityProcessError(throwable, process);
         }
     }
 

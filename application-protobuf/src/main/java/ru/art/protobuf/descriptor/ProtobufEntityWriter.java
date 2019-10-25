@@ -44,8 +44,8 @@ public class ProtobufEntityWriter {
     public static void writeProtobuf(Value value, OutputStream outputStream) {
         try {
             writeProtobuf(value).writeTo(outputStream);
-        } catch (IOException e) {
-            throw new ProtobufException(e);
+        } catch (IOException ioException) {
+            throw new ProtobufException(ioException);
         }
     }
 
@@ -72,6 +72,10 @@ public class ProtobufEntityWriter {
                 return com.google.protobuf.Value.newBuilder().setBoolValue(asPrimitive(value).getBool()).build();
             case ENTITY:
                 return writeEntityToProtobuf(asEntity(value));
+            case STRING_PARAMETERS_MAP:
+                return writeStringParametersToProtobuf((StringParametersMap) value);
+            case MAP:
+                return writeMapValueToProtobuf((MapValue) value);
             case COLLECTION:
                 return writeCollectionToProtobuf(asCollection(value));
         }
@@ -102,6 +106,10 @@ public class ProtobufEntityWriter {
                 return writeEntityToProtobuf((Entity) value);
             case COLLECTION:
                 return writeCollectionToProtobuf((CollectionValue<?>) value);
+            case STRING_PARAMETERS_MAP:
+                return writeStringParametersToProtobuf((StringParametersMap) value);
+            case MAP:
+                return writeMapValueToProtobuf((MapValue) value);
             case VALUE:
                 return writeProtobuf((Value) value);
         }
@@ -115,6 +123,35 @@ public class ProtobufEntityWriter {
                         .filter(entry -> nonNull(entry.getValue()))
                         .filter(entry -> !entry.getValue().isEmpty())
                         .collect(toMap(Entry::getKey, entry -> writeProtobuf(entry.getValue()))))
+                .build();
+        return com.google.protobuf.Value.newBuilder()
+                .setStructValue(protobufEntity)
+                .build();
+    }
+
+    private static com.google.protobuf.Value writeStringParametersToProtobuf(StringParametersMap stringParameters) {
+        Struct protobufEntity = Struct.newBuilder()
+                .putAllFields(stringParameters.getParameters()
+                        .entrySet()
+                        .stream()
+                        .filter(entry -> nonNull(entry.getValue()))
+                        .filter(entry -> !entry.getValue().isEmpty())
+                        .collect(toMap(Entry::getKey, entry -> com.google.protobuf.Value.newBuilder().setStringValue(entry.getValue()).build())))
+                .build();
+        return com.google.protobuf.Value.newBuilder()
+                .setStructValue(protobufEntity)
+                .build();
+    }
+
+    private static com.google.protobuf.Value writeMapValueToProtobuf(MapValue map) {
+        Struct protobufEntity = Struct.newBuilder()
+                .putAllFields(map.getElements()
+                        .entrySet()
+                        .stream()
+                        .filter(entry -> nonNull(entry.getValue()))
+                        .filter(entry -> !entry.getValue().isEmpty())
+                        .filter(entry -> isPrimitive(entry.getKey()))
+                        .collect(toMap(entry -> asPrimitive(entry.getKey()).getString(), entry -> writeProtobuf(entry.getValue()))))
                 .build();
         return com.google.protobuf.Value.newBuilder()
                 .setStructValue(protobufEntity)

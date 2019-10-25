@@ -50,9 +50,12 @@ import java.util.*;
 
 @Getter
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class HttpResourceServiceSpecification implements HttpServiceSpecification {
     private final String resourcePath;
-    private final String serviceId = HTTP_RESOURCE_SERVICE;
+    private HttpResourceConfiguration resourceConfiguration = httpServerModule().getResourceConfiguration();
+    @Getter(lazy = true)
+    private final String serviceId = resourcePath;
     @Getter(lazy = true)
     private final HttpService httpService = httpService()
 
@@ -85,20 +88,21 @@ public class HttpResourceServiceSpecification implements HttpServiceSpecificatio
     @SuppressWarnings("All")
     public <P, R> R executeMethod(String methodId, P request) {
         if (GET_RESOURCE.equals(methodId)) {
-            HttpResourceConfiguration resourceConfiguration = httpServerModule().getResourceConfiguration();
             String resourcePath = ifEmpty(cast(request), resourceConfiguration.getDefaultResource().getPath());
             if (resourcePath.contains(DOT)) {
                 return cast(resourceConfiguration
                         .getResourceExtensionTypeMappings()
                         .get(resourcePath.substring(resourcePath.lastIndexOf(DOT)).toLowerCase()) == STRING
-                        ? stringPrimitive(getStringResource(resourcePath))
-                        : byteCollection(getBinaryResource(resourcePath)));
+                        ? stringPrimitive(getStringResource(resourcePath, resourceConfiguration))
+                        : byteCollection(getBinaryResource(resourcePath, resourceConfiguration)));
             }
             HttpResource resource = resourceConfiguration
                     .getResourceMappings()
                     .getOrDefault(request, resourceConfiguration.getDefaultResource());
-            return cast(resource.getType() == STRING ? stringPrimitive(getStringResource(resource.getPath())) : byteCollection(getBinaryResource(resource.getPath())));
+            return cast(resource.getType() == STRING
+                    ? stringPrimitive(getStringResource(resource.getPath(), resourceConfiguration))
+                    : byteCollection(getBinaryResource(resource.getPath(), resourceConfiguration)));
         }
-        throw new UnknownServiceMethodException(serviceId, methodId);
+        throw new UnknownServiceMethodException(getServiceId(), methodId);
     }
 }

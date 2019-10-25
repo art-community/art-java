@@ -55,8 +55,8 @@ public final class TarantoolConnector {
         TarantoolClientImpl tarantoolClient = new TarantoolClientImpl(socketChannelProvider, config);
         try {
             tarantoolClient.waitAlive();
-        } catch (Throwable e) {
-            throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address), e);
+        } catch (Throwable throwable) {
+            throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address), throwable);
         }
         loggingModule().getLogger(TarantoolInitializer.class).info(format(TARANTOOL_SUCCESSFULLY_CONNECTED, instanceId, address));
         tarantoolModuleState().getClients().put(instanceId, tarantoolClient);
@@ -79,8 +79,8 @@ public final class TarantoolConnector {
         try {
             tarantoolClient = new TarantoolClientImpl(socketChannelProvider, config);
             tarantoolClient.waitAlive();
-        } catch (Throwable e) {
-            throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address), e);
+        } catch (Throwable throwable) {
+            throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address), throwable);
         }
         return tarantoolClient;
     }

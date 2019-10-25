@@ -18,13 +18,17 @@
 
 package ru.art.service.validation;
 
-import lombok.*;
+import ru.art.service.constants.*;
 import static java.text.MessageFormat.*;
-import static ru.art.service.constants.ServiceExceptionsMessages.*;
+import static ru.art.service.constants.ValidationExpressionType.*;
 
-@AllArgsConstructor
 class NotEqualsValidationExpression extends ValidationExpression<Object> {
     private Object other;
+
+    NotEqualsValidationExpression(Object other) {
+        super(NOT_EQUALS);
+        this.other = other;
+    }
 
     @Override
     public boolean evaluate(String fieldName, Object value) {
@@ -33,6 +37,6 @@ class NotEqualsValidationExpression extends ValidationExpression<Object> {
 
     @Override
     public String getValidationErrorMessage() {
-        return format(EQUALS_VALIDATION_ERROR, fieldName, value, other);
+        return format(ServiceExceptionsMessages.EQUALS_VALIDATION_ERROR, fieldName, value, other);
     }
 }

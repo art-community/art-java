@@ -18,7 +18,7 @@ class HttpServerConfiguration : HttpServerAgileConfiguration() {
                 .builder()
                 .cookieValidator(TOKEN, ::authenticate)
                 .pathFilter { path -> !path.contains(METRICS_PATH) }
-                .errorProvider { cookieError(UNAUTHORIZED.code, getStringResource(INDEX_HTML)) }
+                .errorProvider { cookieError().status(UNAUTHORIZED.code).content(getStringResource(INDEX_HTML)) }
                 .build()))
         addAll(super.getRequestInterceptors())
     }

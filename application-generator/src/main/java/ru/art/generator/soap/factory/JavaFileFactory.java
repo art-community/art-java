@@ -1,12 +1,28 @@
+/*
+ * ART Java
+ *
+ * Copyright 2019 ART
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package ru.art.generator.soap.factory;
 
 import com.squareup.javapoet.*;
 import lombok.Builder;
 import lombok.*;
 import lombok.experimental.*;
-import ru.art.generator.soap.constants.*;
 import ru.art.generator.soap.model.*;
-import ru.art.generator.soap.service.*;
 import ru.art.service.validation.*;
 import static com.squareup.javapoet.CodeBlock.*;
 import static com.squareup.javapoet.TypeSpec.*;
@@ -18,6 +34,7 @@ import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstant
 import static ru.art.generator.soap.constants.Constants.*;
 import static ru.art.generator.soap.constants.Constants.ToXmlModelConstants.*;
 import static ru.art.generator.soap.factory.TypeFactory.*;
+import static ru.art.generator.soap.service.SoapGeneratorService.*;
 import java.io.*;
 import java.util.*;
 
@@ -29,18 +46,9 @@ public class JavaFileFactory {
     public static JavaFile createJavaFile(String packagePath, TypeSpec spec) {
         JavaFile javaFile = JavaFile.builder(packagePath, spec).build();
         try {
-            javaFile.writeTo(new File(SourceCodeGenService.class.getProtectionDomain()
-                    .getCodeSource()
-                    .getLocation()
-                    .getPath()
-                    .subSequence(0, SourceCodeGenService.class.getProtectionDomain()
-                            .getCodeSource()
-                            .getLocation()
-                            .getPath()
-                            .indexOf(Constants.BUILD))
-                    .toString() + SRC_MAIN_JAVA));
-        } catch (IOException e) {
-            e.printStackTrace();
+            javaFile.writeTo(new File(SRC_MAIN_JAVA_ABSOLUTE_PATH.get()));
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
         return javaFile;
     }

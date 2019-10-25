@@ -20,6 +20,7 @@ art {
     providedModules {
         applicationCore()
         applicationEntity()
+        applicationLogging()
         applicationService()
         applicationXml()
     }
@@ -36,8 +37,16 @@ dependencies {
             .exclude("com.github.fge")
             .exclude("com.google.guava", "guava")
             .exclude("org.apache.httpcomponents", "httpclient")
+            .exclude("org.slf4j")
+            .exclude("commons-cli")
+            .exclude("commons-codec")
+            .exclude("commons-dbcp")
+            .exclude("commons-discovery")
+            .exclude("commons-fileupload")
+            .exclude("javax.mail")
+            .exclude("io.swagger")
+            .exclude("com.floreysoft")
     embedded("com.google.guava", "guava", art.externalDependencyVersionsConfiguration.guavaVersion)
     embedded("org.apache.httpcomponents", "httpclient", art.externalDependencyVersionsConfiguration.apacheHttpClientVersion)
             .exclude("org.apache.httpcomponents", "httpcore")
-
 }

@@ -66,8 +66,8 @@ public interface AnalyzingOperations {
                     return findClass(name);
                 }
             }.loadClass(packagePath + DOT + fileName);
-        } catch (MalformedURLException | ClassNotFoundException e) {
-            throw new DefinitionException(format(UNABLE_TO_DEFINE_CLASS, fileName), e);
+        } catch (MalformedURLException | ClassNotFoundException throwable) {
+            throw new DefinitionException(format(UNABLE_TO_DEFINE_CLASS, fileName), throwable);
         }
     }
 
@@ -134,8 +134,8 @@ public interface AnalyzingOperations {
                             + DOT_JAVA;
                     new File(pathname).delete();
                 } else mappingPackageHasNonGeneratedFiles = true;
-            } catch (DefinitionException e) {
-                e.printStackTrace();
+            } catch (DefinitionException throwable) {
+                throwable.printStackTrace();
             }
         }
         if (modelFilesList.isEmpty() && !mappingPackageHasNonGeneratedFiles) {

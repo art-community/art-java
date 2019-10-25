@@ -20,7 +20,6 @@ package ru.art.configurator.service;
 
 import ru.art.config.remote.api.specification.*;
 import ru.art.configurator.api.model.*;
-import ru.art.configurator.factory.*;
 import ru.art.core.checker.*;
 import ru.art.entity.*;
 import static ru.art.configurator.api.model.Configuration.*;
@@ -81,8 +80,9 @@ public interface ConfiguratorService {
 
     static void applyModuleConfiguration(ModuleKey moduleKey) {
         getModulesConnectionParameters(moduleKey)
+                .stream()
                 .filter(CheckerForEmptiness::isNotEmpty)
-                .flatMap(RemoteConfigCommunicationSpecificationsFactory::createRemoteConfigCommunicationSpecification)
-                .ifPresent(RemoteConfigCommunicationSpecification::applyConfiguration);
+                .map(parameters -> new RemoteConfigCommunicationSpecification(parameters.getGrpcHost(), parameters.getGrpcPort(), parameters.getGrpcPath()))
+                .forEach(RemoteConfigCommunicationSpecification::applyConfiguration);
     }
 }

@@ -142,8 +142,8 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                     clientBuilder.setSSLContext(custom()
                             .loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray())
                             .build());
-                } catch (Throwable e) {
-                    throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
+                } catch (Throwable throwable) {
+                    throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
                 }
             }
             if (this.isEnableRawDataTracing()) {
@@ -173,8 +173,8 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                     clientBuilder.setSSLContext(custom()
                             .loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray())
                             .build());
-                } catch (Throwable e) {
-                    throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
+                } catch (Throwable throwable) {
+                    throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
                 }
             }
             return clientBuilder.build();
@@ -187,16 +187,16 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                 keyStoreInputStream = new FileInputStream(new File(getSslKeyStoreFilePath()));
                 keyStore.load(keyStoreInputStream, getSslKeyStorePassword().toCharArray());
                 return keyStore;
-            } catch (Throwable e) {
-                throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, e);
+            } catch (Throwable throwable) {
+                throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
             } finally {
                 if (nonNull(keyStoreInputStream)) {
                     try {
                         keyStoreInputStream.close();
-                    } catch (IOException e) {
+                    } catch (IOException ioException) {
                         loggingModule()
                                 .getLogger(HttpClientModuleConfiguration.class)
-                                .error(HTTP_SSL_CONFIGURATION_FAILED, e);
+                                .error(HTTP_SSL_CONFIGURATION_FAILED, ioException);
                     }
                 }
             }

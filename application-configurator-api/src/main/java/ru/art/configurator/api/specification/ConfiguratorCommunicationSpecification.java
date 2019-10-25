@@ -19,8 +19,7 @@
 package ru.art.configurator.api.specification;
 
 import lombok.*;
-import ru.art.configurator.api.model.Configuration;
-import ru.art.configurator.api.model.ModuleKey;
+import ru.art.configurator.api.model.*;
 import ru.art.grpc.client.communicator.*;
 import ru.art.grpc.client.specification.*;
 import ru.art.service.exception.*;
@@ -59,7 +58,7 @@ public class ConfiguratorCommunicationSpecification implements GrpcCommunication
     private Configuration getConfiguration() {
         try {
             return getOrElse((Configuration) getGetProtobufConfig().execute(moduleKey).getResponseData(), Configuration.builder().build());
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return Configuration.builder()
                     .configuration(entityBuilder().build())
                     .build();

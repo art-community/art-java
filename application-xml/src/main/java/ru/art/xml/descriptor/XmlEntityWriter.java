@@ -26,6 +26,7 @@ import static java.nio.charset.StandardCharsets.*;
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.xml.constants.XmlDocumentConstants.*;
@@ -40,7 +41,7 @@ import java.util.*;
 @UtilityClass
 public class XmlEntityWriter {
     public static byte[] writeXmlToBytes(XmlEntity xmlEntity) throws XmlMappingException {
-        return writeXml(xmlModule().getXmlOutputFactory(), xmlEntity).getBytes();
+        return writeXml(xmlModule().getXmlOutputFactory(), xmlEntity).getBytes(contextConfiguration().getCharset());
     }
 
     public static void writeXml(XmlEntity xmlEntity, OutputStream outputStream) throws XmlMappingException {
@@ -49,8 +50,8 @@ public class XmlEntityWriter {
         }
         try {
             outputStream.write(writeXml(xmlModule().getXmlOutputFactory(), xmlEntity).getBytes());
-        } catch (Throwable e) {
-            throw new XmlMappingException(e);
+        } catch (Throwable throwable) {
+            throw new XmlMappingException(throwable);
         }
     }
 
@@ -71,15 +72,15 @@ public class XmlEntityWriter {
             xmlStreamWriter = xmlOutputFactory.createXMLStreamWriter(os, UTF_8.name());
             writeAllElements(xmlStreamWriter, xmlEntity);
             return os.toString();
-        } catch (Throwable e) {
-            throw new XmlMappingException(e);
+        } catch (Throwable throwable) {
+            throw new XmlMappingException(throwable);
         } finally {
             if (nonNull(xmlStreamWriter)) {
                 try {
                     xmlStreamWriter.flush();
                     xmlStreamWriter.close();
-                } catch (Throwable e) {
-                    loggingModule().getLogger(XmlEntityWriter.class).error(XML_GENERATOR_CLOSING_ERROR, e);
+                } catch (Throwable throwable) {
+                    loggingModule().getLogger(XmlEntityWriter.class).error(XML_GENERATOR_CLOSING_ERROR, throwable);
                 }
             }
         }

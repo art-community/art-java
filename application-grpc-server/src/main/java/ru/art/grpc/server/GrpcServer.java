@@ -81,8 +81,8 @@ public class GrpcServer {
             grpcServer.server.start();
             logger.info(format(GRPC_STARTED_MESSAGE, currentTimeMillis() - timestamp));
             return grpcServer;
-        } catch (Throwable e) {
-            throw new GrpcServerException(GRPC_SERVER_INITIALIZATION_FAILED, e);
+        } catch (Throwable throwable) {
+            throw new GrpcServerException(GRPC_SERVER_INITIALIZATION_FAILED, throwable);
         }
     }
 
@@ -91,7 +91,7 @@ public class GrpcServer {
                 grpcServerModule().getPort(),
                 grpcServerModule().getPath(),
                 service.getServiceId(),
-                service.getGrpcService().getMethods().keySet().toString());
+                service.getGrpcService().getGrpcMethods().keySet().toString());
     }
 
     private static void logService(GrpcServiceSpecification specification) {
@@ -101,8 +101,8 @@ public class GrpcServer {
     public void await() {
         try {
             server.awaitTermination();
-        } catch (Throwable e) {
-            throw new GrpcServerException(GRPC_SERVER_AWAITING_FAILED, e);
+        } catch (Throwable throwable) {
+            throw new GrpcServerException(GRPC_SERVER_AWAITING_FAILED, throwable);
         }
     }
 
@@ -117,7 +117,7 @@ public class GrpcServer {
             server.awaitTermination();
             startGrpcServer();
             logger.info(format(GRPC_RESTARTED_MESSAGE, currentTimeMillis() - millis));
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             logger.error(GRPC_SERVER_RESTART_FAILED);
         }
     }

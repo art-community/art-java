@@ -19,8 +19,9 @@
 package ru.art.entity.mapper;
 
 import ru.art.entity.*;
+import java.io.*;
 
-public interface ValueFromModelMapper<T, V extends Value> {
+public interface ValueFromModelMapper<T, V extends Value> extends Serializable {
     V map(T model);
 
     interface EntityFromModelMapper<T> extends ValueFromModelMapper<T, Entity> {

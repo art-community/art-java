@@ -19,7 +19,7 @@
 package ru.art.sql.exception;
 
 public class SqlModuleException extends RuntimeException {
-    public SqlModuleException(Throwable e) {
-        super(e);
+    public SqlModuleException(Throwable throwable) {
+        super(throwable);
     }
 }

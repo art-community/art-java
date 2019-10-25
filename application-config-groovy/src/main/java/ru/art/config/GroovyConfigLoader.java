@@ -44,7 +44,7 @@ interface GroovyConfigLoader {
         }
         try {
             configFileUrl = configFile.toURI().toURL();
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException throwable) {
             throw new GroovyConfigLoadingException(CONFIG_FILE_NOT_FOUND);
         }
         return (ConfigObject) new ConfigSlurper().parse(configFileUrl).get(configId);

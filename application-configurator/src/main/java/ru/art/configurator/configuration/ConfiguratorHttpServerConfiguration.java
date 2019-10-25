@@ -22,6 +22,7 @@ import lombok.*;
 import org.zalando.logbook.*;
 import ru.art.core.mime.*;
 import ru.art.http.mapper.*;
+import ru.art.http.server.HttpServerModuleConfiguration.HttpResourceConfiguration.*;
 import ru.art.http.server.HttpServerModuleConfiguration.*;
 import ru.art.http.server.interceptor.*;
 import static ru.art.config.ConfigProvider.*;
@@ -30,11 +31,13 @@ import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorLocalConfigKeys.*;
 import static ru.art.configurator.dao.UserDao.*;
 import static ru.art.configurator.http.content.mapping.ConfiguratorHttpContentMapping.*;
+import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.http.constants.HttpCommonConstants.*;
 import static ru.art.http.constants.HttpStatus.*;
 import static ru.art.http.server.HttpServerModuleConfiguration.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;
 import static ru.art.http.server.interceptor.CookieInterceptor.Error.*;
 import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
 import static ru.art.http.server.service.HttpResourceService.*;
@@ -49,13 +52,18 @@ public class ConfiguratorHttpServerConfiguration extends HttpServerModuleDefault
     private final String path = ifExceptionOrEmpty(() ->
             config(CONFIGURATOR_SECTION_ID).getString(CONFIGURATOR_HTTP_PATH_PROPERTY), CONFIGURATOR_PATH);
     private final List<HttpServerInterceptor> requestInterceptors = initializeRequestInterceptors(super.getRequestInterceptors());
+    private final HttpResourceConfiguration resourceConfiguration = super.getResourceConfiguration()
+            .toBuilder()
+            .templateResourceVariable(WEB_UI_PATH_VARIABLE, CONFIGURATOR_PATH + WEB_UI_PATH)
+            .defaultResource(new HttpResource(CONFIGURATOR_INDEX_HTML, STRING, contextConfiguration().getCharset()))
+            .build();
 
     private static List<HttpServerInterceptor> initializeRequestInterceptors(List<HttpServerInterceptor> superInterceptors) {
         List<HttpServerInterceptor> httpServerInterceptors = dynamicArrayOf(initializeWebServerInterceptors(superInterceptors));
         httpServerInterceptors.add(intercept(CookieInterceptor.builder()
                 .pathFilter(path -> !AUTHORIZATION_CHECKING_PATHS.contains(path))
                 .cookieValidator(TOKEN_COOKIE, token -> getToken().equalsIgnoreCase(token))
-                .errorProvider(path -> cookieError(UNAUTHORIZED.getCode(), getStringResource(INDEX_HTML)))
+                .errorProvider(path -> cookieError().status(UNAUTHORIZED.getCode()).content(getStringResource(CONFIGURATOR_INDEX_HTML)))
                 .build()));
         return httpServerInterceptors;
     }

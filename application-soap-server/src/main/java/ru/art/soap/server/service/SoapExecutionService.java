@@ -19,7 +19,6 @@
 package ru.art.soap.server.service;
 
 import lombok.experimental.*;
-import ru.art.core.factory.CollectionsFactory.*;
 import ru.art.entity.mapper.ValueFromModelMapper.*;
 import ru.art.service.constants.*;
 import ru.art.service.exception.*;
@@ -31,7 +30,7 @@ import ru.art.soap.server.specification.*;
 import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
-import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.http.server.service.HttpResourceService.*;
 import static ru.art.service.ServiceController.*;
 import static ru.art.soap.server.constans.SoapServerModuleConstants.ResponseFaultConstants.*;
@@ -95,8 +94,10 @@ public class SoapExecutionService {
         }
         String normalizeWsdlPath = normalizeUrlPath(wsdlResourcePath);
         String normalizedServiceUrl = normalizeUrlPath(wsdlServiceUrl);
-        MapBuilder<String, String> templateMapping = mapOf(SOAP_SERVICE_URL, normalizedServiceUrl);
-        String wsdl = getStringResource(normalizeWsdlPath, templateMapping);
+        String wsdl = getStringResource(normalizeWsdlPath, httpServerModule()
+                .getResourceConfiguration()
+                .toBuilder()
+                .templateResourceVariable(SOAP_SERVICE_URL, normalizedServiceUrl).build());
         if (isEmpty(wsdl)) {
             throw new SoapServerException(WSDL_IS_EMPTY);
         }

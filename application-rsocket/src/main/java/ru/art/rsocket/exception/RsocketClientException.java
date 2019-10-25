@@ -19,8 +19,8 @@
 package ru.art.rsocket.exception;
 
 public class RsocketClientException extends RuntimeException {
-    public RsocketClientException(Throwable e) {
-        super(e);
+    public RsocketClientException(Throwable throwable) {
+        super(throwable);
     }
 
     public RsocketClientException(String message) {

@@ -28,9 +28,9 @@ import static ru.art.task.deferred.executor.SchedulerModuleExceptions.*;
  */
 public class DeferredExecutorExceptionHandler implements ExceptionHandler {
     @Override
-    public void onException(ExceptionEvent event, Throwable e) {
+    public void onException(ExceptionEvent event, Throwable throwable) {
         loggingModule()
                 .getLogger(DeferredExecutorExceptionHandler.class)
-                .error(format(EXCEPTION_OCCURRED_DURING, event.getMessage(), ifEmpty(e.getMessage(), e.getClass()), e));
+                .error(format(EXCEPTION_OCCURRED_DURING, event.getMessage(), ifEmpty(throwable.getMessage(), throwable.getClass()), throwable));
     }
 }

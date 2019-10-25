@@ -77,10 +77,8 @@ class HttpServerRequestHandler {
             }
         }
         ValueToModelMapper<?, Value> requestMapper;
-        ServiceRequest<?> serviceRequest = isNull(httpMethod.getRequestDataSource()) ||
-                isNull(requestValue) ||
-                isNull(requestMapper = cast(httpMethod.getRequestMapper()))
-                ? newServiceRequest(command)
+        ServiceRequest<?> serviceRequest = isNull(httpMethod.getRequestDataSource()) || isNull(requestMapper = cast(httpMethod.getRequestMapper()))
+                ? newServiceRequest(command, httpMethod.getRequestValidationPolicy())
                 : newServiceRequest(command, requestMapper.map(requestValue), httpMethod.getRequestValidationPolicy());
         ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);
         Value responseValue = mapResponseValue(httpMethod, serviceResponse);
@@ -139,8 +137,8 @@ class HttpServerRequestHandler {
         Collection<Part> parts;
         try {
             parts = request.getParts();
-        } catch (Exception e) {
-            throw new HttpServerException(e);
+        } catch (Exception throwable) {
+            throw new HttpServerException(throwable);
         }
         EntityBuilder entityBuilder = entityBuilder();
         for (Part part : parts) {
@@ -154,10 +152,10 @@ class HttpServerRequestHandler {
                 if (!isEmpty(value)) {
                     entityBuilder.byteCollectionField(submittedFileName, value);
                 }
-            } catch (IOException e) {
+            } catch (IOException ioException) {
                 loggingModule()
                         .getLogger(HttpServerRequestHandler.class)
-                        .error(EXCEPTION_OCCURRED_DURING_READING_PART, e);
+                        .error(EXCEPTION_OCCURRED_DURING_READING_PART, ioException);
             }
         }
         return entityBuilder.build();

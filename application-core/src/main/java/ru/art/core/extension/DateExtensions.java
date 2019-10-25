@@ -34,8 +34,8 @@ public class DateExtensions {
     public static Date parse(String template, String dateString, Locale locale) {
         try {
             return new SimpleDateFormat(template, locale).parse(dateString);
-        } catch (ParseException e) {
-            throw new InternalRuntimeException(e);
+        } catch (ParseException throwable) {
+            throw new InternalRuntimeException(throwable);
         }
     }
 
@@ -46,7 +46,7 @@ public class DateExtensions {
     public static Date tryParse(String dateTimeString, SimpleDateFormat format, Date orElse) {
         try {
             return format.parse(dateTimeString);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return orElse;
         }
     }
@@ -54,8 +54,8 @@ public class DateExtensions {
     public static Optional<Date> parseSafety(String template, String dateString, Locale locale) {
         try {
             return of(new SimpleDateFormat(template, locale).parse(dateString));
-        } catch (ParseException e) {
-            e.printStackTrace();
+        } catch (ParseException throwable) {
+            throwable.printStackTrace();
             return empty();
         }
     }
@@ -68,7 +68,7 @@ public class DateExtensions {
     public static String tryFormat(Date dateTime, SimpleDateFormat format, String orElse) {
         try {
             return format.format(dateTime);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             return orElse;
         }
     }

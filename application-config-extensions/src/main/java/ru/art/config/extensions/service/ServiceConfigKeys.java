@@ -19,9 +19,8 @@
 package ru.art.config.extensions.service;
 
 public interface ServiceConfigKeys {
-    String DEACTIVATION = "deactivation";
     String DEACTIVATED = "deactivated";
-    String METHODS = "methods";
+    String DEACTIVATED_METHODS = "deactivatedMethods";
     String SERVICE = "service";
     String FAILURE_RATE_THRESHOLD = "failureRateThreshold";
     String WAIT_DURATION_IN_OPEN_STATE = "waitDurationInOpenState";

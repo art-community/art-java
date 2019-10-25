@@ -18,9 +18,12 @@
 
 package ru.art.http.server.service;
 
+import lombok.experimental.*;
 import org.jtwig.*;
+import ru.art.http.server.HttpServerModuleConfiguration.*;
 import static java.util.Objects.*;
 import static org.jtwig.JtwigTemplate.*;
+import static org.jtwig.environment.EnvironmentConfigurationBuilder.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -32,136 +35,82 @@ import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.logging.LoggingModule.*;
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.nio.charset.*;
 
-public interface HttpResourceService {
-    static String getStringResource(final String resource) {
-        if (httpServerModule().getResourceConfiguration().getAvailableResourceExtensions().stream().noneMatch(resource::endsWith)) {
+@UtilityClass
+public class HttpResourceService {
+    public static String getStringResource(String resource) {
+        return getStringResource(resource, contextConfiguration().getCharset(), httpServerModule().getResourceConfiguration());
+    }
+
+    public static String getStringResource(String resource, HttpResourceConfiguration resourceConfiguration) {
+        return getStringResource(resource, contextConfiguration().getCharset(), resourceConfiguration);
+    }
+
+    public static String getStringResource(String resource, Charset charset, HttpResourceConfiguration resourceConfiguration) {
+        if (resourceConfiguration.getAvailableResourceExtensions().stream().noneMatch(resource::endsWith)) {
             return EMPTY_STRING;
         }
-        URL resourceUrl = mapResourceUrl(resource);
+        URL resourceUrl = mapResourceUrl(resource, resourceConfiguration);
         if (isNull(resourceUrl)) {
             return EMPTY_STRING;
         }
         try (InputStream pageStream = resourceUrl.openStream()) {
-            String resourceContent = resolveResourceContent(pageStream);
-            for (String extension : httpServerModule().getResourceConfiguration().getTemplatingResourceExtensions()) {
+            String resourceContent = resolveResourceContent(pageStream, charset, resourceConfiguration);
+            for (String extension : resourceConfiguration.getTemplatingResourceExtensions()) {
                 if (resource.endsWith(extension)) {
                     JtwigModel model = new JtwigModel();
-                    httpServerModule().getResourceConfiguration()
-                            .getTemplateResourceVariables()
-                            .forEach(model::with);
-                    return inlineTemplate(resourceContent).render(model);
+                    resourceConfiguration.getTemplateResourceVariables().forEach(model::with);
+                    return inlineTemplate(resourceContent, configuration().render().withOutputCharset(charset).and().build()).render(model);
                 }
             }
             return resourceContent;
-        } catch (IOException e) {
+        } catch (IOException ioException) {
             loggingModule()
                     .getLogger(HttpResourceService.class)
-                    .error(RESOURCE_ERROR, e);
+                    .error(RESOURCE_ERROR, ioException);
         }
         return EMPTY_STRING;
     }
 
-    static String getStringResource(String resource, Map<String, String> templateMapping) {
-        if (httpServerModule().getResourceConfiguration().getAvailableResourceExtensions().stream().noneMatch(resource::endsWith)) {
-            return EMPTY_STRING;
-        }
-        URL resourceUrl = mapResourceUrl(resource);
-        if (isNull(resourceUrl)) {
-            return EMPTY_STRING;
-        }
-        try (InputStream pageStream = resourceUrl.openStream()) {
-            String resourceContent = resolveResourceContent(pageStream);
-            for (String extension : httpServerModule().getResourceConfiguration().getTemplatingResourceExtensions()) {
-                if (resource.endsWith(extension)) {
-                    JtwigModel model = new JtwigModel();
-                    templateMapping.forEach(model::with);
-                    return inlineTemplate(resourceContent).render(model);
-                }
-            }
-            return resourceContent;
-        } catch (IOException e) {
-            loggingModule()
-                    .getLogger(HttpResourceService.class)
-                    .error(RESOURCE_ERROR, e);
-        }
-        return EMPTY_STRING;
+    public static byte[] getBinaryResource(String resource) {
+        return getBinaryResource(resource, httpServerModule().getResourceConfiguration());
     }
 
-    static String getStringResource(String resource, Map<String, String> resourcePathMapping, Map<String, String> templateMapping) {
-        if (httpServerModule().getResourceConfiguration().getAvailableResourceExtensions().stream().noneMatch(resource::endsWith)) {
-            return EMPTY_STRING;
-        }
-        URL resourceUrl = mapResourceUrl(resource, resourcePathMapping);
-        if (isNull(resourceUrl)) {
-            return EMPTY_STRING;
-        }
-        try (InputStream pageStream = resourceUrl.openStream()) {
-            String resourceContent = resolveResourceContent(pageStream);
-            for (String extension : httpServerModule().getResourceConfiguration().getTemplatingResourceExtensions()) {
-                if (resource.endsWith(extension)) {
-                    JtwigTemplate jtwigTemplate = inlineTemplate(resourceContent);
-                    JtwigModel model = new JtwigModel();
-                    templateMapping.forEach(model::with);
-                    return jtwigTemplate.render(model);
-                }
-            }
-            return resourceContent;
-        } catch (IOException e) {
-            loggingModule()
-                    .getLogger(HttpResourceService.class)
-                    .error(RESOURCE_ERROR, e);
-        }
-        return EMPTY_STRING;
-    }
-
-    static byte[] getBinaryResource(String resource) {
-        if (httpServerModule().getResourceConfiguration().getAvailableResourceExtensions().stream().noneMatch(resource::endsWith)) {
+    public static byte[] getBinaryResource(String resource, HttpResourceConfiguration resourceConfiguration) {
+        if (resourceConfiguration.getAvailableResourceExtensions().stream().noneMatch(resource::endsWith)) {
             return EMPTY_BYTES;
         }
-        URL resourceUrl = mapResourceUrl(resource);
-        return getBinaryResourceContent(resourceUrl);
+        URL resourceUrl = mapResourceUrl(resource, resourceConfiguration);
+        return getBinaryResourceContent(resourceUrl, resourceConfiguration);
     }
 
-    static byte[] getBinaryResourceContent(URL resourceUrl) {
+    private static byte[] getBinaryResourceContent(URL resourceUrl, HttpResourceConfiguration resourceConfiguration) {
         try (InputStream pageStream = resourceUrl.openStream()) {
-            return resolveResourceBinaryContent(pageStream);
-        } catch (IOException e) {
+            return resolveResourceBinaryContent(pageStream, resourceConfiguration);
+        } catch (IOException ioException) {
             loggingModule()
                     .getLogger(HttpResourceService.class)
-                    .error(RESOURCE_ERROR, e);
+                    .error(RESOURCE_ERROR, ioException);
         }
         return EMPTY_BYTES;
     }
 
-    static String resolveResourceContent(InputStream pageStream) throws IOException {
-        return new String(resolveResourceBinaryContent(pageStream), contextConfiguration().getCharset());
+    private static String resolveResourceContent(InputStream pageStream, Charset charset, HttpResourceConfiguration resourceConfiguration) throws IOException {
+        return new String(resolveResourceBinaryContent(pageStream, resourceConfiguration), charset);
     }
 
-    static byte[] getBinaryResource(String resource, Map<String, String> resourcePathMapping) {
-        URL resourceUrl = mapResourceUrl(resource, resourcePathMapping);
-        return getBinaryResourceContent(resourceUrl);
-    }
-
-    static byte[] resolveResourceBinaryContent(InputStream pageStream) throws IOException {
+    private static byte[] resolveResourceBinaryContent(InputStream pageStream, HttpResourceConfiguration resourceConfiguration) throws IOException {
         BufferedInputStream bufferedInputStream = new BufferedInputStream(pageStream);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        transferBytes(bufferedInputStream, byteArrayOutputStream, httpServerModule().getResourceConfiguration().getResourceBufferSize());
+        transferBytes(bufferedInputStream, byteArrayOutputStream, resourceConfiguration.getResourceBufferSize());
         return byteArrayOutputStream.toByteArray();
     }
 
-    static URL mapResourceUrl(String resource) {
-        HttpResource resourceMapping = httpServerModule().getResourceConfiguration().getResourceMappings().get(resource);
+    private static URL mapResourceUrl(String resource, HttpResourceConfiguration resourceConfiguration) {
+        HttpResource resourceMapping = resourceConfiguration.getResourceMappings().get(resource);
         if (isNotEmpty(resourceMapping)) {
             resource = resourceMapping.getPath();
-        }
-        return HttpResourceService.class.getClassLoader().getResource(resource);
-    }
-
-    static URL mapResourceUrl(String resource, Map<String, String> resourcePathMapping) {
-        if (!isEmpty(resourcePathMapping)) {
-            resource = resourcePathMapping.get(resource);
         }
         return HttpResourceService.class.getClassLoader().getResource(resource);
     }

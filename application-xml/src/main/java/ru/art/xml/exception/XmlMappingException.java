@@ -23,7 +23,7 @@ public class XmlMappingException extends RuntimeException {
         super(message);
     }
 
-    public XmlMappingException(Throwable e) {
-        super(e);
+    public XmlMappingException(Throwable throwable) {
+        super(throwable);
     }
 }

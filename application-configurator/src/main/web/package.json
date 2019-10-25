@@ -13,7 +13,6 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "http-status-codes": "^1.3.0",
-    "parcel-bundler": "^1.11.0",
     "react": "^16.7.0",
     "react-cookie": "^3.0.8",
     "react-dom": "^16.7.0",
@@ -25,11 +24,12 @@
     "semantic-ui-react": "^0.84.0"
   },
   "scripts": {
-    "production": "parcel build src/index.html --public-url /configurator/",
-    "development": "parcel src/index.html --public-url /configurator/"
+    "production": "parcel build src/configurator.index.html --public-url .",
+    "development": "parcel src/configurator.index.dev.html --public-url /configurator/ui"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
+    "parcel-bundler": "^1.11.0",
     "@babel/plugin-proposal-class-properties": "^7.3.0",
     "@babel/plugin-proposal-optional-chaining": "^7.2.0",
     "@babel/preset-react": "^7.0.0",

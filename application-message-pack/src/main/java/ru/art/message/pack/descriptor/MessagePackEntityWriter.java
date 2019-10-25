@@ -33,7 +33,7 @@ import static org.msgpack.value.ValueFactory.MapBuilder;
 import static org.msgpack.value.ValueFactory.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.ArrayConstants.*;
-import static ru.art.core.extension.FileExtensions.writeFileQuietly;
+import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Value.*;
 import static ru.art.entity.constants.CollectionMode.*;
@@ -49,8 +49,8 @@ public class MessagePackEntityWriter {
         }
         try {
             outputStream.write(writeMessagePackToBytes(value));
-        } catch (Throwable e) {
-            throw new MessagePackMappingException(e);
+        } catch (Throwable throwable) {
+            throw new MessagePackMappingException(throwable);
         }
     }
 
@@ -66,8 +66,8 @@ public class MessagePackEntityWriter {
         try {
             newDefaultPacker(output).packValue(writeMessagePack(value)).close();
             return output.toByteArray();
-        } catch (Throwable e) {
-            throw new MessagePackMappingException(e);
+        } catch (Throwable throwable) {
+            throw new MessagePackMappingException(throwable);
         }
     }
 
@@ -82,6 +82,8 @@ public class MessagePackEntityWriter {
                 return writeCollectionValue(asCollection(value));
             case MAP:
                 return writeMapValue(asMap(value));
+            case STRING_PARAMETERS_MAP:
+                return writeStringParametersValue(asStringParametersMap(value));
         }
         return newNil();
     }
@@ -188,6 +190,12 @@ public class MessagePackEntityWriter {
                         .filter(CheckerForEmptiness::isNotEmpty)
                         .map(MessagePackEntityWriter::writeMapValue)
                         .collect(toList()));
+            case STRING_PARAMETERS_MAP:
+                return newArray(collectionValue.getStringParametersList()
+                        .stream()
+                        .filter(CheckerForEmptiness::isNotEmpty)
+                        .map(MessagePackEntityWriter::writeMessagePack)
+                        .collect(toList()));
             case VALUE:
                 return newArray(collectionValue.getValueList()
                         .stream()
@@ -229,9 +237,20 @@ public class MessagePackEntityWriter {
             case ENTITY:
                 mapBuilder.put(newString(entry.getKey()), writeEntity(asEntity(value)));
                 return;
+            case STRING_PARAMETERS_MAP:
+                mapBuilder.put(newString(entry.getKey()), writeStringParametersValue(asStringParametersMap(value)));
+                return;
             case MAP:
                 mapBuilder.put(newString(entry.getKey()), writeMapValue(asMap(value)));
         }
+    }
+
+    private static ImmutableMapValue writeStringParametersValue(StringParametersMap value) {
+        return newMap(asStringParametersMap(value)
+                .getParameters()
+                .entrySet()
+                .stream()
+                .collect(toMap(stringEntry -> newString(stringEntry.getKey()), stringEntry -> newString(stringEntry.getValue()))));
     }
 
 

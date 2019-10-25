@@ -27,7 +27,6 @@ import ru.art.core.module.*;
 import ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import ru.art.service.interceptor.*;
 import ru.art.service.model.*;
-import ru.art.service.validation.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.service.ServiceExceptionWrapperBuilder.*;
 import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
@@ -35,8 +34,6 @@ import java.util.*;
 
 
 public interface ServiceModuleConfiguration extends ModuleConfiguration {
-    Validator getValidator();
-
     List<RequestInterceptor> getRequestInterceptors();
 
     List<ResponseInterceptor> getResponseInterceptors();
@@ -53,6 +50,8 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
 
     Map<String, ServiceExecutionConfiguration> getExecutionConfigurations();
 
+    Map<String, DeactivationConfig> getDeactivationConfigurations();
+
     ServiceModuleDefaultConfiguration DEFAULT_CONFIGURATION = new ServiceModuleDefaultConfiguration();
 
 
@@ -62,8 +61,8 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
         private final RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.ofDefaults();
         private final RetryRegistry retryRegistry = RetryRegistry.ofDefaults();
         private final BulkheadRegistry bulkheadRegistry = BulkheadRegistry.ofDefaults();
-        private final Validator validator = new Validator();
         private final Map<String, ServiceExecutionConfiguration> executionConfigurations = mapOf();
+        private final Map<String, DeactivationConfig> deactivationConfigurations = mapOf();
         @Getter
         private final List<RequestInterceptor> requestInterceptors = linkedListOf(interceptRequest(new ServiceLoggingInterception()), interceptRequest(new ServiceValidationInterception()));
         @Getter

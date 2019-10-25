@@ -104,8 +104,8 @@ class HttpServiceServlet extends HttpServlet {
             }
             writeResponseBody(response, responseBody);
             clearServiceCallLoggingParameters();
-        } catch (Throwable e) {
-            handleException(request, response, e);
+        } catch (Throwable throwable) {
+            handleException(request, response, throwable);
             clearServiceCallLoggingParameters();
         }
     }

@@ -35,10 +35,10 @@ public interface HttpBodyDescriptor {
             for (int n = inputStream.read(buf); n != -1; n = inputStream.read(buf)) {
                 os.write(buf, 0, n);
             }
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             loggingModule()
                     .getLogger(HttpBodyDescriptor.class)
-                    .error(REQUEST_BODY_READING_EXCEPTION, e);
+                    .error(REQUEST_BODY_READING_EXCEPTION, throwable);
             return EMPTY_BYTES;
         }
         return os.toByteArray();
@@ -47,10 +47,10 @@ public interface HttpBodyDescriptor {
     static void writeResponseBody(HttpServletResponse response, byte[] body) {
         try {
             response.getOutputStream().write(body);
-        } catch (Throwable e) {
+        } catch (Throwable throwable) {
             loggingModule()
                     .getLogger(HttpBodyDescriptor.class)
-                    .error(REQUEST_BODY_WRITING_EXCEPTION, e);
+                    .error(REQUEST_BODY_WRITING_EXCEPTION, throwable);
         }
     }
 }
