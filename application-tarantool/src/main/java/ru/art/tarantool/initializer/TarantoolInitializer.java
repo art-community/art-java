@@ -180,7 +180,9 @@ public class TarantoolInitializer {
                 .directory(new File(localConfiguration.getWorkingDirectory()))
                 .redirectOutput(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .redirectError(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
-                .start();
+                .start()
+                .getProcess()
+                .waitFor();
         logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
     }
 
