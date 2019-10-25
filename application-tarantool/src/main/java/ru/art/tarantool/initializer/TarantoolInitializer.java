@@ -184,7 +184,7 @@ public class TarantoolInitializer {
         logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
     }
 
-    private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException, InterruptedException {
+    private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException {
         URL executableUrl = TarantoolInitializer.class.getClassLoader().getResource(localConfiguration.getExecutable());
         if (isNull(executableUrl)) {
             throw new TarantoolInitializationException(format(TARANTOOL_EXECUTABLE_NOT_EXISTS, address, localConfiguration.getExecutable()));
