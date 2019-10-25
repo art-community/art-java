@@ -19,23 +19,25 @@
 package ru.art.config;
 
 import com.esotericsoftware.yamlbeans.*;
-import io.advantageous.config.*;
-import static io.advantageous.config.ConfigLoader.*;
 import static java.lang.System.*;
 import static java.util.Objects.*;
 import static ru.art.config.YamlConfigLoaderConstants.*;
 import static ru.art.config.YamlLoadingExceptionMessages.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.SystemProperties.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.core.finder.MapEntryFinder.find;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 class YamlConfigLoader {
-    static Config loadYamlConfig(String configId) {
+    static Map<String, ?> loadYamlConfig(String configId) {
         Reader reader = wrapException(() -> new BufferedReader(new InputStreamReader(loadConfigInputStream(), contextConfiguration().getCharset())), YamlLoadingException::new);
-        return loadFromObject(wrapException(() -> new YamlReader(reader).read(), YamlLoadingException::new)).getConfig(configId);
+        Map<String, ?> configMap = wrapException(() -> cast(new YamlReader(reader).read()), YamlLoadingException::new);
+        return isEmpty(configId) ? configMap : cast(find(configMap, configId));
     }
 
     private static InputStream loadConfigInputStream() throws IOException {
