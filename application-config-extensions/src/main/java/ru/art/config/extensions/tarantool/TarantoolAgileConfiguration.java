@@ -33,6 +33,7 @@ import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.network.provider.IpAddressProvider.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.*;
 import static ru.art.tarantool.model.TarantoolEntityFieldsMapping.*;
@@ -70,7 +71,7 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
                 .build();
         Function<Config, TarantoolConfiguration> mapper = config -> TarantoolConfiguration.builder()
                 .connectionConfiguration(TarantoolConnectionConfiguration.builder()
-                        .host(ifExceptionOrEmpty(() -> config.getString(CONNECTION_SECTION_ID + DOT + HOST), LOCALHOST))
+                        .host(translateLocalHostToIp(ifExceptionOrEmpty(() -> config.getString(CONNECTION_SECTION_ID + DOT + HOST), LOCALHOST_IP_ADDRESS)))
                         .port(ifExceptionOrEmpty(() -> config.getInt(CONNECTION_SECTION_ID + DOT + PORT), DEFAULT_TARANTOOL_PORT))
                         .username(ifExceptionOrEmpty(() -> config.getString(CONNECTION_SECTION_ID + DOT + USERNAME), DEFAULT_TARANTOOL_USERNAME))
                         .password(ifExceptionOrEmpty(() -> config.getString(CONNECTION_SECTION_ID + DOT + PASSWORD), EMPTY_STRING))
