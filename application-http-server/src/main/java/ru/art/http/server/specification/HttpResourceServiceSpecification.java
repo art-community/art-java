@@ -20,6 +20,7 @@ package ru.art.http.server.specification;
 
 import lombok.*;
 import ru.art.core.caster.*;
+import ru.art.entity.*;
 import ru.art.entity.mapper.ValueToModelMapper.*;
 import ru.art.http.server.HttpServerModuleConfiguration.*;
 import ru.art.http.server.model.*;
@@ -30,6 +31,7 @@ import ru.art.service.model.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
 import static ru.art.entity.PrimitivesFactory.*;
@@ -47,6 +49,7 @@ import static ru.art.http.server.service.HttpResourceService.*;
 import static ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import static ru.art.service.model.ServiceInterceptionResult.*;
 import java.util.*;
+import java.util.function.*;
 
 @Getter
 @AllArgsConstructor
@@ -61,7 +64,7 @@ public class HttpResourceServiceSpecification implements HttpServiceSpecificatio
 
             .get(GET_RESOURCE)
             .fromPathParameters(RESOURCE)
-            .requestMapper((StringParametersMapToModelMapper<String>) resource -> resource.getParameter(RESOURCE))
+            .requestMapper((StringParametersMapToModelMapper<String>) resource -> doIfNotNull(resource, (Function<StringParametersMap, String>) res -> resource.getParameter(RESOURCE)))
             .overrideResponseContentType()
             .responseMapper(Caster::cast)
             .addRequestInterceptor(intercept(interceptAndContinue(((request, response) -> response.setContentType(extractTypeByFile(request.getRequestURI()))))))
