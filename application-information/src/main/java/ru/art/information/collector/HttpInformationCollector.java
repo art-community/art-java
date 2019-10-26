@@ -24,8 +24,8 @@ import ru.art.information.model.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
-import static ru.art.core.network.provider.IpAddressProvider.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
 import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.information.constants.InformationModuleConstants.*;
@@ -49,7 +49,7 @@ public class HttpInformationCollector {
                                         .method(method.getMethodType().toString())
                                         .url(HTTP_SCHEME
                                                 + SCHEME_DELIMITER
-                                                + getIpAddress()
+                                                + contextConfiguration().getIpAddress()
                                                 + COLON
                                                 + httpServerModule().getPort()
                                                 + service.getHttpService().getPath()

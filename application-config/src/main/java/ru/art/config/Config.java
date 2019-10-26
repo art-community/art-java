@@ -18,6 +18,8 @@
 
 package ru.art.config;
 
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.node.*;
 import groovy.util.*;
 import lombok.*;
 import ru.art.config.constants.*;
@@ -25,11 +27,13 @@ import ru.art.config.exception.*;
 import ru.art.core.checker.*;
 import ru.art.core.finder.*;
 import ru.art.entity.*;
+import static com.fasterxml.jackson.databind.node.JsonNodeType.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
+import static java.util.stream.StreamSupport.*;
 import static ru.art.config.constants.ConfigExceptionMessages.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -52,7 +56,8 @@ public class Config {
             case HOCON:
                 return config.asTypesafeConfig().isEmpty();
             case YAML:
-                return config.asYamlConfig().isEmpty();
+                JsonNode node = config.asYamlConfig();
+                return node.size() <= 0 || node.getNodeType() == NULL || node.getNodeType() == MISSING;
             case GROOVY:
                 return config.asGroovyConfig().isEmpty();
             case REMOTE_ENTITY_CONFIG:
@@ -72,9 +77,9 @@ public class Config {
         return ((com.typesafe.config.ConfigObject) this.configObject).toConfig();
     }
 
-    public Map<String, Object> asYamlConfig() {
+    public JsonNode asYamlConfig() {
         if (!configType.isYamlConfig()) throw new ConfigException(CONFIG_TYPE_IS_NOT_YAML);
-        return cast(this.configObject);
+        return (JsonNode) this.configObject;
     }
 
     public ConfigObject asGroovyConfig() {
@@ -97,7 +102,7 @@ public class Config {
             case HOCON:
                 return new Config(asTypesafeConfig().getConfig(sectionId), configType);
             case YAML:
-                return new Config(find(asYamlConfig(), sectionId), configType);
+                return new Config(asYamlConfig().at(SLASH + sectionId.replace(DOT, SLASH)), configType);
             case GROOVY:
                 return new Config(find(cast(asGroovyConfig()), sectionId), configType);
             case REMOTE_ENTITY_CONFIG:
@@ -120,7 +125,7 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getString(path);
             case YAML:
-                return cast(find(cast(asYamlConfig()), path));
+                return asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).asText();
             case GROOVY:
                 return cast(find(cast(asGroovyConfig()), path));
             default:
@@ -140,7 +145,7 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getInt(path);
             case YAML:
-                return cast(find(cast(asYamlConfig()), path));
+                return asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).asInt();
             case GROOVY:
                 return cast(find(cast(asGroovyConfig()), path));
             default:
@@ -160,7 +165,7 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getLong(path);
             case YAML:
-                return cast(find(cast(asYamlConfig()), path));
+                return asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).asLong();
             case GROOVY:
                 return cast(find(cast(asGroovyConfig()), path));
             default:
@@ -180,7 +185,7 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getDouble(path);
             case YAML:
-                return cast(find(cast(asYamlConfig()), path));
+                return asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).asDouble();
             case GROOVY:
                 return cast(find(cast(asGroovyConfig()), path));
             default:
@@ -200,7 +205,7 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getBoolean(path);
             case YAML:
-                return cast(find(cast(asYamlConfig()), path));
+                return asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).asBoolean();
             case GROOVY:
                 return cast(find(cast(asGroovyConfig()), path));
             default:
@@ -221,9 +226,9 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getConfigList(path).stream().map(configObject -> new Config(configObject, configType)).collect(toList());
             case YAML:
-                return isNull(config = find(cast(asYamlConfig()), path))
-                        ? emptyList()
-                        : config.values().stream().map(configObject -> new Config(configObject, configType)).collect(toList());
+                return stream(((Iterable<Map.Entry<String, JsonNode>>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).fields()).spliterator(), false)
+                        .map(configObject -> new Config(configObject.getValue(), configType))
+                        .collect(toList());
             case GROOVY:
                 return isNull(config = find(cast(asGroovyConfig()), path))
                         ? emptyList()
@@ -245,7 +250,9 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getStringList(path);
             case YAML:
-                return cast(fixedArrayOf((Collection<?>) find(cast(asYamlConfig()), path)));
+                return stream(((Iterable<JsonNode>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).iterator()).spliterator(), false)
+                        .map(JsonNode::asText)
+                        .collect(toList());
             case GROOVY:
                 return cast(fixedArrayOf((Collection<?>) find(cast(asGroovyConfig()), path)));
             default:
@@ -265,7 +272,9 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getIntList(path);
             case YAML:
-                return fixedArrayOf((Collection<?>) find(cast(asYamlConfig()), path)).stream().map(element -> (Number) element).map(Number::intValue).collect(toList());
+                return stream(((Iterable<JsonNode>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).iterator()).spliterator(), false)
+                        .map(JsonNode::asInt)
+                        .collect(toList());
             case GROOVY:
                 return fixedArrayOf((Collection<?>) find(cast(asGroovyConfig()), path)).stream().map(element -> (Number) element).map(Number::intValue).collect(toList());
             default:
@@ -285,7 +294,9 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getDoubleList(path);
             case YAML:
-                return fixedArrayOf((Collection<?>) find(cast(asYamlConfig()), path)).stream().map(element -> (Number) element).map(Number::doubleValue).collect(toList());
+                return stream(((Iterable<JsonNode>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).iterator()).spliterator(), false)
+                        .map(JsonNode::asDouble)
+                        .collect(toList());
             case GROOVY:
                 return fixedArrayOf((Collection<?>) find(cast(asGroovyConfig()), path)).stream().map(element -> (Number) element).map(Number::doubleValue).collect(toList());
             default:
@@ -305,7 +316,9 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getLongList(path);
             case YAML:
-                return fixedArrayOf((Collection<?>) find(cast(asYamlConfig()), path)).stream().map(element -> (Number) element).map(Number::longValue).collect(toList());
+                return stream(((Iterable<JsonNode>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).iterator()).spliterator(), false)
+                        .map(JsonNode::asLong)
+                        .collect(toList());
             case GROOVY:
                 return fixedArrayOf((Collection<?>) find(cast(asGroovyConfig()), path)).stream().map(element -> (Number) element).map(Number::longValue).collect(toList());
             default:
@@ -325,7 +338,9 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getBooleanList(path);
             case YAML:
-                return cast(fixedArrayOf((Collection<?>) find(cast(asYamlConfig()), path)));
+                return stream(((Iterable<JsonNode>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).iterator()).spliterator(), false)
+                        .map(JsonNode::asBoolean)
+                        .collect(toList());
             case GROOVY:
                 return cast(fixedArrayOf((Collection<?>) find(cast(asGroovyConfig()), path)));
             default:
@@ -341,7 +356,7 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getObject(path).keySet();
             case YAML:
-                return isNull(config = find(cast(asYamlConfig()), path)) ? emptySet() : config.keySet();
+                return stream(((Iterable<String>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).fieldNames()).spliterator(), false).collect(toSet());
             case GROOVY:
                 return isNull(config = find(cast(asGroovyConfig()), path)) ? emptySet() : config.keySet();
             case REMOTE_ENTITY_CONFIG:
@@ -359,7 +374,7 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().root().keySet();
             case YAML:
-                return cast(asYamlConfig().keySet());
+                return stream(((Iterable<String>) () -> asYamlConfig().fieldNames()).spliterator(), false).collect(toSet());
             case GROOVY:
                 return cast(asGroovyConfig().keySet());
             case REMOTE_ENTITY_CONFIG:
@@ -381,7 +396,8 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().hasPath(path);
             case YAML:
-                return MapEntryFinder.hasPath(cast(asYamlConfig()), path);
+                JsonNodeType nodeType = asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).getNodeType();
+                return nodeType != NULL && nodeType != MISSING;
             case GROOVY:
                 return MapEntryFinder.hasPath(cast(asGroovyConfig()), path);
             default:
