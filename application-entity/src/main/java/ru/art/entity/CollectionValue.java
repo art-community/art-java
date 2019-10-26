@@ -189,7 +189,7 @@ public class CollectionValue<T> implements Value {
         return cast(queueOf((Collection<?>) elements));
     }
 
-    
+
     public List<Value> getValueList() {
         if (isEmpty()) return emptyList();
         List<Value> list = dynamicArrayOf();
@@ -2369,8 +2369,19 @@ public class CollectionValue<T> implements Value {
         if (this == other) return true;
         if (other == null || getClass() != other.getClass()) return false;
         CollectionValue<?> otherValue = (CollectionValue<?>) other;
-        if (otherValue.elementsType == VALUE) {
+        if (otherValue.elementsType == VALUE
+                || otherValue.elementsType == CollectionElementsType.COLLECTION
+                || otherValue.elementsType == MAP
+                || otherValue.elementsType == STRING_PARAMETERS_MAP
+                || otherValue.elementsType == ENTITY) {
             return Objects.equals(otherValue.elements, elements);
+        }
+        if (elementsType == VALUE
+                || elementsType == CollectionElementsType.COLLECTION
+                || elementsType == MAP
+                || elementsType == STRING_PARAMETERS_MAP
+                || elementsType == ENTITY) {
+            return Objects.equals(elements, otherValue.elements);
         }
         if (elementsType != otherValue.elementsType) {
             return false;
