@@ -23,6 +23,7 @@ import ru.art.config.module.*;
 import ru.art.configurator.configuration.*;
 import ru.art.configurator.specification.*;
 import ru.art.core.configurator.*;
+import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import ru.art.grpc.client.module.*;
 import ru.art.grpc.server.configuration.*;

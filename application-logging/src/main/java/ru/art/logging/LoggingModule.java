@@ -19,6 +19,7 @@
 package ru.art.logging;
 
 import lombok.*;
+import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;

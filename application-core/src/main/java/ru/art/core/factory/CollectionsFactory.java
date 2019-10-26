@@ -635,7 +635,7 @@ public class CollectionsFactory {
     }
 
     @NoArgsConstructor
-    public class MapBuilder<K, V> extends LinkedHashMap<K, V> implements Map<K, V> {
+    public static class MapBuilder<K, V> extends LinkedHashMap<K, V> implements Map<K, V> {
         MapBuilder(Map<K, V> map) {
             super(map);
         }

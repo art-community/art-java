@@ -22,7 +22,7 @@ import io.grpc.ForwardingServerCall.*;
 import io.grpc.ForwardingServerCallListener.*;
 import io.grpc.*;
 import io.grpc.ServerCall.*;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.Logger;
 import ru.art.logging.*;
 import static io.grpc.Metadata.*;
 import static io.grpc.Metadata.Key.*;

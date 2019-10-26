@@ -19,6 +19,7 @@
 package ru.art.json.module;
 
 import lombok.*;
+import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import ru.art.json.configuration.*;
 import static lombok.AccessLevel.*;

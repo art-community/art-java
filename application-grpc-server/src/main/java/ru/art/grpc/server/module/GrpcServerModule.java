@@ -19,7 +19,7 @@
 package ru.art.grpc.server.module;
 
 import lombok.*;
-import ru.art.core.module.*;
+import ru.art.core.module.Module;
 import ru.art.grpc.server.configuration.*;
 import ru.art.grpc.server.state.*;
 import static lombok.AccessLevel.*;
