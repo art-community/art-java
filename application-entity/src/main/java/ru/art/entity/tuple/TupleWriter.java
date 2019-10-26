@@ -87,7 +87,7 @@ public class TupleWriter {
 
     private static void writeCollectionValue(List<?> tuple, CollectionValue<?> collectionValue) {
         List<?> collectionValueTuple = dynamicArrayOf();
-        List<?> valueList = collectionValue.getList();
+        List<?> valueList = collectionValue.getValueList();
         tuple.add(cast(collectionValue.getType().ordinal()));
         for (Object value : valueList) {
             switch (collectionValue.getElementsType()) {

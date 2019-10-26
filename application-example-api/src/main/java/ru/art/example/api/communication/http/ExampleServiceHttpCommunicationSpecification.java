@@ -47,84 +47,80 @@ public class ExampleServiceHttpCommunicationSpecification implements HttpCommuni
 
     @Getter(lazy = true)
     @Accessors(fluent = true)
-    private final HttpCommunicator requestResponseHandlingExample = httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
-            .addPath(REQUEST_RESPONSE_HANDLING_EXAMPLE_PATH))
-            .addRequestInterceptor(interceptRequest(new ExampleHttpClientInterception()))
-            .consumes(applicationJsonUtf8())
-            .responseMapper(toExampleResponse)
-            .post()
-            .requestMapper(fromExampleRequest)
-            .produces(applicationJsonUtf8());
+    private final HttpCommunicator requestResponseHandlingExample = requestResponseHandlingExampleCommunicator();
 
     @Getter(lazy = true)
     @Accessors(fluent = true)
-    private final HttpCommunicator usingConfigurationValuesExample = httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
-            .addPath(USING_CONFIGURATION_VALUES_EXAMPLE_PATH))
-            .post();
-
-    @Getter(lazy = true)
-    @Accessors(fluent = true)
-    private final HttpCommunicator soapClientExample = httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
-            .addPath(SOAP_CLIENT_EXAMPLE_PATH))
-            .post();
-
-    @Getter(lazy = true)
-    @Accessors(fluent = true)
-    private final HttpCommunicator httpClientExample = httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
-            .addPath(HTTP_CLIENT_EXAMPLE_PATH))
-            .post();
-
-    @Getter(lazy = true)
-    @Accessors(fluent = true)
-    private final HttpCommunicator protobufClientExample = httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
-            .addPath(GRPC_CLIENT_EXAMPLE_PATH))
-            .post();
-
-    @Getter(lazy = true)
-    @Accessors(fluent = true)
-    private final HttpCommunicator sqlExample = httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
-            .addPath(SQL_EXAMPLE_PATH))
-            .post();
-
-    @Getter(lazy = true)
-    @Accessors(fluent = true)
-    private final HttpCommunicator rocksDbExample = httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
-            .addPath(ROCKS_DB_EXAMPLE_PATH))
-            .post();
-
-    @Getter(lazy = true)
-    @Accessors(fluent = true)
-    private final HttpCommunicator loggingExample = httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
-            .addPath(LOGGING_EXAMPLE_PATH))
-            .post();
+    private final HttpCommunicator usingConfigurationValuesExample = createCommunicator(USING_CONFIGURATION_VALUES_EXAMPLE_PATH);
 
 
     @Getter(lazy = true)
     @Accessors(fluent = true)
-    private final HttpCommunicator jsonReadWriteExample = httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
-            .addPath(JSON_READ_WRITE_EXAMPLE_PATH))
-            .post();
+    private final HttpCommunicator soapClientExample = createCommunicator(SOAP_CLIENT_EXAMPLE_PATH);
 
     @Getter(lazy = true)
     @Accessors(fluent = true)
-    private final HttpCommunicator protobufReadWriteExample = httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
-            .addPath(PROTOBUF_READ_WRITE_EXAMPLE_PATH))
-            .post();
+    private final HttpCommunicator httpClientExample = createCommunicator(HTTP_CLIENT_EXAMPLE_PATH);
+
+    @Getter(lazy = true)
+    @Accessors(fluent = true)
+    private final HttpCommunicator protobufClientExample = createCommunicator(GRPC_CLIENT_EXAMPLE_PATH);
+
+    @Getter(lazy = true)
+    @Accessors(fluent = true)
+    private final HttpCommunicator sqlExample = createCommunicator(SQL_EXAMPLE_PATH);
+
+    @Getter(lazy = true)
+    @Accessors(fluent = true)
+    private final HttpCommunicator rocksDbExample = createCommunicator(ROCKS_DB_EXAMPLE_PATH);
+
+    @Getter(lazy = true)
+    @Accessors(fluent = true)
+    private final HttpCommunicator loggingExample = createCommunicator(LOGGING_EXAMPLE_PATH);
 
 
     @Getter(lazy = true)
     @Accessors(fluent = true)
-    private final HttpCommunicator asyncTaskExecutingExample = httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
-            .addPath(ASYNC_TASK_EXECUTING_EXAMPLE_PATH))
-            .post();
+    private final HttpCommunicator jsonReadWriteExample = createCommunicator(JSON_READ_WRITE_EXAMPLE_PATH);
 
     @Getter(lazy = true)
     @Accessors(fluent = true)
-    private final HttpCommunicator getExampleModuleState = httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
-            .addPath(GET_EXAMPLE_MODULE_STATE_PATH))
-            .consumes(applicationJsonUtf8())
-            .responseMapper(toExampleStateModel)
-            .post();
+    private final HttpCommunicator protobufReadWriteExample = createCommunicator(PROTOBUF_READ_WRITE_EXAMPLE_PATH);
+
+
+    @Getter(lazy = true)
+    @Accessors(fluent = true)
+    private final HttpCommunicator asyncTaskExecutingExample = createCommunicator(ASYNC_TASK_EXECUTING_EXAMPLE_PATH);
+
+    @Getter(lazy = true)
+    @Accessors(fluent = true)
+    private final HttpCommunicator getExampleModuleState = getExampleModuleStateCommunicator();
+
+    private HttpCommunicator getExampleModuleStateCommunicator() {
+        return httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
+                .addPath(GET_EXAMPLE_MODULE_STATE_PATH))
+                .consumes(applicationJsonUtf8())
+                .responseMapper(toExampleStateModel)
+                .post();
+    }
+
+    private HttpCommunicator requestResponseHandlingExampleCommunicator() {
+        return httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
+                .addPath(REQUEST_RESPONSE_HANDLING_EXAMPLE_PATH))
+                .addRequestInterceptor(interceptRequest(new ExampleHttpClientInterception()))
+                .consumes(applicationJsonUtf8())
+                .responseMapper(toExampleResponse)
+                .post()
+                .requestMapper(fromExampleRequest)
+                .produces(applicationJsonUtf8());
+    }
+
+
+    private HttpCommunicator createCommunicator(String path) {
+        return httpCommunicator(communicationTarget(EXAMPLE_SERVICE_ID)
+                .addPath(path))
+                .post();
+    }
 
     @Override
     public <P, R> R executeMethod(String methodId, P request) {

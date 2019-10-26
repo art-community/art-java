@@ -237,12 +237,6 @@ class DeferredExecutorSpec extends Specification {
 
         cleanup:
         executor.shutdown()
-        infinityEvents.each {
-            while (!it.cancelled) {
-                sleep 1000
-                println "Waiting for infinity task cancellation"
-            }
-        }
 
         where:
         infinityCount || longCount
