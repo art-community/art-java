@@ -26,7 +26,7 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 @Builder
 public class TarantoolConnectionConfiguration {
     @Builder.Default
-    private final String host = LOCALHOST;
+    private final String host = LOCALHOST_IP_ADDRESS;
     @Builder.Default
     private final Integer port = DEFAULT_TARANTOOL_PORT;
     @Builder.Default

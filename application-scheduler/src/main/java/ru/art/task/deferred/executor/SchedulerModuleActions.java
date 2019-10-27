@@ -20,6 +20,7 @@ package ru.art.task.deferred.executor;
 
 import static ru.art.task.deferred.executor.SchedulerModule.*;
 import java.time.*;
+import java.util.Optional;
 import java.util.concurrent.*;
 
 public interface SchedulerModuleActions {
@@ -62,7 +63,7 @@ public interface SchedulerModuleActions {
         return schedulerModule().getPeriodicExecutor().cancelPeriodicTask(taskId);
     }
 
-    static Future<?> removePeriodicTask(String taskId) {
+    static Optional<Future<?>> removePeriodicTask(String taskId) {
         return schedulerModule().getPeriodicExecutor().removePeriodicTask(taskId);
     }
 
