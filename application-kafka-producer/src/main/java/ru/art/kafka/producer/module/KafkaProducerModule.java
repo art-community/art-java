@@ -19,6 +19,7 @@
 package ru.art.kafka.producer.module;
 
 import lombok.*;
+import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import ru.art.kafka.producer.configuration.*;
 import static lombok.AccessLevel.*;

@@ -18,6 +18,7 @@
 
 package ru.art.core.configurator;
 
+import ru.art.core.module.Module;
 import ru.art.core.module.*;
 
 @FunctionalInterface

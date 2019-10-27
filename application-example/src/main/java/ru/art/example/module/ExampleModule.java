@@ -19,7 +19,7 @@
 package ru.art.example.module;
 
 import lombok.*;
-import ru.art.core.module.*;
+import ru.art.core.module.Module;
 import ru.art.example.api.communication.grpc.*;
 import ru.art.example.api.communication.http.*;
 import ru.art.example.configuration.*;

@@ -23,7 +23,7 @@ import org.apache.catalina.connector.*;
 import org.apache.catalina.servlets.*;
 import org.apache.catalina.startup.*;
 import org.apache.coyote.http2.*;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.Logger;
 import org.apache.tomcat.util.descriptor.web.*;
 import org.zalando.logbook.servlet.*;
 import ru.art.core.constants.*;

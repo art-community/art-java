@@ -18,38 +18,37 @@
 
 package ru.art.config;
 
-import com.esotericsoftware.yamlbeans.*;
-import io.advantageous.config.*;
-import static io.advantageous.config.ConfigLoader.*;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.dataformat.yaml.*;
 import static java.lang.System.*;
-import static java.nio.file.Paths.*;
 import static java.util.Objects.*;
 import static ru.art.config.YamlConfigLoaderConstants.*;
 import static ru.art.config.YamlLoadingExceptionMessages.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.constants.SystemProperties.*;
-import static ru.art.core.context.Context.*;
-import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
 import java.io.*;
 import java.net.*;
 
-class YamlConfigLoader {
-    static Config loadYamlConfig(String configId) {
-        Reader reader = wrapException(() -> new BufferedReader(new InputStreamReader(loadConfigInputStream(), contextConfiguration().getCharset())), YamlLoadingException::new);
-        return loadFromObject(wrapException(() -> new YamlReader(reader).read(), YamlLoadingException::new)).getConfig(configId);
+public class YamlConfigLoader {
+    private static YAMLMapper YAML_MAPPER = new YAMLMapper();
+
+    static JsonNode loadYamlConfig(String configId) {
+        JsonNode node = wrapException(YamlConfigLoader::loadYaml, YamlLoadingException::new);
+        return isEmpty(configId) ? node : node.at(SLASH + configId.replace(DOT, SLASH));
     }
 
-    private static InputStream loadConfigInputStream() throws IOException {
+    private static JsonNode loadYaml() throws IOException {
         String configFilePath = getProperty(CONFIG_FILE_PATH_PROPERTY);
         File configFile;
-        if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists() || isEmpty(readFile(get(configFile.getAbsolutePath())))) {
+        if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists()) {
             URL configFileUrl = YamlConfigLoader.class.getClassLoader().getResource(DEFAULT_YAML_CONFIG_FILE_NAME);
             if (isNull(configFileUrl)) {
                 throw new YamlLoadingException(CONFIG_FILE_WAS_NOT_FOUND);
             }
-            return configFileUrl.openStream();
+            return new YAMLMapper().readTree(configFileUrl);
         }
-        return new FileInputStream(configFile);
+        return YAML_MAPPER.readTree(configFile);
     }
 }

@@ -19,10 +19,8 @@
 package ru.art.config;
 
 import com.typesafe.config.*;
-import io.advantageous.config.Config;
 import static com.typesafe.config.ConfigFactory.*;
 import static com.typesafe.config.ConfigParseOptions.*;
-import static io.advantageous.konf.typesafe.TypeSafeConfig.*;
 import static java.lang.System.*;
 import static java.nio.file.Paths.get;
 import static java.text.MessageFormat.*;
@@ -37,8 +35,9 @@ import java.io.*;
 import java.net.*;
 
 class TypesafeConfigLoader {
-    static Config loadTypeSafeConfig(String configId, ConfigSyntax configSyntax) {
-        return fromTypeSafeConfig(parseReader(wrapException(() -> loadConfigReader(configSyntax), TypesafeConfigLoadingException::new), defaults().setSyntax(configSyntax))).getConfig(configId);
+    static ConfigObject loadTypeSafeConfig(String configId, ConfigSyntax configSyntax) {
+        Config config = parseReader(wrapException(() -> loadConfigReader(configSyntax), TypesafeConfigLoadingException::new), defaults().setSyntax(configSyntax));
+        return isEmpty(configId) ? config.root() : config.getObject(configId);
     }
 
     private static Reader loadConfigReader(ConfigSyntax configSyntax) throws IOException {

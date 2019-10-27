@@ -26,7 +26,8 @@ art {
 
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
-        embedded("io.advantageous.konf", "konf", konfVersion)
-        embedded("com.esotericsoftware.yamlbeans", "yamlbeans", yamlbeansVersion)
+        embedded("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
+        embedded("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
+        embedded("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)
     }
 }

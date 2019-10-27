@@ -20,13 +20,13 @@ package ru.art.config;
 
 import groovy.util.*;
 import static java.lang.System.*;
-import static java.nio.file.Paths.*;
 import static java.util.Objects.*;
 import static ru.art.config.GroovyConfigLoaderConstants.*;
 import static ru.art.config.GroovyConfigLoadingExceptionMessages.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.SystemProperties.*;
-import static ru.art.core.extension.FileExtensions.*;
+import static ru.art.core.finder.MapEntryFinder.*;
 import java.io.*;
 import java.net.*;
 
@@ -35,18 +35,20 @@ interface GroovyConfigLoader {
         String configFilePath = getProperty(CONFIG_FILE_PATH_PROPERTY);
         File configFile;
         URL configFileUrl;
-        if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists() || isEmpty(readFile(get(configFile.getAbsolutePath())))) {
+        if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists()) {
             configFileUrl = GroovyConfigLoader.class.getClassLoader().getResource(DEFAULT_GROOVY_CONFIG_FILE_NAME);
             if (isNull(configFileUrl)) {
                 throw new GroovyConfigLoadingException(CONFIG_FILE_NOT_FOUND);
             }
-            return (ConfigObject) new ConfigSlurper().parse(configFileUrl).get(configId);
+            ConfigObject rootConfig = new ConfigSlurper().parse(configFileUrl);
+            return isEmpty(configId) ? rootConfig : find(cast(rootConfig), configId);
         }
         try {
             configFileUrl = configFile.toURI().toURL();
         } catch (MalformedURLException throwable) {
             throw new GroovyConfigLoadingException(CONFIG_FILE_NOT_FOUND);
         }
-        return (ConfigObject) new ConfigSlurper().parse(configFileUrl).get(configId);
+        ConfigObject rootConfig = new ConfigSlurper().parse(configFileUrl);
+        return isEmpty(configId) ? rootConfig : (ConfigObject) rootConfig.get(configId);
     }
 }

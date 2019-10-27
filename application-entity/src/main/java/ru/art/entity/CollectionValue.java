@@ -189,7 +189,7 @@ public class CollectionValue<T> implements Value {
         return cast(queueOf((Collection<?>) elements));
     }
 
-    
+
     public List<Value> getValueList() {
         if (isEmpty()) return emptyList();
         List<Value> list = dynamicArrayOf();
@@ -2365,10 +2365,47 @@ public class CollectionValue<T> implements Value {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        return Objects.equals(getList(), ((CollectionValue<?>) o).getList());
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        CollectionValue<?> otherValue = (CollectionValue<?>) other;
+        if (otherValue.elementsType == VALUE
+                || otherValue.elementsType == CollectionElementsType.COLLECTION
+                || otherValue.elementsType == MAP
+                || otherValue.elementsType == STRING_PARAMETERS_MAP
+                || otherValue.elementsType == ENTITY) {
+            return Objects.equals(otherValue.elements, elements);
+        }
+        if (elementsType == VALUE
+                || elementsType == CollectionElementsType.COLLECTION
+                || elementsType == MAP
+                || elementsType == STRING_PARAMETERS_MAP
+                || elementsType == ENTITY) {
+            return Objects.equals(elements, otherValue.elements);
+        }
+        if (elementsType != otherValue.elementsType) {
+            return false;
+        }
+        switch (collectionMode) {
+            case PRIMITIVE_ARRAY:
+                switch (elementsType) {
+                    case LONG:
+                        return Arrays.equals(longElements, otherValue.longElements);
+                    case DOUBLE:
+                        return Arrays.equals(doubleElements, otherValue.doubleElements);
+                    case FLOAT:
+                        return Arrays.equals(floatElements, otherValue.floatElements);
+                    case INT:
+                        return Arrays.equals(intElements, otherValue.intElements);
+                    case BOOL:
+                        return Arrays.equals(boolElements, otherValue.boolElements);
+                    case BYTE:
+                        return Arrays.equals(byteElements, otherValue.byteElements);
+                }
+            case COLLECTION:
+                return Objects.equals(otherValue.elements, elements);
+        }
+        return false;
     }
 
     @Override

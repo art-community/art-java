@@ -19,7 +19,7 @@
 package ru.art.rsocket.module;
 
 import lombok.*;
-import ru.art.core.module.*;
+import ru.art.core.module.Module;
 import ru.art.rsocket.configuration.*;
 import ru.art.rsocket.state.*;
 import static ru.art.core.context.Context.*;
