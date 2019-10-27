@@ -37,7 +37,6 @@ import java.text.*;
 
 
 @Getter
-@EqualsAndHashCode
 @AllArgsConstructor
 public class Primitive implements Value {
     private Object value;
@@ -217,6 +216,43 @@ public class Primitive implements Value {
     @Override
     public ValueType getType() {
         return PrimitiveType.asValueType(primitiveType);
+    }
+
+    public boolean equals(final Object other) {
+        if (other == this) return true;
+        if (other instanceof Primitive) {
+            Primitive otherPrimitive = (Primitive) other;
+            if (isNull(this.value) && isNull(otherPrimitive.value)) {
+                return true;
+            }
+            if (isNull(this.value)) {
+                return false;
+            }
+            if (this.value == otherPrimitive.value) {
+                return true;
+            }
+            return this.value.equals(otherPrimitive.value);
+        }
+        if (isNull(this.value) && isNull(other)) {
+            return true;
+        }
+        if (isNull(this.value)) {
+            return false;
+        }
+        if (this.value == other) {
+            return true;
+        }
+        return this.value.equals(other);
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $value = this.getValue();
+        result = result * PRIME + ($value == null ? 43 : $value.hashCode());
+        final Object $primitiveType = this.getPrimitiveType();
+        result = result * PRIME + ($primitiveType == null ? 43 : $primitiveType.hashCode());
+        return result;
     }
 }
     

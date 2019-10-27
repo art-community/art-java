@@ -28,7 +28,6 @@ import static java.util.stream.Collectors.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
-import static ru.art.core.network.provider.IpAddressProvider.*;
 import static ru.art.information.model.RsocketInformation.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.module.RsocketModule.*;
@@ -47,10 +46,10 @@ public class RsocketInformationCollector {
         }
         RsocketInformationBuilder builder = builder();
         if (!tcpServerNotStarted) {
-            builder.tcpUrl(getIpAddress() + COLON + rsocketModule().getServerTcpPort());
+            builder.tcpUrl(contextConfiguration().getIpAddress() + COLON + rsocketModule().getServerTcpPort());
         }
         if (!webSocketServerNotStated) {
-            builder.webSocketUrl(getIpAddress() + COLON + rsocketModule().getServerWebSocketPort());
+            builder.webSocketUrl(contextConfiguration().getIpAddress() + COLON + rsocketModule().getServerWebSocketPort());
         }
         return builder.services(serviceModuleState()
                 .getServiceRegistry()

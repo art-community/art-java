@@ -22,13 +22,12 @@ import lombok.experimental.*;
 import ru.art.grpc.server.specification.*;
 import ru.art.information.generator.*;
 import ru.art.information.model.*;
-import static java.util.Objects.isNull;
+import static java.util.Objects.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
-import static ru.art.core.network.provider.IpAddressProvider.*;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
 import static ru.art.grpc.server.module.GrpcServerModule.*;
 import static ru.art.service.ServiceModule.*;
@@ -40,7 +39,7 @@ public class GrpcInformationCollector {
             return null;
         }
         return GrpcInformation.builder()
-                .url(getIpAddress() + COLON + grpcServerModule().getPort() + grpcServerModule().getPath())
+                .url(contextConfiguration().getIpAddress() + COLON + grpcServerModule().getPort() + grpcServerModule().getPath())
                 .services(serviceModuleState()
                         .getServiceRegistry()
                         .getServices()
