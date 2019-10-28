@@ -32,6 +32,7 @@ import static org.msgpack.core.MessagePack.*;
 import static org.msgpack.value.ValueFactory.MapBuilder;
 import static org.msgpack.value.ValueFactory.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -250,6 +251,7 @@ public class MessagePackEntityWriter {
                 .getParameters()
                 .entrySet()
                 .stream()
+                .filter(entry -> isNotEmpty(entry.getValue()))
                 .collect(toMap(stringEntry -> newString(stringEntry.getKey()), stringEntry -> newString(stringEntry.getValue()))));
     }
 
@@ -258,6 +260,9 @@ public class MessagePackEntityWriter {
         if (Value.isEmpty(mapValue)) {
             return emptyMap();
         }
-        return newMap(mapValue.getElements().entrySet().stream().collect(toMap(entry -> writeMessagePack(entry.getKey()), entry -> writeMessagePack(entry.getValue()))));
+        return newMap(mapValue.getElements().entrySet()
+                .stream()
+                .filter(entry -> !Value.isEmpty(entry.getValue()))
+                .collect(toMap(entry -> writeMessagePack(entry.getKey()), entry -> writeMessagePack(entry.getValue()))));
     }
 }

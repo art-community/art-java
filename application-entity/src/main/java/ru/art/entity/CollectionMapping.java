@@ -23,7 +23,7 @@ import ru.art.entity.mapper.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import static ru.art.core.caster.Caster.*;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.entity.CollectionValuesFactory.*;
 import static ru.art.entity.mapper.ValueMapper.*;
 import java.util.*;
@@ -40,7 +40,7 @@ public class CollectionMapping {
     public static ValueMapper<Collection<Value>, CollectionValue<Value>> valueCollectionMapper = mapper(CollectionValuesFactory::valueCollection, CollectionValue::getElements);
 
     public static <T> ValueToModelMapper<Collection<T>, CollectionValue<? extends Value>> collectionValueToModel(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return collection -> isEmpty(collection) ? emptyList(): collection.getElements()
+        return collection -> isEmpty(collection) ? emptyList() : collection.getElements()
                 .stream()
                 .filter(Objects::nonNull)
                 .map(element -> elementMapper.map(cast(element)))

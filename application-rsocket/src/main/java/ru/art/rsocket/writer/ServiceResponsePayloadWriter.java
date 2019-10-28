@@ -69,6 +69,9 @@ public class ServiceResponsePayloadWriter {
     }
 
     public static Flux<Payload> writeResponseReactive(RsocketMethod rsocketMethod, ServiceResponse<?> serviceResponse, RsocketDataFormat dataFormat) {
+        if (isNull(serviceResponse)) {
+            return never();
+        }
         if (nonNull(serviceResponse.getServiceException())) {
             return error(serviceResponse.getServiceException());
         }
