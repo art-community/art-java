@@ -67,6 +67,8 @@ public class HttpResourceService {
                     StringWriter templateWriter = new StringWriter();
                     new PebbleEngine.Builder()
                             .loader(templateLoader)
+                            .autoEscaping(false)
+                            .cacheActive(false)
                             .build()
                             .getTemplate(resourceContent)
                             .evaluate(templateWriter, templateContext);

@@ -83,6 +83,8 @@ public class TarantoolIndexConfiguration {
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
                     .build()
                     .getTemplate(CREATE_INDEX + TWIG_TEMPLATE)
                     .evaluate(templateWriter, templateContext);
@@ -114,6 +116,8 @@ public class TarantoolIndexConfiguration {
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
                     .build()
                     .getTemplate(ALTER_INDEX + TWIG_TEMPLATE)
                     .evaluate(templateWriter, templateContext);
@@ -131,6 +135,8 @@ public class TarantoolIndexConfiguration {
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
                     .build()
                     .getTemplate(INDEX_MANAGEMENT + TWIG_TEMPLATE)
                     .evaluate(templateWriter, templateContext);

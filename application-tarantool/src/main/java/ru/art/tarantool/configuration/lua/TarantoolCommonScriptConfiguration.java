@@ -39,6 +39,8 @@ public class TarantoolCommonScriptConfiguration {
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
                     .build()
                     .getTemplate(COMMON + TWIG_TEMPLATE)
                     .evaluate(templateWriter, mapOf(SPACE_NAME, spaceName));

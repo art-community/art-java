@@ -39,6 +39,8 @@ public class TarantoolSimpleValueScriptConfiguration {
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
                     .build()
                     .getTemplate(SIMPLE_VALUE + TWIG_TEMPLATE)
                     .evaluate(templateWriter, mapOf(SPACE_NAME, spaceName));

@@ -71,6 +71,8 @@ public class TarantoolInitialConfiguration {
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
                     .build()
                     .getTemplate(CONFIGURATION + TWIG_TEMPLATE)
                     .evaluate(templateWriter, templateContext);

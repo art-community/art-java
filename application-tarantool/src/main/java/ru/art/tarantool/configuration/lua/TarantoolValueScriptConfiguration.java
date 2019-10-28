@@ -45,6 +45,8 @@ public class TarantoolValueScriptConfiguration {
             Map<String, Object> templateContext = cast(mapOf(SPACE_NAME, spaceName).toMap(INDEX_NAME, indexName));
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
                     .build()
                     .getTemplate(VALUE + TWIG_TEMPLATE)
                     .evaluate(templateWriter, templateContext);

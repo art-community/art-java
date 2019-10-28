@@ -57,6 +57,8 @@ public class TarantoolSequenceConfiguration {
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
                     .build()
                     .getTemplate(CREATE_SEQUENCE + TWIG_TEMPLATE)
                     .evaluate(templateWriter, templateContext);
@@ -71,6 +73,8 @@ public class TarantoolSequenceConfiguration {
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
                     .build()
                     .getTemplate(SEQUENCE_MANAGEMENT + TWIG_TEMPLATE)
                     .evaluate(templateWriter, mapOf(SEQUENCE_NAME, sequenceName));

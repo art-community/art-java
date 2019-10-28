@@ -8,9 +8,9 @@ if box.space.{{ spaceName }}Schema.index[0] == nil then
     box.space.{{ spaceName }}Schema:create_index('{{ spaceName }}SchemaIndex', { if_not_exists = true });
 end
 
-{% if not (empty(indexName)) %}
+{% if not (indexName is empty) %}
 box.space.{{ spaceName }}:create_index('{{ indexName }}', {
-    {%- if not (empty(indexParts)) -%}
+{%- if not (indexParts is empty) -%}
         parts = {{ indexParts }};
     {%- endif -%}
     if_not_exists = true

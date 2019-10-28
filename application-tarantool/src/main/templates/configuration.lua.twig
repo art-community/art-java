@@ -1,44 +1,44 @@
 box.cfg {
-    {%- if not (empty(listen)) -%}
+{%- if not (listen is empty) -%}
         listen = {{ listen }};
     {%- endif -%}
-    {%- if not (empty(background)) -%}
+{%- if not (background is empty) -%}
         background = {{  background }};
     {%- endif -%}
-    {%- if not (empty(customProcTitle)) -%}
+{%- if not (customProcTitle is empty) -%}
         custom_proc_title = "{{  customProcTitle }}";
     {%- endif -%}
-    {%- if not (empty(memtxDir)) -%}
+{%- if not (memtxDir is empty) -%}
         memtx_dir = "{{  memtxDir }}";
     {%- endif -%}
-    {%- if not (empty(vinylDir)) -%}
+{%- if not (vinylDir is empty) -%}
         vinyl_dir = "{{  vinylDir }}";
     {%- endif -%}
-    {%- if not (empty(workDir)) -%}
+{%- if not (workDir is empty) -%}
         work_dir = "{{  workDir }}";
     {%- endif -%}
-    {%- if not (empty(username)) -%}
+{%- if not (username is empty) -%}
         username = "{{  username }}";
     {%- endif -%}
-    {%- if not (empty(pidFile)) -%}
+{%- if not (pidFile is empty) -%}
         pid_file = "{{  pidFile }}";
     {%- endif -%}
-    {%- if not (empty(readOnly)) -%}
+{%- if not (readOnly is empty) -%}
         read_only = {{  readOnly }};
     {%- endif -%}
-    {%- if not (empty(vinylTimeout)) -%}
+{%- if not (vinylTimeout is empty) -%}
         vinyl_timeout = {{  vinylTimeout }};
     {%- endif -%}
-    {%- if not (empty(workerPoolThreads)) -%}
+{%- if not (workerPoolThreads is empty) -%}
         worker_pool_threads = {{  workerPoolThreads }};
     {%- endif -%}
-    {%- if not (empty(memtxMaxTupleSize)) -%}
+{%- if not (memtxMaxTupleSize is empty) -%}
         memtx_max_tuple_size = {{  memtxMaxTupleSize }};
     {%- endif -%}
-    {%- if not (empty(memtxMemory)) -%}
+{%- if not (memtxMemory is empty) -%}
         memtx_memory = {{  memtxMemory }};
     {%- endif -%}
-    {%- if not (empty(slabAllocFactor)) -%}
+{%- if not (slabAllocFactor is empty) -%}
         slab_alloc_factor = {{  slabAllocFactor }};
     {%- endif -%}
 }

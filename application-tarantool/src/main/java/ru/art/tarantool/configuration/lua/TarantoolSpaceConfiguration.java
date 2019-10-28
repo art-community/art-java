@@ -71,6 +71,8 @@ public class TarantoolSpaceConfiguration {
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
                     .build()
                     .getTemplate(CREATE_SPACE + TWIG_TEMPLATE)
                     .evaluate(templateWriter, templateContext);
@@ -88,6 +90,8 @@ public class TarantoolSpaceConfiguration {
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
                     .build()
                     .getTemplate(FORMAT_SPACE + TWIG_TEMPLATE)
                     .evaluate(templateWriter, templateContext);
@@ -103,6 +107,8 @@ public class TarantoolSpaceConfiguration {
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
                     .build()
                     .getTemplate(SPACE_MANAGEMENT + TWIG_TEMPLATE)
                     .evaluate(templateWriter, templateContext);

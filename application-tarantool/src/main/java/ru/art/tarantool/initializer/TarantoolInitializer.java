@@ -135,6 +135,8 @@ public class TarantoolInitializer {
                     .add(PASSWORD, connectionConfiguration.getPassword()));
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
                     .build()
                     .getTemplate(USER + TWIG_TEMPLATE)
                     .evaluate(templateWriter, templateContext);
