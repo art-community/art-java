@@ -2,7 +2,7 @@
 # Gradle: 5.6.2
 # Nodejs: 10.
 # Yarn: 1.19.1
-# JDK: openjdk 1.8
+# JDK: openjdk 11_0_2
 
 # Building image
 FROM ubuntu:18.10
@@ -16,31 +16,51 @@ RUN DISTRIB_CODENAME=$(cat /etc/*release* | grep DISTRIB_CODENAME | cut -f2 -d'=
     && echo "deb http://archive.ubuntu.com/ubuntu ${DISTRIB_CODENAME}-updates main universe\n" >> /etc/apt/sources.list \
     && echo "deb http://security.ubuntu.com/ubuntu ${DISTRIB_CODENAME}-security main universe\n" >> /etc/apt/sources.list
 
-# Add APT Git repository
+# APT preparation
 RUN apt-get update -qqy
 RUN apt-get -qqy --no-install-recommends install software-properties-common
+
+# Add APT Git repository
 RUN add-apt-repository -y ppa:git-core/ppa
 RUN apt-get update -qqy
 
+# Insall APT tools
+RUN apt-get -qqy --no-install-recommends install apt-utils
+RUN apt-get -qqy --no-install-recommends install aptitude
+
 # Install common libraries
 RUN apt-get -qqy --no-install-recommends install \
-    aptitude \
     curl \
     fontconfig \
     bzr \
     iproute2 \
-    openssh-client ssh-askpass\
-    ca-certificates \
-    openjdk-8-jdk \
     tar zip unzip \
     wget curl \
-    git \
-    git-lfs \
     dirmngr \
     iptables \
     build-essential \
     less nano tree \
-    gnupg-agent \
+    gnupg-agent
+
+# Install SSH
+RUN apt-get -qqy --no-install-recommends install \
+    openssh-client ssh-askpass
+
+# Install certificates
+RUN apt-get -qqy --no-install-recommends install \
+    ca-certificates
+
+# Install JDK
+RUN apt-get -qqy --no-install-recommends install \
+        openjdk-11-jdk
+
+# Install Git
+RUN apt-get -qqy --no-install-recommends install \
+        git \
+        git-lfs
+
+# Install Snap
+RUN apt-get -qqy --no-install-recommends install \
     snapd squashfuse fuse
 ENV PATH /snap/bin:$PATH
 
@@ -75,7 +95,6 @@ RUN ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
 ENV MAVEN_HOME /usr/share/maven
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 
-
 # Install NPM
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get -qqy --no-install-recommends install nodejs
@@ -101,7 +120,7 @@ RUN ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg
 RUN rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
 
 # Set securerandom for Java
-RUN sed -i 's/securerandom\.source=file:\/dev\/random/securerandom\.source=file:\/dev\/urandom/' ./usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/java.security
+RUN sed -i 's/securerandom\.source=file:\/dev\/random/securerandom\.source=file:\/dev\/urandom/' ./usr/lib/jvm/java-11-openjdk-amd64/conf/security/java.security
 
 # Copy Agent files
 COPY build/libs /agent
