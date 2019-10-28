@@ -18,20 +18,24 @@
 
 package ru.art.tarantool.configuration.lua;
 
+import com.mitchellbosecke.pebble.*;
+import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
-import org.jtwig.*;
+import ru.art.tarantool.exception.*;
 import static java.util.stream.Collectors.*;
-import static org.jtwig.JtwigTemplate.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.CharConstants.CLOSING_BRACES;
 import static ru.art.core.constants.CharConstants.EQUAL;
 import static ru.art.core.constants.CharConstants.OPENING_BRACES;
 import static ru.art.core.constants.CharConstants.SINGLE_QUOTE;
 import static ru.art.core.constants.StringConstants.COMMA;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
+import java.io.*;
 import java.util.*;
 
 @Getter
@@ -58,52 +62,82 @@ public class TarantoolIndexConfiguration {
     private String sequence;
 
     public String toCreateIndexLua() {
-        JtwigModel model = new JtwigModel()
-                .with(INDEX_NAME, indexName)
-                .with(SPACE_NAME, spaceName)
-                .with(TYPE, type)
-                .with(ID_FIELD, id)
-                .with(UNIQUE, unique)
-                .with(DISTANCE, distance)
-                .with(DIMENSION, dimension)
-                .with(BLOOM_FPR, bloomFpr)
-                .with(PAGE_SIZE, pageSize)
-                .with(RANGE_SIZE, rangeSize)
-                .with(RUN_COUNT_PER_LEVEL, runCountPerLevel)
-                .with(RUN_SIZE_RATIO, runSizeRatio)
-                .with(SEQUENCE, sequence);
+        Map<String, Object> templateContext = cast(mapOf()
+                .add(INDEX_NAME, indexName)
+                .add(SPACE_NAME, spaceName)
+                .add(TYPE, type)
+                .add(ID_FIELD, id)
+                .add(UNIQUE, unique)
+                .add(DISTANCE, distance)
+                .add(DIMENSION, dimension)
+                .add(BLOOM_FPR, bloomFpr)
+                .add(PAGE_SIZE, pageSize)
+                .add(RANGE_SIZE, rangeSize)
+                .add(RUN_COUNT_PER_LEVEL, runCountPerLevel)
+                .add(RUN_SIZE_RATIO, runSizeRatio)
+                .add(SEQUENCE, sequence));
         if (isNotEmpty(parts)) {
-            model.with(PARTS, OPENING_BRACES + parts.stream().map(Part::toString).collect(joining(COMMA)) + CLOSING_BRACES);
+            templateContext.put(PARTS, OPENING_BRACES + parts.stream().map(Part::toString).collect(joining(COMMA)) + CLOSING_BRACES);
         }
-        return classpathTemplate(CREATE_INDEX + JTW_EXTENSION).render(model);
+        StringWriter templateWriter = new StringWriter();
+        try {
+            new PebbleEngine.Builder()
+                    .loader(new ClasspathLoader())
+                    .build()
+                    .getTemplate(CREATE_INDEX + TWIG_TEMPLATE)
+                    .evaluate(templateWriter, templateContext);
+            return templateWriter.toString();
+        } catch (Throwable e) {
+            throw new TarantoolExecutionException(e);
+        }
     }
 
     public String toAlterIndexLua() {
-        JtwigModel model = new JtwigModel()
-                .with(INDEX_NAME, indexName)
-                .with(SPACE_NAME, spaceName)
-                .with(TYPE, type)
-                .with(ID_FIELD, id)
-                .with(UNIQUE, unique)
-                .with(DISTANCE, distance)
-                .with(DIMENSION, dimension)
-                .with(BLOOM_FPR, bloomFpr)
-                .with(PAGE_SIZE, pageSize)
-                .with(RANGE_SIZE, rangeSize)
-                .with(RUN_COUNT_PER_LEVEL, runCountPerLevel)
-                .with(RUN_SIZE_RATIO, runSizeRatio)
-                .with(SEQUENCE, sequence);
+        Map<String, Object> templateContext = cast(mapOf()
+                .add(INDEX_NAME, indexName)
+                .add(SPACE_NAME, spaceName)
+                .add(TYPE, type)
+                .add(ID_FIELD, id)
+                .add(UNIQUE, unique)
+                .add(DISTANCE, distance)
+                .add(DIMENSION, dimension)
+                .add(BLOOM_FPR, bloomFpr)
+                .add(PAGE_SIZE, pageSize)
+                .add(RANGE_SIZE, rangeSize)
+                .add(RUN_COUNT_PER_LEVEL, runCountPerLevel)
+                .add(RUN_SIZE_RATIO, runSizeRatio)
+                .add(SEQUENCE, sequence));
         if (isNotEmpty(parts)) {
-            model.with(PARTS, OPENING_BRACES + parts.stream().map(Part::toString).collect(joining(COMMA)) + CLOSING_BRACES);
+            templateContext.put(PARTS, OPENING_BRACES + parts.stream().map(Part::toString).collect(joining(COMMA)) + CLOSING_BRACES);
         }
-        return classpathTemplate(ALTER_INDEX + JTW_EXTENSION).render(model);
+        StringWriter templateWriter = new StringWriter();
+        try {
+            new PebbleEngine.Builder()
+                    .loader(new ClasspathLoader())
+                    .build()
+                    .getTemplate(ALTER_INDEX + TWIG_TEMPLATE)
+                    .evaluate(templateWriter, templateContext);
+            return templateWriter.toString();
+        } catch (Throwable e) {
+            throw new TarantoolExecutionException(e);
+        }
     }
 
     public String toManageIndexLua() {
-        return classpathTemplate(INDEX_MANAGEMENT + JTW_EXTENSION)
-                .render(new JtwigModel()
-                        .with(INDEX_NAME, indexName)
-                        .with(SPACE_NAME, spaceName));
+        Map<String, Object> templateContext = cast(mapOf()
+                .add(INDEX_NAME, indexName)
+                .add(SPACE_NAME, spaceName));
+        StringWriter templateWriter = new StringWriter();
+        try {
+            new PebbleEngine.Builder()
+                    .loader(new ClasspathLoader())
+                    .build()
+                    .getTemplate(INDEX_MANAGEMENT + TWIG_TEMPLATE)
+                    .evaluate(templateWriter, templateContext);
+            return templateWriter.toString();
+        } catch (Throwable e) {
+            throw new TarantoolExecutionException(e);
+        }
     }
 
 

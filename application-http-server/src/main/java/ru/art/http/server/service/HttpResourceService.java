@@ -18,17 +18,17 @@
 
 package ru.art.http.server.service;
 
+import com.mitchellbosecke.pebble.*;
+import com.mitchellbosecke.pebble.loader.*;
 import lombok.experimental.*;
-import org.jtwig.*;
 import ru.art.http.server.HttpServerModuleConfiguration.*;
 import static java.util.Objects.*;
-import static org.jtwig.JtwigTemplate.*;
-import static org.jtwig.environment.EnvironmentConfigurationBuilder.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.InputOutputStreamExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.server.HttpServerModuleConfiguration.HttpResourceConfiguration.*;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
 import static ru.art.http.server.module.HttpServerModule.*;
@@ -36,6 +36,7 @@ import static ru.art.logging.LoggingModule.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
+import java.util.*;
 
 @UtilityClass
 public class HttpResourceService {
@@ -59,9 +60,17 @@ public class HttpResourceService {
             String resourceContent = resolveResourceContent(pageStream, charset, resourceConfiguration);
             for (String extension : resourceConfiguration.getTemplatingResourceExtensions()) {
                 if (resource.endsWith(extension)) {
-                    JtwigModel model = new JtwigModel();
-                    resourceConfiguration.getTemplateResourceVariables().forEach(model::with);
-                    return inlineTemplate(resourceContent, configuration().render().withOutputCharset(charset).and().build()).render(model);
+                    Map<String, Object> templateContext = mapOf();
+                    resourceConfiguration.getTemplateResourceVariables().forEach(templateContext::put);
+                    StringLoader templateLoader = new StringLoader();
+                    templateLoader.setCharset(charset.name());
+                    StringWriter templateWriter = new StringWriter();
+                    new PebbleEngine.Builder()
+                            .loader(templateLoader)
+                            .build()
+                            .getTemplate(resourceContent)
+                            .evaluate(templateWriter, templateContext);
+                    return templateWriter.toString();
                 }
             }
             return resourceContent;

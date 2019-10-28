@@ -18,12 +18,16 @@
 
 package ru.art.tarantool.configuration.lua;
 
+import com.mitchellbosecke.pebble.*;
+import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
-import org.jtwig.*;
-import static org.jtwig.JtwigTemplate.*;
+import ru.art.tarantool.exception.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
+import java.io.*;
 import java.util.*;
 
 @Getter
@@ -47,22 +51,32 @@ public class TarantoolInitialConfiguration {
     private final Map<String, Object> options;
 
     public String toLua(int port) {
-        JtwigModel model = new JtwigModel()
-                .with(LISTEN, port)
-                .with(BACKGROUND, background)
-                .with(CUSTOM_PROC_TITLE, customProcTitle)
-                .with(MEMTX_DIR, memtxDir)
-                .with(VINYL_DIR, vinylDir)
-                .with(WORK_DIR, workDir)
-                .with(USERNAME, username)
-                .with(PID_FILE, pidFile)
-                .with(READ_ONLY, readOnly)
-                .with(VINYL_TIMEOUT, vinylTimeout)
-                .with(MEMTX_MAX_TUPLE_SIZE, memtexMaxTupleSize)
-                .with(MEMTX_MEMORY, memtxMemory)
-                .with(SLAB_ALLOC_FACTOR, slabAllocFactor)
-                .with(WORKER_POOL_THREADS, workerPoolThreads);
-        options.forEach(model::with);
-        return classpathTemplate(CONFIGURATION + JTW_EXTENSION).render(model);
+        Map<String, Object> templateContext = cast(mapOf()
+                .add(LISTEN, port)
+                .add(BACKGROUND, background)
+                .add(CUSTOM_PROC_TITLE, customProcTitle)
+                .add(MEMTX_DIR, memtxDir)
+                .add(VINYL_DIR, vinylDir)
+                .add(WORK_DIR, workDir)
+                .add(USERNAME, username)
+                .add(PID_FILE, pidFile)
+                .add(READ_ONLY, readOnly)
+                .add(VINYL_TIMEOUT, vinylTimeout)
+                .add(MEMTX_MAX_TUPLE_SIZE, memtexMaxTupleSize)
+                .add(MEMTX_MEMORY, memtxMemory)
+                .add(SLAB_ALLOC_FACTOR, slabAllocFactor)
+                .add(WORKER_POOL_THREADS, workerPoolThreads));
+        options.forEach(templateContext::put);
+        StringWriter templateWriter = new StringWriter();
+        try {
+            new PebbleEngine.Builder()
+                    .loader(new ClasspathLoader())
+                    .build()
+                    .getTemplate(CONFIGURATION + TWIG_TEMPLATE)
+                    .evaluate(templateWriter, templateContext);
+            return templateWriter.toString();
+        } catch (Throwable e) {
+            throw new TarantoolExecutionException(e);
+        }
     }
 }

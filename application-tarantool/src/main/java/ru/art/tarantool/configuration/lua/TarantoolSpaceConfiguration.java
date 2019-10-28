@@ -18,21 +18,25 @@
 
 package ru.art.tarantool.configuration.lua;
 
+import com.mitchellbosecke.pebble.*;
+import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
-import org.jtwig.*;
+import ru.art.tarantool.exception.*;
 import static java.util.stream.Collectors.*;
-import static org.jtwig.JtwigTemplate.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.CharConstants.EQUAL;
 import static ru.art.core.constants.CharConstants.SINGLE_QUOTE;
 import static ru.art.core.constants.StringConstants.CLOSING_BRACES;
 import static ru.art.core.constants.StringConstants.COMMA;
 import static ru.art.core.constants.StringConstants.OPENING_BRACES;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.USER;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
+import java.io.*;
 import java.util.*;
 
 @Getter
@@ -52,31 +56,60 @@ public class TarantoolSpaceConfiguration {
     private String user;
 
     public String toCreateSpaceLua() {
-        JtwigModel model = new JtwigModel()
-                .with(SPACE_NAME, spaceName)
-                .with(ID_FIELD, id)
-                .with(TEMPORARY, temporary)
-                .with(ENGINE, engine)
-                .with(FIELD_COUNT, fieldCount)
-                .with(IS_LOCAL, isLocal)
-                .with(USER, user);
+        Map<String, Object> templateContext = cast(mapOf()
+                .add(SPACE_NAME, spaceName)
+                .add(ID_FIELD, id)
+                .add(TEMPORARY, temporary)
+                .add(ENGINE, engine)
+                .add(FIELD_COUNT, fieldCount)
+                .add(IS_LOCAL, isLocal)
+                .add(USER, user));
         if (!isEmpty(formats)) {
-            model.with(FORMAT, OPENING_BRACES + formats.stream().map(Format::toString).collect(joining()) + CLOSING_BRACES);
+            templateContext.put(FORMAT, OPENING_BRACES + formats.stream().map(Format::toString).collect(joining()) + CLOSING_BRACES);
         }
-        return classpathTemplate(CREATE_SPACE + JTW_EXTENSION).render(model);
+        StringWriter templateWriter = new StringWriter();
+        try {
+            new PebbleEngine.Builder()
+                    .loader(new ClasspathLoader())
+                    .build()
+                    .getTemplate(CREATE_SPACE + TWIG_TEMPLATE)
+                    .evaluate(templateWriter, templateContext);
+            return templateWriter.toString();
+        } catch (Throwable e) {
+            throw new TarantoolExecutionException(e);
+        }
     }
 
     public String toFormatSpaceLua() {
-        return classpathTemplate(FORMAT_SPACE + JTW_EXTENSION)
-                .render(new JtwigModel()
-                        .with(SPACE_NAME, spaceName)
-                        .with(FORMAT, OPENING_BRACES + formats.stream().map(Format::toString).collect(joining()) + CLOSING_BRACES));
+        StringWriter templateWriter = new StringWriter();
+        Map<String, Object> templateContext = cast(mapOf()
+                .add(SPACE_NAME, spaceName)
+                .add(FORMAT, OPENING_BRACES + formats.stream().map(Format::toString).collect(joining()) + CLOSING_BRACES));
+        try {
+            new PebbleEngine.Builder()
+                    .loader(new ClasspathLoader())
+                    .build()
+                    .getTemplate(FORMAT_SPACE + TWIG_TEMPLATE)
+                    .evaluate(templateWriter, templateContext);
+            return templateWriter.toString();
+        } catch (Throwable e) {
+            throw new TarantoolExecutionException(e);
+        }
     }
 
     public String toManageSpaceLua() {
-        return classpathTemplate(SPACE_MANAGEMENT + JTW_EXTENSION)
-                .render(new JtwigModel()
-                        .with(SPACE_NAME, spaceName));
+        StringWriter templateWriter = new StringWriter();
+        Map<String, Object> templateContext = cast(mapOf().add(SPACE_NAME, spaceName));
+        try {
+            new PebbleEngine.Builder()
+                    .loader(new ClasspathLoader())
+                    .build()
+                    .getTemplate(SPACE_MANAGEMENT + TWIG_TEMPLATE)
+                    .evaluate(templateWriter, templateContext);
+            return templateWriter.toString();
+        } catch (Throwable e) {
+            throw new TarantoolExecutionException(e);
+        }
     }
 
     @Getter
