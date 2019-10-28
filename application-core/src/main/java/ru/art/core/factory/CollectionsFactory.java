@@ -34,7 +34,7 @@ import java.util.stream.*;
 @UtilityClass
 public class CollectionsFactory {
     public static <K, V> MapBuilder<K, V> mapOf(K k, V v) {
-        return cast(new MapBuilder<>().add(k, v));
+        return new MapBuilder<K, V>().add(k, v);
     }
 
     public static <K, V> MapBuilder<K, V> mapOf() {
@@ -50,6 +50,9 @@ public class CollectionsFactory {
         return new MapBuilder<>(size);
     }
 
+    public static <K, V> ConcurrentHashMap<K, V> concurrentHashMapOf(K k, V v) {
+        return concurrentHashMap(new MapBuilder<K, V>().add(k, v));
+    }
 
     public static <K, V> ConcurrentHashMap<K, V> concurrentHashMap() {
         return new ConcurrentHashMap<>();
@@ -600,7 +603,7 @@ public class CollectionsFactory {
             treeSet.add(element);
         }
         return treeSet;
-  }
+    }
 
     public static Set<Double> treeOf(Comparator<Double> comparator, double[] elements) {
         TreeSet<Double> treeSet = new TreeSet<>();
@@ -609,7 +612,7 @@ public class CollectionsFactory {
             treeSet.add(element);
         }
         return treeSet;
-  }
+    }
 
     public static Set<Float> treeOf(Comparator<Float> comparator, float[] elements) {
         TreeSet<Float> treeSet = new TreeSet<>();
@@ -646,6 +649,15 @@ public class CollectionsFactory {
 
         public MapBuilder<K, V> add(K key, V value) {
             put(key, value);
+            return this;
+        }
+
+        public Map<K, V> toMap(K key, V value) {
+            put(key, value);
+            return this;
+        }
+
+        public Map<K, V> toMap() {
             return this;
         }
     }
