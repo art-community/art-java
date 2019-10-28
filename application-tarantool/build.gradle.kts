@@ -32,12 +32,10 @@ art {
 
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
-            embedded("org.jtwig", "jtwig-core", jtwigVersion)
-                .exclude("com.google.guava", "guava")
+        embedded("io.pebbletemplates", "pebble", "3.1.0")
         embedded("org.zeroturnaround", "zt-exec", zeroTurnaroundVersion)
         embedded("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
         embedded("org.tarantool", "connector", tarantoolConnectorVersion)
-        embedded("com.google.guava", "guava", guavaVersion)
     }
 }
 configurations {

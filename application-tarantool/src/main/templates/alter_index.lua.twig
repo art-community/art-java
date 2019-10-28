@@ -1,48 +1,50 @@
 box.schema.space.create('{{ spaceName }}', { if_not_exists = true });
-{%- if not (empty(sequence)) -%}
-    box.schema.sequence.create('{{ sequence }}', { if_not_exists = true });
-{%- endif -%}
-{%- if not (empty(id)) and id > 0 -%}
+{%- if not (id is empty) and id > 0 -%}
     if box.space.{{ spaceName }}.index[0] == nil then
         box.schema.sequence.create('{{ spaceName }}Sequence', { if_not_exists = true });
         box.space.{{ spaceName }}:create_index('{{ spaceName }}Index', { sequence = '{{ spaceName }}Sequence'; if_not_exists = true });
     end;
 {%- endif -%}
-box.space.{{ spaceName }}:create_index('{{ indexName }}', {
-        {%- if not (empty(sequence)) -%}
-            sequence = '{{ sequence }}';
-        {%- endif -%}
-        {%- if not (empty(type)) -%}
+box.space.{{ spaceName }}:create_index('{{ indexName }}', { if_not_exists = true });
+{%- if not (sequence is empty) -%}
+    box.schema.sequence.create('{{ sequence }}', { if_not_exists = true });
+{%- endif -%}
+box.space.{{ spaceName }}.index.{{ indexName }}:alter({
+{%- if not (type is empty) -%}
             type = '{{ type }}';
         {%- endif -%}
-        {%- if not (empty(id)) -%}
+{%- if not (id is empty) -%}
             id = {{ id }};
         {%- endif -%}
-        {%- if not (empty(parts)) -%}
+{%- if not (unique is empty) -%}
+            unique = {{ unique }};
+        {%- endif -%}
+{%- if not (parts is empty) -%}
             parts = {{ parts }};
         {%- endif -%}
-        {%- if not (empty(dimension)) -%}
+{%- if not (dimension is empty) -%}
             dimension = {{ dimension }};
         {%- endif -%}
-        {%- if not (empty(distance)) -%}
+{%- if not (distance is empty) -%}
             distance = {{ distance }};
         {%- endif -%}
-        {%- if not (empty(bloom_fpr)) -%}
+{%- if not (bloom_fpr is empty) -%}
             bloom_fpr = {{ bloomFpr }};
         {%- endif -%}
-        {%- if not (empty(pageSize)) -%}
+{%- if not (pageSize is empty) -%}
             page_size = {{ pageSize }};
         {%- endif -%}
-        {%- if not (empty(rangeSize)) -%}
+{%- if not (rangeSize is empty) -%}
             range_size = {{ rangeSize}};
         {%- endif -%}
-        {%- if not (empty(runCountPerLevel)) -%}
+{%- if not (runCountPerLevel is empty) -%}
             run_count_per_level = {{ runCountPerLevel }};
         {%- endif -%}
-        {%- if not (empty(runSizeRatio)) -%}
+{%- if not (runSizeRatio is empty) -%}
             run_size_ratio = {{ runSizeRatio }};
         {%- endif -%}
-        if_not_exists = true;
-        unique = {{ unique }};
-   }
+{%- if not (sequence is empty) -%}
+            sequence = {{ sequence }};
+        {%- endif -%}
+    }
 )

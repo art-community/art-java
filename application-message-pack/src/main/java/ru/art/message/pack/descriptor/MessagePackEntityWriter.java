@@ -59,7 +59,7 @@ public class MessagePackEntityWriter {
     }
 
     public static byte[] writeMessagePackToBytes(Value value) {
-        if (isEmpty(value)) {
+        if (Value.isEmpty(value)) {
             return EMPTY_BYTES;
         }
         ArrayBufferOutput output = new ArrayBufferOutput();
@@ -90,7 +90,7 @@ public class MessagePackEntityWriter {
 
 
     private static org.msgpack.value.Value writePrimitive(Primitive primitive) {
-        if (isEmpty(primitive)) {
+        if (Value.isEmpty(primitive)) {
             return newNil();
         }
         switch (primitive.getPrimitiveType()) {
@@ -113,7 +113,7 @@ public class MessagePackEntityWriter {
     }
 
     private static org.msgpack.value.Value writeCollectionValue(CollectionValue<?> collectionValue) {
-        if (isEmpty(collectionValue)) {
+        if (Value.isEmpty(collectionValue)) {
             return newArray();
         }
         switch (collectionValue.getElementsType()) {
@@ -208,7 +208,7 @@ public class MessagePackEntityWriter {
     }
 
     private static org.msgpack.value.Value writeEntity(Entity entity) {
-        if (isEmpty(entity)) {
+        if (Value.isEmpty(entity)) {
             return emptyMap();
         }
         MapBuilder mapBuilder = newMapBuilder();
@@ -217,7 +217,7 @@ public class MessagePackEntityWriter {
     }
 
     private static void writeEntityEntry(MapBuilder mapBuilder, Map.Entry<String, ? extends Value> entry) {
-        if (isEmpty(entry.getKey()) || isEmpty(entry.getValue())) {
+        if (isEmpty(entry.getKey())) {
             return;
         }
         Value value = entry.getValue();
@@ -255,7 +255,7 @@ public class MessagePackEntityWriter {
 
 
     private static org.msgpack.value.Value writeMapValue(MapValue mapValue) {
-        if (isEmpty(mapValue)) {
+        if (Value.isEmpty(mapValue)) {
             return emptyMap();
         }
         return newMap(mapValue.getElements().entrySet().stream().collect(toMap(entry -> writeMessagePack(entry.getKey()), entry -> writeMessagePack(entry.getValue()))));
