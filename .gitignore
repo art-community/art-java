@@ -69,3 +69,4 @@ rocks.db/
 tarantoo/
 kafka/
 zookeeper/
+tarantool/lua
