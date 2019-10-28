@@ -106,7 +106,7 @@ public class ServiceConfigProvider {
 
     public static DeactivationConfig getServiceDeactivationConfig(String sectionId) {
         boolean deactivated = configBoolean(sectionId, DEACTIVATED, false);
-        Set<String> deactivatedMethods = hasPath(sectionId, DEACTIVATED_METHODS)
+        Set<String> deactivatedMethods = ifException(() -> hasPath(sectionId, DEACTIVATED_METHODS), false)
                 ? configStringSet(sectionId, DEACTIVATED_METHODS)
                 : emptySet();
         return DeactivationConfig.builder().deactivated(deactivated).deactivatedMethods(deactivatedMethods).build();
