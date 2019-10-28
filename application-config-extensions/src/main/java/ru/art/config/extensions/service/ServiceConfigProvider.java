@@ -34,6 +34,7 @@ import static java.util.Collections.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.service.RateLimiterDefaults.*;
 import static ru.art.config.extensions.service.ServiceConfigKeys.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
 import java.util.*;
 
 @PublicApi
@@ -44,9 +45,11 @@ public class ServiceConfigProvider {
         CircuitBreakerConfig.Builder circuitBreakerBuilder = CircuitBreakerConfig.custom();
         if (hasPath(sectionId) && (breakable = hasPath(sectionId, CIRCUIT_BREAKER))) {
             circuitBreakerBuilder
-                    .failureRateThreshold(configDouble(sectionId, FAILURE_RATE_THRESHOLD, DEFAULT_MAX_FAILURE_THRESHOLD).floatValue())
-                    .ringBufferSizeInClosedState(configInt(sectionId, RING_BUFFER_SIZE_IN_CLOSED_STATE, DEFAULT_RING_BUFFER_SIZE_IN_CLOSED_STATE))
-                    .ringBufferSizeInHalfOpenState(configInt(sectionId, RING_BUFFER_SIZE_IN_HALF_OPEN_STATE, DEFAULT_RING_BUFFER_SIZE_IN_HALF_OPEN_STATE))
+                    .failureRateThreshold(configDouble(sectionId, FAILURE_RATE_THRESHOLD, DEFAULT_FAILURE_RATE_THRESHOLD).floatValue())
+                    .permittedNumberOfCallsInHalfOpenState(configInt(sectionId, PERMITTED_NUMBER_OF_CALLS_IN_HALF_OPEN_STATE, DEFAULT_PERMITTED_CALLS_IN_HALF_OPEN_STATE))
+                    .slidingWindow(configInt(sectionId, SLIDING_WINDOW_SIZE, DEFAULT_SLIDING_WINDOW_SIZE),
+                            configInt(sectionId, SLIDING_WINDOW_MINIMUM_NUMBER_OF_CALLS, DEFAULT_MINIMUM_NUMBER_OF_CALLS),
+                            ifException(() -> SlidingWindowType.valueOf(configString(sectionId, SLIDING_WINDOW_TYPE)), DEFAULT_SLIDING_WINDOW_TYPE))
                     .waitDurationInOpenState(ofSeconds(configLong(sectionId, WAIT_DURATION_IN_OPEN_STATE, DEFAULT_WAIT_DURATION_IN_OPEN_STATE)));
             if (configBoolean(sectionId, AUTOMATIC_TRANSITION_FROM_OPEN_TO_HALF_OPEN_ENABLED)) {
                 circuitBreakerBuilder.enableAutomaticTransitionFromOpenToHalfOpen();
@@ -79,7 +82,7 @@ public class ServiceConfigProvider {
         if (hasPath(sectionId) && (bulkheaded = hasPath(sectionId, BULKHEAD))) {
             bulkheadConfigBuilder
                     .maxConcurrentCalls(configInt(sectionId, MAX_CONCURRENT_CALLS, DEFAULT_MAX_CONCURRENT_CALLS))
-                    .maxWaitTime(configLong(sectionId, MAX_WAIT_TIME, DEFAULT_MAX_WAIT_TIME));
+                    .maxWaitDuration(ofMillis(configLong(sectionId, MAX_WAIT_DURATION, DEFAULT_MAX_WAIT_DURATION.toMillis())));
         }
         return BulkheadServiceConfig.builder()
                 .bulkheaded(bulkheaded)
@@ -92,7 +95,7 @@ public class ServiceConfigProvider {
         RetryConfig.Builder retryConfigBuilder = RetryConfig.custom();
         if (hasPath(sectionId) && (retryable = hasPath(sectionId, RETRYER))) {
             retryConfigBuilder
-                    .maxAttempts(configInt(sectionId, MAX_ATTEMPTS, DEFAULT_MAX_ATTEMPTS))
+                    .maxAttempts(configInt(sectionId, MAX_ATTEMPTS, 3))
                     .waitDuration(ofMillis(configLong(sectionId, WAIT_DURATION, DEFAULT_WAIT_DURATION)));
         }
         return RetryServiceConfig.builder()
