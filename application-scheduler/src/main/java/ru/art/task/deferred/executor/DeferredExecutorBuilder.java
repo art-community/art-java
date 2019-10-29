@@ -18,9 +18,9 @@
 
 package ru.art.task.deferred.executor;
 
-import static java.lang.Runtime.*;
-import static java.lang.Thread.*;
-import static java.util.Objects.*;
+import static java.lang.Thread.UncaughtExceptionHandler;
+import static java.util.Objects.isNull;
+import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
 
 /**
  * Строитель конфигурации для {@link DeferredExecutorImpl} и {@link DeferredEventObserver}
@@ -67,7 +67,7 @@ public class DeferredExecutorBuilder {
         DeferredExecutorConfiguration executorConfiguration = new DeferredExecutorConfiguration();
         executorConfiguration.setExceptionHandler(isNull(exceptionHandler) ? new DeferredExecutorExceptionHandler() : exceptionHandler);
         executorConfiguration.setEventsQueueMaxSize(isNull(eventsQueueMaxSize) ? DeferredExecutorImpl.DeferredExecutorConstants.DEFAULT_MAX_QUEUE_SIZE : eventsQueueMaxSize);
-        executorConfiguration.setThreadPoolCoreSize(isNull(threadPoolCoreSize) ? getRuntime().availableProcessors() - 1 : threadPoolCoreSize);
+        executorConfiguration.setThreadPoolCoreSize(isNull(threadPoolCoreSize) ? DEFAULT_THREAD_POOL_SIZE : threadPoolCoreSize);
         executorConfiguration.setThreadPoolExceptionHandler(isNull(threadPoolExceptionHandler) ? new DeferredExecutorThreadPoolExceptionHandler() : threadPoolExceptionHandler);
         executorConfiguration.setAwaitAllTasksTerminationOnShutdown(isNull(awaitAllTasksTerminationOnShutdown) ? false : awaitAllTasksTerminationOnShutdown);
         executorConfiguration.setThreadPoolTerminationTimeout(isNull(threadPoolTerminationTimeout) ? DeferredExecutorImpl.DeferredExecutorConstants.DEFAULT_SHUTDOWN_TIMEOUT : threadPoolTerminationTimeout);
