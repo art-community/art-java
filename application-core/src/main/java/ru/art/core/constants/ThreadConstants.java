@@ -22,5 +22,5 @@ import static java.lang.Math.*;
 import static java.lang.Runtime.*;
 
 public interface ThreadConstants {
-    int DEFAULT_THREAD_POOL_SIZE = min(getRuntime().availableProcessors() - 1, 2);
+    int DEFAULT_THREAD_POOL_SIZE = max(getRuntime().availableProcessors() - 1, 2);
 }
