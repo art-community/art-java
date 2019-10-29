@@ -79,7 +79,7 @@ public class FieldFactory {
 
     private static FieldBuilder createFieldByModelGroup(Element element, ComplexType complexType,
                                                         ModelGroup modelGroup) {
-        String typeName = isNull(complexType.getName()) ? element.getName() : complexType.getName();
+        String typeName = isNull(complexType) || isNull(complexType.getName()) ? element.getName() : complexType.getName();
         return Field.builder()
                 .name(element.getName())
                 .type(Object.class)
