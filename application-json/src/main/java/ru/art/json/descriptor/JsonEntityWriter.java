@@ -62,10 +62,10 @@ public class JsonEntityWriter {
     }
 
     public static String writeJson(Value value) {
-        return writeJson(jsonModule().getObjectMapper().getFactory(), value);
+        return writeJson(jsonModule().getObjectMapper().getFactory(), value, false);
     }
 
-    public static String writeJson(JsonFactory jsonFactory, Value value) {
+    public static String writeJson(JsonFactory jsonFactory, Value value, boolean prettyOutput) {
         if (isNull(jsonFactory)) throw new JsonMappingException(JSON_FACTORY_IS_NULL);
         if (isNull(value)) {
             return BRACES;
@@ -79,7 +79,10 @@ public class JsonEntityWriter {
         StringWriter stringWriter = new StringWriter();
         JsonGenerator generator = null;
         try {
-            generator = jsonFactory.createGenerator(stringWriter).useDefaultPrettyPrinter();
+            generator = jsonFactory.createGenerator(stringWriter);
+            if (prettyOutput) {
+                generator.useDefaultPrettyPrinter();
+            }
             switch (value.getType()) {
                 case ENTITY:
                     writeJsonEntity(generator, asEntity(value));
