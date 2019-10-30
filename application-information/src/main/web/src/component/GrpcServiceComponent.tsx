@@ -29,7 +29,8 @@ import {
     Theme,
     Typography
 } from "@material-ui/core";
-import {ExpandMore} from "@material-ui/icons";
+
+import ExpandMore from "@material-ui/icons/ExpandMore";
 import {GRPC_CHIP_STYLE} from "../constants/Constants";
 import {GrpcMethodComponent} from "./GrpcMethodComponent";
 import {GrpcInformation, GrpcServiceInformation} from "../model/Models";
