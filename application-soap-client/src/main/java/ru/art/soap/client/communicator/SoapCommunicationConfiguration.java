@@ -34,6 +34,8 @@ import static lombok.AccessLevel.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.client.module.HttpClientModule.*;
+import static ru.art.soap.client.constants.SoapClientModuleConstants.*;
+import static ru.art.soap.client.constants.SoapClientModuleConstants.OperationIdSource.*;
 import static ru.art.soap.client.constants.SoapClientModuleExceptionMessages.*;
 import static ru.art.soap.client.module.SoapClientModule.*;
 import static ru.art.soap.content.mapper.SoapMimeToContentTypeMapper.*;
@@ -68,12 +70,13 @@ class SoapCommunicationConfiguration {
     private HttpCommunicationCancellationHandler<?> cancellationHandler;
     private List<ValueInterceptor<XmlEntity, XmlEntity>> requestValueInterceptors = linkedListOf();
     private List<ValueInterceptor<XmlEntity, XmlEntity>> responseValueInterceptors = linkedListOf();
+    private OperationIdSource operationIdSource = REQUEST;
     private Object request;
 
     void validateRequiredFields() {
         boolean urlIsEmpty = isEmpty(url);
-        boolean operationIdIsEmpty = isEmpty(operationId);
-        boolean operationNamespaceIsEmpty = isEmpty(operationNamespace);
+        boolean operationIdIsEmpty = operationIdSource == REQUEST || isEmpty(operationId);
+        boolean operationNamespaceIsEmpty = operationIdSource == REQUEST || isEmpty(operationNamespace);
         if (!urlIsEmpty && !operationIdIsEmpty && !operationNamespaceIsEmpty) {
             return;
         }

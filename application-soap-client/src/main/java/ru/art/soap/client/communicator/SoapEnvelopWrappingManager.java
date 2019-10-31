@@ -25,12 +25,29 @@ import static lombok.AccessLevel.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.entity.XmlEntity.*;
 import static ru.art.soap.client.constants.SoapClientModuleConstants.*;
+import static ru.art.soap.client.constants.SoapClientModuleConstants.OperationIdSource.REQUEST;
 import static ru.art.soap.client.constants.SoapClientModuleExceptionMessages.*;
 import java.util.*;
 
 @NoArgsConstructor(access = PACKAGE)
 class SoapEnvelopWrappingManager {
     static XmlEntity wrapToSoapEnvelop(XmlEntity xmlEntity, SoapCommunicationConfiguration proxyConfig) {
+        if (proxyConfig.getOperationIdSource() == REQUEST) {
+            return xmlEntityBuilder()
+                    .tag(SOAP_ENVELOPE_TAG)
+                    .prefix(proxyConfig.getEnvelopePrefix())
+                    .namespace(proxyConfig.getEnvelopeNamespace())
+                    .namespaceField(proxyConfig.getEnvelopePrefix(), proxyConfig.getEnvelopeNamespace())
+                    .child(xmlEntityBuilder()
+                            .tag(SOAP_BODY_TAG)
+                            .prefix(proxyConfig.getBodyPrefix())
+                            .namespace(proxyConfig.getBodyNamespace())
+                            .namespaceField(proxyConfig.getBodyPrefix(), proxyConfig.getBodyNamespace())
+                            .child(xmlEntity)
+                            .create())
+                    .create();
+        }
+
         String operationPrefix = proxyConfig.getOperationPrefix();
         String operationNamespace = proxyConfig.getOperationNamespace();
         XmlEntity operation = xmlEntityBuilder()
