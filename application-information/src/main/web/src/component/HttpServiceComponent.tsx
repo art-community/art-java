@@ -19,14 +19,17 @@
 import React from "react";
 import {
     Box,
-    Chip, createStyles,
+    Chip,
+    createStyles,
     ExpansionPanel,
     ExpansionPanelDetails,
     ExpansionPanelSummary,
-    Grid, makeStyles, Theme,
+    Grid,
+    makeStyles,
+    Theme,
     Typography
 } from "@material-ui/core";
-import {ExpandMore} from "@material-ui/icons";
+import ExpandMore from "@material-ui/icons/ExpandMore";
 import {HttpMethodComponent} from "./HttpMethodComponent";
 import {HTTP_CHIP_STYLE} from "../constants/Constants";
 import {HttpServiceInformation, HttpServiceMethodInformation} from "../model/Models";

@@ -198,7 +198,7 @@ public interface ExampleService {
         Value jsonValue = readJson(jsonModule().getObjectMapper().getFactory(), jsonString);
 
         // mapping value to string
-        String jsonMappedString = writeJson(jsonModule().getObjectMapper().getFactory(), jsonValue);
+        String jsonMappedString = writeJson(jsonModule().getObjectMapper().getFactory(), jsonValue, false);
 
         // logging results
         loggingModule().getLogger().info(jsonValue);
