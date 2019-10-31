@@ -29,10 +29,10 @@ import {
     Theme,
     Typography
 } from "@material-ui/core";
-import {ExpandMore} from "@material-ui/icons";
 import {RSOCKET_CHIP_STYLE} from "../constants/Constants";
 import {RsocketMethodComponent} from "./RsocketMethodComponent";
 import {RsocketInformation, RsocketServiceInformation, RsocketServiceMethodInformation} from "../model/Models";
+import ExpandMore from "@material-ui/icons/ExpandMore";
 
 interface RsocketServiceComponentProps {
     information: RsocketInformation
