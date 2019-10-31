@@ -36,8 +36,9 @@ import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.extension.StringExtensions.*;
-import static ru.art.http.client.model.HttpCommunicationTargetConfiguration.httpCommunicationTarget;
+import static ru.art.http.client.model.HttpCommunicationTargetConfiguration.*;
 import static ru.art.http.client.module.HttpClientModule.*;
+import static ru.art.soap.client.constants.SoapClientModuleConstants.OperationIdSource.*;
 import static ru.art.soap.client.module.SoapClientModule.*;
 import java.nio.charset.*;
 import java.util.*;
@@ -165,6 +166,18 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
     @Override
     public SoapCommunicator addResponseValueInterceptor(ValueInterceptor<XmlEntity, XmlEntity> interceptor) {
         configuration.getResponseValueInterceptors().add(validator.notNullField(interceptor, "responseValueInterceptor"));
+        return this;
+    }
+
+    @Override
+    public SoapCommunicator useOperationIdFromRequest() {
+        configuration.setOperationIdSource(REQUEST);
+        return this;
+    }
+
+    @Override
+    public SoapCommunicator useOperationIdFromConfiguration() {
+        configuration.setOperationIdSource(CONFIGURATION);
         return this;
     }
 
