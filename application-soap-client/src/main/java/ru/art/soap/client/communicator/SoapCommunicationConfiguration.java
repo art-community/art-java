@@ -75,8 +75,8 @@ class SoapCommunicationConfiguration {
 
     void validateRequiredFields() {
         boolean urlIsEmpty = isEmpty(url);
-        boolean operationIdIsEmpty = operationIdSource == REQUEST || isEmpty(operationId);
-        boolean operationNamespaceIsEmpty = operationIdSource == REQUEST || isEmpty(operationNamespace);
+        boolean operationIdIsEmpty = operationIdSource != REQUEST && isEmpty(operationId);
+        boolean operationNamespaceIsEmpty = operationIdSource != REQUEST && isEmpty(operationNamespace);
         if (!urlIsEmpty && !operationIdIsEmpty && !operationNamespaceIsEmpty) {
             return;
         }

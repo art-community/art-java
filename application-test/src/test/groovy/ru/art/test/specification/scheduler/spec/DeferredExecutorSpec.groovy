@@ -26,7 +26,7 @@ import spock.lang.Unroll
 import static java.lang.System.getenv
 import static java.lang.Thread.sleep
 import static java.time.LocalDateTime.now
-import static ru.art.task.deferred.executor.DeferredExecutorImpl.builder as deferredExecutorBuilder
+import static ru.art.task.deferred.executor.DeferredExecutorImplementation.builder as deferredExecutorBuilder
 import static ru.art.test.specification.scheduler.operation.DeferredExecutorSpecOperations.*
 
 @IgnoreIf({ getenv('TRAVIS') as boolean })
