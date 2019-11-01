@@ -218,7 +218,7 @@ public class MessagePackEntityWriter {
     }
 
     private static void writeEntityEntry(MapBuilder mapBuilder, Map.Entry<String, ? extends Value> entry) {
-        if (isEmpty(entry.getKey())) {
+        if (isEmpty(entry.getKey()) || isEmpty(entry.getValue())) {
             return;
         }
         Value value = entry.getValue();
