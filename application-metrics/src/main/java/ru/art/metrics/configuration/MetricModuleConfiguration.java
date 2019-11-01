@@ -18,6 +18,7 @@
 
 package ru.art.metrics.configuration;
 
+import com.codahale.metrics.*;
 import io.github.mweirauch.micrometer.jvm.extras.*;
 import io.micrometer.core.instrument.binder.*;
 import io.micrometer.core.instrument.binder.jvm.*;
@@ -27,12 +28,15 @@ import lombok.*;
 import ru.art.core.module.*;
 import static io.micrometer.prometheus.PrometheusConfig.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.metrics.factory.DropwizardMetricRegistryFactory.*;
 import java.util.*;
 
 public interface MetricModuleConfiguration extends ModuleConfiguration {
     Set<MeterBinder> getMeterBinders();
 
     PrometheusMeterRegistry getPrometheusMeterRegistry();
+
+    MetricRegistry getDropwizardMetricRegistry();
 
     MetricModuleDefaultConfiguration DEFAULT_CONFIGURATION = new MetricModuleDefaultConfiguration();
 
@@ -47,5 +51,6 @@ public interface MetricModuleConfiguration extends ModuleConfiguration {
                 new ProcessThreadMetrics(),
                 new UptimeMetrics());
         private final PrometheusMeterRegistry prometheusMeterRegistry = new PrometheusMeterRegistry(DEFAULT);
+        private final MetricRegistry dropwizardMetricRegistry = createDefaultDropwizardMetricRegistry();
     }
 }

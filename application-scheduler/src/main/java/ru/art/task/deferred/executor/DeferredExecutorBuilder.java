@@ -18,12 +18,12 @@
 
 package ru.art.task.deferred.executor;
 
-import static java.lang.Runtime.*;
 import static java.lang.Thread.*;
 import static java.util.Objects.*;
+import static ru.art.core.constants.ThreadConstants.*;
 
 /**
- * Строитель конфигурации для {@link DeferredExecutorImpl} и {@link DeferredEventObserver}
+ * Строитель конфигурации для {@link DeferredExecutorImplementation} и {@link DeferredEventObserver}
  */
 public class DeferredExecutorBuilder {
     private ExceptionHandler exceptionHandler;
@@ -66,11 +66,11 @@ public class DeferredExecutorBuilder {
     public DeferredExecutor build() {
         DeferredExecutorConfiguration executorConfiguration = new DeferredExecutorConfiguration();
         executorConfiguration.setExceptionHandler(isNull(exceptionHandler) ? new DeferredExecutorExceptionHandler() : exceptionHandler);
-        executorConfiguration.setEventsQueueMaxSize(isNull(eventsQueueMaxSize) ? DeferredExecutorImpl.DeferredExecutorConstants.DEFAULT_MAX_QUEUE_SIZE : eventsQueueMaxSize);
-        executorConfiguration.setThreadPoolCoreSize(isNull(threadPoolCoreSize) ? getRuntime().availableProcessors() - 1 : threadPoolCoreSize);
+        executorConfiguration.setEventsQueueMaxSize(isNull(eventsQueueMaxSize) ? DeferredExecutorImplementation.DeferredExecutorConstants.DEFAULT_MAX_QUEUE_SIZE : eventsQueueMaxSize);
+        executorConfiguration.setThreadPoolCoreSize(isNull(threadPoolCoreSize) ? DEFAULT_THREAD_POOL_SIZE : threadPoolCoreSize);
         executorConfiguration.setThreadPoolExceptionHandler(isNull(threadPoolExceptionHandler) ? new DeferredExecutorThreadPoolExceptionHandler() : threadPoolExceptionHandler);
         executorConfiguration.setAwaitAllTasksTerminationOnShutdown(isNull(awaitAllTasksTerminationOnShutdown) ? false : awaitAllTasksTerminationOnShutdown);
-        executorConfiguration.setThreadPoolTerminationTimeout(isNull(threadPoolTerminationTimeout) ? DeferredExecutorImpl.DeferredExecutorConstants.DEFAULT_SHUTDOWN_TIMEOUT : threadPoolTerminationTimeout);
-        return new DeferredExecutorImpl(executorConfiguration);
+        executorConfiguration.setThreadPoolTerminationTimeout(isNull(threadPoolTerminationTimeout) ? DeferredExecutorImplementation.DeferredExecutorConstants.DEFAULT_SHUTDOWN_TIMEOUT : threadPoolTerminationTimeout);
+        return new DeferredExecutorImplementation(executorConfiguration);
     }
 }

@@ -29,5 +29,6 @@ dependencies {
         embedded("org.jooq", "jooq", jooqVersion)
         embedded("com.zaxxer", "HikariCP", hikariVersion)
         embedded("org.apache.tomcat", "tomcat-jdbc", tomcatVersion)
+        embedded("io.dropwizard", "dropwizard-db", "1.3.16")
     }
 }

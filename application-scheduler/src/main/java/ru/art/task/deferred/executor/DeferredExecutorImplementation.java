@@ -29,11 +29,11 @@ import java.util.concurrent.locks.*;
 /**
  * Реализация ключевого компонента проекта. Описание функций: {@link DeferredExecutor}
  */
-public class DeferredExecutorImpl implements DeferredExecutor {
+public class DeferredExecutorImplementation implements DeferredExecutor {
     private final ReentrantLock lock = new ReentrantLock();
     private final DeferredEventObserver observer;
 
-    DeferredExecutorImpl(DeferredExecutorConfiguration configuration) {
+    DeferredExecutorImplementation(DeferredExecutorConfiguration configuration) {
         observer = new DeferredEventObserver(configuration);
     }
 

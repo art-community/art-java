@@ -25,7 +25,7 @@ import {
     Typography,
     useTheme
 } from "@material-ui/core";
-import {ExpandMore} from "@material-ui/icons";
+import ExpandMore from "@material-ui/icons/ExpandMore";
 import ReactJson from "react-json-view";
 
 interface EntityComponentProps {

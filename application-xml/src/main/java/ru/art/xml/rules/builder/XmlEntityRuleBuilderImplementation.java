@@ -24,8 +24,8 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import java.util.*;
 
 @RequiredArgsConstructor
-class XmlEntityRuleBuilderImpl implements XmlEntityRuleBuilder {
-    private final XmlEntityMappingBuilderImpl mappingBuilder;
+class XmlEntityRuleBuilderImplementation implements XmlEntityRuleBuilder {
+    private final XmlEntityMappingBuilderImplementation mappingBuilder;
     private final Set<XmlEntityMappingTargets> parsedParts;
     private final Set<String> inputs = setOf();
 

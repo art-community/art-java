@@ -24,31 +24,31 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.xml.constants.XmlEntityMappingTargets.*;
 
 @RequiredArgsConstructor
-class XmlEntityPartBuilderImpl implements XmlEntityPartBuilder {
-    private final XmlEntityMappingBuilderImpl mappingBuilder;
+class XmlEntityPartBuilderImplementation implements XmlEntityPartBuilder {
+    private final XmlEntityMappingBuilderImplementation mappingBuilder;
 
     @Override
     public XmlEntityRuleBuilder forAttributesValues() {
-        return new XmlEntityRuleBuilderImpl(mappingBuilder, setOf(ATTRIBUTE_VALUE));
+        return new XmlEntityRuleBuilderImplementation(mappingBuilder, setOf(ATTRIBUTE_VALUE));
     }
 
     @Override
     public XmlEntityRuleBuilder forTagsValues() {
-        return new XmlEntityRuleBuilderImpl(mappingBuilder, setOf(TAG_VALUE));
+        return new XmlEntityRuleBuilderImplementation(mappingBuilder, setOf(TAG_VALUE));
     }
 
     @Override
     public XmlEntityRuleBuilder forNamespacesValues() {
-        return new XmlEntityRuleBuilderImpl(mappingBuilder, setOf(NAMESPACE_VALUE));
+        return new XmlEntityRuleBuilderImplementation(mappingBuilder, setOf(NAMESPACE_VALUE));
     }
 
     @Override
     public XmlEntityRuleBuilder forAll() {
-        return new XmlEntityRuleBuilderImpl(mappingBuilder, setOf(ATTRIBUTE_VALUE, TAG_VALUE, NAMESPACE_VALUE));
+        return new XmlEntityRuleBuilderImplementation(mappingBuilder, setOf(ATTRIBUTE_VALUE, TAG_VALUE, NAMESPACE_VALUE));
     }
 
     @Override
     public XmlEntityRuleBuilder forTargets(XmlEntityMappingTargets... names) {
-        return new XmlEntityRuleBuilderImpl(mappingBuilder, setOf(names));
+        return new XmlEntityRuleBuilderImplementation(mappingBuilder, setOf(names));
     }
 }

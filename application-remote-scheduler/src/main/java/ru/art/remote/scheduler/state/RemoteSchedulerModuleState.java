@@ -24,7 +24,7 @@ import ru.art.task.deferred.executor.*;
 
 @Getter
 public class RemoteSchedulerModuleState implements ModuleState {
-    private final PeriodicExecutor periodicInfinityExecutor = new PeriodicExecutor(DeferredExecutorImpl.builder()
+    private final PeriodicExecutor periodicInfinityExecutor = new PeriodicExecutor(DeferredExecutorImplementation.builder()
             .withExceptionHandler(new DeferredExecutorExceptionHandler())
             .build());
 }

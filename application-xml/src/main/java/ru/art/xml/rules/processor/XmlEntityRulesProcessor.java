@@ -32,7 +32,7 @@ import java.util.Map.*;
 
 public class XmlEntityRulesProcessor {
     public static XmlEntityMappingBuilder xmlMappingBuilder() {
-        return new XmlEntityMappingBuilderImpl();
+        return new XmlEntityMappingBuilderImplementation();
     }
 
     public static XmlEntity map(XmlEntityMapping mappingRules, XmlEntity entity) {

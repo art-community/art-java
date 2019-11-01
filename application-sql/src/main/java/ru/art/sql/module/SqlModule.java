@@ -18,6 +18,7 @@
 
 package ru.art.sql.module;
 
+import io.dropwizard.db.*;
 import lombok.*;
 import ru.art.core.module.*;
 import ru.art.sql.configuration.*;
@@ -25,6 +26,7 @@ import ru.art.sql.exception.*;
 import static java.lang.Class.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.metrics.module.MetricsModule.*;
 import static ru.art.sql.configuration.SqlModuleConfiguration.*;
 import static ru.art.sql.constants.SqlModuleConstants.*;
 import javax.sql.*;
@@ -51,7 +53,7 @@ public class SqlModule implements Module<SqlModuleConfiguration, ModuleState> {
                 dataSource = sqlModule().getHikariPoolConfig().getDataSource();
                 break;
             case TOMCAT:
-                dataSource = new org.apache.tomcat.jdbc.pool.DataSource(sqlModule().getTomcatPoolConfig());
+                dataSource = new ManagedPooledDataSource(sqlModule().getTomcatPoolConfig(), metricsModule().getDropwizardMetricRegistry());
                 break;
         }
         try {

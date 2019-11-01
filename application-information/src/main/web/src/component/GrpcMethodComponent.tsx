@@ -28,7 +28,7 @@ import {
     makeStyles,
     Typography
 } from "@material-ui/core";
-import {ExpandMore} from "@material-ui/icons";
+import ExpandMore from "@material-ui/icons/ExpandMore";
 import {EntityComponent, EntityType} from "./EntityComponent";
 import {Theme} from "@material-ui/core/styles/createMuiTheme";
 import {GRPC_CHIP_STYLE} from "../constants/Constants";
