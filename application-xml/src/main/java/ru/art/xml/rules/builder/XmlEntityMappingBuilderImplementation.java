@@ -26,14 +26,14 @@ import static ru.art.xml.constants.XmlEntityMappingTargets.*;
 import static ru.art.xml.constants.XmlMappingExceptionMessages.*;
 import java.util.*;
 
-public class XmlEntityMappingBuilderImpl implements XmlEntityMappingBuilder {
+public class XmlEntityMappingBuilderImplementation implements XmlEntityMappingBuilder {
     private final Set<XmlEntityRule> attributeValueRules = setOf();
     private final Set<XmlEntityRule> namespaceValueRules = setOf();
     private final Set<XmlEntityRule> tagValueRules = setOf();
 
     @Override
     public XmlEntityPartBuilder addRule() {
-        return new XmlEntityPartBuilderImpl(this);
+        return new XmlEntityPartBuilderImplementation(this);
     }
 
     @Override
