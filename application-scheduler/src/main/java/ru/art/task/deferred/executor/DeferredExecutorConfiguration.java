@@ -22,7 +22,7 @@ import lombok.*;
 import java.lang.Thread.*;
 
 /**
- * Конфигурация для {@link DeferredExecutorImpl} и {@link DeferredEventObserver}
+ * Конфигурация для {@link DeferredExecutorImplementation} и {@link DeferredEventObserver}
  */
 @Getter
 @Setter

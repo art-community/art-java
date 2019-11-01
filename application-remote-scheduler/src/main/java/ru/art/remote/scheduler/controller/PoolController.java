@@ -33,7 +33,7 @@ import static ru.art.remote.scheduler.module.RemoteSchedulerModule.*;
 import static ru.art.scheduler.db.adapter.api.constants.SchedulerDbAdapterApiConstants.Methods.GET_ALL_INFINITY_PROCESSES;
 import static ru.art.task.deferred.executor.SchedulerModule.*;
 import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
-import static ru.art.task.deferred.executor.TaskFactory.runnableTask;
+import static ru.art.task.deferred.executor.TaskFactory.*;
 import java.time.*;
 import java.util.*;
 
@@ -45,7 +45,7 @@ public interface PoolController {
     }
 
     static void startPoolRefreshingTask() {
-        PeriodicExecutor periodicRefreshExecutor = new PeriodicExecutor(DeferredExecutorImpl.builder()
+        PeriodicExecutor periodicRefreshExecutor = new PeriodicExecutor(DeferredExecutorImplementation.builder()
                 .withExceptionHandler(new DeferredExecutorExceptionHandler())
                 .build());
 
