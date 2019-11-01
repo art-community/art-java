@@ -74,6 +74,10 @@ public interface SoapCommunicator {
 
     SoapCommunicator addResponseValueInterceptor(ValueInterceptor<XmlEntity, XmlEntity> interceptor);
 
+    SoapCommunicator useOperationIdFromRequest();
+
+    SoapCommunicator useOperationIdFromConfiguration();
+
     SoapCommunicator version(HttpVersion httpVersion);
 
     <RequestType, ResponseType> Optional<ResponseType> execute(RequestType request);

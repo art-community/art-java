@@ -27,4 +27,9 @@ public interface SoapClientModuleConstants {
     String SOAP_BODY_TAG = "Body";
     String SOAP_CLIENT_MODULE_ID = "SOAP_CLIENT_MODULE";
     String SOAP_COMMUNICATION_SERVICE_TYPE = "SOAP_COMMUNICATION";
+
+    enum OperationIdSource {
+        REQUEST,
+        CONFIGURATION
+    }
 }
