@@ -23,7 +23,6 @@ import lombok.experimental.*;
 import ru.art.config.constants.*;
 import ru.art.config.exception.ConfigException;
 import static java.text.MessageFormat.*;
-import static ru.art.config.GroovyConfigLoader.*;
 import static ru.art.config.TypesafeConfigLoader.*;
 import static ru.art.config.YamlConfigLoader.*;
 import static ru.art.config.constants.ConfigExceptionMessages.*;
@@ -36,8 +35,6 @@ public class ConfigLoader {
             case JSON:
             case HOCON:
                 return new Config(loadTypeSafeConfig(configId, toTypesafeConfigSyntax(configType)), configType);
-            case GROOVY:
-                return new Config(loadGroovyConfig(configId), configType);
             case YAML:
                 return new Config(loadYamlConfig(configId), configType);
             default:

@@ -22,6 +22,5 @@ art {
         applicationEntity()
         applicationConfigTypesafe()
         applicationConfigYaml()
-        applicationConfigGroovy()
     }
 }
