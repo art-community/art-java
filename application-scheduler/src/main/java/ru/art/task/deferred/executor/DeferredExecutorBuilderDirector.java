@@ -25,6 +25,6 @@ package ru.art.task.deferred.executor;
  */
 public class DeferredExecutorBuilderDirector {
     public static DeferredExecutor createDefaultDeferredExecutor() {
-        return DeferredExecutorImpl.builder().build();
+        return DeferredExecutorImplementation.builder().build();
     }
 }
