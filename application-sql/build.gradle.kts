@@ -30,5 +30,12 @@ dependencies {
         embedded("com.zaxxer", "HikariCP", hikariVersion)
         embedded("org.apache.tomcat", "tomcat-jdbc", tomcatVersion)
         embedded("io.dropwizard", "dropwizard-db", "1.3.16")
+                .exclude("io.dropwizard")
+        embedded("io.dropwizard", "dropwizard-core", "1.3.16")
+                .exclude("io.dropwizard")
+        embedded("io.dropwizard", "dropwizard-util", "1.3.16")
+        embedded("io.dropwizard", "dropwizard-validation", "1.3.16")
+        embedded("io.dropwizard", "dropwizard-lifecycle", "1.3.16")
+        embedded("com.google.guava", "guava", art.externalDependencyVersionsConfiguration.guavaVersion)
     }
 }
