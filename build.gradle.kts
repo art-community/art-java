@@ -24,7 +24,7 @@ import org.jfrog.gradle.plugin.artifactory.task.*
 plugins {
     `maven-publish`
     id("com.gradle.build-scan") version "2.0.2"
-    id("io.github.art.project") version "1.0.87"
+    id("io.github.art.project") version "1.0.92"
     id("com.jfrog.bintray") version "1.8.4"
     id("com.jfrog.artifactory") version "4.9.8"
 }
@@ -125,6 +125,10 @@ subprojects {
             })
             tasks["bintrayUpload"].dependsOn(tasks["generatePomFileFor${name.capitalize()}Publication"], jar, sourceJar)
         }
+    }
+
+    task<DependencyReportTask>("showDependencies") {
+
     }
 }
 
