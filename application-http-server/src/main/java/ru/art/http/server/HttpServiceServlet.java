@@ -34,7 +34,6 @@ import static java.text.MessageFormat.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
-import static javax.servlet.http.HttpServletResponse.*;
 import static org.apache.logging.log4j.ThreadContext.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
@@ -47,6 +46,7 @@ import static ru.art.core.mime.MimeType.valueOf;
 import static ru.art.http.constants.HttpHeaders.*;
 import static ru.art.http.constants.HttpMethodType.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
+import static ru.art.http.constants.HttpStatus.*;
 import static ru.art.http.server.HttpServerRequestHandler.*;
 import static ru.art.http.server.body.descriptor.HttpBodyDescriptor.*;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
@@ -78,7 +78,7 @@ class HttpServiceServlet extends HttpServlet {
                     .stream()
                     .map(method -> method.getHttpMethod().getMethodType().name())
                     .collect(joining(COMMA)));
-            response.setStatus(SC_OK);
+            response.setStatus(OK.getCode());
             clearServiceCallLoggingParameters();
             return;
         }

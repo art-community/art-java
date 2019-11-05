@@ -20,6 +20,7 @@ package ru.art.http.server;
 
 import org.apache.catalina.*;
 import org.apache.catalina.connector.*;
+import org.apache.catalina.core.*;
 import org.apache.catalina.servlets.*;
 import org.apache.catalina.startup.*;
 import org.apache.coyote.http2.*;
@@ -128,12 +129,15 @@ public class HttpServer {
     }
 
     private Context createContext() {
-        Context ctx = tomcat.addContext(EMPTY_STRING, getProperty(TEMP_DIR_KEY));
+        StandardContext ctx = (StandardContext) tomcat.addContext(EMPTY_STRING, getProperty(TEMP_DIR_KEY));
         ctx.setAllowCasualMultipartParsing(httpServerModule().isAllowCasualMultipartParsing());
         if (cancelablePaths.contains(SLASH)) {
             logger.info(HTTP_SERVICES_CANCELED);
             return ctx;
         }
+        ctx.setClearReferencesObjectStreamClassCaches(false);
+        ctx.setClearReferencesRmiTargets(false);
+        ctx.setClearReferencesThreadLocals(false);
         registerHttpServices(ctx);
         return ctx;
     }
