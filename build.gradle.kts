@@ -147,7 +147,6 @@ task("showExternalDependenciesDuplicates") {
                 "application-example",
                 "application-state",
                 "application-module-executor",
-                "application-information",
                 "application-remote-scheduler",
                 "application-kafka-broker")
 
