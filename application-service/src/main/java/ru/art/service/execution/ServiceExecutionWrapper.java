@@ -18,17 +18,19 @@
 
 package ru.art.service.execution;
 
+import lombok.experimental.*;
 import ru.art.service.model.*;
 import static ru.art.service.ServiceModule.*;
 import static ru.art.service.constants.ServiceExecutionFeatureTarget.*;
 import java.util.concurrent.*;
 
-public interface ServiceExecutor {
-    static <ResponseType> ResponseType executeServiceWithConfiguration(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
+@UtilityClass
+public class ServiceExecutionWrapper {
+    public static <ResponseType> ResponseType executeServiceWithConfiguration(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
         return executeServiceWithBreaker(serviceExecution, command, executionConfiguration);
     }
 
-    static <ResponseType> ResponseType executeServiceWithBreaker(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithBreaker(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
         if (!executionConfiguration.isBreakable()) {
             return executeServiceWithRateLimiter(serviceExecution, command, executionConfiguration);
         }
@@ -38,7 +40,7 @@ public interface ServiceExecutor {
                 .executeCallable(() -> executeServiceWithRateLimiter(serviceExecution, command, executionConfiguration));
     }
 
-    static <ResponseType> ResponseType executeServiceWithRateLimiter(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithRateLimiter(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
         if (!executionConfiguration.isLimited()) {
             return executeServiceWithBulkHeaded(serviceExecution, command, executionConfiguration);
         }
@@ -48,7 +50,7 @@ public interface ServiceExecutor {
                 .executeCallable(() -> executeServiceWithBulkHeaded(serviceExecution, command, executionConfiguration));
     }
 
-    static <ResponseType> ResponseType executeServiceWithBulkHeaded(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithBulkHeaded(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
         if (!executionConfiguration.isBulkHeaded()) {
             return executeServiceWithRetrying(serviceExecution, command, executionConfiguration);
         }
@@ -58,7 +60,7 @@ public interface ServiceExecutor {
                 .executeCallable(() -> executeServiceWithRetrying(serviceExecution, command, executionConfiguration));
     }
 
-    static <ResponseType> ResponseType executeServiceWithRetrying(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithRetrying(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
         if (!executionConfiguration.isRetryable()) {
             return serviceExecution.call();
         }
