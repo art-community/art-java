@@ -148,6 +148,8 @@ task("showExternalDependenciesDuplicates") {
                 "application-state",
                 "application-module-executor",
                 "application-remote-scheduler",
+                "agent",
+                "management-panel",
                 "application-kafka-broker")
 
         subprojects.filter { subproject -> subproject.name !in exclusions }

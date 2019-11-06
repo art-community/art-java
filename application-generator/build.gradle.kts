@@ -30,7 +30,7 @@ art {
 
 dependencies {
     embedded("com.squareup", "javapoet", art.externalDependencyVersionsConfiguration.javaPoetVersion)
-    embedded("org.projectlombok","lombok", art.externalDependencyVersionsConfiguration.lombokVersion)
+    embedded("org.projectlombok", "lombok", art.externalDependencyVersionsConfiguration.lombokVersion)
     embedded("org.membrane-soa", "service-proxy-core", "4.6.1")
             .exclude("org.springframework")
             .exclude("com.fasterxml.jackson.core")
@@ -45,14 +45,8 @@ dependencies {
             .exclude("javax.mail")
             .exclude("io.swagger")
             .exclude("com.floreysoft")
-    embedded("com.google.guava", "guava", art.externalDependencyVersionsConfiguration.guavaVersion)
-}
-
-configurations {
-    with(embedded.get()) {
-        exclude("org.slf4j")
-        exclude("commons-logging")
-        exclude("org.apache.httpcomponents")
-        exclude("com.google.guava")
-    }
+            .exclude("org.slf4j")
+            .exclude("commons-logging")
+            .exclude("org.apache.httpcomponents")
+            .exclude("com.google.guava")
 }

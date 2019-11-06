@@ -27,13 +27,8 @@ art {
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
         embedded("org.zalando", "logbook-core", logbookVersion)
+                .exclude("org.slf4j")
+                .exclude("com.google.code.findbugs")
         embedded("org.apache.httpcomponents", "httpcore", apacheHttpCoreVersion)
-    }
-}
-
-configurations {
-    with(embedded.get()) {
-        exclude("org.slf4j")
-        exclude("com.google.code.findbugs")
     }
 }

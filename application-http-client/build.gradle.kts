@@ -29,19 +29,18 @@ art {
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
         embedded("org.apache.httpcomponents", "httpclient", apacheHttpClientVersion)
+                .exclude("org.apache.httpcomponents", "httpcore")
+                .exclude("commons-logging")
         embedded("org.apache.httpcomponents", "httpasyncclient", apacheHttpAsyncClientVersion)
+                .exclude("org.apache.httpcomponents", "httpcore")
+                .exclude("commons-logging")
         embedded("org.zalando", "logbook-httpclient", logbookVersion)
                 .exclude("org.zalando", "logbook-core")
                 .exclude("org.zalando", "logbook-api")
                 .exclude("org.zalando", "faux-pas")
                 .exclude("org.apiguardian")
-    }
-}
-
-configurations {
-    with(embedded.get()) {
-        exclude("org.slf4j")
-        exclude("commons-logging")
-        exclude("org.apache.httpcomponents", "httpcore")
+                .exclude("org.apache.httpcomponents", "httpcore")
+                .exclude("org.slf4j")
+                .exclude("commons-logging")
     }
 }

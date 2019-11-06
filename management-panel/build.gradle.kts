@@ -34,13 +34,26 @@ art {
 
 dependencies {
     embedded(project(":api"))
-    embedded("com.auth0:java-jwt:3.8.+") {
-        exclude("com.fasterxml.jackson.dataformat")
-        exclude("com.fasterxml.jackson.core")
-    }
-    embedded("com.github.docker-java", "docker-java", "3.1.5")
-}
 
+    embedded("com.auth0", "java-jwt", "3.8.+")
+            .exclude("com.fasterxml.jackson.dataformat")
+            .exclude("com.fasterxml.jackson.core")
+            .exclude("com.google.guava")
+            .exclude("org.slf4j")
+
+    embedded("com.github.docker-java", "docker-java", "3.1.5")
+            .exclude("commons-logging")
+            .exclude("commons-codec")
+            .exclude("io.netty")
+            .exclude("com.fasterxml.jackson.dataformat")
+            .exclude("com.fasterxml.jackson.core")
+            .exclude("com.google.guava")
+            .exclude("org.apache.httpcomponents")
+            .exclude("org.slf4j")
+            .exclude("org.glassfish.jersey.inject")
+            .exclude("org.glassfish.jersey.core")
+            .exclude("org.glassfish.jersey.connectors")
+}
 
 tasks.withType<KotlinCompile> {
     sourceCompatibility = VERSION_11.toString()
@@ -50,5 +63,6 @@ tasks.withType<KotlinCompile> {
         jvmTarget = VERSION_11.toString()
     }
 }
+
 
 tasks.withType(JavaCompile::class).forEach { task -> task.dependsOn(":api:build") }

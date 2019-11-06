@@ -27,22 +27,23 @@ art {
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
         embedded("org.jooq", "jooq", jooqVersion)
+                .exclude("org.slf4j")
+                .exclude("com.google.guava")
+                .exclude("com.google.code.findbugs")
         embedded("com.zaxxer", "HikariCP", hikariVersion)
+                .exclude("com.google.guava")
+                .exclude("com.google.code.findbugs")
+                .exclude("org.slf4j")
         embedded("org.apache.tomcat", "tomcat-jdbc", tomcatVersion)
+        embedded("org.apache.tomcat.extras", "juli-adapters", "6.0.53")
         embedded("io.dropwizard", "dropwizard-db", "1.3.16")
                 .exclude("io.dropwizard")
-        embedded("io.dropwizard", "dropwizard-core", "1.3.16")
-                .exclude("io.dropwizard")
-        embedded("io.dropwizard", "dropwizard-util", "1.3.16")
-        embedded("io.dropwizard", "dropwizard-validation", "1.3.16")
-        embedded("io.dropwizard", "dropwizard-lifecycle", "1.3.16")
-    }
-}
-
-configurations {
-    with(embedded.get()) {
-        exclude("org.slf4j")
-        exclude("com.google.guava")
-        exclude("com.google.code.findbugs")
+                .exclude("com.google.guava")
+                .exclude("com.google.code.findbugs")
+                .exclude("org.slf4j")
+                .exclude("com.google.guava")
+                .exclude("com.google.code.findbugs")
+                .exclude("org.eclipse.jetty")
+                .exclude("org.slf4j")
     }
 }

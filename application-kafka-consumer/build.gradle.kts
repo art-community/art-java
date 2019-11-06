@@ -31,11 +31,6 @@ dependencies {
         embedded("org.apache.kafka", "kafka-streams", kafkaVersion)
                 .exclude("org.apache.kafka", "kafka-clients")
                 .exclude("com.fasterxml.jackson.core")
-    }
-}
-
-configurations {
-    with(embedded.get()) {
-        exclude("org.slf4j")
+                .exclude("org.slf4j")
     }
 }

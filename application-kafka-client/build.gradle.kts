@@ -31,13 +31,8 @@ art {
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
         embedded("org.apache.kafka", "kafka-clients", kafkaVersion)
+                .exclude("org.slf4j")
         embedded("org.apache.kafka", "kafka-log4j-appender", kafkaLog4jAppenderVersion)
-        embedded("org.slf4j", "slf4j-api", "1.7.28")
-    }
-}
-
-configurations {
-    with(embedded.get()) {
-        exclude("org.slf4j")
+                .exclude("org.slf4j")
     }
 }

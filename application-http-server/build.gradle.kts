@@ -32,20 +32,16 @@ dependencies {
     with(art.externalDependencyVersionsConfiguration) {
         embedded("org.apache.tomcat.embed", "tomcat-embed-core", tomcatVersion)
                 .exclude("org.apache.httpcomponents", "httpcore")
+        embedded("org.apache.tomcat.extras", "juli-adapters", "6.0.53")
         embedded("org.apache.tomcat", "tomcat-servlet-api", tomcatVersion)
         embedded("org.zalando", "logbook-servlet", logbookVersion)
                 .exclude("org.zalando", "logbook-core")
                 .exclude("org.zalando", "logbook-api")
                 .exclude("org.zalando", "faux-pas")
                 .exclude("org.apiguardian")
+                .exclude("org.slf4j")
+                .exclude("commons-logging")
         embedded("org.apache.logging.log4j", "log4j-web", log4jVersion)
                 .exclude("org.apache.logging.log4j")
-    }
-}
-
-configurations {
-    with(embedded.get()) {
-        exclude("org.slf4j")
-        exclude("commons-logging")
     }
 }

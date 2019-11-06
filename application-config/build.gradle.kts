@@ -20,6 +20,7 @@ art {
     providedModules {
         applicationCore()
         applicationEntity()
+        applicationLogging()
         applicationConfigTypesafe()
         applicationConfigYaml()
     }

@@ -25,17 +25,3 @@ art {
         applicationKafkaClient()
     }
 }
-
-dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("org.apache.kafka", "kafka-clients", kafkaVersion)
-                .exclude("org.apache.kafka", "kafka-clients")
-        embedded("org.apache.kafka", "kafka-log4j-appender", kafkaLog4jAppenderVersion)
-    }
-}
-
-configurations {
-    with(embedded.get()) {
-        exclude("org.slf4j")
-    }
-}

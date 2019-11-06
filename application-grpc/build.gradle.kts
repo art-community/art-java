@@ -27,19 +27,20 @@ dependencies {
     with(art.externalDependencyVersionsConfiguration) {
         embedded("io.grpc", "grpc-stub", grpcVersion)
                 .exclude("io.grpc", "grpc-api")
+                .exclude("com.google.guava")
+                .exclude("com.google.code.findbugs")
         embedded("io.grpc", "grpc-netty", grpcVersion)
                 .exclude("io.grpc", "grpc-api")
                 .exclude("io.netty")
+                .exclude("com.google.guava")
+                .exclude("com.google.code.findbugs")
         embedded("io.grpc", "grpc-netty-shaded", grpcVersion)
                 .exclude("io.grpc", "grpc-api")
                 .exclude("io.netty")
+                .exclude("com.google.guava")
+                .exclude("com.google.code.findbugs")
         embedded("io.netty", "netty-all", "4.1.42.Final")
-    }
-}
-
-configurations {
-    with(embedded.get()) {
-        exclude("com.google.guava")
-        exclude("com.google.code.findbugs")
+                .exclude("com.google.guava")
+                .exclude("com.google.code.findbugs")
     }
 }

@@ -29,14 +29,10 @@ dependencies {
     with(art.externalDependencyVersionsConfiguration) {
         embedded("io.micrometer", "micrometer-registry-prometheus", micrometerPrometheusVersion)
         embedded("io.github.mweirauch", "micrometer-jvm-extras", micrometerJvmExtrasVersion)
+                .exclude("org.slf4j")
         embedded("io.prometheus", "simpleclient_dropwizard", prometheusDropwizardSimpleClient)
         embedded("io.dropwizard.metrics", "metrics-jvm", dropwizardVersions)
                 .exclude("io.dropwizard.metrics", "metrics-core")
-    }
-}
-
-configurations {
-    with(embedded.get()) {
-        exclude("org.slf4j")
+                .exclude("org.slf4j")
     }
 }

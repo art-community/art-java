@@ -35,14 +35,10 @@ art {
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
         embedded("org.zeroturnaround", "zt-exec", zeroTurnaroundVersion)
+                .exclude("org.slf4j")
         embedded("org.tarantool", "connector", tarantoolConnectorVersion)
+                .exclude("org.slf4j")
         embedded("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
                 .exclude("org.apache.logging.log4j")
-    }
-}
-
-configurations {
-    with(embedded.get()) {
-        exclude("org.slf4j")
     }
 }
