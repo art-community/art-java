@@ -35,7 +35,6 @@ dependencies {
                 .exclude("com.google.code.findbugs")
                 .exclude("org.slf4j")
         embedded("org.apache.tomcat", "tomcat-jdbc", tomcatVersion)
-        embedded("org.apache.tomcat.extras", "juli-adapters", "6.0.53")
         embedded("io.dropwizard", "dropwizard-db", "1.3.16")
                 .exclude("io.dropwizard")
                 .exclude("com.google.guava")
