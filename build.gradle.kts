@@ -188,6 +188,7 @@ task("showExternalDependenciesDuplicates") {
 task("showAllExternalDependencies") {
     group = "dependencies"
     doLast {
+        val dependencies = mutableSetOf<String>()
         subprojects.forEach { subproject ->
             subproject.configurations
                     .getByName(EMBEDDED.configuration)
@@ -196,8 +197,9 @@ task("showAllExternalDependencies") {
                     .allModuleDependencies
                     .toSet()
                     .filter { dependency -> dependency.module.id.group != rootProject.group }
-                    .forEach { dependency -> println(message(dependency.name, BLUE_BOLD)) }
+                    .forEach { dependency -> dependencies.add(dependency.name) }
         }
+        dependencies.forEach { dependency -> println(message(dependency, BLUE_BOLD)) }
     }
 }
 
