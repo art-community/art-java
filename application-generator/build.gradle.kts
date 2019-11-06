@@ -37,7 +37,6 @@ dependencies {
             .exclude("com.fasterxml.jackson.dataformat")
             .exclude("com.fasterxml.jackson.datatype")
             .exclude("com.github.fge")
-            .exclude("com.google.guava", "guava")
             .exclude("commons-cli")
             .exclude("commons-codec")
             .exclude("commons-dbcp")

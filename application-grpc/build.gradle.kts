@@ -31,7 +31,6 @@ dependencies {
                 .exclude("io.grpc", "grpc-api")
                 .exclude("io.netty")
         embedded("io.grpc", "grpc-netty-shaded", grpcVersion)
-                .exclude("com.google.guava", "guava")
                 .exclude("io.grpc", "grpc-api")
                 .exclude("io.netty")
         embedded("io.netty", "netty-all", "4.1.42.Final")

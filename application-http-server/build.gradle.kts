@@ -31,7 +31,6 @@ art {
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
         embedded("org.apache.tomcat.embed", "tomcat-embed-core", tomcatVersion)
-                .exclude("org.apache.tomcat", "tomcat-juli")
                 .exclude("org.apache.httpcomponents", "httpcore")
         embedded("org.apache.tomcat", "tomcat-servlet-api", tomcatVersion)
         embedded("org.zalando", "logbook-servlet", logbookVersion)
