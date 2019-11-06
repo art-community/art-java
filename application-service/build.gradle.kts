@@ -44,7 +44,5 @@ dependencies {
         embedded("io.github.resilience4j", "resilience4j-timelimiter", resilience4jVersion)
                 .exclude("io.vavr")
                 .exclude("org.slf4j")
-        embedded("io.dropwizard.metrics", "metrics-json", metricsDropwizVersion)
-                .exclude("org.slf4j")
     }
 }
