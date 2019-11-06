@@ -22,6 +22,7 @@ import org.jfrog.gradle.plugin.artifactory.dsl.*
 import org.jfrog.gradle.plugin.artifactory.task.*
 import ru.art.gradle.constants.DependencyConfiguration.*
 import ru.art.gradle.logging.*
+import ru.art.gradle.logging.LogMessageColor.*
 
 plugins {
     `maven-publish`
@@ -131,52 +132,71 @@ subprojects {
         }
     }
 
+    task<DependencyReportTask>("showDependencyTrees") {
+        group = "dependencies"
+    }
 }
 
-task("showEmbeddedDependencies") {
+task("showExternalDependenciesDuplicates") {
     group = "dependencies"
     doLast {
         val subProjectDependencies = mutableMapOf<String, MutableList<ResolvedDependency>>()
-        subprojects
-                .filter {
-                    it.name !in listOf(
-                            "application-configurator",
-                            "application-example",
-                            "application-state",
-                            "application-module-executor",
-                            "application-information",
-                            "application-remote-scheduler",
-                            "application-kafka-broker"
-                    )
-                }
-                .forEach {
-                    val dependencies = it.configurations
+
+        val exclusions = listOf(
+                "application-configurator",
+                "application-example",
+                "application-state",
+                "application-module-executor",
+                "application-information",
+                "application-remote-scheduler",
+                "application-kafka-broker")
+
+        subprojects.filter { subproject -> subproject.name !in exclusions }
+                .forEach { subproject ->
+                    val dependencies = subproject.configurations
                             .getByName(EMBEDDED.configuration)
                             .resolvedConfiguration
                             .lenientConfiguration
                             .allModuleDependencies
                             .toList()
                             .filter { dependency -> dependency.module.id.group != rootProject.group }
-                            .toList()
                     if (dependencies.isNotEmpty()) {
-                        subProjectDependencies[it.name] = dependencies.toMutableList()
+                        subProjectDependencies[subproject.name] = dependencies.toMutableList()
                     }
                 }
-        subProjectDependencies
-                .values
+        subProjectDependencies.values
                 .forEach { dependencies ->
                     dependencies.removeIf { dependency ->
-                        subProjectDependencies.values.filter { it != dependencies }.none { dependency in it }
+                        subProjectDependencies.values
+                                .filter { filtering -> filtering != dependencies }
+                                .none { filtering -> dependency in filtering }
                     }
                 }
-        subProjectDependencies
-                .filterValues { it.isNotEmpty() }
-                .forEach { (key, value) ->
-                    println(message("[${key}]:", LogMessageColor.BLUE_BOLD))
-                    value.forEach { dependency -> println("\t${message(dependency.name, LogMessageColor.YELLOW_BOLD)}") }
+        subProjectDependencies.filterValues { dependencies -> dependencies.isNotEmpty() }
+                .onEach { (key, value) ->
+                    println(message("[${key}]:", BLUE_BOLD))
+                    value.forEach { dependency -> println("\t${message(dependency.name, RED_BOLD)}") }
                     println()
                 }
+                .ifEmpty {
+                    println(message("ART hasn't duplicates of external dependencies!", GREEN_BOLD))
+                }
+    }
+}
 
+task("showAllExternalDependencies") {
+    group = "dependencies"
+    doLast {
+        subprojects.forEach { subproject ->
+            subproject.configurations
+                    .getByName(EMBEDDED.configuration)
+                    .resolvedConfiguration
+                    .lenientConfiguration
+                    .allModuleDependencies
+                    .toSet()
+                    .filter { dependency -> dependency.module.id.group != rootProject.group }
+                    .forEach { dependency -> println(message(dependency.name, BLUE_BOLD)) }
+        }
     }
 }
 
