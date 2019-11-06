@@ -23,7 +23,6 @@ import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
-import static org.slf4j.bridge.SLF4JBridgeHandler.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.logging.LoggingModuleConfiguration.*;
 import static ru.art.logging.LoggingModuleConstants.*;
@@ -37,7 +36,6 @@ public class LoggingModule implements Module<LoggingModuleConfiguration, ModuleS
 
     static {
         getLogManager().reset();
-        install();
     }
 
     public static LoggingModuleConfiguration loggingModule() {
