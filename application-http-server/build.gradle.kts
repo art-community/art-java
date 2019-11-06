@@ -24,6 +24,7 @@ art {
         applicationService()
         applicationHttp()
         applicationMetrics()
+        applicationTemplateEngine()
     }
 }
 
@@ -34,9 +35,18 @@ dependencies {
                 .exclude("org.apache.httpcomponents", "httpcore")
         embedded("org.apache.tomcat", "tomcat-servlet-api", tomcatVersion)
         embedded("org.zalando", "logbook-servlet", logbookVersion)
-        embedded("io.pebbletemplates", "pebble", "3.1.0")
-                .exclude("org.slf4j")
-        embedded("org.apache.httpcomponents", "httpclient", apacheHttpClientVersion)
-                .exclude("org.apache.httpcomponents", "httpcore")
+                .exclude("org.zalando", "logbook-core")
+                .exclude("org.zalando", "logbook-api")
+                .exclude("org.zalando", "faux-pas")
+                .exclude("org.apiguardian")
+        embedded("org.apache.logging.log4j", "log4j-web", log4jVersion)
+                .exclude("org.apache.logging.log4j")
+    }
+}
+
+configurations {
+    with(embedded.get()) {
+        exclude("org.slf4j")
+        exclude("commons-logging")
     }
 }

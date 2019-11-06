@@ -30,7 +30,13 @@ dependencies {
         embedded("io.micrometer", "micrometer-registry-prometheus", micrometerPrometheusVersion)
         embedded("io.github.mweirauch", "micrometer-jvm-extras", micrometerJvmExtrasVersion)
         embedded("io.prometheus", "simpleclient_dropwizard", prometheusDropwizardSimpleClient)
-        embedded("io.dropwizard.metrics", "metrics-core", dropwizardVersions)
         embedded("io.dropwizard.metrics", "metrics-jvm", dropwizardVersions)
+                .exclude("io.dropwizard.metrics", "metrics-core")
+    }
+}
+
+configurations {
+    with(embedded.get()) {
+        exclude("org.slf4j")
     }
 }

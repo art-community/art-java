@@ -26,10 +26,14 @@ art {
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
         embedded("org.slf4j", "jul-to-slf4j", sl4jVersion)
+        embedded("org.slf4j", "slf4j-api", "1.7.28")
+        embedded("org.apache.logging.log4j", "log4j-slf4j-impl", "2.12.1")
+
+        embedded("commons-logging", "commons-logging", "1.2")
+        embedded("org.apache.logging.log4j", "log4j-jcl", "2.12.1")
 
         embedded("org.apache.logging.log4j", "log4j-api", "2.12.1")
         embedded("org.apache.logging.log4j", "log4j-core", "2.12.1")
-        embedded("org.apache.logging.log4j", "log4j-slf4j-impl", "2.12.1")
 
         embedded("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
         embedded("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)

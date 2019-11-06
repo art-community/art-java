@@ -26,17 +26,16 @@ art {
     }
 }
 
-configurations {
-    with(embedded.get()) {
-        exclude("org.slf4j", "slf4j-api")
-        exclude("org.slf4j", "slf4j-log4j12")
-        exclude("org.slf4j", "jul-to-slf4j")
-    }
-}
-
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
         embedded("org.apache.kafka", "kafka-clients", kafkaVersion)
+                .exclude("org.apache.kafka", "kafka-clients")
         embedded("org.apache.kafka", "kafka-log4j-appender", kafkaLog4jAppenderVersion)
+    }
+}
+
+configurations {
+    with(embedded.get()) {
+        exclude("org.slf4j")
     }
 }

@@ -20,13 +20,27 @@ art {
     providedModules {
         applicationCore()
         applicationProtobuf()
-		}
+    }
 }
 
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
-        embedded("io.grpc", "grpc-stub", grpcVersion).exclude("com.google.guava", "guava")
-        embedded("io.grpc", "grpc-netty", grpcVersion).exclude("com.google.guava", "guava")
-        embedded("io.grpc", "grpc-netty-shaded", grpcVersion).exclude("com.google.guava", "guava")
+        embedded("io.grpc", "grpc-stub", grpcVersion)
+                .exclude("io.grpc", "grpc-api")
+        embedded("io.grpc", "grpc-netty", grpcVersion)
+                .exclude("io.grpc", "grpc-api")
+                .exclude("io.netty")
+        embedded("io.grpc", "grpc-netty-shaded", grpcVersion)
+                .exclude("com.google.guava", "guava")
+                .exclude("io.grpc", "grpc-api")
+                .exclude("io.netty")
+        embedded("io.netty", "netty-all", "4.1.42.Final")
+    }
+}
+
+configurations {
+    with(embedded.get()) {
+        exclude("com.google.guava")
+        exclude("com.google.code.findbugs")
     }
 }

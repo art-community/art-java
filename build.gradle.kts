@@ -20,6 +20,8 @@ import com.jfrog.bintray.gradle.BintrayExtension.*
 import groovy.lang.*
 import org.jfrog.gradle.plugin.artifactory.dsl.*
 import org.jfrog.gradle.plugin.artifactory.task.*
+import ru.art.gradle.constants.DependencyConfiguration.*
+import ru.art.gradle.logging.*
 
 plugins {
     `maven-publish`
@@ -45,6 +47,8 @@ buildScan {
 }
 
 subprojects {
+    group = rootProject.group
+
     repositories {
         jcenter()
         mavenCentral()
@@ -127,7 +131,51 @@ subprojects {
         }
     }
 
-    task<DependencyReportTask>("showDependencies") {
+}
+
+task("showEmbeddedDependencies") {
+    group = "dependencies"
+    doLast {
+        val subProjectDependencies = mutableMapOf<String, MutableList<ResolvedDependency>>()
+        subprojects
+                .filter {
+                    it.name !in listOf(
+                            "application-configurator",
+                            "application-example",
+                            "application-state",
+                            "application-module-executor",
+                            "application-information",
+                            "application-remote-scheduler",
+                            "application-kafka-broker"
+                    )
+                }
+                .forEach {
+                    val dependencies = it.configurations
+                            .getByName(EMBEDDED.configuration)
+                            .resolvedConfiguration
+                            .lenientConfiguration
+                            .allModuleDependencies
+                            .toList()
+                            .filter { dependency -> dependency.module.id.group != rootProject.group }
+                            .toList()
+                    if (dependencies.isNotEmpty()) {
+                        subProjectDependencies[it.name] = dependencies.toMutableList()
+                    }
+                }
+        subProjectDependencies
+                .values
+                .forEach { dependencies ->
+                    dependencies.removeIf { dependency ->
+                        subProjectDependencies.values.filter { it != dependencies }.none { dependency in it }
+                    }
+                }
+        subProjectDependencies
+                .filterValues { it.isNotEmpty() }
+                .forEach { (key, value) ->
+                    println(message("[${key}]:", LogMessageColor.BLUE_BOLD))
+                    value.forEach { dependency -> println("\t${message(dependency.name, LogMessageColor.YELLOW_BOLD)}") }
+                    println()
+                }
 
     }
 }

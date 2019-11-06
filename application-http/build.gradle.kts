@@ -30,3 +30,10 @@ dependencies {
         embedded("org.apache.httpcomponents", "httpcore", apacheHttpCoreVersion)
     }
 }
+
+configurations {
+    with(embedded.get()) {
+        exclude("org.slf4j")
+        exclude("com.google.code.findbugs")
+    }
+}

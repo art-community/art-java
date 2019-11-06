@@ -16,29 +16,8 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-        applicationService()
-        applicationTemplateEngine()
-    }
-
-    resources {
-        resourceDirs.add("src/main/templates")
-        resourceDirs.add("src/main/executable")
-        resourceDirs.add("src/main/lua")
-    }
-}
-
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("org.zeroturnaround", "zt-exec", zeroTurnaroundVersion)
-        embedded("org.tarantool", "connector", tarantoolConnectorVersion)
-        embedded("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
-                .exclude("org.apache.logging.log4j")
-    }
+    embedded("io.pebbletemplates", "pebble", "3.1.0")
 }
 
 configurations {

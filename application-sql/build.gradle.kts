@@ -36,6 +36,13 @@ dependencies {
         embedded("io.dropwizard", "dropwizard-util", "1.3.16")
         embedded("io.dropwizard", "dropwizard-validation", "1.3.16")
         embedded("io.dropwizard", "dropwizard-lifecycle", "1.3.16")
-        embedded("com.google.guava", "guava", art.externalDependencyVersionsConfiguration.guavaVersion)
+    }
+}
+
+configurations {
+    with(embedded.get()) {
+        exclude("org.slf4j")
+        exclude("com.google.guava")
+        exclude("com.google.code.findbugs")
     }
 }

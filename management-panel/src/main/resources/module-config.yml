@@ -1,6 +1,6 @@
 http:
   server:
-    port: 8080
+    port: 10000
     path: /platform
 rsocket:
   server:
@@ -14,4 +14,3 @@ tarantool:
         username: username
         password: password
       instanceMode: local
-

@@ -35,3 +35,9 @@ dependencies {
         embedded("io.dropwizard.metrics", "metrics-json", metricsDropwizVersion)
     }
 }
+
+configurations {
+    with(embedded.get()) {
+        exclude("org.slf4j")
+    }
+}

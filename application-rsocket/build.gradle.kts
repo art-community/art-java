@@ -24,7 +24,7 @@ art {
         applicationService()
         applicationReactiveService()
         applicationProtobuf()
-		applicationJson()
+        applicationJson()
         applicationXml()
         applicationMessagePack()
     }
@@ -32,5 +32,16 @@ art {
 
 dependencies {
     embedded("io.rsocket", "rsocket-core", art.externalDependencyVersionsConfiguration.rsocketVersion)
+            .exclude("io.netty")
+            .exclude("io.projectreactor", "reactor-core")
     embedded("io.rsocket", "rsocket-transport-netty", art.externalDependencyVersionsConfiguration.rsocketVersion)
+            .exclude("io.netty")
+            .exclude("io.projectreactor", "reactor-core")
+    embedded("io.netty", "netty-all", "4.1.38.Final")
+}
+
+configurations {
+    with(embedded.get()) {
+        exclude("org.slf4j")
+    }
 }

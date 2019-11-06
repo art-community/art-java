@@ -15,3 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+dependencies {
+    embedded("com.google.guava", "guava", "28.1-jre")
+    embedded("io.vavr", "vavr", "0.10.2")
+}

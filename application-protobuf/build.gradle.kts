@@ -28,6 +28,13 @@ art {
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
         embedded("io.grpc", "grpc-protobuf", grpcVersion).exclude("com.google.guava", "guava")
-        embedded("com.google.guava", "guava", guavaVersion)
+    }
+}
+
+configurations {
+    with(embedded.get()) {
+        exclude("com.google.guava")
+        exclude("com.google.code.findbugs")
+        exclude("com.google.errorprone")
     }
 }

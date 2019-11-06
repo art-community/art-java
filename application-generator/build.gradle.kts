@@ -22,6 +22,8 @@ art {
         applicationEntity()
         applicationLogging()
         applicationService()
+        applicationHttp()
+        applicationHttpClient()
         applicationXml()
     }
 }
@@ -36,8 +38,6 @@ dependencies {
             .exclude("com.fasterxml.jackson.datatype")
             .exclude("com.github.fge")
             .exclude("com.google.guava", "guava")
-            .exclude("org.apache.httpcomponents", "httpclient")
-            .exclude("org.slf4j")
             .exclude("commons-cli")
             .exclude("commons-codec")
             .exclude("commons-dbcp")
@@ -47,6 +47,13 @@ dependencies {
             .exclude("io.swagger")
             .exclude("com.floreysoft")
     embedded("com.google.guava", "guava", art.externalDependencyVersionsConfiguration.guavaVersion)
-    embedded("org.apache.httpcomponents", "httpclient", art.externalDependencyVersionsConfiguration.apacheHttpClientVersion)
-            .exclude("org.apache.httpcomponents", "httpcore")
+}
+
+configurations {
+    with(embedded.get()) {
+        exclude("org.slf4j")
+        exclude("commons-logging")
+        exclude("org.apache.httpcomponents")
+        exclude("com.google.guava")
+    }
 }

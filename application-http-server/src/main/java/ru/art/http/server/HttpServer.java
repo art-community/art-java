@@ -57,6 +57,7 @@ import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 import static ru.art.http.server.model.HttpService.*;
 import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.logging.LoggingModule.*;
+import javax.servlet.*;
 import javax.servlet.http.*;
 import java.util.*;
 
@@ -346,7 +347,7 @@ public class HttpServer {
         logger.info(format(REGISTERING_HTTP_INTERCEPTOR, filterName, urlPattern));
         FilterDef def = new FilterDef();
         def.setFilterName(filterName);
-        def.setFilter((request, response, chain) -> {
+        Filter filter = (request, response, chain) -> {
             InterceptionStrategy strategy = lastRequestInterceptionResult.get();
             if (isNull(strategy) || strategy == NEXT_INTERCEPTOR) {
                 lastRequestInterceptionResult
@@ -357,7 +358,8 @@ public class HttpServer {
             if (strategy == PROCESS_HANDLING) {
                 chain.doFilter(request, response);
             }
-        });
+        };
+        def.setFilter(filter);
         FilterMap map = new FilterMap();
         map.setFilterName(filterName);
         map.addURLPattern(urlPattern);
