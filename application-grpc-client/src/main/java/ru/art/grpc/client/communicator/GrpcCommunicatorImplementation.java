@@ -172,7 +172,7 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     public <ResponseType> CompletableFuture<ServiceResponse<ResponseType>> executeAsynchronous() {
         validator.validate();
         configuration.validateRequiredFields();
-        return GrpcCommunicationAsyncExecutor.execute(configuration);
+        return GrpcCommunicationAsynchronousExecutor.execute(configuration);
     }
 
     @Override
@@ -180,6 +180,6 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
         configuration.setRequest(validator.notNullField(request, "request"));
         validator.validate();
         configuration.validateRequiredFields();
-        return GrpcCommunicationAsyncExecutor.execute(configuration);
+        return GrpcCommunicationAsynchronousExecutor.execute(configuration);
     }
 }
