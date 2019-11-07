@@ -123,9 +123,9 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         private final int balancerPort = DEFAULT_HTTP_PORT;
         private final Map<String, HttpCommunicationTargetConfiguration> communicationTargets = emptyMap();
         @Getter(lazy = true)
-        private final HttpClient client = createHttpClient();
+        private final CloseableHttpClient client = createHttpClient();
         @Getter(lazy = true)
-        private final HttpAsyncClient asynchronousClient = createAsyncHttpClient();
+        private final CloseableHttpAsyncClient asynchronousClient = createAsyncHttpClient();
 
         @SuppressWarnings({"Duplicates", "WeakerAccess"})
         protected CloseableHttpAsyncClient createAsyncHttpClient() {
