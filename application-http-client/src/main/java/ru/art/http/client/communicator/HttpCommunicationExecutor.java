@@ -20,11 +20,11 @@ package ru.art.http.client.communicator;
 
 import lombok.*;
 import org.apache.http.*;
-import org.apache.http.client.*;
 import org.apache.http.client.entity.*;
 import org.apache.http.client.methods.*;
 import org.apache.http.concurrent.*;
-import org.apache.http.nio.client.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.nio.client.*;
 import org.apache.http.nio.client.methods.*;
 import org.zalando.logbook.httpclient.*;
 import ru.art.core.constants.*;
@@ -52,6 +52,8 @@ import static ru.art.http.client.body.descriptor.HttpBodyDescriptor.*;
 import static ru.art.http.client.builder.HttpUriBuilder.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
 import static ru.art.http.client.module.HttpClientModule.*;
+import static ru.art.logging.LoggingModule.*;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -68,9 +70,10 @@ class HttpCommunicationExecutor {
             if (strategy == PROCESS_HANDLING) break;
             if (strategy == STOP_HANDLING) return null;
         }
+        CloseableHttpClient client = getOrElse(configuration.getSynchronousClient(), httpClientModule().getClient());
+        CloseableHttpResponse httpResponse = null;
         try {
-            HttpClient client = getOrElse(configuration.getSynchronousClient(), httpClientModule().getClient());
-            HttpResponse httpResponse = client.execute(request);
+            httpResponse = client.execute(request);
             List<HttpClientInterceptor> responseInterceptors = configuration.getResponseInterceptors();
             for (HttpClientInterceptor responseInterceptor : responseInterceptors) {
                 InterceptionStrategy strategy = responseInterceptor.interceptResponse(request, httpResponse);
@@ -80,6 +83,16 @@ class HttpCommunicationExecutor {
             return parseResponse(configuration, httpResponse);
         } catch (Throwable throwable) {
             throw new HttpClientException(throwable);
+        } finally {
+            if (nonNull(httpResponse)) {
+                try {
+                    httpResponse.close();
+                } catch (IOException e) {
+                    loggingModule()
+                            .getLogger(HttpCommunicationExecutor.class)
+                            .error(e.getMessage(), e);
+                }
+            }
         }
     }
 
@@ -94,14 +107,14 @@ class HttpCommunicationExecutor {
             if (strategy == PROCESS_HANDLING) break;
             if (strategy == STOP_HANDLING) return completedFuture(empty());
         }
-        HttpAsyncClient client = getOrElse(configuration.getAsynchronousClient(), httpClientModule().getAsynchronousClient());
+        CloseableHttpAsyncClient client = getOrElse(configuration.getAsynchronousClient(), httpClientModule().getAsynchronousClient());
         HttpAsynchronousClientCallback callback = new HttpAsynchronousClientCallback(configuration.getRequest(), httpUriRequest, configuration);
 
         return supplyAsync(() -> executeHttpUriRequest(httpUriRequest, client, callback), configuration.getAsynchronousFuturesExecutor())
                 .thenApply(response -> ofNullable(parseResponse(configuration, response)));
     }
 
-    private static HttpResponse executeHttpUriRequest(HttpUriRequest httpUriRequest, HttpAsyncClient client, HttpAsynchronousClientCallback callback) {
+    private static HttpResponse executeHttpUriRequest(HttpUriRequest httpUriRequest, CloseableHttpAsyncClient client, HttpAsynchronousClientCallback callback) {
         try {
             if (httpClientModule().isEnableRawDataTracing()) {
                 LogbookHttpAsyncResponseConsumer<HttpResponse> logbookConsumer = new LogbookHttpAsyncResponseConsumer<>(createConsumer());
