@@ -19,19 +19,28 @@
 package ru.art.generator.soap.service;
 
 import com.squareup.javapoet.*;
-import lombok.*;
-import ru.art.entity.mapper.ValueFromModelMapper.*;
-import ru.art.entity.mapper.ValueToModelMapper.*;
-import ru.art.generator.soap.model.*;
-import static com.squareup.javapoet.TypeSpec.*;
+import lombok.RequiredArgsConstructor;
+import ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
+import ru.art.entity.mapper.ValueToModelMapper.XmlEntityToModelMapper;
+import ru.art.generator.soap.model.Field;
+import ru.art.generator.soap.model.OperationSoapGen;
+import ru.art.generator.soap.model.SoapGenerationMode;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.squareup.javapoet.TypeSpec.interfaceBuilder;
 import static javax.lang.model.element.Modifier.*;
-import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.extension.StringExtensions.*;
+import static ru.art.core.constants.StringConstants.DOUBLE_TABULATION;
+import static ru.art.core.constants.StringConstants.NEW_LINE;
+import static ru.art.core.extension.StringExtensions.firstLetterToLowerCase;
+import static ru.art.core.extension.StringExtensions.firstLetterToUpperCase;
 import static ru.art.generator.soap.constants.Constants.ToXmlModelConstants.*;
 import static ru.art.generator.soap.constants.Constants.XML_MAPPER;
-import static ru.art.generator.soap.factory.CodeBlockFactory.*;
-import static ru.art.generator.soap.factory.JavaFileFactory.*;
-import java.util.*;
+import static ru.art.generator.soap.factory.CodeBlockFactory.createModelFromXmlEntity;
+import static ru.art.generator.soap.factory.CodeBlockFactory.createXmlEntityFromModel;
+import static ru.art.generator.soap.factory.JavaFileFactory.createJavaFile;
+import static ru.art.generator.soap.model.SoapGenerationMode.CLIENT;
 
 @RequiredArgsConstructor
 public class SourceCodeGenService {
@@ -72,38 +81,10 @@ public class SourceCodeGenService {
                 fieldSpecList.add(createFieldSpec(className, lambda, input, postFix));
             }
             for (Field output : operation.getOutput()) {
-                String postFix;
-                String lambda;
-                ClassName className;
-                if (SoapGenerationMode.CLIENT.equals(soapGenerationMode)) {
-                    postFix = TO_MODEL;
-                    lambda = XML_ENTITY_TO_MODEL_MAPPER_LAMBDA_FOR_OPERATION;
-                    className = ClassName.get(XmlEntityToModelMapper.class);
-                    createModelFromXmlEntity(output, packageString);
-                } else {
-                    postFix = FROM_MODEL;
-                    lambda = XML_ENTITY_FROM_MODEL_MAPPER_LAMBDA_FOR_OPERATION;
-                    className = ClassName.get(XmlEntityFromModelMapper.class);
-                    createXmlEntityFromModel(output, packageString);
-                }
-                fieldSpecList.add(createFieldSpec(className, lambda, output, postFix));
+                addFieldSpec(soapGenerationMode, fieldSpecList, output);
             }
             for (Field fault : operation.getFault()) {
-                String postFix;
-                String lambda;
-                ClassName className;
-                if (SoapGenerationMode.CLIENT.equals(soapGenerationMode)) {
-                    postFix = TO_MODEL;
-                    lambda = XML_ENTITY_TO_MODEL_MAPPER_LAMBDA_FOR_OPERATION;
-                    className = ClassName.get(XmlEntityToModelMapper.class);
-                    createModelFromXmlEntity(fault, packageString);
-                } else {
-                    postFix = FROM_MODEL;
-                    lambda = XML_ENTITY_FROM_MODEL_MAPPER_LAMBDA_FOR_OPERATION;
-                    className = ClassName.get(XmlEntityFromModelMapper.class);
-                    createXmlEntityFromModel(fault, packageString);
-                }
-                fieldSpecList.add(createFieldSpec(className, lambda, fault, postFix));
+                addFieldSpec(soapGenerationMode, fieldSpecList, fault);
             }
 
             TypeSpec specOperation = interfaceBuilder(firstLetterToUpperCase(operation.getName())).addModifiers(PUBLIC, STATIC)
@@ -113,6 +94,24 @@ public class SourceCodeGenService {
 
         }
         System.out.println("Mappers created successfully");
+    }
+
+    private void addFieldSpec(SoapGenerationMode soapGenerationMode, List<FieldSpec> fieldSpecList, Field output) {
+        String postFix;
+        String lambda;
+        ClassName className;
+        if (CLIENT.equals(soapGenerationMode)) {
+            postFix = TO_MODEL;
+            lambda = XML_ENTITY_TO_MODEL_MAPPER_LAMBDA_FOR_OPERATION;
+            className = ClassName.get(XmlEntityToModelMapper.class);
+            createModelFromXmlEntity(output, packageString);
+        } else {
+            postFix = FROM_MODEL;
+            lambda = XML_ENTITY_FROM_MODEL_MAPPER_LAMBDA_FOR_OPERATION;
+            className = ClassName.get(XmlEntityFromModelMapper.class);
+            createXmlEntityFromModel(output, packageString);
+        }
+        fieldSpecList.add(createFieldSpec(className, lambda, output, postFix));
     }
 
     private FieldSpec createFieldSpec(ClassName classNameXmlEntity, String lambda, Field field, String postFixForCode) {
