@@ -20,9 +20,9 @@ package ru.art.soap.client.communicator;
 
 import lombok.*;
 import org.apache.http.*;
-import org.apache.http.client.*;
 import org.apache.http.client.config.*;
-import org.apache.http.nio.client.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.nio.client.*;
 import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
@@ -45,8 +45,8 @@ import java.util.*;
 @Getter
 @Setter(value = PACKAGE)
 class SoapCommunicationConfiguration {
-    private HttpClient httpClient;
-    private HttpAsyncClient asynchronousHttpClient;
+    private CloseableHttpClient httpClient;
+    private CloseableHttpAsyncClient asynchronousHttpClient;
     private String url;
     private String operationId;
     private RequestConfig requestConfig = httpClientModule().getRequestConfig();

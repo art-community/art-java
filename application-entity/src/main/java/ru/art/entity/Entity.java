@@ -58,7 +58,7 @@ public class Entity implements Value {
         return new EntityBuilder();
     }
 
-    public static Entity concat(Entity... entities) {
+    public static Entity merge(Entity... entities) {
         if (CheckerForEmptiness.isEmpty(entities)) {
             return null;
         }

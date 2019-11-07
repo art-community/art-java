@@ -19,9 +19,9 @@
 package ru.art.soap.client.communicator;
 
 import org.apache.http.*;
-import org.apache.http.client.*;
 import org.apache.http.client.config.*;
-import org.apache.http.nio.client.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.nio.client.*;
 import ru.art.core.validator.*;
 import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
@@ -65,7 +65,7 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
     }
 
     @Override
-    public SoapCommunicator client(HttpClient synchronousClient) {
+    public SoapCommunicator client(CloseableHttpClient synchronousClient) {
         configuration.setHttpClient(validator.notEmptyField(synchronousClient, "synchronousClient"));
         return this;
     }
@@ -197,7 +197,7 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
     }
 
     @Override
-    public SoapAsynchronousCommunicator client(HttpAsyncClient asynchronousClient) {
+    public SoapAsynchronousCommunicator client(CloseableHttpAsyncClient asynchronousClient) {
         configuration.setAsynchronousHttpClient(validator.notNullField(asynchronousClient, "asynchronousClient"));
         return this;
     }
