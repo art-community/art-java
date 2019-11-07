@@ -20,9 +20,9 @@ package ru.art.http.client.communicator;
 
 import lombok.*;
 import org.apache.http.*;
-import org.apache.http.client.*;
 import org.apache.http.client.config.*;
-import org.apache.http.nio.client.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.nio.client.*;
 import ru.art.entity.Value;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
@@ -36,7 +36,6 @@ import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpMethodType.*;
 import java.nio.charset.*;
 import java.util.*;
-import java.util.concurrent.*;
 
 @Getter(value = PACKAGE)
 @Setter(value = PACKAGE)
@@ -63,9 +62,8 @@ class HttpCommunicationConfiguration {
     private Charset requestContentCharset = contextConfiguration().getCharset();
     private String requestContentEncoding = contextConfiguration().getCharset().name();
     private boolean ignoreResponseContentType;
-    private HttpClient synchronousClient;
-    private HttpAsyncClient asynchronousClient;
-    private Executor asynchronousFuturesExecutor = httpClientModule().getAsynchronousFuturesExecutor();
+    private CloseableHttpClient synchronousClient;
+    private CloseableHttpAsyncClient asynchronousClient;
     private List<ValueInterceptor<Value, Value>> requestValueInterceptors = linkedListOf(httpClientModule().getRequestValueInterceptors());
     private List<ValueInterceptor<Value, Value>> responseValueInterceptors = linkedListOf(httpClientModule().getResponseValueInterceptors());
 }
