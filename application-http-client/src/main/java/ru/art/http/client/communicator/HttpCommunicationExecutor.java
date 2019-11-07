@@ -53,7 +53,6 @@ import static ru.art.http.client.builder.HttpUriBuilder.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.logging.LoggingModule.*;
-import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -242,17 +241,17 @@ class HttpCommunicationExecutor {
             }
             try {
                 HttpCommunicationResponseHandler<?, ?> completionHandler = configuration.getCompletionHandler();
+                Optional<?> optionalResponse = ofNullable(parseResponse(configuration, result));
                 if (nonNull(completionHandler)) {
-                    Optional<?> optionalResponse = ofNullable(parseResponse(configuration, result));
                     completionHandler.completed(cast(ofNullable(configuration.getRequest())), cast(optionalResponse));
-                    completableFuture.complete(optionalResponse);
                 }
+                completableFuture.complete(optionalResponse);
             } catch (Throwable throwable) {
                 HttpCommunicationExceptionHandler<?> exceptionHandler = configuration.getExceptionHandler();
                 if (nonNull(exceptionHandler)) {
                     exceptionHandler.failed(ofNullable(cast(configuration.getRequest())), throwable);
-                    completableFuture.completeExceptionally(throwable);
                 }
+                completableFuture.completeExceptionally(throwable);
             }
         }
 
