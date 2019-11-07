@@ -24,7 +24,7 @@ import spock.lang.Specification
 
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.core.constants.NetworkConstants.LOCALHOST
-import static ru.art.entity.Entity.concat
+import static ru.art.entity.Entity.merge
 import static ru.art.entity.Entity.entityBuilder
 import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator
 import static ru.art.grpc.server.GrpcServer.startGrpcServer
@@ -43,7 +43,7 @@ class GrpcSpecification extends Specification {
         grpc(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .handle { request -> concat(request as Entity, response) }
+                .handle { request -> merge(request as Entity, response) }
         startGrpcServer()
         sleep(500L)
 
@@ -67,7 +67,7 @@ class GrpcSpecification extends Specification {
 
         then:
         response != null
-        (response.responseData as Entity) == concat(request, this.response)
+        (response.responseData as Entity) == merge(request, this.response)
 
         when:
         communicator = grpcCommunicator(LOCALHOST, grpcServerModule().getPort(), grpcServerModule().getPath())
@@ -91,6 +91,6 @@ class GrpcSpecification extends Specification {
                 .get()
 
         then:
-        (asyncResponseWithReq.responseData as Entity) == concat(request, this.response)
+        (asyncResponseWithReq.responseData as Entity) == merge(request, this.response)
     }
 }
