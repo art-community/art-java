@@ -19,9 +19,9 @@
 package ru.art.soap.client.communicator;
 
 import org.apache.http.*;
-import org.apache.http.client.*;
 import org.apache.http.client.config.*;
-import org.apache.http.nio.client.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.nio.client.*;
 import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
@@ -42,7 +42,7 @@ public interface SoapCommunicator {
         return new SoapCommunicatorImplementation(targetConfiguration);
     }
 
-    SoapCommunicator client(HttpClient synchronousClient);
+    SoapCommunicator client(CloseableHttpClient synchronousClient);
 
     SoapCommunicator operationId(String operationId);
 
@@ -85,7 +85,7 @@ public interface SoapCommunicator {
     SoapAsynchronousCommunicator asynchronous();
 
     interface SoapAsynchronousCommunicator {
-        SoapAsynchronousCommunicator client(HttpAsyncClient asynchronousClient);
+        SoapAsynchronousCommunicator client(CloseableHttpAsyncClient asynchronousClient);
 
         <RequestType, ResponseType> SoapAsynchronousCommunicator responseHandler(HttpCommunicationResponseHandler<RequestType, ResponseType> handler);
 
