@@ -248,16 +248,16 @@ public class CodeBlockFactory {
                 builder.add("$T.parseInt(" + GET_VALUE_BY_TAG + ")", Integer.class, nameParameter);
                 return builder.build();
             case DATE_TIME:
-                builder.add("$T.parse($T.$N, " + GET_VALUE_BY_TAG + ")", DateExtensions.class, DateConstants.class,
-                        YYYY_MM_DD_DASH, nameParameter);
+                builder.add("$T.parse($T.$L, " + GET_VALUE_BY_TAG + ")", DateExtensions.class, DateConstants.class,
+                        "YYYY_MM_DD_DASH", nameParameter);
                 return builder.build();
             case TIME:
-                builder.add("$T.parse($T.$N, " + GET_VALUE_BY_TAG + ")", DateExtensions.class, DateConstants.class,
-                        HH_MM_SS_24H, nameParameter);
+                builder.add("$T.parse($T.$L, " + GET_VALUE_BY_TAG + ")", DateExtensions.class, DateConstants.class,
+                        "HH_MM_SS_24H", nameParameter);
                 return builder.build();
             case DATE:
                 builder.add("$T.parse($T.$N, " + GET_VALUE_BY_TAG + ")", DateExtensions.class, DateConstants.class,
-                        YYYY_MM_DD_T_HH_MM_SS_SSSXXX, nameParameter);
+                        "YYYY_MM_DD_T_HH_MM_SS_SSSXXX", nameParameter);
                 return builder.build();
             default:
                 builder.add(GET_VALUE_BY_TAG, nameParameter);

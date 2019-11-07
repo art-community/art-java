@@ -59,6 +59,8 @@ public class TypeFactory {
                 return Date.class;
             case DATE:
                 return Date.class;
+            case BYTE_ARRAY:
+                return Byte[].class;
             default:
                 return Object.class;
         }
@@ -77,6 +79,27 @@ public class TypeFactory {
             return element.getType().getLocalPart();
         }
         return "Object";
+    }
+
+    public static String getTypeByAttribute(Attribute attribute) {
+        if (attribute.getType() != null) {
+            return attribute.getType().getLocalPart();
+        } else if (attribute.getRef() != null) {
+                return attribute.getRef().getLocalPart();
+        } else {
+            return "Object";
+        }
+    }
+
+    public static TypeDefinition getTypeDefinitionByAttribute(Attribute attribute) {
+        QName ref = null;
+        if (attribute.getType() != null) {
+            ref = attribute.getType();
+
+        } else if (attribute.getRef() != null) {
+            ref = attribute.getRef();
+        }
+        return attribute.getSchema().getType(ref);
     }
 
     @SneakyThrows
@@ -101,8 +124,7 @@ public class TypeFactory {
                 return element.getSchema().getType(qName);
             }
         }
-        String localPart = getTypeByElement(element);
-        return element.getSchema().getType(localPart);
+        return element.getSchema().getType(element.getType());
     }
 
     public static String getNamespaceByPrefix(Element element, String prefix) {
