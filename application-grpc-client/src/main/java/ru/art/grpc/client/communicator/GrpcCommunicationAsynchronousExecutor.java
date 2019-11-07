@@ -91,22 +91,23 @@ class GrpcCommunicationAsynchronousExecutor {
             }
         }
         ListenableFuture<com.google.protobuf.Value> future = stub.executeService(writeProtobuf(requestValue));
-        addCallback(future, createFutureCallback(configuration), configuration.getAsynchronousFuturesExecutor());
-        return supplyAsync(() -> executeGrpcFuture(configuration, future, command), configuration.getAsynchronousFuturesExecutor());
+        CompletableFuture<ServiceResponse<?>> completableFuture = new CompletableFuture<>();
+        addCallback(future, createFutureCallback(configuration, completableFuture), configuration.getAsynchronousFuturesExecutor());
+        return cast(completableFuture);
     }
 
-    private static FutureCallback<com.google.protobuf.Value> createFutureCallback(GrpcCommunicationConfiguration configuration) {
+    private static FutureCallback<com.google.protobuf.Value> createFutureCallback(GrpcCommunicationConfiguration configuration,
+                                                                                  CompletableFuture<ServiceResponse<?>> completableFuture) {
         return new FutureCallback<com.google.protobuf.Value>() {
             @Override
             public void onSuccess(com.google.protobuf.Value response) {
                 if (isNull(response)) {
                     if (isNull(configuration.getExceptionHandler())) {
+                        completableFuture.completeExceptionally(new GrpcClientException(RESPONSE_IS_NULL));
                         return;
                     }
                     configuration.getExceptionHandler().failed(empty(), new GrpcClientException(RESPONSE_IS_NULL));
-                    return;
-                }
-                if (isNull(configuration.getCompletionHandler())) {
+                    completableFuture.completeExceptionally(new GrpcClientException(RESPONSE_IS_NULL));
                     return;
                 }
                 Entity responseValue = asEntity(readProtobuf(response));
@@ -121,12 +122,17 @@ class GrpcCommunicationAsynchronousExecutor {
                         break;
                     }
                     if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                        completableFuture.complete(okResponse(new ServiceMethodCommand(configuration.getServiceId(), configuration.getMethodId())));
                         return;
                     }
                 }
-                configuration.getCompletionHandler()
-                        .onComplete(ofNullable(cast(configuration.getRequest())),
-                                cast(toServiceResponse(cast(configuration.getResponseMapper())).map(responseValue)));
+                ServiceResponse<?> serviceResponse = toServiceResponse(cast(configuration.getResponseMapper())).map(responseValue);
+                if (isNull(configuration.getCompletionHandler())) {
+                    completableFuture.complete(serviceResponse);
+                    return;
+                }
+                configuration.getCompletionHandler().onComplete(ofNullable(cast(configuration.getRequest())), cast(response));
+                completableFuture.complete(serviceResponse);
             }
 
             @Override
@@ -136,34 +142,8 @@ class GrpcCommunicationAsynchronousExecutor {
                     return;
                 }
                 configuration.getExceptionHandler().failed(ofNullable(cast(configuration.getRequest())), exception);
+                completableFuture.completeExceptionally(exception);
             }
         };
-    }
-
-    private static <ResponseType> ServiceResponse<ResponseType> executeGrpcFuture(GrpcCommunicationConfiguration configuration, ListenableFuture<com.google.protobuf.Value> future, ServiceMethodCommand command) {
-        try {
-            com.google.protobuf.Value grpcResponse = future.get();
-            if (isNull(grpcResponse)) {
-                return okResponse(command);
-            }
-            Entity responseValue = asEntity(readProtobuf(grpcResponse));
-            List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = configuration.getResponseValueInterceptors();
-            for (ValueInterceptor<Entity, Entity> responseValueInterceptor : responseValueInterceptors) {
-                ValueInterceptionResult<Entity, Entity> result = responseValueInterceptor.intercept(responseValue);
-                if (isNull(result)) {
-                    break;
-                }
-                responseValue = result.getOutValue();
-                if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
-                    break;
-                }
-                if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
-                    return okResponse(command);
-                }
-            }
-            return cast(toServiceResponse(cast(configuration.getResponseMapper())).map(responseValue));
-        } catch (Exception throwable) {
-            throw new GrpcClientException(throwable);
-        }
     }
 }

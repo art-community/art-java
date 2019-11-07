@@ -36,7 +36,6 @@ import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpMethodType.*;
 import java.nio.charset.*;
 import java.util.*;
-import java.util.concurrent.*;
 
 @Getter(value = PACKAGE)
 @Setter(value = PACKAGE)
@@ -65,7 +64,6 @@ class HttpCommunicationConfiguration {
     private boolean ignoreResponseContentType;
     private CloseableHttpClient synchronousClient;
     private CloseableHttpAsyncClient asynchronousClient;
-    private Executor asynchronousFuturesExecutor = httpClientModule().getAsynchronousFuturesExecutor();
     private List<ValueInterceptor<Value, Value>> requestValueInterceptors = linkedListOf(httpClientModule().getRequestValueInterceptors());
     private List<ValueInterceptor<Value, Value>> responseValueInterceptors = linkedListOf(httpClientModule().getResponseValueInterceptors());
 }

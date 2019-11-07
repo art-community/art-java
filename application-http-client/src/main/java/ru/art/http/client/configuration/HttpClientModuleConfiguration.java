@@ -20,13 +20,11 @@ package ru.art.http.client.configuration;
 
 import lombok.*;
 import org.apache.http.*;
-import org.apache.http.client.*;
 import org.apache.http.client.config.*;
 import org.apache.http.config.*;
 import org.apache.http.impl.client.*;
 import org.apache.http.impl.nio.client.*;
 import org.apache.http.impl.nio.reactor.*;
-import org.apache.http.nio.client.*;
 import org.zalando.logbook.httpclient.*;
 import ru.art.http.client.exception.*;
 import ru.art.http.client.interceptor.*;
@@ -89,8 +87,6 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
 
     int getBalancerPort();
 
-    Executor getAsynchronousFuturesExecutor();
-
     Map<String, HttpCommunicationTargetConfiguration> getCommunicationTargets();
 
     default HttpCommunicationTargetConfiguration getCommunicationTargetConfiguration(String serviceId) {
@@ -102,7 +98,6 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
 
     @Getter
     class HttpClientModuleDefaultConfiguration extends HttpModuleDefaultConfiguration implements HttpClientModuleConfiguration {
-        private final Executor asynchronousFuturesExecutor = commonPool();
         private final RequestConfig requestConfig = RequestConfig.DEFAULT;
         private final SocketConfig socketConfig = SocketConfig.DEFAULT;
         private final ConnectionConfig connectionConfig = ConnectionConfig.DEFAULT;

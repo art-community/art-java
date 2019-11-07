@@ -105,8 +105,6 @@ public interface HttpCommunicator {
     interface HttpAsynchronousCommunicator {
         HttpAsynchronousCommunicator client(CloseableHttpAsyncClient client);
 
-        HttpAsynchronousCommunicator asynchronousFuturesExecutor(Executor executor);
-
         <RequestType, ResponseType> HttpAsynchronousCommunicator completionHandler(HttpCommunicationResponseHandler<RequestType, ResponseType> handler);
 
         <RequestType> HttpAsynchronousCommunicator exceptionHandler(HttpCommunicationExceptionHandler<RequestType> handler);
