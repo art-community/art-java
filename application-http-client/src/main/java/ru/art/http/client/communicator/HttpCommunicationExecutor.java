@@ -87,10 +87,10 @@ class HttpCommunicationExecutor {
             if (nonNull(httpResponse)) {
                 try {
                     httpResponse.close();
-                } catch (IOException e) {
+                } catch (Throwable closableThrowable) {
                     loggingModule()
                             .getLogger(HttpCommunicationExecutor.class)
-                            .error(e.getMessage(), e);
+                            .error(closableThrowable.getMessage(), closableThrowable);
                 }
             }
         }
