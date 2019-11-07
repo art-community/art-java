@@ -55,9 +55,9 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
-    HttpClient getClient();
+    CloseableHttpClient getClient();
 
-    HttpAsyncClient getAsynchronousClient();
+    CloseableHttpAsyncClient getAsynchronousClient();
 
     RequestConfig getRequestConfig();
 
