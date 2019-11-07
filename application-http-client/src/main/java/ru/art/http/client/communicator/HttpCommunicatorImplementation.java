@@ -21,7 +21,6 @@ package ru.art.http.client.communicator;
 import org.apache.http.*;
 import org.apache.http.client.config.*;
 import org.apache.http.impl.client.*;
-import org.apache.http.impl.nio.client.*;
 import ru.art.core.validator.*;
 import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
@@ -235,13 +234,13 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     public <RequestType, ResponseType> Optional<ResponseType> execute(RequestType request) {
         configuration.setRequest(validator.notNullField(request, "request"));
         validator.validate();
-        return ofNullable(executeHttpRequest(configuration));
+        return ofNullable(executeSynchronousHttpRequest(configuration));
     }
 
     @Override
     public <ResponseType> Optional<ResponseType> execute() {
         validator.validate();
-        return ofNullable(executeHttpRequest(configuration));
+        return ofNullable(executeSynchronousHttpRequest(configuration));
     }
 
 

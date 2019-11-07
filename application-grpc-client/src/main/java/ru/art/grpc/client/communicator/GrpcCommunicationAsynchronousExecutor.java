@@ -53,7 +53,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 @NoArgsConstructor(access = PRIVATE)
-class GrpcCommunicationAsyncExecutor {
+class GrpcCommunicationAsynchronousExecutor {
     @SuppressWarnings("Duplicates")
     static <ResponseType> CompletableFuture<ServiceResponse<ResponseType>> execute(GrpcCommunicationConfiguration configuration) {
         ManagedChannelBuilder<?> channelBuilder = forTarget(configuration.getUrl()).usePlaintext();

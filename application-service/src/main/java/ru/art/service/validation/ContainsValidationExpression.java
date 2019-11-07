@@ -24,9 +24,9 @@ import static ru.art.service.constants.ValidationExpressionType.*;
 import java.util.*;
 
 public class ContainsValidationExpression extends ValidationExpression<Object> {
-    private List<Object> objectList;
+    private List<?> objectList;
 
-    ContainsValidationExpression(List<Object> objectList) {
+    ContainsValidationExpression(List<?> objectList) {
         super(CONTAINS);
         this.objectList = objectList;
     }
