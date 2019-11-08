@@ -21,6 +21,7 @@ package ru.art.http.server;
 import lombok.*;
 import ru.art.core.mime.*;
 import ru.art.http.constants.*;
+import ru.art.http.mapper.*;
 import ru.art.http.server.context.*;
 import ru.art.http.server.context.HttpRequestContext.*;
 import ru.art.http.server.context.MultiPartContext.*;
@@ -179,17 +180,14 @@ class HttpServiceServlet extends HttpServlet {
             return;
         }
         List<MimeType> acceptTypes = sortMimeTypes(acceptTypesStr);
-        Iterator<MimeType> acceptTypeIt = acceptTypes.iterator();
-        while (acceptTypeIt.hasNext()) {
-            MimeType type = acceptTypeIt.next();
-            if (httpServerModule().getContentMappers().containsKey(type)) {
+        Map<MimeType, HttpContentMapper> contentMappers = concurrentHashMap(httpServerModule().getContentMappers());
+        for (MimeType type : acceptTypes) {
+            if (contentMappers.containsKey(type)) {
                 requestContextBuilder.acceptType(type);
                 return;
             }
-            if (!acceptTypeIt.hasNext()) {
-                throw new HttpServerException(format(REQUEST_ACCEPT_TYPE_NOT_SUPPORTED, type.toString()));
-            }
         }
+        throw new HttpServerException(format(REQUEST_ACCEPT_TYPE_NOT_SUPPORTED, acceptTypeHeader));
     }
 
     private void calculateContentType(HttpServletCommand command, HttpServletRequest request, HttpRequestContextBuilder requestContextBuilder) {
@@ -209,17 +207,14 @@ class HttpServiceServlet extends HttpServlet {
             return;
         }
         List<MimeType> contentTypes = sortMimeTypes(contentTypesStr);
-        Iterator<MimeType> contentTypeIt = contentTypes.iterator();
-        while (contentTypeIt.hasNext()) {
-            MimeType type = contentTypeIt.next();
-            if (httpServerModule().getContentMappers().containsKey(type)) {
+        Map<MimeType, HttpContentMapper> contentMappers = concurrentHashMap(httpServerModule().getContentMappers());
+        for (MimeType type : contentTypes) {
+            if (contentMappers.containsKey(type)) {
                 requestContextBuilder.contentType(type);
                 return;
             }
-            if (!contentTypeIt.hasNext()) {
-                throw new HttpServerException(format(REQUEST_CONTENT_TYPE_NOT_SUPPORTED, contentTypeHeader));
-            }
         }
+        throw new HttpServerException(format(REQUEST_CONTENT_TYPE_NOT_SUPPORTED, contentTypeHeader));
     }
 
     private MimeType getConsumesMimeTypeChecked(HttpServletCommand command) {
