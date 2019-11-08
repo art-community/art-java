@@ -74,7 +74,7 @@ public class ServiceController {
 
     public static <RequestType, ResponseType> ServiceResponse<ResponseType> executeServiceMethodUnchecked(ServiceRequest<RequestType> request) {
         Date startTime = new Date();
-        putIfNotNull(REQUEST_START_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT.format(startTime));
+        putIfNotNull(REQUEST_START_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT.get().format(startTime));
         Specification service = serviceModuleState()
                     .getServiceRegistry()
                 .getService(request.getServiceMethodCommand().getServiceId());
@@ -91,7 +91,7 @@ public class ServiceController {
                 .executeServiceWrapped(requestAfterInterception.getServiceMethodCommand(), requestAfterInterception);
         Date endTime = new Date();
         putIfNotNull(EXECUTION_TIME_KEY, endTime.getTime() - startTime.getTime());
-        putIfNotNull(REQUEST_END_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT.format(endTime));
+        putIfNotNull(REQUEST_END_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT.get().format(endTime));
         return cast(getOrElse(afterServiceExecution(request, service, response).getResponse(), response));
     }
 
