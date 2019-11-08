@@ -87,7 +87,7 @@ public class ReactiveServiceLoggingInterception extends ServiceLoggingIntercepti
         if (isNull(request.getRequestData())) {
             return super.intercept(request);
         }
-        Flux<Object> requestStream = from(cast(request.getRequestData()))
+        Flux<?> requestStream = from(cast(request.getRequestData()))
                 .doOnNext(payload -> super.intercept(new ServiceRequest<>(request.getServiceMethodCommand(), request.getValidationPolicy(), payload)));
         return nextInterceptor(new ServiceRequest<>(request.getServiceMethodCommand(), request.getValidationPolicy(), requestStream));
     }
