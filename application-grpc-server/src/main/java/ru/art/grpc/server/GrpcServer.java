@@ -20,7 +20,7 @@ package ru.art.grpc.server;
 
 import io.grpc.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.Logger;
 import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.*;
 import ru.art.grpc.server.exception.*;
 import ru.art.grpc.server.servlet.*;

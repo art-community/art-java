@@ -19,6 +19,7 @@
 package ru.art.task.deferred.executor;
 
 import lombok.*;
+import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;

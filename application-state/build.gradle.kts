@@ -25,7 +25,6 @@ art {
         applicationConfig()
         applicationConfigTypesafe()
         applicationConfigYaml()
-        applicationConfigGroovy()
         applicationConfigRemote()
         applicationConfiguratorApi()
         applicationConfigRemoteApi()

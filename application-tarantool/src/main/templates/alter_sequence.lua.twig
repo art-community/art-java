@@ -1,0 +1,22 @@
+box.schema.sequence.create('{{ sequenceName }}', { if_not_exists = true });
+box.sequence.{{ sequenceName }}:alter({
+{%- if not (start is empty) -%}
+            start
+        {%- endif -%}
+{%- if not (min is empty) -%}
+            min
+        {%- endif -%}
+{%- if not (max is empty) -%}
+            max
+        {%- endif -%}
+{%- if not (cycle is empty) -%}
+            cycle
+        {%- endif -%}
+{%- if not (cache is empty) -%}
+            cache
+        {%- endif -%}
+{%- if not (step is empty) -%}
+            step
+        {%- endif -%}
+    }
+)

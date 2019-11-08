@@ -19,7 +19,7 @@
 package ru.art.state.module;
 
 import lombok.*;
-import ru.art.core.module.*;
+import ru.art.core.module.Module;
 import ru.art.http.server.specification.*;
 import ru.art.metrics.http.specification.*;
 import ru.art.state.*;
@@ -37,8 +37,8 @@ import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstan
 import static ru.art.state.configuration.ApplicationStateModuleConfiguration.*;
 import static ru.art.state.constants.StateModuleConstants.*;
 import static ru.art.state.dao.ClusterDao.*;
-import static ru.art.task.deferred.executor.TaskFactory.*;
 import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
+import static ru.art.task.deferred.executor.TaskFactory.*;
 
 @Getter
 public class ApplicationStateModule implements Module<ApplicationStateModuleConfiguration, ApplicationState> {

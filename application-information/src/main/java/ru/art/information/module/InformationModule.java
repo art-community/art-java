@@ -19,6 +19,7 @@
 package ru.art.information.module;
 
 import lombok.*;
+import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import ru.art.information.configuration.*;
 import static ru.art.core.context.Context.*;
