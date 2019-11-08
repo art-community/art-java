@@ -125,7 +125,34 @@ subprojects {
                 userOrg = "art-community"
                 websiteUrl = "https://github.com/art-community/art"
                 vcsUrl = "https://github.com/art-community/art"
-                setLabels("art", "kotlin", "java", "rsocket", "tarantool", "grpc", "protobuf", "rocksdb", "http", "tomcat")
+                setLabels("tarantool",
+                        "kafka",
+                        "sql",
+                        "java",
+                        "rsocket",
+                        "rsocket-java",
+                        "grpc",
+                        "grpc-java",
+                        "protobuf",
+                        "json",
+                        "xml",
+                        "framework",
+                        "kit",
+                        "configuration",
+                        "module",
+                        "gradle",
+                        "kotlin",
+                        "scala",
+                        "art",
+                        "kotlin-dsl",
+                        "rocksdb",
+                        "scheduling",
+                        "configurator",
+                        "yaml",
+                        "lightbend",
+                        "log4j",
+                        "resilience4j",
+                        "badges")
                 setLicenses("Apache-2.0")
             })
             tasks["bintrayUpload"].dependsOn(tasks["generatePomFileFor${name.capitalize()}Publication"], jar, sourceJar)
