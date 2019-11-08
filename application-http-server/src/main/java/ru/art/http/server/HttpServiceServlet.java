@@ -69,6 +69,8 @@ import java.util.*;
 @MultipartConfig
 class HttpServiceServlet extends HttpServlet {
     private final Map<HttpMethodType, HttpServletCommand> commands;
+    private final Map<MimeType, HttpContentMapper> contentMappers = concurrentHashMap(httpServerModule().getContentMappers());
+    private final Map<Class<Throwable>, HttpExceptionHandler<Throwable>> exceptionHandlers = concurrentHashMap(httpServerModule().getExceptionHandlers());
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) {
@@ -114,9 +116,9 @@ class HttpServiceServlet extends HttpServlet {
     private void handleException(HttpServletRequest request, HttpServletResponse response, Throwable exception) {
         loggingModule().getLogger(HttpServiceServlet.class).error(HTTP_REQUEST_HANDLING_EXCEPTION_MESSAGE, exception);
         Class<? extends Throwable> exceptionClass = exception.getClass();
-        HttpExceptionHandler<Throwable> exceptionExceptionHandler = cast(httpServerModule().getExceptionHandlers().get(exceptionClass));
+        HttpExceptionHandler<Throwable> exceptionExceptionHandler = cast(exceptionHandlers.get(exceptionClass));
         if (isNull(exceptionExceptionHandler)) {
-            exceptionExceptionHandler = cast(httpServerModule().getExceptionHandlers().get(Throwable.class));
+            exceptionExceptionHandler = cast(exceptionHandlers.get(Throwable.class));
         }
         if (isNull(exceptionExceptionHandler)) throw new HttpServerException(exception);
         exceptionExceptionHandler.handle(exception, request, response);
@@ -180,7 +182,6 @@ class HttpServiceServlet extends HttpServlet {
             return;
         }
         List<MimeType> acceptTypes = sortMimeTypes(acceptTypesStr);
-        Map<MimeType, HttpContentMapper> contentMappers = concurrentHashMap(httpServerModule().getContentMappers());
         for (MimeType type : acceptTypes) {
             if (contentMappers.containsKey(type)) {
                 requestContextBuilder.acceptType(type);
@@ -207,7 +208,6 @@ class HttpServiceServlet extends HttpServlet {
             return;
         }
         List<MimeType> contentTypes = sortMimeTypes(contentTypesStr);
-        Map<MimeType, HttpContentMapper> contentMappers = concurrentHashMap(httpServerModule().getContentMappers());
         for (MimeType type : contentTypes) {
             if (contentMappers.containsKey(type)) {
                 requestContextBuilder.contentType(type);
