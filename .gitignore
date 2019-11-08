@@ -60,8 +60,6 @@ node_modules
 *.snap
 *.xlog
 log.*
-!management-panel/src/main/web/src/component/build
-Registrator
 /application-test/kafka/
 /application-test/tarantool/
 /application-test/zookeeper/

@@ -31,14 +31,16 @@ art {
 }
 
 dependencies {
-    embedded("io.rsocket", "rsocket-core", art.externalDependencyVersionsConfiguration.rsocketVersion)
-            .exclude("io.netty")
-            .exclude("io.projectreactor", "reactor-core")
-            .exclude("org.slf4j")
-    embedded("io.rsocket", "rsocket-transport-netty", art.externalDependencyVersionsConfiguration.rsocketVersion)
-            .exclude("io.netty")
-            .exclude("io.projectreactor", "reactor-core")
-            .exclude("org.slf4j")
-    embedded("io.netty", "netty-all", "4.1.38.Final")
-            .exclude("org.slf4j")
+    with(art.externalDependencyVersionsConfiguration) {
+        embedded("io.rsocket", "rsocket-core", rsocketVersion)
+                .exclude("io.netty")
+                .exclude("io.projectreactor", "reactor-core")
+                .exclude("org.slf4j")
+        embedded("io.rsocket", "rsocket-transport-netty", rsocketVersion)
+                .exclude("io.netty")
+                .exclude("io.projectreactor", "reactor-core")
+                .exclude("org.slf4j")
+        embedded("io.netty", "netty-all", nettyVersion)
+                .exclude("org.slf4j")
+    }
 }

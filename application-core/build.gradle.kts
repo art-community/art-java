@@ -17,6 +17,8 @@
  */
 
 dependencies {
-    embedded("com.google.guava", "guava", "28.1-jre")
-    embedded("io.vavr", "vavr", "0.10.2")
+    with(art.externalDependencyVersionsConfiguration) {
+        embedded("com.google.guava", "guava", guavaVersion)
+        embedded("io.vavr", "vavr", vavrVersion)
+    }
 }

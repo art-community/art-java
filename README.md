@@ -35,8 +35,8 @@ art {
  }
 ```
 ## Requirements
-- Java 8+ (Tested on 9, 11, 13)
-- Gradle 5.+
+- Java 8+ (9, 10, 11, 12)
+- Gradle 5+
 - If working with web - installed nodejs and npm
 - If using tarantool on Windows - installed WSL (Tarantool is not supported on Windows System)
 - If using sql - installed SQL db

@@ -39,7 +39,7 @@ dependencies {
                 .exclude("io.netty")
                 .exclude("com.google.guava")
                 .exclude("com.google.code.findbugs")
-        embedded("io.netty", "netty-all", "4.1.42.Final")
+        embedded("io.netty", "netty-all", nettyVersion)
                 .exclude("com.google.guava")
                 .exclude("com.google.code.findbugs")
     }

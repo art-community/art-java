@@ -25,6 +25,6 @@ art {
 
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
-        embedded("com.typesafe", "config", "1.4+")
+        embedded("com.typesafe", "config", typesafeConfigVersion)
     }
 }
