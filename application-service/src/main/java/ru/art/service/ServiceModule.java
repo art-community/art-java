@@ -19,7 +19,7 @@
 package ru.art.service;
 
 import lombok.*;
-import ru.art.core.module.*;
+import ru.art.core.module.Module;
 import ru.art.service.state.*;
 import static lombok.AccessLevel.*;
 import static org.apache.logging.log4j.ThreadContext.*;

@@ -49,11 +49,15 @@ public class ConfiguratorCommunicationSpecification implements GrpcCommunication
     private final ModuleKey moduleKey = new ModuleKey(isEmpty(profileId) ? LOCAL_PROFILE : profileId, contextConfiguration().getMainModuleId());
 
     @Getter(lazy = true)
-    private final GrpcCommunicator getProtobufConfig = grpcCommunicator(host, port, path)
-            .serviceId(CONFIGURATOR_SERVICE_ID)
-            .methodId(GET_PROTOBUF_CONFIG)
-            .requestMapper(moduleKeyMapper.getFromModel())
-            .responseMapper(configurationMapper.getToModel());
+    private final GrpcCommunicator getProtobufConfig = getProtobufConfig();
+
+    private GrpcCommunicator getProtobufConfig() {
+        return grpcCommunicator(host, port, path)
+                .serviceId(CONFIGURATOR_SERVICE_ID)
+                .methodId(GET_PROTOBUF_CONFIG)
+                .requestMapper(moduleKeyMapper.getFromModel())
+                .responseMapper(configurationMapper.getToModel());
+    }
 
     private Configuration getConfiguration() {
         try {

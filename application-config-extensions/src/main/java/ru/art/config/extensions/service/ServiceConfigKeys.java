@@ -24,8 +24,10 @@ public interface ServiceConfigKeys {
     String SERVICE = "service";
     String FAILURE_RATE_THRESHOLD = "failureRateThreshold";
     String WAIT_DURATION_IN_OPEN_STATE = "waitDurationInOpenState";
-    String RING_BUFFER_SIZE_IN_HALF_OPEN_STATE = "ringBufferSizeInHalfOpenState";
-    String RING_BUFFER_SIZE_IN_CLOSED_STATE = "ringBufferSizeInClosedState";
+    String PERMITTED_NUMBER_OF_CALLS_IN_HALF_OPEN_STATE = "permittedNumberOfCallsInHalfOpenState";
+    String SLIDING_WINDOW_SIZE = "slidingWindow.size";
+    String SLIDING_WINDOW_TYPE = "slidingWindow.type";
+    String SLIDING_WINDOW_MINIMUM_NUMBER_OF_CALLS = "slidingWindow.minimumNumberOfCalls";
     String AUTOMATIC_TRANSITION_FROM_OPEN_TO_HALF_OPEN_ENABLED = "automaticTransitionFromOpenToHalfOpenEnabled";
     String TIMEOUT_DURATION = "timeoutDuration";
     String LIMIT_REFRESH_PERIOD = "limitRefreshPeriod";
@@ -33,7 +35,7 @@ public interface ServiceConfigKeys {
     String MAX_ATTEMPTS = "maxAttempts";
     String WAIT_DURATION = "waitDuration";
     String MAX_CONCURRENT_CALLS = "maxConcurrentCalls";
-    String MAX_WAIT_TIME = "waitDuration";
+    String MAX_WAIT_DURATION = "maxWaitDuration";
     String CIRCUIT_BREAKER = "circuitBreaker";
     String RATE_LIMITER = "rateLimiter";
     String BULKHEAD = "bulkhead";

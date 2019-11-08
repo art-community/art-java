@@ -1,0 +1,22 @@
+box.schema.sequence.create('{{ sequenceName }}', {
+{%- if not (start is empty) -%}
+            start = {{ start }};
+        {%- endif -%}
+{%- if not (min is empty) -%}
+            min = {{ min }};
+        {%- endif -%}
+{%- if not (max is empty) -%}
+            max = {{ max }};
+        {%- endif -%}
+{%- if not (cycle is empty) -%}
+            cycle = {{ cycle }};
+        {%- endif -%}
+{%- if not (cache is empty) -%}
+            cache = {{ cache }};
+        {%- endif -%}
+{%- if not (step is empty) -%}
+            step = {{ step }};
+        {%- endif -%}
+        if_not_exists = true;
+    }
+)

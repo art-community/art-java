@@ -22,11 +22,11 @@ import ru.art.http.server.context.*;
 import ru.art.http.server.handler.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static javax.servlet.http.HttpServletResponse.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.http.constants.HttpHeaders.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
+import static ru.art.http.constants.HttpStatus.*;
 import static ru.art.http.server.body.descriptor.HttpBodyDescriptor.*;
 import static ru.art.http.server.constants.HttpExceptionResponses.*;
 import static ru.art.http.server.module.HttpServerModule.*;
@@ -37,7 +37,7 @@ class ExceptionHttpJsonHandler implements HttpExceptionHandler<Throwable> {
     public void handle(Throwable exception, HttpServletRequest request, HttpServletResponse response) {
         String error = format(EXCEPTION_HANDLING_ERROR_RESPONSE, exception.getMessage());
         response.setHeader(CONTENT_TYPE, APPLICATION_JSON_UTF8.toString());
-        response.setStatus(SC_INTERNAL_SERVER_ERROR);
+        response.setStatus(INTERNAL_SERVER_ERROR.getCode());
         HttpRequestContext requestContext = httpServerModuleState().getRequestContext();
         writeResponseBody(response, error.getBytes(isNull(requestContext) ?
                 contextConfiguration().getCharset() :

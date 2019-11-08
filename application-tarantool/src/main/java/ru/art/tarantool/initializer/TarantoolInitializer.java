@@ -18,8 +18,9 @@
 
 package ru.art.tarantool.initializer;
 
+import com.mitchellbosecke.pebble.*;
+import com.mitchellbosecke.pebble.loader.*;
 import org.apache.logging.log4j.*;
-import org.jtwig.*;
 import org.tarantool.*;
 import org.zeroturnaround.exec.*;
 import ru.art.tarantool.configuration.*;
@@ -31,7 +32,7 @@ import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static org.apache.logging.log4j.io.IoBuilder.*;
-import static org.jtwig.JtwigTemplate.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.constants.SystemConstants.*;
 import static ru.art.core.converter.WslPathConverter.*;
@@ -128,11 +129,18 @@ public class TarantoolInitializer {
                     address,
                     luaConfiguration,
                     luaConfigurationPath.toAbsolutePath()));
-
-            String luaUserConfiguration = classpathTemplate(USER + JTW_EXTENSION)
-                    .render(new JtwigModel()
-                            .with(USERNAME, connectionConfiguration.getUsername())
-                            .with(PASSWORD, connectionConfiguration.getPassword()));
+            StringWriter templateWriter = new StringWriter();
+            Map<String, Object> templateContext = cast(mapOf()
+                    .add(USERNAME, connectionConfiguration.getUsername())
+                    .add(PASSWORD, connectionConfiguration.getPassword()));
+            new PebbleEngine.Builder()
+                    .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
+                    .build()
+                    .getTemplate(USER + TWIG_TEMPLATE)
+                    .evaluate(templateWriter, templateContext);
+            String luaUserConfiguration = templateWriter.toString();
             Path userConfigurationPath = get(getLuaScriptPath(localConfiguration, USER));
             writeFile(userConfigurationPath, luaUserConfiguration);
             logger.info(format(WRITING_TARANTOOL_USER_CONFIGURATION,
@@ -184,7 +192,7 @@ public class TarantoolInitializer {
         logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
     }
 
-    private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException {
+    private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException, InterruptedException {
         URL executableUrl = TarantoolInitializer.class.getClassLoader().getResource(localConfiguration.getExecutable());
         if (isNull(executableUrl)) {
             throw new TarantoolInitializationException(format(TARANTOOL_EXECUTABLE_NOT_EXISTS, address, localConfiguration.getExecutable()));
@@ -206,7 +214,8 @@ public class TarantoolInitializer {
                 .directory(new File(localConfiguration.getWorkingDirectory()))
                 .redirectOutput(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .redirectError(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
-                .start();
+                .start()
+                .getProcess();
         logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
     }
 

@@ -83,8 +83,7 @@ public class RsocketAcceptor extends AbstractRSocket {
         }
         ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(context.getRequest());
         RsocketService.RsocketMethod rsocketMethod = context.getRsocketReactiveMethods().getRsocketMethod();
-        return writeResponseReactive(rsocketMethod, cast(serviceResponse),
-                fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType()));
+        return writeResponseReactive(rsocketMethod, cast(serviceResponse), fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType()));
     }
 
     @Override
@@ -104,13 +103,11 @@ public class RsocketAcceptor extends AbstractRSocket {
                                 .getReactiveMethod()
                                 .responseProcessingMode() == REACTIVE)
                         .groupBy(RsocketRequestReactiveContext::getRsocketReactiveGroupKey, serviceModuleState()
-                    .getServiceRegistry()
+                                .getServiceRegistry()
                                 .getServices()
                                 .size())
                         .map(RsocketReactivePreparedResponse::fromGroupedFlux)
-                        .flatMap(preparedResponse -> writeResponseReactive(preparedResponse.getRsocketMethod(),
-                                executeServiceMethodUnchecked(preparedResponse.getServiceRequest()),
-                                dataFormat)));
+                        .flatMap(preparedResponse -> writeResponseReactive(preparedResponse.getRsocketMethod(), executeServiceMethodUnchecked(preparedResponse.getServiceRequest()), dataFormat)));
     }
 
     @Override

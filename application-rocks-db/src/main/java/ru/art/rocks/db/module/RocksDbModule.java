@@ -20,7 +20,7 @@ package ru.art.rocks.db.module;
 
 import lombok.*;
 import org.rocksdb.*;
-import ru.art.core.module.*;
+import ru.art.core.module.Module;
 import ru.art.rocks.db.configuration.*;
 import ru.art.rocks.db.exception.*;
 import ru.art.rocks.db.state.*;
