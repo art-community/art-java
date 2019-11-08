@@ -73,7 +73,7 @@ public class CollectionValue<T> implements Value {
 
     CollectionValue() {
         this.elements = emptyList();
-        this.elementsType = null;
+        this.elementsType = VALUE;
         collectionMode = COLLECTION;
     }
 

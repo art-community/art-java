@@ -18,19 +18,21 @@
 
 package ru.art.config;
 
-import groovy.util.*;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.node.*;
 import lombok.*;
 import ru.art.config.constants.*;
 import ru.art.config.exception.*;
 import ru.art.core.checker.*;
 import ru.art.entity.*;
+import static com.fasterxml.jackson.databind.node.JsonNodeType.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
+import static java.util.stream.StreamSupport.*;
 import static ru.art.config.constants.ConfigExceptionMessages.*;
-import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
 import java.util.*;
 
@@ -46,11 +48,11 @@ public class Config {
         switch (config.configType) {
             case PROPERTIES:
             case JSON:
-            case HOCON: //Temporary return false, because we cannot determine emptiness of config
+            case HOCON:
+                return config.asTypesafeConfig().isEmpty();
             case YAML:
-                return false;
-            case GROOVY:
-                return config.asGroovyConfig().isEmpty();
+                JsonNode node = config.asYamlConfig();
+                return node.size() <= 0 || node.getNodeType() == NULL || node.getNodeType() == MISSING;
             case REMOTE_ENTITY_CONFIG:
                 return config.asEntityConfig().isEmpty();
             default:
@@ -63,19 +65,14 @@ public class Config {
     }
 
 
-    public io.advantageous.config.Config asTypesafeConfig() {
+    public com.typesafe.config.Config asTypesafeConfig() {
         if (!configType.isTypesafeConfig()) throw new ConfigException(CONFIG_TYPE_IS_NOT_TYPESAFE);
-        return (io.advantageous.config.Config) this.configObject;
+        return ((com.typesafe.config.ConfigObject) this.configObject).toConfig();
     }
 
-    public io.advantageous.config.Config asYamlConfig() {
+    public JsonNode asYamlConfig() {
         if (!configType.isYamlConfig()) throw new ConfigException(CONFIG_TYPE_IS_NOT_YAML);
-        return (io.advantageous.config.Config) this.configObject;
-    }
-
-    public ConfigObject asGroovyConfig() {
-        if (!configType.isGroovyConfig()) throw new ConfigException(CONFIG_TYPE_IS_NOT_GROOVY);
-        return (ConfigObject) this.configObject;
+        return (JsonNode) this.configObject;
     }
 
     public Entity asEntityConfig() {
@@ -93,9 +90,7 @@ public class Config {
             case HOCON:
                 return new Config(asTypesafeConfig().getConfig(sectionId), configType);
             case YAML:
-                return new Config(asYamlConfig().getConfig(sectionId), configType);
-            case GROOVY:
-                return new Config(asGroovyConfig().get(sectionId), configType);
+                return new Config(asYamlConfig().at(SLASH + sectionId.replace(DOT, SLASH)), configType);
             case REMOTE_ENTITY_CONFIG:
                 return new Config(asEntityConfig().find(sectionId), configType);
             default:
@@ -116,9 +111,7 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getString(path);
             case YAML:
-                return asYamlConfig().getString(path);
-            case GROOVY:
-                return cast(asGroovyConfig().get(path));
+                return asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).asText();
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
@@ -136,9 +129,7 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getInt(path);
             case YAML:
-                return asYamlConfig().getInt(path);
-            case GROOVY:
-                return cast(asGroovyConfig().get(path));
+                return asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).asInt();
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
@@ -156,9 +147,7 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getLong(path);
             case YAML:
-                return asYamlConfig().getLong(path);
-            case GROOVY:
-                return cast(asGroovyConfig().get(path));
+                return asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).asLong();
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
@@ -176,9 +165,7 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getDouble(path);
             case YAML:
-                return asYamlConfig().getDouble(path);
-            case GROOVY:
-                return cast(asGroovyConfig().get(path));
+                return asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).asDouble();
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
@@ -196,20 +183,17 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getBoolean(path);
             case YAML:
-                return asYamlConfig().getBoolean(path);
-            case GROOVY:
-                return cast(asGroovyConfig().get(path));
+                return asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).asBoolean();
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
     }
 
-
-    @SuppressWarnings("unchecked")
     public List<Config> getConfigList(String path) {
         if (isEmpty(this)) return emptyList();
         if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
         if (!hasPath(path)) return emptyList();
+        Map<String, ?> config;
         switch (configType) {
             case REMOTE_ENTITY_CONFIG:
                 return asEntityConfig().findEntityList(path).stream().map(configObject -> new Config(configObject, configType)).collect(toList());
@@ -218,9 +202,9 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getConfigList(path).stream().map(configObject -> new Config(configObject, configType)).collect(toList());
             case YAML:
-                return asYamlConfig().getConfigList(path).stream().map(configObject -> new Config(configObject, configType)).collect(toList());
-            case GROOVY:
-                return ((Map<String, ?>) asGroovyConfig().get(path)).values().stream().map(configObject -> new Config(configObject, configType)).collect(toList());
+                return stream(((Iterable<Map.Entry<String, JsonNode>>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).fields()).spliterator(), false)
+                        .map(configObject -> new Config(configObject.getValue(), configType))
+                        .collect(toList());
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
@@ -238,9 +222,9 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getStringList(path);
             case YAML:
-                return asYamlConfig().getStringList(path);
-            case GROOVY:
-                return cast(asGroovyConfig().get(path));
+                return stream(((Iterable<JsonNode>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).iterator()).spliterator(), false)
+                        .map(JsonNode::asText)
+                        .collect(toList());
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
@@ -258,9 +242,9 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getIntList(path);
             case YAML:
-                return asYamlConfig().getIntList(path);
-            case GROOVY:
-                return cast(asGroovyConfig().get(path));
+                return stream(((Iterable<JsonNode>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).iterator()).spliterator(), false)
+                        .map(JsonNode::asInt)
+                        .collect(toList());
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
@@ -278,9 +262,9 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getDoubleList(path);
             case YAML:
-                return asYamlConfig().getDoubleList(path);
-            case GROOVY:
-                return cast(asGroovyConfig().get(path));
+                return stream(((Iterable<JsonNode>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).iterator()).spliterator(), false)
+                        .map(JsonNode::asDouble)
+                        .collect(toList());
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
@@ -298,9 +282,9 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getLongList(path);
             case YAML:
-                return asYamlConfig().getLongList(path);
-            case GROOVY:
-                return cast(asGroovyConfig().get(path));
+                return stream(((Iterable<JsonNode>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).iterator()).spliterator(), false)
+                        .map(JsonNode::asLong)
+                        .collect(toList());
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
@@ -318,25 +302,23 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getBooleanList(path);
             case YAML:
-                return asYamlConfig().getBooleanList(path);
-            case GROOVY:
-                return cast(asGroovyConfig().get(path));
+                return stream(((Iterable<JsonNode>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).iterator()).spliterator(), false)
+                        .map(JsonNode::asBoolean)
+                        .collect(toList());
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
     }
 
-    @SuppressWarnings("unchecked")
     public Set<String> getKeys(String path) {
+        Map<String, ?> config;
         switch (configType) {
             case PROPERTIES:
             case JSON:
             case HOCON:
-                return asTypesafeConfig().getMap(path).keySet();
+                return asTypesafeConfig().getObject(path).keySet();
             case YAML:
-                return asYamlConfig().getMap(path).keySet();
-            case GROOVY:
-                return ((Map<String, ?>) asGroovyConfig().get(path)).keySet();
+                return stream(((Iterable<String>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).fieldNames()).spliterator(), false).collect(toSet());
             case REMOTE_ENTITY_CONFIG:
                 return asEntityConfig().findEntity(path).getFieldNames();
             default:
@@ -350,11 +332,9 @@ public class Config {
             case PROPERTIES:
             case JSON:
             case HOCON:
-                return asTypesafeConfig().getMap(EMPTY_STRING).keySet();
+                return asTypesafeConfig().root().keySet();
             case YAML:
-                return asYamlConfig().getMap(EMPTY_STRING).keySet();
-            case GROOVY:
-                return cast(asGroovyConfig().keySet());
+                return stream(((Iterable<String>) () -> asYamlConfig().fieldNames()).spliterator(), false).collect(toSet());
             case REMOTE_ENTITY_CONFIG:
                 return asEntityConfig().getFieldNames();
             default:
@@ -374,9 +354,8 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().hasPath(path);
             case YAML:
-                return asYamlConfig().hasPath(path);
-            case GROOVY:
-                return asGroovyConfig().containsKey(path);
+                JsonNodeType nodeType = asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).getNodeType();
+                return nodeType != NULL && nodeType != MISSING;
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }

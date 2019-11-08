@@ -19,6 +19,7 @@
 package ru.art.reactive.service.module;
 
 import lombok.*;
+import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import ru.art.reactive.service.configuration.*;
 import static ru.art.core.context.Context.*;

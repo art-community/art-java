@@ -19,7 +19,7 @@
 package ru.art.tarantool.module;
 
 import lombok.*;
-import ru.art.core.module.*;
+import ru.art.core.module.Module;
 import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.initializer.*;
 import ru.art.tarantool.state.*;

@@ -22,7 +22,9 @@ art {
         applicationEntity()
         applicationLogging()
         applicationService()
+        applicationTemplateEngine()
     }
+
     resources {
         resourceDirs.add("src/main/templates")
         resourceDirs.add("src/main/executable")
@@ -32,18 +34,11 @@ art {
 
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
-            embedded("org.jtwig", "jtwig-core", jtwigVersion)
-                .exclude("com.google.guava", "guava")
         embedded("org.zeroturnaround", "zt-exec", zeroTurnaroundVersion)
-        embedded("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
+                .exclude("org.slf4j")
         embedded("org.tarantool", "connector", tarantoolConnectorVersion)
-        embedded("com.google.guava", "guava", guavaVersion)
+                .exclude("org.slf4j")
+        embedded("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
+                .exclude("org.apache.logging.log4j")
     }
 }
-configurations {
-        with(embedded.get()) {
-            exclude("org.slf4j", "slf4j-api")
-            exclude("org.slf4j", "slf4j-log4j12")
-            exclude("org.slf4j", "jul-to-slf4j")
-        }
-    }
