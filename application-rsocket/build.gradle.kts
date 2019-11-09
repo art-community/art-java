@@ -24,13 +24,23 @@ art {
         applicationService()
         applicationReactiveService()
         applicationProtobuf()
-		applicationJson()
+        applicationJson()
         applicationXml()
         applicationMessagePack()
     }
 }
 
 dependencies {
-    embedded("io.rsocket", "rsocket-core", art.externalDependencyVersionsConfiguration.rsocketVersion)
-    embedded("io.rsocket", "rsocket-transport-netty", art.externalDependencyVersionsConfiguration.rsocketVersion)
+    with(art.externalDependencyVersionsConfiguration) {
+        embedded("io.rsocket", "rsocket-core", rsocketVersion)
+                .exclude("io.netty")
+                .exclude("io.projectreactor", "reactor-core")
+                .exclude("org.slf4j")
+        embedded("io.rsocket", "rsocket-transport-netty", rsocketVersion)
+                .exclude("io.netty")
+                .exclude("io.projectreactor", "reactor-core")
+                .exclude("org.slf4j")
+        embedded("io.netty", "netty-all", nettyVersion)
+                .exclude("org.slf4j")
+    }
 }

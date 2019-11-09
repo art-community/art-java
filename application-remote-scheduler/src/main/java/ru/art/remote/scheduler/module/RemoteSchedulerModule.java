@@ -19,7 +19,7 @@
 package ru.art.remote.scheduler.module;
 
 import lombok.*;
-import ru.art.core.module.*;
+import ru.art.core.module.Module;
 import ru.art.remote.scheduler.configuration.*;
 import ru.art.remote.scheduler.state.*;
 import static lombok.AccessLevel.*;

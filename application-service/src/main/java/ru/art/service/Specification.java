@@ -31,7 +31,7 @@ public interface Specification {
     <P, R> R executeMethod(String methodId, P request);
 
     default DeactivationConfig getDeactivationConfig() {
-        return DeactivationConfig.builder().build();
+        return serviceModule().getDeactivationConfigurations().getOrDefault(getServiceId(), DeactivationConfig.builder().build());
     }
 
     default List<RequestInterceptor> getRequestInterceptors() {

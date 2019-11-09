@@ -20,10 +20,11 @@ package ru.art.http.server;
 
 import org.apache.catalina.*;
 import org.apache.catalina.connector.*;
+import org.apache.catalina.core.*;
 import org.apache.catalina.servlets.*;
 import org.apache.catalina.startup.*;
 import org.apache.coyote.http2.*;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.Logger;
 import org.apache.tomcat.util.descriptor.web.*;
 import org.zalando.logbook.servlet.*;
 import ru.art.core.constants.*;
@@ -56,6 +57,7 @@ import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 import static ru.art.http.server.model.HttpService.*;
 import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.logging.LoggingModule.*;
+import javax.servlet.*;
 import javax.servlet.http.*;
 import java.util.*;
 
@@ -128,12 +130,15 @@ public class HttpServer {
     }
 
     private Context createContext() {
-        Context ctx = tomcat.addContext(EMPTY_STRING, getProperty(TEMP_DIR_KEY));
+        StandardContext ctx = (StandardContext) tomcat.addContext(EMPTY_STRING, getProperty(TEMP_DIR_KEY));
         ctx.setAllowCasualMultipartParsing(httpServerModule().isAllowCasualMultipartParsing());
         if (cancelablePaths.contains(SLASH)) {
             logger.info(HTTP_SERVICES_CANCELED);
             return ctx;
         }
+        ctx.setClearReferencesObjectStreamClassCaches(false);
+        ctx.setClearReferencesRmiTargets(false);
+        ctx.setClearReferencesThreadLocals(false);
         registerHttpServices(ctx);
         return ctx;
     }
@@ -342,7 +347,7 @@ public class HttpServer {
         logger.info(format(REGISTERING_HTTP_INTERCEPTOR, filterName, urlPattern));
         FilterDef def = new FilterDef();
         def.setFilterName(filterName);
-        def.setFilter((request, response, chain) -> {
+        Filter filter = (request, response, chain) -> {
             InterceptionStrategy strategy = lastRequestInterceptionResult.get();
             if (isNull(strategy) || strategy == NEXT_INTERCEPTOR) {
                 lastRequestInterceptionResult
@@ -353,7 +358,8 @@ public class HttpServer {
             if (strategy == PROCESS_HANDLING) {
                 chain.doFilter(request, response);
             }
-        });
+        };
+        def.setFilter(filter);
         FilterMap map = new FilterMap();
         map.setFilterName(filterName);
         map.addURLPattern(urlPattern);

@@ -19,9 +19,9 @@
 package ru.art.http.client.communicator;
 
 import org.apache.http.*;
-import org.apache.http.client.*;
 import org.apache.http.client.config.*;
-import org.apache.http.nio.client.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.nio.client.*;
 import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
@@ -42,7 +42,7 @@ public interface HttpCommunicator {
         return new HttpCommunicatorImplementation(targetConfiguration);
     }
 
-    HttpCommunicator client(HttpClient client);
+    HttpCommunicator client(CloseableHttpClient client);
 
     HttpCommunicator consumes(MimeToContentTypeMapper responseContentTypeMapper);
 
@@ -103,9 +103,7 @@ public interface HttpCommunicator {
     HttpAsynchronousCommunicator asynchronous();
 
     interface HttpAsynchronousCommunicator {
-        HttpAsynchronousCommunicator client(HttpAsyncClient client);
-
-        HttpAsynchronousCommunicator asynchronousFuturesExecutor(Executor executor);
+        HttpAsynchronousCommunicator client(CloseableHttpAsyncClient client);
 
         <RequestType, ResponseType> HttpAsynchronousCommunicator completionHandler(HttpCommunicationResponseHandler<RequestType, ResponseType> handler);
 

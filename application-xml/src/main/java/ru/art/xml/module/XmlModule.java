@@ -19,6 +19,7 @@
 package ru.art.xml.module;
 
 import lombok.*;
+import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import ru.art.xml.configuration.*;
 import static lombok.AccessLevel.*;

@@ -18,12 +18,17 @@
 
 package ru.art.tarantool.configuration.lua;
 
+import com.mitchellbosecke.pebble.*;
+import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
-import org.jtwig.*;
-import static org.jtwig.JtwigTemplate.*;
+import ru.art.tarantool.exception.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
+import java.io.*;
+import java.util.*;
 
 @Getter
 @Builder
@@ -40,19 +45,42 @@ public class TarantoolSequenceConfiguration {
     private String step;
 
     public String toCreateSequenceLua() {
-        return classpathTemplate(CREATE_SEQUENCE + JTW_EXTENSION)
-                .render(new JtwigModel()
-                        .with(SEQUENCE_NAME, sequenceName)
-                        .with(START, start)
-                        .with(MIN, min)
-                        .with(MAX, max)
-                        .with(CYCLE, cycle)
-                        .with(CACHE, cache)
-                        .with(STEP, step));
+        Map<String, Object> templateContext = cast(mapOf()
+                .add(SEQUENCE_NAME, sequenceName)
+                .add(START, start)
+                .add(MIN, min)
+                .add(MAX, max)
+                .add(CYCLE, cycle)
+                .add(CACHE, cache)
+                .add(STEP, step));
+        StringWriter templateWriter = new StringWriter();
+        try {
+            new PebbleEngine.Builder()
+                    .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
+                    .build()
+                    .getTemplate(CREATE_SEQUENCE + TWIG_TEMPLATE)
+                    .evaluate(templateWriter, templateContext);
+            return templateWriter.toString();
+        } catch (Throwable e) {
+            throw new TarantoolExecutionException(e);
+        }
     }
 
     public String toManageSequenceLua() {
-        return classpathTemplate(SEQUENCE_MANAGEMENT + JTW_EXTENSION)
-                .render(new JtwigModel().with(SEQUENCE_NAME, sequenceName));
+        StringWriter templateWriter = new StringWriter();
+        try {
+            new PebbleEngine.Builder()
+                    .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
+                    .build()
+                    .getTemplate(SEQUENCE_MANAGEMENT + TWIG_TEMPLATE)
+                    .evaluate(templateWriter, mapOf(SEQUENCE_NAME, sequenceName));
+            return templateWriter.toString();
+        } catch (Throwable e) {
+            throw new TarantoolExecutionException(e);
+        }
     }
 }

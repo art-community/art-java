@@ -19,6 +19,7 @@
 package ru.art.soap.server.module;
 
 import lombok.*;
+import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import ru.art.soap.server.configuration.*;
 import static lombok.AccessLevel.*;

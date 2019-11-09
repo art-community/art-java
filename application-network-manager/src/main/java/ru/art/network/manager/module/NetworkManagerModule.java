@@ -19,7 +19,7 @@
 package ru.art.network.manager.module;
 
 import lombok.*;
-import ru.art.core.module.*;
+import ru.art.core.module.Module;
 import ru.art.network.manager.client.*;
 import ru.art.network.manager.configuration.*;
 import ru.art.network.manager.refresher.*;
@@ -31,8 +31,8 @@ import static ru.art.core.context.Context.*;
 import static ru.art.network.manager.configuration.NetworkManagerModuleConfiguration.*;
 import static ru.art.network.manager.constants.NetworkManagerModuleConstants.*;
 import static ru.art.service.ServiceModule.*;
-import static ru.art.task.deferred.executor.TaskFactory.*;
 import static ru.art.task.deferred.executor.SchedulerModuleActions.*;
+import static ru.art.task.deferred.executor.TaskFactory.*;
 
 @Getter
 public class NetworkManagerModule implements Module<NetworkManagerModuleConfiguration, NetworkManagerModuleState> {
