@@ -29,6 +29,7 @@ import ru.art.generator.soap.model.SoapGenerationMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.squareup.javapoet.ClassName.get;
 import static com.squareup.javapoet.TypeSpec.interfaceBuilder;
 import static javax.lang.model.element.Modifier.*;
 import static ru.art.core.constants.StringConstants.DOUBLE_TABULATION;
@@ -41,6 +42,7 @@ import static ru.art.generator.soap.factory.CodeBlockFactory.createModelFromXmlE
 import static ru.art.generator.soap.factory.CodeBlockFactory.createXmlEntityFromModel;
 import static ru.art.generator.soap.factory.JavaFileFactory.createJavaFile;
 import static ru.art.generator.soap.model.SoapGenerationMode.CLIENT;
+import static ru.art.generator.soap.model.SoapGenerationMode.SERVER;
 
 @RequiredArgsConstructor
 public class SourceCodeGenService {
@@ -64,22 +66,15 @@ public class SourceCodeGenService {
         for (OperationSoapGen operation : operationSoapGenList) {
             List<FieldSpec> fieldSpecList = new ArrayList<>();
             for (Field input : operation.getInput()) {
-                String postFix;
-                String lambda;
-                ClassName className;
-                if (SoapGenerationMode.SERVER.equals(soapGenerationMode)) {
-                    postFix = TO_MODEL;
-                    lambda = XML_ENTITY_TO_MODEL_MAPPER_LAMBDA_FOR_OPERATION;
-                    className = ClassName.get(XmlEntityToModelMapper.class);
+                if (SERVER.equals(soapGenerationMode)) {
                     createModelFromXmlEntity(input, packageString);
-                } else {
-                    postFix = FROM_MODEL;
-                    lambda = XML_ENTITY_FROM_MODEL_MAPPER_LAMBDA_FOR_OPERATION;
-                    className = ClassName.get(XmlEntityFromModelMapper.class);
-                    createXmlEntityFromModel(input, packageString);
+                    fieldSpecList.add(createFieldSpec(get(XmlEntityToModelMapper.class), XML_ENTITY_TO_MODEL_MAPPER_LAMBDA_FOR_OPERATION, input, TO_MODEL));
+                    continue;
                 }
-                fieldSpecList.add(createFieldSpec(className, lambda, input, postFix));
+                createXmlEntityFromModel(input, packageString);
+                fieldSpecList.add(createFieldSpec(get(XmlEntityFromModelMapper.class), XML_ENTITY_FROM_MODEL_MAPPER_LAMBDA_FOR_OPERATION, input, FROM_MODEL));
             }
+
             for (Field output : operation.getOutput()) {
                 addFieldSpec(soapGenerationMode, fieldSpecList, output);
             }
@@ -97,28 +92,18 @@ public class SourceCodeGenService {
     }
 
     private void addFieldSpec(SoapGenerationMode soapGenerationMode, List<FieldSpec> fieldSpecList, Field output) {
-        String postFix;
-        String lambda;
-        ClassName className;
         if (CLIENT.equals(soapGenerationMode)) {
-            postFix = TO_MODEL;
-            lambda = XML_ENTITY_TO_MODEL_MAPPER_LAMBDA_FOR_OPERATION;
-            className = ClassName.get(XmlEntityToModelMapper.class);
             createModelFromXmlEntity(output, packageString);
-        } else {
-            postFix = FROM_MODEL;
-            lambda = XML_ENTITY_FROM_MODEL_MAPPER_LAMBDA_FOR_OPERATION;
-            className = ClassName.get(XmlEntityFromModelMapper.class);
-            createXmlEntityFromModel(output, packageString);
+            fieldSpecList.add(createFieldSpec(get(XmlEntityToModelMapper.class), XML_ENTITY_TO_MODEL_MAPPER_LAMBDA_FOR_OPERATION, output, TO_MODEL));
+            return;
         }
-        fieldSpecList.add(createFieldSpec(className, lambda, output, postFix));
+        createXmlEntityFromModel(output, packageString);
+        fieldSpecList.add(createFieldSpec(get(XmlEntityFromModelMapper.class), XML_ENTITY_FROM_MODEL_MAPPER_LAMBDA_FOR_OPERATION, output, FROM_MODEL));
     }
 
     private FieldSpec createFieldSpec(ClassName classNameXmlEntity, String lambda, Field field, String postFixForCode) {
-        ClassName classNameMapper = ClassName
-                .get(packageString + ".mapper." + field.getPrefix(), firstLetterToUpperCase(field.getTypeName()) + XML_MAPPER);
-        ClassName classNameModel = ClassName
-                .get(packageString + ".model." + field.getPrefix(), firstLetterToUpperCase(field.getTypeName()));
+        ClassName classNameMapper = get(packageString + ".mapper." + field.getPrefix(), firstLetterToUpperCase(field.getTypeName()) + XML_MAPPER);
+        ClassName classNameModel = get(packageString + ".model." + field.getPrefix(), firstLetterToUpperCase(field.getTypeName()));
         CodeBlock xmlEntityCodeBlock = CodeBlock.builder()
                 .add(NEW_LINE + DOUBLE_TABULATION + lambda,
                         classNameMapper, firstLetterToLowerCase(field.getName() + postFixForCode))

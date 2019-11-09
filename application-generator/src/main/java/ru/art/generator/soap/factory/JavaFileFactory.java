@@ -20,23 +20,33 @@ package ru.art.generator.soap.factory;
 
 import com.squareup.javapoet.*;
 import lombok.Builder;
-import lombok.*;
-import lombok.experimental.*;
-import ru.art.generator.soap.model.*;
-import ru.art.service.validation.*;
-import static com.squareup.javapoet.CodeBlock.*;
-import static com.squareup.javapoet.TypeSpec.*;
-import static javax.lang.model.element.Modifier.*;
-import static ru.art.core.checker.CheckerForEmptiness.*;
-import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.extension.StringExtensions.*;
-import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
+import lombok.Singular;
+import lombok.Value;
+import lombok.experimental.UtilityClass;
+import ru.art.generator.soap.model.Field;
+import ru.art.service.validation.Validatable;
+import ru.art.service.validation.ValidationExpressions;
+import ru.art.service.validation.Validator;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.squareup.javapoet.CodeBlock.join;
+import static com.squareup.javapoet.TypeSpec.classBuilder;
+import static javax.lang.model.element.Modifier.PRIVATE;
+import static javax.lang.model.element.Modifier.PUBLIC;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.constants.StringConstants.NEW_LINE;
+import static ru.art.core.extension.StringExtensions.firstLetterToLowerCase;
+import static ru.art.core.extension.StringExtensions.firstLetterToUpperCase;
+import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.DOT_MODEL_DOT;
 import static ru.art.generator.soap.constants.Constants.*;
-import static ru.art.generator.soap.constants.Constants.ToXmlModelConstants.*;
-import static ru.art.generator.soap.factory.TypeFactory.*;
-import static ru.art.generator.soap.service.SoapGeneratorService.*;
-import java.io.*;
-import java.util.*;
+import static ru.art.generator.soap.constants.Constants.ToXmlModelConstants.VALIDATOR;
+import static ru.art.generator.soap.factory.TypeFactory.isObject;
+import static ru.art.generator.soap.service.SoapGeneratorService.SRC_MAIN_JAVA_ABSOLUTE_PATH;
 
 @UtilityClass
 public class JavaFileFactory {
