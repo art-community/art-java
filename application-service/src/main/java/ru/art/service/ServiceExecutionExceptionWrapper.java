@@ -25,7 +25,7 @@ import ru.art.service.model.*;
 import static java.util.Objects.*;
 import static ru.art.service.ServiceModule.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;
-import static ru.art.service.execution.ServiceExecutor.*;
+import static ru.art.service.execution.ServiceExecutionWrapper.*;
 import static ru.art.service.factory.ServiceResponseFactory.*;
 
 public class ServiceExecutionExceptionWrapper {

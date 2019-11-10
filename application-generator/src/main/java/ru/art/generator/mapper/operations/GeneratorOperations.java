@@ -19,33 +19,45 @@
 package ru.art.generator.mapper.operations;
 
 import com.squareup.javapoet.*;
-import ru.art.core.checker.*;
-import ru.art.entity.*;
-import ru.art.entity.mapper.*;
-import ru.art.generator.mapper.annotation.*;
-import ru.art.generator.mapper.exception.*;
-import static com.squareup.javapoet.CodeBlock.*;
-import static com.squareup.javapoet.TypeSpec.*;
-import static java.io.File.*;
-import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
+import ru.art.core.checker.CheckerForEmptiness;
+import ru.art.entity.Entity;
+import ru.art.entity.mapper.ValueFromModelMapper;
+import ru.art.entity.mapper.ValueToModelMapper;
+import ru.art.generator.mapper.annotation.GenerationException;
+import ru.art.generator.mapper.annotation.IgnoreGeneration;
+import ru.art.generator.mapper.exception.DefinitionException;
+import ru.art.generator.mapper.exception.InnerClassGenerationException;
+import ru.art.generator.mapper.exception.MappingGeneratorException;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.squareup.javapoet.CodeBlock.join;
+import static com.squareup.javapoet.CodeBlock.of;
+import static com.squareup.javapoet.TypeSpec.interfaceBuilder;
+import static java.io.File.separator;
+import static java.text.MessageFormat.format;
+import static java.util.Objects.nonNull;
 import static javax.lang.model.element.Modifier.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
 import static ru.art.generator.mapper.constants.Constants.*;
 import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
 import static ru.art.generator.mapper.constants.Constants.SupportedJavaClasses.*;
-import static ru.art.generator.mapper.constants.Constants.SymbolsAndFormatting.*;
+import static ru.art.generator.mapper.constants.Constants.SymbolsAndFormatting.STRING_PATTERN;
 import static ru.art.generator.mapper.constants.ExceptionConstants.MapperGeneratorExceptions.*;
 import static ru.art.generator.mapper.constants.FromModelConstants.*;
 import static ru.art.generator.mapper.constants.ToModelConstants.*;
 import static ru.art.generator.mapper.operations.CollectionGeneratorOperations.*;
 import static ru.art.generator.mapper.operations.CommonOperations.*;
-import java.io.*;
-import java.lang.reflect.Field;
-import java.net.*;
-import java.util.*;
-import java.util.stream.*;
 
 /**
  * Interface containing static methods for creating mapper classes,
@@ -89,14 +101,7 @@ public interface GeneratorOperations {
     static void createMapperClass(Class<?> clazz, String genPackage, String jarPathToMain)
             throws MappingGeneratorException {
         printMessage(format(START_GENERATING, clazz.getSimpleName() + MAPPER));
-        for (int i = 0; i < clazz.getClasses().length; i++) {
-            if (!clazz.getClasses()[i].getSimpleName().equals(clazz.getSimpleName() + BUILDER) &&
-                    !generatedFiles.contains(clazz.getClasses()[i]) &&
-                    !clazz.getClasses()[i].isAnnotationPresent(IgnoreGeneration.class) &&
-                    !clazz.isEnum()) {
-                createMapperClass(clazz.getClasses()[i], genPackage, jarPathToMain);
-            }
-        }
+        createMapperClasses(clazz, genPackage, jarPathToMain);
 
         TypeSpec mapperType = generateMappers(clazz, jarPathToMain);
 
@@ -147,22 +152,8 @@ public interface GeneratorOperations {
     static void createRequestResponseMapperClass(Class<?> request, Class<?> response, String genPackage, String jarPathToMain)
             throws MappingGeneratorException {
         printMessage(format(START_GENERATING, request.getSimpleName().replace(REQUEST, EMPTY_STRING) + REQUEST + RESPONSE + MAPPER));
-        for (int i = 0; i < request.getClasses().length; i++) {
-            if (!request.getClasses()[i].getSimpleName().equals(request.getSimpleName() + BUILDER) &&
-                    !generatedFiles.contains(request.getClasses()[i]) &&
-                    !request.getClasses()[i].isAnnotationPresent(IgnoreGeneration.class) &&
-                    !request.isEnum()) {
-                createMapperClass(request.getClasses()[i], genPackage, jarPathToMain);
-            }
-        }
-        for (int i = 0; i < response.getClasses().length; i++) {
-            if (!response.getClasses()[i].getSimpleName().equals(response.getSimpleName() + BUILDER) &&
-                    !generatedFiles.contains(response.getClasses()[i]) &&
-                    !response.getClasses()[i].isAnnotationPresent(IgnoreGeneration.class) &&
-                    !response.isEnum()) {
-                createMapperClass(response.getClasses()[i], genPackage, jarPathToMain);
-            }
-        }
+        createMapperClasses(request, genPackage, jarPathToMain);
+        createMapperClasses(response, genPackage, jarPathToMain);
 
         String newClassName = request.getSimpleName().replace(REQUEST, EMPTY_STRING) + REQUEST + RESPONSE + MAPPER;
         TypeSpec mapper = interfaceBuilder(newClassName)
@@ -206,6 +197,17 @@ public interface GeneratorOperations {
             throw new MappingGeneratorException(format(UNABLE_TO_FIND_A_PATH_FOR_CLASS, request.getSimpleName()), throwable);
         } catch (Throwable throwable) {
             throw new MappingGeneratorException(format(UNABLE_TO_CREATE_MAPPER_UNKNOWN_ERROR, request.getSimpleName()), throwable);
+        }
+    }
+
+    static void createMapperClasses(Class<?> request, String genPackage, String jarPathToMain) {
+        for (int i = 0; i < request.getClasses().length; i++) {
+            if (!request.getClasses()[i].getSimpleName().equals(request.getSimpleName() + BUILDER) &&
+                    !generatedFiles.contains(request.getClasses()[i]) &&
+                    !request.getClasses()[i].isAnnotationPresent(IgnoreGeneration.class) &&
+                    !request.isEnum()) {
+                createMapperClass(request.getClasses()[i], genPackage, jarPathToMain);
+            }
         }
     }
 
@@ -369,6 +371,7 @@ public interface GeneratorOperations {
                     break;
                 case CLASS_LIST:
                 case CLASS_SET:
+                case CLASS_QUEUE:
                     try {
                         codeBlocks.add(generateFromModelForCollection(field, jarPathToMain));
                     } catch (DefinitionException | InnerClassGenerationException throwable) {
@@ -379,14 +382,6 @@ public interface GeneratorOperations {
                 case CLASS_MAP:
                     try {
                         codeBlocks.add(generateFromModelForMap(field, jarPathToMain));
-                    } catch (DefinitionException | InnerClassGenerationException throwable) {
-                        notGeneratedFields.add(field.getName());
-                        printError(throwable.getCause() + SPACE + throwable.getMessage());
-                    }
-                    break;
-                case CLASS_QUEUE:
-                    try {
-                        codeBlocks.add(generateFromModelForCollection(field, jarPathToMain));
                     } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
                         printError(throwable.getCause() + SPACE + throwable.getMessage());

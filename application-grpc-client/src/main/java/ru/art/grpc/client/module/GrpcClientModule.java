@@ -19,6 +19,7 @@
 package ru.art.grpc.client.module;
 
 import lombok.*;
+import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import ru.art.grpc.client.configuration.*;
 import ru.art.grpc.client.constants.*;

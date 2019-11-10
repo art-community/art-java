@@ -27,7 +27,7 @@ import spock.lang.Unroll
 import static reactor.core.publisher.Flux.just
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.core.constants.NetworkConstants.LOCALHOST
-import static ru.art.entity.Entity.concat
+import static ru.art.entity.Entity.merge
 import static ru.art.entity.Entity.entityBuilder
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.REACTIVE
 import static ru.art.rsocket.communicator.RsocketCommunicator.rsocketCommunicator
@@ -52,7 +52,7 @@ class RsocketSpecification extends Specification {
         rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .handle { request -> concat(request as Entity, response) }
+                .handle { request -> merge(request as Entity, response) }
         switch (transport) {
             case TCP:
                 startRsocketTcpServer()
@@ -99,7 +99,7 @@ class RsocketSpecification extends Specification {
         rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .handle { request -> concat(request as Entity, response) }
+                .handle { request -> merge(request as Entity, response) }
         switch (transport) {
             case TCP:
                 startRsocketTcpServer()
@@ -140,7 +140,7 @@ class RsocketSpecification extends Specification {
 
         then:
         response
-        (response.responseData as Entity) == concat(request, this.response)
+        (response.responseData as Entity) == merge(request, this.response)
 
         where:
         format   | transport
@@ -160,7 +160,7 @@ class RsocketSpecification extends Specification {
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
                 .responseProcessingMode(REACTIVE)
-                .handle { request -> just(concat(request as Entity, response)) }
+                .handle { request -> just(merge(request as Entity, response)) }
         switch (transport) {
             case TCP:
                 startRsocketTcpServer()
@@ -201,7 +201,7 @@ class RsocketSpecification extends Specification {
 
         then:
         response
-        (response.responseData as Entity) == concat(request, this.response)
+        (response.responseData as Entity) == merge(request, this.response)
 
         where:
         format   | transport
@@ -222,7 +222,7 @@ class RsocketSpecification extends Specification {
                 .responseMapper(Caster.&cast)
                 .requestProcessingMode(REACTIVE)
                 .responseProcessingMode(REACTIVE)
-                .handle { request -> (request as Flux<Entity>).map { concat(it as Entity, response) } }
+                .handle { request -> (request as Flux<Entity>).map { merge(it as Entity, response) } }
         switch (transport) {
             case TCP:
                 startRsocketTcpServer()
@@ -257,7 +257,7 @@ class RsocketSpecification extends Specification {
 
         then:
         response
-        (response.responseData as Entity) == concat(request, this.response)
+        (response.responseData as Entity) == merge(request, this.response)
 
 
         where:

@@ -233,8 +233,6 @@ public class CodeBlockFactory {
                 builder.add("$T.parseFloat(" + GET_VALUE_BY_TAG + ")", Float.class, nameParameter);
                 return builder.build();
             case DOUBLE:
-                builder.add("$T.parseDouble(" + GET_VALUE_BY_TAG + ")", Double.class, nameParameter);
-                return builder.build();
             case DECIMAL:
                 builder.add("$T.parseDouble(" + GET_VALUE_BY_TAG + ")", Double.class, nameParameter);
                 return builder.build();
@@ -242,8 +240,6 @@ public class CodeBlockFactory {
                 builder.add("$T.parseLong(" + GET_VALUE_BY_TAG + ")", Long.class, nameParameter);
                 return builder.build();
             case INT:
-                builder.add("$T.parseInt(" + GET_VALUE_BY_TAG + ")", Integer.class, nameParameter);
-                return builder.build();
             case INTEGER:
                 builder.add("$T.parseInt(" + GET_VALUE_BY_TAG + ")", Integer.class, nameParameter);
                 return builder.build();

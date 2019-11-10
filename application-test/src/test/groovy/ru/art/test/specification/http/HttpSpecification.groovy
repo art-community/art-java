@@ -24,7 +24,7 @@ import spock.lang.Specification
 
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.core.constants.NetworkConstants.LOCALHOST
-import static ru.art.entity.Entity.concat
+import static ru.art.entity.Entity.merge
 import static ru.art.entity.Entity.entityBuilder
 import static ru.art.http.client.communicator.HttpCommunicator.httpCommunicator
 import static ru.art.http.server.HttpServer.startHttpServer
@@ -43,7 +43,7 @@ class HttpSpecification extends Specification {
                 .fromBody()
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
-                .handle { request -> concat(request as Entity, response) }
+                .handle { request -> merge(request as Entity, response) }
         startHttpServer()
         sleep(500L)
 
@@ -67,7 +67,7 @@ class HttpSpecification extends Specification {
 
         then:
         response
-        (response.get() as Entity) == concat(request, this.response)
+        (response.get() as Entity) == merge(request, this.response)
 
         when:
         communicator = httpCommunicator("http://$LOCALHOST:${httpServerModule().getPort()}$listeningPath")
@@ -92,6 +92,6 @@ class HttpSpecification extends Specification {
                 .executeAsynchronous(request)
                 .get()
         then:
-        (asyncResponseWithReq.get() as Entity) == concat(request, this.response)
+        (asyncResponseWithReq.get() as Entity) == merge(request, this.response)
     }
 }

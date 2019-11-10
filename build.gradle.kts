@@ -20,13 +20,16 @@ import com.jfrog.bintray.gradle.BintrayExtension.*
 import groovy.lang.*
 import org.jfrog.gradle.plugin.artifactory.dsl.*
 import org.jfrog.gradle.plugin.artifactory.task.*
+import ru.art.gradle.constants.DependencyConfiguration.*
+import ru.art.gradle.logging.*
+import ru.art.gradle.logging.LogMessageColor.*
 
 plugins {
     `maven-publish`
     id("com.gradle.build-scan") version "2.0.2"
-    id("io.github.art.project") version "1.0.87"
+    id("io.github.art.project") version "1.0.95"
     id("com.jfrog.bintray") version "1.8.4"
-    id("com.jfrog.artifactory") version "4.9.8"
+    id("com.jfrog.artifactory") version "4.10.0"
 }
 
 tasks.withType(Wrapper::class.java) {
@@ -45,6 +48,8 @@ buildScan {
 }
 
 subprojects {
+    group = rootProject.group
+
     repositories {
         jcenter()
         mavenCentral()
@@ -120,11 +125,108 @@ subprojects {
                 userOrg = "art-community"
                 websiteUrl = "https://github.com/art-community/art"
                 vcsUrl = "https://github.com/art-community/art"
-                setLabels("art", "kotlin", "java", "rsocket", "tarantool", "grpc", "protobuf", "rocksdb", "http", "tomcat")
+                setLabels("tarantool",
+                        "kafka",
+                        "sql",
+                        "java",
+                        "rsocket",
+                        "rsocket-java",
+                        "grpc",
+                        "grpc-java",
+                        "protobuf",
+                        "json",
+                        "xml",
+                        "framework",
+                        "kit",
+                        "configuration",
+                        "module",
+                        "gradle",
+                        "kotlin",
+                        "scala",
+                        "art",
+                        "kotlin-dsl",
+                        "rocksdb",
+                        "scheduling",
+                        "configurator",
+                        "yaml",
+                        "lightbend",
+                        "log4j",
+                        "resilience4j",
+                        "badges")
                 setLicenses("Apache-2.0")
             })
             tasks["bintrayUpload"].dependsOn(tasks["generatePomFileFor${name.capitalize()}Publication"], jar, sourceJar)
         }
+    }
+
+    task<DependencyReportTask>("showDependencyTrees") {
+        group = "dependencies"
+    }
+}
+
+task("showExternalDependenciesDuplicates") {
+    group = "dependencies"
+    doLast {
+        val subProjectDependencies = mutableMapOf<String, MutableList<ResolvedDependency>>()
+
+        val exclusions = listOf(
+                "application-configurator",
+                "application-example",
+                "application-state",
+                "application-module-executor",
+                "application-remote-scheduler",
+                "agent",
+                "management-panel",
+                "application-kafka-broker")
+
+        subprojects.filter { subproject -> subproject.name !in exclusions }
+                .forEach { subproject ->
+                    val dependencies = subproject.configurations
+                            .getByName(EMBEDDED.configuration)
+                            .resolvedConfiguration
+                            .lenientConfiguration
+                            .allModuleDependencies
+                            .toList()
+                            .filter { dependency -> dependency.module.id.group != rootProject.group }
+                    if (dependencies.isNotEmpty()) {
+                        subProjectDependencies[subproject.name] = dependencies.toMutableList()
+                    }
+                }
+        subProjectDependencies.values
+                .forEach { dependencies ->
+                    dependencies.removeIf { dependency ->
+                        subProjectDependencies.values
+                                .filter { filtering -> filtering != dependencies }
+                                .none { filtering -> dependency in filtering }
+                    }
+                }
+        subProjectDependencies.filterValues { dependencies -> dependencies.isNotEmpty() }
+                .onEach { (key, value) ->
+                    println(message("[${key}]:", BLUE_BOLD))
+                    value.forEach { dependency -> println("\t${message(dependency.name, RED_BOLD)}") }
+                    println()
+                }
+                .ifEmpty {
+                    println(message("ART hasn't duplicates of external dependencies!", GREEN_BOLD))
+                }
+    }
+}
+
+task("showAllExternalDependencies") {
+    group = "dependencies"
+    doLast {
+        val dependencies = mutableSetOf<String>()
+        subprojects.forEach { subproject ->
+            subproject.configurations
+                    .getByName(EMBEDDED.configuration)
+                    .resolvedConfiguration
+                    .lenientConfiguration
+                    .allModuleDependencies
+                    .toSet()
+                    .filter { dependency -> dependency.module.id.group != rootProject.group }
+                    .forEach { dependency -> dependencies.add(dependency.name) }
+        }
+        dependencies.forEach { dependency -> println(message(dependency, BLUE_BOLD)) }
     }
 }
 

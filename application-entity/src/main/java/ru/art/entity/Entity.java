@@ -58,7 +58,7 @@ public class Entity implements Value {
         return new EntityBuilder();
     }
 
-    public static Entity concat(Entity... entities) {
+    public static Entity merge(Entity... entities) {
         if (CheckerForEmptiness.isEmpty(entities)) {
             return null;
         }
@@ -93,7 +93,7 @@ public class Entity implements Value {
     public Date getDate(String name) {
         Primitive primitive = asPrimitive(fields.get(name));
         try {
-            return isNull(primitive) ? null : YYYY_MM_DD_T_HH_MM_SS_24H_SSS_Z_DASH_FORMAT.parse(primitive.getString());
+            return isNull(primitive) ? null : YYYY_MM_DD_T_HH_MM_SS_24H_SSS_Z_DASH_FORMAT.get().parse(primitive.getString());
         } catch (ParseException throwable) {
             throw new ValueMappingException(UNABLE_TO_PARSE_DATE);
         }
@@ -629,7 +629,7 @@ public class Entity implements Value {
 
         public EntityBuilder dateField(String name, Date value) {
             if (isNotEmpty(value)) {
-                fields.put(name, stringPrimitive(YYYY_MM_DD_T_HH_MM_SS_24H_SSS_Z_DASH_FORMAT.format(value)));
+                fields.put(name, stringPrimitive(YYYY_MM_DD_T_HH_MM_SS_24H_SSS_Z_DASH_FORMAT.get().format(value)));
             }
             return this;
         }

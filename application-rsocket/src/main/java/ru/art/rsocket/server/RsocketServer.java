@@ -21,7 +21,7 @@ package ru.art.rsocket.server;
 import io.rsocket.*;
 import io.rsocket.transport.netty.server.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.Logger;
 import reactor.core.*;
 import reactor.core.publisher.*;
 import ru.art.rsocket.exception.*;

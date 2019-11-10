@@ -18,21 +18,27 @@
 
 package ru.art.generator.mapper.operations;
 
-import com.squareup.javapoet.*;
-import ru.art.entity.*;
-import ru.art.generator.mapper.exception.*;
-import static com.squareup.javapoet.CodeBlock.*;
-import static java.text.MessageFormat.*;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
+import ru.art.entity.PrimitiveMapping;
+import ru.art.generator.mapper.exception.DefinitionException;
+import ru.art.generator.mapper.exception.InnerClassGenerationException;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
+import static com.squareup.javapoet.CodeBlock.of;
+import static java.text.MessageFormat.format;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.generator.mapper.constants.Constants.*;
+import static ru.art.generator.mapper.constants.Constants.GET;
+import static ru.art.generator.mapper.constants.Constants.MAPPER;
 import static ru.art.generator.mapper.constants.Constants.SupportedJavaClasses.*;
-import static ru.art.generator.mapper.constants.Constants.SymbolsAndFormatting.*;
-import static ru.art.generator.mapper.constants.ExceptionConstants.DefinitionExceptions.*;
+import static ru.art.generator.mapper.constants.Constants.SymbolsAndFormatting.PATTERN_FOR_GENERIC_INNER_TYPES;
+import static ru.art.generator.mapper.constants.ExceptionConstants.DefinitionExceptions.UNABLE_TO_DEFINE_GENERIC_TYPE;
 import static ru.art.generator.mapper.constants.FromModelConstants.*;
 import static ru.art.generator.mapper.constants.ToModelConstants.*;
-import static ru.art.generator.mapper.operations.CommonOperations.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.*;
+import static ru.art.generator.mapper.operations.CommonOperations.createMapperForInnerClassIfNeeded;
 
 /**
  * Interface containing static methods for generating
@@ -232,29 +238,33 @@ public interface CollectionGeneratorOperations {
      * @throws DefinitionException is thrown when field's generic type isn't supported.
      */
     static CodeBlock generateFromModelForCollection(Field field, String jarPathToMain) throws DefinitionException, InnerClassGenerationException {
-        if (field.getGenericType().getTypeName().matches(PATTERN_FOR_GENERIC_INNER_TYPES) ||
-                field.getGenericType().getTypeName().equals(CLASS_LIST) ||
-                field.getGenericType().getTypeName().equals(CLASS_SET) ||
-                field.getGenericType().getTypeName().equals(CLASS_QUEUE))
+        String typeName = field.getGenericType().getTypeName();
+
+        if (typeName.matches(PATTERN_FOR_GENERIC_INNER_TYPES) ||
+                typeName.equals(CLASS_LIST) ||
+                typeName.equals(CLASS_SET) ||
+                typeName.equals(CLASS_QUEUE))
             throw new DefinitionException(format(UNABLE_TO_DEFINE_GENERIC_TYPE,
-                    field.getGenericType().getTypeName(),
+                    typeName,
                     field.getName(),
                     field.getDeclaringClass().getSimpleName(),
                     FROM_MODEL + field.getDeclaringClass().getSimpleName()));
+
         String getField = GET + String.valueOf(field.getName().charAt(0)).toUpperCase() + field.getName().substring(1);
-        if (field.getGenericType().getTypeName().contains(CLASS_STRING))
+
+        if (typeName.contains(CLASS_STRING))
             return CodeBlock.builder().add(of(DOUBLE_TABULATION + STRING_COLLECTION_FIELD, field.getName(), getField)).build();
-        if (field.getGenericType().getTypeName().contains(CLASS_INTEGER))
+        if (typeName.contains(CLASS_INTEGER))
             return CodeBlock.builder().add(of(DOUBLE_TABULATION + INT_COLLECTION_FIELD, field.getName(), getField)).build();
-        if (field.getGenericType().getTypeName().contains(CLASS_DOUBLE))
+        if (typeName.contains(CLASS_DOUBLE))
             return CodeBlock.builder().add(of(DOUBLE_TABULATION + DOUBLE_COLLECTION_FIELD, field.getName(), getField)).build();
-        if (field.getGenericType().getTypeName().contains(CLASS_LONG))
+        if (typeName.contains(CLASS_LONG))
             return CodeBlock.builder().add(of(DOUBLE_TABULATION + LONG_COLLECTION_FIELD, field.getName(), getField)).build();
-        if (field.getGenericType().getTypeName().contains(CLASS_BYTE))
+        if (typeName.contains(CLASS_BYTE))
             return CodeBlock.builder().add(of(DOUBLE_TABULATION + BYTE_COLLECTION_FIELD, field.getName(), getField)).build();
-        if (field.getGenericType().getTypeName().contains(CLASS_BOOLEAN))
+        if (typeName.contains(CLASS_BOOLEAN))
             return CodeBlock.builder().add(of(DOUBLE_TABULATION + BOOL_COLLECTION_FIELD, field.getName(), getField)).build();
-        if (field.getGenericType().getTypeName().contains(CLASS_FLOAT))
+        if (typeName.contains(CLASS_FLOAT))
             return CodeBlock.builder().add(of(DOUBLE_TABULATION + FLOAT_COLLECTION_FIELD, field.getName(), getField)).build();
 
         ClassName newClassMapper = createMapperForInnerClassIfNeeded(field, jarPathToMain);

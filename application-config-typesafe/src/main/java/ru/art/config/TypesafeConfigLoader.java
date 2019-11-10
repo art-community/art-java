@@ -19,30 +19,31 @@
 package ru.art.config;
 
 import com.typesafe.config.*;
-import io.advantageous.config.Config;
 import static com.typesafe.config.ConfigFactory.*;
 import static com.typesafe.config.ConfigParseOptions.*;
-import static io.advantageous.konf.typesafe.TypeSafeConfig.*;
 import static java.lang.System.*;
+import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static ru.art.config.TypesafeConfigLoaderConstants.*;
 import static ru.art.config.TypesafeConfigLoadingExceptionMessages.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.SystemProperties.*;
+import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
 import java.io.*;
 import java.net.*;
 
 class TypesafeConfigLoader {
-    static Config loadTypeSafeConfig(String configId, ConfigSyntax configSyntax) {
-        return fromTypeSafeConfig(parseReader(wrapException(() -> loadConfigReader(configSyntax), TypesafeConfigLoadingException::new), defaults().setSyntax(configSyntax))).getConfig(configId);
+    static ConfigObject loadTypeSafeConfig(String configId, ConfigSyntax configSyntax) {
+        Config config = parseReader(wrapException(() -> loadConfigReader(configSyntax), TypesafeConfigLoadingException::new), defaults().setSyntax(configSyntax));
+        return isEmpty(configId) ? config.root() : config.getObject(configId);
     }
 
     private static Reader loadConfigReader(ConfigSyntax configSyntax) throws IOException {
         String configFilePath = getProperty(CONFIG_FILE_PATH_PROPERTY);
         File configFile;
-        if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists()) {
+        if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists() || isEmpty(readFile(get(configFile.getAbsolutePath())))) {
             URL configFileUrl = TypesafeConfigLoader.class.getClassLoader().getResource(format(DEFAULT_TYPESAFE_CONFIG_FILE_NAME, configSyntax.toString().toLowerCase()));
             if (isNull(configFileUrl)) {
                 throw new TypesafeConfigLoadingException(format(CONFIG_FILE_NOT_FOUND, configSyntax.toString().toLowerCase()));

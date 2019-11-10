@@ -1,0 +1,209 @@
+box.schema.space.create('{{ spaceName }}', { if_not_exists = true });
+box.schema.space.create('{{ spaceName }}Schema', { if_not_exists = true });
+if box.space.{{ spaceName }}.index[0] == nil then
+    box.schema.sequence.create('{{ spaceName }}Sequence', { if_not_exists = true });
+    box.space.{{ spaceName }}:create_index('{{ spaceName }}Index', { sequence = '{{ spaceName }}Sequence'; if_not_exists = true });
+end
+if box.space.{{ spaceName }}Schema.index[0] == nil then
+    box.space.{{ spaceName }}Schema:create_index('{{ spaceName }}SchemaIndex', { if_not_exists = true });
+end
+
+{% if not (indexName is empty) %}
+box.space.{{ spaceName }}:create_index('{{ indexName }}', {
+{%- if not (indexParts is empty) -%}
+        parts = {{ indexParts }};
+    {%- endif -%}
+    if_not_exists = true
+});
+
+function get{{ spaceName }}ValueBy{{ indexName }}(...)
+    local tuple = box.space.{{ spaceName }}.index.{{ indexName }}:get{...};
+    if tuple == nil then
+        return {}
+    end
+
+    local schema = box.space.{{ spaceName }}Schema:get(tuple[1]):totable();
+    table.remove(schema, 1);
+    return {
+        tuple;
+        schema;
+    }
+end;
+
+function select{{ spaceName }}ValuesBy{{ indexName }}(...)
+    local tuples = box.space.{{ spaceName }}.index.{{ indexName }}:select{...};
+    if tuples == nil or #tuples == 0 then
+        return {}
+    end
+
+    local schemes = {};
+    for i = 1,#tuples  do
+        local schema = box.space.{{ spaceName }}Schema:get(tuples[i][1]):totable();
+        table.remove(schema, 1);
+        table.insert(schemes, schema);
+    end
+    return {
+        tuples;
+        schemes;
+    }
+end;
+
+function delete{{ spaceName }}ValuesBy{{ indexName }}(...)
+    local tuple = box.space.{{ spaceName }}.index.{{ indexName }}:delete{...};
+    if tuple == nil then
+        return {}
+    end
+
+    local schema = box.space.{{ spaceName }}Schema:delete(tuple[1]):totable();
+    table.remove(schema, 1);
+    return {
+        tuple;
+        schema;
+    }
+end;
+
+function update{{ spaceName }}ValueBy{{ indexName }}(keys, operations)
+    local result = box.space.{{ spaceName }}.index.{{ indexName }}:update(keys, operations);
+    if result == nil then
+        return {}
+    end
+    local schema = box.space.{{ spaceName }}Schema:get(result[1]):totable();
+    table.remove(schema, 1);
+    return {
+        result;
+        schema;
+    }
+end;
+
+function update{{ spaceName }}ValueWithSchemaBy{{ indexName }}(keys, valueOperations, schemaOperations)
+    local result = box.space.{{ spaceName }}.index.{{ indexName }}:update(keys, valueOperations);
+    if result == nil then
+        return {}
+    end
+    local schema = box.space.{{ spaceName }}Schema:update(result[1], schemaOperations):totable();
+    table.remove(schema, 1);
+    return {
+        result;
+        schema;
+    }
+end;
+
+
+function count{{ spaceName }}ValuesBy{{ indexName }}(...)
+    return box.space.{{ spaceName }}.index.{{ indexName }}:count{...};
+end;
+
+function len{{ spaceName }}ValuesBy{{ indexName }}()
+    return box.space.{{ spaceName }}.index.{{ indexName }}:len();
+end;
+{% endif %}
+
+
+function put{{ spaceName }}Value(valueTuple, schemaTuple)
+    local result = box.space.{{ spaceName }}:put(valueTuple);
+    local schema = box.space.{{ spaceName }}Schema:put{result[1], unpack(schemaTuple)}:totable();
+    table.remove(schema, 1);
+    return {
+        result;
+        schema;
+    }
+end;
+
+function insert{{ spaceName }}Value(valueTuple, schemaTuple)
+    local result = box.space.{{ spaceName }}:insert(valueTuple);
+    local schema = box.space.{{ spaceName }}Schema:insert{result[1], unpack(schemaTuple)}:totable();
+    table.remove(schema, 1);
+    return {
+        result;
+        schema;
+    }
+end;
+
+function get{{ spaceName }}Value(...)
+    local tuple = box.space.{{ spaceName }}:get{...};
+    if tuple == nil then
+        return {}
+    end
+
+    local schema = box.space.{{ spaceName }}Schema.index.{{ spaceName }}SchemaIndex:get(tuple[1]):totable();
+    table.remove(schema, 1);
+    return {
+        tuple;
+        schema;
+    }
+end;
+
+function select{{ spaceName }}Values(...)
+    local tuples = box.space.{{ spaceName }}:select{...};
+    if tuples == nil or #tuples == 0 then
+        return {};
+    end
+
+    local schemes = {};
+    for i = 1,#tuples  do
+        local schema = box.space.{{ spaceName }}Schema.index.{{ spaceName }}SchemaIndex:get(tuples[i][1]):totable();
+        table.remove(schema, 1);
+        table.insert(schemes, schema);
+    end
+    return {
+        tuples;
+        schemes;
+    }
+end;
+
+function delete{{ spaceName }}Values(...)
+    local tuple = box.space.{{ spaceName }}:delete{...};
+    if tuple == nil then
+        return {}
+    end
+
+    local schema = box.space.{{ spaceName }}Schema.index.{{ spaceName }}SchemaIndex:delete(tuple[1]):totable();
+    table.remove(schema, 1);
+    return {
+        tuple;
+        schema;
+    }
+end;
+
+function truncate{{ spaceName }}Values()
+    box.space.{{ spaceName }}:truncate();
+    box.space.{{ spaceName }}Schema:truncate();
+end;
+
+function deleteAll{{ spaceName }}Values()
+    local values = select{{ spaceName }}Values();
+    box.space.{{ spaceName }}:truncate();
+    box.space.{{ spaceName }}Schema:truncate();
+    return values;
+end;
+
+function update{{ spaceName }}Value(keys, operations)
+    local result = box.space.{{ spaceName }}:update(keys, operations);
+    if result == nil then
+        return {}
+    end
+    local schema = box.space.{{ spaceName }}Schema:get(result[1]):totable();
+    table.remove(schema, 1);
+    return {
+        result;
+        schema;
+    }
+end;
+
+function update{{ spaceName }}ValueWithSchema(keys, valueOperations, schemaOperations)
+    local result = box.space.{{ spaceName }}:update(keys, valueOperations);
+    if result == nil then
+        return {}
+    end
+    local schema = box.space.{{ spaceName }}Schema:update(result[1], schemaOperations):totable();
+    table.remove(schema, 1);
+    return {
+        result;
+        schema;
+    }
+end;
+
+function upsert{{ spaceName }}ValueWithSchema(defaultValueTuple, defaultSchemaTuple, valueOperations, schemaOperations)
+    box.space.{{ spaceName }}:upsert(defaultValueTuple, valueOperations);
+    box.space.{{ spaceName }}Schema:upsert({defaultValueTuple[1], unpack(defaultSchemaTuple)}, schemaOperations);
+end;

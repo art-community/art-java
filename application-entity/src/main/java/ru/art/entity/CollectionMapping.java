@@ -18,17 +18,40 @@
 
 package ru.art.entity;
 
+import lombok.experimental.*;
 import ru.art.entity.mapper.*;
+import static java.util.Collections.*;
+import static java.util.stream.Collectors.*;
+import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.entity.CollectionValuesFactory.*;
 import static ru.art.entity.mapper.ValueMapper.*;
 import java.util.*;
 
-public interface CollectionMapping {
-    ValueMapper<Collection<String>, CollectionValue<String>> stringCollectionMapper = mapper(CollectionValuesFactory::stringCollection, CollectionValue::getElements);
-    ValueMapper<Collection<Integer>, CollectionValue<Integer>> intCollectionMapper = mapper(CollectionValuesFactory::intCollection, CollectionValue::getElements);
-    ValueMapper<Collection<Double>, CollectionValue<Double>> doubleCollectionMapper = mapper(CollectionValuesFactory::doubleCollection, CollectionValue::getElements);
-    ValueMapper<Collection<Float>, CollectionValue<Float>> floatCollectionMapper = mapper(CollectionValuesFactory::floatCollection, CollectionValue::getElements);
-    ValueMapper<Collection<Boolean>, CollectionValue<Boolean>> boolCollectionMapper = mapper(CollectionValuesFactory::boolCollection, CollectionValue::getElements);
-    ValueMapper<Collection<Long>, CollectionValue<Long>> longCollectionMapper = mapper(CollectionValuesFactory::longCollection, CollectionValue::getElements);
-    ValueMapper<Collection<Entity>, CollectionValue<Entity>> entityCollectionMapper = mapper(CollectionValuesFactory::entityCollection, CollectionValue::getElements);
-    ValueMapper<Collection<Value>, CollectionValue<Value>> valueCollectionMapper = mapper(CollectionValuesFactory::valueCollection, CollectionValue::getElements);
+@UtilityClass
+public class CollectionMapping {
+    public static ValueMapper<Collection<String>, CollectionValue<String>> stringCollectionMapper = mapper(CollectionValuesFactory::stringCollection, CollectionValue::getElements);
+    public static ValueMapper<Collection<Integer>, CollectionValue<Integer>> intCollectionMapper = mapper(CollectionValuesFactory::intCollection, CollectionValue::getElements);
+    public static ValueMapper<Collection<Double>, CollectionValue<Double>> doubleCollectionMapper = mapper(CollectionValuesFactory::doubleCollection, CollectionValue::getElements);
+    public static ValueMapper<Collection<Float>, CollectionValue<Float>> floatCollectionMapper = mapper(CollectionValuesFactory::floatCollection, CollectionValue::getElements);
+    public static ValueMapper<Collection<Boolean>, CollectionValue<Boolean>> boolCollectionMapper = mapper(CollectionValuesFactory::boolCollection, CollectionValue::getElements);
+    public static ValueMapper<Collection<Long>, CollectionValue<Long>> longCollectionMapper = mapper(CollectionValuesFactory::longCollection, CollectionValue::getElements);
+    public static ValueMapper<Collection<Entity>, CollectionValue<Entity>> entityCollectionMapper = mapper(CollectionValuesFactory::entityCollection, CollectionValue::getElements);
+    public static ValueMapper<Collection<Value>, CollectionValue<Value>> valueCollectionMapper = mapper(CollectionValuesFactory::valueCollection, CollectionValue::getElements);
+
+    public static <T> ValueToModelMapper<Collection<T>, CollectionValue<? extends Value>> collectionValueToModel(ValueToModelMapper<T, ? extends Value> elementMapper) {
+        return collection -> isEmpty(collection) ? emptyList() : collection.getElements()
+                .stream()
+                .filter(Objects::nonNull)
+                .map(element -> elementMapper.map(cast(element)))
+                .collect(toList());
+    }
+
+    public static <T> ValueFromModelMapper<Collection<T>, CollectionValue<? extends Value>> collectionValueFromModel(ValueFromModelMapper<T, ? extends Value> elementMapper) {
+        return collection -> isEmpty(collection) ? cast(emptyCollection()) : valueCollection(collection
+                .stream()
+                .filter(Objects::nonNull)
+                .map(element -> elementMapper.map(cast(element)))
+                .collect(toList()));
+    }
 }
