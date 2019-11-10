@@ -15,7 +15,7 @@ Releases are available via Maven Central.
 Example:
 ```kotlin
 plugins {
-    id("io.github.art.project") version "1.0.95"
+    id("io.github.art.project") version "1.0.96"
 }
 
 art {
@@ -44,6 +44,20 @@ art {
 ## Bugs and Feedback
 For bugs, questions and discussions please use the [Github Issues](https://github.com/art-community/art/issues).
 
+## Documentation
+
+* [How To](https://github.com/art-community/ART/tree/latest/documentation/how-to-get-started-with-art.md)
+* [Examples](https://github.com/art-community/ART/tree/latest/documentation/examples.md)
+* [Concepts & motivation](https://github.com/art-community/ART/tree/latest/documentation/concept-&-motivation.md)
+* [Use cases](https://github.com/art-community/ART/tree/latest/documentation/use-cases.md)
+* [Modules](https://github.com/art-community/ART/tree/latest/documentation/modules-&-capabilities.md)
+* [Universal value model](https://github.com/art-community/ART/tree/latest/documentation/universal-value-model.md)
+* [Auto configuring](https://github.com/art-community/ART/tree/latest/documentation/agile-auto-configuring.md)
+* [Configuration specifications](https://github.com/art-community/ART/tree/latest/documentation/configuration-specifications.md)
+* [Public API](https://github.com/art-community/ART/tree/latest/documentation/public-api.md)
+* [Constraints & Development](https://github.com/art-community/ART/tree/latest/documentation/constraints-&-development.md)
+ 
+
 ## Dependency libraries
 
 * `com.101tec:zkclient:0.11`
@@ -68,7 +82,6 @@ For bugs, questions and discussions please use the [Github Issues](https://githu
 * `com.google.code.findbugs:jsr305:1.3.9`
 * `com.google.code.findbugs:jsr305:3.0.2`
 * `com.google.code.gson:gson:2.7`
-* `com.google.errorprone:error_prone_annotations:2.3.2`
 * `com.google.errorprone:error_prone_annotations:2.3.3`
 * `com.google.guava:failureaccess:1.0.1`
 * `com.google.guava:guava:28.1-jre`
@@ -139,7 +152,6 @@ For bugs, questions and discussions please use the [Github Issues](https://githu
 * `io.rsocket:rsocket-transport-netty:0.12.2-RC4`
 * `io.vavr:vavr-match:0.10.2`
 * `io.vavr:vavr:0.10.2`
-* `javax.annotation:com.springsource.javax.annotation:1.0.0`
 * `javax.xml.bind:jaxb-api:2.3.0`
 * `net.sf.jopt-simple:jopt-simple:5.0.4`
 * `org.apache.commons:commons-compress:1.18`
@@ -152,7 +164,7 @@ For bugs, questions and discussions please use the [Github Issues](https://githu
 * `org.apache.kafka:kafka-clients:2.3.1`
 * `org.apache.kafka:kafka-log4j-appender:2.3.1`
 * `org.apache.kafka:kafka-streams:2.3.1`
-* `org.apache.kafka:kafka_2.12:2.3.1`
+* `org.apache.kafka:kafka_2.12:2.3.1` (only for kafka broker)
 * `org.apache.logging.log4j:log4j-api:2.12.1`
 * `org.apache.logging.log4j:log4j-core:2.12.1`
 * `org.apache.logging.log4j:log4j-iostreams:2.12.1`
@@ -170,27 +182,16 @@ For bugs, questions and discussions please use the [Github Issues](https://githu
 * `org.apiguardian:apiguardian-api:1.0.0`
 * `org.bitbucket.b_c:jose4j:0.4.4`
 * `org.bouncycastle:bcpg-jdk15on:1.61`
-* `org.bouncycastle:bcpkix-jdk15on:1.54`
 * `org.bouncycastle:bcpkix-jdk15on:1.60`
 * `org.bouncycastle:bcpkix-jdk15on:1.61`
-* `org.bouncycastle:bcprov-jdk15on:1.54`
-* `org.bouncycastle:bcprov-jdk15on:1.60`
 * `org.bouncycastle:bcprov-jdk15on:1.61`
 * `org.checkerframework:checker-qual:2.8.1`
-* `org.codehaus.groovy:groovy-json:2.4.7`
-* `org.codehaus.groovy:groovy-templates:2.4.12`
-* `org.codehaus.groovy:groovy-xml:2.4.12`
-* `org.codehaus.groovy:groovy:2.4.12`
 * `org.codehaus.mojo:animal-sniffer-annotations:1.17`
 * `org.codehaus.mojo:animal-sniffer-annotations:1.18`
 * `org.eclipse.jgit:org.eclipse.jgit:5.5.1.201910021850-r`
 * `org.hdrhistogram:HdrHistogram:2.1.11`
 * `org.jeasy:easy-random-core:4.1.0`
 * `org.jeasy:easy-random:4.1.0`
-* `org.jetbrains.kotlin:kotlin-stdlib-common:1.3.31`
-* `org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.31`
-* `org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.31`
-* `org.jetbrains.kotlin:kotlin-stdlib:1.3.31`
 * `org.jetbrains:annotations:13.0`
 * `org.jooq:jooq:3.12.3`
 * `org.jvnet.staxex:stax-ex:1.8.2`
@@ -205,8 +206,8 @@ For bugs, questions and discussions please use the [Github Issues](https://githu
 * `org.reactivestreams:reactive-streams:1.0.3`
 * `org.rocksdb:rocksdbjni:5.18.3`
 * `org.rocksdb:rocksdbjni:6.3.6`
-* `org.scala-lang:scala-library:2.12.10`
-* `org.scala-lang:scala-reflect:2.12.8`
+* `org.scala-lang:scala-library:2.12.10` (only for kafka broker)
+* `org.scala-lang:scala-reflect:2.12.8` (only for kafka broker)
 * `org.slf4j:slf4j-api:1.7.26`
 * `org.slf4j:slf4j-api:1.7.28`
 * `org.tarantool:connector:1.9.2`
@@ -219,20 +220,6 @@ For bugs, questions and discussions please use the [Github Issues](https://githu
 * `org.zalando:logbook-httpclient:1.13.0`
 * `org.zalando:logbook-servlet:1.13.0`
 * `org.zeroturnaround:zt-exec:1.11`
-
-## Documentation
-
-* [How To](https://github.com/art-community/ART/tree/latest/documentation/how-to-get-started-with-art.md)
-* [Examples](https://github.com/art-community/ART/tree/latest/documentation/examples.md)
-* [Concepts & motivation](https://github.com/art-community/ART/tree/latest/documentation/concept-&-motivation.md)
-* [Use cases](https://github.com/art-community/ART/tree/latest/documentation/use-cases.md)
-* [Modules](https://github.com/art-community/ART/tree/latest/documentation/modules-&-capabilities.md)
-* [Universal value model](https://github.com/art-community/ART/tree/latest/documentation/universal-value-model.md)
-* [Auto configuring](https://github.com/art-community/ART/tree/latest/documentation/agile-auto-configuring.md)
-* [Configuration specifications](https://github.com/art-community/ART/tree/latest/documentation/configuration-specifications.md)
-* [Public API](https://github.com/art-community/ART/tree/latest/documentation/public-api.md)
-* [Constraints & Development](https://github.com/art-community/ART/tree/latest/documentation/constraints-&-development.md)
- 
 
 ## LICENSE
 ART Java
