@@ -4,8 +4,9 @@
 using namespace reindexer;
 
 Error initializeReindexer(const char* directory);
+const char* getClassName(JNIEnv* environment, jclass currentClass);
 
-jobject newReindexerError(JNIEnv* environment, const Error& error)
+jobject newReindexerError(JNIEnv* environment, const Error &error)
 {
     jclass reindexerErrorClass = environment->FindClass("ReindexerError");
     jmethodID constructor = environment->GetMethodID(reindexerErrorClass, "<init>", "(ILjava/lang/String;)V");
@@ -21,7 +22,24 @@ Java_Main_initializeReindexer(JNIEnv* environment, jclass mainClass, jstring dir
     return newReindexerError(environment, initializeReindexer(environment->GetStringUTFChars(directory, nullptr)));
 }
 
-Error initializeReindexer(const char* directory)
+Error log(JNIEnv* environment, jclass currentClass, const std::function<Error(void)> &function)
+{
+    auto error = function();
+    printf("[JNI] [%s] Executed reindexer operation with code = '%d' and text %s \n",
+           getClassName(environment, currentClass),
+           error.code(),
+           error.what().c_str());
+    return error;
+}
+
+const char* getClassName(JNIEnv* environment, jclass currentClass)
+{
+    jmethodID methodId = environment->GetMethodID(currentClass, "getName", "()Ljava/lang/String;");
+    jstring className = (jstring) environment->CallObjectMethod(currentClass, methodId);
+    return environment->GetStringUTFChars(className, nullptr);
+}
+
+Error initializeReindexer(JNIEnv* environment, jclass currentClass, const char* directory)
 {
     auto reindexer = Reindexer();
     reindexer.Connect(directory, ConnectOpts());
@@ -33,12 +51,12 @@ Error initializeReindexer(const char* directory)
     }
     auto index = IndexDef("PK");
     index.opts_ = IndexOpts(kIndexOptPK);
-    reindexer.AddIndex("Test", index);
-    printf("%s", openNamespace.what().c_str());
+    log(environment, currentClass, [&]() -> Error
+    { return reindexer.AddIndex("Test", index); });
     auto item = reindexer.NewItem("Test");
-    printf("%d", item.NumFields());
     item["str"] = "Test";
-    return reindexer.Insert("Test", item);
+    return log(environment, currentClass, [&]() -> Error
+    { return reindexer.Insert("Test", item); });
 }
 
 int main(int argumentCount, char** arguments)
