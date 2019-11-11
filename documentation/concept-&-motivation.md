@@ -1,5 +1,7 @@
 # What is ART?
 
+## A little marketing or how I got to such a life
+ 
 What means `coding` for you?
 
 Two years ago I asked myself. And i'm answered. `Code` - is an ART.
@@ -46,3 +48,22 @@ Because of:
 * ART is simple. How much time you wasted during trying to understand how works nowadays framework? And how many files for sources you see when opening their code? And how many lines in that files? ART you can understand even without docs. Just try it! Look at the code.
 * ART is compact. You are reading documentation of something framework and meet something like this `Go to <url> and install <soft> on youre machine`. Of course, some server application really must be installed with Linux package managers of even with Ansible, but what if i what to centralize configuring of them ? Or, for example, i whant to launch needed soft on any machine, but not inside the container (I hope you do not put your databases in the container on production). For solute yore task you no need to install the BIG database or deploy Message Broker, or write wrapper on a wrapper on wrapper. ART votes for embedded and distroless solutions.
 
+## Words nothing, show me the code
+
+Well, okay, sounds good.
+
+But, what inside in ART ? How its working and why i need read this docs and ART's code ?
+
+Keywords of ART architecture:
+
+* Context
+* Module
+* Configuration
+* State
+* Service
+* Method
+* Specification
+* Communicator
+* DAO
+* Interceptor
+* Function
