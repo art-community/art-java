@@ -68,3 +68,4 @@ tarantoo/
 kafka/
 zookeeper/
 tarantool/lua
+/application-reindexer/src/main/cpp/reindexer/
