@@ -3,24 +3,46 @@
 
 using namespace reindexer;
 
-void initializeReindexer();
+Error initializeReindexer(const char* directory);
 
-JNIEXPORT void JNICALL
-Java_Main_initializeReindexer(JNIEnv* env, jobject obj)
+jobject newReindexerError(JNIEnv* environment, const Error& error)
 {
-    initializeReindexer();
+    jclass reindexerErrorClass = environment->FindClass("ReindexerError");
+    jmethodID constructor = environment->GetMethodID(reindexerErrorClass, "<init>", "(ILjava/lang/String;)V");
+    jvalue arguments[2];
+    arguments[0].i = error.code();
+    arguments[1].l = environment->NewStringUTF(error.what().c_str());
+    return environment->NewObjectA(reindexerErrorClass, constructor, arguments);
 }
 
-void initializeReindexer()
+JNIEXPORT jobject JNICALL
+Java_Main_initializeReindexer(JNIEnv* environment, jclass mainClass, jstring directory)
 {
-    Reindexer reindexer;
-    auto string = std::string(R"(C:\Development\Projects\ART\application-reindexer\src\main\c\reindexer)");
-    auto error = reindexer.Connect(string, ConnectOpts());
-    printf("Result of initializing: %d with what: \"%s\"\n", error.code(), error.what().c_str());
+    return newReindexerError(environment, initializeReindexer(environment->GetStringUTFChars(directory, nullptr)));
+}
+
+Error initializeReindexer(const char* directory)
+{
+    auto reindexer = Reindexer();
+    reindexer.Connect(directory, ConnectOpts());
+    const Error &openNamespace = reindexer.OpenNamespace("Test");
+    if (!openNamespace.ok())
+    {
+        const Error &addNamespace = reindexer.AddNamespace(NamespaceDef("Test"));
+        printf("%s", addNamespace.what().c_str());
+    }
+    auto index = IndexDef("PK");
+    index.opts_ = IndexOpts(kIndexOptPK);
+    reindexer.AddIndex("Test", index);
+    printf("%s", openNamespace.what().c_str());
+    auto item = reindexer.NewItem("Test");
+    printf("%d", item.NumFields());
+    item["str"] = "Test";
+    return reindexer.Insert("Test", item);
 }
 
 int main(int argumentCount, char** arguments)
 {
-    initializeReindexer();
+    initializeReindexer(nullptr);
     return 0;
 }

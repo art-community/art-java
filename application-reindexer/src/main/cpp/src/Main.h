@@ -10,12 +10,10 @@ extern "C" {
 /*
  * Class:     Main
  * Method:    initializeReindexer
- * Signature: ()V
+ * Signature: ()LReindexerError;
  */
-JNIEXPORT void JNICALL Java_Main_initializeReindexer
-  (JNIEnv *, jobject);
-
-
+JNIEXPORT jobject JNICALL Java_Main_initializeReindexer
+  (JNIEnv *, jclass, jstring);
 
 #ifdef __cplusplus
 }
