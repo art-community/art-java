@@ -32,8 +32,8 @@ link_directories(${REINDEXER_LINK_DIRECTORIES_GLOBAL})
 
 add_library(${REINDEXER_LIB} SHARED ${SOURCE_FILES})
 add_dependencies(${REINDEXER_LIB} reindexer)
-target_link_libraries(${REINDEXER_LIB} ${REINDEXER_LIBRARIES_GLOBAL} msvcrtd.lib vcruntimed.lib ucrtd.lib wsock32 ws2_32 shlwapi)
+target_link_libraries(${REINDEXER_LIB} ${REINDEXER_LIBRARIES_GLOBAL})
 
 add_executable(${REINDEXER_EXE} ${SOURCE_FILES})
 add_dependencies(${REINDEXER_EXE} reindexer)
-target_link_libraries(${REINDEXER_EXE} ${REINDEXER_LIBRARIES_GLOBAL} msvcrtd.lib vcruntimed.lib ucrtd.lib wsock32 ws2_32 shlwapi)
+target_link_libraries(${REINDEXER_EXE} ${REINDEXER_LIBRARIES_GLOBAL})
