@@ -67,3 +67,5 @@ Keywords of ART architecture:
 * DAO
 * Interceptor
 * Function
+* Value & Entity
+* Mapper
