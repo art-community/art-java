@@ -3,7 +3,7 @@
 
 using namespace reindexer;
 
-Error initializeReindexer(const char* directory);
+Error initializeReindexer(JNIEnv* environment, jclass currentClass, const char* directory);
 const char* getClassName(JNIEnv* environment, jclass currentClass);
 
 jobject newReindexerError(JNIEnv* environment, const Error &error)
@@ -19,7 +19,7 @@ jobject newReindexerError(JNIEnv* environment, const Error &error)
 JNIEXPORT jobject JNICALL
 Java_Main_initializeReindexer(JNIEnv* environment, jclass mainClass, jstring directory)
 {
-    return newReindexerError(environment, initializeReindexer(environment->GetStringUTFChars(directory, nullptr)));
+    return newReindexerError(environment, initializeReindexer(environment, mainClass, environment->GetStringUTFChars(directory, nullptr)));
 }
 
 Error log(JNIEnv* environment, jclass currentClass, const std::function<Error(void)> &function)
@@ -35,7 +35,7 @@ Error log(JNIEnv* environment, jclass currentClass, const std::function<Error(vo
 const char* getClassName(JNIEnv* environment, jclass currentClass)
 {
     jmethodID methodId = environment->GetMethodID(currentClass, "getName", "()Ljava/lang/String;");
-    jstring className = (jstring) environment->CallObjectMethod(currentClass, methodId);
+    auto className = (jstring) environment->CallObjectMethod(currentClass, methodId);
     return environment->GetStringUTFChars(className, nullptr);
 }
 
@@ -61,6 +61,5 @@ Error initializeReindexer(JNIEnv* environment, jclass currentClass, const char* 
 
 int main(int argumentCount, char** arguments)
 {
-    initializeReindexer(nullptr);
     return 0;
 }
