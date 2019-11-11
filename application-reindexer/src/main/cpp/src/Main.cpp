@@ -1,8 +1,7 @@
-#include <cstdlib>
-#include <vector>
-#include <string>
 #include "Main.h"
 #include "../reindexer/cpp_src/core/reindexer.h"
+
+using namespace reindexer;
 
 void initializeReindexer();
 
@@ -14,14 +13,10 @@ Java_Main_initializeReindexer(JNIEnv* env, jobject obj)
 
 void initializeReindexer()
 {
-    auto reindexer =
-    uintptr_t reindexer = init_reindexer();
-    const char* string = R"(C:\\Development\\Projects\\ART\\application-reindexer\\src\\main\\c\\reindexer)";
-    reindexer_string reindexerString;
-    reindexerString.p = (void*) string;
-    reindexerString.n = _mbstrlen(string);
-    const reindexer_error &error = reindexer_connect(reindexer, reindexerString, ConnectOpts());
-    printf("Result of initializing: %d with what: \"%s\"\n", error.code, error.what);
+    Reindexer reindexer;
+    auto string = std::string(R"(C:\Development\Projects\ART\application-reindexer\src\main\c\reindexer)");
+    auto error = reindexer.Connect(string, ConnectOpts());
+    printf("Result of initializing: %d with what: \"%s\"\n", error.code(), error.what().c_str());
 }
 
 int main(int argumentCount, char** arguments)
