@@ -1,10 +1,11 @@
 #include "Main.h"
-#include "../reindexer/cpp_src/core/reindexer.h"
+#include "core/reindexer.h"
 
 using namespace reindexer;
 
 Error initializeReindexer(JNIEnv* environment, jclass currentClass, const char* directory);
-const char* geClassName(JNIEnv *env, jclass clazz);
+
+const char* getClassName(JNIEnv* environment, jclass currentClass);
 
 jobject newReindexerError(JNIEnv* environment, const Error &error)
 {
@@ -19,34 +20,28 @@ jobject newReindexerError(JNIEnv* environment, const Error &error)
 JNIEXPORT jobject JNICALL
 Java_Main_initializeReindexer(JNIEnv* environment, jclass mainClass, jstring directory)
 {
-    return newReindexerError(environment, initializeReindexer(environment, mainClass, environment->GetStringUTFChars(directory, nullptr)));
+    return newReindexerError(environment, initializeReindexer(environment, mainClass,
+                                                              environment->GetStringUTFChars(directory, nullptr)));
 }
 
 Error log(JNIEnv* environment, jclass currentClass, const std::function<Error(void)> &function)
 {
     auto error = function();
-    printf("[JNI] [%s] Executed reindexer operation with code = '%d' and text %s \n",
-           geClassName(environment, currentClass),
+    printf("[JNI] [%s] Executed reindexer operation with code = '%d' and what: '%s' \n",
+           getClassName(environment, currentClass),
            error.code(),
            error.what().c_str());
     return error;
 }
 
-const char* geClassName(JNIEnv *env, jclass clazz)
+const char* getClassName(JNIEnv* environment, jclass currentClass)
 {
-    jmethodID mid = env->GetMethodID(clazz, "getClass", "()Ljava/lang/Class;");
-    jobject clsObj = env->CallObjectMethod(clazz, mid);
-    jclass clazzz = env->GetObjectClass(clsObj);
-    mid = env->GetMethodID(clazzz, "getName", "()Ljava/lang/String;");
-    jstring strObj = (jstring)env->CallObjectMethod(clsObj, mid);
-
-    const char* str = env->GetStringUTFChars(strObj, NULL);
-    std::string res(str);
-
-    env->ReleaseStringUTFChars(strObj, str);
-
-    return res.c_str();
+    jclass classObject = environment->GetObjectClass(currentClass);
+    jmethodID methodId = environment->GetMethodID(classObject, "getName", "()Ljava/lang/String;");
+    auto className = (jstring) environment->CallObjectMethod(currentClass, methodId);
+    return environment->GetStringUTFChars(className, nullptr);
 }
+
 
 Error initializeReindexer(JNIEnv* environment, jclass currentClass, const char* directory)
 {
@@ -58,10 +53,12 @@ Error initializeReindexer(JNIEnv* environment, jclass currentClass, const char* 
         const Error &addNamespace = reindexer.AddNamespace(NamespaceDef("Test"));
         printf("%s", addNamespace.what().c_str());
     }
-    auto index = IndexDef("PK");
-    index.opts_ = IndexOpts(kIndexOptPK);
-    log(environment, currentClass, [&]() -> Error
-    { return reindexer.AddIndex("Test", index); });
+    auto index = IndexDef("primary", {"str"}, IndexType::IndexStrHash, IndexOpts().PK(true));
+    index.FromType(IndexType::IndexStrHash);
+    auto function = [&]() -> Error
+    { return reindexer.AddIndex("Test", index); };
+    log(environment, currentClass, function);
+
     auto item = reindexer.NewItem("Test");
     item["str"] = "Test";
     return log(environment, currentClass, [&]() -> Error

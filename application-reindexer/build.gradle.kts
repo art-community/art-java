@@ -1,3 +1,5 @@
+import org.eclipse.jgit.api.Git.*
+
 /*
  * ART Java
  *
@@ -17,5 +19,29 @@
  */
 
 plugins {
-    cpp
+    id("org.ajoberstar.grgit") version "1.7.2"
+    id("net.freudasoft.gradle-cmake-plugin") version "0.0.4"
+}
+
+cmake {
+    generator.set("")
+    executable.set("cmake")
+    workingFolder.set(file("$projectDir/src/main/cpp/cmake-build-debug"))
+    sourceFolder.set(file("$projectDir/src/main/cpp"))
+}
+
+tasks["cmakeConfigure"].doFirst {
+    if (!file("$projectDir/src/main/cpp/reindexer").exists()) {
+        cloneRepository()
+                .setURI("https://github.com/Restream/reindexer")
+                .setDirectory(file("$projectDir/src/main/cpp/reindexer"))
+                .call()
+        return@doFirst
+    }
+    open(file("$projectDir/src/main/cpp/reindexer"))
+            .pull()
+            .setRemote("origin")
+            .setRemoteBranchName("master")
+            .call()
+
 }
