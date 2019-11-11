@@ -48,7 +48,56 @@ Because of:
 * ART is simple. How much time you wasted during trying to understand how works nowadays framework? And how many files for sources you see when opening their code? And how many lines in that files? ART you can understand even without docs. Just try it! Look at the code.
 * ART is compact. You are reading documentation of something framework and meet something like this `Go to <url> and install <soft> on youre machine`. Of course, some server application really must be installed with Linux package managers of even with Ansible, but what if i what to centralize configuring of them ? Or, for example, i whant to launch needed soft on any machine, but not inside the container (I hope you do not put your databases in the container on production). For solute yore task you no need to install the BIG database or deploy Message Broker, or write wrapper on a wrapper on wrapper. ART votes for embedded and distroless solutions.
 
-## Words nothing, show me the code
+## Words nothing, show me the features
+
+### Protocols
+
+ART support serving and communication with:
+
+* HTTP (+ SOAP). As HTTP Server ART using Embedded Apache Tomcat, and for communication - Apache Http Client and Apache Async HTTP Client
+* GRPC. Implementation of Google Protobuf RPC. A distinctive feature of ART is that it does not use .proto files to write a request and response scheme
+* RSocket. All five modes: 
+    * fireAndForget
+    * requestResponse
+    * requestSteam
+    * requestChannel
+    * metadataPush
+In ART reactive and straight communication is just a two constants inside the enum. You can combine two styles in one common serving & communication model.
+
+### Value & Data formats
+
+ART support multiple data formats:
+
+* JSON
+* XML
+* Protobuf
+* Message Puck
+* Plain Tuple
+
+But all of thees formats have single abstraction point - Value.
+Value could be a 
+* Primitive `{Int | Float | Double | String | Boolean }`
+* Collection of `{Int | Float | Double | String | Boolean | Value }`
+* Entity that is `String -> Value`
+* StringParameters that are `String -> String`
+* MapValue that is `Value -> Value`
+
+Every data structure that you write in youre code could be mapped to/from Value. 
+
+And Value could be mapped to/from every data format.  Mapping to/from POJO doesn't use reflection or hand-written. Mappers code is generating from POJO. So you just write you're POJOs and run Gradle task that generate yore mappers.
+
+### DB
+
+ART support of:
+
+* SQL databases. As connection pool you could choose between Tomcat and Hikari. As ORM library ART is using JOOQ.
+* RocksDB. ART has DAO-compatibility API for interact with RocksDB.
+* Tarantool. ART has DAO-compatibility API for interact with Tarantool. You don't need to install tarantool binary by yourself. Also you don't need to write Lua procedures to working with T. ART can work with Tarantool in two modes: `LOCAL` and `REMOTE`. When `LOCAL`, then ART will try to launch tarantool by itself. And when `REMOTE`, then ART will connect to already running instance of Tarantol. Also ART supporting multiple instances of Tarantool. But the key feature is that ART executes all the lua requests itself. You just working with ART Tarantool DAO in you're Java application, and don't write lua scripts. As a data structure to interact with Tarantool ART use Value converted to/from Plain Tuple.
+* Reindexer. As a rocksDB ART will be able to work with Reindexer full-text search database.
+
+ 
+ 
+
 
 Well, okay, sounds good.
 
@@ -69,3 +118,4 @@ Keywords of ART architecture:
 * Function
 * Value & Entity
 * Mapper
+
