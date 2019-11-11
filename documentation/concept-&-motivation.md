@@ -62,6 +62,7 @@ ART support serving and communication with:
     * requestSteam
     * requestChannel
     * metadataPush
+    
 In ART reactive and straight communication is just a two constants inside the enum. You can combine two styles in one common serving & communication model.
 
 ### Value & Data formats
