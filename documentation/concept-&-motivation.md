@@ -96,7 +96,7 @@ ART support of:
 * Reindexer. As a rocksDB ART will be able to work with Reindexer full-text search database.
 
  
- 
+## How does it looks?  
 
 
 Well, okay, sounds good.
