@@ -104,7 +104,7 @@ ART could be configured by:
 * JSON
 * HOCON
 * Java Properties
-* ART Value (receiving from remote configurator by GRPC protocol like Spring Config Server)
+* ART Value (receiving from remote configurator by GRPC protocol)
 
 Remote configuration could be applied by runtime without downtime. Server's parameters like port's also could be changed. In this case server will be restarted;
 
