@@ -96,6 +96,69 @@ ART support of:
 * Tarantool. ART has DAO-compatibility API for interact with Tarantool. You don't need to install tarantool binary by yourself. Also you don't need to write Lua procedures to working with T. ART can work with Tarantool in two modes: `LOCAL` and `REMOTE`. When `LOCAL`, then ART will try to launch tarantool by itself. And when `REMOTE`, then ART will connect to already running instance of Tarantol. Also ART supporting multiple instances of Tarantool. But the key feature is that ART executes all the lua requests itself. You just working with ART Tarantool DAO in you're Java application, and don't write lua scripts. As a data structure to interact with Tarantool ART use Value converted to/from Plain Tuple.
 * Reindexer. As a rocksDB ART will be able to work with Reindexer full-text search database.
 
+### Configuring
+
+ART could be configured by:
+
+* YAML
+* JSON
+* HOCON
+* Java Properties
+* ART Value (receiving from remote configurator by GRPC protocol like Spring Config Server)
+
+Remote configuration could be applied by runtime without downtime. Server's parameters like port's also could be changed. In this case server will be restarted;
+
+### Scheduling
+
+ART has two schedulers: 
+
+* LOCAL. Jar embedded thread pool wish ordered tasks
+* REMOTE. Server scheduler, that could handle tasks of three types:  periodic, infinity and deferred; 
+ 
+### Kafka
+
+ART has modules for 
+
+* Kafka Broker. Has embedded Kafka inside and managed by ART configuration management.
+* Kafka Producer. ART communication through Kafka producing.
+* Kafka Consumer & Streams. ART communication through Kafka consuming and streaming.
+ 
+### Service Model 
+ 
+ART has itself service architecture. All applications actions are service methods. Service has specification. Specification describe, how we can use service (for example, HttpServiceSpecification or GrpcServiceSpecification).
+
+Specification also specify some configurable parameters of service:
+
+* Resiliency attributes for circuit breaker, rate limiter, retryer
+* Deactivation attributes: needs for runtime deactivation service or method
+
+Specification also has ExceptionWrapper for handling service exception exceptions. All service call will not produce an exception: results could be Optional or ServiceResponse, but not an exception or throwable. 
+
+### Interceptors
+
+ART Produces multiple layers of interceptors:
+
+* Transport/Protocol interceptors:
+    * RSocket interceptor
+    * GRPC Server & Client interceptors
+    * HTTP Server, service, service method interceptors
+    * HTTP Client interceptor
+* All service interceptor. Concrete service interceptor. Service methods interceptors.
+  
+### Logging & Metrics
+
+ART use log4j2 as logger. ART support overriding logging ofr log4j, slf4j and jul.
+
+For metrics ART use Dropwizard & Micrometer metrics libraries and producing metrics by `/metrics` endpoint in prometheus format.
+
+### Web
+
+ART likes web !
+
+Every module with HTTP Serving will have /information/ui endpoints, that provides web page with module services & protocols information.
+
+HTML pages rendered by pebble engine. But ART can render not only HTML. Every resource, that you need could be processed by ART templating.
+    
  
 ## How does it looks?  
 
