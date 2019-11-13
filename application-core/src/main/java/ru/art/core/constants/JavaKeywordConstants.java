@@ -1,7 +1,10 @@
 package ru.art.core.constants;
 
-import java.util.Arrays;
+import lombok.*;
+import static java.util.EnumSet.*;
 
+@Getter
+@AllArgsConstructor
 public enum JavaKeywordConstants {
   ABSTRACT("abstract"), CONTINUE("continue"), FOR("for"), NEW("new"), SWITCH("switch"), ASSERT("assert"),
   DEFAULT("default"), GOTO("goto"), PACKAGE("package"), SYNCHRONIZED("synchronized"), BOOLEAN("boolean"),
@@ -15,11 +18,7 @@ public enum JavaKeywordConstants {
 
   private final String word;
 
-  JavaKeywordConstants(String value) {
-    this.word = value;
-  }
-
   public static boolean contains(String value) {
-    return Arrays.asList(JavaKeywordConstants.values()).contains(JavaKeywordConstants.valueOf(value));
+    return allOf(JavaKeywordConstants.class).stream().anyMatch(keyword -> keyword.name().equalsIgnoreCase(value));
   }
 }
