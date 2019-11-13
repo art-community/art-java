@@ -21,6 +21,7 @@ package ru.art.http.server;
 import lombok.*;
 import ru.art.core.mime.*;
 import ru.art.http.constants.*;
+import ru.art.http.mapper.*;
 import ru.art.http.server.context.*;
 import ru.art.http.server.context.HttpRequestContext.*;
 import ru.art.http.server.context.MultiPartContext.*;
@@ -34,7 +35,6 @@ import static java.text.MessageFormat.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
-import static javax.servlet.http.HttpServletResponse.*;
 import static org.apache.logging.log4j.ThreadContext.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
@@ -47,6 +47,7 @@ import static ru.art.core.mime.MimeType.valueOf;
 import static ru.art.http.constants.HttpHeaders.*;
 import static ru.art.http.constants.HttpMethodType.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
+import static ru.art.http.constants.HttpStatus.*;
 import static ru.art.http.server.HttpServerRequestHandler.*;
 import static ru.art.http.server.body.descriptor.HttpBodyDescriptor.*;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
@@ -68,6 +69,8 @@ import java.util.*;
 @MultipartConfig
 class HttpServiceServlet extends HttpServlet {
     private final Map<HttpMethodType, HttpServletCommand> commands;
+    private final Map<MimeType, HttpContentMapper> contentMappers = concurrentHashMap(httpServerModule().getContentMappers());
+    private final Map<Class<Throwable>, HttpExceptionHandler<Throwable>> exceptionHandlers = concurrentHashMap(httpServerModule().getExceptionHandlers());
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) {
@@ -78,7 +81,7 @@ class HttpServiceServlet extends HttpServlet {
                     .stream()
                     .map(method -> method.getHttpMethod().getMethodType().name())
                     .collect(joining(COMMA)));
-            response.setStatus(SC_OK);
+            response.setStatus(OK.getCode());
             clearServiceCallLoggingParameters();
             return;
         }
@@ -113,9 +116,9 @@ class HttpServiceServlet extends HttpServlet {
     private void handleException(HttpServletRequest request, HttpServletResponse response, Throwable exception) {
         loggingModule().getLogger(HttpServiceServlet.class).error(HTTP_REQUEST_HANDLING_EXCEPTION_MESSAGE, exception);
         Class<? extends Throwable> exceptionClass = exception.getClass();
-        HttpExceptionHandler<Throwable> exceptionExceptionHandler = cast(httpServerModule().getExceptionHandlers().get(exceptionClass));
+        HttpExceptionHandler<Throwable> exceptionExceptionHandler = cast(exceptionHandlers.get(exceptionClass));
         if (isNull(exceptionExceptionHandler)) {
-            exceptionExceptionHandler = cast(httpServerModule().getExceptionHandlers().get(Throwable.class));
+            exceptionExceptionHandler = cast(exceptionHandlers.get(Throwable.class));
         }
         if (isNull(exceptionExceptionHandler)) throw new HttpServerException(exception);
         exceptionExceptionHandler.handle(exception, request, response);
@@ -179,17 +182,13 @@ class HttpServiceServlet extends HttpServlet {
             return;
         }
         List<MimeType> acceptTypes = sortMimeTypes(acceptTypesStr);
-        Iterator<MimeType> acceptTypeIt = acceptTypes.iterator();
-        while (acceptTypeIt.hasNext()) {
-            MimeType type = acceptTypeIt.next();
-            if (httpServerModule().getContentMappers().containsKey(type)) {
+        for (MimeType type : acceptTypes) {
+            if (contentMappers.containsKey(type)) {
                 requestContextBuilder.acceptType(type);
                 return;
             }
-            if (!acceptTypeIt.hasNext()) {
-                throw new HttpServerException(format(REQUEST_ACCEPT_TYPE_NOT_SUPPORTED, type.toString()));
-            }
         }
+        throw new HttpServerException(format(REQUEST_ACCEPT_TYPE_NOT_SUPPORTED, acceptTypeHeader));
     }
 
     private void calculateContentType(HttpServletCommand command, HttpServletRequest request, HttpRequestContextBuilder requestContextBuilder) {
@@ -209,17 +208,13 @@ class HttpServiceServlet extends HttpServlet {
             return;
         }
         List<MimeType> contentTypes = sortMimeTypes(contentTypesStr);
-        Iterator<MimeType> contentTypeIt = contentTypes.iterator();
-        while (contentTypeIt.hasNext()) {
-            MimeType type = contentTypeIt.next();
-            if (httpServerModule().getContentMappers().containsKey(type)) {
+        for (MimeType type : contentTypes) {
+            if (contentMappers.containsKey(type)) {
                 requestContextBuilder.contentType(type);
                 return;
             }
-            if (!contentTypeIt.hasNext()) {
-                throw new HttpServerException(format(REQUEST_CONTENT_TYPE_NOT_SUPPORTED, contentTypeHeader));
-            }
         }
+        throw new HttpServerException(format(REQUEST_CONTENT_TYPE_NOT_SUPPORTED, contentTypeHeader));
     }
 
     private MimeType getConsumesMimeTypeChecked(HttpServletCommand command) {

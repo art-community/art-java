@@ -18,21 +18,30 @@
 
 package ru.art.generator.mapper;
 
-import lombok.experimental.*;
-import ru.art.generator.mapper.annotation.*;
-import ru.art.generator.mapper.exception.*;
-import ru.art.generator.mapper.operations.*;
-import static java.io.File.*;
-import static ru.art.core.checker.CheckerForEmptiness.*;
+import lombok.experimental.UtilityClass;
+import ru.art.generator.mapper.annotation.IgnoreGeneration;
+import ru.art.generator.mapper.exception.MappingGeneratorException;
+import ru.art.generator.mapper.operations.AnalyzingOperations;
+
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
+
+import static java.io.File.separator;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
-import static ru.art.generator.mapper.constants.Constants.*;
-import static ru.art.generator.mapper.operations.AnalyzingOperations.*;
-import static ru.art.generator.mapper.operations.CommonOperations.*;
+import static ru.art.generator.mapper.constants.Constants.REQUEST;
+import static ru.art.generator.mapper.constants.Constants.RESPONSE;
+import static ru.art.generator.mapper.operations.AnalyzingOperations.deleteFile;
+import static ru.art.generator.mapper.operations.AnalyzingOperations.getListOfFilesInCompiledPackage;
+import static ru.art.generator.mapper.operations.CommonOperations.printError;
 import static ru.art.generator.mapper.operations.GeneratorOperations.*;
-import java.io.*;
-import java.util.*;
 
 /**
  * Main class for generating mappers based on classes in package "model".
@@ -122,15 +131,17 @@ public class Generator {
         /*
         Map files was created for convenient way to get file by it's name without searching it
          */
-        Map<String, Integer> files = mapOf();
-        for (int i = 0; i < modelFileList.size(); i++)
-            files.put(modelFileList.get(i).getName(), i);
+        Map<String, Integer> files = IntStream.range(0, modelFileList.size())
+                .boxed()
+                .collect(toMap(index -> modelFileList.get(index).getName(), identity()));
+
         String jarPathToMain = genPackagePath.substring(0, genPackagePath.lastIndexOf(MAIN) + 5);
-        for (int i = 0; i < modelFileList.size(); i++) {
-            if (isEmpty(modelFileList.get(i))) continue;
-            String currentModelFileName = modelFileList.get(i).getName();
-            if (modelFileList.get(i).isDirectory()) {
-                performGeneration(modelFileList.get(i).getPath().replace(separator + currentModelFileName, EMPTY_STRING),
+        for (File modelFile : modelFileList) {
+            if (isEmpty(modelFile)) continue;
+
+            String currentModelFileName = modelFile.getName();
+            if (modelFile.isDirectory()) {
+                performGeneration(modelFile.getPath().replace(separator + currentModelFileName, EMPTY_STRING),
                         currentModelFileName,
                         currentModelFileName);
                 continue;

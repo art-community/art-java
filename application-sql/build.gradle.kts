@@ -26,9 +26,30 @@ art {
 
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
+        fun dropwizardExclusions(dependency: ExternalModuleDependency) {
+            with(dependency) {
+                exclude("io.dropwizard")
+                exclude("com.google.guava")
+                exclude("com.google.code.findbugs")
+                exclude("org.slf4j")
+                exclude("com.google.guava")
+                exclude("com.google.code.findbugs")
+                exclude("org.eclipse.jetty")
+                exclude("org.slf4j")
+            }
+        }
         embedded("org.jooq", "jooq", jooqVersion)
+                .exclude("org.slf4j")
+                .exclude("com.google.guava")
+                .exclude("com.google.code.findbugs")
         embedded("com.zaxxer", "HikariCP", hikariVersion)
+                .exclude("com.google.guava")
+                .exclude("com.google.code.findbugs")
+                .exclude("org.slf4j")
         embedded("org.apache.tomcat", "tomcat-jdbc", tomcatVersion)
-        embedded("io.dropwizard", "dropwizard-db", "1.3.16")
+        dropwizardExclusions(embedded("io.dropwizard", "dropwizard-util", dropwizardVersion))
+        dropwizardExclusions(embedded("io.dropwizard", "dropwizard-validation", dropwizardVersion))
+        dropwizardExclusions(embedded("io.dropwizard", "dropwizard-lifecycle", dropwizardVersion))
+        dropwizardExclusions(embedded("io.dropwizard", "dropwizard-db", dropwizardVersion))
     }
 }

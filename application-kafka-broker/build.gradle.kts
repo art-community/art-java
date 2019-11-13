@@ -26,10 +26,6 @@ art {
 
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
-        with(embedded("org.apache.kafka", "kafka_2.12", kafkaVersion)) {
-            exclude("org.slf4j", "slf4j-api")
-            exclude("org.slf4j", "slf4j-log4j12")
-            exclude("org.slf4j", "jul-to-slf4j")
-        }
+        embedded("org.apache.kafka", "kafka_2.12", kafkaVersion)
     }
 }

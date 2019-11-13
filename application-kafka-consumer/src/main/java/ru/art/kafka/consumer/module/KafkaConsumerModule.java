@@ -19,7 +19,7 @@
 package ru.art.kafka.consumer.module;
 
 import lombok.*;
-import ru.art.core.module.*;
+import ru.art.core.module.Module;
 import ru.art.kafka.consumer.configuration.*;
 import ru.art.kafka.consumer.registry.*;
 import ru.art.kafka.consumer.specification.*;

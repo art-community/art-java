@@ -39,7 +39,7 @@ public interface LoggingParametersManager {
         putIfNotNull(SERVICE_METHOD_ID_KEY, parameters.getServiceMethodId());
         putIfNotNull(SERVICE_METHOD_COMMAND_KEY, parameters.getServiceMethodCommand());
         putIfNotNull(SERVICE_EVENT_TYPE_KEY, parameters.getLoggingEventType());
-        putIfNotNull(REQUEST_START_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT.format(new Date()));
+        putIfNotNull(REQUEST_START_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT.get().format(new Date()));
         putIfNotNull(SERVICES_KEY, parameters.getLoadedServices());
     }
 

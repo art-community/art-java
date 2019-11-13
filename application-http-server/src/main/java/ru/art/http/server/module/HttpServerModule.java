@@ -19,7 +19,7 @@
 package ru.art.http.server.module;
 
 import lombok.*;
-import ru.art.core.module.*;
+import ru.art.core.module.Module;
 import ru.art.http.server.*;
 import ru.art.http.server.specification.*;
 import static java.util.stream.Collectors.*;

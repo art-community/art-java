@@ -73,8 +73,8 @@ public class KafkaConsumerController {
 
     private static void startKafkaConsumer(KafkaConsumerConfiguration configuration, String serviceId) {
         List<KafkaConsumerServiceSpecification> kafkaConsumerServiceSpecifications = kafkaConsumerServices();
-        Deserializer<Object> keyDeserializer = configuration.getKeyDeserializer();
-        Deserializer<Object> valueDeserializer = configuration.getValueDeserializer();
+        Deserializer<?> keyDeserializer = configuration.getKeyDeserializer();
+        Deserializer<?> valueDeserializer = configuration.getValueDeserializer();
         KafkaConsumer<?, ?> consumer = new KafkaConsumer<>(createProperties(configuration), keyDeserializer, valueDeserializer);
         consumer.subscribe(configuration.getTopics());
         kafkaConsumerModuleState().getKafkaConsumers().put(serviceId, ManagedKafkaConsumer.builder().consumer(consumer).build());

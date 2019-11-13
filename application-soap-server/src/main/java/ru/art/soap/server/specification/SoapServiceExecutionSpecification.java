@@ -44,12 +44,16 @@ public class SoapServiceExecutionSpecification implements HttpServiceSpecificati
     @Getter(lazy = true)
     private final String serviceId = SOAP_EXECUTION_SERVICE_TYPE + OPENING_BRACKET + soapServiceSpecification.getServiceId() + CLOSING_BRACKET;
     @Getter(lazy = true)
-    private final HttpService httpService = addExecuteSoapServiceOperation(httpService())
-            .get(GET_SERVICE_WSDL)
-            .responseMapper(stringMapper.getFromModel())
-            .listen(soapServiceSpecification.getSoapService().getPath())
+    private final HttpService httpService = createHttpService();
 
-            .serve(EMPTY_STRING);
+    private HttpService createHttpService() {
+        return addExecuteSoapServiceOperation(httpService())
+                .get(GET_SERVICE_WSDL)
+                .responseMapper(stringMapper.getFromModel())
+                .listen(soapServiceSpecification.getSoapService().getPath())
+
+                .serve(EMPTY_STRING);
+    }
 
     public SoapServiceExecutionSpecification(SoapServiceSpecification soapServiceSpecification) {
         this.soapServiceSpecification = soapServiceSpecification;

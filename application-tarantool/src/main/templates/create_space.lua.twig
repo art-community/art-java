@@ -1,0 +1,25 @@
+box.schema.space.create('{{ spaceName }}', {
+{%- if not (id is empty) -%}
+            id = {{ id }};
+        {%- endif -%}
+{%- if not (temporary is empty) -%}
+            temporary = {{ temporary }};
+        {%- endif -%}
+{%- if not (engine is empty) -%}
+            engine = '{{ engine }}';
+        {%- endif -%}
+{%- if not (field_count is empty) -%}
+            field_count = {{ field_count }};
+        {%- endif -%}
+{%- if not (format is empty) -%}
+            format = {{ format }};
+        {%- endif -%}
+{%- if not (isLocal is empty) -%}
+            isLocal = {{ isLocal }};
+        {%- endif -%}
+{%- if not (user is empty) -%}
+            user = '{{ user }}';
+        {%- endif -%}
+        if_not_exists = true;
+    }
+)

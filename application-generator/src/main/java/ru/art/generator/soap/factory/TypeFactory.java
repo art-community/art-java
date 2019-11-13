@@ -18,17 +18,20 @@
 
 package ru.art.generator.soap.factory;
 
-import com.predic8.schema.*;
+import com.predic8.schema.Element;
+import com.predic8.schema.TypeDefinition;
 import com.predic8.schema.restriction.facet.*;
-import groovy.xml.*;
-import lombok.*;
-import lombok.experimental.*;
-import ru.art.generator.exception.*;
+import groovy.xml.QName;
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import ru.art.generator.exception.NotFoundPrefixException;
 import ru.art.generator.soap.model.Restriction;
-import ru.art.generator.soap.model.Restriction.*;
-import ru.art.generator.soap.model.*;
+import ru.art.generator.soap.model.Restriction.RestrictionBuilder;
+import ru.art.generator.soap.model.RestrictionOperation;
+
+import java.util.Date;
+
 import static ru.art.generator.soap.constants.Constants.SupportJavaType.*;
-import java.util.*;
 
 @UtilityClass
 public class TypeFactory {
@@ -44,19 +47,15 @@ public class TypeFactory {
             case FLOAT:
                 return Float.class;
             case DOUBLE:
-                return Double.class;
             case DECIMAL:
                 return Double.class;
             case LONG:
                 return Long.class;
             case INT:
-                return Integer.class;
             case INTEGER:
                 return Integer.class;
             case DATE_TIME:
-                return Date.class;
             case TIME:
-                return Date.class;
             case DATE:
                 return Date.class;
             case BYTE_ARRAY:
@@ -162,7 +161,6 @@ public class TypeFactory {
         }
         return builder.build();
     }
-
 
     public static boolean isObject(Class classString) {
         return classString.getTypeName().equals(Object.class.getName());

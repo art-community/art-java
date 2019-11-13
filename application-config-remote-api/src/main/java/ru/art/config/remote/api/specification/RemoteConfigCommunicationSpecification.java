@@ -18,13 +18,13 @@
 
 package ru.art.config.remote.api.specification;
 
-import lombok.Getter;
-import ru.art.grpc.client.communicator.GrpcCommunicator.GrpcAsynchronousCommunicator;
-import ru.art.grpc.client.specification.GrpcCommunicationSpecification;
-import ru.art.service.exception.UnknownServiceMethodException;
-import static ru.art.config.remote.api.constants.RemoteConfigApiConstants.Methods.APPLY_CONFIGURATION_METHOD_ID;
-import static ru.art.config.remote.api.constants.RemoteConfigApiConstants.REMOTE_CONFIG_SERVICE_ID;
-import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator;
+import lombok.*;
+import ru.art.grpc.client.communicator.GrpcCommunicator.*;
+import ru.art.grpc.client.specification.*;
+import ru.art.service.exception.*;
+import static ru.art.config.remote.api.constants.RemoteConfigApiConstants.Methods.*;
+import static ru.art.config.remote.api.constants.RemoteConfigApiConstants.*;
+import static ru.art.grpc.client.communicator.GrpcCommunicator.*;
 
 @Getter
 public class RemoteConfigCommunicationSpecification implements GrpcCommunicationSpecification {
@@ -40,7 +40,7 @@ public class RemoteConfigCommunicationSpecification implements GrpcCommunication
     }
 
     @Getter(lazy = true)
-    private final GrpcAsynchronousCommunicator applyConfigurationProxy = grpcCommunicator(host, port, path)
+    private final GrpcAsynchronousCommunicator applyConfiguration = grpcCommunicator(host, port, path)
             .serviceId(REMOTE_CONFIG_SERVICE_ID)
             .methodId(APPLY_CONFIGURATION_METHOD_ID)
             .asynchronous();
@@ -52,7 +52,7 @@ public class RemoteConfigCommunicationSpecification implements GrpcCommunication
     @Override
     public <P, R> R executeMethod(String methodId, P request) {
         if (APPLY_CONFIGURATION_METHOD_ID.equals(methodId)) {
-            getApplyConfigurationProxy().executeAsynchronous();
+            getApplyConfiguration().executeAsynchronous();
             return null;
         }
         throw new UnknownServiceMethodException(getServiceId(), methodId);

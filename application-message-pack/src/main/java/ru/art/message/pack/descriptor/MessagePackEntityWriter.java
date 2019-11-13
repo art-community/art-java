@@ -32,6 +32,7 @@ import static org.msgpack.core.MessagePack.*;
 import static org.msgpack.value.ValueFactory.MapBuilder;
 import static org.msgpack.value.ValueFactory.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -59,7 +60,7 @@ public class MessagePackEntityWriter {
     }
 
     public static byte[] writeMessagePackToBytes(Value value) {
-        if (isEmpty(value)) {
+        if (Value.isEmpty(value)) {
             return EMPTY_BYTES;
         }
         ArrayBufferOutput output = new ArrayBufferOutput();
@@ -90,7 +91,7 @@ public class MessagePackEntityWriter {
 
 
     private static org.msgpack.value.Value writePrimitive(Primitive primitive) {
-        if (isEmpty(primitive)) {
+        if (Value.isEmpty(primitive)) {
             return newNil();
         }
         switch (primitive.getPrimitiveType()) {
@@ -113,7 +114,7 @@ public class MessagePackEntityWriter {
     }
 
     private static org.msgpack.value.Value writeCollectionValue(CollectionValue<?> collectionValue) {
-        if (isEmpty(collectionValue)) {
+        if (Value.isEmpty(collectionValue)) {
             return newArray();
         }
         switch (collectionValue.getElementsType()) {
@@ -208,7 +209,7 @@ public class MessagePackEntityWriter {
     }
 
     private static org.msgpack.value.Value writeEntity(Entity entity) {
-        if (isEmpty(entity)) {
+        if (Value.isEmpty(entity)) {
             return emptyMap();
         }
         MapBuilder mapBuilder = newMapBuilder();
@@ -250,14 +251,18 @@ public class MessagePackEntityWriter {
                 .getParameters()
                 .entrySet()
                 .stream()
+                .filter(entry -> isNotEmpty(entry.getValue()))
                 .collect(toMap(stringEntry -> newString(stringEntry.getKey()), stringEntry -> newString(stringEntry.getValue()))));
     }
 
 
     private static org.msgpack.value.Value writeMapValue(MapValue mapValue) {
-        if (isEmpty(mapValue)) {
+        if (Value.isEmpty(mapValue)) {
             return emptyMap();
         }
-        return newMap(mapValue.getElements().entrySet().stream().collect(toMap(entry -> writeMessagePack(entry.getKey()), entry -> writeMessagePack(entry.getValue()))));
+        return newMap(mapValue.getElements().entrySet()
+                .stream()
+                .filter(entry -> !Value.isEmpty(entry.getValue()))
+                .collect(toMap(entry -> writeMessagePack(entry.getKey()), entry -> writeMessagePack(entry.getValue()))));
     }
 }

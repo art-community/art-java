@@ -19,9 +19,9 @@
 package ru.art.http.client.communicator;
 
 import org.apache.http.*;
-import org.apache.http.client.*;
 import org.apache.http.client.config.*;
-import org.apache.http.nio.client.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.nio.client.*;
 import ru.art.core.validator.*;
 import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
@@ -127,7 +127,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     }
 
     @Override
-    public HttpCommunicator client(HttpClient client) {
+    public HttpCommunicator client(CloseableHttpClient client) {
         configuration.setSynchronousClient(validator.notNullField(getOrElse(client, httpClientModule().getClient()), "synchronousClient"));
         return this;
     }
@@ -235,25 +235,19 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     public <RequestType, ResponseType> Optional<ResponseType> execute(RequestType request) {
         configuration.setRequest(validator.notNullField(request, "request"));
         validator.validate();
-        return ofNullable(executeHttpRequest(configuration));
+        return ofNullable(executeSynchronousHttpRequest(configuration));
     }
 
     @Override
     public <ResponseType> Optional<ResponseType> execute() {
         validator.validate();
-        return ofNullable(executeHttpRequest(configuration));
+        return ofNullable(executeSynchronousHttpRequest(configuration));
     }
 
 
     @Override
-    public HttpAsynchronousCommunicator client(HttpAsyncClient client) {
+    public HttpAsynchronousCommunicator client(CloseableHttpAsyncClient client) {
         configuration.setAsynchronousClient(validator.notNullField(client, "asynchronousClient"));
-        return this;
-    }
-
-    @Override
-    public HttpAsynchronousCommunicator asynchronousFuturesExecutor(Executor executor) {
-        configuration.setAsynchronousFuturesExecutor(validator.notNullField(executor, "asynchronousFuturesExecutor"));
         return this;
     }
 
