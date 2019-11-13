@@ -13,10 +13,10 @@ public enum JavaKeywordConstants {
   CLASS("class"), FINALLY("finally"), LONG("long"), STRICTFP("strictfp"), VOLATILE("volatile"),
   CONST("const"), FLOAT("float"), NATIVE("native"), SUPER("super"), WHILE("while");
 
-  private final String value;
+  private final String word;
 
   JavaKeywordConstants(String value) {
-    this.value = value;
+    this.word = value;
   }
 
   public static boolean contains(String value) {
