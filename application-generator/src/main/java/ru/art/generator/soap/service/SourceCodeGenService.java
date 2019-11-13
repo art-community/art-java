@@ -19,35 +19,27 @@
 package ru.art.generator.soap.service;
 
 import com.squareup.javapoet.*;
-import lombok.RequiredArgsConstructor;
-import ru.art.entity.mapper.ValueFromModelMapper.XmlEntityFromModelMapper;
-import ru.art.entity.mapper.ValueToModelMapper.XmlEntityToModelMapper;
-import ru.art.generator.soap.model.Field;
-import ru.art.generator.soap.model.OperationSoapGen;
-import ru.art.generator.soap.model.SoapGenerationMode;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.squareup.javapoet.ClassName.get;
-import static com.squareup.javapoet.TypeSpec.interfaceBuilder;
+import lombok.*;
+import ru.art.entity.mapper.ValueFromModelMapper.*;
+import ru.art.entity.mapper.ValueToModelMapper.*;
+import ru.art.generator.soap.model.*;
+import static com.squareup.javapoet.ClassName.*;
+import static com.squareup.javapoet.TypeSpec.*;
 import static javax.lang.model.element.Modifier.*;
-import static ru.art.core.constants.StringConstants.DOUBLE_TABULATION;
-import static ru.art.core.constants.StringConstants.NEW_LINE;
-import static ru.art.core.extension.StringExtensions.firstLetterToLowerCase;
-import static ru.art.core.extension.StringExtensions.firstLetterToUpperCase;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.generator.soap.constants.Constants.ToXmlModelConstants.*;
-import static ru.art.generator.soap.constants.Constants.XML_MAPPER;
-import static ru.art.generator.soap.factory.CodeBlockFactory.createModelFromXmlEntity;
-import static ru.art.generator.soap.factory.CodeBlockFactory.createXmlEntityFromModel;
-import static ru.art.generator.soap.factory.JavaFileFactory.createJavaFile;
-import static ru.art.generator.soap.model.SoapGenerationMode.CLIENT;
-import static ru.art.generator.soap.model.SoapGenerationMode.SERVER;
+import static ru.art.generator.soap.constants.Constants.*;
+import static ru.art.generator.soap.factory.CodeBlockFactory.*;
+import static ru.art.generator.soap.factory.JavaFileFactory.*;
+import static ru.art.generator.soap.model.SoapGenerationMode.*;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class SourceCodeGenService {
 
     private final String packageString;
+    private final String absolutePathToSrcMainJava;
 
     private static String getValidatorMethodName(String type) {
         switch (type) {
@@ -67,11 +59,11 @@ public class SourceCodeGenService {
             List<FieldSpec> fieldSpecList = new ArrayList<>();
             for (Field input : operation.getInput()) {
                 if (SERVER.equals(soapGenerationMode)) {
-                    createModelFromXmlEntity(input, packageString);
+                    createModelFromXmlEntity(input, packageString, absolutePathToSrcMainJava);
                     fieldSpecList.add(createFieldSpec(get(XmlEntityToModelMapper.class), XML_ENTITY_TO_MODEL_MAPPER_LAMBDA_FOR_OPERATION, input, TO_MODEL));
                     continue;
                 }
-                createXmlEntityFromModel(input, packageString);
+                createXmlEntityFromModel(input, packageString, absolutePathToSrcMainJava);
                 fieldSpecList.add(createFieldSpec(get(XmlEntityFromModelMapper.class), XML_ENTITY_FROM_MODEL_MAPPER_LAMBDA_FOR_OPERATION, input, FROM_MODEL));
             }
 
@@ -85,7 +77,7 @@ public class SourceCodeGenService {
             TypeSpec specOperation = interfaceBuilder(firstLetterToUpperCase(operation.getName())).addModifiers(PUBLIC, STATIC)
                     .addFields(fieldSpecList)
                     .build();
-            createJavaFile(packageString + ".operation", specOperation);
+            createJavaFile(packageString + ".operation", specOperation, absolutePathToSrcMainJava);
 
         }
         System.out.println("Mappers created successfully");
@@ -93,11 +85,11 @@ public class SourceCodeGenService {
 
     private void addFieldSpec(SoapGenerationMode soapGenerationMode, List<FieldSpec> fieldSpecList, Field output) {
         if (CLIENT.equals(soapGenerationMode)) {
-            createModelFromXmlEntity(output, packageString);
+            createModelFromXmlEntity(output, packageString, absolutePathToSrcMainJava);
             fieldSpecList.add(createFieldSpec(get(XmlEntityToModelMapper.class), XML_ENTITY_TO_MODEL_MAPPER_LAMBDA_FOR_OPERATION, output, TO_MODEL));
             return;
         }
-        createXmlEntityFromModel(output, packageString);
+        createXmlEntityFromModel(output, packageString, absolutePathToSrcMainJava);
         fieldSpecList.add(createFieldSpec(get(XmlEntityFromModelMapper.class), XML_ENTITY_FROM_MODEL_MAPPER_LAMBDA_FOR_OPERATION, output, FROM_MODEL));
     }
 

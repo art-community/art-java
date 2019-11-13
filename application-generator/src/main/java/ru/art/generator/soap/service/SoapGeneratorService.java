@@ -18,14 +18,28 @@
 
 package ru.art.generator.soap.service;
 
+import lombok.*;
 import ru.art.generator.soap.model.*;
 import static ru.art.generator.soap.service.ParserService.*;
-import java.util.concurrent.atomic.*;
 
 public class SoapGeneratorService {
-    public static final AtomicReference<String> SRC_MAIN_JAVA_ABSOLUTE_PATH = new AtomicReference<>();
+    @Builder
+    public static class SoapGenerationRequest {
+        private String wsdlUrl;
+        private String packageName;
+        private SoapGenerationMode generationMode;
+        private String absolutePathToSrcMainJava;
+    }
 
-    public static void performGeneration(String wsdlUrl, String packageName, SoapGenerationMode generationMode) {
-        new SourceCodeGenService(packageName).sourceGen(parseWsdl(wsdlUrl), generationMode);
+    public static void performGeneration(SoapGenerationRequest request) {
+        new SourceCodeGenService(request.packageName, request.absolutePathToSrcMainJava).sourceGen(parseWsdl(request.wsdlUrl), request.generationMode);
+    }
+
+    public static void main(String[] args) {
+        SoapGeneratorService.performGeneration(SoapGenerationRequest.builder().generationMode(SoapGenerationMode.CLIENT)
+                .absolutePathToSrcMainJava("https://github.com/art-community/ART/files/3819206/errorWsdl.txt")
+                .wsdlUrl("http://10.28.43.18:20300/CRMServices/ru.atc.crm.aif.provider.FinAccountServices?wsdl")
+                .packageName("wsdl")
+                .build());
     }
 }
