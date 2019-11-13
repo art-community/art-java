@@ -23,6 +23,7 @@ import ru.art.core.configuration.ContextInitialConfiguration.*;
 import ru.art.core.configurator.*;
 import ru.art.core.constants.*;
 import ru.art.core.exception.*;
+import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import ru.art.core.provider.*;
 import static java.lang.Runtime.*;

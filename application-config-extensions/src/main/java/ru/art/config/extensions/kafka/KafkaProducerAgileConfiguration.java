@@ -16,21 +16,22 @@
 
 package ru.art.config.extensions.kafka;
 
-import lombok.*;
-import org.apache.kafka.common.serialization.*;
-import ru.art.kafka.producer.configuration.*;
-import ru.art.kafka.producer.configuration.KafkaProducerModuleConfiguration.*;
-import static java.lang.Class.*;
-import static org.apache.kafka.common.serialization.Serdes.*;
-import static ru.art.config.extensions.ConfigExtensions.*;
+import lombok.Getter;
+import org.apache.kafka.common.serialization.Serializer;
+import ru.art.kafka.producer.configuration.KafkaProducerConfiguration;
+import ru.art.kafka.producer.configuration.KafkaProducerModuleConfiguration.KafkaProducerDefaultModuleConfiguration;
+
+import java.util.Map;
+
+import static java.lang.Class.forName;
+import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
+import static ru.art.config.extensions.ConfigExtensions.configMap;
 import static ru.art.config.extensions.common.DataFormats.*;
 import static ru.art.config.extensions.kafka.KafkaConfigKeys.*;
-import static ru.art.core.checker.CheckerForEmptiness.*;
-import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.extension.ExceptionExtensions.ifException;
 import static ru.art.kafka.instances.KafkaSerdes.*;
-import static ru.art.kafka.producer.configuration.KafkaProducerConfiguration.*;
-import java.lang.String;
-import java.util.*;
+import static ru.art.kafka.producer.configuration.KafkaProducerConfiguration.producerConfiguration;
 
 @Getter
 public class KafkaProducerAgileConfiguration extends KafkaProducerDefaultModuleConfiguration {

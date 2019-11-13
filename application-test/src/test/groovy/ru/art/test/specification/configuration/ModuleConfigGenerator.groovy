@@ -97,9 +97,6 @@ http.server.web=false
             case HOCON:
                 name = "module-config.hocon"
                 break
-            case GROOVY:
-                name = "module-config.groovy"
-                break
             case YAML:
                 name = "module-config.yml"
                 config = YAML_CONFIG

@@ -58,9 +58,8 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         if (!entity.getFieldNames().contains(ID_FIELD) && idCalculationMode == MANUAL) {
             throw new TarantoolDaoException(format(ENTITY_WITHOUT_ID_FILED, spaceName));
         }
-        entity = concat(entityBuilder().longField(ID_FIELD, null).build(), entity);
         evaluateValueScript(instanceId, spaceName);
-        PlainTupleWriterResult valueTupleResult = writeTuple(entity);
+        PlainTupleWriterResult valueTupleResult = writeTuple(merge(entityBuilder().longField(ID_FIELD, null).build(), entity));
         if (isNull(valueTupleResult)) {
             throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
         }
@@ -243,9 +242,8 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         if (!entity.getFieldNames().contains(ID_FIELD) && idCalculationMode == MANUAL) {
             throw new TarantoolDaoException(format(ENTITY_WITHOUT_ID_FILED, spaceName));
         }
-        entity = concat(entityBuilder().longField(ID_FIELD, null).build(), entity);
         evaluateValueScript(instanceId, spaceName);
-        PlainTupleWriterResult valueTupleResult = writeTuple(entity);
+        PlainTupleWriterResult valueTupleResult = writeTuple(merge(entityBuilder().longField(ID_FIELD, null).build(), entity));
         if (isNull(valueTupleResult)) {
             throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
         }
@@ -378,7 +376,6 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         return ofNullable(asEntity(readTuple(valueTuple, fromTuple(schemaTuple))));
     }
 
-
     public void upsert(String spaceName, Entity defaultEntity, TarantoolUpdateFieldOperation... operations) {
         if (isNull(defaultEntity)) {
             throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
@@ -386,9 +383,8 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         if (!defaultEntity.getFieldNames().contains(ID_FIELD) && idCalculationMode == MANUAL) {
             throw new TarantoolDaoException(format(ENTITY_WITHOUT_ID_FILED, spaceName));
         }
-        defaultEntity = concat(entityBuilder().longField(ID_FIELD, null).build(), defaultEntity);
         evaluateValueScript(instanceId, spaceName);
-        PlainTupleWriterResult valueTupleResult = writeTuple(defaultEntity);
+        PlainTupleWriterResult valueTupleResult = writeTuple(merge(entityBuilder().longField(ID_FIELD, null).build(), defaultEntity));
         if (isNull(valueTupleResult)) {
             throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
         }

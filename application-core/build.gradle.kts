@@ -15,3 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+dependencies {
+    with(art.externalDependencyVersionsConfiguration) {
+        embedded("com.google.guava", "guava", guavaVersion)
+        embedded("io.vavr", "vavr", vavrVersion)
+    }
+}

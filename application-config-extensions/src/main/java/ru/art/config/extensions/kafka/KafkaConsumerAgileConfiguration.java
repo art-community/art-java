@@ -16,30 +16,35 @@
 
 package ru.art.config.extensions.kafka;
 
-import lombok.*;
-import org.apache.kafka.common.serialization.*;
-import ru.art.kafka.consumer.configuration.*;
-import ru.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration.*;
-import static java.lang.Class.*;
-import static java.time.Duration.*;
-import static org.apache.kafka.common.serialization.Serdes.*;
+import lombok.Getter;
+import org.apache.kafka.common.serialization.Deserializer;
+import org.apache.kafka.common.serialization.Serde;
+import ru.art.kafka.consumer.configuration.KafkaConsumerConfiguration;
+import ru.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration.KafkaConsumerModuleDefaultConfiguration;
+import ru.art.kafka.consumer.configuration.KafkaStreamConfiguration;
+
+import java.util.Map;
+
+import static java.lang.Class.forName;
+import static java.time.Duration.ofMillis;
+import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
 import static ru.art.config.extensions.ConfigExtensions.*;
-import static ru.art.config.extensions.common.CommonConfigKeys.*;
+import static ru.art.config.extensions.common.CommonConfigKeys.ENABLE_TRACING;
+import static ru.art.config.extensions.common.CommonConfigKeys.THREAD_POOL_SIZE;
 import static ru.art.config.extensions.common.DataFormats.*;
 import static ru.art.config.extensions.kafka.KafkaConfigKeys.*;
-import static ru.art.core.checker.CheckerForEmptiness.*;
-import static ru.art.core.constants.ThreadConstants.*;
-import static ru.art.core.context.Context.*;
-import static ru.art.core.extension.ExceptionExtensions.*;
-import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.core.wrapper.ExceptionWrapper.*;
-import static ru.art.kafka.consumer.configuration.KafkaStreamConfiguration.*;
-import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
-import static ru.art.kafka.consumer.controller.KafkaConsumerController.*;
-import static ru.art.kafka.consumer.module.KafkaConsumerModule.*;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
+import static ru.art.core.context.Context.context;
+import static ru.art.core.extension.ExceptionExtensions.ifException;
+import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
+import static ru.art.core.factory.CollectionsFactory.setOf;
+import static ru.art.core.wrapper.ExceptionWrapper.ignoreException;
+import static ru.art.kafka.consumer.configuration.KafkaStreamConfiguration.streamConfiguration;
+import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.KAFKA_CONSUMER_MODULE_ID;
+import static ru.art.kafka.consumer.controller.KafkaConsumerController.restartKafkaConsumer;
+import static ru.art.kafka.consumer.module.KafkaConsumerModule.kafkaConsumerModuleState;
 import static ru.art.kafka.instances.KafkaSerdes.*;
-import java.lang.String;
-import java.util.*;
 
 @Getter
 public class KafkaConsumerAgileConfiguration extends KafkaConsumerModuleDefaultConfiguration {

@@ -56,8 +56,15 @@ dist
 package-lock.json
 node_modules
 .cache
-rocks.db/
 !gradle/wrapper/gradle-wrapper.jar
 *.snap
 *.xlog
 log.*
+/application-test/kafka/
+/application-test/tarantool/
+/application-test/zookeeper/
+rocks.db/
+tarantoo/
+kafka/
+zookeeper/
+tarantool/lua

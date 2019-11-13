@@ -20,6 +20,7 @@ package ru.art.sql.module;
 
 import io.dropwizard.db.*;
 import lombok.*;
+import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import ru.art.sql.configuration.*;
 import ru.art.sql.exception.*;

@@ -21,10 +21,16 @@ package ru.art.config.state;
 import lombok.*;
 import lombok.experimental.*;
 import ru.art.core.module.*;
+import static ru.art.config.state.ConfigModuleState.ConfigurationMode.*;
 
 @Getter
 @Setter
 @Accessors(fluent = true)
 public class ConfigModuleState implements ModuleState {
-    private volatile boolean useRemoteConfiguration;
+    private volatile ConfigurationMode configurationMode = FILE;
+
+    public enum ConfigurationMode {
+        FILE,
+        REMOTE
+    }
 }

@@ -18,6 +18,7 @@
 
 package ru.art.service;
 
+import lombok.experimental.*;
 import ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import ru.art.service.model.*;
 import static java.text.MessageFormat.*;
@@ -39,40 +40,41 @@ import static ru.art.service.factory.ServiceResponseFactory.*;
 import static ru.art.service.model.ServiceInterceptionResult.*;
 import java.util.*;
 
-public interface ServiceController {
-    static <RequestType, ResponseType> Optional<ResponseType> executeServiceMethod(String serviceId, String methodId, RequestType requestData) {
+@UtilityClass
+public class ServiceController {
+    public static <RequestType, ResponseType> Optional<ResponseType> executeServiceMethod(String serviceId, String methodId, RequestType requestData) {
         ServiceMethodCommand command = new ServiceMethodCommand(serviceId, methodId);
         ServiceRequest<RequestType> request = newServiceRequest(command, requestData);
         return ofNullable(extractResponseDataChecked(executeServiceMethodUnchecked(request)));
     }
 
-    static <ResponseType> Optional<ResponseType> executeServiceMethod(String serviceId, String methodId) {
+    public static <ResponseType> Optional<ResponseType> executeServiceMethod(String serviceId, String methodId) {
         ServiceMethodCommand command = new ServiceMethodCommand(serviceId, methodId);
         ServiceRequest<?> request = newServiceRequest(command);
         return ofNullable(extractResponseDataChecked(executeServiceMethodUnchecked(request)));
     }
 
-    static <RequestType, ResponseType> ServiceResponse<ResponseType> executeServiceMethodUnchecked(String serviceId, String methodId, RequestType requestData) {
+    public static <RequestType, ResponseType> ServiceResponse<ResponseType> executeServiceMethodUnchecked(String serviceId, String methodId, RequestType requestData) {
         ServiceMethodCommand command = new ServiceMethodCommand(serviceId, methodId);
         ServiceRequest<RequestType> request = newServiceRequest(command, requestData);
         return executeServiceMethodUnchecked(request);
     }
 
-    static <RequestType, ResponseType> ServiceResponse<ResponseType> executeServiceMethodValidatableUnchecked(String serviceId, String methodId, RequestType requestData) {
+    public static <RequestType, ResponseType> ServiceResponse<ResponseType> executeServiceMethodValidatableUnchecked(String serviceId, String methodId, RequestType requestData) {
         ServiceMethodCommand command = new ServiceMethodCommand(serviceId, methodId);
         ServiceRequest<RequestType> request = newServiceRequest(command, requestData, VALIDATABLE);
         return executeServiceMethodUnchecked(request);
     }
 
-    static <ResponseType> ServiceResponse<ResponseType> executeServiceMethodUnchecked(String serviceId, String methodId) {
+    public static <ResponseType> ServiceResponse<ResponseType> executeServiceMethodUnchecked(String serviceId, String methodId) {
         ServiceMethodCommand command = new ServiceMethodCommand(serviceId, methodId);
         ServiceRequest<?> request = newServiceRequest(command);
         return executeServiceMethodUnchecked(request);
     }
 
-    static <RequestType, ResponseType> ServiceResponse<ResponseType> executeServiceMethodUnchecked(ServiceRequest<RequestType> request) {
+    public static <RequestType, ResponseType> ServiceResponse<ResponseType> executeServiceMethodUnchecked(ServiceRequest<RequestType> request) {
         Date startTime = new Date();
-        putIfNotNull(REQUEST_START_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT.format(startTime));
+        putIfNotNull(REQUEST_START_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT.get().format(startTime));
         Specification service = serviceModuleState()
                     .getServiceRegistry()
                 .getService(request.getServiceMethodCommand().getServiceId());
@@ -89,11 +91,11 @@ public interface ServiceController {
                 .executeServiceWrapped(requestAfterInterception.getServiceMethodCommand(), requestAfterInterception);
         Date endTime = new Date();
         putIfNotNull(EXECUTION_TIME_KEY, endTime.getTime() - startTime.getTime());
-        putIfNotNull(REQUEST_END_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT.format(endTime));
+        putIfNotNull(REQUEST_END_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT.get().format(endTime));
         return cast(getOrElse(afterServiceExecution(request, service, response).getResponse(), response));
     }
 
-    static <RequestType> ServiceInterceptionResult beforeServiceExecution(Specification service, ServiceRequest<RequestType> request) {
+    public static <RequestType> ServiceInterceptionResult beforeServiceExecution(Specification service, ServiceRequest<RequestType> request) {
         DeactivationConfig deactivationConfig = service.getDeactivationConfig();
         if (deactivationConfig.isDeactivated() || deactivationConfig.getDeactivatedMethods().contains(request.getServiceMethodCommand().getMethodId()))
             return stopHandling(request, okResponse(request.getServiceMethodCommand()));
@@ -123,7 +125,7 @@ public interface ServiceController {
         return serviceInterceptionResult;
     }
 
-    static <RequestType, ResponseType> ServiceInterceptionResult afterServiceExecution(ServiceRequest<RequestType> request, Specification service, ServiceResponse<ResponseType> response) {
+    public static <RequestType, ResponseType> ServiceInterceptionResult afterServiceExecution(ServiceRequest<RequestType> request, Specification service, ServiceResponse<ResponseType> response) {
         List<ResponseInterceptor> methodResponseInterceptors = service.getMethodResponseInterceptors().get(request.getServiceMethodCommand().getMethodId());
         List<ResponseInterceptor> responseInterceptors = service.getResponseInterceptors();
         ServiceInterceptionResult serviceInterceptionResult = nextInterceptor(request, response);

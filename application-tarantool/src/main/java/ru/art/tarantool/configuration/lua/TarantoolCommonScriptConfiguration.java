@@ -18,12 +18,15 @@
 
 package ru.art.tarantool.configuration.lua;
 
+import com.mitchellbosecke.pebble.*;
+import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
-import org.jtwig.*;
-import static org.jtwig.JtwigTemplate.*;
+import ru.art.tarantool.exception.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
+import java.io.*;
 
 @Getter
 @EqualsAndHashCode
@@ -32,8 +35,19 @@ public class TarantoolCommonScriptConfiguration {
     private final String spaceName;
 
     public String toLua() {
-        return classpathTemplate(COMMON + JTW_EXTENSION)
-                .render(new JtwigModel().with(SPACE_NAME, spaceName));
+        StringWriter templateWriter = new StringWriter();
+        try {
+            new PebbleEngine.Builder()
+                    .loader(new ClasspathLoader())
+                    .autoEscaping(false)
+                    .cacheActive(false)
+                    .build()
+                    .getTemplate(COMMON + TWIG_TEMPLATE)
+                    .evaluate(templateWriter, mapOf(SPACE_NAME, spaceName));
+            return templateWriter.toString();
+        } catch (Throwable e) {
+            throw new TarantoolExecutionException(e);
+        }
     }
 
 }

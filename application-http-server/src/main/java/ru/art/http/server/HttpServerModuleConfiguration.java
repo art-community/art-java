@@ -157,9 +157,8 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         private final List<HttpServerInterceptor> responseInterceptors = linkedListOf();
         private final boolean ignoreAcceptHeader = false;
         private final HttpResourceConfiguration resourceConfiguration = HttpResourceConfiguration.builder().build();
-        private final Map<? extends Class<? extends Throwable>, ? extends HttpExceptionHandler<? extends Throwable>> exceptionHandlers =
-                mapOf(Throwable.class, new ExceptionHttpJsonHandler())
-                        .add(cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler()));
+        private final Map<? extends Class<? extends Throwable>, ? extends HttpExceptionHandler<?>> exceptionHandlers =
+                mapOf(Throwable.class, (HttpExceptionHandler<Throwable>) new ExceptionHttpJsonHandler()).add(cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler()));
 
         private static List<HttpServerInterceptor> initializeInterceptors() {
             return linkedListOf(intercept(new HttpServerTracingIdentifierInterception()), intercept(new HttpWebInterception()));

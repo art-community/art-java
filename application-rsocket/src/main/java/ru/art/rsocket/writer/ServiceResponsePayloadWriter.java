@@ -69,8 +69,14 @@ public class ServiceResponsePayloadWriter {
     }
 
     public static Flux<Payload> writeResponseReactive(RsocketMethod rsocketMethod, ServiceResponse<?> serviceResponse, RsocketDataFormat dataFormat) {
+        if (isNull(serviceResponse)) {
+            return never();
+        }
+        if (nonNull(serviceResponse.getServiceException())) {
+            return error(serviceResponse.getServiceException());
+        }
         ValueFromModelMapper<?, ?> responseMapper = rsocketMethod.responseMapper();
-        return isNull(serviceResponse) || isNull(responseMapper) || isNull(serviceResponse.getResponseData()) ?
+        return isNull(responseMapper) || isNull(serviceResponse.getResponseData()) ?
                 never() :
                 from(cast(serviceResponse.getResponseData()))
                         .map(response -> fromServiceResponse(responseMapper).map(cast(okResponse(serviceResponse.getCommand(), response))))
