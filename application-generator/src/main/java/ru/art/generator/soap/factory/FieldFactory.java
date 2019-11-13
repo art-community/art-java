@@ -23,6 +23,8 @@ import com.predic8.schema.restriction.*;
 import com.predic8.wsdl.*;
 import com.predic8.xml.util.*;
 import lombok.experimental.*;
+import ru.art.core.constants.JavaKeywordConstants;
+import ru.art.core.constants.StringConstants;
 import ru.art.generator.soap.model.Field;
 import ru.art.generator.soap.model.Field.*;
 import static java.util.Objects.*;
@@ -38,20 +40,10 @@ public class FieldFactory {
     private final static String NECESSARY = "1";
     private final static String REQUIRED = "required";
     private final static String UNBOUNDED = "unbounded";
-    private static List<String> listSpecicalWord = createSpecialList();
-
-    public static List<String> createSpecialList() {
-        return Arrays.asList("abstract", "continue", "for", "new", "switch", "assert", "default", "goto", "package",
-            "synchronized", "boolean", "do", "if", "private", "this", "break", "double", "implements",
-            "protected", "throw", "byte", "else", "import", "public", "throws", "case", "enum",
-            "instanceof", "return", "transient", "catch", "extends", "int", "short", "try", "char", "final",
-            "interface", "static", "void", "class", "finally", "long", "strictfp", "volatile", "const", "float",
-            "native", "super", "while");
-    }
 
     private static String checkAndRenameField(String name) {
-        if (listSpecicalWord.contains(name.toLowerCase())) {
-            return "_".concat(name);
+        if (JavaKeywordConstants.contains(name.toLowerCase())) {
+            return StringConstants.UNDERSCORE.concat(name);
         }
         return name;
     }

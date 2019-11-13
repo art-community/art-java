@@ -67,36 +67,36 @@ public class TypeFactory {
     }
 
     public static String getTypeByElement(Element element) {
-        if (element.getType() == null) {
-            if (element.getEmbeddedType() != null) {
+        if (Objects.nonNull(element.getType())) {
+            if (Objects.nonNull(element.getEmbeddedType()) ) {
                 if (element.getEmbeddedType().getQname() != null) {
                     return element.getEmbeddedType().getQname().getLocalPart();
                 }
-            } else if (element.getRef() != null) {
+            } else if (Objects.nonNull(element.getRef())) {
                 return element.getRef().getLocalPart();
             }
         } else {
             return element.getType().getLocalPart();
         }
-        return "Object";
+        return Object.class.getSimpleName();
     }
 
     public static String getTypeByAttribute(Attribute attribute) {
-        if (attribute.getType() != null) {
+        if (Objects.nonNull(attribute.getType())) {
             return attribute.getType().getLocalPart();
-        } else if (attribute.getRef() != null) {
+        } else if (Objects.nonNull(attribute.getRef())) {
                 return attribute.getRef().getLocalPart();
         } else {
-            return "Object";
+            return Object.class.getSimpleName();
         }
     }
 
     public static TypeDefinition getTypeDefinitionByAttribute(Attribute attribute) {
         QName ref = null;
-        if (attribute.getType() != null) {
+        if (Objects.nonNull(attribute.getType())) {
             ref = attribute.getType();
 
-        } else if (attribute.getRef() != null) {
+        } else if (Objects.nonNull(attribute.getRef())) {
             ref = attribute.getRef();
         }
         return attribute.getSchema().getType(ref);
@@ -104,17 +104,17 @@ public class TypeFactory {
 
     @SneakyThrows
     public static TypeDefinition getTypeDefinition(Element element) {
-        if (element.getType() == null) {
-            if (element.getEmbeddedType() != null) {
+        if (Objects.isNull(element.getType())) {
+            if (Objects.nonNull(element.getEmbeddedType())) {
                 return element.getEmbeddedType();
-            } else if (element.getRef() != null) {
+            } else if (Objects.nonNull(element.getRef())) {
                 QName ref = element.getRef();
-                if (ref.getNamespaceURI() != null) {
+                if (Objects.nonNull(ref.getNamespaceURI())) {
                     Element refElement = element.getSchema().getElement(ref);
                     element.setName(refElement.getName());
                     return getTypeDefinition(refElement);
                 }
-                if (ref.getPrefix() == null || ref.getPrefix().isEmpty()) {
+                if (Objects.isNull(ref.getPrefix()) || ref.getPrefix().isEmpty()) {
                     throw new NotFoundPrefixException("Not fount prefix for ref about elememt "
                             + element.getName());
                 }
