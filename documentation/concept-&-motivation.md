@@ -158,10 +158,8 @@ ART likes web !
 Every module with HTTP Serving will have /information/ui endpoints, that provides web page with module services & protocols information.
 
 HTML pages rendered by pebble engine. But ART can render not only HTML. Every resource, that you need could be processed by ART templating.
-    
- 
-## How does it looks?  
 
+## How does it looks?  
 
 Well, okay, sounds good.
 
@@ -182,4 +180,42 @@ Keywords of ART architecture:
 * Function
 * Value & Entity
 * Mapper
+
+### I want to hear three words... Context, Module, Configuration
+
+**Module** - basic conception of any functional in ART architecture.
+
+Model is separate project, separate part of code. 
+
+Every module has 
+```
+class *ModuleName*Module implements Module<*ModuleName*Configuration, ModuleState>
+```
+
+**Module Configuration** - store of any module configurable attribute or object. 
+
+Configuration - place, where we can store any module public objects, thant could be changed in module loaders.
+
+For example, HTTP/GRPC server modules have port in their configurations. Because when we are using HTTP or GRPC server we want to specify their port (by default wil be used any free port on first network adapter).
+
+**Module State** - make you're module stateful.
+
+State - place, where we can store any mutable object, related to our module. 
+
+For example, RocksDB module state has reference to RockDB object, that contain pointer to native RocksDB handler.
+This object creating on module loading, using during RocksDB DAOs interacting and destroying on module unloading.
+
+**Context**  - store for all modules. Context is just threadsafe API for map of modules.
+It can:
+ * Getting state module by name or load module by method reference
+ * Getting module by name or load it by method reference
+ * Loading module
+ * Overriding module
+ * Reloading module
+ * Refreshing module
+ * Check module on existing in context
+
+There are all production-ready modules, that ART provides to you
+
+![Image](https://i.ibb.co/L9mNCbj/image.png)
 
