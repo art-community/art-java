@@ -165,19 +165,30 @@ Well, okay, sounds good.
 
 But, what inside in ART ? How its working and why i need read this docs and ART's code ?
 
-Keywords of ART architecture:
+### Keywords of ART **architecture**:
 
+#### Where does it all begin
 * Context
 * Module
 * Configuration
 * State
+
+#### Hands of ART
 * Service
 * Method
 * Specification
-* Communicator
-* DAO
-* Interceptor
 * Function
+
+#### Voice of ART
+* Communicator
+
+#### ART's Data 
+* DAO
+
+#### Catch them all
+* Interceptor
+
+#### Do it more abstract
 * Value & Entity
 * Mapper
 
@@ -219,3 +230,60 @@ There are all production-ready modules, that ART provides to you
 
 ![Image](https://i.ibb.co/L9mNCbj/image.png)
 
+### Think and do
+
+**Service** - main executable unit in ART.
+
+Service could be imagine as `{Request|Nothing} -> {Response|Nothing}`.
+
+This sounds like 'Convert some requests to some response'.
+
+So service is mapper or converter or handler that working with requests and produces responses.
+
+Service may has some **methods** or could be just a **function** `(X) -> Y`.  
+
+*Method* just is single named action with input and output.
+
+Input could be empty or any request;
+Output could be empty or any response; 
+
+**Function** is a service with one method. Functions are protocol-dependent: HTTP_SERVICE_FUNCTION, GRPC_SERVICE_FUNCTION, KAFKA_SERVICE_FUNCTION.
+
+In fact function is just a sugar for declaring service. For example HTTP GET function:
+```java
+   httpGet("/hello")
+                .fromPathParameters("param")
+                .requestMapper(stringParameterToStringMapper("param").getToModel())
+                .responseMapper(fromModel)
+                .handle(requestParam -> "<h1>" + requestParam + "</h1>");
+```
+
+This function  receives any (`param`) from url and convert (`->`) into (`HTML header`): `(param) -> (HTML header of param)`.
+
+Function can be:
+* handling `(X) -> Y`
+* consuming `(X) > {} `
+* producing `() -> Y`
+
+Service may has **Specification**.
+ 
+**Specification** describes how we can use our Service.
+
+For example, we want to send HTTP POST request for our application and do some actions.
+Then we can use HttpServiceSpecification, inside it we describe, what we want:
+
+```java
+httpService() // Beacuse may be we want to use our service not as HTTP
+            .post(DO_ACTION) // What **Service Method** will be called on HTTP request 
+            .consumes(applicationJsonUtf8()) // What content mime type we are expecting from client
+            .fromBody() // Where where must search request
+            .validationPolicy(VALIDATABLE) // Validatiable ? Of course!
+            .requestMapper(toOurRequest) // How we must parse our request 
+            .produces(applicationJsonUtf8()) // What content mime type expecting our client
+            .responseMapper(fromExtInteractionCreateResponse) // How we must write our response
+            .exceptionMapper(exceptionMapper) / How we muse write our errors
+            .listen("/doAction") // What url we want handle
+// Above we can describe any other HTTP handlers 
+```
+
+... And, it's all!
