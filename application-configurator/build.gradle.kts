@@ -41,5 +41,6 @@ art {
         applicationConfiguratorApi()
         applicationConfigRemoteApi()
         applicationInformation()
+        applicationTemplateEngine()
     }
 }
