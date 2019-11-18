@@ -68,7 +68,7 @@ public class TypeFactory {
     }
 
     public static String getTypeByElement(Element element) {
-        if (Objects.nonNull(element.getType())) {
+        if (Objects.isNull(element.getType())) {
             if (Objects.nonNull(element.getEmbeddedType()) ) {
                 if (element.getEmbeddedType().getQname() != null) {
                     return element.getEmbeddedType().getQname().getLocalPart();
