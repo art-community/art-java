@@ -26,5 +26,6 @@ art {
         applicationSoap()
         applicationHttp()
         applicationHttpServer()
+        applicationTemplateEngine()
     }
 }
