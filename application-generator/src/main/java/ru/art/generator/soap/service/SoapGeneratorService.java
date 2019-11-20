@@ -34,12 +34,4 @@ public class SoapGeneratorService {
     public static void performGeneration(SoapGenerationRequest request) {
         new SourceCodeGenService(request.packageName, request.absolutePathToSrcMainJava).sourceGen(parseWsdl(request.wsdlUrl), request.generationMode);
     }
-
-    public static void main(String[] args) {
-        SoapGeneratorService.performGeneration(SoapGenerationRequest.builder().generationMode(SoapGenerationMode.CLIENT)
-                .absolutePathToSrcMainJava("C:\\Development\\Projects\\ART\\application-generator\\src\\main")
-                .wsdlUrl("https://github.com/art-community/ART/files/3819206/errorWsdl.txt")
-                .packageName("wsdl")
-                .build());
-    }
 }
