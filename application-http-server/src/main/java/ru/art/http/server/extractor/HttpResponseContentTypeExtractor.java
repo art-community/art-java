@@ -28,7 +28,7 @@ public interface HttpResponseContentTypeExtractor {
     static String extractTypeByFile(String fileUrl) {
         if (isEmpty(fileUrl)) return ALL.toString();
         if (!fileUrl.contains(DOT)) return TEXT_HTML.toString();
-        String ext = fileUrl.substring(fileUrl.indexOf(DOT));
+        String ext = fileUrl.substring(fileUrl.lastIndexOf(DOT));
         if (ext.contains(WEBP)) {
             return IMAGE_WEBP.toString();
         }
