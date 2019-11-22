@@ -18,10 +18,12 @@
 
 package ru.art.generator.soap.factory;
 
+import com.predic8.schema.Attribute;
 import com.predic8.schema.Element;
 import com.predic8.schema.TypeDefinition;
 import com.predic8.schema.restriction.facet.*;
 import groovy.xml.QName;
+import java.util.Objects;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import ru.art.generator.exception.NotFoundPrefixException;
@@ -58,39 +60,62 @@ public class TypeFactory {
             case TIME:
             case DATE:
                 return Date.class;
+            case BYTE_ARRAY:
+                return Byte[].class;
             default:
                 return Object.class;
         }
     }
 
     public static String getTypeByElement(Element element) {
-        if (element.getType() == null) {
-            if (element.getEmbeddedType() != null) {
+        if (Objects.nonNull(element.getType())) {
+            if (Objects.nonNull(element.getEmbeddedType()) ) {
                 if (element.getEmbeddedType().getQname() != null) {
                     return element.getEmbeddedType().getQname().getLocalPart();
                 }
-            } else if (element.getRef() != null) {
+            } else if (Objects.nonNull(element.getRef())) {
                 return element.getRef().getLocalPart();
             }
         } else {
             return element.getType().getLocalPart();
         }
-        return "Object";
+        return Object.class.getSimpleName();
+    }
+
+    public static String getTypeByAttribute(Attribute attribute) {
+        if (Objects.nonNull(attribute.getType())) {
+            return attribute.getType().getLocalPart();
+        } else if (Objects.nonNull(attribute.getRef())) {
+                return attribute.getRef().getLocalPart();
+        } else {
+            return Object.class.getSimpleName();
+        }
+    }
+
+    public static TypeDefinition getTypeDefinitionByAttribute(Attribute attribute) {
+        QName ref = null;
+        if (Objects.nonNull(attribute.getType())) {
+            ref = attribute.getType();
+
+        } else if (Objects.nonNull(attribute.getRef())) {
+            ref = attribute.getRef();
+        }
+        return attribute.getSchema().getType(ref);
     }
 
     @SneakyThrows
     public static TypeDefinition getTypeDefinition(Element element) {
-        if (element.getType() == null) {
-            if (element.getEmbeddedType() != null) {
+        if (Objects.isNull(element.getType())) {
+            if (Objects.nonNull(element.getEmbeddedType())) {
                 return element.getEmbeddedType();
-            } else if (element.getRef() != null) {
+            } else if (Objects.nonNull(element.getRef())) {
                 QName ref = element.getRef();
-                if (ref.getNamespaceURI() != null) {
+                if (Objects.nonNull(ref.getNamespaceURI())) {
                     Element refElement = element.getSchema().getElement(ref);
                     element.setName(refElement.getName());
                     return getTypeDefinition(refElement);
                 }
-                if (ref.getPrefix() == null || ref.getPrefix().isEmpty()) {
+                if (Objects.isNull(ref.getPrefix()) || ref.getPrefix().isEmpty()) {
                     throw new NotFoundPrefixException("Not fount prefix for ref about elememt "
                             + element.getName());
                 }
@@ -100,8 +125,7 @@ public class TypeFactory {
                 return element.getSchema().getType(qName);
             }
         }
-        String localPart = getTypeByElement(element);
-        return element.getSchema().getType(localPart);
+        return element.getSchema().getType(element.getType());
     }
 
     public static String getNamespaceByPrefix(Element element, String prefix) {
