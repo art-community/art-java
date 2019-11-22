@@ -64,5 +64,6 @@ public interface Constants {
         String DATE_TIME = "dateTime";
         String TIME = "time";
         String DATE = "date";
+        String BYTE_ARRAY = "base64Binary";
     }
 }

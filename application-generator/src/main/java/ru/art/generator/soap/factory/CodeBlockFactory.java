@@ -54,7 +54,7 @@ public class CodeBlockFactory {
 
     private static String TABULATION = StringConstants.DOUBLE_TABULATION;
 
-    public static CodeBlock createXmlEntityFromModel(Field inputField, String packageString) {
+    public static CodeBlock createXmlEntityFromModel(Field inputField, String packageString, String absolutePathToSrcMainJava) {
 
         CodeBlock.Builder codeBlockBuilder = CodeBlock.builder();
 
@@ -68,19 +68,19 @@ public class CodeBlockFactory {
             if (!isObject(field.getType())) {
                 codeBlocks.add(createPrimitiveXmlValue(field));
             } else {
-                codeBlocks.add(createXmlEntityFromModel(field, packageString));
+                codeBlocks.add(createXmlEntityFromModel(field, packageString, absolutePathToSrcMainJava));
             }
         }
         removeDoubleTabulation();
         codeBlocks.add(of(TABULATION + CREATE_METHOD));
-        ClassName className = getModel(inputField, packageString);
+        ClassName className = getModel(inputField, packageString, absolutePathToSrcMainJava);
         ClassName classNameXmlEntityFromModelMapper = ClassName.get(XmlEntityFromModelMapper.class);
         FieldSpec fieldSpec = FieldSpec.builder(ParameterizedTypeName.get(classNameXmlEntityFromModelMapper, className),
                 firstLetterToLowerCase(inputField.getName()) + FROM_MODEL, PUBLIC, STATIC, FINAL)
                 .initializer(join(codeBlocks, NEW_LINE))
                 .build();
         String mapperName = firstLetterToUpperCase(inputField.getTypeName()) + XML_MAPPER;
-        checkAndAddTypeSpec(interfaceXmlEntityFromModel, mapperName, inputField, fieldSpec, packageString);
+        checkAndAddTypeSpec(interfaceXmlEntityFromModel, mapperName, inputField, fieldSpec, packageString, absolutePathToSrcMainJava);
         ClassName mapperClassName = ClassName.get(packageString + ".mapper." + inputField.getPrefix(), mapperName);
         codeBlock = inputField.isList() ?
                 CodeBlock.builder()
@@ -95,14 +95,14 @@ public class CodeBlockFactory {
     }
 
 
-    public static CodeBlock createModelFromXmlEntity(Field inputField, String packageString) {
+    public static CodeBlock createModelFromXmlEntity(Field inputField, String packageString, String absolutePathToSrcMainJava) {
         CodeBlock codeBlock;
 
         if (isObject(inputField.getType())) {
-            ClassName className = getModel(inputField, packageString);
+            ClassName className = getModel(inputField, packageString, absolutePathToSrcMainJava);
             List<CodeBlock> codeBlocks = dynamicArrayOf(of(XML_ENTITY_TO_MODEL_MAPPER_LAMBDA, className));
             for (Field field : inputField.getFieldsList()) {
-                codeBlocks.add(createModelFromXmlEntity(field, packageString));
+                codeBlocks.add(createModelFromXmlEntity(field, packageString, absolutePathToSrcMainJava));
             }
             codeBlocks.add(of(TABULATION + BUILD_METHOD));
             ClassName classNameXmlEntityToModelMapper = ClassName.get(XmlEntityToModelMapper.class);
@@ -111,7 +111,7 @@ public class CodeBlockFactory {
                     .initializer(join(codeBlocks, NEW_LINE))
                     .build();
             String mapperName = firstLetterToUpperCase((inputField.getTypeName())) + XML_MAPPER;
-            checkAndAddTypeSpec(interfaceModelFromXmlEntity, mapperName, inputField, fieldSpec, packageString);
+            checkAndAddTypeSpec(interfaceModelFromXmlEntity, mapperName, inputField, fieldSpec, packageString, absolutePathToSrcMainJava);
             ClassName mapperClassName = ClassName.get(packageString + ".mapper." + inputField.getPrefix(),
                     mapperName);
             codeBlock = inputField.isList()
@@ -138,7 +138,7 @@ public class CodeBlockFactory {
     }
 
     private static void checkAndAddTypeSpec(Map<String, JavaFile> map, String mapperName, Field field,
-                                            FieldSpec fieldSpec, String packageString) {
+                                            FieldSpec fieldSpec, String packageString, String absolutePathToSrcMainJava) {
         if (map.containsKey(field.getPrefix() + mapperName)) {
             return;
         }
@@ -146,12 +146,12 @@ public class CodeBlockFactory {
                 .addModifiers(PUBLIC, STATIC)
                 .addField(fieldSpec)
                 .build();
-        map.put(field.getPrefix() + mapperName, createJavaFile(packageString + DOT_MAPPER_DOT + field.getPrefix(), mapper));
+        map.put(field.getPrefix() + mapperName, createJavaFile(packageString + DOT_MAPPER_DOT + field.getPrefix(), mapper, absolutePathToSrcMainJava));
     }
 
-    private static ClassName getModel(Field field, String packageString) {
+    private static ClassName getModel(Field field, String packageString, String absolutePathToSrcMainJava) {
         if (!createdModels.containsKey(field.getPrefix() + field.getName())) {
-            createdModels.put(field.getPrefix() + field.getName(), createJavaFileByField(field, packageString));
+            createdModels.put(field.getPrefix() + field.getName(), createJavaFileByField(field, packageString, absolutePathToSrcMainJava));
         }
         return ClassName.get(packageString + ".model." + field.getPrefix(), firstLetterToUpperCase(field.getTypeName()));
     }
@@ -244,11 +244,11 @@ public class CodeBlockFactory {
                 builder.add("$T.parseInt(" + GET_VALUE_BY_TAG + ")", Integer.class, nameParameter);
                 return builder.build();
             case DATE_TIME:
-                builder.add("$T.parse($T.$N, " + GET_VALUE_BY_TAG + ")", DateExtensions.class, DateConstants.class,
+                builder.add("$T.parse($T.$L, " + GET_VALUE_BY_TAG + ")", DateExtensions.class, DateConstants.class,
                         YYYY_MM_DD_DASH, nameParameter);
                 return builder.build();
             case TIME:
-                builder.add("$T.parse($T.$N, " + GET_VALUE_BY_TAG + ")", DateExtensions.class, DateConstants.class,
+                builder.add("$T.parse($T.$L, " + GET_VALUE_BY_TAG + ")", DateExtensions.class, DateConstants.class,
                         HH_MM_SS_24H, nameParameter);
                 return builder.build();
             case DATE:
