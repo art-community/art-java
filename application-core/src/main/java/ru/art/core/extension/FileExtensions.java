@@ -60,6 +60,9 @@ public class FileExtensions {
     }
 
     public static String readFile(Path path, int bufferSize) {
+        if (bufferSize <= 0) {
+            return EMPTY_STRING;
+        }
         ByteBuffer buffer = allocateDirect(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
         try {
@@ -67,7 +70,10 @@ public class FileExtensions {
             do {
                 fileChannel.read(buffer);
                 buffer.flip();
-                result.append(contextConfiguration().getCharset().newDecoder().decode(buffer).toString());
+                if (buffer.limit() > 1) {
+                    result.append(contextConfiguration().getCharset().newDecoder().decode(buffer).toString());
+                }
+                buffer.clear();
             } while (fileChannel.position() < fileChannel.size());
         } catch (IOException ioException) {
             throw new InternalRuntimeException(ioException);
@@ -76,6 +82,9 @@ public class FileExtensions {
     }
 
     public static String readFileQuietly(Path path, int bufferSize) {
+        if (bufferSize <= 0) {
+            return EMPTY_STRING;
+        }
         ByteBuffer buffer = allocateDirect(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
         try {
@@ -84,6 +93,7 @@ public class FileExtensions {
                 fileChannel.read(buffer);
                 buffer.flip();
                 result.append(contextConfiguration().getCharset().newDecoder().decode(buffer).toString());
+                buffer.clear();
             } while (fileChannel.position() < fileChannel.size());
         } catch (IOException ioException) {
             ioException.printStackTrace();
@@ -113,6 +123,9 @@ public class FileExtensions {
     }
 
     public static byte[] readFileBytes(Path path, int bufferSize) {
+        if (bufferSize <= 0) {
+            return EMPTY_BYTES;
+        }
         ByteBuffer buffer = allocateDirect(bufferSize);
         byte[] result = EMPTY_BYTES;
         try {
@@ -120,11 +133,6 @@ public class FileExtensions {
             do {
                 fileChannel.read(buffer);
                 buffer.flip();
-                if (result.length == 0 && buffer.limit() <= bufferSize) {
-                    result = new byte[buffer.limit()];
-                    buffer.get(result);
-                    return result;
-                }
                 byte[] bufferBytes = new byte[buffer.limit()];
                 buffer.get(bufferBytes);
                 byte[] newResult = new byte[result.length + bufferBytes.length];

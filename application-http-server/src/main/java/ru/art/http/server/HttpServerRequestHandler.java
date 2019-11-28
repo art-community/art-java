@@ -148,9 +148,9 @@ class HttpServerRequestHandler {
                     continue;
                 }
                 InputStream is = part.getInputStream();
-                List<Byte> value = toByteList(is);
+                byte[] value = toByteArraySafety(is);
                 if (!isEmpty(value)) {
-                    entityBuilder.byteCollectionField(submittedFileName, value);
+                    entityBuilder.byteArrayField(submittedFileName, value);
                 }
             } catch (IOException ioException) {
                 loggingModule()
