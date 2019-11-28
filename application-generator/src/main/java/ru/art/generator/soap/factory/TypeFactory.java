@@ -92,13 +92,13 @@ public class TypeFactory {
 
     public static String getTypeByElement(Element element) {
         if (Objects.isNull(element.getType())) {
-            if (Objects.nonNull(element.getEmbeddedType()) ) {
+            if (Objects.nonNull(element.getEmbeddedType())) {
                 if (element.getEmbeddedType().getQname() != null) {
                     return element.getEmbeddedType().getQname().getLocalPart();
                 }
-            } else {
-                return element.getType().getLocalPart();
             }
+        } else {
+            return element.getType().getLocalPart();
         }
         if (Objects.nonNull(element.getRef())) {
             return checkRefAndGetType(element);
