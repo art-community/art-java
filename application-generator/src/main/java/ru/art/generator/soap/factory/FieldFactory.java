@@ -79,8 +79,8 @@ public class FieldFactory {
     }
 
     private static FieldBuilder createPrimitiveFieldByElement(Element element) {
-        String localPart = element.getType().getLocalPart();
-        String name = checkAndRenameField(element.getName());
+        String localPart = getTypeByElement(element);
+        String name = checkAndRenameField(getName(element));
         return Field.builder()
                 .name(name)
                 .typeName(localPart)
@@ -177,6 +177,14 @@ public class FieldFactory {
                 .map(attribute -> createFieldByAttribute(attribute, element))
                 .collect(Collectors.toList())
             );
+    }
+
+    private static String getName(Element element) {
+        if (Objects.nonNull(element.getName())) {
+            return element.getName();
+        } else {
+            return element.getRef().getLocalPart();
+        }
     }
 
     private static boolean isNecessary(Element element) {
