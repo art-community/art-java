@@ -64,6 +64,7 @@ public class TypeFactory {
     public static Class<? extends Object> getTypeByString(String type) {
         switch (type) {
             case STRING:
+            case BYTE_ARRAY:
                 return String.class;
             case BYTE:
                 return Byte.class;
@@ -83,8 +84,6 @@ public class TypeFactory {
             case TIME:
             case DATE:
                 return Date.class;
-            case BYTE_ARRAY:
-                return Byte[].class;
             default:
                 return Object.class;
         }
