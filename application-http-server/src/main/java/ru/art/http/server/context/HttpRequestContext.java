@@ -42,5 +42,8 @@ public class HttpRequestContext {
     private final MimeType acceptType;
     private final boolean hasContent;
     private final int contentLength;
-    private String interceptedResponseContentType;
+    private MimeType interceptedResponseContentType;
+    private final HttpServletRequest request;
+    private final HttpServletResponse response;
+
 }
