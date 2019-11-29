@@ -100,7 +100,7 @@ class HttpServiceServlet extends HttpServlet {
                 .loadedServices(serviceModuleState().getServiceRegistry().getServices().keySet())
                 .build());
         try {
-            updateRequestContext(command, request);
+            updateRequestContext(command, request, response);
             byte[] responseBody = executeHttpService(serviceCommand, request, command.getHttpMethod());
             if (!command.getHttpMethod().isOverrideResponseContentType()) {
                 response.addHeader(CONTENT_TYPE, httpServerModuleState().getRequestContext().getAcceptType().toString());
@@ -124,7 +124,7 @@ class HttpServiceServlet extends HttpServlet {
         exceptionExceptionHandler.handle(exception, request, response);
     }
 
-    private void updateRequestContext(HttpServletCommand command, HttpServletRequest request) {
+    private void updateRequestContext(HttpServletCommand command, HttpServletRequest request, HttpServletResponse response) {
         Map<String, String> headers = mapOf();
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
@@ -135,6 +135,8 @@ class HttpServiceServlet extends HttpServlet {
         String charsetHeader = request.getHeader(ACCEPT_CHARSET);
         HttpRequestContextBuilder requestContextBuilder = HttpRequestContext.builder()
                 .requestUrl(request.getRequestURL().toString())
+                .request(request)
+                .response(response)
                 .headers(headers)
                 .cookies(cookies)
                 .acceptCharset(isEmpty(charsetHeader) ? contextConfiguration().getCharset() : forName(charsetHeader))
@@ -142,7 +144,7 @@ class HttpServiceServlet extends HttpServlet {
                 .acceptLanguages(emptyIfNull(request.getHeader(ACCEPT_LANGUAGE)))
                 .contentLength(request.getContentLength())
                 .hasContent(request.getContentLength() == EMPTY_HTTP_CONTENT_LENGTH);
-        calculateAcceptType(command, request, requestContextBuilder);
+        calculateAcceptType(command, request, response, requestContextBuilder);
         calculateContentType(command, request, requestContextBuilder);
         String contentType;
         if (nonNull(contentType = request.getHeader(CONTENT_TYPE)) && contentType.contains(MULTIPART_PATTERN)) {
@@ -166,10 +168,18 @@ class HttpServiceServlet extends HttpServlet {
         parts.forEach(part -> addPartToContext(requestContextBuilder, part));
     }
 
-    private void calculateAcceptType(HttpServletCommand command, HttpServletRequest request, HttpRequestContextBuilder requestContextBuilder) {
+    private void calculateAcceptType(HttpServletCommand command, HttpServletRequest request, HttpServletResponse response, HttpRequestContextBuilder requestContextBuilder) {
         if (command.isIgnoreRequestAcceptType()) {
             requestContextBuilder.acceptType(getProducesMimeTypeChecked(command));
             return;
+        }
+        if (command.getHttpMethod().isOverrideResponseContentType()) {
+            MimeType responseContentType = valueOf(response.getContentType());
+            if (contentMappers.containsKey(responseContentType)) {
+                requestContextBuilder.acceptType(responseContentType);
+                requestContextBuilder.interceptedResponseContentType(responseContentType);
+                return;
+            }
         }
         String acceptTypeHeader = request.getHeader(ACCEPT);
         if (isEmpty(acceptTypeHeader)) {
