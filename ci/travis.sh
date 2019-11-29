@@ -13,7 +13,7 @@ elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" != "" ] ; then
     ./gradlew \
         -Pversion="$TRAVIS_TAG" \
         -PbintrayUser="${bintrayUser}" -PbintrayKey="${bintrayKey}" \
-        bintrayUpload --stacktrace
+        bintrayUpload bintrayPublish --stacktrace
 else
     echo -e "Building $TRAVIS_REPO_SLUG/$TRAVIS_BRANCH"
     ./gradlew test
