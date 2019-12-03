@@ -21,8 +21,12 @@ package ru.art.generator.mapper.operations;
 import ru.art.generator.mapper.*;
 import ru.art.generator.mapper.annotation.*;
 import ru.art.generator.mapper.exception.*;
+import ru.art.generator.mapper.models.GenerationPackageModel;
+
 import static java.io.File.*;
 import static java.text.MessageFormat.*;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.generator.mapper.constants.Constants.*;
@@ -42,21 +46,20 @@ public interface AnalyzingOperations {
     /**
      * Getting class with URLClassLoader by path and file's name.
      *
-     * @param path        - compiled path taken from jar till main.
+     * @param generationInfo - information about packages and path for generated class.
      * @param fileName    - name of the file, which class need to be taken.
-     * @param packagePath - string value of package path.
      * @return Class instance.
      * @throws DefinitionException is thrown when unable to define class by url.
      */
-    static Class getClass(String path, String fileName, String packagePath) throws DefinitionException {
+    static Class getClass(GenerationPackageModel generationInfo, String fileName) throws DefinitionException {
         URL[] urls = new URL[1];
-        File file = new File(path);
+        File file = new File(generationInfo.getJarPathToMain());
         try {
             urls[0] = file.toURI().toURL();
             return new URLClassLoader(urls, Generator.class.getClassLoader()) {
                 @Override
                 public Class<?> loadClass(String name) throws ClassNotFoundException {
-                    String classFile = path.substring(0, path.indexOf(MAIN) + MAIN.length())
+                    String classFile = generationInfo.getJarPathToMain().substring(0, generationInfo.getJarPathToMain().indexOf(MAIN) + MAIN.length())
                             + separator
                             + name.replace(DOT, separator)
                             + DOT_CLASS;
@@ -65,7 +68,7 @@ public interface AnalyzingOperations {
                     }
                     return findClass(name);
                 }
-            }.loadClass(packagePath + DOT + fileName);
+            }.loadClass(generationInfo.getModelPackage() + DOT + fileName);
         } catch (MalformedURLException | ClassNotFoundException throwable) {
             throw new DefinitionException(format(UNABLE_TO_DEFINE_CLASS, fileName), throwable);
         }
@@ -93,54 +96,53 @@ public interface AnalyzingOperations {
      *
      * @param mappingFilesList - list of files in mapping non-compiled package.
      * @param modelFilesList   - list of files in model non-compiled package.
-     * @param path             - compiled package path of model directory.
+     * @param path             - compiled package path of mapping directory.
      * @param packageMapping   - string value of mapping package.
      * @param files            - map of files in model non-compiled package.
      */
     @SuppressWarnings("all")
-    static void deleteFile(List<File> mappingFilesList, List<File> modelFilesList, String path, String packageMapping, Map<String, Integer> files) {
-        String nonCompiledMappingPackagePath = path.replace(BUILD_CLASSES_JAVA_MAIN, SRC_MAIN_JAVA) + SLASH_MAPPING;
-
-        boolean mappingPackageHasNonGeneratedFiles = false;
+    static void deleteNonExistedFiles(List<File> mappingFilesList, List<File> modelFilesList, GenerationPackageModel generationPackageInfo, Map<String, Integer> files) {
         for (File mappingFile : mappingFilesList) {
-            boolean modelFileWasDeleted = true;
-            //for all model package try to find which files were deleted
-            for (File modelFile : modelFilesList) {
-                String modelFileName = modelFile.getName().replace(DOT_CLASS, EMPTY_STRING);
-                String checkingFileName = mappingFile.getName().replace(MAPPER, EMPTY_STRING).replace(DOT_CLASS, EMPTY_STRING);
-                if (!checkingFileName.equals(modelFileName) && !checkingFileName.contains(REQUEST + RESPONSE)) {
-                    continue;
-                }
-                if (files.containsKey(checkingFileName.replace(REQUEST, EMPTY_STRING))) {
-                    continue;
-                }
-                if (files.containsKey(checkingFileName.replace(RESPONSE, EMPTY_STRING))) {
-                    continue;
-                }
-                modelFileWasDeleted = false;
-                break;
+            deleteFile(mappingFile, modelFilesList, generationPackageInfo, files);
+            if (modelFilesList.isEmpty()) {
+                File mappingPackage = new File(generationPackageInfo.getGenPackagePath());
+                mappingPackage.delete();
             }
-            //deleting mapping file
-            if (!modelFileWasDeleted) {
-                continue;
+        }
+    }
+
+    static void deleteFile(File currentFile, List<File> modelFilesList, GenerationPackageModel generationInfo, Map<String, Integer> files) {
+        //for all model package try to find which files were deleted
+        File modelNonCompiledFile = null;
+        for (File modelFile : modelFilesList) {
+            String modelFileName = modelFile.getName().replace(DOT_CLASS, EMPTY_STRING);
+            String checkingFileName = currentFile.getName().replace(MAPPER, EMPTY_STRING).replace(DOT_CLASS, EMPTY_STRING);
+            if (checkingFileName.equals(modelFileName) || checkingFileName.contains(REQUEST + RESPONSE)) {
+                if (isNotEmpty(files.get(checkingFileName.replace(REQUEST, EMPTY_STRING))) &&
+                        isNotEmpty(files.get(checkingFileName.replace(RESPONSE, EMPTY_STRING)))) {
+                    modelNonCompiledFile = modelFile;
+                    break;
+                }
             }
+        }
+        if (modelNonCompiledFile != null && !currentFile.isDirectory())
+            return;
+
+        if (!currentFile.isDirectory()) {
             try {
-                path = path.substring(0, path.lastIndexOf(MAIN) + MAIN.length());
-                Class<?> clazz = getClass(path, mappingFile.getName().replace(DOT_CLASS, EMPTY_STRING), packageMapping);
+                String mappingFileName = currentFile.getName().replace(DOT_CLASS, EMPTY_STRING);
+                Class<?> clazz = getClass(generationInfo, mappingFileName);
                 if (!clazz.isAnnotationPresent(IgnoreGeneration.class)) {
-                    String pathname = nonCompiledMappingPackagePath
-                            + separator
-                            + mappingFile.getName().replace(DOT_CLASS, EMPTY_STRING)
-                            + DOT_JAVA;
+                    String pathname = generationInfo.getGenPackagePath() + separator + mappingFileName + DOT_JAVA;
                     new File(pathname).delete();
-                } else mappingPackageHasNonGeneratedFiles = true;
+                }
             } catch (DefinitionException throwable) {
                 throwable.printStackTrace();
             }
-        }
-        if (modelFilesList.isEmpty() && !mappingPackageHasNonGeneratedFiles) {
-            File mappingPackage = new File(nonCompiledMappingPackagePath);
-            mappingPackage.delete();
+        } else {
+            if (isEmpty(modelNonCompiledFile.listFiles()) || modelNonCompiledFile.listFiles().length == 0) {
+                currentFile.delete();
+            }
         }
     }
 }

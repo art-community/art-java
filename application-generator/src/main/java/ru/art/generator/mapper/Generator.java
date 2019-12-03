@@ -21,6 +21,7 @@ package ru.art.generator.mapper;
 import lombok.experimental.UtilityClass;
 import ru.art.generator.mapper.annotation.IgnoreGeneration;
 import ru.art.generator.mapper.exception.MappingGeneratorException;
+import ru.art.generator.mapper.models.GenerationPackageModel;
 import ru.art.generator.mapper.operations.AnalyzingOperations;
 
 import java.io.File;
@@ -38,7 +39,7 @@ import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
 import static ru.art.generator.mapper.constants.Constants.REQUEST;
 import static ru.art.generator.mapper.constants.Constants.RESPONSE;
-import static ru.art.generator.mapper.operations.AnalyzingOperations.deleteFile;
+import static ru.art.generator.mapper.operations.AnalyzingOperations.deleteNonExistedFiles;
 import static ru.art.generator.mapper.operations.AnalyzingOperations.getListOfFilesInCompiledPackage;
 import static ru.art.generator.mapper.operations.CommonOperations.printError;
 import static ru.art.generator.mapper.operations.GeneratorOperations.*;
@@ -65,6 +66,11 @@ import static ru.art.generator.mapper.operations.GeneratorOperations.*;
  */
 @UtilityClass
 public class Generator {
+
+    public static void main(String[] args) {
+        performGeneration("C:\\ART\\application-generator\\build\\classes\\java\\main\\ru\\art\\generator", "model", "mapping");
+    }
+
     /**
      * Perform generation of mapping classes basing on model package.
      * Before generating, deleting redundant classes in mapping package.
@@ -74,34 +80,41 @@ public class Generator {
      * @param generatedPackageName - name of package which will contain mappers.
      */
     public static void performGeneration(String startPackagePath, String modelPackageName, String generatedPackageName) {
-        String genPackageParentPath = startPackagePath.replace(SLASH_MODEL, SLASH_MAPPING);
         String fullModelPackagePath = startPackagePath + separator + modelPackageName;
-        String fullGenPackagePath = genPackageParentPath + separator + generatedPackageName;
-
+        String fullGenPackagePath = startPackagePath + separator + generatedPackageName;
 
         String parentPackage = startPackagePath.substring(startPackagePath.indexOf(MAIN) + MAIN.length() + 1)
                 .replace(SLASH, DOT)
                 .replace(BACKWARD_SLASH, DOT);
-        String genParentPackage = genPackageParentPath.substring(genPackageParentPath.indexOf(MAIN) + MAIN.length() + 1)
-                .replace(SLASH, DOT)
-                .replace(BACKWARD_SLASH, DOT);
         String packageModel = parentPackage + DOT + modelPackageName;
-        String genPackage = genParentPackage + DOT + generatedPackageName;
+        String genPackage = parentPackage + DOT + generatedPackageName;
+        String jarPathToMain = fullGenPackagePath.substring(0, fullGenPackagePath.lastIndexOf(MAIN) + 5);
+
+        GenerationPackageModel generationPackageInfo = GenerationPackageModel.builder()
+                .startPackage(parentPackage)
+                .startPackagePath(startPackagePath.replace(BUILD_CLASSES_JAVA_MAIN, SRC_MAIN_JAVA))
+                .startPackagePathCompiled(startPackagePath)
+                .modelPackage(packageModel)
+                .modelPackagePath(fullModelPackagePath.replace(BUILD_CLASSES_JAVA_MAIN, SRC_MAIN_JAVA))
+                .modelPackagePathCompiled(fullModelPackagePath)
+                .genPackage(genPackage)
+                .genPackagePath(fullGenPackagePath.replace(BUILD_CLASSES_JAVA_MAIN, SRC_MAIN_JAVA))
+                .genPackagePathCompiled(fullGenPackagePath)
+                .jarPathToMain(jarPathToMain)
+                .build();
 
         List<File> modelFileList = getListOfFilesInCompiledPackage(fullModelPackagePath);
-        packageMappingPreparation(genPackageParentPath, genPackage, fullGenPackagePath, modelFileList);
-        mapperGeneration(startPackagePath, genPackage, packageModel, modelFileList);
+        packageMappingPreparation(generationPackageInfo, modelFileList);
+        mapperGeneration(generationPackageInfo, modelFileList);
     }
 
     /**
      * Analyze model package and delete redundant classes in mapping package.
      *
-     * @param genPackageParentPath - path of parent package for generated one taken from jar.
-     * @param genPackage           - package which will contain mappers.
-     * @param fullGenPackagePath   - absolute path of genPackage.
+     * @param generationPackageInfo
      * @param modelFileList        - list of files in compiled model package.
      */
-    private static void packageMappingPreparation(String genPackageParentPath, String genPackage, String fullGenPackagePath, List<File> modelFileList) {
+    private static void packageMappingPreparation(GenerationPackageModel generationPackageInfo, List<File> modelFileList) {
         /*
         Map files was created for convenient way to get file by it's name without searching it
          */
@@ -109,8 +122,8 @@ public class Generator {
         for (int i = 0; i < modelFileList.size(); i++)
             files.put(modelFileList.get(i).getName().replace(DOT_CLASS, EMPTY_STRING), i);
 
-        List<File> mappingFile = getListOfFilesInCompiledPackage(fullGenPackagePath);
-        deleteFile(mappingFile, modelFileList, genPackageParentPath, genPackage, files);
+        List<File> mappingFile = getListOfFilesInCompiledPackage(generationPackageInfo.getGenPackagePathCompiled());
+        deleteNonExistedFiles(mappingFile, modelFileList, generationPackageInfo, files);
     }
 
     /**
@@ -122,12 +135,10 @@ public class Generator {
      * If both classes exist, generator creates one mapping class with name
      * equals "ModelClass" + "RequestResponseMapper".
      *
-     * @param genPackagePath - path to model package's parent package.
-     * @param genPackage     - string value of mapper's package.
-     * @param packageModel   - string value of model package.
+     * @param generationPackageInfo
      * @param modelFileList  - list of files in compiled model package.
      */
-    private static void mapperGeneration(String genPackagePath, String genPackage, String packageModel, List<File> modelFileList) {
+    private static void mapperGeneration(GenerationPackageModel generationPackageInfo, List<File> modelFileList) {
         /*
         Map files was created for convenient way to get file by it's name without searching it
          */
@@ -135,29 +146,42 @@ public class Generator {
                 .boxed()
                 .collect(toMap(index -> modelFileList.get(index).getName(), identity()));
 
-        String jarPathToMain = genPackagePath.substring(0, genPackagePath.lastIndexOf(MAIN) + 5);
+        String genPackage = generationPackageInfo.getGenPackage();
+        String packageModel = generationPackageInfo.getModelPackage();
+
         for (File modelFile : modelFileList) {
             if (isEmpty(modelFile)) continue;
 
             String currentModelFileName = modelFile.getName();
-            if (modelFile.isDirectory()) {
-                performGeneration(modelFile.getPath().replace(separator + currentModelFileName, EMPTY_STRING),
-                        currentModelFileName,
-                        currentModelFileName);
+            if (modelFile.isDirectory() && isNotEmpty(modelFile.getParentFile())) {
+                List<File> filesInDirectory = getListOfFilesInCompiledPackage(modelFile.getPath());
+                GenerationPackageModel innerPackageInfo = GenerationPackageModel.builder()
+                        .startPackage(packageModel)
+                        .startPackagePath(generationPackageInfo.getModelPackagePath())
+                        .startPackagePathCompiled(generationPackageInfo.getModelPackagePathCompiled())
+                        .modelPackage(packageModel + DOT + currentModelFileName)
+                        .modelPackagePath(generationPackageInfo.getModelPackagePath() + separator + currentModelFileName)
+                        .modelPackagePathCompiled(generationPackageInfo.getModelPackagePathCompiled() + separator + currentModelFileName)
+                        .genPackage(genPackage + DOT + currentModelFileName)
+                        .genPackagePath(generationPackageInfo.getGenPackagePath() + separator + currentModelFileName)
+                        .genPackagePathCompiled(generationPackageInfo.getGenPackagePathCompiled() + separator + currentModelFileName)
+                        .jarPathToMain(generationPackageInfo.getJarPathToMain())
+                        .build();
+                mapperGeneration(innerPackageInfo, filesInDirectory);
                 continue;
             }
 
-            Class<?> currentClass = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING), packageModel);
+            Class<?> currentClass = AnalyzingOperations.getClass(generationPackageInfo, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING));
             if (currentClass.isAnnotationPresent(IgnoreGeneration.class) || currentClass.isEnum())
                 continue;
             if (currentModelFileName.contains(REQUEST)) {
                 if (isNotEmpty(files.get(currentModelFileName.replace(REQUEST, RESPONSE)))) {
                     try {
-                        Class<?> response = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING).replace(REQUEST, RESPONSE), packageModel);
+                        Class<?> response = AnalyzingOperations.getClass(generationPackageInfo, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING).replace(REQUEST, RESPONSE));
                         if (!currentClass.isAnnotationPresent(IgnoreGeneration.class) &&
                                 !response.isAnnotationPresent(IgnoreGeneration.class) &&
                                 !currentClass.isEnum()) {
-                            createRequestResponseMapperClass(currentClass, response, genPackage, jarPathToMain);
+                            createRequestResponseMapperClass(currentClass, response, generationPackageInfo);
                             modelFileList.set(files.get(currentModelFileName.replace(REQUEST, RESPONSE)), null);
                             files.remove(currentModelFileName);
                             files.remove(currentModelFileName.replace(REQUEST, RESPONSE));
@@ -167,14 +191,14 @@ public class Generator {
                     }
                 } else {
                     try {
-                        createMapper(genPackage, packageModel, jarPathToMain, currentModelFileName);
+                        createMapper(generationPackageInfo, currentModelFileName);
                     } catch (MappingGeneratorException exception) {
                         printError(exception.getMessage());
                     }
                 }
             } else {
                 try {
-                    createMapper(genPackage, packageModel, jarPathToMain, currentModelFileName);
+                    createMapper(generationPackageInfo, currentModelFileName);
                 } catch (MappingGeneratorException exception) {
                     printError(exception.getMessage());
                 }
@@ -186,14 +210,12 @@ public class Generator {
     /**
      * Method for creating simple mapper class.
      *
-     * @param genPackage           - string value of mapper's package.
-     * @param packageModel         - string value of model package.
-     * @param jarPathToMain        - classpath from root to main.
+     * @param generationInfo - information about packages and path for generated class.
      * @param currentModelFileName - name of current model file.
      */
-    private static void createMapper(String genPackage, String packageModel, String jarPathToMain, String currentModelFileName) {
-        Class<?> clazz = AnalyzingOperations.getClass(jarPathToMain, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING), packageModel);
+    private static void createMapper(GenerationPackageModel generationInfo, String currentModelFileName) {
+        Class<?> clazz = AnalyzingOperations.getClass(generationInfo, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING));
         if (!clazz.isAnnotationPresent(IgnoreGeneration.class) && !clazz.isEnum())
-            createMapperClass(clazz, genPackage, jarPathToMain);
+            createMapperClass(clazz, generationInfo);
     }
 }

@@ -21,10 +21,12 @@ package ru.art.generator.mapper.operations;
 import com.squareup.javapoet.*;
 import ru.art.generator.mapper.annotation.*;
 import ru.art.generator.mapper.exception.*;
+import ru.art.generator.mapper.models.GenerationPackageModel;
+
+import static java.io.File.separator;
 import static java.text.MessageFormat.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.generator.mapper.constants.Constants.*;
-import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
 import static ru.art.generator.mapper.constants.ExceptionConstants.MapperGeneratorExceptions.*;
 import static ru.art.generator.mapper.operations.GeneratorOperations.*;
 import java.lang.reflect.Field;
@@ -57,43 +59,41 @@ public interface CommonOperations {
      * Generate mapper for class, if it wasn't generated earlier.
      *
      * @param genClass      - class of mapper's model.
-     * @param jarPathToMain - classpath from root to main.
+     * @param generationInfo - information about packages and path for generated class.
      * @return ClassName of new generated class.
      */
-    static ClassName createMapperForInnerClassIfNeeded(Class<?> genClass, String jarPathToMain) {
+    static ClassName createMapperForInnerClassIfNeeded(Class<?> genClass, GenerationPackageModel generationInfo) {
         if (genClass.isEnum()) return ClassName.get(genClass);
+        String packageName = genClass.getPackage().getName().replace(generationInfo.getModelPackage() + DOT, EMPTY_STRING);
         if (!genClass.isAnnotationPresent(IgnoreGeneration.class)) {
-            String classPackage = genClass.getName().substring(0, genClass.getName().indexOf(genClass.getSimpleName()) - 1);
-            String genPackage = classPackage.contains(MODEL) ?
-                    classPackage.replace(MODEL, MAPPING) :
-                    classPackage.substring(0, classPackage.lastIndexOf(DOT)) + DOT + MAPPING;
-            if (!generatedFiles.contains(genClass))
-                createMapperClass(genClass, genPackage, jarPathToMain);
-            return ClassName.get(genPackage, genClass.getSimpleName() + MAPPER);
+            if (!generatedFiles.contains(genClass)) {
+                GenerationPackageModel generationInnerClassInfo = GenerationPackageModel.builder()
+                        .startPackage(generationInfo.getModelPackage())
+                        .startPackagePath(generationInfo.getModelPackagePath())
+                        .startPackagePathCompiled(generationInfo.getModelPackagePathCompiled())
+                        .modelPackage(genClass.getPackage().getName())
+                        .modelPackagePath(generationInfo.getModelPackagePath() + separator + packageName)
+                        .modelPackagePathCompiled(generationInfo.getModelPackagePathCompiled() + separator + packageName)
+                        .genPackage(generationInfo.getGenPackage() + DOT + packageName)
+                        .genPackagePath(generationInfo.getGenPackagePath() + separator + packageName)
+                        .genPackagePathCompiled(generationInfo.getGenPackagePathCompiled() + separator + packageName)
+                        .jarPathToMain(generationInfo.getJarPathToMain())
+                        .build();
+                createMapperClass(genClass, generationInnerClassInfo);
+                return ClassName.get(generationInnerClassInfo.getGenPackage(), genClass.getSimpleName() + MAPPER);
+            }
+            return ClassName.get(generationInfo.getGenPackage() + DOT + packageName, genClass.getSimpleName() + MAPPER);
         }
         throw new InnerClassGenerationException(format(UNABLE_TO_CREATE_INNER_CLASS_MAPPER, genClass));
     }
 
     /**
-     * Generate mapper for class, if it wasn't generated earlier.
-     *
-     * @param field         - field which type is a model for new mapper.
-     * @param jarPathToMain - classpath from root to main.
-     * @return ClassName of new generated class.
+     * Gets class by field.
+     * @param field - field which type is a model for new mapper.
+     * @return class from field
      */
-    static ClassName createMapperForInnerClassIfNeeded(Field field, String jarPathToMain) {
+    static Class<?> getClassFromField (Field field) {
         ParameterizedType type = (ParameterizedType) field.getGenericType();
-        Class<?> genClass = (Class) type.getActualTypeArguments()[0];
-        if (genClass.isEnum()) return ClassName.get(genClass);
-        if (!genClass.isAnnotationPresent(IgnoreGeneration.class)) {
-            String classPackage = genClass.getName().substring(0, genClass.getName().indexOf(genClass.getSimpleName()) - 1);
-            String genPackage = classPackage.contains(MODEL) ?
-                    classPackage.replace(MODEL, MAPPING) :
-                    classPackage.substring(0, classPackage.lastIndexOf(DOT)) + DOT + MAPPING;
-            if (!generatedFiles.contains(genClass))
-                createMapperClass(genClass, genPackage, jarPathToMain);
-            return ClassName.get(genPackage, genClass.getSimpleName() + MAPPER);
-        }
-        throw new InnerClassGenerationException(format(UNABLE_TO_CREATE_INNER_CLASS_MAPPER, genClass));
+        return (Class) type.getActualTypeArguments()[0];
     }
 }
