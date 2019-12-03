@@ -67,10 +67,6 @@ import static ru.art.generator.mapper.operations.GeneratorOperations.*;
 @UtilityClass
 public class Generator {
 
-    public static void main(String[] args) {
-        performGeneration("C:\\ART\\application-generator\\build\\classes\\java\\main\\ru\\art\\generator", "model", "mapping");
-    }
-
     /**
      * Perform generation of mapping classes basing on model package.
      * Before generating, deleting redundant classes in mapping package.
@@ -111,8 +107,8 @@ public class Generator {
     /**
      * Analyze model package and delete redundant classes in mapping package.
      *
-     * @param generationPackageInfo
-     * @param modelFileList        - list of files in compiled model package.
+     * @param generationPackageInfo - information about packages and path for generated class.
+     * @param modelFileList         - list of files in compiled model package.
      */
     private static void packageMappingPreparation(GenerationPackageModel generationPackageInfo, List<File> modelFileList) {
         /*
@@ -135,7 +131,7 @@ public class Generator {
      * If both classes exist, generator creates one mapping class with name
      * equals "ModelClass" + "RequestResponseMapper".
      *
-     * @param generationPackageInfo
+     * @param generationPackageInfo - information about packages and path for generated class.
      * @param modelFileList  - list of files in compiled model package.
      */
     private static void mapperGeneration(GenerationPackageModel generationPackageInfo, List<File> modelFileList) {

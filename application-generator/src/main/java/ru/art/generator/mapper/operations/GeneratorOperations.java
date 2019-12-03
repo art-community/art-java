@@ -93,7 +93,8 @@ public interface GeneratorOperations {
     /**
      * Creating ordinary mapping class.
      *
-     * @param clazz         - class of model for mappers generating.
+     * @param clazz          - class of model for mappers generating.
+     * @param generationInfo - information about packages and path for generated class.
      * @throws MappingGeneratorException is thrown when IOException or NullPointerException
      *                                   happens while writing to file.
      */
@@ -144,8 +145,9 @@ public interface GeneratorOperations {
     /**
      * Creating unit mapping class for both request and response model.
      *
-     * @param request       - class of request model.
-     * @param response      - class of response model.
+     * @param request        - class of request model.
+     * @param response       - class of response model.
+     * @param generationInfo - information about packages and path for generated class.
      * @throws MappingGeneratorException is thrown when IOException or NullPointerException
      *                                   happens while writing to file.
      */
@@ -201,6 +203,11 @@ public interface GeneratorOperations {
         }
     }
 
+    /**
+     *
+     * @param request        - class of request model.
+     * @param generationInfo - information about packages and path for generated class.
+     */
     static void createMapperClasses(Class<?> request, GenerationPackageModel generationInfo) {
         for (int i = 0; i < request.getClasses().length; i++) {
             if (!request.getClasses()[i].getSimpleName().equals(request.getSimpleName() + BUILDER) &&
@@ -218,7 +225,7 @@ public interface GeneratorOperations {
      * ValueToModelMapper<Model, Entity> toModel = entity -> Model.builder()
      * .build();
      *
-     * @param clazz         - class of model for mappers generating.
+     * @param clazz          - class of model for mappers generating.
      * @param generationInfo - information about packages and path for generated class.
      * @return FieldSpec containing ToModel block.
      */

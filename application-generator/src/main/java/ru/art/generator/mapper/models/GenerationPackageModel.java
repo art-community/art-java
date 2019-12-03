@@ -4,6 +4,10 @@ import lombok.Builder;
 import lombok.Setter;
 import lombok.Value;
 
+/**
+ * Model to store packages and paths for generated class.
+ */
+
 @Builder
 @Value
 @Setter

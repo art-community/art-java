@@ -94,11 +94,10 @@ public interface AnalyzingOperations {
      * If model package is empty, deleting mapping package.
      * Classes marked as @IgnoreGeneration are never automatically deleted.
      *
-     * @param mappingFilesList - list of files in mapping non-compiled package.
-     * @param modelFilesList   - list of files in model non-compiled package.
-     * @param path             - compiled package path of mapping directory.
-     * @param packageMapping   - string value of mapping package.
-     * @param files            - map of files in model non-compiled package.
+     * @param mappingFilesList      - list of files in mapping non-compiled package.
+     * @param modelFilesList        - list of files in model non-compiled package.
+     * @param generationPackageInfo - information about packages and path for generated class.
+     * @param files                 - map of files in model non-compiled package.
      */
     @SuppressWarnings("all")
     static void deleteNonExistedFiles(List<File> mappingFilesList, List<File> modelFilesList, GenerationPackageModel generationPackageInfo, Map<String, Integer> files) {
@@ -111,6 +110,14 @@ public interface AnalyzingOperations {
         }
     }
 
+    /**
+     * Method checks if model file was deleted and if is was, then
+     * delete matching mapping file.
+     * @param currentFile    - processed file.
+     * @param modelFilesList - list of files in model non-compiled package.
+     * @param generationInfo - information about packages and path for generated class.
+     * @param files          - map of files in model non-compiled package.
+     */
     static void deleteFile(File currentFile, List<File> modelFilesList, GenerationPackageModel generationInfo, Map<String, Integer> files) {
         //for all model package try to find which files were deleted
         File modelNonCompiledFile = null;
@@ -140,7 +147,7 @@ public interface AnalyzingOperations {
                 throwable.printStackTrace();
             }
         } else {
-            if (isEmpty(modelNonCompiledFile.listFiles()) || modelNonCompiledFile.listFiles().length == 0) {
+            if (isEmpty(modelNonCompiledFile) || isEmpty(modelNonCompiledFile.listFiles()) || modelNonCompiledFile.listFiles().length == 0) {
                 currentFile.delete();
             }
         }
