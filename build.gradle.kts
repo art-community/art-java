@@ -17,6 +17,7 @@
  */
 
 import com.jfrog.bintray.gradle.BintrayExtension.*
+import com.jfrog.bintray.gradle.tasks.*
 import groovy.lang.*
 import org.jfrog.gradle.plugin.artifactory.dsl.*
 import org.jfrog.gradle.plugin.artifactory.task.*
@@ -154,7 +155,10 @@ subprojects {
                         "badges")
                 setLicenses("Apache-2.0")
             })
-            tasks["bintrayUpload"].dependsOn(tasks["generatePomFileFor${name.capitalize()}Publication"], jar, sourceJar)
+            with(tasks["bintrayUpload"] as BintrayUploadTask) {
+                publish = true
+                dependsOn(tasks["generatePomFileFor${name.capitalize()}Publication"], jar, sourceJar)
+            }
         }
     }
 
