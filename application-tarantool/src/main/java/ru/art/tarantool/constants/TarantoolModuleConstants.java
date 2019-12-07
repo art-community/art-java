@@ -69,6 +69,7 @@ public interface TarantoolModuleConstants {
         String TARANTOOL_EXECUTABLE_NOT_EXISTS = "Tarantool ''{0}'' executable ''{1}'' not exists inside classpath";
         String ENTITY_WITHOUT_ID_FILED = "Entity ''{0}'' does not has 'id' long field";
         String ENTITY_IS_NULL = "Entity ''{0}'' is null";
+        String RESULT_IS_INVALID = "Result for entity ''{0}'' returned from Tarantool is invalid";
     }
 
     interface LoggingMessages {
