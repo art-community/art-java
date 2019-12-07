@@ -45,7 +45,7 @@ class TarantoolCommonDao {
         if (isEmpty(result)) {
             return 0L;
         }
-        return ((Number) ((List<?>) result.get(0)).get(0)).longValue();
+        return ((Number) result.get(0)).longValue();
     }
 
     public long count(String spaceName, long id) {
@@ -64,7 +64,7 @@ class TarantoolCommonDao {
         if (isEmpty(result)) {
             return 0L;
         }
-        return ((Number) ((List<?>) result.get(0)).get(0)).longValue();
+        return ((Number) result.get(0)).longValue();
     }
 
 
