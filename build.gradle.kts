@@ -157,7 +157,7 @@ subprojects {
             })
             with(tasks["bintrayUpload"] as BintrayUploadTask) {
                 publish = true
-                dependsOn(tasks["generatePomFileFor${name.capitalize()}Publication"], jar, sourceJar)
+                dependsOn(tasks["generatePomFileFor${this@subprojects.name.capitalize()}Publication"], jar, sourceJar)
             }
         }
     }
