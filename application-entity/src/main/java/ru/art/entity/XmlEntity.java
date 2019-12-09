@@ -207,27 +207,27 @@ public class XmlEntity implements Value {
             return this;
         }
 
-        public XmlEntityBuilder intAttributeField(String name, int value) {
+        public XmlEntityBuilder intAttributeField(String name, Integer value) {
             attributes.put(name, emptyIfNull(value));
             return this;
         }
 
-        public XmlEntityBuilder longAttributeField(String name, long value) {
+        public XmlEntityBuilder longAttributeField(String name, Long value) {
             attributes.put(name, emptyIfNull(value));
             return this;
         }
 
-        public XmlEntityBuilder doubleAttributeField(String name, double value) {
+        public XmlEntityBuilder doubleAttributeField(String name, Double value) {
             attributes.put(name, emptyIfNull(value));
             return this;
         }
 
-        public XmlEntityBuilder booleanAttributeFieldStringFormat(String name, boolean value) {
+        public XmlEntityBuilder booleanAttributeFieldStringFormat(String name, Boolean value) {
             attributes.put(name, emptyIfNull(value));
             return this;
         }
 
-        public XmlEntityBuilder booleanAttributeFieldNumericFormat(String name, boolean value) {
+        public XmlEntityBuilder booleanAttributeFieldNumericFormat(String name, Boolean value) {
             attributes.put(name, value ? TRUE_NUMERIC : FALSE_NUMERIC);
             return this;
         }
@@ -258,23 +258,23 @@ public class XmlEntity implements Value {
             return value(emptyIfNull(value));
         }
 
-        public XmlEntityBuilder intValue(int value) {
+        public XmlEntityBuilder intValue(Integer value) {
             return value(emptyIfNull(value));
         }
 
-        public XmlEntityBuilder doubleValue(double value) {
+        public XmlEntityBuilder doubleValue(Double value) {
             return value(emptyIfNull(value));
         }
 
-        public XmlEntityBuilder longValue(long value) {
+        public XmlEntityBuilder longValue(Long value) {
             return value(emptyIfNull(value));
         }
 
-        public XmlEntityBuilder booleanValueStringFormat(boolean value) {
+        public XmlEntityBuilder booleanValueStringFormat(Boolean value) {
             return value(emptyIfNull(value));
         }
 
-        public XmlEntityBuilder booleanValueNumericFormat(boolean value) {
+        public XmlEntityBuilder booleanValueNumericFormat(Boolean value) {
             return value(value ? TRUE_NUMERIC : FALSE_NUMERIC);
         }
 

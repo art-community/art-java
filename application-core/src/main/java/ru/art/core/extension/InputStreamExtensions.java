@@ -23,62 +23,32 @@ import ru.art.core.exception.*;
 import static java.lang.System.*;
 import static java.nio.ByteBuffer.*;
 import static java.nio.channels.Channels.*;
-import static java.util.Collections.*;
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.core.constants.BufferConstants.*;
 import static ru.art.core.constants.StreamConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
-import static ru.art.core.factory.CollectionsFactory.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.nio.charset.*;
-import java.util.*;
 
 @UtilityClass
 public class InputStreamExtensions {
-    public static List<Byte> toByteList(InputStream is) {
-        try {
-            List<Byte> byteList = arrayOf(is.available());
-            for (int i = is.read(); i != EOF; i = is.read()) {
-                byteList.add((byte) i);
-            }
-            return byteList;
-        } catch (IOException ioException) {
-            throw new InternalRuntimeException(ioException);
-        }
-    }
-
-    public static List<Byte> toByteListSafety(InputStream is) {
-        try {
-            List<Byte> byteList = arrayOf(is.available());
-            for (int i = is.read(); i != EOF; i = is.read()) {
-                byteList.add((byte) i);
-            }
-            return byteList;
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-            return emptyList();
-        }
-    }
-
     public static byte[] toByteArray(InputStream is) {
         return toByteArray(is, DEFAULT_BUFFER_SIZE);
     }
 
     public static byte[] toByteArray(InputStream is, int bufferSize) {
+        if (bufferSize <= 0) {
+            return EMPTY_BYTES;
+        }
         ByteBuffer buffer = allocateDirect(bufferSize);
         byte[] result = EMPTY_BYTES;
         try {
             ReadableByteChannel channel = newChannel(is);
             while (channel.read(buffer) != EOF) {
                 buffer.flip();
-                if (result.length == 0 && buffer.limit() <= bufferSize) {
-                    result = new byte[buffer.limit()];
-                    buffer.get(result);
-                    return result;
-                }
                 byte[] bufferBytes = new byte[buffer.limit()];
                 buffer.get(bufferBytes);
                 byte[] newResult = new byte[result.length + bufferBytes.length];

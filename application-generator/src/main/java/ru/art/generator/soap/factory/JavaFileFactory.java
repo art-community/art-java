@@ -20,43 +20,32 @@ package ru.art.generator.soap.factory;
 
 import com.squareup.javapoet.*;
 import lombok.Builder;
-import lombok.Singular;
-import lombok.Value;
-import lombok.experimental.UtilityClass;
-import ru.art.generator.soap.model.Field;
-import ru.art.service.validation.Validatable;
-import ru.art.service.validation.ValidationExpressions;
-import ru.art.service.validation.Validator;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import static com.squareup.javapoet.CodeBlock.join;
-import static com.squareup.javapoet.TypeSpec.classBuilder;
-import static javax.lang.model.element.Modifier.PRIVATE;
-import static javax.lang.model.element.Modifier.PUBLIC;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.NEW_LINE;
-import static ru.art.core.extension.StringExtensions.firstLetterToLowerCase;
-import static ru.art.core.extension.StringExtensions.firstLetterToUpperCase;
-import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.DOT_MODEL_DOT;
+import lombok.*;
+import lombok.experimental.*;
+import ru.art.generator.soap.model.*;
+import ru.art.service.validation.*;
+import static com.squareup.javapoet.CodeBlock.*;
+import static com.squareup.javapoet.TypeSpec.*;
+import static javax.lang.model.element.Modifier.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.StringExtensions.*;
+import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
 import static ru.art.generator.soap.constants.Constants.*;
-import static ru.art.generator.soap.constants.Constants.ToXmlModelConstants.VALIDATOR;
-import static ru.art.generator.soap.factory.TypeFactory.isObject;
-import static ru.art.generator.soap.service.SoapGeneratorService.SRC_MAIN_JAVA_ABSOLUTE_PATH;
+import static ru.art.generator.soap.constants.Constants.ToXmlModelConstants.*;
+import static ru.art.generator.soap.factory.TypeFactory.*;
+import java.io.*;
+import java.util.*;
 
 @UtilityClass
 public class JavaFileFactory {
 
     private static HashMap<String, JavaFile> setJavaFiles = new HashMap<>();
 
-    public static JavaFile createJavaFile(String packagePath, TypeSpec spec) {
+    public static JavaFile createJavaFile(String packagePath, TypeSpec spec, String absolutePathToSrcMainJava) {
         JavaFile javaFile = JavaFile.builder(packagePath, spec).build();
         try {
-            javaFile.writeTo(new File(SRC_MAIN_JAVA_ABSOLUTE_PATH.get()));
+            javaFile.writeTo(new File(absolutePathToSrcMainJava));
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
@@ -64,7 +53,7 @@ public class JavaFileFactory {
     }
 
 
-    public static JavaFile createJavaFileByField(Field field, String packageString) {
+    public static JavaFile createJavaFileByField(Field field, String packageString, String absolutePathToSrcMainJava) {
         TypeSpec.Builder classBuilder = classBuilder(firstLetterToUpperCase(field.getTypeName()));
         classBuilder.addModifiers(PUBLIC);
         classBuilder.addSuperinterface(Validatable.class);
@@ -78,7 +67,7 @@ public class JavaFileFactory {
         FieldSpec fieldSpec;
         for (Field innerField : field.getFieldsList()) {
             if (isObject(innerField.getType())) {
-                checkAndAddJavaClass(innerField, packageString);
+                checkAndAddJavaClass(innerField, packageString, absolutePathToSrcMainJava);
                 ClassName className = ClassName.get(packageString + ".model." + innerField.getPrefix(), firstLetterToUpperCase(innerField.getTypeName()));
                 fieldSpec = innerField.isList()
                         ? FieldSpec.builder(ParameterizedTypeName.get(ClassName.get(List.class), className),
@@ -137,18 +126,18 @@ public class JavaFileFactory {
             methodBuilder.addCode(join(methodCodeBlockList, NEW_LINE));
             classBuilder.addMethod(methodBuilder.build());
         }
-        return createJavaFile(packageString + DOT_MODEL_DOT + field.getPrefix(), classBuilder.build());
+        return createJavaFile(packageString + DOT_MODEL_DOT + field.getPrefix(), classBuilder.build(), absolutePathToSrcMainJava);
     }
 
     private static boolean checkDuplicateCreatedJavaClass(Field field) {
         return setJavaFiles.containsKey(field.getPrefix() + field.getTypeName());
     }
 
-    private static void checkAndAddJavaClass(Field field, String packageString) {
+    private static void checkAndAddJavaClass(Field field, String packageString, String absolutePathToSrcMainJava) {
         if (checkDuplicateCreatedJavaClass(field)) {
             return;
         }
-        setJavaFiles.put(field.getPrefix() + field.getTypeName(), createJavaFileByField(field, packageString));
+        setJavaFiles.put(field.getPrefix() + field.getTypeName(), createJavaFileByField(field, packageString, absolutePathToSrcMainJava));
     }
 
     private static AnnotationSpec addSingularAnnotation(Field field) {

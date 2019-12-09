@@ -18,10 +18,39 @@
 
 package ru.art.generator.soap.factory;
 
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.BOOLEAN;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.BYTE;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.BYTE_ARRAY;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.DATE;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.DATE_TIME;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.DECIMAL;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.DOUBLE;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.FLOAT;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.INT;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.INTEGER;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.LONG;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.STRING;
+import static ru.art.generator.soap.constants.Constants.SupportJavaType.TIME;
+
+import com.predic8.schema.Attribute;
 import com.predic8.schema.Element;
 import com.predic8.schema.TypeDefinition;
-import com.predic8.schema.restriction.facet.*;
+import com.predic8.schema.restriction.facet.EnumerationFacet;
+import com.predic8.schema.restriction.facet.Facet;
+import com.predic8.schema.restriction.facet.FractionDigits;
+import com.predic8.schema.restriction.facet.LengthFacet;
+import com.predic8.schema.restriction.facet.MaxExclusiveFacet;
+import com.predic8.schema.restriction.facet.MaxInclusiveFacet;
+import com.predic8.schema.restriction.facet.MaxLengthFacet;
+import com.predic8.schema.restriction.facet.MinExclusiveFacet;
+import com.predic8.schema.restriction.facet.MinInclusiveFacet;
+import com.predic8.schema.restriction.facet.MinLengthFacet;
+import com.predic8.schema.restriction.facet.PatternFacet;
+import com.predic8.schema.restriction.facet.TotalDigitsFacet;
+import com.predic8.schema.restriction.facet.WhiteSpaceFacet;
 import groovy.xml.QName;
+import java.util.Date;
+import java.util.Objects;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import ru.art.generator.exception.NotFoundPrefixException;
@@ -29,16 +58,13 @@ import ru.art.generator.soap.model.Restriction;
 import ru.art.generator.soap.model.Restriction.RestrictionBuilder;
 import ru.art.generator.soap.model.RestrictionOperation;
 
-import java.util.Date;
-
-import static ru.art.generator.soap.constants.Constants.SupportJavaType.*;
-
 @UtilityClass
 public class TypeFactory {
 
     public static Class<? extends Object> getTypeByString(String type) {
         switch (type) {
             case STRING:
+            case BYTE_ARRAY:
                 return String.class;
             case BYTE:
                 return Byte.class;
@@ -64,33 +90,64 @@ public class TypeFactory {
     }
 
     public static String getTypeByElement(Element element) {
-        if (element.getType() == null) {
-            if (element.getEmbeddedType() != null) {
+        if (Objects.isNull(element.getType())) {
+            if (Objects.nonNull(element.getEmbeddedType())) {
                 if (element.getEmbeddedType().getQname() != null) {
                     return element.getEmbeddedType().getQname().getLocalPart();
                 }
-            } else if (element.getRef() != null) {
-                return element.getRef().getLocalPart();
             }
         } else {
             return element.getType().getLocalPart();
         }
-        return "Object";
+        if (Objects.nonNull(element.getRef())) {
+            return checkRefAndGetType(element);
+        }
+        return Object.class.getSimpleName();
+    }
+
+    public static String checkRefAndGetType(Element element) {
+        String localPart = element.getRef().getLocalPart();
+        if (isObject(getTypeByString(localPart))) {
+            element = element.getSchema().getElement(element.getRef());
+            return element.getType().getLocalPart();
+        }
+        return element.getRef().getLocalPart();
+    }
+
+    public static String getTypeByAttribute(Attribute attribute) {
+        if (Objects.nonNull(attribute.getType())) {
+            return attribute.getType().getLocalPart();
+        } else if (Objects.nonNull(attribute.getRef())) {
+                return attribute.getRef().getLocalPart();
+        } else {
+            return Object.class.getSimpleName();
+        }
+    }
+
+    public static TypeDefinition getTypeDefinitionByAttribute(Attribute attribute) {
+        QName ref = null;
+        if (Objects.nonNull(attribute.getType())) {
+            ref = attribute.getType();
+
+        } else if (Objects.nonNull(attribute.getRef())) {
+            ref = attribute.getRef();
+        }
+        return attribute.getSchema().getType(ref);
     }
 
     @SneakyThrows
     public static TypeDefinition getTypeDefinition(Element element) {
-        if (element.getType() == null) {
-            if (element.getEmbeddedType() != null) {
+        if (Objects.isNull(element.getType())) {
+            if (Objects.nonNull(element.getEmbeddedType())) {
                 return element.getEmbeddedType();
-            } else if (element.getRef() != null) {
+            } else if (Objects.nonNull(element.getRef())) {
                 QName ref = element.getRef();
-                if (ref.getNamespaceURI() != null) {
+                if (Objects.nonNull(ref.getNamespaceURI())) {
                     Element refElement = element.getSchema().getElement(ref);
                     element.setName(refElement.getName());
                     return getTypeDefinition(refElement);
                 }
-                if (ref.getPrefix() == null || ref.getPrefix().isEmpty()) {
+                if (Objects.isNull(ref.getPrefix()) || ref.getPrefix().isEmpty()) {
                     throw new NotFoundPrefixException("Not fount prefix for ref about elememt "
                             + element.getName());
                 }
@@ -100,8 +157,7 @@ public class TypeFactory {
                 return element.getSchema().getType(qName);
             }
         }
-        String localPart = getTypeByElement(element);
-        return element.getSchema().getType(localPart);
+        return element.getSchema().getType(element.getType());
     }
 
     public static String getNamespaceByPrefix(Element element, String prefix) {

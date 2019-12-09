@@ -24,6 +24,7 @@ import static java.util.Objects.*;
 import static kafka.server.KafkaConfig.*;
 import static lombok.AccessLevel.*;
 import static org.apache.kafka.common.utils.Time.*;
+import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
 import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.ZookeeperInitializationMode.*;
@@ -45,7 +46,7 @@ public class EmbeddedKafkaBroker {
     public static EmbeddedKafkaBroker startKafkaBroker(KafkaBrokerConfiguration kafkaBrokerConfiguration, ZookeeperConfiguration zookeeperConfiguration, ZookeeperInitializationMode zookeeperInitializationMode) {
         Properties properties = new Properties();
         properties.put(ZkConnectProp(), kafkaBrokerConfiguration.getZookeeperConnection());
-        properties.put(ListenersProp(), PLAINTEXT + COLON + kafkaBrokerConfiguration.getPort());
+        properties.put(ListenersProp(), PLAINTEXT + LOCALHOST_IP_ADDRESS + COLON + kafkaBrokerConfiguration.getPort());
         properties.put(LogDirProp(), kafkaBrokerConfiguration.getLogDirectory());
         properties.put(OffsetsTopicReplicationFactorProp(), kafkaBrokerConfiguration.getReplicationFactor());
         properties.putAll(kafkaBrokerConfiguration.getAdditionalProperties());

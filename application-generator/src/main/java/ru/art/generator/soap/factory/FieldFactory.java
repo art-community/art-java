@@ -23,10 +23,14 @@ import com.predic8.schema.restriction.*;
 import com.predic8.wsdl.*;
 import com.predic8.xml.util.*;
 import lombok.experimental.*;
+import ru.art.core.constants.JavaKeywordConstants;
+import ru.art.core.constants.StringConstants;
 import ru.art.generator.soap.model.Field;
 import ru.art.generator.soap.model.Field.*;
 import static java.util.Objects.*;
 import static ru.art.generator.soap.factory.TypeFactory.*;
+import static ru.art.generator.soap.factory.TypeFactory.getTypeByString;
+
 import java.util.*;
 import java.util.stream.*;
 
@@ -34,7 +38,15 @@ import java.util.stream.*;
 public class FieldFactory {
 
     private final static String NECESSARY = "1";
+    private final static String REQUIRED = "required";
     private final static String UNBOUNDED = "unbounded";
+
+    private static String checkAndRenameField(String name) {
+        if (JavaKeywordConstants.contains(name.toLowerCase())) {
+            return StringConstants.UNDERSCORE.concat(name);
+        }
+        return name;
+    }
 
     public static List<Field> createFieldsByMessage(String message, Definitions wsdlDefinitions) {
         List<Element> elementList = new ArrayList<>();
@@ -44,33 +56,61 @@ public class FieldFactory {
 
     private static Field createFieldByElement(Element element) {
         Class classString = getTypeByString(getTypeByElement(element));
-        FieldBuilder fieldBuilder = isObject(classString) ? createComplexField(element) : createPrimitiveField(element);
+        FieldBuilder fieldBuilder = isObject(classString) ? createComplexFieldByElement(element) : createPrimitiveFieldByElement(element);
         fieldBuilder.necessary(isNecessary(element));
         fieldBuilder.list(isList(element));
         return fieldBuilder.build();
     }
 
-    private static FieldBuilder createPrimitiveField(Element element) {
-        String localPart = element.getType().getLocalPart();
+    private static Field createFieldByAttribute(Attribute attribute, Element element) {
+        Class<?> classString = getTypeByString(getTypeByAttribute(attribute));
+        FieldBuilder fieldBuilder = isObject(classString) ? createComplexFieldByAttribute(attribute, element) : createPrimitiveFieldByAttribute(attribute);
+        return fieldBuilder.build();
+    }
+
+    private static FieldBuilder createPrimitiveFieldByAttribute(Attribute attribute) {
+        String localPart = getTypeByAttribute(attribute);
+        String name = checkAndRenameField(attribute.getName());
         return Field.builder()
-                .name(element.getName())
+            .name(name)
+            .typeName(localPart)
+            .type(getTypeByString(localPart))
+            .necessary(REQUIRED.equals(attribute.getUse()));
+    }
+
+    private static FieldBuilder createPrimitiveFieldByElement(Element element) {
+        String localPart = getTypeByElement(element);
+        String name = checkAndRenameField(getName(element));
+        return Field.builder()
+                .name(name)
                 .typeName(localPart)
                 .type(getTypeByString(localPart));
     }
 
-    private static FieldBuilder createComplexField(Element element) {
+    private static FieldBuilder createComplexFieldByElement(Element element) {
         TypeDefinition type = getTypeDefinition(element);
-        FieldBuilder field = null;
+        return createFieldBuilderByTypeDefinition(element, type);
+    }
+
+    private static FieldBuilder createComplexFieldByAttribute(Attribute attribute, Element element) {
+        TypeDefinition type = getTypeDefinitionByAttribute(attribute);
+        return createFieldBuilderByTypeDefinition(element, type);
+    }
+
+    private static FieldBuilder createFieldBuilderByTypeDefinition(Element element, TypeDefinition type) {
         if (type instanceof ComplexType) {
-            field = createFieldByComplexType(element, (ComplexType) type);
+            return createFieldByComplexType(element, (ComplexType) type);
         } else if (type instanceof SimpleType) {
-            field = createFieldBySimpleType(element, (SimpleType) type);
+            return createFieldBySimpleType(element, (SimpleType) type);
         }
-        return field;
+        return null;
     }
 
     private static FieldBuilder createFieldByComplexType(Element element, ComplexType complexType) {
         SchemaComponent model = complexType.getModel();
+        if (model == null) {
+            return createFieldByNullModel(element, complexType);
+        }
         if (model instanceof ComplexContent) {
             return createFieldByComplexContent(element, complexType, (ComplexContent) model);
         }
@@ -80,8 +120,9 @@ public class FieldFactory {
     private static FieldBuilder createFieldByModelGroup(Element element, ComplexType complexType,
                                                         ModelGroup modelGroup) {
         String typeName = isNull(complexType) || isNull(complexType.getName()) ? element.getName() : complexType.getName();
+        String name = checkAndRenameField(element.getName());
         return Field.builder()
-                .name(element.getName())
+                .name(name)
                 .type(Object.class)
                 .typeName(typeName)
                 .prefix(element.getPrefix())
@@ -106,8 +147,9 @@ public class FieldFactory {
     private static FieldBuilder createFieldBySimpleType(Element element, SimpleType simpleType) {
         BaseRestriction restriction = simpleType.getRestriction();
         Class classString = getTypeByString(restriction.getBase().getLocalPart());
+        String name = checkAndRenameField(element.getName());
         return Field.builder()
-                .name(element.getName())
+                .name(name)
                 .prefix(element.getPrefix())
                 .namespace(element.getNamespaceUri())
                 .type(classString)
@@ -117,6 +159,32 @@ public class FieldFactory {
                                 .stream().map(TypeFactory::getRestrictionByFacet)
                                 .collect(Collectors.toList())
                 );
+    }
+
+    private static FieldBuilder createFieldByNullModel(Element element, ComplexType complexType) {
+        Class<?> typeByString = getTypeByString(element.getName());
+        String name = checkAndRenameField(element.getName());
+        return Field.builder()
+            .name(name)
+            .prefix(element.getPrefix())
+            .namespace(element.getNamespaceUri())
+            .type(typeByString)
+            .typeName(element.getName())
+            .necessary(isNecessary(element))
+            .list(isList(element))
+            .fieldsList(
+                complexType.getAllAttributes().stream()
+                .map(attribute -> createFieldByAttribute(attribute, element))
+                .collect(Collectors.toList())
+            );
+    }
+
+    private static String getName(Element element) {
+        if (Objects.nonNull(element.getName())) {
+            return element.getName();
+        } else {
+            return element.getRef().getLocalPart();
+        }
     }
 
     private static boolean isNecessary(Element element) {

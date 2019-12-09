@@ -17,6 +17,7 @@
  */
 
 import com.jfrog.bintray.gradle.BintrayExtension.*
+import com.jfrog.bintray.gradle.tasks.*
 import groovy.lang.*
 import org.jfrog.gradle.plugin.artifactory.dsl.*
 import org.jfrog.gradle.plugin.artifactory.task.*
@@ -26,14 +27,13 @@ import ru.art.gradle.logging.LogMessageColor.*
 
 plugins {
     `maven-publish`
-    id("com.gradle.build-scan") version "2.0.2"
-    id("io.github.art.project") version "1.0.95"
+    id("io.github.art.project") version "1.0.97"
     id("com.jfrog.bintray") version "1.8.4"
     id("com.jfrog.artifactory") version "4.10.0"
 }
 
 tasks.withType(Wrapper::class.java) {
-    gradleVersion = "5.6"
+    gradleVersion = "6.0"
 }
 
 val bintrayUser: String? by project
@@ -155,7 +155,10 @@ subprojects {
                         "badges")
                 setLicenses("Apache-2.0")
             })
-            tasks["bintrayUpload"].dependsOn(tasks["generatePomFileFor${name.capitalize()}Publication"], jar, sourceJar)
+            with(tasks["bintrayUpload"] as BintrayUploadTask) {
+                publish = true
+                dependsOn(tasks["generatePomFileFor${this@subprojects.name.capitalize()}Publication"], jar, sourceJar)
+            }
         }
     }
 
