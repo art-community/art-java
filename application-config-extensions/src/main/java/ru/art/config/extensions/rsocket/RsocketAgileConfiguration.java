@@ -50,8 +50,10 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
     private boolean enableValueTracing;
     private boolean resumableServer;
     private long serverResumeSessionDuration;
+    private long serverResumeStreamDuration;
     private boolean resumableClient;
     private long clientResumeSessionDuration;
+    private long clientResumeStreamDuration;
 
     public RsocketAgileConfiguration() {
         refresh();
@@ -61,8 +63,10 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
     public void refresh() {
         resumableServer = configBoolean(RSOCKET_SECTION_ID, RESUMABLE, super.isResumableServer());
         serverResumeSessionDuration = configLong(RSOCKET_SECTION_ID, RESUME_SESSION_DURATION, super.getServerResumeSessionDuration());
+        serverResumeStreamDuration = configLong(RSOCKET_SECTION_ID, RESUME_STREAM_DURATION, super.getServerResumeStreamDuration());
         resumableClient = configBoolean(RSOCKET_COMMUNICATION_SECTION_ID, RESUMABLE, super.isResumableClient());
         clientResumeSessionDuration = configLong(RSOCKET_COMMUNICATION_SECTION_ID, RESUME_SESSION_DURATION, super.getClientResumeSessionDuration());
+        clientResumeStreamDuration  = configLong(RSOCKET_COMMUNICATION_SECTION_ID, RESUME_STREAM_DURATION, super.getClientResumeStreamDuration());
         enableRawDataTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
         enableValueTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         dataFormat = ifException(() -> parseRsocketDataFormat(configString(RSOCKET_SECTION_ID, DATA_FORMAT).toUpperCase()), super.getDataFormat());

@@ -130,6 +130,8 @@ public interface TarantoolModuleConstants {
         String MEMTX_MAX_TUPLE_SIZE = "memtxMaxTupleSize";
         String MEMTX_MEMORY = "memtxMemory";
         String SLAB_ALLOC_FACTOR = "slabAllocFactor";
+        String SLAB_ALLOC_MAXIMAL = "slabAllocMaximal";
+        String SLAB_ALLOC_ARENA = "slabAllocArena";
     }
 
     interface Functions {

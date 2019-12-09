@@ -47,6 +47,8 @@ public class TarantoolInitialConfiguration {
     private Long memtexMaxTupleSize;
     private Long memtxMemory;
     private Integer slabAllocFactor;
+    private Long slabAllocMaximal;
+    private Integer slabAllocArena;
     @Singular("option")
     private final Map<String, Object> options;
 
@@ -65,6 +67,8 @@ public class TarantoolInitialConfiguration {
                 .add(MEMTX_MAX_TUPLE_SIZE, memtexMaxTupleSize)
                 .add(MEMTX_MEMORY, memtxMemory)
                 .add(SLAB_ALLOC_FACTOR, slabAllocFactor)
+                .add(SLAB_ALLOC_MAXIMAL, slabAllocMaximal)
+                .add(SLAB_ALLOC_ARENA, slabAllocArena)
                 .add(WORKER_POOL_THREADS, workerPoolThreads));
         options.forEach(templateContext::put);
         StringWriter templateWriter = new StringWriter();
