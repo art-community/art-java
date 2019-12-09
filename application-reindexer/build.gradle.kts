@@ -24,7 +24,6 @@ plugins {
 }
 
 cmake {
-    generator.set("")
     executable.set("cmake")
     workingFolder.set(file("$projectDir/src/main/cpp/cmake-build-debug"))
     sourceFolder.set(file("$projectDir/src/main/cpp"))
