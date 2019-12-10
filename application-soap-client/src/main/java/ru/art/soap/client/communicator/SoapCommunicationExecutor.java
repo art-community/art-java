@@ -57,6 +57,7 @@ class SoapCommunicationExecutor {
                 .post()
                 .requestEncoding(configuration.getRequestBodyEncoding())
                 .produces(configuration.getProducesMimeType().toHttpMimeToContentTypeMapper())
+                .client(configuration.getHttpClient())
                 .execute(configuration.getRequest());
     }
 
