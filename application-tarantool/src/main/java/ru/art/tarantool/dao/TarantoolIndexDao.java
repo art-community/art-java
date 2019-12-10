@@ -47,7 +47,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<?> result = callTarantoolFunction(client, GET + spaceName + VALUE_POSTFIX + BY + indexName, keys);
-        if (isEmpty(result) || result.size() == 1) {
+        if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return empty();
         }
         List<List<?>> valueTuple = cast(result.get(0));
@@ -64,7 +64,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, SELECT + spaceName + VALUES_POSTFIX + BY + indexName, keys));
-        if (isEmpty(result) || result.size() == 1) {
+        if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return emptyList();
         }
         List<List<List<?>>> valueTuples = cast(result.get(0));
@@ -85,7 +85,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         evaluateValueScript(instanceId, spaceName, indexName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, DELETE + spaceName + VALUES_POSTFIX + BY + indexName, keys));
-        if (isEmpty(result) || result.size() == 1) {
+        if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return empty();
         }
         List<List<?>> valueTuple = cast(result.get(0));
@@ -101,7 +101,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         if (isEmpty(result)) {
             return 0L;
         }
-        return ((Number) ((List<?>) result.get(0)).get(0)).longValue();
+        return ((Number) result.get(0)).longValue();
     }
 
     public long countByIndex(String spaceName, String indexName) {
@@ -115,7 +115,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         if (isEmpty(result)) {
             return 0L;
         }
-        return ((Number) ((List<?>) result.get(0)).get(0)).longValue();
+        return ((Number) result.get(0)).longValue();
     }
 
     public Optional<Entity> updateByIndex(String spaceName, String indexName, Collection<?> keys, TarantoolUpdateFieldOperation... operations) {
@@ -149,7 +149,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
                 .collect(toList());
         List<List<?>> arguments = fixedArrayOf(fixedArrayOf(keys), valueOperations, schemaOperations);
         List<List<?>> result = cast(callTarantoolFunction(client, functionName, arguments));
-        if (isEmpty(result) || result.size() == 1) {
+        if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return empty();
         }
         List<List<?>> valueTuple = cast(result.get(0));
@@ -165,7 +165,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
                 .stream()
                 .map(TarantoolUpdateFieldOperation::getValueOperation)
                 .collect(toList()))));
-        if (isEmpty(result) || result.size() == 1) {
+        if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return empty();
         }
         List<List<?>> valueTuple = cast(result.get(0));
