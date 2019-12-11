@@ -19,36 +19,21 @@
 package ru.art.http.server.extractor;
 
 
+import ru.art.core.mime.*;
+import static java.util.Objects.nonNull;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.http.constants.HttpMimeTypes.*;
-import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.ResourceExtensions.*;
+import static ru.art.http.server.module.HttpServerModule.*;
 
 public interface HttpResponseContentTypeExtractor {
     static String extractTypeByFile(String fileUrl) {
         if (isEmpty(fileUrl)) return ALL.toString();
         if (!fileUrl.contains(DOT)) return TEXT_HTML.toString();
         String ext = fileUrl.substring(fileUrl.lastIndexOf(DOT));
-        if (ext.contains(WEBP)) {
-            return IMAGE_WEBP.toString();
-        }
-        if (ext.contains(JPEG)) {
-            return IMAGE_JPEG.toString();
-        }
-        if (ext.contains(PNG)) {
-            return IMAGE_PNG.toString();
-        }
-        if (ext.contains(CSS)) {
-            return TEXT_CSS.toString();
-        }
-        if (ext.contains(MAP)) {
-            return TEXT_JS.toString();
-        }
-        if (ext.contains(JS)) {
-            return TEXT_JS.toString();
-        }
-        if (ext.contains(HTML)) {
-            return TEXT_HTML.toString();
+        MimeType mimeType = httpServerModule().getResourceConfiguration().getResourceExtensionMimeTypeMappings().get(ext);
+        if (nonNull(mimeType)) {
+            return mimeType.toString();
         }
         return ALL.toString();
     }
