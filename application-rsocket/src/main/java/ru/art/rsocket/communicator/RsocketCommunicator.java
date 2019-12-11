@@ -66,8 +66,8 @@ public class RsocketCommunicator {
     private final Mono<RSocket> socket;
     private String serviceId;
     private String methodId;
-    private ValueFromModelMapper requestMapper;
-    private ValueToModelMapper responseMapper;
+    private ValueFromModelMapper<?, ?> requestMapper;
+    private ValueToModelMapper<?, ?> responseMapper;
     private RsocketDataFormat dataFormat;
     private final BuilderValidator validator = new BuilderValidator(RsocketCommunicator.class.getName());
     private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = linkedListOf(rsocketModule().getRequestValueInterceptors());
@@ -79,7 +79,8 @@ public class RsocketCommunicator {
         ClientRSocketFactory factory = connect();
         if (configuration.resumable()) {
             factory = factory.resume()
-                    .resumeSessionDuration(ofMillis(configuration.resumeSessionDuration()));
+                    .resumeSessionDuration(ofMillis(configuration.resumeSessionDuration()))
+                    .resumeStreamTimeout(ofMillis(configuration.resumeSessionDuration()));
         }
         rsocketModule().getClientInterceptors().forEach(factory::addRequesterPlugin);
         configuration.interceptors().forEach(factory::addRequesterPlugin);

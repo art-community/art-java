@@ -60,7 +60,9 @@ public class RsocketServer {
     private Mono<CloseableChannel> createServer() {
         RSocketFactory.ServerRSocketFactory socketFactory = receive();
         if (rsocketModule().isResumableServer()) {
-            socketFactory = socketFactory.resume().resumeSessionDuration(ofMillis(rsocketModule().getServerResumeSessionDuration()));
+            socketFactory = socketFactory.resume()
+                    .resumeSessionDuration(ofMillis(rsocketModule().getServerResumeSessionDuration()))
+                    .resumeStreamTimeout(ofMillis(rsocketModule().getServerResumeStreamTimeout()));
         }
         rsocketModule().getServerInterceptors().forEach(socketFactory::addResponderPlugin);
         ServerTransportAcceptor acceptor = socketFactory.acceptor((setup, sendingSocket) -> just(new RsocketAcceptor(sendingSocket, setup)));
