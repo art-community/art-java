@@ -293,7 +293,7 @@ public class RsocketCommunicator {
             return;
         }
         if (serviceIdIsEmpty && methodIdIsEmpty) {
-            throw new RsocketClientException(INVALID_RSOCKET_COMMUNICATION_CONFIGURATION + "serviceId,methodId");
+            throw new RsocketClientException(INVALID_RSOCKET_COMMUNICATION_CONFIGURATION + "serviceId,methodId or functionId");
         }
         if (serviceIdIsEmpty) {
             throw new RsocketClientException(INVALID_RSOCKET_COMMUNICATION_CONFIGURATION + "serviceId");

@@ -69,7 +69,7 @@ public class GrpcCommunicationConfiguration {
             return;
         }
         if (serviceIdIsEmpty && methodIdIsEmpty) {
-            throw new GrpcClientException(INVALID_GRPC_COMMUNICATION_CONFIGURATION + "serviceId,methodId");
+            throw new GrpcClientException(INVALID_GRPC_COMMUNICATION_CONFIGURATION + "serviceId,methodId or functionId");
         }
         if (serviceIdIsEmpty) {
             throw new GrpcClientException(INVALID_GRPC_COMMUNICATION_CONFIGURATION + "serviceId");
