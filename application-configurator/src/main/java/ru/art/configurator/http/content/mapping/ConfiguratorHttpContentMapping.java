@@ -43,6 +43,7 @@ public interface ConfiguratorHttpContentMapping {
                 .add(APPLICATION_OCTET_STREAM, bytesContentMapper)
                 .add(IMAGE_WEBP, bytesContentMapper)
                 .add(IMAGE_SVG, bytesContentMapper)
+                .add(IMAGE_SVG_XML, bytesContentMapper)
                 .add(IMAGE_GIF, bytesContentMapper)
                 .add(TEXT_CSS, textContentMapper)
                 .add(TEXT_JS, textContentMapper)
