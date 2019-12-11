@@ -43,6 +43,7 @@ public interface HttpMimeTypes {
     MimeType IMAGE_JPEG = mimeType("image", "jpeg");
     MimeType IMAGE_PNG = mimeType("image", "png");
     MimeType IMAGE_WEBP = mimeType("image", "webp");
+    MimeType IMAGE_SVG = mimeType("image", "svg");
     MimeType MULTIPART_FORM_DATA = mimeType("multipart", "form-data");
     MimeType TEXT_EVENT_STREAM = mimeType("text", "event-stream");
     MimeType TEXT_HTML = mimeType("text", "html");

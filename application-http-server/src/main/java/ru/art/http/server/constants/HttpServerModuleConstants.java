@@ -64,6 +64,7 @@ public interface HttpServerModuleConstants {
             String WEBP = ".webp";
             String JPEG = ".jpeg";
             String PNG = ".png";
+            String SVG = ".svg";
             String CSS = ".css";
             String MAP = ".map";
             String JS = ".js";
