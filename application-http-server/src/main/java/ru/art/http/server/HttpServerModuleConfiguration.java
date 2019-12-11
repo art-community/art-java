@@ -111,7 +111,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
                 .add(WEBP, IMAGE_WEBP)
                 .add(JPEG, IMAGE_JPEG)
                 .add(PNG, IMAGE_PNG)
-                .add(SVG, IMAGE_SVG);
+                .add(SVG, IMAGE_SVG_XML);
         @Singular("resourcePathMapping")
         private final Map<String, HttpResource> resourceMappings;
         @Builder.Default
@@ -128,6 +128,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
                 .add(IMAGE_PNG, HTTP_RESOURCE)
                 .add(IMAGE_JPEG, HTTP_RESOURCE)
                 .add(IMAGE_GIF, HTTP_RESOURCE)
+                .add(IMAGE_SVG_XML, HTTP_RESOURCE)
                 .add(IMAGE_SVG, HTTP_RESOURCE);
         @Singular("accessControlParameter")
         private final Map<String, String> accessControlParameters = mapOf(ACCESS_CONTROL_ALLOW_METHODS_KEY, ACCESS_CONTROL_ALLOW_METHODS_VALUE)
