@@ -20,8 +20,8 @@ package ru.art.service.exception;
 
 import lombok.*;
 import ru.art.service.model.*;
+import static com.google.common.base.Throwables.*;
 import static java.text.MessageFormat.*;
-import static ru.art.core.constants.StringConstants.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;
 
 @Getter
@@ -56,20 +56,10 @@ public class ServiceExecutionException extends RuntimeException {
 
     private static String formatErrorMessage(ServiceMethodCommand command, String errorCode, Throwable throwable) {
         return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE, command.getServiceId(), command.getMethodId(),
-                errorCode, throwable.getMessage(), getStackTrace(throwable));
+                errorCode, throwable.getMessage(), getStackTraceAsString(throwable));
     }
 
     private static String formatErrorMessage(String errorCode, Throwable throwable) {
-        return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE_WITHOUT_COMMAND, errorCode, throwable.getMessage(), getStackTrace(throwable));
-    }
-
-    private static String getStackTrace(Throwable throwable) {
-        StringBuilder errorMessage = new StringBuilder();
-        for (StackTraceElement stackTraceElement : throwable.getStackTrace()) {
-            errorMessage.append(stackTraceElement.getClassName()).append(DOT)
-                    .append(stackTraceElement.getMethodName()).append(DOT)
-                    .append(stackTraceElement.getLineNumber()).append(NEW_LINE);
-        }
-        return errorMessage.toString();
+        return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE_WITHOUT_COMMAND, errorCode, throwable.getMessage(), getStackTraceAsString(throwable));
     }
 }
