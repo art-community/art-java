@@ -41,4 +41,10 @@ box.cfg {
 {%- if not (slabAllocFactor is empty) -%}
         slab_alloc_factor = {{  slabAllocFactor }};
     {%- endif -%}
+{%- if not (slabAllocArena is empty) -%}
+        slab_alloc_arena = {{  slabAllocArena }};
+    {%- endif -%}
+{%- if not (slabAllocMaximal is empty) -%}
+        slab_alloc_maximal = {{  slabAllocMaximal }};
+    {%- endif -%}
 }
