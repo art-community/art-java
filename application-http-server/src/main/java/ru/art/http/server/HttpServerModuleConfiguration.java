@@ -102,7 +102,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
                 .add(JPEG, BINARY)
                 .add(PNG, BINARY)
                 .add(SVG, BINARY);
-        @Singular("resourceTypeMapping")
+        @Singular("resourceExtensionMimeTypeMapping")
         private final Map<String, MimeType> resourceExtensionMimeTypeMappings = mapOf(HTML, TEXT_HTML)
                 .add(WSDL, TEXT_HTML)
                 .add(CSS, TEXT_CSS)
