@@ -39,31 +39,43 @@ public class CollectionValueSchema extends ValueSchema {
             case STRING:
                 collectionValue
                         .getElements()
+                        .stream()
+                        .filter(Objects::nonNull)
                         .forEach(element -> elementsSchema.add(new ValueSchema(STRING)));
                 break;
             case LONG:
                 collectionValue
                         .getElements()
+                        .stream()
+                        .filter(Objects::nonNull)
                         .forEach(element -> elementsSchema.add(new ValueSchema(LONG)));
                 break;
             case DOUBLE:
                 collectionValue
                         .getElements()
+                        .stream()
+                        .filter(Objects::nonNull)
                         .forEach(element -> elementsSchema.add(new ValueSchema(DOUBLE)));
                 break;
             case FLOAT:
                 collectionValue
                         .getElements()
+                        .stream()
+                        .filter(Objects::nonNull)
                         .forEach(element -> elementsSchema.add(new ValueSchema(FLOAT)));
                 break;
             case INT:
                 collectionValue
                         .getElements()
+                        .stream()
+                        .filter(Objects::nonNull)
                         .forEach(element -> elementsSchema.add(new ValueSchema(INT)));
                 break;
             case BOOL:
                 collectionValue
                         .getElements()
+                        .stream()
+                        .filter(Objects::nonNull)
                         .forEach(element -> elementsSchema.add(new ValueSchema(BOOL)));
                 break;
             case BYTE:
@@ -78,6 +90,8 @@ public class CollectionValueSchema extends ValueSchema {
             case VALUE:
                 collectionValue
                         .getElements()
+                        .stream()
+                        .filter(Objects::nonNull)
                         .forEach(element -> elementsSchema.add(fromValue((Value) element)));
                 break;
         }
