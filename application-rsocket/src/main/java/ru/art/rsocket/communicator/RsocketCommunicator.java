@@ -80,7 +80,7 @@ public class RsocketCommunicator {
         if (configuration.resumable()) {
             factory = factory.resume()
                     .resumeSessionDuration(ofMillis(configuration.resumeSessionDuration()))
-                    .resumeStreamTimeout(ofMillis(configuration.resumeSessionDuration()));
+                    .resumeStreamTimeout(ofMillis(configuration.resumeStreamTimeout()));
         }
         rsocketModule().getClientInterceptors().forEach(factory::addRequesterPlugin);
         configuration.interceptors().forEach(factory::addRequesterPlugin);

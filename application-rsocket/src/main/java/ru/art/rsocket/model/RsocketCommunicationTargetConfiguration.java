@@ -45,7 +45,7 @@ public class RsocketCommunicationTargetConfiguration {
     @Builder.Default
     private final long resumeSessionDuration = rsocketModule().getClientResumeSessionDuration();
     @Builder.Default
-    private final long resumeStreamDuration = rsocketModule().getClientResumeStreamTimeout();
+    private final long resumeStreamTimeout = rsocketModule().getClientResumeStreamTimeout();
     @Singular
     private final List<RSocketInterceptor> interceptors;
 }
