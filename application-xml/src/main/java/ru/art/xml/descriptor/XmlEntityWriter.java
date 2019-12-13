@@ -105,7 +105,6 @@ public class XmlEntityWriter {
         }
 
         writeStartElement(xmlStreamWriter, entity);
-
         writeNamespaces(xmlStreamWriter, entity);
         writeAttributes(xmlStreamWriter, entity);
 
@@ -114,9 +113,8 @@ public class XmlEntityWriter {
             if (isEmpty(xmlEntity)) continue;
             writeXmlEntity(xmlStreamWriter, xmlEntity);
         }
-        writeValue(xmlStreamWriter, entity);
 
-
+        if (isNotEmpty(entity.getValue())) writeValue(xmlStreamWriter, entity);
         writeEndElement(xmlStreamWriter);
     }
 
