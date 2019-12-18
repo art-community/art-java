@@ -91,7 +91,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
     @Builder(toBuilder = true)
     class HttpResourceConfiguration {
         @Singular("templateResourceVariable")
-        private final Map<String, String> templateResourceVariables;
+        private final Map<String, Object> templateResourceVariables;
         @Singular("resourceTypeMapping")
         private final Map<String, HttpResourceType> resourceExtensionTypeMappings = mapOf(HTML, STRING)
                 .add(WSDL, STRING)
