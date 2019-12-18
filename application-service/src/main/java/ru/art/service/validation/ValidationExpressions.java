@@ -26,76 +26,127 @@ public interface ValidationExpressions {
         return cast(new NotNullValidationExpression());
     }
 
+    static <T> ValidationExpression<T> notNull(String pattern) {
+        return cast(new NotNullValidationExpression(pattern));
+    }
+
     static <T> ValidationExpression<T> notEmptyString() {
         return cast(new NotEmptyStringValidationExpression());
+    }
+
+    static <T> ValidationExpression<T> notEmptyString(String pattern) {
+        return cast(new NotEmptyStringValidationExpression(pattern));
     }
 
     static <T> ValidationExpression<T> notEmptyCollection() {
         return cast(new NotEmptyCollectionValidationExpression());
     }
 
+    static <T> ValidationExpression<T> notEmptyCollection(String pattern) {
+        return cast(new NotEmptyCollectionValidationExpression(pattern));
+    }
+
     static <T> ValidationExpression<T> notEmptyMap() {
         return cast(new NotEmptyMapValidationExpression());
+    }
+
+    static <T> ValidationExpression<T> notEmptyMap(String pattern) {
+        return cast(new NotEmptyMapValidationExpression(pattern));
     }
 
     static <T> ValidationExpression<T> notEqualsOther(Object other) {
         return cast(new NotEqualsValidationExpression(other));
     }
 
+    static <T> ValidationExpression<T> notEqualsOther(Object other, String pattern) {
+        return cast(new NotEqualsValidationExpression(other, pattern));
+    }
+
     static <T> ValidationExpression<T> equalsOther(Object other) {
         return cast(new EqualsValidationExpression(other));
+    }
+
+    static <T> ValidationExpression<T> equalsOther(Object other, String pattern) {
+        return cast(new EqualsValidationExpression(other, pattern));
     }
 
     static <T> ValidationExpression<T> containsOther(List<?> list) {
         return cast(new ContainsValidationExpression(list));
     }
 
+    static <T> ValidationExpression<T> containsOther(List<?> list, String pattern) {
+        return cast(new ContainsValidationExpression(list, pattern));
+    }
+
     static <T> ValidationExpression<T> betweenInt(Integer lower, Integer greater) {
-        return cast(BetweenIntValidationExpression.builder()
-                .greaterValue(greater)
-                .lowerValue(lower)
-                .build());
+        return cast(new BetweenIntValidationExpression(lower, greater));
+    }
+
+    static <T> ValidationExpression<T> betweenInt(Integer lower, Integer greater, String pattern) {
+        return cast(new BetweenIntValidationExpression(lower, greater, pattern));
+    }
+
+    static <T> ValidationExpression<T> moreThanInt(Integer value) {
+        return cast(new BetweenIntValidationExpression(Integer.MAX_VALUE, value));
+    }
+
+    static <T> ValidationExpression<T> moreThanInt(Integer value, String pattern) {
+        return cast(new BetweenIntValidationExpression(Integer.MAX_VALUE, value, pattern));
+    }
+
+    static <T> ValidationExpression<T> lessThanInt(Integer value) {
+        return cast(new BetweenIntValidationExpression(value, Integer.MIN_VALUE));
+    }
+
+    static <T> ValidationExpression<T> lessThanInt(Integer value, String pattern) {
+        return cast(new BetweenIntValidationExpression(value, Integer.MIN_VALUE, pattern));
     }
 
     static <T> ValidationExpression<T> betweenLong(Long lower, Long greater) {
-        return cast(BetweenLongValidationExpression.builder()
-                .greaterValue(greater)
-                .lowerValue(lower)
-                .build());
+        return cast(new BetweenLongValidationExpression(lower, greater));
     }
 
-    static <T> ValidationExpression<T> moreThanLong(Long lower) {
-        return cast(BetweenLongValidationExpression.builder()
-                .greaterValue(lower)
-                .lowerValue(Long.MAX_VALUE)
-                .build());
+    static <T> ValidationExpression<T> betweenLong(Long lower, Long greater, String pattern) {
+        return cast(new BetweenLongValidationExpression(lower, greater, pattern));
     }
 
-    static <T> ValidationExpression<T> lessThanLong(Long greater) {
-        return cast(BetweenLongValidationExpression.builder()
-                .greaterValue(Long.MIN_VALUE)
-                .lowerValue(greater)
-                .build());
+    static <T> ValidationExpression<T> moreThanLong(Long value) {
+        return cast(new BetweenLongValidationExpression(Long.MAX_VALUE, value));
     }
 
-    static <T> ValidationExpression<T> moreThanInt(Integer lower) {
-        return cast(BetweenIntValidationExpression.builder()
-                .greaterValue(lower)
-                .lowerValue(Integer.MAX_VALUE)
-                .build());
+    static <T> ValidationExpression<T> moreThanLong(Long value, String pattern) {
+        return cast(new BetweenLongValidationExpression(Long.MAX_VALUE, value, pattern));
     }
 
-    static <T> ValidationExpression<T> lessThanInt(Integer greater) {
-        return cast(BetweenIntValidationExpression.builder()
-                .greaterValue(Integer.MIN_VALUE)
-                .lowerValue(greater)
-                .build());
+    static <T> ValidationExpression<T> lessThanLong(Long value) {
+        return cast(new BetweenLongValidationExpression(value, Long.MIN_VALUE));
+    }
+
+    static <T> ValidationExpression<T> lessThanLong(Long value, String pattern) {
+        return cast(new BetweenLongValidationExpression(value, Long.MIN_VALUE, pattern));
     }
 
     static <T> ValidationExpression<T> betweenDouble(Double lower, Double greater) {
-        return cast(BetweenDoubleValidationExpression.builder()
-                .greaterValue(greater)
-                .lowerValue(lower)
-                .build());
+        return cast(new BetweenDoubleValidationExpression(lower, greater));
+    }
+
+    static <T> ValidationExpression<T> betweenDouble(Double lower, Double greater, String pattern) {
+        return cast(new BetweenDoubleValidationExpression(lower, greater, pattern));
+    }
+
+    static <T> ValidationExpression<T> moreThanDouble(Double value) {
+        return cast(new BetweenDoubleValidationExpression(Double.MAX_VALUE, value));
+    }
+
+    static <T> ValidationExpression<T> moreThanDouble(Double value, String pattern) {
+        return cast(new BetweenDoubleValidationExpression(Double.MAX_VALUE, value, pattern));
+    }
+
+    static <T> ValidationExpression<T> lessThanDouble(Double value) {
+        return cast(new BetweenDoubleValidationExpression(value, Double.MIN_VALUE));
+    }
+
+    static <T> ValidationExpression<T> lessThanDouble(Double value, String pattern) {
+        return cast(new BetweenDoubleValidationExpression(value, Double.MIN_VALUE, pattern));
     }
 }

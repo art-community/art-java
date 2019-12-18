@@ -18,13 +18,20 @@
 
 package ru.art.service.validation;
 
-import ru.art.service.constants.*;
-import static ru.art.service.constants.ValidationExpressionType.*;
-import java.text.*;
+import ru.art.service.constants.ServiceExceptionsMessages;
+
+import static java.text.MessageFormat.format;
+import static ru.art.service.constants.ValidationExpressionType.NOT_EMPTY_STRING;
 
 class NotEmptyStringValidationExpression extends ValidationExpression<String> {
+
     NotEmptyStringValidationExpression() {
         super(NOT_EMPTY_STRING);
+    }
+
+    NotEmptyStringValidationExpression(String pattern) {
+        super(NOT_EMPTY_STRING);
+        this.pattern = pattern;
     }
 
     @Override
@@ -32,7 +39,8 @@ class NotEmptyStringValidationExpression extends ValidationExpression<String> {
         return super.evaluate(fieldName, value) && !value.isEmpty();
     }
 
+    @Override
     public String getValidationErrorMessage() {
-        return MessageFormat.format(ServiceExceptionsMessages.EMPTY_VALIDATION_ERROR, fieldName);
+        return format(ServiceExceptionsMessages.EMPTY_VALIDATION_ERROR, fieldName);
     }
 }
