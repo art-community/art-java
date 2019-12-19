@@ -51,7 +51,7 @@ public class ServiceLoggingInterception implements ServiceRequestInterception, S
         putIfNotNull(REQUEST_KEY, request);
         putServiceCallLoggingParameters(parameters);
         List<String> serviceTypes = serviceModuleState()
-                    .getServiceRegistry()
+                .getServiceRegistry()
                 .getService(request.getServiceMethodCommand().getServiceId())
                 .getServiceTypes();
         putIfNotNull(SERVICE_TYPES_KEY, serviceTypes);
@@ -85,7 +85,13 @@ public class ServiceLoggingInterception implements ServiceRequestInterception, S
             putIfNotNull(RESPONSE_KEY, response);
             putIfNotNull(SERVICE_EXCEPTION_KEY, serviceException);
             putIfNotNull(SERVICE_EVENT_TYPE_KEY, RESPONSE_EVENT);
-            getLogger().error(format(SERVICE_FAILED_MESSAGE, request.getServiceMethodCommand(), getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID), serviceException.getErrorCode(), serviceException.getErrorMessage()), serviceException);
+            getLogger().error(format(SERVICE_FAILED_MESSAGE,
+                    request.getServiceMethodCommand(),
+                    getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID),
+                    serviceException.getErrorCode(),
+                    serviceException.getErrorMessage(),
+                    serviceException.getStackTrace()),
+                    serviceException);
             return nextInterceptor(request, response);
         }
         putIfNotNull(RESPONSE_KEY, response);
