@@ -90,7 +90,7 @@ public class ServiceLoggingInterception implements ServiceRequestInterception, S
                     getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID),
                     serviceException.getErrorCode(),
                     serviceException.getErrorMessage(),
-                    serviceException.getStackTrace()),
+                    serviceException.getStackTraceText()),
                     serviceException);
             return nextInterceptor(request, response);
         }

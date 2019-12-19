@@ -89,7 +89,7 @@ public interface ServiceResponseMapping {
             return entityBuilder.entityField(SERVICE_EXECUTION_EXCEPTION, entityBuilder()
                     .stringField(ERROR_CODE, errorCode)
                     .stringField(ERROR_MESSAGE, serviceException.getErrorMessage())
-                    .stringField(STACK_TRACE, serviceException.getStackTrace())
+                    .stringField(STACK_TRACE, serviceException.getStackTraceText())
                     .build())
                     .build();
         };

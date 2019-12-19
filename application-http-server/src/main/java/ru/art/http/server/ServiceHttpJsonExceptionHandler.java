@@ -52,7 +52,7 @@ class ServiceHttpJsonExceptionHandler implements HttpExceptionHandler<ServiceExe
                     .mapToBytes(serviceExecutionExceptionMapper.map(exception), APPLICATION_JSON_UTF8, charset);
             writeResponseBody(response, bodyBytes);
         } catch (Throwable throwable) {
-            String error = format(SERVICE_EXCEPTION_HANDLING_ERROR_RESPONSE, exception.getErrorCode(), exception.getErrorMessage(), exception.getStackTrace());
+            String error = format(SERVICE_EXCEPTION_HANDLING_ERROR_RESPONSE, exception.getErrorCode(), exception.getErrorMessage(), exception.getStackTraceText());
             writeResponseBody(response, error.getBytes(charset));
         }
     }
