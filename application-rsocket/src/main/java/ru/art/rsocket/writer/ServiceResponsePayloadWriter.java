@@ -25,8 +25,8 @@ import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
 import ru.art.rsocket.constants.RsocketModuleConstants.*;
+import ru.art.rsocket.model.*;
 import ru.art.rsocket.service.RsocketService.*;
-import ru.art.service.exception.*;
 import ru.art.service.model.*;
 import static io.rsocket.util.ByteBufPayload.create;
 import static io.rsocket.util.DefaultPayload.*;
@@ -34,7 +34,6 @@ import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.InterceptionStrategy.*;
-import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.processor.ResponseValueInterceptorProcessor.*;
 import static ru.art.rsocket.writer.RsocketPayloadWriter.*;
 import static ru.art.service.factory.ServiceResponseFactory.*;
@@ -68,28 +67,31 @@ public class ServiceResponsePayloadWriter {
                 create(writePayloadData(responseValue, dataFormat));
     }
 
-    public static Flux<Payload> writeResponseReactive(RsocketMethod rsocketMethod, ServiceResponse<?> serviceResponse, RsocketDataFormat dataFormat) {
+    public static Flux<Payload> writeResponseReactive(RsocketReactiveMethods rsocketReactiveMethods, ServiceResponse<?> serviceResponse, RsocketDataFormat dataFormat) {
         if (isNull(serviceResponse)) {
             return never();
         }
         if (nonNull(serviceResponse.getServiceException())) {
             return error(serviceResponse.getServiceException());
         }
-        ValueFromModelMapper<?, ?> responseMapper = rsocketMethod.responseMapper();
-        return isNull(responseMapper) || isNull(serviceResponse.getResponseData()) ?
+        ValueFromModelMapper<?, ?> responseMapper = rsocketReactiveMethods.getRsocketMethod().responseMapper();
+        Flux<Payload> flux = isNull(responseMapper) || isNull(serviceResponse.getResponseData()) ?
                 never() :
                 from(cast(serviceResponse.getResponseData()))
                         .map(response -> fromServiceResponse(responseMapper).map(cast(okResponse(serviceResponse.getCommand(), response))))
-                        .map(responseValue -> processResponseValueInterceptors(responseValue, rsocketMethod.responseValueInterceptors()))
+                        .map(responseValue -> processResponseValueInterceptors(responseValue, rsocketReactiveMethods.getRsocketMethod().responseValueInterceptors()))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
-                        .map(responseValue -> writePayloadData(responseValue, dataFormat))
-                        .onErrorResume(error -> just(writePayloadData(fromServiceResponse(responseMapper)
-                                .map(cast(ServiceResponse.builder()
-                                        .command(serviceResponse.getCommand())
-                                        .serviceException(new ServiceExecutionException(serviceResponse.getCommand(),
-                                                REACTIVE_SERVICE_EXCEPTION_ERROR_CODE, error))
-                                        .build())), dataFormat)));
+                        .map(responseValue -> writePayloadData(responseValue, dataFormat));
+        return rsocketReactiveMethods.getReactiveMethod()
+                .reactiveServiceExceptionWrappers()
+                .getReactiveServiceExceptionWrappers()
+                .entrySet()
+                .stream()
+                .reduce(flux, (resultFlux, entry) -> resultFlux.onErrorResume(entry.getKey(), exception -> cast(just(writePayloadData(fromServiceResponse(responseMapper).map(cast(ServiceResponse.builder()
+                        .command(serviceResponse.getCommand())
+                        .serviceException(entry.getValue().wrap(serviceResponse.getCommand(), cast(exception)))
+                        .build())), dataFormat)))), (current, next) -> next);
     }
 
 }
