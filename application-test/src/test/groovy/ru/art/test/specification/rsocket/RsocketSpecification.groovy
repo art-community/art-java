@@ -21,6 +21,7 @@ package ru.art.test.specification.rsocket
 import reactor.core.publisher.Flux
 import ru.art.core.caster.Caster
 import ru.art.entity.Entity
+import ru.art.reactive.service.configuration.ReactiveServiceModuleConfiguration
 import ru.art.reactive.service.module.ReactiveServiceModule
 import ru.art.reactive.service.wrapper.ReactiveServiceExceptionWrappers
 import ru.art.service.exception.ServiceExecutionException
@@ -32,7 +33,6 @@ import static ru.art.config.extensions.activator.AgileConfigurationsActivator.us
 import static ru.art.core.constants.NetworkConstants.LOCALHOST
 import static ru.art.entity.Entity.entityBuilder
 import static ru.art.entity.Entity.merge
-import static ru.art.reactive.service.configuration.ReactiveServiceModuleConfiguration.ReactiveServiceModuleDefaultConfiguration
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.REACTIVE
 import static ru.art.rsocket.communicator.RsocketCommunicator.rsocketCommunicator
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*
@@ -44,15 +44,26 @@ import static ru.art.rsocket.module.RsocketModule.rsocketModule
 import static ru.art.rsocket.server.RsocketServer.startRsocketTcpServer
 import static ru.art.rsocket.server.RsocketServer.startRsocketWebSocketServer
 
+class MyException extends RuntimeException {}
+
 class RsocketSpecification extends Specification {
     def functionId = "TEST_SERVICE"
     def request = entityBuilder().stringField("request", "request").build()
     def response = entityBuilder().stringField("response", "response").build()
+    static errorCode = MyException.class.name
+
+    def setupSpec() {
+        useAgileConfigurations().loadModule(new ReactiveServiceModule(), new ReactiveServiceModuleConfiguration.ReactiveServiceModuleDefaultConfiguration() {
+            @Override
+            ReactiveServiceExceptionWrappers getReactiveServiceExceptionWrappers() {
+                return super.getReactiveServiceExceptionWrappers().add(MyException) { command, exception -> new ServiceExecutionException(command, errorCode, exception) }
+            }
+        })
+    }
 
     @Unroll
     "should communicate by rsocket (format = #format, transport = #transport, mode = fireAndForget())"() {
         setup:
-        useAgileConfigurations()
         rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
@@ -99,7 +110,6 @@ class RsocketSpecification extends Specification {
     @Unroll
     "should communicate by rsocket (format = #format, transport = #transport, mode = requestResponse())"() {
         setup:
-        useAgileConfigurations()
         rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
@@ -159,7 +169,6 @@ class RsocketSpecification extends Specification {
     @Unroll
     "should communicate by rsocket (format = #format, transport = #transport, mode = requestStream())"() {
         setup:
-        useAgileConfigurations()
         rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
@@ -220,7 +229,6 @@ class RsocketSpecification extends Specification {
     @Unroll
     "should communicate by rsocket (format = #format, transport = #transport, mode = requestChannel())"() {
         setup:
-        useAgileConfigurations()
         rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
@@ -277,13 +285,6 @@ class RsocketSpecification extends Specification {
     @Unroll
     "should communicate by rsocket (format = #format, transport = #transport, mode = requestStream()) and correctly wrap exception"() {
         setup:
-        def errorCode = MyException.class.name
-        useAgileConfigurations().loadModule(new ReactiveServiceModule(), new ReactiveServiceModuleDefaultConfiguration() {
-            @Override
-            ReactiveServiceExceptionWrappers getReactiveServiceExceptionWrappers() {
-                return super.getReactiveServiceExceptionWrappers().add(MyException) { command, exception -> new ServiceExecutionException(command, errorCode, exception) }
-            }
-        })
         rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
@@ -340,6 +341,4 @@ class RsocketSpecification extends Specification {
         JSON         | WEB_SOCKET
         MESSAGE_PACK | WEB_SOCKET
     }
-
-    class MyException extends RuntimeException {}
 }
