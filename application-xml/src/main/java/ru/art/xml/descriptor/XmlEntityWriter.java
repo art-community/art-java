@@ -96,6 +96,9 @@ public class XmlEntityWriter {
     private static void writeXmlEntity(XMLStreamWriter xmlStreamWriter, XmlEntity entity) throws XMLStreamException {
         //gather all child elements
         List<XmlEntity> children = entity.getChildren();
+
+        if (isEmpty(children) && isEmpty(entity.getValue())) return;
+
         if (isEmpty(entity.getTag())) {
             for (XmlEntity xmlEntity : children) {
                 if (isEmpty(xmlEntity)) continue;
@@ -114,7 +117,7 @@ public class XmlEntityWriter {
             writeXmlEntity(xmlStreamWriter, xmlEntity);
         }
 
-        if (isNotEmpty(entity.getValue())) writeValue(xmlStreamWriter, entity);
+        writeValue(xmlStreamWriter, entity);
         writeEndElement(xmlStreamWriter);
     }
 
