@@ -24,6 +24,7 @@ import reactor.core.publisher.*;
 import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
+import ru.art.reactive.service.wrapper.*;
 import ru.art.rsocket.constants.RsocketModuleConstants.*;
 import ru.art.rsocket.model.*;
 import ru.art.rsocket.service.RsocketService.*;
@@ -83,15 +84,19 @@ public class ServiceResponsePayloadWriter {
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .map(responseValue -> writePayloadData(responseValue, dataFormat));
-        return rsocketReactiveMethods.getReactiveMethod()
-                .reactiveServiceExceptionWrappers()
+        ReactiveServiceExceptionWrappers exceptionWrappers = rsocketReactiveMethods.getReactiveMethod().reactiveServiceExceptionWrappers();
+        return exceptionWrappers
                 .getReactiveServiceExceptionWrappers()
                 .entrySet()
                 .stream()
                 .reduce(flux, (resultFlux, entry) -> resultFlux.onErrorResume(entry.getKey(), exception -> cast(just(writePayloadData(fromServiceResponse(responseMapper).map(cast(ServiceResponse.builder()
                         .command(serviceResponse.getCommand())
                         .serviceException(entry.getValue().wrap(serviceResponse.getCommand(), cast(exception)))
-                        .build())), dataFormat)))), (current, next) -> next);
+                        .build())), dataFormat)))), (current, next) -> next)
+                .onErrorResume(Throwable.class, exception -> just(writePayloadData(fromServiceResponse(responseMapper).map(cast(ServiceResponse.builder()
+                        .command(serviceResponse.getCommand())
+                        .serviceException(exceptionWrappers.getUndeclaredExceptionWrapper().wrap(serviceResponse.getCommand(), exception))
+                        .build())), dataFormat)));
     }
 
 }

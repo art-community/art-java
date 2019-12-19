@@ -45,8 +45,6 @@ public interface ReactiveServiceModuleConfiguration extends ModuleConfiguration 
                 interceptRequest(new ReactiveServiceValidationInterception()));
         private final List<ResponseInterceptor> responseInterceptors = cast(linkedListOf(interceptResponse(new ReactiveServiceLoggingInterception())));
         private final ReactiveServiceExceptionWrappers reactiveServiceExceptionWrappers = new ReactiveServiceExceptionWrappers()
-                .add(Throwable.class, (command, exception) -> new ServiceExecutionException(command, UNDECLARED_INTERNAL_ERROR, exception))
-                .add(RuntimeException.class,  (command, exception) -> new ServiceExecutionException(command, UNDECLARED_INTERNAL_ERROR, exception))
                 .add(NullPointerException.class,  (command, exception) -> new ServiceExecutionException(command, NPE, exception))
                 .add(UnknownServiceMethodException.class, (command, exception) -> new ServiceExecutionException(command, UNKNOWN_METHOD_ERROR, exception))
                 .add(InternalRuntimeException.class, (command, exception) -> new ServiceExecutionException(command, INTERNAL_ERROR, exception))

@@ -51,7 +51,7 @@ public class ServiceExecutionException extends RuntimeException {
     public ServiceExecutionException(ServiceMethodCommand command, String errorCode, Throwable throwable) {
         super(formatErrorMessage(command, errorCode, throwable), throwable);
         this.errorCode = errorCode;
-        this.errorMessage = throwable.getMessage();
+        this.errorMessage = formatErrorMessage(command, errorCode, throwable);
     }
 
     private static String formatErrorMessage(ServiceMethodCommand command, String errorCode, Throwable throwable) {
