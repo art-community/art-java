@@ -20,8 +20,10 @@ package ru.art.reactive.service.model;
 
 import lombok.*;
 import lombok.experimental.*;
+import ru.art.reactive.service.wrapper.*;
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.*;
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.*;
+import static ru.art.reactive.service.module.ReactiveServiceModule.*;
 import java.util.*;
 
 @Getter
@@ -37,5 +39,6 @@ public class ReactiveService {
     public static class ReactiveMethod {
         private ReactiveMethodProcessingMode requestProcessingMode = STRAIGHT;
         private ReactiveMethodProcessingMode responseProcessingMode = STRAIGHT;
+        private ReactiveServiceExceptionWrappers reactiveServiceExceptionWrappers = reactiveServiceModule().getReactiveServiceExceptionWrappers();
     }
 }
