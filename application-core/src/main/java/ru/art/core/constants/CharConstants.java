@@ -20,6 +20,7 @@ package ru.art.core.constants;
 
 public interface CharConstants {
     char SLASH = '/';
+    char SHARP = '#';
     char WILDCARD = '*';
     char SEMICOLON = ';';
     char COLON = ':';
