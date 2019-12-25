@@ -21,14 +21,18 @@ package ru.art.test.specification.rsocket
 import reactor.core.publisher.Flux
 import ru.art.core.caster.Caster
 import ru.art.entity.Entity
+import ru.art.reactive.service.configuration.ReactiveServiceModuleConfiguration
+import ru.art.reactive.service.module.ReactiveServiceModule
+import ru.art.reactive.service.wrapper.ReactiveServiceExceptionWrappers
+import ru.art.service.exception.ServiceExecutionException
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import static reactor.core.publisher.Flux.just
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.core.constants.NetworkConstants.LOCALHOST
-import static ru.art.entity.Entity.merge
 import static ru.art.entity.Entity.entityBuilder
+import static ru.art.entity.Entity.merge
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.REACTIVE
 import static ru.art.rsocket.communicator.RsocketCommunicator.rsocketCommunicator
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*
@@ -40,15 +44,26 @@ import static ru.art.rsocket.module.RsocketModule.rsocketModule
 import static ru.art.rsocket.server.RsocketServer.startRsocketTcpServer
 import static ru.art.rsocket.server.RsocketServer.startRsocketWebSocketServer
 
+class MyException extends RuntimeException {}
+
 class RsocketSpecification extends Specification {
     def functionId = "TEST_SERVICE"
     def request = entityBuilder().stringField("request", "request").build()
     def response = entityBuilder().stringField("response", "response").build()
+    static errorCode = MyException.class.name
+
+    def setupSpec() {
+        useAgileConfigurations().loadModule(new ReactiveServiceModule(), new ReactiveServiceModuleConfiguration.ReactiveServiceModuleDefaultConfiguration() {
+            @Override
+            ReactiveServiceExceptionWrappers getReactiveServiceExceptionWrappers() {
+                return super.getReactiveServiceExceptionWrappers().add(MyException) { command, exception -> new ServiceExecutionException(command, errorCode, exception) }
+            }
+        })
+    }
 
     @Unroll
     "should communicate by rsocket (format = #format, transport = #transport, mode = fireAndForget())"() {
         setup:
-        useAgileConfigurations()
         rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
@@ -95,7 +110,6 @@ class RsocketSpecification extends Specification {
     @Unroll
     "should communicate by rsocket (format = #format, transport = #transport, mode = requestResponse())"() {
         setup:
-        useAgileConfigurations()
         rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
@@ -143,7 +157,7 @@ class RsocketSpecification extends Specification {
         (response.responseData as Entity) == merge(request, this.response)
 
         where:
-        format   | transport
+        format       | transport
         PROTOBUF     | TCP
         JSON         | TCP
         MESSAGE_PACK | TCP
@@ -155,7 +169,6 @@ class RsocketSpecification extends Specification {
     @Unroll
     "should communicate by rsocket (format = #format, transport = #transport, mode = requestStream())"() {
         setup:
-        useAgileConfigurations()
         rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
@@ -204,7 +217,7 @@ class RsocketSpecification extends Specification {
         (response.responseData as Entity) == merge(request, this.response)
 
         where:
-        format   | transport
+        format       | transport
         PROTOBUF     | TCP
         JSON         | TCP
         MESSAGE_PACK | TCP
@@ -216,7 +229,6 @@ class RsocketSpecification extends Specification {
     @Unroll
     "should communicate by rsocket (format = #format, transport = #transport, mode = requestChannel())"() {
         setup:
-        useAgileConfigurations()
         rsocket(functionId)
                 .requestMapper(Caster.&cast)
                 .responseMapper(Caster.&cast)
@@ -261,7 +273,7 @@ class RsocketSpecification extends Specification {
 
 
         where:
-        format   | transport
+        format       | transport
         PROTOBUF     | TCP
         JSON         | TCP
         MESSAGE_PACK | TCP
@@ -270,4 +282,63 @@ class RsocketSpecification extends Specification {
         MESSAGE_PACK | WEB_SOCKET
     }
 
+    @Unroll
+    "should communicate by rsocket (format = #format, transport = #transport, mode = requestStream()) and correctly wrap exception"() {
+        setup:
+        rsocket(functionId)
+                .requestMapper(Caster.&cast)
+                .responseMapper(Caster.&cast)
+                .responseProcessingMode(REACTIVE)
+                .handle { request -> just(merge(request as Entity, response)).map { throw new MyException() } }
+        switch (transport) {
+            case TCP:
+                startRsocketTcpServer()
+                break
+            case WEB_SOCKET:
+                startRsocketWebSocketServer()
+                break
+        }
+        sleep(500L)
+        def communicator = rsocketCommunicator(rsocketCommunicationTarget()
+                .host(LOCALHOST)
+                .tcpPort({
+                    switch (transport) {
+                        case TCP:
+                            rsocketModule().serverTcpPort
+                            break
+                        case WEB_SOCKET:
+                            rsocketModule().serverWebSocketPort
+                            break
+                    }
+                }.call())
+                .dataFormat(format)
+                .transport(transport)
+                .build())
+                .requestMapper(Caster.&cast)
+                .responseMapper(Caster.&cast)
+                .functionId(functionId)
+
+        when:
+        def response = communicator.stream().blockFirst()
+
+        then:
+        response
+        response.serviceException.errorCode == errorCode
+
+        when:
+        response = communicator.stream(request).blockFirst()
+
+        then:
+        response
+        response.serviceException.errorCode == errorCode
+
+        where:
+        format       | transport
+        PROTOBUF     | TCP
+        JSON         | TCP
+        MESSAGE_PACK | TCP
+        PROTOBUF     | WEB_SOCKET
+        JSON         | WEB_SOCKET
+        MESSAGE_PACK | WEB_SOCKET
+    }
 }

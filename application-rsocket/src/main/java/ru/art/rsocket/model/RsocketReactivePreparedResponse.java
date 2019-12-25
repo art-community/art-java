@@ -20,7 +20,6 @@ package ru.art.rsocket.model;
 
 import lombok.*;
 import reactor.core.publisher.*;
-import ru.art.rsocket.service.*;
 import ru.art.service.model.*;
 import static ru.art.service.factory.ServiceRequestFactory.*;
 
@@ -28,15 +27,15 @@ import static ru.art.service.factory.ServiceRequestFactory.*;
 @Builder
 public class RsocketReactivePreparedResponse {
     private final ServiceRequest<?> serviceRequest;
-    private RsocketService.RsocketMethod rsocketMethod;
+    private final RsocketReactiveMethods rsocketReactiveMethods;
 
     @SuppressWarnings("ConstantConditions")
     public static RsocketReactivePreparedResponse fromGroupedFlux(GroupedFlux<RsocketReactiveGroupKey, RsocketRequestReactiveContext> group) {
         return RsocketReactivePreparedResponse.builder()
-                .rsocketMethod(group.key().getRsocketMethod())
+                .rsocketReactiveMethods(group.key().getRsocketReactiveMethods())
                 .serviceRequest(newServiceRequest(group.key().getServiceMethodCommand(),
                         group.map(RsocketRequestReactiveContext::getRequestData),
-                        group.key().getRsocketMethod().validationPolicy()))
+                        group.key().getRsocketReactiveMethods().getRsocketMethod().validationPolicy()))
                 .build();
     }
 }

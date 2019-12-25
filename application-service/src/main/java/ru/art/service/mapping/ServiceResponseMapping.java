@@ -38,6 +38,7 @@ public interface ServiceResponseMapping {
     String RESPONSE_DATA = "responseData";
     String ERROR_CODE = "errorCode";
     String ERROR_MESSAGE = "errorMessage";
+    String STACK_TRACE = "stackTrace";
 
     static <V> ValueToModelMapper.EntityToModelMapper<ServiceResponse<V>> toServiceResponse(final ValueToModelMapper<V, Value> responseDataMapper) {
         return value -> {
@@ -60,8 +61,8 @@ public interface ServiceResponseMapping {
             String errorCode = serviceExceptionEntity.getString(ERROR_CODE);
             if (isEmpty(errorCode)) throw new ServiceMappingException(ERROR_CODE_IS_EMPTY);
             ServiceExecutionException serviceException = isNull(command)
-                    ? new ServiceExecutionException(errorCode, serviceExceptionEntity.getString(ERROR_MESSAGE))
-                    : new ServiceExecutionException(command, errorCode, serviceExceptionEntity.getString(ERROR_MESSAGE));
+                    ? new ServiceExecutionException(errorCode, serviceExceptionEntity.getString(ERROR_MESSAGE), serviceExceptionEntity.getString(STACK_TRACE))
+                    : new ServiceExecutionException(command, errorCode, serviceExceptionEntity.getString(ERROR_MESSAGE), serviceExceptionEntity.getString(STACK_TRACE));
             return serviceResponseBuilder.serviceException(serviceException).build();
         };
     }
@@ -85,10 +86,10 @@ public interface ServiceResponseMapping {
             }
             String errorCode = serviceException.getErrorCode();
             if (isEmpty(errorCode)) throw new ServiceMappingException(ERROR_CODE_IS_EMPTY);
-            String errorMessage = serviceException.getErrorMessage();
             return entityBuilder.entityField(SERVICE_EXECUTION_EXCEPTION, entityBuilder()
                     .stringField(ERROR_CODE, errorCode)
-                    .stringField(ERROR_MESSAGE, errorMessage)
+                    .stringField(ERROR_MESSAGE, serviceException.getErrorMessage())
+                    .stringField(STACK_TRACE, serviceException.getStackTraceText())
                     .build())
                     .build();
         };
