@@ -332,6 +332,16 @@ public class ConfigExtensions {
         return ifExceptionOrEmpty(() -> configMap(sectionId, path, configMapper), defaultValues);
     }
 
+    public static <T> Map<String, T> configMap(String sectionId, String path, BiFunction<String, Config, T> configMapper) {
+        if (isEmpty(sectionId)) throw new ConfigException(SECTION_ID_IS_EMPTY);
+        Config remoteConfig = remoteConfig(sectionId);
+        if (Config.isNotEmpty(remoteConfig)) {
+            return remoteConfig.getKeys(path).stream().collect(toMap(key -> key, key -> configMapper.apply(path + DOT + key, remoteConfig)));
+        }
+        Config localConfig = config(sectionId);
+        return localConfig.getKeys(path).stream().collect(toMap(key -> key, key -> configMapper.apply(path + DOT + key, localConfig)));
+    }
+
     public static boolean hasPath(String sectionId, String path) {
         if (isEmpty(sectionId)) throw new ConfigException(SECTION_ID_IS_EMPTY);
         Config remoteConfig = remoteConfig(sectionId);
