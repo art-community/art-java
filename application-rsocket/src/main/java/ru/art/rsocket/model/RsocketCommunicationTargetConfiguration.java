@@ -44,6 +44,8 @@ public class RsocketCommunicationTargetConfiguration {
     private final boolean resumable = rsocketModule().isResumableClient();
     @Builder.Default
     private final long resumeSessionDuration = rsocketModule().getClientResumeSessionDuration();
+    @Builder.Default
+    private final long resumeStreamTimeout = rsocketModule().getClientResumeStreamTimeout();
     @Singular
     private final List<RSocketInterceptor> interceptors;
 }
