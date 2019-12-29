@@ -80,7 +80,7 @@ public class RsocketRequestReactiveContext {
             return RsocketRequestReactiveContext.builder()
                     .rsocketReactiveGroupKey(RsocketReactiveGroupKey.builder()
                             .serviceMethodCommand(command)
-                            .rsocketMethod(rsocketServiceMethods.getRsocketMethod())
+                            .rsocketReactiveMethods(rsocketServiceMethods)
                             .build())
                     .rsocketReactiveMethods(rsocketServiceMethods)
                     .build();
@@ -90,7 +90,7 @@ public class RsocketRequestReactiveContext {
                 .requestData(requestData)
                 .rsocketReactiveGroupKey(RsocketReactiveGroupKey.builder()
                         .serviceMethodCommand(command)
-                        .rsocketMethod(rsocketServiceMethods.getRsocketMethod())
+                        .rsocketReactiveMethods(rsocketServiceMethods)
                         .build())
                 .rsocketReactiveMethods(rsocketServiceMethods)
                 .build();

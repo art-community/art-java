@@ -91,7 +91,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
     @Builder(toBuilder = true)
     class HttpResourceConfiguration {
         @Singular("templateResourceVariable")
-        private final Map<String, String> templateResourceVariables;
+        private final Map<String, Object> templateResourceVariables;
         @Singular("resourceTypeMapping")
         private final Map<String, HttpResourceType> resourceExtensionTypeMappings = mapOf(HTML, STRING)
                 .add(WSDL, STRING)
@@ -100,7 +100,18 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
                 .add(JS, STRING)
                 .add(WEBP, BINARY)
                 .add(JPEG, BINARY)
-                .add(PNG, BINARY);
+                .add(PNG, BINARY)
+                .add(SVG, BINARY);
+        @Singular("resourceExtensionMimeTypeMapping")
+        private final Map<String, MimeType> resourceExtensionMimeTypeMappings = mapOf(HTML, TEXT_HTML)
+                .add(WSDL, TEXT_HTML)
+                .add(CSS, TEXT_CSS)
+                .add(MAP, TEXT_HTML)
+                .add(JS, TEXT_JS)
+                .add(WEBP, IMAGE_WEBP)
+                .add(JPEG, IMAGE_JPEG)
+                .add(PNG, IMAGE_PNG)
+                .add(SVG, IMAGE_SVG_XML);
         @Singular("resourcePathMapping")
         private final Map<String, HttpResource> resourceMappings;
         @Builder.Default
@@ -108,7 +119,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         @Builder.Default
         private final Set<String> templatingResourceExtensions = setOf(HTML, WSDL);
         @Builder.Default
-        private final Set<String> availableResourceExtensions = setOf(WEBP, JPEG, PNG, CSS, MAP, JS, HTML, WSDL);
+        private final Set<String> availableResourceExtensions = setOf(WEBP, JPEG, PNG, CSS, MAP, JS, SVG, HTML, WSDL);
         @Singular("logbookResponseBodyReplacer")
         private final Map<MimeType, String> logbookResponseBodyReplacers = mapOf(TEXT_HTML, HTTP_RESOURCE)
                 .add(TEXT_JS, HTTP_RESOURCE)
@@ -116,7 +127,9 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
                 .add(IMAGE_WEBP, HTTP_RESOURCE)
                 .add(IMAGE_PNG, HTTP_RESOURCE)
                 .add(IMAGE_JPEG, HTTP_RESOURCE)
-                .add(IMAGE_GIF, HTTP_RESOURCE);
+                .add(IMAGE_GIF, HTTP_RESOURCE)
+                .add(IMAGE_SVG_XML, HTTP_RESOURCE)
+                .add(IMAGE_SVG, HTTP_RESOURCE);
         @Singular("accessControlParameter")
         private final Map<String, String> accessControlParameters = mapOf(ACCESS_CONTROL_ALLOW_METHODS_KEY, ACCESS_CONTROL_ALLOW_METHODS_VALUE)
                 .add(ACCESS_CONTROL_ALLOW_HEADERS_KEY, ACCESS_CONTROL_ALLOW_HEADERS_VALUE)
