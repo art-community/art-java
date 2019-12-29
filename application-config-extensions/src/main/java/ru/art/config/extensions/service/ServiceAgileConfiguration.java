@@ -43,7 +43,7 @@ public class ServiceAgileConfiguration extends ServiceModuleDefaultConfiguration
         if (!ifException(() -> hasPath(SERVICES), false)) {
             return;
         }
-        configMap(SERVICES)
+        configInnerMap(SERVICES)
                 .keySet()
                 .stream()
                 .peek(serviceId -> executionConfigurations.put(serviceId,
