@@ -26,6 +26,7 @@ public interface StringConstants {
     String ART_BANNER = "";
     String TRUE_NUMERIC = "1";
     String FALSE_NUMERIC = "0";
+    String SHARP = "#";
     String SLASH = "/";
     String BACKWARD_SLASH = "\\";
     String BACKWARD_SLASH_REGEX = "\\\\";

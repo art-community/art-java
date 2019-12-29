@@ -20,9 +20,10 @@ package ru.art.service.constants;
 
 public interface ServiceExceptionsMessages {
     String INTERCEPTION_IS_NULL = "Interception is null";
+    String SERVICE_EXECUTION_EXCEPTION_WITH_STACK_TRACE = "Service execution failed with errorCode ''{0}'', error message ''{1}'' and stack trace \n{2}";
     String SERVICE_EXECUTION_EXCEPTION_MESSAGE = "Service ''{0}'' method ''{1}'' execution failed with errorCode ''{2}'' and error message: ''{3}''";
-    String SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE = "Service ''{0}'' method ''{1}'' execution failed with errorCode ''{2}'', error message: ''{3}'' and stackTrace ''{4}''";
-    String SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE_WITHOUT_COMMAND = "Service execution failed with errorCode ''{1}'', error message: ''{2}'' and stackTrace ''{3}''";
+    String SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE = "Service ''{0}'' method ''{1}'' execution failed with errorCode ''{2}'', error message: ''{3}'' and stack trace\n{4}";
+    String SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE_WITHOUT_COMMAND = "Service execution failed with errorCode ''{1}'', error message: ''{2}'' and stack trace\n{3}";
     String UNKNOWN_SERVICE_METHOD_MESSAGE = "Service ''{0}'' has not method with id: ''{1}''";
     String REQUEST_DATA_IS_NULL = "RequestData is null";
     String SERVICE_COMMAND_HAS_WRONG_FORMAT = "Service command has wrong format (SERVICE_ID.METHOD_ID()): ''{0}''";

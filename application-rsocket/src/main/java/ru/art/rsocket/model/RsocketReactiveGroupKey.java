@@ -19,7 +19,6 @@
 package ru.art.rsocket.model;
 
 import lombok.*;
-import ru.art.rsocket.service.*;
 import ru.art.service.model.*;
 
 @Getter
@@ -28,5 +27,5 @@ import ru.art.service.model.*;
 public class RsocketReactiveGroupKey {
     @EqualsAndHashCode.Include
     private final ServiceMethodCommand serviceMethodCommand;
-    private RsocketService.RsocketMethod rsocketMethod;
+    private final RsocketReactiveMethods rsocketReactiveMethods;
 }

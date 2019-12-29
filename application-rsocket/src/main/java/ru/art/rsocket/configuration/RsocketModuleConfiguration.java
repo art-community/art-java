@@ -54,13 +54,13 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
 
     long getServerResumeSessionDuration();
 
-    long getServerResumeStreamDuration();
+    long getServerResumeStreamTimeout();
 
     boolean isResumableClient();
 
     long getClientResumeSessionDuration();
 
-    long getClientResumeStreamDuration();
+    long getClientResumeStreamTimeout();
 
     RsocketDataFormat getDataFormat();
 
@@ -98,10 +98,10 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
         private final int balancerWebSocketPort = DEFAULT_RSOCKET_WEB_SOCKET_PORT;
         private final boolean resumableServer = true;
         private final long serverResumeSessionDuration = DEFAULT_RSOCKET_RESUME_SESSION_DURATION;
-        private final long serverResumeStreamDuration = DEFAULT_RSOCKET_RESUME_STREAM_DURATION;
+        private final long serverResumeStreamTimeout = DEFAULT_RSOCKET_RESUME_STREAM_TIMEOUT;
         private final boolean resumableClient = true;
         private final long clientResumeSessionDuration = DEFAULT_RSOCKET_RESUME_SESSION_DURATION;
-        private final long clientResumeStreamDuration = DEFAULT_RSOCKET_RESUME_STREAM_DURATION;
+        private final long clientResumeStreamTimeout = DEFAULT_RSOCKET_RESUME_STREAM_TIMEOUT;
         private final boolean enableRawDataTracing = false;
         private final boolean enableValueTracing = false;
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))

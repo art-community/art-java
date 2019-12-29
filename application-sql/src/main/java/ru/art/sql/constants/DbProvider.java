@@ -24,7 +24,8 @@ import lombok.*;
 @AllArgsConstructor
 public enum DbProvider {
     POSTGRES("org.postgresql.Driver"),
-    ORACLE("oracle.jdbc.OracleDriver");
+    ORACLE("oracle.jdbc.OracleDriver"),
+    MSSQL("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
     private final String driverClassName;
 }

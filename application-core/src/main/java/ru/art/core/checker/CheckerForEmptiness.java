@@ -72,6 +72,10 @@ public class CheckerForEmptiness {
         return isNull(map) || map.isEmpty();
     }
 
+    public static boolean isNotEmpty(Collection<?> collection) {
+        return !isEmpty(collection);
+    }
+
     public static boolean isEmpty(Collection<?> collection) {
         return isNull(collection) || collection.isEmpty();
     }

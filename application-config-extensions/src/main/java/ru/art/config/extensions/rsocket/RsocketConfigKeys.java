@@ -28,5 +28,5 @@ public interface RsocketConfigKeys {
     String DATA_FORMAT = "dataFormat";
     String RESUMABLE = "resumable";
     String RESUME_SESSION_DURATION = "resumeSessionDuration";
-    String RESUME_STREAM_DURATION = "resumeStreamDuration";
+    String RESUME_STREAM_TIMEOUT = "resumeStreamTimeout";
 }

@@ -18,9 +18,9 @@
 
 package ru.art.service;
 
-import ru.art.service.constants.*;
-import ru.art.service.factory.*;
 import ru.art.service.model.*;
+import static ru.art.service.constants.ServiceErrorCodes.*;
+import static ru.art.service.factory.ServiceResponseFactory.*;
 
 public class RuntimeExceptionWrapper extends ServiceExecutionExceptionWrapper {
     @Override
@@ -28,7 +28,7 @@ public class RuntimeExceptionWrapper extends ServiceExecutionExceptionWrapper {
         try {
             return previousWrapper.wrapServiceExecution(command, request);
         } catch (Throwable throwable) {
-            return ServiceResponseFactory.errorResponse(command, ServiceErrorCodes.UNDECLARED_INTERNAL_ERROR, throwable);
+            return errorResponse(command, UNDECLARED_INTERNAL_ERROR, throwable);
         }
     }
 }

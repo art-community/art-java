@@ -68,7 +68,7 @@ public class RsocketAcceptor extends AbstractRSocket {
         RsocketService.RsocketMethod rsocketMethod = context.getRsocketReactiveMethods().getRsocketMethod();
         return context.getRsocketReactiveMethods().getReactiveMethod().responseProcessingMode() == STRAIGHT
                 ? just(writeServiceResponse(rsocketMethod, serviceResponse, getOrElse(rsocketMethod.overrideResponseDataFormat(), dataFormat)))
-                : writeResponseReactive(rsocketMethod, cast(serviceResponse), dataFormat).next();
+                : writeResponseReactive(context.getRsocketReactiveMethods(), cast(serviceResponse), dataFormat).next();
     }
 
     @Override
@@ -82,8 +82,7 @@ public class RsocketAcceptor extends AbstractRSocket {
             return Flux.never();
         }
         ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(context.getRequest());
-        RsocketService.RsocketMethod rsocketMethod = context.getRsocketReactiveMethods().getRsocketMethod();
-        return writeResponseReactive(rsocketMethod, cast(serviceResponse), fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType()));
+        return writeResponseReactive(context.getRsocketReactiveMethods(), cast(serviceResponse), fromMimeType(rsocketModuleState().currentRocketState().getDataMimeType()));
     }
 
     @Override
@@ -107,7 +106,7 @@ public class RsocketAcceptor extends AbstractRSocket {
                                 .getServices()
                                 .size())
                         .map(RsocketReactivePreparedResponse::fromGroupedFlux)
-                        .flatMap(preparedResponse -> writeResponseReactive(preparedResponse.getRsocketMethod(), executeServiceMethodUnchecked(preparedResponse.getServiceRequest()), dataFormat)));
+                        .flatMap(preparedResponse -> writeResponseReactive(preparedResponse.getRsocketReactiveMethods(), executeServiceMethodUnchecked(preparedResponse.getServiceRequest()), dataFormat)));
     }
 
     @Override
