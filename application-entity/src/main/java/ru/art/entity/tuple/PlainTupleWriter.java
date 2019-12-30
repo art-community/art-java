@@ -18,23 +18,19 @@
 
 package ru.art.entity.tuple;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.experimental.UtilityClass;
+import lombok.*;
+import lombok.experimental.*;
+import ru.art.entity.Value;
 import ru.art.entity.*;
-import ru.art.entity.tuple.schema.ValueSchema;
-
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.emptyList;
-import static java.util.Objects.isNull;
-import static ru.art.core.caster.Caster.cast;
+import ru.art.entity.tuple.schema.*;
+import static java.util.Collections.*;
+import static java.util.Objects.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
-import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Value.*;
-import static ru.art.entity.tuple.schema.ValueSchema.fromValue;
+import static ru.art.entity.tuple.schema.ValueSchema.*;
+import java.util.*;
 
 @UtilityClass
 public class PlainTupleWriter {
@@ -72,7 +68,9 @@ public class PlainTupleWriter {
                 tuple.add(cast(asPrimitive(value).getValue()));
                 continue;
             }
-            tuple.add(cast(writeComplexTypeValue(value)));
+            if (nonNull(value)) {
+                tuple.add(cast(writeComplexTypeValue(value)));
+            }
         }
         return tuple;
     }
@@ -81,6 +79,8 @@ public class PlainTupleWriter {
         List<?> tuple = dynamicArrayOf();
         List<?> valueList = collectionValue.getList();
         for (Object value : valueList) {
+            if (isNull(value)) continue;
+
             switch (collectionValue.getElementsType()) {
                 case STRING:
                 case LONG:

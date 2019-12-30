@@ -46,5 +46,7 @@ public interface TarantoolConfigKeys {
     String MEMTEX_MAX_TUPLE_SIZE = "memtexMaxTupleSize";
     String MEMTX_MEMORY = "memtxMemory";
     String SLAB_ALLOC_FACTOR = "slabAllocFactor";
+    String SLAB_ALLOC_MAXIMAL = "slabAllocMaximal";
+    String SLAB_ALLOC_ARENA = "slabAllocArena";
 }
 

@@ -68,6 +68,9 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         List<?> valueTuple = valueTupleResult.getTuple();
         List<?> schemaTuple = valueTupleResult.getSchema().toTuple();
         List<List<?>> result = cast(callTarantoolFunction(client, valueFunctionName, fixedArrayOf(valueTuple, schemaTuple)));
+        if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
+            throw new TarantoolDaoException(format(RESULT_IS_INVALID, spaceName));
+        }
         return asEntity(readTuple(result.get(0), fromTuple(result.get(1))));
     }
 
@@ -108,8 +111,8 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     public Optional<Entity> get(String spaceName, Collection<?> keys) {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
-        List<?> result = callTarantoolFunction(client, GET + spaceName + VALUE_POSTFIX, keys);
-        if (isEmpty(result) || result.size() == 1) {
+        List<?> result = cast(callTarantoolFunction(client, GET + spaceName + VALUE_POSTFIX, keys));
+        if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return empty();
         }
         List<List<?>> valueTuple = cast(result.get(0));
@@ -162,7 +165,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, SELECT + spaceName + VALUES_POSTFIX, keys));
-        if (isEmpty(result) || result.size() == 1) {
+        if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return emptyList();
         }
         List<List<List<?>>> valueTuples = cast(result.get(0));
@@ -252,6 +255,9 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         List<?> valueTuple = valueTupleResult.getTuple();
         List<?> schemaTuple = valueTupleResult.getSchema().toTuple();
         List<List<?>> result = cast(callTarantoolFunction(client, valueFunctionName, fixedArrayOf(valueTuple, schemaTuple)));
+        if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
+            throw new TarantoolDaoException(format(RESULT_IS_INVALID, spaceName));
+        }
         return asEntity(readTuple(result.get(0), fromTuple(result.get(1))));
     }
 
@@ -293,7 +299,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, DELETE + spaceName + VALUES_POSTFIX, keys));
-        if (isEmpty(result) || result.size() == 1) {
+        if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return empty();
         }
         List<List<?>> valueTuple = cast(result.get(0));
@@ -309,7 +315,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         evaluateValueScript(instanceId, spaceName);
         TarantoolClient client = tarantoolModuleState().getClient(instanceId);
         List<List<?>> result = cast(callTarantoolFunction(client, DELETE_ALL + spaceName + VALUES_POSTFIX));
-        if (isEmpty(result) || result.size() == 1) {
+        if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return emptyList();
         }
         List<List<List<?>>> tuples = cast(result.get(0));
@@ -352,7 +358,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
                 .map(TarantoolUpdateFieldOperation::getSchemaOperation)
                 .collect(toList());
         List<List<?>> result = cast(callTarantoolFunction(client, functionName, fixedArrayOf(fixedArrayOf(keys), valueOperations, schemaOperations)));
-        if (isEmpty(result) || result.size() == 1) {
+        if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return empty();
         }
         List<List<?>> valueTuple = cast(result.get(0));
@@ -368,7 +374,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
                 .stream()
                 .map(TarantoolUpdateFieldOperation::getValueOperation)
                 .collect(toList()))));
-        if (isEmpty(result) || result.size() == 1) {
+        if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return empty();
         }
         List<List<?>> valueTuple = cast(result.get(0));
