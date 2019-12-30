@@ -63,6 +63,9 @@ public class RemoteConfigProvider {
     }
 
     public static Config remoteConfig(String sectionId) {
+        if (EMPTY_STRING.equals(sectionId)) {
+            return remoteConfig();
+        }
         return remoteConfig().getConfig(sectionId);
     }
 

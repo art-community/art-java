@@ -82,7 +82,7 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
         balancerHost = configString(RSOCKET_BALANCER_SECTION_ID, HOST, super.getBalancerHost());
         balancerTcpPort = configInt(RSOCKET_BALANCER_SECTION_ID, TCP_PORT, super.getBalancerTcpPort());
         balancerWebSocketPort = configInt(RSOCKET_BALANCER_SECTION_ID, WEB_SOCKET_PORT, super.getBalancerWebSocketPort());
-        communicationTargets = configMap(RSOCKET_COMMUNICATION_SECTION_ID, TARGETS, config -> rsocketCommunicationTarget()
+        communicationTargets = configInnerMap(RSOCKET_COMMUNICATION_SECTION_ID, TARGETS, config -> rsocketCommunicationTarget()
                 .host(ifEmpty(config.getString(HOST), balancerHost))
                 .tcpPort(getOrElse(config.getInt(TCP_PORT), balancerTcpPort))
                 .webSocketPort(getOrElse(config.getInt(WEB_SOCKET_PORT), balancerWebSocketPort))

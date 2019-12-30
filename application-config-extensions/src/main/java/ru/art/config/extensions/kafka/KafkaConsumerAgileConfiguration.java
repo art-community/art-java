@@ -69,7 +69,7 @@ public class KafkaConsumerAgileConfiguration extends KafkaConsumerModuleDefaultC
                 .pollTimeout(ofMillis(configLong(KAFKA_CONSUMER_SECTION_ID, POLL_TIMEOUT, defaultKafkaConsumerConfiguration.getPollTimeout().toMillis())))
                 .groupId(configString(KAFKA_CONSUMER_SECTION_ID, GROUP_ID, defaultKafkaConsumerConfiguration.getGroupId()))
                 .build();
-        Map<String, KafkaStreamConfiguration> newKafkaStreamConfigurations = configMap(KAFKA_CONSUMER_SECTION_ID, STREAMS_SECTION_ID, streamConfig ->
+        Map<String, KafkaStreamConfiguration> newKafkaStreamConfigurations = configInnerMap(KAFKA_CONSUMER_SECTION_ID, STREAMS_SECTION_ID, streamConfig ->
                 streamConfiguration()
                         .brokers(streamConfig.getStringList(BROKERS))
                         .topic(streamConfig.getString(TOPIC))

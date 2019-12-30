@@ -23,6 +23,7 @@ import ru.art.config.*;
 import ru.art.config.exception.*;
 import ru.art.core.annotation.*;
 import static java.util.Collections.*;
+import static java.util.Objects.isNull;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import static ru.art.config.ConfigProvider.*;
@@ -287,30 +288,26 @@ public class ConfigExtensions {
     }
 
 
-    public static <T> Map<String, T> configMap(String path, Function<Config, T> configMapper) {
-        return configMap(path).entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> configMapper.apply(entry.getValue())));
+    public static <T> Map<String, T> configInnerMap(String path, Function<Config, T> configMapper) {
+        return configInnerMap(path).entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> configMapper.apply(entry.getValue())));
     }
 
-    public static <T> Map<String, T> configMap(String path, BiFunction<String, Config, T> configMapper) {
-        return configMap(path).entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> configMapper.apply(entry.getKey(), entry.getValue())));
-    }
-
-    @SuppressWarnings("Duplicates")
-    public static Map<String, Config> configMap(String path) {
-        Config remoteConfig = remoteConfig();
-        if (Config.isNotEmpty(remoteConfig))
-            return remoteConfig.getKeys(path).stream().collect(toMap(key -> key, key -> remoteConfig.getConfig(path + DOT + key)));
-        Config localConfig = config(EMPTY_STRING);
-        return localConfig.getKeys(path).stream().collect(toMap(key -> key, key -> localConfig.getConfig(path + DOT + key)));
-    }
-
-    public static <T> Map<String, T> configMap(String sectionId, String path, Function<Config, T> configMapper) {
-        return configMap(sectionId, path).entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> configMapper.apply(entry.getValue())));
+    public static <T> Map<String, T> configInnerMap(String path, BiFunction<String, Config, T> configMapper) {
+        return configInnerMap(path).entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> configMapper.apply(entry.getKey(), entry.getValue())));
     }
 
     @SuppressWarnings("Duplicates")
-    public static Map<String, Config> configMap(String sectionId, String path) {
-        if (isEmpty(sectionId)) throw new ConfigException(SECTION_ID_IS_EMPTY);
+    public static Map<String, Config> configInnerMap(String path) {
+        return configInnerMap(EMPTY_STRING, path);
+    }
+
+    public static <T> Map<String, T> configInnerMap(String sectionId, String path, Function<Config, T> configMapper) {
+        return configInnerMap(sectionId, path).entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> configMapper.apply(entry.getValue())));
+    }
+
+    @SuppressWarnings("Duplicates")
+    public static Map<String, Config> configInnerMap(String sectionId, String path) {
+        if (isNull(sectionId)) throw new ConfigException(SECTION_ID_IS_NULL);
         Config remoteConfig = remoteConfig(sectionId);
         if (Config.isNotEmpty(remoteConfig)) {
             return remoteConfig.getKeys(path).stream().collect(toMap(key -> key, key -> remoteConfig.getConfig(path + DOT + key)));
@@ -320,15 +317,37 @@ public class ConfigExtensions {
     }
 
 
-    public static <T> Map<String, T> configMap(String path, Function<Config, T> configMapper, Map<String, T> defaultValues) {
-        return ifExceptionOrEmpty(() -> configMap(path, configMapper), defaultValues);
+    public static <T> Map<String, T> configInnerMap(String path, Function<Config, T> configMapper, Map<String, T> defaultValues) {
+        return ifExceptionOrEmpty(() -> configInnerMap(path, configMapper), defaultValues);
+    }
+
+    public static <T> Map<String, T> configInnerMap(String path, BiFunction<String, Config, T> configMapper, Map<String, T> defaultValues) {
+        return ifExceptionOrEmpty(() -> configInnerMap(path, configMapper), defaultValues);
+    }
+
+    public static <T> Map<String, T> configInnerMap(String sectionId, String path, Function<Config, T> configMapper, Map<String, T> defaultValues) {
+        return ifExceptionOrEmpty(() -> configInnerMap(sectionId, path, configMapper), defaultValues);
+    }
+
+    public static <T> Map<String, T> configMap(String path, BiFunction<String, Config, T> configMapper) {
+        return configMap(EMPTY_STRING, path, configMapper);
     }
 
     public static <T> Map<String, T> configMap(String path, BiFunction<String, Config, T> configMapper, Map<String, T> defaultValues) {
         return ifExceptionOrEmpty(() -> configMap(path, configMapper), defaultValues);
     }
 
-    public static <T> Map<String, T> configMap(String sectionId, String path, Function<Config, T> configMapper, Map<String, T> defaultValues) {
+    public static <T> Map<String, T> configMap(String sectionId, String path, BiFunction<String, Config, T> configMapper) {
+        if (isNull(sectionId)) throw new ConfigException(SECTION_ID_IS_NULL);
+        Config remoteConfig = remoteConfig(sectionId);
+        if (Config.isNotEmpty(remoteConfig)) {
+            return remoteConfig.getKeys(path).stream().collect(toMap(key -> key, key -> configMapper.apply(path + DOT + key, remoteConfig)));
+        }
+        Config localConfig = config(sectionId);
+        return localConfig.getKeys(path).stream().collect(toMap(key -> key, key -> configMapper.apply(path + DOT + key, localConfig)));
+    }
+
+    public static <T> Map<String, T> configMap(String sectionId, String path, BiFunction<String, Config, T> configMapper, Map<String, T> defaultValues) {
         return ifExceptionOrEmpty(() -> configMap(sectionId, path, configMapper), defaultValues);
     }
 
@@ -348,7 +367,7 @@ public class ConfigExtensions {
 
     public static Properties configProperties(String sectionId, String key) {
         Properties additionalProperties = new Properties();
-        additionalProperties.putAll(configMap(sectionId, key, propertyConfig -> propertyConfig
+        additionalProperties.putAll(configInnerMap(sectionId, key, propertyConfig -> propertyConfig
                 .getKeys()
                 .stream()
                 .collect(toMap(identity(), propertyConfig::getString)), emptyMap()));

@@ -101,6 +101,6 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
                                                 config.getInt(ENTITIES + DOT + entityName + DOT + FIELDS + DOT + fieldName)))))
                                 .map())), emptyMap()))
                 .build();
-        tarantoolConfigurations = configMap(TARANTOOL_CONFIGURATIONS_SECTION_ID, mapper, super.getTarantoolConfigurations());
+        tarantoolConfigurations = configInnerMap(TARANTOOL_CONFIGURATIONS_SECTION_ID, mapper, super.getTarantoolConfigurations());
     }
 }
