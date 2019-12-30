@@ -25,6 +25,7 @@ import ru.art.generator.mapper.models.GenerationPackageModel;
 
 import static java.io.File.separator;
 import static java.text.MessageFormat.*;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.generator.mapper.constants.Constants.*;
 import static ru.art.generator.mapper.constants.ExceptionConstants.MapperGeneratorExceptions.*;
@@ -64,25 +65,38 @@ public interface CommonOperations {
      */
     static ClassName createMapperForInnerClassIfNeeded(Class<?> genClass, GenerationPackageModel generationInfo) {
         if (genClass.isEnum()) return ClassName.get(genClass);
-        String packageName = genClass.getPackage().getName().replace(generationInfo.getModelPackage() + DOT, EMPTY_STRING);
+        String packageName = genClass.getPackage().getName().equals(generationInfo.getModelPackage())
+                ? EMPTY_STRING
+                :genClass.getPackage().getName().replace(generationInfo.getModelPackage() + DOT, EMPTY_STRING);
         if (!genClass.isAnnotationPresent(IgnoreGeneration.class)) {
-            if (!generatedFiles.contains(genClass)) {
+            if (!generatedFiles.contains(genClass.getName())) {
                 GenerationPackageModel generationInnerClassInfo = GenerationPackageModel.builder()
                         .startPackage(generationInfo.getModelPackage())
                         .startPackagePath(generationInfo.getModelPackagePath())
                         .startPackagePathCompiled(generationInfo.getModelPackagePathCompiled())
                         .modelPackage(genClass.getPackage().getName())
-                        .modelPackagePath(generationInfo.getModelPackagePath() + separator + packageName)
-                        .modelPackagePathCompiled(generationInfo.getModelPackagePathCompiled() + separator + packageName)
-                        .genPackage(generationInfo.getGenPackage() + DOT + packageName)
-                        .genPackagePath(generationInfo.getGenPackagePath() + separator + packageName)
-                        .genPackagePathCompiled(generationInfo.getGenPackagePathCompiled() + separator + packageName)
+                        .modelPackagePath(isEmpty(packageName)
+                                ? generationInfo.getModelPackagePath()
+                                : generationInfo.getModelPackagePath() + separator + packageName)
+                        .modelPackagePathCompiled(isEmpty(packageName)
+                                ? generationInfo.getModelPackagePathCompiled()
+                                : generationInfo.getModelPackagePathCompiled() + separator + packageName)
+                        .genPackage(isEmpty(packageName)
+                                ? generationInfo.getGenPackage()
+                                : generationInfo.getGenPackage() + DOT + packageName)
+                        .genPackagePath(isEmpty(packageName)
+                                ? generationInfo.getGenPackagePath()
+                                : generationInfo.getGenPackagePath() + separator + packageName)
+                        .genPackagePathCompiled(isEmpty(packageName)
+                                ? generationInfo.getGenPackagePathCompiled()
+                                : generationInfo.getGenPackagePathCompiled() + separator + packageName)
                         .jarPathToMain(generationInfo.getJarPathToMain())
                         .build();
                 createMapperClass(genClass, generationInnerClassInfo);
                 return ClassName.get(generationInnerClassInfo.getGenPackage(), genClass.getSimpleName() + MAPPER);
             }
-            return ClassName.get(generationInfo.getGenPackage() + DOT + packageName, genClass.getSimpleName() + MAPPER);
+            String newPackageName = isEmpty(packageName) ? generationInfo.getGenPackage() : generationInfo.getGenPackage() + DOT + packageName;
+            return ClassName.get(newPackageName, genClass.getSimpleName() + MAPPER);
         }
         throw new InnerClassGenerationException(format(UNABLE_TO_CREATE_INNER_CLASS_MAPPER, genClass));
     }

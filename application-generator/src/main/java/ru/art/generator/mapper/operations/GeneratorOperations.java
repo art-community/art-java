@@ -66,7 +66,7 @@ import static ru.art.generator.mapper.operations.CommonOperations.*;
  */
 public interface GeneratorOperations {
 
-    Set<Class> generatedFiles = new HashSet<>();
+    Set<String> generatedFiles = new HashSet<>();
 
     /**
      * Generate block ValueToModelMapper and ValueFromModelMapper for class.
@@ -100,6 +100,8 @@ public interface GeneratorOperations {
      */
     static void createMapperClass(Class<?> clazz, GenerationPackageModel generationInfo)
             throws MappingGeneratorException {
+        if (generatedFiles.contains(clazz.getName()))
+            return;
         printMessage(format(START_GENERATING, clazz.getSimpleName() + MAPPER));
 
         String genPackage = generationInfo.getGenPackage();
@@ -124,12 +126,12 @@ public interface GeneratorOperations {
             }
             if (classJarPath.length() != 0) {
                 javaFile.writeTo(new File(classJarPath.subSequence(0, classJarPath.indexOf(BUILD)).toString() + SRC_MAIN_JAVA));
-                generatedFiles.add(clazz);
+                generatedFiles.add(clazz.getName());
                 printMessage(format(GENERATED_SUCCESSFULLY, clazz.getSimpleName() + MAPPER));
                 return;
             }
             javaFile.writeTo(new File(jarPathToMain.subSequence(0, jarPathToMain.indexOf(BUILD)).toString() + SRC_MAIN_JAVA));
-            generatedFiles.add(clazz);
+            generatedFiles.add(clazz.getName());
             printMessage(format(GENERATED_SUCCESSFULLY, clazz.getSimpleName() + MAPPER));
         } catch (StringIndexOutOfBoundsException throwable) {
             throw new MappingGeneratorException(format(UNABLE_TO_PARSE_JAR_PATH, clazz.getSimpleName()), throwable);
@@ -153,11 +155,14 @@ public interface GeneratorOperations {
      */
     static void createRequestResponseMapperClass(Class<?> request, Class<?> response, GenerationPackageModel generationInfo)
             throws MappingGeneratorException {
-        printMessage(format(START_GENERATING, request.getSimpleName().replace(REQUEST, EMPTY_STRING) + REQUEST + RESPONSE + MAPPER));
+        if (generatedFiles.contains(request.getName()) && generatedFiles.contains(response.getName()))
+            printMessage(format(START_GENERATING, request.getSimpleName().replace(REQUEST, EMPTY_STRING) + REQUEST + RESPONSE + MAPPER));
         String jarPathToMain = generationInfo.getJarPathToMain();
 
-        createMapperClasses(request, generationInfo);
-        createMapperClasses(response, generationInfo);
+        if (!generatedFiles.contains(request.getName()))
+            createMapperClasses(request, generationInfo);
+        if (!generatedFiles.contains(response.getName()))
+            createMapperClasses(response, generationInfo);
 
         String newClassName = request.getSimpleName().replace(REQUEST, EMPTY_STRING) + REQUEST + RESPONSE + MAPPER;
         TypeSpec mapper = interfaceBuilder(newClassName)
@@ -186,8 +191,8 @@ public interface GeneratorOperations {
             }
 
             javaFile.writeTo(new File(requestJarPath.subSequence(0, requestJarPath.indexOf(BUILD)).toString() + SRC_MAIN_JAVA));
-            generatedFiles.add(request);
-            generatedFiles.add(response);
+            generatedFiles.add(request.getName());
+            generatedFiles.add(response.getName());
             printMessage(format(GENERATED_SUCCESSFULLY, request.getSimpleName().replace(REQUEST, EMPTY_STRING)
                     + REQUEST
                     + RESPONSE
@@ -211,7 +216,7 @@ public interface GeneratorOperations {
     static void createMapperClasses(Class<?> request, GenerationPackageModel generationInfo) {
         for (int i = 0; i < request.getClasses().length; i++) {
             if (!request.getClasses()[i].getSimpleName().equals(request.getSimpleName() + BUILDER) &&
-                    !generatedFiles.contains(request.getClasses()[i]) &&
+                    !generatedFiles.contains(request.getName()) &&
                     !request.getClasses()[i].isAnnotationPresent(IgnoreGeneration.class) &&
                     !request.isEnum()) {
                 createMapperClass(request.getClasses()[i], generationInfo);
