@@ -29,37 +29,56 @@ import static ru.art.service.constants.ServiceExceptionsMessages.*;
 public class ServiceExecutionException extends RuntimeException {
     private final String errorCode;
     private final String errorMessage;
+    private final String stackTraceText;
 
     public ServiceExecutionException(String errorCode, String errorMessage) {
         super(errorMessage);
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
+        this.stackTraceText = getStackTraceAsString(this);
+    }
+
+    public ServiceExecutionException(String errorCode, String errorMessage, String stackTraceText) {
+        super(format(SERVICE_EXECUTION_EXCEPTION_WITH_STACK_TRACE, errorCode, errorMessage, stackTraceText));
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        this.stackTraceText = stackTraceText;
     }
 
     public ServiceExecutionException(String errorCode, Throwable throwable) {
-        super(formatErrorMessage(errorCode, throwable), throwable);
+        super(formatFullErrorMessage(errorCode, throwable), throwable);
         this.errorCode = errorCode;
         this.errorMessage = throwable.getMessage();
+        this.stackTraceText = getStackTraceAsString(throwable);
     }
 
     public ServiceExecutionException(ServiceMethodCommand command, String errorCode, String errorMessage) {
         super(format(SERVICE_EXECUTION_EXCEPTION_MESSAGE, command.getServiceId(), command.getMethodId(), errorCode, errorMessage));
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
+        this.stackTraceText = getStackTraceAsString(this);
+    }
+
+    public ServiceExecutionException(ServiceMethodCommand command, String errorCode, String errorMessage, String stackTraceText) {
+        super(format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE, command.getServiceId(), command.getMethodId(), errorCode, errorMessage, stackTraceText));
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        this.stackTraceText = stackTraceText;
     }
 
     public ServiceExecutionException(ServiceMethodCommand command, String errorCode, Throwable throwable) {
-        super(formatErrorMessage(command, errorCode, throwable), throwable);
+        super(formatFullErrorMessage(command, errorCode, throwable), throwable);
         this.errorCode = errorCode;
         this.errorMessage = throwable.getMessage();
+        this.stackTraceText = getStackTraceAsString(throwable);
     }
 
-    private static String formatErrorMessage(ServiceMethodCommand command, String errorCode, Throwable throwable) {
+    private static String formatFullErrorMessage(ServiceMethodCommand command, String errorCode, Throwable throwable) {
         return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE, command.getServiceId(), command.getMethodId(),
                 errorCode, throwable.getMessage(), getStackTraceAsString(throwable));
     }
 
-    private static String formatErrorMessage(String errorCode, Throwable throwable) {
+    private static String formatFullErrorMessage(String errorCode, Throwable throwable) {
         return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE_WITHOUT_COMMAND, errorCode, throwable.getMessage(), getStackTraceAsString(throwable));
     }
 }
