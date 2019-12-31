@@ -18,9 +18,10 @@
 
 package ru.art.service.validation;
 
-import ru.art.service.constants.*;
-import static java.text.MessageFormat.*;
-import static ru.art.service.constants.ValidationExpressionType.*;
+import ru.art.service.constants.ServiceExceptionsMessages;
+
+import static java.text.MessageFormat.format;
+import static ru.art.service.constants.ValidationExpressionType.NOT_EQUALS;
 
 class NotEqualsValidationExpression extends ValidationExpression<Object> {
     private Object other;
@@ -28,6 +29,12 @@ class NotEqualsValidationExpression extends ValidationExpression<Object> {
     NotEqualsValidationExpression(Object other) {
         super(NOT_EQUALS);
         this.other = other;
+    }
+
+    NotEqualsValidationExpression(Object other, String pattern) {
+        super(NOT_EQUALS);
+        this.other = other;
+        this.pattern = pattern;
     }
 
     @Override
