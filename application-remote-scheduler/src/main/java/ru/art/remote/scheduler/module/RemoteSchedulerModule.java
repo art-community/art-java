@@ -56,5 +56,6 @@ public class RemoteSchedulerModule implements Module<RemoteSchedulerModuleConfig
     public void onLoad() {
         serviceModuleState().getServiceRegistry()
                 .registerService(new RemoteSchedulerServiceGrpcCommunicationSpec());
+        startRemoteScheduler();
     }
 }
