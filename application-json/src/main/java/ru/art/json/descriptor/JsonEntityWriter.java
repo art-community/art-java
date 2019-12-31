@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.*;
 import lombok.experimental.*;
 import ru.art.core.checker.*;
 import ru.art.entity.*;
+import ru.art.entity.constants.ValueType;
 import ru.art.entity.constants.ValueType.*;
 import ru.art.json.exception.*;
 import static java.util.Objects.*;
@@ -31,7 +32,6 @@ import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.entity.Value.*;
-import static ru.art.entity.constants.ValueType.*;
 import static ru.art.json.constants.JsonLoggingMessages.*;
 import static ru.art.json.constants.JsonMappingExceptionMessages.*;
 import static ru.art.json.module.JsonModule.*;
@@ -266,26 +266,6 @@ public class JsonEntityWriter {
             case ENTITY:
                 writeJsonEntity(jsonGenerator, asEntity(cast(value)));
                 return;
-            case BYTE:
-            case STRING:
-            case INT:
-            case BOOL:
-            case DOUBLE:
-            case LONG:
-            case FLOAT:
-                writeCollectionElement(jsonGenerator, type, value);
-                return;
-            case VALUE:
-                writeCollectionValue(jsonGenerator, asCollectionElementsType(((Value) value).getType()), value);
-                return;
-            case STRING_PARAMETERS_MAP:
-                writeStringParameters(jsonGenerator, asStringParametersMap(cast(value)));
-        }
-    }
-
-    private static void writeCollectionElement(JsonGenerator jsonGenerator, CollectionElementsType type, Object value) throws IOException {
-        if (isNull(value)) return;
-        switch (type) {
             case STRING:
                 jsonGenerator.writeString((String) value);
                 return;
@@ -306,6 +286,48 @@ public class JsonEntityWriter {
                 return;
             case FLOAT:
                 jsonGenerator.writeNumber((Float) value);
+                return;
+            case VALUE:
+                Value valueObject = (Value) value;
+                writeCollectionValue(jsonGenerator, valueObject.getType(), valueObject);
+                return;
+            case STRING_PARAMETERS_MAP:
+                writeStringParameters(jsonGenerator, asStringParametersMap(cast(value)));
+        }
+    }
+
+
+    private static void writeCollectionValue(JsonGenerator jsonGenerator, ValueType type, Value value) throws IOException {
+        if (isNull(value)) return;
+        switch (type) {
+            case COLLECTION:
+                writeArray(jsonGenerator, asCollection(cast(value)));
+                return;
+            case ENTITY:
+                writeJsonEntity(jsonGenerator, asEntity(cast(value)));
+                return;
+            case STRING:
+                jsonGenerator.writeString(asPrimitive(value).getString());
+                return;
+            case INT:
+                jsonGenerator.writeNumber(asPrimitive(value).getInt());
+                return;
+            case BOOL:
+                jsonGenerator.writeBoolean(asPrimitive(value).getBool());
+                return;
+            case DOUBLE:
+                jsonGenerator.writeNumber(asPrimitive(value).getDouble());
+                return;
+            case LONG:
+                jsonGenerator.writeNumber(asPrimitive(value).getLong());
+                return;
+            case BYTE:
+                jsonGenerator.writeNumber(asPrimitive(value).getByte());
+                return;
+            case FLOAT:
+                jsonGenerator.writeNumber(asPrimitive(value).getFloat());
+            case STRING_PARAMETERS_MAP:
+                writeStringParameters(jsonGenerator, asStringParametersMap(cast(value)));
         }
     }
 

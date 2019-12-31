@@ -25,7 +25,7 @@ import java.util.Map;
 
 import static java.lang.Class.forName;
 import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
-import static ru.art.config.extensions.ConfigExtensions.configMap;
+import static ru.art.config.extensions.ConfigExtensions.configInnerMap;
 import static ru.art.config.extensions.common.DataFormats.*;
 import static ru.art.config.extensions.kafka.KafkaConfigKeys.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
@@ -43,7 +43,7 @@ public class KafkaProducerAgileConfiguration extends KafkaProducerDefaultModuleC
 
     @Override
     public void refresh() {
-        producerConfigurations = configMap(KAFKA_PRODUCERS_SECTION_ID, (key, config) -> {
+        producerConfigurations = configInnerMap(KAFKA_PRODUCERS_SECTION_ID, (key, config) -> {
             String keySerializerString = config.getString(KEY_SERIALIZER);
             String valueSerializerString = config.getString(VALUE_SERIALIZER);
             return producerConfiguration()
