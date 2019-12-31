@@ -85,9 +85,6 @@ public class ConfiguratorServiceSpecification implements HttpServiceSpecificatio
             .listen(PROFILES_PATH)
 
             .post(GET_ALL_MODULES)
-            .consumes(applicationJsonUtf8())
-            .fromBody()
-            .requestMapper(moduleKeyMapper.getToModel())
             .produces(applicationJsonUtf8())
             .responseMapper(moduleKeyCollectionMapper.getFromModel())
             .listen(MODULES_PATH)
