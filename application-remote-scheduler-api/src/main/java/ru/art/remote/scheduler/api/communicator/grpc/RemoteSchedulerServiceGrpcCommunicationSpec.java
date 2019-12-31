@@ -12,9 +12,12 @@ import static ru.art.grpc.client.communicator.GrpcCommunicator.grpcCommunicator;
 import static ru.art.grpc.client.module.GrpcClientModule.grpcClientModule;
 import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.Methods.*;
 import static ru.art.remote.scheduler.api.constants.RemoteSchedulerApiConstants.REMOTE_SCHEDULER_SERVICE_ID;
+import static ru.art.remote.scheduler.api.mapping.DeferredTaskMappers.DeferredTaskCollectionMapper.deferredTaskCollectionToModelMapper;
 import static ru.art.remote.scheduler.api.mapping.DeferredTaskMappers.DeferredTaskRequestMapper.deferredTaskRequestFromModelMapper;
 import static ru.art.remote.scheduler.api.mapping.DeferredTaskMappers.DeferredTaskRequestMapper.deferredTaskRequestToModelMapper;
+import static ru.art.remote.scheduler.api.mapping.InfinityProcessMappers.InfinityProcessCollectionMapper.processCollectionToModelMapper;
 import static ru.art.remote.scheduler.api.mapping.InfinityProcessMappers.InfinityProcessRequestMapper.infinityProcessRequestFromModelMapper;
+import static ru.art.remote.scheduler.api.mapping.PeriodicTaskMappers.PeriodicTaskCollectionMapper.periodicTaskCollectionToModelMapper;
 import static ru.art.remote.scheduler.api.mapping.PeriodicTaskMappers.PeriodicTaskRequestMapper.periodicTaskRequestFromModelMapper;
 import static ru.art.remote.scheduler.api.mapping.PeriodicTaskMappers.PeriodicTaskRequestMapper.periodicTaskRequestToModelMapper;
 import static ru.art.service.ServiceResponseDataExtractor.extractResponseDataChecked;
@@ -50,12 +53,6 @@ public class RemoteSchedulerServiceGrpcCommunicationSpec implements GrpcCommunic
             .requestMapper(infinityProcessRequestFromModelMapper)
             .responseMapper(stringMapper.getToModel());
 
-    /*
-
-GET_ALL_PERIODIC_TASKS
-GET_ALL_INFINITY_PROCESSES
-CANCEL_PERIODIC_TASK
-     */
     @Getter(lazy = true)
     @Accessors(fluent = true)
     private final GrpcCommunicator getDeferredTaskById = grpcCommunicator(grpcClientModule()
@@ -80,8 +77,31 @@ CANCEL_PERIODIC_TASK
             .getCommunicationTargetConfiguration(serviceId))
             .serviceId(REMOTE_SCHEDULER_SERVICE_ID)
             .methodId(GET_ALL_DEFERRED_TASKS)
-            .requestMapper(stringMapper.getFromModel())
-            .responseMapper(periodicTaskRequestToModelMapper);
+            .responseMapper(deferredTaskCollectionToModelMapper);
+
+    @Getter(lazy = true)
+    @Accessors(fluent = true)
+    private final GrpcCommunicator getAllPeriodicTasks = grpcCommunicator(grpcClientModule()
+            .getCommunicationTargetConfiguration(serviceId))
+            .serviceId(REMOTE_SCHEDULER_SERVICE_ID)
+            .methodId(GET_ALL_PERIODIC_TASKS)
+            .responseMapper(periodicTaskCollectionToModelMapper);
+
+    @Getter(lazy = true)
+    @Accessors(fluent = true)
+    private final GrpcCommunicator getAllInfinityProcesses = grpcCommunicator(grpcClientModule()
+            .getCommunicationTargetConfiguration(serviceId))
+            .serviceId(REMOTE_SCHEDULER_SERVICE_ID)
+            .methodId(GET_ALL_INFINITY_PROCESSES)
+            .responseMapper(processCollectionToModelMapper);
+
+    @Getter(lazy = true)
+    @Accessors(fluent = true)
+    private final GrpcCommunicator cancelPeriodicTask = grpcCommunicator(grpcClientModule()
+            .getCommunicationTargetConfiguration(serviceId))
+            .serviceId(REMOTE_SCHEDULER_SERVICE_ID)
+            .methodId(CANCEL_PERIODIC_TASK)
+            .requestMapper(stringMapper.getFromModel());
 
     @Override
     public <RequestType, ResponseType> ResponseType executeMethod(String methodId, RequestType request) {
@@ -96,6 +116,15 @@ CANCEL_PERIODIC_TASK
                 return cast(extractResponseDataChecked(getDeferredTaskById.execute()));
             case GET_PERIODIC_TASK_BY_ID:
                 return cast(extractResponseDataChecked(getPeriodicTaskById.execute()));
+            case GET_ALL_DEFERRED_TASKS:
+                return cast(extractResponseDataChecked(getAllDeferredTasks.execute()));
+            case GET_ALL_PERIODIC_TASKS:
+                return cast(extractResponseDataChecked(getAllPeriodicTasks.execute()));
+            case GET_ALL_INFINITY_PROCESSES:
+                return cast(extractResponseDataChecked(getAllInfinityProcesses.execute()));
+            case CANCEL_PERIODIC_TASK:
+                cancelPeriodicTask.execute();
+                return null;
         }
         throw new UnknownServiceMethodException(getServiceId(), methodId);
     }
