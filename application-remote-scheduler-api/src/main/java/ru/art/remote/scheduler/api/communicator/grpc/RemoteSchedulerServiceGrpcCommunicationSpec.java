@@ -107,23 +107,23 @@ public class RemoteSchedulerServiceGrpcCommunicationSpec implements GrpcCommunic
     public <RequestType, ResponseType> ResponseType executeMethod(String methodId, RequestType request) {
         switch (methodId) {
             case ADD_DEFERRED_TASK:
-                return cast(extractResponseDataChecked(addDeferredTask.execute()));
+                return cast(extractResponseDataChecked(addDeferredTask().execute(request)));
             case ADD_PERIODIC_TASK:
-                return cast(extractResponseDataChecked(addPeriodicTask.execute()));
+                return cast(extractResponseDataChecked(addPeriodicTask().execute(request)));
             case ADD_INFINITY_PROCESS:
-                return cast(extractResponseDataChecked(addInfinityProcess.execute()));
+                return cast(extractResponseDataChecked(addInfinityProcess().execute(request)));
             case GET_DEFERRED_TASK_BY_ID:
-                return cast(extractResponseDataChecked(getDeferredTaskById.execute()));
+                return cast(extractResponseDataChecked(getDeferredTaskById().execute(request)));
             case GET_PERIODIC_TASK_BY_ID:
-                return cast(extractResponseDataChecked(getPeriodicTaskById.execute()));
+                return cast(extractResponseDataChecked(getPeriodicTaskById().execute(request)));
             case GET_ALL_DEFERRED_TASKS:
-                return cast(extractResponseDataChecked(getAllDeferredTasks.execute()));
+                return cast(extractResponseDataChecked(getAllDeferredTasks().execute()));
             case GET_ALL_PERIODIC_TASKS:
-                return cast(extractResponseDataChecked(getAllPeriodicTasks.execute()));
+                return cast(extractResponseDataChecked(getAllPeriodicTasks().execute()));
             case GET_ALL_INFINITY_PROCESSES:
-                return cast(extractResponseDataChecked(getAllInfinityProcesses.execute()));
+                return cast(extractResponseDataChecked(getAllInfinityProcesses().execute()));
             case CANCEL_PERIODIC_TASK:
-                cancelPeriodicTask.execute();
+                cancelPeriodicTask().execute(request);
                 return null;
         }
         throw new UnknownServiceMethodException(getServiceId(), methodId);
