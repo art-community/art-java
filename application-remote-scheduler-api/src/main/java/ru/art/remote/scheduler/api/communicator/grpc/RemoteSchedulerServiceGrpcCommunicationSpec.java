@@ -125,7 +125,8 @@ public class RemoteSchedulerServiceGrpcCommunicationSpec implements GrpcCommunic
             case CANCEL_PERIODIC_TASK:
                 cancelPeriodicTask().execute(request);
                 return null;
+            default:
+                throw new UnknownServiceMethodException(getServiceId(), methodId);
         }
-        throw new UnknownServiceMethodException(getServiceId(), methodId);
     }
 }
