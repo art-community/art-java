@@ -18,17 +18,25 @@
 
 package ru.art.service.validation;
 
-import ru.art.service.constants.*;
-import static java.text.MessageFormat.*;
-import static ru.art.service.constants.ValidationExpressionType.*;
-import java.util.*;
+import ru.art.service.constants.ServiceExceptionsMessages;
 
-public class ContainsValidationExpression extends ValidationExpression<Object> {
+import java.util.List;
+
+import static java.text.MessageFormat.format;
+import static ru.art.service.constants.ValidationExpressionType.CONTAINS;
+
+class ContainsValidationExpression extends ValidationExpression<Object> {
     private List<?> objectList;
 
     ContainsValidationExpression(List<?> objectList) {
         super(CONTAINS);
         this.objectList = objectList;
+    }
+
+    ContainsValidationExpression(List<?> objectList, String pattern) {
+        super(CONTAINS);
+        this.objectList = objectList;
+        this.pattern = pattern;
     }
 
     @Override

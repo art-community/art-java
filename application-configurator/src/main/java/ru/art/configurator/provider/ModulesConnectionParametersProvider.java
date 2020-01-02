@@ -36,8 +36,8 @@ public interface ModulesConnectionParametersProvider {
             return emptyList();
         }
         Optional<Set<String>> hosts = profileConfiguration.map(configuration -> configuration.getStringSet(moduleKey.getModuleId()));
-        Optional<Integer> port = moduleConfiguration.map(config -> config.getInt(GRPC_SERVER_PORT_KEY));
-        Optional<String> path = moduleConfiguration.map(config -> config.getString(GRPC_SERVER_PATH_KEY));
+        Optional<Integer> port = moduleConfiguration.map(config -> config.findInt(GRPC_SERVER_PORT_KEY));
+        Optional<String> path = moduleConfiguration.map(config -> config.findString(GRPC_SERVER_PATH_KEY));
         if (!hosts.isPresent() || !port.isPresent() || !path.isPresent()) {
             return emptyList();
         }

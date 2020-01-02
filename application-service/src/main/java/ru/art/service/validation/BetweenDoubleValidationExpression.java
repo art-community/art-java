@@ -19,20 +19,26 @@
 package ru.art.service.validation;
 
 
-import lombok.*;
-import ru.art.service.constants.*;
-import static java.text.MessageFormat.*;
-import static ru.art.service.constants.ValidationExpressionType.*;
+import ru.art.service.constants.ServiceExceptionsMessages;
 
-@Builder
+import static java.text.MessageFormat.format;
+import static ru.art.service.constants.ValidationExpressionType.BETWEEN_DOUBLE;
+
 class BetweenDoubleValidationExpression extends ValidationExpression<Double> {
     private double lowerValue;
     private double greaterValue;
 
-    BetweenDoubleValidationExpression(double lowerValue, double greaterValue) {
+    BetweenDoubleValidationExpression(Double lowerValue, Double greaterValue) {
         super(BETWEEN_DOUBLE);
         this.lowerValue = lowerValue;
         this.greaterValue = greaterValue;
+    }
+
+    BetweenDoubleValidationExpression(Double lowerValue, Double greaterValue, String pattern) {
+        super(BETWEEN_DOUBLE);
+        this.lowerValue = lowerValue;
+        this.greaterValue = greaterValue;
+        this.pattern = pattern;
     }
 
     @Override

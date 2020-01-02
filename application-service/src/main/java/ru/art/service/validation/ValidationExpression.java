@@ -18,16 +18,20 @@
 
 package ru.art.service.validation;
 
-import lombok.*;
-import ru.art.service.constants.*;
+import lombok.Getter;
+
+import static java.text.MessageFormat.format;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.constants.StringConstants.EMPTY_STRING;
 
 @Getter
 public abstract class ValidationExpression<T> {
     protected String fieldName;
     protected T value;
-    protected final ValidationExpressionType type;
+    protected final String type;
+    protected String pattern;
 
-    protected ValidationExpression(ValidationExpressionType type) {
+    protected ValidationExpression(String type) {
         this.type = type;
     }
 
@@ -38,4 +42,8 @@ public abstract class ValidationExpression<T> {
     }
 
     public abstract String getValidationErrorMessage();
+
+    public String getValidationErrorMessageWithPattern(Object... params) {
+        return isEmpty(pattern) ? EMPTY_STRING : format(pattern, params);
+    }
 }
