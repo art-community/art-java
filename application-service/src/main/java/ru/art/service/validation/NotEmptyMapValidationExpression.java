@@ -18,14 +18,22 @@
 
 package ru.art.service.validation;
 
-import ru.art.service.constants.*;
-import static java.text.MessageFormat.*;
-import static ru.art.service.constants.ValidationExpressionType.*;
-import java.util.*;
+import ru.art.service.constants.ServiceExceptionsMessages;
+
+import java.util.Map;
+
+import static java.text.MessageFormat.format;
+import static ru.art.service.constants.ValidationExpressionType.NOT_EMPTY_MAP;
 
 class NotEmptyMapValidationExpression extends ValidationExpression<Map> {
+
     NotEmptyMapValidationExpression() {
         super(NOT_EMPTY_MAP);
+    }
+
+    NotEmptyMapValidationExpression(String pattern) {
+        super(NOT_EMPTY_MAP);
+        this.pattern = pattern;
     }
 
     @Override
@@ -33,6 +41,7 @@ class NotEmptyMapValidationExpression extends ValidationExpression<Map> {
         return super.evaluate(fieldName, value) && !value.isEmpty();
     }
 
+    @Override
     public String getValidationErrorMessage() {
         return format(ServiceExceptionsMessages.EMPTY_VALIDATION_ERROR, fieldName);
     }

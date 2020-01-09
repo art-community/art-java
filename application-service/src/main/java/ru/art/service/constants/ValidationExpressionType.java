@@ -18,15 +18,15 @@
 
 package ru.art.service.constants;
 
-public enum ValidationExpressionType {
-    BETWEEN_DOUBLE,
-    BETWEEN_INT,
-    BETWEEN_LONG,
-    CONTAINS,
-    EQUALS,
-    NOT_EMPTY_COLLECTION,
-    NOT_EMPTY_MAP,
-    NOT_EMPTY_STRING,
-    NOT_EQUALS,
-    NOT_NULL
+public interface ValidationExpressionType {
+    String BETWEEN_DOUBLE = "BETWEEN_DOUBLE";
+    String BETWEEN_INT = "BETWEEN_INT";
+    String BETWEEN_LONG = "BETWEEN_LONG";
+    String CONTAINS = "CONTAINS";
+    String EQUALS = "EQUALS";
+    String NOT_EMPTY_COLLECTION = "NOT_EMPTY_COLLECTION";
+    String NOT_EMPTY_MAP = "NOT_EMPTY_MAP";
+    String NOT_EMPTY_STRING = "NOT_EMPTY_STRING";
+    String NOT_EQUALS = "NOT_EQUALS";
+    String NOT_NULL = "NOT_NULL";
 }

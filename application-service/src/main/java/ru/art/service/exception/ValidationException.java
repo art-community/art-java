@@ -18,16 +18,17 @@
 
 package ru.art.service.exception;
 
-import lombok.*;
-import ru.art.service.constants.*;
-import ru.art.service.validation.*;
-import static ru.art.core.caster.Caster.*;
+import lombok.Getter;
+import ru.art.service.validation.Validatable;
+import ru.art.service.validation.ValidationExpression;
+
+import static ru.art.core.caster.Caster.cast;
 
 public class ValidationException extends RuntimeException {
     @Getter
     private String fieldName;
     @Getter
-    private ValidationExpressionType type;
+    private String type;
     @Getter
     private ValidationExpression<?> expression;
     private Validatable validatableModel;
@@ -43,6 +44,14 @@ public class ValidationException extends RuntimeException {
 
     public ValidationException(Validatable validatableModel, ValidationExpression<?> expression) {
         super(expression.getValidationErrorMessage());
+        this.fieldName = expression.getFieldName();
+        this.type = expression.getType();
+        this.expression = expression;
+        this.validatableModel = validatableModel;
+    }
+
+    public ValidationException(Validatable validatableModel, ValidationExpression<?> expression, Object... params) {
+        super(expression.getValidationErrorMessageWithPattern(params));
         this.fieldName = expression.getFieldName();
         this.type = expression.getType();
         this.expression = expression;
