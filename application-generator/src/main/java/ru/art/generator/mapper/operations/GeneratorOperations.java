@@ -20,6 +20,7 @@ package ru.art.generator.mapper.operations;
 
 import com.squareup.javapoet.*;
 import ru.art.core.checker.CheckerForEmptiness;
+import ru.art.core.extension.StringExtensions;
 import ru.art.entity.Entity;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
@@ -302,7 +303,9 @@ public interface GeneratorOperations {
                     }
                     break;
                 default:
-                    if (field.getType().getName().equals(clazz.getName()))
+                    if (field.getType().getName().equals(clazz.getName())) {
+                        notGeneratedFields.add(field.getName());
+                    } else if (clazz.isEnum())
                         try {
                             codeBlocks.add(of(DOUBLE_TABULATION + GET_ENUM_VALUE, field.getName(), clazz, field.getName()));
                         } catch (DefinitionException | InnerClassGenerationException throwable) {
@@ -319,7 +322,7 @@ public interface GeneratorOperations {
 
             }
         }
-        codeBlocks.add(of(DOUBLE_TABULATION + DEFAULT_ENTITY_BUILDER, clazz));
+        codeBlocks.add(of(DOUBLE_TABULATION + DEFAULT_ENTITY_BUILDER));
         if (notGeneratedFields.isEmpty())
             return FieldSpec.builder(ParameterizedTypeName.get(ValueToModelMapper.class, clazz, Entity.class), TO_MODEL + clazz.getSimpleName(), PUBLIC, STATIC, FINAL)
                     .initializer(join(codeBlocks, NEW_LINE))
@@ -401,9 +404,11 @@ public interface GeneratorOperations {
                     }
                     break;
                 default:
-                    if (field.getType().getName().equals(clazz.getName()))
+                    if (field.getType().getName().equals(clazz.getName())) {
+                        notGeneratedFields.add(field.getName());
+                    } else if (clazz.isEnum())
                         try {
-                            codeBlocks.add(of(DOUBLE_TABULATION + ENUM_FILED, field.getName(), CheckerForEmptiness.class, EMPTY_IF_NULL, getField));
+                            codeBlocks.add(of(DOUBLE_TABULATION + ENUM_FILED, field.getName(), StringExtensions.class, EMPTY_IF_NULL, getField));
                         } catch (DefinitionException | InnerClassGenerationException throwable) {
                             notGeneratedFields.add(field.getName());
                             printError(throwable.getCause() + SPACE + throwable.getMessage());
@@ -418,7 +423,7 @@ public interface GeneratorOperations {
             }
         }
 
-        codeBlocks.add(of(DOUBLE_TABULATION + DEFAULT_MODEL_BUILDER, Entity.class));
+        codeBlocks.add(of(DOUBLE_TABULATION + DEFAULT_MODEL_BUILDER));
         if (notGeneratedFields.isEmpty())
             return FieldSpec.builder(ParameterizedTypeName.get(ValueFromModelMapper.class, clazz, Entity.class), FROM_MODEL + clazz.getSimpleName(), PUBLIC, STATIC, FINAL)
                     .initializer(join(codeBlocks, NEW_LINE))
@@ -443,7 +448,7 @@ public interface GeneratorOperations {
     static CodeBlock generateFromEntityFieldMapperCodeBlock(Class<?> clazz, String fieldName, GenerationPackageModel generationInfo)
             throws InnerClassGenerationException {
         ClassName className = createMapperForInnerClassIfNeeded(clazz, generationInfo);
-        if (clazz.getName().equals(className.packageName()) && clazz.getSimpleName().equals(className.simpleName()))
+        if (clazz.isEnum())
             return CodeBlock.builder()
                     .add(of(DOUBLE_TABULATION + GET_ENUM_VALUE, fieldName, clazz, fieldName))
                     .build();
@@ -466,9 +471,9 @@ public interface GeneratorOperations {
     static CodeBlock generateToEntityFieldMapperCodeBlock(Class<?> clazz, String fieldName, String getField, GenerationPackageModel generationInfo)
             throws InnerClassGenerationException {
         ClassName className = createMapperForInnerClassIfNeeded(clazz, generationInfo);
-        if (clazz.getName().equals(className.packageName()) && clazz.getSimpleName().equals(className.simpleName()))
+        if (clazz.isEnum())
             return CodeBlock.builder()
-                    .add(of(DOUBLE_TABULATION + ENUM_FILED, fieldName, CheckerForEmptiness.class, EMPTY_IF_NULL, getField))
+                    .add(of(DOUBLE_TABULATION + ENUM_FILED, fieldName, StringExtensions.class, EMPTY_IF_NULL, getField))
                     .build();
         return CodeBlock.builder()
                 .add(of(DOUBLE_TABULATION + ENTITY_FIELD, fieldName, getField, className, FROM_MODEL + clazz.getSimpleName()))
