@@ -17,6 +17,8 @@
 package ru.art.kafka.broker.embedded;
 
 import kafka.server.*;
+import kafka.zk.AdminZkClient;
+import kafka.zk.KafkaZkClient;
 import lombok.*;
 import ru.art.kafka.broker.configuration.*;
 import scala.collection.immutable.List;
@@ -43,6 +45,14 @@ public class EmbeddedKafkaBroker {
     private final KafkaServer server;
     private EmbeddedZookeeper embeddedZookeeper;
 
+    /**
+     *
+     * @param kafkaBrokerConfiguration - custom broker configuration to fill properties instance to start KafkaService;
+     * @param zookeeperConfiguration - custom zookeeper configuration to start Zookeeper;
+     * @param zookeeperInitializationMode - parameter allows different ways of initializing Zookeeper.
+     * if is not equals ON_KAFKA_BROKER_INITIALIZATION value, Zookeeper is not started;
+     * @return broker instance;
+     */
     public static EmbeddedKafkaBroker startKafkaBroker(KafkaBrokerConfiguration kafkaBrokerConfiguration, ZookeeperConfiguration zookeeperConfiguration, ZookeeperInitializationMode zookeeperInitializationMode) {
         Properties properties = new Properties();
         properties.put(ZkConnectProp(), kafkaBrokerConfiguration.getZookeeperConnection());
@@ -51,6 +61,9 @@ public class EmbeddedKafkaBroker {
         properties.put(OffsetsTopicReplicationFactorProp(), kafkaBrokerConfiguration.getReplicationFactor());
         properties.putAll(kafkaBrokerConfiguration.getAdditionalProperties());
         KafkaServer kafkaServer = new KafkaServer(new KafkaConfig(properties), SYSTEM, empty(), List.empty());
+        KafkaZkClient kafkaZkClient = kafkaServer.zkClient();
+        AdminZkClient adminZkClient = new AdminZkClient(kafkaZkClient);
+        //adminZkClient.createTopic();
         if (zookeeperInitializationMode == ON_KAFKA_BROKER_INITIALIZATION) {
             EmbeddedKafkaBroker broker = new EmbeddedKafkaBroker(kafkaBrokerConfiguration,
                     zookeeperConfiguration,
