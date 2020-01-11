@@ -23,11 +23,11 @@ import ru.art.entity.*;
 import ru.art.entity.constants.*;
 import ru.art.entity.tuple.schema.*;
 import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
-import static ru.art.entity.Value.*;
 import static ru.art.entity.Entity.*;
 import static ru.art.entity.PrimitivesFactory.*;
 import java.util.*;
@@ -130,14 +130,16 @@ public class PlainTupleReader {
         List<?> elements = dynamicArrayOf();
         List<ValueSchema> elementsSchema = schema.getElementsSchema();
         switch (schema.getElementsType()) {
+            case BYTE:
             case STRING:
-            case LONG:
+            case BOOL:
             case DOUBLE:
             case FLOAT:
-            case INT:
-            case BOOL:
-            case BYTE:
                 return collectionValue(schema.getElementsType(), cast(collection));
+            case LONG:
+                return longCollection(collection.stream().filter(Objects::nonNull).map(element -> ((Number) element).longValue()).collect(toList()));
+            case INT:
+                return intCollection(collection.stream().filter(Objects::nonNull).map(element -> ((Number) element).intValue()).collect(toList()));
             case ENTITY:
                 for (int i = 0; i < elementsSchema.size(); i++) {
                     elements.add(cast(readEntity((List<?>) collection.get(i), (EntitySchema) elementsSchema.get(i))));
