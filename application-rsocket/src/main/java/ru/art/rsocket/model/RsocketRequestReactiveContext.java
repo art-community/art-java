@@ -25,14 +25,18 @@ import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
 import ru.art.service.model.*;
+import static java.text.MessageFormat.format;
 import static java.util.Objects.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.InterceptionStrategy.*;
 import static ru.art.entity.Value.*;
+import static ru.art.logging.LoggingModule.loggingModule;
+import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.FAILED_TO_READ_PAYLOAD;
 import static ru.art.rsocket.constants.RsocketModuleConstants.REQUEST_DATA;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.model.RsocketReactiveMethods.*;
+import static ru.art.rsocket.module.RsocketModule.rsocketModule;
 import static ru.art.rsocket.reader.RsocketPayloadReader.*;
 import static ru.art.service.mapping.ServiceRequestMapping.*;
 import java.util.*;
@@ -49,7 +53,16 @@ public class RsocketRequestReactiveContext {
 
     @SuppressWarnings("Duplicates")
     public static RsocketRequestReactiveContext fromPayload(Payload payload, RsocketDataFormat dataFormat) {
-        Entity requestValue = asEntity(readPayloadData(payload, dataFormat));
+        Value payloadValue;
+        try {
+            payloadValue = readPayloadData(payload, dataFormat);
+        } catch (Throwable throwable) {
+            if (rsocketModule().isEnableRawDataTracing()) {
+                loggingModule().getLogger(RsocketRequestContext.class).error(format(FAILED_TO_READ_PAYLOAD, throwable.getMessage(), throwable));
+            }
+            return RsocketRequestReactiveContext.builder().stopHandling(true).build();
+        }
+        Entity requestValue = asEntity(payloadValue);
         ServiceMethodCommand command = toServiceRequest().map(requestValue).getServiceMethodCommand();
         RsocketReactiveMethods rsocketServiceMethods = fromCommand(command);
         List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = rsocketServiceMethods.getRsocketMethod().requestValueInterceptors();
