@@ -234,7 +234,12 @@ class RsocketSpecification extends Specification {
                 .responseMapper(Caster.&cast)
                 .requestProcessingMode(REACTIVE)
                 .responseProcessingMode(REACTIVE)
-                .handle { request -> (request as Flux<Entity>).map { merge(it as Entity, response) } }
+                .handle { request ->
+                    (request as Flux<Entity>)
+                            .map {
+                                merge(it as Entity, response)
+                            }
+                }
         switch (transport) {
             case TCP:
                 startRsocketTcpServer()
@@ -265,7 +270,7 @@ class RsocketSpecification extends Specification {
                 .functionId(functionId)
 
         when:
-        def response = communicator.channel(just(request)).blockFirst()
+        def response = communicator.channel(just(request, request)).blockFirst()
 
         then:
         response

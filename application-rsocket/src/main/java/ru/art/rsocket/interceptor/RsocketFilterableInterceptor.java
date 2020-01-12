@@ -30,7 +30,6 @@ import ru.art.entity.*;
 import ru.art.service.exception.*;
 import ru.art.service.model.*;
 import static java.util.Objects.*;
-import static reactor.core.publisher.Flux.*;
 import static ru.art.entity.Value.*;
 import static ru.art.rsocket.interceptor.RsocketFilterableInterceptor.InterceptingDataType.*;
 import static ru.art.rsocket.module.RsocketModule.*;
@@ -39,7 +38,6 @@ import static ru.art.rsocket.selector.RsocketDataFormatMimeTypeConverter.*;
 import static ru.art.service.constants.ServiceExceptionsMessages.*;
 import static ru.art.service.mapping.ServiceRequestMapping.*;
 import javax.annotation.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 @Getter
@@ -103,13 +101,8 @@ public class RsocketFilterableInterceptor implements RSocketInterceptor {
 
             @Override
             public Flux<Payload> requestChannel(@Nonnull Publisher<Payload> payloads) {
-                AtomicReference<Value> payloadValue = new AtomicReference<>();
-                return from(payloads)
-                        .doOnNext(payload -> payloadValue.set(getDataByType(payload)))
-                        .filter(payload -> nonNull(payloadValue.get()))
-                        .filter(payload -> testServiceMethodCommand(payloadValue.get()))
-                        .switchIfEmpty(super.requestChannel(payloads))
-                        .flatMap(data -> interceptor.apply(rsocket, asEntity(payloadValue.get()).getValue(REQUEST_DATA)).requestChannel(payloads));
+                return super.requestChannel(payloads);
+                //TODO: Add interceptor logic
             }
 
             @Override
