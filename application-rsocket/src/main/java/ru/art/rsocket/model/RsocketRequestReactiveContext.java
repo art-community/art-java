@@ -56,6 +56,7 @@ public class RsocketRequestReactiveContext {
         Value payloadValue;
         try {
             payloadValue = readPayloadData(payload, dataFormat);
+            payload.release(payload.refCnt());
         } catch (Throwable throwable) {
             if (rsocketModule().isEnableRawDataTracing()) {
                 loggingModule().getLogger(RsocketRequestContext.class).error(format(FAILED_TO_READ_PAYLOAD, throwable.getMessage(), throwable));
