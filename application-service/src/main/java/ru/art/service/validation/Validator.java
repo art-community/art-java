@@ -34,13 +34,13 @@ public class Validator {
         }
         return this;
     }
-
-    @SafeVarargs
-    public final <T> Validator validate(String fieldName, T value, ValidationExpression<T> validationExpression, Object...params) {
-        if (!validationExpression.evaluate(fieldName, value)) {
-            throw new ValidationException(model, validationExpression, params);
-        }
-
-        return this;
-    }
+//
+//    @SafeVarargs
+//    public final <T> Validator validate(String fieldName, T value, ValidationExpression<T> validationExpression, Object...params) {
+//        if (!validationExpression.evaluate(fieldName, value)) {
+//            throw new ValidationException(model, validationExpression, params);
+//        }
+//
+//        return this;
+//    }
 }
