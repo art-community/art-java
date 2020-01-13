@@ -1,9 +1,13 @@
 kafka:
   broker:
     port: 19092
-
   topics:
-    test1
+    test1:
+      replecationFactor: 1
+      partition: 3
+    test2:
+      replecationFactor: 1
+      partition: 3
   consumer:
     enableTracing: true
     streams:
