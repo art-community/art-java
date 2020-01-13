@@ -89,14 +89,8 @@ public class RsocketFilterableInterceptor implements RSocketInterceptor {
 
             @Override
             public Flux<Payload> requestStream(@Nonnull Payload payload) {
-                Value data = getDataByType(payload);
-                if (!isEntity(data)) {
-                    return super.requestStream(payload);
-                }
-                if (testServiceMethodCommand(data)) {
-                    return interceptor.apply(rsocket, asEntity(data).getValue(REQUEST_DATA)).requestStream(payload);
-                }
                 return super.requestStream(payload);
+                //TODO: Add interceptor logic
             }
 
             @Override
