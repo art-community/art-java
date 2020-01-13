@@ -19,7 +19,6 @@
 package ru.art.generator.mapper;
 
 import lombok.experimental.UtilityClass;
-import ru.art.generator.mapper.annotation.IgnoreGeneration;
 import ru.art.generator.mapper.exception.MappingGeneratorException;
 import ru.art.generator.mapper.models.GenerationPackageModel;
 import ru.art.generator.mapper.operations.AnalyzingOperations;
@@ -39,8 +38,7 @@ import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
 import static ru.art.generator.mapper.constants.Constants.REQUEST;
 import static ru.art.generator.mapper.constants.Constants.RESPONSE;
-import static ru.art.generator.mapper.operations.AnalyzingOperations.deleteNonExistedFiles;
-import static ru.art.generator.mapper.operations.AnalyzingOperations.getListOfFilesInCompiledPackage;
+import static ru.art.generator.mapper.operations.AnalyzingOperations.*;
 import static ru.art.generator.mapper.operations.CommonOperations.printError;
 import static ru.art.generator.mapper.operations.GeneratorOperations.*;
 
@@ -168,14 +166,14 @@ public class Generator {
             }
 
             Class<?> currentClass = AnalyzingOperations.getClass(generationPackageInfo, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING));
-            if (currentClass.isAnnotationPresent(IgnoreGeneration.class) || currentClass.isEnum())
+            if (isClassHasIgnoreGenerationAnnotation(currentClass) || currentClass.isEnum())
                 continue;
             if (currentModelFileName.contains(REQUEST)) {
                 if (isNotEmpty(files.get(currentModelFileName.replace(REQUEST, RESPONSE)))) {
                     try {
                         Class<?> response = AnalyzingOperations.getClass(generationPackageInfo, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING).replace(REQUEST, RESPONSE));
-                        if (!currentClass.isAnnotationPresent(IgnoreGeneration.class) &&
-                                !response.isAnnotationPresent(IgnoreGeneration.class) &&
+                        if (!isClassHasIgnoreGenerationAnnotation(currentClass) &&
+                                !isClassHasIgnoreGenerationAnnotation(response) &&
                                 !currentClass.isEnum()) {
                             createRequestResponseMapperClass(currentClass, response, generationPackageInfo);
                             modelFileList.set(files.get(currentModelFileName.replace(REQUEST, RESPONSE)), null);
@@ -200,7 +198,7 @@ public class Generator {
                 }
             }
         }
-        generatedFiles.clear();
+        getGeneratedFiles().clear();
     }
 
     /**
@@ -211,7 +209,7 @@ public class Generator {
      */
     private static void createMapper(GenerationPackageModel generationInfo, String currentModelFileName) {
         Class<?> clazz = AnalyzingOperations.getClass(generationInfo, currentModelFileName.replace(DOT_CLASS, EMPTY_STRING));
-        if (!clazz.isAnnotationPresent(IgnoreGeneration.class) && !clazz.isEnum())
+        if (!isClassHasIgnoreGenerationAnnotation(clazz) && !clazz.isEnum())
             createMapperClass(clazz, generationInfo);
     }
 }

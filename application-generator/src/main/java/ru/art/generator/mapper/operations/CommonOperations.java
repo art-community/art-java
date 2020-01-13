@@ -18,32 +18,37 @@
 
 package ru.art.generator.mapper.operations;
 
-import com.squareup.javapoet.*;
-import ru.art.generator.mapper.annotation.*;
-import ru.art.generator.mapper.exception.*;
+import com.squareup.javapoet.ClassName;
+import ru.art.generator.mapper.exception.InnerClassGenerationException;
 import ru.art.generator.mapper.models.GenerationPackageModel;
 
-import static java.io.File.separator;
-import static java.text.MessageFormat.*;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.*;
-import static ru.art.generator.mapper.constants.Constants.*;
-import static ru.art.generator.mapper.constants.ExceptionConstants.MapperGeneratorExceptions.*;
-import static ru.art.generator.mapper.operations.GeneratorOperations.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.*;
+import java.lang.reflect.ParameterizedType;
+
+import static java.io.File.separator;
+import static java.text.MessageFormat.format;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.generator.mapper.constants.Constants.MAPPER;
+import static ru.art.generator.mapper.constants.ExceptionConstants.MapperGeneratorExceptions.UNABLE_TO_CREATE_INNER_CLASS_MAPPER;
+import static ru.art.generator.mapper.operations.AnalyzingOperations.isClassHasIgnoreGenerationAnnotation;
+import static ru.art.generator.mapper.operations.GeneratorOperations.createMapperClass;
+import static ru.art.generator.mapper.operations.GeneratorOperations.generatedFiles;
 
 /**
- * Interface containing common static methods which can be used in other operations
+ * Class containing common static methods which can be used in other operations
  */
-public interface CommonOperations {
+public final class CommonOperations {
+    private CommonOperations() {
+    }
 
     /**
      * Wrap of System.out.println.
      *
      * @param message - text to print.
      */
-    static void printMessage(String message) {
+    public static void printMessage(String message) {
         System.out.println(message);
     }
 
@@ -52,8 +57,23 @@ public interface CommonOperations {
      *
      * @param errorText - error to print.
      */
-    static void printError(String errorText) {
+    public static void printError(String errorText) {
         System.err.println(errorText);
+    }
+
+    /**
+     * Wrap of System.err.println.
+     *
+     * @param errorCause - error cause.
+     * @param errorMessage - error message.
+     */
+    public static void printError(String errorCause, String errorMessage) {
+        if (isEmpty(errorCause) && isEmpty(errorMessage)) return;
+        System.err.println(isEmpty(errorCause) && isNotEmpty(errorMessage)
+                ? errorMessage
+                : isEmpty(errorMessage)
+                    ? errorCause
+                    : errorCause + SPACE + errorMessage);
     }
 
     /**
@@ -63,12 +83,12 @@ public interface CommonOperations {
      * @param generationInfo - information about packages and path for generated class.
      * @return ClassName of new generated class.
      */
-    static ClassName createMapperForInnerClassIfNeeded(Class<?> genClass, GenerationPackageModel generationInfo) {
+    public static ClassName createMapperForInnerClassIfNeeded(Class<?> genClass, GenerationPackageModel generationInfo) {
         if (genClass.isEnum()) return ClassName.get(genClass);
         String packageName = genClass.getPackage().getName().equals(generationInfo.getModelPackage())
                 ? EMPTY_STRING
                 :genClass.getPackage().getName().replace(generationInfo.getModelPackage() + DOT, EMPTY_STRING);
-        if (!genClass.isAnnotationPresent(IgnoreGeneration.class)) {
+        if (!isClassHasIgnoreGenerationAnnotation(genClass)) {
             if (!generatedFiles.contains(genClass.getName())) {
                 GenerationPackageModel generationInnerClassInfo = GenerationPackageModel.builder()
                         .startPackage(generationInfo.getModelPackage())
@@ -106,7 +126,7 @@ public interface CommonOperations {
      * @param field - field which type is a model for new mapper.
      * @return class from field
      */
-    static Class<?> getClassFromField (Field field) {
+    public static Class<?> getClassFromField (Field field) {
         ParameterizedType type = (ParameterizedType) field.getGenericType();
         return (Class) type.getActualTypeArguments()[0];
     }

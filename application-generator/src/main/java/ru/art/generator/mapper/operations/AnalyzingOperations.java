@@ -18,30 +18,37 @@
 
 package ru.art.generator.mapper.operations;
 
-import ru.art.generator.mapper.*;
-import ru.art.generator.mapper.annotation.*;
-import ru.art.generator.mapper.exception.*;
+import ru.art.generator.mapper.Generator;
+import ru.art.generator.mapper.annotation.IgnoreGeneration;
+import ru.art.generator.mapper.exception.DefinitionException;
 import ru.art.generator.mapper.models.GenerationPackageModel;
 
-import static java.io.File.*;
-import static java.text.MessageFormat.*;
+import java.io.File;
+import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.List;
+import java.util.Map;
+
+import static java.io.File.separator;
+import static java.text.MessageFormat.format;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
 import static ru.art.generator.mapper.constants.Constants.*;
 import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
-import static ru.art.generator.mapper.constants.ExceptionConstants.DefinitionExceptions.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import static ru.art.generator.mapper.constants.ExceptionConstants.DefinitionExceptions.UNABLE_TO_DEFINE_CLASS;
 
 /**
- * Interface containing static methods for analyzing
+ * Class containing static methods for analyzing
  * model and mapping packages before starting generating
  * new mappers.
  */
-public interface AnalyzingOperations {
+public final class AnalyzingOperations {
+    private AnalyzingOperations() {
+    }
 
     /**
      * Getting class with URLClassLoader by path and file's name.
@@ -51,7 +58,7 @@ public interface AnalyzingOperations {
      * @return Class instance.
      * @throws DefinitionException is thrown when unable to define class by url.
      */
-    static Class getClass(GenerationPackageModel generationInfo, String fileName) throws DefinitionException {
+    public static Class getClass(GenerationPackageModel generationInfo, String fileName) throws DefinitionException {
         URL[] urls = new URL[1];
         File file = new File(generationInfo.getJarPathToMain());
         try {
@@ -80,7 +87,7 @@ public interface AnalyzingOperations {
      * @param path - path to compiled package.
      * @return List of files in package.
      */
-    static List<File> getListOfFilesInCompiledPackage(String path) {
+    public static List<File> getListOfFilesInCompiledPackage(String path) {
         File packageInJar = new File(path);
         List<File> fileList =
                 dynamicArrayOf(packageInJar.listFiles());
@@ -100,7 +107,7 @@ public interface AnalyzingOperations {
      * @param files                 - map of files in model non-compiled package.
      */
     @SuppressWarnings("all")
-    static void deleteNonExistedFiles(List<File> mappingFilesList, List<File> modelFilesList, GenerationPackageModel generationPackageInfo, Map<String, Integer> files) {
+    public static void deleteNonExistedFiles(List<File> mappingFilesList, List<File> modelFilesList, GenerationPackageModel generationPackageInfo, Map<String, Integer> files) {
         for (File mappingFile : mappingFilesList) {
             deleteFile(mappingFile, modelFilesList, generationPackageInfo, files);
             if (modelFilesList.isEmpty()) {
@@ -118,7 +125,7 @@ public interface AnalyzingOperations {
      * @param generationInfo - information about packages and path for generated class.
      * @param files          - map of files in model non-compiled package.
      */
-    static void deleteFile(File currentFile, List<File> modelFilesList, GenerationPackageModel generationInfo, Map<String, Integer> files) {
+    public static void deleteFile(File currentFile, List<File> modelFilesList, GenerationPackageModel generationInfo, Map<String, Integer> files) {
         //for all model package try to find which files were deleted
         File modelNonCompiledFile = null;
         for (File modelFile : modelFilesList) {
@@ -139,7 +146,7 @@ public interface AnalyzingOperations {
             try {
                 String mappingFileName = currentFile.getName().replace(DOT_CLASS, EMPTY_STRING);
                 Class<?> clazz = getClass(generationInfo, mappingFileName);
-                if (!clazz.isAnnotationPresent(IgnoreGeneration.class)) {
+                if (!isClassHasIgnoreGenerationAnnotation(clazz)) {
                     String pathname = generationInfo.getGenPackagePath() + separator + mappingFileName + DOT_JAVA;
                     new File(pathname).delete();
                 }
@@ -151,5 +158,20 @@ public interface AnalyzingOperations {
                 currentFile.delete();
             }
         }
+    }
+
+    /**
+     * Method checks if class has @IgnoreGeneration annotation.
+     * Need to check this manually, cause clazz.isAnnotationPresent doesn't wor properly.
+     * @param clazz - class to check
+     * @return true - if class has @IgnoreGeneration
+     *         false - if class hasn't @IgnoreGeneration
+     */
+    public static boolean isClassHasIgnoreGenerationAnnotation(Class<?> clazz) {
+        for (Annotation annotation : clazz.getAnnotations()) {
+            if (annotation.annotationType().getCanonicalName().equals(IgnoreGeneration.class.getCanonicalName()))
+                return true;
+        }
+        return false;
     }
 }

@@ -43,10 +43,12 @@ import static ru.art.generator.mapper.operations.CommonOperations.createMapperFo
 import static ru.art.generator.mapper.operations.CommonOperations.getClassFromField;
 
 /**
- * Interface containing static methods for generating
+ * Class containing static methods for generating
  * strings in builder for collections.
  */
-public interface CollectionGeneratorOperations {
+public final class CollectionGeneratorOperations {
+    private CollectionGeneratorOperations() {
+    }
 
     /**
      * Generate block code for List type for to model mapper.
@@ -56,7 +58,7 @@ public interface CollectionGeneratorOperations {
      * @return CodeBlock for List field.
      * @throws DefinitionException is thrown when field's generic type isn't supported.
      */
-    static CodeBlock generateToModelForList(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
+    public static CodeBlock generateToModelForList(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
         if (field.getGenericType().getTypeName().equals(CLASS_LIST) || field.getGenericType().getTypeName().matches(PATTERN_FOR_GENERIC_INNER_TYPES))
             throw new DefinitionException(format(UNABLE_TO_DEFINE_GENERIC_TYPE,
                     field.getGenericType().getTypeName(),
@@ -94,7 +96,7 @@ public interface CollectionGeneratorOperations {
      * @return CodeBlock for Set field.
      * @throws DefinitionException is thrown when field's generic type isn't supported.
      */
-    static CodeBlock generateToModelForSet(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
+    public static CodeBlock generateToModelForSet(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
         if (field.getGenericType().getTypeName().equals(CLASS_SET) || field.getGenericType().getTypeName().matches(PATTERN_FOR_GENERIC_INNER_TYPES))
             throw new DefinitionException(format(UNABLE_TO_DEFINE_GENERIC_TYPE,
                     field.getGenericType().getTypeName(),
@@ -132,7 +134,7 @@ public interface CollectionGeneratorOperations {
      * @return CodeBlock for Queue field.
      * @throws DefinitionException is thrown when field's generic type isn't supported.
      */
-    static CodeBlock generateToModelForQueue(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
+    public static CodeBlock generateToModelForQueue(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
         if (field.getGenericType().getTypeName().equals(CLASS_QUEUE) || field.getGenericType().getTypeName().matches(PATTERN_FOR_GENERIC_INNER_TYPES))
             throw new DefinitionException(format(UNABLE_TO_DEFINE_GENERIC_TYPE,
                     field.getGenericType().getTypeName(),
@@ -170,7 +172,7 @@ public interface CollectionGeneratorOperations {
      * @return CodeBlock for Map field.
      * @throws DefinitionException is thrown when field's generic type isn't supported.
      */
-    static CodeBlock generateToModelForMap(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
+    public static CodeBlock generateToModelForMap(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
         if (field.getGenericType().getTypeName().equals(CLASS_MAP) || field.getGenericType().getTypeName().matches(PATTERN_FOR_GENERIC_INNER_TYPES))
             throw new DefinitionException(format(UNABLE_TO_DEFINE_GENERIC_TYPE,
                     field.getGenericType().getTypeName(),
@@ -239,7 +241,7 @@ public interface CollectionGeneratorOperations {
      * @return CodeBlock for field of one of supported types.
      * @throws DefinitionException is thrown when field's generic type isn't supported.
      */
-    static CodeBlock generateFromModelForCollection(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
+    public static CodeBlock generateFromModelForCollection(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
         String typeName = field.getGenericType().getTypeName();
 
         if (typeName.matches(PATTERN_FOR_GENERIC_INNER_TYPES) ||
@@ -285,7 +287,7 @@ public interface CollectionGeneratorOperations {
      * @return CodeBlock for Map field.
      * @throws DefinitionException is thrown when field's generic type isn't supported.
      */
-    static CodeBlock generateFromModelForMap(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
+    public static CodeBlock generateFromModelForMap(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
         if (field.getGenericType().getTypeName().equals(CLASS_MAP) || field.getGenericType().getTypeName().matches(PATTERN_FOR_GENERIC_INNER_TYPES))
             throw new DefinitionException(format(UNABLE_TO_DEFINE_GENERIC_TYPE,
                     field.getGenericType().getTypeName(),
@@ -353,7 +355,7 @@ public interface CollectionGeneratorOperations {
      * @param valueType - type of map's value.
      * @return pattern.
      */
-    static String calculateMapGetter(String keyType, String valueType) {
+    public static String calculateMapGetter(String keyType, String valueType) {
         String getter;
         switch (keyType) {
             case CLASS_STRING:
@@ -389,7 +391,7 @@ public interface CollectionGeneratorOperations {
      * @param valueType - type of map's value.
      * @return pattern.
      */
-    static String calculateMapBuilder(String keyType, String valueType) {
+    public static String calculateMapBuilder(String keyType, String valueType) {
         String builder;
         switch (keyType) {
             case CLASS_STRING:
@@ -425,7 +427,7 @@ public interface CollectionGeneratorOperations {
      * @param type - type of map's key or value.
      * @return string value of toModel parameter mapping.
      */
-    static String getToModelMappingFromType(Type type) {
+    public static String getToModelMappingFromType(Type type) {
         switch (type.getTypeName()) {
             case CLASS_STRING:
                 return STRING_TO_MODEL;
@@ -453,7 +455,7 @@ public interface CollectionGeneratorOperations {
      * @param type - type of map's key or value.
      * @return string value of fromModel parameter.
      */
-    static String getFromModelMappingFromType(Type type) {
+    public static String getFromModelMappingFromType(Type type) {
         switch (type.getTypeName()) {
             case CLASS_STRING:
                 return STRING_FROM_MODEL;

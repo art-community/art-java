@@ -25,7 +25,6 @@ import ru.art.entity.Entity;
 import ru.art.entity.mapper.ValueFromModelMapper;
 import ru.art.entity.mapper.ValueToModelMapper;
 import ru.art.generator.mapper.annotation.GenerationException;
-import ru.art.generator.mapper.annotation.IgnoreGeneration;
 import ru.art.generator.mapper.exception.DefinitionException;
 import ru.art.generator.mapper.exception.InnerClassGenerationException;
 import ru.art.generator.mapper.exception.MappingGeneratorException;
@@ -58,16 +57,23 @@ import static ru.art.generator.mapper.constants.Constants.SymbolsAndFormatting.S
 import static ru.art.generator.mapper.constants.ExceptionConstants.MapperGeneratorExceptions.*;
 import static ru.art.generator.mapper.constants.FromModelConstants.*;
 import static ru.art.generator.mapper.constants.ToModelConstants.*;
+import static ru.art.generator.mapper.operations.AnalyzingOperations.isClassHasIgnoreGenerationAnnotation;
 import static ru.art.generator.mapper.operations.CollectionGeneratorOperations.*;
 import static ru.art.generator.mapper.operations.CommonOperations.*;
 
 /**
- * Interface containing static methods for creating mapper classes,
+ * Class containing static methods for creating mapper classes,
  * generation of ToModel and FromModel methods.
  */
-public interface GeneratorOperations {
+public final class GeneratorOperations {
+    private GeneratorOperations() {
+    }
 
-    Set<String> generatedFiles = new HashSet<>();
+    static Set<String> generatedFiles = new HashSet<>();
+
+    public static Set<String> getGeneratedFiles() {
+        return generatedFiles;
+    }
 
     /**
      * Generate block ValueToModelMapper and ValueFromModelMapper for class.
@@ -77,7 +83,7 @@ public interface GeneratorOperations {
      * @return TypeSpec containing ToModel and FromModel mappers.
      * @throws MappingGeneratorException is thrown when any other exception happens in attempt to create mapper.
      */
-    static TypeSpec generateMappers(Class<?> clazz, GenerationPackageModel generationInfo)
+    public static TypeSpec generateMappers(Class<?> clazz, GenerationPackageModel generationInfo)
             throws MappingGeneratorException {
         try {
             return interfaceBuilder(clazz.getSimpleName() + MAPPER)
@@ -99,7 +105,7 @@ public interface GeneratorOperations {
      * @throws MappingGeneratorException is thrown when IOException or NullPointerException
      *                                   happens while writing to file.
      */
-    static void createMapperClass(Class<?> clazz, GenerationPackageModel generationInfo)
+    public static void createMapperClass(Class<?> clazz, GenerationPackageModel generationInfo)
             throws MappingGeneratorException {
         if (generatedFiles.contains(clazz.getName()))
             return;
@@ -154,7 +160,7 @@ public interface GeneratorOperations {
      * @throws MappingGeneratorException is thrown when IOException or NullPointerException
      *                                   happens while writing to file.
      */
-    static void createRequestResponseMapperClass(Class<?> request, Class<?> response, GenerationPackageModel generationInfo)
+    public static void createRequestResponseMapperClass(Class<?> request, Class<?> response, GenerationPackageModel generationInfo)
             throws MappingGeneratorException {
         if (generatedFiles.contains(request.getName()) && generatedFiles.contains(response.getName()))
             printMessage(format(START_GENERATING, request.getSimpleName().replace(REQUEST, EMPTY_STRING) + REQUEST + RESPONSE + MAPPER));
@@ -214,11 +220,11 @@ public interface GeneratorOperations {
      * @param request        - class of request model.
      * @param generationInfo - information about packages and path for generated class.
      */
-    static void createMapperClasses(Class<?> request, GenerationPackageModel generationInfo) {
+    public static void createMapperClasses(Class<?> request, GenerationPackageModel generationInfo) {
         for (int i = 0; i < request.getClasses().length; i++) {
             if (!request.getClasses()[i].getSimpleName().equals(request.getSimpleName() + BUILDER) &&
                     !generatedFiles.contains(request.getName()) &&
-                    !request.getClasses()[i].isAnnotationPresent(IgnoreGeneration.class) &&
+                    !isClassHasIgnoreGenerationAnnotation(request.getClasses()[i]) &&
                     !request.isEnum()) {
                 createMapperClass(request.getClasses()[i], generationInfo);
             }
@@ -235,7 +241,7 @@ public interface GeneratorOperations {
      * @param generationInfo - information about packages and path for generated class.
      * @return FieldSpec containing ToModel block.
      */
-    static FieldSpec generateToModelBlock(Class<?> clazz, GenerationPackageModel generationInfo) {
+    public static FieldSpec generateToModelBlock(Class<?> clazz, GenerationPackageModel generationInfo) {
         List<CodeBlock> codeBlocks = dynamicArrayOf(of(ENTITY_TO_MODEL_LAMBDA, clazz));
         List<String> notGeneratedFields = new ArrayList<>();
         for (Field field : clazz.getDeclaredFields()) {
@@ -275,7 +281,7 @@ public interface GeneratorOperations {
                         codeBlocks.add(generateToModelForList(field, generationInfo));
                     } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
-                        printError(throwable.getMessage());
+                        printError(String.valueOf(throwable.getCause()), throwable.getMessage());
                     }
                     break;
                 case CLASS_SET:
@@ -283,7 +289,7 @@ public interface GeneratorOperations {
                         codeBlocks.add(generateToModelForSet(field, generationInfo));
                     } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
-                        printError(throwable.getCause() + SPACE + throwable.getMessage());
+                        printError(String.valueOf(throwable.getCause()), throwable.getMessage());
                     }
                     break;
                 case CLASS_MAP:
@@ -291,7 +297,7 @@ public interface GeneratorOperations {
                         codeBlocks.add(generateToModelForMap(field, generationInfo));
                     } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
-                        printError(throwable.getCause() + SPACE + throwable.getMessage());
+                        printError(String.valueOf(throwable.getCause()), throwable.getMessage());
                     }
                     break;
                 case CLASS_QUEUE:
@@ -299,7 +305,7 @@ public interface GeneratorOperations {
                         codeBlocks.add(generateToModelForQueue(field, generationInfo));
                     } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
-                        printError(throwable.getCause() + SPACE + throwable.getMessage());
+                        printError(String.valueOf(throwable.getCause()), throwable.getMessage());
                     }
                     break;
                 default:
@@ -310,14 +316,14 @@ public interface GeneratorOperations {
                             codeBlocks.add(of(DOUBLE_TABULATION + GET_ENUM_VALUE, field.getName(), clazz, field.getName()));
                         } catch (DefinitionException | InnerClassGenerationException throwable) {
                             notGeneratedFields.add(field.getName());
-                            printError(throwable.getCause() + SPACE + throwable.getMessage());
+                            printError(String.valueOf(throwable.getCause()), throwable.getMessage());
                         }
                     else
                         try {
                             codeBlocks.add(generateFromEntityFieldMapperCodeBlock(field.getType(), field.getName(), generationInfo));
                         } catch (DefinitionException | InnerClassGenerationException throwable) {
                             notGeneratedFields.add(field.getName());
-                            printError(throwable.getCause() + SPACE + throwable.getMessage());
+                            printError(String.valueOf(throwable.getCause()), throwable.getMessage());
                         }
 
             }
@@ -344,7 +350,7 @@ public interface GeneratorOperations {
      * @param generationInfo - information about packages and path for generated class.
      * @return FieldSpec containing FromModel block.
      */
-    static FieldSpec generateFromModelBlock(Class<?> clazz, GenerationPackageModel generationInfo) {
+    public static FieldSpec generateFromModelBlock(Class<?> clazz, GenerationPackageModel generationInfo) {
         List<CodeBlock> codeBlocks = dynamicArrayOf(of(MODEL_TO_ENTITY_LAMBDA, Entity.class));
         List<String> notGeneratedFields = new ArrayList<>();
         for (Field field : clazz.getDeclaredFields()) {
@@ -392,7 +398,7 @@ public interface GeneratorOperations {
                         codeBlocks.add(generateFromModelForCollection(field, generationInfo));
                     } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
-                        printError(throwable.getCause() + SPACE + throwable.getMessage());
+                        printError(String.valueOf(throwable.getCause()), throwable.getMessage());
                     }
                     break;
                 case CLASS_MAP:
@@ -400,7 +406,7 @@ public interface GeneratorOperations {
                         codeBlocks.add(generateFromModelForMap(field, generationInfo));
                     } catch (DefinitionException | InnerClassGenerationException throwable) {
                         notGeneratedFields.add(field.getName());
-                        printError(throwable.getCause() + SPACE + throwable.getMessage());
+                        printError(String.valueOf(throwable.getCause()), throwable.getMessage());
                     }
                     break;
                 default:
@@ -411,14 +417,14 @@ public interface GeneratorOperations {
                             codeBlocks.add(of(DOUBLE_TABULATION + ENUM_FILED, field.getName(), StringExtensions.class, EMPTY_IF_NULL, getField));
                         } catch (DefinitionException | InnerClassGenerationException throwable) {
                             notGeneratedFields.add(field.getName());
-                            printError(throwable.getCause() + SPACE + throwable.getMessage());
+                            printError(String.valueOf(throwable.getCause()), throwable.getMessage());
                         }
                     else
                         try {
                             codeBlocks.add(generateToEntityFieldMapperCodeBlock(field.getType(), field.getName(), getField, generationInfo));
                         } catch (DefinitionException | InnerClassGenerationException throwable) {
                             notGeneratedFields.add(field.getName());
-                            printError(throwable.getCause() + SPACE + throwable.getMessage());
+                            printError(String.valueOf(throwable.getCause()), throwable.getMessage());
                         }
             }
         }
@@ -445,7 +451,7 @@ public interface GeneratorOperations {
      * @return CodeBlock for entity of ToModel mapper.
      * @throws MappingGeneratorException can be thrown by createMapperClass.
      */
-    static CodeBlock generateFromEntityFieldMapperCodeBlock(Class<?> clazz, String fieldName, GenerationPackageModel generationInfo)
+    public static CodeBlock generateFromEntityFieldMapperCodeBlock(Class<?> clazz, String fieldName, GenerationPackageModel generationInfo)
             throws InnerClassGenerationException {
         ClassName className = createMapperForInnerClassIfNeeded(clazz, generationInfo);
         if (clazz.isEnum())
@@ -468,7 +474,7 @@ public interface GeneratorOperations {
      * @return CodeBlock for entity of FromModel mapper.
      * @throws MappingGeneratorException can be thrown by createMapperClass.
      */
-    static CodeBlock generateToEntityFieldMapperCodeBlock(Class<?> clazz, String fieldName, String getField, GenerationPackageModel generationInfo)
+    public static CodeBlock generateToEntityFieldMapperCodeBlock(Class<?> clazz, String fieldName, String getField, GenerationPackageModel generationInfo)
             throws InnerClassGenerationException {
         ClassName className = createMapperForInnerClassIfNeeded(clazz, generationInfo);
         if (clazz.isEnum())
@@ -489,7 +495,7 @@ public interface GeneratorOperations {
      * @param fieldNameToGet - either name of processing field or "get" + name of processing field.
      * @return CodeBlock of generating string.
      */
-    static CodeBlock getBuilderLineForField(String pattern, String fieldName, String fieldNameToGet) {
+    public static CodeBlock getBuilderLineForField(String pattern, String fieldName, String fieldNameToGet) {
         return of(DOUBLE_TABULATION + pattern, fieldName, fieldNameToGet);
     }
 
@@ -499,7 +505,7 @@ public interface GeneratorOperations {
      * @param clazz - class of model for mappers generating.
      * @return fields' names as string constants.
      */
-    static Iterable<FieldSpec> generateConstantsBlock(Class<?> clazz) {
+    public static Iterable<FieldSpec> generateConstantsBlock(Class<?> clazz) {
         return Stream.of(clazz.getDeclaredFields())
                 .map(declaredFields -> FieldSpec.builder(String.class, declaredFields.getName())
                         .addModifiers(PUBLIC, STATIC, FINAL)
