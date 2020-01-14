@@ -48,9 +48,9 @@ public class EmbeddedKafkaBroker {
     /**
      *
      * @param kafkaBrokerConfiguration - custom broker configuration to fill properties instance to start KafkaService;
-     * @param zookeeperConfiguration - custom zookeeper configuration to start Zookeeper;
-     * @param zookeeperInitializationMode - parameter allows different ways of initializing Zookeeper.
-     * if is not equals ON_KAFKA_BROKER_INITIALIZATION value, Zookeeper is not started;
+     * @param zookeeperConfiguration - custom zookeeper configuration to start new or use existing Zookeeper;
+     * @param zookeeperInitializationMode - parameter allows different ways of choosing Zookeeper;
+     * if is not equals ON_KAFKA_BROKER_INITIALIZATION value, Zookeeper is not started, as soon as expected it's running already;
      * @return broker instance;
      */
     public static EmbeddedKafkaBroker startKafkaBroker(KafkaBrokerConfiguration kafkaBrokerConfiguration, ZookeeperConfiguration zookeeperConfiguration, ZookeeperInitializationMode zookeeperInitializationMode) {
@@ -61,9 +61,6 @@ public class EmbeddedKafkaBroker {
         properties.put(OffsetsTopicReplicationFactorProp(), kafkaBrokerConfiguration.getReplicationFactor());
         properties.putAll(kafkaBrokerConfiguration.getAdditionalProperties());
         KafkaServer kafkaServer = new KafkaServer(new KafkaConfig(properties), SYSTEM, empty(), List.empty());
-        KafkaZkClient kafkaZkClient = kafkaServer.zkClient();
-        AdminZkClient adminZkClient = new AdminZkClient(kafkaZkClient);
-        //adminZkClient.createTopic();
         if (zookeeperInitializationMode == ON_KAFKA_BROKER_INITIALIZATION) {
             EmbeddedKafkaBroker broker = new EmbeddedKafkaBroker(kafkaBrokerConfiguration,
                     zookeeperConfiguration,
@@ -72,6 +69,11 @@ public class EmbeddedKafkaBroker {
                     startZookeeper(zookeeperConfiguration));
             kafkaBrokerModuleState().setBroker(broker);
             kafkaServer.startup();
+
+            KafkaZkClient kafkaZkClient = kafkaServer.zkClient();
+            AdminZkClient adminZkClient = new AdminZkClient(kafkaZkClient);
+            //final String topic, final int partitions, final int replicationFactor, final Properties topicConfig, final RackAwareMode rackAwareMode
+            //adminZkClient.createTopic();
             return broker;
         }
         EmbeddedKafkaBroker broker = new EmbeddedKafkaBroker(kafkaBrokerConfiguration, zookeeperConfiguration, zookeeperInitializationMode, kafkaServer);
@@ -80,15 +82,29 @@ public class EmbeddedKafkaBroker {
         return broker;
     }
 
+    /**
+     *
+     * @param configuration
+     * @param zookeeperInitializationMode
+     * @return broker instance;
+     */
     public static EmbeddedKafkaBroker startKafkaBroker(KafkaBrokerConfiguration configuration, ZookeeperInitializationMode zookeeperInitializationMode) {
         return startKafkaBroker(configuration, kafkaBrokerModule().getZookeeperConfiguration(), zookeeperInitializationMode);
     }
 
-
+    /**
+     *
+     * @param configuration
+     * @return broker instance;
+     */
     public static EmbeddedKafkaBroker startKafkaBroker(KafkaBrokerConfiguration configuration) {
         return startKafkaBroker(configuration, kafkaBrokerModule().getZookeeperConfiguration(), kafkaBrokerModule().getZookeeperInitializationMode());
     }
 
+    /**
+     *
+     * @return broker instance;
+     */
     public static EmbeddedKafkaBroker startKafkaBroker() {
         return startKafkaBroker(kafkaBrokerModule().getKafkaBrokerConfiguration());
     }
