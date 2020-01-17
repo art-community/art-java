@@ -75,11 +75,13 @@ public class RsocketRequestChannelEmitter {
                     sink.next(context.getRequestData());
                 }, error -> {
                     if (!subscribed.get()) {
+                        emitter.error(error);
                         return;
                     }
                     sink.error(error);
                 }, () -> {
                     if (!subscribed.get()) {
+                        emitter.complete();
                         return;
                     }
                     sink.complete();
