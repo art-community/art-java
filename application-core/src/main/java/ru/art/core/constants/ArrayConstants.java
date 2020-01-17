@@ -18,6 +18,8 @@
 
 package ru.art.core.constants;
 
+import static ru.art.core.caster.Caster.*;
+
 public interface ArrayConstants {
     byte[] EMPTY_BYTES = {};
     int[] EMPTY_INTS = {};
@@ -36,4 +38,5 @@ public interface ArrayConstants {
     Boolean[] EMPTY_BOOLEAN_ARRAY = {};
     Short[] EMPTY_SHORT_ARRAY = {};
     String[] EMPTY_STRINGS = {};
+    Object[] EMPTY_OBJECTS = {};
 }
