@@ -47,4 +47,5 @@ public interface CharConstants {
     char TABULATION = '\t';
     char BOM_UTF = '\uFEFF';
     char PIPE = '|';
+    char EXCLAMATION_MARK = '1';
 }
