@@ -3,11 +3,11 @@ kafka:
     port: 19092
   topics:
     test1:
-      replecationFactor: 1
-      partition: 3
+      partitions: 3
+      retention: 200
     test2:
-      replecationFactor: 1
-      partition: 3
+      partitions: 3
+      retention: 200
   consumer:
     enableTracing: true
     streams:

@@ -29,6 +29,7 @@ public interface KafkaBrokerModuleConstants {
     int DEFAULT_BROKER_PORT = findAvailableTcpPort();
     int DEFAULT_ZOOKEEPER_MAXIMUM_CONNECTED_CLIENTS = 1024;
     int DEFAULT_ZOOKEEPER_TICK_TIME = 500;
+    int DEFAULT_TOPIC_REPLICATION_FACTOR = 1;
     String PLAINTEXT = "PLAINTEXT://";
 
     enum ZookeeperInitializationMode {

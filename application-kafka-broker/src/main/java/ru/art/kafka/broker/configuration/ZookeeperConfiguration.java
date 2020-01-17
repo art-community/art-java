@@ -17,6 +17,10 @@
 package ru.art.kafka.broker.configuration;
 
 import lombok.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static java.io.File.*;
 import static java.nio.file.Paths.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -36,4 +40,6 @@ public class ZookeeperConfiguration {
     private final int maximumConnectedClients = DEFAULT_ZOOKEEPER_MAXIMUM_CONNECTED_CLIENTS;
     @Builder.Default
     private final int tickTime = DEFAULT_ZOOKEEPER_TICK_TIME;
+    @Builder.Default
+    private Map<String, KafkaTopicConfiguration> kafkaDefaultTopics = new HashMap<>();
 }

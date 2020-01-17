@@ -16,6 +16,8 @@
 
 package ru.art.kafka.broker.embedded;
 
+import kafka.admin.RackAwareMode;
+import kafka.log.LogConfig;
 import kafka.server.*;
 import kafka.zk.AdminZkClient;
 import kafka.zk.KafkaZkClient;
@@ -26,6 +28,7 @@ import static java.util.Objects.*;
 import static kafka.server.KafkaConfig.*;
 import static lombok.AccessLevel.*;
 import static org.apache.kafka.common.utils.Time.*;
+import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
@@ -70,10 +73,16 @@ public class EmbeddedKafkaBroker {
             kafkaBrokerModuleState().setBroker(broker);
             kafkaServer.startup();
 
-            KafkaZkClient kafkaZkClient = kafkaServer.zkClient();
-            AdminZkClient adminZkClient = new AdminZkClient(kafkaZkClient);
-            //final String topic, final int partitions, final int replicationFactor, final Properties topicConfig, final RackAwareMode rackAwareMode
-            //adminZkClient.createTopic();
+            if (isNotEmpty(zookeeperConfiguration.getKafkaDefaultTopics())) {
+                KafkaZkClient kafkaZkClient = kafkaServer.zkClient();
+                AdminZkClient adminZkClient = new AdminZkClient(kafkaZkClient);
+                for (Map.Entry<String, KafkaTopicConfiguration> topic: zookeeperConfiguration.getKafkaDefaultTopics().entrySet()) {
+                    Properties topicProperties = new Properties();
+                    topicProperties.put(LogConfig.RetentionMsProp(), String.valueOf(topic.getValue().getRetention()));
+                    adminZkClient.createTopic(topic.getKey(), topic.getValue().getPartitions(), DEFAULT_TOPIC_REPLICATION_FACTOR, topicProperties, RackAwareMode.Disabled$.MODULE$);
+                }
+
+            }
             return broker;
         }
         EmbeddedKafkaBroker broker = new EmbeddedKafkaBroker(kafkaBrokerConfiguration, zookeeperConfiguration, zookeeperInitializationMode, kafkaServer);

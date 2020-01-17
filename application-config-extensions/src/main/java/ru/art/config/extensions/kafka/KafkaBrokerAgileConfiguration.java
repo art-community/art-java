@@ -21,6 +21,10 @@ import ru.art.kafka.broker.configuration.*;
 import ru.art.kafka.broker.configuration.KafkaBrokerModuleConfiguration.*;
 import ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
 import ru.art.kafka.broker.embedded.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static java.util.Objects.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
@@ -42,12 +46,18 @@ public class KafkaBrokerAgileConfiguration extends KafkaBrokerModuleDefaultConfi
 
     @Override
     public void refresh() {
+        Map<String, KafkaTopicConfiguration> kafkaDefaultTopics = configInnerMap(KAFKA_DEFAULT_TOPIC_SECTION_ID, (key, config) ->
+                KafkaTopicConfiguration.topicConfiguration()
+                        .partitions(config.getInt(PARTITIONS))
+                        .retention(config.getLong(RETENTION))
+                        .build(), new HashMap<>());
         ZookeeperConfiguration defaultZookeeperConfiguration = super.getZookeeperConfiguration();
         ZookeeperConfiguration newZookeeperConfiguration = ZookeeperConfiguration.builder()
                 .logsDirectory(configString(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, LOGS_DIRECTORY, defaultZookeeperConfiguration.getLogsDirectory()))
                 .port(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, PORT, defaultZookeeperConfiguration.getPort()))
                 .tickTime(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, TICK_TIME, defaultZookeeperConfiguration.getTickTime()))
                 .maximumConnectedClients(configInt(KAFKA_BROKER_ZOOKEEPER_SECTION_ID, MAXIMUM_CONNECTED_CLIENTS, defaultZookeeperConfiguration.getMaximumConnectedClients()))
+                .kafkaDefaultTopics(kafkaDefaultTopics)
                 .build();
         boolean restartZookeeper = false;
         if (!newZookeeperConfiguration.equals(this.zookeeperConfiguration)) {
