@@ -30,6 +30,7 @@ public interface TarantoolModuleConstants {
     String DEFAULT_TARANTOOL_USERNAME = "guest";
     String LUA_REGEX = ".+\\.lua";
     String DEFAULT_TARANTOOL_EXECUTABLE = "tarantool";
+    int DEFAULT_STARTUP_TIMEOUT = 60 * 60 * 1000;
     String TWIG_TEMPLATE = ".twig";
     String IS_NULLABLE = "is_nullable";
     String COLLATION = "collation";

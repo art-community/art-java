@@ -31,6 +31,7 @@ import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import static java.util.concurrent.TimeUnit.*;
 import static org.apache.logging.log4j.io.IoBuilder.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -57,6 +58,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class TarantoolInitializer {
     private final static OutputStream TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM = forLogger(loggingModule()
@@ -159,7 +161,7 @@ public class TarantoolInitializer {
         }
     }
 
-    private static void startTarantoolFromJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException {
+    private static void startTarantoolFromJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException, InterruptedException, ExecutionException, TimeoutException {
         createDirectories(get(localConfiguration.getWorkingDirectory() + separator + BIN));
         extractCurrentJarEntry(TarantoolModule.class, LUA_REGEX, getLuaScriptPath(localConfiguration, EMPTY_STRING));
         extractCurrentJarEntry(TarantoolModule.class, localConfiguration.getExecutable(), localConfiguration.getWorkingDirectory() + separator + BIN);
@@ -188,11 +190,13 @@ public class TarantoolInitializer {
                 .directory(new File(localConfiguration.getWorkingDirectory()))
                 .redirectOutput(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .redirectError(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
-                .start();
+                .start()
+                .getFuture()
+                .get(localConfiguration.getStartupTimeoutMillis(), MILLISECONDS);
         logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
     }
 
-    private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException, InterruptedException {
+    private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException, InterruptedException, TimeoutException, ExecutionException {
         URL executableUrl = TarantoolInitializer.class.getClassLoader().getResource(localConfiguration.getExecutable());
         if (isNull(executableUrl)) {
             throw new TarantoolInitializationException(format(TARANTOOL_EXECUTABLE_NOT_EXISTS, address, localConfiguration.getExecutable()));
@@ -215,7 +219,8 @@ public class TarantoolInitializer {
                 .redirectOutput(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .redirectError(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .start()
-                .getProcess();
+                .getFuture()
+                .get(localConfiguration.getStartupTimeoutMillis(), MILLISECONDS);
         logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
     }
 

@@ -70,5 +70,6 @@ public interface StringConstants {
     String WINDOWS_DISK_PATH_BACKWARD_SLASH_REGEX = ":\\\\";
     String WSL_DISK_PREFIX = "/mnt/";
     String PIPE = "|";
-    String  ANSI_RESET = "\u001B[0m";
+    String ANSI_RESET = "\u001B[0m";
+    String EXCLAMATION_MARK = "!";
 }
