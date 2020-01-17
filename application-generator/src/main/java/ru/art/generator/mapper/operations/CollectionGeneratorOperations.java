@@ -23,6 +23,7 @@ import com.squareup.javapoet.CodeBlock;
 import ru.art.entity.PrimitiveMapping;
 import ru.art.generator.mapper.exception.DefinitionException;
 import ru.art.generator.mapper.exception.InnerClassGenerationException;
+import ru.art.generator.mapper.models.GenerationPackageModel;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -39,22 +40,25 @@ import static ru.art.generator.mapper.constants.ExceptionConstants.DefinitionExc
 import static ru.art.generator.mapper.constants.FromModelConstants.*;
 import static ru.art.generator.mapper.constants.ToModelConstants.*;
 import static ru.art.generator.mapper.operations.CommonOperations.createMapperForInnerClassIfNeeded;
+import static ru.art.generator.mapper.operations.CommonOperations.getClassFromField;
 
 /**
- * Interface containing static methods for generating
+ * Class containing static methods for generating
  * strings in builder for collections.
  */
-public interface CollectionGeneratorOperations {
+public final class CollectionGeneratorOperations {
+    private CollectionGeneratorOperations() {
+    }
 
     /**
      * Generate block code for List type for to model mapper.
      *
      * @param field         - class' field with List type.
-     * @param jarPathToMain - classpath from root to main.
+     * @param generationInfo - information about packages and path for generated class.
      * @return CodeBlock for List field.
      * @throws DefinitionException is thrown when field's generic type isn't supported.
      */
-    static CodeBlock generateToModelForList(Field field, String jarPathToMain) throws DefinitionException, InnerClassGenerationException {
+    public static CodeBlock generateToModelForList(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
         if (field.getGenericType().getTypeName().equals(CLASS_LIST) || field.getGenericType().getTypeName().matches(PATTERN_FOR_GENERIC_INNER_TYPES))
             throw new DefinitionException(format(UNABLE_TO_DEFINE_GENERIC_TYPE,
                     field.getGenericType().getTypeName(),
@@ -76,7 +80,7 @@ public interface CollectionGeneratorOperations {
         if (field.getGenericType().getTypeName().contains(CLASS_FLOAT))
             return CodeBlock.builder().add(of(DOUBLE_TABULATION + GET_FLOAT_LIST, field.getName(), field.getName())).build();
 
-        ClassName newClassMapper = createMapperForInnerClassIfNeeded(field, jarPathToMain);
+        ClassName newClassMapper = createMapperForInnerClassIfNeeded(getClassFromField(field), generationInfo);
         return CodeBlock.builder().add(of(DOUBLE_TABULATION + GET_ENTITY_LIST,
                 field.getName(),
                 field.getName(),
@@ -88,11 +92,11 @@ public interface CollectionGeneratorOperations {
      * Generate block code for Set type for to model mapper.
      *
      * @param field         - class' field with Set type.
-     * @param jarPathToMain - classpath from root to main.
+     * @param generationInfo - information about packages and path for generated class.
      * @return CodeBlock for Set field.
      * @throws DefinitionException is thrown when field's generic type isn't supported.
      */
-    static CodeBlock generateToModelForSet(Field field, String jarPathToMain) throws DefinitionException, InnerClassGenerationException {
+    public static CodeBlock generateToModelForSet(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
         if (field.getGenericType().getTypeName().equals(CLASS_SET) || field.getGenericType().getTypeName().matches(PATTERN_FOR_GENERIC_INNER_TYPES))
             throw new DefinitionException(format(UNABLE_TO_DEFINE_GENERIC_TYPE,
                     field.getGenericType().getTypeName(),
@@ -114,7 +118,7 @@ public interface CollectionGeneratorOperations {
         if (field.getGenericType().getTypeName().contains(CLASS_FLOAT))
             return CodeBlock.builder().add(of(DOUBLE_TABULATION + GET_FLOAT_SET, field.getName(), field.getName())).build();
 
-        ClassName newClassMapper = createMapperForInnerClassIfNeeded(field, jarPathToMain);
+        ClassName newClassMapper = createMapperForInnerClassIfNeeded(getClassFromField(field), generationInfo);
         return CodeBlock.builder().add(of(DOUBLE_TABULATION + GET_ENTITY_SET,
                 field.getName(),
                 field.getName(),
@@ -126,11 +130,11 @@ public interface CollectionGeneratorOperations {
      * Generate block code for Queue type for to model mapper.
      *
      * @param field         - class' field with Queue type.
-     * @param jarPathToMain - classpath from root to main.
+     * @param generationInfo - information about packages and path for generated class.
      * @return CodeBlock for Queue field.
      * @throws DefinitionException is thrown when field's generic type isn't supported.
      */
-    static CodeBlock generateToModelForQueue(Field field, String jarPathToMain) throws DefinitionException, InnerClassGenerationException {
+    public static CodeBlock generateToModelForQueue(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
         if (field.getGenericType().getTypeName().equals(CLASS_QUEUE) || field.getGenericType().getTypeName().matches(PATTERN_FOR_GENERIC_INNER_TYPES))
             throw new DefinitionException(format(UNABLE_TO_DEFINE_GENERIC_TYPE,
                     field.getGenericType().getTypeName(),
@@ -152,7 +156,7 @@ public interface CollectionGeneratorOperations {
         if (field.getGenericType().getTypeName().contains(CLASS_FLOAT))
             return CodeBlock.builder().add(of(DOUBLE_TABULATION + GET_FLOAT_QUEUE, field.getName(), field.getName())).build();
 
-        ClassName newClassMapper = createMapperForInnerClassIfNeeded(field, jarPathToMain);
+        ClassName newClassMapper = createMapperForInnerClassIfNeeded(getClassFromField(field), generationInfo);
         return CodeBlock.builder().add(of(DOUBLE_TABULATION + GET_ENTITY_QUEUE,
                 field.getName(),
                 field.getName(),
@@ -164,11 +168,11 @@ public interface CollectionGeneratorOperations {
      * Generate block code for Map type for to model mapper.
      *
      * @param field         - class' field with Map type.
-     * @param jarPathToMain - classpath from root to main.
+     * @param generationInfo - information about packages and path for generated class.
      * @return CodeBlock for Map field.
      * @throws DefinitionException is thrown when field's generic type isn't supported.
      */
-    static CodeBlock generateToModelForMap(Field field, String jarPathToMain) throws DefinitionException, InnerClassGenerationException {
+    public static CodeBlock generateToModelForMap(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
         if (field.getGenericType().getTypeName().equals(CLASS_MAP) || field.getGenericType().getTypeName().matches(PATTERN_FOR_GENERIC_INNER_TYPES))
             throw new DefinitionException(format(UNABLE_TO_DEFINE_GENERIC_TYPE,
                     field.getGenericType().getTypeName(),
@@ -186,7 +190,7 @@ public interface CollectionGeneratorOperations {
 
         switch (mapGetter) {
             case GET_MAP_PRIMITIVE_KEY:
-                createMapperForInnerClassIfNeeded(valueClass, jarPathToMain);
+                createMapperForInnerClassIfNeeded(valueClass, generationInfo);
                 return CodeBlock.builder()
                         .add(of(DOUBLE_TABULATION + mapGetter,
                                 field.getName(),
@@ -196,7 +200,7 @@ public interface CollectionGeneratorOperations {
                                 getToModelMappingFromType(valueType)))
                         .build();
             case GET_MAP_PRIMITIVE_VALUE:
-                createMapperForInnerClassIfNeeded(keyClass, jarPathToMain);
+                createMapperForInnerClassIfNeeded(keyClass, generationInfo);
                 return CodeBlock.builder()
                         .add(of(DOUBLE_TABULATION + mapGetter,
                                 field.getName(),
@@ -216,8 +220,8 @@ public interface CollectionGeneratorOperations {
                                 getToModelMappingFromType(valueType)))
                         .build();
             default:
-                createMapperForInnerClassIfNeeded(valueClass, jarPathToMain);
-                createMapperForInnerClassIfNeeded(keyClass, jarPathToMain);
+                createMapperForInnerClassIfNeeded(valueClass, generationInfo);
+                createMapperForInnerClassIfNeeded(keyClass, generationInfo);
                 return CodeBlock.builder()
                         .add(of(DOUBLE_TABULATION + mapGetter,
                                 field.getName(),
@@ -233,11 +237,11 @@ public interface CollectionGeneratorOperations {
      * Supported collections: List, Set, Queue.
      *
      * @param field         - class' field with one of supported types.
-     * @param jarPathToMain - classpath from root to main.
+     * @param generationInfo - information about packages and path for generated class.
      * @return CodeBlock for field of one of supported types.
      * @throws DefinitionException is thrown when field's generic type isn't supported.
      */
-    static CodeBlock generateFromModelForCollection(Field field, String jarPathToMain) throws DefinitionException, InnerClassGenerationException {
+    public static CodeBlock generateFromModelForCollection(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
         String typeName = field.getGenericType().getTypeName();
 
         if (typeName.matches(PATTERN_FOR_GENERIC_INNER_TYPES) ||
@@ -267,7 +271,7 @@ public interface CollectionGeneratorOperations {
         if (typeName.contains(CLASS_FLOAT))
             return CodeBlock.builder().add(of(DOUBLE_TABULATION + FLOAT_COLLECTION_FIELD, field.getName(), getField)).build();
 
-        ClassName newClassMapper = createMapperForInnerClassIfNeeded(field, jarPathToMain);
+        ClassName newClassMapper = createMapperForInnerClassIfNeeded(getClassFromField(field), generationInfo);
         return CodeBlock.builder().add(of(DOUBLE_TABULATION + ENTITY_COLLECTION_FIELD,
                 field.getName(),
                 getField,
@@ -279,11 +283,11 @@ public interface CollectionGeneratorOperations {
      * Generate block code for Map type for from model mapper.
      *
      * @param field         - class' field with Map type.
-     * @param jarPathToMain - classpath from root to main.
+     * @param generationInfo - information about packages and path for generated class.
      * @return CodeBlock for Map field.
      * @throws DefinitionException is thrown when field's generic type isn't supported.
      */
-    static CodeBlock generateFromModelForMap(Field field, String jarPathToMain) throws DefinitionException, InnerClassGenerationException {
+    public static CodeBlock generateFromModelForMap(Field field, GenerationPackageModel generationInfo) throws DefinitionException, InnerClassGenerationException {
         if (field.getGenericType().getTypeName().equals(CLASS_MAP) || field.getGenericType().getTypeName().matches(PATTERN_FOR_GENERIC_INNER_TYPES))
             throw new DefinitionException(format(UNABLE_TO_DEFINE_GENERIC_TYPE,
                     field.getGenericType().getTypeName(),
@@ -302,7 +306,7 @@ public interface CollectionGeneratorOperations {
 
         switch (mapBuilder) {
             case MAP_FIELD_PRIMITIVE_KEY:
-                createMapperForInnerClassIfNeeded(valueClass, jarPathToMain);
+                createMapperForInnerClassIfNeeded(valueClass, generationInfo);
                 return CodeBlock.builder()
                         .add(of(DOUBLE_TABULATION + mapBuilder,
                                 field.getName(),
@@ -312,7 +316,7 @@ public interface CollectionGeneratorOperations {
                                 getFromModelMappingFromType(valueType)))
                         .build();
             case MAP_FIELD_PRIMITIVE_VALUE:
-                createMapperForInnerClassIfNeeded(keyClass, jarPathToMain);
+                createMapperForInnerClassIfNeeded(keyClass, generationInfo);
                 return CodeBlock.builder()
                         .add(of(DOUBLE_TABULATION + mapBuilder,
                                 field.getName(),
@@ -332,8 +336,8 @@ public interface CollectionGeneratorOperations {
                                 getFromModelMappingFromType(valueType)))
                         .build();
             default:
-                createMapperForInnerClassIfNeeded(valueClass, jarPathToMain);
-                createMapperForInnerClassIfNeeded(keyClass, jarPathToMain);
+                createMapperForInnerClassIfNeeded(valueClass, generationInfo);
+                createMapperForInnerClassIfNeeded(keyClass, generationInfo);
                 return CodeBlock.builder()
                         .add(of(DOUBLE_TABULATION + mapBuilder,
                                 field.getName(),
@@ -351,7 +355,7 @@ public interface CollectionGeneratorOperations {
      * @param valueType - type of map's value.
      * @return pattern.
      */
-    static String calculateMapGetter(String keyType, String valueType) {
+    public static String calculateMapGetter(String keyType, String valueType) {
         String getter;
         switch (keyType) {
             case CLASS_STRING:
@@ -387,7 +391,7 @@ public interface CollectionGeneratorOperations {
      * @param valueType - type of map's value.
      * @return pattern.
      */
-    static String calculateMapBuilder(String keyType, String valueType) {
+    public static String calculateMapBuilder(String keyType, String valueType) {
         String builder;
         switch (keyType) {
             case CLASS_STRING:
@@ -423,7 +427,7 @@ public interface CollectionGeneratorOperations {
      * @param type - type of map's key or value.
      * @return string value of toModel parameter mapping.
      */
-    static String getToModelMappingFromType(Type type) {
+    public static String getToModelMappingFromType(Type type) {
         switch (type.getTypeName()) {
             case CLASS_STRING:
                 return STRING_TO_MODEL;
@@ -451,7 +455,7 @@ public interface CollectionGeneratorOperations {
      * @param type - type of map's key or value.
      * @return string value of fromModel parameter.
      */
-    static String getFromModelMappingFromType(Type type) {
+    public static String getFromModelMappingFromType(Type type) {
         switch (type.getTypeName()) {
             case CLASS_STRING:
                 return STRING_FROM_MODEL;

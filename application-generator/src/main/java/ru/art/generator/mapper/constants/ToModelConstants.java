@@ -28,7 +28,7 @@ import ru.art.entity.mapper.*;
 public interface ToModelConstants {
     String TO_MODEL = "to";
     String ENTITY_TO_MODEL_LAMBDA = "entity -> isNotEmpty(entity) ? $T.builder()";
-    String DEFAULT_ENTITY_BUILDER = ".build() : $T.builder().build()";
+    String DEFAULT_ENTITY_BUILDER = ".build() : null";
 
     String GET_ENTITY_STRING = ".$L(entity.getString($N))";
     String GET_ENTITY_INT = ".$L(entity.getInt($N))";

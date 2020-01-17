@@ -18,29 +18,37 @@
 
 package ru.art.generator.mapper.operations;
 
-import com.squareup.javapoet.*;
-import ru.art.generator.mapper.annotation.*;
-import ru.art.generator.mapper.exception.*;
-import static java.text.MessageFormat.*;
-import static ru.art.core.constants.StringConstants.*;
-import static ru.art.generator.mapper.constants.Constants.*;
-import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
-import static ru.art.generator.mapper.constants.ExceptionConstants.MapperGeneratorExceptions.*;
-import static ru.art.generator.mapper.operations.GeneratorOperations.*;
+import com.squareup.javapoet.ClassName;
+import ru.art.generator.mapper.exception.InnerClassGenerationException;
+import ru.art.generator.mapper.models.GenerationPackageModel;
+
 import java.lang.reflect.Field;
-import java.lang.reflect.*;
+import java.lang.reflect.ParameterizedType;
+
+import static java.io.File.separator;
+import static java.text.MessageFormat.format;
+import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.generator.mapper.constants.Constants.MAPPER;
+import static ru.art.generator.mapper.constants.ExceptionConstants.MapperGeneratorExceptions.UNABLE_TO_CREATE_INNER_CLASS_MAPPER;
+import static ru.art.generator.mapper.operations.AnalyzingOperations.isClassHasIgnoreGenerationAnnotation;
+import static ru.art.generator.mapper.operations.GeneratorOperations.createMapperClass;
+import static ru.art.generator.mapper.operations.GeneratorOperations.generatedFiles;
 
 /**
- * Interface containing common static methods which can be used in other operations
+ * Class containing common static methods which can be used in other operations
  */
-public interface CommonOperations {
+public final class CommonOperations {
+    private CommonOperations() {
+    }
 
     /**
      * Wrap of System.out.println.
      *
      * @param message - text to print.
      */
-    static void printMessage(String message) {
+    public static void printMessage(String message) {
         System.out.println(message);
     }
 
@@ -49,51 +57,77 @@ public interface CommonOperations {
      *
      * @param errorText - error to print.
      */
-    static void printError(String errorText) {
+    public static void printError(String errorText) {
         System.err.println(errorText);
+    }
+
+    /**
+     * Wrap of System.err.println.
+     *
+     * @param errorCause - error cause.
+     * @param errorMessage - error message.
+     */
+    public static void printError(String errorCause, String errorMessage) {
+        if (isEmpty(errorCause) && isEmpty(errorMessage)) return;
+        System.err.println(isEmpty(errorCause) && isNotEmpty(errorMessage)
+                ? errorMessage
+                : isEmpty(errorMessage)
+                    ? errorCause
+                    : errorCause + SPACE + errorMessage);
     }
 
     /**
      * Generate mapper for class, if it wasn't generated earlier.
      *
      * @param genClass      - class of mapper's model.
-     * @param jarPathToMain - classpath from root to main.
+     * @param generationInfo - information about packages and path for generated class.
      * @return ClassName of new generated class.
      */
-    static ClassName createMapperForInnerClassIfNeeded(Class<?> genClass, String jarPathToMain) {
+    public static ClassName createMapperForInnerClassIfNeeded(Class<?> genClass, GenerationPackageModel generationInfo) {
         if (genClass.isEnum()) return ClassName.get(genClass);
-        if (!genClass.isAnnotationPresent(IgnoreGeneration.class)) {
-            String classPackage = genClass.getName().substring(0, genClass.getName().indexOf(genClass.getSimpleName()) - 1);
-            String genPackage = classPackage.contains(MODEL) ?
-                    classPackage.replace(MODEL, MAPPING) :
-                    classPackage.substring(0, classPackage.lastIndexOf(DOT)) + DOT + MAPPING;
-            if (!generatedFiles.contains(genClass))
-                createMapperClass(genClass, genPackage, jarPathToMain);
-            return ClassName.get(genPackage, genClass.getSimpleName() + MAPPER);
+        String packageName = genClass.getPackage().getName().equals(generationInfo.getModelPackage())
+                ? EMPTY_STRING
+                :genClass.getPackage().getName().replace(generationInfo.getModelPackage() + DOT, EMPTY_STRING);
+        if (!isClassHasIgnoreGenerationAnnotation(genClass)) {
+            if (!generatedFiles.contains(genClass.getName())) {
+                GenerationPackageModel generationInnerClassInfo = GenerationPackageModel.builder()
+                        .startPackage(generationInfo.getModelPackage())
+                        .startPackagePath(generationInfo.getModelPackagePath())
+                        .startPackagePathCompiled(generationInfo.getModelPackagePathCompiled())
+                        .modelPackage(genClass.getPackage().getName())
+                        .modelPackagePath(isEmpty(packageName)
+                                ? generationInfo.getModelPackagePath()
+                                : generationInfo.getModelPackagePath() + separator + packageName)
+                        .modelPackagePathCompiled(isEmpty(packageName)
+                                ? generationInfo.getModelPackagePathCompiled()
+                                : generationInfo.getModelPackagePathCompiled() + separator + packageName)
+                        .genPackage(isEmpty(packageName)
+                                ? generationInfo.getGenPackage()
+                                : generationInfo.getGenPackage() + DOT + packageName)
+                        .genPackagePath(isEmpty(packageName)
+                                ? generationInfo.getGenPackagePath()
+                                : generationInfo.getGenPackagePath() + separator + packageName)
+                        .genPackagePathCompiled(isEmpty(packageName)
+                                ? generationInfo.getGenPackagePathCompiled()
+                                : generationInfo.getGenPackagePathCompiled() + separator + packageName)
+                        .jarPathToMain(generationInfo.getJarPathToMain())
+                        .build();
+                createMapperClass(genClass, generationInnerClassInfo);
+                return ClassName.get(generationInnerClassInfo.getGenPackage(), genClass.getSimpleName() + MAPPER);
+            }
+            String newPackageName = isEmpty(packageName) ? generationInfo.getGenPackage() : generationInfo.getGenPackage() + DOT + packageName;
+            return ClassName.get(newPackageName, genClass.getSimpleName() + MAPPER);
         }
         throw new InnerClassGenerationException(format(UNABLE_TO_CREATE_INNER_CLASS_MAPPER, genClass));
     }
 
     /**
-     * Generate mapper for class, if it wasn't generated earlier.
-     *
-     * @param field         - field which type is a model for new mapper.
-     * @param jarPathToMain - classpath from root to main.
-     * @return ClassName of new generated class.
+     * Gets class by field.
+     * @param field - field which type is a model for new mapper.
+     * @return class from field
      */
-    static ClassName createMapperForInnerClassIfNeeded(Field field, String jarPathToMain) {
+    public static Class<?> getClassFromField (Field field) {
         ParameterizedType type = (ParameterizedType) field.getGenericType();
-        Class<?> genClass = (Class) type.getActualTypeArguments()[0];
-        if (genClass.isEnum()) return ClassName.get(genClass);
-        if (!genClass.isAnnotationPresent(IgnoreGeneration.class)) {
-            String classPackage = genClass.getName().substring(0, genClass.getName().indexOf(genClass.getSimpleName()) - 1);
-            String genPackage = classPackage.contains(MODEL) ?
-                    classPackage.replace(MODEL, MAPPING) :
-                    classPackage.substring(0, classPackage.lastIndexOf(DOT)) + DOT + MAPPING;
-            if (!generatedFiles.contains(genClass))
-                createMapperClass(genClass, genPackage, jarPathToMain);
-            return ClassName.get(genPackage, genClass.getSimpleName() + MAPPER);
-        }
-        throw new InnerClassGenerationException(format(UNABLE_TO_CREATE_INNER_CLASS_MAPPER, genClass));
+        return (Class) type.getActualTypeArguments()[0];
     }
 }
