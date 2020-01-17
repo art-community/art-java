@@ -29,6 +29,7 @@ public interface StringConstants {
     String SHARP = "#";
     String SLASH = "/";
     String BACKWARD_SLASH = "\\";
+    String SLASH_REGEX = "\\/";
     String BACKWARD_SLASH_REGEX = "\\\\";
     String DOUBLE_QUOTES = "\"";
     String WILDCARD = "*";
@@ -68,4 +69,6 @@ public interface StringConstants {
     String WINDOWS_DISK_PATH_BACKWARD_SLASH = ":\\";
     String WINDOWS_DISK_PATH_BACKWARD_SLASH_REGEX = ":\\\\";
     String WSL_DISK_PREFIX = "/mnt/";
+    String PIPE = "|";
+    String  ANSI_RESET = "\u001B[0m";
 }

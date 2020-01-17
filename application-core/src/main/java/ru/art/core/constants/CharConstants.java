@@ -46,4 +46,5 @@ public interface CharConstants {
     char BACK_SLASH = '\\';
     char TABULATION = '\t';
     char BOM_UTF = '\uFEFF';
+    char PIPE = '|';
 }
