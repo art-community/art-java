@@ -26,8 +26,6 @@ public interface LoggingModuleConstants {
     String LOG4J2_YAML_FILE = "log4j2.yml";
     String LOG4J2_CONFIGURATION_FILE_PROPERTY = "log4j.configurationFile";
     String VALUE_LOG_MESSAGE = "Value: ''{0}''";
-    String LOG4_ASYNC_CONTEXT_PROPERTY_NAME = "Log4jContextSelector";
-
 
     enum LoggingMode {
         CONSOLE,
