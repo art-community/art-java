@@ -36,7 +36,6 @@ public interface TarantoolModuleConstants {
     String COLLATION = "collation";
     String ID_FIELD = "id";
     String VALUE = "value";
-    String TARANTOOL_READY_MESSAGE = "entering the event loop";
 
     interface Templates {
         String CONFIGURATION = "configuration.lua";
