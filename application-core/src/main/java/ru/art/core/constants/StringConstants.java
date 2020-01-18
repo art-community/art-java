@@ -23,7 +23,7 @@ import java.util.regex.*;
 
 public interface StringConstants {
     // @formatter:off
-    String ART_BANNER = "";
+    String ART_BANNER = "Welcome to ART!";
     String TRUE_NUMERIC = "1";
     String FALSE_NUMERIC = "0";
     String SHARP = "#";

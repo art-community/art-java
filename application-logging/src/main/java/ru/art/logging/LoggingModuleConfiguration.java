@@ -19,11 +19,16 @@
 package ru.art.logging;
 
 import lombok.*;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.core.async.*;
 import ru.art.core.module.*;
 import ru.art.logging.LoggingModuleConstants.*;
+import static java.lang.System.*;
 import static org.apache.logging.log4j.LogManager.getRootLogger;
 import static org.apache.logging.log4j.core.config.Configurator.*;
+import static org.apache.logging.log4j.core.util.Constants.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.logging.LoggerConfigurationService.*;
 import static ru.art.logging.LoggingModuleConstants.LoggingMode.*;
 import java.util.*;
@@ -43,30 +48,46 @@ public interface LoggingModuleConfiguration extends ModuleConfiguration {
 
     LoggingModuleDefaultConfiguration DEFAULT_CONFIGURATION = new LoggingModuleDefaultConfiguration();
 
-	@Getter
-	class LoggingModuleDefaultConfiguration implements LoggingModuleConfiguration {
-        private final Logger logger = LogManager.getLogger(LoggingModuleConfiguration.class);
+    boolean isEnabledColoredLogs();
+
+    boolean isEnabledAsynchronousLogging();
+
+    @Getter
+    class LoggingModuleDefaultConfiguration implements LoggingModuleConfiguration {
+        @Getter(lazy = true)
         private final Level level = loadLoggingLevel();
+        @Getter(lazy = true)
         private final SocketAppenderConfiguration socketAppenderConfiguration = loadSocketAppenderCurrentConfiguration();
+        @Getter(lazy = true)
         private final Set<LoggingMode> loggingModes = loadLoggingModes();
+        private final boolean enabledColoredLogs = false;
+        private final boolean enabledAsynchronousLogging = false;
 
         protected LoggingModuleDefaultConfiguration() {
+            if (isEnabledAsynchronousLogging()) {
+                setProperty(LOG4J_CONTEXT_SELECTOR, AsyncLoggerContextSelector.class.getName());
+            }
             refresh();
         }
 
         @Override
+        public Logger getLogger() {
+            return isEnabledColoredLogs() ? new ColoredLogger(cast(LogManager.getLogger())) : LogManager.getLogger();
+        }
+
+        @Override
         public Logger getLogger(String topic) {
-            return LogManager.getLogger(topic);
+            return isEnabledColoredLogs() ? new ColoredLogger(cast(LogManager.getLogger(topic))) : LogManager.getLogger(topic);
         }
 
         @Override
         public Logger getLogger(Class<?> topicClass) {
-            return LogManager.getLogger(topicClass);
+            return isEnabledColoredLogs() ? new ColoredLogger(cast(LogManager.getLogger(topicClass))) : LogManager.getLogger(topicClass);
         }
 
         @Override
         public void refresh() {
-            setLoggingModes(loggingModes);
+            setLoggingModes(getLoggingModes());
             if (getLoggingModes().contains(SOCKET)) {
                 updateSocketAppender(getSocketAppenderConfiguration());
             }
