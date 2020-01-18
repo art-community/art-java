@@ -1,10 +1,10 @@
-package ru.art.logging;
+package ru.art.core.constants;
 
 import lombok.*;
 
 @Getter
 @AllArgsConstructor
-enum LogMessageColor {
+public enum AnsiColor {
     BLACK("\u001B[30m"),
     RED("\u001B[31m"),
     GREEN("\u001B[32m"),
