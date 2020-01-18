@@ -19,15 +19,14 @@
 package ru.art.logging;
 
 import lombok.*;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.core.async.*;
 import ru.art.core.module.*;
 import ru.art.logging.LoggingModuleConstants.*;
-import static java.lang.System.*;
+import static java.lang.System.setProperty;
 import static org.apache.logging.log4j.LogManager.getRootLogger;
 import static org.apache.logging.log4j.core.config.Configurator.*;
-import static org.apache.logging.log4j.core.util.Constants.*;
+import static org.apache.logging.log4j.core.util.Constants.LOG4J_CONTEXT_SELECTOR;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.logging.LoggerConfigurationService.*;
 import static ru.art.logging.LoggingModuleConstants.LoggingMode.*;
@@ -64,9 +63,6 @@ public interface LoggingModuleConfiguration extends ModuleConfiguration {
         private final boolean enabledAsynchronousLogging = false;
 
         protected LoggingModuleDefaultConfiguration() {
-            if (isEnabledAsynchronousLogging()) {
-                setProperty(LOG4J_CONTEXT_SELECTOR, AsyncLoggerContextSelector.class.getName());
-            }
             refresh();
         }
 
@@ -87,6 +83,9 @@ public interface LoggingModuleConfiguration extends ModuleConfiguration {
 
         @Override
         public void refresh() {
+            if (isEnabledAsynchronousLogging()) {
+                setProperty(LOG4J_CONTEXT_SELECTOR, AsyncLoggerContextSelector.class.getName());
+            }
             setLoggingModes(getLoggingModes());
             if (getLoggingModes().contains(SOCKET)) {
                 updateSocketAppender(getSocketAppenderConfiguration());
