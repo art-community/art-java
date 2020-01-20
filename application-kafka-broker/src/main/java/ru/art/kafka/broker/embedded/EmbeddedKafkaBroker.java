@@ -54,6 +54,7 @@ public class EmbeddedKafkaBroker {
      * @param zookeeperConfiguration - custom zookeeper configuration to start new or use existing Zookeeper;
      * @param zookeeperInitializationMode - parameter allows different ways of choosing Zookeeper;
      * if is not equals ON_KAFKA_BROKER_INITIALIZATION value, Zookeeper is not started, as soon as expected it's running already;
+     * if mode is ON_KAFKA_BROKER_INITIALIZATION and default topics define in config, create them with replication factor = 1;
      * @return broker instance;
      */
     public static EmbeddedKafkaBroker startKafkaBroker(KafkaBrokerConfiguration kafkaBrokerConfiguration, ZookeeperConfiguration zookeeperConfiguration, ZookeeperInitializationMode zookeeperInitializationMode) {
@@ -92,9 +93,9 @@ public class EmbeddedKafkaBroker {
     }
 
     /**
-     *
-     * @param configuration
-     * @param zookeeperInitializationMode
+     * Kafka zookeeper's configuration is taking from module;
+     * @param configuration - custom broker configuration to fill properties instance to start KafkaService;
+     * @param zookeeperInitializationMode - parameter allows different ways of choosing Zookeeper;
      * @return broker instance;
      */
     public static EmbeddedKafkaBroker startKafkaBroker(KafkaBrokerConfiguration configuration, ZookeeperInitializationMode zookeeperInitializationMode) {
@@ -102,8 +103,8 @@ public class EmbeddedKafkaBroker {
     }
 
     /**
-     *
-     * @param configuration
+     * Kafka zookeeper's configuration and initialization mode are taking from module;
+     * @param configuration - custom broker configuration to fill properties instance to start KafkaService;
      * @return broker instance;
      */
     public static EmbeddedKafkaBroker startKafkaBroker(KafkaBrokerConfiguration configuration) {
@@ -111,7 +112,7 @@ public class EmbeddedKafkaBroker {
     }
 
     /**
-     *
+     * Kafka broker's configuration's taking from module;
      * @return broker instance;
      */
     public static EmbeddedKafkaBroker startKafkaBroker() {
