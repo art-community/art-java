@@ -22,15 +22,31 @@ import lombok.*;
 import lombok.experimental.*;
 import ru.art.core.module.*;
 import static ru.art.config.state.ConfigModuleState.ConfigurationMode.*;
+import static ru.art.core.constants.StringConstants.*;
 
 @Getter
 @Setter
 @Accessors(fluent = true)
 public class ConfigModuleState implements ModuleState {
     private volatile ConfigurationMode configurationMode = FILE;
+    private volatile String localConfigUrl = EMPTY_STRING;
+    private volatile RemoteConfigConnectionProperties remoteConfigProperties = RemoteConfigConnectionProperties.builder().build();
 
     public enum ConfigurationMode {
         FILE,
         REMOTE
+    }
+
+    @Getter
+    @Builder
+    public static class RemoteConfigConnectionProperties {
+        private final String host;
+        private final int port;
+        private final String path;
+
+        @Override
+        public String toString() {
+            return "host: " + host + ", port: " + port + ", path: " + path;
+        }
     }
 }

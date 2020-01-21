@@ -18,8 +18,12 @@
 
 package ru.art.rsocket.configuration;
 
+import io.rsocket.RSocketFactory.*;
 import io.rsocket.plugins.*;
+import io.rsocket.transport.netty.server.*;
 import lombok.*;
+import reactor.netty.http.server.*;
+import reactor.netty.tcp.*;
 import ru.art.core.module.*;
 import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
@@ -29,6 +33,7 @@ import ru.art.rsocket.exception.*;
 import ru.art.rsocket.interceptor.*;
 import ru.art.rsocket.model.*;
 import static java.text.MessageFormat.*;
+import static java.util.function.Function.*;
 import static ru.art.core.constants.NetworkConstants.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -36,6 +41,7 @@ import static ru.art.core.network.selector.PortSelector.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*;
 import java.util.*;
+import java.util.function.*;
 
 public interface RsocketModuleConfiguration extends ModuleConfiguration {
     String getServerHost();
@@ -87,6 +93,18 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
 
     List<ValueInterceptor<Entity, Entity>> getResponseValueInterceptors();
 
+    Function<? extends HttpServer, ? extends HttpServer> getWebSocketServerConfigurator();
+
+    Function<? extends TcpServer, ? extends TcpServer> getTcpServerConfigurator();
+
+    Function<? extends WebsocketServerTransport, ? extends WebsocketServerTransport> getWebSocketServerTransportConfigurator();
+
+    Function<? extends TcpServerTransport, ? extends TcpServerTransport> getTcpServerTransportConfigurator();
+
+    Function<? extends ServerRSocketFactory, ? extends ServerRSocketFactory> getServerFactoryConfigurator();
+
+    int getFragmentationMtu();
+
     @Getter
     class RsocketModuleDefaultConfiguration implements RsocketModuleConfiguration {
         private final RsocketDataFormat dataFormat = MESSAGE_PACK;
@@ -104,6 +122,12 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
         private final long clientResumeStreamTimeout = DEFAULT_RSOCKET_RESUME_STREAM_TIMEOUT;
         private final boolean enableRawDataTracing = false;
         private final boolean enableValueTracing = false;
+        private final int fragmentationMtu = 0;
+        private final Function<? extends HttpServer, ? extends HttpServer> webSocketServerConfigurator = identity();
+        private final Function<? extends TcpServer, ? extends TcpServer> tcpServerConfigurator = identity();
+        private final Function<? extends WebsocketServerTransport, ? extends WebsocketServerTransport> webSocketServerTransportConfigurator = identity();
+        private final Function<? extends TcpServerTransport, ? extends TcpServerTransport> tcpServerTransportConfigurator = identity();
+        private final Function<? extends ServerRSocketFactory, ? extends ServerRSocketFactory> serverFactoryConfigurator = identity();
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<RSocketInterceptor> serverInterceptors = initializeInterceptors();
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))

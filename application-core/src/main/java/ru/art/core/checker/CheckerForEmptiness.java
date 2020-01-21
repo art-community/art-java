@@ -20,6 +20,7 @@ package ru.art.core.checker;
 
 import lombok.experimental.*;
 import static java.util.Objects.*;
+import static ru.art.core.constants.StringConstants.*;
 import java.util.*;
 
 @UtilityClass
@@ -29,7 +30,8 @@ public class CheckerForEmptiness {
     }
 
     public static <T> boolean isEmpty(T val) {
-        return isNull(val) || val.toString().trim().isEmpty();
+        String valAsString;
+        return isNull(val) || (valAsString = val.toString().trim()).isEmpty() || (valAsString.equalsIgnoreCase(NULL_STRING));
     }
 
     public static <T> boolean isEmpty(T[] content) {

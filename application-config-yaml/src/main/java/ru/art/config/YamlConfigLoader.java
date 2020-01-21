@@ -39,7 +39,7 @@ public class YamlConfigLoader {
         return isEmpty(configId) ? node : node.at(SLASH + configId.replace(DOT, SLASH));
     }
 
-    private static JsonNode loadYaml() throws IOException {
+    static URL loadYamlConfigUrl() {
         String configFilePath = getProperty(CONFIG_FILE_PATH_PROPERTY);
         File configFile;
         if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists()) {
@@ -47,8 +47,16 @@ public class YamlConfigLoader {
             if (isNull(configFileUrl)) {
                 throw new YamlLoadingException(CONFIG_FILE_WAS_NOT_FOUND);
             }
-            return new YAMLMapper().readTree(configFileUrl);
+            return configFileUrl;
         }
-        return YAML_MAPPER.readTree(configFile);
+        try {
+            return configFile.toURI().toURL();
+        } catch (Throwable throwable) {
+            throw new YamlLoadingException(throwable);
+        }
+    }
+
+    private static JsonNode loadYaml() throws IOException {
+        return YAML_MAPPER.readTree(loadYamlConfigUrl());
     }
 }

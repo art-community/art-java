@@ -35,6 +35,7 @@ dependencies {
         embedded("org.apache.logging.log4j", "log4j-core", log4jVersion)
 
         embedded("org.apache.logging.log4j", "log4j-jul", log4jVersion)
+        embedded("com.lmax", "disruptor", "3.4.+")
 
         embedded("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
         embedded("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)

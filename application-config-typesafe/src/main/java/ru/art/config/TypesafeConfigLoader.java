@@ -40,7 +40,7 @@ class TypesafeConfigLoader {
         return isEmpty(configId) ? config.root() : config.getObject(configId);
     }
 
-    private static Reader loadConfigReader(ConfigSyntax configSyntax) throws IOException {
+    static URL loadTypeSafeConfigUrl(ConfigSyntax configSyntax) {
         String configFilePath = getProperty(CONFIG_FILE_PATH_PROPERTY);
         File configFile;
         if (isEmpty(configFilePath) || !(configFile = new File(configFilePath)).exists() || isEmpty(readFile(get(configFile.getAbsolutePath())))) {
@@ -48,8 +48,16 @@ class TypesafeConfigLoader {
             if (isNull(configFileUrl)) {
                 throw new TypesafeConfigLoadingException(format(CONFIG_FILE_NOT_FOUND, configSyntax.toString().toLowerCase()));
             }
-            return new InputStreamReader(configFileUrl.openStream());
+            return configFileUrl;
         }
-        return new FileReader(configFile);
+        try {
+            return configFile.toURI().toURL();
+        } catch (Throwable throwable) {
+            throw new TypesafeConfigLoadingException(throwable);
+        }
+    }
+
+    private static Reader loadConfigReader(ConfigSyntax configSyntax) throws IOException {
+        return new InputStreamReader(loadTypeSafeConfigUrl(configSyntax).openStream());
     }
 }

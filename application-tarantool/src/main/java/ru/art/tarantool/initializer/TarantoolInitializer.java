@@ -83,10 +83,10 @@ public class TarantoolInitializer {
             }
         } catch (Throwable throwable) {
             if (instanceMode == LOCAL) {
-                logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address), throwable);
+                logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
                 startTarantool(instanceId);
             }
-            TarantoolClient tarantoolClient = tryConnectToTarantool(instanceId);
+            TarantoolClient tarantoolClient = waitForTarantoolInitialization(instanceId);
             if (tarantoolClient.isAlive()) {
                 connectToTarantool(instanceId);
                 return;
@@ -96,7 +96,7 @@ public class TarantoolInitializer {
         if (instanceMode == LOCAL) {
             logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
             startTarantool(instanceId);
-            TarantoolClient tarantoolClient = tryConnectToTarantool(instanceId);
+            TarantoolClient tarantoolClient = waitForTarantoolInitialization(instanceId);
             if (tarantoolClient.isAlive()) {
                 connectToTarantool(instanceId);
                 return;
@@ -214,8 +214,7 @@ public class TarantoolInitializer {
                 .directory(new File(localConfiguration.getWorkingDirectory()))
                 .redirectOutput(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .redirectError(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
-                .start()
-                .getProcess();
+                .start();
         logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
     }
 

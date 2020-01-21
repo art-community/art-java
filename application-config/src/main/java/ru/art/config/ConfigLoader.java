@@ -26,6 +26,7 @@ import static java.text.MessageFormat.*;
 import static ru.art.config.TypesafeConfigLoader.*;
 import static ru.art.config.YamlConfigLoader.*;
 import static ru.art.config.constants.ConfigExceptionMessages.*;
+import static ru.art.config.module.ConfigModule.*;
 
 @UtilityClass
 public class ConfigLoader {
@@ -34,8 +35,10 @@ public class ConfigLoader {
             case PROPERTIES:
             case JSON:
             case HOCON:
+                configModuleState().localConfigUrl(loadTypeSafeConfigUrl(toTypesafeConfigSyntax(configType)).toString());
                 return new Config(loadTypeSafeConfig(configId, toTypesafeConfigSyntax(configType)), configType);
             case YAML:
+                configModuleState().localConfigUrl(loadYamlConfigUrl().toString());
                 return new Config(loadYamlConfig(configId), configType);
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));

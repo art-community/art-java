@@ -19,4 +19,8 @@ package ru.art.core.constants;
 public interface SystemConstants {
     String WSL = "wsl";
     String BASH = "bash";
+    int PROCESS_ERROR_CODE_OK = 0;
+    int PROCESS_ERROR_CODE_FAIL = -1;
+    String BASH_FIRST_ARGUMENT = "$1";
+    String BASH_ALL_ARGUMENTS = "$@";
 }

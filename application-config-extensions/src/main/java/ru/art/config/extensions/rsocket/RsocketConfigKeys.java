@@ -29,4 +29,5 @@ public interface RsocketConfigKeys {
     String RESUMABLE = "resumable";
     String RESUME_SESSION_DURATION = "resumeSessionDuration";
     String RESUME_STREAM_TIMEOUT = "resumeStreamTimeout";
+    String FRAGMENTATION_MTU = "fragmentationMtu";
 }
