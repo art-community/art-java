@@ -28,6 +28,7 @@ public interface TarantoolModuleConstants {
     int DEFAULT_TARANTOOL_CONNECTION_TIMEOUT = DEFAULT_TARANTOOL_PROBE_CONNECTION_TIMEOUT * 20;
     int DEFAULT_TARANTOOL_PORT = findAvailableTcpPort();
     String DEFAULT_TARANTOOL_USERNAME = "guest";
+    int DEFAULT_TARANTOOL_OPERATION_TIMEOUT = 60 * 1000;
     String LUA_REGEX = ".+\\.lua";
     String DEFAULT_TARANTOOL_EXECUTABLE = "tarantool";
     int DEFAULT_STARTUP_TIMEOUT = 60 * 60 * 1000;
@@ -102,6 +103,7 @@ public interface TarantoolModuleConstants {
         String READ_ONLY = "readOnly";
         String VINYL_TIMEOUT = "vinylTimeout";
         String WORKER_POOL_THREADS = "workerPoolThreads";
+        String OPTIONS = "options";
         String PASSWORD = "password";
         String INDEX_NAME = "indexName";
         String SPACE_NAME = "spaceName";
