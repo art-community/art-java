@@ -35,6 +35,7 @@ public interface TarantoolConfigKeys {
     String STARTUP_TIMEOUT_MILLIS = "startupTimeoutMillis";
     String USERNAME = "username";
     String PASSWORD = "password";
+    String OPERATION_TIMEOUT_MILLIS = "operationTimeoutMillis";
     String BACKGROUND = "background";
     String CUSTOM_PROC_TITLE = "customProcTitle";
     String MEMTX_DIR = "memtxDir";
