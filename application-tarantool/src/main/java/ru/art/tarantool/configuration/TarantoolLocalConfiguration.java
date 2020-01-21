@@ -30,6 +30,8 @@ public class TarantoolLocalConfiguration {
     @Builder.Default
     private final String executable = DEFAULT_TARANTOOL_EXECUTABLE;
     @Builder.Default
+    private final int startupTimeoutMillis = DEFAULT_STARTUP_TIMEOUT;
+    @Builder.Default
     private final String workingDirectory = get(EMPTY_STRING).toAbsolutePath().toString()
             + separator
             + TARANTOOL;

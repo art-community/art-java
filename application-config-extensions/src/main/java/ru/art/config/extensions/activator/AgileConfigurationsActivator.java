@@ -42,6 +42,18 @@ public class AgileConfigurationsActivator {
         loggingModule()
                 .getLogger(AgileConfigurationsActivator.class)
                 .info(format(CONFIGURATION_MODE, configModuleState().configurationMode()));
+        switch (configModuleState().configurationMode()) {
+            case FILE:
+                loggingModule()
+                        .getLogger(AgileConfigurationsActivator.class)
+                        .info(format(CONFIGURATION_FILE_URL, configModuleState().localConfigUrl()));
+                return context;
+            case REMOTE:
+                loggingModule()
+                        .getLogger(AgileConfigurationsActivator.class)
+                        .info(format(REMOTE_CONFIGURATION_PROPERTIES, configModuleState().remoteConfigProperties()));
+                return context;
+        }
         return context;
     }
 

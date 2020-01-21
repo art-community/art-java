@@ -22,6 +22,7 @@ import ru.art.config.*;
 import ru.art.config.cache.*;
 import ru.art.config.exception.*;
 import ru.art.config.remote.specification.*;
+import ru.art.config.state.*;
 import ru.art.configurator.api.specification.*;
 import static java.util.Objects.*;
 import static ru.art.config.ConfigProvider.*;
@@ -52,13 +53,18 @@ public class RemoteConfigProvider {
             String configuratorHost = localConfig.getString(CONFIGURATOR_HOST);
             Integer configuratorPort = localConfig.getInt(CONFIGURATOR_PORT);
             String configuratorPath = localConfig.getString(CONFIGURATOR_PATH);
+            configModuleState().remoteConfigProperties(ConfigModuleState.RemoteConfigConnectionProperties.builder()
+                    .host(configuratorHost)
+                    .port(configuratorPort)
+                    .path(configuratorPath)
+                    .build());
             serviceModuleState()
                     .getServiceRegistry()
                     .registerService(new ConfiguratorCommunicationSpecification(configuratorHost, configuratorPort, configuratorPath))
                     .registerService(new RemoteConfigServiceSpecification());
             configModuleState().configurationMode(REMOTE);
         } catch (Throwable throwable) {
-            loggingModule().getLogger(RemoteConfigProvider.class).warn(CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS, throwable);
+            loggingModule().getLogger(RemoteConfigProvider.class).warn(CONFIGURATOR_CONNECTION_PROPERTIES_NOT_EXISTS);
         }
     }
 

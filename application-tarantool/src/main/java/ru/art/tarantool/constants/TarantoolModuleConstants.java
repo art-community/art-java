@@ -30,6 +30,7 @@ public interface TarantoolModuleConstants {
     String DEFAULT_TARANTOOL_USERNAME = "guest";
     String LUA_REGEX = ".+\\.lua";
     String DEFAULT_TARANTOOL_EXECUTABLE = "tarantool";
+    int DEFAULT_STARTUP_TIMEOUT = 60 * 60 * 1000;
     String TWIG_TEMPLATE = ".twig";
     String IS_NULLABLE = "is_nullable";
     String COLLATION = "collation";
@@ -70,13 +71,14 @@ public interface TarantoolModuleConstants {
         String ENTITY_WITHOUT_ID_FILED = "Entity ''{0}'' does not has 'id' long field";
         String ENTITY_IS_NULL = "Entity ''{0}'' is null";
         String RESULT_IS_INVALID = "Result for entity ''{0}'' returned from Tarantool is invalid";
+        String TIMEOUT_ERROR = "Unable to startup Tarantool during ''{0,number,#}[ms]''";
     }
 
     interface LoggingMessages {
         String TARANTOOL_SUCCESSFULLY_CONNECTED = "Tarantool ''{0}'' with address ''{1}'' successfully connected";
         String TARANTOOL_SUCCESSFULLY_STARTED = "Tarantool ''{0}'' with address ''{1}'' successfully started";
-        String WRITING_TARANTOOL_CONFIGURATION = "Writing Tarantool ''{0}'' address ''{1}'' configuration:\n\t{2}\nto file ''{3}''";
-        String EVALUATING_LUA_SCRIPT = "Evaluating lua script:\n\t{0}";
+        String WRITING_TARANTOOL_CONFIGURATION = "Writing Tarantool ''{0}'' address ''{1}'' configuration: ''{2}'' to file ''{3}''";
+        String EVALUATING_LUA_SCRIPT = "Evaluating lua script: ''{0}''";
         String EXTRACT_TARANTOOL_LUA_SCRIPTS = "Extract Tarantool ''{0}'' with address''{1}'' lua scripts to ''{2}''";
         String EXTRACT_TARANTOOL_BINARY = "Extract Tarantool ''{0}'' with address ''{1}'' binary executable to ''{2}''";
         String WRITING_TARANTOOL_USER_CONFIGURATION = "Writing Tarantool ''{0}'' with address = ''{1}'' user configuration to file ''{2}''";

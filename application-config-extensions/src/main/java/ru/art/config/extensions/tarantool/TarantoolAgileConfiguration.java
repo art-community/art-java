@@ -65,8 +65,11 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
         executabe = configString(TARANTOOL_LOCAL_SECTION_ID, EXECUTABLE, executabe);
         String workingDirectory = defaultLocalConfiguration.getWorkingDirectory();
         workingDirectory = configString(TARANTOOL_LOCAL_SECTION_ID, WORKING_DIRECTORY, workingDirectory);
+        int startupTimeoutMillis = defaultLocalConfiguration.getStartupTimeoutMillis();
+        startupTimeoutMillis = configInt(TARANTOOL_LOCAL_SECTION_ID, STARTUP_TIMEOUT_MILLIS, startupTimeoutMillis);
         localConfiguration = TarantoolLocalConfiguration.builder()
                 .executable(executabe)
+                .startupTimeoutMillis(startupTimeoutMillis)
                 .workingDirectory(workingDirectory)
                 .build();
         Function<Config, TarantoolConfiguration> mapper = config -> TarantoolConfiguration.builder()
