@@ -52,6 +52,7 @@ public interface RsocketModuleConstants {
         String UNSUPPORTED_TRANSPORT = "Unsupported RSocket transport: {0}";
         String RSOCKET_RESTART_FAILED = "Rsocket restart failed";
         String INVALID_RSOCKET_COMMUNICATION_CONFIGURATION = "Some required fields in RSocket communication configuration are null: ";
+        String FAILED_TO_READ_PAYLOAD = "Payload reading failed with exception: {0}";
     }
 
     interface LoggingMessages {

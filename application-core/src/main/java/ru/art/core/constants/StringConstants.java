@@ -19,16 +19,18 @@
 package ru.art.core.constants;
 
 import static java.util.regex.Pattern.*;
+import static ru.art.core.colorizer.AnsiColorizer.success;
 import java.util.regex.*;
 
 public interface StringConstants {
     // @formatter:off
-    String ART_BANNER = "";
+    String ART_BANNER = success("Welcome to ART!");
     String TRUE_NUMERIC = "1";
     String FALSE_NUMERIC = "0";
     String SHARP = "#";
     String SLASH = "/";
     String BACKWARD_SLASH = "\\";
+    String SLASH_REGEX = "\\/";
     String BACKWARD_SLASH_REGEX = "\\\\";
     String DOUBLE_QUOTES = "\"";
     String WILDCARD = "*";
@@ -68,4 +70,7 @@ public interface StringConstants {
     String WINDOWS_DISK_PATH_BACKWARD_SLASH = ":\\";
     String WINDOWS_DISK_PATH_BACKWARD_SLASH_REGEX = ":\\\\";
     String WSL_DISK_PREFIX = "/mnt/";
+    String PIPE = "|";
+    String ANSI_RESET = "\u001B[0m";
+    String EXCLAMATION_MARK = "!";
 }

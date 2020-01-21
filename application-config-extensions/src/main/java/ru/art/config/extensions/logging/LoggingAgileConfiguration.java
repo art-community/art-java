@@ -24,12 +24,14 @@ import ru.art.logging.LoggingModuleConfiguration.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.logging.LoggingConfigKeys.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
+import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
 
 @Getter
 public class LoggingAgileConfiguration extends LoggingModuleDefaultConfiguration {
     private Level level;
+    private boolean enabledColoredLogs;
+    private boolean enabledAsynchronousLogging;
 
     public LoggingAgileConfiguration() {
         refresh();
@@ -37,6 +39,8 @@ public class LoggingAgileConfiguration extends LoggingModuleDefaultConfiguration
 
     @Override
     public void refresh() {
+        enabledColoredLogs = configBoolean(LOGGING_SECTION_ID, ENABLED_COLORED_LOGS, super.isEnabledColoredLogs());
+        enabledAsynchronousLogging = configBoolean(LOGGING_SECTION_ID, ENABLED_ASYNCHRONOUS_LOGGING, super.isEnabledAsynchronousLogging());
         String levelString = configString(LOGGING_SECTION_ID, LEVEL, EMPTY_STRING);
         if (isEmpty(levelString)) {
             level = super.getLevel();

@@ -48,6 +48,7 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
     private Map<String, RsocketCommunicationTargetConfiguration> communicationTargets;
     private boolean enableRawDataTracing;
     private boolean enableValueTracing;
+    private int fragmentationMtu;
     private boolean resumableServer;
     private long serverResumeSessionDuration;
     private long serverResumeStreamDuration;
@@ -69,6 +70,7 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
         clientResumeStreamDuration  = configLong(RSOCKET_COMMUNICATION_SECTION_ID, RESUME_STREAM_TIMEOUT, super.getClientResumeStreamTimeout());
         enableRawDataTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
         enableValueTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
+        fragmentationMtu = configInt(RSOCKET_SECTION_ID, FRAGMENTATION_MTU, super.getFragmentationMtu());
         dataFormat = ifException(() -> parseRsocketDataFormat(configString(RSOCKET_SECTION_ID, DATA_FORMAT).toUpperCase()), super.getDataFormat());
         String newAcceptorHost = configString(RSOCKET_SERVER_SECTION_ID, HOST, super.getServerHost());
         boolean restart = !serverHost.equals(newAcceptorHost);

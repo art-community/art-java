@@ -44,8 +44,6 @@ public interface Constants {
     }
 
     interface PathAndPackageConstants {
-        String SLASH_MODEL = separator + "model";
-        String SLASH_MAPPING = separator + "mapping";
         String SRC_MAIN_JAVA = "src" + separator + "main" + separator + "java";
         String DOT_MAPPER_DOT = ".mapper.";
         String DOT_MODEL_DOT = ".model.";
@@ -54,8 +52,6 @@ public interface Constants {
         String DOT_CLASS = ".class";
         String DOT_JAVA = ".java";
         String MAIN = "main";
-        String MODEL = "model";
-        String MAPPING = "mapping";
         String DOT_JAR = ".jar";
     }
 
