@@ -29,7 +29,7 @@ import java.util.concurrent.locks.*;
 @UtilityClass
 @SuppressWarnings("Duplicates")
 public final class TarantoolScriptService {
-    private final static ReentrantLock LOCK = new ReentrantLock();
+    private static final ReentrantLock LOCK = new ReentrantLock();
 
     public static void evaluateValueScript(String instanceId, String spaceName) {
         TarantoolValueScriptConfiguration valueScriptConfiguration = tarantoolValueScript(spaceName);
