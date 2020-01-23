@@ -18,7 +18,6 @@ package ru.art.kafka.broker.configuration;
 
 import lombok.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.io.File.*;

@@ -22,7 +22,6 @@ import ru.art.kafka.broker.configuration.KafkaBrokerModuleConfiguration.*;
 import ru.art.kafka.broker.constants.KafkaBrokerModuleConstants.*;
 import ru.art.kafka.broker.embedded.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Objects.*;
