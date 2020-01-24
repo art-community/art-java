@@ -61,14 +61,14 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
         initializationMode = super.getInitializationMode();
         initializationMode = ifException(() -> TarantoolInitializationMode.valueOf(configString(TARANTOOL_SECTION_ID, INITIALIZATION_MODE).toUpperCase()), initializationMode);
         TarantoolLocalConfiguration defaultLocalConfiguration = super.getLocalConfiguration();
-        String executabe = defaultLocalConfiguration.getExecutable();
-        executabe = configString(TARANTOOL_LOCAL_SECTION_ID, EXECUTABLE, executabe);
+        String executable = defaultLocalConfiguration.getExecutable();
+        executable = configString(TARANTOOL_LOCAL_SECTION_ID, EXECUTABLE, executable);
         String workingDirectory = defaultLocalConfiguration.getWorkingDirectory();
         workingDirectory = configString(TARANTOOL_LOCAL_SECTION_ID, WORKING_DIRECTORY, workingDirectory);
         int startupTimeoutMillis = defaultLocalConfiguration.getStartupTimeoutMillis();
         startupTimeoutMillis = configInt(TARANTOOL_LOCAL_SECTION_ID, STARTUP_TIMEOUT_MILLIS, startupTimeoutMillis);
         localConfiguration = TarantoolLocalConfiguration.builder()
-                .executable(executabe)
+                .executable(executable)
                 .startupTimeoutMillis(startupTimeoutMillis)
                 .workingDirectory(workingDirectory)
                 .build();
@@ -78,6 +78,7 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
                         .port(ifExceptionOrEmpty(() -> config.getInt(CONNECTION_SECTION_ID + DOT + PORT), DEFAULT_TARANTOOL_PORT))
                         .username(ifExceptionOrEmpty(() -> config.getString(CONNECTION_SECTION_ID + DOT + USERNAME), DEFAULT_TARANTOOL_USERNAME))
                         .password(ifExceptionOrEmpty(() -> config.getString(CONNECTION_SECTION_ID + DOT + PASSWORD), EMPTY_STRING))
+                        .operationTimeoutMillis(ifExceptionOrEmpty(() -> config.getInt(CONNECTION_SECTION_ID + DOT + OPERATION_TIMEOUT_MILLIS), DEFAULT_TARANTOOL_OPERATION_TIMEOUT))
                         .build())
                 .initialConfiguration(TarantoolInitialConfiguration.builder()
                         .background(nullIfException(() -> config.getBool(INITIAL_SECTION_ID + DOT + BACKGROUND)))

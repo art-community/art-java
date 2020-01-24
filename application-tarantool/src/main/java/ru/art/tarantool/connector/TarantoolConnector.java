@@ -51,6 +51,7 @@ public final class TarantoolConnector {
         TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
         config.username = connectionConfiguration.getUsername();
         config.password = connectionConfiguration.getPassword();
+        config.operationExpiryTimeMillis = connectionConfiguration.getOperationTimeoutMillis();
         String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
         SocketChannelProvider socketChannelProvider = new RoundRobinSocketProviderImpl(address);
         TarantoolClientImpl tarantoolClient;
@@ -77,6 +78,7 @@ public final class TarantoolConnector {
         TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
         config.username = connectionConfiguration.getUsername();
         config.password = connectionConfiguration.getPassword();
+        config.operationExpiryTimeMillis = connectionConfiguration.getOperationTimeoutMillis();
         String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
         SocketChannelProvider socketChannelProvider = new RoundRobinSocketProviderImpl(address);
         TarantoolClientImpl tarantoolClient;
@@ -101,6 +103,7 @@ public final class TarantoolConnector {
         TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
         config.username = connectionConfiguration.getUsername();
         config.password = connectionConfiguration.getPassword();
+        config.operationExpiryTimeMillis = connectionConfiguration.getOperationTimeoutMillis();
         String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
         SocketChannelProvider socketChannelProvider = new RoundRobinSocketProviderImpl(address);
         TarantoolClientImpl tarantoolClient;

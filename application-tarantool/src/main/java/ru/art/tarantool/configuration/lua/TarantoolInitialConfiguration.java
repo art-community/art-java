@@ -69,8 +69,8 @@ public class TarantoolInitialConfiguration {
                 .add(SLAB_ALLOC_FACTOR, slabAllocFactor)
                 .add(SLAB_ALLOC_MAXIMAL, slabAllocMaximal)
                 .add(SLAB_ALLOC_ARENA, slabAllocArena)
-                .add(WORKER_POOL_THREADS, workerPoolThreads));
-        options.forEach(templateContext::put);
+                .add(WORKER_POOL_THREADS, workerPoolThreads)
+                .add(OPTIONS, options));
         StringWriter templateWriter = new StringWriter();
         try {
             new PebbleEngine.Builder()
