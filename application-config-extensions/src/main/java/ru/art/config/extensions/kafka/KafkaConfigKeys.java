@@ -19,6 +19,7 @@ package ru.art.config.extensions.kafka;
 public interface KafkaConfigKeys {
     String KAFKA_BROKER_SECTION_ID = "kafka.broker";
     String KAFKA_CONSUMER_SECTION_ID = "kafka.consumer";
+    String KAFKA_TOPICS_SECTION_ID = "kafka.topics";
     String STREAMS_SECTION_ID = "streams";
     String KAFKA_PRODUCERS_SECTION_ID = "kafka.producers";
     String KAFKA_BROKER_ZOOKEEPER_SECTION_ID = "kafka.broker.zookeeper";
@@ -34,6 +35,8 @@ public interface KafkaConfigKeys {
     String KEY_DESERIALIZER = "keyDeserializer";
     String VALUE_DESERIALIZER = "valueDeserializer";
     String TOPICS = "topics";
+    String RETENTION = "retention";
+    String PARTITIONS = "partitions";
     String POLL_TIMEOUT = "pollTimeout";
     String GROUP_ID = "groupId";
     String KEY_SERDE = "keySerde";
