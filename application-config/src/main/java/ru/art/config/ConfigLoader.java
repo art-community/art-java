@@ -27,9 +27,27 @@ import static ru.art.config.TypesafeConfigLoader.*;
 import static ru.art.config.YamlConfigLoader.*;
 import static ru.art.config.constants.ConfigExceptionMessages.*;
 import static ru.art.config.module.ConfigModule.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 
 @UtilityClass
 public class ConfigLoader {
+    public static String getConfigUrl(ConfigType configType) {
+        String currentUrl;
+        if (isNotEmpty(currentUrl = configModuleState().localConfigUrl())) {
+            return currentUrl;
+        }
+        switch (configType) {
+            case PROPERTIES:
+            case JSON:
+            case HOCON:
+                return configModuleState().localConfigUrl(loadTypeSafeConfigUrl(toTypesafeConfigSyntax(configType)).toString()).localConfigUrl();
+            case YAML:
+                return configModuleState().localConfigUrl(loadYamlConfigUrl().toString()).localConfigUrl();
+            default:
+                throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
+        }
+    }
+
     public static Config loadLocalConfig(String configId, ConfigType configType) {
         switch (configType) {
             case PROPERTIES:

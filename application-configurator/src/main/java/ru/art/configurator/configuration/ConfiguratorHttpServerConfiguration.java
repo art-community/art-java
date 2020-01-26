@@ -22,7 +22,6 @@ import lombok.*;
 import org.zalando.logbook.*;
 import ru.art.core.mime.*;
 import ru.art.http.mapper.*;
-import ru.art.http.server.HttpServerModuleConfiguration.HttpResourceConfiguration.*;
 import ru.art.http.server.HttpServerModuleConfiguration.*;
 import ru.art.http.server.interceptor.*;
 import static ru.art.config.ConfigProvider.*;

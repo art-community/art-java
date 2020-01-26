@@ -92,61 +92,40 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
     class HttpResourceConfiguration {
         @Singular("templateResourceVariable")
         private final Map<String, Object> templateResourceVariables;
-        @Singular("resourceTypeMapping")
-        private final Map<String, HttpResourceType> resourceExtensionTypeMappings = mapOf(HTML, STRING)
-                .add(WSDL, STRING)
-                .add(CSS, STRING)
-                .add(MAP, STRING)
-                .add(JS, STRING)
-                .add(WEBP, BINARY)
-                .add(JPEG, BINARY)
-                .add(PNG, BINARY)
-                .add(SVG, BINARY);
-        @Singular("resourceExtensionMimeTypeMapping")
-        private final Map<String, MimeType> resourceExtensionMimeTypeMappings = mapOf(HTML, TEXT_HTML)
-                .add(WSDL, TEXT_HTML)
-                .add(CSS, TEXT_CSS)
-                .add(MAP, TEXT_HTML)
-                .add(JS, TEXT_JS)
-                .add(WEBP, IMAGE_WEBP)
-                .add(JPEG, IMAGE_JPEG)
-                .add(PNG, IMAGE_PNG)
-                .add(SVG, IMAGE_SVG_XML);
         @Singular("resourcePathMapping")
-        private final Map<String, HttpResource> resourceMappings;
-        @Builder.Default
-        private final int resourceBufferSize = DEFAULT_BUFFER_SIZE;
-        @Builder.Default
-        private final Set<String> templatingResourceExtensions = setOf(HTML, WSDL);
-        @Builder.Default
-        private final Set<String> availableResourceExtensions = setOf(WEBP, JPEG, PNG, CSS, MAP, JS, SVG, HTML, WSDL);
-        @Singular("logbookResponseBodyReplacer")
-        private final Map<MimeType, String> logbookResponseBodyReplacers = mapOf(TEXT_HTML, HTTP_RESOURCE)
-                .add(TEXT_JS, HTTP_RESOURCE)
-                .add(TEXT_CSS, HTTP_RESOURCE)
-                .add(IMAGE_WEBP, HTTP_RESOURCE)
-                .add(IMAGE_PNG, HTTP_RESOURCE)
-                .add(IMAGE_JPEG, HTTP_RESOURCE)
-                .add(IMAGE_GIF, HTTP_RESOURCE)
-                .add(IMAGE_SVG_XML, HTTP_RESOURCE)
-                .add(IMAGE_SVG, HTTP_RESOURCE);
+        private final Map<String, HttpResource> resourcePathMappings;
+        @Singular("resourceExtensionMapping")
+        private final Map<String, HttpResourceExtensionMapping> resourceExtensionMappings;
         @Singular("accessControlParameter")
-        private final Map<String, String> accessControlParameters = mapOf(ACCESS_CONTROL_ALLOW_METHODS_KEY, ACCESS_CONTROL_ALLOW_METHODS_VALUE)
-                .add(ACCESS_CONTROL_ALLOW_HEADERS_KEY, ACCESS_CONTROL_ALLOW_HEADERS_VALUE)
-                .add(ACCESS_CONTROL_MAX_AGE_HEADERS_KEY, ACCESS_CONTROL_MAX_AGE_HEADERS_VALUE)
-                .add(ACCESS_CONTROL_ALLOW_CREDENTIALS_KEY, ACCESS_CONTROL_ALLOW_CREDENTIALS_VALUE);
+        private final Map<String, String> accessControlParameters;
         @Builder.Default
         private final boolean allowOriginParameterFromRequest = true;
         @Builder.Default
         private final HttpResource defaultResource = new HttpResource(INDEX_HTML, STRING, contextConfiguration().getCharset());
+        @Builder.Default
+        private final int resourceBufferSize = DEFAULT_BUFFER_SIZE;
+        @Builder.Default
+        private final Set<String> templatingResourceExtensions = setOf(DOT_HTML, DOT_WSDL);
+    }
 
-        @Getter
-        @AllArgsConstructor
-        public static class HttpResource {
-            String path;
-            HttpResourceType type;
-            Charset charset;
-        }
+    @Getter
+    @AllArgsConstructor
+    class HttpResource {
+        private final String path;
+        private final HttpResourceType type;
+        private final Charset charset;
+    }
+
+    @Getter
+    @Builder(toBuilder = true)
+    class HttpResourceExtensionMapping {
+        private String extension;
+        @Builder.Default
+        private final MimeType mimeType = ALL;
+        private final HttpResourceType resourceType;
+        @Builder.Default
+        private final String logbookBodyReplacement = HTTP_RESOURCE_BODY_REPLACEMENT;
+        private final HttpResource customHttpResource;
     }
 
     HttpServerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new HttpServerModuleDefaultConfiguration();
@@ -169,7 +148,26 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<HttpServerInterceptor> responseInterceptors = linkedListOf();
         private final boolean ignoreAcceptHeader = false;
-        private final HttpResourceConfiguration resourceConfiguration = HttpResourceConfiguration.builder().build();
+        private final HttpResourceConfiguration resourceConfiguration = HttpResourceConfiguration.builder()
+                .accessControlParameter(ACCESS_CONTROL_ALLOW_METHODS_KEY, ACCESS_CONTROL_ALLOW_METHODS_VALUE)
+                .accessControlParameter(ACCESS_CONTROL_ALLOW_HEADERS_KEY, ACCESS_CONTROL_ALLOW_HEADERS_VALUE)
+                .accessControlParameter(ACCESS_CONTROL_MAX_AGE_HEADERS_KEY, ACCESS_CONTROL_MAX_AGE_HEADERS_VALUE)
+                .accessControlParameter(ACCESS_CONTROL_ALLOW_CREDENTIALS_KEY, ACCESS_CONTROL_ALLOW_CREDENTIALS_VALUE)
+
+                .resourceExtensionMapping(DOT_WEBP, HttpResourceExtensionMapping.builder().extension(DOT_WEBP).mimeType(IMAGE_WEBP).resourceType(BINARY).build())
+                .resourceExtensionMapping(DOT_JPG, HttpResourceExtensionMapping.builder().extension(DOT_JPG).mimeType(IMAGE_JPG).resourceType(BINARY).build())
+                .resourceExtensionMapping(DOT_ICO, HttpResourceExtensionMapping.builder().extension(DOT_ICO).mimeType(IMAGE_ICO).resourceType(BINARY).build())
+                .resourceExtensionMapping(DOT_JPEG, HttpResourceExtensionMapping.builder().extension(DOT_JPEG).mimeType(IMAGE_JPEG).resourceType(BINARY).build())
+                .resourceExtensionMapping(DOT_PNG, HttpResourceExtensionMapping.builder().extension(DOT_PNG).mimeType(IMAGE_PNG).resourceType(BINARY).build())
+                .resourceExtensionMapping(DOT_SVG, HttpResourceExtensionMapping.builder().extension(DOT_SVG).mimeType(IMAGE_SVG_XML).resourceType(BINARY).build())
+                .resourceExtensionMapping(DOT_CSS, HttpResourceExtensionMapping.builder().extension(DOT_CSS).mimeType(TEXT_CSS).resourceType(STRING).build())
+                .resourceExtensionMapping(DOT_JS, HttpResourceExtensionMapping.builder().extension(DOT_JS).mimeType(TEXT_JS).resourceType(STRING).build())
+                .resourceExtensionMapping(DOT_HTML, HttpResourceExtensionMapping.builder().extension(DOT_HTML).mimeType(TEXT_HTML).resourceType(STRING).build())
+                .resourceExtensionMapping(DOT_WSDL, HttpResourceExtensionMapping.builder().extension(DOT_WSDL).mimeType(TEXT_XML).resourceType(STRING).build())
+                .resourceExtensionMapping(DOT_XML, HttpResourceExtensionMapping.builder().extension(DOT_XML).mimeType(TEXT_XML).resourceType(STRING).build())
+                .resourceExtensionMapping(DOT_TXT, HttpResourceExtensionMapping.builder().extension(DOT_TXT).mimeType(TEXT_PLAIN).resourceType(STRING).build())
+                .build();
+
         private final Map<? extends Class<? extends Throwable>, ? extends HttpExceptionHandler<?>> exceptionHandlers =
                 mapOf(Throwable.class, (HttpExceptionHandler<Throwable>) new ExceptionHttpJsonHandler()).add(cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler()));
 

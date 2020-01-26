@@ -34,6 +34,15 @@ import static ru.art.config.module.ConfigModule.*;
 public class ConfigProvider {
     private static final ConfigCacheContainer CONFIG_CACHE_CONTAINER = new ConfigCacheContainer();
 
+    public static String configUrl() {
+        return configUrl(configModule().getModuleConfigType());
+    }
+
+    public static String configUrl(ConfigType configType) {
+        if (isNull(configType)) throw new ConfigException(CONFIG_TYPE_IS_NULL);
+        return getConfigUrl(configType);
+    }
+
     public static Config commonConfig() {
         return config(COMMON_CONFIG_ID, configModule().getModuleConfigType());
     }

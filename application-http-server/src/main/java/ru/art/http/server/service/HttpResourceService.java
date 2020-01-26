@@ -21,16 +21,21 @@ package ru.art.http.server.service;
 import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
 import lombok.experimental.*;
+import ru.art.entity.*;
 import ru.art.http.server.HttpServerModuleConfiguration.*;
 import static java.util.Objects.*;
+import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.InputOutputStreamExtensions.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.http.server.HttpServerModuleConfiguration.HttpResourceConfiguration.*;
+import static ru.art.entity.CollectionValuesFactory.*;
+import static ru.art.entity.PrimitivesFactory.*;
 import static ru.art.http.server.constants.HttpServerExceptionMessages.*;
+import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;
 import static ru.art.http.server.module.HttpServerModule.*;
 import static ru.art.logging.LoggingModule.*;
 import java.io.*;
@@ -40,6 +45,48 @@ import java.util.*;
 
 @UtilityClass
 public class HttpResourceService {
+    public static Value getHttpResource(String resource) {
+        return getHttpResource(resource, contextConfiguration().getCharset(), httpServerModule().getResourceConfiguration());
+    }
+
+    public static Value getHttpResource(String resource, HttpResourceConfiguration resourceConfiguration) {
+        return getHttpResource(resource, contextConfiguration().getCharset(), resourceConfiguration);
+    }
+
+    public static Value getHttpResource(String request, Charset charset, HttpResourceConfiguration resourceConfiguration) {
+        String resourcePath = ifEmpty(cast(request), resourceConfiguration.getDefaultResource().getPath());
+        Map<String, HttpResourceExtensionMapping> extensionMappings = resourceConfiguration.getResourceExtensionMappings();
+        Map<String, HttpResource> resourcePathMappings = resourceConfiguration.getResourcePathMappings();
+
+        HttpResource resource;
+        if (nonNull(resource = resourcePathMappings.get(resourcePath))) {
+            return cast(resource.getType() == STRING
+                    ? stringPrimitive(getStringResource(resource.getPath(), getOrElse(resource.getCharset(), charset), resourceConfiguration))
+                    : byteCollection(getBinaryResource(resource.getPath(), resourceConfiguration)));
+        }
+
+        HttpResourceExtensionMapping resourceExtensionMapping;
+        if (resourcePath.contains(DOT) && nonNull(resourceExtensionMapping = extensionMappings.get(resourcePath
+                .substring(resourcePath.lastIndexOf(DOT))
+                .toLowerCase()))) {
+            HttpResource customResource;
+            if (nonNull(customResource = resourceExtensionMapping.getCustomHttpResource())) {
+                return cast(customResource.getType() == STRING
+                        ? stringPrimitive(getStringResource(customResource.getPath(), getOrElse(customResource.getCharset(), charset), resourceConfiguration))
+                        : byteCollection(getBinaryResource(customResource.getPath(), resourceConfiguration)));
+            }
+            return cast(resourceExtensionMapping.getResourceType() == STRING
+                    ? stringPrimitive(getStringResource(resourcePath, getOrElse(resourceExtensionMapping.getMimeType().getCharset(), charset), resourceConfiguration))
+                    : byteCollection(getBinaryResource(resourcePath, resourceConfiguration)));
+        }
+        HttpResource defaultResource = resourceConfiguration.getDefaultResource();
+        return cast(defaultResource.getType() == STRING
+                ? stringPrimitive(getStringResource(defaultResource.getPath(), getOrElse(defaultResource.getCharset(), charset), resourceConfiguration))
+                : byteCollection(getBinaryResource(defaultResource.getPath(), resourceConfiguration)));
+
+    }
+
+
     public static String getStringResource(String resource) {
         return getStringResource(resource, contextConfiguration().getCharset(), httpServerModule().getResourceConfiguration());
     }
@@ -49,7 +96,7 @@ public class HttpResourceService {
     }
 
     public static String getStringResource(String resource, Charset charset, HttpResourceConfiguration resourceConfiguration) {
-        if (resourceConfiguration.getAvailableResourceExtensions().stream().noneMatch(resource::endsWith)) {
+        if (resourceConfiguration.getResourceExtensionMappings().keySet().stream().noneMatch(resource::endsWith)) {
             return EMPTY_STRING;
         }
         URL resourceUrl = mapResourceUrl(resource, resourceConfiguration);
@@ -84,17 +131,19 @@ public class HttpResourceService {
         return EMPTY_STRING;
     }
 
+
     public static byte[] getBinaryResource(String resource) {
         return getBinaryResource(resource, httpServerModule().getResourceConfiguration());
     }
 
     public static byte[] getBinaryResource(String resource, HttpResourceConfiguration resourceConfiguration) {
-        if (resourceConfiguration.getAvailableResourceExtensions().stream().noneMatch(resource::endsWith)) {
+        if (resourceConfiguration.getResourceExtensionMappings().keySet().stream().noneMatch(resource::endsWith)) {
             return EMPTY_BYTES;
         }
         URL resourceUrl = mapResourceUrl(resource, resourceConfiguration);
         return getBinaryResourceContent(resourceUrl, resourceConfiguration);
     }
+
 
     private static byte[] getBinaryResourceContent(URL resourceUrl, HttpResourceConfiguration resourceConfiguration) {
         try (InputStream pageStream = resourceUrl.openStream()) {
@@ -119,9 +168,9 @@ public class HttpResourceService {
     }
 
     private static URL mapResourceUrl(String resource, HttpResourceConfiguration resourceConfiguration) {
-        HttpResource resourceMapping = resourceConfiguration.getResourceMappings().get(resource);
-        if (isNotEmpty(resourceMapping)) {
-            resource = resourceMapping.getPath();
+        HttpResource resourcePathMapping = resourceConfiguration.getResourcePathMappings().get(resource);
+        if (isNotEmpty(resourcePathMapping)) {
+            resource = resourcePathMapping.getPath();
         }
         return HttpResourceService.class.getClassLoader().getResource(resource);
     }

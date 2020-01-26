@@ -27,6 +27,7 @@ import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.exception.*;
 import ru.art.tarantool.module.*;
 import static java.io.File.*;
+import static java.lang.Thread.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
@@ -85,11 +86,11 @@ public class TarantoolInitializer {
             if (instanceMode == LOCAL) {
                 logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
                 startTarantool(instanceId);
-            }
-            TarantoolClient tarantoolClient = waitForTarantoolInitialization(instanceId);
-            if (tarantoolClient.isAlive()) {
-                connectToTarantool(instanceId);
-                return;
+                TarantoolClient tarantoolClient = waitForTarantoolInitialization(instanceId);
+                if (tarantoolClient.isAlive()) {
+                    connectToTarantool(instanceId);
+                    return;
+                }
             }
             throw throwable;
         }
@@ -155,6 +156,7 @@ public class TarantoolInitializer {
             startTarantoolOutOfJar(instanceId, localConfiguration, address);
 
         } catch (Throwable throwable) {
+            logger.error(format(STARTUP_ERROR, instanceId), throwable);
             throw new TarantoolInitializationException(throwable);
         }
     }
@@ -166,11 +168,11 @@ public class TarantoolInitializer {
         logger.info(format(EXTRACT_TARANTOOL_LUA_SCRIPTS,
                 instanceId,
                 address,
-                localConfiguration.getWorkingDirectory()) + separator + LUA);
+                localConfiguration.getWorkingDirectory() + separator + LUA));
         logger.info(format(EXTRACT_TARANTOOL_BINARY,
                 instanceId,
                 address,
-                localConfiguration.getWorkingDirectory()) + separator + BIN);
+                localConfiguration.getWorkingDirectory() + separator + BIN));
         String executableFilePath = localConfiguration.getWorkingDirectory()
                 + separator
                 + BIN
@@ -186,13 +188,19 @@ public class TarantoolInitializer {
         new ProcessExecutor()
                 .command(executableCommand)
                 .directory(new File(localConfiguration.getWorkingDirectory()))
-                .redirectOutput(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
-                .redirectError(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
+                .redirectOutputAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
+                .redirectErrorAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .start();
+        // Sorry. I don't know why, but running inside Docker not working without this...
+        try {
+            sleep(localConfiguration.getProcessStartupTimeoutMillis());
+        } catch (Throwable throwable) {
+            //ignored
+        }
         logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
     }
 
-    private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException, InterruptedException {
+    private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException {
         URL executableUrl = TarantoolInitializer.class.getClassLoader().getResource(localConfiguration.getExecutable());
         if (isNull(executableUrl)) {
             throw new TarantoolInitializationException(format(TARANTOOL_EXECUTABLE_NOT_EXISTS, address, localConfiguration.getExecutable()));
@@ -212,9 +220,15 @@ public class TarantoolInitializer {
         new ProcessExecutor()
                 .command(executableCommand)
                 .directory(new File(localConfiguration.getWorkingDirectory()))
-                .redirectOutput(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
-                .redirectError(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
+                .redirectOutputAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
+                .redirectErrorAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .start();
+        // Sorry. I don't know why, but running inside Docker not working without this...
+        try {
+            sleep(localConfiguration.getProcessStartupTimeoutMillis());
+        } catch (Throwable throwable) {
+            //ignored
+        }
         logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
     }
 

@@ -27,12 +27,13 @@ public interface TarantoolConfigKeys {
     String CONNECTION_SECTION_ID = "connection";
     String INITIAL_SECTION_ID = "initial";
     String INSTANCE_MODE = "instanceMode";
-    String PROBE_CONNECTION_TIMEOUT = "probeConnectionTimeout";
-    String CONNECTION_TIMEOUT = "connectionTimeout";
+    String PROBE_CONNECTION_TIMEOUT_MILLIS = "probeConnectionTimeoutMillis";
+    String CONNECTION_TIMEOUT_MILLIS = "connectionTimeoutMillis";
     String INITIALIZATION_MODE = "initializationMode";
     String EXECUTABLE = "executable";
     String WORKING_DIRECTORY = "workingDirectory";
     String STARTUP_TIMEOUT_MILLIS = "startupTimeoutMillis";
+    String PROCESS_STARTUP_TIMEOUT_MILLIS = "processStartupTimeoutMillis";
     String USERNAME = "username";
     String PASSWORD = "password";
     String OPERATION_TIMEOUT_MILLIS = "operationTimeoutMillis";

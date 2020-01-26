@@ -32,6 +32,7 @@ public interface TarantoolModuleConstants {
     String LUA_REGEX = ".+\\.lua";
     String DEFAULT_TARANTOOL_EXECUTABLE = "tarantool";
     int DEFAULT_STARTUP_TIMEOUT = 60 * 60 * 1000;
+    int DEFAULT_PROCESS_STARTUP_TIMEOUT = 100;
     String TWIG_TEMPLATE = ".twig";
     String IS_NULLABLE = "is_nullable";
     String COLLATION = "collation";
@@ -72,7 +73,7 @@ public interface TarantoolModuleConstants {
         String ENTITY_WITHOUT_ID_FILED = "Entity ''{0}'' does not has 'id' long field";
         String ENTITY_IS_NULL = "Entity ''{0}'' is null";
         String RESULT_IS_INVALID = "Result for entity ''{0}'' returned from Tarantool is invalid";
-        String TIMEOUT_ERROR = "Unable to startup Tarantool during ''{0,number,#}[ms]''";
+        String STARTUP_ERROR = "Unable to startup tarantool ''{0}''";
     }
 
     interface LoggingMessages {
@@ -89,6 +90,7 @@ public interface TarantoolModuleConstants {
         String CALLED_FUNCTION = "Called tarantool function ''{0}'' with result: {1}";
         String FAILED_FUNCTION = "Failed to call tarantool function ''{0}''";
         String FAILED_SET_EXECUTABLE = "Failed apply setExecutable(true) for ''{0}''. Possibly *.jar runner user hasn't permissions to set file as executable";
+        String WAITING_FOR_CONNECT = "Waiting for tarantool ''{0}'' with address ''{1}'' to be connected during timeout ''{2,number,#}''";
     }
 
     interface TemplateParameterKeys {
