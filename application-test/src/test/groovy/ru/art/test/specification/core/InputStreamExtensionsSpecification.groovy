@@ -13,7 +13,7 @@ class InputStreamExtensionsSpecification extends Specification {
         def stream = "http://www.ovh.net/files/1Mio.dat".toURI().toURL().content as InputStream
         def file = new File("temp.bin")
         new FileOutputStream(file).with {
-            it.write(stream.readAllBytes())
+            it.write((stream.newReader().readLines().sum() as String).bytes)
             it.flush()
             it.close()
         }
