@@ -33,6 +33,7 @@ public interface TarantoolConfigKeys {
     String EXECUTABLE = "executable";
     String WORKING_DIRECTORY = "workingDirectory";
     String STARTUP_TIMEOUT_MILLIS = "startupTimeoutMillis";
+    String PROCESS_STARTUP_TIMEOUT_MILLIS = "processStartupTimeoutMillis";
     String USERNAME = "username";
     String PASSWORD = "password";
     String OPERATION_TIMEOUT_MILLIS = "operationTimeoutMillis";

@@ -20,10 +20,8 @@ package ru.art.test.specification.tarantool
 
 import ru.art.entity.Entity
 import ru.art.tarantool.configuration.lua.TarantoolIndexConfiguration
-import spock.lang.IgnoreIf
 import spock.lang.Specification
 
-import static java.lang.System.getenv
 import static java.util.Optional.empty
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.core.constants.StringConstants.EMPTY_STRING
@@ -40,7 +38,6 @@ import static ru.art.tarantool.service.TarantoolIndexService.dropIndex
 import static ru.art.tarantool.service.TarantoolSequenceService.dropSequence
 import static ru.art.tarantool.service.TarantoolSpaceService.dropSpace
 
-@IgnoreIf({ getenv('TRAVIS') as boolean })
 class TarantoolCrudSpecification extends Specification {
     def spaceName = "DataEntity"
     def instanceId = "T"

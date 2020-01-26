@@ -19,17 +19,14 @@
 package ru.art.test.specification.scheduler.spec
 
 import ru.art.test.specification.scheduler.model.DeferredEventResult
-import spock.lang.IgnoreIf
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static java.lang.System.getenv
 import static java.lang.Thread.sleep
 import static java.time.LocalDateTime.now
 import static ru.art.task.deferred.executor.DeferredExecutorImplementation.builder as deferredExecutorBuilder
 import static ru.art.test.specification.scheduler.operation.DeferredExecutorSpecOperations.*
 
-@IgnoreIf({ getenv('TRAVIS') as boolean })
 class DeferredExecutorSpec extends Specification {
     @Unroll
     "Should execute immediately #eventCount events"() {
@@ -43,7 +40,7 @@ class DeferredExecutorSpec extends Specification {
 
         when:
         println "Executor isWorking with $eventCount events"
-        triggerTimes.collect { addEventToExecutor executor, it, actualResults }*.get()
+        runInJoinedThread { triggerTimes.collect { addEventToExecutor executor, it, actualResults }*.get() }
 
         then:
         actualResults != null
@@ -69,7 +66,7 @@ class DeferredExecutorSpec extends Specification {
 
         when:
         println "Executor isWorking with $eventCount events"
-        triggerTimes.collect { addEventToExecutor executor, it, actualResults }*.get()
+        runInJoinedThread { triggerTimes.collect { addEventToExecutor executor, it, actualResults }*.get() }
 
         then:
         actualResults != null
@@ -160,7 +157,7 @@ class DeferredExecutorSpec extends Specification {
 
         when:
         println "Executor isWorking with $eventCount events"
-        triggerTimes.collect { addEventToExecutor executor, it, actualResults }*.get()
+        runInJoinedThread { triggerTimes.collect { addEventToExecutor executor, it, actualResults }*.get() }
 
         then:
         actualResults != null
@@ -222,10 +219,16 @@ class DeferredExecutorSpec extends Specification {
         when:
         println "Executor isWorking with $infinityCount infinity events and $longCount long events"
         def infinityEvents = infinityEventsTriggerTimes.collect {
-            executor.submit createInfinityDeferredEventTask(it, { addEventResult actualResults; actualResults.size() - 1 }), it
+            executor.submit createInfinityDeferredEventTask(it, {
+                addEventResult actualResults;
+                actualResults.size() - 1
+            }), it
         }
         longEventsTriggerTimes.collect {
-            executor.submit createLongDeferredEventTask(it, { addEventResult actualResults; actualResults.size() - 1 }), it
+            executor.submit createLongDeferredEventTask(it, {
+                addEventResult actualResults;
+                actualResults.size() - 1
+            }), it
         }
         sleep 5000
 

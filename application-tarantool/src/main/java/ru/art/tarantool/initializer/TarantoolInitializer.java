@@ -27,6 +27,7 @@ import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.exception.*;
 import ru.art.tarantool.module.*;
 import static java.io.File.*;
+import static java.lang.Thread.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
@@ -190,6 +191,12 @@ public class TarantoolInitializer {
                 .redirectOutputAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .redirectErrorAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .start();
+        // Sorry. I don't know why, but running inside Docker not working without this...
+        try {
+            sleep(localConfiguration.getProcessStartupTimeoutMillis());
+        } catch (Throwable throwable) {
+            //ignored
+        }
         logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
     }
 
@@ -216,6 +223,12 @@ public class TarantoolInitializer {
                 .redirectOutputAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .redirectErrorAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .start();
+        // Sorry. I don't know why, but running inside Docker not working without this...
+        try {
+            sleep(localConfiguration.getProcessStartupTimeoutMillis());
+        } catch (Throwable throwable) {
+            //ignored
+        }
         logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
     }
 
