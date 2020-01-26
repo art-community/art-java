@@ -218,17 +218,21 @@ class DeferredExecutorSpec extends Specification {
 
         when:
         println "Executor isWorking with $infinityCount infinity events and $longCount long events"
-        def infinityEvents = infinityEventsTriggerTimes.collect {
-            executor.submit createInfinityDeferredEventTask(it, {
-                addEventResult actualResults;
-                actualResults.size() - 1
-            }), it
+        runInJoinedThread {
+            infinityEventsTriggerTimes.collect {
+                executor.submit createInfinityDeferredEventTask(it, {
+                    addEventResult actualResults;
+                    actualResults.size() - 1
+                }), it
+            }
         }
-        longEventsTriggerTimes.collect {
-            executor.submit createLongDeferredEventTask(it, {
-                addEventResult actualResults;
-                actualResults.size() - 1
-            }), it
+        runInJoinedThread {
+            longEventsTriggerTimes.collect {
+                executor.submit createLongDeferredEventTask(it, {
+                    addEventResult actualResults;
+                    actualResults.size() - 1
+                }), it
+            }
         }
         sleep 5000
 
@@ -259,7 +263,9 @@ class DeferredExecutorSpec extends Specification {
 
         when:
         println "Executor isWorking with $eventCount events"
-        triggerTimes.collect { addEventToExecutorWithReturningValue executor, it, actualResults, expectedValues.poll() }*.get()
+        runInJoinedThread {
+            triggerTimes.collect { addEventToExecutorWithReturningValue executor, it, actualResults, expectedValues.poll() }*.get()
+        }
 
         then:
         actualResults != null
