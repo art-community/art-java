@@ -111,21 +111,21 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
     @Getter
     @AllArgsConstructor
     class HttpResource {
-        String path;
-        HttpResourceType type;
-        Charset charset;
+        private final String path;
+        private final HttpResourceType type;
+        private final Charset charset;
     }
 
     @Getter
     @Builder(toBuilder = true)
     class HttpResourceExtensionMapping {
-        String extension;
+        private String extension;
         @Builder.Default
-        MimeType mimeType = ALL;
-        HttpResourceType resourceType;
+        private final MimeType mimeType = ALL;
+        private final HttpResourceType resourceType;
         @Builder.Default
-        String logbookBodyReplacement = HTTP_RESOURCE_BODY_REPLACEMENT;
-        HttpResource customHttpResource;
+        private final String logbookBodyReplacement = HTTP_RESOURCE_BODY_REPLACEMENT;
+        private final HttpResource customHttpResource;
     }
 
     HttpServerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new HttpServerModuleDefaultConfiguration();
