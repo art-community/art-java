@@ -25,6 +25,7 @@ import ru.art.core.annotation.*;
 import ru.art.core.configuration.ContextInitialConfiguration.*;
 import ru.art.core.context.*;
 import static java.text.MessageFormat.*;
+import static ru.art.config.ConfigProvider.configUrl;
 import static ru.art.config.module.ConfigModule.*;
 import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.*;
 import static ru.art.core.constants.ContextConstants.*;
@@ -46,7 +47,7 @@ public class AgileConfigurationsActivator {
             case FILE:
                 loggingModule()
                         .getLogger(AgileConfigurationsActivator.class)
-                        .info(format(CONFIGURATION_FILE_URL, configModuleState().localConfigUrl()));
+                        .info(format(CONFIGURATION_FILE_URL, configUrl()));
                 return context;
             case REMOTE:
                 loggingModule()

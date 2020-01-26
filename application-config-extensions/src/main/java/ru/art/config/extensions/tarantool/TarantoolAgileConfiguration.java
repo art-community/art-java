@@ -56,8 +56,8 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
     @Override
     public void refresh() {
         enableTracing = configBoolean(TARANTOOL_SECTION_ID, ENABLE_TRACING, super.isEnableTracing());
-        probeConnectionTimeout = configLong(TARANTOOL_SECTION_ID, PROBE_CONNECTION_TIMEOUT, super.getProbeConnectionTimeout());
-        connectionTimeout = configLong(TARANTOOL_SECTION_ID, CONNECTION_TIMEOUT, super.getConnectionTimeout());
+        probeConnectionTimeout = configLong(TARANTOOL_SECTION_ID, PROBE_CONNECTION_TIMEOUT_MILLIS, super.getProbeConnectionTimeoutMillis());
+        connectionTimeout = configLong(TARANTOOL_SECTION_ID, CONNECTION_TIMEOUT_MILLIS, super.getConnectionTimeoutMillis());
         initializationMode = super.getInitializationMode();
         initializationMode = ifException(() -> TarantoolInitializationMode.valueOf(configString(TARANTOOL_SECTION_ID, INITIALIZATION_MODE).toUpperCase()), initializationMode);
         TarantoolLocalConfiguration defaultLocalConfiguration = super.getLocalConfiguration();
