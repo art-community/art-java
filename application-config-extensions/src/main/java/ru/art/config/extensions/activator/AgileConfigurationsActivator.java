@@ -25,9 +25,10 @@ import ru.art.core.annotation.*;
 import ru.art.core.configuration.ContextInitialConfiguration.*;
 import ru.art.core.context.*;
 import static java.text.MessageFormat.*;
-import static ru.art.config.ConfigProvider.configUrl;
+import static ru.art.config.ConfigProvider.*;
 import static ru.art.config.module.ConfigModule.*;
 import static ru.art.config.remote.constants.RemoteConfigLoaderConstants.*;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ContextConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
@@ -45,9 +46,16 @@ public class AgileConfigurationsActivator {
                 .info(format(CONFIGURATION_MODE, configModuleState().configurationMode()));
         switch (configModuleState().configurationMode()) {
             case FILE:
+                String configUrl = configUrl();
+                if (isEmpty(configUrl)) {
+                    loggingModule()
+                            .getLogger(AgileConfigurationsActivator.class)
+                            .warn(CONFIGURATION_FILE_NOT_EXISTS);
+                    return context;
+                }
                 loggingModule()
                         .getLogger(AgileConfigurationsActivator.class)
-                        .info(format(CONFIGURATION_FILE_URL, configUrl()));
+                        .info(format(CONFIGURATION_FILE_URL, configUrl));
                 return context;
             case REMOTE:
                 loggingModule()
