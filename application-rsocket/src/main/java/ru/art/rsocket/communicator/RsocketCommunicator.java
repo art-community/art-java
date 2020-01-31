@@ -35,9 +35,7 @@ import ru.art.service.model.*;
 import static io.rsocket.RSocketFactory.*;
 import static java.text.MessageFormat.*;
 import static java.time.Duration.*;
-import static java.util.Objects.*;
 import static java.util.Optional.*;
-import static reactor.core.publisher.Flux.empty;
 import static reactor.core.publisher.Flux.from;
 import static reactor.core.publisher.Mono.just;
 import static ru.art.core.caster.Caster.*;
@@ -203,9 +201,6 @@ public class RsocketCommunicator {
                 .flatMapMany(rsocket -> rsocket
                         .requestStream(writeServiceRequestPayload(fromServiceRequest().map(newServiceRequest(command)),
                                 requestValueInterceptors, dataFormat)));
-        if (isNull(responseModelMapper)) {
-            return empty();
-        }
         return requestStream
                 .map(responsePayload -> ofNullable(readPayloadData(responsePayload, dataFormat)))
                 .filter(Optional::isPresent)
@@ -252,9 +247,6 @@ public class RsocketCommunicator {
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
         Payload requestPayload = writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
                 .map(newServiceRequest(command, request)), requestValueInterceptors, dataFormat);
-        if (isNull(responseModelMapper)) {
-            return empty();
-        }
         return socket.flatMapMany(rsocket -> rsocket.requestStream(requestPayload)
                 .map(responsePayload -> ofNullable(readPayloadData(responsePayload, dataFormat)))
                 .filter(Optional::isPresent)
@@ -270,9 +262,6 @@ public class RsocketCommunicator {
         validateRequiredFields();
         ValueFromModelMapper<?, ? extends Value> requestModelMapper = cast(requestMapper);
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
-        if (isNull(responseModelMapper)) {
-            return empty();
-        }
         return socket.flatMapMany(rsocket -> rsocket.requestChannel(from(request)
                 .filter(Objects::nonNull)
                 .map(requestData -> writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
@@ -298,7 +287,7 @@ public class RsocketCommunicator {
         if (serviceIdIsEmpty) {
             throw new RsocketClientException(INVALID_RSOCKET_COMMUNICATION_CONFIGURATION + "serviceId");
         }
-        throw new RsocketClientException("methodId");
+        throw new RsocketClientException(INVALID_RSOCKET_COMMUNICATION_CONFIGURATION + "methodId");
     }
 
 }

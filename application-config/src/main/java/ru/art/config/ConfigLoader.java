@@ -28,6 +28,7 @@ import static ru.art.config.YamlConfigLoader.*;
 import static ru.art.config.constants.ConfigExceptionMessages.*;
 import static ru.art.config.module.ConfigModule.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.extension.StringExtensions.*;
 
 @UtilityClass
 public class ConfigLoader {
@@ -40,9 +41,11 @@ public class ConfigLoader {
             case PROPERTIES:
             case JSON:
             case HOCON:
-                return configModuleState().localConfigUrl(loadTypeSafeConfigUrl(toTypesafeConfigSyntax(configType)).toString()).localConfigUrl();
+                return configModuleState()
+                        .localConfigUrl(emptyIfNull(loadTypeSafeConfigUrl(toTypesafeConfigSyntax(configType))))
+                        .localConfigUrl();
             case YAML:
-                return configModuleState().localConfigUrl(loadYamlConfigUrl().toString()).localConfigUrl();
+                return configModuleState().localConfigUrl(emptyIfNull(loadYamlConfigUrl())).localConfigUrl();
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
         }
@@ -53,10 +56,10 @@ public class ConfigLoader {
             case PROPERTIES:
             case JSON:
             case HOCON:
-                configModuleState().localConfigUrl(loadTypeSafeConfigUrl(toTypesafeConfigSyntax(configType)).toString());
+                configModuleState().localConfigUrl(emptyIfNull(loadTypeSafeConfigUrl(toTypesafeConfigSyntax(configType))));
                 return new Config(loadTypeSafeConfig(configId, toTypesafeConfigSyntax(configType)), configType);
             case YAML:
-                configModuleState().localConfigUrl(loadYamlConfigUrl().toString());
+                configModuleState().localConfigUrl(emptyIfNull(loadYamlConfigUrl()));
                 return new Config(loadYamlConfig(configId), configType);
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
