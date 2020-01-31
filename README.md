@@ -7,7 +7,7 @@ ART is a kit of modules for developing multifunctional applications.
 [![Gitter](https://badges.gitter.im/art-community/community.svg)](https://gitter.im/art-community/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 ![Bintray](https://img.shields.io/bintray/v/art-community/art/io.github.art)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3a5d459c173a4109b2d039c8f7cd3cce)](https://app.codacy.com/app/antonbashir/ART?utm_source=github.com&utm_medium=referral&utm_content=art-community/ART&utm_campaign=Badge_Grade_Dashboard)
-![GitHub repo size](https://img.shields.io/github/repo-size/art-community/art
+![GitHub repo size](https://img.shields.io/github/repo-size/art-community/art)
 
 [![JFrog Bintray](https://www.bintray.com/docs/images/bintray_badge_color.png)](https://bintray.com/art-community/art/io.github.art?source=watch)
 
