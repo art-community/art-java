@@ -42,7 +42,7 @@ import java.util.concurrent.locks.*;
 import java.util.function.*;
 
 public class Context {
-    private static final ReentrantLock lock = new ReentrantLock();
+    private static final ReentrantLock LOCK = new ReentrantLock();
     private static volatile Context INSTANCE;
     private Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules = mapOf();
     private ContextInitialConfiguration initialConfiguration = new ContextInitialDefaultConfiguration();
@@ -73,7 +73,7 @@ public class Context {
     public static Context initContext(ContextInitialConfiguration contextInitialConfiguration) {
         if (isNull(contextInitialConfiguration))
             throw new ContextInitializationException(CONTEXT_INITIAL_CONFIGURATION_IS_NULL);
-        ReentrantLock lock = Context.lock;
+        ReentrantLock lock = Context.LOCK;
         lock.lock();
         INSTANCE = new Context(contextInitialConfiguration);
         out.println(ART_BANNER);
@@ -85,7 +85,7 @@ public class Context {
         if (isNull(contextInitialConfiguration)) {
             throw new ContextInitializationException(CONTEXT_INITIAL_CONFIGURATION_IS_NULL);
         }
-        ReentrantLock lock = Context.lock;
+        ReentrantLock lock = Context.LOCK;
         lock.lock();
         long oldContextLastActionTimestamp = INSTANCE.lastActionTimestamp;
         final Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules = INSTANCE.modules;
@@ -99,7 +99,7 @@ public class Context {
     public static Context context() {
         Context localInstance = INSTANCE;
         if (isNull(localInstance)) {
-            ReentrantLock lock = Context.lock;
+            ReentrantLock lock = Context.LOCK;
             lock.lock();
             localInstance = INSTANCE;
             if (isNull(localInstance)) {
@@ -300,7 +300,7 @@ public class Context {
     }
 
     public static boolean contextIsNotReady() {
-        ReentrantLock lock = Context.lock;
+        ReentrantLock lock = Context.LOCK;
         lock.lock();
         Context instance = INSTANCE;
         lock.unlock();

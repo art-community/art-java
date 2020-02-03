@@ -47,4 +47,10 @@ box.cfg {
 {%- if not (slabAllocMaximal is empty) -%}
         slab_alloc_maximal = {{  slabAllocMaximal }};
     {%- endif -%}
+{%- for stringOption in stringOptions -%}
+        {{ stringOption.key }} = "{{  stringOption.value }}";
+    {%- endfor -%}
+{%- for numberOption in numberOptions -%}
+        {{ numberOption.key }} = {{  numberOption.value }};
+    {%- endfor -%}
 }

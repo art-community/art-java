@@ -25,7 +25,6 @@ import ru.art.tarantool.exception.*;
 import ru.art.tarantool.initializer.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static java.util.concurrent.TimeUnit.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_CONNECT_TO_TARANTOOL;
@@ -40,8 +39,6 @@ public final class TarantoolConnector {
         if (nonNull(connectedClient)) {
             return connectedClient;
         }
-        TarantoolClientConfig config = new TarantoolClientConfig();
-        config.initTimeoutMillis = tarantoolModule().getConnectionTimeout();
         TarantoolConfiguration tarantoolConfiguration = tarantoolModule()
                 .getTarantoolConfigurations()
                 .get(instanceId);
@@ -49,14 +46,20 @@ public final class TarantoolConnector {
             throw new TarantoolConnectionException(format(CONFIGURATION_IS_NULL, instanceId));
         }
         TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
+        TarantoolClientConfig config = new TarantoolClientConfig();
+        config.initTimeoutMillis = tarantoolModule().getConnectionTimeoutMillis();
         config.username = connectionConfiguration.getUsername();
         config.password = connectionConfiguration.getPassword();
+        config.operationExpiryTimeMillis = connectionConfiguration.getOperationTimeoutMillis();
         String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
         SocketChannelProvider socketChannelProvider = new RoundRobinSocketProviderImpl(address);
         TarantoolClientImpl tarantoolClient;
         try {
+            loggingModule().getLogger(TarantoolConnector.class).info(format(WAITING_FOR_CONNECT,
+                    instanceId,
+                    address,
+                    config.initTimeoutMillis));
             tarantoolClient = new TarantoolClientImpl(socketChannelProvider, config);
-            tarantoolClient.waitAlive();
         } catch (Throwable throwable) {
             throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address), throwable);
         }
@@ -66,8 +69,6 @@ public final class TarantoolConnector {
     }
 
     public static TarantoolClient tryConnectToTarantool(String instanceId) {
-        TarantoolClientConfig config = new TarantoolClientConfig();
-        config.initTimeoutMillis = tarantoolModule().getProbeConnectionTimeout();
         TarantoolConfiguration tarantoolConfiguration = tarantoolModule()
                 .getTarantoolConfigurations()
                 .get(instanceId);
@@ -75,14 +76,20 @@ public final class TarantoolConnector {
             throw new TarantoolConnectionException(format(CONFIGURATION_IS_NULL, instanceId));
         }
         TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
+        TarantoolClientConfig config = new TarantoolClientConfig();
+        config.initTimeoutMillis = tarantoolModule().getProbeConnectionTimeoutMillis();
         config.username = connectionConfiguration.getUsername();
         config.password = connectionConfiguration.getPassword();
+        config.operationExpiryTimeMillis = connectionConfiguration.getOperationTimeoutMillis();
         String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
         SocketChannelProvider socketChannelProvider = new RoundRobinSocketProviderImpl(address);
         TarantoolClientImpl tarantoolClient;
         try {
+            loggingModule().getLogger(TarantoolConnector.class).info(format(WAITING_FOR_CONNECT,
+                    instanceId,
+                    address,
+                    config.initTimeoutMillis));
             tarantoolClient = new TarantoolClientImpl(socketChannelProvider, config);
-            tarantoolClient.waitAlive();
         } catch (Throwable throwable) {
             throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address), throwable);
         }
@@ -90,8 +97,6 @@ public final class TarantoolConnector {
     }
 
     public static TarantoolClient waitForTarantoolInitialization(String instanceId) {
-        TarantoolClientConfig config = new TarantoolClientConfig();
-        config.initTimeoutMillis = tarantoolModule().getLocalConfiguration().getStartupTimeoutMillis();
         TarantoolConfiguration tarantoolConfiguration = tarantoolModule()
                 .getTarantoolConfigurations()
                 .get(instanceId);
@@ -99,14 +104,20 @@ public final class TarantoolConnector {
             throw new TarantoolConnectionException(format(CONFIGURATION_IS_NULL, instanceId));
         }
         TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
+        TarantoolClientConfig config = new TarantoolClientConfig();
+        config.initTimeoutMillis = tarantoolModule().getLocalConfiguration().getStartupTimeoutMillis();
         config.username = connectionConfiguration.getUsername();
         config.password = connectionConfiguration.getPassword();
+        config.operationExpiryTimeMillis = connectionConfiguration.getOperationTimeoutMillis();
         String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
         SocketChannelProvider socketChannelProvider = new RoundRobinSocketProviderImpl(address);
         TarantoolClientImpl tarantoolClient;
         try {
+            loggingModule().getLogger(TarantoolConnector.class).info(format(WAITING_FOR_CONNECT,
+                    instanceId,
+                    address,
+                    config.initTimeoutMillis));
             tarantoolClient = new TarantoolClientImpl(socketChannelProvider, config);
-            tarantoolClient.waitAlive(tarantoolModule().getLocalConfiguration().getStartupTimeoutMillis(), MILLISECONDS);
         } catch (Throwable throwable) {
             throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address), throwable);
         }

@@ -47,7 +47,7 @@ public class KafkaStreamsRegistry {
     private final Map<String, ManagedKafkaStream> streams = concurrentHashMap();
     private static final Logger logger = loggingModule().getLogger(KafkaStreamsRegistry.class);
 
-    public static <K, V> KStream<K, V> withTracing(KStream<K, V> stream) {
+    public static <Key, Value> KStream<Key, Value> withTracing(KStream<Key, Value> stream) {
         return stream.peek(KafkaStreamsRegistry::logKafkaRecord);
     }
 
