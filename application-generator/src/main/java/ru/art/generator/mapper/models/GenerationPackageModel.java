@@ -22,5 +22,6 @@ public class GenerationPackageModel {
     private String genPackagePath;              //full path to non compiled generation package
     private String genPackage;                  //full package for generation
     private String jarPathToMain;               //compiled path taken from jar till main
+    private String pathToSrcMainJava;           //path till src/main/java
 }
 
