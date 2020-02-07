@@ -25,7 +25,7 @@ import org.apache.http.impl.nio.reactor.*;
 import static ru.art.http.client.module.HttpClientModule.*;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 public class HttpClientConfiguration {
     @Builder.Default
     private final RequestConfig requestConfig = httpClientModule().getRequestConfig();

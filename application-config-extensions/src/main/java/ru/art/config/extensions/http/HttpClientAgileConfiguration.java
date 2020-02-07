@@ -101,8 +101,7 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
         int socketTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, SOCKET_TIMEOUT, RequestConfig.DEFAULT.getSocketTimeout());
         int connectionTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, CONNECTION_TIMEOUT, DEFAULT_TIMEOUT);
         int soTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, SO_TIMEOUT, SocketConfig.DEFAULT.getSoTimeout());
-        int connectionRequestTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, CONNECTION_REQUEST_TIMEOUT,
-                RequestConfig.DEFAULT.getConnectionRequestTimeout());
+        int connectionRequestTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, CONNECTION_REQUEST_TIMEOUT, RequestConfig.DEFAULT.getConnectionRequestTimeout());
         int ioReactorThreadCount = configInt(HTTP_COMMUNICATION_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE);
         ioReactorConfig = IOReactorConfig.custom()
                 .setIoThreadCount(ioReactorThreadCount)
@@ -116,8 +115,7 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
                 .setSoTimeout(soTimeout)
                 .build();
         ssl = configBoolean(HTTP_COMMUNICATION_SECTION_ID, SSL, super.isSsl());
-        disableSslHostNameVerification = configBoolean(HTTP_COMMUNICATION_SECTION_ID, IS_DISABLE_SSL_HOST_NAME_VERIFICATION,
-                super.isDisableSslHostNameVerification());
+        disableSslHostNameVerification = configBoolean(HTTP_COMMUNICATION_SECTION_ID, IS_DISABLE_SSL_HOST_NAME_VERIFICATION, super.isDisableSslHostNameVerification());
         sslKeyStoreType = configString(HTTP_COMMUNICATION_SECTION_ID, SSL_KEY_STORE_TYPE, super.getSslKeyStoreType());
         sslKeyStoreFilePath = configString(HTTP_COMMUNICATION_SECTION_ID, SSL_KEY_STORE_FILE_PATH, super.getSslKeyStoreFilePath());
         sslKeyStorePassword = configString(HTTP_COMMUNICATION_SECTION_ID, SSL_KEY_STORE_PASSWORD, super.getSslKeyStorePassword());

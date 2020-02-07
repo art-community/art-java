@@ -51,12 +51,11 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class HttpResourceServiceSpecification implements HttpServiceSpecification {
     private final String resourcePath;
-    private HttpResourceConfiguration resourceConfiguration = httpServerModule().getResourceConfiguration();
+    private HttpResourceConfiguration resourceConfiguration;
     @Getter(lazy = true)
     private final String serviceId = resourcePath;
     @Getter(lazy = true)
     private final HttpService httpService = httpService()
-
             .get(GET_RESOURCE)
             .fromPathParameters(RESOURCE)
             .requestMapper((StringParametersMapToModelMapper<String>) resource -> doIfNotNull(resource, (Function<StringParametersMap, String>) res -> resource.getParameter(RESOURCE)))
@@ -86,7 +85,7 @@ public class HttpResourceServiceSpecification implements HttpServiceSpecificatio
     @SuppressWarnings("All")
     public <P, R> R executeMethod(String methodId, P request) {
         if (GET_RESOURCE.equals(methodId)) {
-            return cast(getHttpResource(cast(request), resourceConfiguration));
+            return cast(getHttpResource(cast(request), getOrElse(resourceConfiguration, resourceConfiguration = httpServerModule().getResourceConfiguration())));
         }
         throw new UnknownServiceMethodException(getServiceId(), methodId);
     }
