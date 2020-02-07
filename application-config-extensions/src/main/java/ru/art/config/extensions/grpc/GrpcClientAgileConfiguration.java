@@ -62,7 +62,7 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
                 .port(getOrElse(entry.getValue().getInt(PORT), balancerPort))
                 .path(getOrElse(entry.getValue().getString(PATH), SLASH))
                 .secured(getOrElse(entry.getValue().getBool(SECURED), false))
-                .timeout(getOrElse(entry.getValue().getLong(TIMEOUT), super.getTimeout()))
+                .timeout(getOrElse(entry.getValue().getLong(TIMEOUT), timeout))
                 .url(entry.getValue().getString(URL))
                 .build())), super.getCommunicationTargets());
     }
