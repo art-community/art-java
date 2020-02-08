@@ -67,6 +67,7 @@ public interface HttpServerModuleConstants {
             String DOT_PNG = ".png";
             String DOT_SVG = ".svg";
             String DOT_CSS = ".css";
+            String DOT_MAP = ".map";
             String DOT_JS = ".js";
             String DOT_HTML = ".html";
             String DOT_WSDL = ".wsdl";
