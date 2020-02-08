@@ -166,6 +166,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
                 .resourceExtensionMapping(DOT_WSDL, HttpResourceExtensionMapping.builder().extension(DOT_WSDL).mimeType(TEXT_XML).resourceType(STRING).build())
                 .resourceExtensionMapping(DOT_XML, HttpResourceExtensionMapping.builder().extension(DOT_XML).mimeType(TEXT_XML).resourceType(STRING).build())
                 .resourceExtensionMapping(DOT_TXT, HttpResourceExtensionMapping.builder().extension(DOT_TXT).mimeType(TEXT_PLAIN).resourceType(STRING).build())
+                .resourceExtensionMapping(DOT_MAP, HttpResourceExtensionMapping.builder().extension(DOT_MAP).mimeType(TEXT_PLAIN).resourceType(STRING).build())
                 .build();
 
         private final Map<? extends Class<? extends Throwable>, ? extends HttpExceptionHandler<?>> exceptionHandlers =
