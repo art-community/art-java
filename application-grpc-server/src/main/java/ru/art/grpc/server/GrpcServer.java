@@ -19,6 +19,7 @@
 package ru.art.grpc.server;
 
 import io.grpc.*;
+import io.grpc.netty.*;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
 import ru.art.grpc.server.configuration.GrpcServerModuleConfiguration.*;
@@ -30,6 +31,7 @@ import static java.lang.System.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.TimeUnit.*;
+import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.grpc.server.constants.GrpcServerExceptionMessages.*;
@@ -47,8 +49,13 @@ public class GrpcServer {
     private final Server server;
 
     public static GrpcServer grpcServer() {
-        ServerBuilder<?> serverBuilder = forPort(grpcServerModule().getPort());
-        serverBuilder.maxInboundMessageSize(grpcServerModule().getMaxInboundMessageSize());
+        NettyServerBuilder serverBuilder = cast(forPort(grpcServerModule().getPort()));
+        serverBuilder
+                .keepAliveTime(grpcServerModule().getKeepAliveTimeNanos(), NANOSECONDS)
+                .keepAliveTimeout(grpcServerModule().getKeepAliveTimeOutNanos(), NANOSECONDS)
+                .permitKeepAliveTime(grpcServerModule().getPermitKeepAliveTimeNanos(), NANOSECONDS)
+                .permitKeepAliveWithoutCalls(grpcServerModule().isPermitKeepAliveWithoutCalls())
+                .maxInboundMessageSize(grpcServerModule().getMaxInboundMessageSize());
         if (grpcServerModule().isExecuteServiceInTransportThread()) {
             serverBuilder.directExecutor();
         }

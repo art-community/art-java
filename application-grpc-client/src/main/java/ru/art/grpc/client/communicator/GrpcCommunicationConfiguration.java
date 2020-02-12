@@ -57,6 +57,12 @@ public class GrpcCommunicationConfiguration {
     @ToString.Include
     private long deadlineTimeout;
     @ToString.Include
+    private long keepAliveTimeNanos = grpcClientModule().getKeepAliveTimeNanos();
+    @ToString.Include
+    private long keepAliveTimeOutNanos = grpcClientModule().getKeepAliveTimeOutNanos();
+    @ToString.Include
+    private boolean keepAliveWithoutCalls = grpcClientModule().isKeepAliveWithoutCalls();
+    @ToString.Include
     private boolean useSecuredTransport;
     private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = linkedListOf(grpcClientModule().getRequestValueInterceptors());
     private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = linkedListOf(grpcClientModule().getResponseValueInterceptors());

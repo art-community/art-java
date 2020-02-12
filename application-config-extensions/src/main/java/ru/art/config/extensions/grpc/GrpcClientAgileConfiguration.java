@@ -30,7 +30,7 @@ import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.constants.ThreadConstants.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
-import static ru.art.grpc.client.model.GrpcCommunicationTargetConfiguration.grpcCommunicationTarget;
+import static ru.art.grpc.client.model.GrpcCommunicationTargetConfiguration.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -44,6 +44,9 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
     private Map<String, GrpcCommunicationTargetConfiguration> communicationTargets;
     private boolean enableRawDataTracing;
     private boolean enableValueTracing;
+    private long keepAliveTimeNanos;
+    private long keepAliveTimeOutNanos;
+    private boolean keepAliveWithoutCalls;
 
     public GrpcClientAgileConfiguration() {
         refresh();
@@ -54,6 +57,9 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
         enableRawDataTracing = configBoolean(GRPC_COMMUNICATION_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
         enableValueTracing = configBoolean(GRPC_COMMUNICATION_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         timeout = configLong(GRPC_COMMUNICATION_SECTION_ID, TIMEOUT, super.getTimeout());
+        keepAliveTimeNanos = ifException(() -> configLong(GRPC_COMMUNICATION_SECTION_ID, KEEP_ALIVE_TIME_MILLIS) * 1000, super.getKeepAliveTimeNanos());
+        keepAliveTimeOutNanos = ifException(() -> configLong(GRPC_COMMUNICATION_SECTION_ID, KEEP_ALIVE_TIME_OUT_MILLIS) * 1000, super.getKeepAliveTimeOutNanos());
+        keepAliveWithoutCalls = configBoolean(GRPC_COMMUNICATION_SECTION_ID, KEEP_ALIVE_WITHOUT_CALLS, super.isKeepAliveWithoutCalls());
         overridingExecutor = new ForkJoinPool(configInt(GRPC_COMMUNICATION_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE));
         balancerHost = configString(GRPC_BALANCER_SECTION_ID, HOST, super.getBalancerHost());
         balancerPort = configInt(GRPC_BALANCER_SECTION_ID, PORT, super.getBalancerPort());
@@ -63,6 +69,9 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
                 .path(getOrElse(entry.getValue().getString(PATH), SLASH))
                 .secured(getOrElse(entry.getValue().getBool(SECURED), false))
                 .timeout(getOrElse(entry.getValue().getLong(TIMEOUT), timeout))
+                .keepAliveTimeNanos(getOrElse(entry.getValue().getLong(KEEP_ALIVE_TIME_MILLIS) * 1000, keepAliveTimeNanos))
+                .keepAliveTimeOutNanos(getOrElse(entry.getValue().getLong(KEEP_ALIVE_TIME_OUT_MILLIS) * 1000, keepAliveTimeOutNanos))
+                .keepAliveWithoutCalls(getOrElse(entry.getValue().getBool(KEEP_ALIVE_WITHOUT_CALLS), keepAliveWithoutCalls))
                 .url(entry.getValue().getString(URL))
                 .build())), super.getCommunicationTargets());
     }

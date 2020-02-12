@@ -53,6 +53,10 @@ class GrpcCommunicationExecutor {
         if (configuration.isUseSecuredTransport()) {
             channelBuilder.useTransportSecurity();
         }
+        channelBuilder
+                .keepAliveTime(configuration.getKeepAliveTimeNanos(), NANOSECONDS)
+                .keepAliveTimeout(configuration.getKeepAliveTimeOutNanos(), NANOSECONDS)
+                .keepAliveWithoutCalls(configuration.isKeepAliveWithoutCalls());
         long deadlineTimeout = configuration.getDeadlineTimeout();
         GrpcServletBlockingStub stub = new GrpcServlet().newBlockingStub(channelBuilder.build(), emptyIfNull(configuration.getPath()))
                 .withDeadlineAfter(deadlineTimeout > 0L ? deadlineTimeout : grpcClientModule().getTimeout(), MILLISECONDS)

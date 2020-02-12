@@ -27,6 +27,8 @@ import ru.art.grpc.client.exception.*;
 import ru.art.grpc.client.interceptor.*;
 import ru.art.grpc.client.model.*;
 import ru.art.logging.*;
+import static io.grpc.internal.GrpcUtil.*;
+import static java.lang.Long.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.concurrent.ForkJoinPool.*;
@@ -43,6 +45,12 @@ public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
     List<ClientInterceptor> getInterceptors();
 
     long getTimeout();
+
+    long getKeepAliveTimeNanos();
+
+    long getKeepAliveTimeOutNanos();
+
+    boolean isKeepAliveWithoutCalls();
 
     Executor getOverridingExecutor();
 
@@ -85,6 +93,9 @@ public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
         private final List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = initializeValueInterceptors();
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = initializeValueInterceptors();
+        private long keepAliveTimeNanos = MAX_VALUE;
+        private long keepAliveTimeOutNanos = DEFAULT_KEEPALIVE_TIMEOUT_NANOS;
+        private boolean keepAliveWithoutCalls = false;
 
         private List<ClientInterceptor> initializeInterceptors() {
             List<ClientInterceptor> interceptors = linkedListOf(new GrpcClientTracingInterceptor());
