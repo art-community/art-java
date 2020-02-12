@@ -31,5 +31,7 @@ public interface CommonConfigKeys {
     String THREAD_POOL_SIZE = "threadPoolSize";
     String TIMEOUT = "timeout";
     String SERVICES = "services";
-
+    String KEEP_ALIVE_TIME_MILLIS = "keepAliveTimeMillis";
+    String KEEP_ALIVE_TIME_OUT_MILLIS = "keepAliveTimeOutMillis";
+    String KEEP_ALIVE_WITHOUT_CALLS = "keepAliveWithoutCalls";
 }
