@@ -21,6 +21,7 @@ package ru.art.rsocket.communicator;
 import io.rsocket.*;
 import io.rsocket.transport.netty.client.*;
 import lombok.*;
+import org.apache.logging.log4j.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import ru.art.core.validator.*;
@@ -62,6 +63,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class RsocketCommunicator {
     private final Mono<RSocket> socket;
+    private final static Logger logger = loggingModule().getLogger(RsocketCommunicator.class);
     private String serviceId;
     private String methodId;
     private ValueFromModelMapper<?, ?> requestMapper;
@@ -88,19 +90,19 @@ public class RsocketCommunicator {
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
                         .transport(TcpClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .start()
-                        .doOnSubscribe(subscription -> loggingModule()
-                                .getLogger(RsocketCommunicator.class)
+                        .doOnSubscribe(subscription -> logger
                                 .info(format(RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.tcpPort())));
-                return;
+                logger.info(format(RSOCKET_TCP_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.tcpPort()));
+            return;
             case WEB_SOCKET:
                 socket = factory
                         .dataMimeType(toMimeType(configuration.dataFormat()))
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
                         .transport(WebsocketClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .start()
-                        .doOnSubscribe(subscription -> loggingModule()
-                                .getLogger(RsocketCommunicator.class)
+                        .doOnSubscribe(subscription -> logger
                                 .info(format(RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.webSocketPort())));
+                logger.info(format(RSOCKET_WS_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.tcpPort()));
                 return;
         }
         throw new RsocketClientException(format(UNSUPPORTED_TRANSPORT, configuration.transport()));

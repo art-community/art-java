@@ -21,10 +21,12 @@ package ru.art.rsocket.state;
 import io.rsocket.*;
 import lombok.*;
 import ru.art.core.module.*;
+import ru.art.rsocket.constants.RsocketModuleConstants.*;
 import ru.art.rsocket.server.*;
 
 public class RsocketModuleState implements ModuleState {
     private final ThreadLocal<CurrentRsocketState> currentClientSocket = new ThreadLocal<>();
+
     @Getter
     @Setter
     private RsocketServer tcpServer;
@@ -43,10 +45,11 @@ public class RsocketModuleState implements ModuleState {
     }
 
     @Getter
-    @AllArgsConstructor
+    @Builder
     public static class CurrentRsocketState {
         private final String dataMimeType;
         private final String metadataMimeType;
+        private final RsocketDataFormat dataFormat;
         private final RSocket rsocket;
     }
 }
