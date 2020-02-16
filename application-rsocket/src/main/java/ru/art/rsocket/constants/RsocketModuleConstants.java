@@ -39,6 +39,16 @@ public interface RsocketModuleConstants {
         MESSAGE_PACK
     }
 
+    enum RsocketInterceptingDataType {
+        DATA,
+        META_DATA
+    }
+
+    enum RsocketInterceptedResultAction {
+        RETURN,
+        PROCESS
+    }
+
     enum RsocketTransport {
         TCP,
         WEB_SOCKET
@@ -53,13 +63,16 @@ public interface RsocketModuleConstants {
         String RSOCKET_RESTART_FAILED = "Rsocket restart failed";
         String INVALID_RSOCKET_COMMUNICATION_CONFIGURATION = "Some required fields in RSocket communication configuration are null: ";
         String FAILED_TO_READ_PAYLOAD = "Payload reading failed with exception: {0}";
+        String INTERCEPTING_DATA_TYPE_NULL = "Intercepting data type is null";
     }
 
     interface LoggingMessages {
         String RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE = "RSocket TCP acceptor started in {0}[ms]";
         String RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE = "RSocket WS acceptor started in {0}[ms]";
         String RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE = "RSocket TCP communicator to {0}:{1,number,#} started";
-        String RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE = "RSocket WebSocket to {0}:{1,number,#} communicator started";
+        String RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE = "RSocket WebSocket communicator to {0}:{1,number,#} started";
+        String RSOCKET_WS_COMMUNICATOR_CREATED_MESSAGE = "RSocket WebSocket communicator to {0}:{1,number,#} created";
+        String RSOCKET_TCP_COMMUNICATOR_CREATED_MESSAGE = "RSocket TCP communicator to {0}:{1,number,#} created";
         String RSOCKET_RESTARTED_MESSAGE = "RSocket Server restarted in {0}[ms]";
         String RSOCKET_LOADED_SERVICE_MESSAGE = "RSocket service loaded: {0}:{1,number,#} - {2}.{3}";
         String RSOCKET_FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget() with request data: {0} and metadata: {1}";
