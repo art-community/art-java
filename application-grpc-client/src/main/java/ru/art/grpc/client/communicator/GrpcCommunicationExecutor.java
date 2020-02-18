@@ -42,13 +42,14 @@ import static ru.art.service.factory.ServiceRequestFactory.*;
 import static ru.art.service.factory.ServiceResponseFactory.*;
 import static ru.art.service.mapping.ServiceRequestMapping.*;
 import static ru.art.service.mapping.ServiceResponseMapping.*;
+import javax.annotation.*;
 import java.util.*;
 import java.util.concurrent.*;
 
 @NoArgsConstructor(access = PRIVATE)
 class GrpcCommunicationExecutor {
     @SuppressWarnings("Duplicates")
-    static <ResponseType> ServiceResponse<ResponseType> execute(GrpcCommunicationConfiguration configuration) {
+    static <RequestType, ResponseType> ServiceResponse<ResponseType> execute(GrpcCommunicationConfiguration configuration, @Nullable RequestType request) {
         ManagedChannelBuilder<?> channelBuilder = forTarget(configuration.getUrl()).usePlaintext();
         if (configuration.isUseSecuredTransport()) {
             channelBuilder.useTransportSecurity();
@@ -67,8 +68,7 @@ class GrpcCommunicationExecutor {
         }
         ServiceMethodCommand command = new ServiceMethodCommand(configuration.getServiceId(), configuration.getMethodId());
         ValueFromModelMapper<?, ? extends Value> requestMapper = null;
-        Object request;
-        ServiceRequest<Object> serviceRequest = isNull(request = configuration.getRequest())
+        ServiceRequest<Object> serviceRequest = isNull(request)
                 || isNull(requestMapper = configuration.getRequestMapper())
                 ? newServiceRequest(command)
                 : newServiceRequest(command, request);

@@ -233,15 +233,15 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public <RequestType, ResponseType> Optional<ResponseType> execute(RequestType request) {
-        configuration.setRequest(validator.notNullField(request, "request"));
+        request = validator.notNullField(request, "request");
         validator.validate();
-        return ofNullable(executeSynchronousHttpRequest(configuration));
+        return ofNullable(executeSynchronousHttpRequest(configuration, request));
     }
 
     @Override
     public <ResponseType> Optional<ResponseType> execute() {
         validator.validate();
-        return ofNullable(executeSynchronousHttpRequest(configuration));
+        return ofNullable(executeSynchronousHttpRequest(configuration, null));
     }
 
 
@@ -271,9 +271,9 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public <RequestType, ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronous(RequestType request) {
-        configuration.setRequest(validator.notNullField(request, "request"));
+        request = validator.notNullField(request, "request");
         validator.validate();
-        return executeAsynchronousHttpRequest(configuration);
+        return executeAsynchronousHttpRequest(configuration, request);
     }
 
     @Override
@@ -284,6 +284,6 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     @Override
     public <ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronous() {
         validator.validate();
-        return executeAsynchronousHttpRequest(configuration);
+        return executeAsynchronousHttpRequest(configuration, null);
     }
 }

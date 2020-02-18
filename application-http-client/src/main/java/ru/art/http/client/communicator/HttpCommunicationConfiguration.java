@@ -52,7 +52,6 @@ class HttpCommunicationConfiguration {
     private HttpCommunicationResponseHandler<?, ?> completionHandler;
     private HttpCommunicationExceptionHandler<?> exceptionHandler;
     private HttpCommunicationCancellationHandler<?> cancellationHandler;
-    private Object request;
     private boolean chunkedBody;
     private boolean gzipCompressedBody;
     private RequestConfig requestConfig = httpClientModule().getRequestConfig();
