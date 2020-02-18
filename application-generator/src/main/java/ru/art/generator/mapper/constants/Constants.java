@@ -75,5 +75,6 @@ public interface Constants {
         String CLASS_BYTE_UNBOX = "byte";
         String CLASS_BOOLEAN_UNBOX = "boolean";
         String CLASS_FLOAT_UNBOX = "float";
+        String CLASS_ENTITY = "ru.art.entity.Entity";
     }
 }
