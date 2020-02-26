@@ -73,7 +73,7 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
                         .timeout(getOrElse(entry.getValue().getLong(TIMEOUT), timeout))
                         .keepAliveTimeNanos(ifException(() -> entry.getValue().getLong(KEEP_ALIVE_TIME_MILLIS) * 1000, keepAliveTimeNanos))
                         .keepAliveTimeOutNanos(ifException(() -> entry.getValue().getLong(KEEP_ALIVE_TIME_OUT_MILLIS) * 1000, keepAliveTimeOutNanos))
-                        .keepAliveWithoutCalls(getOrElse(entry.getValue().getBool(KEEP_ALIVE_WITHOUT_CALLS), keepAliveWithoutCalls))
+                        .keepAliveWithoutCalls(ifException(() -> entry.getValue().getBool(KEEP_ALIVE_WITHOUT_CALLS), keepAliveWithoutCalls))
                         .url(entry.getValue().getString(URL))
                         .build())), super.getCommunicationTargets());
     }
