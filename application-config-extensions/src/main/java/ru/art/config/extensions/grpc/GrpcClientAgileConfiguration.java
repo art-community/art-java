@@ -63,16 +63,18 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
         overridingExecutor = new ForkJoinPool(configInt(GRPC_COMMUNICATION_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE));
         balancerHost = configString(GRPC_BALANCER_SECTION_ID, HOST, super.getBalancerHost());
         balancerPort = configInt(GRPC_BALANCER_SECTION_ID, PORT, super.getBalancerPort());
-        communicationTargets = ifException(() -> configInnerMap(GRPC_COMMUNICATION_SECTION_ID, TARGETS).entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> grpcCommunicationTarget()
-                .host(ifEmpty(entry.getValue().getString(HOST), balancerHost))
-                .port(getOrElse(entry.getValue().getInt(PORT), balancerPort))
-                .path(getOrElse(entry.getValue().getString(PATH), SLASH))
-                .secured(getOrElse(entry.getValue().getBool(SECURED), false))
-                .timeout(getOrElse(entry.getValue().getLong(TIMEOUT), timeout))
-                .keepAliveTimeNanos(getOrElse(entry.getValue().getLong(KEEP_ALIVE_TIME_MILLIS) * 1000, keepAliveTimeNanos))
-                .keepAliveTimeOutNanos(getOrElse(entry.getValue().getLong(KEEP_ALIVE_TIME_OUT_MILLIS) * 1000, keepAliveTimeOutNanos))
-                .keepAliveWithoutCalls(getOrElse(entry.getValue().getBool(KEEP_ALIVE_WITHOUT_CALLS), keepAliveWithoutCalls))
-                .url(entry.getValue().getString(URL))
-                .build())), super.getCommunicationTargets());
+        communicationTargets = ifException(() -> configInnerMap(GRPC_COMMUNICATION_SECTION_ID, TARGETS).entrySet()
+                .stream()
+                .collect(toMap(Map.Entry::getKey, entry -> grpcCommunicationTarget()
+                        .host(ifEmpty(entry.getValue().getString(HOST), balancerHost))
+                        .port(getOrElse(entry.getValue().getInt(PORT), balancerPort))
+                        .path(getOrElse(entry.getValue().getString(PATH), SLASH))
+                        .secured(getOrElse(entry.getValue().getBool(SECURED), false))
+                        .timeout(getOrElse(entry.getValue().getLong(TIMEOUT), timeout))
+                        .keepAliveTimeNanos(ifException(() -> entry.getValue().getLong(KEEP_ALIVE_TIME_MILLIS) * 1000, keepAliveTimeNanos))
+                        .keepAliveTimeOutNanos(ifException(() -> entry.getValue().getLong(KEEP_ALIVE_TIME_OUT_MILLIS) * 1000, keepAliveTimeOutNanos))
+                        .keepAliveWithoutCalls(ifException(() -> entry.getValue().getBool(KEEP_ALIVE_WITHOUT_CALLS), keepAliveWithoutCalls))
+                        .url(entry.getValue().getString(URL))
+                        .build())), super.getCommunicationTargets());
     }
 }
