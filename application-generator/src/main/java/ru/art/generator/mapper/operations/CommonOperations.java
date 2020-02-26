@@ -31,7 +31,8 @@ import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.generator.mapper.constants.Constants.MAPPER;
-import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.*;
+import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.DOT_MAPPING_DOT;
+import static ru.art.generator.mapper.constants.Constants.PathAndPackageConstants.DOT_MODEL_DOT;
 import static ru.art.generator.mapper.constants.ExceptionConstants.MapperGeneratorExceptions.UNABLE_TO_CREATE_INNER_CLASS_MAPPER;
 import static ru.art.generator.mapper.operations.AnalyzingOperations.isClassHasIgnoreGenerationAnnotation;
 import static ru.art.generator.mapper.operations.GeneratorOperations.createMapperClass;
@@ -86,9 +87,11 @@ public final class CommonOperations {
      */
     public static ClassName createMapperForInnerClassIfNeeded(Class<?> genClass, GenerationPackageModel generationInfo) {
         if (genClass.isEnum()) return ClassName.get(genClass);
+        // if inner class is in current class's package, we don't need to add package name to path, so it's empty
         String packageName = genClass.getPackage().getName().equals(generationInfo.getModelPackage())
                 ? EMPTY_STRING
-                :genClass.getPackage().getName().replace(generationInfo.getModelPackage() + DOT, EMPTY_STRING);
+                : genClass.getPackage().getName().replace(genClass.getPackage().getName() + DOT, EMPTY_STRING);
+
         if (!isClassHasIgnoreGenerationAnnotation(genClass)) {
             if (!generatedFiles.contains(genClass.getName())) {
                 String startPackage = isEmpty(packageName) ? generationInfo.getModelPackage() : packageName.substring(0, packageName.lastIndexOf(DOT));
@@ -118,7 +121,7 @@ public final class CommonOperations {
                 createMapperClass(genClass, generationInnerClassInfo);
                 return ClassName.get(generationInnerClassInfo.getGenPackage(), genClass.getSimpleName() + MAPPER);
             }
-            String newPackageName = isEmpty(packageName) ? generationInfo.getGenPackage() : packageName.replaceFirst(DOT_MODEL_DOT, DOT_MAPPING_DOT);
+            String newPackageName = isEmpty(packageName) ? genClass.getPackage().getName().replaceFirst(DOT_MODEL_DOT, DOT_MAPPING_DOT) : packageName.replaceFirst(DOT_MODEL_DOT, DOT_MAPPING_DOT);
             return ClassName.get(newPackageName, genClass.getSimpleName() + MAPPER);
         }
         throw new InnerClassGenerationException(format(UNABLE_TO_CREATE_INNER_CLASS_MAPPER, genClass));

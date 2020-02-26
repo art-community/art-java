@@ -83,7 +83,6 @@ For bugs, questions and discussions please use the [Github Issues](https://githu
 * `io.github.resilience4j:resilience4j-timelimiter:1.1.1-SNAPSHOT`
 * `io.grpc:grpc-protobuf:1.24.0`
 * `io.grpc:grpc-stub:1.24.0`
-* `io.grpc:grpc-netty:1.24.0`
 * `io.grpc:grpc-netty-shaded:1.24.0`
 * `io.netty:netty-all:4.1.42.Final`
 * `org.zalando:logbook-core:1.13.0`
