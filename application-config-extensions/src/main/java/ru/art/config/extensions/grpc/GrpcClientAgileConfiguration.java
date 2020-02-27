@@ -19,6 +19,7 @@
 package ru.art.config.extensions.grpc;
 
 import lombok.*;
+import ru.art.config.*;
 import ru.art.grpc.client.configuration.GrpcClientModuleConfiguration.*;
 import ru.art.grpc.client.model.*;
 import static java.util.stream.Collectors.*;
@@ -65,16 +66,20 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
         balancerPort = configInt(GRPC_BALANCER_SECTION_ID, PORT, super.getBalancerPort());
         communicationTargets = ifException(() -> configInnerMap(GRPC_COMMUNICATION_SECTION_ID, TARGETS).entrySet()
                 .stream()
-                .collect(toMap(Map.Entry::getKey, entry -> grpcCommunicationTarget()
-                        .host(ifEmpty(entry.getValue().getString(HOST), balancerHost))
-                        .port(getOrElse(entry.getValue().getInt(PORT), balancerPort))
-                        .path(getOrElse(entry.getValue().getString(PATH), SLASH))
-                        .secured(getOrElse(entry.getValue().getBool(SECURED), false))
-                        .timeout(getOrElse(entry.getValue().getLong(TIMEOUT), timeout))
-                        .keepAliveTimeNanos(ifException(() -> entry.getValue().getLong(KEEP_ALIVE_TIME_MILLIS) * 1000, keepAliveTimeNanos))
-                        .keepAliveTimeOutNanos(ifException(() -> entry.getValue().getLong(KEEP_ALIVE_TIME_OUT_MILLIS) * 1000, keepAliveTimeOutNanos))
-                        .keepAliveWithoutCalls(ifException(() -> entry.getValue().getBool(KEEP_ALIVE_WITHOUT_CALLS), keepAliveWithoutCalls))
-                        .url(entry.getValue().getString(URL))
-                        .build())), super.getCommunicationTargets());
+                .collect(toMap(Map.Entry::getKey, entry -> getCommunicationTarget(entry.getValue()))), super.getCommunicationTargets());
+    }
+
+    private GrpcCommunicationTargetConfiguration getCommunicationTarget(Config value) {
+        return grpcCommunicationTarget()
+                .host(ifEmpty(value.getString(HOST), balancerHost))
+                .port(getOrElse(value.getInt(PORT), balancerPort))
+                .path(getOrElse(value.getString(PATH), SLASH))
+                .secured(getOrElse(value.getBool(SECURED), false))
+                .timeout(getOrElse(value.getLong(TIMEOUT), timeout))
+                .keepAliveTimeNanos(ifException(() -> value.getLong(KEEP_ALIVE_TIME_MILLIS) * 1000, keepAliveTimeNanos))
+                .keepAliveTimeOutNanos(ifException(() -> value.getLong(KEEP_ALIVE_TIME_OUT_MILLIS) * 1000, keepAliveTimeOutNanos))
+                .keepAliveWithoutCalls(getOrElse(value.getBool(KEEP_ALIVE_WITHOUT_CALLS), keepAliveWithoutCalls))
+                .url(value.getString(URL))
+                .build();
     }
 }
