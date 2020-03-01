@@ -49,8 +49,12 @@ public class TarantoolInitialConfiguration {
     private Integer slabAllocFactor;
     private Long slabAllocMaximal;
     private Integer slabAllocArena;
-    @Singular("option")
-    private final Map<String, Object> options;
+    @Singular("replica")
+    private final Set<String> replicas;
+    @Singular("stringOption")
+    private final Map<String, String> stringOptions;
+    @Singular("numberOption")
+    private final Map<String, Long> numberOptions;
 
     public String toLua(int port) {
         Map<String, Object> templateContext = cast(mapOf()
@@ -69,8 +73,10 @@ public class TarantoolInitialConfiguration {
                 .add(SLAB_ALLOC_FACTOR, slabAllocFactor)
                 .add(SLAB_ALLOC_MAXIMAL, slabAllocMaximal)
                 .add(SLAB_ALLOC_ARENA, slabAllocArena)
+                .add(REPLICAS, replicas)
                 .add(WORKER_POOL_THREADS, workerPoolThreads)
-                .add(OPTIONS, options));
+                .add(NUMBER_OPTIONS, numberOptions)
+                .add(STRING_OPTIONS, stringOptions));
         StringWriter templateWriter = new StringWriter();
         try {
             new PebbleEngine.Builder()

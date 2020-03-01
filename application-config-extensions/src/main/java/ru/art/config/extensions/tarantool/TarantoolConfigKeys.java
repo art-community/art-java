@@ -42,6 +42,7 @@ public interface TarantoolConfigKeys {
     String CUSTOM_PROC_TITLE = "customProcTitle";
     String MEMTX_DIR = "memtxDir";
     String VINYL_DIR = "vinylDir";
+    String REPLICAS = "replicas";
     String WORK_DIR = "workDir";
     String PID_FILE = "pidFile";
     String READ_ONLY = "readOnly";

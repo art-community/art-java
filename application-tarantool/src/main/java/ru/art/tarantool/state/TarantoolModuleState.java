@@ -38,8 +38,8 @@ import java.util.*;
 @Setter
 public class TarantoolModuleState implements ModuleState {
     private final Map<String, TarantoolClient> clients = concurrentHashMap();
-    private final Set<TarantoolValueScriptConfiguration> loadedValueScripts = newKeySet();
-    private final Set<TarantoolCommonScriptConfiguration> loadedCommonScripts = newKeySet();
+    private final Map<String, Set<TarantoolValueScriptConfiguration>> loadedValueScripts = concurrentHashMap();
+    private final Map<String, Set<TarantoolCommonScriptConfiguration>> loadedCommonScripts = concurrentHashMap();
 
     @SuppressWarnings("Duplicates")
     public TarantoolClient getClient(String instanceId) {

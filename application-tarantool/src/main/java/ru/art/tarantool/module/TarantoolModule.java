@@ -30,6 +30,7 @@ import static ru.art.core.context.Context.*;
 import static ru.art.tarantool.configuration.TarantoolModuleConfiguration.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.*;
+import static ru.art.tarantool.initializer.TarantoolInitializer.initializeTarantools;
 
 @Getter
 public class TarantoolModule implements Module<TarantoolModuleConfiguration, TarantoolModuleState> {
@@ -46,12 +47,7 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
         if (tarantoolModule().getInitializationMode() != ON_MODULE_LOAD) {
             return;
         }
-        tarantoolModule().getTarantoolConfigurations()
-                .entrySet()
-                .stream()
-                .filter(entry -> nonNull(entry) && nonNull(entry.getKey()) && nonNull(entry.getValue()))
-                .map(Entry::getKey)
-                .forEach(TarantoolInitializer::initializeTarantool);
+        initializeTarantools();
     }
 
     public static TarantoolModuleConfiguration tarantoolModule() {

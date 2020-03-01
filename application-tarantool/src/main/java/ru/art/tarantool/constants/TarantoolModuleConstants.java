@@ -70,7 +70,7 @@ public interface TarantoolModuleConstants {
         String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Connection waiting time has passed";
         String TARANTOOL_INITIALIZATION_SCRIP_NOT_EXISTS = "Tarantool ''{0}'' initialization script not exists inside classpath";
         String TARANTOOL_EXECUTABLE_NOT_EXISTS = "Tarantool ''{0}'' executable ''{1}'' not exists inside classpath";
-        String TARANTOOL_PROCESS_FAILED = "Tarantool ''{0}'' process ''{1}'' failed to start";
+        String TARANTOOL_PROCESS_FAILED = "Tarantool ''{0}'' process failed to start";
         String ENTITY_WITHOUT_ID_FILED = "Entity ''{0}'' does not has 'id' long field";
         String ENTITY_IS_NULL = "Entity ''{0}'' is null";
         String RESULT_IS_INVALID = "Result for entity ''{0}'' returned from Tarantool is invalid";
@@ -106,7 +106,9 @@ public interface TarantoolModuleConstants {
         String READ_ONLY = "readOnly";
         String VINYL_TIMEOUT = "vinylTimeout";
         String WORKER_POOL_THREADS = "workerPoolThreads";
-        String OPTIONS = "options";
+        String REPLICAS = "replicas";
+        String STRING_OPTIONS = "stringOptions";
+        String NUMBER_OPTIONS = "numberOptions";
         String PASSWORD = "password";
         String INDEX_NAME = "indexName";
         String SPACE_NAME = "spaceName";

@@ -91,6 +91,7 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
                         .customProcTitle(nullIfException(() -> config.getString(INITIAL_SECTION_ID + DOT + CUSTOM_PROC_TITLE)))
                         .memtxDir(nullIfException(() -> config.getString(INITIAL_SECTION_ID + DOT + MEMTX_DIR)))
                         .vinylDir(nullIfException(() -> config.getString(INITIAL_SECTION_ID + DOT + VINYL_DIR)))
+                        .replicas(nullIfException(() -> config.getStringList(INITIAL_SECTION_ID + DOT + REPLICAS)))
                         .workDir(nullIfException(() -> config.getString(INITIAL_SECTION_ID + DOT + WORK_DIR)))
                         .pidFile(nullIfException(() -> config.getString(INITIAL_SECTION_ID + DOT + PID_FILE)))
                         .readOnly(nullIfException(() -> config.getBool(INITIAL_SECTION_ID + DOT + READ_ONLY)))
