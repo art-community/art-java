@@ -31,6 +31,7 @@ public interface TarantoolConfigKeys {
     String CONNECTION_TIMEOUT_MILLIS = "connectionTimeoutMillis";
     String INITIALIZATION_MODE = "initializationMode";
     String EXECUTABLE = "executable";
+    String EXECUTABLE_FILE_PATH = "executableFilePath";
     String WORKING_DIRECTORY = "workingDirectory";
     String STARTUP_TIMEOUT_MILLIS = "startupTimeoutMillis";
     String PROCESS_STARTUP_TIMEOUT_MILLIS = "processStartupTimeoutMillis";

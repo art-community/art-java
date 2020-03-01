@@ -63,6 +63,8 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
         TarantoolLocalConfiguration defaultLocalConfiguration = super.getLocalConfiguration();
         String executable = defaultLocalConfiguration.getExecutable();
         executable = configString(TARANTOOL_LOCAL_SECTION_ID, EXECUTABLE, executable);
+        String executableFilePath = defaultLocalConfiguration.getExecutableFilePath();
+        executableFilePath = configString(TARANTOOL_LOCAL_SECTION_ID, EXECUTABLE_FILE_PATH, executableFilePath);
         String workingDirectory = defaultLocalConfiguration.getWorkingDirectory();
         workingDirectory = configString(TARANTOOL_LOCAL_SECTION_ID, WORKING_DIRECTORY, workingDirectory);
         int startupTimeoutMillis = defaultLocalConfiguration.getStartupTimeoutMillis();
@@ -71,6 +73,7 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
         processStartupTimeoutMillis = configInt(TARANTOOL_LOCAL_SECTION_ID, PROCESS_STARTUP_TIMEOUT_MILLIS, processStartupTimeoutMillis);
         localConfiguration = TarantoolLocalConfiguration.builder()
                 .executable(executable)
+                .executableFilePath(executableFilePath)
                 .startupTimeoutMillis(startupTimeoutMillis)
                 .processStartupTimeoutMillis(processStartupTimeoutMillis)
                 .workingDirectory(workingDirectory)

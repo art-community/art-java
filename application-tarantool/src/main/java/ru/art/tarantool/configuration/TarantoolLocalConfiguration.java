@@ -37,4 +37,5 @@ public class TarantoolLocalConfiguration {
     private final String workingDirectory = get(EMPTY_STRING).toAbsolutePath().toString()
             + separator
             + TARANTOOL;
+    private final String executableFilePath;
 }
