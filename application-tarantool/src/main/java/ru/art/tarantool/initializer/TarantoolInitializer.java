@@ -23,6 +23,7 @@ import com.mitchellbosecke.pebble.loader.*;
 import org.apache.logging.log4j.*;
 import org.tarantool.*;
 import org.zeroturnaround.exec.*;
+import ru.art.core.determinant.SystemDeterminant;
 import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.exception.*;
 import ru.art.tarantool.module.*;
@@ -161,7 +162,7 @@ public class TarantoolInitializer {
                     .map(TarantoolConfiguration::getConnectionConfiguration)
                     .map(replicaConfiguration ->
                             replicaConfiguration.getUsername() + COLON + replicaConfiguration.getPassword() + AT_SIGN +
-                            replicaConfiguration.getHost() + COLON + replicaConfiguration.getPort())
+                                    replicaConfiguration.getHost() + COLON + replicaConfiguration.getPort())
                     .collect(toSet());
             String luaConfiguration = configuration.getInitialConfiguration().toLua(connectionConfiguration.getPort(), replicas);
             Path luaConfigurationPath = get(getLuaScriptPath(instanceId, localConfiguration, CONFIGURATION));
@@ -208,23 +209,22 @@ public class TarantoolInitializer {
         String workingDirectory = localConfiguration.getWorkingDirectory() + separator + instanceId;
         String executableDirectory = workingDirectory + separator + BIN;
         String luaDirectory = workingDirectory + separator + LUA;
+        String executableFilePath = localConfiguration.getExecutableFilePath();
         extractCurrentJarEntry(TarantoolModule.class, LUA_REGEX, getLuaScriptPath(instanceId, localConfiguration, EMPTY_STRING));
-        if (isEmpty(localConfiguration.getExecutableFilePath())) {
+        if (isEmpty(executableFilePath) || !isMac()) {
             createDirectories(get(executableDirectory));
             extractCurrentJarEntry(TarantoolModule.class, localConfiguration.getExecutable(), executableDirectory);
         }
         logger.info(format(EXTRACT_TARANTOOL_LUA_SCRIPTS, instanceId, address, luaDirectory));
-        String executableLogMessage = isEmpty(localConfiguration.getExecutableFilePath())
-                ? EXTRACT_TARANTOOL_BINARY
-                : USING_TARANTOOL_BINARY;
+        String executableLogMessage = isEmpty(executableFilePath) || !isMac() ? EXTRACT_TARANTOOL_BINARY : USING_TARANTOOL_BINARY;
         logger.info(format(executableLogMessage, instanceId, address, executableDirectory));
-        String executableFilePath = ifEmpty(localConfiguration.getExecutableFilePath(), executableDirectory + localConfiguration.getExecutable());
-        if (!new File(executableFilePath).setExecutable(true)) {
-            logger.warn(format(FAILED_SET_EXECUTABLE, executableFilePath));
+        String executableFile = isEmpty(executableFilePath) || !isMac() ? executableDirectory + separator + localConfiguration.getExecutable() : executableFilePath;
+        if (!new File(executableFile).setExecutable(true)) {
+            logger.warn(format(FAILED_SET_EXECUTABLE, executableFile));
         }
         List<String> executableCommand = isWindows()
-                ? dynamicArrayOf(WSL, convertToWslPath(executableFilePath))
-                : dynamicArrayOf(executableFilePath);
+                ? dynamicArrayOf(WSL, convertToWslPath(executableFile))
+                : dynamicArrayOf(executableFile);
         executableCommand.add(convertToWslPath(getLuaScriptPath(instanceId, localConfiguration, INITIALIZATION)));
         StartedProcess process = new ProcessExecutor()
                 .command(executableCommand)
@@ -238,6 +238,7 @@ public class TarantoolInitializer {
     private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException {
         String workingDirectory = localConfiguration.getWorkingDirectory() + separator + instanceId;
         URL executableUrl = ofNullable(localConfiguration.getExecutableFilePath())
+                .filter(file -> isMac())
                 .map(File::new)
                 .filter(File::exists)
                 .map(File::toURI)
