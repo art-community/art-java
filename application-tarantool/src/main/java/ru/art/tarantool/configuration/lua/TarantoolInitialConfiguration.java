@@ -23,6 +23,7 @@ import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
 import ru.art.tarantool.exception.*;
 import static ru.art.core.caster.Caster.*;
+import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
@@ -49,14 +50,12 @@ public class TarantoolInitialConfiguration {
     private Integer slabAllocFactor;
     private Long slabAllocMaximal;
     private Integer slabAllocArena;
-    @Singular("replica")
-    private final Set<String> replicas;
     @Singular("stringOption")
     private final Map<String, String> stringOptions;
     @Singular("numberOption")
     private final Map<String, Long> numberOptions;
 
-    public String toLua(int port) {
+    public String toLua(int port, Set<String> replicas) {
         Map<String, Object> templateContext = cast(mapOf()
                 .add(LISTEN, port)
                 .add(BACKGROUND, background)

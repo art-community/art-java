@@ -27,18 +27,19 @@ import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.exception.*;
 import ru.art.tarantool.module.*;
 import static java.io.File.*;
+import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import static java.util.Optional.ofNullable;
 import static java.util.concurrent.ForkJoinPool.*;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.logging.log4j.io.IoBuilder.*;
 import static ru.art.core.caster.Caster.*;
-import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.constants.SystemConstants.*;
 import static ru.art.core.converter.WslPathConverter.*;
@@ -46,6 +47,8 @@ import static ru.art.core.determinant.SystemDeterminant.*;
 import static ru.art.core.extension.FileExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.core.jar.JarExtensions.*;
+import static ru.art.core.wrapper.ExceptionWrapper.ignoreException;
+import static ru.art.core.wrapper.ExceptionWrapper.wrapException;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.tarantool.connector.TarantoolConnector.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Directories.*;
@@ -64,8 +67,6 @@ import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ForkJoinTask;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class TarantoolInitializer {
     private final static OutputStream TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM = forLogger(loggingModule()
@@ -73,7 +74,6 @@ public class TarantoolInitializer {
             .buildOutputStream();
     private final static Logger logger = loggingModule().getLogger(TarantoolInitializer.class);
 
-    @SuppressWarnings("Duplicates")
     public static void initializeTarantools() {
         tarantoolModule().getTarantoolConfigurations()
                 .entrySet()
@@ -81,19 +81,20 @@ public class TarantoolInitializer {
                 .filter(entry -> nonNull(entry) && nonNull(entry.getKey()) && nonNull(entry.getValue()))
                 .map(Map.Entry::getKey)
                 .map(TarantoolInitializer::initializeTarantool)
-                .collect(toList())
-                .parallelStream()
                 .forEach(Runnable::run);
     }
 
     private static Runnable initializeTarantool(String instanceId) {
-        TarantoolConfiguration tarantoolConfiguration = tarantoolModule()
-                .getTarantoolConfigurations()
-                .get(instanceId);
-        if (isNull(tarantoolConfiguration)) {
-            throw new TarantoolConnectionException(format(CONFIGURATION_IS_NULL, instanceId));
-        }
-        ForkJoinTask<?> task = commonPool().submit(() -> initialTarantoolSynchronously(instanceId, tarantoolConfiguration));
+        TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations());
+        ForkJoinTask<?> task = commonPool().submit(() -> {
+            try {
+                initialTarantoolSynchronously(instanceId, tarantoolConfiguration);
+            } catch (Throwable throwable) {
+                loggingModule().getLogger(TarantoolInitializer.class).error(throwable.getMessage(), throwable);
+                throw throwable;
+            }
+        });
+        ignoreException(() -> sleep(DEFAULT_TARANTOOL_INSTANCE_STARTUP_BETWEEN_TIME));
         return () -> waitInitializationTask(instanceId, tarantoolConfiguration, task);
     }
 
@@ -101,7 +102,7 @@ public class TarantoolInitializer {
         try {
             switch (tarantoolConfiguration.getInstanceMode()) {
                 case LOCAL:
-                    task.get(tarantoolModule().getLocalConfiguration().getStartupTimeoutMillis() + tarantoolModule().getConnectionTimeoutMillis(), MILLISECONDS);
+                    task.get(tarantoolModule().getLocalConfiguration().getProcessStartupTimeoutMillis(), MILLISECONDS);
                     break;
                 case REMOTE:
                     task.get(tarantoolModule().getProbeConnectionTimeoutMillis(), MILLISECONDS);
@@ -121,56 +122,52 @@ public class TarantoolInitializer {
         try {
             TarantoolClient tarantoolClient = tryConnectToTarantool(instanceId);
             if (tarantoolClient.isAlive()) {
-                connectToTarantool(instanceId);
                 return;
             }
         } catch (Throwable throwable) {
             if (instanceMode == LOCAL) {
                 logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
                 startTarantool(instanceId);
-                TarantoolClient tarantoolClient = waitForTarantoolInitialization(instanceId);
-                if (tarantoolClient.isAlive()) {
-                    connectToTarantool(instanceId);
-                    return;
-                }
+                return;
             }
             throw throwable;
         }
         if (instanceMode == LOCAL) {
             logger.warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
             startTarantool(instanceId);
-            TarantoolClient tarantoolClient = waitForTarantoolInitialization(instanceId);
-            if (tarantoolClient.isAlive()) {
-                connectToTarantool(instanceId);
-                return;
-            }
-            throw new TarantoolInitializationException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address));
         }
-        connectToTarantool(instanceId);
     }
 
     @SuppressWarnings("Duplicates")
     private static void startTarantool(String instanceId) {
         try {
-            TarantoolConfiguration configuration = tarantoolModule()
-                    .getTarantoolConfigurations()
-                    .get(instanceId);
-            if (isNull(configuration)) {
-                throw new TarantoolConnectionException(format(CONFIGURATION_IS_NULL, instanceId));
-            }
+            Map<String, TarantoolConfiguration> configurations = tarantoolModule().getTarantoolConfigurations();
+            TarantoolConfiguration configuration = getTarantoolConfiguration(instanceId, configurations);
 
             TarantoolConnectionConfiguration connectionConfiguration = configuration.getConnectionConfiguration();
             TarantoolLocalConfiguration localConfiguration = tarantoolModule().getLocalConfiguration();
             String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
 
-            createDirectories(get(localConfiguration.getWorkingDirectory() + separator + instanceId + separator + LUA));
+            String workingDirectory = localConfiguration.getWorkingDirectory() + separator + instanceId;
+            String luaDirectory = workingDirectory + separator + LUA;
+            createDirectories(get(luaDirectory));
 
-            String luaConfiguration = configuration.getInitialConfiguration().toLua(connectionConfiguration.getPort());
+            Set<String> replicas = setOf(configuration.getReplicas());
+            if (isNotEmpty(replicas)) {
+                replicas.add(instanceId);
+            }
+            replicas = replicas.stream()
+                    .map(replica -> getTarantoolConfiguration(replica, configurations))
+                    .map(TarantoolConfiguration::getConnectionConfiguration)
+                    .map(replicaConfiguration ->
+                            replicaConfiguration.getUsername() + COLON + replicaConfiguration.getPassword() + AT_SIGN +
+                            replicaConfiguration.getHost() + COLON + replicaConfiguration.getPort())
+                    .collect(toSet());
+            String luaConfiguration = configuration.getInitialConfiguration().toLua(connectionConfiguration.getPort(), replicas);
             Path luaConfigurationPath = get(getLuaScriptPath(instanceId, localConfiguration, CONFIGURATION));
             writeFile(luaConfigurationPath, luaConfiguration);
             logger.info(format(WRITING_TARANTOOL_CONFIGURATION, instanceId,
                     address,
-                    luaConfiguration,
                     luaConfigurationPath.toAbsolutePath()));
             StringWriter templateWriter = new StringWriter();
             Map<String, Object> templateContext = cast(mapOf()
@@ -191,6 +188,10 @@ public class TarantoolInitializer {
                     address,
                     userConfigurationPath.toAbsolutePath()));
 
+            if (isEmpty(localConfiguration.getExecutableFilePath()) && isMac()) {
+                throw new TarantoolInitializationException(TARANTOOL_ON_MAC_EXCEPTION);
+            }
+
             if (insideJar(TarantoolModule.class)) {
                 startTarantoolFromJar(instanceId, localConfiguration, address);
                 return;
@@ -204,29 +205,20 @@ public class TarantoolInitializer {
     }
 
     private static void startTarantoolFromJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException {
+        String workingDirectory = localConfiguration.getWorkingDirectory() + separator + instanceId;
+        String executableDirectory = workingDirectory + separator + BIN;
+        String luaDirectory = workingDirectory + separator + LUA;
         extractCurrentJarEntry(TarantoolModule.class, LUA_REGEX, getLuaScriptPath(instanceId, localConfiguration, EMPTY_STRING));
         if (isEmpty(localConfiguration.getExecutableFilePath())) {
-            createDirectories(get(localConfiguration.getWorkingDirectory() + separator + instanceId + separator + BIN));
-            extractCurrentJarEntry(TarantoolModule.class, localConfiguration.getExecutable(), localConfiguration.getWorkingDirectory()
-                    + separator + instanceId
-                    + separator + BIN);
+            createDirectories(get(executableDirectory));
+            extractCurrentJarEntry(TarantoolModule.class, localConfiguration.getExecutable(), executableDirectory);
         }
-        logger.info(format(EXTRACT_TARANTOOL_LUA_SCRIPTS,
-                instanceId,
-                address,
-                localConfiguration.getWorkingDirectory() + separator + instanceId + separator + LUA));
-        if (isEmpty(localConfiguration.getExecutableFilePath())) {
-            logger.info(format(EXTRACT_TARANTOOL_BINARY,
-                    instanceId,
-                    address,
-                    localConfiguration.getWorkingDirectory() + separator + instanceId + separator + BIN));
-        }
-        String executableFilePath = ifEmpty(localConfiguration.getExecutableFilePath(), localConfiguration.getWorkingDirectory()
-                + separator + instanceId
-                + separator
-                + BIN
-                + separator
-                + localConfiguration.getExecutable());
+        logger.info(format(EXTRACT_TARANTOOL_LUA_SCRIPTS, instanceId, address, luaDirectory));
+        String executableLogMessage = isEmpty(localConfiguration.getExecutableFilePath())
+                ? EXTRACT_TARANTOOL_BINARY
+                : USING_TARANTOOL_BINARY;
+        logger.info(format(executableLogMessage, instanceId, address, executableDirectory));
+        String executableFilePath = ifEmpty(localConfiguration.getExecutableFilePath(), executableDirectory + localConfiguration.getExecutable());
         if (!new File(executableFilePath).setExecutable(true)) {
             logger.warn(format(FAILED_SET_EXECUTABLE, executableFilePath));
         }
@@ -236,26 +228,21 @@ public class TarantoolInitializer {
         executableCommand.add(convertToWslPath(getLuaScriptPath(instanceId, localConfiguration, INITIALIZATION)));
         StartedProcess process = new ProcessExecutor()
                 .command(executableCommand)
-                .directory(new File(localConfiguration.getWorkingDirectory() + separator + instanceId))
+                .directory(new File(workingDirectory))
                 .redirectOutputAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .redirectErrorAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .start();
-        // Sorry. I don't know why, but running inside Docker not working without this...
-        try {
-            sleep(localConfiguration.getProcessStartupTimeoutMillis());
-        } catch (Throwable throwable) {
-            //ignored
-        }
-        if (!process.getProcess().isAlive()) {
-            throw new TarantoolInitializationException(format(TARANTOOL_PROCESS_FAILED, address));
-        }
-        logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
+        waitForTarantoolProcess(instanceId, localConfiguration, address, process);
     }
 
     private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException {
-        URL executableUrl = ifEmpty(new File(localConfiguration.getExecutableFilePath())
-                .toURI()
-                .toURL(), TarantoolInitializer.class.getClassLoader().getResource(localConfiguration.getExecutable()));
+        String workingDirectory = localConfiguration.getWorkingDirectory() + separator + instanceId;
+        URL executableUrl = ofNullable(localConfiguration.getExecutableFilePath())
+                .map(File::new)
+                .filter(File::exists)
+                .map(File::toURI)
+                .map(uri -> wrapException(uri::toURL, TarantoolExecutionException::new))
+                .orElse(TarantoolInitializer.class.getClassLoader().getResource(localConfiguration.getExecutable()));
         if (isNull(executableUrl)) {
             throw new TarantoolInitializationException(format(TARANTOOL_EXECUTABLE_NOT_EXISTS, address, localConfiguration.getExecutable()));
         }
@@ -270,26 +257,34 @@ public class TarantoolInitializer {
         if (isNull(initializationScriptUrl)) {
             throw new TarantoolInitializationException(format(TARANTOOL_INITIALIZATION_SCRIP_NOT_EXISTS, address));
         }
-        executableCommand.add(convertToWslPath(initializationScriptUrl.getPath()));
+        executableCommand.add(isWindows() ? convertToWslPath(initializationScriptUrl.getPath()) : initializationScriptUrl.getPath());
         StartedProcess process = new ProcessExecutor()
                 .command(executableCommand)
-                .directory(new File(localConfiguration.getWorkingDirectory() + separator + instanceId))
+                .directory(new File(workingDirectory))
                 .redirectOutputAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .redirectErrorAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
                 .start();
-        // Sorry. I don't know why, but running inside Docker not working without this...
-        try {
-            sleep(localConfiguration.getProcessStartupTimeoutMillis());
-        } catch (Throwable throwable) {
-            //ignored
-        }
-        if (!process.getProcess().isAlive()) {
-            throw new TarantoolInitializationException(format(TARANTOOL_PROCESS_FAILED, address));
-        }
-        logger.info(format(TARANTOOL_SUCCESSFULLY_STARTED, instanceId, address));
+        waitForTarantoolProcess(instanceId, localConfiguration, address, process);
     }
 
     private static String getLuaScriptPath(String instanceId, TarantoolLocalConfiguration localConfiguration, String scriptName) {
-        return localConfiguration.getWorkingDirectory() + separator + instanceId + separator + LUA + separator + scriptName;
+        String workingDirectory = localConfiguration.getWorkingDirectory() + separator + instanceId;
+        String luaDirectory = workingDirectory + separator + LUA;
+        return luaDirectory + separator + scriptName;
+    }
+
+    private static void waitForTarantoolProcess(String instanceId, TarantoolLocalConfiguration localConfiguration, String address, StartedProcess process) {
+        long current = currentTimeMillis();
+        int checkIntervalMillis = localConfiguration.getProcessStartupCheckIntervalMillis();
+        int startupTimeoutMillis = localConfiguration.getProcessStartupTimeoutMillis();
+        while (!process.getProcess().isAlive()) {
+            logger.info(format(WAITING_FOR_INITIALIZATION, instanceId, address, startupTimeoutMillis, checkIntervalMillis));
+            ignoreException(() -> sleep(checkIntervalMillis));
+            if (currentTimeMillis() - current > startupTimeoutMillis) {
+                throw new TarantoolInitializationException(format(TARANTOOL_PROCESS_FAILED, instanceId));
+            }
+        }
+        ignoreException(() -> sleep(checkIntervalMillis));
+        logger.info(format(TARANTOOL_PROCESS_SUCCESSFULLY_STARTED, instanceId, address));
     }
 }

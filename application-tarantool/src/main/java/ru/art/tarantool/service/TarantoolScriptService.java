@@ -38,6 +38,18 @@ import java.util.concurrent.locks.*;
 public final class TarantoolScriptService {
     private static final ReentrantLock LOCK = new ReentrantLock();
 
+    public static void evaluateValueScript(Set<String> instanceIds, String spaceName) {
+        instanceIds.forEach(id -> evaluateValueScript(id, spaceName));
+    }
+
+    public static void evaluateCommonScript(Set<String> instanceIds, String spaceName) {
+        instanceIds.forEach(id -> evaluateCommonScript(id, spaceName));
+    }
+
+    public static void evaluateValueIndexScript(Set<String> instanceIds, String spaceName, String indexName) {
+        instanceIds.forEach(id -> evaluateValueIndexScript(id, spaceName, indexName));
+    }
+
     public static void evaluateValueScript(String instanceId, String spaceName) {
         TarantoolValueScriptConfiguration valueScriptConfiguration = tarantoolValueScript(spaceName);
         Set<TarantoolValueScriptConfiguration> instanceValueScripts = tarantoolModuleState()
@@ -86,7 +98,7 @@ public final class TarantoolScriptService {
         }
     }
 
-    public static void evaluateValueScript(String instanceId, String spaceName, String indexName) {
+    public static void evaluateValueIndexScript(String instanceId, String spaceName, String indexName) {
         TarantoolValueScriptConfiguration valueScriptConfiguration = tarantoolValueScript(spaceName, indexName);
         Set<TarantoolValueScriptConfiguration> instanceValueScripts = tarantoolModuleState()
                 .getLoadedValueScripts()
