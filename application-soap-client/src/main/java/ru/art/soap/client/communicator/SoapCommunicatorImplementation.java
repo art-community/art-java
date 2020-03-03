@@ -190,10 +190,10 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
 
     @Override
     public <RequestType, ResponseType> Optional<ResponseType> execute(RequestType request) {
-        configuration.setRequest(validator.notNullField(request, "request"));
+        request = validator.notNullField(request, "request");
         validator.validate();
         configuration.validateRequiredFields();
-        return SoapCommunicationExecutor.execute(configuration);
+        return SoapCommunicationExecutor.execute(configuration, request);
     }
 
     @Override
@@ -227,9 +227,9 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
 
     @Override
     public <RequestType, ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronous(RequestType request) {
-        configuration.setRequest(validator.notNullField(request, "request"));
+        request = validator.notNullField(request, "request");
         validator.validate();
         configuration.validateRequiredFields();
-        return SoapCommunicationExecutor.executeAsynchronous(configuration);
+        return SoapCommunicationExecutor.executeAsynchronous(configuration, request);
     }
 }

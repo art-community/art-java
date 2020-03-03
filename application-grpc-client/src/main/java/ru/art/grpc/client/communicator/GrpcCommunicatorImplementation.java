@@ -127,15 +127,15 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     public <ResponseType> ServiceResponse<ResponseType> execute() {
         validator.validate();
         configuration.validateRequiredFields();
-        return GrpcCommunicationExecutor.execute(configuration);
+        return GrpcCommunicationExecutor.execute(configuration, null);
     }
 
     @Override
     public <RequestType, ResponseType> ServiceResponse<ResponseType> execute(RequestType request) {
-        configuration.setRequest(validator.notNullField(request, "request"));
+        request = validator.notNullField(request, "request");
         validator.validate();
         configuration.validateRequiredFields();
-        return GrpcCommunicationExecutor.execute(configuration);
+        return GrpcCommunicationExecutor.execute(configuration, request);
     }
 
     @Override
@@ -172,14 +172,14 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     public <ResponseType> CompletableFuture<ServiceResponse<ResponseType>> executeAsynchronous() {
         validator.validate();
         configuration.validateRequiredFields();
-        return GrpcCommunicationAsynchronousExecutor.execute(configuration);
+        return GrpcCommunicationAsynchronousExecutor.execute(configuration, null);
     }
 
     @Override
     public <RequestType, ResponseType> CompletableFuture<ServiceResponse<ResponseType>> executeAsynchronous(RequestType request) {
-        configuration.setRequest(validator.notNullField(request, "request"));
+        request = validator.notNullField(request, "request");
         validator.validate();
         configuration.validateRequiredFields();
-        return GrpcCommunicationAsynchronousExecutor.execute(configuration);
+        return GrpcCommunicationAsynchronousExecutor.execute(configuration, request);
     }
 }
