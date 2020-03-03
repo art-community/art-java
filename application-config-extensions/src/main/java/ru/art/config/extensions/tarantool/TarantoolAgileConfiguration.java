@@ -63,15 +63,18 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
         TarantoolLocalConfiguration defaultLocalConfiguration = super.getLocalConfiguration();
         String executable = defaultLocalConfiguration.getExecutable();
         executable = configString(TARANTOOL_LOCAL_SECTION_ID, EXECUTABLE, executable);
+        String executableFilePath = defaultLocalConfiguration.getExecutableFilePath();
+        executableFilePath = configString(TARANTOOL_LOCAL_SECTION_ID, EXECUTABLE_FILE_PATH, executableFilePath);
         String workingDirectory = defaultLocalConfiguration.getWorkingDirectory();
         workingDirectory = configString(TARANTOOL_LOCAL_SECTION_ID, WORKING_DIRECTORY, workingDirectory);
-        int startupTimeoutMillis = defaultLocalConfiguration.getStartupTimeoutMillis();
-        startupTimeoutMillis = configInt(TARANTOOL_LOCAL_SECTION_ID, STARTUP_TIMEOUT_MILLIS, startupTimeoutMillis);
+        int processStartupCheckIntervalMillis = defaultLocalConfiguration.getProcessStartupCheckIntervalMillis();
+        processStartupCheckIntervalMillis = configInt(TARANTOOL_LOCAL_SECTION_ID, PROCESS_STARTUP_CHECK_INTERVAL_MILLIS, processStartupCheckIntervalMillis);
         int processStartupTimeoutMillis = defaultLocalConfiguration.getProcessStartupTimeoutMillis();
         processStartupTimeoutMillis = configInt(TARANTOOL_LOCAL_SECTION_ID, PROCESS_STARTUP_TIMEOUT_MILLIS, processStartupTimeoutMillis);
         localConfiguration = TarantoolLocalConfiguration.builder()
                 .executable(executable)
-                .startupTimeoutMillis(startupTimeoutMillis)
+                .executableFilePath(executableFilePath)
+                .processStartupCheckIntervalMillis(processStartupCheckIntervalMillis)
                 .processStartupTimeoutMillis(processStartupTimeoutMillis)
                 .workingDirectory(workingDirectory)
                 .build();
@@ -99,6 +102,7 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
                         .slabAllocMaximal(nullIfException(() -> config.getLong(INITIAL_SECTION_ID + DOT + SLAB_ALLOC_MAXIMAL)))
                         .slabAllocArena(nullIfException(() -> config.getInt(INITIAL_SECTION_ID + DOT + SLAB_ALLOC_ARENA))).build())
                 .instanceMode(ifException(() -> TarantoolInstanceMode.valueOf(config.getString(INSTANCE_MODE).toUpperCase()), LOCAL))
+                .replicas(config.getStringList(REPLICAS))
                 .entityFieldsMappings(ifExceptionOrEmpty(() -> config.getConfig(ENTITIES).getKeys()
                         .stream().collect(toMap(identity(), entityName -> entityFieldsMapping()
                                 .fieldsMapping(cast(config.getConfig(ENTITIES + DOT + entityName + DOT + FIELDS)
