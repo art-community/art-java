@@ -8,3 +8,4 @@ function loadModule(moduleId)
 end
 loadModule('lua.configuration')
 loadModule('lua.user')
+loadModule('lua.vshard')
