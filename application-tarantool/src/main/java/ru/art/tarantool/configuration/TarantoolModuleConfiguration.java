@@ -58,10 +58,7 @@ public interface TarantoolModuleConfiguration extends ModuleConfiguration {
     }
 
     static TarantoolEntityFieldsMapping fieldMapping(String instanceId, String entityName) {
-        TarantoolConfiguration tarantoolConfiguration = tarantoolModule().getTarantoolConfigurations().get(instanceId);
-        if (isNull(tarantoolConfiguration)) {
-            throw new TarantoolConnectionException(format(CONFIGURATION_IS_NULL, instanceId));
-        }
+        TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations());
         TarantoolEntityFieldsMapping entityFieldsMapping = tarantoolConfiguration
                 .getEntityFieldsMappings()
                 .get(entityName);

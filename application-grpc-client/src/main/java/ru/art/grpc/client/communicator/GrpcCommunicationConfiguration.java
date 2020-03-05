@@ -53,8 +53,6 @@ public class GrpcCommunicationConfiguration {
     private List<ClientInterceptor> interceptors = grpcClientModule().getInterceptors();
     private Executor overrideExecutor;
     @ToString.Include
-    private Object request;
-    @ToString.Include
     private long deadlineTimeout;
     @ToString.Include
     private long keepAliveTimeNanos = grpcClientModule().getKeepAliveTimeNanos();
