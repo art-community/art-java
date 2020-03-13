@@ -18,13 +18,15 @@
 
 package ru.art.config.extensions.sql;
 
-import lombok.*;
-import ru.art.sql.configuration.SqlModuleConfiguration.*;
-import ru.art.sql.constants.*;
+import lombok.Getter;
+import org.jooq.conf.Settings;
+import ru.art.sql.configuration.SqlModuleConfiguration.SqlModuleDefaultConfiguration;
+import ru.art.sql.constants.DbProvider;
 import static ru.art.config.extensions.ConfigExtensions.*;
-import static ru.art.config.extensions.common.CommonConfigKeys.*;
+import static ru.art.config.extensions.common.CommonConfigKeys.ENABLE_METRICS;
+import static ru.art.config.extensions.common.CommonConfigKeys.URL;
 import static ru.art.config.extensions.sql.SqlConfigKeys.*;
-import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.extension.ExceptionExtensions.ifException;
 
 @Getter
 public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
@@ -33,6 +35,7 @@ public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
     private String jdbcPassword;
     private DbProvider dbProvider;
     private boolean enableMetrics;
+    private Settings jooqSettings;
 
     public SqlAgileConfiguration() {
         refresh();
@@ -45,5 +48,8 @@ public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
         jdbcPassword = configString(SQL_DB_SECTION_ID, PASSWORD, super.getJdbcLogin());
         dbProvider = ifException(() -> DbProvider.valueOf(configString(SQL_DB_SECTION_ID, PROVIDER).toUpperCase()), super.getDbProvider());
         enableMetrics = configBoolean(SQL_DB_SECTION_ID, ENABLE_METRICS, super.isEnableMetrics());
+        Settings defaultSettings = super.getJooqSettings();
+        jooqSettings = defaultSettings
+                .withQueryTimeout(configInt(SQL_DB_SECTION_ID, QUERY_TIMEOUT, defaultSettings.getQueryTimeout()));
     }
 }
