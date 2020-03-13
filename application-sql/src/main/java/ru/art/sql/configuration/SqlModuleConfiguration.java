@@ -22,6 +22,7 @@ import com.zaxxer.hikari.*;
 import lombok.*;
 import org.apache.tomcat.jdbc.pool.*;
 import org.jooq.*;
+import org.jooq.conf.Settings;
 import org.jooq.impl.*;
 import ru.art.core.module.*;
 import ru.art.sql.constants.*;
@@ -32,6 +33,8 @@ import static ru.art.sql.factory.SqlConnectionPoolsFactory.*;
 
 public interface SqlModuleConfiguration extends ModuleConfiguration {
     Configuration getJooqConfiguration();
+
+    Settings getJooqSettings();
 
     HikariConfig getHikariPoolConfig();
 
@@ -54,6 +57,7 @@ public interface SqlModuleConfiguration extends ModuleConfiguration {
     @Getter
     class SqlModuleDefaultConfiguration implements SqlModuleConfiguration {
         private final Configuration jooqConfiguration = new DefaultConfiguration();
+        private final Settings jooqSettings = jooqConfiguration.settings();
         @Getter(lazy = true)
         private final HikariConfig hikariPoolConfig = createHikariPoolConfig();
         @Getter(lazy = true)

@@ -23,4 +23,5 @@ public interface SqlConfigKeys {
     String LOGIN = "login";
     String PASSWORD = "password";
     String PROVIDER = "provider";
+    String QUERY_TIMEOUT = "queryTimeout";
 }
