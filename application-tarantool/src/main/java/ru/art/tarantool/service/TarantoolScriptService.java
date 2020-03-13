@@ -20,10 +20,17 @@ package ru.art.tarantool.service;
 
 import lombok.experimental.*;
 import ru.art.tarantool.configuration.lua.*;
+import static java.util.Collections.*;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static ru.art.core.factory.CollectionsFactory.setOf;
 import static ru.art.tarantool.configuration.lua.TarantoolCommonScriptConfiguration.*;
 import static ru.art.tarantool.configuration.lua.TarantoolValueScriptConfiguration.*;
 import static ru.art.tarantool.executor.TarantoolLuaExecutor.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.*;
 
 @UtilityClass
@@ -31,18 +38,37 @@ import java.util.concurrent.locks.*;
 public final class TarantoolScriptService {
     private static final ReentrantLock LOCK = new ReentrantLock();
 
+    public static void evaluateValueScript(Set<String> instanceIds, String spaceName) {
+        instanceIds.forEach(id -> evaluateValueScript(id, spaceName));
+    }
+
+    public static void evaluateCommonScript(Set<String> instanceIds, String spaceName) {
+        instanceIds.forEach(id -> evaluateCommonScript(id, spaceName));
+    }
+
+    public static void evaluateValueIndexScript(Set<String> instanceIds, String spaceName, String indexName) {
+        instanceIds.forEach(id -> evaluateValueIndexScript(id, spaceName, indexName));
+    }
+
     public static void evaluateValueScript(String instanceId, String spaceName) {
         TarantoolValueScriptConfiguration valueScriptConfiguration = tarantoolValueScript(spaceName);
-        if (tarantoolModuleState().getLoadedValueScripts().contains(valueScriptConfiguration)) {
+        Set<TarantoolValueScriptConfiguration> instanceValueScripts = tarantoolModuleState()
+                .getLoadedValueScripts()
+                .putIfAbsent(instanceId, emptySet());
+        if (nonNull(instanceValueScripts) && instanceValueScripts.contains(valueScriptConfiguration)) {
             return;
         }
         LOCK.lock();
         try {
-            if (tarantoolModuleState().getLoadedValueScripts().contains(valueScriptConfiguration)) {
+            if (nonNull(instanceValueScripts) && instanceValueScripts.contains(valueScriptConfiguration)) {
                 return;
             }
             evaluateLuaScript(instanceId, valueScriptConfiguration.toLua());
-            tarantoolModuleState().getLoadedValueScripts().add(valueScriptConfiguration);
+            if (isNull(instanceValueScripts)) {
+                tarantoolModuleState().getLoadedValueScripts().put(instanceId, setOf(valueScriptConfiguration));
+                return;
+            }
+            instanceValueScripts.add(valueScriptConfiguration);
         } finally {
             LOCK.unlock();
         }
@@ -50,33 +76,47 @@ public final class TarantoolScriptService {
 
     public static void evaluateCommonScript(String instanceId, String spaceName) {
         TarantoolCommonScriptConfiguration commonScriptConfiguration = tarantoolCommonScript(spaceName);
-        if (tarantoolModuleState().getLoadedCommonScripts().contains(commonScriptConfiguration)) {
+        Set<TarantoolCommonScriptConfiguration> instanceCommonScripts = tarantoolModuleState()
+                .getLoadedCommonScripts()
+                .putIfAbsent(instanceId, emptySet());
+        if (nonNull(instanceCommonScripts) && instanceCommonScripts.contains(commonScriptConfiguration)) {
             return;
         }
         LOCK.lock();
         try {
-            if (tarantoolModuleState().getLoadedCommonScripts().contains(commonScriptConfiguration)) {
+            if (nonNull(instanceCommonScripts) && instanceCommonScripts.contains(commonScriptConfiguration)) {
                 return;
             }
             evaluateLuaScript(instanceId, commonScriptConfiguration.toLua());
-            tarantoolModuleState().getLoadedCommonScripts().add(commonScriptConfiguration);
+            if (isNull(instanceCommonScripts)) {
+                tarantoolModuleState().getLoadedCommonScripts().put(instanceId, setOf(commonScriptConfiguration));
+                return;
+            }
+            instanceCommonScripts.add(commonScriptConfiguration);
         } finally {
             LOCK.unlock();
         }
     }
 
-    public static void evaluateValueScript(String instanceId, String spaceName, String indexName) {
+    public static void evaluateValueIndexScript(String instanceId, String spaceName, String indexName) {
         TarantoolValueScriptConfiguration valueScriptConfiguration = tarantoolValueScript(spaceName, indexName);
-        if (tarantoolModuleState().getLoadedValueScripts().contains(valueScriptConfiguration)) {
+        Set<TarantoolValueScriptConfiguration> instanceValueScripts = tarantoolModuleState()
+                .getLoadedValueScripts()
+                .putIfAbsent(instanceId, emptySet());
+        if (nonNull(instanceValueScripts) && instanceValueScripts.contains(valueScriptConfiguration)) {
             return;
         }
         LOCK.lock();
         try {
-            if (tarantoolModuleState().getLoadedValueScripts().contains(valueScriptConfiguration)) {
+            if (nonNull(instanceValueScripts) && instanceValueScripts.contains(valueScriptConfiguration)) {
                 return;
             }
             evaluateLuaScript(instanceId, valueScriptConfiguration.toLua());
-            tarantoolModuleState().getLoadedValueScripts().add(valueScriptConfiguration);
+            if (isNull(instanceValueScripts)) {
+                tarantoolModuleState().getLoadedValueScripts().put(instanceId, setOf(valueScriptConfiguration));
+                return;
+            }
+            instanceValueScripts.add(valueScriptConfiguration);
         } finally {
             LOCK.unlock();
         }

@@ -47,6 +47,9 @@ box.cfg {
 {%- if not (slabAllocMaximal is empty) -%}
         slab_alloc_maximal = {{  slabAllocMaximal }};
     {%- endif -%}
+{%- if not (replicas is empty) -%}
+        replication = {'{{ replicas | join('\',\'') }}'}
+{%- endif -%}
 {%- for stringOption in stringOptions -%}
         {{ stringOption.key }} = "{{  stringOption.value }}";
     {%- endfor -%}

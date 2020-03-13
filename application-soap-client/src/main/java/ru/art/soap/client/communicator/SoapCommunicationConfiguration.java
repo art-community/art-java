@@ -71,7 +71,6 @@ class SoapCommunicationConfiguration {
     private List<ValueInterceptor<XmlEntity, XmlEntity>> requestValueInterceptors = linkedListOf();
     private List<ValueInterceptor<XmlEntity, XmlEntity>> responseValueInterceptors = linkedListOf();
     private OperationIdSource operationIdSource = REQUEST;
-    private Object request;
 
     void validateRequiredFields() {
         boolean urlIsEmpty = isEmpty(url);

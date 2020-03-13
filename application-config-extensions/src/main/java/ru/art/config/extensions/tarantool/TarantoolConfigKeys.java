@@ -31,8 +31,9 @@ public interface TarantoolConfigKeys {
     String CONNECTION_TIMEOUT_MILLIS = "connectionTimeoutMillis";
     String INITIALIZATION_MODE = "initializationMode";
     String EXECUTABLE = "executable";
+    String EXECUTABLE_FILE_PATH = "executableFilePath";
     String WORKING_DIRECTORY = "workingDirectory";
-    String STARTUP_TIMEOUT_MILLIS = "startupTimeoutMillis";
+    String PROCESS_STARTUP_CHECK_INTERVAL_MILLIS = "processStartupCheckIntervalMillis";
     String PROCESS_STARTUP_TIMEOUT_MILLIS = "processStartupTimeoutMillis";
     String USERNAME = "username";
     String PASSWORD = "password";
@@ -41,6 +42,7 @@ public interface TarantoolConfigKeys {
     String CUSTOM_PROC_TITLE = "customProcTitle";
     String MEMTX_DIR = "memtxDir";
     String VINYL_DIR = "vinylDir";
+    String REPLICAS = "replicas";
     String WORK_DIR = "workDir";
     String PID_FILE = "pidFile";
     String READ_ONLY = "readOnly";
