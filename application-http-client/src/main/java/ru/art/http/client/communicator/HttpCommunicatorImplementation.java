@@ -45,7 +45,6 @@ import static ru.art.core.extension.StringExtensions.emptyIfNull;
 import static ru.art.core.wrapper.ExceptionWrapper.ignoreException;
 import static ru.art.http.client.communicator.HttpCommunicationExecutor.executeAsynchronousHttpRequest;
 import static ru.art.http.client.communicator.HttpCommunicationExecutor.executeSynchronousHttpRequest;
-import static ru.art.http.client.model.HttpCommunicationTargetConfiguration.httpCommunicationTarget;
 import static ru.art.http.client.module.HttpClientModule.httpClientModule;
 import static ru.art.http.constants.HttpMethodType.*;
 import static ru.art.logging.LoggingModule.loggingModule;
@@ -58,7 +57,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     private final HttpCommunicationConfiguration configuration = new HttpCommunicationConfiguration();
 
     HttpCommunicatorImplementation(String url) {
-        this(httpCommunicationTarget().build().url(url));
+        this(HttpCommunicationTargetConfiguration.httpCommunicationTarget().build().url(url));
     }
 
     HttpCommunicatorImplementation(HttpCommunicationTargetConfiguration targetConfiguration) {
