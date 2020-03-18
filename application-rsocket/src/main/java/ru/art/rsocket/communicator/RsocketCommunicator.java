@@ -91,6 +91,7 @@ public class RsocketCommunicator {
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
                         .transport(TcpClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .start()
+                        .doOnNext(rsocketModuleState()::registerRsocket)
                         .doOnSubscribe(subscription -> logger
                                 .info(format(RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.tcpPort())));
                 logger.info(format(RSOCKET_TCP_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.tcpPort()));
@@ -101,6 +102,7 @@ public class RsocketCommunicator {
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
                         .transport(WebsocketClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .start()
+                        .doOnNext(rsocketModuleState()::registerRsocket)
                         .doOnSubscribe(subscription -> logger
                                 .info(format(RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.webSocketPort())));
                 logger.info(format(RSOCKET_WS_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.tcpPort()));
