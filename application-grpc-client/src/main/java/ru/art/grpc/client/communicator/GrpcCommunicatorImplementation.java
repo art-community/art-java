@@ -212,8 +212,6 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
                         .shutdownNow()
                         .awaitTermination(GRPC_CHANNEL_SHUTDOWN_TIMEOUT, MILLISECONDS),
                 loggingModule().getLogger(GrpcCommunicator.class)::error);
-        return;
-
     }
 
     @Override

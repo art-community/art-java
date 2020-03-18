@@ -18,33 +18,26 @@
 
 package ru.art.tarantool.module;
 
-import lombok.Getter;
-import org.apache.logging.log4j.Logger;
-import org.tarantool.TarantoolClient;
+import lombok.*;
+import org.apache.logging.log4j.*;
+import org.tarantool.*;
 import ru.art.core.module.Module;
-import ru.art.core.wrapper.ExceptionWrapper;
-import ru.art.logging.LoggingModule;
-import ru.art.tarantool.configuration.TarantoolConfiguration;
-import ru.art.tarantool.configuration.TarantoolModuleConfiguration;
-import ru.art.tarantool.constants.TarantoolModuleConstants;
-import ru.art.tarantool.exception.TarantoolConnectionException;
-import ru.art.tarantool.state.TarantoolModuleState;
+import ru.art.tarantool.configuration.*;
+import ru.art.tarantool.exception.*;
+import ru.art.tarantool.state.*;
 import static java.text.MessageFormat.*;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.contextIsNotReady;
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
 import static ru.art.logging.LoggingModule.*;
-import static ru.art.tarantool.configuration.TarantoolModuleConfiguration.DEFAULT_CONFIGURATION;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.CONFIGURATION_IS_NULL;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.CLOSING_TARANTOOL_CLIENT;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TARANTOOL_MODULE_ID;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.ON_MODULE_LOAD;
-import static ru.art.tarantool.initializer.TarantoolInitializer.initializeTarantools;
-import java.text.MessageFormat;
-import java.util.Map;
+import static ru.art.tarantool.configuration.TarantoolModuleConfiguration.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
+import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.*;
+import static ru.art.tarantool.initializer.TarantoolInitializer.*;
+import java.util.*;
 
 @Getter
 public class TarantoolModule implements Module<TarantoolModuleConfiguration, TarantoolModuleState> {

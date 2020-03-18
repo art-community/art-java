@@ -1,7 +1,6 @@
 package ru.art.core.lazy;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import static java.util.Objects.nonNull;
 import java.util.concurrent.atomic.AtomicReference;
