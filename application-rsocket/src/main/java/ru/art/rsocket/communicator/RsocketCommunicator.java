@@ -23,6 +23,7 @@ import io.rsocket.transport.netty.client.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import org.reactivestreams.*;
+import reactor.core.Disposable;
 import reactor.core.publisher.*;
 import ru.art.core.validator.*;
 import ru.art.entity.Value;
@@ -62,7 +63,7 @@ import java.util.*;
 @SuppressWarnings("Duplicates")
 @RequiredArgsConstructor
 public class RsocketCommunicator {
-    private final Mono<RSocket> socket;
+    private final Mono<RSocket> rsocketMono;
     private final static Logger logger = loggingModule().getLogger(RsocketCommunicator.class);
     private String serviceId;
     private String methodId;
@@ -86,7 +87,7 @@ public class RsocketCommunicator {
         configuration.interceptors().forEach(factory::addRequesterPlugin);
         switch (configuration.transport()) {
             case TCP:
-                socket = factory.dataMimeType(toMimeType(configuration.dataFormat()))
+                rsocketMono = factory.dataMimeType(toMimeType(configuration.dataFormat()))
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
                         .transport(TcpClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .start()
@@ -95,7 +96,7 @@ public class RsocketCommunicator {
                 logger.info(format(RSOCKET_TCP_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.tcpPort()));
             return;
             case WEB_SOCKET:
-                socket = factory
+                rsocketMono = factory
                         .dataMimeType(toMimeType(configuration.dataFormat()))
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
                         .transport(WebsocketClientTransport.create(configuration.host(), configuration.tcpPort()))
@@ -174,7 +175,7 @@ public class RsocketCommunicator {
     public Mono<Void> call() {
         validator.validate();
         validateRequiredFields();
-        return socket.flatMap(rsocket -> rsocket
+        return rsocketMono.flatMap(rsocket -> rsocket
                 .fireAndForget(writeServiceRequestPayload(fromServiceRequest()
                         .map(newServiceRequest(command)), requestValueInterceptors, dataFormat)));
     }
@@ -183,7 +184,7 @@ public class RsocketCommunicator {
         validator.validate();
         validateRequiredFields();
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
-        return socket.flatMap(rsocket -> rsocket
+        return rsocketMono.flatMap(rsocket -> rsocket
                 .requestResponse(writeServiceRequestPayload(fromServiceRequest().map(newServiceRequest(command)),
                         requestValueInterceptors, dataFormat)))
                 .map(responsePayload -> ofNullable(readPayloadData(responsePayload, dataFormat)))
@@ -199,7 +200,7 @@ public class RsocketCommunicator {
         validator.validate();
         validateRequiredFields();
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
-        Flux<Payload> requestStream = socket
+        Flux<Payload> requestStream = rsocketMono
                 .flatMapMany(rsocket -> rsocket
                         .requestStream(writeServiceRequestPayload(fromServiceRequest().map(newServiceRequest(command)),
                                 requestValueInterceptors, dataFormat)));
@@ -219,7 +220,7 @@ public class RsocketCommunicator {
         ValueFromModelMapper<?, ? extends Value> requestModelMapper = cast(requestMapper);
         Payload requestPayload = writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
                 .map(newServiceRequest(command, request)), requestValueInterceptors, dataFormat);
-        return socket.flatMap(rsocket -> rsocket.fireAndForget(requestPayload));
+        return rsocketMono.flatMap(rsocket -> rsocket.fireAndForget(requestPayload));
     }
 
     @SuppressWarnings("Duplicates")
@@ -230,7 +231,7 @@ public class RsocketCommunicator {
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
         Payload requestPayload = writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
                 .map(newServiceRequest(command, request)), requestValueInterceptors, dataFormat);
-        Mono<Payload> requestResponse = socket.flatMap(rsocket -> rsocket.requestResponse(requestPayload));
+        Mono<Payload> requestResponse = rsocketMono.flatMap(rsocket -> rsocket.requestResponse(requestPayload));
         return requestResponse
                 .map(responsePayload -> ofNullable(readPayloadData(responsePayload, dataFormat)))
                 .filter(Optional::isPresent)
@@ -249,7 +250,7 @@ public class RsocketCommunicator {
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
         Payload requestPayload = writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
                 .map(newServiceRequest(command, request)), requestValueInterceptors, dataFormat);
-        return socket.flatMapMany(rsocket -> rsocket.requestStream(requestPayload)
+        return rsocketMono.flatMapMany(rsocket -> rsocket.requestStream(requestPayload)
                 .map(responsePayload -> ofNullable(readPayloadData(responsePayload, dataFormat)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -264,7 +265,7 @@ public class RsocketCommunicator {
         validateRequiredFields();
         ValueFromModelMapper<?, ? extends Value> requestModelMapper = cast(requestMapper);
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
-        return socket.flatMapMany(rsocket -> rsocket.requestChannel(from(request)
+        return rsocketMono.flatMapMany(rsocket -> rsocket.requestChannel(from(request)
                 .filter(Objects::nonNull)
                 .map(requestData -> writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
                         .map(newServiceRequest(command, requestData)), requestValueInterceptors, dataFormat)))

@@ -23,6 +23,7 @@ import io.grpc.ForwardingServerCallListener.*;
 import io.grpc.*;
 import io.grpc.ServerCall.*;
 import org.apache.logging.log4j.Logger;
+import ru.art.grpc.server.module.GrpcServerModule;
 import ru.art.logging.*;
 import static io.grpc.Metadata.*;
 import static io.grpc.Metadata.Key.*;
@@ -33,6 +34,7 @@ import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.grpc.server.constants.GrpcServerLoggingMessages.*;
 import static ru.art.grpc.server.constants.GrpcServerModuleConstants.*;
+import static ru.art.grpc.server.module.GrpcServerModule.grpcServerModule;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.logging.LoggingParametersManager.*;
 
@@ -51,6 +53,9 @@ public class GrpcServerLoggingInterceptor implements ServerInterceptor {
                 .requestId(randomUUID().toString())
                 .traceId(isEmpty(traceIdHeader) ? randomUUID().toString() : traceIdHeader)
                 .build());
+        if (!grpcServerModule().isEnableRawDataTracing()) {
+            return serverCallHandler.startCall(serverCall, metadata);
+        }
         logger.info(format(GRPC_ON_REQUEST_HEADERS, emptyIfNull(metadata.toString())));
         return new SimpleForwardingServerCallListener<ReqT>(serverCallHandler.startCall(new SimpleForwardingServerCall<ReqT, RespT>(serverCall) {
             @Override

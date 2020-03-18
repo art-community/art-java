@@ -20,12 +20,17 @@ package ru.art.rsocket.state;
 
 import io.rsocket.*;
 import lombok.*;
+import ru.art.core.factory.CollectionsFactory;
 import ru.art.core.module.*;
 import ru.art.rsocket.constants.RsocketModuleConstants.*;
 import ru.art.rsocket.server.*;
+import static ru.art.core.factory.CollectionsFactory.linkedListOf;
+import java.util.List;
 
 public class RsocketModuleState implements ModuleState {
     private final ThreadLocal<CurrentRsocketState> currentClientSocket = new ThreadLocal<>();
+    @Getter
+    private final List<RSocket> rsocketClients = linkedListOf();
 
     @Getter
     @Setter
@@ -42,6 +47,11 @@ public class RsocketModuleState implements ModuleState {
 
     public CurrentRsocketState currentRocketState() {
         return currentClientSocket.get();
+    }
+
+    public RSocket registerRsocket(RSocket rsocket) {
+        rsocketClients.add(rsocket);
+        return rsocket;
     }
 
     @Getter

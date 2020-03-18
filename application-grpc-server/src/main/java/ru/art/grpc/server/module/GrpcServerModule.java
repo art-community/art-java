@@ -47,4 +47,9 @@ public class GrpcServerModule implements Module<GrpcServerModuleConfiguration, G
     public static GrpcServerModuleState grpcServerModuleState() {
         return getGrpcServerModuleState();
     }
+
+    @Override
+    public void onUnload() {
+        grpcServerModuleState().getServer().stop();
+    }
 }

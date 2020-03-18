@@ -161,11 +161,22 @@ public class RsocketServer {
                 serverDisposable.dispose();
             }
             new RsocketServer(transport).subscribe();
-            logger.info(format(RSOCKET_RESTARTED_MESSAGE, currentTimeMillis() - millis));
+            logger.info(format(RSOCKET_RESTARTING_MESSAGE, currentTimeMillis() - millis));
         } catch (Throwable throwable) {
             logger.error(RSOCKET_RESTART_FAILED);
         }
+    }
 
+    public void stop() {
+        long millis = currentTimeMillis();
+        try {
+            if (nonNull(serverDisposable)) {
+                serverDisposable.dispose();
+            }
+            logger.info(format(RSOCKET_STOPPING_MESSAGE, currentTimeMillis() - millis));
+        } catch (Throwable throwable) {
+            logger.error(RSOCKET_STOP_FAILED);
+        }
     }
 
     public boolean isWorking() {

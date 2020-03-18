@@ -18,44 +18,56 @@
 
 package ru.art.grpc.client.communicator;
 
-import com.google.common.util.concurrent.*;
-import io.grpc.*;
-import lombok.*;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.ListenableFuture;
+import io.grpc.ClientInterceptor;
+import io.grpc.ManagedChannelBuilder;
+import lombok.NoArgsConstructor;
+import ru.art.entity.Entity;
 import ru.art.entity.Value;
-import ru.art.entity.*;
-import ru.art.entity.interceptor.*;
-import ru.art.entity.mapper.*;
-import ru.art.grpc.client.exception.*;
-import ru.art.grpc.servlet.*;
-import ru.art.service.model.*;
-import static com.google.common.util.concurrent.Futures.*;
-import static io.grpc.ManagedChannelBuilder.*;
-import static java.util.Objects.*;
-import static java.util.Optional.*;
-import static java.util.concurrent.CompletableFuture.*;
-import static java.util.concurrent.TimeUnit.*;
-import static lombok.AccessLevel.*;
-import static ru.art.core.caster.Caster.*;
-import static ru.art.core.checker.CheckerForEmptiness.*;
-import static ru.art.core.constants.InterceptionStrategy.*;
-import static ru.art.core.extension.StringExtensions.*;
-import static ru.art.entity.Value.*;
-import static ru.art.grpc.client.constants.GrpcClientExceptionMessages.*;
-import static ru.art.grpc.client.module.GrpcClientModule.*;
-import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
-import static ru.art.protobuf.descriptor.ProtobufEntityWriter.*;
-import static ru.art.service.factory.ServiceRequestFactory.*;
-import static ru.art.service.factory.ServiceResponseFactory.*;
-import static ru.art.service.mapping.ServiceRequestMapping.*;
-import static ru.art.service.mapping.ServiceResponseMapping.*;
-import javax.annotation.*;
-import java.util.*;
-import java.util.concurrent.*;
+import ru.art.entity.interceptor.ValueInterceptionResult;
+import ru.art.entity.interceptor.ValueInterceptor;
+import ru.art.entity.mapper.ValueFromModelMapper;
+import ru.art.grpc.client.exception.GrpcClientException;
+import ru.art.grpc.servlet.GrpcServlet;
+import ru.art.grpc.servlet.GrpcServlet.GrpcServletFutureStub;
+import ru.art.service.model.ServiceMethodCommand;
+import ru.art.service.model.ServiceRequest;
+import ru.art.service.model.ServiceResponse;
+import static com.google.common.util.concurrent.Futures.addCallback;
+import static io.grpc.ManagedChannelBuilder.forTarget;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
+import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
+import static lombok.AccessLevel.PRIVATE;
+import static ru.art.core.caster.Caster.cast;
+import static ru.art.core.checker.CheckerForEmptiness.ifEmpty;
+import static ru.art.core.constants.InterceptionStrategy.PROCESS_HANDLING;
+import static ru.art.core.constants.InterceptionStrategy.STOP_HANDLING;
+import static ru.art.core.extension.StringExtensions.emptyIfNull;
+import static ru.art.entity.Value.asEntity;
+import static ru.art.grpc.client.constants.GrpcClientExceptionMessages.RESPONSE_IS_NULL;
+import static ru.art.grpc.client.module.GrpcClientModule.grpcClientModule;
+import static ru.art.protobuf.descriptor.ProtobufEntityReader.readProtobuf;
+import static ru.art.protobuf.descriptor.ProtobufEntityWriter.writeProtobuf;
+import static ru.art.service.factory.ServiceRequestFactory.newServiceRequest;
+import static ru.art.service.factory.ServiceResponseFactory.okResponse;
+import static ru.art.service.mapping.ServiceRequestMapping.fromServiceRequest;
+import static ru.art.service.mapping.ServiceResponseMapping.toServiceResponse;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @NoArgsConstructor(access = PRIVATE)
 class GrpcCommunicationAsynchronousExecutor {
-    @SuppressWarnings("Duplicates")
-    static <RequestType, ResponseType> CompletableFuture<ServiceResponse<ResponseType>> execute(GrpcCommunicationConfiguration configuration, @Nullable RequestType request) {
+    static GrpcServletFutureStub createFutureStub(GrpcCommunicationConfiguration configuration) {
+        @SuppressWarnings("duplicates")
         ManagedChannelBuilder<?> channelBuilder = forTarget(configuration.getUrl()).usePlaintext();
         if (configuration.isUseSecuredTransport()) {
             channelBuilder.useTransportSecurity();
@@ -68,10 +80,20 @@ class GrpcCommunicationAsynchronousExecutor {
         GrpcServlet.GrpcServletFutureStub stub = new GrpcServlet().newFutureStub(channelBuilder.build(), emptyIfNull(configuration.getPath()))
                 .withDeadlineAfter(deadlineTimeout > 0L ? deadlineTimeout : grpcClientModule().getTimeout(), MILLISECONDS)
                 .withInterceptors(ifEmpty(configuration.getInterceptors(), grpcClientModule().getInterceptors()).toArray(new ClientInterceptor[0]));
+        if (configuration.isWaitForReady()) {
+            stub = stub.withWaitForReady();
+        }
         Executor executor;
         if (nonNull(executor = configuration.getOverrideExecutor()) || nonNull(executor = grpcClientModule().getOverridingExecutor())) {
             stub = stub.withExecutor(executor);
         }
+        return stub;
+    }
+
+    @SuppressWarnings("Duplicates")
+    static <RequestType, ResponseType> CompletableFuture<ServiceResponse<ResponseType>> execute(GrpcServletFutureStub stub,
+                                                                                                GrpcCommunicationConfiguration configuration,
+                                                                                                @Nullable RequestType request) {
         ServiceMethodCommand command = new ServiceMethodCommand(configuration.getServiceId(), configuration.getMethodId());
         ValueFromModelMapper<?, ? extends Value> requestMapper = null;
         ServiceRequest<Object> serviceRequest = isNull(request)

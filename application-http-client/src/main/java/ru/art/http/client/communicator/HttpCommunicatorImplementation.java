@@ -18,33 +18,40 @@
 
 package ru.art.http.client.communicator;
 
-import org.apache.http.*;
-import org.apache.http.client.config.*;
-import org.apache.http.impl.client.*;
-import org.apache.http.impl.nio.client.*;
-import ru.art.core.validator.*;
-import ru.art.entity.*;
-import ru.art.entity.interceptor.*;
-import ru.art.entity.mapper.*;
-import ru.art.http.client.communicator.HttpCommunicator.*;
-import ru.art.http.client.handler.*;
-import ru.art.http.client.interceptor.*;
-import ru.art.http.client.model.*;
-import ru.art.http.constants.*;
-import static java.util.Optional.*;
-import static ru.art.core.caster.Caster.*;
-import static ru.art.core.checker.CheckerForEmptiness.*;
-import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.context.Context.*;
-import static ru.art.core.extension.NullCheckingExtensions.*;
-import static ru.art.core.extension.StringExtensions.*;
-import static ru.art.http.client.communicator.HttpCommunicationExecutor.*;
-import static ru.art.http.client.model.HttpCommunicationTargetConfiguration.*;
-import static ru.art.http.client.module.HttpClientModule.*;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import ru.art.core.validator.BuilderValidator;
+import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptor;
+import ru.art.entity.mapper.ValueFromModelMapper;
+import ru.art.entity.mapper.ValueToModelMapper;
+import ru.art.http.client.communicator.HttpCommunicator.HttpAsynchronousCommunicator;
+import ru.art.http.client.handler.HttpCommunicationCancellationHandler;
+import ru.art.http.client.handler.HttpCommunicationExceptionHandler;
+import ru.art.http.client.handler.HttpCommunicationResponseHandler;
+import ru.art.http.client.interceptor.HttpClientInterceptor;
+import ru.art.http.client.model.HttpCommunicationTargetConfiguration;
+import ru.art.http.constants.MimeToContentTypeMapper;
+import static java.util.Optional.ofNullable;
+import static ru.art.core.caster.Caster.cast;
+import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
+import static ru.art.core.constants.StringConstants.COLON;
+import static ru.art.core.constants.StringConstants.SCHEME_DELIMITER;
+import static ru.art.core.context.Context.contextConfiguration;
+import static ru.art.core.extension.NullCheckingExtensions.getOrElse;
+import static ru.art.core.extension.StringExtensions.emptyIfNull;
+import static ru.art.core.wrapper.ExceptionWrapper.ignoreException;
+import static ru.art.http.client.communicator.HttpCommunicationExecutor.executeAsynchronousHttpRequest;
+import static ru.art.http.client.communicator.HttpCommunicationExecutor.executeSynchronousHttpRequest;
+import static ru.art.http.client.model.HttpCommunicationTargetConfiguration.httpCommunicationTarget;
+import static ru.art.http.client.module.HttpClientModule.httpClientModule;
 import static ru.art.http.constants.HttpMethodType.*;
-import java.nio.charset.*;
-import java.util.*;
-import java.util.concurrent.*;
+import static ru.art.logging.LoggingModule.loggingModule;
+import java.nio.charset.Charset;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsynchronousCommunicator {
     private final BuilderValidator validator = new BuilderValidator(HttpCommunicator.class.getName());
@@ -232,6 +239,11 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     }
 
     @Override
+    public void closeClient() {
+        ignoreException(configuration.getSynchronousClient()::close, loggingModule().getLogger(HttpCommunicator.class)::error);
+    }
+
+    @Override
     public <RequestType, ResponseType> Optional<ResponseType> execute(RequestType request) {
         request = validator.notNullField(request, "request");
         validator.validate();
@@ -244,6 +256,11 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
         return ofNullable(executeSynchronousHttpRequest(configuration, null));
     }
 
+
+    @Override
+    public void closeAsynchronousClient() {
+        ignoreException(configuration.getAsynchronousClient()::close, loggingModule().getLogger(HttpCommunicator.class)::error);
+    }
 
     @Override
     public HttpAsynchronousCommunicator client(CloseableHttpAsyncClient client) {

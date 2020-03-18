@@ -18,23 +18,42 @@
 
 package ru.art.grpc.client.communicator;
 
-import io.grpc.*;
-import ru.art.core.validator.*;
-import ru.art.entity.*;
-import ru.art.entity.interceptor.*;
-import ru.art.entity.mapper.*;
-import ru.art.grpc.client.handler.*;
-import ru.art.grpc.client.model.*;
-import ru.art.service.model.*;
-import static ru.art.core.caster.Caster.*;
-import static ru.art.core.checker.CheckerForEmptiness.*;
-import static ru.art.core.constants.StringConstants.*;
-import static ru.art.grpc.client.constants.GrpcClientModuleConstants.*;
-import java.util.concurrent.*;
+import io.grpc.ClientInterceptor;
+import io.grpc.ManagedChannel;
+import ru.art.core.lazy.LazyLoadingValue;
+import ru.art.core.runnable.ExceptionRunnable;
+import ru.art.core.validator.BuilderValidator;
+import ru.art.entity.Entity;
+import ru.art.entity.Value;
+import ru.art.entity.interceptor.ValueInterceptor;
+import ru.art.entity.mapper.ValueFromModelMapper;
+import ru.art.entity.mapper.ValueToModelMapper;
+import ru.art.grpc.client.handler.GrpcCommunicationCompletionHandler;
+import ru.art.grpc.client.handler.GrpcCommunicationExceptionHandler;
+import ru.art.grpc.client.model.GrpcCommunicationTargetConfiguration;
+import ru.art.grpc.servlet.GrpcServlet.GrpcServletBlockingStub;
+import ru.art.grpc.servlet.GrpcServlet.GrpcServletFutureStub;
+import ru.art.service.model.ServiceResponse;
+import static java.util.Objects.nonNull;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static ru.art.core.caster.Caster.cast;
+import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
+import static ru.art.core.constants.StringConstants.COLON;
+import static ru.art.core.lazy.LazyLoadingValue.lazyValue;
+import static ru.art.core.wrapper.ExceptionWrapper.ignoreException;
+import static ru.art.grpc.client.communicator.GrpcCommunicationAsynchronousExecutor.createFutureStub;
+import static ru.art.grpc.client.communicator.GrpcCommunicationExecutor.createBlockingStub;
+import static ru.art.grpc.client.constants.GrpcClientModuleConstants.GRPC_CHANNEL_SHUTDOWN_TIMEOUT;
+import static ru.art.grpc.client.constants.GrpcClientModuleConstants.GRPC_FUNCTION_SERVICE;
+import static ru.art.logging.LoggingModule.loggingModule;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCommunicator.GrpcAsynchronousCommunicator {
     private final GrpcCommunicationConfiguration configuration = new GrpcCommunicationConfiguration();
     private final BuilderValidator validator = new BuilderValidator(GrpcCommunicator.class.getName());
+    private final LazyLoadingValue<GrpcServletBlockingStub> blockingStub = lazyValue(() -> createBlockingStub(configuration));
+    private final LazyLoadingValue<GrpcServletFutureStub> futureStub = lazyValue(() -> createFutureStub(configuration));
 
     GrpcCommunicatorImplementation(String host, int port, String path) {
         configuration.setUrl(validator.notEmptyField(host, "host") + COLON + validator.notNullField(port, "port"));
@@ -101,6 +120,12 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     }
 
     @Override
+    public GrpcCommunicator waitForReady() {
+        configuration.setWaitForReady(true);
+        return this;
+    }
+
+    @Override
     public GrpcCommunicator addInterceptor(ClientInterceptor interceptor) {
         configuration.getInterceptors().add(validator.notNullField(interceptor, "interceptor"));
         return this;
@@ -119,6 +144,23 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     }
 
     @Override
+    public void shutdownBlockingChannel() {
+        GrpcServletBlockingStub blockingStub = this.blockingStub.safeValue();
+        if (!nonNull(blockingStub)) {
+            return;
+        }
+        ManagedChannel channel = (ManagedChannel) blockingStub.getChannel();
+        if (channel.isShutdown() || channel.isTerminated()) {
+            return;
+        }
+        ignoreException((ExceptionRunnable) () -> channel
+                        .shutdownNow()
+                        .awaitTermination(GRPC_CHANNEL_SHUTDOWN_TIMEOUT, MILLISECONDS),
+                loggingModule().getLogger(GrpcCommunicator.class)::error);
+        return;
+    }
+
+    @Override
     public GrpcAsynchronousCommunicator asynchronous() {
         return this;
     }
@@ -127,7 +169,7 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     public <ResponseType> ServiceResponse<ResponseType> execute() {
         validator.validate();
         configuration.validateRequiredFields();
-        return GrpcCommunicationExecutor.execute(configuration, null);
+        return GrpcCommunicationExecutor.execute(blockingStub.safeValue(), configuration, null);
     }
 
     @Override
@@ -135,7 +177,7 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
         request = validator.notNullField(request, "request");
         validator.validate();
         configuration.validateRequiredFields();
-        return GrpcCommunicationExecutor.execute(configuration, request);
+        return GrpcCommunicationExecutor.execute(blockingStub.safeValue(), configuration, request);
     }
 
     @Override
@@ -157,6 +199,24 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     }
 
     @Override
+    public void shutdownFutureChannel() {
+        GrpcServletFutureStub futureStub = this.futureStub.safeValue();
+        if (!nonNull(futureStub)) {
+            return;
+        }
+        ManagedChannel channel = (ManagedChannel) futureStub.getChannel();
+        if (channel.isShutdown() || channel.isTerminated()) {
+            return;
+        }
+        ignoreException((ExceptionRunnable) () -> channel
+                        .shutdownNow()
+                        .awaitTermination(GRPC_CHANNEL_SHUTDOWN_TIMEOUT, MILLISECONDS),
+                loggingModule().getLogger(GrpcCommunicator.class)::error);
+        return;
+
+    }
+
+    @Override
     public <RequestType, ResponseType> GrpcAsynchronousCommunicator completionHandler(GrpcCommunicationCompletionHandler<RequestType, ResponseType> completionHandler) {
         configuration.setCompletionHandler(validator.notNullField(completionHandler, "completionHandler"));
         return this;
@@ -172,7 +232,7 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     public <ResponseType> CompletableFuture<ServiceResponse<ResponseType>> executeAsynchronous() {
         validator.validate();
         configuration.validateRequiredFields();
-        return GrpcCommunicationAsynchronousExecutor.execute(configuration, null);
+        return GrpcCommunicationAsynchronousExecutor.execute(futureStub.safeValue(), configuration, null);
     }
 
     @Override
@@ -180,6 +240,6 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
         request = validator.notNullField(request, "request");
         validator.validate();
         configuration.validateRequiredFields();
-        return GrpcCommunicationAsynchronousExecutor.execute(configuration, request);
+        return GrpcCommunicationAsynchronousExecutor.execute(futureStub.safeValue(), configuration, request);
     }
 }

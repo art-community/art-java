@@ -18,13 +18,21 @@
 
 package ru.art.rsocket.module;
 
-import lombok.*;
+import io.rsocket.RSocket;
+import lombok.Getter;
+import org.apache.logging.log4j.Logger;
 import ru.art.core.module.Module;
-import ru.art.rsocket.configuration.*;
-import ru.art.rsocket.state.*;
-import static ru.art.core.context.Context.*;
-import static ru.art.rsocket.configuration.RsocketModuleConfiguration.*;
-import static ru.art.rsocket.constants.RsocketModuleConstants.*;
+import ru.art.rsocket.configuration.RsocketModuleConfiguration;
+import ru.art.rsocket.server.RsocketServer;
+import ru.art.rsocket.state.RsocketModuleState;
+import static ru.art.core.context.Context.context;
+import static ru.art.core.context.Context.contextIsNotReady;
+import static ru.art.core.extension.NullCheckingExtensions.doIfNotNull;
+import static ru.art.logging.LoggingModule.loggingModule;
+import static ru.art.rsocket.configuration.RsocketModuleConfiguration.DEFAULT_CONFIGURATION;
+import static ru.art.rsocket.configuration.RsocketModuleConfiguration.RsocketModuleDefaultConfiguration;
+import static ru.art.rsocket.constants.RsocketModuleConstants.RSOCKET_CLIENT_DISPOSING;
+import static ru.art.rsocket.constants.RsocketModuleConstants.RSOCKET_MODULE_ID;
 
 @Getter
 public class RsocketModule implements Module<RsocketModuleConfiguration, RsocketModuleState> {
@@ -35,6 +43,7 @@ public class RsocketModule implements Module<RsocketModuleConfiguration, Rsocket
     private final String id = RSOCKET_MODULE_ID;
     private final RsocketModuleConfiguration defaultConfiguration = RsocketModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
     private final RsocketModuleState state = new RsocketModuleState();
+    private static Logger logger = loggingModule().getLogger(RsocketModule.class);
 
     public static RsocketModuleConfiguration rsocketModule() {
         if (contextIsNotReady()) {
@@ -45,5 +54,20 @@ public class RsocketModule implements Module<RsocketModuleConfiguration, Rsocket
 
     public static RsocketModuleState rsocketModuleState() {
         return getRsocketModuleState();
+    }
+
+    @Override
+    public void onUnload() {
+        doIfNotNull(rsocketModuleState().getTcpServer(), RsocketServer::stop);
+        doIfNotNull(rsocketModuleState().getWebSocketServer(), RsocketServer::stop);
+        rsocketModuleState().getRsocketClients().stream().filter(rsocket -> !rsocket.isDisposed()).forEach(this::disposeRsocket);
+    }
+
+    private void disposeRsocket(RSocket rsocket) {
+        if (rsocket.isDisposed()) {
+            return;
+        }
+        rsocket.dispose();
+        logger.info(RSOCKET_CLIENT_DISPOSING);
     }
 }

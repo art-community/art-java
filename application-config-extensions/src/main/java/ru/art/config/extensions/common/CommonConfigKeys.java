@@ -34,4 +34,5 @@ public interface CommonConfigKeys {
     String KEEP_ALIVE_TIME_MILLIS = "keepAliveTimeMillis";
     String KEEP_ALIVE_TIME_OUT_MILLIS = "keepAliveTimeOutMillis";
     String KEEP_ALIVE_WITHOUT_CALLS = "keepAliveWithoutCalls";
+    String WAIT_FOR_READY = "waitForReady";
 }

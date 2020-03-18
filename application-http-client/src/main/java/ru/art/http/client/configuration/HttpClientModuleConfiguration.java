@@ -29,6 +29,7 @@ import org.zalando.logbook.httpclient.*;
 import ru.art.http.client.exception.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.client.model.*;
+import ru.art.http.client.module.HttpClientModule;
 import ru.art.http.configuration.*;
 import static java.security.KeyStore.*;
 import static java.text.MessageFormat.*;
@@ -44,6 +45,7 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
 import static ru.art.http.client.constants.HttpClientModuleConstants.*;
 import static ru.art.http.client.interceptor.HttpClientInterceptor.*;
+import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
 import static ru.art.logging.LoggingModule.*;
 import javax.net.ssl.*;
@@ -144,7 +146,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
             if (this.isEnableRawDataTracing()) {
                 clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()));
             }
-            CloseableHttpAsyncClient client = clientBuilder.build();
+            CloseableHttpAsyncClient client = httpClientModuleState().registerClient(clientBuilder.build());
             client.start();
             return client;
         }
@@ -172,7 +174,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                     throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
                 }
             }
-            return clientBuilder.build();
+            return httpClientModuleState().registerClient(clientBuilder.build());
         }
 
         private KeyStore loadKeyStore() {

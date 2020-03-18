@@ -104,7 +104,7 @@ public interface GrpcServerModuleConfiguration extends ModuleConfiguration {
         }
 
         private List<ServerInterceptor> initializeInterceptors() {
-            return isEnableRawDataTracing() ? linkedListOf(new GrpcServerLoggingInterceptor()) : linkedListOf();
+            return linkedListOf(new GrpcServerLoggingInterceptor());
         }
     }
 }

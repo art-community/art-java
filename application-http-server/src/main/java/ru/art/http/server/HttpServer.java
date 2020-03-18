@@ -125,7 +125,17 @@ public class HttpServer {
             startHttpServer();
             logger.info(format(TOMCAT_RESTARTED_MESSAGE, currentTimeMillis() - millis));
         } catch (Throwable throwable) {
-            logger.error(TOMCAT_RESTART_FAILED);
+            logger.error(TOMCAT_RESTARTING_FAILED);
+        }
+    }
+
+    public void stop() {
+        long millis = currentTimeMillis();
+        try {
+            tomcat.stop();
+            logger.info(format(TOMCAT_STOPPED_MESSAGE, currentTimeMillis() - millis));
+        } catch (Throwable throwable) {
+            logger.error(TOMCAT_STOPPING_FAILED);
         }
     }
 
