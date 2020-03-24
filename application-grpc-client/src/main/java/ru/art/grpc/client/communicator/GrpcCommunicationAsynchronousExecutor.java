@@ -30,7 +30,6 @@ import ru.art.grpc.servlet.*;
 import ru.art.grpc.servlet.GrpcServlet.*;
 import ru.art.service.model.*;
 import static com.google.common.util.concurrent.Futures.*;
-import static io.grpc.ManagedChannelBuilder.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static java.util.concurrent.CompletableFuture.*;
@@ -55,32 +54,9 @@ import java.util.concurrent.*;
 
 @NoArgsConstructor(access = PRIVATE)
 class GrpcCommunicationAsynchronousExecutor {
-    static GrpcServletFutureStub createFutureStub(GrpcCommunicationConfiguration configuration) {
-        @SuppressWarnings("duplicates")
-        ManagedChannelBuilder<?> channelBuilder = forTarget(configuration.getUrl()).usePlaintext();
-        if (configuration.isUseSecuredTransport()) {
-            channelBuilder.useTransportSecurity();
-        }
-        channelBuilder
-                .keepAliveTime(configuration.getKeepAliveTimeNanos(), NANOSECONDS)
-                .keepAliveTimeout(configuration.getKeepAliveTimeOutNanos(), NANOSECONDS)
-                .keepAliveWithoutCalls(configuration.isKeepAliveWithoutCalls());
-        long deadlineTimeout = configuration.getDeadlineTimeout();
-        GrpcServlet.GrpcServletFutureStub stub = new GrpcServlet().newFutureStub(channelBuilder.build(), emptyIfNull(configuration.getPath()))
-                .withDeadlineAfter(deadlineTimeout > 0L ? deadlineTimeout : grpcClientModule().getTimeout(), MILLISECONDS)
-                .withInterceptors(ifEmpty(configuration.getInterceptors(), grpcClientModule().getInterceptors()).toArray(new ClientInterceptor[0]));
-        if (configuration.isWaitForReady()) {
-            stub = stub.withWaitForReady();
-        }
-        Executor executor;
-        if (nonNull(executor = configuration.getOverrideExecutor()) || nonNull(executor = grpcClientModule().getOverridingExecutor())) {
-            stub = stub.withExecutor(executor);
-        }
-        return stub;
-    }
 
     @SuppressWarnings("Duplicates")
-    static <RequestType, ResponseType> CompletableFuture<ServiceResponse<ResponseType>> execute(GrpcServletFutureStub stub,
+    static <RequestType, ResponseType> CompletableFuture<ServiceResponse<ResponseType>> execute(ManagedChannel channel,
                                                                                                 GrpcCommunicationConfiguration configuration,
                                                                                                 @Nullable RequestType request) {
         ServiceMethodCommand command = new ServiceMethodCommand(configuration.getServiceId(), configuration.getMethodId());
@@ -104,10 +80,25 @@ class GrpcCommunicationAsynchronousExecutor {
                 return completedFuture(okResponse(command));
             }
         }
-        ListenableFuture<com.google.protobuf.Value> future = stub.executeService(writeProtobuf(requestValue));
+        ListenableFuture<com.google.protobuf.Value> future = createFutureStub(channel, configuration).executeService(writeProtobuf(requestValue));
         CompletableFuture<ServiceResponse<?>> completableFuture = new CompletableFuture<>();
         addCallback(future, createFutureCallback(configuration, request, completableFuture), configuration.getAsynchronousFuturesExecutor());
         return cast(completableFuture);
+    }
+
+    private static GrpcServletFutureStub createFutureStub(ManagedChannel channel, GrpcCommunicationConfiguration configuration) {
+        long deadlineTimeout = configuration.getDeadlineTimeout();
+        GrpcServlet.GrpcServletFutureStub stub = new GrpcServlet().newFutureStub(channel, emptyIfNull(configuration.getPath()))
+                .withDeadlineAfter(deadlineTimeout > 0L ? deadlineTimeout : grpcClientModule().getTimeout(), MILLISECONDS)
+                .withInterceptors(ifEmpty(configuration.getInterceptors(), grpcClientModule().getInterceptors()).toArray(new ClientInterceptor[0]));
+        if (configuration.isWaitForReady()) {
+            stub = stub.withWaitForReady();
+        }
+        Executor executor;
+        if (nonNull(executor = configuration.getOverrideExecutor()) || nonNull(executor = grpcClientModule().getOverridingExecutor())) {
+            stub = stub.withExecutor(executor);
+        }
+        return stub;
     }
 
     private static FutureCallback<com.google.protobuf.Value> createFutureCallback(GrpcCommunicationConfiguration configuration,
