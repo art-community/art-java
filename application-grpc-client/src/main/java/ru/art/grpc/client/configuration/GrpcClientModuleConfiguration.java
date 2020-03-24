@@ -52,6 +52,8 @@ public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
 
     boolean isKeepAliveWithoutCalls();
 
+    boolean isWaitForReady();
+
     Executor getOverridingExecutor();
 
     String getBalancerHost();
@@ -84,7 +86,7 @@ public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ClientInterceptor> interceptors = initializeInterceptors();
         private final Executor asynchronousFuturesExecutor = commonPool();
-        private final long timeout = DEFAULT_TIMEOUT;
+        private final long timeout = DEFAULT_GRPC_DEADLINE;
         private final Executor overridingExecutor = new ForkJoinPool(DEFAULT_THREAD_POOL_SIZE);
         private final String balancerHost = LOCALHOST;
         private final int balancerPort = DEFAULT_GRPC_PORT;
@@ -96,6 +98,7 @@ public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
         private long keepAliveTimeNanos = MAX_VALUE;
         private long keepAliveTimeOutNanos = DEFAULT_KEEPALIVE_TIMEOUT_NANOS;
         private boolean keepAliveWithoutCalls = false;
+        private boolean waitForReady = false;
 
         private List<ClientInterceptor> initializeInterceptors() {
             List<ClientInterceptor> interceptors = linkedListOf(new GrpcClientTracingInterceptor());

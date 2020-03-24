@@ -62,4 +62,9 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
     public static HttpServerModuleState httpServerModuleState() {
         return getHttpServerModuleState();
     }
+
+    @Override
+    public void onUnload() {
+        httpServerModuleState().getServer().stop();
+    }
 }

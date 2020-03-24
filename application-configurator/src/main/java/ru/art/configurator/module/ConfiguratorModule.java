@@ -31,6 +31,7 @@ import ru.art.grpc.server.module.*;
 import ru.art.grpc.server.state.*;
 import ru.art.http.client.configuration.*;
 import ru.art.http.client.module.*;
+import ru.art.http.client.state.HttpClientModuleState;
 import ru.art.http.server.*;
 import ru.art.http.server.module.*;
 import ru.art.http.server.specification.*;
@@ -81,8 +82,7 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
                 .loadModule(new MetricsModule(), (ModuleConfigurator<MetricModuleConfiguration, ModuleState>) (module) ->
                         new ConfiguratorMetricsConfiguration())
                 .loadModule(new GrpcClientModule())
-                .loadModule(new HttpClientModule(), (ModuleConfigurator<HttpClientModuleConfiguration, ModuleState>) (module) ->
-                        new ConfiguratorHttpClientConfiguration())
+                .loadModule(new HttpClientModule(), (ModuleConfigurator<HttpClientModuleConfiguration, HttpClientModuleState>) module -> new ConfiguratorHttpClientConfiguration())
                 .loadModule(new ConfiguratorModule());
         serviceModuleState()
                 .getServiceRegistry()

@@ -95,6 +95,7 @@ public interface TarantoolModuleConstants {
     }
 
     interface LoggingMessages {
+        String CLOSING_TARANTOOL_CLIENT = "Closing tarantool client for instance ''{0}''";
         String TARANTOOL_SUCCESSFULLY_CONNECTED = "Tarantool ''{0}'' with address ''{1}'' successfully connected";
         String TARANTOOL_PROCESS_SUCCESSFULLY_STARTED = "Tarantool ''{0}'' with address ''{1}'' process successfully started";
         String WRITING_TARANTOOL_CONFIGURATION = "Writing Tarantool ''{0}'' address ''{1}'' configuration to file ''{2}''";

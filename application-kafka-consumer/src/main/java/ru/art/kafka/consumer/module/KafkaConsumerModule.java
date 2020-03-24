@@ -19,17 +19,24 @@
 package ru.art.kafka.consumer.module;
 
 import lombok.*;
+import org.apache.kafka.streams.KafkaStreams;
+import org.apache.logging.log4j.Logger;
 import ru.art.core.module.Module;
 import ru.art.kafka.consumer.configuration.*;
+import ru.art.kafka.consumer.model.ManagedKafkaConsumer;
+import ru.art.kafka.consumer.model.ManagedKafkaStream;
 import ru.art.kafka.consumer.registry.*;
 import ru.art.kafka.consumer.specification.*;
 import ru.art.kafka.consumer.state.*;
+import static java.text.MessageFormat.format;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.core.wrapper.ExceptionWrapper.ignoreException;
 import static ru.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration.*;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
+import static ru.art.logging.LoggingModule.loggingModule;
 import static ru.art.service.ServiceModule.*;
 import java.util.*;
 
@@ -51,6 +58,7 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
     private final String id = KAFKA_CONSUMER_MODULE_ID;
     private final KafkaConsumerModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private final KafkaConsumerModuleState state = new KafkaConsumerModuleState();
+    private final static Logger logger = loggingModule().getLogger(KafkaConsumerModule.class);
 
     public static KafkaConsumerModuleConfiguration kafkaConsumerModule() {
         if (contextIsNotReady()) {
@@ -69,5 +77,27 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
 
     public static KafkaStreamsRegistry kafkaStreamsRegistry() {
         return getKafkaConsumerModuleState().getKafkaStreamsRegistry();
+    }
+
+    @Override
+    public void onUnload() {
+        kafkaConsumerModuleState().getKafkaConsumers().entrySet().stream().filter(client -> !client.getValue().isStopped()).forEach(this::stopConsumer);
+        kafkaConsumerModuleState()
+                .getKafkaStreamsRegistry()
+                .getStreams()
+                .entrySet()
+                .stream()
+                .filter(client -> client.getValue().getKafkaStreams().state() != KafkaStreams.State.NOT_RUNNING)
+                .forEach(this::stopStream);
+    }
+
+    private void stopConsumer(Map.Entry<String, ManagedKafkaConsumer> entry) {
+        logger.info(format(CLOSING_KAFKA_CONSUMER, entry.getKey()));
+        ignoreException(entry.getValue().getConsumer()::close);
+    }
+
+    private void stopStream(Map.Entry<String, ManagedKafkaStream> entry) {
+        logger.info(format(CLOSING_KAFKA_STREAMS, entry.getKey()));
+        ignoreException(entry.getValue().getKafkaStreams()::close);
     }
 }

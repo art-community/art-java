@@ -117,6 +117,17 @@ public class GrpcServer {
         return !server.isTerminated();
     }
 
+    public void stop() {
+        long millis = currentTimeMillis();
+        try {
+            server.shutdownNow();
+            server.awaitTermination();
+            logger.info(format(GRPC_STOPPED_MESSAGE, currentTimeMillis() - millis));
+        } catch (Throwable throwable) {
+            logger.error(GRPC_SERVER_STOPPING_FAILED);
+        }
+    }
+
     public void restart() {
         long millis = currentTimeMillis();
         try {
@@ -125,7 +136,7 @@ public class GrpcServer {
             startGrpcServer();
             logger.info(format(GRPC_RESTARTED_MESSAGE, currentTimeMillis() - millis));
         } catch (Throwable throwable) {
-            logger.error(GRPC_SERVER_RESTART_FAILED);
+            logger.error(GRPC_SERVER_RESTARTING_FAILED);
         }
     }
 }

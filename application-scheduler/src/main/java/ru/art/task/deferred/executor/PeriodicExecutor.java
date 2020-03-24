@@ -78,6 +78,10 @@ public class PeriodicExecutor {
         deferredExecutor.clear();
     }
 
+    public void shutdown() {
+        deferredExecutor.shutdown();
+    }
+
     private <EventResultType> Future<? extends EventResultType> submit(CallableTask<EventResultType> task, LocalDateTime startTime, Duration duration) {
         NotifiedCallable<EventResultType> eventTask = new NotifiedCallable<>(() -> task.getCallable().apply(task.getId()), (notification) -> submitAgain(task, duration));
         Future<? extends EventResultType> future = deferredExecutor.submit(eventTask, startTime);
