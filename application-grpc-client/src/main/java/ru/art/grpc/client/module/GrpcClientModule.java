@@ -45,7 +45,8 @@ public class GrpcClientModule implements Module<GrpcClientModuleConfiguration, G
     private final String id = GrpcClientModuleConstants.GRPC_CLIENT_MODULE_ID;
     private final GrpcClientModuleConfiguration defaultConfiguration = GrpcClientModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
     private final GrpcClientModuleState state = new GrpcClientModuleState();
-    private static Logger logger = loggingModule().getLogger(GrpcClientModule.class);
+    @Getter(lazy = true, value = PRIVATE)
+    private final static Logger logger = loggingModule().getLogger(GrpcClientModule.class);
 
     public static GrpcClientModuleConfiguration grpcClientModule() {
         if (contextIsNotReady()) {
@@ -68,9 +69,9 @@ public class GrpcClientModule implements Module<GrpcClientModuleConfiguration, G
             if (channel.isShutdown() || channel.isTerminated()) {
                 return;
             }
-            logger.info(format(GRPC_CHANNEL_SHUTDOWN, channel.toString()));
+            getLogger().info(format(GRPC_CHANNEL_SHUTDOWN, channel.toString()));
             channel.shutdownNow();
             channel.awaitTermination(GRPC_CHANNEL_SHUTDOWN_TIMEOUT, MILLISECONDS);
-        }, logger::error);
+        }, getLogger()::error);
     }
 }

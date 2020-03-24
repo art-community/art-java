@@ -23,6 +23,7 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.*;
 import org.apache.logging.log4j.core.appender.*;
 import org.apache.logging.log4j.core.config.*;
+import org.apache.logging.log4j.core.net.*;
 import static java.lang.Integer.*;
 import static java.lang.System.*;
 import static java.util.Objects.*;
@@ -64,10 +65,12 @@ public interface LoggerConfigurationService {
         if (isNull(socketAppender)) return SocketAppenderConfiguration.builder().build();
         Map<String, String> contentFormat = socketAppender.getManager().getContentFormat();
         String host = contentFormat.get(ADDRESS);
+        String protocol = contentFormat.get(PROTOCOL);
         int port = parseInt(contentFormat.get(PORT));
         return SocketAppenderConfiguration.builder()
                 .host(host)
                 .port(port)
+                .protocol(protocol)
                 .layout(socketAppender.getLayout())
                 .build();
     }
@@ -112,6 +115,7 @@ public interface LoggerConfigurationService {
                 .newBuilder()
                 .setName(SocketAppender.class.getSimpleName())
                 .withHost(host)
+                .withProtocol(isEmpty(socketAppenderConfiguration) ? Protocol.TCP : Protocol.valueOf(socketAppenderConfiguration.getProtocol().toUpperCase()))
                 .withPort(socketAppenderConfiguration.getPort())
                 .setLayout(socketAppenderConfiguration.getLayout())
                 .build();

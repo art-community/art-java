@@ -48,6 +48,7 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
     private final String id = TARANTOOL_MODULE_ID;
     private final TarantoolModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private final TarantoolModuleState state = new TarantoolModuleState();
+    @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = loggingModule().getLogger(TarantoolModule.class);
 
     @Override
@@ -85,7 +86,7 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
     }
 
     private void closeTarantoolClient(Map.Entry<String, TarantoolClient> entry) {
-        logger.info(format(CLOSING_TARANTOOL_CLIENT, entry.getKey()));
+        getLogger().info(format(CLOSING_TARANTOOL_CLIENT, entry.getKey()));
         ignoreException(entry.getValue()::close);
     }
 }

@@ -138,11 +138,11 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
         private final List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = initializeValueInterceptors();
 
         private List<RSocketInterceptor> initializeInterceptors() {
-            return linkedListOf(new RsocketLoggingInterceptor(this::isEnableRawDataTracing));
+            return linkedListOf(new RsocketLoggingInterceptor());
         }
 
         private List<ValueInterceptor<Entity, Entity>> initializeValueInterceptors() {
-            return isEnableValueTracing() ? linkedListOf(new LoggingValueInterceptor<>()) : linkedListOf();
+            return linkedListOf(new LoggingValueInterceptor<>(this::isEnableValueTracing));
         }
 
         private final Map<String, RsocketCommunicationTargetConfiguration> communicationTargets = mapOf();

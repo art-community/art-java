@@ -85,6 +85,7 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
                         .username(ifExceptionOrEmpty(() -> config.getString(CONNECTION_SECTION_ID + DOT + USERNAME), DEFAULT_TARANTOOL_USERNAME))
                         .password(ifExceptionOrEmpty(() -> config.getString(CONNECTION_SECTION_ID + DOT + PASSWORD), EMPTY_STRING))
                         .operationTimeoutMillis(ifExceptionOrEmpty(() -> config.getInt(CONNECTION_SECTION_ID + DOT + OPERATION_TIMEOUT_MILLIS), DEFAULT_TARANTOOL_OPERATION_TIMEOUT))
+                        .maxRetryCount(ifExceptionOrEmpty(() -> config.getInt(CONNECTION_SECTION_ID + DOT + MAX_RETRY_COUNT), DEFAULT_TARANTOOL_RETRIES))
                         .build())
                 .initialConfiguration(TarantoolInitialConfiguration.builder()
                         .background(nullIfException(() -> config.getBool(INITIAL_SECTION_ID + DOT + BACKGROUND)))

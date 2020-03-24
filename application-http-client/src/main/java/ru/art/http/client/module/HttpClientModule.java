@@ -45,7 +45,8 @@ public class HttpClientModule implements Module<HttpClientModuleConfiguration, H
     private final String id = HTTP_CLIENT_MODULE_ID;
     private final HttpClientModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private final HttpClientModuleState state = new HttpClientModuleState();
-    private static Logger logger = loggingModule().getLogger(HttpClientModule.class);
+    @Getter(lazy = true, value = PRIVATE)
+    private final static Logger logger = loggingModule().getLogger(HttpClientModule.class);
 
     public static HttpClientModuleConfiguration httpClientModule() {
         if (contextIsNotReady()) {
@@ -65,12 +66,12 @@ public class HttpClientModule implements Module<HttpClientModuleConfiguration, H
     }
 
     private void closeClient(CloseableHttpClient client) {
-        logger.info(format(HTTP_CLIENT_CLOSING, ((Configurable) client).getConfig().toString()));
-        ignoreException(client::close, logger::error);
+        getLogger().info(HTTP_CLIENT_CLOSING);
+        ignoreException(client::close, getLogger()::error);
     }
 
     private void closeClient(CloseableHttpAsyncClient client) {
-        logger.info(format(HTTP_CLIENT_CLOSING, ((Configurable) client).getConfig().toString()));
-        ignoreException(client::close, logger::error);
+        getLogger().info(HTTP_CLIENT_CLOSING);
+        ignoreException(client::close, getLogger()::error);
     }
 }

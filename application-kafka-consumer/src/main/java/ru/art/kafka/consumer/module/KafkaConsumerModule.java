@@ -19,24 +19,23 @@
 package ru.art.kafka.consumer.module;
 
 import lombok.*;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.logging.log4j.Logger;
+import org.apache.kafka.streams.*;
+import org.apache.logging.log4j.*;
 import ru.art.core.module.Module;
 import ru.art.kafka.consumer.configuration.*;
-import ru.art.kafka.consumer.model.ManagedKafkaConsumer;
-import ru.art.kafka.consumer.model.ManagedKafkaStream;
+import ru.art.kafka.consumer.model.*;
 import ru.art.kafka.consumer.registry.*;
 import ru.art.kafka.consumer.specification.*;
 import ru.art.kafka.consumer.state.*;
-import static java.text.MessageFormat.format;
+import static java.text.MessageFormat.*;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.context.Context.*;
-import static ru.art.core.wrapper.ExceptionWrapper.ignoreException;
+import static ru.art.core.wrapper.ExceptionWrapper.*;
 import static ru.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration.*;
 import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
-import static ru.art.logging.LoggingModule.loggingModule;
+import static ru.art.logging.LoggingModule.*;
 import static ru.art.service.ServiceModule.*;
 import java.util.*;
 
@@ -44,7 +43,7 @@ import java.util.*;
 public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfiguration, KafkaConsumerModuleState> {
     @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}), value = PRIVATE)
     private final static List<KafkaConsumerServiceSpecification> kafkaConsumerServices = cast(serviceModuleState()
-                    .getServiceRegistry()
+            .getServiceRegistry()
             .getServices()
             .values()
             .stream()
@@ -58,7 +57,8 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
     private final String id = KAFKA_CONSUMER_MODULE_ID;
     private final KafkaConsumerModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private final KafkaConsumerModuleState state = new KafkaConsumerModuleState();
-    private final static Logger logger = loggingModule().getLogger(KafkaConsumerModule.class);
+    @Getter(lazy = true, value = PRIVATE)
+    private static final Logger logger = loggingModule().getLogger(KafkaConsumerModule.class);
 
     public static KafkaConsumerModuleConfiguration kafkaConsumerModule() {
         if (contextIsNotReady()) {
@@ -92,12 +92,12 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
     }
 
     private void stopConsumer(Map.Entry<String, ManagedKafkaConsumer> entry) {
-        logger.info(format(CLOSING_KAFKA_CONSUMER, entry.getKey()));
+        getLogger().info(format(CLOSING_KAFKA_CONSUMER, entry.getKey()));
         ignoreException(entry.getValue().getConsumer()::close);
     }
 
     private void stopStream(Map.Entry<String, ManagedKafkaStream> entry) {
-        logger.info(format(CLOSING_KAFKA_STREAMS, entry.getKey()));
+        getLogger().info(format(CLOSING_KAFKA_STREAMS, entry.getKey()));
         ignoreException(entry.getValue().getKafkaStreams()::close);
     }
 }

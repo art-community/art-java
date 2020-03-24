@@ -18,32 +18,31 @@
 
 package ru.art.rsocket.module;
 
-import io.rsocket.RSocket;
-import lombok.Getter;
-import org.apache.logging.log4j.Logger;
+import io.rsocket.*;
+import lombok.*;
+import org.apache.logging.log4j.*;
 import ru.art.core.module.Module;
-import ru.art.rsocket.configuration.RsocketModuleConfiguration;
-import ru.art.rsocket.server.RsocketServer;
-import ru.art.rsocket.state.RsocketModuleState;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.contextIsNotReady;
-import static ru.art.core.extension.NullCheckingExtensions.doIfNotNull;
-import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.rsocket.configuration.RsocketModuleConfiguration.DEFAULT_CONFIGURATION;
-import static ru.art.rsocket.configuration.RsocketModuleConfiguration.RsocketModuleDefaultConfiguration;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RSOCKET_CLIENT_DISPOSING;
-import static ru.art.rsocket.constants.RsocketModuleConstants.RSOCKET_MODULE_ID;
+import ru.art.rsocket.configuration.*;
+import ru.art.rsocket.server.*;
+import ru.art.rsocket.state.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.logging.LoggingModule.*;
+import static ru.art.rsocket.configuration.RsocketModuleConfiguration.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 
 @Getter
 public class RsocketModule implements Module<RsocketModuleConfiguration, RsocketModuleState> {
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private static final RsocketModuleConfiguration rsocketModule = context().getModule(RSOCKET_MODULE_ID, RsocketModule::new);
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private static final RsocketModuleState rsocketModuleState = context().getModuleState(RSOCKET_MODULE_ID, RsocketModule::new);
     private final String id = RSOCKET_MODULE_ID;
     private final RsocketModuleConfiguration defaultConfiguration = RsocketModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
     private final RsocketModuleState state = new RsocketModuleState();
-    private static Logger logger = loggingModule().getLogger(RsocketModule.class);
+    @Getter(lazy = true, value = PRIVATE)
+    private static final Logger logger = loggingModule().getLogger(RsocketModule.class);
 
     public static RsocketModuleConfiguration rsocketModule() {
         if (contextIsNotReady()) {
@@ -68,6 +67,6 @@ public class RsocketModule implements Module<RsocketModuleConfiguration, Rsocket
             return;
         }
         rsocket.dispose();
-        logger.info(RSOCKET_CLIENT_DISPOSING);
+        getLogger().info(RSOCKET_CLIENT_DISPOSING);
     }
 }

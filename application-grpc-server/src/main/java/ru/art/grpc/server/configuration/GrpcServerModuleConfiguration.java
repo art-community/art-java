@@ -100,7 +100,7 @@ public interface GrpcServerModuleConfiguration extends ModuleConfiguration {
         private long permitKeepAliveTimeNanos = DEFAULT_PERMIT_KEEP_ALIVE_TIME_NANOS;
 
         private List<ValueInterceptor<Entity, Entity>> initializeValueInterceptors() {
-            return isEnableValueTracing() ? linkedListOf(new LoggingValueInterceptor<>()) : linkedListOf();
+            return linkedListOf(new LoggingValueInterceptor<>(this::isEnableValueTracing));
         }
 
         private List<ServerInterceptor> initializeInterceptors() {

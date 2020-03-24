@@ -26,6 +26,7 @@ import ru.art.service.interceptor.*;
 import ru.art.service.model.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import static lombok.AccessLevel.PRIVATE;
 import static org.apache.logging.log4j.ThreadContext.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.StringConstants.*;
@@ -44,8 +45,8 @@ import java.util.*;
 
 public class ServiceLoggingInterception implements ServiceRequestInterception, ServiceResponseInterception {
     private final static ThreadLocal<Stack<ServiceCallLoggingParameters>> serviceLoggingParameters = new ThreadLocal<>();
-    @Getter(lazy = true)
-    private final Logger logger = loggingModule().getLogger(ServiceLoggingInterception.class);
+    @Getter(lazy = true, value = PRIVATE)
+    private static final Logger logger = loggingModule().getLogger(ServiceLoggingInterception.class);
 
     private static void putRequestResponseMetrics(ServiceRequest<?> request, ServiceCallLoggingParameters parameters) {
         putIfNotNull(REQUEST_KEY, request);

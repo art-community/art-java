@@ -44,10 +44,10 @@ import java.util.function.*;
 public class Context {
     private static final ReentrantLock LOCK = new ReentrantLock();
     private static volatile Context INSTANCE;
-    private Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules = mapOf();
-    private ContextInitialConfiguration initialConfiguration = new ContextInitialDefaultConfiguration();
-    private ContextState state = READY;
-    private Long lastActionTimestamp = currentTimeMillis();
+    private volatile ContextInitialConfiguration initialConfiguration = new ContextInitialDefaultConfiguration();
+    private volatile ContextState state = READY;
+    private volatile Long lastActionTimestamp = currentTimeMillis();
+    private Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules = concurrentHashMap();
 
     private Context() {
         if (initialConfiguration.isUnloadModulesOnShutdown()) {
@@ -116,6 +116,9 @@ public class Context {
 
     public <C extends ModuleConfiguration, S extends ModuleState> C getModule(String moduleId, Module<C, S> toLoadIfNotExists) {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        if (state != READY) {
+            return toLoadIfNotExists.getDefaultConfiguration();
+        }
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
         PreconfiguredModuleProvider preconfiguredModulesProvider;
         if (nonNull(moduleContainer)) {
@@ -131,6 +134,9 @@ public class Context {
 
     public <C extends ModuleConfiguration, S extends ModuleState> S getModuleState(String moduleId, Module<C, S> toLoadIfNotExists) {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        if (state == LOADING_MODULES) {
+            return toLoadIfNotExists.getState();
+        }
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
         PreconfiguredModuleProvider preconfiguredModulesProvider;
         if (nonNull(moduleContainer)) {
@@ -146,6 +152,9 @@ public class Context {
 
     public <C extends ModuleConfiguration, S extends ModuleState> C getModule(String moduleId, Supplier<Module<C, S>> toLoadIfNotExists) {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        if (state != READY) {
+            return toLoadIfNotExists.get().getDefaultConfiguration();
+        }
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
         PreconfiguredModuleProvider preconfiguredModulesProvider;
         if (nonNull(moduleContainer)) {
@@ -162,6 +171,9 @@ public class Context {
 
     public <C extends ModuleConfiguration, S extends ModuleState> S getModuleState(String moduleId, Supplier<Module<C, S>> toLoadIfNotExists) {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        if (state == LOADING_MODULES) {
+            return toLoadIfNotExists.get().getState();
+        }
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
         PreconfiguredModuleProvider preconfiguredModulesProvider;
         if (nonNull(moduleContainer)) {
@@ -178,10 +190,11 @@ public class Context {
 
     public <C extends ModuleConfiguration, S extends ModuleState> Context loadModule(Module<C, S> module) {
         if (isNull(module)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        ContextState currentState = state;
         state = LOADING_MODULES;
         modules.put(module.getId(), new ModuleContainer<>(module, cast(module.getDefaultConfiguration())));
         out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp));
-        state = READY;
+        state = currentState;
         module.onLoad();
         lastActionTimestamp = currentTimeMillis();
         return this;
@@ -189,10 +202,11 @@ public class Context {
 
     public <C extends ModuleConfiguration, S extends ModuleState> Context loadModule(Module<C, S> module, ModuleConfigurator<C, S> moduleConfigurator) {
         if (isNull(module)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        ContextState currentState = state;
         state = LOADING_MODULES;
         modules.put(module.getId(), new ModuleContainer<>(module, cast(moduleConfigurator.configure(module))));
         out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp));
-        state = READY;
+        state = currentState;
         module.onLoad();
         lastActionTimestamp = currentTimeMillis();
         return this;
@@ -200,9 +214,10 @@ public class Context {
 
     public <C extends ModuleConfiguration, S extends ModuleState> Context loadModule(Module<C, S> module, C customModuleConfiguration) {
         if (isNull(module)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        ContextState currentState = state;
         state = LOADING_MODULES;
         modules.put(module.getId(), new ModuleContainer<>(module, cast(nonNull(customModuleConfiguration) ? customModuleConfiguration : module.getDefaultConfiguration())));
-        state = READY;
+        state = currentState;
         module.onLoad();
         out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp));
         lastActionTimestamp = currentTimeMillis();
@@ -210,10 +225,11 @@ public class Context {
     }
 
     private <C extends ModuleConfiguration, S extends ModuleState> C loadModule(Module<C, S> module, PreconfiguredModuleProvider preconfiguredModulesProvider) {
+        ContextState currentState = state;
         state = LOADING_MODULES;
         C configuration = cast(preconfiguredModulesProvider.getModuleConfiguration(module.getId()).orElse(module.getDefaultConfiguration()));
+        state = currentState;
         loadModule(module, configuration);
-        state = READY;
         return cast(configuration);
     }
 
@@ -225,11 +241,12 @@ public class Context {
         }
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
         if (isNull(moduleContainer)) return this;
+        ContextState currentState = state;
         state = LOADING_MODULES;
         modules.put(moduleId, moduleContainer.overrideConfiguration(cast(customModuleConfiguration)));
         out.println(format(MODULE_OVERRIDDEN_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
         lastActionTimestamp = currentTimeMillis();
-        state = READY;
+        state = currentState;
         return this;
     }
 
@@ -238,11 +255,12 @@ public class Context {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
         if (isNull(moduleContainer)) return this;
+        ContextState currentState = state;
         state = RELOADING_MODULES;
         moduleContainer.reloadModule();
         out.println(format(MODULE_RELOADED_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
         lastActionTimestamp = currentTimeMillis();
-        state = READY;
+        state = currentState;
         return this;
     }
 
@@ -251,16 +269,18 @@ public class Context {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
         if (isNull(moduleContainer)) return this;
+        ContextState currentState = state;
         state = REFRESHING_MODULES;
         moduleContainer.refreshConfiguration();
         out.println(format(MODULE_REFRESHED_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
         lastActionTimestamp = currentTimeMillis();
-        state = READY;
+        state = currentState;
         return this;
     }
 
     public Context refreshAndReloadModule(String moduleId) {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
+        ContextState currentState = state;
         state = REFRESHING_AND_RELOADING_MODULES;
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
         if (isNull(moduleContainer)) return this;
@@ -268,7 +288,7 @@ public class Context {
         moduleContainer.refreshConfiguration();
         out.println(format(MODULE_REFRESHED_AND_RELOADED_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
         lastActionTimestamp = currentTimeMillis();
-        state = READY;
+        state = currentState;
         return this;
     }
 
@@ -308,7 +328,6 @@ public class Context {
     }
 
     private void unloadModules() {
-        state = UNLOADING_MODULES;
         modules.values().forEach(module -> module.getModule().onUnload());
         modules.clear();
     }

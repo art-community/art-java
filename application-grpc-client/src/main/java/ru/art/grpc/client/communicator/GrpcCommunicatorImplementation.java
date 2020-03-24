@@ -19,10 +19,13 @@
 package ru.art.grpc.client.communicator;
 
 import io.grpc.*;
+import lombok.*;
+import org.apache.logging.log4j.*;
 import ru.art.core.lazy.*;
 import ru.art.core.runnable.*;
 import ru.art.core.validator.*;
 import ru.art.entity.*;
+import ru.art.entity.Value;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
 import ru.art.grpc.client.handler.*;
@@ -30,6 +33,7 @@ import ru.art.grpc.client.model.*;
 import ru.art.service.model.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.TimeUnit.*;
+import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
@@ -44,6 +48,8 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     private final GrpcCommunicationConfiguration configuration = new GrpcCommunicationConfiguration();
     private final BuilderValidator validator = new BuilderValidator(GrpcCommunicator.class.getName());
     private final LazyLoadingValue<ManagedChannel> channel = lazyValue(() -> createChannel(configuration));
+    @Getter(lazy = true, value = PRIVATE)
+    private static final Logger logger = loggingModule().getLogger(GrpcCommunicator.class);
 
     GrpcCommunicatorImplementation(String host, int port, String path) {
         configuration.setUrl(validator.notEmptyField(host, "host") + COLON + validator.notNullField(port, "port"));
@@ -69,7 +75,9 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
             configuration.setUrl(targetConfiguration.url());
             return;
         }
-        configuration.setUrl(validator.notEmptyField(targetConfiguration.host(), "host") + COLON + validator.notNullField(targetConfiguration.port(), "port"));
+        configuration.setUrl(validator.notEmptyField(targetConfiguration.host(), "host")
+                + COLON
+                + validator.notNullField(targetConfiguration.port(), "port"));
     }
 
     @Override
@@ -140,9 +148,8 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
             return;
         }
         ignoreException((ExceptionRunnable) () -> channel
-                        .shutdownNow()
-                        .awaitTermination(GRPC_CHANNEL_SHUTDOWN_TIMEOUT, MILLISECONDS),
-                loggingModule().getLogger(GrpcCommunicator.class)::error);
+                .shutdownNow()
+                .awaitTermination(GRPC_CHANNEL_SHUTDOWN_TIMEOUT, MILLISECONDS), getLogger()::error);
     }
 
     @Override

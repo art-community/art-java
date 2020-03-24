@@ -31,6 +31,7 @@ import static java.lang.System.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.TimeUnit.*;
+import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -45,7 +46,8 @@ import java.util.concurrent.*;
 
 @AllArgsConstructor
 public class GrpcServer {
-    private static final Logger logger = loggingModule().getLogger(GrpcServer.class);
+    @Getter(lazy = true, value = PRIVATE)
+    private final static Logger logger = loggingModule().getLogger(GrpcServer.class);
     private final Server server;
 
     public static GrpcServer grpcServer() {
@@ -86,7 +88,7 @@ public class GrpcServer {
             long timestamp = currentTimeMillis();
             GrpcServer grpcServer = grpcServer();
             grpcServer.server.start();
-            logger.info(format(GRPC_STARTED_MESSAGE, currentTimeMillis() - timestamp));
+            getLogger().info(format(GRPC_STARTED_MESSAGE, currentTimeMillis() - timestamp));
             return grpcServer;
         } catch (Throwable throwable) {
             throw new GrpcServerException(GRPC_SERVER_INITIALIZATION_FAILED, throwable);
@@ -102,7 +104,7 @@ public class GrpcServer {
     }
 
     private static void logService(GrpcServiceSpecification specification) {
-        logger.info(buildServiceLoadedMessage(specification));
+        getLogger().info(buildServiceLoadedMessage(specification));
     }
 
     public void await() {
@@ -122,9 +124,9 @@ public class GrpcServer {
         try {
             server.shutdownNow();
             server.awaitTermination();
-            logger.info(format(GRPC_STOPPED_MESSAGE, currentTimeMillis() - millis));
+            getLogger().info(format(GRPC_STOPPED_MESSAGE, currentTimeMillis() - millis));
         } catch (Throwable throwable) {
-            logger.error(GRPC_SERVER_STOPPING_FAILED);
+            getLogger().error(GRPC_SERVER_STOPPING_FAILED);
         }
     }
 
@@ -134,9 +136,9 @@ public class GrpcServer {
             server.shutdownNow();
             server.awaitTermination();
             startGrpcServer();
-            logger.info(format(GRPC_RESTARTED_MESSAGE, currentTimeMillis() - millis));
+            getLogger().info(format(GRPC_RESTARTED_MESSAGE, currentTimeMillis() - millis));
         } catch (Throwable throwable) {
-            logger.error(GRPC_SERVER_RESTARTING_FAILED);
+            getLogger().error(GRPC_SERVER_RESTARTING_FAILED);
         }
     }
 }

@@ -1,9 +1,9 @@
 package ru.art.grpc.client.communicator;
 
 import io.grpc.*;
-import ru.art.grpc.client.module.*;
 import static io.grpc.ManagedChannelBuilder.*;
 import static java.util.concurrent.TimeUnit.*;
+import static ru.art.core.context.Context.*;
 import static ru.art.grpc.client.module.GrpcClientModule.*;
 
 public class GrpcCommunicatorChannelFactory {
@@ -12,10 +12,11 @@ public class GrpcCommunicatorChannelFactory {
         if (configuration.isUseSecuredTransport()) {
             channelBuilder.useTransportSecurity();
         }
-        return grpcClientModuleState().registerChannel(channelBuilder
+        ManagedChannel channel = channelBuilder
                 .keepAliveTime(configuration.getKeepAliveTimeNanos(), NANOSECONDS)
                 .keepAliveTimeout(configuration.getKeepAliveTimeOutNanos(), NANOSECONDS)
                 .keepAliveWithoutCalls(configuration.isKeepAliveWithoutCalls())
-                .build());
+                .build();
+        return grpcClientModuleState().registerChannel(channel);
     }
 }
