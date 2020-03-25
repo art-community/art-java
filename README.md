@@ -17,7 +17,7 @@ Releases are available via Maven Central.
 Example:
 ```kotlin
 plugins {
-    id("io.github.art.project") version "1.0.100"
+    id("io.github.art.project") version "1.0.112"
 }
 
 art {

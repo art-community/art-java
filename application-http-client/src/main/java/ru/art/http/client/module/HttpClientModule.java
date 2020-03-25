@@ -62,12 +62,16 @@ public class HttpClientModule implements Module<HttpClientModuleConfiguration, H
     }
 
     private void closeClient(CloseableHttpClient client) {
-        getLogger().info(HTTP_CLIENT_CLOSING);
-        ignoreException(client::close, getLogger()::error);
+        ignoreException(() -> {
+            client.close();
+            getLogger().info(HTTP_CLIENT_CLOSED);
+        }, getLogger()::error);
     }
 
     private void closeClient(CloseableHttpAsyncClient client) {
-        getLogger().info(HTTP_CLIENT_CLOSING);
-        ignoreException(client::close, getLogger()::error);
+        ignoreException(() -> {
+            client.close();
+            getLogger().info(HTTP_CLIENT_CLOSED);
+        }, getLogger()::error);
     }
 }

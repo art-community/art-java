@@ -69,9 +69,9 @@ public class GrpcClientModule implements Module<GrpcClientModuleConfiguration, G
             if (channel.isShutdown() || channel.isTerminated()) {
                 return;
             }
-            getLogger().info(format(GRPC_CHANNEL_SHUTDOWN, channel.toString()));
             channel.shutdownNow();
             channel.awaitTermination(GRPC_CHANNEL_SHUTDOWN_TIMEOUT, MILLISECONDS);
+            getLogger().info(format(GRPC_CHANNEL_SHUTDOWN, channel.toString()));
         }, getLogger()::error);
     }
 }

@@ -19,7 +19,7 @@
 package ru.art.http.client.constants;
 
 public interface HttpClientModuleConstants {
-    String HTTP_CLIENT_CLOSING = "Closing HTTP client";
+    String HTTP_CLIENT_CLOSED = "HTTP client closed";
     String HTTP_COMMUNICATION_SERVICE_TYPE = "HTTP_COMMUNICATION";
     String HTTP_CLIENT_MODULE_ID = "HTTP_CLIENT_MODULE";
     String TRACE_ID_HEADER = "X-Trace-Id";
