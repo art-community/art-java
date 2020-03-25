@@ -27,19 +27,21 @@ import java.util.function.*;
 
 @SuppressWarnings("SameParameterValue")
 public class ZalangoLogbookLogWriter implements HttpLogWriter {
+    private final Supplier<Boolean> enabled;
     private final Logger logger;
     private final Predicate<Logger> activator;
     private final BiConsumer<Logger, String> consumer;
 
-    public ZalangoLogbookLogWriter() {
-        this(loggingModule().getLogger(ZalangoLogbookLogWriter.class));
+    public ZalangoLogbookLogWriter(Supplier<Boolean> enabled) {
+        this(loggingModule().getLogger(ZalangoLogbookLogWriter.class), enabled);
     }
 
-    private ZalangoLogbookLogWriter(final Logger logger) {
-        this(logger, INFO);
+    private ZalangoLogbookLogWriter(final Logger logger, Supplier<Boolean> enabled) {
+        this(enabled, logger, INFO);
     }
 
-    private ZalangoLogbookLogWriter(final Logger logger, final Level level) {
+    private ZalangoLogbookLogWriter(Supplier<Boolean> enabled, final Logger logger, final Level level) {
+        this.enabled = enabled;
         this.logger = logger;
         this.activator = chooseActivator(level);
         this.consumer = chooseConsumer(level);
@@ -79,7 +81,7 @@ public class ZalangoLogbookLogWriter implements HttpLogWriter {
 
     @Override
     public boolean isActive(final RawHttpRequest request) {
-        return activator.test(logger);
+        return enabled.get() && activator.test(logger);
     }
 
     @Override

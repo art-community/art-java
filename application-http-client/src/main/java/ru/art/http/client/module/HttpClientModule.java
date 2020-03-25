@@ -18,23 +18,19 @@
 
 package ru.art.http.client.module;
 
-import lombok.Getter;
-import org.apache.http.client.methods.Configurable;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.logging.log4j.Logger;
+import lombok.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.impl.nio.client.*;
+import org.apache.logging.log4j.*;
 import ru.art.core.module.Module;
-import ru.art.http.client.configuration.HttpClientModuleConfiguration;
-import ru.art.http.client.state.HttpClientModuleState;
-import static java.text.MessageFormat.format;
-import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.context.Context.context;
-import static ru.art.core.context.Context.contextIsNotReady;
-import static ru.art.core.wrapper.ExceptionWrapper.ignoreException;
-import static ru.art.http.client.configuration.HttpClientModuleConfiguration.DEFAULT_CONFIGURATION;
-import static ru.art.http.client.constants.HttpClientModuleConstants.HTTP_CLIENT_CLOSING;
-import static ru.art.http.client.constants.HttpClientModuleConstants.HTTP_CLIENT_MODULE_ID;
-import static ru.art.logging.LoggingModule.loggingModule;
+import ru.art.http.client.configuration.*;
+import ru.art.http.client.state.*;
+import static lombok.AccessLevel.*;
+import static ru.art.core.context.Context.*;
+import static ru.art.core.wrapper.ExceptionWrapper.*;
+import static ru.art.http.client.configuration.HttpClientModuleConfiguration.*;
+import static ru.art.http.client.constants.HttpClientModuleConstants.*;
+import static ru.art.logging.LoggingModule.*;
 
 @Getter
 public class HttpClientModule implements Module<HttpClientModuleConfiguration, HttpClientModuleState> {
@@ -45,7 +41,8 @@ public class HttpClientModule implements Module<HttpClientModuleConfiguration, H
     private final String id = HTTP_CLIENT_MODULE_ID;
     private final HttpClientModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private final HttpClientModuleState state = new HttpClientModuleState();
-    private static Logger logger = loggingModule().getLogger(HttpClientModule.class);
+    @Getter(lazy = true, value = PRIVATE)
+    private final static Logger logger = loggingModule().getLogger(HttpClientModule.class);
 
     public static HttpClientModuleConfiguration httpClientModule() {
         if (contextIsNotReady()) {
@@ -65,12 +62,12 @@ public class HttpClientModule implements Module<HttpClientModuleConfiguration, H
     }
 
     private void closeClient(CloseableHttpClient client) {
-        logger.info(format(HTTP_CLIENT_CLOSING, ((Configurable) client).getConfig().toString()));
-        ignoreException(client::close, logger::error);
+        getLogger().info(HTTP_CLIENT_CLOSING);
+        ignoreException(client::close, getLogger()::error);
     }
 
     private void closeClient(CloseableHttpAsyncClient client) {
-        logger.info(format(HTTP_CLIENT_CLOSING, ((Configurable) client).getConfig().toString()));
-        ignoreException(client::close, logger::error);
+        getLogger().info(HTTP_CLIENT_CLOSING);
+        ignoreException(client::close, getLogger()::error);
     }
 }

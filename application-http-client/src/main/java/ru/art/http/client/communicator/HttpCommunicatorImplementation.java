@@ -18,10 +18,12 @@
 
 package ru.art.http.client.communicator;
 
+import lombok.*;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.logging.log4j.*;
 import ru.art.core.validator.BuilderValidator;
 import ru.art.entity.Value;
 import ru.art.entity.interceptor.ValueInterceptor;
@@ -35,6 +37,7 @@ import ru.art.http.client.interceptor.HttpClientInterceptor;
 import ru.art.http.client.model.HttpCommunicationTargetConfiguration;
 import ru.art.http.constants.MimeToContentTypeMapper;
 import static java.util.Optional.ofNullable;
+import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.constants.StringConstants.COLON;
@@ -55,6 +58,8 @@ import java.util.concurrent.CompletableFuture;
 public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsynchronousCommunicator {
     private final BuilderValidator validator = new BuilderValidator(HttpCommunicator.class.getName());
     private final HttpCommunicationConfiguration configuration = new HttpCommunicationConfiguration();
+    @Getter(lazy = true, value = PRIVATE)
+    private final static Logger logger = loggingModule().getLogger(HttpCommunicator.class);
 
     HttpCommunicatorImplementation(String url) {
         this(HttpCommunicationTargetConfiguration.httpCommunicationTarget().build().url(url));
@@ -239,7 +244,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public void closeClient() {
-        ignoreException(configuration.getSynchronousClient()::close, loggingModule().getLogger(HttpCommunicator.class)::error);
+        ignoreException(configuration.getSynchronousClient()::close, getLogger()::error);
     }
 
     @Override
@@ -258,7 +263,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public void closeAsynchronousClient() {
-        ignoreException(configuration.getAsynchronousClient()::close, loggingModule().getLogger(HttpCommunicator.class)::error);
+        ignoreException(configuration.getAsynchronousClient()::close, getLogger()::error);
     }
 
     @Override

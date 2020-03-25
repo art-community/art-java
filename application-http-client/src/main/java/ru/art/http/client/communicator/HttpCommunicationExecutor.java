@@ -101,7 +101,7 @@ class HttpCommunicationExecutor {
     }
 
 
-    static <RequestType, ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronousHttpRequest(HttpCommunicationConfiguration configuration, @Nullable  RequestType request) {
+    static <RequestType, ResponseType> CompletableFuture<Optional<ResponseType>> executeAsynchronousHttpRequest(HttpCommunicationConfiguration configuration, @Nullable RequestType request) {
         HttpUriRequest httpUriRequest = buildRequest(configuration, request);
         if (isNull(httpUriRequest)) {
             return completedFuture(empty());
@@ -126,12 +126,12 @@ class HttpCommunicationExecutor {
 
     private static void executeHttpUriRequest(HttpUriRequest httpUriRequest, CloseableHttpAsyncClient client, HttpAsynchronousClientCallback callback) {
         try {
-            if (httpClientModule().isEnableRawDataTracing()) {
-                LogbookHttpAsyncResponseConsumer<HttpResponse> logbookConsumer = new LogbookHttpAsyncResponseConsumer<>(createConsumer());
-                client.execute(HttpAsyncMethods.create(httpUriRequest), logbookConsumer, callback);
+            if (!httpClientModule().isEnableRawDataTracing()) {
+                client.execute(httpUriRequest, callback);
                 return;
             }
-            client.execute(httpUriRequest, callback);
+            LogbookHttpAsyncResponseConsumer<HttpResponse> logbookConsumer = new LogbookHttpAsyncResponseConsumer<>(createConsumer());
+            client.execute(HttpAsyncMethods.create(httpUriRequest), logbookConsumer, callback);
         } catch (Exception throwable) {
             throw new HttpClientException(throwable);
         }
@@ -241,7 +241,7 @@ class HttpCommunicationExecutor {
             for (HttpClientInterceptor responseInterceptor : responseInterceptors) {
                 InterceptionStrategy strategy = responseInterceptor.interceptResponse(httpUriRequest, result);
                 if (strategy == PROCESS_HANDLING) break;
-                if (strategy == STOP_HANDLING){
+                if (strategy == STOP_HANDLING) {
                     completableFuture.complete(empty());
                     return;
                 }

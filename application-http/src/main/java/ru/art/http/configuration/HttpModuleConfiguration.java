@@ -65,10 +65,10 @@ public interface HttpModuleConfiguration extends ModuleConfiguration {
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<ValueInterceptor<Value, Value>> responseValueInterceptors = initializeValueInterceptors();
         @Getter(lazy = true)
-        private final Logbook logbook = Logbook.builder().writer(new ZalangoLogbookLogWriter()).build();
+        private final Logbook logbook = Logbook.builder().writer(new ZalangoLogbookLogWriter(this::isEnableRawDataTracing)).build();
 
         private List<ValueInterceptor<Value, Value>> initializeValueInterceptors() {
-            return isEnableValueTracing() ? linkedListOf(new LoggingValueInterceptor<>()) : linkedListOf();
+            return linkedListOf(new LoggingValueInterceptor<>(this::isEnableValueTracing));
         }
     }
 }

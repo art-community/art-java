@@ -37,6 +37,7 @@ import static io.rsocket.RSocketFactory.*;
 import static java.text.MessageFormat.*;
 import static java.time.Duration.*;
 import static java.util.Optional.*;
+import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Flux.from;
 import static reactor.core.publisher.Mono.just;
 import static ru.art.core.caster.Caster.*;
@@ -63,6 +64,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class RsocketCommunicator {
     private final Mono<RSocket> rsocketMono;
+    @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = loggingModule().getLogger(RsocketCommunicator.class);
     private String serviceId;
     private String methodId;
@@ -91,10 +93,9 @@ public class RsocketCommunicator {
                         .transport(TcpClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .start()
                         .doOnNext(rsocketModuleState()::registerRsocket)
-                        .doOnSubscribe(subscription -> logger
-                                .info(format(RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.tcpPort())));
-                logger.info(format(RSOCKET_TCP_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.tcpPort()));
-            return;
+                        .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.tcpPort())));
+                getLogger().info(format(RSOCKET_TCP_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.tcpPort()));
+                return;
             case WEB_SOCKET:
                 rsocketMono = factory
                         .dataMimeType(toMimeType(configuration.dataFormat()))
@@ -102,9 +103,8 @@ public class RsocketCommunicator {
                         .transport(WebsocketClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .start()
                         .doOnNext(rsocketModuleState()::registerRsocket)
-                        .doOnSubscribe(subscription -> logger
-                                .info(format(RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.webSocketPort())));
-                logger.info(format(RSOCKET_WS_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.tcpPort()));
+                        .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.webSocketPort())));
+                getLogger().info(format(RSOCKET_WS_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.tcpPort()));
                 return;
         }
         throw new RsocketClientException(format(UNSUPPORTED_TRANSPORT, configuration.transport()));

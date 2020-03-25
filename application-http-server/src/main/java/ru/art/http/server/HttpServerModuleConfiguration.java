@@ -42,6 +42,7 @@ import static ru.art.http.server.constants.HttpServerModuleConstants.HttpResourc
 import static ru.art.http.server.interceptor.HttpServerInterceptor.*;
 import java.nio.charset.*;
 import java.util.*;
+import java.util.function.*;
 
 public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
     static List<HttpServerInterceptor> initializeWebServerInterceptors(List<HttpServerInterceptor> parents) {
@@ -49,12 +50,16 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         return parents;
     }
 
-    static LogbookCreator.Builder logbookWithoutResourceLogs(LogbookCreator.Builder builder) {
-        return builder.rawResponseFilter(replaceBody(HttpResourceLogsFilter::replaceResponseBody)).writer(new ZalangoLogbookLogWriter());
+    static LogbookCreator.Builder logbookWithoutResourceLogs(LogbookCreator.Builder builder, Supplier<Boolean> enabled) {
+        return builder
+                .rawResponseFilter(replaceBody(HttpResourceLogsFilter::replaceResponseBody))
+                .writer(new ZalangoLogbookLogWriter(enabled));
     }
 
-    static LogbookCreator.Builder logbookWithoutResourceLogs() {
-        return Logbook.builder().rawResponseFilter(replaceBody(HttpResourceLogsFilter::replaceResponseBody)).writer(new ZalangoLogbookLogWriter());
+    static LogbookCreator.Builder logbookWithoutResourceLogs(Supplier<Boolean> enabled) {
+        return Logbook.builder()
+                .rawResponseFilter(replaceBody(HttpResourceLogsFilter::replaceResponseBody))
+                .writer(new ZalangoLogbookLogWriter(enabled));
     }
 
     String getHost();

@@ -101,15 +101,11 @@ public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
         private boolean waitForReady = false;
 
         private List<ClientInterceptor> initializeInterceptors() {
-            List<ClientInterceptor> interceptors = linkedListOf(new GrpcClientTracingInterceptor());
-            if (isEnableRawDataTracing()) {
-                interceptors.add(new GrpcClientLoggingInterceptor());
-            }
-            return interceptors;
+            return linkedListOf(new GrpcClientTracingInterceptor(), new GrpcClientLoggingInterceptor());
         }
 
         private List<ValueInterceptor<Entity, Entity>> initializeValueInterceptors() {
-            return isEnableValueTracing() ? linkedListOf(new LoggingValueInterceptor<>()) : linkedListOf();
+            return linkedListOf(new LoggingValueInterceptor<>(this::isEnableValueTracing));
         }
     }
 }

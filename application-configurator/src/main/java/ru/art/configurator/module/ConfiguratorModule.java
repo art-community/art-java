@@ -31,7 +31,7 @@ import ru.art.grpc.server.module.*;
 import ru.art.grpc.server.state.*;
 import ru.art.http.client.configuration.*;
 import ru.art.http.client.module.*;
-import ru.art.http.client.state.HttpClientModuleState;
+import ru.art.http.client.state.*;
 import ru.art.http.server.*;
 import ru.art.http.server.module.*;
 import ru.art.http.server.specification.*;
@@ -45,6 +45,7 @@ import ru.art.rocks.db.module.*;
 import ru.art.rocks.db.state.*;
 import ru.art.service.*;
 import static java.util.UUID.*;
+import static lombok.AccessLevel.*;
 import static ru.art.config.ConfigProvider.*;
 import static ru.art.configurator.api.constants.ConfiguratorServiceConstants.*;
 import static ru.art.configurator.constants.ConfiguratorModuleConstants.*;
@@ -61,7 +62,7 @@ import static ru.art.service.ServiceModule.*;
 
 @Getter
 public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguration, ModuleState> {
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private static final ConfiguratorModuleConfiguration configuratorModule = context().getModule(CONFIGURATOR_MODULE_ID, ConfiguratorModule::new);
     private final String id = CONFIGURATOR_MODULE_ID;
     private final ConfiguratorModuleConfiguration defaultConfiguration = new ConfiguratorModuleConfiguration();

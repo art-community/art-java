@@ -22,14 +22,12 @@ import lombok.experimental.*;
 import ru.art.config.cache.*;
 import ru.art.config.constants.*;
 import ru.art.config.exception.*;
-import ru.art.core.annotation.*;
 import static java.util.Objects.*;
 import static ru.art.config.ConfigLoader.*;
 import static ru.art.config.constants.ConfigExceptionMessages.*;
 import static ru.art.config.constants.ConfigModuleConstants.*;
 import static ru.art.config.module.ConfigModule.*;
 
-@PublicApi
 @UtilityClass
 public class ConfigProvider {
     private static final ConfigCacheContainer CONFIG_CACHE_CONTAINER = new ConfigCacheContainer();
