@@ -68,6 +68,7 @@ public class SqlModule implements Module<SqlModuleConfiguration, SqlModuleState>
     public void onLoad() {
         DataSource dataSource = null;
         try {
+            forName(sqlModule().getDbProvider().getDriverClassName());
             switch (sqlModule().getConnectionPoolType()) {
                 case HIKARI:
                     HikariDataSource hikariDataSource = new HikariDataSource(sqlModule().getHikariPoolConfig());
@@ -88,7 +89,6 @@ public class SqlModule implements Module<SqlModuleConfiguration, SqlModuleState>
                     }
                     break;
             }
-            forName(sqlModule().getDbProvider().getDriverClassName());
             sqlModule().getJooqConfiguration().set(dataSource).set(sqlModule().getJooqSettings());
         } catch (Exception throwable) {
             throw new SqlModuleException(throwable);
