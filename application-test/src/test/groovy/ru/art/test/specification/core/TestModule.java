@@ -55,9 +55,9 @@ public class TestModule implements Module<TestModule.TestModuleConfiguration, Te
 
     @Getter
     public static class TestModuleState implements ModuleState {
-        List<String> collection = dynamicArrayOf();
+        public List<String> collection = dynamicArrayOf();
 
-        void add(String element) {
+        public void add(String element) {
             collection.add(element);
         }
     }
