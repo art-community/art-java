@@ -1,7 +1,7 @@
 package ru.art.test.specification.core;
 
 import lombok.*;
-import static ru.art.test.specification.core.TestModule.TestModuleConfiguration.*;
+import ru.art.test.specification.core.TestModuleConfiguration.*;
 import static ru.art.test.specification.core.TestModule.*;
 
 @Getter

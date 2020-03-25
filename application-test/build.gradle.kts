@@ -1,3 +1,5 @@
+import ru.art.gradle.constants.lombok
+
 /*
  * ART Java
  *
@@ -28,4 +30,9 @@ configurations {
     with(testRuntimeClasspath.get()) {
         exclude("org.apache.logging.log4j")
     }
+}
+
+dependencies {
+    annotationProcessor(lombok().inGradleNotation())
+    testAnnotationProcessor(lombok().inGradleNotation())
 }

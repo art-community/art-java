@@ -14,9 +14,9 @@ import static java.util.Optional.empty
 import static java.util.Optional.of
 import static ru.art.core.constants.ContextConstants.DEFAULT_MAIN_MODULE_ID
 import static ru.art.core.context.Context.initContext
-import static ru.art.test.specification.core.TestModule.TestModuleConfiguration.*
 import static ru.art.test.specification.core.TestModule.testModule
 import static ru.art.test.specification.core.TestModule.testModuleState
+import static ru.art.test.specification.core.TestModuleConfiguration.*
 
 class ModulesLoadingSpecification extends Specification {
     static applicationContextConfiguration = new ContextInitialConfiguration.ApplicationContextConfiguration(DEFAULT_MAIN_MODULE_ID, new PreconfiguredModuleProvider() {
