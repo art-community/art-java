@@ -11,6 +11,7 @@ import static ru.art.logging.LoggingModule.*;
 import static ru.art.test.specification.core.TestModule.TestModuleConfiguration.*;
 import java.util.*;
 
+
 @Getter
 public class TestModule implements Module<TestModule.TestModuleConfiguration, TestModule.TestModuleState> {
     @Getter(lazy = true, value = PRIVATE)
