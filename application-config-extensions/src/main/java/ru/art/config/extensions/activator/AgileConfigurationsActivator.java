@@ -21,7 +21,6 @@ package ru.art.config.extensions.activator;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import ru.art.config.extensions.provider.*;
-import ru.art.core.annotation.*;
 import ru.art.core.configuration.ContextInitialConfiguration.*;
 import ru.art.core.context.*;
 import static java.text.MessageFormat.*;
@@ -34,7 +33,6 @@ import static ru.art.core.constants.ContextConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.logging.LoggingModule.*;
 
-@PublicApi
 @UtilityClass
 public class AgileConfigurationsActivator {
     public static Context useAgileConfigurations(String mainModuleId) {
