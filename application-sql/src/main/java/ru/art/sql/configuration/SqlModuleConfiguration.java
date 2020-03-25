@@ -27,6 +27,7 @@ import org.jooq.impl.*;
 import ru.art.core.module.*;
 import ru.art.sql.constants.*;
 import static ru.art.core.constants.StringConstants.*;
+import static ru.art.sql.constants.ConnectionPoolInitializationMode.*;
 import static ru.art.sql.constants.ConnectionPoolType.*;
 import static ru.art.sql.constants.DbProvider.*;
 import static ru.art.sql.factory.SqlConnectionPoolsFactory.*;
@@ -52,6 +53,8 @@ public interface SqlModuleConfiguration extends ModuleConfiguration {
 
     boolean isEnableMetrics();
 
+    ConnectionPoolInitializationMode getConnectionPoolInitializationMode();
+
     SqlModuleDefaultConfiguration DEFAULT_CONFIGURATION = new SqlModuleDefaultConfiguration();
 
     @Getter
@@ -68,5 +71,6 @@ public interface SqlModuleConfiguration extends ModuleConfiguration {
         private final String jdbcPassword = EMPTY_STRING;
         private final DbProvider dbProvider = POSTGRES;
         private final boolean enableMetrics = true;
+        private final ConnectionPoolInitializationMode connectionPoolInitializationMode = ON_MODULE_LOAD;
     }
 }

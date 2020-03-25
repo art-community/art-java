@@ -12,7 +12,6 @@ import java.util.function.Supplier;
 public class LazyLoadingValue<T> {
     private final ReentrantLock lock = new ReentrantLock();
     private final Supplier<T> loader;
-    private boolean safe = false;
     private final AtomicReference<T> value = new AtomicReference<>();
 
     public T value() {
