@@ -1,19 +1,16 @@
 package ru.art.core.lazy;
 
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import static java.util.Objects.nonNull;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Supplier;
+import lombok.*;
+import static java.util.Objects.*;
+import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.*;
+import java.util.function.*;
 
 @RequiredArgsConstructor
-@AllArgsConstructor
 public class LazyLoadingValue<T> {
     private final ReentrantLock lock = new ReentrantLock();
-    private final Supplier<T> loader;
-    private boolean safe = false;
     private final AtomicReference<T> value = new AtomicReference<>();
+    private final Supplier<T> loader;
 
     public T value() {
         T value;

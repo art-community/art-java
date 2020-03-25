@@ -18,15 +18,7 @@
 
 package ru.art.sql.constants;
 
-public interface SqlModuleConstants {
-    String SQL_MODULE_ID = "SQL_MODULE";
-
-    interface ConfigurationDefaults {
-        String DEFAULT_CONNECTION_TEST_QUERY = "select 1 from dual";
-    }
-
-    interface LoggingMessages {
-        String CLOSING_POOL = "Closing DB connection pool: {0}";
-        String STARING_POOL = "Starting connection pool to DataSource: {0}";
-    }
+public enum ConnectionPoolInitializationMode {
+    ON_MODULE_LOAD,
+    MANUAL
 }
