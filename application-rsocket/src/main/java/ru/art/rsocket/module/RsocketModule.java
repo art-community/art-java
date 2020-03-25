@@ -28,6 +28,7 @@ import ru.art.rsocket.state.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.core.wrapper.ExceptionWrapper.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
@@ -66,7 +67,7 @@ public class RsocketModule implements Module<RsocketModuleConfiguration, Rsocket
         if (rsocket.isDisposed()) {
             return;
         }
-        rsocket.dispose();
         getLogger().info(RSOCKET_CLIENT_DISPOSING);
+        ignoreException(rsocket::dispose, getLogger()::error);
     }
 }

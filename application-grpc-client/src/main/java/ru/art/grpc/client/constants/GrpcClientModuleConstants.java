@@ -25,7 +25,7 @@ public interface GrpcClientModuleConstants {
     long DEFAULT_GRPC_DEADLINE = 10000L;
     int DEFAULT_GRPC_PORT = 8000;
     long GRPC_CHANNEL_SHUTDOWN_TIMEOUT = 1000L;
-    String GRPC_CHANNEL_SHUTDOWN = "Shutdown GRPC channel for ''{0}''";
+    String GRPC_CHANNEL_SHUTDOWN = "GRPC channel for ''{0}'' shutdown";
     String GRPC_ON_CLOSE = "GRPC onClose() status: ''{0}'', metadata: ''{1}''";
     String GRPC_ON_READY = "GRPC onReady()";
     String GRPC_ON_REQUEST_MESSAGE = "GRPC onMessage() request message:\n''{0}''";

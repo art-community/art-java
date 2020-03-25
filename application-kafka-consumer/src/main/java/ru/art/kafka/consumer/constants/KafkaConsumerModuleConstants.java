@@ -22,8 +22,8 @@ import static java.time.Duration.*;
 import java.time.*;
 
 public interface KafkaConsumerModuleConstants {
-    String CLOSING_KAFKA_STREAMS = "Closing Kafka stream: ''{0}''";
-    String CLOSING_KAFKA_CONSUMER = "Closing Kafka consumer: ''{0}''";
+    String KAFKA_STREAMS_CLOSED = "Kafka stream: ''{0}'' closed";
+    String KAFKA_CONSUMER_CLOSED = "Kafka consumer: ''{0}'' closed";
     String KAFKA_CONSUMER_MODULE_ID = "KAFKA_CONSUMER_MODULE";
     String KAFKA_CONSUMER_SERVICE_TYPE = "KAFKA_CONSUMER";
     Duration DEFAULT_DURATION = ofSeconds(10L);

@@ -86,7 +86,9 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
     }
 
     private void closeTarantoolClient(Map.Entry<String, TarantoolClient> entry) {
-        getLogger().info(format(CLOSING_TARANTOOL_CLIENT, entry.getKey()));
-        ignoreException(entry.getValue()::close);
+        ignoreException(() -> {
+            entry.getValue().close();
+            getLogger().info(format(TARANTOOL_CLIENT_CLOSED, entry.getKey()));
+        }, getLogger()::error);
     }
 }

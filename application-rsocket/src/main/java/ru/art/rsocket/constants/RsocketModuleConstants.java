@@ -74,8 +74,8 @@ public interface RsocketModuleConstants {
         String RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE = "RSocket WebSocket communicator to {0}:{1,number,#} started";
         String RSOCKET_WS_COMMUNICATOR_CREATED_MESSAGE = "RSocket WebSocket communicator to {0}:{1,number,#} created";
         String RSOCKET_TCP_COMMUNICATOR_CREATED_MESSAGE = "RSocket TCP communicator to {0}:{1,number,#} created";
-        String RSOCKET_RESTARTING_MESSAGE = "RSocket Server restarting in {0}[ms]";
-        String RSOCKET_STOPPING_MESSAGE = "RSocket Server stopping in {0}[ms]";
+        String RSOCKET_RESTARTED_MESSAGE = "RSocket Server restarted in {0}[ms]";
+        String RSOCKET_STOPPED = "RSocket Server stopped in {0}[ms]";
         String RSOCKET_LOADED_SERVICE_MESSAGE = "RSocket service loaded: {0}:{1,number,#} - {2}.{3}";
         String RSOCKET_FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget() with request data: {0} and metadata: {1}";
         String RSOCKET_FIRE_AND_FORGET_RESPONSE_LOG = "RSocket fireAndForget() completed";

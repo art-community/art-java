@@ -19,7 +19,6 @@
 package ru.art.kafka.consumer.module;
 
 import lombok.*;
-import org.apache.kafka.streams.*;
 import org.apache.logging.log4j.*;
 import ru.art.core.module.Module;
 import ru.art.kafka.consumer.configuration.*;
@@ -30,6 +29,7 @@ import ru.art.kafka.consumer.state.*;
 import static java.text.MessageFormat.*;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
+import static org.apache.kafka.streams.KafkaStreams.State.NOT_RUNNING;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
@@ -81,23 +81,32 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
 
     @Override
     public void onUnload() {
-        kafkaConsumerModuleState().getKafkaConsumers().entrySet().stream().filter(client -> !client.getValue().isStopped()).forEach(this::stopConsumer);
+        kafkaConsumerModuleState()
+                .getKafkaConsumers()
+                .entrySet()
+                .stream()
+                .filter(client -> !client.getValue().isStopped())
+                .forEach(this::stopConsumer);
         kafkaConsumerModuleState()
                 .getKafkaStreamsRegistry()
                 .getStreams()
                 .entrySet()
                 .stream()
-                .filter(client -> client.getValue().getKafkaStreams().state() != KafkaStreams.State.NOT_RUNNING)
+                .filter(client -> client.getValue().getKafkaStreams().state() != NOT_RUNNING)
                 .forEach(this::stopStream);
     }
 
     private void stopConsumer(Map.Entry<String, ManagedKafkaConsumer> entry) {
-        getLogger().info(format(CLOSING_KAFKA_CONSUMER, entry.getKey()));
-        ignoreException(entry.getValue().getConsumer()::close);
+        ignoreException(() -> {
+            entry.getValue().getConsumer().close();
+            getLogger().info(format(KAFKA_CONSUMER_CLOSED, entry.getKey()));
+        }, getLogger()::error);
     }
 
     private void stopStream(Map.Entry<String, ManagedKafkaStream> entry) {
-        getLogger().info(format(CLOSING_KAFKA_STREAMS, entry.getKey()));
-        ignoreException(entry.getValue().getKafkaStreams()::close);
+        ignoreException(() -> {
+            entry.getValue().getKafkaStreams().close();
+            getLogger().info(format(KAFKA_STREAMS_CLOSED, entry.getKey()));
+        }, getLogger()::error);
     }
 }

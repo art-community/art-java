@@ -162,19 +162,20 @@ public class RsocketServer {
                 serverDisposable.dispose();
             }
             new RsocketServer(transport).subscribe();
-            getLogger().info(format(RSOCKET_RESTARTING_MESSAGE, currentTimeMillis() - millis));
+            getLogger().info(format(RSOCKET_RESTARTED_MESSAGE, currentTimeMillis() - millis));
         } catch (Throwable throwable) {
             getLogger().error(RSOCKET_RESTART_FAILED);
         }
     }
 
     public void stop() {
+        if (isNull(serverDisposable)) {
+            return;
+        }
         long millis = currentTimeMillis();
         try {
-            if (nonNull(serverDisposable)) {
-                serverDisposable.dispose();
-            }
-            getLogger().info(format(RSOCKET_STOPPING_MESSAGE, currentTimeMillis() - millis));
+            serverDisposable.dispose();
+            getLogger().info(format(RSOCKET_STOPPED, currentTimeMillis() - millis));
         } catch (Throwable throwable) {
             getLogger().error(RSOCKET_STOP_FAILED);
         }
