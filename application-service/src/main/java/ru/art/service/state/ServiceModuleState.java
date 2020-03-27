@@ -20,22 +20,9 @@ package ru.art.service.state;
 
 import lombok.*;
 import ru.art.core.module.*;
-import ru.art.entity.Value;
 import ru.art.service.registry.*;
-import static java.util.Optional.*;
-import java.util.*;
 
 public class ServiceModuleState implements ModuleState {
-    private final ThreadLocal<Value> requestValue = new ThreadLocal<>();
-
     @Getter
     private final ServiceRegistry serviceRegistry = new ServiceRegistry();
-
-    public Optional<Value> getRequestValue() {
-        return ofNullable(requestValue.get());
-    }
-
-    public void setRequestValue(Value value) {
-        requestValue.set(value);
-    }
 }

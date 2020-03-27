@@ -22,12 +22,17 @@ import io.rsocket.*;
 import lombok.*;
 import ru.art.core.module.*;
 import ru.art.rsocket.constants.RsocketModuleConstants.*;
+import ru.art.rsocket.exception.*;
 import ru.art.rsocket.server.*;
+import static java.text.MessageFormat.*;
+import static java.util.concurrent.ConcurrentHashMap.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.CONNECTED_RSOCKET_NOT_FOUND;
+import java.text.*;
 import java.util.*;
 
 public class RsocketModuleState implements ModuleState {
-    private final ThreadLocal<CurrentRsocketState> currentClientSocket = new ThreadLocal<>();
+    private final Set<ConnectedRsocketState> connectedRsockets = newKeySet();
     @Getter
     private final List<RSocket> rsocketClients = linkedListOf();
 
@@ -39,13 +44,22 @@ public class RsocketModuleState implements ModuleState {
     @Setter
     private RsocketServer webSocketServer;
 
-    public RsocketModuleState currentRocketState(CurrentRsocketState state) {
-        currentClientSocket.set(state);
+    public RsocketModuleState connectRsocket(ConnectedRsocketState state) {
+        connectedRsockets.add(state);
         return this;
     }
 
-    public CurrentRsocketState currentRocketState() {
-        return currentClientSocket.get();
+    public ConnectedRsocketState connectedRsocket(RSocket rsocket) {
+        return connectedRsockets
+                .stream()
+                .filter(state -> state.rsocket.equals(rsocket))
+                .findFirst()
+                .orElseThrow(() -> new RsocketServerException(format(CONNECTED_RSOCKET_NOT_FOUND, rsocket)));
+    }
+
+
+    public Set<ConnectedRsocketState> connectedRsockets() {
+        return connectedRsockets;
     }
 
     public RSocket registerRsocket(RSocket rsocket) {
@@ -55,7 +69,8 @@ public class RsocketModuleState implements ModuleState {
 
     @Getter
     @Builder
-    public static class CurrentRsocketState {
+    @EqualsAndHashCode
+    public static class ConnectedRsocketState {
         private final String dataMimeType;
         private final String metadataMimeType;
         private final RsocketDataFormat dataFormat;

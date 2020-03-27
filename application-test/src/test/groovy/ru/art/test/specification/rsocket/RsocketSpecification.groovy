@@ -18,13 +18,17 @@
 
 package ru.art.test.specification.rsocket
 
+import reactor.core.publisher.DirectProcessor
 import reactor.core.publisher.Flux
+import ru.art.config.extensions.rsocket.RsocketAgileConfiguration
 import ru.art.core.caster.Caster
 import ru.art.core.configurator.ModuleConfigurator
 import ru.art.entity.Entity
 import ru.art.reactive.service.configuration.ReactiveServiceModuleConfiguration
 import ru.art.reactive.service.module.ReactiveServiceModule
 import ru.art.reactive.service.wrapper.ReactiveServiceExceptionWrappers
+import ru.art.rsocket.communicator.RsocketCommunicator
+import ru.art.rsocket.module.RsocketModule
 import ru.art.service.exception.ServiceExecutionException
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -32,6 +36,8 @@ import spock.lang.Unroll
 import static reactor.core.publisher.Flux.just
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.core.constants.NetworkConstants.LOCALHOST
+import static ru.art.core.constants.NetworkConstants.LOCALHOST_IP_ADDRESS
+import static ru.art.core.context.Context.context
 import static ru.art.entity.Entity.entityBuilder
 import static ru.art.entity.Entity.merge
 import static ru.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.REACTIVE
@@ -132,7 +138,7 @@ class RsocketSpecification extends Specification {
         sleep(500L)
         def communicator = rsocketCommunicator(rsocketCommunicationTarget()
                 .host(LOCALHOST)
-                .tcpPort({
+                .port({
                     switch (transport) {
                         case TCP:
                             rsocketModule().serverTcpPort
@@ -192,7 +198,7 @@ class RsocketSpecification extends Specification {
         sleep(500L)
         def communicator = rsocketCommunicator(rsocketCommunicationTarget()
                 .host(LOCALHOST)
-                .tcpPort({
+                .port({
                     switch (transport) {
                         case TCP:
                             rsocketModule().serverTcpPort
@@ -259,7 +265,7 @@ class RsocketSpecification extends Specification {
         sleep(500L)
         def communicator = rsocketCommunicator(rsocketCommunicationTarget()
                 .host(LOCALHOST)
-                .tcpPort({
+                .port({
                     switch (transport) {
                         case TCP:
                             rsocketModule().serverTcpPort
@@ -313,7 +319,7 @@ class RsocketSpecification extends Specification {
         sleep(500L)
         def communicator = rsocketCommunicator(rsocketCommunicationTarget()
                 .host(LOCALHOST)
-                .tcpPort({
+                .port({
                     switch (transport) {
                         case TCP:
                             rsocketModule().serverTcpPort
@@ -352,5 +358,46 @@ class RsocketSpecification extends Specification {
         PROTOBUF     | WEB_SOCKET
         JSON         | WEB_SOCKET
         MESSAGE_PACK | WEB_SOCKET
+    }
+
+    def "s"() {
+        setup:
+        context().loadModule(new RsocketModule(), {
+            new RsocketAgileConfiguration() {
+                @Override
+                int getServerTcpPort() {
+                    return 38099
+                }
+            }
+        } as ModuleConfigurator)
+        def processor = DirectProcessor.create()
+        def emitter = processor.sink()
+        rsocket(functionId).requestMapper(Caster.&cast).responseMapper(Caster.&cast).responseProcessingMode(REACTIVE)
+                .handle { flux -> processor }
+        startRsocketTcpServer()
+        sleep(500L)
+        while (true) {
+            emitter.next(response)
+            sleep(500L)
+        }
+    }
+
+    def "c"() {
+        setup:
+        def communicator = rsocketCommunicator(LOCALHOST_IP_ADDRESS, 38099)
+                .requestMapper(Caster.&cast)
+                .responseMapper(Caster.&cast)
+                .functionId(functionId)
+        def disposable = communicator
+                .stream(request)
+                .subscribe { println it }
+        Thread.sleep(5000)
+        disposable.dispose()
+        Thread.sleep(5000)
+        communicator.stream(request).subscribe { println it }
+        while (true) {
+
+        }
+
     }
 }

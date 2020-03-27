@@ -19,6 +19,7 @@
 package ru.art.rsocket.model;
 
 import io.rsocket.plugins.*;
+import io.rsocket.resume.*;
 import lombok.*;
 import lombok.experimental.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
@@ -33,9 +34,7 @@ public class RsocketCommunicationTargetConfiguration {
     @Setter
     private String host;
     @Setter
-    private Integer tcpPort;
-    @Setter
-    private Integer webSocketPort;
+    private Integer port;
     @Builder.Default
     private final RsocketTransport transport = TCP;
     @Builder.Default
@@ -45,7 +44,11 @@ public class RsocketCommunicationTargetConfiguration {
     @Builder.Default
     private final long resumeSessionDuration = rsocketModule().getClientResumeSessionDuration();
     @Builder.Default
+    private final long resumeStore = rsocketModule().getClientResumeSessionDuration();
+    @Builder.Default
     private final long resumeStreamTimeout = rsocketModule().getClientResumeStreamTimeout();
+    @Builder.Default
+    private final ResumeStrategy resumeStrategy = rsocketModule().getClientResumeStrategy();
     @Singular
     private final List<RSocketInterceptor> interceptors;
 }

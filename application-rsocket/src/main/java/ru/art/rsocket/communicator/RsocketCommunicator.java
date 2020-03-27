@@ -32,6 +32,7 @@ import ru.art.entity.mapper.*;
 import ru.art.rsocket.constants.RsocketModuleConstants.*;
 import ru.art.rsocket.exception.*;
 import ru.art.rsocket.model.*;
+import ru.art.rsocket.resume.*;
 import ru.art.service.model.*;
 import static io.rsocket.RSocketFactory.*;
 import static java.text.MessageFormat.*;
@@ -81,6 +82,7 @@ public class RsocketCommunicator {
         ClientRSocketFactory factory = connect();
         if (configuration.resumable()) {
             factory = factory.resume()
+                    .resumeStrategy(() -> new TracingResumeStrategy(configuration.resumeStrategy()))
                     .resumeSessionDuration(ofMillis(configuration.resumeSessionDuration()))
                     .resumeStreamTimeout(ofMillis(configuration.resumeStreamTimeout()));
         }
@@ -90,36 +92,36 @@ public class RsocketCommunicator {
             case TCP:
                 rsocketMono = factory.dataMimeType(toMimeType(configuration.dataFormat()))
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
-                        .transport(TcpClientTransport.create(configuration.host(), configuration.tcpPort()))
+                        .transport(TcpClientTransport.create(configuration.host(), configuration.port()))
                         .start()
                         .doOnNext(rsocketModuleState()::registerRsocket)
-                        .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.tcpPort())));
-                getLogger().info(format(RSOCKET_TCP_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.tcpPort()));
+                        .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.port())));
+                getLogger().info(format(RSOCKET_TCP_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.port()));
                 return;
             case WEB_SOCKET:
                 rsocketMono = factory
                         .dataMimeType(toMimeType(configuration.dataFormat()))
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
-                        .transport(WebsocketClientTransport.create(configuration.host(), configuration.tcpPort()))
+                        .transport(WebsocketClientTransport.create(configuration.host(), configuration.port()))
                         .start()
                         .doOnNext(rsocketModuleState()::registerRsocket)
-                        .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.webSocketPort())));
-                getLogger().info(format(RSOCKET_WS_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.tcpPort()));
+                        .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.port())));
+                getLogger().info(format(RSOCKET_WS_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.port()));
                 return;
         }
         throw new RsocketClientException(format(UNSUPPORTED_TRANSPORT, configuration.transport()));
     }
 
     public static RsocketCommunicator rsocketCommunicator(String host, int port) {
-        return new RsocketCommunicator(rsocketCommunicationTarget().tcpPort(port).host(host).build());
+        return new RsocketCommunicator(rsocketCommunicationTarget().port(port).host(host).build());
     }
 
     public static RsocketCommunicator rsocketCommunicator(String host, int port, RsocketDataFormat dataFormat) {
-        return new RsocketCommunicator(rsocketCommunicationTarget().tcpPort(port).host(host).dataFormat(dataFormat).build());
+        return new RsocketCommunicator(rsocketCommunicationTarget().port(port).host(host).dataFormat(dataFormat).build());
     }
 
     public static RsocketCommunicator rsocketCommunicator(String host, int port, RsocketTransport transport) {
-        return new RsocketCommunicator(rsocketCommunicationTarget().tcpPort(port).host(host).transport(transport).build());
+        return new RsocketCommunicator(rsocketCommunicationTarget().port(port).host(host).transport(transport).build());
     }
 
     public static RsocketCommunicator rsocketCommunicator(RsocketCommunicationTargetConfiguration targetConfiguration) {
@@ -219,8 +221,7 @@ public class RsocketCommunicator {
         validator.validate();
         validateRequiredFields();
         ValueFromModelMapper<?, ? extends Value> requestModelMapper = cast(requestMapper);
-        Payload requestPayload = writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
-                .map(newServiceRequest(command, request)), requestValueInterceptors, dataFormat);
+        Payload requestPayload = writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper)).map(newServiceRequest(command, request)), requestValueInterceptors, dataFormat);
         return rsocketMono.flatMap(rsocket -> rsocket.fireAndForget(requestPayload));
     }
 
@@ -232,8 +233,7 @@ public class RsocketCommunicator {
         ValueToModelMapper<?, ? extends Value> responseModelMapper = cast(responseMapper);
         Payload requestPayload = writeServiceRequestPayload(fromServiceRequest(cast(requestModelMapper))
                 .map(newServiceRequest(command, request)), requestValueInterceptors, dataFormat);
-        Mono<Payload> requestResponse = rsocketMono.flatMap(rsocket -> rsocket.requestResponse(requestPayload));
-        return requestResponse
+        return rsocketMono.flatMap(rsocket -> rsocket.requestResponse(requestPayload))
                 .map(responsePayload -> ofNullable(readPayloadData(responsePayload, dataFormat)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)

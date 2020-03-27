@@ -84,7 +84,7 @@ public class RsocketValueInterceptor implements RSocketInterceptor {
                 if (isNull(onFireAndForget)) {
                     return super.fireAndForget(payload);
                 }
-                CurrentRsocketState state = rsocketModuleState().currentRocketState();
+                ConnectedRsocketState state = rsocketModuleState().connectedRsocket(rsocket);
                 Value data = valueByType.apply(payload, state.getDataFormat());
                 if (!isEntity(data)) {
                     return super.fireAndForget(payload);
@@ -106,7 +106,7 @@ public class RsocketValueInterceptor implements RSocketInterceptor {
                 if (isNull(onRequestResponse)) {
                     return super.requestResponse(payload);
                 }
-                CurrentRsocketState state = rsocketModuleState().currentRocketState();
+                ConnectedRsocketState state = rsocketModuleState().connectedRsocket(rsocket);
                 Value data = valueByType.apply(payload, state.getDataFormat());
                 if (!isEntity(data)) {
                     return super.requestResponse(payload);
@@ -128,7 +128,7 @@ public class RsocketValueInterceptor implements RSocketInterceptor {
                 if (isNull(onRequestStream)) {
                     return super.requestStream(payload);
                 }
-                CurrentRsocketState state = rsocketModuleState().currentRocketState();
+                ConnectedRsocketState state = rsocketModuleState().connectedRsocket(rsocket);
                 Value data = valueByType.apply(payload, state.getDataFormat());
                 if (!isEntity(data)) {
                     return super.requestStream(payload);
@@ -152,7 +152,7 @@ public class RsocketValueInterceptor implements RSocketInterceptor {
                 if (isNull(onRequestChannel)) {
                     return super.requestChannel(payloads);
                 }
-                CurrentRsocketState state = rsocketModuleState().currentRocketState();
+                ConnectedRsocketState state = rsocketModuleState().connectedRsocket(rsocket);
 
                 EmitterProcessor<Payload> responseProcessor = EmitterProcessor.create();
                 FluxSink<Payload> mainResponseEmitter = responseProcessor.sink();
@@ -226,7 +226,7 @@ public class RsocketValueInterceptor implements RSocketInterceptor {
                 if (isNull(onMetadataPush)) {
                     return super.metadataPush(payload);
                 }
-                CurrentRsocketState state = rsocketModuleState().currentRocketState();
+                ConnectedRsocketState state = rsocketModuleState().connectedRsocket(rsocket);
                 Value data = valueByType.apply(payload, state.getDataFormat());
                 if (!isEntity(data)) {
                     return super.metadataPush(payload);

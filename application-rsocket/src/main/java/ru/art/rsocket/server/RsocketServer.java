@@ -18,6 +18,7 @@
 
 package ru.art.rsocket.server;
 
+import io.netty.buffer.*;
 import io.rsocket.transport.netty.server.*;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +27,7 @@ import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
 import reactor.netty.tcp.*;
 import ru.art.rsocket.exception.*;
+import ru.art.rsocket.resume.*;
 import ru.art.rsocket.socket.*;
 import ru.art.rsocket.specification.*;
 import static io.rsocket.RSocketFactory.*;
@@ -65,6 +67,7 @@ public class RsocketServer {
         ServerRSocketFactory socketFactory = receive().fragment(rsocketModule().getFragmentationMtu());
         if (rsocketModule().isResumableServer()) {
             socketFactory = socketFactory.resume()
+                    .resumeStore(RsocketServer::resumeStore)
                     .resumeSessionDuration(ofMillis(rsocketModule().getServerResumeSessionDuration()))
                     .resumeStreamTimeout(ofMillis(rsocketModule().getServerResumeStreamTimeout()));
         }
@@ -82,8 +85,7 @@ public class RsocketServer {
                                 .apply(cast(TcpServer.create()
                                         .host(rsocketModule().getServerHost())
                                         .port(rsocketModule().getServerTcpPort())))))))
-                        .start()
-                        .onTerminateDetach();
+                        .start();
                 rsocketModuleState().setTcpServer(this);
                 break;
             case WEB_SOCKET:
@@ -94,8 +96,7 @@ public class RsocketServer {
                                 .apply(cast(HttpServer.create()
                                         .host(rsocketModule().getServerHost())
                                         .port(rsocketModule().getServerWebSocketPort())))))))
-                        .start()
-                        .onTerminateDetach();
+                        .start();
                 rsocketModuleState().setWebSocketServer(this);
                 break;
             default:
@@ -118,6 +119,12 @@ public class RsocketServer {
                                 entry.getKey(),
                                 ((RsocketServiceSpecification) entry.getValue()).getRsocketService().getRsocketMethods().keySet()))));
     }
+
+    private static PersistableResumableFramesStore resumeStore(ByteBuf token) {
+        ResumableFramesStateRepository repository = rsocketModule().getResumableFramesServerStateRepository().apply(cast(token));
+        return new PersistableResumableFramesStore(repository.getProvider(), repository.getConsumer());
+    }
+
 
     public static RsocketServer rsocketTcpServer() {
         return new RsocketServer(TCP);

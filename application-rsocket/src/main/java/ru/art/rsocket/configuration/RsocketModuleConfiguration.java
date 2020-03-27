@@ -18,8 +18,10 @@
 
 package ru.art.rsocket.configuration;
 
+import io.netty.buffer.*;
 import io.rsocket.RSocketFactory.*;
 import io.rsocket.plugins.*;
+import io.rsocket.resume.*;
 import io.rsocket.transport.netty.server.*;
 import lombok.*;
 import reactor.netty.http.server.*;
@@ -32,6 +34,7 @@ import ru.art.rsocket.constants.RsocketModuleConstants.*;
 import ru.art.rsocket.exception.*;
 import ru.art.rsocket.interceptor.*;
 import ru.art.rsocket.model.*;
+import ru.art.rsocket.resume.*;
 import static java.text.MessageFormat.*;
 import static java.util.function.Function.*;
 import static ru.art.core.constants.NetworkConstants.*;
@@ -68,6 +71,8 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
 
     long getClientResumeStreamTimeout();
 
+    ResumeStrategy getClientResumeStrategy();
+
     RsocketDataFormat getDataFormat();
 
     Map<String, RsocketCommunicationTargetConfiguration> getCommunicationTargets();
@@ -103,6 +108,8 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
 
     Function<? extends ServerRSocketFactory, ? extends ServerRSocketFactory> getServerFactoryConfigurator();
 
+    Function<? extends ByteBuf, ? extends ResumableFramesStateRepository> getResumableFramesServerStateRepository();
+
     int getFragmentationMtu();
 
     @Getter
@@ -120,9 +127,12 @@ public interface RsocketModuleConfiguration extends ModuleConfiguration {
         private final boolean resumableClient = true;
         private final long clientResumeSessionDuration = DEFAULT_RSOCKET_RESUME_SESSION_DURATION;
         private final long clientResumeStreamTimeout = DEFAULT_RSOCKET_RESUME_STREAM_TIMEOUT;
+        private final ResumeStrategy clientResumeStrategy = RSOCKET_DEFAULT_CLIENT_RESUME_STRATEGY;
         private final boolean enableRawDataTracing = false;
         private final boolean enableValueTracing = false;
         private final int fragmentationMtu = 0;
+        private final Function<? extends ByteBuf, ? extends ResumableFramesStateRepository> resumableFramesServerStateRepository =
+                token -> ResumableFramesStateRepository.builder().build();
         private final Function<? extends HttpServer, ? extends HttpServer> webSocketServerConfigurator = identity();
         private final Function<? extends TcpServer, ? extends TcpServer> tcpServerConfigurator = identity();
         private final Function<? extends WebsocketServerTransport, ? extends WebsocketServerTransport> webSocketServerTransportConfigurator = identity();

@@ -18,6 +18,9 @@
 
 package ru.art.rsocket.constants;
 
+import io.rsocket.resume.*;
+import static java.time.Duration.ofSeconds;
+
 public interface RsocketModuleConstants {
     String RSOCKET_MODULE_ID = "RSOCKET_MODULE";
     String RSOCKET_FUNCTION_SERVICE = "RSOCKET_FUNCTION_SERVICE";
@@ -26,11 +29,20 @@ public interface RsocketModuleConstants {
     String RSOCKET_COMMUNICATION_SERVICE_TYPE = "RSOCKET_COMMUNICATION";
     String RSOCKET_COMMUNICATION_TARGET_CONFIGURATION_NOT_FOUND = "RSocket communication target configuration was not found for serviceId: {0}";
     String RSOCKET_CLIENT_DISPOSING = "Disposing RSocket client";
+    String CONNECTED_RSOCKET_DISPOSING = "Disposing connected RSocket";
     String BINARY_MIME_TYPE = "application/binary";
     int DEFAULT_RSOCKET_TCP_PORT = 9000;
     int DEFAULT_RSOCKET_WEB_SOCKET_PORT = 10000;
     long DEFAULT_RSOCKET_RESUME_SESSION_DURATION = 24 * 60 * 60 * 1000;
     long DEFAULT_RSOCKET_RESUME_STREAM_TIMEOUT = 24 * 60 * 60 * 1000;
+    ResumeStrategy RSOCKET_DEFAULT_CLIENT_RESUME_STRATEGY = new ExponentialBackoffResumeStrategy(ofSeconds(1), ofSeconds(16), 2);
+    String RESUME_STATE_PREFIX = "RSOCKET_RESUME_STATE_";
+    int DEFAULT_RSOCKET_RESUME_STATE_CACHE_SIZE = 100_000;
+
+    enum RsocketResumeStateStorageType {
+        TARANTOOL,
+        ROCKS_DB
+    }
 
     enum RsocketDataFormat {
         PROTOBUF,
@@ -65,6 +77,7 @@ public interface RsocketModuleConstants {
         String INVALID_RSOCKET_COMMUNICATION_CONFIGURATION = "Some required fields in RSocket communication configuration are null: ";
         String FAILED_TO_READ_PAYLOAD = "Payload reading failed with exception: {0}";
         String INTERCEPTING_DATA_TYPE_NULL = "Intercepting data type is null";
+        String CONNECTED_RSOCKET_NOT_FOUND = "Connected RSocket state not found for ''{0}''";
     }
 
     interface LoggingMessages {
@@ -92,5 +105,6 @@ public interface RsocketModuleConstants {
         String RSOCKET_REQUEST_CHANNEL_REQUEST_LOG = "RSocket requestChannel() processed with request data: {0} and metadata: {1}";
         String RSOCKET_REQUEST_CHANNEL_RESPONSE_LOG = "RSocket requestChannel() processed with response data: {0} and metadata: {1}";
         String RSOCKET_REQUEST_CHANNEL_EXCEPTION_LOG = "RSocket requestChannel() failed with exception: {0}";
+        String RSOCKET_RESUMING = "Disconnected. Trying to resume connection...";
     }
 }

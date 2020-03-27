@@ -31,6 +31,7 @@ import static ru.art.protobuf.descriptor.ProtobufEntityReader.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.module.RsocketModule.*;
+import static ru.art.rsocket.reader.ByteBufReader.readByteBufToArray;
 import static ru.art.xml.descriptor.XmlEntityReader.*;
 import java.nio.*;
 
@@ -49,13 +50,7 @@ public class RsocketPayloadReader {
             case XML:
                 return readXml(wrapException(payload::getDataUtf8, RsocketServerException::new));
             case MESSAGE_PACK:
-                ByteBuf byteBuf = payload.sliceData();
-                if (byteBuf.readableBytes() == 0) {
-                    return null;
-                }
-                byte[] bytes = new byte[byteBuf.readableBytes()];
-                byteBuf.readBytes(bytes);
-                return readMessagePack(bytes);
+                return readMessagePack(readByteBufToArray(payload.sliceData()));
         }
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDataFormat()));
     }

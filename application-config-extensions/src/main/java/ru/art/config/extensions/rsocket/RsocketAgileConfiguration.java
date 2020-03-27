@@ -18,15 +18,18 @@
 
 package ru.art.config.extensions.rsocket;
 
+import io.netty.buffer.*;
 import lombok.*;
 import ru.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import ru.art.rsocket.model.*;
+import ru.art.rsocket.resume.*;
 import ru.art.rsocket.server.*;
 import static java.util.Objects.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.common.DataFormats.*;
 import static ru.art.config.extensions.rsocket.RsocketConfigKeys.*;
+import static ru.art.config.extensions.rsocket.RsocketResumableStateRepositories.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
@@ -34,7 +37,9 @@ import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.model.RsocketCommunicationTargetConfiguration.*;
 import static ru.art.rsocket.module.RsocketModule.*;
+import static ru.art.rsocket.reader.ByteBufReader.*;
 import java.util.*;
+import java.util.function.*;
 
 @Getter
 public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration {
@@ -55,6 +60,7 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
     private boolean resumableClient;
     private long clientResumeSessionDuration;
     private long clientResumeStreamDuration;
+    private Function<? extends ByteBuf, ? extends ResumableFramesStateRepository> resumableFramesServerStateRepository = super.getResumableFramesServerStateRepository();
 
     public RsocketAgileConfiguration() {
         refresh();
@@ -67,7 +73,7 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
         serverResumeStreamDuration = configLong(RSOCKET_SECTION_ID, RESUME_STREAM_TIMEOUT, super.getServerResumeStreamTimeout());
         resumableClient = configBoolean(RSOCKET_COMMUNICATION_SECTION_ID, RESUMABLE, super.isResumableClient());
         clientResumeSessionDuration = configLong(RSOCKET_COMMUNICATION_SECTION_ID, RESUME_SESSION_DURATION, super.getClientResumeSessionDuration());
-        clientResumeStreamDuration  = configLong(RSOCKET_COMMUNICATION_SECTION_ID, RESUME_STREAM_TIMEOUT, super.getClientResumeStreamTimeout());
+        clientResumeStreamDuration = configLong(RSOCKET_COMMUNICATION_SECTION_ID, RESUME_STREAM_TIMEOUT, super.getClientResumeStreamTimeout());
         enableRawDataTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
         enableValueTracing = configBoolean(RSOCKET_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         fragmentationMtu = configInt(RSOCKET_SECTION_ID, FRAGMENTATION_MTU, super.getFragmentationMtu());
@@ -84,10 +90,20 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
         balancerHost = configString(RSOCKET_BALANCER_SECTION_ID, HOST, super.getBalancerHost());
         balancerTcpPort = configInt(RSOCKET_BALANCER_SECTION_ID, TCP_PORT, super.getBalancerTcpPort());
         balancerWebSocketPort = configInt(RSOCKET_BALANCER_SECTION_ID, WEB_SOCKET_PORT, super.getBalancerWebSocketPort());
+        if (hasPath(RSOCKET_SERVER_RESUME_SECTION_ID, RESUME_STATE_STORAGE_TYPE)) {
+            switch (RsocketResumeStateStorageType.valueOf(configString(RSOCKET_SERVER_RESUME_SECTION_ID, RESUME_STATE_STORAGE_TYPE).toUpperCase())) {
+                case TARANTOOL:
+                    String instanceId = configString(RSOCKET_SERVER_RESUME_SECTION_ID, RESUME_STATE_TARANTOOL_INSTANCE_ID);
+                    resumableFramesServerStateRepository = token -> storeInTarantool(readByteBufToString(token), instanceId);
+                    break;
+                case ROCKS_DB:
+                    resumableFramesServerStateRepository = token -> storeInRocksDb(readByteBufToString(token));
+                    break;
+            }
+        }
         communicationTargets = configInnerMap(RSOCKET_COMMUNICATION_SECTION_ID, TARGETS, config -> rsocketCommunicationTarget()
                 .host(ifEmpty(config.getString(HOST), balancerHost))
-                .tcpPort(getOrElse(config.getInt(TCP_PORT), balancerTcpPort))
-                .webSocketPort(getOrElse(config.getInt(WEB_SOCKET_PORT), balancerWebSocketPort))
+                .port(getOrElse(config.getInt(PORT), balancerTcpPort))
                 .dataFormat(super.getDataFormat())
                 .resumable(getOrElse(config.getBool(RESUMABLE), super.isResumableClient()))
                 .resumeSessionDuration(getOrElse(config.getLong(RESUME_SESSION_DURATION), super.getClientResumeSessionDuration()))

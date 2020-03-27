@@ -185,6 +185,14 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         return select(spaceName, emptySet());
     }
 
+    public Optional<Entity> selectFirst(String spaceName) {
+        return select(spaceName, emptySet()).stream().findFirst();
+    }
+
+    public Optional<Entity> selectAny(String spaceName) {
+        return select(spaceName, emptySet()).stream().findAny();
+    }
+
 
     public List<Primitive> selectPrimitives(String spaceName, Collection<?> keys) {
         return select(spaceName, keys).stream().map(entity -> asPrimitive(entity.getValue(VALUE))).collect(toList());

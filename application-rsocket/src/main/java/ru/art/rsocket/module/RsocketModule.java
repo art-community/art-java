@@ -60,14 +60,39 @@ public class RsocketModule implements Module<RsocketModuleConfiguration, Rsocket
     public void onUnload() {
         doIfNotNull(rsocketModuleState().getTcpServer(), RsocketServer::stop);
         doIfNotNull(rsocketModuleState().getWebSocketServer(), RsocketServer::stop);
-        rsocketModuleState().getRsocketClients().stream().filter(rsocket -> !rsocket.isDisposed()).forEach(this::disposeRsocket);
+
+        if (!rsocketModule().isResumableClient()) {
+            rsocketModuleState()
+                    .getRsocketClients()
+                    .stream()
+                    .filter(rsocket -> !rsocket.isDisposed())
+                    .forEach(this::disposeRsocketClient);
+        }
+
+
+        if (!rsocketModule().isResumableServer()) {
+            rsocketModuleState()
+                    .connectedRsockets()
+                    .stream()
+                    .map(RsocketModuleState.ConnectedRsocketState::getRsocket)
+                    .filter(rsocket -> !rsocket.isDisposed())
+                    .forEach(this::disposeConnectedRsocket);
+        }
     }
 
-    private void disposeRsocket(RSocket rsocket) {
+    private void disposeRsocketClient(RSocket rsocket) {
         if (rsocket.isDisposed()) {
             return;
         }
         getLogger().info(RSOCKET_CLIENT_DISPOSING);
+        ignoreException(rsocket::dispose, getLogger()::error);
+    }
+
+    private void disposeConnectedRsocket(RSocket rsocket) {
+        if (rsocket.isDisposed()) {
+            return;
+        }
+        getLogger().info(CONNECTED_RSOCKET_DISPOSING);
         ignoreException(rsocket::dispose, getLogger()::error);
     }
 }
