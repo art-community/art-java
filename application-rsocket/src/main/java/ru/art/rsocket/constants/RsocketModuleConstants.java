@@ -41,7 +41,7 @@ public interface RsocketModuleConstants {
 
     enum RsocketResumeStateStorageType {
         TARANTOOL,
-        ROCKS_DB
+        ROCKS
     }
 
     enum RsocketDataFormat {

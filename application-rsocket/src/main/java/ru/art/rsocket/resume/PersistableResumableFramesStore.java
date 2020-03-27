@@ -5,13 +5,13 @@ import io.rsocket.resume.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.util.concurrent.*;
-import ru.art.core.extension.*;
 import static java.lang.Long.*;
 import static java.lang.Math.max;
 import static java.lang.String.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
-import static ru.art.rsocket.constants.RsocketModuleConstants.DEFAULT_RSOCKET_RESUME_STATE_CACHE_SIZE;
+import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -19,21 +19,27 @@ import java.util.function.*;
 public class PersistableResumableFramesStore implements ResumableFramesStore {
     private static final long SAVE_REQUEST_SIZE = MAX_VALUE;
     private final MonoProcessor<Void> disposed = MonoProcessor.create();
-    private volatile long position;
+    private volatile AtomicLong position;
     private volatile AtomicLong impliedPosition;
-    private volatile int cacheSize;
+    private volatile AtomicInteger cacheSize;
+    private volatile ByteBuf setupFrame;
     private final Queue<ByteBuf> cachedFrames;
+    private final Queue<ByteBuf> persistedFrames;
     private final int cacheLimit;
     private volatile int upstreamFrameRefCnt;
     private Consumer<ResumableFramesState> persistingConsumer;
 
     public PersistableResumableFramesStore(Supplier<ResumableFramesState> stateProvider, Consumer<ResumableFramesState> persistingConsumer) {
         ResumableFramesState state = stateProvider.get();
-        this.position = getOrElse(state.getPosition(), 0L);
-        this.impliedPosition = new AtomicLong(getOrElse(state.getImpliedPosition(), 0L));
-        this.cacheLimit = getOrElse(state.getCacheLimit(),  DEFAULT_RSOCKET_RESUME_STATE_CACHE_SIZE);
-        this.cachedFrames = ifEmpty(state.getCachedFrames(), cachedFramesQueue(this.cacheLimit));
+        this.position = new AtomicLong(getOrElse(state.getPosition(), 0L));
+        this.impliedPosition = new AtomicLong(0L);
+        this.cacheSize = new AtomicInteger(getOrElse(state.getCacheSize(), 0));
+        this.cacheLimit = getOrElse(state.getCacheLimit(), DEFAULT_RSOCKET_RESUME_STATE_CACHE_SIZE);
+        this.persistedFrames = new LinkedList<>(ifEmpty(state.getFrames(), linkedListOf()));
+        this.cachedFrames = isEmpty(this.persistedFrames) ? cachedFramesQueue(this.cacheLimit) : cachedFramesQueue(this.persistedFrames.size());
+        this.persistedFrames.forEach(this.cachedFrames::offer);
         this.upstreamFrameRefCnt = getOrElse(state.getUpstreamFrameRefCnt(), 0);
+        this.setupFrame = state.getSetupFrame();
         this.persistingConsumer = persistingConsumer;
     }
 
@@ -45,10 +51,11 @@ public class PersistableResumableFramesStore implements ResumableFramesStore {
 
     @Override
     public void releaseFrames(long remoteImpliedPos) {
-        long pos = position;
+        long pos = position.get();
         long removeSize = max(0, remoteImpliedPos - pos);
         while (removeSize > 0) {
             ByteBuf cachedFrame = cachedFrames.poll();
+            persistedFrames.poll();
             if (cachedFrame != null) {
                 removeSize -= releaseTailFrame(cachedFrame);
             } else {
@@ -74,11 +81,15 @@ public class PersistableResumableFramesStore implements ResumableFramesStore {
                 (state, sink) -> {
                     if (state.next()) {
                         ByteBuf frame = cachedFrames.poll();
-                        if (state.shouldRetain(frame)) {
-                            frame.retain();
+                        if (Objects.nonNull(frame)) {
+                            persistedFrames.poll();
+                            if (state.shouldRetain(frame)) {
+                                frame.retain();
+                            }
+                            cachedFrames.offer(frame);
+                            persistedFrames.offer(frame);
+                            sink.next(frame);
                         }
-                        cachedFrames.offer(frame);
-                        sink.next(frame);
                     } else {
                         sink.complete();
                     }
@@ -89,12 +100,23 @@ public class PersistableResumableFramesStore implements ResumableFramesStore {
 
     @Override
     public long framePosition() {
-        return position;
+        return position.get();
     }
 
     @Override
     public long frameImpliedPosition() {
         return impliedPosition.get();
+    }
+
+    @Override
+    public ByteBuf setupFrame() {
+        return setupFrame;
+    }
+
+    @Override
+    public void saveSetupFrame(ByteBuf byteBuf) {
+        this.setupFrame = byteBuf;
+        persist();
     }
 
     @Override
@@ -110,11 +132,13 @@ public class PersistableResumableFramesStore implements ResumableFramesStore {
 
     @Override
     public void dispose() {
-        cacheSize = 0;
+        cacheSize.set(0);
         ByteBuf frame = cachedFrames.poll();
+        persistedFrames.poll();
         while (frame != null) {
             frame.release();
             frame = cachedFrames.poll();
+            persistedFrames.poll();
         }
         persist();
         disposed.onComplete();
@@ -127,19 +151,21 @@ public class PersistableResumableFramesStore implements ResumableFramesStore {
 
     public void persist() {
         persistingConsumer.accept(ResumableFramesState.builder()
-                .position(position)
-                .impliedPosition(impliedPosition.get())
-                .cacheSize(cacheSize)
-                .cachedFrames(cachedFrames)
+                .setupFrame(setupFrame.retain())
+                .position(position.get())
+                .cacheSize(cacheSize.get())
+                .cacheLimit(cacheLimit)
+                .frames(persistedFrames)
                 .upstreamFrameRefCnt(upstreamFrameRefCnt)
                 .build());
     }
 
     private int releaseTailFrame(ByteBuf content) {
         int frameSize = content.readableBytes();
-        cacheSize -= frameSize;
-        position += frameSize;
+        cacheSize.addAndGet(-frameSize);
+        position.addAndGet(frameSize);
         content.release();
+        persist();
         return frameSize;
     }
 
@@ -149,9 +175,10 @@ public class PersistableResumableFramesStore implements ResumableFramesStore {
         }
 
         int frameSize = frame.readableBytes();
-        long availableSize = cacheLimit - cacheSize;
+        long availableSize = cacheLimit - cacheSize.get();
         while (availableSize < frameSize) {
             ByteBuf cachedFrame = cachedFrames.poll();
+            persistedFrames.poll();
             if (cachedFrame != null) {
                 availableSize += releaseTailFrame(cachedFrame);
             } else {
@@ -159,12 +186,14 @@ public class PersistableResumableFramesStore implements ResumableFramesStore {
             }
         }
         if (availableSize >= frameSize) {
-            cachedFrames.offer(frame.retain());
-            cacheSize += frameSize;
+            ByteBuf buf = frame.retain();
+            cachedFrames.offer(buf);
+            persistedFrames.offer(buf.retain());
+            cacheSize.addAndGet(frameSize);
             persist();
             return;
         }
-        position += frameSize;
+        position.addAndGet(frameSize);
         persist();
     }
 

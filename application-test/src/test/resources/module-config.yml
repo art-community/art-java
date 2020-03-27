@@ -37,6 +37,9 @@ http:
     consumesMimeType: application/json
     producesMimeType: application/json
 rsocket:
+  server:
+    resume:
+      storageType: rocks
   enableRawDataTracing: true
 tarantool:
   enableTracing: true

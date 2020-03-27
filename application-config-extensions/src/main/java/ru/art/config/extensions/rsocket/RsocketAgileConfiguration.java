@@ -96,7 +96,7 @@ public class RsocketAgileConfiguration extends RsocketModuleDefaultConfiguration
                     String instanceId = configString(RSOCKET_SERVER_RESUME_SECTION_ID, RESUME_STATE_TARANTOOL_INSTANCE_ID);
                     resumableFramesServerStateRepository = token -> storeInTarantool(readByteBufToString(token), instanceId);
                     break;
-                case ROCKS_DB:
+                case ROCKS:
                     resumableFramesServerStateRepository = token -> storeInRocksDb(readByteBufToString(token));
                     break;
             }

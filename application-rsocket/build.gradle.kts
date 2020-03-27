@@ -32,10 +32,7 @@ art {
 
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
-        embedded("io.rsocket", "rsocket-core", rsocketVersion)
-                .exclude("io.netty")
-                .exclude("io.projectreactor", "reactor-core")
-                .exclude("org.slf4j")
+        embedded(fileTree("/Users/anton/Development/Projects/rsocket-java/rsocket-core/build/libs/rsocket-core-1.0.0-RC7.jar"))
         embedded("io.rsocket", "rsocket-transport-netty", rsocketVersion)
                 .exclude("io.netty")
                 .exclude("io.projectreactor", "reactor-core")

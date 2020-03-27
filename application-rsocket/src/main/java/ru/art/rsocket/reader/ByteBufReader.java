@@ -11,8 +11,10 @@ public class ByteBufReader {
         if (byteBuf.readableBytes() == 0) {
             return null;
         }
+        byteBuf.markReaderIndex();
         byte[] bytes = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(bytes);
+        byteBuf.resetReaderIndex();
         return bytes;
     }
 
@@ -20,8 +22,10 @@ public class ByteBufReader {
         if (byteBuf.readableBytes() == 0) {
             return null;
         }
+        byteBuf.markReaderIndex();
         byte[] bytes = new byte[byteBuf.readableBytes()];
         byteBuf.readBytes(bytes);
+        byteBuf.resetReaderIndex();
         return new String(bytes, contextConfiguration().getCharset());
     }
 }

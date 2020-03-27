@@ -30,7 +30,7 @@ public interface RsocketConfigKeys {
     String RESUME_SESSION_DURATION = "resumeSessionDuration";
     String RESUME_STREAM_TIMEOUT = "resumeStreamTimeout";
     String FRAGMENTATION_MTU = "fragmentationMtu";
-    String RSOCKET_SERVER_RESUME_SECTION_ID = "rsocket.serve.resume";
+    String RSOCKET_SERVER_RESUME_SECTION_ID = "rsocket.server.resume";
     String RESUME_STATE_STORAGE_TYPE = "storageType";
     String RESUME_STATE_TARANTOOL_INSTANCE_ID = "tarantoolInstanceId";
 }

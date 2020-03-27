@@ -81,44 +81,49 @@ public class PlainTupleReader {
         List<EntitySchema.EntityFieldSchema> fieldsSchema = schema.getFieldsSchema();
         for (int i = 0, fieldsSchemaSize = fieldsSchema.size(); i < fieldsSchemaSize; i++) {
             EntitySchema.EntityFieldSchema fieldSchema = fieldsSchema.get(i);
+            Object value = entity.get(i);
+            if (isNull(value)) {
+                entityBuilder.valueField(fieldSchema.getName(), fieldSchema.getType(), (Object v) -> null);
+                continue;
+            }
             switch (fieldSchema.getType()) {
                 case STRING:
-                    entityBuilder.stringField(fieldSchema.getName(), (String) entity.get(i));
+                    entityBuilder.stringField(fieldSchema.getName(), (String) value);
                     break;
                 case LONG:
-                    Number number = (Number) entity.get(i);
-                    if (nonNull(number)) {
-                        entityBuilder.longField(fieldSchema.getName(), number.longValue());
-                        break;
-                    }
-                    entityBuilder.longField(fieldSchema.getName(), null);
+                    Number number = (Number) value;
+                    entityBuilder.longField(fieldSchema.getName(), number.longValue());
                     break;
                 case DOUBLE:
-                    entityBuilder.doubleField(fieldSchema.getName(), (Double) entity.get(i));
+                    number = (Number) value;
+                    entityBuilder.doubleField(fieldSchema.getName(), number.doubleValue());
                     break;
                 case FLOAT:
-                    entityBuilder.floatField(fieldSchema.getName(), (Float) entity.get(i));
+                    number = (Number) value;
+                    entityBuilder.floatField(fieldSchema.getName(), number.floatValue());
                     break;
                 case INT:
-                    entityBuilder.intField(fieldSchema.getName(), (Integer) entity.get(i));
+                    number = (Number) value;
+                    entityBuilder.intField(fieldSchema.getName(), number.intValue());
                     break;
                 case BOOL:
-                    entityBuilder.boolField(fieldSchema.getName(), (Boolean) entity.get(i));
+                    entityBuilder.boolField(fieldSchema.getName(), (Boolean) value);
                     break;
                 case BYTE:
-                    entityBuilder.byteField(fieldSchema.getName(), (Byte) entity.get(i));
+                    number = (Number) value;
+                    entityBuilder.byteField(fieldSchema.getName(), number.byteValue());
                     break;
                 case ENTITY:
-                    entityBuilder.entityField(fieldSchema.getName(), readEntity((List<?>) entity.get(i), (EntitySchema) fieldSchema.getSchema()));
+                    entityBuilder.entityField(fieldSchema.getName(), readEntity((List<?>) value, (EntitySchema) fieldSchema.getSchema()));
                     break;
                 case COLLECTION:
-                    entityBuilder.valueField(fieldSchema.getName(), readCollectionValue((List<?>) entity.get(i), (CollectionValueSchema) fieldSchema.getSchema()));
+                    entityBuilder.valueField(fieldSchema.getName(), readCollectionValue((List<?>) value, (CollectionValueSchema) fieldSchema.getSchema()));
                     break;
                 case MAP:
-                    entityBuilder.valueField(fieldSchema.getName(), readMapValue((List<?>) entity.get(i), (MapValueSchema) fieldSchema.getSchema()));
+                    entityBuilder.valueField(fieldSchema.getName(), readMapValue((List<?>) value, (MapValueSchema) fieldSchema.getSchema()));
                     break;
                 case STRING_PARAMETERS_MAP:
-                    entityBuilder.valueField(fieldSchema.getName(), readStringParameters((List<?>) entity.get(i), (StringParametersSchema) fieldSchema.getSchema()));
+                    entityBuilder.valueField(fieldSchema.getName(), readStringParameters((List<?>) value, (StringParametersSchema) fieldSchema.getSchema()));
                     break;
             }
         }

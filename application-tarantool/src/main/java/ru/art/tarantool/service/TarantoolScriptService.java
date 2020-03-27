@@ -54,7 +54,7 @@ public final class TarantoolScriptService {
         TarantoolValueScriptConfiguration valueScriptConfiguration = tarantoolValueScript(spaceName);
         Set<TarantoolValueScriptConfiguration> instanceValueScripts = tarantoolModuleState()
                 .getLoadedValueScripts()
-                .putIfAbsent(instanceId, emptySet());
+                .putIfAbsent(instanceId, setOf());
         if (nonNull(instanceValueScripts) && instanceValueScripts.contains(valueScriptConfiguration)) {
             return;
         }

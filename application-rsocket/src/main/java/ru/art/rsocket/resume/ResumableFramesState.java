@@ -4,7 +4,6 @@ import io.netty.buffer.*;
 import lombok.*;
 import ru.art.entity.*;
 import static ru.art.entity.Value.*;
-import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.rsocket.resume.ResumableFramesStateMapping.*;
 import java.util.*;
 
@@ -15,9 +14,9 @@ public class ResumableFramesState {
     private final Integer cacheLimit;
     private final Integer cacheSize;
     private final Long position;
-    private final Long impliedPosition;
-    private final Queue<ByteBuf> cachedFrames;
+    private final Queue<ByteBuf> frames;
     private final Integer upstreamFrameRefCnt;
+    private final ByteBuf setupFrame;
 
     public static ResumableFramesState fromValue(Entity value) {
         return toResumableFramesState.map(asEntity(value));
