@@ -228,15 +228,18 @@ public class Context {
         if (isNull(module)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         ReentrantLock lock = Context.LOCK;
         lock.lock();
-        ContextState currentState = state;
-        state = LOADING_MODULES;
-        C configuration = module.getDefaultConfiguration();
-        modules.put(module.getId(), new ModuleContainer<>(module, cast(configuration)));
-        out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, configuration.getClass().getName()));
-        state = currentState;
-        module.onLoad();
-        lastActionTimestamp = currentTimeMillis();
-        lock.unlock();
+        try {
+            ContextState currentState = state;
+            state = LOADING_MODULES;
+            C configuration = module.getDefaultConfiguration();
+            modules.put(module.getId(), new ModuleContainer<>(module, cast(configuration)));
+            out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, configuration.getClass().getName()));
+            state = currentState;
+            module.onLoad();
+            lastActionTimestamp = currentTimeMillis();
+        } finally {
+            lock.unlock();
+        }
         return this;
     }
 
@@ -244,15 +247,18 @@ public class Context {
         if (isNull(module)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         ReentrantLock lock = Context.LOCK;
         lock.lock();
-        ContextState currentState = state;
-        state = LOADING_MODULES;
-        C configuration = cast(moduleConfigurator.configure(module));
-        modules.put(module.getId(), new ModuleContainer<>(module, configuration));
-        out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, configuration.getClass().getName()));
-        state = currentState;
-        module.onLoad();
-        lastActionTimestamp = currentTimeMillis();
-        lock.unlock();
+        try {
+            ContextState currentState = state;
+            state = LOADING_MODULES;
+            C configuration = cast(moduleConfigurator.configure(module));
+            modules.put(module.getId(), new ModuleContainer<>(module, configuration));
+            out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, configuration.getClass().getName()));
+            state = currentState;
+            module.onLoad();
+            lastActionTimestamp = currentTimeMillis();
+        } finally {
+            lock.unlock();
+        }
         return this;
     }
 
@@ -260,28 +266,35 @@ public class Context {
         if (isNull(module)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         ReentrantLock lock = Context.LOCK;
         lock.lock();
-        ContextState currentState = state;
-        state = LOADING_MODULES;
-        C configuration = cast(nonNull(customModuleConfiguration) ? customModuleConfiguration : module.getDefaultConfiguration());
-        modules.put(module.getId(), new ModuleContainer<>(module, configuration));
-        state = currentState;
-        module.onLoad();
-        out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, configuration.getClass().getName()));
-        lastActionTimestamp = currentTimeMillis();
-        lock.unlock();
+        try {
+            ContextState currentState = state;
+            state = LOADING_MODULES;
+            C configuration = cast(nonNull(customModuleConfiguration) ? customModuleConfiguration : module.getDefaultConfiguration());
+            modules.put(module.getId(), new ModuleContainer<>(module, configuration));
+            state = currentState;
+            module.onLoad();
+            out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, configuration.getClass().getName()));
+            lastActionTimestamp = currentTimeMillis();
+        } finally {
+            lock.unlock();
+        }
         return this;
     }
 
     private <C extends ModuleConfiguration, S extends ModuleState> C loadModule(Module<C, S> module, PreconfiguredModuleProvider preconfiguredModulesProvider) {
         ReentrantLock lock = Context.LOCK;
         lock.lock();
-        ContextState currentState = state;
-        state = LOADING_MODULES;
-        C configuration = cast(preconfiguredModulesProvider.getModuleConfiguration(module.getId()).orElse(module.getDefaultConfiguration()));
-        state = currentState;
-        lock.unlock();
-        loadModule(module, configuration);
-        return cast(configuration);
+        try {
+            ContextState currentState = state;
+            state = LOADING_MODULES;
+            C configuration = cast(preconfiguredModulesProvider.getModuleConfiguration(module.getId()).orElse(module.getDefaultConfiguration()));
+            state = currentState;
+            loadModule(module, configuration);
+            return cast(configuration);
+        } finally {
+            lock.unlock();
+        }
+
     }
 
     @SuppressWarnings("Duplicates")
@@ -292,19 +305,21 @@ public class Context {
         }
         ReentrantLock lock = Context.LOCK;
         lock.lock();
-        ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
-        if (isNull(moduleContainer)) {
-            lock.unlock();
+        try {
+            ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
+            if (isNull(moduleContainer)) {
+                return this;
+            }
+            ContextState currentState = state;
+            state = LOADING_MODULES;
+            modules.put(moduleId, moduleContainer.overrideConfiguration(cast(customModuleConfiguration)));
+            out.println(format(MODULE_OVERRIDDEN_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
+            lastActionTimestamp = currentTimeMillis();
+            state = currentState;
             return this;
+        } finally {
+            lock.unlock();
         }
-        ContextState currentState = state;
-        state = LOADING_MODULES;
-        modules.put(moduleId, moduleContainer.overrideConfiguration(cast(customModuleConfiguration)));
-        out.println(format(MODULE_OVERRIDDEN_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
-        lastActionTimestamp = currentTimeMillis();
-        state = currentState;
-        lock.unlock();
-        return this;
     }
 
     @SuppressWarnings("Duplicates")
@@ -312,19 +327,21 @@ public class Context {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         ReentrantLock lock = Context.LOCK;
         lock.lock();
-        ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
-        if (isNull(moduleContainer)) {
-            lock.unlock();
+        try {
+            ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
+            if (isNull(moduleContainer)) {
+                return this;
+            }
+            ContextState currentState = state;
+            state = RELOADING_MODULES;
+            moduleContainer.reloadModule();
+            out.println(format(MODULE_RELOADED_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
+            lastActionTimestamp = currentTimeMillis();
+            state = currentState;
             return this;
+        } finally {
+            lock.unlock();
         }
-        ContextState currentState = state;
-        state = RELOADING_MODULES;
-        moduleContainer.reloadModule();
-        out.println(format(MODULE_RELOADED_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
-        lastActionTimestamp = currentTimeMillis();
-        state = currentState;
-        lock.unlock();
-        return this;
     }
 
     @SuppressWarnings("Duplicates")
@@ -332,39 +349,43 @@ public class Context {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         ReentrantLock lock = Context.LOCK;
         lock.lock();
-        ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
-        if (isNull(moduleContainer)) {
-            lock.unlock();
+        try {
+            ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
+            if (isNull(moduleContainer)) {
+                return this;
+            }
+            ContextState currentState = state;
+            state = REFRESHING_MODULES;
+            moduleContainer.refreshConfiguration();
+            out.println(format(MODULE_REFRESHED_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
+            lastActionTimestamp = currentTimeMillis();
+            state = currentState;
             return this;
+        } finally {
+            lock.unlock();
         }
-        ContextState currentState = state;
-        state = REFRESHING_MODULES;
-        moduleContainer.refreshConfiguration();
-        out.println(format(MODULE_REFRESHED_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
-        lastActionTimestamp = currentTimeMillis();
-        state = currentState;
-        lock.unlock();
-        return this;
     }
 
     public Context refreshAndReloadModule(String moduleId) {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         ReentrantLock lock = Context.LOCK;
         lock.lock();
-        ContextState currentState = state;
-        state = REFRESHING_AND_RELOADING_MODULES;
-        ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
-        if (isNull(moduleContainer)) {
-            lock.unlock();
+        try {
+            ContextState currentState = state;
+            state = REFRESHING_AND_RELOADING_MODULES;
+            ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
+            if (isNull(moduleContainer)) {
+                return this;
+            }
+            moduleContainer.reloadModule();
+            moduleContainer.refreshConfiguration();
+            out.println(format(MODULE_REFRESHED_AND_RELOADED_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
+            lastActionTimestamp = currentTimeMillis();
+            state = currentState;
             return this;
+        } finally {
+            lock.unlock();
         }
-        moduleContainer.reloadModule();
-        moduleContainer.refreshConfiguration();
-        out.println(format(MODULE_REFRESHED_AND_RELOADED_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
-        lastActionTimestamp = currentTimeMillis();
-        state = currentState;
-        lock.unlock();
-        return this;
     }
 
     public Context refreshAndReloadModules() {
