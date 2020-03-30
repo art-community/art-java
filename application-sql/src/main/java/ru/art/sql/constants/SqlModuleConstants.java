@@ -24,4 +24,9 @@ public interface SqlModuleConstants {
     interface ConfigurationDefaults {
         String DEFAULT_CONNECTION_TEST_QUERY = "select 1 from dual";
     }
+
+    interface LoggingMessages {
+        String CLOSING_POOL = "Closing DB connection pool: {0}";
+        String STARING_POOL = "Starting connection pool to DataSource: {0}";
+    }
 }

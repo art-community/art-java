@@ -18,7 +18,8 @@
 
 package ru.art.logging;
 
-import ru.art.entity.*;
+import lombok.*;
+import ru.art.entity.Value;
 import ru.art.entity.interceptor.*;
 import static java.text.MessageFormat.*;
 import static org.apache.logging.log4j.ThreadContext.*;
@@ -28,14 +29,20 @@ import static ru.art.logging.LoggingModule.*;
 import static ru.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static ru.art.logging.LoggingModuleConstants.*;
 import static ru.art.logging.ThreadContextExtensions.*;
+import java.util.function.*;
 
+@AllArgsConstructor
 public class LoggingValueInterceptor<InValue extends Value, OutValue extends Value> implements ValueInterceptor<InValue, OutValue> {
+    private final Supplier<Boolean> enableTracing;
+
     @Override
     public ValueInterceptionResult<InValue, OutValue> intercept(Value value) {
         putIfNotNull(REQUEST_VALUE_KEY, value);
-        loggingModule()
-                .getLogger(LoggingValueInterceptor.class)
-                .info(format(VALUE_LOG_MESSAGE, value));
+        if (enableTracing.get()) {
+            loggingModule()
+                    .getLogger(LoggingValueInterceptor.class)
+                    .info(format(VALUE_LOG_MESSAGE, value));
+        }
         remove(REQUEST_VALUE_KEY);
         return cast(nextInterceptor(value));
     }

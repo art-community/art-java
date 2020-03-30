@@ -50,7 +50,7 @@ import java.util.*;
 @Getter
 public class HttpServerAgileConfiguration extends HttpServerModuleDefaultConfiguration {
     private final Map<MimeType, HttpContentMapper> contentMappers = configureHttpContentMappers(super.getContentMappers());
-    private final Logbook logbook = logbookWithoutResourceLogs(logbookWithoutMetricsLogs()).build();
+    private final Logbook logbook = logbookWithoutResourceLogs(logbookWithoutMetricsLogs(this::isEnableValueTracing), this::isEnableValueTracing).build();
     private int port;
     private String path;
     private int maxThreadsCount;

@@ -18,10 +18,13 @@
 
 package ru.art.tarantool.executor;
 
+import lombok.*;
 import lombok.experimental.*;
+import org.apache.logging.log4j.*;
 import ru.art.core.extension.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
@@ -29,6 +32,9 @@ import java.io.*;
 
 @UtilityClass
 public final class TarantoolLuaExecutor {
+    @Getter(lazy = true, value = PRIVATE)
+    private static final Logger logger = loggingModule().getLogger(TarantoolLuaExecutor.class);
+
     public static void executeLuaScript(String instanceId, String scriptName) {
         String script;
         InputStream scriptStream = TarantoolLuaExecutor.class
@@ -43,7 +49,7 @@ public final class TarantoolLuaExecutor {
 
     public static void evaluateLuaScript(String instanceId, String script) {
         if (tarantoolModule().isEnableTracing()) {
-            loggingModule().getLogger(TarantoolLuaExecutor.class).trace(format(EVALUATING_LUA_SCRIPT, script));
+            getLogger().trace(format(EVALUATING_LUA_SCRIPT, script));
         }
         tarantoolModuleState().getClient(instanceId).syncOps().eval(script);
     }

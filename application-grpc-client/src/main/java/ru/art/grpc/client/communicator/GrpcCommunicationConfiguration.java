@@ -61,6 +61,8 @@ public class GrpcCommunicationConfiguration {
     @ToString.Include
     private boolean keepAliveWithoutCalls = grpcClientModule().isKeepAliveWithoutCalls();
     @ToString.Include
+    private boolean waitForReady = grpcClientModule().isWaitForReady();
+    @ToString.Include
     private boolean useSecuredTransport;
     private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = linkedListOf(grpcClientModule().getRequestValueInterceptors());
     private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = linkedListOf(grpcClientModule().getResponseValueInterceptors());

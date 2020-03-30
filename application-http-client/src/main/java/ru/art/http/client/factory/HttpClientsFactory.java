@@ -56,11 +56,10 @@ public class HttpClientsFactory {
                 throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
             }
         }
-        if (configuration.isEnableRawDataTracing()) {
-            clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(httpClientModule().getLogbook()))
-                    .addInterceptorLast(new LogbookHttpResponseInterceptor());
-        }
-        CloseableHttpAsyncClient client = clientBuilder.build();
+        clientBuilder
+                .addInterceptorFirst(new LogbookHttpRequestInterceptor(httpClientModule().getLogbook()))
+                .addInterceptorLast(new LogbookHttpResponseInterceptor());
+        CloseableHttpAsyncClient client = httpClientModuleState().registerClient(clientBuilder.build());
         client.start();
         return client;
     }
@@ -70,11 +69,9 @@ public class HttpClientsFactory {
         HttpClientBuilder clientBuilder = HttpClients.custom()
                 .setDefaultRequestConfig(configuration.getRequestConfig())
                 .setDefaultConnectionConfig(configuration.getConnectionConfig())
-                .setDefaultSocketConfig(configuration.getSocketConfig());
-        if (configuration.isEnableRawDataTracing()) {
-            clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(httpClientModule().getLogbook()))
-                    .addInterceptorLast(new LogbookHttpResponseInterceptor());
-        }
+                .setDefaultSocketConfig(configuration.getSocketConfig())
+                .addInterceptorFirst(new LogbookHttpRequestInterceptor(httpClientModule().getLogbook()))
+                .addInterceptorLast(new LogbookHttpResponseInterceptor());
         if (configuration.isSsl()) {
             try {
                 if (configuration.isDisableSslHostNameVerification()) {
@@ -88,7 +85,7 @@ public class HttpClientsFactory {
                 throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
             }
         }
-        return clientBuilder.build();
+        return httpClientModuleState().registerClient(clientBuilder.build());
     }
 
     private static KeyStore loadKeyStore(HttpClientConfiguration configuration) {

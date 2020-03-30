@@ -78,21 +78,30 @@ public interface SqlConnectionPoolsFactory {
         poolProperties.setDriverClassName(properties.getDriver().getDriverClassName());
         poolProperties.setUsername(properties.getLogin());
         poolProperties.setPassword(properties.getPassword());
+
         poolProperties.setJmxEnabled(true);
+
         poolProperties.setTestWhileIdle(false);
-        poolProperties.setTestOnBorrow(true);
-        poolProperties.setValidationQuery(DEFAULT_CONNECTION_TEST_QUERY);
         poolProperties.setTestOnReturn(false);
+        poolProperties.setTestOnBorrow(true);
+
+        poolProperties.setValidationQuery(DEFAULT_CONNECTION_TEST_QUERY);
         poolProperties.setValidationInterval(30000);
-        poolProperties.setTimeBetweenEvictionRunsMillis(30000);
-        poolProperties.setMaxActive(100);
+
         poolProperties.setInitialSize(10);
-        poolProperties.setMaxWait(10000);
-        poolProperties.setMinEvictableIdleTimeMillis(30000);
         poolProperties.setMinIdle(10);
+        poolProperties.setMaxActive(100);
+        poolProperties.setMaxIdle(100);
+
+        poolProperties.setTimeBetweenEvictionRunsMillis(30000);
+        poolProperties.setMinEvictableIdleTimeMillis(30000);
+
+        poolProperties.setMaxWait(10000);
+
         poolProperties.setLogAbandoned(true);
         poolProperties.setRemoveAbandoned(true);
         poolProperties.setRemoveAbandonedTimeout(60);
+
         return poolProperties;
     }
 

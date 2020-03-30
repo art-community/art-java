@@ -1,3 +1,5 @@
+test:
+  value: "from file"
 kafka:
   broker:
     port: 19092

@@ -38,6 +38,7 @@ public interface TarantoolConfigKeys {
     String USERNAME = "username";
     String PASSWORD = "password";
     String OPERATION_TIMEOUT_MILLIS = "operationTimeoutMillis";
+    String MAX_RETRY_COUNT = "maxRetryCount";
     String BACKGROUND = "background";
     String CUSTOM_PROC_TITLE = "customProcTitle";
     String MEMTX_DIR = "memtxDir";

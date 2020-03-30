@@ -100,9 +100,13 @@ public interface HttpCommunicator {
 
     HttpCommunicator addResponseValueInterceptor(ValueInterceptor<Value, Value> interceptor);
 
+    void closeClient();
+
     HttpAsynchronousCommunicator asynchronous();
 
     interface HttpAsynchronousCommunicator {
+        void closeAsynchronousClient();
+
         HttpAsynchronousCommunicator client(CloseableHttpAsyncClient client);
 
         <RequestType, ResponseType> HttpAsynchronousCommunicator completionHandler(HttpCommunicationResponseHandler<RequestType, ResponseType> handler);

@@ -22,6 +22,7 @@ public interface LoggingModuleConstants {
     String LOGGING_MODULE_ID = "LOGGING_MODULE";
     String DEFAULT_REQUEST_ID = "DEFAULT_REQUEST_ID";
     String PORT = "port";
+    String PROTOCOL = "protocol";
     String ADDRESS = "address";
     String LOG4J2_YAML_FILE = "log4j2.yml";
     String LOG4J2_CONFIGURATION_FILE_PROPERTY = "log4j.configurationFile";

@@ -34,7 +34,6 @@ import static java.security.KeyStore.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
-import static java.util.concurrent.ForkJoinPool.*;
 import static org.apache.http.HttpVersion.*;
 import static org.apache.http.ssl.SSLContexts.*;
 import static ru.art.core.constants.NetworkConstants.*;
@@ -44,13 +43,13 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
 import static ru.art.http.client.constants.HttpClientModuleConstants.*;
 import static ru.art.http.client.interceptor.HttpClientInterceptor.*;
+import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
 import static ru.art.logging.LoggingModule.*;
 import javax.net.ssl.*;
 import java.io.*;
 import java.security.*;
 import java.util.*;
-import java.util.concurrent.*;
 
 public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
     CloseableHttpClient getClient();
@@ -141,10 +140,8 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                     throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
                 }
             }
-            if (this.isEnableRawDataTracing()) {
-                clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()));
-            }
-            CloseableHttpAsyncClient client = clientBuilder.build();
+            clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()));
+            CloseableHttpAsyncClient client = httpClientModuleState().registerClient(clientBuilder.build());
             client.start();
             return client;
         }
@@ -154,11 +151,9 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
             HttpClientBuilder clientBuilder = HttpClients.custom()
                     .setDefaultRequestConfig(getRequestConfig())
                     .setDefaultConnectionConfig(getConnectionConfig())
-                    .setDefaultSocketConfig(getSocketConfig());
-            if (this.isEnableRawDataTracing()) {
-                clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()))
-                        .addInterceptorLast(new LogbookHttpResponseInterceptor());
-            }
+                    .setDefaultSocketConfig(getSocketConfig())
+                    .addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()))
+                    .addInterceptorLast(new LogbookHttpResponseInterceptor());
             if (isSsl()) {
                 try {
                     if (disableSslHostNameVerification) {
@@ -172,7 +167,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
                     throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
                 }
             }
-            return clientBuilder.build();
+            return httpClientModuleState().registerClient(clientBuilder.build());
         }
 
         private KeyStore loadKeyStore() {

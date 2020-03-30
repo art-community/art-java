@@ -33,5 +33,7 @@ public class TarantoolConnectionConfiguration {
     private final String username = DEFAULT_TARANTOOL_USERNAME;
     @Builder.Default
     private final int operationTimeoutMillis = DEFAULT_TARANTOOL_OPERATION_TIMEOUT;
+    @Builder.Default
+    private final int maxRetryCount = DEFAULT_TARANTOOL_RETRIES;
     private String password;
 }

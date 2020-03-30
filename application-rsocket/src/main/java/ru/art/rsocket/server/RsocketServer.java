@@ -34,6 +34,7 @@ import static java.lang.Thread.*;
 import static java.text.MessageFormat.*;
 import static java.time.Duration.*;
 import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Mono.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.NetworkConstants.*;
@@ -52,7 +53,8 @@ public class RsocketServer {
     @Getter
     private final Mono<CloseableChannel> serverChannel;
     private Disposable serverDisposable;
-    private final Logger logger = loggingModule().getLogger(RsocketServer.class);
+    @Getter(lazy = true, value = PRIVATE)
+    private final static Logger logger = loggingModule().getLogger(RsocketServer.class);
 
     private RsocketServer(RsocketTransport transport) {
         this.transport = transport;
@@ -106,7 +108,7 @@ public class RsocketServer {
                         .entrySet()
                         .stream()
                         .filter(entry -> entry.getValue().getServiceTypes().contains(RSOCKET_SERVICE_TYPE))
-                        .forEach(entry -> logger.info(format(RSOCKET_LOADED_SERVICE_MESSAGE,
+                        .forEach(entry -> getLogger().info(format(RSOCKET_LOADED_SERVICE_MESSAGE,
                                 rsocketModule().getServerHost().equals(BROADCAST_IP_ADDRESS)
                                         ? contextConfiguration().getIpAddress()
                                         : rsocketModule().getServerHost(),
@@ -139,11 +141,10 @@ public class RsocketServer {
 
     public void subscribe() {
         final long timestamp = currentTimeMillis();
-        serverDisposable = serverChannel.subscribe(serverChannel -> logger
-                .info(format(transport == TCP
-                                ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE
-                                : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE,
-                        currentTimeMillis() - timestamp)));
+        serverDisposable = serverChannel.subscribe(serverChannel -> getLogger().info(format(transport == TCP
+                        ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE
+                        : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE,
+                currentTimeMillis() - timestamp)));
     }
 
     public void await() {
@@ -161,11 +162,23 @@ public class RsocketServer {
                 serverDisposable.dispose();
             }
             new RsocketServer(transport).subscribe();
-            logger.info(format(RSOCKET_RESTARTED_MESSAGE, currentTimeMillis() - millis));
+            getLogger().info(format(RSOCKET_RESTARTED_MESSAGE, currentTimeMillis() - millis));
         } catch (Throwable throwable) {
-            logger.error(RSOCKET_RESTART_FAILED);
+            getLogger().error(RSOCKET_RESTART_FAILED);
         }
+    }
 
+    public void stop() {
+        if (isNull(serverDisposable)) {
+            return;
+        }
+        long millis = currentTimeMillis();
+        try {
+            serverDisposable.dispose();
+            getLogger().info(format(RSOCKET_STOPPED, currentTimeMillis() - millis));
+        } catch (Throwable throwable) {
+            getLogger().error(RSOCKET_STOP_FAILED);
+        }
     }
 
     public boolean isWorking() {

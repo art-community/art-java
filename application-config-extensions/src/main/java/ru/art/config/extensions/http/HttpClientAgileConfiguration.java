@@ -99,7 +99,7 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
                         .build())
                 .build(), super.getCommunicationTargets());
         int socketTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, SOCKET_TIMEOUT, RequestConfig.DEFAULT.getSocketTimeout());
-        int connectionTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, CONNECTION_TIMEOUT, DEFAULT_TIMEOUT);
+        int connectionTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, CONNECTION_TIMEOUT, DEFAULT_HTTP_CLIENT_TIMEOUT);
         int soTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, SO_TIMEOUT, SocketConfig.DEFAULT.getSoTimeout());
         int connectionRequestTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, CONNECTION_REQUEST_TIMEOUT, RequestConfig.DEFAULT.getConnectionRequestTimeout());
         int ioReactorThreadCount = configInt(HTTP_COMMUNICATION_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE);
