@@ -76,6 +76,10 @@ public interface HttpCommunicator {
 
     HttpCommunicator options();
 
+    HttpCommunicator considerKeepAliveResponseHeader();
+
+    HttpCommunicator ignoreKeepAliveResponseHeader();
+
     HttpCommunicator delete();
 
     HttpCommunicator trace();

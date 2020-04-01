@@ -1,6 +1,10 @@
 package ru.art.grpc.client.communicator;
 
 import io.grpc.*;
+import io.grpc.internal.*;
+import io.grpc.util.*;
+import io.netty.resolver.*;
+import ru.art.grpc.client.interceptor.*;
 import static io.grpc.ManagedChannelBuilder.*;
 import static java.util.concurrent.TimeUnit.*;
 import static ru.art.core.context.Context.*;
@@ -13,6 +17,7 @@ public class GrpcCommunicatorChannelFactory {
             channelBuilder.useTransportSecurity();
         }
         ManagedChannel channel = channelBuilder
+                .defaultLoadBalancingPolicy("round_robin")
                 .keepAliveTime(configuration.getKeepAliveTimeNanos(), NANOSECONDS)
                 .keepAliveTimeout(configuration.getKeepAliveTimeOutNanos(), NANOSECONDS)
                 .keepAliveWithoutCalls(configuration.isKeepAliveWithoutCalls())

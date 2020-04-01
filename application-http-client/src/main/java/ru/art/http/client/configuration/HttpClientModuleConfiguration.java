@@ -20,12 +20,14 @@ package ru.art.http.client.configuration;
 
 import lombok.*;
 import org.apache.http.*;
+import org.apache.http.client.*;
 import org.apache.http.client.config.*;
 import org.apache.http.config.*;
 import org.apache.http.impl.client.*;
 import org.apache.http.impl.nio.client.*;
 import org.apache.http.impl.nio.reactor.*;
 import org.zalando.logbook.httpclient.*;
+import ru.art.http.client.constants.*;
 import ru.art.http.client.exception.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.client.model.*;
@@ -52,6 +54,10 @@ import java.security.*;
 import java.util.*;
 
 public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
+    int getMaxConnectionsPerRoute();
+
+    int getMaxConnectionsTotal();
+
     CloseableHttpClient getClient();
 
     CloseableHttpAsyncClient getAsynchronousClient();
@@ -97,6 +103,8 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
 
     @Getter
     class HttpClientModuleDefaultConfiguration extends HttpModuleDefaultConfiguration implements HttpClientModuleConfiguration {
+        int maxConnectionsPerRoute = DEFAULT_MAX_CONNECTIONS_PER_ROUTE;
+        int maxConnectionsTotal = DEFAULT_MAX_CONNECTIONS_TOTAL;
         private final RequestConfig requestConfig = RequestConfig.DEFAULT;
         private final SocketConfig socketConfig = SocketConfig.DEFAULT;
         private final ConnectionConfig connectionConfig = ConnectionConfig.DEFAULT;
@@ -124,6 +132,8 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         @SuppressWarnings({"Duplicates", "WeakerAccess"})
         protected CloseableHttpAsyncClient createAsyncHttpClient() {
             HttpAsyncClientBuilder clientBuilder = HttpAsyncClients.custom()
+                    .setMaxConnPerRoute(getMaxConnectionsPerRoute())
+                    .setMaxConnTotal(getMaxConnectionsTotal())
                     .setDefaultRequestConfig(getRequestConfig())
                     .setDefaultIOReactorConfig(getIoReactorConfig())
                     .setDefaultConnectionConfig(getConnectionConfig());
@@ -149,6 +159,8 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         @SuppressWarnings({"Duplicates", "WeakerAccess"})
         protected CloseableHttpClient createHttpClient() {
             HttpClientBuilder clientBuilder = HttpClients.custom()
+                    .setMaxConnPerRoute(getMaxConnectionsPerRoute())
+                    .setMaxConnTotal(getMaxConnectionsTotal())
                     .setDefaultRequestConfig(getRequestConfig())
                     .setDefaultConnectionConfig(getConnectionConfig())
                     .setDefaultSocketConfig(getSocketConfig())

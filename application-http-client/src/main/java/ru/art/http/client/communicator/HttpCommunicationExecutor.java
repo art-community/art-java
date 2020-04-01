@@ -32,6 +32,7 @@ import ru.art.core.mime.*;
 import ru.art.entity.Value;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
+import ru.art.http.client.constants.*;
 import ru.art.http.client.exception.*;
 import ru.art.http.client.handler.*;
 import ru.art.http.client.interceptor.*;
@@ -51,6 +52,8 @@ import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.http.client.body.descriptor.HttpBodyDescriptor.*;
 import static ru.art.http.client.builder.HttpUriBuilder.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
+import static ru.art.http.client.constants.HttpClientModuleConstants.HttpClientKeepAliveHeaderStrategy.CONSIDER;
+import static ru.art.http.client.constants.HttpClientModuleConstants.HttpClientKeepAliveHeaderStrategy.IGNORE;
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.logging.LoggingModule.*;
 import javax.annotation.*;
@@ -88,7 +91,7 @@ class HttpCommunicationExecutor {
         } catch (Throwable throwable) {
             throw new HttpClientException(throwable);
         } finally {
-            if (nonNull(httpResponse)) {
+            if (nonNull(httpResponse) && configuration.getKeepAliveResponseHeaderStrategy() == IGNORE) {
                 try {
                     httpResponse.close();
                 } catch (Throwable closableThrowable) {
