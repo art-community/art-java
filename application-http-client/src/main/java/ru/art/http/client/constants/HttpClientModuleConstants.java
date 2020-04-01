@@ -25,4 +25,11 @@ public interface HttpClientModuleConstants {
     String TRACE_ID_HEADER = "X-Trace-Id";
     int DEFAULT_HTTP_CLIENT_TIMEOUT = 10000;
     int RESPONSE_BUFFER_DEFAULT_SIZE = 4096;
+    int DEFAULT_MAX_CONNECTIONS_PER_ROUTE = 2;
+    int DEFAULT_MAX_CONNECTIONS_TOTAL = 20;
+
+    enum HttpClientKeepAliveHeaderStrategy {
+        IGNORE,
+        CONSIDER
+    }
 }

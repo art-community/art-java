@@ -60,6 +60,8 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
     private boolean enableValueTracing;
     private MimeToContentTypeMapper consumesMimeTypeMapper;
     private MimeToContentTypeMapper producesMimeTypeMapper;
+    private int maxConnectionsPerRoute;
+    private int maxConnectionsTotal;
 
     public HttpClientAgileConfiguration() {
         refresh();
@@ -119,5 +121,7 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
         sslKeyStoreType = configString(HTTP_COMMUNICATION_SECTION_ID, SSL_KEY_STORE_TYPE, super.getSslKeyStoreType());
         sslKeyStoreFilePath = configString(HTTP_COMMUNICATION_SECTION_ID, SSL_KEY_STORE_FILE_PATH, super.getSslKeyStoreFilePath());
         sslKeyStorePassword = configString(HTTP_COMMUNICATION_SECTION_ID, SSL_KEY_STORE_PASSWORD, super.getSslKeyStorePassword());
+        maxConnectionsPerRoute = configInt(HTTP_COMMUNICATION_SECTION_ID, MAX_CONNECTIONS_PER_ROUTE, super.getMaxConnectionsPerRoute());
+        maxConnectionsTotal = configInt(HTTP_COMMUNICATION_SECTION_ID, MAX_CONNECTIONS_TOTAL, super.getMaxConnectionsTotal());
     }
 }

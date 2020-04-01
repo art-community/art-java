@@ -40,6 +40,8 @@ public class HttpClientsFactory {
     @SuppressWarnings("Duplicates")
     public static CloseableHttpAsyncClient createAsyncHttpClient(HttpClientConfiguration configuration) {
         HttpAsyncClientBuilder clientBuilder = HttpAsyncClients.custom()
+                .setMaxConnPerRoute(configuration.getMaxConnectionsPerRoute())
+                .setMaxConnTotal(configuration.getMaxConnectionsTotal())
                 .setDefaultRequestConfig(configuration.getRequestConfig())
                 .setDefaultIOReactorConfig(configuration.getIoReactorConfig())
                 .setDefaultConnectionConfig(configuration.getConnectionConfig());
@@ -67,6 +69,8 @@ public class HttpClientsFactory {
     @SuppressWarnings("Duplicates")
     public static CloseableHttpClient createHttpClient(HttpClientConfiguration configuration) {
         HttpClientBuilder clientBuilder = HttpClients.custom()
+                .setMaxConnPerRoute(configuration.getMaxConnectionsPerRoute())
+                .setMaxConnTotal(configuration.getMaxConnectionsTotal())
                 .setDefaultRequestConfig(configuration.getRequestConfig())
                 .setDefaultConnectionConfig(configuration.getConnectionConfig())
                 .setDefaultSocketConfig(configuration.getSocketConfig())

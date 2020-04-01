@@ -33,8 +33,11 @@ public interface HttpConfigKeys {
     String SSL = "ssl";
     String SSL_KEY_STORE_FILE_PATH = "sslKeyStoreFilePath";
     String SSL_KEY_STORE_PASSWORD = "sslKeyStorePassword";
+    String MAX_CONNECTIONS_PER_ROUTE = "maxConnectionsPerRoute";
+    String MAX_CONNECTIONS_TOTAL = "maxConnectionsTotal";
     String SSL_KEY_STORE_TYPE = "sslKeyStoreType";
     String CONSUMES_MIME_TYPE = "consumesMimeType";
     String PRODUCES_MIME_TYPE = "producesMimeType";
     String WEB = "web";
+
 }

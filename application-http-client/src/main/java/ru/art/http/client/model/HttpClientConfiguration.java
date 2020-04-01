@@ -47,4 +47,8 @@ public class HttpClientConfiguration {
     private final String sslKeyStorePassword = httpClientModule().getSslKeyStorePassword();
     @Builder.Default
     private final boolean enableRawDataTracing = httpClientModule().isEnableRawDataTracing();
+    @Builder.Default
+    private final int maxConnectionsPerRoute = httpClientModule().getMaxConnectionsPerRoute();
+    @Builder.Default
+    private final int maxConnectionsTotal = httpClientModule().getMaxConnectionsTotal();
 }
