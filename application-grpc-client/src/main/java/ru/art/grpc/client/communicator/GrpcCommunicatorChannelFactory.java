@@ -17,7 +17,6 @@ public class GrpcCommunicatorChannelFactory {
             channelBuilder.useTransportSecurity();
         }
         ManagedChannel channel = channelBuilder
-                .defaultLoadBalancingPolicy("round_robin")
                 .keepAliveTime(configuration.getKeepAliveTimeNanos(), NANOSECONDS)
                 .keepAliveTimeout(configuration.getKeepAliveTimeOutNanos(), NANOSECONDS)
                 .keepAliveWithoutCalls(configuration.isKeepAliveWithoutCalls())
