@@ -40,6 +40,7 @@ class SoapCommunicationExecutor {
         configuration.getRequestValueInterceptors().forEach(interceptor -> httpCommunicator.addRequestValueInterceptor(cast(interceptor)));
         configuration.getResponseValueInterceptors().forEach(interceptor -> httpCommunicator.addResponseValueInterceptor(cast(interceptor)));
         httpCommunicator
+                .connectionClosingPolicy(configuration.getConnectionClosingPolicy())
                 .version(configuration.getHttpVersion())
                 .requestCharset(configuration.getRequestCharset())
                 .addHeader(ACCEPT, configuration.getConsumesMimeType().getMimeType().toString())
@@ -68,6 +69,7 @@ class SoapCommunicationExecutor {
         configuration.getRequestValueInterceptors().forEach(interceptor -> httpCommunicator.addRequestValueInterceptor(cast(interceptor)));
         configuration.getResponseValueInterceptors().forEach(interceptor -> httpCommunicator.addResponseValueInterceptor(cast(interceptor)));
         httpCommunicator
+                .connectionClosingPolicy(configuration.getConnectionClosingPolicy())
                 .version(configuration.getHttpVersion())
                 .requestCharset(configuration.getRequestCharset())
                 .addHeader(ACCEPT, configuration.getConsumesMimeType().getMimeType().toString())

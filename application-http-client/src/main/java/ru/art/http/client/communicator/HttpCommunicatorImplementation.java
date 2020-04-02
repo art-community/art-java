@@ -43,7 +43,7 @@ import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.extension.StringExtensions.*;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
 import static ru.art.http.client.communicator.HttpCommunicationExecutor.*;
-import static ru.art.http.client.constants.HttpClientModuleConstants.HttpClientKeepAliveHeaderStrategy.*;
+import static ru.art.http.client.constants.HttpClientModuleConstants.*;
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpMethodType.*;
 import static ru.art.logging.LoggingModule.*;
@@ -221,14 +221,8 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     }
 
     @Override
-    public HttpCommunicator ignoreKeepAliveResponseHeader() {
-        configuration.setKeepAliveResponseHeaderStrategy(IGNORE);
-        return this;
-    }
-
-    @Override
-    public HttpCommunicator considerKeepAliveResponseHeader() {
-        configuration.setKeepAliveResponseHeaderStrategy(CONSIDER);
+    public HttpCommunicator connectionClosingPolicy(ConnectionClosingPolicy policy) {
+        configuration.setConnectionClosingPolicy(policy);
         return this;
     }
 

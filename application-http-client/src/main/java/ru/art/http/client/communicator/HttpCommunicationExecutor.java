@@ -32,11 +32,11 @@ import ru.art.core.mime.*;
 import ru.art.entity.Value;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
-import ru.art.http.client.constants.*;
 import ru.art.http.client.exception.*;
 import ru.art.http.client.handler.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.constants.*;
+import ru.art.http.constants.HttpHeaders;
 import ru.art.http.mapper.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -52,9 +52,9 @@ import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.http.client.body.descriptor.HttpBodyDescriptor.*;
 import static ru.art.http.client.builder.HttpUriBuilder.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
-import static ru.art.http.client.constants.HttpClientModuleConstants.HttpClientKeepAliveHeaderStrategy.CONSIDER;
-import static ru.art.http.client.constants.HttpClientModuleConstants.HttpClientKeepAliveHeaderStrategy.IGNORE;
+import static ru.art.http.client.constants.HttpClientModuleConstants.ConnectionClosingPolicy.CLOSE_AFTER_RESPONSE;
 import static ru.art.http.client.module.HttpClientModule.*;
+import static ru.art.http.constants.HttpHeaders.KEEP_ALIVE;
 import static ru.art.logging.LoggingModule.*;
 import javax.annotation.*;
 import java.util.*;
@@ -91,9 +91,20 @@ class HttpCommunicationExecutor {
         } catch (Throwable throwable) {
             throw new HttpClientException(throwable);
         } finally {
-            if (nonNull(httpResponse) && configuration.getKeepAliveResponseHeaderStrategy() == IGNORE) {
+            if (nonNull(httpResponse)) {
                 try {
-                    httpResponse.close();
+                    switch (configuration.getConnectionClosingPolicy()) {
+                        case CLOSE_AFTER_RESPONSE:
+                            httpResponse.close();
+                            break;
+                        case CLOSE_IF_NOT_KEEP_ALIVE_HEADER_PRESENTS:
+                            if (!httpResponse.containsHeader(KEEP_ALIVE)) {
+                                httpResponse.close();
+                            }
+                            break;
+                        case ALWAYS_KEEP_OPEN_AFTER_RESPONSE:
+                            break;
+                    }
                 } catch (Throwable closableThrowable) {
                     loggingModule()
                             .getLogger(HttpCommunicationExecutor.class)
