@@ -26,6 +26,7 @@ import ru.art.core.validator.*;
 import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
+import ru.art.http.client.constants.*;
 import ru.art.http.client.handler.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.client.model.*;
@@ -178,6 +179,12 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
     @Override
     public SoapCommunicator useOperationIdFromConfiguration() {
         configuration.setOperationIdSource(CONFIGURATION);
+        return this;
+    }
+
+    @Override
+    public SoapCommunicator connectionClosingPolicy(HttpClientModuleConstants.ConnectionClosingPolicy policy) {
+        configuration.setConnectionClosingPolicy(policy);
         return this;
     }
 

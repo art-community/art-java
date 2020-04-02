@@ -28,8 +28,9 @@ public interface HttpClientModuleConstants {
     int DEFAULT_MAX_CONNECTIONS_PER_ROUTE = 2;
     int DEFAULT_MAX_CONNECTIONS_TOTAL = 20;
 
-    enum HttpClientKeepAliveHeaderStrategy {
-        IGNORE,
-        CONSIDER
+    enum ConnectionClosingPolicy {
+        CLOSE_AFTER_RESPONSE,
+        CLOSE_IF_NOT_KEEP_ALIVE_HEADER_PRESENTS,
+        ALWAYS_KEEP_OPEN_AFTER_RESPONSE
     }
 }
