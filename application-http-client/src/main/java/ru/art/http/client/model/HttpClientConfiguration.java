@@ -51,4 +51,6 @@ public class HttpClientConfiguration {
     private final int maxConnectionsPerRoute = httpClientModule().getMaxConnectionsPerRoute();
     @Builder.Default
     private final int maxConnectionsTotal = httpClientModule().getMaxConnectionsTotal();
+    @Builder.Default
+    private final int validateAfterInactivityMillis = httpClientModule().getValidateAfterInactivityMillis();
 }

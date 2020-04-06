@@ -62,6 +62,7 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
     private MimeToContentTypeMapper producesMimeTypeMapper;
     private int maxConnectionsPerRoute;
     private int maxConnectionsTotal;
+    private int validateAfterInactivityMillis;
 
     public HttpClientAgileConfiguration() {
         refresh();
@@ -96,8 +97,7 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
                 .requestConfig(RequestConfig.custom()
                         .setConnectTimeout(getOrElse(config.getInt(CONNECTION_TIMEOUT), super.getRequestConfig().getConnectTimeout()))
                         .setSocketTimeout(getOrElse(config.getInt(SOCKET_TIMEOUT), super.getRequestConfig().getSocketTimeout()))
-                        .setConnectionRequestTimeout(getOrElse(config.getInt(CONNECTION_REQUEST_TIMEOUT),
-                                super.getRequestConfig().getConnectionRequestTimeout()))
+                        .setConnectionRequestTimeout(getOrElse(config.getInt(CONNECTION_REQUEST_TIMEOUT), super.getRequestConfig().getConnectionRequestTimeout()))
                         .build())
                 .build(), super.getCommunicationTargets());
         int socketTimeout = configInt(HTTP_COMMUNICATION_SECTION_ID, SOCKET_TIMEOUT, RequestConfig.DEFAULT.getSocketTimeout());
@@ -123,5 +123,6 @@ public class HttpClientAgileConfiguration extends HttpClientModuleDefaultConfigu
         sslKeyStorePassword = configString(HTTP_COMMUNICATION_SECTION_ID, SSL_KEY_STORE_PASSWORD, super.getSslKeyStorePassword());
         maxConnectionsPerRoute = configInt(HTTP_COMMUNICATION_SECTION_ID, MAX_CONNECTIONS_PER_ROUTE, super.getMaxConnectionsPerRoute());
         maxConnectionsTotal = configInt(HTTP_COMMUNICATION_SECTION_ID, MAX_CONNECTIONS_TOTAL, super.getMaxConnectionsTotal());
+        validateAfterInactivityMillis = configInt(HTTP_COMMUNICATION_SECTION_ID, VALIDATE_AFTER_INACTIVITY_MILLIS, super.getValidateAfterInactivityMillis());
     }
 }

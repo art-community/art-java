@@ -21,28 +21,36 @@ package ru.art.http.logger;
 import org.apache.logging.log4j.*;
 import org.zalando.logbook.*;
 import org.zalando.logbook.DefaultHttpLogWriter.Level;
+import ru.art.core.lazy.*;
 import static org.zalando.logbook.DefaultHttpLogWriter.Level.*;
+import static ru.art.core.lazy.LazyLoadingValue.*;
 import static ru.art.logging.LoggingModule.*;
 import java.util.function.*;
 
 @SuppressWarnings("SameParameterValue")
 public class ZalangoLogbookLogWriter implements HttpLogWriter {
     private final Supplier<Boolean> enabled;
-    private final Logger logger;
+    private final LazyLoadingValue<Logger> logger;
     private final Predicate<Logger> activator;
     private final BiConsumer<Logger, String> consumer;
 
     public ZalangoLogbookLogWriter(Supplier<Boolean> enabled) {
-        this(loggingModule().getLogger(ZalangoLogbookLogWriter.class), enabled);
+        this.enabled = enabled;
+        this.logger = lazyValue(() -> loggingModule().getLogger(ZalangoLogbookLogWriter.class));
+        this.activator = chooseActivator(INFO);
+        this.consumer = chooseConsumer(INFO);
     }
 
     private ZalangoLogbookLogWriter(final Logger logger, Supplier<Boolean> enabled) {
-        this(enabled, logger, INFO);
+        this.enabled = enabled;
+        this.logger = lazyValue(() -> logger);
+        this.activator = chooseActivator(INFO);
+        this.consumer = chooseConsumer(INFO);
     }
 
     private ZalangoLogbookLogWriter(Supplier<Boolean> enabled, final Logger logger, final Level level) {
         this.enabled = enabled;
-        this.logger = logger;
+        this.logger = lazyValue(() -> logger);
         this.activator = chooseActivator(level);
         this.consumer = chooseConsumer(level);
     }
@@ -81,16 +89,16 @@ public class ZalangoLogbookLogWriter implements HttpLogWriter {
 
     @Override
     public boolean isActive(final RawHttpRequest request) {
-        return enabled.get() && activator.test(logger);
+        return enabled.get() && activator.test(logger.value());
     }
 
     @Override
     public void writeRequest(final Precorrelation<String> precorrelation) {
-        consumer.accept(logger, precorrelation.getRequest());
+        consumer.accept(logger.value(), precorrelation.getRequest());
     }
 
     @Override
     public void writeResponse(final Correlation<String, String> correlation) {
-        consumer.accept(logger, correlation.getResponse());
+        consumer.accept(logger.value(), correlation.getResponse());
     }
 }
