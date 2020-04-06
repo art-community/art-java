@@ -19,12 +19,14 @@
 package ru.art.http.server.module;
 
 import lombok.*;
+import ru.art.core.extension.*;
 import ru.art.core.module.Module;
 import ru.art.http.server.*;
 import ru.art.http.server.specification.*;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.http.server.HttpServerModuleConfiguration.*;
 import static ru.art.http.server.constants.HttpServerModuleConstants.*;
 import static ru.art.service.ServiceModule.*;
@@ -65,6 +67,6 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
 
     @Override
     public void onUnload() {
-        httpServerModuleState().getServer().stop();
+        doIfNotNull(httpServerModuleState().getServer(), HttpServer::stop);
     }
 }

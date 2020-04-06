@@ -27,6 +27,7 @@ public interface HttpClientModuleConstants {
     int RESPONSE_BUFFER_DEFAULT_SIZE = 4096;
     int DEFAULT_MAX_CONNECTIONS_PER_ROUTE = 2;
     int DEFAULT_MAX_CONNECTIONS_TOTAL = 20;
+    int DEFAULT_VALIDATE_AFTER_INACTIVITY_MILLIS = 4000;
 
     enum ConnectionClosingPolicy {
         CLOSE_AFTER_RESPONSE,
