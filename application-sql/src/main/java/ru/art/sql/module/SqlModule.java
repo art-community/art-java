@@ -66,12 +66,21 @@ public class SqlModule implements Module<SqlModuleConfiguration, SqlModuleState>
 
     @Override
     public void onLoad() {
+        sqlModule().getDbConfigurations().values().forEach(this::initializeConnectionPool);
+    }
+
+    @Override
+    public void onUnload() {
+        sqlModule().getDbConfigurations().values().forEach(this::closeConnectionPool);
+    }
+
+
+    private void initializeConnectionPool(SqlDbConfiguration configuration) {
         DataSource dataSource = null;
         try {
-            forName(sqlModule().getDbProvider().getDriverClassName());
-            switch (sqlModule().getConnectionPoolType()) {
+            switch (configuration.getConnectionPoolType()) {
                 case HIKARI:
-                    HikariDataSource hikariDataSource = new HikariDataSource(sqlModule().getHikariPoolConfig());
+                    HikariDataSource hikariDataSource = new HikariDataSource(configuration.getHikariPoolConfig());
                     dataSource = hikariDataSource;
                     sqlModuleState().hikariDataSource(hikariDataSource);
                     if (sqlModule().getInitializationMode() == BOOTSTRAP) {
@@ -80,7 +89,7 @@ public class SqlModule implements Module<SqlModuleConfiguration, SqlModuleState>
                     }
                     break;
                 case TOMCAT:
-                    ManagedPooledDataSource tomcatDataSource = new ManagedPooledDataSource(sqlModule().getTomcatPoolConfig(), metricsModule().getDropwizardMetricRegistry());
+                    ManagedPooledDataSource tomcatDataSource = new ManagedPooledDataSource(configuration.getTomcatPoolConfig(), metricsModule().getDropwizardMetricRegistry());
                     sqlModuleState().tomcatDataSource(tomcatDataSource);
                     dataSource = tomcatDataSource;
                     if (sqlModule().getInitializationMode() == BOOTSTRAP) {
@@ -89,16 +98,15 @@ public class SqlModule implements Module<SqlModuleConfiguration, SqlModuleState>
                     }
                     break;
             }
-            sqlModule().getJooqConfiguration().set(dataSource).set(sqlModule().getJooqSettings());
+            configuration.getJooqConfiguration().set(dataSource);
         } catch (Exception throwable) {
             throw new SqlModuleException(throwable);
         }
     }
 
-    @Override
-    public void onUnload() {
+    private void closeConnectionPool(SqlDbConfiguration configuration) {
         try {
-            switch (sqlModule().getConnectionPoolType()) {
+            switch (configuration.getConnectionPoolType()) {
                 case HIKARI:
                     doIfNotNull(sqlModuleState().hikariDataSource(), (Consumer<HikariDataSource>) pool -> ignoreException(() -> {
                         pool.close();

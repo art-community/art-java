@@ -21,18 +21,21 @@ package ru.art.config.extensions.sql;
 import com.zaxxer.hikari.*;
 import lombok.*;
 import org.apache.tomcat.jdbc.pool.*;
+import org.jooq.*;
 import org.jooq.conf.*;
-import org.jooq.impl.*;
 import ru.art.config.*;
 import ru.art.sql.configuration.*;
 import ru.art.sql.configuration.SqlModuleConfiguration.*;
 import ru.art.sql.constants.*;
+import ru.art.sql.model.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.sql.SqlConfigKeys.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.sql.constants.ConnectionPoolDefaultConfigurations.*;
+import static ru.art.sql.factory.SqlConnectionPoolsFactory.*;
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.*;
 
 @Getter
 public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
@@ -51,24 +54,38 @@ public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
         );
         Function<Config, SqlDbConfiguration> mapper = config -> {
             Settings defaultSettings = new Settings();
+            DbConnectionProperties properties = DbConnectionProperties.builder()
+                    .driver(DbProvider.valueOf(config.getString(PROVIDER).toUpperCase()))
+                    .url(config.getString(URL))
+                    .login(config.getString(LOGIN))
+                    .password(config.getString(PASSWORD))
+                    .build();
+            HikariConfig hikariConfig = extractHikariPoolConfig(config, properties);
+            PoolProperties tomcatPoolConfig = extractTomcatPoolConfig(config, properties);
+            Configuration jooqConfiguration;
+            ConnectionPoolType connectionPoolType = ConnectionPoolType.valueOf(config.getString(POOL_TYPE).toUpperCase());
+            switch (connectionPoolType) {
+                case HIKARI:
+                    jooqConfiguration = createJooqConfiguration(properties.getDriver().getDriverClassName(), hikariConfig);
+                    break;
+                default:
+                    jooqConfiguration = createJooqConfiguration(properties.getDriver().getDriverClassName(), tomcatPoolConfig);
+                    break;
+            }
             return SqlDbConfiguration.builder()
-                    .connectionPoolType(ConnectionPoolType.valueOf(config.getString(POOL_TYPE).toUpperCase()))
-                    .dbProvider(DbProvider.valueOf(config.getString(PROVIDER).toUpperCase()))
-                    .jdbcUrl(config.getString(URL))
-                    .jdbcLogin(config.getString(LOGIN))
-                    .jdbcPassword(config.getString(PASSWORD))
+                    .connectionPoolType(connectionPoolType)
                     .enableMetrics(ifExceptionOrEmpty(() -> config.getBool(ENABLE_METRICS), false))
-                    .jooqConfiguration(new DefaultConfiguration().set(defaultSettings.withQueryTimeout(config.getInt(QUERY_TIMEOUT))))
-                    .hikariPoolConfig(extractHikariPoolConfig(config))
-                    .tomcatPoolConfig(extractTomcatPoolConfig(config))
+                    .jooqConfiguration(jooqConfiguration.set(defaultSettings.withQueryTimeout(config.getInt(QUERY_TIMEOUT))))
+                    .hikariPoolConfig(hikariConfig)
+                    .tomcatPoolConfig(tomcatPoolConfig)
                     .build();
         };
         dbConfigurations = configInnerMap(SQL_DB_INSTANCES_SECTION_ID, mapper, super.getDbConfigurations());
     }
 
-    private HikariConfig extractHikariPoolConfig(Config config) {
-        HikariConfig hikariPoolConfig = new HikariConfig();
-        hikariPoolConfig.setPoolName(configString(POOL_HIKARI_SECTION_DI, POOL_NAME, super.getHikariPoolConfig().getPoolName()));
+    private HikariConfig extractHikariPoolConfig(Config config, DbConnectionProperties properties) {
+        HikariConfig hikariPoolConfig = createDefaultHikariPoolConfig(properties);
+        hikariPoolConfig.setPoolName(ifExceptionOrEmpty(() -> config.getString(POOL_NAME), hikariPoolConfig.getPoolName());
         hikariPoolConfig.setRegisterMbeans(configBoolean(POOL_HIKARI_SECTION_DI, HIKARI_REGISTER_MBEANS, super.getHikariPoolConfig().isRegisterMbeans()));
         hikariPoolConfig.setConnectionTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_CONNECTION_TIMEOUT_MILLIS, super.getHikariPoolConfig().getConnectionTimeout()));
         hikariPoolConfig.setIdleTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_IDLE_TIMEOUT_MILLIS, super.getHikariPoolConfig().getIdleTimeout()));
@@ -84,7 +101,7 @@ public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
         return hikariPoolConfig;
     }
 
-    private PoolProperties extractTomcatPoolConfig(Config config) {
+    private PoolProperties extractTomcatPoolConfig(Config config, DbConnectionProperties properties) {
         PoolProperties tomcatPoolConfig = new PoolProperties();
         tomcatPoolConfig.setName(configString(POOL_TOMCAT_SECTION_DI, POOL_NAME, super.getTomcatPoolConfig().getName()));
         tomcatPoolConfig.setJmxEnabled(configBoolean(POOL_TOMCAT_SECTION_DI, TOMCAT_JMX_ENABLED, super.getTomcatPoolConfig().isJmxEnabled()));
