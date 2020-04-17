@@ -37,12 +37,12 @@ public interface SqlModuleConfiguration extends ModuleConfiguration {
 
     Map<String, SqlDbConfiguration> getDbConfigurations();
 
-    default SqlDbConfiguration getSqlDbConfiguration(String instanceId) {
+    default SqlDbConfiguration getDbConfiguration(String instanceId) {
         return exceptionIfNull(getDbConfigurations().get(instanceId), new SqlModuleException(format(SQL_DB_CONFIGURATION_NOT_FOUND, instanceId))).toBuilder().build();
     }
 
     default Configuration getJooqConfiguration(String instanceId) {
-        return getSqlDbConfiguration(instanceId).getJooqConfiguration();
+        return getDbConfiguration(instanceId).getJooqConfiguration();
     }
 
     @Getter

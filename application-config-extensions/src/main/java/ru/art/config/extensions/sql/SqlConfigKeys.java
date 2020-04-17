@@ -26,10 +26,11 @@ public interface SqlConfigKeys {
     String POOL_NAME = "name";
     String POOL_INITIALIZATION_MODE = "poolInitializationMode";
     String POOL_TYPE = "pool.type";
-    String LOGIN = "login";
+    String USER_NAME = "userName";
     String PASSWORD = "password";
     String PROVIDER = "provider";
-    String QUERY_TIMEOUT = "queryTimeout";
+    String QUERY_TIMEOUT_SECONDS = "queryTimeoutSeconds";
+    String DRIVER_PROPERTIES = "driverProperties";
 
     String TOMCAT_JMX_ENABLED = "jmxEnabled";
     String TOMCAT_TEST_WHILE_IDLE = "testWhileIdle";

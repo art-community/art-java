@@ -21,6 +21,7 @@ package ru.art.config.extensions.sql;
 import com.zaxxer.hikari.*;
 import lombok.*;
 import org.apache.tomcat.jdbc.pool.*;
+import org.checkerframework.checker.nullness.*;
 import org.jooq.*;
 import org.jooq.conf.*;
 import ru.art.config.*;
@@ -28,12 +29,14 @@ import ru.art.sql.configuration.*;
 import ru.art.sql.configuration.SqlModuleConfiguration.*;
 import ru.art.sql.constants.*;
 import ru.art.sql.model.*;
+import static java.util.Optional.ofNullable;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.sql.SqlConfigKeys.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
-import static ru.art.sql.constants.ConnectionPoolDefaultConfigurations.*;
-import static ru.art.sql.factory.SqlConnectionPoolsFactory.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
+import static ru.art.sql.constants.ConnectionPoolType.*;
+import static ru.art.sql.factory.SqlDbDefaultsFactory.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -57,27 +60,30 @@ public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
             DbConnectionProperties properties = DbConnectionProperties.builder()
                     .driver(DbProvider.valueOf(config.getString(PROVIDER).toUpperCase()))
                     .url(config.getString(URL))
-                    .login(config.getString(LOGIN))
+                    .userName(config.getString(USER_NAME))
                     .password(config.getString(PASSWORD))
                     .build();
-            HikariConfig hikariConfig = extractHikariPoolConfig(config, properties);
-            PoolProperties tomcatPoolConfig = extractTomcatPoolConfig(config, properties);
+
+            Optional<HikariConfig> hikariPoolConfig = ofNullable(config.getConfig(POOL_HIKARI_SECTION_DI)).map(hikariConfig -> extractHikariPoolConfig(hikariConfig, properties));
+            Optional<PoolProperties> tomcatPoolConfig = ofNullable(config.getConfig(POOL_TOMCAT_SECTION_DI)).map(tomcatConfig -> extractTomcatPoolConfig(tomcatConfig, properties));
+
             Configuration jooqConfiguration;
-            ConnectionPoolType connectionPoolType = ConnectionPoolType.valueOf(config.getString(POOL_TYPE).toUpperCase());
+            ConnectionPoolType connectionPoolType = ifExceptionOrEmpty(() -> ConnectionPoolType.valueOf(config.getString(POOL_TYPE).toUpperCase()), TOMCAT);
+            String driverClassName = properties.getDriver().getDriverClassName();
             switch (connectionPoolType) {
                 case HIKARI:
-                    jooqConfiguration = createJooqConfiguration(properties.getDriver().getDriverClassName(), hikariConfig);
+                    jooqConfiguration = createDefaultJooqConfiguration(driverClassName, hikariPoolConfig.orElse(createDefaultHikariPoolConfig(properties)));
                     break;
                 default:
-                    jooqConfiguration = createJooqConfiguration(properties.getDriver().getDriverClassName(), tomcatPoolConfig);
+                    jooqConfiguration = createDefaultJooqConfiguration(driverClassName, tomcatPoolConfig.orElse(createDefaultTomcatPoolConfig(properties)));
                     break;
             }
             return SqlDbConfiguration.builder()
                     .connectionPoolType(connectionPoolType)
                     .enableMetrics(ifExceptionOrEmpty(() -> config.getBool(ENABLE_METRICS), false))
-                    .jooqConfiguration(jooqConfiguration.set(defaultSettings.withQueryTimeout(config.getInt(QUERY_TIMEOUT))))
-                    .hikariPoolConfig(hikariConfig)
-                    .tomcatPoolConfig(tomcatPoolConfig)
+                    .jooqConfiguration(jooqConfiguration.set(defaultSettings.withQueryTimeout(config.getInt(QUERY_TIMEOUT_SECONDS))))
+                    .hikariPoolConfig(hikariPoolConfig.orElse(createDefaultHikariPoolConfig(properties)))
+                    .tomcatPoolConfig(tomcatPoolConfig.orElse(createDefaultTomcatPoolConfig(properties)))
                     .build();
         };
         dbConfigurations = configInnerMap(SQL_DB_INSTANCES_SECTION_ID, mapper, super.getDbConfigurations());
@@ -85,45 +91,53 @@ public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
 
     private HikariConfig extractHikariPoolConfig(Config config, DbConnectionProperties properties) {
         HikariConfig hikariPoolConfig = createDefaultHikariPoolConfig(properties);
-        hikariPoolConfig.setPoolName(ifExceptionOrEmpty(() -> config.getString(POOL_NAME), hikariPoolConfig.getPoolName());
-        hikariPoolConfig.setRegisterMbeans(configBoolean(POOL_HIKARI_SECTION_DI, HIKARI_REGISTER_MBEANS, super.getHikariPoolConfig().isRegisterMbeans()));
-        hikariPoolConfig.setConnectionTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_CONNECTION_TIMEOUT_MILLIS, super.getHikariPoolConfig().getConnectionTimeout()));
-        hikariPoolConfig.setIdleTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_IDLE_TIMEOUT_MILLIS, super.getHikariPoolConfig().getIdleTimeout()));
-        hikariPoolConfig.setMaxLifetime(configLong(POOL_HIKARI_SECTION_DI, HIKARI_MAX_LIFETIME_MILLIS, super.getHikariPoolConfig().getMaxLifetime()));
-        hikariPoolConfig.setMinimumIdle(configInt(POOL_HIKARI_SECTION_DI, HIKARI_MINIMUM_IDLE, super.getHikariPoolConfig().getMinimumIdle()));
-        hikariPoolConfig.setMaximumPoolSize(configInt(POOL_HIKARI_SECTION_DI, HIKARI_MAXIMUM_POOL_SIZE, super.getHikariPoolConfig().getMaximumPoolSize()));
-        hikariPoolConfig.setAllowPoolSuspension(configBoolean(POOL_HIKARI_SECTION_DI, HIKARI_ALLOW_POOL_SUSPENSION, super.getHikariPoolConfig().isAllowPoolSuspension()));
-        hikariPoolConfig.setInitializationFailTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_INITIALIZATION_FAIL_TIMEOUT_MILLIS,
-                super.getHikariPoolConfig().getInitializationFailTimeout()));
-        hikariPoolConfig.setReadOnly(configBoolean(POOL_HIKARI_SECTION_DI, HIKARI_READ_ONLY, super.getHikariPoolConfig().isReadOnly()));
-        hikariPoolConfig.setValidationTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_VALIDATION_TIMEOUT_MILLIS, super.getHikariPoolConfig().getValidationTimeout()));
-        hikariPoolConfig.setLeakDetectionThreshold(configLong(POOL_HIKARI_SECTION_DI, HIKARI_LEAK_DETECTION_THRESHOLD_MILLIS, super.getHikariPoolConfig().getLeakDetectionThreshold()));
+        hikariPoolConfig.setPoolName(ifExceptionOrEmpty(() -> config.getString(POOL_NAME), hikariPoolConfig.getPoolName()));
+        hikariPoolConfig.setRegisterMbeans(ifExceptionOrEmpty(() -> config.getBool(HIKARI_REGISTER_MBEANS), hikariPoolConfig.isRegisterMbeans()));
+        hikariPoolConfig.setConnectionTimeout(ifExceptionOrEmpty(() -> config.getLong(HIKARI_CONNECTION_TIMEOUT_MILLIS), hikariPoolConfig.getConnectionTimeout()));
+        hikariPoolConfig.setIdleTimeout(ifExceptionOrEmpty(() -> config.getLong(HIKARI_IDLE_TIMEOUT_MILLIS), hikariPoolConfig.getIdleTimeout()));
+        hikariPoolConfig.setMaxLifetime(ifExceptionOrEmpty(() -> config.getLong(HIKARI_MAX_LIFETIME_MILLIS), hikariPoolConfig.getMaxLifetime()));
+        hikariPoolConfig.setMinimumIdle(ifExceptionOrEmpty(() -> config.getInt(HIKARI_MINIMUM_IDLE), hikariPoolConfig.getMinimumIdle()));
+        hikariPoolConfig.setMaximumPoolSize(ifExceptionOrEmpty(() -> config.getInt(HIKARI_MAXIMUM_POOL_SIZE), hikariPoolConfig.getMaximumPoolSize()));
+        hikariPoolConfig.setAllowPoolSuspension(ifExceptionOrEmpty(() -> config.getBool(HIKARI_ALLOW_POOL_SUSPENSION), hikariPoolConfig.isAllowPoolSuspension()));
+        hikariPoolConfig.setInitializationFailTimeout(ifExceptionOrEmpty(
+                () -> config.getLong(HIKARI_INITIALIZATION_FAIL_TIMEOUT_MILLIS),
+                hikariPoolConfig.getInitializationFailTimeout())
+        );
+        hikariPoolConfig.setReadOnly(ifExceptionOrEmpty(() -> config.getBool(HIKARI_READ_ONLY), hikariPoolConfig.isReadOnly()));
+        hikariPoolConfig.setValidationTimeout(ifExceptionOrEmpty(() -> config.getLong(HIKARI_VALIDATION_TIMEOUT_MILLIS), hikariPoolConfig.getValidationTimeout()));
+        hikariPoolConfig.setLeakDetectionThreshold(ifExceptionOrEmpty(() -> config.getLong(HIKARI_LEAK_DETECTION_THRESHOLD_MILLIS), hikariPoolConfig.getLeakDetectionThreshold()));
+        hikariPoolConfig.setDataSourceProperties(ifExceptionOrEmpty(() -> config.getProperties(DRIVER_PROPERTIES), new Properties()));
         return hikariPoolConfig;
     }
 
     private PoolProperties extractTomcatPoolConfig(Config config, DbConnectionProperties properties) {
-        PoolProperties tomcatPoolConfig = new PoolProperties();
-        tomcatPoolConfig.setName(configString(POOL_TOMCAT_SECTION_DI, POOL_NAME, super.getTomcatPoolConfig().getName()));
-        tomcatPoolConfig.setJmxEnabled(configBoolean(POOL_TOMCAT_SECTION_DI, TOMCAT_JMX_ENABLED, super.getTomcatPoolConfig().isJmxEnabled()));
-        tomcatPoolConfig.setTestWhileIdle(configBoolean(POOL_TOMCAT_SECTION_DI, TOMCAT_TEST_WHILE_IDLE, super.getTomcatPoolConfig().isTestWhileIdle()));
-        tomcatPoolConfig.setTestOnReturn(configBoolean(POOL_TOMCAT_SECTION_DI, TOMCAT_TEST_ON_RETURN, super.getTomcatPoolConfig().isTestOnReturn()));
-        tomcatPoolConfig.setTestOnBorrow(configBoolean(POOL_TOMCAT_SECTION_DI, TOMCAT_TEST_ON_BORROW, super.getTomcatPoolConfig().isTestOnBorrow()));
-        tomcatPoolConfig.setTestOnConnect(configBoolean(POOL_TOMCAT_SECTION_DI, TOMCAT_TEST_ON_CONNECT, super.getTomcatPoolConfig().isTestOnConnect()));
-        tomcatPoolConfig.setValidationQuery(configString(POOL_TOMCAT_SECTION_DI, TOMCAT_VALIDATION_QUERY, super.getTomcatPoolConfig().getValidationQuery()));
-        tomcatPoolConfig.setValidationInterval(configLong(POOL_TOMCAT_SECTION_DI, TOMCAT_VALIDATION_INTERVAL_MILLIS, super.getTomcatPoolConfig().getValidationInterval()));
-        tomcatPoolConfig.setInitialSize(configInt(POOL_TOMCAT_SECTION_DI, TOMCAT_INITIAL_SIZE, super.getTomcatPoolConfig().getInitialSize()));
-        tomcatPoolConfig.setMinIdle(configInt(POOL_TOMCAT_SECTION_DI, TOMCAT_MIN_IDLE, super.getTomcatPoolConfig().getMinIdle()));
-        tomcatPoolConfig.setMaxActive(configInt(POOL_TOMCAT_SECTION_DI, TOMCAT_MAX_ACTIVE, super.getTomcatPoolConfig().getMaxActive()));
-        tomcatPoolConfig.setMaxIdle(configInt(POOL_TOMCAT_SECTION_DI, TOMCAT_MAX_IDLE, super.getTomcatPoolConfig().getMaxIdle()));
-        tomcatPoolConfig.setMaxAge(configLong(POOL_TOMCAT_SECTION_DI, TOMCAT_MAX_LIFE_TIME_MILLIS, super.getTomcatPoolConfig().getMaxAge()));
-        tomcatPoolConfig.setTimeBetweenEvictionRunsMillis(configInt(POOL_TOMCAT_SECTION_DI, TOMCAT_TIME_BETWEEN_EVICTION_RUNS_MILLIS,
-                super.getTomcatPoolConfig().getTimeBetweenEvictionRunsMillis()));
-        tomcatPoolConfig.setMinEvictableIdleTimeMillis(configInt(POOL_TOMCAT_SECTION_DI, TOMCAT_MIN_EVICTABLE_IDLE_TIME_MILLIS,
-                super.getTomcatPoolConfig().getMinEvictableIdleTimeMillis()));
-        tomcatPoolConfig.setMaxWait(configInt(POOL_TOMCAT_SECTION_DI, TOMCAT_MAX_WAIT_MILLIS, super.getTomcatPoolConfig().getMaxWait()));
-        tomcatPoolConfig.setLogAbandoned(configBoolean(POOL_TOMCAT_SECTION_DI, TOMCAT_LOG_ABANDONED, super.getTomcatPoolConfig().isLogAbandoned()));
-        tomcatPoolConfig.setRemoveAbandoned(configBoolean(POOL_TOMCAT_SECTION_DI, TOMCAT_REMOVE_ABANDONED, super.getTomcatPoolConfig().isRemoveAbandoned()));
-        tomcatPoolConfig.setRemoveAbandonedTimeout(configInt(POOL_TOMCAT_SECTION_DI, TOMCAT_REMOVE_ABANDONED_TIMEOUT_MILLIS, super.getTomcatPoolConfig().getRemoveAbandonedTimeout()));
+        PoolProperties tomcatPoolConfig = createDefaultTomcatPoolConfig(properties);
+        tomcatPoolConfig.setName(ifExceptionOrEmpty(() -> config.getString(POOL_NAME), tomcatPoolConfig.getName()));
+        tomcatPoolConfig.setJmxEnabled(ifExceptionOrEmpty(() -> config.getBool(TOMCAT_JMX_ENABLED), tomcatPoolConfig.isJmxEnabled()));
+        tomcatPoolConfig.setTestWhileIdle(ifExceptionOrEmpty(() -> config.getBool(TOMCAT_TEST_WHILE_IDLE), tomcatPoolConfig.isTestWhileIdle()));
+        tomcatPoolConfig.setTestOnReturn(ifExceptionOrEmpty(() -> config.getBool(TOMCAT_TEST_ON_RETURN), tomcatPoolConfig.isTestOnReturn()));
+        tomcatPoolConfig.setTestOnBorrow(ifExceptionOrEmpty(() -> config.getBool(TOMCAT_TEST_ON_BORROW), tomcatPoolConfig.isTestOnBorrow()));
+        tomcatPoolConfig.setTestOnConnect(ifExceptionOrEmpty(() -> config.getBool(TOMCAT_TEST_ON_CONNECT), tomcatPoolConfig.isTestOnConnect()));
+        tomcatPoolConfig.setValidationQuery(ifExceptionOrEmpty(() -> config.getString(TOMCAT_VALIDATION_QUERY), tomcatPoolConfig.getValidationQuery()));
+        tomcatPoolConfig.setValidationInterval(ifExceptionOrEmpty(() -> config.getLong(TOMCAT_VALIDATION_INTERVAL_MILLIS), tomcatPoolConfig.getValidationInterval()));
+        tomcatPoolConfig.setInitialSize(ifExceptionOrEmpty(() -> config.getInt(TOMCAT_INITIAL_SIZE), tomcatPoolConfig.getInitialSize()));
+        tomcatPoolConfig.setMinIdle(ifExceptionOrEmpty(() -> config.getInt(TOMCAT_MIN_IDLE), tomcatPoolConfig.getMinIdle()));
+        tomcatPoolConfig.setMaxActive(ifExceptionOrEmpty(() -> config.getInt(TOMCAT_MAX_ACTIVE), tomcatPoolConfig.getMaxActive()));
+        tomcatPoolConfig.setMaxIdle(ifExceptionOrEmpty(() -> config.getInt(TOMCAT_MAX_IDLE), tomcatPoolConfig.getMaxIdle()));
+        tomcatPoolConfig.setMaxAge(ifExceptionOrEmpty(() -> config.getLong(TOMCAT_MAX_LIFE_TIME_MILLIS), tomcatPoolConfig.getMaxAge()));
+        tomcatPoolConfig.setTimeBetweenEvictionRunsMillis(ifExceptionOrEmpty(
+                () -> config.getInt(TOMCAT_TIME_BETWEEN_EVICTION_RUNS_MILLIS),
+                tomcatPoolConfig.getTimeBetweenEvictionRunsMillis())
+        );
+        tomcatPoolConfig.setMinEvictableIdleTimeMillis(ifExceptionOrEmpty(
+                () -> config.getInt(TOMCAT_MIN_EVICTABLE_IDLE_TIME_MILLIS),
+                tomcatPoolConfig.getMinEvictableIdleTimeMillis()
+        ));
+        tomcatPoolConfig.setMaxWait(ifExceptionOrEmpty(() -> config.getInt(TOMCAT_MAX_WAIT_MILLIS), tomcatPoolConfig.getMaxWait()));
+        tomcatPoolConfig.setLogAbandoned(ifExceptionOrEmpty(() -> config.getBool(TOMCAT_LOG_ABANDONED), tomcatPoolConfig.isLogAbandoned()));
+        tomcatPoolConfig.setRemoveAbandoned(ifExceptionOrEmpty(() -> config.getBool(TOMCAT_REMOVE_ABANDONED), tomcatPoolConfig.isRemoveAbandoned()));
+        tomcatPoolConfig.setRemoveAbandonedTimeout(ifExceptionOrEmpty(() -> config.getInt(TOMCAT_REMOVE_ABANDONED_TIMEOUT_MILLIS), tomcatPoolConfig.getRemoveAbandonedTimeout()));
+        tomcatPoolConfig.setDbProperties(ifExceptionOrEmpty(() -> config.getProperties(DRIVER_PROPERTIES), new Properties()));
         return tomcatPoolConfig;
     }
 }

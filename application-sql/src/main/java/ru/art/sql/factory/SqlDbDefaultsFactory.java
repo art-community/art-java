@@ -1,21 +1,41 @@
-package ru.art.sql.constants;
+package ru.art.sql.factory;
 
 import com.zaxxer.hikari.*;
 import lombok.experimental.*;
 import org.apache.tomcat.jdbc.pool.*;
+import org.jooq.*;
+import org.jooq.impl.*;
+import ru.art.sql.exception.*;
 import ru.art.sql.model.*;
+import static java.lang.Class.*;
 import static ru.art.core.context.Context.*;
-import static ru.art.metrics.module.MetricsModule.*;
 import static ru.art.sql.constants.SqlModuleConstants.ConfigurationDefaults.*;
-import static ru.art.sql.module.SqlModule.*;
 
 @UtilityClass
-public class ConnectionPoolDefaultConfigurations {
+public class SqlDbDefaultsFactory {
+    public static Configuration createDefaultJooqConfiguration(String driveClassName, HikariConfig config) {
+        try {
+            forName(driveClassName);
+            return new DefaultConfiguration().set(new HikariDataSource(config));
+        } catch (Throwable throwable) {
+            throw new SqlModuleException(throwable);
+        }
+    }
+
+    public static Configuration createDefaultJooqConfiguration(String driveClassName, PoolProperties config) {
+        try {
+            forName(driveClassName);
+            return new DefaultConfiguration().set(new DataSource(config));
+        } catch (Throwable throwable) {
+            throw new SqlModuleException(throwable);
+        }
+    }
+
     public static HikariConfig createDefaultHikariPoolConfig(DbConnectionProperties properties) {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setPoolName(HIKARI_POOL_PREFIX + contextConfiguration().getMainModuleId());
         hikariConfig.setJdbcUrl(properties.getUrl());
-        hikariConfig.setUsername(properties.getLogin());
+        hikariConfig.setUsername(properties.getUserName());
         hikariConfig.setPassword(properties.getPassword());
         hikariConfig.setDriverClassName(properties.getDriver().getDriverClassName());
 
@@ -30,22 +50,7 @@ public class ConnectionPoolDefaultConfigurations {
         hikariConfig.setReadOnly(false);
         hikariConfig.setValidationTimeout(5 * 1000);
         hikariConfig.setLeakDetectionThreshold(0);
-
-        switch (properties.getDriver()) {
-            case POSTGRES:
-                hikariConfig.setConnectionTestQuery(DEFAULT_POSTGRES_CONNECTION_TEST_QUERY);
-                break;
-            case ORACLE:
-                hikariConfig.setConnectionTestQuery(DEFAULT_ORACLE_CONNECTION_TEST_QUERY);
-                break;
-            case MSSQL:
-                hikariConfig.setConnectionTestQuery(DEFAULT_MSSQL_CONNECTION_TEST_QUERY);
-                break;
-        }
-
-        if (sqlModule().isEnableMetrics()) {
-            hikariConfig.setMetricRegistry(metricsModule().getPrometheusMeterRegistry());
-        }
+        hikariConfig.setConnectionTestQuery(properties.getDriver().getValidationQuery());
         return hikariConfig;
     }
 
@@ -54,7 +59,7 @@ public class ConnectionPoolDefaultConfigurations {
         poolProperties.setName(TOMCAT_POOL_PREFIX + contextConfiguration().getMainModuleId());
         poolProperties.setUrl(properties.getUrl());
         poolProperties.setDriverClassName(properties.getDriver().getDriverClassName());
-        poolProperties.setUsername(properties.getLogin());
+        poolProperties.setUsername(properties.getUserName());
         poolProperties.setPassword(properties.getPassword());
 
         poolProperties.setJmxEnabled(true);
@@ -63,17 +68,7 @@ public class ConnectionPoolDefaultConfigurations {
         poolProperties.setTestOnReturn(false);
         poolProperties.setTestOnBorrow(true);
 
-        switch (properties.getDriver()) {
-            case POSTGRES:
-                poolProperties.setValidationQuery(DEFAULT_POSTGRES_CONNECTION_TEST_QUERY);
-                break;
-            case ORACLE:
-                poolProperties.setValidationQuery(DEFAULT_ORACLE_CONNECTION_TEST_QUERY);
-                break;
-            case MSSQL:
-                poolProperties.setValidationQuery(DEFAULT_MSSQL_CONNECTION_TEST_QUERY);
-                break;
-        }
+        poolProperties.setValidationQuery(properties.getDriver().getValidationQuery());
 
         poolProperties.setValidationInterval(30000);
 

@@ -7,8 +7,9 @@ import org.jooq.*;
 import org.jooq.impl.*;
 import ru.art.sql.constants.*;
 import ru.art.sql.model.*;
+import static ru.art.sql.factory.SqlDbDefaultsFactory.createDefaultHikariPoolConfig;
+import static ru.art.sql.factory.SqlDbDefaultsFactory.createDefaultTomcatPoolConfig;
 import static ru.art.sql.constants.ConnectionPoolType.*;
-import static ru.art.sql.factory.SqlConnectionPoolsFactory.*;
 
 @Getter
 @Builder(toBuilder = true)
@@ -20,7 +21,7 @@ public class SqlDbConfiguration {
     @Builder.Default
     private final boolean enableMetrics = true;
     @Builder.Default
-    private final HikariConfig hikariPoolConfig = createHikariPoolConfig(DbConnectionProperties.builder().build());
+    private final HikariConfig hikariPoolConfig = createDefaultHikariPoolConfig(DbConnectionProperties.builder().build());
     @Builder.Default
-    private final PoolProperties tomcatPoolConfig = createTomcatPoolConfig(DbConnectionProperties.builder().build());
+    private final PoolProperties tomcatPoolConfig = createDefaultTomcatPoolConfig(DbConnectionProperties.builder().build());
 }
