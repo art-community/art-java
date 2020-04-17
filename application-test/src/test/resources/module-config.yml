@@ -42,8 +42,6 @@ tarantool:
   enableTracing: true
   configurations:
     t-master-1:
-      replicas:
-        - "t-master-2"
       initial:
         readOnly: false
       connection:
@@ -51,14 +49,7 @@ tarantool:
         port: 3301
         username: username
         password: password
-      entities:
-        DataEntity:
-          fields:
-            Data: 2
-            Entity: 3
     t-master-2:
-      replicas:
-        - "t-master-1"
       initial:
         readOnly: false
       connection:
@@ -66,11 +57,6 @@ tarantool:
         port: 3302
         username: username
         password: password
-      entities:
-        DataEntity:
-          fields:
-            Data: 2
-            Entity: 3
 logging:
   colored: true
   asynchronous: true

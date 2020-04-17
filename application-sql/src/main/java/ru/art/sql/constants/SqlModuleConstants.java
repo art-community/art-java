@@ -33,4 +33,8 @@ public interface SqlModuleConstants {
         String CLOSING_POOL = "Closing DB connection pool: {0}";
         String STARING_POOL = "Starting connection pool to DataSource: {0}";
     }
+
+    interface ExceptionMessages {
+        String SQL_DB_CONFIGURATION_NOT_FOUND = "SQL DB configuration for instance ''{0}'' was not found";
+    }
 }

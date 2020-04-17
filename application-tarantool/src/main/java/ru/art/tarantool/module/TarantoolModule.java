@@ -53,7 +53,7 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
 
     @Override
     public void onLoad() {
-        if (tarantoolModule().getInitializationMode() != ON_MODULE_LOAD) {
+        if (tarantoolModule().getInitializationMode() != BOOTSTRAP) {
             return;
         }
         initializeTarantools();

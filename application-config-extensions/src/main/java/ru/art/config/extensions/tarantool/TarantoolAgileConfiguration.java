@@ -45,7 +45,7 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
     private boolean enableTracing;
     private long probeConnectionTimeout;
     private long connectionTimeout;
-    private TarantoolInitializationMode initializationMode;
+    private TarantoolInitializationMode initializationMode = super.getInitializationMode();
     private TarantoolLocalConfiguration localConfiguration;
     private Map<String, TarantoolConfiguration> tarantoolConfigurations;
 
@@ -58,7 +58,6 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
         enableTracing = configBoolean(TARANTOOL_SECTION_ID, ENABLE_TRACING, super.isEnableTracing());
         probeConnectionTimeout = configLong(TARANTOOL_SECTION_ID, PROBE_CONNECTION_TIMEOUT_MILLIS, super.getProbeConnectionTimeoutMillis());
         connectionTimeout = configLong(TARANTOOL_SECTION_ID, CONNECTION_TIMEOUT_MILLIS, super.getConnectionTimeoutMillis());
-        initializationMode = super.getInitializationMode();
         initializationMode = ifException(() -> TarantoolInitializationMode.valueOf(configString(TARANTOOL_SECTION_ID, INITIALIZATION_MODE).toUpperCase()), initializationMode);
         TarantoolLocalConfiguration defaultLocalConfiguration = super.getLocalConfiguration();
         String executable = defaultLocalConfiguration.getExecutable();
@@ -113,6 +112,6 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
                                                 config.getInt(ENTITIES + DOT + entityName + DOT + FIELDS + DOT + fieldName)))))
                                 .map())), emptyMap()))
                 .build();
-        tarantoolConfigurations = configInnerMap(TARANTOOL_CONFIGURATIONS_SECTION_ID, mapper, super.getTarantoolConfigurations());
+        tarantoolConfigurations = configInnerMap(TARANTOOL_INSTANCES_SECTION_ID, mapper, super.getTarantoolConfigurations());
     }
 }

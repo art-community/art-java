@@ -26,25 +26,14 @@ import ru.art.sql.exception.*;
 import ru.art.sql.model.*;
 import static java.lang.Class.*;
 import static ru.art.sql.constants.ConnectionPoolDefaultConfigurations.*;
-import static ru.art.sql.module.SqlModule.*;
 
 public interface SqlConnectionPoolsFactory {
-    static HikariConfig createHikariPoolConfig() {
-        return createDefaultHikariPoolConfig(DbConnectionProperties.builder()
-                .login(sqlModule().getJdbcLogin())
-                .password(sqlModule().getJdbcPassword())
-                .url(sqlModule().getJdbcUrl())
-                .driver(sqlModule().getDbProvider())
-                .build());
+    static HikariConfig createHikariPoolConfig(DbConnectionProperties properties) {
+        return createDefaultHikariPoolConfig(properties);
     }
 
-    static PoolProperties createTomcatPoolConfig() {
-        return createDefaultTomcatPoolConfig(DbConnectionProperties.builder()
-                .login(sqlModule().getJdbcLogin())
-                .password(sqlModule().getJdbcPassword())
-                .url(sqlModule().getJdbcUrl())
-                .driver(sqlModule().getDbProvider())
-                .build());
+    static PoolProperties createTomcatPoolConfig(DbConnectionProperties properties) {
+        return createDefaultTomcatPoolConfig(properties);
     }
 
     static Configuration createJooqConfiguration(String driveClassName, HikariConfig config) {

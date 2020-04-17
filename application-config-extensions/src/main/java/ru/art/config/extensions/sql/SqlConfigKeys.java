@@ -20,9 +20,12 @@ package ru.art.config.extensions.sql;
 
 public interface SqlConfigKeys {
     String SQL_DB_SECTION_ID = "sql.db";
+    String SQL_DB_INSTANCES_SECTION_ID = "sql.db.instances";
     String POOL_HIKARI_SECTION_DI = "pool.hikari";
     String POOL_TOMCAT_SECTION_DI = "pool.tomcat";
     String POOL_NAME = "name";
+    String POOL_INITIALIZATION_MODE = "poolInitializationMode";
+    String POOL_TYPE = "pool.type";
     String LOGIN = "login";
     String PASSWORD = "password";
     String PROVIDER = "provider";

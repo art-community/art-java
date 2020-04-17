@@ -22,23 +22,22 @@ import com.zaxxer.hikari.*;
 import lombok.*;
 import org.apache.tomcat.jdbc.pool.*;
 import org.jooq.conf.*;
+import org.jooq.impl.*;
+import ru.art.config.*;
+import ru.art.sql.configuration.*;
 import ru.art.sql.configuration.SqlModuleConfiguration.*;
 import ru.art.sql.constants.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.sql.SqlConfigKeys.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
+import java.util.*;
+import java.util.function.Function;
 
 @Getter
 public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
-    private String jdbcUrl;
-    private String jdbcLogin;
-    private String jdbcPassword;
-    private DbProvider dbProvider;
-    private boolean enableMetrics;
-    private Settings jooqSettings;
-    private HikariConfig hikariPoolConfig = super.getHikariPoolConfig();
-    private PoolProperties tomcatPoolConfig = super.getTomcatPoolConfig();
+    private Map<String, SqlDbConfiguration> dbConfigurations = super.getDbConfigurations();
+    private ConnectionPoolInitializationMode initializationMode = super.getInitializationMode();
 
     public SqlAgileConfiguration() {
         refresh();
@@ -46,16 +45,47 @@ public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
 
     @Override
     public void refresh() {
-        jdbcUrl = configString(SQL_DB_SECTION_ID, URL, super.getJdbcUrl());
-        jdbcLogin = configString(SQL_DB_SECTION_ID, LOGIN, super.getJdbcLogin());
-        jdbcPassword = configString(SQL_DB_SECTION_ID, PASSWORD, super.getJdbcLogin());
-        dbProvider = ifException(() -> DbProvider.valueOf(configString(SQL_DB_SECTION_ID, PROVIDER).toUpperCase()), super.getDbProvider());
-        enableMetrics = configBoolean(SQL_DB_SECTION_ID, ENABLE_METRICS, super.isEnableMetrics());
+        initializationMode = ifException(
+                () -> ConnectionPoolInitializationMode.valueOf(configString(SQL_DB_INSTANCES_SECTION_ID, POOL_INITIALIZATION_MODE).toUpperCase()),
+                initializationMode
+        );
+        Function<Config, SqlDbConfiguration> mapper = config -> {
+            Settings defaultSettings = new Settings();
+            return SqlDbConfiguration.builder()
+                    .connectionPoolType(ConnectionPoolType.valueOf(config.getString(POOL_TYPE).toUpperCase()))
+                    .dbProvider(DbProvider.valueOf(config.getString(PROVIDER).toUpperCase()))
+                    .jdbcUrl(config.getString(URL))
+                    .jdbcLogin(config.getString(LOGIN))
+                    .jdbcPassword(config.getString(PASSWORD))
+                    .enableMetrics(ifExceptionOrEmpty(() -> config.getBool(ENABLE_METRICS), false))
+                    .jooqConfiguration(new DefaultConfiguration().set(defaultSettings.withQueryTimeout(config.getInt(QUERY_TIMEOUT))))
+                    .hikariPoolConfig(extractHikariPoolConfig(config))
+                    .tomcatPoolConfig(extractTomcatPoolConfig(config))
+                    .build();
+        };
+        dbConfigurations = configInnerMap(SQL_DB_INSTANCES_SECTION_ID, mapper, super.getDbConfigurations());
+    }
 
-        Settings defaultSettings = super.getJooqSettings();
-        jooqSettings = defaultSettings
-                .withQueryTimeout(configInt(SQL_DB_SECTION_ID, QUERY_TIMEOUT, defaultSettings.getQueryTimeout()));
+    private HikariConfig extractHikariPoolConfig(Config config) {
+        HikariConfig hikariPoolConfig = new HikariConfig();
+        hikariPoolConfig.setPoolName(configString(POOL_HIKARI_SECTION_DI, POOL_NAME, super.getHikariPoolConfig().getPoolName()));
+        hikariPoolConfig.setRegisterMbeans(configBoolean(POOL_HIKARI_SECTION_DI, HIKARI_REGISTER_MBEANS, super.getHikariPoolConfig().isRegisterMbeans()));
+        hikariPoolConfig.setConnectionTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_CONNECTION_TIMEOUT_MILLIS, super.getHikariPoolConfig().getConnectionTimeout()));
+        hikariPoolConfig.setIdleTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_IDLE_TIMEOUT_MILLIS, super.getHikariPoolConfig().getIdleTimeout()));
+        hikariPoolConfig.setMaxLifetime(configLong(POOL_HIKARI_SECTION_DI, HIKARI_MAX_LIFETIME_MILLIS, super.getHikariPoolConfig().getMaxLifetime()));
+        hikariPoolConfig.setMinimumIdle(configInt(POOL_HIKARI_SECTION_DI, HIKARI_MINIMUM_IDLE, super.getHikariPoolConfig().getMinimumIdle()));
+        hikariPoolConfig.setMaximumPoolSize(configInt(POOL_HIKARI_SECTION_DI, HIKARI_MAXIMUM_POOL_SIZE, super.getHikariPoolConfig().getMaximumPoolSize()));
+        hikariPoolConfig.setAllowPoolSuspension(configBoolean(POOL_HIKARI_SECTION_DI, HIKARI_ALLOW_POOL_SUSPENSION, super.getHikariPoolConfig().isAllowPoolSuspension()));
+        hikariPoolConfig.setInitializationFailTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_INITIALIZATION_FAIL_TIMEOUT_MILLIS,
+                super.getHikariPoolConfig().getInitializationFailTimeout()));
+        hikariPoolConfig.setReadOnly(configBoolean(POOL_HIKARI_SECTION_DI, HIKARI_READ_ONLY, super.getHikariPoolConfig().isReadOnly()));
+        hikariPoolConfig.setValidationTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_VALIDATION_TIMEOUT_MILLIS, super.getHikariPoolConfig().getValidationTimeout()));
+        hikariPoolConfig.setLeakDetectionThreshold(configLong(POOL_HIKARI_SECTION_DI, HIKARI_LEAK_DETECTION_THRESHOLD_MILLIS, super.getHikariPoolConfig().getLeakDetectionThreshold()));
+        return hikariPoolConfig;
+    }
 
+    private PoolProperties extractTomcatPoolConfig(Config config) {
+        PoolProperties tomcatPoolConfig = new PoolProperties();
         tomcatPoolConfig.setName(configString(POOL_TOMCAT_SECTION_DI, POOL_NAME, super.getTomcatPoolConfig().getName()));
         tomcatPoolConfig.setJmxEnabled(configBoolean(POOL_TOMCAT_SECTION_DI, TOMCAT_JMX_ENABLED, super.getTomcatPoolConfig().isJmxEnabled()));
         tomcatPoolConfig.setTestWhileIdle(configBoolean(POOL_TOMCAT_SECTION_DI, TOMCAT_TEST_WHILE_IDLE, super.getTomcatPoolConfig().isTestWhileIdle()));
@@ -77,20 +107,6 @@ public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
         tomcatPoolConfig.setLogAbandoned(configBoolean(POOL_TOMCAT_SECTION_DI, TOMCAT_LOG_ABANDONED, super.getTomcatPoolConfig().isLogAbandoned()));
         tomcatPoolConfig.setRemoveAbandoned(configBoolean(POOL_TOMCAT_SECTION_DI, TOMCAT_REMOVE_ABANDONED, super.getTomcatPoolConfig().isRemoveAbandoned()));
         tomcatPoolConfig.setRemoveAbandonedTimeout(configInt(POOL_TOMCAT_SECTION_DI, TOMCAT_REMOVE_ABANDONED_TIMEOUT_MILLIS, super.getTomcatPoolConfig().getRemoveAbandonedTimeout()));
-
-
-        hikariPoolConfig.setPoolName(configString(POOL_HIKARI_SECTION_DI, POOL_NAME, super.getHikariPoolConfig().getPoolName()));
-        hikariPoolConfig.setRegisterMbeans(configBoolean(POOL_HIKARI_SECTION_DI, HIKARI_REGISTER_MBEANS, super.getHikariPoolConfig().isRegisterMbeans()));
-        hikariPoolConfig.setConnectionTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_CONNECTION_TIMEOUT_MILLIS, super.getHikariPoolConfig().getConnectionTimeout()));
-        hikariPoolConfig.setIdleTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_IDLE_TIMEOUT_MILLIS, super.getHikariPoolConfig().getIdleTimeout()));
-        hikariPoolConfig.setMaxLifetime(configLong(POOL_HIKARI_SECTION_DI, HIKARI_MAX_LIFETIME_MILLIS, super.getHikariPoolConfig().getMaxLifetime()));
-        hikariPoolConfig.setMinimumIdle(configInt(POOL_HIKARI_SECTION_DI, HIKARI_MINIMUM_IDLE, super.getHikariPoolConfig().getMinimumIdle()));
-        hikariPoolConfig.setMaximumPoolSize(configInt(POOL_HIKARI_SECTION_DI, HIKARI_MAXIMUM_POOL_SIZE, super.getHikariPoolConfig().getMaximumPoolSize()));
-        hikariPoolConfig.setAllowPoolSuspension(configBoolean(POOL_HIKARI_SECTION_DI, HIKARI_ALLOW_POOL_SUSPENSION, super.getHikariPoolConfig().isAllowPoolSuspension()));
-        hikariPoolConfig.setInitializationFailTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_INITIALIZATION_FAIL_TIMEOUT_MILLIS,
-                super.getHikariPoolConfig().getInitializationFailTimeout()));
-        hikariPoolConfig.setReadOnly(configBoolean(POOL_HIKARI_SECTION_DI, HIKARI_READ_ONLY, super.getHikariPoolConfig().isReadOnly()));
-        hikariPoolConfig.setValidationTimeout(configLong(POOL_HIKARI_SECTION_DI, HIKARI_VALIDATION_TIMEOUT_MILLIS, super.getHikariPoolConfig().getValidationTimeout()));
-        hikariPoolConfig.setLeakDetectionThreshold(configLong(POOL_HIKARI_SECTION_DI, HIKARI_LEAK_DETECTION_THRESHOLD_MILLIS, super.getHikariPoolConfig().getLeakDetectionThreshold()));
+        return tomcatPoolConfig;
     }
 }

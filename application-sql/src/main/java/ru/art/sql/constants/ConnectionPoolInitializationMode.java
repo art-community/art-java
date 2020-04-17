@@ -19,6 +19,6 @@
 package ru.art.sql.constants;
 
 public enum ConnectionPoolInitializationMode {
-    ON_MODULE_LOAD,
-    MANUAL
+    BOOTSTRAP,
+    LAZY
 }

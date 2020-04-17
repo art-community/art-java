@@ -193,8 +193,8 @@ public interface TarantoolModuleConstants {
     }
 
     enum TarantoolInitializationMode {
-        ON_MODULE_LOAD,
-        MANUAL
+        BOOTSTRAP,
+        LAZY
     }
 
     enum TarantoolFieldType {

@@ -74,7 +74,7 @@ public class SqlModule implements Module<SqlModuleConfiguration, SqlModuleState>
                     HikariDataSource hikariDataSource = new HikariDataSource(sqlModule().getHikariPoolConfig());
                     dataSource = hikariDataSource;
                     sqlModuleState().hikariDataSource(hikariDataSource);
-                    if (sqlModule().getConnectionPoolInitializationMode() == ON_MODULE_LOAD) {
+                    if (sqlModule().getInitializationMode() == BOOTSTRAP) {
                         hikariDataSource.getConnection();
                         getLogger().info(format(STARING_POOL, hikariDataSource));
                     }
@@ -83,7 +83,7 @@ public class SqlModule implements Module<SqlModuleConfiguration, SqlModuleState>
                     ManagedPooledDataSource tomcatDataSource = new ManagedPooledDataSource(sqlModule().getTomcatPoolConfig(), metricsModule().getDropwizardMetricRegistry());
                     sqlModuleState().tomcatDataSource(tomcatDataSource);
                     dataSource = tomcatDataSource;
-                    if (sqlModule().getConnectionPoolInitializationMode() == ON_MODULE_LOAD) {
+                    if (sqlModule().getInitializationMode() == BOOTSTRAP) {
                         tomcatDataSource.start();
                         getLogger().info(format(STARING_POOL, tomcatDataSource));
                     }
