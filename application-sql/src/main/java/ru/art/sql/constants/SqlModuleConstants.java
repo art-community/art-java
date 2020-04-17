@@ -22,7 +22,11 @@ public interface SqlModuleConstants {
     String SQL_MODULE_ID = "SQL_MODULE";
 
     interface ConfigurationDefaults {
-        String DEFAULT_CONNECTION_TEST_QUERY = "select 1 from dual";
+        String HIKARI_POOL_PREFIX = "hikari-db-pool-";
+        String TOMCAT_POOL_PREFIX = "tomcat-db-pool-";
+        String DEFAULT_ORACLE_CONNECTION_TEST_QUERY = "select 1 from dual";
+        String DEFAULT_POSTGRES_CONNECTION_TEST_QUERY = "select 1";
+        String DEFAULT_MSSQL_CONNECTION_TEST_QUERY = "select 1";
     }
 
     interface LoggingMessages {
