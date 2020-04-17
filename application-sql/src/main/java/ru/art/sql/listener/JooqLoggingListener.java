@@ -41,34 +41,34 @@ public class JooqLoggingListener extends LoggerListener {
         String[] batchSql = context.batchSQL();
         if (nonNull(context.query())) {
             String query = newline + using(configuration).renderInlined(context.query());
-            putIfNotNull(SQL_QUERY, query);
+            putIfNotNull(SQL_QUERY_KEY, query);
             getLogger().info(format(EXECUTING_QUERY, query));
-            remove(SQL_QUERY);
+            remove(SQL_QUERY_KEY);
             return;
         }
 
         if (nonNull(context.routine())) {
             String routine = newline + using(configuration).renderInlined(context.routine());
-            putIfNotNull(SQL_ROUTINE, routine);
+            putIfNotNull(SQL_ROUTINE_KEY, routine);
             getLogger().info(format(EXECUTING_ROUTINE, routine));
-            remove(SQL_ROUTINE);
+            remove(SQL_ROUTINE_KEY);
             return;
         }
 
         if (isNotEmpty(context.sql())) {
             String query = newline + context.sql();
-            putIfNotNull(SQL_QUERY, query);
+            putIfNotNull(SQL_QUERY_KEY, query);
             getLogger().info(format(context.type() == BATCH ? EXECUTING_BATCH_QUERY : EXECUTING_QUERY, query));
-            remove(SQL_QUERY);
+            remove(SQL_QUERY_KEY);
             return;
         }
 
         if (batchSql.length > 0 && batchSql[batchSql.length - 1] != null) {
             stream(batchSql).forEach(sql -> {
                 String query = newline + sql;
-                putIfNotNull(SQL_QUERY, query);
+                putIfNotNull(SQL_QUERY_KEY, query);
                 getLogger().info(format(EXECUTING_BATCH_QUERY, query));
-                remove(SQL_QUERY);
+                remove(SQL_QUERY_KEY);
             });
         }
     }

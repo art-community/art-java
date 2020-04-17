@@ -90,7 +90,7 @@ class GrpcCommunicationAsynchronousExecutor {
         long deadlineTimeout = configuration.getDeadlineTimeout();
         GrpcServlet.GrpcServletFutureStub stub = new GrpcServlet().newFutureStub(channel, emptyIfNull(configuration.getPath()))
                 .withDeadlineAfter(deadlineTimeout > 0L ? deadlineTimeout : grpcClientModule().getTimeout(), MILLISECONDS)
-                .withInterceptors(ifEmpty(configuration.getInterceptors(), grpcClientModule().getInterceptors()).toArray(new ClientInterceptor[0]));
+                .withInterceptors(configuration.getInterceptors().toArray(new ClientInterceptor[0]));
         if (configuration.isWaitForReady()) {
             stub = stub.withWaitForReady();
         }

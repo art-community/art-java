@@ -34,6 +34,7 @@ public interface LoggingModuleConstants {
     }
 
     interface LoggingParameters {
+        String LOG_TIMESTAMP = "logTimestamp";
         String MODULES_KEY = "modules";
         String SERVICES_KEY = "services";
         String PROTOCOL_KEY = "protocol";
@@ -46,16 +47,16 @@ public interface LoggingModuleConstants {
         String SERVICE_ID_KEY = "serviceId";
         String SERVICE_METHOD_ID_KEY = "serviceMethodId";
         String SERVICE_METHOD_COMMAND_KEY = "serviceMethodCommand";
-        String APPLICATION_MODULE_ID_KEY = "applicationModuleId";
+        String MAIN_MODULE_ID_KEY = "mainModuleId";
         String REQUEST_START_TIME_KEY = "requestStartTime";
         String REQUEST_END_TIME_KEY = "requestEndTime";
         String EXECUTION_TIME_KEY = "executionTime";
         String SERVICE_EXCEPTION_KEY = "serviceException";
         String SERVICE_TYPES_KEY = "serviceTypes";
-        String SERVICE_EVENT_TYPE_KEY = "serviceEventType";
-        String APPLICATION_JAR_KEY = "applicationJar";
+        String LOG_EVENT_TYPE = "logEventType";
+        String MODULE_JAR_KEY = "moduleJar";
         String REQUEST_VALUE_KEY = "requestValue";
-        String SQL_QUERY = "sqlQuery";
-        String SQL_ROUTINE = "sqlRoutine";
+        String SQL_QUERY_KEY = "sqlQuery";
+        String SQL_ROUTINE_KEY = "sqlRoutine";
     }
 }
