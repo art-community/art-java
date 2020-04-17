@@ -21,22 +21,22 @@ package ru.art.config.extensions.sql;
 import com.zaxxer.hikari.*;
 import lombok.*;
 import org.apache.tomcat.jdbc.pool.*;
-import org.checkerframework.checker.nullness.*;
 import org.jooq.*;
 import org.jooq.conf.*;
 import ru.art.config.*;
 import ru.art.sql.configuration.*;
 import ru.art.sql.configuration.SqlModuleConfiguration.*;
 import ru.art.sql.constants.*;
+import ru.art.sql.listener.*;
 import ru.art.sql.model.*;
-import static java.util.Optional.ofNullable;
+import static java.util.Optional.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
 import static ru.art.config.extensions.sql.SqlConfigKeys.*;
 import static ru.art.core.extension.ExceptionExtensions.*;
-import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.sql.constants.ConnectionPoolType.*;
 import static ru.art.sql.factory.SqlDbDefaultsFactory.*;
+import static ru.art.sql.module.SqlModule.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -55,7 +55,7 @@ public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
                 () -> ConnectionPoolInitializationMode.valueOf(configString(SQL_DB_INSTANCES_SECTION_ID, POOL_INITIALIZATION_MODE).toUpperCase()),
                 initializationMode
         );
-        Function<Config, SqlDbConfiguration> mapper = config -> {
+        BiFunction<String, Config, SqlDbConfiguration> mapper = (instance, config) -> {
             Settings defaultSettings = new Settings();
             DbConnectionProperties properties = DbConnectionProperties.builder()
                     .driver(DbProvider.valueOf(config.getString(PROVIDER).toUpperCase()))
@@ -81,7 +81,10 @@ public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
             return SqlDbConfiguration.builder()
                     .connectionPoolType(connectionPoolType)
                     .enableMetrics(ifExceptionOrEmpty(() -> config.getBool(ENABLE_METRICS), false))
-                    .jooqConfiguration(jooqConfiguration.set(defaultSettings.withQueryTimeout(config.getInt(QUERY_TIMEOUT_SECONDS))))
+                    .enableTracing(ifExceptionOrEmpty(() -> config.getBool(ENABLE_TRACING), false))
+                    .jooqConfiguration(jooqConfiguration
+                            .set(new JooqLoggingListener(() -> sqlModule().getDbConfiguration(instance).isEnableTracing()))
+                            .set(defaultSettings.withQueryTimeout(config.getInt(QUERY_TIMEOUT_SECONDS))))
                     .hikariPoolConfig(hikariPoolConfig.orElse(createDefaultHikariPoolConfig(properties)))
                     .tomcatPoolConfig(tomcatPoolConfig.orElse(createDefaultTomcatPoolConfig(properties)))
                     .build();

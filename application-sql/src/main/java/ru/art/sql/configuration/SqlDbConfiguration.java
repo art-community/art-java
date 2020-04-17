@@ -21,6 +21,8 @@ public class SqlDbConfiguration {
     @Builder.Default
     private final boolean enableMetrics = true;
     @Builder.Default
+    private final boolean enableTracing = false;
+    @Builder.Default
     private final HikariConfig hikariPoolConfig = createDefaultHikariPoolConfig(DbConnectionProperties.builder().build());
     @Builder.Default
     private final PoolProperties tomcatPoolConfig = createDefaultTomcatPoolConfig(DbConnectionProperties.builder().build());

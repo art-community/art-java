@@ -62,6 +62,7 @@ sql:
     instances:
       embedded:
         enableMetrics: true
+        enableTracing: true
         provider: hsqldb
         url: jdbc:hsqldb:mem:db
         userName: sa
