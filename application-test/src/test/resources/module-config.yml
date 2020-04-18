@@ -25,22 +25,27 @@ kafka:
 grpc:
   server:
     enableRawDataTracing: true
+    enableValueTracing: true
   communication:
     enableRawDataTracing: true
+    enableValueTracing: true
 http:
   server:
     consumesMimeType: application/json
     producesMimeType: application/json
     enableRawDataTracing: true
+    enableValueTracing: true
   communication:
-    enableRawDataTracing: true
     consumesMimeType: application/json
     producesMimeType: application/json
+    enableRawDataTracing: true
+    enableValueTracing: true
 rsocket:
   enableRawDataTracing: true
+  enableValueTracing: true
 tarantool:
   enableTracing: true
-  configurations:
+  instances:
     t-master-1:
       replicas:
         - "t-master-2"
@@ -71,6 +76,16 @@ tarantool:
           fields:
             Data: 2
             Entity: 3
+sql:
+  db:
+    instances:
+      embedded:
+        enableMetrics: true
+        enableTracing: true
+        provider: hsqldb
+        url: jdbc:hsqldb:mem:db
+        userName: sa
+        password: ""
 logging:
   colored: true
   asynchronous: true

@@ -22,9 +22,17 @@ import lombok.*;
 import org.apache.http.*;
 import org.apache.http.client.config.*;
 import org.apache.http.config.*;
+import org.apache.http.conn.socket.*;
+import org.apache.http.conn.ssl.*;
+import org.apache.http.conn.util.*;
 import org.apache.http.impl.client.*;
+import org.apache.http.impl.conn.*;
 import org.apache.http.impl.nio.client.*;
+import org.apache.http.impl.nio.conn.*;
 import org.apache.http.impl.nio.reactor.*;
+import org.apache.http.nio.conn.*;
+import org.apache.http.nio.conn.ssl.*;
+import org.apache.http.ssl.SSLContexts;
 import org.zalando.logbook.httpclient.*;
 import ru.art.http.client.exception.*;
 import ru.art.http.client.interceptor.*;
@@ -52,6 +60,12 @@ import java.security.*;
 import java.util.*;
 
 public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
+    int getMaxConnectionsPerRoute();
+
+    int getMaxConnectionsTotal();
+
+    int getValidateAfterInactivityMillis();
+
     CloseableHttpClient getClient();
 
     CloseableHttpAsyncClient getAsynchronousClient();
@@ -97,6 +111,10 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
 
     @Getter
     class HttpClientModuleDefaultConfiguration extends HttpModuleDefaultConfiguration implements HttpClientModuleConfiguration {
+        private static HostnameVerifier ALLOW_ALL = (hostName, session) -> true;
+        int maxConnectionsPerRoute = DEFAULT_MAX_CONNECTIONS_PER_ROUTE;
+        int maxConnectionsTotal = DEFAULT_MAX_CONNECTIONS_TOTAL;
+        int validateAfterInactivityMillis = DEFAULT_VALIDATE_AFTER_INACTIVITY_MILLIS;
         private final RequestConfig requestConfig = RequestConfig.DEFAULT;
         private final SocketConfig socketConfig = SocketConfig.DEFAULT;
         private final ConnectionConfig connectionConfig = ConnectionConfig.DEFAULT;
@@ -124,23 +142,8 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         @SuppressWarnings({"Duplicates", "WeakerAccess"})
         protected CloseableHttpAsyncClient createAsyncHttpClient() {
             HttpAsyncClientBuilder clientBuilder = HttpAsyncClients.custom()
-                    .setDefaultRequestConfig(getRequestConfig())
-                    .setDefaultIOReactorConfig(getIoReactorConfig())
-                    .setDefaultConnectionConfig(getConnectionConfig());
-            if (isSsl()) {
-                try {
-                    if (disableSslHostNameVerification) {
-                        HostnameVerifier allowAll = (hostName, session) -> true;
-                        clientBuilder.setSSLHostnameVerifier(allowAll);
-                    }
-                    clientBuilder.setSSLContext(custom()
-                            .loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray())
-                            .build());
-                } catch (Throwable throwable) {
-                    throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
-                }
-            }
-            clientBuilder.addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()));
+                    .setConnectionManager(createAsyncConnectionManager())
+                    .addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()));
             CloseableHttpAsyncClient client = httpClientModuleState().registerClient(clientBuilder.build());
             client.start();
             return client;
@@ -149,25 +152,80 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         @SuppressWarnings({"Duplicates", "WeakerAccess"})
         protected CloseableHttpClient createHttpClient() {
             HttpClientBuilder clientBuilder = HttpClients.custom()
+                    .setMaxConnPerRoute(getMaxConnectionsPerRoute())
+                    .setMaxConnTotal(getMaxConnectionsTotal())
                     .setDefaultRequestConfig(getRequestConfig())
                     .setDefaultConnectionConfig(getConnectionConfig())
                     .setDefaultSocketConfig(getSocketConfig())
                     .addInterceptorFirst(new LogbookHttpRequestInterceptor(getLogbook()))
-                    .addInterceptorLast(new LogbookHttpResponseInterceptor());
+                    .addInterceptorLast(new LogbookHttpResponseInterceptor())
+                    .setConnectionManager(createConnectionManager());
+            return httpClientModuleState().registerClient(clientBuilder.build());
+        }
+
+        private PoolingHttpClientConnectionManager createConnectionManager() {
+            HostnameVerifier hostnameVerifier = new DefaultHostnameVerifier(PublicSuffixMatcherLoader.getDefault());
+            SSLContext sslContext = null;
             if (isSsl()) {
                 try {
-                    if (disableSslHostNameVerification) {
-                        HostnameVerifier allowAll = (hostName, session) -> true;
-                        clientBuilder.setSSLHostnameVerifier(allowAll);
+                    sslContext = custom().loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray()).build();
+                    if (isDisableSslHostNameVerification()) {
+                        hostnameVerifier = ALLOW_ALL;
                     }
-                    clientBuilder.setSSLContext(custom()
-                            .loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray())
-                            .build());
                 } catch (Throwable throwable) {
                     throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
                 }
             }
-            return httpClientModuleState().registerClient(clientBuilder.build());
+
+            SSLConnectionSocketFactory sslSocketFactory = isNull(sslContext)
+                    ? new SSLConnectionSocketFactory(org.apache.http.ssl.SSLContexts.createDefault(), hostnameVerifier)
+                    : new SSLConnectionSocketFactory(sslContext, null, null, hostnameVerifier);
+
+            Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                    .register(HTTP_SCHEME, PlainConnectionSocketFactory.getSocketFactory())
+                    .register(HTTPS_SCHEME, sslSocketFactory)
+                    .build();
+            PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(registry);
+            manager.setDefaultSocketConfig(getSocketConfig());
+            manager.setDefaultConnectionConfig(getConnectionConfig());
+            manager.setMaxTotal(getMaxConnectionsTotal());
+            manager.setDefaultMaxPerRoute(getMaxConnectionsPerRoute());
+            manager.setValidateAfterInactivity(getValidateAfterInactivityMillis());
+            return manager;
+        }
+
+        private PoolingNHttpClientConnectionManager createAsyncConnectionManager() {
+            HostnameVerifier hostnameVerifier = new DefaultHostnameVerifier(PublicSuffixMatcherLoader.getDefault());
+            SSLContext sslContext = null;
+            if (isSsl()) {
+                try {
+                    sslContext = custom().loadKeyMaterial(loadKeyStore(), getSslKeyStorePassword().toCharArray()).build();
+                    if (isDisableSslHostNameVerification()) {
+                        hostnameVerifier = ALLOW_ALL;
+                    }
+                } catch (Throwable throwable) {
+                    throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
+                }
+            }
+
+            SSLIOSessionStrategy sslSessionStrategy = isNull(sslContext)
+                    ? new SSLIOSessionStrategy(SSLContexts.createDefault(), hostnameVerifier)
+                    : new SSLIOSessionStrategy(sslContext, null, null, hostnameVerifier);
+
+            Registry<SchemeIOSessionStrategy> registry = RegistryBuilder.<SchemeIOSessionStrategy>create()
+                    .register(HTTP_SCHEME, NoopIOSessionStrategy.INSTANCE)
+                    .register(HTTPS_SCHEME, sslSessionStrategy)
+                    .build();
+            PoolingNHttpClientConnectionManager manager = null;
+            try {
+                manager = new PoolingNHttpClientConnectionManager(new DefaultConnectingIOReactor(getIoReactorConfig()), registry);
+            } catch (Throwable throwable) {
+                throw new HttpClientException(HTTP_ASYNC_CONFIGURATION_FAILED, throwable);
+            }
+            manager.setDefaultConnectionConfig(getConnectionConfig());
+            manager.setMaxTotal(getMaxConnectionsTotal());
+            manager.setDefaultMaxPerRoute(getMaxConnectionsPerRoute());
+            return manager;
         }
 
         private KeyStore loadKeyStore() {

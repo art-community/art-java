@@ -54,7 +54,7 @@ public interface TarantoolModuleConfiguration extends ModuleConfiguration {
         private final long probeConnectionTimeoutMillis = DEFAULT_TARANTOOL_PROBE_CONNECTION_TIMEOUT;
         private final boolean enableTracing = false;
         private final TarantoolLocalConfiguration localConfiguration = TarantoolLocalConfiguration.builder().build();
-        private final TarantoolInitializationMode initializationMode = ON_MODULE_LOAD;
+        private final TarantoolInitializationMode initializationMode = BOOTSTRAP;
     }
 
     static TarantoolEntityFieldsMapping fieldMapping(String instanceId, String entityName) {

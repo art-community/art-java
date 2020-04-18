@@ -1,6 +1,10 @@
 package ru.art.grpc.client.communicator;
 
 import io.grpc.*;
+import io.grpc.internal.*;
+import io.grpc.util.*;
+import io.netty.resolver.*;
+import ru.art.grpc.client.interceptor.*;
 import static io.grpc.ManagedChannelBuilder.*;
 import static java.util.concurrent.TimeUnit.*;
 import static ru.art.core.context.Context.*;

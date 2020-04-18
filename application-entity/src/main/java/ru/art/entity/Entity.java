@@ -588,6 +588,27 @@ public class Entity implements Value {
                 .build();
     }
 
+    public Map<String, String> dump() {
+        if (isEmpty()) {
+            return emptyMap();
+        }
+        Map<String, String> dump = mapOf();
+        fields.forEach((key, value) -> {
+            if (isPrimitive(value)) {
+                dump.put(key, value.toString());
+                return;
+            }
+            if (isEntity(value)) {
+                asEntity(value).dump().forEach((innerKey, innerField) -> dump.put(key + DOT + innerKey, innerField));
+                return;
+            }
+            if (isCollection(value)) {
+                asCollection(value).dump().forEach((innerKey, innerField) -> dump.put(key + innerKey, innerField));
+            }
+        });
+        return dump;
+    }
+
     @Override
     public boolean isEmpty() {
         return CheckerForEmptiness.isEmpty(fields);

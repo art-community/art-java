@@ -17,7 +17,7 @@ Releases are available via Maven Central.
 Example:
 ```kotlin
 plugins {
-    id("io.github.art.project") version "1.0.112"
+    id("io.github.art.project") version "1.0.113"
 }
 
 art {
@@ -45,6 +45,8 @@ art {
 
 ## Bugs and Feedback
 For bugs, questions and discussions please use the [Github Issues](https://github.com/art-community/art/issues).
+
+Join us on Telegram: https://t.me/art_github
 
 ## Documentation
 

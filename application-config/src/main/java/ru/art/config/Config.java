@@ -29,6 +29,8 @@ import static com.fasterxml.jackson.databind.node.JsonNodeType.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
+import static java.util.Spliterator.*;
+import static java.util.Spliterators.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import static java.util.stream.StreamSupport.*;
@@ -189,6 +191,7 @@ public class Config {
         }
     }
 
+
     public List<Config> getConfigList(String path) {
         if (isEmpty(this)) return emptyList();
         if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
@@ -202,8 +205,8 @@ public class Config {
             case HOCON:
                 return asTypesafeConfig().getConfigList(path).stream().map(configObject -> new Config(configObject, configType)).collect(toList());
             case YAML:
-                return stream(((Iterable<Map.Entry<String, JsonNode>>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).fields()).spliterator(), false)
-                        .map(configObject -> new Config(configObject.getValue(), configType))
+                return stream(spliteratorUnknownSize(asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).iterator(), ORDERED), false)
+                        .map(configObject -> new Config(configObject, configType))
                         .collect(toList());
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
@@ -310,8 +313,8 @@ public class Config {
         }
     }
 
+
     public Set<String> getKeys(String path) {
-        Map<String, ?> config;
         switch (configType) {
             case PROPERTIES:
             case JSON:
@@ -365,9 +368,8 @@ public class Config {
         if (!hasPath(path)) {
             return new Properties();
         }
-        Properties additionalProperties = new Properties();
-        additionalProperties.putAll(getKeys(path).stream()
-                .collect(toMap(identity(), this::getString)));
-        return additionalProperties;
+        Properties properties = new Properties();
+        properties.putAll(getKeys(path).stream().collect(toMap(identity(), key -> getString(path + DOT + key))));
+        return properties;
     }
 }

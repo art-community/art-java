@@ -21,7 +21,7 @@ package ru.art.config.extensions.tarantool;
 public interface TarantoolConfigKeys {
     String TARANTOOL_SECTION_ID = "tarantool";
     String TARANTOOL_LOCAL_SECTION_ID = "tarantool.local";
-    String TARANTOOL_CONFIGURATIONS_SECTION_ID = "tarantool.configurations";
+    String TARANTOOL_INSTANCES_SECTION_ID = "tarantool.instances";
     String ENTITIES = "entities";
     String FIELDS = "fields";
     String CONNECTION_SECTION_ID = "connection";

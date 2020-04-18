@@ -25,10 +25,12 @@ import org.apache.http.impl.nio.client.*;
 import ru.art.entity.*;
 import ru.art.entity.interceptor.*;
 import ru.art.entity.mapper.*;
+import ru.art.http.client.constants.*;
 import ru.art.http.client.handler.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.client.model.*;
 import ru.art.http.constants.*;
+import static ru.art.http.client.constants.HttpClientModuleConstants.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -75,6 +77,8 @@ public interface HttpCommunicator {
     HttpCommunicator patch();
 
     HttpCommunicator options();
+
+    HttpCommunicator connectionClosingPolicy(ConnectionClosingPolicy policy);
 
     HttpCommunicator delete();
 
