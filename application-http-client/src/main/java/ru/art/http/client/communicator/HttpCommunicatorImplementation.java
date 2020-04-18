@@ -233,6 +233,12 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     }
 
     @Override
+    public HttpCommunicator enableKeepAlive() {
+        configuration.setEnableKeepAlive(true);
+        return this;
+    }
+
+    @Override
     public HttpCommunicator addRequestValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
         configuration.getRequestValueInterceptors().add(validator.notNullField(interceptor, "requestValueInterceptor"));
         return this;

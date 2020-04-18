@@ -75,6 +75,7 @@ class SoapCommunicationConfiguration {
     private List<ValueInterceptor<XmlEntity, XmlEntity>> responseValueInterceptors = linkedListOf();
     private OperationIdSource operationIdSource = REQUEST;
     private ConnectionClosingPolicy connectionClosingPolicy = CLOSE_AFTER_RESPONSE;
+    private boolean enableKeepAlive;
 
     void validateRequiredFields() {
         boolean urlIsEmpty = isEmpty(url);

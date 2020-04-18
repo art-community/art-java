@@ -68,8 +68,14 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     GrpcCommunicatorImplementation(GrpcCommunicationTargetConfiguration targetConfiguration) {
         configuration.setPath(validator.notEmptyField(targetConfiguration.path(), "path"));
         deadlineTimeout(targetConfiguration.timeout());
+        keepAliveTimeNanos(targetConfiguration.keepAliveTimeNanos());
+        keepAliveTimeNanos(targetConfiguration.keepAliveTimeOutNanos());
+        keepAliveWithoutCalls(targetConfiguration.keepAliveWithoutCalls());
         if (targetConfiguration.secured()) {
             secured();
+        }
+        if (targetConfiguration.waitForReady()) {
+            waitForReady();
         }
         if (isNotEmpty(targetConfiguration.url())) {
             configuration.setUrl(targetConfiguration.url());
@@ -139,6 +145,24 @@ public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCom
     public GrpcCommunicator secured() {
         configuration.setUseSecuredTransport(true);
         return this;
+    }
+
+    @Override
+    public GrpcCommunicator keepAliveTimeNanos(long time) {
+        configuration.setKeepAliveTimeNanos(time);
+        return this;
+    }
+
+    @Override
+    public GrpcCommunicator keepAliveTimeOutNanos(long timeOut) {
+        configuration.setKeepAliveTimeNanos(timeOut);
+        return this;
+    }
+
+    @Override
+    public GrpcCommunicator keepAliveWithoutCalls(boolean keepAliveWithoutCalls) {
+        configuration.setKeepAliveWithoutCalls(keepAliveWithoutCalls);
+        return null;
     }
 
     @Override

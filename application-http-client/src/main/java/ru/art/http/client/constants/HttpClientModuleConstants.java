@@ -29,6 +29,8 @@ public interface HttpClientModuleConstants {
     int DEFAULT_MAX_CONNECTIONS_PER_ROUTE = 2;
     int DEFAULT_MAX_CONNECTIONS_TOTAL = 20;
     int DEFAULT_VALIDATE_AFTER_INACTIVITY_MILLIS = 4000;
+    String HTTP_HEADER_CONNECTION_CLOSE = "Close";
+    String HTTP_HEADER_CONNECTION_KEEP_ALIVE = "Keep-Alive";
 
     enum ConnectionClosingPolicy {
         CLOSE_AFTER_RESPONSE,

@@ -196,6 +196,12 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
     }
 
     @Override
+    public SoapCommunicator enableKeepAlive() {
+        configuration.setEnableKeepAlive(true);
+        return this;
+    }
+
+    @Override
     public <RequestType, ResponseType> Optional<ResponseType> execute(RequestType request) {
         request = validator.notNullField(request, "request");
         validator.validate();
