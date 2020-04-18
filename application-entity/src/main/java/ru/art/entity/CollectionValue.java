@@ -2358,6 +2358,30 @@ public class CollectionValue<T> implements Value {
         return copyOf(values, i);
     }
 
+    public Map<String, String> dump() {
+        if (isEmpty()) {
+            return emptyMap();
+        }
+        Map<String, String> dump = mapOf();
+        List<Value> valueList = getValueList();
+        for (int i = 0; i < valueList.size(); i++) {
+            Value value = valueList.get(i);
+            if (isPrimitive(value)) {
+                dump.put(OPENING_SQUARE_BRACES + i + CLOSING_SQUARE_BRACES, value.toString());
+                continue;
+            }
+            if (isEntity(value)) {
+                int index = i;
+                asEntity(value).dump().forEach((innerKey, innerField) -> dump.put(OPENING_SQUARE_BRACES + index + CLOSING_SQUARE_BRACES + DOT + innerKey, innerField));
+                continue;
+            }
+            if (isCollection(value)) {
+                int index = i;
+                asCollection(value).dump().forEach((innerKey, innerField) -> dump.put(OPENING_SQUARE_BRACES + index + CLOSING_SQUARE_BRACES + innerKey, innerField));
+            }
+        }
+        return dump;
+    }
 
     @Override
     public String toString() {

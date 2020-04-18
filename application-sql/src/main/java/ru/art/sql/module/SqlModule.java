@@ -22,11 +22,12 @@ import com.zaxxer.hikari.*;
 import io.dropwizard.db.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
+import org.apache.tomcat.jdbc.pool.*;
+import ru.art.core.caster.*;
 import ru.art.core.module.Module;
 import ru.art.sql.configuration.*;
 import ru.art.sql.exception.*;
 import ru.art.sql.state.*;
-import static java.lang.Class.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import static ru.art.core.context.Context.*;
@@ -38,7 +39,7 @@ import static ru.art.sql.configuration.SqlModuleConfiguration.*;
 import static ru.art.sql.constants.ConnectionPoolInitializationMode.*;
 import static ru.art.sql.constants.SqlModuleConstants.LoggingMessages.*;
 import static ru.art.sql.constants.SqlModuleConstants.*;
-import javax.sql.*;
+import javax.sql.DataSource;
 import java.util.function.*;
 
 @Getter
@@ -66,48 +67,58 @@ public class SqlModule implements Module<SqlModuleConfiguration, SqlModuleState>
 
     @Override
     public void onLoad() {
-        DataSource dataSource = null;
+        sqlModule().getDbConfigurations().values().forEach(this::initializeConnectionPool);
+    }
+
+    @Override
+    public void onUnload() {
+        sqlModule().getDbConfigurations().values().forEach(this::closeConnectionPool);
+    }
+
+    private void initializeConnectionPool(SqlDbConfiguration configuration) {
+        DataSource dataSource;
         try {
-            forName(sqlModule().getDbProvider().getDriverClassName());
-            switch (sqlModule().getConnectionPoolType()) {
+            switch (configuration.getConnectionPoolType()) {
                 case HIKARI:
-                    HikariDataSource hikariDataSource = new HikariDataSource(sqlModule().getHikariPoolConfig());
-                    dataSource = hikariDataSource;
-                    sqlModuleState().hikariDataSource(hikariDataSource);
-                    if (sqlModule().getConnectionPoolInitializationMode() == ON_MODULE_LOAD) {
-                        hikariDataSource.getConnection();
-                        getLogger().info(format(STARING_POOL, hikariDataSource));
+                    dataSource = new HikariDataSource(configuration.getHikariPoolConfig());
+                    sqlModuleState().hikariDataSource(dataSource);
+                    if (sqlModule().getInitializationMode() == BOOTSTRAP) {
+                        dataSource.getConnection();
+                        getLogger().info(format(STARING_POOL, dataSource));
                     }
                     break;
-                case TOMCAT:
-                    ManagedPooledDataSource tomcatDataSource = new ManagedPooledDataSource(sqlModule().getTomcatPoolConfig(), metricsModule().getDropwizardMetricRegistry());
-                    sqlModuleState().tomcatDataSource(tomcatDataSource);
-                    dataSource = tomcatDataSource;
-                    if (sqlModule().getConnectionPoolInitializationMode() == ON_MODULE_LOAD) {
-                        tomcatDataSource.start();
-                        getLogger().info(format(STARING_POOL, tomcatDataSource));
+                default:
+                    dataSource = configuration.isEnableMetrics()
+                            ? new ManagedPooledDataSource(configuration.getTomcatPoolConfig(), metricsModule().getDropwizardMetricRegistry())
+                            : new org.apache.tomcat.jdbc.pool.DataSource(configuration.getTomcatPoolConfig());
+                    sqlModuleState().tomcatDataSource(dataSource);
+                    if (sqlModule().getInitializationMode() == BOOTSTRAP) {
+                        if (configuration.isEnableMetrics()) {
+                            Caster.<ManagedPooledDataSource>cast(dataSource).start();
+                        }
+                        dataSource.getConnection();
+                        getLogger().info(format(STARING_POOL, dataSource));
                     }
                     break;
             }
-            sqlModule().getJooqConfiguration().set(dataSource).set(sqlModule().getJooqSettings());
+            configuration.getJooqConfiguration().set(dataSource);
         } catch (Exception throwable) {
             throw new SqlModuleException(throwable);
         }
     }
 
-    @Override
-    public void onUnload() {
+    private void closeConnectionPool(SqlDbConfiguration configuration) {
         try {
-            switch (sqlModule().getConnectionPoolType()) {
+            switch (configuration.getConnectionPoolType()) {
                 case HIKARI:
-                    doIfNotNull(sqlModuleState().hikariDataSource(), (Consumer<HikariDataSource>) pool -> ignoreException(() -> {
-                        pool.close();
+                    doIfNotNull(sqlModuleState().hikariDataSource(), (Consumer<DataSource>) pool -> ignoreException(() -> {
+                        Caster.<HikariDataSource>cast(pool).close();
                         getLogger().info(format(CLOSING_POOL, pool));
                     }, getLogger()::error));
                     break;
                 case TOMCAT:
-                    doIfNotNull(sqlModuleState().tomcatDataSource(), (Consumer<ManagedPooledDataSource>) pool -> ignoreException(() -> {
-                        pool.close();
+                    doIfNotNull(sqlModuleState().tomcatDataSource(), (Consumer<DataSource>) pool -> ignoreException(() -> {
+                        Caster.<DataSourceProxy>cast(pool).close();
                         getLogger().info(format(CLOSING_POOL, pool));
                     }, getLogger()::error));
                     break;

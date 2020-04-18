@@ -101,7 +101,7 @@ public interface GrpcClientModuleConfiguration extends ModuleConfiguration {
         private boolean waitForReady = false;
 
         private List<ClientInterceptor> initializeInterceptors() {
-            return linkedListOf(new GrpcClientTracingInterceptor(), new GrpcClientLoggingInterceptor());
+            return linkedListOf(new GrpcClientTracingIdentifiersInterceptor(), new GrpcClientLoggingInterceptor());
         }
 
         private List<ValueInterceptor<Entity, Entity>> initializeValueInterceptors() {

@@ -35,4 +35,5 @@ configurations {
 dependencies {
     annotationProcessor(lombok().inGradleNotation())
     testAnnotationProcessor(lombok().inGradleNotation())
+    testImplementation("org.hsqldb", "hsqldb", "2+")
 }
