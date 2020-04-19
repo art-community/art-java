@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import ru.art.gradle.constants.lombok
 
 /*
@@ -36,4 +38,11 @@ dependencies {
     annotationProcessor(lombok().inGradleNotation())
     testAnnotationProcessor(lombok().inGradleNotation())
     testImplementation("org.hsqldb", "hsqldb", "2+")
+}
+
+tasks.withType<Test> {
+    testLogging {
+        events = setOf(PASSED, FAILED, SKIPPED)
+        exceptionFormat = FULL
+    }
 }
