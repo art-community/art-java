@@ -96,6 +96,8 @@ public interface HttpCommunicator {
 
     HttpCommunicator requestEncoding(String encoding);
 
+    HttpCommunicator enableKeepAlive();
+
     <RequestType, ResponseType> Optional<ResponseType> execute(RequestType request);
 
     <ResponseType> Optional<ResponseType> execute();
@@ -107,6 +109,7 @@ public interface HttpCommunicator {
     void closeClient();
 
     HttpAsynchronousCommunicator asynchronous();
+
 
     interface HttpAsynchronousCommunicator {
         void closeAsynchronousClient();

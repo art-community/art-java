@@ -39,6 +39,9 @@ class SoapCommunicationExecutor {
         configuration.getResponseInterceptors().forEach(httpCommunicator::addResponseInterceptor);
         configuration.getRequestValueInterceptors().forEach(interceptor -> httpCommunicator.addRequestValueInterceptor(cast(interceptor)));
         configuration.getResponseValueInterceptors().forEach(interceptor -> httpCommunicator.addResponseValueInterceptor(cast(interceptor)));
+        if (configuration.isEnableKeepAlive()) {
+            httpCommunicator.enableKeepAlive();
+        }
         httpCommunicator
                 .connectionClosingPolicy(configuration.getConnectionClosingPolicy())
                 .version(configuration.getHttpVersion())
@@ -68,6 +71,9 @@ class SoapCommunicationExecutor {
         configuration.getRequestInterceptors().forEach(httpCommunicator::addResponseInterceptor);
         configuration.getRequestValueInterceptors().forEach(interceptor -> httpCommunicator.addRequestValueInterceptor(cast(interceptor)));
         configuration.getResponseValueInterceptors().forEach(interceptor -> httpCommunicator.addResponseValueInterceptor(cast(interceptor)));
+        if (configuration.isEnableKeepAlive()) {
+            httpCommunicator.enableKeepAlive();
+        }
         httpCommunicator
                 .connectionClosingPolicy(configuration.getConnectionClosingPolicy())
                 .version(configuration.getHttpVersion())

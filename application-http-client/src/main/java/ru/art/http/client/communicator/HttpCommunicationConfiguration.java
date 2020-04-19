@@ -56,7 +56,6 @@ class HttpCommunicationConfiguration {
     private HttpCommunicationCancellationHandler<?> cancellationHandler;
     private boolean chunkedBody;
     private boolean gzipCompressedBody;
-    private ConnectionClosingPolicy connectionClosingPolicy = CLOSE_AFTER_RESPONSE;
     private RequestConfig requestConfig = httpClientModule().getRequestConfig();
     private HttpVersion httpProtocolVersion = httpClientModule().getHttpVersion();
     private MimeToContentTypeMapper producesMimeType = httpClientModule().getProducesMimeTypeMapper();
@@ -68,4 +67,6 @@ class HttpCommunicationConfiguration {
     private CloseableHttpAsyncClient asynchronousClient;
     private List<ValueInterceptor<Value, Value>> requestValueInterceptors = linkedListOf(httpClientModule().getRequestValueInterceptors());
     private List<ValueInterceptor<Value, Value>> responseValueInterceptors = linkedListOf(httpClientModule().getResponseValueInterceptors());
+    private ConnectionClosingPolicy connectionClosingPolicy = CLOSE_AFTER_RESPONSE;
+    private boolean enableKeepAlive;
 }

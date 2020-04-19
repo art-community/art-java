@@ -64,6 +64,12 @@ public interface GrpcCommunicator {
 
     GrpcCommunicator secured();
 
+    GrpcCommunicator keepAliveTimeNanos(long time);
+
+    GrpcCommunicator keepAliveTimeOutNanos(long timeOut);
+
+    GrpcCommunicator keepAliveWithoutCalls(boolean keepAliveWithoutCalls);
+
     void shutdownChannel();
 
     GrpcAsynchronousCommunicator asynchronous();

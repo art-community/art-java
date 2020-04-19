@@ -53,7 +53,10 @@ import static ru.art.http.client.body.descriptor.HttpBodyDescriptor.*;
 import static ru.art.http.client.builder.HttpUriBuilder.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
 import static ru.art.http.client.constants.HttpClientModuleConstants.ConnectionClosingPolicy.CLOSE_AFTER_RESPONSE;
+import static ru.art.http.client.constants.HttpClientModuleConstants.HTTP_HEADER_CONNECTION_CLOSE;
+import static ru.art.http.client.constants.HttpClientModuleConstants.HTTP_HEADER_CONNECTION_KEEP_ALIVE;
 import static ru.art.http.client.module.HttpClientModule.*;
+import static ru.art.http.constants.HttpHeaders.CONNECTION;
 import static ru.art.http.constants.HttpHeaders.KEEP_ALIVE;
 import static ru.art.logging.LoggingModule.*;
 import javax.annotation.*;
@@ -159,6 +162,7 @@ class HttpCommunicationExecutor {
                 .setCharset(configuration.getRequestContentCharset())
                 .setVersion(configuration.getHttpProtocolVersion());
         configuration.getHeaders().forEach(requestBuilder::addHeader);
+        requestBuilder.addHeader(CONNECTION, configuration.isEnableKeepAlive() ? HTTP_HEADER_CONNECTION_KEEP_ALIVE : HTTP_HEADER_CONNECTION_CLOSE);
         if (isNull(request)) {
             return requestBuilder.build();
         }

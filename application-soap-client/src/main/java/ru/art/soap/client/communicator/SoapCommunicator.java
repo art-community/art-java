@@ -85,6 +85,8 @@ public interface SoapCommunicator {
 
     SoapCommunicator version(HttpVersion httpVersion);
 
+    SoapCommunicator enableKeepAlive();
+
     <RequestType, ResponseType> Optional<ResponseType> execute(RequestType request);
 
     SoapAsynchronousCommunicator asynchronous();
