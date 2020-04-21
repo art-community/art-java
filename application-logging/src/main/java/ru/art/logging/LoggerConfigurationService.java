@@ -93,7 +93,11 @@ public interface LoggerConfigurationService {
         return appenderRefs.stream()
                 .map(AppenderRef::getRef)
                 .filter(Objects::nonNull)
-                .map(ref -> ref.equalsIgnoreCase(SocketAppender.class.getSimpleName()) ? SOCKET : CONSOLE)
+                .map(ref -> ref.equalsIgnoreCase(SocketAppender.class.getSimpleName())
+                        ? SOCKET
+                        : ref.equalsIgnoreCase(FileAppender.class.getSimpleName())
+                        ? FILE
+                        : CONSOLE)
                 .collect(toSet());
     }
 
