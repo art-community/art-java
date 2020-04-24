@@ -185,8 +185,8 @@ public final class CollectionGeneratorOperations {
         Type valueType = parameterizedType.getActualTypeArguments()[1];
         String mapGetter = calculateMapGetter(keyType.getTypeName(), valueType.getTypeName());
 
-        Class keyClass = (Class) keyType;
-        Class valueClass = (Class) valueType;
+        Class<?> keyClass = (Class<?>) keyType;
+        Class<?> valueClass = (Class<?>) valueType;
 
         switch (mapGetter) {
             case GET_MAP_PRIMITIVE_KEY:
@@ -444,7 +444,7 @@ public final class CollectionGeneratorOperations {
             case CLASS_FLOAT:
                 return FLOAT_TO_MODEL;
         }
-        String className = ((Class) type).getSimpleName();
+        String className = ((Class<?>) type).getSimpleName();
         return className + MAPPER + DOT + TO_MODEL + className;
     }
 
@@ -472,7 +472,7 @@ public final class CollectionGeneratorOperations {
             case CLASS_FLOAT:
                 return FLOAT_FROM_MODEL;
         }
-        String className = ((Class) type).getSimpleName();
+        String className = ((Class<?>) type).getSimpleName();
         return className + MAPPER + DOT + FROM_MODEL + className;
     }
 }

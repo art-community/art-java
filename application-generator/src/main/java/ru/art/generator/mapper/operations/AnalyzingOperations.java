@@ -58,7 +58,7 @@ public final class AnalyzingOperations {
      * @return Class instance.
      * @throws DefinitionException is thrown when unable to define class by url.
      */
-    public static Class getClass(GenerationPackageModel generationInfo, String fileName) throws DefinitionException {
+    public static Class<?> getClass(GenerationPackageModel generationInfo, String fileName) throws DefinitionException {
         URL[] urls = new URL[1];
         File file = new File(generationInfo.getJarPathToMain());
         try {
