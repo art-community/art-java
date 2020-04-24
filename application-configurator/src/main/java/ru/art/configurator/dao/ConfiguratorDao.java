@@ -24,7 +24,9 @@ import ru.art.entity.*;
 import ru.art.rocks.db.dao.*;
 import static java.util.stream.Collectors.*;
 import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
+import static ru.art.configurator.dao.ConfigurationSaver.saveProfileModulesConfiguration;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.entity.Value.isPrimitive;
 import static ru.art.rocks.db.dao.RocksDbCollectionDao.*;
 import static ru.art.rocks.db.dao.RocksDbPrimitiveDao.*;
 import static ru.art.rocks.db.dao.RocksDbValueDao.*;
@@ -33,8 +35,8 @@ import java.util.*;
 public interface ConfiguratorDao {
     static void saveConfig(Configuration inputConfiguration) {
         Entity configuration = inputConfiguration.getConfiguration();
-        Set<String> profiles = configuration.getFieldKeys();
-        profiles.forEach(profileId -> ConfigurationSaver.saveProfileModulesConfiguration(profileId, configuration.getEntity(profileId)));
+        Set<String> profiles = configuration.getFieldKeys().stream().filter(Value::isPrimitive).map(Object::toString).collect(toSet());
+        profiles.forEach(profileId -> saveProfileModulesConfiguration(profileId, configuration.getEntity(profileId)));
     }
 
     static void saveApplicationConfiguration(Entity applicationConfig) {
