@@ -23,6 +23,7 @@ import ru.art.entity.*;
 import ru.art.entity.Entity.*;
 import ru.art.rocks.db.dao.*;
 import static java.lang.String.*;
+import static java.util.stream.Collectors.toSet;
 import static ru.art.configurator.constants.ConfiguratorDbConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.entity.constants.ValueType.*;
@@ -34,7 +35,7 @@ public class ConfigurationSaver {
     public static void saveProfileModulesConfiguration(String profileId, Entity profileConfigEntity) {
         RocksDbPrimitiveDao.add(PROFILE_KEYS, profileId);
         EntityBuilder profileConfigBuilder = Entity.entityBuilder();
-        Set<String> profileFields = profileConfigEntity.getFieldKeys();
+        Set<String> profileFields = profileConfigEntity.getFieldKeys().stream().filter(Value::isPrimitive).map(Object::toString).collect(toSet());
         for (String profileField : profileFields) {
             Value profileFieldConfig = profileConfigEntity.getValue(profileField);
             if (profileFieldConfig.getType().equals(ENTITY)) {
