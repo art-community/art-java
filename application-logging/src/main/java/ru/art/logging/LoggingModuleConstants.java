@@ -30,6 +30,7 @@ public interface LoggingModuleConstants {
 
     enum LoggingMode {
         CONSOLE,
+        FILE,
         SOCKET
     }
 
