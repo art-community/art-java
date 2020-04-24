@@ -18,7 +18,6 @@
 
 package ru.art.tarantool.dao;
 
-import org.tarantool.*;
 import ru.art.entity.*;
 import ru.art.tarantool.exception.*;
 import ru.art.tarantool.model.*;
@@ -31,8 +30,9 @@ import static java.util.stream.Collectors.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.entity.Value.*;
 import static ru.art.entity.Entity.*;
+import static ru.art.entity.PrimitivesFactory.*;
+import static ru.art.entity.Value.*;
 import static ru.art.entity.tuple.PlainTupleReader.*;
 import static ru.art.entity.tuple.PlainTupleWriter.*;
 import static ru.art.entity.tuple.schema.ValueSchema.*;
@@ -41,7 +41,6 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessa
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.*;
-import static ru.art.tarantool.module.TarantoolModule.*;
 import static ru.art.tarantool.service.TarantoolScriptService.*;
 import java.util.*;
 
@@ -55,7 +54,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         if (isNull(entity)) {
             throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
         }
-        if (!entity.getFieldNames().contains(ID_FIELD) && idCalculationMode == MANUAL) {
+        if (!entity.getFieldKeys().contains(ID_FIELD) && idCalculationMode == MANUAL) {
             throw new TarantoolDaoException(format(ENTITY_WITHOUT_ID_FILED, spaceName));
         }
         evaluateValueScript(clusterIds, spaceName);
@@ -82,15 +81,6 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         return put(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, collectionValue).build());
     }
 
-    public Entity put(String spaceName, Long id, StringParametersMap stringParameters) {
-        return put(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, stringParameters).build());
-    }
-
-    public Entity put(String spaceName, Long id, MapValue mapValue) {
-        return put(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, mapValue).build());
-    }
-
-
     public Entity put(String spaceName, Primitive primitive) {
         return put(spaceName, entityBuilder().valueField(VALUE, primitive).build());
     }
@@ -98,15 +88,6 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     public Entity put(String spaceName, CollectionValue<?> collectionValue) {
         return put(spaceName, entityBuilder().valueField(VALUE, collectionValue).build());
     }
-
-    public Entity put(String spaceName, StringParametersMap stringParameters) {
-        return put(spaceName, entityBuilder().valueField(VALUE, stringParameters).build());
-    }
-
-    public Entity put(String spaceName, MapValue mapValue) {
-        return put(spaceName, entityBuilder().valueField(VALUE, mapValue).build());
-    }
-
 
     public Optional<Entity> get(String spaceName, Collection<?> keys) {
         evaluateValueScript(clusterIds, spaceName);
@@ -141,25 +122,6 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     public Optional<CollectionValue<?>> getCollectionValue(String spaceName) {
         return getCollectionValue(spaceName, 1);
     }
-
-
-    public Optional<StringParametersMap> getStringParameters(String spaceName, long id) {
-        return get(spaceName, id).map(value -> asStringParametersMap(asEntity(value).getValue(VALUE)));
-    }
-
-    public Optional<StringParametersMap> getStringParameters(String spaceName) {
-        return getStringParameters(spaceName, 1);
-    }
-
-
-    public Optional<MapValue> getMapValue(String spaceName, long id) {
-        return get(spaceName, id).map(value -> asMap(asEntity(value).getValue(VALUE)));
-    }
-
-    public Optional<MapValue> getMapValue(String spaceName) {
-        return getMapValue(spaceName, 1);
-    }
-
 
     public List<Entity> select(String spaceName, Collection<?> keys) {
         evaluateValueScript(clusterIds, spaceName);
@@ -211,38 +173,11 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         return selectCollections(spaceName, emptySet());
     }
 
-
-    public List<StringParametersMap> selectStringParameters(String spaceName, Collection<?> keys) {
-        return select(spaceName, keys).stream().map(entity -> asStringParametersMap(entity.getValue(VALUE))).collect(toList());
-    }
-
-    public List<StringParametersMap> selectStringParameters(String spaceName, long id) {
-        return selectStringParameters(spaceName, setOf(id));
-    }
-
-    public List<StringParametersMap> selectAllStringParameters(String spaceName) {
-        return selectStringParameters(spaceName, emptySet());
-    }
-
-
-    public List<MapValue> selectMaps(String spaceName, Collection<?> keys) {
-        return select(spaceName, keys).stream().map(entity -> asMap(entity.getValue(VALUE))).collect(toList());
-    }
-
-    public List<MapValue> selectMaps(String spaceName, long id) {
-        return selectMaps(spaceName, setOf(id));
-    }
-
-    public List<MapValue> selectAllMaps(String spaceName) {
-        return selectMaps(spaceName, emptySet());
-    }
-
-
     public Entity insert(String spaceName, Entity entity) {
         if (isNull(entity)) {
             throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
         }
-        if (!entity.getFieldNames().contains(ID_FIELD) && idCalculationMode == MANUAL) {
+        if (!entity.getFieldKeys().contains(stringPrimitive(ID_FIELD)) && idCalculationMode == MANUAL) {
             throw new TarantoolDaoException(format(ENTITY_WITHOUT_ID_FILED, spaceName));
         }
         evaluateValueScript(clusterIds, spaceName);
@@ -269,15 +204,6 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         return insert(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, collectionValue).build());
     }
 
-    public Entity insert(String spaceName, Long id, StringParametersMap stringParameters) {
-        return insert(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, stringParameters).build());
-    }
-
-    public Entity insert(String spaceName, Long id, MapValue mapValue) {
-        return insert(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, mapValue).build());
-    }
-
-
     public Entity insert(String spaceName, Primitive primitive) {
         return put(spaceName, entityBuilder().valueField(VALUE, primitive).build());
     }
@@ -285,15 +211,6 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     public Entity insert(String spaceName, CollectionValue<?> collectionValue) {
         return put(spaceName, entityBuilder().valueField(VALUE, collectionValue).build());
     }
-
-    public Entity insert(String spaceName, StringParametersMap stringParameters) {
-        return put(spaceName, entityBuilder().valueField(VALUE, stringParameters).build());
-    }
-
-    public Entity insert(String spaceName, MapValue mapValue) {
-        return put(spaceName, entityBuilder().valueField(VALUE, mapValue).build());
-    }
-
 
     public Optional<Entity> delete(String spaceName, Collection<?> keys) {
         evaluateValueScript(clusterIds, spaceName);
@@ -386,7 +303,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         if (isNull(defaultEntity)) {
             throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
         }
-        if (!defaultEntity.getFieldNames().contains(ID_FIELD) && idCalculationMode == MANUAL) {
+        if (!defaultEntity.getFieldKeys().contains(ID_FIELD) && idCalculationMode == MANUAL) {
             throw new TarantoolDaoException(format(ENTITY_WITHOUT_ID_FILED, spaceName));
         }
         evaluateValueScript(clusterIds, spaceName);

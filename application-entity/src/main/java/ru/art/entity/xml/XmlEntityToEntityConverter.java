@@ -92,7 +92,10 @@ public final class XmlEntityToEntityConverter {
             return entityBuilder().build();
         }
         return entityBuilder()
-                .stringParametersField(xmlEntity.getTag(), StringParametersMap.builder().parameters(xmlEntity.getAttributes()).build())
+                .mapField(xmlEntity.getTag(), xmlEntity.getAttributes()
+                        .entrySet()
+                        .stream()
+                        .collect(toMap(entry -> stringPrimitive(entry.getKey()), entry -> stringPrimitive(entry.getValue()))))
                 .build();
     }
 }

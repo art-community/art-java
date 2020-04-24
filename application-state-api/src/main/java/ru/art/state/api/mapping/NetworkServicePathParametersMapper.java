@@ -23,5 +23,5 @@ import ru.art.state.api.model.*;
 import static ru.art.state.api.constants.StateApiConstants.NetworkServiceConstants.PathParameters.*;
 
 public interface NetworkServicePathParametersMapper {
-    StringParametersMapToModelMapper<ClusterProfileRequest> toClusterProfileRequest = value -> ClusterProfileRequest.builder().profile(value.getParameter(PROFILE)).build();
+    EntityToModelMapper<ClusterProfileRequest> toClusterProfileRequest = value -> ClusterProfileRequest.builder().profile(value.getString(PROFILE)).build();
 }

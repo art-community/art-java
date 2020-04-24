@@ -29,9 +29,7 @@ import static ru.art.entity.constants.ValueType.CollectionElementsType.ENTITY;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.FLOAT;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.INT;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.LONG;
-import static ru.art.entity.constants.ValueType.CollectionElementsType.MAP;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING;
-import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING_PARAMETERS_MAP;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.*;
 import java.util.*;
 
@@ -123,17 +121,6 @@ public class CollectionValuesFactory {
         if (isNull(value)) return new CollectionValue<>();
         return new CollectionValue<>(COLLECTION, value);
     }
-
-    public static <T extends StringParametersMap> CollectionValue<T> stringParametersCollection(Collection<T> value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(STRING_PARAMETERS_MAP, value);
-    }
-
-    public static <T extends MapValue> CollectionValue<T> mapCollection(Collection<T> value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(MAP, value);
-    }
-
 
     public static CollectionValue<?> emptyCollection() {
         return new CollectionValue<>();

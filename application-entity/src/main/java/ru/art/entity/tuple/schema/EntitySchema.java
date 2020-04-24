@@ -33,6 +33,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.factory.CollectionsFactory.dynamicArrayOf;
+import static ru.art.entity.Value.isPrimitive;
 import static ru.art.entity.Value.isPrimitiveType;
 import static ru.art.entity.constants.ValueMappingExceptionMessages.VALUE_TYPE_IS_NULL;
 import static ru.art.entity.constants.ValueType.ENTITY;
@@ -43,12 +44,13 @@ public class EntitySchema extends ValueSchema {
 
     EntitySchema(Entity entity) {
         super(ENTITY);
-        Set<? extends Map.Entry<String, ? extends Value>> fields = entity.getFields().entrySet();
-        for (Map.Entry<String, ? extends Value> entry : fields) {
-            String key = entry.getKey();
+        Set<? extends Map.Entry<? extends Value, ? extends Value>> fields = entity.getFields().entrySet();
+        for (Map.Entry<? extends Value, ? extends Value> entry : fields) {
+            Value key = entry.getKey();
+            if (!isPrimitive(key)) continue;;
             Value value = entry.getValue();
             if (isNull(value)) continue;
-            fieldsSchema.add(new EntityFieldSchema(value.getType(), key, fromValue(value)));
+            fieldsSchema.add(new EntityFieldSchema(value.getType(), key.toString(), fromValue(value)));
         }
     }
 
@@ -105,10 +107,6 @@ public class EntitySchema extends ValueSchema {
                     return new EntityFieldSchema(type, name, EntitySchema.fromTuple((List<?>) tuple.get(2)));
                 case COLLECTION:
                     return new EntityFieldSchema(type, name, CollectionValueSchema.fromTuple((List<?>) tuple.get(2)));
-                case MAP:
-                    return new EntityFieldSchema(type, name, MapValueSchema.fromTuple((List<?>) tuple.get(2)));
-                case STRING_PARAMETERS_MAP:
-                    return new EntityFieldSchema(type, name, StringParametersSchema.fromTuple((List<?>) tuple.get(2)));
             }
             throw new ValueMappingException(VALUE_TYPE_IS_NULL);
         }

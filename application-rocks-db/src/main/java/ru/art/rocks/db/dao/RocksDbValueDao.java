@@ -132,7 +132,8 @@ public interface RocksDbValueDao {
     static void put(String entityKey, Entity entity) {
         if (isEmpty(entityKey)) return;
         if (isEmpty(entity)) return;
-        for (Entry<String, ? extends Value> entry : entity.getFields().entrySet()) {
+        for (Entry<? extends Value, ? extends Value> entry : entity.getFields().entrySet()) {
+            if (!isPrimitive(entry.getKey())) continue;
             put(entityKey + ROCKS_DB_KEY_DELIMITER + entry.getKey(), entry.getValue());
         }
     }

@@ -52,9 +52,7 @@ import static ru.art.entity.constants.ValueType.CollectionElementsType.ENTITY;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.FLOAT;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.INT;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.LONG;
-import static ru.art.entity.constants.ValueType.CollectionElementsType.MAP;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING;
-import static ru.art.entity.constants.ValueType.CollectionElementsType.STRING_PARAMETERS_MAP;
 import static ru.art.entity.constants.ValueType.CollectionElementsType.*;
 import java.util.*;
 
@@ -276,20 +274,8 @@ public class CollectionValue<T> implements Value {
                 return cast(getEntityList());
             case COLLECTION:
                 return cast(getCollectionsList());
-            case MAP:
-                return cast(getMapValueList());
-            case STRING_PARAMETERS_MAP:
-                return cast(getStringParametersList());
             case VALUE:
                 return cast(getList());
-        }
-        return cast(getList());
-    }
-
-    public List<MapValue> getMapValueList() {
-        if (isEmpty()) return emptyList();
-        if (elementsType != MAP && elementsType != VALUE) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, MAP.toString(), elementsType.toString()));
         }
         return cast(getList());
     }
@@ -298,14 +284,6 @@ public class CollectionValue<T> implements Value {
         if (isEmpty()) return emptyList();
         if (elementsType != CollectionElementsType.COLLECTION && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, COLLECTION.toString(), elementsType.toString()));
-        }
-        return cast(getList());
-    }
-
-    public List<StringParametersMap> getStringParametersList() {
-        if (isEmpty()) return emptyList();
-        if (elementsType != STRING_PARAMETERS_MAP && elementsType != VALUE) {
-            throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, STRING_PARAMETERS_MAP.toString(), elementsType.toString()));
         }
         return cast(getList());
     }
@@ -871,20 +849,8 @@ public class CollectionValue<T> implements Value {
                 return cast(getEntitySet());
             case COLLECTION:
                 return cast(getCollectionsSet());
-            case MAP:
-                return cast(getMapValueSet());
-            case STRING_PARAMETERS_MAP:
-                return cast(getStringParametersSet());
             case VALUE:
                 return cast(getSet());
-        }
-        return cast(getSet());
-    }
-
-    public Set<MapValue> getMapValueSet() {
-        if (isEmpty()) return emptySet();
-        if (elementsType != MAP && elementsType != VALUE) {
-            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, MAP.toString(), elementsType.toString()));
         }
         return cast(getSet());
     }
@@ -893,14 +859,6 @@ public class CollectionValue<T> implements Value {
         if (isEmpty()) return emptySet();
         if (elementsType != CollectionElementsType.COLLECTION && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, COLLECTION.toString(), elementsType.toString()));
-        }
-        return cast(getSet());
-    }
-
-    public Set<StringParametersMap> getStringParametersSet() {
-        if (isEmpty()) return emptySet();
-        if (elementsType != STRING_PARAMETERS_MAP && elementsType != VALUE) {
-            throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, STRING_PARAMETERS_MAP.toString(), elementsType.toString()));
         }
         return cast(getSet());
     }
@@ -1469,20 +1427,8 @@ public class CollectionValue<T> implements Value {
                 return cast(getEntityQueue());
             case COLLECTION:
                 return cast(getCollectionsQueue());
-            case MAP:
-                return cast(getMapValueQueue());
-            case STRING_PARAMETERS_MAP:
-                return cast(getStringParametersQueue());
             case VALUE:
                 return cast(getQueue());
-        }
-        return cast(getQueue());
-    }
-
-    public Queue<MapValue> getMapValueQueue() {
-        if (isEmpty()) return queueOf();
-        if (elementsType != MAP && elementsType != VALUE) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, MAP.toString(), elementsType.toString()));
         }
         return cast(getQueue());
     }
@@ -1491,14 +1437,6 @@ public class CollectionValue<T> implements Value {
         if (isEmpty()) return queueOf();
         if (elementsType != CollectionElementsType.COLLECTION && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, COLLECTION.toString(), elementsType.toString()));
-        }
-        return cast(getQueue());
-    }
-
-    public Queue<StringParametersMap> getStringParametersQueue() {
-        if (isEmpty()) return queueOf();
-        if (elementsType != STRING_PARAMETERS_MAP && elementsType != VALUE) {
-            throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, STRING_PARAMETERS_MAP.toString(), elementsType.toString()));
         }
         return cast(getQueue());
     }
@@ -2437,15 +2375,11 @@ public class CollectionValue<T> implements Value {
         CollectionValue<?> otherValue = (CollectionValue<?>) other;
         if (otherValue.elementsType == VALUE
                 || otherValue.elementsType == CollectionElementsType.COLLECTION
-                || otherValue.elementsType == MAP
-                || otherValue.elementsType == STRING_PARAMETERS_MAP
                 || otherValue.elementsType == ENTITY) {
             return Objects.equals(otherValue.elements, elements);
         }
         if (elementsType == VALUE
                 || elementsType == CollectionElementsType.COLLECTION
-                || elementsType == MAP
-                || elementsType == STRING_PARAMETERS_MAP
                 || elementsType == ENTITY) {
             return Objects.equals(elements, otherValue.elements);
         }

@@ -25,6 +25,7 @@ import ru.art.config.constants.*;
 import ru.art.config.exception.*;
 import ru.art.core.checker.*;
 import ru.art.entity.*;
+import ru.art.entity.Value;
 import static com.fasterxml.jackson.databind.node.JsonNodeType.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
@@ -36,7 +37,9 @@ import static java.util.stream.Collectors.*;
 import static java.util.stream.StreamSupport.*;
 import static ru.art.config.constants.ConfigExceptionMessages.*;
 import static ru.art.core.constants.StringConstants.*;
+import static ru.art.entity.Value.isPrimitive;
 import java.util.*;
+import java.util.stream.*;
 
 @Getter
 @AllArgsConstructor
@@ -323,7 +326,7 @@ public class Config {
             case YAML:
                 return stream(((Iterable<String>) () -> asYamlConfig().at(SLASH + path.replace(DOT, SLASH)).fieldNames()).spliterator(), false).collect(toSet());
             case REMOTE_ENTITY_CONFIG:
-                return asEntityConfig().findEntity(path).getFieldNames();
+                return asEntityConfig().findEntity(path).getFieldKeys().stream().filter(Value::isPrimitive).map(Object::toString).collect(toSet());
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
 
@@ -339,7 +342,7 @@ public class Config {
             case YAML:
                 return stream(((Iterable<String>) () -> asYamlConfig().fieldNames()).spliterator(), false).collect(toSet());
             case REMOTE_ENTITY_CONFIG:
-                return asEntityConfig().getFieldNames();
+                return asEntityConfig().getFieldKeys().stream().filter(Value::isPrimitive).map(Object::toString).collect(toSet());
             default:
                 throw new ConfigException(format(UNKNOWN_CONFIG_TYPE, configType));
 

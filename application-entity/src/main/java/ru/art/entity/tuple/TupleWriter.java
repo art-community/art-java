@@ -43,23 +43,19 @@ public class TupleWriter {
             case COLLECTION:
                 writeCollectionValue(tuple, asCollection(value));
                 break;
-            case STRING_PARAMETERS_MAP:
-                writeStringParameters(tuple, asStringParametersMap(value));
-                break;
-            case MAP:
-                writeMap(tuple, asMap(value));
-                break;
         }
         return tuple;
     }
 
     private static void writeEntity(List<?> tuple, Entity entity) {
         List<?> entityTuple = dynamicArrayOf();
-        Map<String, ? extends Value> fields = entity.getFields();
+        Map<? extends Value, ? extends Value> fields = entity.getFields();
         tuple.add(cast(entity.getType().ordinal()));
-        for (Map.Entry<String, ?> entry : fields.entrySet()) {
-            Value value = (Value) entry.getValue();
-            entityTuple.add(cast(entry.getKey()));
+        for (Map.Entry<? extends Value, ? extends Value> entry : fields.entrySet()) {
+            Value key = entry.getKey();
+            if (!isPrimitive(key)) continue;
+            Value value = entry.getValue();
+            entityTuple.add(cast(asPrimitive(key).getValue()));
             if (isPrimitive(value)) {
                 entityTuple.add(cast(value.getType().ordinal()));
                 entityTuple.add(cast(asPrimitive(value).getValue()));
@@ -72,12 +68,6 @@ public class TupleWriter {
                     break;
                 case COLLECTION:
                     writeCollectionValue(entityTuple, asCollection(value));
-                    break;
-                case MAP:
-                    writeMap(entityTuple, asMap(value));
-                    break;
-                case STRING_PARAMETERS_MAP:
-                    writeStringParameters(entityTuple, asStringParametersMap(value));
                     break;
             }
         }
@@ -125,38 +115,9 @@ public class TupleWriter {
                 case COLLECTION:
                     writeCollectionValue(collectionValueTuple, asCollection((Value) value));
                     break;
-                case MAP:
-                    writeMap(collectionValueTuple, asMap((Value) value));
-                    break;
-                case STRING_PARAMETERS_MAP:
-                    writeStringParameters(collectionValueTuple, asStringParametersMap((Value) value));
-                    break;
             }
         }
         tuple.add(cast(collectionValueTuple.size()));
         tuple.addAll(cast(collectionValueTuple));
-    }
-
-    private static void writeStringParameters(List<?> tuple, StringParametersMap stringParameters) {
-        tuple.add(cast(stringParameters.getType().ordinal()));
-        tuple.add(cast(stringParameters.getParameters().size() * 2));
-        for (Map.Entry<?, ?> entry : stringParameters.getParameters().entrySet()) {
-            tuple.add(cast(entry.getKey()));
-            tuple.add(cast(entry.getValue()));
-        }
-    }
-
-    private static void writeMap(List<?> tuple, MapValue mapValue) {
-        List<?> mapTuple = dynamicArrayOf();
-        for (Map.Entry<? extends Value, ? extends Value> entry : mapValue.getElements().entrySet()) {
-            if (isPrimitive(entry.getKey())) {
-                mapTuple.add(cast(entry.getKey().getType().ordinal()));
-                mapTuple.add(cast(asPrimitive(entry.getKey()).getValue()));
-                mapTuple.addAll(cast(writeTuple(entry.getValue())));
-            }
-        }
-        tuple.add(cast(mapValue.getType().ordinal()));
-        tuple.add(cast(mapTuple.size()));
-        tuple.addAll(cast(mapTuple));
     }
 }

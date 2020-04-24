@@ -26,8 +26,6 @@ import static ru.art.entity.constants.ValueMappingExceptionMessages.*;
 public enum ValueType {
     ENTITY,
     COLLECTION,
-    MAP,
-    STRING_PARAMETERS_MAP,
     XML_ENTITY,
     STRING,
     LONG,
@@ -66,10 +64,6 @@ public enum ValueType {
                 return CollectionElementsType.ENTITY;
             case COLLECTION:
                 return CollectionElementsType.COLLECTION;
-            case MAP:
-                return CollectionElementsType.MAP;
-            case STRING_PARAMETERS_MAP:
-                return CollectionElementsType.STRING_PARAMETERS_MAP;
             case STRING:
                 return CollectionElementsType.STRING;
             case LONG:
@@ -152,8 +146,6 @@ public enum ValueType {
         BYTE,
         ENTITY,
         COLLECTION,
-        MAP,
-        STRING_PARAMETERS_MAP,
         VALUE
     }
 

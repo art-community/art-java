@@ -20,7 +20,6 @@ package ru.art.message.pack.descriptor;
 
 import lombok.experimental.*;
 import org.msgpack.value.*;
-import ru.art.entity.MapValue;
 import ru.art.entity.Value;
 import ru.art.entity.*;
 import ru.art.message.pack.exception.*;
@@ -133,7 +132,7 @@ public class MessagePackEntityReader {
             }
             return entityBuilder.build();
         }
-        MapValue.MapValueBuilder mapValueBuilder = MapValue.builder();
+        EntityBuilder valueBuilder = entityBuilder();
         for (Map.Entry<org.msgpack.value.Value, org.msgpack.value.Value> entry : map.map().entrySet()) {
             org.msgpack.value.Value key = entry.getKey();
             org.msgpack.value.Value value = entry.getValue();
@@ -141,10 +140,10 @@ public class MessagePackEntityReader {
             if (isNull(value)) continue;
             Value keyValue = readMessagePack(key);
             if (nonNull(keyValue)) {
-                mapValueBuilder.element(keyValue, readMessagePack(value));
+                valueBuilder.valueField(keyValue, readMessagePack(value));
             }
         }
-        return mapValueBuilder.build();
+        return valueBuilder.build();
     }
 
     private static CollectionValue<?> readCollectionValue(ArrayValue array) {

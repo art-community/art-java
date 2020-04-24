@@ -46,10 +46,6 @@ public class ValueSchema {
                 return new EntitySchema(Value.asEntity(value));
             case COLLECTION:
                 return new CollectionValueSchema(Value.asCollection(value), Value.asCollection(value).getElementsType());
-            case STRING_PARAMETERS_MAP:
-                return new StringParametersSchema(Value.asStringParametersMap(value));
-            case MAP:
-                return new MapValueSchema(Value.asMap(value));
         }
         return null;
     }
@@ -77,10 +73,6 @@ public class ValueSchema {
                 return EntitySchema.fromTuple(tuple);
             case COLLECTION:
                 return CollectionValueSchema.fromTuple(tuple);
-            case MAP:
-                return MapValueSchema.fromTuple(tuple);
-            case STRING_PARAMETERS_MAP:
-                return StringParametersSchema.fromTuple(tuple);
         }
 
         return null;

@@ -51,10 +51,6 @@ public class PlainTupleWriter {
                 return writeEntity(asEntity(value));
             case COLLECTION:
                 return writeCollectionValue(asCollection(value));
-            case STRING_PARAMETERS_MAP:
-                return writeStringParameters(asStringParametersMap(value));
-            case MAP:
-                return writeMap(asMap(value));
         }
 
         return emptyList();
@@ -62,8 +58,11 @@ public class PlainTupleWriter {
 
     private static List<?> writeEntity(Entity entity) {
         List<?> tuple = dynamicArrayOf();
-        Map<String, ? extends Value> fields = entity.getFields();
-        for (Value value : fields.values()) {
+        Map<? extends Value, ? extends Value> fields = entity.getFields();
+        for (Map.Entry<? extends Value, ? extends Value> entry : fields.entrySet()) {
+            Value key = entry.getKey();
+            if (!isPrimitive(key)) continue;
+            Value value = entry.getValue();
             if (isPrimitive(value)) {
                 tuple.add(cast(asPrimitive(value).getValue()));
                 continue;
@@ -93,36 +92,8 @@ public class PlainTupleWriter {
                     break;
                 case ENTITY:
                 case COLLECTION:
-                case MAP:
-                case STRING_PARAMETERS_MAP:
                     tuple.add(cast(writeComplexTypeValue((Value) value)));
                     break;
-            }
-        }
-        return tuple;
-    }
-
-    private static List<?> writeStringParameters(StringParametersMap stringParameters) {
-        List<?> tuple = dynamicArrayOf();
-        for (Map.Entry<?, ?> entry : stringParameters.getParameters().entrySet()) {
-            tuple.add(cast(entry.getValue()));
-        }
-        return tuple;
-    }
-
-    private static List<?> writeMap(MapValue mapValue) {
-        List<?> tuple = dynamicArrayOf();
-        for (Map.Entry<? extends Value, ? extends Value> entry : mapValue.getElements().entrySet()) {
-            Value key = entry.getKey();
-            Value value = entry.getValue();
-            if (isNull(value)) continue;
-
-            if (isPrimitive(key)) {
-                if (isPrimitive(value)) {
-                    tuple.add(cast(asPrimitive(value).getValue()));
-                    continue;
-                }
-                tuple.add(cast(writeComplexTypeValue(value)));
             }
         }
         return tuple;

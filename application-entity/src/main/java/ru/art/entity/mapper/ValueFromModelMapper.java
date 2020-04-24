@@ -36,9 +36,6 @@ public interface ValueFromModelMapper<T, V extends Value> extends Serializable {
     interface StringDataPrimitiveFromModelMapper extends ValueFromModelMapper<String, Primitive> {
     }
 
-    interface StringParametersMapFromModelMapper<T> extends ValueFromModelMapper<T, StringParametersMap> {
-    }
-
     interface XmlEntityFromModelMapper<T> extends ValueFromModelMapper<T, XmlEntity> {
     }
 }

@@ -28,7 +28,6 @@ import ru.art.service.*;
 import ru.art.service.exception.*;
 import ru.art.service.interceptor.ServiceExecutionInterceptor.*;
 import ru.art.service.model.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
@@ -53,14 +52,15 @@ import java.util.function.*;
 public class HttpResourceServiceSpecification implements HttpServiceSpecification {
     private final String resourcePath;
     private HttpResourceConfiguration resourceConfiguration;
+
     @Getter(lazy = true)
     private final String serviceId = resourcePath;
+
     @Getter(lazy = true)
     private final HttpService httpService = httpService()
             .get(GET_RESOURCE)
             .fromPathParameters(RESOURCE)
-            .requestMapper((StringParametersMapToModelMapper<String>) resource -> doIfNotNull(resource,
-                    (Function<StringParametersMap, String>) res -> resource.getParameter(RESOURCE)))
+            .requestMapper((EntityToModelMapper<String>) resourceValue -> doIfNotNull(resourceValue, (Function<Entity, String>) resource -> resource.getString(RESOURCE)))
             .overrideResponseContentType()
             .responseMapper(Caster::cast)
             .addRequestInterceptor(intercept(interceptAndContinue(((request, response) -> response.setContentType(extractTypeByFile(request.getRequestURI()))))))

@@ -33,7 +33,7 @@ import java.util.*;
 public interface ConfiguratorDao {
     static void saveConfig(Configuration inputConfiguration) {
         Entity configuration = inputConfiguration.getConfiguration();
-        Set<String> profiles = configuration.getFieldNames();
+        Set<String> profiles = configuration.getFieldKeys();
         profiles.forEach(profileId -> ConfigurationSaver.saveProfileModulesConfiguration(profileId, configuration.getEntity(profileId)));
     }
 

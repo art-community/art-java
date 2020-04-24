@@ -85,8 +85,6 @@ public class CollectionValueSchema extends ValueSchema {
                 break;
             case ENTITY:
             case COLLECTION:
-            case MAP:
-            case STRING_PARAMETERS_MAP:
             case VALUE:
                 collectionValue
                         .getElements()

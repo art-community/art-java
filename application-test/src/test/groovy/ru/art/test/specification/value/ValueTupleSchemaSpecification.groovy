@@ -37,7 +37,6 @@ class ValueTupleSchemaSpecification extends Specification {
                 fixedArrayOf(entityBuilder().stringCollectionField("innerString", fixedArrayOf("innerStringValue")).build()))
                 .entityField("entityField", entityBuilder()
                 .stringField("innerStringField", "innerStringFieldValue").build())
-                .stringParametersField("stringParametersField", mapOf("SK", "SV"))
                 .mapField("mapField", mapOf(stringPrimitive("mapKey"), entityBuilder().stringField("mapEntKey", "mapEntValue").build()))
                 .build())
         when:

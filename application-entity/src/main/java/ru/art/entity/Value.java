@@ -36,14 +36,6 @@ public interface Value {
         return (CollectionValue<C>) value;
     }
 
-    static MapValue asMap(Value value) {
-        return (MapValue) value;
-    }
-
-    static StringParametersMap asStringParametersMap(Value value) {
-        return (StringParametersMap) value;
-    }
-
     static boolean isEmpty(Value value) {
         return isNull(value) || value.isEmpty();
     }
@@ -70,11 +62,6 @@ public interface Value {
     static boolean isXmlEntity(Value value) {
         if (isNull(value)) return false;
         return isXmlEntityType(value.getType());
-    }
-
-    static boolean isMap(Value value) {
-        if (isNull(value)) return false;
-        return isMapType(value.getType());
     }
 
     static boolean isPrimitiveType(ValueType type) {
@@ -106,11 +93,6 @@ public interface Value {
     static boolean isXmlEntityType(ValueType type) {
         if (isNull(type)) return false;
         return type == ENTITY;
-    }
-
-    static boolean isMapType(ValueType type) {
-        if (isNull(type)) return false;
-        return type == MAP;
     }
 
     boolean isEmpty();

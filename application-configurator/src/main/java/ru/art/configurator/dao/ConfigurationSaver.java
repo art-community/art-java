@@ -34,7 +34,7 @@ public class ConfigurationSaver {
     public static void saveProfileModulesConfiguration(String profileId, Entity profileConfigEntity) {
         RocksDbPrimitiveDao.add(PROFILE_KEYS, profileId);
         EntityBuilder profileConfigBuilder = Entity.entityBuilder();
-        Set<String> profileFields = profileConfigEntity.getFieldNames();
+        Set<String> profileFields = profileConfigEntity.getFieldKeys();
         for (String profileField : profileFields) {
             Value profileFieldConfig = profileConfigEntity.getValue(profileField);
             if (profileFieldConfig.getType().equals(ENTITY)) {

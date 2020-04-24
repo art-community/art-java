@@ -45,10 +45,6 @@ public class PlainTupleReader {
                 return readEntity(tuple, (EntitySchema) schema);
             case COLLECTION:
                 return readCollectionValue(tuple, (CollectionValueSchema) schema);
-            case MAP:
-                return readMapValue(tuple, (MapValueSchema) schema);
-            case STRING_PARAMETERS_MAP:
-                return readStringParameters(tuple, (StringParametersSchema) schema);
         }
         return null;
     }
@@ -114,12 +110,6 @@ public class PlainTupleReader {
                 case COLLECTION:
                     entityBuilder.valueField(fieldSchema.getName(), readCollectionValue((List<?>) entity.get(i), (CollectionValueSchema) fieldSchema.getSchema()));
                     break;
-                case MAP:
-                    entityBuilder.valueField(fieldSchema.getName(), readMapValue((List<?>) entity.get(i), (MapValueSchema) fieldSchema.getSchema()));
-                    break;
-                case STRING_PARAMETERS_MAP:
-                    entityBuilder.valueField(fieldSchema.getName(), readStringParameters((List<?>) entity.get(i), (StringParametersSchema) fieldSchema.getSchema()));
-                    break;
             }
         }
         return entityBuilder.build();
@@ -151,16 +141,6 @@ public class PlainTupleReader {
                     elements.add(cast(readCollectionValue((List<?>) collection.get(i), (CollectionValueSchema) elementsSchema.get(i))));
                 }
                 return collectionOfCollections(cast(elements));
-            case MAP:
-                for (int i = 0; i < elementsSchema.size(); i++) {
-                    elements.add(cast(readMapValue((List<?>) collection.get(i), (MapValueSchema) elementsSchema.get(i))));
-                }
-                return mapCollection(cast(elements));
-            case STRING_PARAMETERS_MAP:
-                for (int i = 0; i < elementsSchema.size(); i++) {
-                    elements.add(cast(readStringParameters((List<?>) collection.get(i), (StringParametersSchema) elementsSchema.get(i))));
-                }
-                return stringParametersCollection(cast(elements));
             case VALUE:
                 for (int i = 0; i < elementsSchema.size(); i++) {
                     elements.add(cast(readTuple((List<?>) collection.get(i), elementsSchema.get(i))));
@@ -169,37 +149,5 @@ public class PlainTupleReader {
 
         }
         return emptyCollection();
-    }
-
-    private static StringParametersMap readStringParameters(List<?> stringParameters, StringParametersSchema schema) {
-        if (isNull(schema)) return null;
-        if (isEmpty(stringParameters)) return StringParametersMap.builder().build();
-        StringParametersMap.StringParametersMapBuilder stringParametersMapBuilder = StringParametersMap.builder();
-        List<String> stringParametersSchema = schema.getStringParametersSchema();
-        for (int i = 0; i < stringParametersSchema.size(); i++) {
-            stringParametersMapBuilder.parameter(stringParametersSchema.get(i), (String) stringParameters.get(i));
-        }
-        return stringParametersMapBuilder.build();
-    }
-
-    private static MapValue readMapValue(List<?> map, MapValueSchema schema) {
-        if (isNull(schema)) return null;
-        if (isEmpty(map)) return MapValue.builder().build();
-        MapValue.MapValueBuilder mapValueBuilder = MapValue.builder();
-        List<MapValueSchema.MapEntrySchema> entriesSchema = schema.getEntriesSchema();
-        for (int i = 0; i < entriesSchema.size(); i++) {
-            MapValueSchema.MapEntrySchema entrySchema = entriesSchema.get(i);
-            ValueType keyType = entrySchema.getKeyType();
-            if (!isPrimitiveType(keyType)) {
-                continue;
-            }
-            if (isPrimitiveType(entrySchema.getValueType())) {
-                mapValueBuilder.element(entrySchema.getKey(), readPrimitive(entrySchema.getValueType(), map.get(i)));
-                continue;
-            }
-
-            mapValueBuilder.element(entrySchema.getKey(), readTuple((List<?>) map.get(i), entrySchema.getValueSchema()));
-        }
-        return mapValueBuilder.build();
     }
 }

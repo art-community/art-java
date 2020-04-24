@@ -20,18 +20,15 @@ package ru.art.entity.tuple;
 
 import lombok.*;
 import lombok.experimental.*;
-import ru.art.entity.*;
 import ru.art.entity.Value;
-import ru.art.entity.StringParametersMap.*;
+import ru.art.entity.*;
 import ru.art.entity.constants.*;
-import static lombok.AccessLevel.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
 import static ru.art.entity.Entity.*;
 import static ru.art.entity.PrimitivesFactory.*;
-import static ru.art.entity.Value.*;
 import java.util.*;
 
 @UtilityClass
@@ -47,10 +44,6 @@ public class TupleReader {
                 return readEntity(tuple.subList(1, tuple.size())).value;
             case COLLECTION:
                 return readCollectionValue(tuple.subList(1, tuple.size())).value;
-            case MAP:
-                return readMapValue(tuple.subList(1, tuple.size())).value;
-            case STRING_PARAMETERS_MAP:
-                return readStringParameters(tuple.subList(1, tuple.size())).value;
         }
         return null;
     }
@@ -114,16 +107,6 @@ public class TupleReader {
                     entityBuilder.valueField(name, collection.value);
                     i += collection.offset;
                     break;
-                case MAP:
-                    TupleReadingResult<MapValue> mapValue = readMapValue(entity.subList(i + 3, entity.size()));
-                    entityBuilder.valueField(name, mapValue.value);
-                    i += mapValue.offset;
-                    break;
-                case STRING_PARAMETERS_MAP:
-                    TupleReadingResult<StringParametersMap> stringParameters = readStringParameters(entity.subList(i + 3, entity.size()));
-                    entityBuilder.valueField(name, stringParameters.value);
-                    i += stringParameters.offset;
-                    break;
             }
         }
         return TupleReadingResult.<Entity>builder()
@@ -158,16 +141,6 @@ public class TupleReader {
                     elements.add(collectionElement.value);
                     i += collectionElement.offset;
                     break;
-                case MAP:
-                    TupleReadingResult<MapValue> mapElement = readMapValue(collection.subList(i + 2, collection.size()));
-                    elements.add(mapElement.value);
-                    i += mapElement.offset;
-                    break;
-                case STRING_PARAMETERS_MAP:
-                    TupleReadingResult<StringParametersMap> stringParametersElement = readStringParameters(collection.subList(i + 2, collection.size()));
-                    elements.add(stringParametersElement.value);
-                    i += stringParametersElement.offset;
-                    break;
             }
         }
         return TupleReadingResult.<CollectionValue<Value>>builder()
@@ -175,61 +148,6 @@ public class TupleReader {
                 .value(valueCollection(elements))
                 .build();
     }
-
-    private static TupleReadingResult<StringParametersMap> readStringParameters(List<?> map) {
-        Integer size = (Integer) map.get(0);
-        StringParametersMapBuilder stringParametersMapBuilder = StringParametersMap.builder();
-        for (int i = 0; i < size; i += 2) {
-            stringParametersMapBuilder.parameter((String) map.get(i + 1), (String) map.get(i + 2));
-        }
-        return TupleReadingResult.<StringParametersMap>builder()
-                .offset(size)
-                .value(stringParametersMapBuilder.build())
-                .build();
-    }
-
-    private static TupleReadingResult<MapValue> readMapValue(List<?> map) {
-        Integer size = (Integer) map.get(0);
-        MapValue.MapValueBuilder mapValueBuilder = MapValue.builder();
-        for (int i = 0; i < size; i += 4) {
-            Primitive key = readPrimitive(ValueType.values()[(Integer) map.get(i + 1)], map.get(i + 2));
-            ValueType valueType = ValueType.values()[(Integer) map.get(i + 3)];
-            if (isPrimitiveType(valueType)) {
-                mapValueBuilder.element(key, readPrimitive(valueType, map.get(i + 4)));
-                return TupleReadingResult.<MapValue>builder()
-                        .offset(size)
-                        .value(mapValueBuilder.build())
-                        .build();
-            }
-            switch (valueType) {
-                case ENTITY:
-                    TupleReadingResult<Entity> entity = readEntity(map.subList(i + 4, map.size()));
-                    mapValueBuilder.element(key, entity.value);
-                    i += entity.offset;
-                    break;
-                case COLLECTION:
-                    TupleReadingResult<CollectionValue<Value>> collectionValue = readCollectionValue(map.subList(i + 4, map.size()));
-                    mapValueBuilder.element(key, collectionValue.value);
-                    i += collectionValue.offset;
-                    break;
-                case MAP:
-                    TupleReadingResult<MapValue> mapValue = readMapValue(map.subList(i + 4, map.size()));
-                    mapValueBuilder.element(key, mapValue.value);
-                    i += mapValue.offset;
-                    break;
-                case STRING_PARAMETERS_MAP:
-                    TupleReadingResult<StringParametersMap> stringParameters = readStringParameters(map.subList(i + 4, map.size()));
-                    mapValueBuilder.element(key, stringParameters.value);
-                    i += stringParameters.offset;
-                    break;
-            }
-        }
-        return TupleReadingResult.<MapValue>builder()
-                .offset(size)
-                .value(mapValueBuilder.build())
-                .build();
-    }
-
     @Builder
     private static class TupleReadingResult<T> {
         T value;

@@ -21,7 +21,7 @@ package ru.art.entity.mapper;
 import ru.art.entity.*;
 import java.io.*;
 
-public interface ValueToModelMapper<T, V extends Value> extends Serializable  {
+public interface ValueToModelMapper<T, V extends Value> extends Serializable {
     T map(V value);
 
     interface EntityToModelMapper<T> extends ValueToModelMapper<T, Entity> {
@@ -34,9 +34,6 @@ public interface ValueToModelMapper<T, V extends Value> extends Serializable  {
     }
 
     interface StringDataPrimitiveToModelMapper<T> extends ValueToModelMapper<T, Primitive> {
-    }
-
-    interface StringParametersMapToModelMapper<T> extends ValueToModelMapper<T, StringParametersMap> {
     }
 
     interface XmlEntityToModelMapper<T> extends ValueToModelMapper<T, XmlEntity> {

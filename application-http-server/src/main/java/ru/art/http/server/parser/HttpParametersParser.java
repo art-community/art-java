@@ -26,51 +26,49 @@ import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.factory.CollectionsFactory.*;
+import static ru.art.entity.Entity.entityBuilder;
+import static ru.art.entity.PrimitivesFactory.*;
 import javax.servlet.http.*;
 import java.util.*;
 
 public interface HttpParametersParser {
-    static StringParametersMap parseQueryParameters(HttpServletRequest request) {
-        Map<String, String> parameters = request
+    static Entity parseQueryParameters(HttpServletRequest request) {
+        Map<Value, Value> parameters = request
                 .getParameterMap()
                 .keySet()
                 .stream()
-                .collect(toMap(name -> name, name -> request.getParameterValues(name)[0]));
-        return StringParametersMap.builder()
-                .parameters(parameters)
-                .build();
+                .collect(toMap(PrimitivesFactory::stringPrimitive, name -> stringPrimitive(request.getParameterValues(name)[0])));
+        return entityBuilder().putFields(parameters).build();
     }
 
-    static StringParametersMap parsePathParameters(HttpServletRequest request, HttpService.HttpMethod methodConfig) {
-        String pathParameterString = request.getPathInfo();
-        if (isEmpty(pathParameterString)) return StringParametersMap.builder().build();
-        String[] pathParameterValues = pathParameterString.split(SLASH);
-        if (isEmpty(pathParameterValues) || pathParameterValues.length == 1)
-            return StringParametersMap.builder().build();
-        Set<String> pathParameterNames = methodConfig.getPath().getParameters();
-        if (isEmpty(pathParameterNames)) {
-            return StringParametersMap.builder().build();
+    static Entity parsePathParameters(HttpServletRequest request, HttpService.HttpMethod methodConfig) {
+        String parameterString = request.getPathInfo();
+        if (isEmpty(parameterString)) return entityBuilder().build();
+        String[] parameterValues = parameterString.split(SLASH);
+        if (isEmpty(parameterValues) || parameterValues.length == 1)
+            return entityBuilder().build();
+        Set<String> parameterNames = methodConfig.getPath().getParameters();
+        if (isEmpty(parameterNames)) {
+            return entityBuilder().build();
         }
-        int pathParameterIndex = 1;
-        MapBuilder<String, String> pathParameters = mapOf();
+        int parameterIndex = 1;
+        MapBuilder<Value, Value> parameters = mapOf();
         String lastParameter = EMPTY_STRING;
-        for (String name : pathParameterNames) {
+        for (String name : parameterNames) {
             lastParameter = name;
-            pathParameters.add(name, pathParameterValues[pathParameterIndex]);
-            pathParameterIndex++;
+            parameters.add(stringPrimitive(name), stringPrimitive(parameterValues[parameterIndex]));
+            parameterIndex++;
         }
         if (isEmpty(lastParameter)) {
-            return StringParametersMap.builder().build();
+            return entityBuilder().build();
         }
-        if (pathParameters.size() < pathParameterIndex) {
-            for (int i = pathParameterIndex; i < pathParameterValues.length; i++) {
+        if (parameters.size() < parameterIndex) {
+            for (int i = parameterIndex; i < parameterValues.length; i++) {
                 int index = i;
-                pathParameters.computeIfPresent(lastParameter, (key, value) -> value + SLASH + pathParameterValues[index]);
+                parameters.computeIfPresent(stringPrimitive(lastParameter), (key, value) -> stringPrimitive(value + SLASH + parameterValues[index]));
             }
         }
-        return StringParametersMap.builder()
-                .parameters(cast(pathParameters))
-                .build();
+        return entityBuilder().putFields(parameters).build();
     }
 }
 
