@@ -46,30 +46,24 @@ public class MapperJavacHandler extends JavacAnnotationHandler<Mapper> {
     private void generateToModelField() {
         JCExpression selfType = type(node().getName());
         JCExpression entityType = type(Entity.class);
+        JCExpression EntityBuilderType = type(EntityBuilder.class);
         JCExpression mapperType = type(ValueFromModelMapper.class);
 
         resetMaker();
 
         JCVariableDecl parameter = parameter("model", selfType);
 
-        JCExpression statement = node()
+        JCVariableDecl builder = maker().VarDef(maker().Modifiers(LocalVarFlags), node().toName("entityBuilder"), EntityBuilderType,
+                maker().Apply(nil(), methodCall(entityType, "entityBuilder"), nil()));
+        node()
                 .getElement()
                 .getEnclosedElements().stream().filter(element -> element.getKind() == FIELD)
                 .map(element -> (VarSymbol) element)
-                .reduce(
-                        maker().Apply(nil(), chainDotsString(node(), entityType.toString() + "." + "entityBuilder"), nil()),
-                        (builder, field) -> {
-                            if (String.class.getName().equals(field.asType().toString())) {
-                                builder = maker().Apply(
-                                        nil(),
-                                        chainDotsString(node(), builder + "." + "stringField"),
-                                        of(maker().Literal(field.name.toString()), maker().Select(maker().Ident(parameter.name), node().toName(field.name.toString())))
-                                );
-                            }
-                            return builder;
-                        }, (current, next) -> next);
+                .forEach(field -> {
 
-        JCBlock body = maker().Block(0L, of(maker().Return(maker().Apply(nil(), methodCall(statement, "build"), nil()))));
+                        });
+
+        JCBlock body = maker().Block(0L, of(maker().Return(maker().Apply(nil(), methodCall(maker().Ident(builder.name), "build"), nil()))));
         JCLambda lambda = lambda(body, parameter);
         JCVariableDecl field = publicStaticFinalField("toModel", genericType(mapperType, selfType, entityType), lambda);
 
