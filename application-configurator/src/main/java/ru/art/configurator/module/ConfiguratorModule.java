@@ -23,7 +23,6 @@ import ru.art.config.module.*;
 import ru.art.configurator.configuration.*;
 import ru.art.configurator.specification.*;
 import ru.art.core.configurator.*;
-import ru.art.core.module.Module;
 import ru.art.core.module.*;
 import ru.art.grpc.client.module.*;
 import ru.art.grpc.server.configuration.*;
@@ -74,14 +73,10 @@ public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguratio
                 .loadModule(new JsonModule())
                 .loadModule(new LoggingModule())
                 .loadModule(new ServiceModule())
-                .loadModule(new RocksDbModule(), (ModuleConfigurator<RocksDbModuleConfiguration, RocksDbModuleState>) module ->
-                        new ConfiguratorRocksDbConfiguration())
-                .loadModule(new HttpServerModule(), (ModuleConfigurator<HttpServerModuleConfiguration, HttpServerModuleState>) (module) ->
-                        new ConfiguratorHttpServerConfiguration())
-                .loadModule(new GrpcServerModule(), (ModuleConfigurator<GrpcServerModuleConfiguration, GrpcServerModuleState>) (module) ->
-                        new ConfiguratorGrpcServerConfiguration())
-                .loadModule(new MetricsModule(), (ModuleConfigurator<MetricModuleConfiguration, ModuleState>) (module) ->
-                        new ConfiguratorMetricsConfiguration())
+                .loadModule(new RocksDbModule(), (ModuleConfigurator<RocksDbModuleConfiguration, RocksDbModuleState>) module -> new ConfiguratorRocksDbConfiguration())
+                .loadModule(new HttpServerModule(), (ModuleConfigurator<HttpServerModuleConfiguration, HttpServerModuleState>) (module) -> new ConfiguratorHttpServerConfiguration())
+                .loadModule(new GrpcServerModule(), (ModuleConfigurator<GrpcServerModuleConfiguration, GrpcServerModuleState>) (module) -> new ConfiguratorGrpcServerConfiguration())
+                .loadModule(new MetricsModule(), (ModuleConfigurator<MetricModuleConfiguration, ModuleState>) (module) -> new ConfiguratorMetricsConfiguration())
                 .loadModule(new GrpcClientModule())
                 .loadModule(new HttpClientModule(), (ModuleConfigurator<HttpClientModuleConfiguration, HttpClientModuleState>) module -> new ConfiguratorHttpClientConfiguration())
                 .loadModule(new ConfiguratorModule());

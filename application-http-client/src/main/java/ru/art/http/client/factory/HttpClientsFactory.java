@@ -35,7 +35,6 @@ import org.zalando.logbook.httpclient.*;
 import ru.art.http.client.configuration.*;
 import ru.art.http.client.exception.*;
 import ru.art.http.client.model.*;
-import static java.security.KeyStore.*;
 import static java.util.Objects.*;
 import static org.apache.http.ssl.SSLContexts.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
@@ -138,7 +137,7 @@ public class HttpClientsFactory {
     private static KeyStore loadKeyStore(HttpClientConfiguration configuration) {
         FileInputStream keyStoreInputStream = null;
         try {
-            KeyStore keyStore = getInstance(configuration.getSslKeyStoreType());
+            KeyStore keyStore = KeyStore.getInstance(configuration.getSslKeyStoreType());
             keyStoreInputStream = new FileInputStream(new File(configuration.getSslKeyStoreFilePath()));
             keyStore.load(keyStoreInputStream, configuration.getSslKeyStorePassword().toCharArray());
             return keyStore;

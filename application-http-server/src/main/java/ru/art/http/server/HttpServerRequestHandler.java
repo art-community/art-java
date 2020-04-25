@@ -115,8 +115,7 @@ class HttpServerRequestHandler {
                 HttpContentMapper contentMapper = httpServerModule().getContentMappers().get(requestContentType);
                 Value value = contentMapper
                         .getFromContent()
-                        .mapFromBytes(readRequestBody(request), requestContentType,
-                                getOrElse(requestContentType.getCharset(), contextConfiguration().getCharset()));
+                        .mapFromBytes(readRequestBody(request), requestContentType, getOrElse(requestContentType.getCharset(), contextConfiguration().getCharset()));
                 if (isNull(value)) return null;
                 return value;
             case PATH_PARAMETERS:
@@ -188,8 +187,6 @@ class HttpServerRequestHandler {
     }
 
     private static Value mapResponseObject(Object object, ValueFromModelMapper<?, ? extends Value> mapper) {
-        MimeType responseContentType = httpServerModuleState().getRequestContext().getAcceptType();
-        HttpContentMapper contentMapper = httpServerModule().getContentMappers().get(responseContentType);
         return mapper.map(cast(object));
     }
 

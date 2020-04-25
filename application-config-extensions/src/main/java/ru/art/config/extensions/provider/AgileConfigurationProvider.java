@@ -23,6 +23,7 @@ import ru.art.config.extensions.http.*;
 import ru.art.config.extensions.kafka.*;
 import ru.art.config.extensions.logging.*;
 import ru.art.config.extensions.metrics.*;
+import ru.art.config.extensions.network.*;
 import ru.art.config.extensions.rocks.*;
 import ru.art.config.extensions.rsocket.*;
 import ru.art.config.extensions.service.*;
@@ -41,6 +42,7 @@ import static ru.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
 import static ru.art.kafka.producer.constants.KafkaProducerModuleConstants.*;
 import static ru.art.logging.LoggingModuleConstants.*;
 import static ru.art.metrics.constants.MetricsModuleConstants.*;
+import static ru.art.network.manager.constants.NetworkManagerModuleConstants.*;
 import static ru.art.rocks.db.constants.RocksDbModuleConstants.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
 import static ru.art.service.constants.ServiceModuleConstants.*;
@@ -64,6 +66,8 @@ public class AgileConfigurationProvider implements PreconfiguredModuleProvider {
                 return of(cast(new GrpcClientAgileConfiguration()));
             case METRICS_MODULE_ID:
                 return of(cast(new MetricsAgileConfiguration()));
+            case NETWORK_MANAGER_MODULE_ID:
+                return of(cast(new NetworkManagerAgileConfiguration()));
             case ROCKS_DB_MODULE_ID:
                 return of(cast(new RocksDbAgileConfiguration()));
             case SQL_MODULE_ID:

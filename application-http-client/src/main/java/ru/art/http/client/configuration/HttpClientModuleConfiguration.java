@@ -32,38 +32,27 @@ import org.apache.http.impl.nio.conn.*;
 import org.apache.http.impl.nio.reactor.*;
 import org.apache.http.nio.conn.*;
 import org.apache.http.nio.conn.ssl.*;
-import org.apache.http.ssl.SSLContexts;
-import org.zalando.logbook.*;
 import org.zalando.logbook.httpclient.*;
-import ru.art.core.mime.*;
-import ru.art.entity.Value;
-import ru.art.entity.interceptor.*;
 import ru.art.http.client.exception.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.client.model.*;
 import ru.art.http.configuration.*;
-import ru.art.http.constants.*;
-import ru.art.http.logger.*;
-import ru.art.http.mapper.*;
-import ru.art.logging.*;
-import static java.security.KeyStore.*;
-import static java.text.MessageFormat.*;
-import static java.util.Collections.*;
-import static java.util.Objects.*;
-import static org.apache.http.HttpVersion.*;
-import static org.apache.http.ssl.SSLContexts.*;
-import static ru.art.core.constants.NetworkConstants.*;
-import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.extension.ExceptionExtensions.*;
-import static ru.art.core.factory.CollectionsFactory.*;
+import static java.lang.String.format;
+import static java.util.Collections.emptyMap;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.apache.http.HttpVersion.HTTP_1_1;
+import static org.apache.http.ssl.SSLContexts.custom;
+import static ru.art.core.constants.NetworkConstants.LOCALHOST;
+import static ru.art.core.constants.StringConstants.EMPTY_STRING;
+import static ru.art.core.extension.ExceptionExtensions.exceptionIfNull;
+import static ru.art.core.factory.CollectionsFactory.linkedListOf;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
 import static ru.art.http.client.constants.HttpClientModuleConstants.*;
-import static ru.art.http.client.interceptor.HttpClientInterceptor.*;
-import static ru.art.http.client.module.HttpClientModule.*;
+import static ru.art.http.client.interceptor.HttpClientInterceptor.interceptRequest;
+import static ru.art.http.client.module.HttpClientModule.httpClientModuleState;
 import static ru.art.http.constants.HttpCommonConstants.*;
-import static ru.art.http.constants.HttpMimeTypes.ALL;
-import static ru.art.http.constants.MimeToContentTypeMapper.all;
-import static ru.art.logging.LoggingModule.*;
+import static ru.art.logging.LoggingModule.loggingModule;
 import javax.net.ssl.*;
 import java.io.*;
 import java.security.*;
@@ -113,32 +102,13 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
     Map<String, HttpCommunicationTargetConfiguration> getCommunicationTargets();
 
     default HttpCommunicationTargetConfiguration getCommunicationTargetConfiguration(String serviceId) {
-        return exceptionIfNull(getCommunicationTargets().get(serviceId),
-                new HttpClientException(format(HTTP_COMMUNICATION_TARGET_NOT_FOUND, serviceId))).toBuilder().build();
+        return exceptionIfNull(getCommunicationTargets().get(serviceId), new HttpClientException(format(HTTP_COMMUNICATION_TARGET_NOT_FOUND, serviceId))).toBuilder().build();
     }
 
     HttpClientModuleDefaultConfiguration DEFAULT_CONFIGURATION = new HttpClientModuleDefaultConfiguration();
 
     @Getter
-    class HttpClientModuleDefaultConfiguration implements HttpClientModuleConfiguration {
-        private final boolean enableRawDataTracing = false;
-        private final boolean enableValueTracing = false;
-        private final boolean enableMetricsMonitoring = true;
-        private final MimeToContentTypeMapper consumesMimeTypeMapper = all();
-        private final MimeToContentTypeMapper producesMimeTypeMapper = all();
-        private final HttpTextPlainMapper textPlainMapper = new HttpTextPlainMapper();
-        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
-        private final Map<MimeType, HttpContentMapper> contentMappers = mapOf(ALL, new HttpContentMapper(getTextPlainMapper(), getTextPlainMapper()));
-        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
-        private final List<ValueInterceptor<ru.art.entity.Value, ru.art.entity.Value>> requestValueInterceptors = initializeValueInterceptors();
-        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
-        private final List<ValueInterceptor<ru.art.entity.Value, ru.art.entity.Value>> responseValueInterceptors = initializeValueInterceptors();
-        @Getter(lazy = true)
-        private final Logbook logbook = Logbook.builder().writer(new ZalangoLogbookLogWriter(this::isEnableRawDataTracing)).build();
-
-        private List<ValueInterceptor<ru.art.entity.Value, Value>> initializeValueInterceptors() {
-            return linkedListOf(new LoggingValueInterceptor<>(this::isEnableValueTracing));
-        }
+    class HttpClientModuleDefaultConfiguration extends HttpModuleDefaultConfiguration implements HttpClientModuleConfiguration {
         private static HostnameVerifier ALLOW_ALL = (hostName, session) -> true;
         int maxConnectionsPerRoute = DEFAULT_MAX_CONNECTIONS_PER_ROUTE;
         int maxConnectionsTotal = DEFAULT_MAX_CONNECTIONS_TOTAL;
@@ -149,8 +119,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         private final IOReactorConfig ioReactorConfig = IOReactorConfig.DEFAULT;
         private final HttpVersion httpVersion = HTTP_1_1;
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
-        private final List<HttpClientInterceptor> requestInterceptors =
-                linkedListOf(interceptRequest(new HttpClientTracingIdentifiersRequestInterception()));
+        private final List<HttpClientInterceptor> requestInterceptors = linkedListOf(interceptRequest(new HttpClientTracingIdentifiersRequestInterception()));
         @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
         private final List<HttpClientInterceptor> responseInterceptors = linkedListOf();
         private final int responseBodyBufferSize = RESPONSE_BUFFER_DEFAULT_SIZE;
@@ -259,7 +228,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         private KeyStore loadKeyStore() {
             FileInputStream keyStoreInputStream = null;
             try {
-                KeyStore keyStore = getInstance(getSslKeyStoreType());
+                KeyStore keyStore = KeyStore.getInstance(getSslKeyStoreType());
                 keyStoreInputStream = new FileInputStream(new File(getSslKeyStoreFilePath()));
                 keyStore.load(keyStoreInputStream, getSslKeyStorePassword().toCharArray());
                 return keyStore;
