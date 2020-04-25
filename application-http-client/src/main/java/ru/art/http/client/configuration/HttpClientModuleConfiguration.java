@@ -37,22 +37,21 @@ import ru.art.http.client.exception.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.client.model.*;
 import ru.art.http.configuration.*;
-import static java.lang.String.format;
-import static java.util.Collections.emptyMap;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.apache.http.HttpVersion.HTTP_1_1;
-import static org.apache.http.ssl.SSLContexts.custom;
-import static ru.art.core.constants.NetworkConstants.LOCALHOST;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
-import static ru.art.core.extension.ExceptionExtensions.exceptionIfNull;
-import static ru.art.core.factory.CollectionsFactory.linkedListOf;
+import static java.lang.String.*;
+import static java.util.Collections.*;
+import static java.util.Objects.*;
+import static org.apache.http.HttpVersion.*;
+import static org.apache.http.ssl.SSLContexts.*;
+import static ru.art.core.constants.NetworkConstants.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.ExceptionExtensions.*;
+import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
 import static ru.art.http.client.constants.HttpClientModuleConstants.*;
-import static ru.art.http.client.interceptor.HttpClientInterceptor.interceptRequest;
-import static ru.art.http.client.module.HttpClientModule.httpClientModuleState;
+import static ru.art.http.client.interceptor.HttpClientInterceptor.*;
+import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
-import static ru.art.logging.LoggingModule.loggingModule;
+import static ru.art.logging.LoggingModule.*;
 import javax.net.ssl.*;
 import java.io.*;
 import java.security.*;
@@ -175,7 +174,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
             }
 
             SSLConnectionSocketFactory sslSocketFactory = isNull(sslContext)
-                    ? new SSLConnectionSocketFactory(org.apache.http.ssl.SSLContexts.createDefault(), hostnameVerifier)
+                    ? new SSLConnectionSocketFactory(createDefault(), hostnameVerifier)
                     : new SSLConnectionSocketFactory(sslContext, null, null, hostnameVerifier);
 
             Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
@@ -206,7 +205,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
             }
 
             SSLIOSessionStrategy sslSessionStrategy = isNull(sslContext)
-                    ? new SSLIOSessionStrategy(SSLContexts.createDefault(), hostnameVerifier)
+                    ? new SSLIOSessionStrategy(createDefault(), hostnameVerifier)
                     : new SSLIOSessionStrategy(sslContext, null, null, hostnameVerifier);
 
             Registry<SchemeIOSessionStrategy> registry = RegistryBuilder.<SchemeIOSessionStrategy>create()

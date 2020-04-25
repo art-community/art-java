@@ -35,7 +35,6 @@ println(current().toolsJar)
 
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
-        embedded(files(current().toolsJar))
         embedded("com.google.auto.service", "auto-service", "1.0-rc4")
         embedded("com.squareup", "javapoet", javaPoetVersion)
         embedded("org.projectlombok", "lombok", lombokVersion)
