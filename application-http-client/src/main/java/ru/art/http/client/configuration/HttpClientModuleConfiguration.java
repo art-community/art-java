@@ -33,11 +33,19 @@ import org.apache.http.impl.nio.reactor.*;
 import org.apache.http.nio.conn.*;
 import org.apache.http.nio.conn.ssl.*;
 import org.apache.http.ssl.SSLContexts;
+import org.zalando.logbook.*;
 import org.zalando.logbook.httpclient.*;
+import ru.art.core.mime.*;
+import ru.art.entity.Value;
+import ru.art.entity.interceptor.*;
 import ru.art.http.client.exception.*;
 import ru.art.http.client.interceptor.*;
 import ru.art.http.client.model.*;
 import ru.art.http.configuration.*;
+import ru.art.http.constants.*;
+import ru.art.http.logger.*;
+import ru.art.http.mapper.*;
+import ru.art.logging.*;
 import static java.security.KeyStore.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
@@ -53,6 +61,8 @@ import static ru.art.http.client.constants.HttpClientModuleConstants.*;
 import static ru.art.http.client.interceptor.HttpClientInterceptor.*;
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
+import static ru.art.http.constants.HttpMimeTypes.ALL;
+import static ru.art.http.constants.MimeToContentTypeMapper.all;
 import static ru.art.logging.LoggingModule.*;
 import javax.net.ssl.*;
 import java.io.*;
@@ -110,7 +120,25 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
     HttpClientModuleDefaultConfiguration DEFAULT_CONFIGURATION = new HttpClientModuleDefaultConfiguration();
 
     @Getter
-    class HttpClientModuleDefaultConfiguration extends HttpModuleDefaultConfiguration implements HttpClientModuleConfiguration {
+    class HttpClientModuleDefaultConfiguration implements HttpClientModuleConfiguration {
+        private final boolean enableRawDataTracing = false;
+        private final boolean enableValueTracing = false;
+        private final boolean enableMetricsMonitoring = true;
+        private final MimeToContentTypeMapper consumesMimeTypeMapper = all();
+        private final MimeToContentTypeMapper producesMimeTypeMapper = all();
+        private final HttpTextPlainMapper textPlainMapper = new HttpTextPlainMapper();
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+        private final Map<MimeType, HttpContentMapper> contentMappers = mapOf(ALL, new HttpContentMapper(getTextPlainMapper(), getTextPlainMapper()));
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+        private final List<ValueInterceptor<ru.art.entity.Value, ru.art.entity.Value>> requestValueInterceptors = initializeValueInterceptors();
+        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+        private final List<ValueInterceptor<ru.art.entity.Value, ru.art.entity.Value>> responseValueInterceptors = initializeValueInterceptors();
+        @Getter(lazy = true)
+        private final Logbook logbook = Logbook.builder().writer(new ZalangoLogbookLogWriter(this::isEnableRawDataTracing)).build();
+
+        private List<ValueInterceptor<ru.art.entity.Value, Value>> initializeValueInterceptors() {
+            return linkedListOf(new LoggingValueInterceptor<>(this::isEnableValueTracing));
+        }
         private static HostnameVerifier ALLOW_ALL = (hostName, session) -> true;
         int maxConnectionsPerRoute = DEFAULT_MAX_CONNECTIONS_PER_ROUTE;
         int maxConnectionsTotal = DEFAULT_MAX_CONNECTIONS_TOTAL;

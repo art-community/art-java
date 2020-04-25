@@ -1,3 +1,6 @@
+import org.gradle.internal.jvm.Jvm.current
+import java.lang.System.*
+
 /*
  * ART Java
  *
@@ -28,8 +31,15 @@ art {
     }
 }
 
+println(current().toolsJar)
+
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
+        embedded(files(current().toolsJar))
+        embedded(files("libraries/lombok.jar"))
+        embedded(files("libraries/lombok-utils.jar"))
+        embedded("com.google.auto.service", "auto-service", "1.0-rc4")
+        embedded("org.kohsuke.metainf-services", "metainf-services", "1.8")
         embedded("com.squareup", "javapoet", javaPoetVersion)
         embedded("org.projectlombok", "lombok", lombokVersion)
         embedded("org.membrane-soa", "service-proxy-core", membraneSoaServiceProxyCoreVersion)

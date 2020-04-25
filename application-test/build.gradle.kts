@@ -21,6 +21,9 @@ import ru.art.gradle.constants.lombok
  */
 
 art {
+    embeddedModules {
+        kit()
+    }
     testModules {
         kit()
         kafkaBroker()
@@ -36,6 +39,8 @@ configurations {
 
 dependencies {
     annotationProcessor(lombok().inGradleNotation())
+    embedded(project(":application-generator"))
+    annotationProcessor(project(":application-generator"))
     testAnnotationProcessor(lombok().inGradleNotation())
     testImplementation("org.hsqldb", "hsqldb", "2+")
 }
