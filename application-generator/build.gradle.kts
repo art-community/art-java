@@ -35,6 +35,7 @@ dependencies {
         if (JavaVersion.current().isJava8) {
             embedded(files(Jvm.current().toolsJar))
         }
+        annotationProcessor("com.google.auto.service", "auto-service", "1.0-rc6")
         embedded("com.google.auto.service", "auto-service", "1.0-rc6")
         embedded("com.squareup", "javapoet", javaPoetVersion)
         embedded("org.membrane-soa", "service-proxy-core", membraneSoaServiceProxyCoreVersion)
