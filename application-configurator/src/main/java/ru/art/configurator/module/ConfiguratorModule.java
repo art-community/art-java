@@ -58,6 +58,7 @@ import static ru.art.http.constants.HttpCommonConstants.*;
 import static ru.art.http.server.HttpServer.*;
 import static ru.art.information.specification.InformationServiceSpecification.*;
 import static ru.art.service.ServiceModule.*;
+import ru.art.core.module.Module;
 
 @Getter
 public class ConfiguratorModule implements Module<ConfiguratorModuleConfiguration, ModuleState> {
