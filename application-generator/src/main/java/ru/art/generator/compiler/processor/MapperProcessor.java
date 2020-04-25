@@ -1,4 +1,4 @@
-package ru.art.generator.compiler;
+package ru.art.generator.compiler.processor;
 
 import com.google.auto.service.*;
 import com.sun.tools.javac.model.*;
@@ -17,6 +17,13 @@ import java.util.*;
 
 @AutoService(Processor.class)
 public class MapperProcessor extends AbstractProcessor {
+    private JavacProcessingEnvironment processingEnvironment;
+
+    @Override
+    public synchronized void init(ProcessingEnvironment processingEnvironment) {
+        super.init(processingEnvironment);
+        this.processingEnvironment = (JavacProcessingEnvironment) processingEnvironment;
+    }
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
@@ -33,7 +40,7 @@ public class MapperProcessor extends AbstractProcessor {
         if (roundEnvironment.processingOver()) {
             return false;
         }
-        Context context = ((JavacProcessingEnvironment) roundEnvironment).getContext();
+        Context context = processingEnvironment.getContext();
         TreeMaker maker = TreeMaker.instance(context);
         JavacElements elementUtils = (JavacElements) processingEnv.getElementUtils();
         for (Element element : roundEnvironment.getElementsAnnotatedWith(Mapper.class)) {
@@ -43,13 +50,14 @@ public class MapperProcessor extends AbstractProcessor {
             }
             maker.at(elementTree.pos);
             JCTree.JCClassDecl modelClass = (JCTree.JCClassDecl) elementTree;
-            modelClass.defs.add(
-                    maker.VarDef(
-                            maker.Modifiers(DEFAULT), elementUtils.getName("test"),
-                            maker.Ident(elementUtils.getName(String.class.getName())),
-                            maker.Literal("Test")
-                    )
-            );
+            ListBuffer<JCTree> modelClassDefinitions = new ListBuffer<>();
+            modelClassDefinitions.addAll(modelClass.defs);
+            modelClassDefinitions.append(maker.VarDef(
+                    maker.Modifiers(FINAL), elementUtils.getName("test"),
+                    maker.Ident(elementUtils.getName(String.class.getSimpleName())),
+                    maker.Literal("Test")
+            ));
+            modelClass.defs = modelClassDefinitions.toList();
         }
         return false;
     }
