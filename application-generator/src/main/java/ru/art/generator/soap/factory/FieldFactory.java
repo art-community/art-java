@@ -26,7 +26,7 @@ import lombok.experimental.*;
 import ru.art.core.constants.JavaKeywordConstants;
 import ru.art.core.constants.StringConstants;
 import ru.art.generator.soap.model.Field;
-import ru.art.generator.soap.model.Field.*;
+import ru.art.generator.soap.model.Field.FieldBuilder;
 import static java.util.Objects.*;
 import static ru.art.generator.soap.factory.TypeFactory.*;
 import static ru.art.generator.soap.factory.TypeFactory.getTypeByString;

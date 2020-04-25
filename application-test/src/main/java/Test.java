@@ -7,7 +7,7 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
         com.sun.tools.javac.Main.main(new String[]{
-                "-processor", "lombok.core.AnnotationProcessor",
+                "-processor", "ru.art.generator.compiler.MapperProcessor",
                 "/Users/anton/Development/Projects/art/application-test/src/main/java/Test.java"});
     }
 }

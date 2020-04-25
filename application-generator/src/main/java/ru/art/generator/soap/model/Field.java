@@ -19,8 +19,8 @@ package ru.art.generator.soap.model;
 import lombok.*;
 import java.util.*;
 
-@Builder
 @Getter
+@Builder
 public class Field {
     private String name;
     private String typeName;

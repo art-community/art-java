@@ -1,5 +1,4 @@
-import org.gradle.internal.jvm.Jvm.current
-import java.lang.System.*
+import org.gradle.internal.jvm.Jvm
 
 /*
  * ART Java
@@ -31,13 +30,13 @@ art {
     }
 }
 
-println(current().toolsJar)
-
 dependencies {
     with(art.externalDependencyVersionsConfiguration) {
-        embedded("com.google.auto.service", "auto-service", "1.0-rc4")
+        if (JavaVersion.current().isJava8) {
+            embedded(files(Jvm.current().toolsJar))
+        }
+        embedded("com.google.auto.service", "auto-service", "1.0-rc6")
         embedded("com.squareup", "javapoet", javaPoetVersion)
-        embedded("org.projectlombok", "lombok", lombokVersion)
         embedded("org.membrane-soa", "service-proxy-core", membraneSoaServiceProxyCoreVersion)
                 .exclude("org.springframework")
                 .exclude("com.fasterxml.jackson.core")
@@ -56,5 +55,17 @@ dependencies {
                 .exclude("commons-logging")
                 .exclude("org.apache.httpcomponents")
                 .exclude("com.google.guava")
+    }
+}
+
+if (!JavaVersion.current().isJava8) {
+    tasks.withType<JavaCompile> {
+        options.compilerArgs.addAll(arrayOf(
+                "--add-exports", "jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+                "--add-exports", "jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+                "--add-exports", "jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED",
+                "--add-exports", "jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
+                "--add-exports", "jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED"
+        ))
     }
 }
