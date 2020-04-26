@@ -1,43 +1,49 @@
 package ru.art.generator.compiler.decorator;
 
+import com.sun.source.tree.*;
 import com.sun.tools.javac.tree.*;
 import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.util.*;
 import lombok.*;
-import ru.art.entity.Value;
 import ru.art.generator.compiler.declaration.*;
+import ru.art.generator.compiler.model.*;
+import static com.sun.source.tree.Tree.Kind.PACKAGE;
 import static java.util.Objects.*;
-import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.DOT;
-import static ru.art.core.constants.StringConstants.EMPTY_STRING;
+import static ru.art.core.checker.CheckerForEmptiness.*;
+import static ru.art.core.constants.StringConstants.*;
+import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.generator.compiler.extensions.JavaCompilerExtensions.*;
 import static ru.art.generator.compiler.service.MakerService.*;
 import static ru.art.generator.compiler.state.CompilationState.*;
 import java.util.List;
 import java.util.*;
 
 @Getter
-@RequiredArgsConstructor
 public class ClassDecorator {
     private final static Map<String, ClassDecorator> decorators = concurrentHashMap();
 
     private final JCCompilationUnit compilationUnit;
     private final JCClassDecl declaration;
-    private final Class<?> currentClass;
+    private final String packageName;
+    private final String className;
     private final Set<String> uniqueImports = setOf();
     private final List<JCFieldAccess> imports = linkedListOf();
     private final List<JCFieldAccess> staticImports = linkedListOf();
     private final List<JCVariableDecl> fields = linkedListOf();
+
+    public ClassDecorator(JCClassDecl declaration) {
+        this.declaration = declaration;
+        compilationUnit = elements().getTreeAndTopLevel(declaration.sym, null, null).snd;
+        packageName = doIfNotNull(compilationUnit.getPackageName(), Object::toString);
+        className = declaration.name.toString();
+    }
 
     public static ClassDecorator decorator(JCClassDecl declaration) {
         ClassDecorator decorator = decorators.get(declaration.name.toString());
         if (nonNull(decorator)) {
             return decorator;
         }
-        JCCompilationUnit compilationUnit = elements().getTreeAndTopLevel(declaration.sym, null, null).snd;
-        Class<?> currentClass = classFor(declaration.name.toString());
-        decorator = new ClassDecorator(compilationUnit, declaration, currentClass);
+        decorator = new ClassDecorator(declaration);
         decorators.put(declaration.name.toString(), decorator);
         return decorator;
     }
@@ -45,7 +51,7 @@ public class ClassDecorator {
     public ClassDecorator field(FieldDeclaration fieldDeclaration) {
         maker().at(declaration.pos);
         Class<?> type = fieldDeclaration.getType();
-        List<Class<?>> typeParameters = fieldDeclaration.getTypeParameters();
+        List<TypedParameter> typeParameters = fieldDeclaration.getTypeParameters();
         JCExpression fieldTypeIdentifier = typeParameters.isEmpty() ? simpleTypeIdentifier(type) : simpleParameterizedType(type, typeParameters);
         fields.add(maker().VarDef(
                 maker().Modifiers(fieldDeclaration.getFlags()),
@@ -59,11 +65,11 @@ public class ClassDecorator {
             imports.add(maker().Select(identifier(type.getPackageName()), name(type.getSimpleName())));
         }
 
-        for (Class<?> typeParameter : typeParameters) {
-            if (!uniqueImports.contains(typeParameter.getName()) && !typeParameter.getName().equals(declaration.name.toString())) {
-                uniqueImports.add(typeParameter.getName());
+        for (TypedParameter typeParameter : typeParameters) {
+            if (!uniqueImports.contains(typeParameter.getTypeName()) && !typeParameter.getTypeName().equals(declaration.name.toString())) {
+                uniqueImports.add(typeParameter.getTypeName());
                 String packageName = typeParameter.getPackageName();
-                String typeName = typeParameter.getSimpleName();
+                String typeName = typeParameter.getTypeName();
                 imports.add(maker().Select(identifier(isEmpty(packageName) ? typeName : packageName), name(isEmpty(packageName) ? EMPTY_STRING : typeName)));
             }
         }
@@ -88,9 +94,18 @@ public class ClassDecorator {
 
         maker().at(compilationUnit.pos);
         ListBuffer<JCTree> importDefinitions = new ListBuffer<>();
+        List<JCTree> initialDefinitions = compilationUnit.defs;
+
+        if (nonNull(compilationUnit.defs.head) && compilationUnit.defs.head.getKind() == PACKAGE) {
+            importDefinitions.add(compilationUnit.defs.head);
+            initialDefinitions = compilationUnit.defs.subList(1, compilationUnit.defs.length());
+        }
+
         imports.stream().map(classImport -> maker().Import(classImport, false)).forEach(importDefinitions::append);
         staticImports.stream().map(staticImport -> maker().Import(staticImport, true)).forEach(importDefinitions::append);
-        importDefinitions.addAll(compilationUnit.defs);
+
+        importDefinitions.addAll(initialDefinitions);
+
         compilationUnit.defs = importDefinitions.toList();
 
         return declaration;

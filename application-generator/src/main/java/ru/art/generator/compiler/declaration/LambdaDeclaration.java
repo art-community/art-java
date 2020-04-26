@@ -19,7 +19,7 @@ public class LambdaDeclaration {
     public JCLambda make() {
         com.sun.tools.javac.util.List<JCVariableDecl> lambdaParameters = fromStream(parameters
                 .stream()
-                .map(parameter -> parameter(parameter.getParameter(), simpleTypeIdentifier(parameter.getType()))));
+                .map(parameter -> parameter(parameter.getParameter(), identifier(parameter.getTypeName()))));
         return maker().Lambda(lambdaParameters, body);
 
     }

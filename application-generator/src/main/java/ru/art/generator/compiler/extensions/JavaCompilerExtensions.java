@@ -35,7 +35,8 @@ public class JavaCompilerExtensions {
                 .filter(member -> member.getKind() == VARIABLE)
                 .map(field -> (JCTree.JCVariableDecl) field)
                 .collect(toMap(field -> field.name.toString(), field -> TypedParameter.builder()
-                        .type(classFor(field.vartype.toString()))
+                        .packageName(classFor(field.vartype.toString()).getPackageName())
+                        .typeName(classFor(field.vartype.toString()).getSimpleName())
                         .parameter(field.name.toString())
                         .build()));
     }
@@ -50,10 +51,6 @@ public class JavaCompilerExtensions {
                 throw new InternalRuntimeException(newException);
             }
         }
-    }
-
-    public static Class<?> classFor(JCTree.JCClassDecl declaration) {
-        return classFor(declaration.toString());
     }
 
     public static boolean classExists(String name) {

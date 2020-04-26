@@ -69,12 +69,12 @@ public class MapperAnnotationProcessor extends AbstractProcessor {
 
         statements.add(variable(
                 "model",
-                simpleTypeIdentifier(decorator.getCurrentClass()),
+                identifier(decorator.getClassName()),
                 maker().NewClass(null, nil(), identifier(modelClass.name.toString()), nil(), null)
         ));
 
         for (TypedParameter field : fields.values()) {
-            switch (field.getType().getName()) {
+            switch (field.getFullTypeName()) {
                 case CLASS_STRING:
                     statements.add(
                             maker().Exec(maker().Assign(
@@ -106,12 +106,12 @@ public class MapperAnnotationProcessor extends AbstractProcessor {
 
         return FieldDeclaration.builder()
                 .name("toModel")
-                .flags(PRIVATE | FINAL | STATIC)
+                .flags(PUBLIC | FINAL | STATIC)
                 .type(ValueToModelMapper.class)
-                .typeParameter(decorator.getCurrentClass())
-                .typeParameter(Entity.class)
+                .typeParameter(TypedParameter.builder().packageName(decorator.getPackageName()).typeName(decorator.getClassName()).build())
+                .typeParameter(TypedParameter.builder().packageName(Entity.class.getPackageName()).typeName(Entity.class.getSimpleName()).build())
                 .initializer(LambdaDeclaration.builder()
-                        .parameter(TypedParameter.builder().type(Entity.class).parameter("value").build())
+                        .parameter(TypedParameter.builder().packageName(Entity.class.getPackageName()).typeName(Entity.class.getSimpleName()).parameter("value").build())
                         .body(maker().Block(0L, statements.toList()))
                         .build()
                         .make())
@@ -122,7 +122,7 @@ public class MapperAnnotationProcessor extends AbstractProcessor {
         JCMethodInvocation entityBuilder = maker().Apply(nil(), maker().Select(simpleTypeIdentifier(Entity.class), name("entityBuilder")), nil());
 
         for (TypedParameter field : fields.values()) {
-            switch (field.getType().getName()) {
+            switch (field.getFullTypeName()) {
                 case CLASS_STRING:
                     entityBuilder = maker().Apply(nil(),
                             maker().Select(entityBuilder, name("stringField")),
@@ -141,10 +141,10 @@ public class MapperAnnotationProcessor extends AbstractProcessor {
                 .name("fromModel")
                 .flags(PUBLIC | FINAL | STATIC)
                 .type(ValueFromModelMapper.class)
-                .typeParameter(decorator.getCurrentClass())
-                .typeParameter(Entity.class)
+                .typeParameter(TypedParameter.builder().packageName(decorator.getPackageName()).typeName(decorator.getClassName()).build())
+                .typeParameter(TypedParameter.builder().packageName(Entity.class.getPackageName()).typeName(Entity.class.getSimpleName()).build())
                 .initializer(LambdaDeclaration.builder()
-                        .parameter(TypedParameter.builder().type(decorator.getCurrentClass()).parameter("model").build())
+                        .parameter(TypedParameter.builder().packageName(decorator.getPackageName()).typeName(decorator.getClassName()).parameter("model").build())
                         .body(maker().Block(0L, of(maker().Return(maker().Apply(nil(), maker().Select(entityBuilder, name("build")), nil())))))
                         .build()
                         .make())

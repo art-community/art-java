@@ -5,6 +5,7 @@ import com.sun.tools.javac.tree.*;
 import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.util.*;
 import ru.art.core.constants.*;
+import ru.art.generator.compiler.model.*;
 import static com.sun.tools.javac.code.Flags.*;
 import static ru.art.core.constants.StringConstants.DOLLAR;
 import static ru.art.core.constants.StringConstants.DOT;
@@ -42,10 +43,6 @@ public class MakerService {
         return maker().Ident(simpleTypeName(type));
     }
 
-    public static JCTree.JCIdent typeIdentifier(String typeName) {
-        return maker().Ident(name(typeName));
-    }
-
 
     public static JCTree.JCVariableDecl parameter(String name, JCTree.JCIdent typeIdentifier) {
         return maker().VarDef(maker().Modifiers(FINAL | PARAMETER), name(name), typeIdentifier, null);
@@ -59,8 +56,8 @@ public class MakerService {
         return maker().TypeApply(typeIdentifier(type), fromStream(parameterTypes.stream().map(MakerService::typeIdentifier)));
     }
 
-    public static JCTree.JCTypeApply simpleParameterizedType(Class<?> type, List<Class<?>> parameterTypes) {
-        return maker().TypeApply(simpleTypeIdentifier(type), fromStream(parameterTypes.stream().map(MakerService::simpleTypeIdentifier)));
+    public static JCTree.JCTypeApply simpleParameterizedType(Class<?> type, List<TypedParameter> parameterTypes) {
+        return maker().TypeApply(simpleTypeIdentifier(type), fromStream(parameterTypes.stream().map(TypedParameter::getTypeName).map(MakerService::identifier)));
     }
 
     public static JCTree.JCCompilationUnit getCompilationUnit(Symbol symbol) {
