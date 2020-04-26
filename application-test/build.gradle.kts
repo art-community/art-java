@@ -39,10 +39,9 @@ configurations {
 
 dependencies {
     annotationProcessor(lombok().inGradleNotation())
-    embedded(project(":application-generator"))
-    annotationProcessor(project(":application-generator"))
     testAnnotationProcessor(lombok().inGradleNotation())
     testImplementation("org.hsqldb", "hsqldb", "2+")
+    embedded(project(":application-generator"))
 }
 
 tasks.withType<Test> {
