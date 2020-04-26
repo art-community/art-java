@@ -1,8 +1,11 @@
 package ru.art.generator.compiler.processor;
 
 import com.google.auto.service.*;
+import com.sun.tools.javac.code.*;
 import com.sun.tools.javac.processing.*;
 import com.sun.tools.javac.tree.JCTree.*;
+import ru.art.entity.*;
+import ru.art.entity.mapper.*;
 import ru.art.generator.compiler.annotation.*;
 import ru.art.generator.compiler.declaration.*;
 import ru.art.generator.compiler.decorator.*;
@@ -20,7 +23,6 @@ import javax.annotation.processing.*;
 import javax.lang.model.*;
 import javax.lang.model.element.*;
 import java.util.*;
-import java.util.function.*;
 
 @AutoService(Processor.class)
 public class MapperAnnotationProcessor extends AbstractProcessor {
@@ -54,16 +56,19 @@ public class MapperAnnotationProcessor extends AbstractProcessor {
     private static void generateModelFields(JCClassDecl modelClass, JavaCompilerService service) {
         Map<String, TypedParameter> fields = getFields(modelClass);
         ClassDecorator decorator = decorator(modelClass);
-        for (TypedParameter field : fields.values()) {
-            JCLambda lambda = service.lambda(maker().Block(0L, of(maker().Return(null))), field);
-            decorator.field(FieldDeclaration.builder()
-                    .name(field.getParameter() + "Mapper")
-                    .flags(PRIVATE | FINAL | STATIC)
-                    .type(Consumer.class)
-                    .typeParameter(field.getType())
-                    .initializer(lambda)
-                    .build());
-        }
+        decorator.field(FieldDeclaration.builder()
+                .name("toModel")
+                .flags(PRIVATE | FINAL | STATIC)
+                .type(ValueToModelMapper.class)
+                .typeParameter(decorator.getCurrentClass())
+                .typeParameter(Value.class)
+                .initializer(LambdaDeclaration.builder()
+                        .parameter(TypedParameter.builder().type(Value.class).parameter("value").build())
+                        .body(maker().Block(0L, of(maker().Return(maker().Literal(TypeTag.BOT, null)))))
+                        .build()
+                        .make())
+                .build());
+
         decorator.decorate();
     }
 }

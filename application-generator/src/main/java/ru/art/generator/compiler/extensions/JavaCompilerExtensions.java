@@ -52,6 +52,10 @@ public class JavaCompilerExtensions {
         }
     }
 
+    public static Class<?> classFor(JCTree.JCClassDecl declaration) {
+        return classFor(declaration.toString());
+    }
+
     public static boolean classExists(String name) {
         try {
             Class.forName(name);

@@ -41,12 +41,6 @@ public class JavaCompilerService {
         return this;
     }
 
-    public JCLambda lambda(JCTree body, TypedParameter... parameters) {
-        List<JCVariableDecl> lambdaParameters = fromStream(stream(parameters).map(parameter -> parameter(parameter.getParameter(), typeIdentifier(parameter.getType()))));
-        return maker().Lambda(lambdaParameters, body);
-    }
-
-
     public static JavaCompilerService javaCompilerService(JavacProcessingEnvironment processingEnvironment, JavacRoundEnvironment roundEnvironment) {
         return new JavaCompilerService(processingEnvironment, roundEnvironment);
     }
