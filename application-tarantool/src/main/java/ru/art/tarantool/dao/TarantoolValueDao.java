@@ -54,7 +54,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         if (isNull(entity)) {
             throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
         }
-        if (!entity.getFieldKeys().contains(ID_FIELD) && idCalculationMode == MANUAL) {
+        if (!entity.getFieldKeys().contains(stringPrimitive(ID_FIELD)) && idCalculationMode == MANUAL) {
             throw new TarantoolDaoException(format(ENTITY_WITHOUT_ID_FILED, spaceName));
         }
         evaluateValueScript(clusterIds, spaceName);
@@ -303,7 +303,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         if (isNull(defaultEntity)) {
             throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
         }
-        if (!defaultEntity.getFieldKeys().contains(ID_FIELD) && idCalculationMode == MANUAL) {
+        if (!defaultEntity.getFieldKeys().contains(stringPrimitive(ID_FIELD)) && idCalculationMode == MANUAL) {
             throw new TarantoolDaoException(format(ENTITY_WITHOUT_ID_FILED, spaceName));
         }
         evaluateValueScript(clusterIds, spaceName);
