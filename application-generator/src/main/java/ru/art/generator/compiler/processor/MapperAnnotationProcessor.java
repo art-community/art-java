@@ -1,9 +1,11 @@
 package ru.art.generator.compiler.processor;
 
 import com.google.auto.service.*;
+import com.sun.source.tree.*;
 import com.sun.tools.javac.processing.*;
 import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.util.*;
+import lombok.*;
 import ru.art.entity.*;
 import ru.art.entity.mapper.*;
 import ru.art.generator.compiler.annotation.*;
@@ -11,6 +13,7 @@ import ru.art.generator.compiler.declaration.*;
 import ru.art.generator.compiler.decorator.*;
 import ru.art.generator.compiler.model.*;
 import ru.art.generator.compiler.service.*;
+import static com.sun.source.tree.Tree.Kind.ANNOTATION;
 import static com.sun.tools.javac.code.Flags.*;
 import static com.sun.tools.javac.util.List.*;
 import static javax.lang.model.SourceVersion.*;
@@ -60,7 +63,7 @@ public class MapperAnnotationProcessor extends AbstractProcessor {
         ClassDecorator decorator = decorator(modelClass);
         decorator
                 .field(generateToModelField(modelClass, fields, decorator))
-                .field(generateFromModelField(modelClass, fields, decorator))
+                .field(generateFromModelField(fields, decorator))
                 .decorate();
     }
 
@@ -105,7 +108,7 @@ public class MapperAnnotationProcessor extends AbstractProcessor {
         statements.add(maker().Return(identifier("model")));
 
         return FieldDeclaration.builder()
-                .name("toModel")
+                .name("to" + decorator.getClassName())
                 .flags(PUBLIC | FINAL | STATIC)
                 .type(ValueToModelMapper.class)
                 .typeParameter(TypedParameter.builder().packageName(decorator.getPackageName()).typeName(decorator.getClassName()).build())
@@ -118,7 +121,7 @@ public class MapperAnnotationProcessor extends AbstractProcessor {
                 .build();
     }
 
-    private static FieldDeclaration generateFromModelField(JCClassDecl modelClass, Map<String, TypedParameter> fields, ClassDecorator decorator) {
+    private static FieldDeclaration generateFromModelField(Map<String, TypedParameter> fields, ClassDecorator decorator) {
         JCMethodInvocation entityBuilder = maker().Apply(nil(), maker().Select(simpleTypeIdentifier(Entity.class), name("entityBuilder")), nil());
 
         for (TypedParameter field : fields.values()) {
@@ -138,7 +141,7 @@ public class MapperAnnotationProcessor extends AbstractProcessor {
             }
         }
         return FieldDeclaration.builder()
-                .name("fromModel")
+                .name("from" + decorator.getClassName())
                 .flags(PUBLIC | FINAL | STATIC)
                 .type(ValueFromModelMapper.class)
                 .typeParameter(TypedParameter.builder().packageName(decorator.getPackageName()).typeName(decorator.getClassName()).build())
