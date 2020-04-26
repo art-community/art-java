@@ -70,11 +70,20 @@ public class ClassDecorator {
         return this;
     }
 
+    public ClassDecorator addImport(Class<?> type) {
+        if (uniqueImports.contains(type.getName()) || type.getName().equals(declaration.name.toString())) {
+            return this;
+        }
+        uniqueImports.add(type.getName());
+        imports.add(maker().Select(identifier(type.getCanonicalName().substring(0, type.getCanonicalName().lastIndexOf(DOT))), name(type.getSimpleName())));
+        return this;
+    }
+
     public JCClassDecl decorate() {
         maker().at(declaration.pos);
         ListBuffer<JCTree> definitions = new ListBuffer<>();
-        fields.forEach(definitions::append);
         definitions.addAll(declaration.defs);
+        fields.forEach(definitions::append);
         declaration.defs = definitions.toList();
 
         maker().at(compilationUnit.pos);

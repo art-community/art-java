@@ -2,8 +2,12 @@ package ru.art.generator.compiler.service;
 
 import com.sun.tools.javac.code.*;
 import com.sun.tools.javac.tree.*;
+import com.sun.tools.javac.tree.JCTree.*;
 import com.sun.tools.javac.util.*;
+import ru.art.core.constants.*;
 import static com.sun.tools.javac.code.Flags.*;
+import static ru.art.core.constants.StringConstants.DOLLAR;
+import static ru.art.core.constants.StringConstants.DOT;
 import static ru.art.generator.compiler.constants.CompilationConstants.*;
 import static ru.art.generator.compiler.extensions.JavaCompilerExtensions.*;
 import static ru.art.generator.compiler.state.CompilationState.*;
@@ -23,6 +27,9 @@ public class MakerService {
     }
 
     public static Name simpleTypeName(Class<?> type) {
+        if (type.getName().contains(DOLLAR)) {
+            return name(type.getName().substring(type.getName().lastIndexOf(DOT) + 1).replace(DOLLAR, DOT));
+        }
         return name(type.getSimpleName());
     }
 
@@ -42,6 +49,10 @@ public class MakerService {
 
     public static JCTree.JCVariableDecl parameter(String name, JCTree.JCIdent typeIdentifier) {
         return maker().VarDef(maker().Modifiers(FINAL | PARAMETER), name(name), typeIdentifier, null);
+    }
+
+    public static JCTree.JCVariableDecl variable(String name, JCTree.JCIdent typeIdentifier, JCExpression initializer) {
+        return maker().VarDef(maker().Modifiers(0L), name(name), typeIdentifier, initializer);
     }
 
     public static JCTree.JCTypeApply parameterizedType(Class<?> type, List<Class<?>> parameterTypes) {
