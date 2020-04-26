@@ -67,7 +67,7 @@ public interface RocksDbValueDao {
         try {
             return ofNullable(readMessagePack(bytes));
         } catch (Throwable throwable) {
-            throw new RocksDbOperationException(PROTOBUF_PARSING_ERROR, throwable);
+            throw new RocksDbOperationException(MESSAGE_PACK_PARSING_ERROR, throwable);
         }
     }
 

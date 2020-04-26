@@ -24,5 +24,5 @@ public interface RocksDbExceptionMessages {
     String MERGE_ERROR = "Occurred error during merging value into RocksDb";
     String GET_ERROR = "Occurred error during getting value from RocksDb";
     String DELETE_ERROR = "Occurred error during deleting value from RocksDb";
-    String PROTOBUF_PARSING_ERROR = "Occurred error during parsing protobuf value from RocksDb";
+    String MESSAGE_PACK_PARSING_ERROR = "Occurred error during parsing MessagePack value from RocksDb";
 }
