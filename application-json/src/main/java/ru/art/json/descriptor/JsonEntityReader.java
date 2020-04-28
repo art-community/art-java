@@ -154,7 +154,7 @@ public class JsonEntityReader {
                 entityBuilder.entityCollectionField(currentName, parseEntityArray(parser));
                 return;
             case START_ARRAY:
-                parseArray(entityBuilder, parser);
+                entityBuilder.collectionValueField(currentName, parseArray(parser));
                 return;
             case VALUE_STRING:
                 entityBuilder.stringCollectionField(currentName, parseStringArray(parser));
