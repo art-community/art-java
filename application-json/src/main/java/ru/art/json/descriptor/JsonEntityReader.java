@@ -154,7 +154,7 @@ public class JsonEntityReader {
                 entityBuilder.entityCollectionField(currentName, parseEntityArray(parser));
                 return;
             case START_ARRAY:
-                parseArray(entityBuilder, parser);
+                entityBuilder.collectionValueCollectionField(currentName, parseArraysArray(parser));
                 return;
             case VALUE_STRING:
                 entityBuilder.stringCollectionField(currentName, parseStringArray(parser));
@@ -187,7 +187,7 @@ public class JsonEntityReader {
             case START_OBJECT:
                 return entityCollection(parseEntityArray(parser));
             case START_ARRAY:
-                return parseArray(parser);
+                return collectionOfCollections(parseArraysArray(parser));
             case VALUE_STRING:
                 return stringCollection(parseStringArray(parser));
             case VALUE_NUMBER_INT:
@@ -263,6 +263,16 @@ public class JsonEntityReader {
         do {
             if (currentToken != START_OBJECT) return array;
             array.add(parseJsonEntity(parser));
+            currentToken = parser.nextToken();
+        } while (!parser.isClosed() && currentToken != END_ARRAY);
+        return array;
+    }
+
+    private Collection<CollectionValue<Entity>> parseArraysArray(JsonParser parser) throws IOException {
+        List<CollectionValue<Entity>> array = dynamicArrayOf();
+        JsonToken currentToken = parser.currentToken();
+        do {
+            if (currentToken != START_ARRAY) array.add(entityCollection(parseEntityArray(parser)));
             currentToken = parser.nextToken();
         } while (!parser.isClosed() && currentToken != END_ARRAY);
         return array;
