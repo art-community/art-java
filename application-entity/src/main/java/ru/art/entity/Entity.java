@@ -802,7 +802,7 @@ public class Entity implements Value {
             return this;
         }
 
-        public EntityBuilder collectionValueCollectionField(String name, Collection<CollectionValue<?>> value) {
+        public EntityBuilder collectionValueCollectionField(String name, Collection<CollectionValue<Entity>> value) {
             fields.put(name, collectionValue(CollectionElementsType.COLLECTION, value));
             return this;
         }
