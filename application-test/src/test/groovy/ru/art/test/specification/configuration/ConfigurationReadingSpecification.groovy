@@ -2,8 +2,10 @@ package ru.art.test.specification.configuration
 
 import ru.art.config.Config
 import ru.art.config.ConfigProvider
+import ru.art.core.constants.StringConstants
 import ru.art.core.extension.FileExtensions
 import spock.lang.Specification
+
 
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.useAgileConfigurations
 import static ru.art.core.constants.SystemProperties.CONFIG_FILE_PATH_PROPERTY
@@ -85,5 +87,6 @@ class ConfigurationReadingSpecification extends Specification {
 
         cleanup:
         deleteFileRecursive(configFile)
+        System.setProperty(CONFIG_FILE_PATH_PROPERTY, StringConstants.EMPTY_STRING)
     }
 }

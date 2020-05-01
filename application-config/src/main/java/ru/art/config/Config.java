@@ -384,7 +384,7 @@ public class Config {
         }
         int dotIndex = path.indexOf(DOT);
         if (dotIndex == EMPTY_ARRAY_INDEX) {
-            return node;
+            return MissingNode.getInstance();
         }
         node = yamlConfig.path(path.substring(0, dotIndex));
         path = path.substring(dotIndex + 1);
@@ -406,7 +406,7 @@ public class Config {
             }
             dotIndex = path.indexOf(DOT);
             if (dotIndex == EMPTY_ARRAY_INDEX) {
-                return node;
+                return MissingNode.getInstance();
             }
             node = node.path(path.substring(0, dotIndex));
             path = path.substring(dotIndex + 1);
