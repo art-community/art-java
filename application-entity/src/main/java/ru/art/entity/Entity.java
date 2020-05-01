@@ -177,9 +177,12 @@ public class Entity implements Value {
         if (CheckerForEmptiness.isEmpty(key)) {
             return null;
         }
+        Value value;
+        if (nonNull(value = getValue(key))) {
+            return value;
+        }
         Queue<String> sections = queueOf(key.split(ESCAPED_DOT));
         Entity entity = this;
-        Value value = null;
         String section;
         while ((section = sections.poll()) != null) {
             value = entity.getValue(section);

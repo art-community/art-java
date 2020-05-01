@@ -24,9 +24,9 @@ import static com.typesafe.config.ConfigParseOptions.*;
 import static java.lang.System.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
-import static java.util.Objects.isNull;
+import static java.util.Objects.*;
 import static ru.art.config.TypesafeConfigLoaderConstants.*;
-import static ru.art.config.TypesafeConfigLoadingExceptionMessages.CONFIG_FILE_NOT_FOUND;
+import static ru.art.config.TypesafeConfigLoadingExceptionMessages.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.SystemProperties.*;
 import static ru.art.core.extension.FileExtensions.*;
@@ -61,8 +61,7 @@ class TypesafeConfigLoader {
     private static Reader loadConfigReader(ConfigSyntax configSyntax) throws IOException {
         URL url = loadTypeSafeConfigUrl(configSyntax);
         if (isNull(url)) {
-            throw new TypesafeConfigLoadingException(format(CONFIG_FILE_NOT_FOUND, configSyntax.toString()
-                    .toLowerCase()));
+            throw new TypesafeConfigLoadingException(format(CONFIG_FILE_NOT_FOUND, configSyntax.toString().toLowerCase()));
         }
         return new InputStreamReader(url.openStream());
     }
