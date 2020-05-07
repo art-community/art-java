@@ -40,6 +40,7 @@ import static ru.art.sql.constants.ConnectionPoolInitializationMode.*;
 import static ru.art.sql.constants.SqlModuleConstants.LoggingMessages.*;
 import static ru.art.sql.constants.SqlModuleConstants.*;
 import javax.sql.DataSource;
+import java.sql.*;
 import java.util.function.*;
 
 @Getter
@@ -83,7 +84,8 @@ public class SqlModule implements Module<SqlModuleConfiguration, SqlModuleState>
                     dataSource = new HikariDataSource(configuration.getHikariPoolConfig());
                     sqlModuleState().hikariDataSource(dataSource);
                     if (sqlModule().getInitializationMode() == BOOTSTRAP) {
-                        dataSource.getConnection();
+                        try (Connection ignored = dataSource.getConnection()) {
+                        }
                         getLogger().info(format(STARING_POOL, dataSource));
                     }
                     break;
@@ -96,7 +98,8 @@ public class SqlModule implements Module<SqlModuleConfiguration, SqlModuleState>
                         if (configuration.isEnableMetrics()) {
                             Caster.<ManagedPooledDataSource>cast(dataSource).start();
                         }
-                        dataSource.getConnection();
+                        try (Connection ignored = dataSource.getConnection()) {
+                        }
                         getLogger().info(format(STARING_POOL, dataSource));
                     }
                     break;
