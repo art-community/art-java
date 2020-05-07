@@ -795,12 +795,17 @@ public class Entity implements Value {
             return this;
         }
 
+        public EntityBuilder collectionValueField(String name, CollectionValue<?> value) {
+            fields.put(name, value);
+            return this;
+        }
+
         public EntityBuilder stringParametersCollectionField(String name, Collection<StringParametersMap> value) {
             fields.put(name, collectionValue(CollectionElementsType.STRING_PARAMETERS_MAP, value));
             return this;
         }
 
-        public EntityBuilder collectionValueCollectionField(String name, Collection<CollectionValue<?>> value) {
+        public EntityBuilder collectionValueCollectionField(String name, Collection<CollectionValue<Entity>> value) {
             fields.put(name, collectionValue(CollectionElementsType.COLLECTION, value));
             return this;
         }
