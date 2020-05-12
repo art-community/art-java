@@ -23,6 +23,7 @@ import lombok.experimental.*;
 import ru.art.entity.*;
 import ru.art.json.exception.*;
 import static com.fasterxml.jackson.core.JsonToken.*;
+import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.context.Context.*;
@@ -107,7 +108,6 @@ public class JsonEntityReader {
             currentName = emptyIfNull(currentName);
             switch (currentToken) {
                 case NOT_AVAILABLE:
-                case END_ARRAY:
                 case END_OBJECT:
                     return entityBuilder.build();
                 case START_OBJECT:
@@ -143,9 +143,11 @@ public class JsonEntityReader {
         String currentName = emptyIfNull(parser.getCurrentName());
         JsonToken currentToken = parser.nextToken();
         switch (currentToken) {
+            case END_ARRAY:
+                entityBuilder.valueCollectionField(currentName, emptyList());
+                return;
             case NOT_AVAILABLE:
             case END_OBJECT:
-            case END_ARRAY:
             case FIELD_NAME:
             case VALUE_EMBEDDED_OBJECT:
             case VALUE_NULL:
@@ -272,8 +274,14 @@ public class JsonEntityReader {
         List<CollectionValue<Entity>> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {
-            if (currentToken != START_ARRAY) array.add(entityCollection(parseEntityArray(parser)));
+            Collection<Entity> entities = dynamicArrayOf();
+            if (currentToken != START_ARRAY) {
+                entities = parseEntityArray(parser);
+            }
             currentToken = parser.nextToken();
+            if (currentToken == END_ARRAY) {
+                array.add(entityCollection(entities));
+            }
         } while (!parser.isClosed() && currentToken != END_ARRAY);
         return array;
     }
