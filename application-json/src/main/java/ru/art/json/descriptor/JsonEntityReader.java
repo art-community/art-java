@@ -274,13 +274,12 @@ public class JsonEntityReader {
         List<CollectionValue<Entity>> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {
-            Collection<Entity> entities = dynamicArrayOf();
             if (currentToken != START_ARRAY) {
-                entities = parseEntityArray(parser);
+                array.add(entityCollection(parseEntityArray(parser)));
             }
             currentToken = parser.nextToken();
-            if (currentToken == END_ARRAY) {
-                array.add(entityCollection(entities));
+            if (currentToken == END_ARRAY && isEmpty(array)) {
+                array.add(entityCollection(dynamicArrayOf()));
             }
         } while (!parser.isClosed() && currentToken != END_ARRAY);
         return array;
