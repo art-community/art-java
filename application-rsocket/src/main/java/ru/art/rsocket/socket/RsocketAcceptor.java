@@ -21,6 +21,7 @@ package ru.art.rsocket.socket;
 import io.rsocket.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
+import reactor.util.annotation.*;
 import ru.art.rsocket.flux.*;
 import ru.art.rsocket.model.*;
 import ru.art.rsocket.service.*;
@@ -39,7 +40,7 @@ import static ru.art.rsocket.writer.RsocketPayloadWriter.*;
 import static ru.art.rsocket.writer.ServiceResponsePayloadWriter.*;
 import static ru.art.service.ServiceController.*;
 
-public class RsocketAcceptor extends AbstractRSocket {
+public class RsocketAcceptor implements RSocket {
     private final CurrentRsocketState state;
 
     public RsocketAcceptor(RSocket socket, ConnectionSetupPayload setupPayload) {
