@@ -18,6 +18,7 @@
 
 package ru.art.rsocket.server;
 
+import io.rsocket.core.*;
 import io.rsocket.transport.netty.server.*;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +29,6 @@ import reactor.netty.tcp.*;
 import ru.art.rsocket.exception.*;
 import ru.art.rsocket.socket.*;
 import ru.art.rsocket.specification.*;
-import static io.rsocket.RSocketFactory.*;
 import static java.lang.System.*;
 import static java.lang.Thread.*;
 import static java.text.MessageFormat.*;
@@ -62,39 +62,37 @@ public class RsocketServer {
     }
 
     private Mono<CloseableChannel> createServer() {
-        ServerRSocketFactory socketFactory = receive().fragment(rsocketModule().getFragmentationMtu());
+        RSocketServer server = RSocketServer.create().fragment(rsocketModule().getFragmentationMtu());
         if (rsocketModule().isResumableServer()) {
-            socketFactory = socketFactory.resume()
-                    .resumeSessionDuration(ofMillis(rsocketModule().getServerResumeSessionDuration()))
-                    .resumeStreamTimeout(ofMillis(rsocketModule().getServerResumeStreamTimeout()));
+            server.resume(new Resume()
+                    .sessionDuration(ofMillis(rsocketModule().getServerResumeSessionDuration()))
+                    .streamTimeout(ofMillis(rsocketModule().getServerResumeStreamTimeout())));
         }
-        rsocketModule().getServerInterceptors().forEach(socketFactory::addResponderPlugin);
-        ServerTransportAcceptor acceptor = rsocketModule()
-                .getServerFactoryConfigurator()
-                .apply(cast(socketFactory))
+        server.interceptors(interceptorRegistry -> rsocketModule().getServerInterceptors().forEach(interceptorRegistry::forResponder));
+        RSocketServer acceptor = rsocketModule()
+                .getServerConfigurator()
+                .apply(cast(server))
                 .acceptor((setup, sendingSocket) -> just(new RsocketAcceptor(sendingSocket, setup)));
         Mono<CloseableChannel> channel;
         switch (transport) {
             case TCP:
-                channel = acceptor.transport(rsocketModule().getTcpServerTransportConfigurator()
+                channel = acceptor.bind(rsocketModule().getTcpServerTransportConfigurator()
                         .apply(cast(TcpServerTransport.create(rsocketModule()
                                 .getTcpServerConfigurator()
                                 .apply(cast(TcpServer.create()
                                         .host(rsocketModule().getServerHost())
                                         .port(rsocketModule().getServerTcpPort())))))))
-                        .start()
                         .onTerminateDetach();
                 rsocketModuleState().setTcpServer(this);
                 break;
             case WEB_SOCKET:
-                channel = acceptor.transport(rsocketModule()
+                channel = acceptor.bind(rsocketModule()
                         .getWebSocketServerTransportConfigurator()
                         .apply(cast(WebsocketServerTransport.create(rsocketModule()
                                 .getWebSocketServerConfigurator()
                                 .apply(cast(HttpServer.create()
                                         .host(rsocketModule().getServerHost())
                                         .port(rsocketModule().getServerWebSocketPort())))))))
-                        .start()
                         .onTerminateDetach();
                 rsocketModuleState().setWebSocketServer(this);
                 break;
