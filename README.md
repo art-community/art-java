@@ -47,6 +47,7 @@ art {
 For bugs, questions and discussions please use the [Github Issues](https://github.com/art-community/art/issues).
 
 Join us on Telegram: https://t.me/art_github
+
 Join us on Discord: https://discord.gg/jaqxB38
 
 ## Documentation
