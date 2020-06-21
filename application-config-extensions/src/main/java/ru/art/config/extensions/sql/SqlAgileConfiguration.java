@@ -94,15 +94,22 @@ public class SqlAgileConfiguration extends SqlModuleDefaultConfiguration {
 
     private HikariConfig extractHikariPoolConfig(Config config, DbConnectionProperties properties) {
         HikariConfig hikariPoolConfig = createDefaultHikariPoolConfig(properties);
-        hikariPoolConfig.setPoolName("application-name");
-        hikariPoolConfig.setRegisterMbeans(true);
-        hikariPoolConfig.setConnectionTimeout(5000L);
-        hikariPoolConfig.setIdleTimeout(10 * 60 * 60 * 1000);
-        hikariPoolConfig.setMaxLifetime(10 * 60 * 1000);
-        hikariPoolConfig.setMinimumIdle(10);
-        hikariPoolConfig.setMaximumPoolSize(10);
-        hikariPoolConfig.setValidationTimeout(5000L);
-        hikariPoolConfig.setLeakDetectionThreshold(15 * 60 * 60 * 1000);
+        hikariPoolConfig.setPoolName(ifExceptionOrEmpty(() -> config.getString(POOL_NAME), hikariPoolConfig.getPoolName()));
+        hikariPoolConfig.setRegisterMbeans(ifExceptionOrEmpty(() -> config.getBool(HIKARI_REGISTER_MBEANS), hikariPoolConfig.isRegisterMbeans()));
+        hikariPoolConfig.setConnectionTimeout(ifExceptionOrEmpty(() -> config.getLong(HIKARI_CONNECTION_TIMEOUT_MILLIS), hikariPoolConfig.getConnectionTimeout()));
+        hikariPoolConfig.setIdleTimeout(ifExceptionOrEmpty(() -> config.getLong(HIKARI_IDLE_TIMEOUT_MILLIS), hikariPoolConfig.getIdleTimeout()));
+        hikariPoolConfig.setMaxLifetime(ifExceptionOrEmpty(() -> config.getLong(HIKARI_MAX_LIFETIME_MILLIS), hikariPoolConfig.getMaxLifetime()));
+        hikariPoolConfig.setMinimumIdle(ifExceptionOrEmpty(() -> config.getInt(HIKARI_MINIMUM_IDLE), hikariPoolConfig.getMinimumIdle()));
+        hikariPoolConfig.setMaximumPoolSize(ifExceptionOrEmpty(() -> config.getInt(HIKARI_MAXIMUM_POOL_SIZE), hikariPoolConfig.getMaximumPoolSize()));
+        hikariPoolConfig.setAllowPoolSuspension(ifExceptionOrEmpty(() -> config.getBool(HIKARI_ALLOW_POOL_SUSPENSION), hikariPoolConfig.isAllowPoolSuspension()));
+        hikariPoolConfig.setInitializationFailTimeout(ifExceptionOrEmpty(
+                () -> config.getLong(HIKARI_INITIALIZATION_FAIL_TIMEOUT_MILLIS),
+                hikariPoolConfig.getInitializationFailTimeout())
+        );
+        hikariPoolConfig.setReadOnly(ifExceptionOrEmpty(() -> config.getBool(HIKARI_READ_ONLY), hikariPoolConfig.isReadOnly()));
+        hikariPoolConfig.setValidationTimeout(ifExceptionOrEmpty(() -> config.getLong(HIKARI_VALIDATION_TIMEOUT_MILLIS), hikariPoolConfig.getValidationTimeout()));
+        hikariPoolConfig.setLeakDetectionThreshold(ifExceptionOrEmpty(() -> config.getLong(HIKARI_LEAK_DETECTION_THRESHOLD_MILLIS), hikariPoolConfig.getLeakDetectionThreshold()));
+        hikariPoolConfig.setDataSourceProperties(ifExceptionOrEmpty(() -> config.getProperties(DRIVER_PROPERTIES), new Properties()));
         return hikariPoolConfig;
     }
 
