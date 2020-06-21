@@ -22,6 +22,7 @@ import lombok.experimental.*;
 import ru.art.entity.*;
 import ru.art.entity.constants.*;
 import ru.art.entity.tuple.schema.*;
+import static java.lang.Math.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static ru.art.core.caster.Caster.*;
@@ -142,27 +143,27 @@ public class PlainTupleReader {
             case INT:
                 return intCollection(collection.stream().filter(Objects::nonNull).map(element -> ((Number) element).intValue()).collect(toList()));
             case ENTITY:
-                for (int i = 0; i < elementsSchema.size(); i++) {
+                for (int i = 0; i < min(collection.size(), elementsSchema.size()); i++) {
                     elements.add(cast(readEntity((List<?>) collection.get(i), (EntitySchema) elementsSchema.get(i))));
                 }
                 return entityCollection(cast(elements));
             case COLLECTION:
-                for (int i = 0; i < elementsSchema.size(); i++) {
+                for (int i = 0; i < min(collection.size(), elementsSchema.size()); i++) {
                     elements.add(cast(readCollectionValue((List<?>) collection.get(i), (CollectionValueSchema) elementsSchema.get(i))));
                 }
                 return collectionOfCollections(cast(elements));
             case MAP:
-                for (int i = 0; i < elementsSchema.size(); i++) {
+                for (int i = 0; i < min(collection.size(), elementsSchema.size()); i++) {
                     elements.add(cast(readMapValue((List<?>) collection.get(i), (MapValueSchema) elementsSchema.get(i))));
                 }
                 return mapCollection(cast(elements));
             case STRING_PARAMETERS_MAP:
-                for (int i = 0; i < elementsSchema.size(); i++) {
+                for (int i = 0; i < min(collection.size(), elementsSchema.size()); i++) {
                     elements.add(cast(readStringParameters((List<?>) collection.get(i), (StringParametersSchema) elementsSchema.get(i))));
                 }
                 return stringParametersCollection(cast(elements));
             case VALUE:
-                for (int i = 0; i < elementsSchema.size(); i++) {
+                for (int i = 0; i < min(collection.size(), elementsSchema.size()); i++) {
                     elements.add(cast(readTuple((List<?>) collection.get(i), elementsSchema.get(i))));
                 }
                 return valueCollection(cast(elements));
