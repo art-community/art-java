@@ -28,6 +28,7 @@ import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
 import static ru.art.core.extension.FileExtensions.*;
+import static ru.art.logging.LoggingModule.*;
 import static ru.art.xml.constants.XmlDocumentConstants.*;
 import static ru.art.xml.constants.XmlMappingExceptionMessages.*;
 import static ru.art.xml.module.XmlModule.*;
@@ -71,9 +72,18 @@ public class XmlEntityWriter {
             return outputStream.toString();
         } catch (Throwable throwable) {
             throw new XmlMappingException(throwable);
+        } finally {
+            if (nonNull(xmlStreamWriter)) {
+                try {
+                    xmlStreamWriter.close();
+                } catch (Throwable throwable) {
+                    loggingModule()
+                            .getLogger(XmlEntityWriter.class)
+                            .error(throwable.getMessage(), throwable);
+                }
+            }
         }
     }
-
 
     private static void writeAllElements(XMLStreamWriter xmlStreamWriter, XmlEntity xmlEntity) throws XMLStreamException {
         writeStartDocument(xmlStreamWriter);
@@ -82,7 +92,6 @@ public class XmlEntityWriter {
     }
 
     private static void writeXmlEntity(XMLStreamWriter xmlStreamWriter, XmlEntity entity) throws XMLStreamException {
-        //gather all child elements
         List<XmlEntity> children = entity.getChildren();
 
         if (isEmpty(children) && isEmpty(entity.getValue())) return;
@@ -99,7 +108,6 @@ public class XmlEntityWriter {
         writeNamespaces(xmlStreamWriter, entity);
         writeAttributes(xmlStreamWriter, entity);
 
-        //gather elements sequence
         for (XmlEntity xmlEntity : children) {
             if (isEmpty(xmlEntity)) continue;
             writeXmlEntity(xmlStreamWriter, xmlEntity);

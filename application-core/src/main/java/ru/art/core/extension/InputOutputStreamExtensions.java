@@ -20,7 +20,6 @@ package ru.art.core.extension;
 
 import lombok.experimental.*;
 import static ru.art.core.constants.BufferConstants.*;
-import static ru.art.core.constants.StreamConstants.*;
 import static ru.art.core.extension.InputStreamExtensions.*;
 import java.io.*;
 
