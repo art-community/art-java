@@ -179,7 +179,6 @@ public class RsocketValueInterceptor implements RSocketInterceptor {
 
                     @Override
                     public void onNext(Payload payload) {
-                        System.out.println(RsocketPayloadReader.readPayloadData(payload, state.getDataFormat()));
                         Value data = valueByType.apply(payload, state.getDataFormat());
                         if (!isEntity(data)) {
                             mainRequestEmitter.next(payload);
