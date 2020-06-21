@@ -19,6 +19,7 @@
 package ru.art.rsocket.communicator;
 
 import io.rsocket.*;
+import io.rsocket.core.*;
 import io.rsocket.transport.netty.client.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
@@ -33,7 +34,7 @@ import ru.art.rsocket.constants.RsocketModuleConstants.*;
 import ru.art.rsocket.exception.*;
 import ru.art.rsocket.model.*;
 import ru.art.service.model.*;
-import static io.rsocket.RSocketFactory.*;
+import static io.rsocket.core.RSocketConnector.create;
 import static java.text.MessageFormat.*;
 import static java.time.Duration.*;
 import static java.util.Optional.*;
@@ -78,30 +79,29 @@ public class RsocketCommunicator {
 
     private RsocketCommunicator(RsocketCommunicationTargetConfiguration configuration) {
         dataFormat = configuration.dataFormat();
-        ClientRSocketFactory factory = connect();
+        RSocketConnector connector = create();
         if (configuration.resumable()) {
-            factory = factory.resume()
-                    .resumeSessionDuration(ofMillis(configuration.resumeSessionDuration()))
-                    .resumeStreamTimeout(ofMillis(configuration.resumeStreamTimeout()));
+            connector = connector.resume(new Resume()
+                    .sessionDuration(ofMillis(configuration.resumeSessionDuration()))
+                    .streamTimeout(ofMillis(configuration.resumeStreamTimeout()))
+            );
         }
-        rsocketModule().getClientInterceptors().forEach(factory::addRequesterPlugin);
-        configuration.interceptors().forEach(factory::addRequesterPlugin);
+        connector.interceptors(interceptorRegistry -> rsocketModule().getClientInterceptors().forEach(interceptorRegistry::forRequester));
+        connector.interceptors(interceptorRegistry -> configuration.interceptors().forEach(interceptorRegistry::forRequester));
         switch (configuration.transport()) {
             case TCP:
-                rsocketMono = factory.dataMimeType(toMimeType(configuration.dataFormat()))
+                rsocketMono = connector.dataMimeType(toMimeType(configuration.dataFormat()))
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
-                        .transport(TcpClientTransport.create(configuration.host(), configuration.tcpPort()))
-                        .start()
+                        .connect(TcpClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .doOnNext(rsocketModuleState()::registerRsocket)
                         .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.tcpPort())));
                 getLogger().info(format(RSOCKET_TCP_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.tcpPort()));
                 return;
             case WEB_SOCKET:
-                rsocketMono = factory
+                rsocketMono = connector
                         .dataMimeType(toMimeType(configuration.dataFormat()))
                         .metadataMimeType(toMimeType(configuration.dataFormat()))
-                        .transport(WebsocketClientTransport.create(configuration.host(), configuration.tcpPort()))
-                        .start()
+                        .connect(WebsocketClientTransport.create(configuration.host(), configuration.tcpPort()))
                         .doOnNext(rsocketModuleState()::registerRsocket)
                         .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE, configuration.host(), configuration.webSocketPort())));
                 getLogger().info(format(RSOCKET_WS_COMMUNICATOR_CREATED_MESSAGE, configuration.host(), configuration.tcpPort()));
