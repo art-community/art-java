@@ -70,8 +70,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class TarantoolInitializer {
-    private final static OutputStream TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM = forLogger(loggingModule()
-            .getLogger(TarantoolInitializer.class))
+    private final static OutputStream loggerOutputStream = forLogger(loggingModule().getLogger(TarantoolInitializer.class))
             .buildOutputStream();
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = loggingModule().getLogger(TarantoolInitializer.class);
@@ -84,6 +83,7 @@ public class TarantoolInitializer {
                 .map(Map.Entry::getKey)
                 .map(TarantoolInitializer::initializeTarantool)
                 .forEach(Runnable::run);
+        ignoreException(loggerOutputStream::close, getLogger()::error);
     }
 
     private static Runnable initializeTarantool(String instanceId) {
@@ -230,8 +230,8 @@ public class TarantoolInitializer {
         StartedProcess process = new ProcessExecutor()
                 .command(executableCommand)
                 .directory(new File(workingDirectory))
-                .redirectOutputAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
-                .redirectErrorAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
+                .redirectOutputAlsoTo(loggerOutputStream)
+                .redirectErrorAlsoTo(loggerOutputStream)
                 .start();
         waitForTarantoolProcess(instanceId, localConfiguration, address, process);
     }
@@ -263,8 +263,8 @@ public class TarantoolInitializer {
         StartedProcess process = new ProcessExecutor()
                 .command(executableCommand)
                 .directory(new File(workingDirectory))
-                .redirectOutputAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
-                .redirectErrorAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
+                .redirectOutputAlsoTo(loggerOutputStream)
+                .redirectErrorAlsoTo(loggerOutputStream)
                 .start();
         waitForTarantoolProcess(instanceId, localConfiguration, address, process);
     }

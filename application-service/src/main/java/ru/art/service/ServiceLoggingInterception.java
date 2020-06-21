@@ -29,6 +29,7 @@ import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static org.apache.logging.log4j.ThreadContext.*;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
+import static ru.art.core.checker.CheckerForEmptiness.isNotEmpty;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
@@ -69,7 +70,7 @@ public class ServiceLoggingInterception implements ServiceRequestInterception, S
 
     @Override
     public ServiceInterceptionResult intercept(ServiceRequest<?> request, ServiceResponse<?> response) {
-        if (!isEmpty(serviceLoggingParameters.get())) {
+        if (isNotEmpty(serviceLoggingParameters.get())) {
             putRequestResponseParameters(request, serviceLoggingParameters.get().pop());
         }
         ServiceExecutionException serviceException = response.getServiceException();

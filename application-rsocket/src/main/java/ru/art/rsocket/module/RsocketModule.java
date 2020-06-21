@@ -32,6 +32,7 @@ import static ru.art.core.wrapper.ExceptionWrapper.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import static ru.art.rsocket.constants.RsocketModuleConstants.*;
+import java.util.*;
 
 @Getter
 public class RsocketModule implements Module<RsocketModuleConfiguration, RsocketModuleState> {
@@ -60,7 +61,9 @@ public class RsocketModule implements Module<RsocketModuleConfiguration, Rsocket
     public void onUnload() {
         doIfNotNull(rsocketModuleState().getTcpServer(), RsocketServer::stop);
         doIfNotNull(rsocketModuleState().getWebSocketServer(), RsocketServer::stop);
-        rsocketModuleState().getRsocketClients().stream().filter(rsocket -> !rsocket.isDisposed()).forEach(this::disposeRsocket);
+        List<RSocket> clients = rsocketModuleState().getClients();
+        clients.stream().filter(rsocket -> !rsocket.isDisposed()).forEach(this::disposeRsocket);
+        clients.clear();
     }
 
     private void disposeRsocket(RSocket rsocket) {

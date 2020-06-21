@@ -53,7 +53,6 @@ import static ru.art.http.client.constants.HttpClientModuleConstants.*;
 import static ru.art.http.client.interceptor.HttpClientInterceptor.*;
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
-import static ru.art.logging.LoggingModule.*;
 import javax.net.ssl.*;
 import java.io.*;
 import java.security.*;
@@ -229,27 +228,14 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         }
 
         private KeyStore loadKeyStore() {
-            FileInputStream keyStoreInputStream = null;
-            try {
+            try (FileInputStream keyStoreInputStream = new FileInputStream(new File(getSslKeyStoreFilePath()))) {
                 KeyStore keyStore = getInstance(getSslKeyStoreType());
-                keyStoreInputStream = new FileInputStream(new File(getSslKeyStoreFilePath()));
                 keyStore.load(keyStoreInputStream, getSslKeyStorePassword().toCharArray());
                 return keyStore;
             } catch (Throwable throwable) {
                 throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
-            } finally {
-                if (nonNull(keyStoreInputStream)) {
-                    try {
-                        keyStoreInputStream.close();
-                    } catch (IOException ioException) {
-                        loggingModule()
-                                .getLogger(HttpClientModuleConfiguration.class)
-                                .error(HTTP_SSL_CONFIGURATION_FAILED, ioException);
-                    }
-                }
             }
         }
-
     }
 }
 

@@ -21,7 +21,6 @@ package ru.art.rsocket.socket;
 import io.rsocket.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
-import reactor.util.annotation.*;
 import ru.art.rsocket.flux.*;
 import ru.art.rsocket.model.*;
 import ru.art.rsocket.service.*;
@@ -105,9 +104,14 @@ public class RsocketAcceptor implements RSocket {
         return never();
     }
 
+    @Override
+    public void dispose() {
+        rsocketModuleState().clearCurrentRocketState();
+    }
+
     private CurrentRsocketState updateState() {
-        RsocketModuleState moduleState = rsocketModuleState();
-        moduleState.currentRocketState(state);
-        return state;
+        RsocketModuleState state = rsocketModuleState();
+        state.setCurrentRocketState(this.state);
+        return this.state;
     }
 }

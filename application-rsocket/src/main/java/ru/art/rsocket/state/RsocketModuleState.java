@@ -27,9 +27,9 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import java.util.*;
 
 public class RsocketModuleState implements ModuleState {
-    private final ThreadLocal<CurrentRsocketState> currentClientSocket = new ThreadLocal<>();
+    private final ThreadLocal<CurrentRsocketState> currentState = new ThreadLocal<>();
     @Getter
-    private final List<RSocket> rsocketClients = linkedListOf();
+    private final List<RSocket> clients = linkedListOf();
 
     @Getter
     @Setter
@@ -39,17 +39,21 @@ public class RsocketModuleState implements ModuleState {
     @Setter
     private RsocketServer webSocketServer;
 
-    public RsocketModuleState currentRocketState(CurrentRsocketState state) {
-        currentClientSocket.set(state);
+    public RsocketModuleState setCurrentRocketState(CurrentRsocketState state) {
+        currentState.set(state);
         return this;
     }
 
-    public CurrentRsocketState currentRocketState() {
-        return currentClientSocket.get();
+    public CurrentRsocketState getCurrentRocketState() {
+        return currentState.get();
+    }
+
+    public void clearCurrentRocketState() {
+        currentState.remove();
     }
 
     public RSocket registerRsocket(RSocket rsocket) {
-        rsocketClients.add(rsocket);
+        clients.add(rsocket);
         return rsocket;
     }
 

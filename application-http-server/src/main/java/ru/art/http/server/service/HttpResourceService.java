@@ -29,7 +29,7 @@ import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.constants.ArrayConstants.*;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.core.context.Context.*;
-import static ru.art.core.extension.InputOutputStreamExtensions.*;
+import static ru.art.core.extension.InputStreamExtensions.*;
 import static ru.art.core.extension.NullCheckingExtensions.*;
 import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.CollectionValuesFactory.*;
@@ -123,10 +123,10 @@ public class HttpResourceService {
                 }
             }
             return resourceContent;
-        } catch (IOException ioException) {
+        } catch (Throwable throwable) {
             loggingModule()
                     .getLogger(HttpResourceService.class)
-                    .error(RESOURCE_ERROR, ioException);
+                    .error(RESOURCE_ERROR, throwable);
         }
         return EMPTY_STRING;
     }
@@ -148,23 +148,20 @@ public class HttpResourceService {
     private static byte[] getBinaryResourceContent(URL resourceUrl, HttpResourceConfiguration resourceConfiguration) {
         try (InputStream pageStream = resourceUrl.openStream()) {
             return resolveResourceBinaryContent(pageStream, resourceConfiguration);
-        } catch (IOException ioException) {
+        } catch (Throwable throwable) {
             loggingModule()
                     .getLogger(HttpResourceService.class)
-                    .error(RESOURCE_ERROR, ioException);
+                    .error(RESOURCE_ERROR, throwable);
         }
         return EMPTY_BYTES;
     }
 
-    private static String resolveResourceContent(InputStream pageStream, Charset charset, HttpResourceConfiguration resourceConfiguration) throws IOException {
+    private static String resolveResourceContent(InputStream pageStream, Charset charset, HttpResourceConfiguration resourceConfiguration) {
         return new String(resolveResourceBinaryContent(pageStream, resourceConfiguration), charset);
     }
 
-    private static byte[] resolveResourceBinaryContent(InputStream pageStream, HttpResourceConfiguration resourceConfiguration) throws IOException {
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(pageStream);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        transferBytes(bufferedInputStream, byteArrayOutputStream, resourceConfiguration.getResourceBufferSize());
-        return byteArrayOutputStream.toByteArray();
+    private static byte[] resolveResourceBinaryContent(InputStream pageStream, HttpResourceConfiguration resourceConfiguration) {
+        return toByteArray(pageStream, resourceConfiguration.getResourceBufferSize());
     }
 
     private static URL mapResourceUrl(String resource, HttpResourceConfiguration resourceConfiguration) {

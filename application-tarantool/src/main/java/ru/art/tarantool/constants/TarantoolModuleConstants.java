@@ -80,6 +80,7 @@ public interface TarantoolModuleConstants {
     }
 
     interface ExceptionMessages {
+        String LUA_SCRIPT_READING_ERROR = "Lua script reading from resources exception";
         String CONFIGURATION_IS_NULL = "Tarantool ''{0}'' configuration is null. Please specify it.";
         String ENTITY_FIELDS_MAPPING_IS_NULL = "Tarantool ''{0}'' entity ''{1}'' fields mapping is null. Please specify it.";
         String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Connection waiting time has passed";

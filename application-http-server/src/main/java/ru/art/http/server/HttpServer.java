@@ -142,17 +142,17 @@ public class HttpServer {
     }
 
     private Context createContext() {
-        StandardContext ctx = (StandardContext) tomcat.addContext(EMPTY_STRING, getProperty(TEMP_DIR_KEY));
-        ctx.setAllowCasualMultipartParsing(httpServerModule().isAllowCasualMultipartParsing());
+        StandardContext context = (StandardContext) tomcat.addContext(EMPTY_STRING, getProperty(TEMP_DIR_KEY));
+        context.setAllowCasualMultipartParsing(httpServerModule().isAllowCasualMultipartParsing());
         if (cancelablePaths.contains(SLASH)) {
             getLogger().info(HTTP_SERVICES_CANCELED);
-            return ctx;
+            return context;
         }
-        ctx.setClearReferencesObjectStreamClassCaches(false);
-        ctx.setClearReferencesRmiTargets(false);
-        ctx.setClearReferencesThreadLocals(false);
-        registerHttpServices(ctx);
-        return ctx;
+        context.setClearReferencesObjectStreamClassCaches(false);
+        context.setClearReferencesRmiTargets(false);
+        context.setClearReferencesThreadLocals(false);
+        registerHttpServices(context);
+        return context;
     }
 
     private void registerHttpServices(Context ctx) {

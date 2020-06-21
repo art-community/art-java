@@ -60,9 +60,8 @@ public class XmlEntityReader {
     public static XmlEntity readXml(XMLInputFactory xmlInputFactory, String xml) {
         if (isNull(xmlInputFactory)) throw new XmlMappingException(XML_FACTORY_IS_NULL);
         if (isEmpty(xml)) return xmlEntityBuilder().create();
-        try {
-            InputStream is = new ByteArrayInputStream(xml.getBytes(UTF_8));
-            XMLStreamReader parser = xmlInputFactory.createXMLStreamReader(is);
+        try(InputStream inputStream = new ByteArrayInputStream(xml.getBytes(UTF_8))) {
+            XMLStreamReader parser = xmlInputFactory.createXMLStreamReader(inputStream);
             XmlEntityBuilder root = getRootElement(parser);
             return root.create();
         } catch (Throwable throwable) {

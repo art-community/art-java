@@ -47,7 +47,7 @@ import static ru.art.test.specification.configuration.ModuleConfigGenerator.writ
 
 @Ignore
 class ConfigurationSpecification extends Specification {
-    static LOCK = new ReentrantLock()
+    static lock = new ReentrantLock()
     def expectedLoggingConfiguration = new LoggingModuleDefaultConfiguration() {
         Level level = TRACE
     }
@@ -69,7 +69,7 @@ class ConfigurationSpecification extends Specification {
     @Unroll
     "Should read configuration from #type and compare it with expected"() {
         setup:
-        LOCK.lock()
+        lock.lock()
         writeModuleConfig(type)
         def configuration = new ConfigModuleConfiguration(configType: type)
         context().with {
@@ -100,7 +100,7 @@ class ConfigurationSpecification extends Specification {
 
         cleanup:
         restoreConfig()
-        LOCK.unlock()
+        lock.unlock()
 
         where:
         type       || _
