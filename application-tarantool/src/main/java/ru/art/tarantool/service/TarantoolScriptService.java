@@ -28,15 +28,13 @@ import static ru.art.tarantool.configuration.lua.TarantoolCommonScriptConfigurat
 import static ru.art.tarantool.configuration.lua.TarantoolValueScriptConfiguration.*;
 import static ru.art.tarantool.executor.TarantoolLuaExecutor.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.*;
 
 @UtilityClass
 @SuppressWarnings("Duplicates")
 public final class TarantoolScriptService {
-    private static final ReentrantLock LOCK = new ReentrantLock();
+    private static final ReentrantLock lock = new ReentrantLock();
 
     public static void evaluateValueScript(Set<String> instanceIds, String spaceName) {
         instanceIds.forEach(id -> evaluateValueScript(id, spaceName));
@@ -58,7 +56,7 @@ public final class TarantoolScriptService {
         if (nonNull(instanceValueScripts) && instanceValueScripts.contains(valueScriptConfiguration)) {
             return;
         }
-        LOCK.lock();
+        lock.lock();
         try {
             if (nonNull(instanceValueScripts) && instanceValueScripts.contains(valueScriptConfiguration)) {
                 return;
@@ -70,7 +68,7 @@ public final class TarantoolScriptService {
             }
             instanceValueScripts.add(valueScriptConfiguration);
         } finally {
-            LOCK.unlock();
+            lock.unlock();
         }
     }
 
@@ -82,7 +80,7 @@ public final class TarantoolScriptService {
         if (nonNull(instanceCommonScripts) && instanceCommonScripts.contains(commonScriptConfiguration)) {
             return;
         }
-        LOCK.lock();
+        lock.lock();
         try {
             if (nonNull(instanceCommonScripts) && instanceCommonScripts.contains(commonScriptConfiguration)) {
                 return;
@@ -94,7 +92,7 @@ public final class TarantoolScriptService {
             }
             instanceCommonScripts.add(commonScriptConfiguration);
         } finally {
-            LOCK.unlock();
+            lock.unlock();
         }
     }
 
@@ -106,7 +104,7 @@ public final class TarantoolScriptService {
         if (nonNull(instanceValueScripts) && instanceValueScripts.contains(valueScriptConfiguration)) {
             return;
         }
-        LOCK.lock();
+        lock.lock();
         try {
             if (nonNull(instanceValueScripts) && instanceValueScripts.contains(valueScriptConfiguration)) {
                 return;
@@ -118,7 +116,7 @@ public final class TarantoolScriptService {
             }
             instanceValueScripts.add(valueScriptConfiguration);
         } finally {
-            LOCK.unlock();
+            lock.unlock();
         }
     }
 }

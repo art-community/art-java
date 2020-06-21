@@ -32,7 +32,6 @@ import org.apache.http.nio.conn.*;
 import org.apache.http.nio.conn.ssl.*;
 import org.apache.http.ssl.SSLContexts;
 import org.zalando.logbook.httpclient.*;
-import ru.art.http.client.configuration.*;
 import ru.art.http.client.exception.*;
 import ru.art.http.client.model.*;
 import static java.security.KeyStore.*;
@@ -41,7 +40,6 @@ import static org.apache.http.ssl.SSLContexts.*;
 import static ru.art.http.client.constants.HttpClientExceptionMessages.*;
 import static ru.art.http.client.module.HttpClientModule.*;
 import static ru.art.http.constants.HttpCommonConstants.*;
-import static ru.art.logging.LoggingModule.*;
 import javax.net.ssl.*;
 import java.io.*;
 import java.security.*;
@@ -136,24 +134,12 @@ public class HttpClientsFactory {
     }
 
     private static KeyStore loadKeyStore(HttpClientConfiguration configuration) {
-        FileInputStream keyStoreInputStream = null;
-        try {
+        try (FileInputStream keyStoreInputStream = new FileInputStream(new File(configuration.getSslKeyStoreFilePath()))) {
             KeyStore keyStore = getInstance(configuration.getSslKeyStoreType());
-            keyStoreInputStream = new FileInputStream(new File(configuration.getSslKeyStoreFilePath()));
             keyStore.load(keyStoreInputStream, configuration.getSslKeyStorePassword().toCharArray());
             return keyStore;
         } catch (Throwable throwable) {
             throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
-        } finally {
-            if (nonNull(keyStoreInputStream)) {
-                try {
-                    keyStoreInputStream.close();
-                } catch (IOException ioException) {
-                    loggingModule()
-                            .getLogger(HttpClientModuleConfiguration.class)
-                            .error(HTTP_SSL_CONFIGURATION_FAILED, ioException);
-                }
-            }
         }
     }
 }

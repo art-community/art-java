@@ -12,7 +12,7 @@ public class LazyLoadingValue<T> {
     private final AtomicReference<T> value = new AtomicReference<>();
     private final Supplier<T> loader;
 
-    public T value() {
+    public T fastValue() {
         T value;
         if (nonNull(value = this.value.get())) {
             return value;
