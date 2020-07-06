@@ -22,6 +22,8 @@ import lombok.*;
 import ru.art.config.*;
 import ru.art.grpc.client.configuration.GrpcClientModuleConfiguration.*;
 import ru.art.grpc.client.model.*;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.stream.Collectors.*;
 import static ru.art.config.extensions.ConfigExtensions.*;
 import static ru.art.config.extensions.common.CommonConfigKeys.*;
@@ -59,8 +61,8 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
         enableRawDataTracing = configBoolean(GRPC_COMMUNICATION_SECTION_ID, ENABLE_RAW_DATA_TRACING, super.isEnableRawDataTracing());
         enableValueTracing = configBoolean(GRPC_COMMUNICATION_SECTION_ID, ENABLE_VALUE_TRACING, super.isEnableValueTracing());
         timeout = configLong(GRPC_COMMUNICATION_SECTION_ID, TIMEOUT, super.getTimeout());
-        keepAliveTimeNanos = ifException(() -> configLong(GRPC_COMMUNICATION_SECTION_ID, KEEP_ALIVE_TIME_MILLIS) * 1000, super.getKeepAliveTimeNanos());
-        keepAliveTimeOutNanos = ifException(() -> configLong(GRPC_COMMUNICATION_SECTION_ID, KEEP_ALIVE_TIME_OUT_MILLIS) * 1000, super.getKeepAliveTimeOutNanos());
+        keepAliveTimeNanos = ifException(() -> MILLISECONDS.toNanos(configLong(GRPC_COMMUNICATION_SECTION_ID, KEEP_ALIVE_TIME_MILLIS)), super.getKeepAliveTimeNanos());
+        keepAliveTimeOutNanos = ifException(() -> MILLISECONDS.toNanos(configLong(GRPC_COMMUNICATION_SECTION_ID, KEEP_ALIVE_TIME_OUT_MILLIS)), super.getKeepAliveTimeOutNanos());
         keepAliveWithoutCalls = configBoolean(GRPC_COMMUNICATION_SECTION_ID, KEEP_ALIVE_WITHOUT_CALLS, super.isKeepAliveWithoutCalls());
         waitForReady = configBoolean(GRPC_COMMUNICATION_SECTION_ID, WAIT_FOR_READY, super.isWaitForReady());
         overridingExecutor = new ForkJoinPool(configInt(GRPC_COMMUNICATION_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE));
