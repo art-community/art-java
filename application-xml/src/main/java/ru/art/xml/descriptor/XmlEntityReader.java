@@ -36,6 +36,7 @@ import static ru.art.xml.constants.XmlMappingExceptionMessages.*;
 import static ru.art.xml.module.XmlModule.*;
 import javax.xml.stream.*;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.*;
 
@@ -151,5 +152,18 @@ public class XmlEntityReader {
             namespaces.put(parser.getNamespacePrefix(i), parser.getNamespaceURI(i));
         }
         return namespaces;
+    }
+
+    public static XmlEntity readXml(XMLInputFactory xmlInputFactory, String xml, String charsetName) {
+        if (isNull(xmlInputFactory)) throw new XmlMappingException(XML_FACTORY_IS_NULL);
+        if (isEmpty(xml)) return xmlEntityBuilder().create();
+        Charset charset = isEmpty(charsetName) ? contextConfiguration().getCharset() : Charset.forName(charsetName);
+        try (InputStream inputStream = new ByteArrayInputStream(xml.getBytes(charset))) {
+            XMLStreamReader parser = xmlInputFactory.createXMLStreamReader(inputStream);
+            XmlEntity.XmlEntityBuilder root = getRootElement(parser);
+            return root.create();
+        } catch (Throwable throwable) {
+            throw new XmlMappingException(throwable);
+        }
     }
 }
