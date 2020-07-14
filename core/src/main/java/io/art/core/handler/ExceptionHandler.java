@@ -8,8 +8,8 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.StringConstants.*;
 import static java.util.Objects.*;
+import static java.util.Optional.ofNullable;
 import static lombok.AccessLevel.*;
-import java.text.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -47,6 +47,14 @@ public class ExceptionHandler<T> {
         ExceptionCallableHandler<T> callableHandler = new ExceptionCallableHandler<>();
         callableHandler.handler = handler;
         return callableHandler;
+    }
+
+    public static <T> T nullIfException(ExceptionCallable<T> callable) {
+        return new ExceptionCallableHandler<T>().orNull().call(callable);
+    }
+
+    public static <T> Optional<T> optionalIfException(ExceptionCallable<T> callable) {
+        return ofNullable(new ExceptionCallableHandler<T>().orNull().call(callable));
     }
 
     public static ExceptionRunnableHandler consumeException(Consumer<Throwable> consumer) {

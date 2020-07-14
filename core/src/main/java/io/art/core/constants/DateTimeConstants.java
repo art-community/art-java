@@ -21,7 +21,7 @@ package io.art.core.constants;
 import static java.time.format.DateTimeFormatter.*;
 import java.time.format.*;
 
-public interface DateConstants {
+public interface DateTimeConstants {
     String YYYY_MM_DD_HH_MM_SS_24H_DASH = "yyyy-MM-dd HH:mm:ss";
     DateTimeFormatter YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT = ofPattern(YYYY_MM_DD_HH_MM_SS_24H_DASH);
 
@@ -77,7 +77,7 @@ public interface DateConstants {
     DateTimeFormatter DD_MM_YYYY_EEEE_DOT_FORMAT = ofPattern(DD_MM_YYYY_EEEE_DOT);
 
     String DD_MM_YYYY_DASH = "dd-MM-yyyy";
-    DateTimeFormatter DD_MM_YYYY_DASH_FROMAT = ofPattern(DD_MM_YYYY_DASH);
+    DateTimeFormatter DD_MM_YYYY_DASH_FORMAT = ofPattern(DD_MM_YYYY_DASH);
 
     String DD_MM_DASH = "dd-MM";
     DateTimeFormatter DD_MM_DASH_FORMAT = ofPattern(DD_MM_DASH);

@@ -19,7 +19,7 @@
 package io.art.logging;
 
 import static org.apache.logging.log4j.ThreadContext.*;
-import static io.art.core.constants.DateConstants.*;
+import static io.art.core.constants.DateTimeConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static io.art.logging.ThreadContextExtensions.*;
