@@ -225,9 +225,9 @@ Join us on Telegram: https://t.me/art_github
 * `org.unbescape:unbescape:1.1.6.RELEASE`
 
 ## LICENSE
-ART Java
+ART
 
-Copyright 2019 ART
+Copyright 2020 ART
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
