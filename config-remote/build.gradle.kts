@@ -16,16 +16,14 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-        applicationService()
-        applicationConfig()
-        applicationConfigRemoteApi()
-        applicationConfiguratorApi()
-        applicationGrpcClient()
-        applicationGrpcServer()
-    }
+dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+    implementation(project(":service"))
+    implementation(project(":config"))
+    implementation(project(":config-remote-api"))
+    implementation(project(":configurator-api"))
+    implementation(project(":grpc-client"))
+    implementation(project(":grpc-server"))
 }

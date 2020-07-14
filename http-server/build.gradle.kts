@@ -16,31 +16,33 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-        applicationService()
-        applicationHttp()
-        applicationMetrics()
-        applicationTemplateEngine()
-    }
-}
+val tomcatVersion by project
+val logbookVersion by project
+val log4jVersion by project
 
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("org.apache.tomcat.embed", "tomcat-embed-core", tomcatVersion)
+        implementation(project(":core"))
+        implementation(project(":entity"))
+        implementation(project(":logging"))
+        implementation(project(":service"))
+        implementation(project(":http"))
+        implementation(project(":metrics"))
+        implementation(project(":template-engine"))
+
+        api("org.apache.tomcat.embed", "tomcat-embed-core", tomcatVersion)
                 .exclude("org.apache.httpcomponents", "httpcore")
-        embedded("org.apache.tomcat", "tomcat-servlet-api", tomcatVersion)
-        embedded("org.zalando", "logbook-servlet", logbookVersion)
+
+        api("org.apache.tomcat", "tomcat-servlet-api", tomcatVersion)
+
+        api("org.zalando", "logbook-servlet", logbookVersion)
                 .exclude("org.zalando", "logbook-core")
                 .exclude("org.zalando", "logbook-api")
                 .exclude("org.zalando", "faux-pas")
                 .exclude("org.apiguardian")
                 .exclude("org.slf4j")
                 .exclude("commons-logging")
-        embedded("org.apache.logging.log4j", "log4j-web", log4jVersion)
+
+        api("org.apache.logging.log4j", "log4j-web", log4jVersion)
                 .exclude("org.apache.logging.log4j")
     }
 }

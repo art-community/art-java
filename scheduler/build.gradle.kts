@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-art {
+
     spockFramework()
-    providedModules {
-        applicationCore()
-        applicationLogging()
+
+        project(":Core()
+        project(":Logging()
     }
 }

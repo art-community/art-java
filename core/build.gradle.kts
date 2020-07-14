@@ -16,9 +16,10 @@
  * limitations under the License.
  */
 
+val guavaVersion by project
+val vavrVersion by project
+
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("com.google.guava", "guava", guavaVersion)
-        embedded("io.vavr", "vavr", vavrVersion)
-    }
+    api("com.google.guava", "guava", guavaVersion)
+    api("io.vavr", "vavr", vavrVersion)
 }

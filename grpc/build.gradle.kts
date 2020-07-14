@@ -16,26 +16,25 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationProtobuf()
-    }
-}
+val nettyVersion by project
+val grpcVersion by project
 
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("io.grpc", "grpc-stub", grpcVersion)
-                .exclude("io.grpc", "grpc-api")
-                .exclude("com.google.guava")
-                .exclude("com.google.code.findbugs")
-        embedded("io.grpc", "grpc-netty-shaded", grpcVersion)
-                .exclude("io.grpc", "grpc-api")
-                .exclude("io.netty")
-                .exclude("com.google.guava")
-                .exclude("com.google.code.findbugs")
-        embedded("io.netty", "netty-all", nettyVersion)
-                .exclude("com.google.guava")
-                .exclude("com.google.code.findbugs")
-    }
+    implementation(project(":core"))
+    implementation(project(":protobuf"))
+
+    api("io.grpc", "grpc-stub", grpcVersion)
+            .exclude("io.grpc", "grpc-api")
+            .exclude("com.google.guava")
+            .exclude("com.google.code.findbugs")
+
+    api("io.grpc", "grpc-netty-shaded", grpcVersion)
+            .exclude("io.grpc", "grpc-api")
+            .exclude("io.netty")
+            .exclude("com.google.guava")
+            .exclude("com.google.code.findbugs")
+
+    api("io.netty", "netty-all", nettyVersion)
+            .exclude("com.google.guava")
+            .exclude("com.google.code.findbugs")
 }

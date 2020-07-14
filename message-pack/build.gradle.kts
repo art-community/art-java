@@ -16,15 +16,15 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationLogging()
-        applicationEntity()
-        applicationJson()
+
+
+        project(":Core()
+        project(":Logging()
+        project(":Entity()
+        project(":Json()
     }
 }
 
 dependencies {
-    embedded("org.msgpack", "msgpack-core", art.externalDependencyVersionsConfiguration.messagePackVersion)
+    api("org.msgpack", "msgpack-core", art.externalDependencyVersionsConfiguration.messagePackVersion)
 }

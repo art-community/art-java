@@ -16,19 +16,17 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-    }
-}
+val logbookVersion by project
+val apacheHttpCoreVersion by project
 
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("org.zalando", "logbook-core", logbookVersion)
-                .exclude("org.slf4j")
-                .exclude("com.google.code.findbugs")
-        embedded("org.apache.httpcomponents", "httpcore", apacheHttpCoreVersion)
-    }
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+
+    api("org.zalando", "logbook-core", logbookVersion)
+            .exclude("org.slf4j")
+            .exclude("com.google.code.findbugs")
+
+    api("org.apache.httpcomponents", "httpcore", apacheHttpCoreVersion)
 }

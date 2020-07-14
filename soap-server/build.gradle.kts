@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-        applicationService()
-        applicationXml()
-        applicationSoap()
-        applicationHttp()
-        applicationHttpServer()
-        applicationTemplateEngine()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Logging()
+        project(":Service()
+        project(":Xml()
+        project(":Soap()
+        project(":Http()
+        project(":HttpServer()
+        project(":TemplateEngine()
     }
 }

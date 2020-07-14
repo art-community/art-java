@@ -16,32 +16,32 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Logging()
     }
 }
 
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("io.github.resilience4j", "resilience4j-circuitbreaker", resilience4jVersion)
+
+        api("io.github.resilience4j", "resilience4j-circuitbreaker", resilience4jVersion)
                 .exclude("io.vavr")
                 .exclude("org.slf4j")
-        embedded("io.github.resilience4j", "resilience4j-ratelimiter", resilience4jVersion)
+        api("io.github.resilience4j", "resilience4j-ratelimiter", resilience4jVersion)
                 .exclude("io.vavr")
                 .exclude("org.slf4j")
-        embedded("io.github.resilience4j", "resilience4j-retry", resilience4jVersion)
+        api("io.github.resilience4j", "resilience4j-retry", resilience4jVersion)
                 .exclude("io.vavr")
                 .exclude("org.slf4j")
-        embedded("io.github.resilience4j", "resilience4j-metrics", resilience4jVersion)
+        api("io.github.resilience4j", "resilience4j-metrics", resilience4jVersion)
                 .exclude("io.vavr")
                 .exclude("org.slf4j")
-        embedded("io.github.resilience4j", "resilience4j-bulkhead", resilience4jVersion)
+        api("io.github.resilience4j", "resilience4j-bulkhead", resilience4jVersion)
                 .exclude("io.vavr")
                 .exclude("org.slf4j")
-        embedded("io.github.resilience4j", "resilience4j-timelimiter", resilience4jVersion)
+        api("io.github.resilience4j", "resilience4j-timelimiter", resilience4jVersion)
                 .exclude("io.vavr")
                 .exclude("org.slf4j")
     }

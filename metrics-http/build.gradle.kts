@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationService()
-        applicationHttp()
-        applicationHttpServer()
-        applicationMetrics()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Service()
+        project(":Http()
+        project(":HttpServer()
+        project(":Metrics()
     }
 }

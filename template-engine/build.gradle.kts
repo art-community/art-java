@@ -17,5 +17,5 @@
  */
 
 dependencies {
-    embedded("io.pebbletemplates", "pebble", art.externalDependencyVersionsConfiguration.pebbleVersion).exclude("org.slf4j")
+    api("io.pebbletemplates", "pebble", art.externalDependencyVersionsConfiguration.pebbleVersion).exclude("org.slf4j")
 }

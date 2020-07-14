@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-        applicationService()
-        applicationKafkaClient()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Logging()
+        project(":Service()
+        project(":KafkaClient()
     }
 }

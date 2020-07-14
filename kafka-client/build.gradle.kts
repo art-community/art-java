@@ -16,23 +16,23 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-        applicationJson()
-        applicationProtobuf()
-		applicationMessagePack()
-        applicationXml()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Logging()
+        project(":Json()
+        project(":Protobuf()
+		project(":MessagePack()
+        project(":Xml()
     }
 }
 
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("org.apache.kafka", "kafka-clients", kafkaVersion)
+
+        api("org.apache.kafka", "kafka-clients", kafkaVersion)
                 .exclude("org.slf4j")
-        embedded("org.apache.kafka", "kafka-log4j-appender", kafkaLog4jAppenderVersion)
+        api("org.apache.kafka", "kafka-log4j-appender", kafkaLog4jAppenderVersion)
                 .exclude("org.slf4j")
     }
 }

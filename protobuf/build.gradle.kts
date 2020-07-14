@@ -16,18 +16,18 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationService()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Service()
 
     }
 }
 
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("io.grpc", "grpc-protobuf", grpcVersion)
+
+        api("io.grpc", "grpc-protobuf", grpcVersion)
                 .exclude("com.google.guava")
                 .exclude("com.google.code.findbugs")
                 .exclude("com.google.errorprone")

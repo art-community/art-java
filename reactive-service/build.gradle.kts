@@ -16,15 +16,15 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationService()
-        applicationLogging()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Service()
+        project(":Logging()
     }
 }
 
 dependencies {
-    embedded("io.projectreactor", "reactor-core", art.externalDependencyVersionsConfiguration.projectReactorVersion)
+    api("io.projectreactor", "reactor-core", art.externalDependencyVersionsConfiguration.projectReactorVersion)
 }

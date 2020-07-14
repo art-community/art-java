@@ -16,29 +16,29 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
+
+
+        project(":Core()
+        project(":Entity()
     }
 }
 
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("org.slf4j", "slf4j-api", sl4jVersion)
-        embedded("org.apache.logging.log4j", "log4j-slf4j-impl", log4jVersion)
 
-        embedded("commons-logging", "commons-logging", commonsLoggingVersion)
-        embedded("org.apache.logging.log4j", "log4j-jcl", log4jVersion)
+        api("org.slf4j", "slf4j-api", sl4jVersion)
+        api("org.apache.logging.log4j", "log4j-slf4j-impl", log4jVersion)
 
-        embedded("org.apache.logging.log4j", "log4j-api", log4jVersion)
-        embedded("org.apache.logging.log4j", "log4j-core", log4jVersion)
+        api("commons-logging", "commons-logging", commonsLoggingVersion)
+        api("org.apache.logging.log4j", "log4j-jcl", log4jVersion)
 
-        embedded("org.apache.logging.log4j", "log4j-jul", log4jVersion)
-        embedded("com.lmax", "disruptor", "3.4.+")
+        api("org.apache.logging.log4j", "log4j-api", log4jVersion)
+        api("org.apache.logging.log4j", "log4j-core", log4jVersion)
 
-        embedded("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
-        embedded("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
-        embedded("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)
+        api("org.apache.logging.log4j", "log4j-jul", log4jVersion)
+        api("com.lmax", "disruptor", "3.4.+")
+
+        api("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
+        api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
+        api("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)
     }
 }

@@ -16,19 +16,19 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-        applicationService()
-        applicationKafkaClient()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Logging()
+        project(":Service()
+        project(":KafkaClient()
     }
 }
 
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("org.apache.kafka", "kafka-streams", kafkaVersion)
+
+        api("org.apache.kafka", "kafka-streams", kafkaVersion)
                 .exclude("org.apache.kafka", "kafka-clients")
                 .exclude("com.fasterxml.jackson.core")
                 .exclude("org.slf4j")

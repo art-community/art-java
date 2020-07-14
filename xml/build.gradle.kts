@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Logging()
     }
 }
 
 dependencies {
-    embedded("org.jvnet.staxex", "stax-ex", art.externalDependencyVersionsConfiguration.staxVersion)
+    api("org.jvnet.staxex", "stax-ex", art.externalDependencyVersionsConfiguration.staxVersion)
 }

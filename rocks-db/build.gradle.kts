@@ -16,15 +16,15 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-        applicationMessagePack()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Logging()
+        project(":MessagePack()
     }
 }
 
 dependencies {
-    embedded("org.rocksdb", "rocksdbjni", art.externalDependencyVersionsConfiguration.rocksdbVersion)
+    api("org.rocksdb", "rocksdbjni", art.externalDependencyVersionsConfiguration.rocksdbVersion)
 }

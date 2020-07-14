@@ -16,31 +16,31 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-        applicationService()
-        applicationHttp()
-    }
-}
+val apacheHttpClientVersion by project
+val apacheHttpAsyncClientVersion by project
+val logbookVersion by project
 
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("org.apache.httpcomponents", "httpclient", apacheHttpClientVersion)
-                .exclude("org.apache.httpcomponents", "httpcore")
-                .exclude("commons-logging")
-        embedded("org.apache.httpcomponents", "httpasyncclient", apacheHttpAsyncClientVersion)
-                .exclude("org.apache.httpcomponents", "httpcore")
-                .exclude("commons-logging")
-        embedded("org.zalando", "logbook-httpclient", logbookVersion)
-                .exclude("org.zalando", "logbook-core")
-                .exclude("org.zalando", "logbook-api")
-                .exclude("org.zalando", "faux-pas")
-                .exclude("org.apiguardian")
-                .exclude("org.apache.httpcomponents", "httpcore")
-                .exclude("org.slf4j")
-                .exclude("commons-logging")
-    }
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+    implementation(project(":service"))
+    implementation(project(":http"))
+
+    api("org.apache.httpcomponents", "httpclient", apacheHttpClientVersion)
+            .exclude("org.apache.httpcomponents", "httpcore")
+            .exclude("commons-logging")
+
+    api("org.apache.httpcomponents", "httpasyncclient", apacheHttpAsyncClientVersion)
+            .exclude("org.apache.httpcomponents", "httpcore")
+            .exclude("commons-logging")
+
+    api("org.zalando", "logbook-httpclient", logbookVersion)
+            .exclude("org.zalando", "logbook-core")
+            .exclude("org.zalando", "logbook-api")
+            .exclude("org.zalando", "faux-pas")
+            .exclude("org.apiguardian")
+            .exclude("org.apache.httpcomponents", "httpcore")
+            .exclude("org.slf4j")
+            .exclude("commons-logging")
 }

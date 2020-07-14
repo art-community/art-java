@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationHttp()
-        applicationHttpXml()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Http()
+        project(":HttpXml()
     }
 }

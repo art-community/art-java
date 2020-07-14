@@ -16,9 +16,6 @@
  * limitations under the License.
  */
 
-art {
-    spockFramework()
-    providedModules {
-        applicationCore()
-    }
+dependencies {
+    implementation(project(":core"))
 }

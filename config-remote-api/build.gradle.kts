@@ -16,11 +16,9 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationService()
-        applicationGrpcClient()
-    }
+dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":service"))
+    implementation(project(":grpc-client"))
 }

@@ -16,11 +16,10 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationHttp()
-        applicationJson()
-    }
+
+dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":http"))
+    implementation(project(":json"))
 }

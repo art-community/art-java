@@ -16,15 +16,15 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-        applicationService()
-        applicationSoap()
-        applicationXml()
-        applicationHttp()
-        applicationHttpClient()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Logging()
+        project(":Service()
+        project(":Soap()
+        project(":Xml()
+        project(":Http()
+        project(":HttpClient()
     }
 }

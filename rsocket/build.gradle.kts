@@ -16,31 +16,31 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-        applicationService()
-        applicationReactiveService()
-        applicationProtobuf()
-        applicationJson()
-        applicationXml()
-        applicationMessagePack()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Logging()
+        project(":Service()
+        project(":ReactiveService()
+        project(":Protobuf()
+        project(":Json()
+        project(":Xml()
+        project(":MessagePack()
     }
 }
 
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("io.rsocket", "rsocket-core", rsocketVersion)
+
+        api("io.rsocket", "rsocket-core", rsocketVersion)
                 .exclude("io.netty")
                 .exclude("io.projectreactor", "reactor-core")
                 .exclude("org.slf4j")
-        embedded("io.rsocket", "rsocket-transport-netty", rsocketVersion)
+        api("io.rsocket", "rsocket-transport-netty", rsocketVersion)
                 .exclude("io.netty")
                 .exclude("io.projectreactor", "reactor-core")
                 .exclude("org.slf4j")
-        embedded("io.netty", "netty-all", nettyVersion)
+        api("io.netty", "netty-all", nettyVersion)
                 .exclude("org.slf4j")
     }
 }

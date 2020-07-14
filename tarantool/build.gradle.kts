@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-        applicationService()
-        applicationTemplateEngine()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Logging()
+        project(":Service()
+        project(":TemplateEngine()
     }
 
     resources {
@@ -33,12 +33,12 @@ art {
 }
 
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("org.zeroturnaround", "zt-exec", zeroTurnaroundVersion)
+
+        api("org.zeroturnaround", "zt-exec", zeroTurnaroundVersion)
                 .exclude("org.slf4j")
-        embedded("org.tarantool", "connector", tarantoolConnectorVersion)
+        api("org.tarantool", "connector", tarantoolConnectorVersion)
                 .exclude("org.slf4j")
-        embedded("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
+        api("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
                 .exclude("org.apache.logging.log4j")
     }
 }

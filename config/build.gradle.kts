@@ -16,12 +16,10 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
-        applicationConfigTypesafe()
-        applicationConfigYaml()
-    }
+dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+    implementation(project(":config-typesafe"))
+    implementation(project(":config-yaml"))
 }

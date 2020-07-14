@@ -20,7 +20,7 @@ plugins {
     id("io.github.art.project") version "1.0.113"
 }
 
-art {
+
   idea()
   lombok()  
   

@@ -16,15 +16,9 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-    }
-}
-
+val typesafeConfigVersion by project
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
-        embedded("com.typesafe", "config", typesafeConfigVersion)
-    }
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    api("com.typesafe", "config", typesafeConfigVersion)
 }

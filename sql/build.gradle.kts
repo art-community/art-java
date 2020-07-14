@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationLogging()
-        applicationMetrics()
+
+
+        project(":Core()
+        project(":Logging()
+        project(":Metrics()
     }
 }
 
 dependencies {
-    with(art.externalDependencyVersionsConfiguration) {
+
         fun dropwizardExclusions(dependency: ExternalModuleDependency) {
             with(dependency) {
                 exclude("io.dropwizard")
@@ -38,18 +38,18 @@ dependencies {
                 exclude("org.slf4j")
             }
         }
-        embedded("org.jooq", "jooq", jooqVersion)
+        api("org.jooq", "jooq", jooqVersion)
                 .exclude("org.slf4j")
                 .exclude("com.google.guava")
                 .exclude("com.google.code.findbugs")
-        embedded("com.zaxxer", "HikariCP", hikariVersion)
+        api("com.zaxxer", "HikariCP", hikariVersion)
                 .exclude("com.google.guava")
                 .exclude("com.google.code.findbugs")
                 .exclude("org.slf4j")
-        embedded("org.apache.tomcat", "tomcat-jdbc", tomcatVersion)
-        dropwizardExclusions(embedded("io.dropwizard", "dropwizard-util", dropwizardVersion))
-        dropwizardExclusions(embedded("io.dropwizard", "dropwizard-validation", dropwizardVersion))
-        dropwizardExclusions(embedded("io.dropwizard", "dropwizard-lifecycle", dropwizardVersion))
-        dropwizardExclusions(embedded("io.dropwizard", "dropwizard-db", dropwizardVersion))
+        api("org.apache.tomcat", "tomcat-jdbc", tomcatVersion)
+        dropwizardExclusions(api("io.dropwizard", "dropwizard-util", dropwizardVersion))
+        dropwizardExclusions(api("io.dropwizard", "dropwizard-validation", dropwizardVersion))
+        dropwizardExclusions(api("io.dropwizard", "dropwizard-lifecycle", dropwizardVersion))
+        dropwizardExclusions(api("io.dropwizard", "dropwizard-db", dropwizardVersion))
     }
 }

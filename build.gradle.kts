@@ -25,7 +25,7 @@ import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 plugins {
     `maven-publish`
     idea
-    java
+    `java-library`
     id("com.jfrog.bintray") version "1.8.4"
     id("com.jfrog.artifactory") version "4.10.0"
 }

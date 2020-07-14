@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-art {
-    providedModules {
-        applicationCore()
-        applicationEntity()
-        applicationLogging()
+
+
+        project(":Core()
+        project(":Entity()
+        project(":Logging()
     }
 }
