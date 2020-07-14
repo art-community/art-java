@@ -16,29 +16,28 @@
  * limitations under the License.
  */
 
-
-
-        project(":Core()
-        project(":Entity()
-    }
-}
+val sl4jVersion by project
+val commonsLoggingVersion by project
+val log4jVersion by project
+val jacksonVersion by project
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
 
-        api("org.slf4j", "slf4j-api", sl4jVersion)
-        api("org.apache.logging.log4j", "log4j-slf4j-impl", log4jVersion)
+    api("org.slf4j", "slf4j-api", sl4jVersion)
+    api("org.apache.logging.log4j", "log4j-slf4j-impl", log4jVersion)
 
-        api("commons-logging", "commons-logging", commonsLoggingVersion)
-        api("org.apache.logging.log4j", "log4j-jcl", log4jVersion)
+    api("commons-logging", "commons-logging", commonsLoggingVersion)
+    api("org.apache.logging.log4j", "log4j-jcl", log4jVersion)
 
-        api("org.apache.logging.log4j", "log4j-api", log4jVersion)
-        api("org.apache.logging.log4j", "log4j-core", log4jVersion)
+    api("org.apache.logging.log4j", "log4j-api", log4jVersion)
+    api("org.apache.logging.log4j", "log4j-core", log4jVersion)
 
-        api("org.apache.logging.log4j", "log4j-jul", log4jVersion)
-        api("com.lmax", "disruptor", "3.4.+")
+    api("org.apache.logging.log4j", "log4j-jul", log4jVersion)
+    api("com.lmax", "disruptor", "3.4.+")
 
-        api("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
-        api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
-        api("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)
-    }
+    api("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
+    api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
+    api("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)
 }

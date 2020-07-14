@@ -16,23 +16,21 @@
  * limitations under the License.
  */
 
-
-
-        project(":Core()
-        project(":Entity()
-        project(":Logging()
-        project(":Json()
-        project(":Protobuf()
-		project(":MessagePack()
-        project(":Xml()
-    }
-}
+val kafkaVersion by project
+val kafkaLog4jAppenderVersion by project
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+    implementation(project(":json"))
+    implementation(project(":protobuf"))
+    implementation(project(":message-pack"))
+    implementation(project(":xml"))
 
-        api("org.apache.kafka", "kafka-clients", kafkaVersion)
-                .exclude("org.slf4j")
-        api("org.apache.kafka", "kafka-log4j-appender", kafkaLog4jAppenderVersion)
-                .exclude("org.slf4j")
-    }
+    api("org.apache.kafka", "kafka-clients", kafkaVersion)
+            .exclude("org.slf4j")
+
+    api("org.apache.kafka", "kafka-log4j-appender", kafkaLog4jAppenderVersion)
+            .exclude("org.slf4j")
 }

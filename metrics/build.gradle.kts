@@ -16,24 +16,26 @@
  * limitations under the License.
  */
 
-
-
-        project(":Core()
-        project(":Entity()
-        project(":Logging()
-        project(":Service()
-    }
-}
+val micrometerPrometheusVersion by project
+val micrometerJvmExtrasVersion by project
+val prometheusDropwizardSimpleClientVersion by project
+val dropwizardMetricsVersion by project
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+    implementation(project(":service"))
 
-        api("io.micrometer", "micrometer-registry-prometheus", micrometerPrometheusVersion)
-        api("io.github.mweirauch", "micrometer-jvm-extras", micrometerJvmExtrasVersion)
-                .exclude("org.slf4j")
-        api("io.prometheus", "simpleclient_dropwizard", prometheusDropwizardSimpleClientVersion)
-                .exclude("org.slf4j")
-        api("io.dropwizard.metrics", "metrics-jvm", dropwizardMetricsVersion)
-                .exclude("io.dropwizard.metrics", "metrics-core")
-                .exclude("org.slf4j")
-    }
+    api("io.micrometer", "micrometer-registry-prometheus", micrometerPrometheusVersion)
+
+    api("io.github.mweirauch", "micrometer-jvm-extras", micrometerJvmExtrasVersion)
+            .exclude("org.slf4j")
+
+    api("io.prometheus", "simpleclient_dropwizard", prometheusDropwizardSimpleClientVersion)
+            .exclude("org.slf4j")
+
+    api("io.dropwizard.metrics", "metrics-jvm", dropwizardMetricsVersion)
+            .exclude("io.dropwizard.metrics", "metrics-core")
+            .exclude("org.slf4j")
 }

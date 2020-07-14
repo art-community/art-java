@@ -16,15 +16,13 @@
  * limitations under the License.
  */
 
-
-
-        project(":Core()
-        project(":Logging()
-        project(":Entity()
-        project(":Json()
-    }
-}
+val messagePackVersion by project
 
 dependencies {
-    api("org.msgpack", "msgpack-core", art.externalDependencyVersionsConfiguration.messagePackVersion)
+    implementation(project(":core"))
+    implementation(project(":logging"))
+    implementation(project(":entity"))
+    implementation(project(":json"))
+
+    api("org.msgpack", "msgpack-core", messagePackVersion)
 }

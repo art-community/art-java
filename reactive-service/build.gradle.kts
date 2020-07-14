@@ -26,5 +26,5 @@
 }
 
 dependencies {
-    api("io.projectreactor", "reactor-core", art.externalDependencyVersionsConfiguration.projectReactorVersion)
+    api("io.projectreactor", "reactor-core", projectReactorVersion)
 }

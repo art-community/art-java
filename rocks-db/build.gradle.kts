@@ -26,5 +26,5 @@
 }
 
 dependencies {
-    api("org.rocksdb", "rocksdbjni", art.externalDependencyVersionsConfiguration.rocksdbVersion)
+    api("org.rocksdb", "rocksdbjni", rocksdbVersion)
 }

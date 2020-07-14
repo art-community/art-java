@@ -18,11 +18,6 @@
 
 
 
-        project(":Core()
-        project(":Entity()
-        project(":Service()
-        project(":Http()
-        project(":HttpServer()
-        project(":Metrics()
-    }
+dependencies {
+
 }

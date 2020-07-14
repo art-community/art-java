@@ -17,11 +17,10 @@
  */
 
 
-
-        project(":Core()
-        project(":Entity()
-        project(":Logging()
-        project(":Service()
-        project(":KafkaClient()
-    }
+dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+    implementation(project(":service"))
+    implementation(project(":kafka-client"))
 }

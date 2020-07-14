@@ -25,5 +25,5 @@
 }
 
 dependencies {
-    api("org.jvnet.staxex", "stax-ex", art.externalDependencyVersionsConfiguration.staxVersion)
+    api("org.jvnet.staxex", "stax-ex", staxVersion)
 }

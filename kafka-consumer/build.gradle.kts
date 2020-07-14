@@ -16,21 +16,17 @@
  * limitations under the License.
  */
 
-
-
-        project(":Core()
-        project(":Entity()
-        project(":Logging()
-        project(":Service()
-        project(":KafkaClient()
-    }
-}
+val kafkaVersion by project
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+    implementation(project(":service"))
+    implementation(project(":kafka-client"))
 
-        api("org.apache.kafka", "kafka-streams", kafkaVersion)
-                .exclude("org.apache.kafka", "kafka-clients")
-                .exclude("com.fasterxml.jackson.core")
-                .exclude("org.slf4j")
-    }
+    api("org.apache.kafka", "kafka-streams", kafkaVersion)
+            .exclude("org.apache.kafka", "kafka-clients")
+            .exclude("com.fasterxml.jackson.core")
+            .exclude("org.slf4j")
 }
