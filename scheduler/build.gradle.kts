@@ -16,10 +16,7 @@
  * limitations under the License.
  */
 
-
-    spockFramework()
-
-        project(":Core()
-        project(":Logging()
-    }
+dependencies {
+    implementation(project(":core"))
+    implementation(project(":logging"))
 }

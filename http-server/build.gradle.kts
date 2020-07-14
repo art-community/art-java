@@ -16,33 +16,32 @@
  * limitations under the License.
  */
 
-val tomcatVersion by project
-val logbookVersion by project
-val log4jVersion by project
+val tomcatVersion: String by project
+val logbookVersion: String by project
+val log4jVersion: String by project
 
 dependencies {
-        implementation(project(":core"))
-        implementation(project(":entity"))
-        implementation(project(":logging"))
-        implementation(project(":service"))
-        implementation(project(":http"))
-        implementation(project(":metrics"))
-        implementation(project(":template-engine"))
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+    implementation(project(":service"))
+    implementation(project(":http"))
+    implementation(project(":metrics"))
+    implementation(project(":template-engine"))
 
-        api("org.apache.tomcat.embed", "tomcat-embed-core", tomcatVersion)
-                .exclude("org.apache.httpcomponents", "httpcore")
+    api("org.apache.tomcat.embed", "tomcat-embed-core", tomcatVersion)
+            .exclude("org.apache.httpcomponents", "httpcore")
 
-        api("org.apache.tomcat", "tomcat-servlet-api", tomcatVersion)
+    api("org.apache.tomcat", "tomcat-servlet-api", tomcatVersion)
 
-        api("org.zalando", "logbook-servlet", logbookVersion)
-                .exclude("org.zalando", "logbook-core")
-                .exclude("org.zalando", "logbook-api")
-                .exclude("org.zalando", "faux-pas")
-                .exclude("org.apiguardian")
-                .exclude("org.slf4j")
-                .exclude("commons-logging")
+    api("org.zalando", "logbook-servlet", logbookVersion)
+            .exclude("org.zalando", "logbook-core")
+            .exclude("org.zalando", "logbook-api")
+            .exclude("org.zalando", "faux-pas")
+            .exclude("org.apiguardian")
+            .exclude("org.slf4j")
+            .exclude("commons-logging")
 
-        api("org.apache.logging.log4j", "log4j-web", log4jVersion)
-                .exclude("org.apache.logging.log4j")
-    }
+    api("org.apache.logging.log4j", "log4j-web", log4jVersion)
+            .exclude("org.apache.logging.log4j")
 }

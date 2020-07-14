@@ -17,30 +17,31 @@
  */
 
 
-
-        project(":Core()
-        project(":Entity()
-        project(":Logging()
-        project(":Service()
-        project(":ReactiveService()
-        project(":Protobuf()
-        project(":Json()
-        project(":Xml()
-        project(":MessagePack()
-    }
-}
+val rsocketVersion: String by project
+val nettyVersion: String by project
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+    implementation(project(":service"))
+    implementation(project(":reactive-service"))
+    implementation(project(":protobuf"))
+    implementation(project(":json"))
+    implementation(project(":xml"))
+    implementation(project(":message-pack"))
 
-        api("io.rsocket", "rsocket-core", rsocketVersion)
-                .exclude("io.netty")
-                .exclude("io.projectreactor", "reactor-core")
-                .exclude("org.slf4j")
-        api("io.rsocket", "rsocket-transport-netty", rsocketVersion)
-                .exclude("io.netty")
-                .exclude("io.projectreactor", "reactor-core")
-                .exclude("org.slf4j")
-        api("io.netty", "netty-all", nettyVersion)
-                .exclude("org.slf4j")
-    }
+
+    api("io.rsocket", "rsocket-core", rsocketVersion)
+            .exclude("io.netty")
+            .exclude("io.projectreactor", "reactor-core")
+            .exclude("org.slf4j")
+
+    api("io.rsocket", "rsocket-transport-netty", rsocketVersion)
+            .exclude("io.netty")
+            .exclude("io.projectreactor", "reactor-core")
+            .exclude("org.slf4j")
+
+    api("io.netty", "netty-all", nettyVersion)
+            .exclude("org.slf4j")
 }

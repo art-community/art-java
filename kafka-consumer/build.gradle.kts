@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-val kafkaVersion by project
+val kafkaVersion: String by project
 
 dependencies {
     implementation(project(":core"))

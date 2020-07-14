@@ -16,7 +16,8 @@
  * limitations under the License.
  */
 
-val typesafeConfigVersion by project
+val typesafeConfigVersion: String by project
+
 dependencies {
     implementation(project(":core"))
     implementation(project(":entity"))

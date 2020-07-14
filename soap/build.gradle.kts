@@ -17,10 +17,9 @@
  */
 
 
-
-        project(":Core()
-        project(":Entity()
-        project(":Http()
-        project(":HttpXml()
-    }
+dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":http"))
+    implementation(project(":http-xml"))
 }

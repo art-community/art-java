@@ -59,6 +59,7 @@ subprojects {
     apply(plugin = "com.jfrog.bintray")
     apply(plugin = "com.jfrog.artifactory")
     apply(plugin = "maven-publish")
+    apply(plugin = "java-library")
 
     if (bintrayUser.isNullOrEmpty() || bintrayKey.isNullOrEmpty()) {
         return@subprojects

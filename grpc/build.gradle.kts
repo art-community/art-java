@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-val nettyVersion by project
-val grpcVersion by project
+val nettyVersion: String  by project
+val grpcVersion: String by project
 
 dependencies {
     implementation(project(":core"))

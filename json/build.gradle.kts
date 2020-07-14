@@ -17,9 +17,8 @@
  */
 
 
-
-        project(":Core()
-        project(":Entity()
-        project(":Logging()
-    }
+dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
 }

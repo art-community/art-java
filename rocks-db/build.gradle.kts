@@ -16,15 +16,13 @@
  * limitations under the License.
  */
 
-
-
-        project(":Core()
-        project(":Entity()
-        project(":Logging()
-        project(":MessagePack()
-    }
-}
+val rocksdbVersion: String by project
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+    implementation(project(":message-pack"))
+
     api("org.rocksdb", "rocksdbjni", rocksdbVersion)
 }

@@ -16,33 +16,29 @@
  * limitations under the License.
  */
 
-
-
-        project(":Core()
-        project(":Entity()
-        project(":Logging()
-    }
-}
+val resilience4jVersion: String by project
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
 
-        api("io.github.resilience4j", "resilience4j-circuitbreaker", resilience4jVersion)
-                .exclude("io.vavr")
-                .exclude("org.slf4j")
-        api("io.github.resilience4j", "resilience4j-ratelimiter", resilience4jVersion)
-                .exclude("io.vavr")
-                .exclude("org.slf4j")
-        api("io.github.resilience4j", "resilience4j-retry", resilience4jVersion)
-                .exclude("io.vavr")
-                .exclude("org.slf4j")
-        api("io.github.resilience4j", "resilience4j-metrics", resilience4jVersion)
-                .exclude("io.vavr")
-                .exclude("org.slf4j")
-        api("io.github.resilience4j", "resilience4j-bulkhead", resilience4jVersion)
-                .exclude("io.vavr")
-                .exclude("org.slf4j")
-        api("io.github.resilience4j", "resilience4j-timelimiter", resilience4jVersion)
-                .exclude("io.vavr")
-                .exclude("org.slf4j")
-    }
+    api("io.github.resilience4j", "resilience4j-circuitbreaker", resilience4jVersion)
+            .exclude("io.vavr")
+            .exclude("org.slf4j")
+    api("io.github.resilience4j", "resilience4j-ratelimiter", resilience4jVersion)
+            .exclude("io.vavr")
+            .exclude("org.slf4j")
+    api("io.github.resilience4j", "resilience4j-retry", resilience4jVersion)
+            .exclude("io.vavr")
+            .exclude("org.slf4j")
+    api("io.github.resilience4j", "resilience4j-metrics", resilience4jVersion)
+            .exclude("io.vavr")
+            .exclude("org.slf4j")
+    api("io.github.resilience4j", "resilience4j-bulkhead", resilience4jVersion)
+            .exclude("io.vavr")
+            .exclude("org.slf4j")
+    api("io.github.resilience4j", "resilience4j-timelimiter", resilience4jVersion)
+            .exclude("io.vavr")
+            .exclude("org.slf4j")
 }

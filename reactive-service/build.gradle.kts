@@ -16,15 +16,12 @@
  * limitations under the License.
  */
 
-
-
-        project(":Core()
-        project(":Entity()
-        project(":Service()
-        project(":Logging()
-    }
-}
+val projectReactorVersion: String by project
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":service"))
+    implementation(project(":logging"))
     api("io.projectreactor", "reactor-core", projectReactorVersion)
 }

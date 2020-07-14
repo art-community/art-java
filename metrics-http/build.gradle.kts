@@ -19,5 +19,10 @@
 
 
 dependencies {
-
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":service"))
+    implementation(project(":http"))
+    implementation(project(":http-server"))
+    implementation(project(":metrics"))
 }

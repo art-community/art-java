@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-val micrometerPrometheusVersion by project
-val micrometerJvmExtrasVersion by project
-val prometheusDropwizardSimpleClientVersion by project
-val dropwizardMetricsVersion by project
+val micrometerPrometheusVersion: String by project
+val micrometerJvmExtrasVersion: String by project
+val prometheusSimpleClientVersion: String by project
+val dropwizrdMetricsJvmVersion: String by project
 
 dependencies {
     implementation(project(":core"))
@@ -32,10 +32,10 @@ dependencies {
     api("io.github.mweirauch", "micrometer-jvm-extras", micrometerJvmExtrasVersion)
             .exclude("org.slf4j")
 
-    api("io.prometheus", "simpleclient_dropwizard", prometheusDropwizardSimpleClientVersion)
+    api("io.prometheus", "simpleclient_dropwizard", prometheusSimpleClientVersion)
             .exclude("org.slf4j")
 
-    api("io.dropwizard.metrics", "metrics-jvm", dropwizardMetricsVersion)
+    api("io.dropwizard.metrics", "metrics-jvm", dropwizrdMetricsJvmVersion)
             .exclude("io.dropwizard.metrics", "metrics-core")
             .exclude("org.slf4j")
 }

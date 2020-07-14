@@ -17,15 +17,14 @@
  */
 
 
-
-        project(":Core()
-        project(":Entity()
-        project(":Logging()
-        project(":Service()
-        project(":Xml()
-        project(":Soap()
-        project(":Http()
-        project(":HttpServer()
-        project(":TemplateEngine()
-    }
+dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+    implementation(project(":service"))
+    implementation(project(":xml"))
+    implementation(project(":soap"))
+    implementation(project(":http"))
+    implementation(project(":http-server"))
+    implementation(project(":template-engine"))
 }

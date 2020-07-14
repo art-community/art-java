@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-val logbookVersion by project
-val apacheHttpCoreVersion by project
+val logbookVersion: String by project
+val apacheHttpCoreVersion: String by project
 
 dependencies {
     implementation(project(":core"))

@@ -16,14 +16,12 @@
  * limitations under the License.
  */
 
-
-
-        project(":Core()
-        project(":Entity()
-        project(":Logging()
-    }
-}
+val staxVersion: String by project
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+
     api("org.jvnet.staxex", "stax-ex", staxVersion)
 }

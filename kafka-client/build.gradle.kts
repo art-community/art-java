@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-val kafkaVersion by project
-val kafkaLog4jAppenderVersion by project
+val kafkaVersion: String by project
+val kafkaLog4jAppenderVersion: String by project
 
 dependencies {
     implementation(project(":core"))

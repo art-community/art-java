@@ -37,7 +37,6 @@ dependencies {
     implementation(project(":soap-server"))
     implementation(project(":network-manager"))
     implementation(project(":kafka-client"))
-    implementation(project(":kafka-broker"))
     implementation(project(":kafka-consumer"))
     implementation(project(":kafka-producer"))
     implementation(project(":reactive-service"))
@@ -46,5 +45,4 @@ dependencies {
     implementation(project(":rocks-db"))
     implementation(project(":tarantool"))
     implementation(project(":soap"))
-    implementation(project(":information"))
 }

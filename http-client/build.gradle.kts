@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-val apacheHttpClientVersion by project
-val apacheHttpAsyncClientVersion by project
-val logbookVersion by project
+val apacheHttpClientVersion: String by project
+val apacheHttpAsyncClientVersion: String by project
+val logbookVersion: String by project
 
 dependencies {
     implementation(project(":core"))

@@ -16,40 +16,39 @@
  * limitations under the License.
  */
 
-
-
-        project(":Core()
-        project(":Logging()
-        project(":Metrics()
-    }
-}
+val jooqVersion: String by project
+val hikariVersion: String by project
+val tomcatVersion: String by project
+val dropwizardVersion: String by project
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":logging"))
+    implementation(project(":metrics"))
 
-        fun dropwizardExclusions(dependency: ExternalModuleDependency) {
-            with(dependency) {
-                exclude("io.dropwizard")
-                exclude("com.google.guava")
-                exclude("com.google.code.findbugs")
-                exclude("org.slf4j")
-                exclude("com.google.guava")
-                exclude("com.google.code.findbugs")
-                exclude("org.eclipse.jetty")
-                exclude("org.slf4j")
-            }
+    fun dropwizardExclusions(dependency: ExternalModuleDependency) {
+        with(dependency) {
+            exclude("io.dropwizard")
+            exclude("com.google.guava")
+            exclude("com.google.code.findbugs")
+            exclude("org.slf4j")
+            exclude("com.google.guava")
+            exclude("com.google.code.findbugs")
+            exclude("org.eclipse.jetty")
+            exclude("org.slf4j")
         }
-        api("org.jooq", "jooq", jooqVersion)
-                .exclude("org.slf4j")
-                .exclude("com.google.guava")
-                .exclude("com.google.code.findbugs")
-        api("com.zaxxer", "HikariCP", hikariVersion)
-                .exclude("com.google.guava")
-                .exclude("com.google.code.findbugs")
-                .exclude("org.slf4j")
-        api("org.apache.tomcat", "tomcat-jdbc", tomcatVersion)
-        dropwizardExclusions(api("io.dropwizard", "dropwizard-util", dropwizardVersion))
-        dropwizardExclusions(api("io.dropwizard", "dropwizard-validation", dropwizardVersion))
-        dropwizardExclusions(api("io.dropwizard", "dropwizard-lifecycle", dropwizardVersion))
-        dropwizardExclusions(api("io.dropwizard", "dropwizard-db", dropwizardVersion))
     }
+    api("org.jooq", "jooq", jooqVersion)
+            .exclude("org.slf4j")
+            .exclude("com.google.guava")
+            .exclude("com.google.code.findbugs")
+    api("com.zaxxer", "HikariCP", hikariVersion)
+            .exclude("com.google.guava")
+            .exclude("com.google.code.findbugs")
+            .exclude("org.slf4j")
+    api("org.apache.tomcat", "tomcat-jdbc", tomcatVersion)
+    dropwizardExclusions(api("io.dropwizard", "dropwizard-util", dropwizardVersion))
+    dropwizardExclusions(api("io.dropwizard", "dropwizard-validation", dropwizardVersion))
+    dropwizardExclusions(api("io.dropwizard", "dropwizard-lifecycle", dropwizardVersion))
+    dropwizardExclusions(api("io.dropwizard", "dropwizard-db", dropwizardVersion))
 }

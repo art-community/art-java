@@ -23,7 +23,6 @@ dependencies {
     implementation(project(":service"))
     implementation(project(":config"))
     implementation(project(":config-remote-api"))
-    implementation(project(":configurator-api"))
     implementation(project(":grpc-client"))
     implementation(project(":grpc-server"))
 }

@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-val sl4jVersion by project
-val commonsLoggingVersion by project
-val log4jVersion by project
-val jacksonVersion by project
+val sl4jVersion: String by project
+val commonsLoggingVersion: String by project
+val log4jVersion: String by project
+val jacksonVersion: String by project
 
 dependencies {
     implementation(project(":core"))

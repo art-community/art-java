@@ -17,28 +17,21 @@
  */
 
 
-
-        project(":Core()
-        project(":Entity()
-        project(":Logging()
-        project(":Service()
-        project(":TemplateEngine()
-    }
-
-    resources {
-        resourceDirs.add("src/main/templates")
-        resourceDirs.add("src/main/executable")
-        resourceDirs.add("src/main/lua")
-    }
-}
+val zeroTurnaroundVersion: String by project
+val tarantoolConnectorVersion: String by project
+val log4jVersion: String by project
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":logging"))
+    implementation(project(":service"))
+    implementation(project(":template-engine"))
 
-        api("org.zeroturnaround", "zt-exec", zeroTurnaroundVersion)
-                .exclude("org.slf4j")
-        api("org.tarantool", "connector", tarantoolConnectorVersion)
-                .exclude("org.slf4j")
-        api("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
-                .exclude("org.apache.logging.log4j")
-    }
+    api("org.zeroturnaround", "zt-exec", zeroTurnaroundVersion)
+            .exclude("org.slf4j")
+    api("org.tarantool", "connector", tarantoolConnectorVersion)
+            .exclude("org.slf4j")
+    api("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
+            .exclude("org.apache.logging.log4j")
 }

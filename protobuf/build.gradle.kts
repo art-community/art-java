@@ -17,19 +17,15 @@
  */
 
 
-
-        project(":Core()
-        project(":Entity()
-        project(":Service()
-
-    }
-}
+val grpcVersion: String by project
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":entity"))
+    implementation(project(":service"))
 
-        api("io.grpc", "grpc-protobuf", grpcVersion)
-                .exclude("com.google.guava")
-                .exclude("com.google.code.findbugs")
-                .exclude("com.google.errorprone")
-    }
+    api("io.grpc", "grpc-protobuf", grpcVersion)
+            .exclude("com.google.guava")
+            .exclude("com.google.code.findbugs")
+            .exclude("com.google.errorprone")
 }
