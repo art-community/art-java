@@ -35,3 +35,11 @@ dependencies {
     api("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
             .exclude("org.apache.logging.log4j")
 }
+
+
+java {
+    with(sourceSets.main.get().resources) {
+        srcDir("src/main/templates")
+        srcDir("src/main/lua")
+    }
+}
