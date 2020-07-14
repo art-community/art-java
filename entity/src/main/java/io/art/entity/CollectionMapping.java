@@ -23,7 +23,7 @@ import io.art.entity.mapper.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.entity.CollectionValuesFactory.*;
 import static io.art.entity.mapper.ValueMapper.*;
 import java.util.*;

@@ -19,7 +19,6 @@
 package io.art.http.server.module;
 
 import lombok.*;
-import io.art.core.extension.*;
 import io.art.core.module.Module;
 import io.art.http.server.*;
 import io.art.http.server.specification.*;
@@ -67,6 +66,6 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
 
     @Override
     public void onUnload() {
-        doIfNotNull(httpServerModuleState().getServer(), HttpServer::stop);
+        let(httpServerModuleState().getServer(), HttpServer::stop);
     }
 }

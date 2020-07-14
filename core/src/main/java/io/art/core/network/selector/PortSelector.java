@@ -19,21 +19,18 @@
 package io.art.core.network.selector;
 
 import lombok.experimental.*;
-import static java.lang.String.*;
-import static java.lang.System.*;
-import static java.net.InetAddress.*;
-import static javax.net.ServerSocketFactory.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.network.selector.PortSelector.SocketType.*;
+import static java.net.InetAddress.*;
+import static java.text.MessageFormat.*;
+import static javax.net.ServerSocketFactory.*;
 import java.net.*;
 import java.util.*;
 
 @UtilityClass
 public class PortSelector {
-    private final static Random RANDOM = new Random(currentTimeMillis());
-
     public static int findAvailableTcpPort() {
         return findAvailableTcpPort(PORT_RANGE_MIN);
     }
@@ -103,23 +100,18 @@ public class PortSelector {
 
         protected abstract boolean isPortAvailable(int port);
 
-        private int findRandomPort(int minPort, int maxPort) {
-            int portRange = maxPort - minPort;
-            return minPort + RANDOM.nextInt(portRange + 1);
-        }
-
         int findAvailablePort(int minPort, int maxPort) {
-            int portRange = maxPort - minPort;
-            int candidatePort;
+            String name = name();
+            int range = maxPort - minPort;
+            int candidatePort = minPort;
             int searchCounter = 0;
-            do {
-                if (searchCounter > portRange) {
-                    throw new IllegalStateException(format(COULD_NOT_FIND_AVAILABLE_PORT_AFTER_ATTEMPTS, name(), minPort, maxPort, searchCounter));
+            while (!isPortAvailable(candidatePort)) {
+                if (searchCounter > range) {
+                    throw new IllegalStateException(format(COULD_NOT_FIND_AVAILABLE_PORT_AFTER_ATTEMPTS, name, minPort, maxPort, searchCounter));
                 }
-                candidatePort = findRandomPort(minPort, maxPort);
                 searchCounter++;
+                candidatePort = minPort + searchCounter;
             }
-            while (!isPortAvailable(candidatePort));
 
             return candidatePort;
         }

@@ -23,7 +23,7 @@ import io.art.http.server.interceptor.*;
 import io.art.logging.*;
 import static java.lang.System.*;
 import static java.util.UUID.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.*;

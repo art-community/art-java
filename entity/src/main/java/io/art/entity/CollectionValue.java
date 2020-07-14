@@ -2350,20 +2350,20 @@ public class CollectionValue<T> implements Value {
             case PRIMITIVE_ARRAY:
                 switch (elementsType) {
                     case LONG:
-                        return CheckerForEmptiness.isEmpty(longElements);
+                        return EmptinessChecker.isEmpty(longElements);
                     case DOUBLE:
-                        return CheckerForEmptiness.isEmpty(doubleElements);
+                        return EmptinessChecker.isEmpty(doubleElements);
                     case INT:
-                        return CheckerForEmptiness.isEmpty(intElements);
+                        return EmptinessChecker.isEmpty(intElements);
                     case BOOL:
-                        return CheckerForEmptiness.isEmpty(boolElements);
+                        return EmptinessChecker.isEmpty(boolElements);
                     case BYTE:
-                        return CheckerForEmptiness.isEmpty(byteElements);
+                        return EmptinessChecker.isEmpty(byteElements);
                     case FLOAT:
-                        return CheckerForEmptiness.isEmpty(floatElements);
+                        return EmptinessChecker.isEmpty(floatElements);
                 }
             case COLLECTION:
-                return CheckerForEmptiness.isEmpty(elements);
+                return EmptinessChecker.isEmpty(elements);
         }
         return true;
     }

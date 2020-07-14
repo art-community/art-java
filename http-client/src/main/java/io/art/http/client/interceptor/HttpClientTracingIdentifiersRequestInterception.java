@@ -20,9 +20,8 @@ package io.art.http.client.interceptor;
 
 import org.apache.http.client.methods.*;
 import io.art.core.constants.*;
-import io.art.entity.*;
 import static org.apache.logging.log4j.ThreadContext.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.http.client.constants.HttpClientModuleConstants.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;

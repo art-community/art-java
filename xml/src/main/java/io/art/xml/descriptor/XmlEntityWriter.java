@@ -24,7 +24,7 @@ import io.art.entity.constants.*;
 import io.art.xml.exception.*;
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.Objects.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extension.FileExtensions.*;

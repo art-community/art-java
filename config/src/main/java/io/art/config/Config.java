@@ -37,9 +37,7 @@ import static java.util.stream.Collectors.*;
 import static java.util.stream.StreamSupport.*;
 import static io.art.config.constants.ConfigExceptionMessages.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.entity.Value.isPrimitive;
 import java.util.*;
-import java.util.stream.*;
 
 @Getter
 @AllArgsConstructor
@@ -106,7 +104,7 @@ public class Config {
 
     public String getString(String path) {
         if (isEmpty(this)) return EMPTY_STRING;
-        if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
+        if (EmptinessChecker.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
         if (!hasPath(path)) return EMPTY_STRING;
         switch (configType) {
             case REMOTE_ENTITY_CONFIG:
@@ -124,7 +122,7 @@ public class Config {
 
     public Integer getInt(String path) {
         if (isEmpty(this)) return null;
-        if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
+        if (EmptinessChecker.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
         if (!hasPath(path)) return null;
         switch (configType) {
             case REMOTE_ENTITY_CONFIG:
@@ -142,7 +140,7 @@ public class Config {
 
     public Long getLong(String path) {
         if (isEmpty(this)) return null;
-        if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
+        if (EmptinessChecker.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
         if (!hasPath(path)) return null;
         switch (configType) {
             case REMOTE_ENTITY_CONFIG:
@@ -160,7 +158,7 @@ public class Config {
 
     public Double getDouble(String path) {
         if (isEmpty(this)) return null;
-        if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
+        if (EmptinessChecker.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
         if (!hasPath(path)) return null;
         switch (configType) {
             case REMOTE_ENTITY_CONFIG:
@@ -178,7 +176,7 @@ public class Config {
 
     public Boolean getBool(String path) {
         if (isEmpty(this)) return null;
-        if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
+        if (EmptinessChecker.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
         if (!hasPath(path)) return null;
         switch (configType) {
             case REMOTE_ENTITY_CONFIG:
@@ -197,7 +195,7 @@ public class Config {
 
     public List<Config> getConfigList(String path) {
         if (isEmpty(this)) return emptyList();
-        if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
+        if (EmptinessChecker.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
         if (!hasPath(path)) return emptyList();
         Map<String, ?> config;
         switch (configType) {
@@ -218,7 +216,7 @@ public class Config {
 
     public List<String> getStringList(String path) {
         if (isEmpty(this)) return emptyList();
-        if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
+        if (EmptinessChecker.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
         if (!hasPath(path)) return emptyList();
         switch (configType) {
             case REMOTE_ENTITY_CONFIG:
@@ -238,7 +236,7 @@ public class Config {
 
     public List<Integer> getIntList(String path) {
         if (isEmpty(this)) return emptyList();
-        if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
+        if (EmptinessChecker.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
         if (!hasPath(path)) return emptyList();
         switch (configType) {
             case REMOTE_ENTITY_CONFIG:
@@ -258,7 +256,7 @@ public class Config {
 
     public List<Double> getDoubleList(String path) {
         if (isEmpty(this)) return emptyList();
-        if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
+        if (EmptinessChecker.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
         if (!hasPath(path)) return emptyList();
         switch (configType) {
             case REMOTE_ENTITY_CONFIG:
@@ -278,7 +276,7 @@ public class Config {
 
     public List<Long> getLongList(String path) {
         if (isEmpty(this)) return emptyList();
-        if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
+        if (EmptinessChecker.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
         if (!hasPath(path)) return emptyList();
         switch (configType) {
             case REMOTE_ENTITY_CONFIG:
@@ -298,7 +296,7 @@ public class Config {
 
     public List<Boolean> getBoolList(String path) {
         if (isEmpty(this)) return emptyList();
-        if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
+        if (EmptinessChecker.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
         if (!hasPath(path)) return emptyList();
         switch (configType) {
             case REMOTE_ENTITY_CONFIG:
@@ -351,7 +349,7 @@ public class Config {
 
 
     public boolean hasPath(String path) {
-        if (CheckerForEmptiness.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
+        if (EmptinessChecker.isEmpty(path)) throw new ConfigException(PATH_IS_EMPTY);
         switch (configType) {
             case REMOTE_ENTITY_CONFIG:
                 return nonNull(asEntityConfig().find(path));

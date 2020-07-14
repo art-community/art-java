@@ -25,7 +25,7 @@ import io.art.entity.*;
 import io.art.http.server.HttpServerModuleConfiguration.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;

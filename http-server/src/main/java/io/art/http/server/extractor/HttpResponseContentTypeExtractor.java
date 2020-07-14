@@ -21,7 +21,7 @@ package io.art.http.server.extractor;
 
 import io.art.core.mime.*;
 import static java.util.Objects.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.http.constants.HttpMimeTypes.*;
 import static io.art.http.server.HttpServerModuleConfiguration.*;

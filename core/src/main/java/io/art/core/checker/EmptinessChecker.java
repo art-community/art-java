@@ -19,20 +19,21 @@
 package io.art.core.checker;
 
 import lombok.experimental.*;
-import static java.util.Objects.*;
 import static io.art.core.constants.StringConstants.*;
+import static java.util.Objects.*;
 import java.util.*;
-import java.util.stream.Stream;
+import java.util.function.*;
+import java.util.stream.*;
 
 @UtilityClass
-public class CheckerForEmptiness {
-    public static <T> boolean isNotEmpty(T val) {
-        return !isEmpty(val);
+public class EmptinessChecker {
+    public static <T> boolean isNotEmpty(T value) {
+        return !isEmpty(value);
     }
 
-    public static <T> boolean isEmpty(T val) {
+    public static <T> boolean isEmpty(T value) {
         String valAsString;
-        return isNull(val) || (valAsString = val.toString().trim()).isEmpty() || (valAsString.equalsIgnoreCase(NULL_STRING));
+        return isNull(value) || (valAsString = value.toString().trim()).isEmpty() || (valAsString.equalsIgnoreCase(NULL_STRING));
     }
 
     public static <T> boolean isEmpty(T[] content) {
@@ -91,7 +92,18 @@ public class CheckerForEmptiness {
         return !isEmpty(stream);
     }
 
-    public static <T> T ifEmpty(T val, T ifEmpty) {
-        return isEmpty(val) ? ifEmpty : val;
+    public static <T> T ifEmpty(T value, T ifEmpty) {
+        return isEmpty(value) ? ifEmpty : value;
+    }
+
+    public static <T> T ifEmpty(T value, Supplier<T> ifEmpty) {
+        return isEmpty(value) ? ifEmpty.get() : value;
+    }
+
+    public static <T> void ifNotEmpty(T value, Consumer<T> action) {
+        if (isEmpty(value)) {
+            return;
+        }
+        action.accept(value);
     }
 }

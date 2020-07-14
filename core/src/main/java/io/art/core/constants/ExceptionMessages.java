@@ -26,8 +26,8 @@ public interface ExceptionMessages {
     String MODULE_HAS_NOT_STATE = "Module ''{0}'' has not state";
     String CUSTOM_MODULE_CONFIGURATION_IS_NULL = "CustomModuleConfiguration is null";
     String BUILDER_VALIDATOR_HAS_NEXT_ERRORS = "Builder validator for ''{0}'' has next error fields:";
-    String COULD_NOT_FIND_AVAILABLE_PORT_AFTER_ATTEMPTS = "Could not find an available %s port in the range [%d, %d] after %d attempts";
-    String COULD_NOT_FIND_AVAILABLE_PORTS_IN_THE_RANGE = "Could not find %d available %s ports in the range [%d, %d]";
+    String COULD_NOT_FIND_AVAILABLE_PORT_AFTER_ATTEMPTS = "Could not find an available {0} port in the range [{1,number,#}, {2,number,#}] after {3,number,#} attempts";
+    String COULD_NOT_FIND_AVAILABLE_PORTS_IN_THE_RANGE = "Could not find {0,number,#} available {1} ports in the range [{2,number,#}, {3,number,#}]";
     String MIME_TYPE_MUST_NOT_BE_EMPTY = "Type must not be empty";
     String MIME_SUBTYPE_MUST_NOT_BE_EMPTY = "Subtype must not be empty";
     String MIME_DOES_NOT_CONTAIN_SLASH = "Does not contain '/'";
@@ -36,4 +36,7 @@ public interface ExceptionMessages {
     String INVALID_TOKEN = "Invalid token character ''{0}'' in token ''{1}''";
     String PARAMETER_ATTRIBUTE_MUST_NOT_BE_EMPTY = "Parameter 'attribute' must not be empty";
     String PARAMETER_VALUE_MUST_NOT_BE_EMPTY = "Parameter 'value' must not be empty";
+    String EXCEPTION_CONSUMER_IS_NULL = "Exception consumer is null";
+    String EXCEPTION_WRAPPER_IS_NULL = "Exception wrapper is null";
+    String EXCEPTION_HANDLER_IS_NULL = "Exception handler is null";
 }

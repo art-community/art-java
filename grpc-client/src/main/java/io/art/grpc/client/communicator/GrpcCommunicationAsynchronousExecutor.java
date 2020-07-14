@@ -36,7 +36,6 @@ import static java.util.concurrent.CompletableFuture.*;
 import static java.util.concurrent.TimeUnit.*;
 import static lombok.AccessLevel.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.extension.StringExtensions.*;
 import static io.art.entity.Value.*;

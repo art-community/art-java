@@ -27,7 +27,7 @@ import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
 import static java.nio.file.StandardOpenOption.*;
 import static java.util.Objects.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.constants.StringConstants.*;
@@ -35,6 +35,7 @@ import static io.art.core.context.Context.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
+import java.nio.charset.*;
 import java.nio.file.*;
 
 @UtilityClass
@@ -65,13 +66,14 @@ public class FileExtensions {
         }
         ByteBuffer buffer = allocateDirect(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
+        CharsetDecoder decoder = contextConfiguration().getCharset().newDecoder();
         try {
             FileChannel fileChannel = open(path);
             do {
                 fileChannel.read(buffer);
                 buffer.flip();
                 if (buffer.limit() > 1) {
-                    result.append(contextConfiguration().getCharset().newDecoder().decode(buffer).toString());
+                    result.append(decoder.decode(buffer).toString());
                 }
                 buffer.clear();
             } while (fileChannel.position() < fileChannel.size());
@@ -87,12 +89,13 @@ public class FileExtensions {
         }
         ByteBuffer buffer = allocateDirect(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
+        CharsetDecoder decoder = contextConfiguration().getCharset().newDecoder();
         try {
             FileChannel fileChannel = open(path);
             do {
                 fileChannel.read(buffer);
                 buffer.flip();
-                result.append(contextConfiguration().getCharset().newDecoder().decode(buffer).toString());
+                result.append(decoder.decode(buffer).toString());
                 buffer.clear();
             } while (fileChannel.position() < fileChannel.size());
         } catch (IOException ioException) {

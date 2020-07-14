@@ -14,7 +14,7 @@ import static org.apache.logging.log4j.ThreadContext.*;
 import static org.jooq.ExecuteType.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.tools.StringUtils.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;

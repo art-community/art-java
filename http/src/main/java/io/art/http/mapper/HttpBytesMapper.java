@@ -22,7 +22,7 @@ import io.art.core.mime.*;
 import io.art.entity.*;
 import io.art.http.exception.*;
 import static java.util.Objects.*;
-import static io.art.core.checker.CheckerForEmptiness.isEmpty;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.entity.CollectionValuesFactory.*;
 import static io.art.entity.Value.*;

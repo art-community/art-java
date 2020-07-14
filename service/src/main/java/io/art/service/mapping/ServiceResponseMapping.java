@@ -24,7 +24,7 @@ import io.art.service.exception.*;
 import io.art.service.model.*;
 import io.art.service.model.ServiceResponse.*;
 import static java.util.Objects.*;
-import static io.art.core.checker.CheckerForEmptiness.isEmpty;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.entity.Entity.*;
 import static io.art.entity.mapper.ValueMapper.*;
 import static io.art.service.constants.ServiceExceptionsMessages.*;

@@ -19,7 +19,6 @@
 package io.art.grpc.server.module;
 
 import lombok.*;
-import io.art.core.extension.*;
 import io.art.core.module.Module;
 import io.art.grpc.server.*;
 import io.art.grpc.server.configuration.*;
@@ -53,6 +52,6 @@ public class GrpcServerModule implements Module<GrpcServerModuleConfiguration, G
 
     @Override
     public void onUnload() {
-        doIfNotNull(grpcServerModuleState().getServer(), GrpcServer::stop);
+        let(grpcServerModuleState().getServer(), GrpcServer::stop);
     }
 }

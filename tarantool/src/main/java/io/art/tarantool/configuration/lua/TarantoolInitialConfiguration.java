@@ -23,7 +23,7 @@ import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
 import io.art.tarantool.exception.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.isNotEmpty;
+import static io.art.core.checker.EmptinessChecker.isNotEmpty;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;

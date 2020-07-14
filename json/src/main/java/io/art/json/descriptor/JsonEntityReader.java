@@ -24,7 +24,7 @@ import io.art.entity.*;
 import io.art.json.exception.*;
 import static com.fasterxml.jackson.core.JsonToken.*;
 import static java.util.Objects.*;
-import static io.art.core.checker.CheckerForEmptiness.isEmpty;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.context.Context.*;
 import static io.art.core.extension.FileExtensions.*;
 import static io.art.core.extension.InputStreamExtensions.*;

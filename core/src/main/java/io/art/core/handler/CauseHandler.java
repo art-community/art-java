@@ -20,7 +20,7 @@ package io.art.core.handler;
 
 import lombok.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor

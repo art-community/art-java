@@ -22,7 +22,7 @@ import io.grpc.*;
 import static io.grpc.Metadata.*;
 import static io.grpc.Metadata.Key.*;
 import static org.apache.logging.log4j.ThreadContext.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.grpc.client.constants.GrpcClientModuleConstants.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
 

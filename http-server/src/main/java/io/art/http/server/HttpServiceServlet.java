@@ -37,7 +37,7 @@ import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static org.apache.logging.log4j.ThreadContext.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.isEmpty;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extension.NullCheckingExtensions.*;

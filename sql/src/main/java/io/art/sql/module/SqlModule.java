@@ -111,13 +111,13 @@ public class SqlModule implements Module<SqlModuleConfiguration, SqlModuleState>
         try {
             switch (configuration.getConnectionPoolType()) {
                 case HIKARI:
-                    doIfNotNull(sqlModuleState().hikariDataSource(), (Consumer<DataSource>) pool -> ignoreException(() -> {
+                    let(sqlModuleState().hikariDataSource(), (Consumer<DataSource>) pool -> ignoreException(() -> {
                         Caster.<HikariDataSource>cast(pool).close();
                         getLogger().info(format(CLOSING_POOL, pool));
                     }, getLogger()::error));
                     break;
                 case TOMCAT:
-                    doIfNotNull(sqlModuleState().tomcatDataSource(), (Consumer<DataSource>) pool -> ignoreException(() -> {
+                    let(sqlModuleState().tomcatDataSource(), (Consumer<DataSource>) pool -> ignoreException(() -> {
                         Caster.<DataSourceProxy>cast(pool).close();
                         getLogger().info(format(CLOSING_POOL, pool));
                     }, getLogger()::error));

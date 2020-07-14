@@ -24,6 +24,6 @@ import lombok.*;
 @EqualsAndHashCode
 @AllArgsConstructor
 public class CachedObject<T> {
-    private T object;
-    private long lastUpdateTime;
+    private final T object;
+    private final long lastUpdateTime;
 }

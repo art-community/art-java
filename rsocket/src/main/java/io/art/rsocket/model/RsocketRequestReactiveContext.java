@@ -28,7 +28,7 @@ import io.art.service.model.*;
 import static java.text.MessageFormat.format;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.isEmpty;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.entity.Value.*;
 import static io.art.logging.LoggingModule.loggingModule;

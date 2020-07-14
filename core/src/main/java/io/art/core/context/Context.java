@@ -26,17 +26,17 @@ import io.art.core.exception.*;
 import io.art.core.module.Module;
 import io.art.core.module.*;
 import io.art.core.provider.*;
-import static java.lang.Runtime.*;
-import static java.lang.System.*;
-import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ContextState.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.CollectionsFactory.*;
+import static java.lang.Runtime.*;
+import static java.lang.System.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 import java.util.*;
 import java.util.concurrent.locks.*;
 import java.util.function.*;
@@ -134,15 +134,15 @@ public class Context {
         ReentrantLock lock = Context.LOCK;
         lock.lock();
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
-        PreconfiguredModuleProvider preconfiguredModulesProvider;
         if (nonNull(moduleContainer)) {
             lock.unlock();
             return cast(moduleContainer.getConfiguration());
         }
         C configuration;
-        if (nonNull(preconfiguredModulesProvider = contextConfiguration().getPreconfiguredModulesProvider())) {
+        Optional<PreconfiguredModuleProvider> provider = contextConfiguration().getPreconfiguredModulesProvider();
+        if (provider.isPresent()) {
             lock.unlock();
-            return loadModule(toLoadIfNotExists, preconfiguredModulesProvider);
+            return loadModule(toLoadIfNotExists, provider.get());
         }
         lock.unlock();
         loadModule(toLoadIfNotExists, (configuration = toLoadIfNotExists.getDefaultConfiguration()));
@@ -158,14 +158,14 @@ public class Context {
             return toLoadIfNotExists.getState();
         }
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
-        PreconfiguredModuleProvider preconfiguredModulesProvider;
         if (nonNull(moduleContainer)) {
             lock.unlock();
             return cast(moduleContainer.getModule().getState());
         }
-        if (nonNull(preconfiguredModulesProvider = contextConfiguration().getPreconfiguredModulesProvider())) {
+        Optional<PreconfiguredModuleProvider> provider = contextConfiguration().getPreconfiguredModulesProvider();
+        if (provider.isPresent()) {
             lock.unlock();
-            loadModule(toLoadIfNotExists, preconfiguredModulesProvider);
+            loadModule(toLoadIfNotExists, provider.get());
             return cast(toLoadIfNotExists.getState());
         }
         lock.unlock();
@@ -182,16 +182,16 @@ public class Context {
             return toLoadIfNotExists.get().getDefaultConfiguration();
         }
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
-        PreconfiguredModuleProvider preconfiguredModulesProvider;
         if (nonNull(moduleContainer)) {
             lock.unlock();
             return cast(moduleContainer.getConfiguration());
         }
         C configuration;
         Module<C, S> module = toLoadIfNotExists.get();
-        if (nonNull(preconfiguredModulesProvider = contextConfiguration().getPreconfiguredModulesProvider())) {
+        Optional<PreconfiguredModuleProvider> provider = contextConfiguration().getPreconfiguredModulesProvider();
+        if (provider.isPresent()) {
             lock.unlock();
-            return loadModule(module, preconfiguredModulesProvider);
+            return loadModule(module, provider.get());
         }
         lock.unlock();
         loadModule(module, (configuration = module.getDefaultConfiguration()));
@@ -207,15 +207,15 @@ public class Context {
             return toLoadIfNotExists.get().getState();
         }
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
-        PreconfiguredModuleProvider preconfiguredModulesProvider;
         if (nonNull(moduleContainer)) {
             lock.unlock();
             return cast(moduleContainer.getModule().getState());
         }
         Module<C, S> module = toLoadIfNotExists.get();
-        if (nonNull(preconfiguredModulesProvider = contextConfiguration().getPreconfiguredModulesProvider())) {
+        Optional<PreconfiguredModuleProvider> provider = contextConfiguration().getPreconfiguredModulesProvider();
+        if (provider.isPresent()) {
             lock.unlock();
-            loadModule(module, preconfiguredModulesProvider);
+            loadModule(module, provider.get());
             return module.getState();
         }
         lock.unlock();

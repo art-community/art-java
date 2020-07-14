@@ -17,7 +17,7 @@
 package io.art.core.converter;
 
 import lombok.experimental.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.determinant.SystemDeterminant.*;
 

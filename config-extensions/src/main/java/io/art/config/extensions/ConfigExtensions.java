@@ -30,7 +30,7 @@ import static java.util.stream.Collectors.*;
 import static io.art.config.ConfigProvider.*;
 import static io.art.config.constants.ConfigExceptionMessages.*;
 import static io.art.config.remote.provider.RemoteConfigProvider.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extension.ExceptionExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;

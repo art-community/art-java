@@ -18,8 +18,6 @@
 
 package io.art.core.constants;
 
-import static io.art.core.caster.Caster.*;
-
 public interface ArrayConstants {
     byte[] EMPTY_BYTES = {};
     int[] EMPTY_INTS = {};

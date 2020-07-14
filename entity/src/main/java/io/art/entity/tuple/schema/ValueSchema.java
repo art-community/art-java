@@ -22,7 +22,7 @@ import lombok.*;
 import io.art.entity.Value;
 import io.art.entity.constants.*;
 import static java.util.Objects.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import java.util.*;
 

@@ -24,25 +24,29 @@ import java.util.function.*;
 
 @UtilityClass
 public class NullCheckingExtensions {
-    public static <T> T getOrElse(T object, T orElse) {
-        return isNull(object) ? orElse : object;
+    public static <T> T getOrElse(T value, T orElse) {
+        return isNull(value) ? orElse : value;
     }
 
-    public static <T> T nullOrElse(Object val, T orElse) {
-        return isNull(val) ? null : orElse;
+    public static <T> T getOrElse(T value, Supplier<T> orElse) {
+        return isNull(value) ? orElse.get() : value;
     }
 
-    public static <T, R> R doIfNotNull(T val, Function<T, R> action) {
-        return nonNull(val) ? action.apply(val) : null;
+    public static <T> T replaceNull(Object value, T orElse) {
+        return isNull(value) ? null : orElse;
     }
 
-    public static <T, R> R doIfNotNull(T val, Function<T, R> action, Supplier<R> orElse) {
-        return nonNull(val) ? action.apply(val) : orElse.get();
-    }
-
-    public static <T> void doIfNotNull(T val, Consumer<T> consumer) {
-        if (nonNull(val)) {
-            consumer.accept(val);
+    public static <T> void apply(T value, Consumer<T> consumer) {
+        if (nonNull(value)) {
+            consumer.accept(value);
         }
+    }
+
+    public static <T, R> R let(T value, Function<T, R> action) {
+        return nonNull(value) ? action.apply(value) : null;
+    }
+
+    public static <T, R> R let(T value, Function<T, R> action, Supplier<R> orElse) {
+        return nonNull(value) ? action.apply(value) : orElse.get();
     }
 }

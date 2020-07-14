@@ -28,7 +28,7 @@ import static io.art.config.ConfigProvider.*;
 import static io.art.config.module.ConfigModule.*;
 import static io.art.config.remote.constants.RemoteConfigLoaderConstants.*;
 import static io.art.config.remote.provider.RemoteConfigProvider.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModule.*;

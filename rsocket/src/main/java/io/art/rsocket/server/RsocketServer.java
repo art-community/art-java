@@ -110,7 +110,7 @@ public class RsocketServer {
                         .filter(entry -> entry.getValue().getServiceTypes().contains(RSOCKET_SERVICE_TYPE))
                         .forEach(entry -> getLogger().info(format(RSOCKET_LOADED_SERVICE_MESSAGE,
                                 rsocketModule().getServerHost().equals(BROADCAST_IP_ADDRESS)
-                                        ? contextConfiguration().getIpAddress()
+                                        ? contextConfiguration().getPrimaryIpAddress()
                                         : rsocketModule().getServerHost(),
                                 transport == TCP
                                         ? rsocketModule().getServerTcpPort()

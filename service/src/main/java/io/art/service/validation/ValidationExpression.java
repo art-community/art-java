@@ -21,7 +21,7 @@ package io.art.service.validation;
 import lombok.Getter;
 
 import static java.text.MessageFormat.format;
-import static io.art.core.checker.CheckerForEmptiness.isEmpty;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.StringConstants.EMPTY_STRING;
 
 @Getter

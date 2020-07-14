@@ -18,15 +18,15 @@
 
 package io.art.core.configuration;
 
-import lombok.*;
 import io.art.core.context.*;
 import io.art.core.network.provider.*;
 import io.art.core.provider.*;
+import lombok.*;
+import static io.art.core.constants.ContextConstants.*;
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.Locale.Category.*;
 import static java.util.Locale.*;
 import static java.util.Optional.*;
-import static io.art.core.constants.ContextConstants.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
@@ -42,32 +42,28 @@ public interface ContextInitialConfiguration {
 
     boolean isUnloadModulesOnShutdown();
 
-    String getIpAddress();
+    String getPrimaryIpAddress();
+
+    Map<String, String> getIpAddresses();
 
     Locale getLocale();
 
-    PreconfiguredModuleProvider getPreconfiguredModulesProvider();
+    Optional<PreconfiguredModuleProvider> getPreconfiguredModulesProvider();
 
-    @Getter
-    @NoArgsConstructor
     class ContextInitialDefaultConfiguration implements ContextInitialConfiguration {
-        private final Charset charset = UTF_8;
-        private final boolean unloadModulesOnShutdown = true;
-        private final String mainModuleId = DEFAULT_MAIN_MODULE_ID;
-        private final String moduleJarName = DEFAULT_MODULE_JAR;
-        private final String ipAddress = IpAddressProvider.getIpAddress();
-        private final Locale locale = getDefault(FORMAT);
-        private PreconfiguredModuleProvider preconfiguredModulesProvider;
-    }
-
-    @Getter
-    @RequiredArgsConstructor
-    class ApplicationContextConfiguration implements ContextInitialConfiguration {
+        @Getter
         private final String mainModuleId;
+        @Getter
         private final Charset charset = UTF_8;
+        @Getter
         private final boolean unloadModulesOnShutdown = true;
-        private final String ipAddress = IpAddressProvider.getIpAddress();
+        @Getter
+        private final String primaryIpAddress = IpAddressProvider.getIpAddress();
+        @Getter
+        private final Map<String, String> ipAddresses = IpAddressProvider.getIpAddresses();
+        @Getter
         private final Locale locale = getDefault(FORMAT);
+        @Getter
         private final String moduleJarName = ofNullable(Context.class.getProtectionDomain())
                 .map(ProtectionDomain::getCodeSource)
                 .map(CodeSource::getLocation)
@@ -76,9 +72,23 @@ public interface ContextInitialConfiguration {
                 .map(File::getPath)
                 .orElse(DEFAULT_MODULE_JAR);
         private PreconfiguredModuleProvider preconfiguredModulesProvider;
-        public ApplicationContextConfiguration(String applicationModuleId, PreconfiguredModuleProvider preconfiguredModulesProvider) {
+
+        public ContextInitialDefaultConfiguration() {
+            this.mainModuleId = DEFAULT_MAIN_MODULE_ID;
+        }
+
+        public ContextInitialDefaultConfiguration(PreconfiguredModuleProvider preconfiguredModulesProvider) {
+            this.mainModuleId = DEFAULT_MAIN_MODULE_ID;
+        }
+
+        public ContextInitialDefaultConfiguration(String applicationModuleId, PreconfiguredModuleProvider preconfiguredModulesProvider) {
             this.mainModuleId = applicationModuleId;
             this.preconfiguredModulesProvider = preconfiguredModulesProvider;
+        }
+
+        @Override
+        public Optional<PreconfiguredModuleProvider> getPreconfiguredModulesProvider() {
+            return ofNullable(preconfiguredModulesProvider);
         }
     }
 }

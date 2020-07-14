@@ -25,7 +25,7 @@ import io.art.core.mime.*;
 import io.art.http.server.exception.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.context.Context.*;
 import static io.art.http.constants.HttpMethodType.*;

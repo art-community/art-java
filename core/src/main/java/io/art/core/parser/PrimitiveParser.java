@@ -24,217 +24,254 @@ import static java.lang.Double.*;
 import static java.lang.Float.*;
 import static java.lang.Integer.*;
 import static java.lang.Long.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
+import static java.lang.Short.parseShort;
 
 @UtilityClass
 public class PrimitiveParser {
-    public static double parseOrElse(String str, double orElse) {
-        if (isEmpty(str)) {
+    public static double parseOrElse(String string, double orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
-        return parseDouble(str);
+        return parseDouble(string);
     }
 
-    public static int parseOrElse(String str, int orElse) {
-        if (isEmpty(str)) {
+    public static int parseOrElse(String string, int orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
-        return parseInt(str);
+        return parseInt(string);
     }
 
-    public static long parseOrElse(String str, long orElse) {
-        if (isEmpty(str)) {
+    public static long parseOrElse(String string, long orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
-        return parseLong(str);
+        return parseLong(string);
     }
 
-    public static boolean parseOrElse(String str, boolean orElse) {
-        if (isEmpty(str)) {
+    public static boolean parseOrElse(String string, boolean orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
-        return parseBoolean(str);
+        return parseBoolean(string);
     }
 
-    public static double parseOrElse(String str, Double orElse) {
-        if (isEmpty(str)) {
+    public static short parseOrElse(String string, short orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
-        return parseDouble(str);
+        return parseShort(string);
     }
 
-    public static int parseOrElse(String str, Integer orElse) {
-        if (isEmpty(str)) {
+    public static double parseOrElse(String string, Double orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
-        return parseInt(str);
+        return parseDouble(string);
     }
 
-    public static long parseOrElse(String str, Long orElse) {
-        if (isEmpty(str)) {
+    public static int parseOrElse(String string, Integer orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
-        return parseLong(str);
+        return parseInt(string);
     }
 
-    public static boolean parseOrElse(String str, Boolean orElse) {
-        if (isEmpty(str)) {
+    public static long parseOrElse(String string, Long orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
-        return parseBoolean(str);
+        return parseLong(string);
+    }
+
+    public static boolean parseOrElse(String string, Boolean orElse) {
+        if (isEmpty(string)) {
+            return orElse;
+        }
+        return parseBoolean(string);
+    }
+    
+    public static short parseOrElse(String string, Short orElse) {
+        if (isEmpty(string)) {
+            return orElse;
+        }
+        return parseShort(string);
     }
 
 
-    public static double tryParseOrElse(String str, double orElse) {
-        if (isEmpty(str)) {
+    public static double tryParseOrElse(String string, double orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
         try {
-            return parseDouble(str);
+            return parseDouble(string);
         } catch (Throwable throwable) {
             return orElse;
         }
     }
 
-    public static int tryParseOrElse(String str, int orElse) {
-        if (isEmpty(str)) {
+    public static int tryParseOrElse(String string, int orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
         try {
-            return parseInt(str);
+            return parseInt(string);
         } catch (Throwable throwable) {
             return orElse;
         }
     }
 
-    public static long tryParseOrElse(String str, long orElse) {
-        if (isEmpty(str)) {
+    public static long tryParseOrElse(String string, long orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
         try {
-            return parseLong(str);
+            return parseLong(string);
         } catch (Throwable throwable) {
             return orElse;
         }
     }
 
-    public static boolean tryParseOrElse(String str, boolean orElse) {
-        if (isEmpty(str)) {
+    public static boolean tryParseOrElse(String string, boolean orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
         try {
-            return parseBoolean(str);
+            return parseBoolean(string);
         } catch (Throwable throwable) {
             return orElse;
         }
     }
 
-    public static double tryParseOrElse(String str, Double orElse) {
-        if (isEmpty(str)) {
+    public static double tryParseOrElse(String string, Double orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
         try {
-            return parseDouble(str);
+            return parseDouble(string);
         } catch (Throwable throwable) {
             return orElse;
         }
     }
 
-    public static int tryParseOrElse(String str, Integer orElse) {
-        if (isEmpty(str)) {
+    public static int tryParseOrElse(String string, Integer orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
         try {
-            return parseInt(str);
+            return parseInt(string);
         } catch (Throwable throwable) {
             return orElse;
         }
     }
 
-    public static long tryParseOrElse(String str, Long orElse) {
-        if (isEmpty(str)) {
+    public static long tryParseOrElse(String string, Long orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
         try {
-            return parseLong(str);
+            return parseLong(string);
         } catch (Throwable throwable) {
             return orElse;
         }
     }
 
-    public static boolean tryParseOrElse(String str, Boolean orElse) {
-        if (isEmpty(str)) {
+    public static boolean tryParseOrElse(String string, Boolean orElse) {
+        if (isEmpty(string)) {
             return orElse;
         }
         try {
-            return parseBoolean(str);
+            return parseBoolean(string);
+        } catch (Throwable throwable) {
+            return orElse;
+        }
+    }
+
+    public static short tryParseOrElse(String string, Short orElse) {
+        if (isEmpty(string)) {
+            return orElse;
+        }
+        try {
+            return parseShort(string);
         } catch (Throwable throwable) {
             return orElse;
         }
     }
 
 
-    public static Boolean tryParseBoolean(String str) {
-        if (isEmpty(str)) {
+    public static Boolean tryParseBoolean(String string) {
+        if (isEmpty(string)) {
             return null;
         }
         try {
-            return parseBoolean(str);
-        } catch (Throwable throwable) {
-            return null;
-        }
-    }
-
-    public static Double tryParseDouble(String str) {
-        if (isEmpty(str)) {
-            return null;
-        }
-        try {
-            return parseDouble(str);
-        } catch (Throwable throwable) {
-            return null;
-        }
-    }
-
-    public static Float tryParseFloat(String str) {
-        if (isEmpty(str)) {
-            return null;
-        }
-        try {
-            return parseFloat(str);
-        } catch (Throwable throwable) {
-            return null;
-        }
-    }
-
-    public static Integer tryParseInt(String str) {
-        if (isEmpty(str)) {
-            return null;
-        }
-        try {
-            return parseInt(str);
+            return parseBoolean(string);
         } catch (Throwable throwable) {
             return null;
         }
     }
 
-    public static Long tryParseLong(String str) {
-        if (isEmpty(str)) {
+    public static Double tryParseDouble(String string) {
+        if (isEmpty(string)) {
             return null;
         }
         try {
-            return parseLong(str);
+            return parseDouble(string);
         } catch (Throwable throwable) {
             return null;
         }
     }
 
-    public static Byte tryParseByte(String str) {
-        if (isEmpty(str)) {
+    public static Float tryParseFloat(String string) {
+        if (isEmpty(string)) {
             return null;
         }
         try {
-            return tryParseByte(str);
+            return parseFloat(string);
+        } catch (Throwable throwable) {
+            return null;
+        }
+    }
+
+    public static Integer tryParseInt(String string) {
+        if (isEmpty(string)) {
+            return null;
+        }
+        try {
+            return parseInt(string);
+        } catch (Throwable throwable) {
+            return null;
+        }
+    }
+
+    public static Long tryParseLong(String string) {
+        if (isEmpty(string)) {
+            return null;
+        }
+        try {
+            return parseLong(string);
+        } catch (Throwable throwable) {
+            return null;
+        }
+    }
+
+    public static Byte tryParseByte(String string) {
+        if (isEmpty(string)) {
+            return null;
+        }
+        try {
+            return tryParseByte(string);
+        } catch (Throwable throwable) {
+            return null;
+        }
+    }
+
+    public static Short tryParseShort(String string) {
+        if (isEmpty(string)) {
+            return null;
+        }
+        try {
+            return tryParseShort(string);
         } catch (Throwable throwable) {
             return null;
         }

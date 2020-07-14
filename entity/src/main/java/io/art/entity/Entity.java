@@ -27,7 +27,7 @@ import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.DateConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.CollectionsFactory.*;
@@ -58,7 +58,7 @@ public class Entity implements Value {
     }
 
     public static Entity merge(Entity... entities) {
-        if (CheckerForEmptiness.isEmpty(entities)) {
+        if (EmptinessChecker.isEmpty(entities)) {
             return null;
         }
         EntityBuilder entityBuilder = entityBuilder();
@@ -153,7 +153,7 @@ public class Entity implements Value {
 
 
     public Value find(String key) {
-        if (CheckerForEmptiness.isEmpty(key)) {
+        if (EmptinessChecker.isEmpty(key)) {
             return null;
         }
         Queue<String> sections = queueOf(key.split(ESCAPED_DOT));
@@ -497,7 +497,7 @@ public class Entity implements Value {
 
     @Override
     public boolean isEmpty() {
-        return CheckerForEmptiness.isEmpty(fields);
+        return EmptinessChecker.isEmpty(fields);
     }
 
     public static class EntityBuilder {

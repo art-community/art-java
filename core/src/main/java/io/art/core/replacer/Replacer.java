@@ -18,10 +18,12 @@
 
 package io.art.core.replacer;
 
-import static io.art.core.checker.CheckerForEmptiness.*;
+import lombok.experimental.*;
+import static io.art.core.checker.EmptinessChecker.*;
 
-public interface Replacer {
-    static <T> T replaceWith(T current, T from, T to) {
+@UtilityClass
+public class Replacer {
+    public static <T> T replaceWith(T current, T from, T to) {
         if (isEmpty(current)) {
             if (isEmpty(from)) return to;
             return current;

@@ -43,7 +43,7 @@ public class BuilderValidator {
     }
 
     public <T> T notEmptyField(T value, String field) {
-        return checkField(value, new BuilderFieldValidationError(field, format(FIELD_MUST_NOT_BE_EMPTY, field)), CheckerForEmptiness::isNotEmpty);
+        return checkField(value, new BuilderFieldValidationError(field, format(FIELD_MUST_NOT_BE_EMPTY, field)), EmptinessChecker::isNotEmpty);
     }
 
     public <T> T notNullField(T value, String field) {
@@ -67,7 +67,7 @@ public class BuilderValidator {
         private final String field;
         private final String error;
 
-        public static BuilderFieldValidationError fieldValidationError(String field, String error) {
+        public static BuilderFieldValidationError fieldError(String field, String error) {
             return new BuilderFieldValidationError(field, error);
         }
 

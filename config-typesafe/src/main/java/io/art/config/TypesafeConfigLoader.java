@@ -27,7 +27,7 @@ import static java.text.MessageFormat.*;
 import static java.util.Objects.isNull;
 import static io.art.config.TypesafeConfigLoaderConstants.*;
 import static io.art.config.TypesafeConfigLoadingExceptionMessages.CONFIG_FILE_NOT_FOUND;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.SystemProperties.*;
 import static io.art.core.extension.FileExtensions.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;

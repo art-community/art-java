@@ -19,9 +19,11 @@
 package io.art.core.network.provider;
 
 import lombok.experimental.*;
+import static io.art.core.factory.CollectionsFactory.mapOf;
 import static java.net.NetworkInterface.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.StringConstants.*;
+import static java.util.Collections.emptyMap;
 import java.net.*;
 import java.util.*;
 
@@ -46,6 +48,29 @@ public class IpAddressProvider {
             }
         }
         return LOCALHOST_IP_ADDRESS;
+    }
+
+    public static Map<String, String> getIpAddresses() {
+        Enumeration<NetworkInterface> networkInterfaces;
+        try {
+            networkInterfaces = getNetworkInterfaces();
+        } catch (SocketException throwable) {
+            return emptyMap();
+        }
+        Map<String, String> addresses = mapOf();
+        while (networkInterfaces.hasMoreElements()) {
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
+            Enumeration<InetAddress> addressEnumeration = networkInterface.getInetAddresses();
+            while (addressEnumeration.hasMoreElements()) {
+                InetAddress inetAddress = addressEnumeration.nextElement();
+                String currentAddress = inetAddress.getHostAddress();
+                if (!inetAddress.isLoopbackAddress() && IP_4_REGEX_PATTERN.matcher(currentAddress).matches()) {
+                    addresses.put(networkInterface.getName(), currentAddress);
+                }
+
+            }
+        }
+        return addresses;
     }
 
     public static String translateLocalHostToIp(String host) {

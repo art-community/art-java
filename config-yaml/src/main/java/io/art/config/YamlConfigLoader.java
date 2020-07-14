@@ -24,7 +24,7 @@ import static java.lang.System.*;
 import static java.util.Objects.isNull;
 import static io.art.config.YamlConfigLoaderConstants.*;
 import static io.art.config.YamlLoadingExceptionMessages.CONFIG_FILE_WAS_NOT_FOUND;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.constants.SystemProperties.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;

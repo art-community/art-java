@@ -41,7 +41,7 @@ import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
 import static org.apache.logging.log4j.io.IoBuilder.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.constants.SystemConstants.*;
 import static io.art.core.converter.WslPathConverter.*;

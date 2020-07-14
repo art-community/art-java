@@ -26,7 +26,7 @@ import static java.util.stream.Collectors.*;
 import static io.art.config.extensions.ConfigExtensions.*;
 import static io.art.config.extensions.common.CommonConfigKeys.*;
 import static io.art.config.extensions.grpc.GrpcConfigKeys.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.constants.ThreadConstants.*;
 import static io.art.core.extension.ExceptionExtensions.*;

@@ -18,12 +18,11 @@
 
 package io.art.core.constants;
 
+import static io.art.core.colorizer.AnsiColorizer.*;
 import static java.util.regex.Pattern.*;
-import static io.art.core.colorizer.AnsiColorizer.success;
 import java.util.regex.*;
 
 public interface StringConstants {
-    // @formatter:off
     String ART_BANNER = success("Welcome to ART!");
     String TRUE_NUMERIC = "1";
     String FALSE_NUMERIC = "0";

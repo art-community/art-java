@@ -87,7 +87,7 @@ public class XmlEntity implements Value {
     }
 
     public XmlEntity find(String tag) {
-        if (CheckerForEmptiness.isEmpty(tag)) {
+        if (EmptinessChecker.isEmpty(tag)) {
             return xmlEntityBuilder().emptyXmlEntity();
         }
         XmlEntity found = findRecursive(tag);
@@ -177,7 +177,7 @@ public class XmlEntity implements Value {
 
     @Override
     public boolean isEmpty() {
-        return CheckerForEmptiness.isEmpty(tag);
+        return EmptinessChecker.isEmpty(tag);
     }
 
     @NoArgsConstructor(access = PRIVATE)
@@ -327,7 +327,7 @@ public class XmlEntity implements Value {
 
         @SuppressWarnings("Duplicates")
         public XmlEntity create() {
-            if (CheckerForEmptiness.isEmpty(tag) && CheckerForEmptiness.isEmpty(children)) {
+            if (EmptinessChecker.isEmpty(tag) && EmptinessChecker.isEmpty(children)) {
                 throw new XmlEntityCreationException(XML_TAG_IS_EMPTY);
             }
             XmlEntity entity = new XmlEntity();
@@ -351,7 +351,7 @@ public class XmlEntity implements Value {
             if (isNull(tag)) {
                 throw new XmlEntityCreationException(XML_TAG_IS_EMPTY);
             }
-            if (deleteEmptyValueAttribute && CheckerForEmptiness.isEmpty(value.getValue())) {
+            if (deleteEmptyValueAttribute && EmptinessChecker.isEmpty(value.getValue())) {
                 return parent;
             }
             XmlEntity entity = new XmlEntity();

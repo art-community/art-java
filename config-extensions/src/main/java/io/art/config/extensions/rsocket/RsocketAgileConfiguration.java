@@ -27,7 +27,7 @@ import static io.art.config.extensions.ConfigExtensions.*;
 import static io.art.config.extensions.common.CommonConfigKeys.*;
 import static io.art.config.extensions.common.DataFormats.*;
 import static io.art.config.extensions.rsocket.RsocketConfigKeys.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extension.ExceptionExtensions.*;
 import static io.art.core.extension.NullCheckingExtensions.*;

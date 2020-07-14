@@ -22,7 +22,7 @@ import lombok.experimental.*;
 import org.tarantool.*;
 import io.art.tarantool.configuration.lua.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.tarantool.caller.TarantoolFunctionCaller.*;
 import static io.art.tarantool.configuration.lua.TarantoolSequenceConfiguration.*;

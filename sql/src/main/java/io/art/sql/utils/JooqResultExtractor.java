@@ -2,7 +2,7 @@ package io.art.sql.utils;
 
 import org.jooq.*;
 import static org.jooq.impl.DSL.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extension.StringExtensions.*;
 
 public class JooqResultExtractor {

@@ -28,7 +28,7 @@ import static java.util.Collections.*;
 import static java.util.Locale.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.CharConstants.DOUBLE_QUOTES;
 import static io.art.core.constants.CharConstants.SEMICOLON;
 import static io.art.core.constants.ExceptionMessages.*;
@@ -180,7 +180,7 @@ public class MimeType implements Comparable<MimeType> {
     }
 
     public Charset getCharset() {
-        return doIfNotNull(getParameter(PARAM_CHARSET), (Function<String, Charset>) charset -> forName(unquote(charset)));
+        return let(getParameter(PARAM_CHARSET), (Function<String, Charset>) charset -> forName(unquote(charset)));
     }
 
     public float getQValue() {

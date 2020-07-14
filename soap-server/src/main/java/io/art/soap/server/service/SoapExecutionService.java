@@ -29,7 +29,7 @@ import io.art.soap.server.model.SoapService.*;
 import io.art.soap.server.specification.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.http.server.module.HttpServerModule.*;
 import static io.art.http.server.service.HttpResourceService.*;
 import static io.art.service.ServiceController.*;

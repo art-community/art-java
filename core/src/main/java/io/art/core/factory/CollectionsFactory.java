@@ -26,7 +26,7 @@ import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import java.util.ArrayList;
 import java.util.*;
 import java.util.concurrent.*;
@@ -101,6 +101,17 @@ public class CollectionsFactory {
         return array;
     }
 
+    public static List<Short> arrayOf(short[] elements) {
+        if (isEmpty(elements)) {
+            return emptyList();
+        }
+        List<Short> array = arrayOf(elements.length);
+        for (short element : elements) {
+            array.add(element);
+        }
+        return array;
+    }
+
     public static List<Byte> arrayOf(byte[] elements) {
         if (isEmpty(elements)) {
             return emptyList();
@@ -167,6 +178,10 @@ public class CollectionsFactory {
         return arrayOf(elements);
     }
 
+    public static List<Short> dynamicArrayOf(short[] elements) {
+        return arrayOf(elements);
+    }
+
     public static List<Integer> dynamicArrayOf(int[] elements) {
         return arrayOf(elements);
     }
@@ -202,6 +217,17 @@ public class CollectionsFactory {
         }
         List<Long> array = linkedListOf();
         for (long element : elements) {
+            array.add(element);
+        }
+        return array;
+    }
+
+    public static List<Short> linkedListOf(short[] elements) {
+        if (isEmpty(elements)) {
+            return linkedListOf();
+        }
+        List<Short> array = linkedListOf();
+        for (short element : elements) {
             array.add(element);
         }
         return array;
@@ -338,6 +364,17 @@ public class CollectionsFactory {
         return deque;
     }
 
+    public static Deque<Short> dequeOf(short[] elements) {
+        if (isEmpty(elements)) {
+            return dequeOf();
+        }
+        Deque<Short> deque = dequeOf();
+        for (short element : elements) {
+            deque.add(element);
+        }
+        return deque;
+    }
+
 
     @SafeVarargs
     public static <T> Queue<T> queueOf(T... elements) {
@@ -410,6 +447,17 @@ public class CollectionsFactory {
         return deque;
     }
 
+    public static Queue<Short> queueOf(short[] elements) {
+        if (isEmpty(elements)) {
+            return queueOf();
+        }
+        Queue<Short> deque = queueOf();
+        for (short element : elements) {
+            deque.add(element);
+        }
+        return deque;
+    }
+
 
     @SafeVarargs
     public static <T> PriorityQueue<T> priorityQueueOf(Comparator<T> comparator, T... elements) {
@@ -474,8 +522,16 @@ public class CollectionsFactory {
             queue.add(element);
         }
         return isEmpty(elements) ? new PriorityQueue<>(comparator) : queue;
-
     }
+
+    public static PriorityQueue<Short> priorityQueueOf(Comparator<Short> comparator, short[] elements) {
+        PriorityQueue<Short> queue = new PriorityQueue<>(comparator);
+        for (short element : elements) {
+            queue.add(element);
+        }
+        return isEmpty(elements) ? new PriorityQueue<>(comparator) : queue;
+    }
+
 
     @SafeVarargs
     public static <T> Stack<T> stackOf(T... elements) {
@@ -560,6 +616,18 @@ public class CollectionsFactory {
         return set;
     }
 
+    public static Set<Short> setOf(short[] elements) {
+        if (isEmpty(elements)) {
+            return setOf();
+        }
+        Set<Short> set = setOf();
+        for (short element : elements) {
+            set.add(element);
+        }
+        return set;
+    }
+
+
     @SafeVarargs
     public static <T> Set<T> treeOf(Comparator<T> comparator, T... elements) {
         TreeSet<T> treeSet = new TreeSet<>(comparator);
@@ -584,7 +652,7 @@ public class CollectionsFactory {
     }
 
     public static Set<Long> treeOf(Comparator<Long> comparator, long[] elements) {
-        TreeSet<Long> treeSet = new TreeSet<>();
+        TreeSet<Long> treeSet = new TreeSet<>(comparator);
         if (isEmpty(elements)) return treeSet;
         for (long element : elements) {
             treeSet.add(element);
@@ -593,7 +661,7 @@ public class CollectionsFactory {
     }
 
     public static Set<Integer> treeOf(Comparator<Integer> comparator, int[] elements) {
-        TreeSet<Integer> treeSet = new TreeSet<>();
+        TreeSet<Integer> treeSet = new TreeSet<>(comparator);
         if (isEmpty(elements)) return treeSet;
         for (int element : elements) {
             treeSet.add(element);
@@ -602,7 +670,7 @@ public class CollectionsFactory {
     }
 
     public static Set<Byte> treeOf(Comparator<Byte> comparator, byte[] elements) {
-        TreeSet<Byte> treeSet = new TreeSet<>();
+        TreeSet<Byte> treeSet = new TreeSet<>(comparator);
         if (isEmpty(elements)) return treeSet;
         for (byte element : elements) {
             treeSet.add(element);
@@ -611,7 +679,7 @@ public class CollectionsFactory {
     }
 
     public static Set<Double> treeOf(Comparator<Double> comparator, double[] elements) {
-        TreeSet<Double> treeSet = new TreeSet<>();
+        TreeSet<Double> treeSet = new TreeSet<>(comparator);
         if (isEmpty(elements)) return treeSet;
         for (double element : elements) {
             treeSet.add(element);
@@ -620,7 +688,7 @@ public class CollectionsFactory {
     }
 
     public static Set<Float> treeOf(Comparator<Float> comparator, float[] elements) {
-        TreeSet<Float> treeSet = new TreeSet<>();
+        TreeSet<Float> treeSet = new TreeSet<>(comparator);
         if (isEmpty(elements)) return treeSet;
         for (float element : elements) {
             treeSet.add(element);
@@ -629,7 +697,7 @@ public class CollectionsFactory {
     }
 
     public static Set<Boolean> treeOf(Comparator<Boolean> comparator, boolean[] elements) {
-        TreeSet<Boolean> treeSet = new TreeSet<>();
+        TreeSet<Boolean> treeSet = new TreeSet<>(comparator);
         if (isEmpty(elements)) return treeSet;
         for (boolean element : elements) {
             treeSet.add(element);
@@ -637,6 +705,14 @@ public class CollectionsFactory {
         return treeSet;
     }
 
+    public static Set<Short> treeOf(Comparator<Short> comparator, short[] elements) {
+        TreeSet<Short> treeSet = new TreeSet<>(comparator);
+        if (isEmpty(elements)) return treeSet;
+        for (short element : elements) {
+            treeSet.add(element);
+        }
+        return treeSet;
+    }
 
     public static <K, V> Pair<K, V> pairOf(K k, V v) {
         return new Pair<>(k, v);

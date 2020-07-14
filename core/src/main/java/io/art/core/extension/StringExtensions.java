@@ -18,42 +18,42 @@
 
 package io.art.core.extension;
 
-import lombok.experimental.*;
 import io.art.core.constants.*;
-import static java.util.Objects.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import lombok.experimental.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
+import static java.util.Objects.*;
 import java.util.*;
 
 @UtilityClass
 public class StringExtensions {
-    public static String collectionToDelimitedString(Collection<?> coll, String delim, String prefix, String suffix) {
-        if (isEmpty(coll)) {
+    public static String collectionToDelimitedString(Collection<?> collection, String delimiter, String prefix, String suffix) {
+        if (isEmpty(collection)) {
             return StringConstants.EMPTY_STRING;
         }
 
         StringBuilder sb = new StringBuilder();
-        Iterator<?> it = coll.iterator();
+        Iterator<?> it = collection.iterator();
         while (it.hasNext()) {
             sb.append(prefix).append(it.next()).append(suffix);
             if (it.hasNext()) {
-                sb.append(delim);
+                sb.append(delimiter);
             }
         }
         return sb.toString();
     }
 
-    public static String collectionToDelimitedString(Collection<?> coll, String delim) {
-        return collectionToDelimitedString(coll, delim, StringConstants.EMPTY_STRING, StringConstants.EMPTY_STRING);
+    public static String collectionToDelimitedString(Collection<?> collection, String delimiter) {
+        return collectionToDelimitedString(collection, delimiter, StringConstants.EMPTY_STRING, StringConstants.EMPTY_STRING);
     }
 
-    public static String collectionToCommaDelimitedString(Collection<?> coll) {
-        return collectionToDelimitedString(coll, StringConstants.COMMA);
+    public static String collectionToCommaDelimitedString(Collection<?> collection) {
+        return collectionToDelimitedString(collection, StringConstants.COMMA);
     }
 
-    public static <T> String toString(T val, String ifNull) {
-        if (isNull(val)) return ifNull;
-        return val.toString();
+    public static <T> String toString(T value, String ifNull) {
+        if (isNull(value)) return ifNull;
+        return value.toString();
     }
 
     public static String rewrite(String current, Map<String, String> rewritingMap) {
@@ -63,28 +63,26 @@ public class StringExtensions {
         return isNull((newValue = rewritingMap.get(current))) ? current : newValue;
     }
 
-    public static <T> String emptyIfNull(T val) {
-        return isNull(val) || val.equals(NULL_STRING) ? EMPTY_STRING : val.toString();
+    public static <T> String emptyIfNull(T value) {
+        return isNull(value) || value.equals(NULL_STRING) ? EMPTY_STRING : value.toString();
     }
 
-    public static boolean isQuotedString(String s) {
-        return s.length() >= 2 && ((s.startsWith(StringConstants.DOUBLE_QUOTES) && s.endsWith(StringConstants.DOUBLE_QUOTES)) || (s.startsWith(StringConstants.SINGLE_QUOTE) && s.endsWith(StringConstants.SINGLE_QUOTE)));
+    public static boolean isQuotedString(String string) {
+        return string.length() >= 2 && ((string.startsWith(DOUBLE_QUOTES) && string.endsWith(DOUBLE_QUOTES)) || (string.startsWith(SINGLE_QUOTE) && string.endsWith(SINGLE_QUOTE)));
     }
 
-    public static String unquote(String s) {
-        if (isNull(s)) {
+    public static String unquote(String string) {
+        if (isNull(string)) {
             return EMPTY_STRING;
         }
-        return isQuotedString(s) ? s.substring(1, s.length() - 1) : s;
+        return isQuotedString(string) ? string.substring(1, string.length() - 1) : string;
     }
 
-    public static String firstLetterToUpperCase(String name) {
-        return name.substring(0, 1).toUpperCase() + name.substring(1);
+    public static String firstLetterToUpperCase(String string) {
+        return string.substring(0, 1).toUpperCase() + string.substring(1);
     }
 
-    public static String firstLetterToLowerCase(String name) {
-        return name.substring(0, 1).toLowerCase() + name.substring(1);
+    public static String firstLetterToLowerCase(String string) {
+        return string.substring(0, 1).toLowerCase() + string.substring(1);
     }
-
-
 }

@@ -19,7 +19,7 @@
 package io.art.http.server.filter;
 
 import org.zalando.logbook.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.mime.MimeType.*;
 import static io.art.http.server.HttpServerModuleConfiguration.*;
 import static io.art.http.server.module.HttpServerModule.*;

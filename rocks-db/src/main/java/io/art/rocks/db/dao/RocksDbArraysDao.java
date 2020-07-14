@@ -19,7 +19,7 @@
 package io.art.rocks.db.dao;
 
 import static java.util.Objects.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.rocks.db.constants.RocksDbModuleConstants.*;

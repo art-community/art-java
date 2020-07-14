@@ -27,7 +27,7 @@ import io.art.entity.mapper.*;
 import io.art.grpc.client.exception.*;
 import io.art.grpc.client.handler.*;
 import static lombok.AccessLevel.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.grpc.client.constants.GrpcClientExceptionMessages.*;
 import static io.art.grpc.client.module.GrpcClientModule.*;

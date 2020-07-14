@@ -22,7 +22,7 @@ import lombok.*;
 import io.art.entity.*;
 import io.art.soap.client.exception.*;
 import static lombok.AccessLevel.*;
-import static io.art.core.checker.CheckerForEmptiness.isEmpty;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.entity.XmlEntity.*;
 import static io.art.soap.client.constants.SoapClientModuleConstants.*;
 import static io.art.soap.client.constants.SoapClientModuleConstants.OperationIdSource.REQUEST;

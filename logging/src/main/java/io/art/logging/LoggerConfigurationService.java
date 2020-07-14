@@ -30,7 +30,7 @@ import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static org.apache.logging.log4j.Level.*;
 import static org.apache.logging.log4j.LogManager.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extension.NullCheckingExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.logging.LoggingModuleConstants.*;

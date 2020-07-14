@@ -25,6 +25,6 @@ import lombok.*;
 @EqualsAndHashCode
 @AllArgsConstructor
 public class Pair<K, V> {
-    private K k;
-    private V v;
+    private final K k;
+    private final V v;
 }

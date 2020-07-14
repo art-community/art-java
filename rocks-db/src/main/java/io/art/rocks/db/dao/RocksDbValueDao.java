@@ -24,7 +24,7 @@ import io.art.rocks.db.exception.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
-import static io.art.core.checker.CheckerForEmptiness.isEmpty;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.Value.*;

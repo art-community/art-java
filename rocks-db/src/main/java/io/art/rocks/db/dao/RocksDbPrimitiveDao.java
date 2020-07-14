@@ -23,7 +23,7 @@ import io.art.rocks.db.exception.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;

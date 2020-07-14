@@ -200,7 +200,7 @@ public class JsonEntityWriter {
     }
 
     private static void writeField(JsonGenerator jsonGenerator, String name, Primitive value) throws IOException {
-        if (isEmpty(value) || CheckerForEmptiness.isEmpty(value.getValue())) return;
+        if (isEmpty(value) || EmptinessChecker.isEmpty(value.getValue())) return;
         switch (value.getType()) {
             case STRING:
                 jsonGenerator.writeStringField(name, value.getString());

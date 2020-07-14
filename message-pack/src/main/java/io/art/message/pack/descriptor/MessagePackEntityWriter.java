@@ -30,7 +30,7 @@ import static java.util.stream.Collectors.*;
 import static org.msgpack.core.MessagePack.*;
 import static org.msgpack.value.ValueFactory.MapBuilder;
 import static org.msgpack.value.ValueFactory.*;
-import static io.art.core.checker.CheckerForEmptiness.isEmpty;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extension.FileExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
@@ -115,7 +115,7 @@ public class MessagePackEntityWriter {
             case STRING:
                 return newArray(collectionValue.getStringList()
                         .stream()
-                        .filter(CheckerForEmptiness::isNotEmpty)
+                        .filter(EmptinessChecker::isNotEmpty)
                         .map(ValueFactory::newString)
                         .collect(toList()));
             case LONG:
@@ -123,7 +123,7 @@ public class MessagePackEntityWriter {
                         ? fixedArrayOf(collectionValue.getLongArray())
                         : collectionValue.getLongList())
                         .stream()
-                        .filter(CheckerForEmptiness::isNotEmpty)
+                        .filter(EmptinessChecker::isNotEmpty)
                         .map(primitive -> newInteger((Long) primitive))
                         .collect(toList()));
             case DOUBLE:
@@ -131,7 +131,7 @@ public class MessagePackEntityWriter {
                         ? fixedArrayOf(collectionValue.getDoubleArray())
                         : collectionValue.getDoubleList())
                         .stream()
-                        .filter(CheckerForEmptiness::isNotEmpty)
+                        .filter(EmptinessChecker::isNotEmpty)
                         .map(primitive -> newFloat((Double) primitive))
                         .collect(toList()));
             case FLOAT:
@@ -139,7 +139,7 @@ public class MessagePackEntityWriter {
                         ? fixedArrayOf(collectionValue.getFloatArray())
                         : collectionValue.getFloatList())
                         .stream()
-                        .filter(CheckerForEmptiness::isNotEmpty)
+                        .filter(EmptinessChecker::isNotEmpty)
                         .map(primitive -> newFloat((Float) primitive))
                         .collect(toList()));
             case INT:
@@ -147,7 +147,7 @@ public class MessagePackEntityWriter {
                         ? fixedArrayOf(collectionValue.getIntArray())
                         : collectionValue.getIntList())
                         .stream()
-                        .filter(CheckerForEmptiness::isNotEmpty)
+                        .filter(EmptinessChecker::isNotEmpty)
                         .map(primitive -> newInteger((Integer) primitive))
                         .collect(toList()));
             case BOOL:
@@ -155,7 +155,7 @@ public class MessagePackEntityWriter {
                         ? fixedArrayOf(collectionValue.getBoolArray())
                         : collectionValue.getBoolList())
                         .stream()
-                        .filter(CheckerForEmptiness::isNotEmpty)
+                        .filter(EmptinessChecker::isNotEmpty)
                         .map(primitive -> newBoolean((Boolean) primitive))
                         .collect(toList()));
             case BYTE:
@@ -164,25 +164,25 @@ public class MessagePackEntityWriter {
                 }
                 return newArray(collectionValue.getByteList()
                         .stream()
-                        .filter(CheckerForEmptiness::isNotEmpty)
+                        .filter(EmptinessChecker::isNotEmpty)
                         .map(ValueFactory::newInteger)
                         .collect(toList()));
             case COLLECTION:
                 return newArray(collectionValue.getCollectionsList()
                         .stream()
-                        .filter(CheckerForEmptiness::isNotEmpty)
+                        .filter(EmptinessChecker::isNotEmpty)
                         .map(MessagePackEntityWriter::writeCollectionValue)
                         .collect(toList()));
             case ENTITY:
                 return newArray(collectionValue.getEntityList()
                         .stream()
-                        .filter(CheckerForEmptiness::isNotEmpty)
+                        .filter(EmptinessChecker::isNotEmpty)
                         .map(MessagePackEntityWriter::writeEntity)
                         .collect(toList()));
             case VALUE:
                 return newArray(collectionValue.getValueList()
                         .stream()
-                        .filter(CheckerForEmptiness::isNotEmpty)
+                        .filter(EmptinessChecker::isNotEmpty)
                         .map(MessagePackEntityWriter::writeMessagePack)
                         .collect(toList()));
 

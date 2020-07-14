@@ -57,7 +57,7 @@ public final class XmlEntityFromEntityConverter {
     }
 
     private static void addValue(XmlEntity.XmlEntityBuilder builder, String name, Value value) {
-        if (CheckerForEmptiness.isEmpty(name) || isNull(value)) {
+        if (EmptinessChecker.isEmpty(name) || isNull(value)) {
             return;
         }
         builder = builder.child().tag(name);

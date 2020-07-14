@@ -89,16 +89,16 @@ public class ZalangoLogbookLogWriter implements HttpLogWriter {
 
     @Override
     public boolean isActive(final RawHttpRequest request) {
-        return enabled.get() && activator.test(logger.value());
+        return enabled.get() && activator.test(logger.get());
     }
 
     @Override
     public void writeRequest(final Precorrelation<String> precorrelation) {
-        consumer.accept(logger.value(), precorrelation.getRequest());
+        consumer.accept(logger.get(), precorrelation.getRequest());
     }
 
     @Override
     public void writeResponse(final Correlation<String, String> correlation) {
-        consumer.accept(logger.value(), correlation.getResponse());
+        consumer.accept(logger.get(), correlation.getResponse());
     }
 }

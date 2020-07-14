@@ -58,8 +58,8 @@ public class RsocketModule implements Module<RsocketModuleConfiguration, Rsocket
 
     @Override
     public void onUnload() {
-        doIfNotNull(rsocketModuleState().getTcpServer(), RsocketServer::stop);
-        doIfNotNull(rsocketModuleState().getWebSocketServer(), RsocketServer::stop);
+        let(rsocketModuleState().getTcpServer(), RsocketServer::stop);
+        let(rsocketModuleState().getWebSocketServer(), RsocketServer::stop);
         rsocketModuleState().getRsocketClients().stream().filter(rsocket -> !rsocket.isDisposed()).forEach(this::disposeRsocket);
     }
 

@@ -20,6 +20,7 @@ package io.art.core.extension;
 
 import lombok.experimental.*;
 import java.util.*;
+import java.util.function.*;
 
 @UtilityClass
 public class EqualsCheckingExtensions {
@@ -29,5 +30,13 @@ public class EqualsCheckingExtensions {
 
     public static <T> T ifNotEquals(T val, T pattern, T ifNotEquals) {
         return !Objects.equals(val, pattern) ? ifNotEquals : val;
+    }
+
+    public static <T> T ifEquals(T val, T pattern, Supplier<T> ifEquals) {
+        return Objects.equals(val, pattern) ? ifEquals.get() : val;
+    }
+
+    public static <T> T ifNotEquals(T val, T pattern, Supplier<T> ifNotEquals) {
+        return !Objects.equals(val, pattern) ? ifNotEquals.get() : val;
     }
 }

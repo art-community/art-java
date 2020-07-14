@@ -35,7 +35,7 @@ import static java.util.Objects.*;
 import static java.util.concurrent.TimeUnit.*;
 import static lombok.AccessLevel.PRIVATE;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.lazy.LazyLoadingValue.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;

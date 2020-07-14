@@ -21,7 +21,7 @@ package io.art.rsocket.selector;
 import lombok.experimental.*;
 import io.art.core.mime.*;
 import static io.rsocket.metadata.WellKnownMimeType.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extension.NullCheckingExtensions.*;
 import static io.art.message.pack.constants.MessagePackConstants.*;

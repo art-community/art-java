@@ -60,7 +60,7 @@ public class HttpResourceServiceSpecification implements HttpServiceSpecificatio
     private final HttpService httpService = httpService()
             .get(GET_RESOURCE)
             .fromPathParameters(RESOURCE)
-            .requestMapper((EntityToModelMapper<String>) resourceValue -> doIfNotNull(resourceValue, (Function<Entity, String>) resource -> resource.getString(RESOURCE)))
+            .requestMapper((EntityToModelMapper<String>) resourceValue -> let(resourceValue, (Function<Entity, String>) resource -> resource.getString(RESOURCE)))
             .overrideResponseContentType()
             .responseMapper(Caster::cast)
             .addRequestInterceptor(intercept(interceptAndContinue(((request, response) -> response.setContentType(extractTypeByFile(request.getRequestURI()))))))

@@ -33,7 +33,7 @@ import static io.art.config.extensions.ConfigExtensions.*;
 import static io.art.config.extensions.common.CommonConfigKeys.*;
 import static io.art.config.extensions.http.HttpConfigKeys.*;
 import static io.art.config.extensions.http.HttpContentMappersConfigurator.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.constants.ThreadConstants.*;
 import static io.art.core.extension.NullCheckingExtensions.*;

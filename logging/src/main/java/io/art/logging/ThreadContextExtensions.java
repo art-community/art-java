@@ -29,7 +29,7 @@ public interface ThreadContextExtensions {
     }
 
     static void putIfNotEmpty(String key, Object value) {
-        if (CheckerForEmptiness.isEmpty(value)) return;
+        if (EmptinessChecker.isEmpty(value)) return;
         put(key, value.toString());
     }
 }

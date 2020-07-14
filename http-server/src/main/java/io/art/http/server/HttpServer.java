@@ -41,7 +41,7 @@ import static java.util.Objects.*;
 import static java.util.logging.LogManager.*;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.StringConstants.*;
@@ -208,7 +208,7 @@ public class HttpServer {
             UrlInfo urlInfo = UrlInfo.builder()
                     .port(httpServerModule().getPort())
                     .serverName(BROADCAST_IP_ADDRESS.equals(httpServerModule().getHost())
-                            ? contextConfiguration().getIpAddress()
+                            ? contextConfiguration().getPrimaryIpAddress()
                             : httpServerModule().getHost())
                     .scheme(HTTP_SCHEME)
                     .uri(path.toString())

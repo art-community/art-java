@@ -36,7 +36,7 @@ import io.art.http.constants.*;
 import static java.util.Optional.*;
 import static lombok.AccessLevel.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extension.NullCheckingExtensions.*;

@@ -32,7 +32,7 @@ import io.art.http.client.interceptor.*;
 import io.art.http.client.model.*;
 import io.art.soap.client.communicator.SoapCommunicator.*;
 import io.art.soap.content.mapper.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extension.NullCheckingExtensions.*;

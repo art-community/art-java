@@ -33,7 +33,7 @@ import static java.util.Objects.*;
 import static lombok.AccessLevel.PRIVATE;
 import static reactor.core.publisher.Flux.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.CheckerForEmptiness.isEmpty;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.entity.Value.*;
 import static io.art.logging.LoggingModule.*;

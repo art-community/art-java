@@ -27,7 +27,7 @@ import static io.art.config.TypesafeConfigLoader.*;
 import static io.art.config.YamlConfigLoader.*;
 import static io.art.config.constants.ConfigExceptionMessages.*;
 import static io.art.config.module.ConfigModule.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extension.StringExtensions.*;
 
 @UtilityClass

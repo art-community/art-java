@@ -96,7 +96,7 @@ public class GrpcServer {
     }
 
     private static String buildServiceLoadedMessage(GrpcServiceSpecification service) {
-        return format(GRPC_LOADED_SERVICE_MESSAGE, contextConfiguration().getIpAddress(),
+        return format(GRPC_LOADED_SERVICE_MESSAGE, contextConfiguration().getPrimaryIpAddress(),
                 grpcServerModule().getPort(),
                 grpcServerModule().getPath(),
                 service.getServiceId(),

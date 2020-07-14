@@ -19,7 +19,7 @@
 package io.art.task.deferred.executor;
 
 import static java.text.MessageFormat.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.task.deferred.executor.SchedulerModuleExceptions.*;
 

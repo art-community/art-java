@@ -23,7 +23,7 @@ import org.apache.logging.log4j.*;
 import io.art.logging.LoggingModuleConfiguration.*;
 import static io.art.config.extensions.ConfigExtensions.*;
 import static io.art.config.extensions.logging.LoggingConfigKeys.*;
-import static io.art.core.checker.CheckerForEmptiness.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extension.ExceptionExtensions.*;
 

@@ -26,7 +26,7 @@ import static java.nio.charset.StandardCharsets.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static javax.xml.stream.XMLStreamConstants.*;
-import static io.art.core.checker.CheckerForEmptiness.isEmpty;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.context.Context.*;
 import static io.art.core.extension.FileExtensions.*;
 import static io.art.core.extension.InputStreamExtensions.*;
