@@ -16,10 +16,11 @@
  * limitations under the License.
  */
 
-val nettyVersion: String  by project
-val grpcVersion: String by project
 
 dependencies {
+    val nettyVersion: String  by project
+    val grpcVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":protobuf"))
 

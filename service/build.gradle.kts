@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-val resilience4jVersion: String by project
-
 dependencies {
+    val resilience4jVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":entity"))
     implementation(project(":logging"))

@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-val micrometerPrometheusVersion: String by project
-val micrometerJvmExtrasVersion: String by project
-val prometheusSimpleClientVersion: String by project
-val dropwizrdMetricsJvmVersion: String by project
-
 dependencies {
+    val micrometerPrometheusVersion: String by project
+    val micrometerJvmExtrasVersion: String by project
+    val prometheusSimpleClientVersion: String by project
+    val dropwizrdMetricsJvmVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":entity"))
     implementation(project(":logging"))

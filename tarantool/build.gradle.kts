@@ -17,11 +17,11 @@
  */
 
 
-val zeroTurnaroundVersion: String by project
-val tarantoolConnectorVersion: String by project
-val log4jVersion: String by project
-
 dependencies {
+    val zeroTurnaroundVersion: String by project
+    val tarantoolConnectorVersion: String by project
+    val log4jVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":entity"))
     implementation(project(":logging"))

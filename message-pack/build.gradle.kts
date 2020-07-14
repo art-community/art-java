@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-val messagePackVersion: String by project
-
 dependencies {
+    val messagePackVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":logging"))
     implementation(project(":entity"))

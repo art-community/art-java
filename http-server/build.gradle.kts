@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-val tomcatVersion: String by project
-val logbookVersion: String by project
-val log4jVersion: String by project
-
 dependencies {
+    val tomcatVersion: String by project
+    val logbookVersion: String by project
+    val log4jVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":entity"))
     implementation(project(":logging"))

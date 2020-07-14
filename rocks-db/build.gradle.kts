@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-val rocksdbVersion: String by project
-
 dependencies {
+    val rocksdbVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":entity"))
     implementation(project(":logging"))

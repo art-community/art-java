@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-val logbookVersion: String by project
-val apacheHttpCoreVersion: String by project
-
 dependencies {
+    val logbookVersion: String by project
+    val apacheHttpCoreVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":entity"))
     implementation(project(":logging"))

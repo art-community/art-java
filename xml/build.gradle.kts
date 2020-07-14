@@ -16,9 +16,10 @@
  * limitations under the License.
  */
 
-val staxVersion: String by project
 
 dependencies {
+    val staxVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":entity"))
     implementation(project(":logging"))

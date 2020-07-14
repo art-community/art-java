@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-val guavaVersion: String by project
-val vavrVersion: String by project
-
 dependencies {
+    val guavaVersion: String by project
+    val vavrVersion: String by project
+
     api("com.google.guava", "guava", guavaVersion)
     api("io.vavr", "vavr", vavrVersion)
 }

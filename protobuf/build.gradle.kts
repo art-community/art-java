@@ -17,9 +17,9 @@
  */
 
 
-val grpcVersion: String by project
-
 dependencies {
+    val grpcVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":entity"))
     implementation(project(":service"))

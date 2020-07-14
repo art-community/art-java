@@ -61,6 +61,12 @@ subprojects {
     apply(plugin = "maven-publish")
     apply(plugin = "java-library")
 
+    dependencies {
+        val lombokVersion: String by project
+        compileOnly("org.projectlombok", "lombok", lombokVersion)
+        annotationProcessor("org.projectlombok", "lombok", lombokVersion)
+    }
+
     if (bintrayUser.isNullOrEmpty() || bintrayKey.isNullOrEmpty()) {
         return@subprojects
     }

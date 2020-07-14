@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-val jooqVersion: String by project
-val hikariVersion: String by project
-val tomcatVersion: String by project
-val dropwizardVersion: String by project
-
 dependencies {
+    val jooqVersion: String by project
+    val hikariVersion: String by project
+    val tomcatVersion: String by project
+    val dropwizardVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":logging"))
     implementation(project(":metrics"))
@@ -38,15 +38,19 @@ dependencies {
             exclude("org.slf4j")
         }
     }
+
     api("org.jooq", "jooq", jooqVersion)
             .exclude("org.slf4j")
             .exclude("com.google.guava")
             .exclude("com.google.code.findbugs")
+
     api("com.zaxxer", "HikariCP", hikariVersion)
             .exclude("com.google.guava")
             .exclude("com.google.code.findbugs")
             .exclude("org.slf4j")
+
     api("org.apache.tomcat", "tomcat-jdbc", tomcatVersion)
+
     dropwizardExclusions(api("io.dropwizard", "dropwizard-util", dropwizardVersion))
     dropwizardExclusions(api("io.dropwizard", "dropwizard-validation", dropwizardVersion))
     dropwizardExclusions(api("io.dropwizard", "dropwizard-lifecycle", dropwizardVersion))

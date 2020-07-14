@@ -16,8 +16,8 @@
  * limitations under the License.
  */
 
-val pebbleVersion: String by project
 
 dependencies {
+    val pebbleVersion: String by project
     api("io.pebbletemplates", "pebble", pebbleVersion).exclude("org.slf4j")
 }

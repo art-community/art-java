@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-val sl4jVersion: String by project
-val commonsLoggingVersion: String by project
-val log4jVersion: String by project
-val jacksonVersion: String by project
-
 dependencies {
+    val sl4jVersion: String by project
+    val commonsLoggingVersion: String by project
+    val log4jVersion: String by project
+    val jacksonVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":entity"))
 

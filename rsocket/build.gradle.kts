@@ -16,11 +16,10 @@
  * limitations under the License.
  */
 
-
-val rsocketVersion: String by project
-val nettyVersion: String by project
-
 dependencies {
+    val rsocketVersion: String by project
+    val nettyVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":entity"))
     implementation(project(":logging"))
