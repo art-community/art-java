@@ -1,0 +1,11 @@
+function drop{{ spaceName}}()
+    if box.space.{{ spaceName }} ~= nil then
+        box.space.{{ spaceName }}:drop()
+    end
+end
+
+function rename{{ spaceName}}(newSpaceName)
+    if box.space.{{ spaceName }} ~= nil then
+        box.space.{{ spaceName }}:rename(newSpaceName)
+    end
+end

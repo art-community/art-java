@@ -1,0 +1,17 @@
+function drop{{ spaceName}}{{ indexName}}()
+    if box.space.{{ spaceName }} == nil then
+        return
+    end
+    if box.space.{{ spaceName }}.index.{{ indexName }} ~= nil then
+        box.space.{{ spaceName }}.index.{{ indexName }}:drop()
+    end
+end
+
+function rename{{ spaceName}}{{ indexName}}(newIndexName)
+    if box.space.{{ spaceName }} == nil then
+        return
+    end
+    if box.space.{{ spaceName }}.index.{{ indexName }} ~= nil then
+        box.space.{{ spaceName }}.index.{{ indexName }}:rename(newIndexName)
+    end
+end

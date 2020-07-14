@@ -1,0 +1,59 @@
+box.cfg {
+{%- if not (listen is empty) -%}
+        listen = {{ listen }};
+    {%- endif -%}
+{%- if not (background is empty) -%}
+        background = {{  background }};
+    {%- endif -%}
+{%- if not (customProcTitle is empty) -%}
+        custom_proc_title = "{{  customProcTitle }}";
+    {%- endif -%}
+{%- if not (memtxDir is empty) -%}
+        memtx_dir = "{{  memtxDir }}";
+    {%- endif -%}
+{%- if not (vinylDir is empty) -%}
+        vinyl_dir = "{{  vinylDir }}";
+    {%- endif -%}
+{%- if not (workDir is empty) -%}
+        work_dir = "{{  workDir }}";
+    {%- endif -%}
+{%- if not (username is empty) -%}
+        username = "{{  username }}";
+    {%- endif -%}
+{%- if not (pidFile is empty) -%}
+        pid_file = "{{  pidFile }}";
+    {%- endif -%}
+{%- if not (readOnly is empty) -%}
+        read_only = {{  readOnly }};
+    {%- endif -%}
+{%- if not (vinylTimeout is empty) -%}
+        vinyl_timeout = {{  vinylTimeout }};
+    {%- endif -%}
+{%- if not (workerPoolThreads is empty) -%}
+        worker_pool_threads = {{  workerPoolThreads }};
+    {%- endif -%}
+{%- if not (memtxMaxTupleSize is empty) -%}
+        memtx_max_tuple_size = {{  memtxMaxTupleSize }};
+    {%- endif -%}
+{%- if not (memtxMemory is empty) -%}
+        memtx_memory = {{  memtxMemory }};
+    {%- endif -%}
+{%- if not (slabAllocFactor is empty) -%}
+        slab_alloc_factor = {{  slabAllocFactor }};
+    {%- endif -%}
+{%- if not (slabAllocArena is empty) -%}
+        slab_alloc_arena = {{  slabAllocArena }};
+    {%- endif -%}
+{%- if not (slabAllocMaximal is empty) -%}
+        slab_alloc_maximal = {{  slabAllocMaximal }};
+    {%- endif -%}
+{%- if not (replicas is empty) -%}
+        replication = {'{{ replicas | join('\',\'') }}'}
+{%- endif -%}
+{%- for stringOption in stringOptions -%}
+        {{ stringOption.key }} = "{{  stringOption.value }}";
+    {%- endfor -%}
+{%- for numberOption in numberOptions -%}
+        {{ numberOption.key }} = {{  numberOption.value }};
+    {%- endfor -%}
+}
