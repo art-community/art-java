@@ -67,3 +67,4 @@ tarantoo/
 kafka/
 zookeeper/
 tarantool/lua
+.DS_Store
