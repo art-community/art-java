@@ -20,7 +20,7 @@ plugins {
     id("com.gradle.enterprise") version "3.0"
 }
 
-rootProject.name = "ART"
+rootProject.name = "art-java"
 include("application-config")
 include("application-config-extensions")
 include("application-config-remote")
