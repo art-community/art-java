@@ -113,36 +113,9 @@ subprojects {
             repo = "art"
             name = rootProject.group as String
             userOrg = "art-community"
-            websiteUrl = "https://github.com/art-community/art"
-            vcsUrl = "https://github.com/art-community/art"
-            setLabels("tarantool",
-                    "kafka",
-                    "sql",
-                    "java",
-                    "rsocket",
-                    "rsocket-java",
-                    "grpc",
-                    "grpc-java",
-                    "protobuf",
-                    "json",
-                    "xml",
-                    "framework",
-                    "kit",
-                    "configuration",
-                    "module",
-                    "gradle",
-                    "kotlin",
-                    "scala",
-                    "art",
-                    "kotlin-dsl",
-                    "rocksdb",
-                    "scheduling",
-                    "configurator",
-                    "yaml",
-                    "lightbend",
-                    "log4j",
-                    "resilience4j",
-                    "badges")
+            websiteUrl = "art-platform.io"
+            vcsUrl = "https://github.com/art-community/art-java"
+            setLabels("art")
             setLicenses("Apache-2.0")
         })
 
