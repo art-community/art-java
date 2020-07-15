@@ -16,8 +16,21 @@
  * limitations under the License.
  */
 
-package io.art.config;
+package io.art.launcher;
 
-public interface TypesafeConfigLoaderConstants {
-    String DEFAULT_TYPESAFE_CONFIG_FILE_NAME = "module-config.{0}";
+import io.art.configurator.module.*;
+import io.art.model.communicator.*;
+import io.art.model.module.*;
+import static io.art.core.context.Context.*;
+import java.util.concurrent.atomic.*;
+
+public class ModuleLauncher {
+    private final static AtomicBoolean launched = new AtomicBoolean(false);
+
+    public static void launch(ModuleModel model) {
+        if (launched.compareAndSet(false, true)) {
+            context().loadModule(new ConfiguratorModule());
+            GrpcCommunicatorModel grpcModel = model.getCommunicatorModel().getGrpcModel();
+        }
+    }
 }

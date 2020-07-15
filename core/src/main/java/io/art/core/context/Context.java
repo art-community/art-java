@@ -22,7 +22,7 @@ import io.art.core.configuration.*;
 import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
-import io.art.core.module.Module;
+import io.art.core.module.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ContextState.*;
@@ -41,7 +41,7 @@ public class Context {
     private volatile ContextConfiguration configuration = new DefaultContextConfiguration();
     private volatile ContextState state = READY;
     private volatile Long lastActionTimestamp = currentTimeMillis();
-    private final Map<String, Module<?, ?, ?>> modules = concurrentHashMap();
+    private final Map<String, StatelessModule<?, ?>> modules = concurrentHashMap();
 
     static {
         out.println(ART_BANNER);
@@ -76,20 +76,20 @@ public class Context {
         return context().configuration;
     }
 
-    public <M extends Module<?, ?, ?>> M getModule(String moduleId) {
+    public <M extends StatelessModuleProvider<?>> M getModule(String moduleId) {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
-        if (isNull(INSTANCE) || state != LOADING) {
+        if (isNull(INSTANCE) || state != READY) {
             throw new ContextInitializationException(CONTEXT_NOT_READY);
         }
         return cast(modules.get(moduleId));
     }
 
-    public Context loadModule(Module<?, ?, ?> module) {
+    public <M extends StatelessModule<?, ?>> Context loadModule(M module) {
         if (isNull(module)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         ContextState currentState = state;
         state = LOADING;
         modules.put(module.getId(), module);
-        out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, configuration.getClass().getName()));
+        out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, module.getConfiguration().getClass().getName()));
         state = currentState;
         module.onLoad();
         lastActionTimestamp = currentTimeMillis();
@@ -110,7 +110,7 @@ public class Context {
 
     private void unloadModules() {
         state = UNLOADING;
-        modules.values().forEach(module -> module.onUnload());
+        modules.values().forEach(StatelessModule::onUnload);
         modules.clear();
         state = EMPTY;
     }

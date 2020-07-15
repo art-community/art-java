@@ -18,6 +18,7 @@
 
 package io.art.core.module;
 
+import java.time.*;
 import java.util.*;
 
 public interface ModuleConfigurationSource {
@@ -31,7 +32,7 @@ public interface ModuleConfigurationSource {
 
     String getString(String path);
 
-    Long getDateTimeMetric(String path);
+    Duration getDuration(String path);
 
     ModuleConfigurationSource getInner(String path);
 
@@ -45,7 +46,7 @@ public interface ModuleConfigurationSource {
 
     List<String> getStringList(String path);
 
-    List<Long> getDateTimeMetricList(String path);
+    List<Duration> getDurationList(String path);
 
     List<ModuleConfigurationSource> getInnerList(String path);
 
@@ -59,7 +60,13 @@ public interface ModuleConfigurationSource {
 
     Map<String, String> getStringMap(String path);
 
-    Map<String, Long> getDateTimeMetricMap(String path);
+    Map<String, Duration> getDurationMap(String path);
 
     Map<String, ModuleConfigurationSource> getInnerMap(String path);
+
+    String getType();
+
+    Set<String> getKeys();
+
+    boolean has(String path);
 }

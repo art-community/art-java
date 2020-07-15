@@ -18,7 +18,6 @@
 
 package io.art.model.module;
 
-import io.art.grpc.client.communicator.*;
 import io.art.grpc.client.module.*;
 import io.art.http.client.module.*;
 import io.art.model.communicator.*;
@@ -30,7 +29,6 @@ import io.art.model.storage.*;
 import io.art.rsocket.module.*;
 import io.art.soap.client.module.*;
 import lombok.*;
-import static io.art.grpc.client.module.GrpcClientModule.*;
 import static io.art.model.constants.ModelConstants.*;
 import static io.art.model.constants.ModelConstants.ExceptionMessages.*;
 import static java.util.Objects.*;

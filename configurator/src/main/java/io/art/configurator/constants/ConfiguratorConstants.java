@@ -16,10 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.config.constants;
+package io.art.configurator.constants;
 
-public interface ConfigModuleConstants {
-    String CONFIG_MODULE_ID = "CONFIG_MODULE";
-    String COMMON_CONFIG_ID = "common";
-    int DEFAULT_CACHE_UPDATE_INTERVAL_SECONDS = 60;
+public interface ConfiguratorConstants {
+    interface ExceptionMessages {
+        String UNABLE_TO_PROVIDE_CONFIGURATION_VALUE = "Unable to provide {0} value from source {1}";
+    }
 }

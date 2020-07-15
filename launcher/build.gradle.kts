@@ -17,5 +17,7 @@
  */
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":configurator"))
     implementation(project(":model"))
 }

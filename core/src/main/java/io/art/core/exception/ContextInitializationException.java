@@ -18,7 +18,7 @@
 
 package io.art.core.exception;
 
-public class ContextInitializationException extends RuntimeException {
+public class ContextInitializationException extends InternalRuntimeException {
     public ContextInitializationException(String message) {
         super(message);
     }

@@ -18,10 +18,12 @@
 
 package io.art.core.module;
 
-import static io.art.core.caster.Caster.cast;
+import io.art.core.identified.*;
+import static io.art.core.caster.Caster.*;
 import java.util.function.*;
 
-interface StatelessModule<Configuration extends ModuleConfiguration, Configurator extends ModuleConfigurator<Configurator>> extends StatelessModuleProvider<Configuration> {
+public interface StatelessModule<Configuration extends ModuleConfiguration, Configurator extends ModuleConfigurator<Configurator>>
+        extends StatelessModuleProvider<Configuration>, UniqueIdentified {
     default void onLoad() {
     }
 

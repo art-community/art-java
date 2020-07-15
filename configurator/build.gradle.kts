@@ -18,8 +18,7 @@
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":entity"))
-    implementation(project(":logging"))
-    implementation(project(":typesafe-configuration"))
-    implementation(project(":yaml-configuration"))
+
+    val typesafeConfigVersion: String by project
+    api("com.typesafe", "config", typesafeConfigVersion)
 }
