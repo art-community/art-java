@@ -42,7 +42,7 @@ import static java.util.Collections.emptySet;
 import static java.util.Objects.isNull;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.StringConstants.SLASH;
-import static io.art.core.extension.NullCheckingExtensions.getOrElse;
+import static io.art.core.extensions.NullCheckingExtensions.getOrElse;
 import static io.art.core.factory.CollectionsFactory.linkedListOf;
 import static io.art.core.factory.CollectionsFactory.setOf;
 import static io.art.http.constants.HttpExceptionsMessages.*;

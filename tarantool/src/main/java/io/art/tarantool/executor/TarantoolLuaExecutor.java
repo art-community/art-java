@@ -21,7 +21,7 @@ package io.art.tarantool.executor;
 import lombok.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
-import io.art.core.extension.*;
+import io.art.core.extensions.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;

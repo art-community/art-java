@@ -24,7 +24,7 @@ import io.art.entity.constants.ValueType.*;
 import io.art.entity.exception.*;
 import static java.util.Objects.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extension.StringExtensions.*;
+import static io.art.core.extensions.StringExtensions.*;
 import static io.art.entity.constants.ValueMappingExceptionMessages.*;
 import static io.art.entity.constants.ValueType.PrimitiveType.BOOL;
 import static io.art.entity.constants.ValueType.PrimitiveType.BYTE;

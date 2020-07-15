@@ -27,7 +27,7 @@ import static java.util.Optional.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.DateTimeConstants.*;
 import static io.art.core.constants.InterceptionStrategy.*;
-import static io.art.core.extension.NullCheckingExtensions.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static io.art.logging.ThreadContextExtensions.*;
 import static io.art.service.ServiceModule.*;

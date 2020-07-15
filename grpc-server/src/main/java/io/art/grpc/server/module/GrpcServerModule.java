@@ -25,7 +25,7 @@ import io.art.grpc.server.configuration.*;
 import io.art.grpc.server.state.*;
 import static lombok.AccessLevel.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extension.NullCheckingExtensions.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.grpc.server.configuration.GrpcServerModuleConfiguration.*;
 import static io.art.grpc.server.constants.GrpcServerModuleConstants.*;
 

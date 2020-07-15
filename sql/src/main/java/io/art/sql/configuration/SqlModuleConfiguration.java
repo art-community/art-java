@@ -24,7 +24,7 @@ import io.art.core.module.*;
 import io.art.sql.constants.*;
 import io.art.sql.exception.*;
 import static java.text.MessageFormat.*;
-import static io.art.core.extension.ExceptionExtensions.*;
+import static io.art.core.extensions.ExceptionExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.sql.constants.ConnectionPoolInitializationMode.BOOTSTRAP;
 import static io.art.sql.constants.SqlModuleConstants.ExceptionMessages.*;

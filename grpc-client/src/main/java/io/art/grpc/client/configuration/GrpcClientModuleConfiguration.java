@@ -34,7 +34,7 @@ import static java.util.Collections.*;
 import static java.util.concurrent.ForkJoinPool.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.ThreadConstants.*;
-import static io.art.core.extension.ExceptionExtensions.*;
+import static io.art.core.extensions.ExceptionExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.grpc.client.constants.GrpcClientExceptionMessages.*;
 import static io.art.grpc.client.constants.GrpcClientModuleConstants.*;

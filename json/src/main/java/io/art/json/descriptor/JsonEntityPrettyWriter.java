@@ -9,7 +9,7 @@ import java.nio.file.Path;
 
 import static java.util.Objects.isNull;
 import static io.art.core.context.Context.contextConfiguration;
-import static io.art.core.extension.FileExtensions.writeFileQuietly;
+import static io.art.core.extensions.FileExtensions.writeFileQuietly;
 import static io.art.json.module.JsonModule.jsonModule;
 
 public class JsonEntityPrettyWriter {

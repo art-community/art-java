@@ -29,7 +29,7 @@ import static org.apache.kafka.clients.CommonClientConfigs.RETRIES_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extension.NullCheckingExtensions.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.kafka.producer.constants.KafkaProducerModuleConstants.KAFKA_PRODUCER_CONFIGURATION_NOT_FOUND;
 import static io.art.kafka.producer.module.KafkaProducerModule.*;
 import java.text.*;

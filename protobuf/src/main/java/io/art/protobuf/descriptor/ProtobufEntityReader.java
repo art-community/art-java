@@ -26,7 +26,7 @@ import static com.google.protobuf.Value.KindCase.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
-import static io.art.core.extension.FileExtensions.*;
+import static io.art.core.extensions.FileExtensions.*;
 import static io.art.entity.CollectionValuesFactory.*;
 import static io.art.entity.Entity.*;
 import static io.art.entity.PrimitivesFactory.*;

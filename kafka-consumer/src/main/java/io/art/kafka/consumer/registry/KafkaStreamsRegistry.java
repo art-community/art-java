@@ -33,7 +33,7 @@ import static org.apache.kafka.streams.StreamsConfig.*;
 import static org.apache.logging.log4j.ThreadContext.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extension.NullCheckingExtensions.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;

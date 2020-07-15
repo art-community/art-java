@@ -27,7 +27,7 @@ import io.art.rsocket.server.*;
 import io.art.rsocket.state.*;
 import static lombok.AccessLevel.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extension.NullCheckingExtensions.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;

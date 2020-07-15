@@ -32,7 +32,7 @@ import static java.text.MessageFormat.*;
 import static java.util.UUID.*;
 import static lombok.AccessLevel.PRIVATE;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.extension.StringExtensions.*;
+import static io.art.core.extensions.StringExtensions.*;
 import static io.art.grpc.server.constants.GrpcServerLoggingMessages.*;
 import static io.art.grpc.server.constants.GrpcServerModuleConstants.*;
 import static io.art.grpc.server.module.GrpcServerModule.grpcServerModule;

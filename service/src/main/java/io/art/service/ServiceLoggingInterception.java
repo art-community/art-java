@@ -30,7 +30,7 @@ import static lombok.AccessLevel.*;
 import static org.apache.logging.log4j.ThreadContext.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extension.NullCheckingExtensions.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.logging.LoggingModuleConstants.DEFAULT_REQUEST_ID;

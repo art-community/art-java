@@ -24,7 +24,7 @@ import io.art.xml.constants.*;
 import io.art.xml.exception.*;
 import io.art.xml.rules.builder.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
-import static io.art.core.extension.NullCheckingExtensions.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.entity.XmlEntity.*;
 import static io.art.xml.constants.XmlMappingExceptionMessages.*;
 import java.util.*;

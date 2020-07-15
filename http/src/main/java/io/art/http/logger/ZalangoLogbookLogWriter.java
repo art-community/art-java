@@ -23,34 +23,34 @@ import org.zalando.logbook.*;
 import org.zalando.logbook.DefaultHttpLogWriter.Level;
 import io.art.core.lazy.*;
 import static org.zalando.logbook.DefaultHttpLogWriter.Level.*;
-import static io.art.core.lazy.LazyLoadingValue.*;
+import static io.art.core.lazy.LazyValue.*;
 import static io.art.logging.LoggingModule.*;
 import java.util.function.*;
 
 @SuppressWarnings("SameParameterValue")
 public class ZalangoLogbookLogWriter implements HttpLogWriter {
     private final Supplier<Boolean> enabled;
-    private final LazyLoadingValue<Logger> logger;
+    private final LazyValue<Logger> logger;
     private final Predicate<Logger> activator;
     private final BiConsumer<Logger, String> consumer;
 
     public ZalangoLogbookLogWriter(Supplier<Boolean> enabled) {
         this.enabled = enabled;
-        this.logger = lazyValue(() -> loggingModule().getLogger(ZalangoLogbookLogWriter.class));
+        this.logger = lazy(() -> loggingModule().getLogger(ZalangoLogbookLogWriter.class));
         this.activator = chooseActivator(INFO);
         this.consumer = chooseConsumer(INFO);
     }
 
     private ZalangoLogbookLogWriter(final Logger logger, Supplier<Boolean> enabled) {
         this.enabled = enabled;
-        this.logger = lazyValue(() -> logger);
+        this.logger = lazy(() -> logger);
         this.activator = chooseActivator(INFO);
         this.consumer = chooseConsumer(INFO);
     }
 
     private ZalangoLogbookLogWriter(Supplier<Boolean> enabled, final Logger logger, final Level level) {
         this.enabled = enabled;
-        this.logger = lazyValue(() -> logger);
+        this.logger = lazy(() -> logger);
         this.activator = chooseActivator(level);
         this.consumer = chooseConsumer(level);
     }

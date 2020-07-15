@@ -35,7 +35,7 @@ import io.art.rsocket.model.*;
 import static java.text.MessageFormat.*;
 import static java.util.function.Function.*;
 import static io.art.core.constants.NetworkConstants.*;
-import static io.art.core.extension.ExceptionExtensions.*;
+import static io.art.core.extensions.ExceptionExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.network.selector.PortSelector.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;

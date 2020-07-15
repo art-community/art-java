@@ -25,7 +25,7 @@ import io.art.http.server.specification.*;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extension.NullCheckingExtensions.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.http.server.HttpServerModuleConfiguration.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.*;
 import static io.art.service.ServiceModule.*;

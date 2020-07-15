@@ -26,7 +26,7 @@ import io.art.service.*;
 import io.art.service.model.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static io.art.core.extension.NullCheckingExtensions.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.reactive.service.constants.ReactiveServiceModuleConstants.*;
 import static io.art.reactive.service.model.ReactiveService.*;
 import static io.art.reactive.service.model.ReactiveService.ReactiveMethod.*;

@@ -44,7 +44,7 @@ import static org.apache.http.HttpVersion.*;
 import static org.apache.http.ssl.SSLContexts.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extension.ExceptionExtensions.*;
+import static io.art.core.extensions.ExceptionExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.http.client.constants.HttpClientExceptionMessages.*;
 import static io.art.http.client.constants.HttpClientModuleConstants.*;

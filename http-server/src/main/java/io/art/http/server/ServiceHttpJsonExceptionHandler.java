@@ -26,7 +26,7 @@ import io.art.service.exception.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extension.NullCheckingExtensions.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.http.constants.HttpMimeTypes.*;
 import static io.art.http.constants.HttpStatus.*;
 import static io.art.http.server.body.descriptor.HttpBodyDescriptor.*;

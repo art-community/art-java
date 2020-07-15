@@ -20,7 +20,7 @@ package io.art.entity;
 
 import lombok.*;
 import io.art.core.checker.*;
-import io.art.core.extension.*;
+import io.art.core.extensions.*;
 import io.art.entity.constants.*;
 import io.art.entity.exception.*;
 import static java.util.Collections.*;
@@ -29,7 +29,7 @@ import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extension.StringExtensions.*;
+import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.constants.ValueMappingExceptionMessages.*;
 import static io.art.entity.constants.ValueType.*;

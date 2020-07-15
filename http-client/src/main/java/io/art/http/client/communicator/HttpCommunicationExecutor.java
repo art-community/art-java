@@ -47,7 +47,7 @@ import static org.apache.http.nio.client.methods.HttpAsyncMethods.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.InterceptionStrategy.*;
-import static io.art.core.extension.NullCheckingExtensions.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.http.client.body.descriptor.HttpBodyDescriptor.*;
 import static io.art.http.client.builder.HttpUriBuilder.*;
 import static io.art.http.client.constants.HttpClientExceptionMessages.*;

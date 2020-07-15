@@ -30,7 +30,7 @@ import io.art.service.interceptor.ServiceExecutionInterceptor.*;
 import io.art.service.model.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extension.NullCheckingExtensions.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpParameters.*;

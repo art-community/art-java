@@ -27,7 +27,7 @@ import static lombok.AccessLevel.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.extension.CollectionExtensions.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.CollectionValuesFactory.*;
 import static io.art.entity.Entity.*;

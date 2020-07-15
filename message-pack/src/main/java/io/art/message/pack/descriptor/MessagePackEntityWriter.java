@@ -32,7 +32,7 @@ import static org.msgpack.value.ValueFactory.MapBuilder;
 import static org.msgpack.value.ValueFactory.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.core.extension.FileExtensions.*;
+import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.Value.*;
 import static io.art.entity.constants.CollectionMode.*;

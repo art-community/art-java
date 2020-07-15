@@ -37,7 +37,7 @@ import static lombok.AccessLevel.PRIVATE;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.lazy.LazyLoadingValue.*;
+import static io.art.core.lazy.LazyValue.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.grpc.client.communicator.GrpcCommunicatorChannelFactory.*;
 import static io.art.grpc.client.constants.GrpcClientModuleConstants.*;
@@ -47,7 +47,7 @@ import java.util.concurrent.*;
 public class GrpcCommunicatorImplementation implements GrpcCommunicator, GrpcCommunicator.GrpcAsynchronousCommunicator {
     private final GrpcCommunicationConfiguration configuration = new GrpcCommunicationConfiguration();
     private final BuilderValidator validator = new BuilderValidator(GrpcCommunicator.class.getName());
-    private final LazyLoadingValue<ManagedChannel> channel = lazyValue(() -> createChannel(configuration));
+    private final LazyValue<ManagedChannel> channel = lazy(() -> createChannel(configuration));
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = loggingModule().getLogger(GrpcCommunicator.class);
 

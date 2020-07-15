@@ -27,7 +27,7 @@ import static java.util.Objects.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extension.FileExtensions.*;
+import static io.art.core.extensions.FileExtensions.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.xml.constants.XmlDocumentConstants.*;
 import static io.art.xml.constants.XmlLoggingMessages.*;

@@ -3,7 +3,7 @@ package io.art.sql.utils;
 import org.jooq.*;
 import static org.jooq.impl.DSL.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.extension.StringExtensions.*;
+import static io.art.core.extensions.StringExtensions.*;
 
 public class JooqResultExtractor {
     private static String getString(Result<?> sqlResult, int index, String alias, String fieldName) {
