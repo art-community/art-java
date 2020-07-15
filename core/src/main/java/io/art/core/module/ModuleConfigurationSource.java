@@ -18,6 +18,48 @@
 
 package io.art.core.module;
 
+import java.util.*;
+
 public interface ModuleConfigurationSource {
+    Integer getInt(String path);
+
+    Long getLong(String path);
+
+    Boolean getBool(String path);
+
+    Double getDouble(String path);
+
     String getString(String path);
+
+    Long getDateTimeMetric(String path);
+
+    ModuleConfigurationSource getInner(String path);
+
+    List<Integer> getIntList(String path);
+
+    List<Long> getLongList(String path);
+
+    List<Boolean> getBoolList(String path);
+
+    List<Double> getDoubleList(String path);
+
+    List<String> getStringList(String path);
+
+    List<Long> getDateTimeMetricList(String path);
+
+    List<ModuleConfigurationSource> getInnerList(String path);
+
+    Map<String, Integer> getIntMap(String path);
+
+    Map<String, Long> getLongMap(String path);
+
+    Map<String, Boolean> getBoolMap(String path);
+
+    Map<String, Double> getDoubleMap(String path);
+
+    Map<String, String> getStringMap(String path);
+
+    Map<String, Long> getDateTimeMetricMap(String path);
+
+    Map<String, ModuleConfigurationSource> getInnerMap(String path);
 }
