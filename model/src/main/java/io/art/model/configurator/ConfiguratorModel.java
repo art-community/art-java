@@ -19,4 +19,5 @@
 package io.art.model.configurator;
 
 public class ConfiguratorModel {
+
 }

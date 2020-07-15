@@ -18,7 +18,6 @@
 
 package io.art.model.communicator;
 
-import io.art.grpc.client.communicator.*;
 import io.art.model.exception.*;
 import io.art.rsocket.communicator.*;
 import lombok.*;
@@ -26,7 +25,7 @@ import lombok.*;
 @RequiredArgsConstructor
 public class RsocketCommunicatorModel {
     private final String name;
-    private final Class<?> target;
+    private final Class<?> specification;
 
     public RsocketCommunicator communicator() {
         throw new ModelWasNotImplementedException(RsocketCommunicatorModel.class);

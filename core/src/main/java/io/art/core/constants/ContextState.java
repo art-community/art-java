@@ -17,10 +17,8 @@
 package io.art.core.constants;
 
 public enum ContextState {
-    LOADING_MODULES,
-    RELOADING_MODULES,
-    REFRESHING_MODULES,
-    REFRESHING_AND_RELOADING_MODULES,
     READY,
-    EMPTY,
+    LOADING,
+    UNLOADING,
+    EMPTY
 }

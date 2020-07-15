@@ -18,14 +18,19 @@
 
 package io.art.model.module;
 
+import io.art.grpc.client.communicator.*;
 import io.art.grpc.client.module.*;
+import io.art.http.client.module.*;
 import io.art.model.communicator.*;
 import io.art.model.configurator.*;
 import io.art.model.consumer.*;
 import io.art.model.producer.*;
 import io.art.model.server.*;
 import io.art.model.storage.*;
+import io.art.rsocket.module.*;
+import io.art.soap.client.module.*;
 import lombok.*;
+import static io.art.grpc.client.module.GrpcClientModule.*;
 import static io.art.model.constants.ModelConstants.*;
 import static io.art.model.constants.ModelConstants.ExceptionMessages.*;
 import static java.util.Objects.*;
@@ -72,10 +77,6 @@ public class ModuleModel {
         return this;
     }
 
-    public void launch() {
-
-    }
-
     public static ModuleModel module() {
         return new ModuleModel(DEFAULT_MODULE_ID);
     }
@@ -88,11 +89,10 @@ public class ModuleModel {
     public static void main(String[] args) {
         module()
                 .communicate(communicator -> communicator
-                        .grpc("myGrpcClient", GrpcClientModule.class)
-                        .rsocket("myRsocketClient")
-                        .http("myHttpClient")
-                        .soap("mySoapClient")
-                )
-                .launch();
+                        .grpc("client-1", GrpcClientModule.class)
+                        .rsocket("client-1", RsocketModule.class)
+                        .http("client-1", HttpClientModule.class)
+                        .soap("client-1", SoapClientModule.class)
+                );
     }
 }

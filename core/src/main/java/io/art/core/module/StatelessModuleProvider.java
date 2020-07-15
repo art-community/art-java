@@ -16,18 +16,8 @@
  * limitations under the License.
  */
 
-package io.art.model.communicator;
+package io.art.core.module;
 
-import io.art.grpc.client.communicator.*;
-import io.art.model.exception.*;
-import lombok.*;
-
-@RequiredArgsConstructor
-public class GrpcCommunicatorModel {
-    private final String name;
-    private final Class<?> specification;
-
-    public GrpcCommunicator communicator() {
-        throw new ModelWasNotImplementedException(GrpcCommunicatorModel.class);
-    }
+interface StatelessModuleProvider<Configuration extends ModuleConfiguration> {
+    Configuration getConfiguration();
 }

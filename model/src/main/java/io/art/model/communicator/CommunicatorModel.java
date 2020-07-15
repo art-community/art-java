@@ -29,39 +29,39 @@ public class CommunicatorModel {
     private RsocketCommunicatorModel rsocketModel;
     private SoapCommunicatorModel soapModel;
 
-    public CommunicatorModel grpc(String name, Class<?> target) {
-        return grpc(name, target, identity());
+    public CommunicatorModel grpc(String name, Class<?> specification) {
+        return grpc(name, specification, identity());
     }
 
-    public CommunicatorModel http(String name, Class<?> target) {
-        return http(name, target, identity());
+    public CommunicatorModel http(String name, Class<?> specification) {
+        return http(name, specification, identity());
     }
 
-    public CommunicatorModel rsocket(String name, Class<?> target) {
-        return rsocket(name, target, identity());
+    public CommunicatorModel rsocket(String name, Class<?> specification) {
+        return rsocket(name, specification, identity());
     }
 
-    public CommunicatorModel soap(String name, Class<?> target) {
-        return soap(name, target, identity());
+    public CommunicatorModel soap(String name, Class<?> specification) {
+        return soap(name, specification, identity());
     }
 
-    public CommunicatorModel grpc(String name, Class<?> target, UnaryOperator<GrpcCommunicatorModel> communicator) {
-        grpcModel = communicator.apply(new GrpcCommunicatorModel(name, target));
+    public CommunicatorModel grpc(String name, Class<?> specification, UnaryOperator<GrpcCommunicatorModel> communicator) {
+        grpcModel = communicator.apply(new GrpcCommunicatorModel(name, specification));
         return this;
     }
 
-    public CommunicatorModel http(String name, Class<?> target, UnaryOperator<HttpCommunicatorModel> communicator) {
-        httpModel = communicator.apply(new HttpCommunicatorModel(name, target));
+    public CommunicatorModel http(String name, Class<?> specification, UnaryOperator<HttpCommunicatorModel> communicator) {
+        httpModel = communicator.apply(new HttpCommunicatorModel(name, specification));
         return this;
     }
 
-    public CommunicatorModel rsocket(String name, Class<?> target, UnaryOperator<RsocketCommunicatorModel> communicator) {
-        rsocketModel = communicator.apply(new RsocketCommunicatorModel(name, target));
+    public CommunicatorModel rsocket(String name, Class<?> specification, UnaryOperator<RsocketCommunicatorModel> communicator) {
+        rsocketModel = communicator.apply(new RsocketCommunicatorModel(name, specification));
         return this;
     }
 
-    public CommunicatorModel soap(String name, Class<?> target, UnaryOperator<SoapCommunicatorModel> communicator) {
-        soapModel = communicator.apply(new SoapCommunicatorModel(name, target));
+    public CommunicatorModel soap(String name, Class<?> specification, UnaryOperator<SoapCommunicatorModel> communicator) {
+        soapModel = communicator.apply(new SoapCommunicatorModel(name, specification));
         return this;
     }
 }

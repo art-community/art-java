@@ -25,7 +25,7 @@ import lombok.*;
 @RequiredArgsConstructor
 public class HttpCommunicatorModel {
     private final String name;
-    private final Class<?> target;
+    private final Class<?> specification;
 
     public HttpCommunicatorModel communicator() {
         throw new ModelWasNotImplementedException(HttpCommunicatorModel.class);

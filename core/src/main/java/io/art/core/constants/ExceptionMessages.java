@@ -23,8 +23,8 @@ public interface ExceptionMessages {
     String EXCEPTION_WRAPPER_FACTORY_IS_NULL = "ExceptionFactory is null";
     String CONTEXT_INITIAL_CONFIGURATION_IS_NULL = "ContextInitialConfiguration is null";
     String MODULE_ID_IS_NULL = "ModuleId is null";
+    String CONTEXT_NOT_READY = "Context not ready";
     String MODULE_HAS_NOT_STATE = "Module ''{0}'' has not state";
-    String CUSTOM_MODULE_CONFIGURATION_IS_NULL = "CustomModuleConfiguration is null";
     String BUILDER_VALIDATOR_HAS_NEXT_ERRORS = "Builder validator for ''{0}'' has next error fields:";
     String COULD_NOT_FIND_AVAILABLE_PORT_AFTER_ATTEMPTS = "Could not find an available {0} port in the range [{1,number,#}, {2,number,#}] after {3,number,#} attempts";
     String COULD_NOT_FIND_AVAILABLE_PORTS_IN_THE_RANGE = "Could not find {0,number,#} available {1} ports in the range [{2,number,#}, {3,number,#}]";

@@ -18,7 +18,6 @@
 
 package io.art.core.module;
 
-@FunctionalInterface
-public interface ModuleConfigurator<C extends ModuleConfiguration<C>> {
-    C configure();
+public interface ModuleConfigurator<C extends ModuleConfigurator<C>> {
+    C from(ModuleConfigurationSource source);
 }

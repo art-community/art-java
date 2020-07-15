@@ -16,18 +16,15 @@
  * limitations under the License.
  */
 
-package io.art.model.communicator;
+package io.art.core.module;
 
-import io.art.grpc.client.communicator.*;
-import io.art.model.exception.*;
-import lombok.*;
+import io.art.core.exception.*;
+import io.art.core.identified.*;
+import static io.art.core.constants.ExceptionMessages.*;
+import static java.text.MessageFormat.*;
 
-@RequiredArgsConstructor
-public class GrpcCommunicatorModel {
-    private final String name;
-    private final Class<?> specification;
-
-    public GrpcCommunicator communicator() {
-        throw new ModelWasNotImplementedException(GrpcCommunicatorModel.class);
+public interface ModuleProvider<Configuration extends ModuleConfiguration, State extends ModuleState> extends StatelessModuleProvider<Configuration>, UniqueIdentified {
+    default State getState() {
+        throw new InternalRuntimeException(format(MODULE_HAS_NOT_STATE, getId()));
     }
 }
