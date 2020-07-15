@@ -19,8 +19,7 @@
 package io.art.core.context;
 
 import io.art.core.configuration.*;
-import io.art.core.configuration.ContextInitialConfiguration.*;
-import io.art.core.configurator.*;
+import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
 import io.art.core.module.Module;
@@ -44,7 +43,7 @@ import java.util.function.*;
 public class Context {
     private static final ReentrantLock LOCK = new ReentrantLock();
     private static volatile Context INSTANCE;
-    private volatile ContextInitialConfiguration initialConfiguration = new ContextInitialDefaultConfiguration();
+    private volatile ContextConfiguration configuration = new DefaultContextConfiguration();
     private volatile ContextState state = READY;
     private volatile Long lastActionTimestamp = currentTimeMillis();
     private Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules = concurrentHashMap();
@@ -55,57 +54,36 @@ public class Context {
 
     private Context() {
         if (nonNull(INSTANCE)) {
-            out.println(format(CONTEXT_CHANGED, initialConfiguration.getClass().getName()));
+            out.println(format(CONTEXT_CHANGED, configuration.getClass().getName()));
         }
-        if (initialConfiguration.isUnloadModulesOnShutdown()) {
-            getRuntime().addShutdownHook(new Thread(this::unloadModules));
-        }
+        getRuntime().addShutdownHook(new Thread(this::unloadModules));
     }
 
-    private Context(ContextInitialConfiguration initialConfiguration) {
+    private Context(ContextConfiguration configuration) {
         if (nonNull(INSTANCE)) {
-            out.println(format(CONTEXT_CHANGED, initialConfiguration.getClass().getName()));
+            out.println(format(CONTEXT_CHANGED, configuration.getClass().getName()));
         }
-        this.initialConfiguration = initialConfiguration;
-        if (initialConfiguration.isUnloadModulesOnShutdown()) {
-            getRuntime().addShutdownHook(new Thread(this::unloadModules));
-        }
+        this.configuration = configuration;
+        getRuntime().addShutdownHook(new Thread(this::unloadModules));
     }
 
-    private Context(ContextInitialConfiguration contextInitialConfiguration, Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules) {
+    private Context(ContextConfiguration contextConfiguration, Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules) {
         if (nonNull(INSTANCE)) {
-            out.println(format(CONTEXT_CHANGED, contextInitialConfiguration.getClass().getName()));
+            out.println(format(CONTEXT_CHANGED, contextConfiguration.getClass().getName()));
         }
-        this.initialConfiguration = contextInitialConfiguration;
+        this.configuration = contextConfiguration;
         this.modules = modules;
-        if (initialConfiguration.isUnloadModulesOnShutdown()) {
-            getRuntime().addShutdownHook(new Thread(this::unloadModules));
-        }
+        getRuntime().addShutdownHook(new Thread(this::unloadModules));
     }
 
-    public static Context initContext(ContextInitialConfiguration contextInitialConfiguration) {
-        if (isNull(contextInitialConfiguration))
+    public static Context initContext(ContextConfiguration contextConfiguration) {
+        if (isNull(contextConfiguration))
             throw new ContextInitializationException(CONTEXT_INITIAL_CONFIGURATION_IS_NULL);
         ReentrantLock lock = Context.LOCK;
         lock.lock();
-        INSTANCE = new Context(contextInitialConfiguration);
+        INSTANCE = new Context(contextConfiguration);
         lock.unlock();
         return INSTANCE;
-    }
-
-    public static void recreateContext(ContextInitialConfiguration contextInitialConfiguration) {
-        if (isNull(contextInitialConfiguration)) {
-            throw new ContextInitializationException(CONTEXT_INITIAL_CONFIGURATION_IS_NULL);
-        }
-        ReentrantLock lock = Context.LOCK;
-        lock.lock();
-        long oldContextLastActionTimestamp = INSTANCE.lastActionTimestamp;
-        final Map<String, ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState>> modules = INSTANCE.modules;
-        INSTANCE = new Context(contextInitialConfiguration, modules);
-        INSTANCE.refreshAndReloadModules();
-        out.println(format(CONTEXT_RELOADED_MESSAGE, currentTimeMillis() - oldContextLastActionTimestamp));
-        INSTANCE.lastActionTimestamp = currentTimeMillis();
-        lock.unlock();
     }
 
     public static Context context() {
@@ -122,14 +100,14 @@ public class Context {
         return INSTANCE;
     }
 
-    public static ContextInitialConfiguration contextConfiguration() {
-        return context().initialConfiguration;
+    public static ContextConfiguration contextConfiguration() {
+        return context().configuration;
     }
 
     public <C extends ModuleConfiguration, S extends ModuleState> C getModule(String moduleId, Module<C, S> toLoadIfNotExists) {
         if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         if (isNull(INSTANCE) || state != READY) {
-            return toLoadIfNotExists.getDefaultConfiguration();
+            return toLoadIfNotExists.getConfiguration();
         }
         ReentrantLock lock = Context.LOCK;
         lock.lock();
@@ -145,7 +123,7 @@ public class Context {
             return loadModule(toLoadIfNotExists, provider.get());
         }
         lock.unlock();
-        loadModule(toLoadIfNotExists, (configuration = toLoadIfNotExists.getDefaultConfiguration()));
+        loadModule(toLoadIfNotExists, (configuration = toLoadIfNotExists.getConfiguration()));
         return cast(configuration);
     }
 
@@ -169,7 +147,7 @@ public class Context {
             return cast(toLoadIfNotExists.getState());
         }
         lock.unlock();
-        loadModule(toLoadIfNotExists, toLoadIfNotExists.getDefaultConfiguration());
+        loadModule(toLoadIfNotExists, toLoadIfNotExists.getConfiguration());
         return cast(toLoadIfNotExists.getState());
     }
 
@@ -179,7 +157,7 @@ public class Context {
         lock.lock();
         if (isNull(INSTANCE) || state != READY) {
             lock.unlock();
-            return toLoadIfNotExists.get().getDefaultConfiguration();
+            return toLoadIfNotExists.get().getConfiguration();
         }
         ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
         if (nonNull(moduleContainer)) {
@@ -194,7 +172,7 @@ public class Context {
             return loadModule(module, provider.get());
         }
         lock.unlock();
-        loadModule(module, (configuration = module.getDefaultConfiguration()));
+        loadModule(module, (configuration = module.getConfiguration()));
         return cast(configuration);
     }
 
@@ -219,7 +197,7 @@ public class Context {
             return module.getState();
         }
         lock.unlock();
-        loadModule(module, module.getDefaultConfiguration());
+        loadModule(module, module.getConfiguration());
         return cast(module.getState());
     }
 
@@ -229,7 +207,7 @@ public class Context {
         lock.lock();
         ContextState currentState = state;
         state = LOADING_MODULES;
-        C configuration = module.getDefaultConfiguration();
+        C configuration = module.getConfiguration();
         modules.put(module.getId(), new ModuleContainer<>(module, cast(configuration)));
         out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, configuration.getClass().getName()));
         state = currentState;
@@ -261,7 +239,7 @@ public class Context {
         lock.lock();
         ContextState currentState = state;
         state = LOADING_MODULES;
-        C configuration = cast(nonNull(customModuleConfiguration) ? customModuleConfiguration : module.getDefaultConfiguration());
+        C configuration = cast(nonNull(customModuleConfiguration) ? customModuleConfiguration : module.getConfiguration());
         modules.put(module.getId(), new ModuleContainer<>(module, configuration));
         state = currentState;
         lock.unlock();
@@ -276,34 +254,11 @@ public class Context {
         lock.lock();
         ContextState currentState = state;
         state = LOADING_MODULES;
-        C configuration = cast(preconfiguredModulesProvider.getModuleConfiguration(module.getId()).orElse(module.getDefaultConfiguration()));
+        C configuration = cast(preconfiguredModulesProvider.getModuleConfiguration(module.getId()).orElse(module.getConfiguration()));
         state = currentState;
         lock.unlock();
         loadModule(module, configuration);
         return cast(configuration);
-    }
-
-    @SuppressWarnings("Duplicates")
-    public <C extends ModuleConfiguration> Context overrideModule(String moduleId, C customModuleConfiguration) {
-        if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
-        if (isNull(customModuleConfiguration)) {
-            throw new ContextInitializationException(CUSTOM_MODULE_CONFIGURATION_IS_NULL);
-        }
-        ReentrantLock lock = Context.LOCK;
-        lock.lock();
-        ModuleContainer<? extends ModuleConfiguration, ? extends ModuleState> moduleContainer = modules.get(moduleId);
-        if (isNull(moduleContainer)) {
-            lock.unlock();
-            return this;
-        }
-        ContextState currentState = state;
-        state = LOADING_MODULES;
-        modules.put(moduleId, moduleContainer.overrideConfiguration(cast(customModuleConfiguration)));
-        out.println(format(MODULE_OVERRIDDEN_MESSAGE, moduleId, currentTimeMillis() - lastActionTimestamp));
-        lastActionTimestamp = currentTimeMillis();
-        state = currentState;
-        lock.unlock();
-        return this;
     }
 
     @SuppressWarnings("Duplicates")

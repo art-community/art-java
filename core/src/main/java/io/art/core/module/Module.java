@@ -18,22 +18,26 @@
 
 package io.art.core.module;
 
+import io.art.core.caster.*;
 import io.art.core.exception.*;
 import io.art.core.identified.*;
-import static java.text.MessageFormat.*;
+import static io.art.core.caster.Caster.cast;
 import static io.art.core.constants.ExceptionMessages.*;
+import static java.text.MessageFormat.*;
+import java.util.function.*;
 
-public interface Module<C extends ModuleConfiguration, S extends ModuleState> extends UniqueIdentified {
+public interface Module<C extends ModuleConfiguration<C>, CC extends ModuleConfigurator<C>, S extends ModuleState> extends UniqueIdentified {
     default void onLoad() {
     }
 
     default void onUnload() {
     }
 
-    default void reload() {
-    }
+    C getConfiguration();
 
-    C getDefaultConfiguration();
+    default void configure(Function<CC, CC> configurator) {
+        configurator.apply(cast(getConfiguration().configurator()));
+    }
 
     default S getState() {
         throw new InternalRuntimeException(format(MODULE_HAS_NOT_STATE, getId()));

@@ -16,8 +16,17 @@
  * limitations under the License.
  */
 
-package io.art.core.module;
+package io.art.kafka.consumer.state;
 
-public interface ModuleConfiguration<C extends ModuleConfiguration<C>> {
-    ModuleConfigurator<C> configurator();
+import lombok.*;
+import io.art.core.module.*;
+import io.art.kafka.consumer.model.*;
+import io.art.kafka.consumer.registry.*;
+import static io.art.core.factory.CollectionsFactory.*;
+import java.util.*;
+
+@Getter
+public class KafkaConsumerModuleState implements ModuleState {
+    private final Map<String, ManagedKafkaConsumer> kafkaConsumers = concurrentHashMap();
+    private final KafkaStreamsRegistry kafkaStreamsRegistry = new KafkaStreamsRegistry();
 }

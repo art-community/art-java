@@ -21,7 +21,6 @@ package io.art.config.extensions.activator;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import io.art.config.extensions.provider.*;
-import io.art.core.configuration.ContextInitialConfiguration.*;
 import io.art.core.context.*;
 import static java.text.MessageFormat.*;
 import static io.art.config.ConfigProvider.*;

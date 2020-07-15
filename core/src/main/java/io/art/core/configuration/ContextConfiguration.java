@@ -24,6 +24,7 @@ import io.art.core.provider.*;
 import lombok.*;
 import static io.art.core.constants.ContextConstants.*;
 import static java.nio.charset.StandardCharsets.*;
+import static java.time.ZoneId.*;
 import static java.util.Locale.Category.*;
 import static java.util.Locale.*;
 import static java.util.Optional.*;
@@ -31,16 +32,15 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
 import java.security.*;
+import java.time.*;
 import java.util.*;
 
-public interface ContextInitialConfiguration {
+public interface ContextConfiguration {
     String getMainModuleId();
 
     String getModuleJarName();
 
     Charset getCharset();
-
-    boolean isUnloadModulesOnShutdown();
 
     String getPrimaryIpAddress();
 
@@ -48,21 +48,23 @@ public interface ContextInitialConfiguration {
 
     Locale getLocale();
 
+    ZoneId getZoneId();
+
     Optional<PreconfiguredModuleProvider> getPreconfiguredModulesProvider();
 
-    class ContextInitialDefaultConfiguration implements ContextInitialConfiguration {
+    class DefaultContextConfiguration implements ContextConfiguration {
         @Getter
         private final String mainModuleId;
         @Getter
         private final Charset charset = UTF_8;
-        @Getter
-        private final boolean unloadModulesOnShutdown = true;
         @Getter
         private final String primaryIpAddress = IpAddressProvider.getIpAddress();
         @Getter
         private final Map<String, String> ipAddresses = IpAddressProvider.getIpAddresses();
         @Getter
         private final Locale locale = getDefault(FORMAT);
+        @Getter
+        private final ZoneId zoneId = systemDefault();
         @Getter
         private final String moduleJarName = ofNullable(Context.class.getProtectionDomain())
                 .map(ProtectionDomain::getCodeSource)
@@ -73,15 +75,15 @@ public interface ContextInitialConfiguration {
                 .orElse(DEFAULT_MODULE_JAR);
         private PreconfiguredModuleProvider preconfiguredModulesProvider;
 
-        public ContextInitialDefaultConfiguration() {
+        public DefaultContextConfiguration() {
             this.mainModuleId = DEFAULT_MAIN_MODULE_ID;
         }
 
-        public ContextInitialDefaultConfiguration(PreconfiguredModuleProvider preconfiguredModulesProvider) {
+        public DefaultContextConfiguration(PreconfiguredModuleProvider preconfiguredModulesProvider) {
             this.mainModuleId = DEFAULT_MAIN_MODULE_ID;
         }
 
-        public ContextInitialDefaultConfiguration(String applicationModuleId, PreconfiguredModuleProvider preconfiguredModulesProvider) {
+        public DefaultContextConfiguration(String applicationModuleId, PreconfiguredModuleProvider preconfiguredModulesProvider) {
             this.mainModuleId = applicationModuleId;
             this.preconfiguredModulesProvider = preconfiguredModulesProvider;
         }

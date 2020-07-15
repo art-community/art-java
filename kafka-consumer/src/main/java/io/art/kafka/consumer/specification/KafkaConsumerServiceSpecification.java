@@ -16,8 +16,19 @@
  * limitations under the License.
  */
 
-package io.art.core.module;
+package io.art.kafka.consumer.specification;
 
-public interface ModuleConfiguration<C extends ModuleConfiguration<C>> {
-    ModuleConfigurator<C> configurator();
+import io.art.service.*;
+import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
+import java.util.*;
+
+public interface KafkaConsumerServiceSpecification extends Specification {
+    @Override
+    default List<String> getServiceTypes() {
+        return fixedArrayOf(KAFKA_CONSUMER_SERVICE_TYPE);
+    }
+
+    @Override
+    <P, R> R executeMethod(String topic, P request);
 }

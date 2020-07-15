@@ -16,8 +16,20 @@
  * limitations under the License.
  */
 
-package io.art.core.module;
+package io.art.kafka.consumer.starter;
 
-public interface ModuleConfiguration<C extends ModuleConfiguration<C>> {
-    ModuleConfigurator<C> configurator();
+import lombok.experimental.*;
+import io.art.kafka.consumer.registry.*;
+import static io.art.kafka.consumer.module.KafkaConsumerModule.*;
+
+
+@UtilityClass
+public class KafkaStreamsStarter{
+    public static void startKafkaStreams() {
+        kafkaStreamsRegistry().getStreams().values().forEach(stream -> stream.getKafkaStreams().start());
+    }
+
+    public static void startKafkaStreams(KafkaStreamsRegistry registry) {
+        registry.getStreams().values().forEach(stream -> stream.getKafkaStreams().start());
+    }
 }

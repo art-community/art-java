@@ -16,8 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.core.module;
+package io.art.kafka.exception;
 
-public interface ModuleConfiguration<C extends ModuleConfiguration<C>> {
-    ModuleConfigurator<C> configurator();
+public class KafkaDeserializerException extends RuntimeException {
+    public KafkaDeserializerException(Throwable throwable) {
+        super(throwable);
+    }
 }

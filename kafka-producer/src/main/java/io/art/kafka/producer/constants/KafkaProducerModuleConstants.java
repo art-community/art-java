@@ -16,8 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.core.module;
+package io.art.kafka.producer.constants;
 
-public interface ModuleConfiguration<C extends ModuleConfiguration<C>> {
-    ModuleConfigurator<C> configurator();
+public interface KafkaProducerModuleConstants {
+    String KAFKA_PRODUCER_MODULE_ID = "KAFKA_PRODUCER_MODULE_ID";
+    String TOPIC_IS_EMPTY = "topic is empty";
+    String BROKERS_ARE_EMPTY = "brokers are empty";
+    String CLIENT_ID_IS_EMPTY = "clientId is empty";
+    String KAFKA_PRODUCER_CONFIGURATION_NOT_FOUND = "Kafka producer configuration was not found for clientId: ''{0}''";
 }

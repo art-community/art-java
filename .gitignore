@@ -64,7 +64,7 @@ log.*
 /application-test/zookeeper/
 rocks.db/
 tarantoo/
-kafka/
+./kafka/
 zookeeper/
 tarantool/lua
 .DS_Store

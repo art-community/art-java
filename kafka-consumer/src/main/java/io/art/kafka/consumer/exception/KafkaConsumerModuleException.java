@@ -16,8 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.core.module;
+package io.art.kafka.consumer.exception;
 
-public interface ModuleConfiguration<C extends ModuleConfiguration<C>> {
-    ModuleConfigurator<C> configurator();
+public class KafkaConsumerModuleException extends RuntimeException {
+    public KafkaConsumerModuleException(String message) {
+        super(message);
+    }
+
+    public KafkaConsumerModuleException(Throwable throwable) {
+        super(throwable);
+    }
 }

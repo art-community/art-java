@@ -16,8 +16,32 @@
  * limitations under the License.
  */
 
-package io.art.core.module;
+package io.art.kafka.serde;
 
-public interface ModuleConfiguration<C extends ModuleConfiguration<C>> {
-    ModuleConfigurator<C> configurator();
+import org.apache.kafka.common.serialization.*;
+import io.art.entity.*;
+import io.art.kafka.deserializer.*;
+import io.art.kafka.serializer.*;
+import java.util.*;
+
+public class KafkaJsonSerde implements Serde<Value> {
+    @Override
+    public void configure(Map<String, ?> configs, boolean isKey) {
+
+    }
+
+    @Override
+    public void close() {
+
+    }
+
+    @Override
+    public Serializer<Value> serializer() {
+        return new KafkaJsonSerializer();
+    }
+
+    @Override
+    public Deserializer<Value> deserializer() {
+        return new KafkaJsonDeserializer();
+    }
 }

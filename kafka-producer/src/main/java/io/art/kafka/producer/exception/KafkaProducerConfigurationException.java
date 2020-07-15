@@ -16,12 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.core.configurator;
+package io.art.kafka.producer.exception;
 
-import io.art.core.module.Module;
-import io.art.core.module.*;
-
-@FunctionalInterface
-public interface ModuleConfigurator<C extends ModuleConfiguration, S extends ModuleState> {
-    C configure(Module<C, S> module);
+public class KafkaProducerConfigurationException extends RuntimeException {
+    public KafkaProducerConfigurationException(String message) {
+        super(message);
+    }
 }

@@ -16,8 +16,15 @@
  * limitations under the License.
  */
 
-package io.art.core.module;
+package io.art.kafka.consumer.container;
 
-public interface ModuleConfiguration<C extends ModuleConfiguration<C>> {
-    ModuleConfigurator<C> configurator();
+import lombok.*;
+import org.apache.kafka.streams.kstream.*;
+import io.art.kafka.consumer.configuration.*;
+
+@Getter
+@Builder(builderMethodName = "streamContainer", buildMethodName = "assemble")
+public class KafkaStreamContainer {
+    private final KafkaStreamConfiguration configuration;
+    private final KStream<?, ?> stream;
 }

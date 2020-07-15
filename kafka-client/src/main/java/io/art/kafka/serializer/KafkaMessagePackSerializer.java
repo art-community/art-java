@@ -16,8 +16,26 @@
  * limitations under the License.
  */
 
-package io.art.core.module;
+package io.art.kafka.serializer;
 
-public interface ModuleConfiguration<C extends ModuleConfiguration<C>> {
-    ModuleConfigurator<C> configurator();
+import org.apache.kafka.common.serialization.*;
+import io.art.entity.*;
+import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
+import java.util.*;
+
+public class KafkaMessagePackSerializer implements Serializer<Value> {
+    @Override
+    public void configure(Map<String, ?> configs, boolean isKey) {
+
+    }
+
+    @Override
+    public byte[] serialize(String topic, Value data) {
+        return writeMessagePackToBytes(data);
+    }
+
+    @Override
+    public void close() {
+
+    }
 }

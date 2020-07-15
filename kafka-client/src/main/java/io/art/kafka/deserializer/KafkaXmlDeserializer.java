@@ -16,8 +16,26 @@
  * limitations under the License.
  */
 
-package io.art.core.module;
+package io.art.kafka.deserializer;
 
-public interface ModuleConfiguration<C extends ModuleConfiguration<C>> {
-    ModuleConfigurator<C> configurator();
+import org.apache.kafka.common.serialization.*;
+import io.art.entity.*;
+import static io.art.xml.descriptor.XmlEntityReader.*;
+import java.util.*;
+
+public class KafkaXmlDeserializer implements Deserializer<Value> {
+    @Override
+    public void configure(Map<String, ?> configs, boolean isKey) {
+
+    }
+
+    @Override
+    public Value deserialize(String topic, byte[] data) {
+        return readXml(data);
+    }
+
+    @Override
+    public void close() {
+
+    }
 }
