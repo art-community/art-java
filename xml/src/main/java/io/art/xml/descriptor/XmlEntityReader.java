@@ -24,7 +24,6 @@ import io.art.entity.immutable.XmlEntity.*;
 import io.art.xml.exception.*;
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.Collections.*;
-import static java.util.Objects.*;
 import static javax.xml.stream.XMLStreamConstants.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.context.Context.*;
@@ -58,7 +57,6 @@ public class XmlEntityReader {
     }
 
     public static XmlEntity readXml(XMLInputFactory xmlInputFactory, String xml) {
-        if (isNull(xmlInputFactory)) throw new XmlMappingException(XML_FACTORY_IS_NULL);
         if (isEmpty(xml)) return xmlEntityBuilder().create();
         try {
             InputStream is = new ByteArrayInputStream(xml.getBytes(UTF_8));
@@ -125,7 +123,7 @@ public class XmlEntityReader {
             }
         }
 
-        throw new XmlMappingException(XML_FILE_HASNT_END_DOCUMENT_TAG);
+        throw new XmlMappingException(XML_FILE_HAS_NOT_END_DOCUMENT_TAG);
     }
 
     private static Map<String, String> getAttributes(XMLStreamReader parser) {

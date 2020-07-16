@@ -88,7 +88,7 @@ public interface TarantoolModuleConstants {
         String TARANTOOL_EXECUTABLE_NOT_EXISTS = "Tarantool ''{0}'' executable ''{1}'' not exists inside classpath";
         String TARANTOOL_PROCESS_FAILED = "Tarantool ''{0}'' process failed to start";
         String ENTITY_WITHOUT_ID_FILED = "Entity ''{0}'' does not has 'id' long field";
-        String ENTITY_IS_NULL = "Entity ''{0}'' is null";
+        String VALUE_TUPLE_IS_NULL = "Value tuple ''{0}'' is null";
         String RESULT_IS_INVALID = "Result for entity ''{0}'' returned from Tarantool is invalid";
         String STARTUP_ERROR = "Unable to startup tarantool ''{0}''";
         String TARANTOOL_ON_MAC_EXCEPTION = "For Mac OS X you need to manually install tarantool executable and specify it in the configuration.\nUse command like 'brew install tarantool'";

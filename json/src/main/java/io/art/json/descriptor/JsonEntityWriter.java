@@ -30,7 +30,6 @@ import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.json.constants.JsonLoggingMessages.*;
-import static io.art.json.constants.JsonMappingExceptionMessages.*;
 import static io.art.json.module.JsonModule.*;
 import static io.art.logging.LoggingModule.*;
 import static java.util.Objects.*;
@@ -64,7 +63,6 @@ public class JsonEntityWriter {
     }
 
     public static String writeJson(JsonFactory jsonFactory, Value value, boolean prettyOutput) {
-        if (isNull(jsonFactory)) throw new JsonMappingException(JSON_FACTORY_IS_NULL);
         if (isNull(value)) {
             return BRACES;
         }

@@ -18,11 +18,13 @@
 
 package io.art.service.mapping;
 
+import io.art.entity.factory.*;
 import io.art.entity.immutable.*;
 import io.art.entity.mapper.*;
 import io.art.service.constants.*;
 import io.art.service.exception.*;
 import io.art.service.model.*;
+import static io.art.entity.factory.PrimitivesFactory.*;
 import static java.util.Objects.*;
 import static org.apache.logging.log4j.core.util.Assert.isEmpty;
 import static io.art.entity.immutable.Entity.*;
@@ -40,13 +42,13 @@ public interface ServiceRequestMapping {
     @SuppressWarnings("Duplicates")
     static <D> ValueToModelMapper.EntityToModelMapper<ServiceRequest<D>> toServiceRequest(final ValueToModelMapper<D, Value> requestDataMapper) {
         return value -> {
-            Entity serviceMethodCommandEntity = value.getEntity(SERVICE_METHOD_COMMAND);
+            Entity serviceMethodCommandEntity = asEntity(value.get(SERVICE_METHOD_COMMAND));
             if (isNull(serviceMethodCommandEntity)) throw new ServiceMappingException(SERVICE_COMMAND_IS_NULL);
-            String serviceId = serviceMethodCommandEntity.getString(SERVICE_ID);
+            String serviceId = asPrimitive(serviceMethodCommandEntity.get(SERVICE_ID)).getString();
             if (isNull(serviceId)) throw new ServiceMappingException(SERVICE_ID_IS_NULL);
-            String methodId = serviceMethodCommandEntity.getString(METHOD_ID);
+            String methodId = asPrimitive(serviceMethodCommandEntity.get(METHOD_ID)).getString();
             if (isNull(methodId)) throw new ServiceMappingException(METHOD_ID_IS_NULL);
-            String validationPolicyAsString = value.getString(VALIDATION_POLICY);
+            String validationPolicyAsString = asPrimitive(value.get(VALIDATION_POLICY)).getString();
             RequestValidationPolicy requestValidationPolicy = isEmpty(validationPolicyAsString)
                     ? NON_VALIDATABLE :
                     RequestValidationPolicy.valueOf(validationPolicyAsString);
@@ -65,12 +67,12 @@ public interface ServiceRequestMapping {
             if (isNull(methodId)) throw new ServiceMappingException(METHOD_ID_IS_NULL);
             RequestValidationPolicy validationPolicy = isNull(validationPolicy = model.getValidationPolicy()) ? NON_VALIDATABLE : validationPolicy;
             return entityBuilder()
-                    .entityField(SERVICE_METHOD_COMMAND, entityBuilder()
-                            .stringField(SERVICE_ID, serviceId)
-                            .stringField(METHOD_ID, methodId)
+                    .put(SERVICE_METHOD_COMMAND, entityBuilder()
+                            .put(SERVICE_ID, stringPrimitive(serviceId))
+                            .put(METHOD_ID, stringPrimitive(methodId))
                             .build())
-                    .stringField(VALIDATION_POLICY, validationPolicy.toString())
-                    .valueField(REQUEST_DATA, isNull(requestDataMapper) ? null : requestDataMapper.map(model.getRequestData()))
+                    .put(VALIDATION_POLICY, stringPrimitive(validationPolicy.toString()))
+                    .lazyPut(REQUEST_DATA, () -> isNull(requestDataMapper) ? null : requestDataMapper.map(model.getRequestData()))
                     .build();
         };
     }

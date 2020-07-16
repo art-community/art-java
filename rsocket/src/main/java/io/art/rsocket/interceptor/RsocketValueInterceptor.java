@@ -246,11 +246,11 @@ public class RsocketValueInterceptor implements RSocketInterceptor {
     }
 
     private boolean testServiceMethodCommand(Value data) {
-        Entity serviceMethodCommandEntity = Value.asEntity(data).getEntity(SERVICE_METHOD_COMMAND);
+        Entity serviceMethodCommandEntity = asEntity(Value.asEntity(data).get(SERVICE_METHOD_COMMAND));
         if (isNull(serviceMethodCommandEntity)) throw new ServiceMappingException(SERVICE_COMMAND_IS_NULL);
-        String serviceId = serviceMethodCommandEntity.getString(SERVICE_ID);
+        String serviceId = asPrimitive(serviceMethodCommandEntity.get(SERVICE_ID)).getString();
         if (isNull(serviceId)) throw new ServiceMappingException(SERVICE_ID_IS_NULL);
-        String methodId = serviceMethodCommandEntity.getString(METHOD_ID);
+        String methodId = asPrimitive(serviceMethodCommandEntity.get(METHOD_ID)).getString();
         if (isNull(methodId)) throw new ServiceMappingException(METHOD_ID_IS_NULL);
         return predicate.test(new ServiceMethodCommand(serviceId, methodId));
     }

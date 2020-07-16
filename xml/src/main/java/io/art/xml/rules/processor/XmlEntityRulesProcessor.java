@@ -21,12 +21,9 @@ package io.art.xml.rules.processor;
 import io.art.entity.immutable.*;
 import io.art.entity.immutable.XmlEntity.*;
 import io.art.xml.constants.*;
-import io.art.xml.exception.*;
 import io.art.xml.rules.builder.*;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.entity.immutable.XmlEntity.*;
-import static io.art.xml.constants.XmlMappingExceptionMessages.*;
 import java.util.*;
 import java.util.Map.*;
 
@@ -36,8 +33,6 @@ public class XmlEntityRulesProcessor {
     }
 
     public static XmlEntity map(XmlEntityMapping mappingRules, XmlEntity entity) {
-        if (isEmpty(mappingRules)) throw new XmlMappingException(XML_MAPPING_RULES_ARE_EMPTY);
-        if (isEmpty(entity)) throw new XmlMappingException(XML_ENTITY_IS_NULL);
         return map(entity, xmlEntityBuilder(), mappingRules.getMapping()).create();
     }
 

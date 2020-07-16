@@ -71,7 +71,6 @@ public class JsonEntityReader {
     }
 
     public static Value readJson(JsonFactory jsonFactory, String json) {
-        if (isNull(jsonFactory)) throw new JsonMappingException(JSON_FACTORY_IS_NULL);
         if (isEmpty(json)) return null;
         try {
             JsonParser parser = jsonFactory.createParser(json);

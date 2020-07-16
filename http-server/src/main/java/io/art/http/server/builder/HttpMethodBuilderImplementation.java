@@ -114,14 +114,12 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
 
     @Override
     public HttpMethodBuilder addRequestInterceptor(HttpServerInterceptor interceptor) {
-        if (isNull(interceptor)) throw new HttpServerException(REQUEST_INTERCEPTOR_IS_NULL);
         requestInterceptors.add(interceptor);
         return this;
     }
 
     @Override
     public HttpMethodBuilder addResponseInterceptor(HttpServerInterceptor interceptor) {
-        if (isNull(interceptor)) throw new HttpServerException(RESPONSE_INTERCEPTOR_IS_NULL);
         responseInterceptors.add(interceptor);
         return this;
     }
@@ -158,7 +156,6 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
 
     @Override
     public HttpMethodWithBodyBuilder consumes(MimeToContentTypeMapper mimeType) {
-        if (isNull(mimeType)) throw new HttpServerException(REQUEST_CONTENT_TYPE_IS_NULL);
         this.consumesMimeType = mimeType;
         return this;
     }
@@ -189,7 +186,6 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
 
     @Override
     public HttpMethodResponseBuilder produces(MimeToContentTypeMapper mimeType) {
-        if (isNull(mimeType)) throw new HttpServerException(RESPONSE_CONTENT_TYPE_IS_NULL);
         this.producesMimeType = mimeType;
         return this;
     }
@@ -202,48 +198,41 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
 
     @Override
     public HttpMethodResponseBuilder requestMapper(ValueToModelMapper requestMapper) {
-        if (isNull(requestMapper)) throw new HttpServerException(REQUEST_MAPPER_IS_NULL);
         this.requestMapper = requestMapper;
         return this;
     }
 
     @Override
     public HttpMethodRequestBuilder validationPolicy(RequestValidationPolicy policy) {
-        if (isNull(policy)) throw new HttpServerException(VALIDATION_POLICY_IS_NULL);
         this.requestValidationPolicy = policy;
         return this;
     }
 
     @Override
     public HttpMethodBuilder responseMapper(ValueFromModelMapper responseMapper) {
-        if (isNull(responseMapper)) throw new HttpServerException(RESPONSE_MAPPER_IS_NULL);
         this.responseMapper = responseMapper;
         return this;
     }
 
     public HttpMethodBuilder exceptionMapper(ValueFromModelMapper exceptionMapper) {
-        if (isNull(exceptionMapper)) throw new HttpServerException(EXCEPTION_MAPPER_IS_NULL);
         this.exceptionMapper = exceptionMapper;
         return this;
     }
 
     @Override
     public HttpMethodBuilder addRequestValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
-        if (isNull(interceptor)) throw new HttpServerException(REQUEST_VALUE_INTERCEPTOR);
         getRequestValueInterceptors().add(interceptor);
         return this;
     }
 
     @Override
     public HttpMethodBuilder addResponseValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
-        if (isNull(interceptor)) throw new HttpServerException(RESPONSE_VALUE_INTERCEPTOR);
         getResponseValueInterceptors().add(interceptor);
         return this;
     }
 
     @Override
     public HttpMethodBuilder addExceptionValueInterceptor(ValueInterceptor<Value, Value> interceptor) {
-        if (isNull(interceptor)) throw new HttpServerException(EXCEPTION_VALUE_INTERCEPTOR);
         exceptionValueInterceptors.add(interceptor);
         return this;
     }

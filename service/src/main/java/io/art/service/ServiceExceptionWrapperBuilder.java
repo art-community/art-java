@@ -29,9 +29,6 @@ public class ServiceExceptionWrapperBuilder {
     }
 
     public ServiceExceptionWrapperBuilder addExceptionWrapper(ServiceExecutionExceptionWrapper wrapper) {
-        if (isNull(wrapper)) {
-            throw new NullPointerException(WRAPPER_IS_NULL);
-        }
         if (isNull(exceptionWrapper)) {
             exceptionWrapper = wrapper;
             return this;
@@ -47,9 +44,6 @@ public class ServiceExceptionWrapperBuilder {
     }
 
     public ServiceExceptionWrapperBuilder setThrowableExceptionWrapper(ServiceExecutionExceptionWrapper throwableExceptionWrapper) {
-        if (isNull(throwableExceptionWrapper)) {
-            throw new NullPointerException(THROWABLE_EXCEPTION_WRAPPER_IS_NULL);
-        }
         if (isNull(exceptionWrapper)) {
             exceptionWrapper = throwableExceptionWrapper;
             return this;

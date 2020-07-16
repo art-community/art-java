@@ -18,12 +18,10 @@
 
 package io.art.xml.descriptor;
 
-import io.art.entity.immutable.*;
-import lombok.experimental.*;
 import io.art.entity.constants.*;
+import io.art.entity.immutable.*;
 import io.art.xml.exception.*;
-import static java.nio.charset.StandardCharsets.*;
-import static java.util.Objects.*;
+import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
@@ -31,8 +29,9 @@ import static io.art.core.extensions.FileExtensions.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.xml.constants.XmlDocumentConstants.*;
 import static io.art.xml.constants.XmlLoggingMessages.*;
-import static io.art.xml.constants.XmlMappingExceptionMessages.*;
 import static io.art.xml.module.XmlModule.*;
+import static java.nio.charset.StandardCharsets.*;
+import static java.util.Objects.*;
 import javax.xml.stream.*;
 import java.io.*;
 import java.nio.file.*;
@@ -64,7 +63,6 @@ public class XmlEntityWriter {
     }
 
     public static String writeXml(XMLOutputFactory xmlOutputFactory, XmlEntity xmlEntity) throws XmlMappingException {
-        if (isNull(xmlOutputFactory)) throw new XmlMappingException(XML_FACTORY_IS_NULL);
         if (isNull(xmlEntity)) return EMPTY_STRING;
         XMLStreamWriter xmlStreamWriter = null;
         try {

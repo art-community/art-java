@@ -38,14 +38,12 @@ import java.nio.charset.*;
 public class HttpXmlMapper implements HttpContentToValueMapper, HttpEntityToContentMapper {
     @Override
     public Value mapFromBytes(byte[] bytes, MimeType mimeType, Charset charset) {
-        if (isNull(mimeType)) throw new HttpTextMapperException(CONTENT_TYPE_IS_NULL);
         if (isEmpty(bytes)) return xmlEntityBuilder().create();
         return readXml(xmlModule().getXmlInputFactory(), new String(bytes, charset));
     }
 
     @Override
     public byte[] mapToBytes(Value value, MimeType mimeType, Charset charset) {
-        if (isNull(mimeType)) throw new HttpTextMapperException(CONTENT_TYPE_IS_NULL);
         if (isEmpty(value)) return EMPTY_BYTES;
         if (value.getType() != XML) throw new HttpXmlMapperException(HTTP_XML_MAPPER_SUPPORT_ONLY_XML_ENTITIES);
         return writeXml(xmlModule().getXmlOutputFactory(), asXmlEntity(value)).getBytes(charset);

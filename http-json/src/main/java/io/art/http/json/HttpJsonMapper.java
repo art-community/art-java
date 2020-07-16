@@ -32,14 +32,12 @@ import java.nio.charset.*;
 public class HttpJsonMapper implements HttpEntityToContentMapper, HttpContentToValueMapper {
     @Override
     public byte[] mapToBytes(Value value, MimeType mimeType, Charset charset) {
-        if (isNull(mimeType)) throw new HttpJsonMapperException(CONTENT_TYPE_IS_NULL);
         if (isNull(value)) return EMPTY_BYTES;
         return writeJson(value).getBytes(charset);
     }
 
     @Override
     public Value mapFromBytes(byte[] content, MimeType mimeType, Charset charset) {
-        if (isNull(mimeType)) throw new HttpJsonMapperException(CONTENT_TYPE_IS_NULL);
         if (isEmpty(content)) return null;
         String jsonString = new String(content, charset);
         return readJson(jsonString);

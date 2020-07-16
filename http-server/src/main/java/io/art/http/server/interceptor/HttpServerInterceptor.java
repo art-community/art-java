@@ -35,17 +35,14 @@ public class HttpServerInterceptor {
     private final InterceptionStrategy strategy;
 
     public static HttpServerInterceptor intercept(HttpServerInterception interception) {
-        if (isNull(interception)) throw new HttpServerException(INTERCEPTION_IS_NULL);
         return new HttpServerInterceptor(interception, NEXT_INTERCEPTOR);
     }
 
     public static HttpServerInterceptor interceptAndProcessHandling(HttpServerInterception interception) {
-        if (isNull(interception)) throw new HttpServerException(INTERCEPTION_IS_NULL);
         return new HttpServerInterceptor(interception, PROCESS_HANDLING);
     }
 
     public static HttpServerInterceptor interceptAndStopHandling(HttpServerInterception interception) {
-        if (isNull(interception)) throw new HttpServerException(INTERCEPTION_IS_NULL);
         return new HttpServerInterceptor(interception, STOP_HANDLING);
     }
 

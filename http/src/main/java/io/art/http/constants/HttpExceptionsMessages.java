@@ -19,16 +19,4 @@
 package io.art.http.constants;
 
 public interface HttpExceptionsMessages {
-    String CONTENT_TYPE_IS_NULL = "Content type is null";
-    String REQUEST_INTERCEPTOR_IS_NULL = "Request interceptor is null";
-    String RESPONSE_INTERCEPTOR_IS_NULL = "Response interceptor is null";
-    String REQUEST_CONTENT_TYPE_IS_NULL = "Request content type is null";
-    String RESPONSE_CONTENT_TYPE_IS_NULL = "Response content type is null";
-    String RESPONSE_MAPPER_IS_NULL = "Response mapper is null";
-    String EXCEPTION_MAPPER_IS_NULL = "Exception mapper is null";
-    String REQUEST_MAPPER_IS_NULL = "Request mapper is null";
-    String VALIDATION_POLICY_IS_NULL = "Validation policy is null";
-    String REQUEST_VALUE_INTERCEPTOR = "Request value interceptor policy is null";
-    String RESPONSE_VALUE_INTERCEPTOR = "Response value interceptor policy is null";
-    String EXCEPTION_VALUE_INTERCEPTOR = "Exception value interceptor policy is null";
 }

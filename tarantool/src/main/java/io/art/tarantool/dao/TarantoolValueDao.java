@@ -21,6 +21,7 @@ package io.art.tarantool.dao;
 import io.art.entity.immutable.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.*;
+import static io.art.entity.builder.EntityBuilder.merge;
 import static java.text.MessageFormat.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
@@ -50,16 +51,13 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
     public Entity put(String spaceName, Entity entity) {
-        if (isNull(entity)) {
-            throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
-        }
         if (!entity.getFieldKeys().contains(stringPrimitive(ID_FIELD)) && idCalculationMode == MANUAL) {
             throw new TarantoolDaoException(format(ENTITY_WITHOUT_ID_FILED, spaceName));
         }
         evaluateValueScript(clusterIds, spaceName);
-        PlainTupleWriterResult valueTupleResult = writeTuple(merge(entityBuilder().longField(ID_FIELD, null).build(), entity));
+        PlainTupleWriterResult valueTupleResult = writeTuple(merge(entityBuilder().put(ID_FIELD, null).build(), entity));
         if (isNull(valueTupleResult)) {
-            throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
+            throw new TarantoolDaoException(format(VALUE_TUPLE_IS_NULL, spaceName));
         }
 
         String valueFunctionName = PUT + spaceName + VALUE_POSTFIX;
@@ -173,16 +171,13 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
     public Entity insert(String spaceName, Entity entity) {
-        if (isNull(entity)) {
-            throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
-        }
         if (!entity.getFieldKeys().contains(stringPrimitive(ID_FIELD)) && idCalculationMode == MANUAL) {
             throw new TarantoolDaoException(format(ENTITY_WITHOUT_ID_FILED, spaceName));
         }
         evaluateValueScript(clusterIds, spaceName);
         PlainTupleWriterResult valueTupleResult = writeTuple(merge(entityBuilder().longField(ID_FIELD, null).build(), entity));
         if (isNull(valueTupleResult)) {
-            throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
+            throw new TarantoolDaoException(format(VALUE_TUPLE_IS_NULL, spaceName));
         }
 
         String valueFunctionName = INSERT + spaceName + VALUE_POSTFIX;
@@ -299,16 +294,13 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
     public void upsert(String spaceName, Entity defaultEntity, TarantoolUpdateFieldOperation... operations) {
-        if (isNull(defaultEntity)) {
-            throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
-        }
         if (!defaultEntity.getFieldKeys().contains(stringPrimitive(ID_FIELD)) && idCalculationMode == MANUAL) {
             throw new TarantoolDaoException(format(ENTITY_WITHOUT_ID_FILED, spaceName));
         }
         evaluateValueScript(clusterIds, spaceName);
         PlainTupleWriterResult valueTupleResult = writeTuple(merge(entityBuilder().longField(ID_FIELD, null).build(), defaultEntity));
         if (isNull(valueTupleResult)) {
-            throw new TarantoolDaoException(format(ENTITY_IS_NULL, spaceName));
+            throw new TarantoolDaoException(format(VALUE_TUPLE_IS_NULL, spaceName));
         }
 
         String functionName = UPSERT + spaceName + VALUE_POSTFIX + WITH_SCHEMA_POSTFIX;

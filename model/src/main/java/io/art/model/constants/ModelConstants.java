@@ -22,7 +22,6 @@ public interface ModelConstants {
     String DEFAULT_MODULE_ID = "module";
 
     interface ExceptionMessages {
-        String MODULE_ID_IS_NULL = "Module id is null";
         String MODEL_WAS_NOT_IMPLEMENTED = "Model {0} was not implemented";
     }
 }

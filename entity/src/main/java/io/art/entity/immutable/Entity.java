@@ -19,7 +19,6 @@
 package io.art.entity.immutable;
 
 import com.google.common.collect.*;
-import io.art.core.caster.*;
 import io.art.core.checker.*;
 import io.art.core.lazy.*;
 import io.art.entity.builder.*;
@@ -27,7 +26,6 @@ import io.art.entity.constants.*;
 import io.art.entity.exception.*;
 import io.art.entity.mapper.*;
 import lombok.*;
-import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
@@ -37,8 +35,9 @@ import static io.art.entity.constants.ValueType.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.mapper.ValueToModelMapper.*;
+import static io.art.entity.mapping.PrimitiveMapping.toString;
+import static io.art.entity.mapping.PrimitiveMapping.*;
 import static java.util.Objects.*;
-import static java.util.stream.Collectors.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -56,69 +55,52 @@ public class Entity implements Value {
 
 
     public <T> ImmutableMap<Primitive, T> mapValues(ValueToModelMapper<T, ? extends Value> mapper) {
-
-        return fields.stream().collect(toImmutableMap(Function.identity(), key -> mapper.map(cast(valueProvider.apply(key)))));
+        ImmutableMap.Builder<Primitive, T> map = ImmutableMap.builder();
+        for (Primitive field : fields) {
+            let(map(field, mapper), value -> map.put(field, value));
+        }
+        return map.build();
     }
 
-    public <K, V> ImmutableMap<K, V> mapToMap(ValueToModelMapper<V, ? extends Value> mapper) {
-        return fields.stream().collect(toImmutableMap(key -> cast(key.getValue()), key -> mapper.map(cast(valueProvider.apply(key)))));
+    public <K, V> ImmutableMap<K, V> mapToMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
+        ImmutableMap.Builder<K, V> map = ImmutableMap.builder();
+        for (Primitive field : fields) {
+            let(map(field, valueMapper), value -> map.put(keyMapper.map(field), value));
+        }
+        return map.build();
     }
 
     public <T> ImmutableMap<String, T> mapToStringMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return fields.stream().collect(toImmutableMap(Primitive::getString, key -> mapper.map(cast(valueProvider.apply(key)))));
+        return mapToMap(toString, mapper);
     }
 
     public <T> ImmutableMap<Integer, T> mapToIntMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return fields.stream().collect(toImmutableMap(Primitive::getInt, key -> mapper.map(cast(valueProvider.apply(key)))));
+        return mapToMap(toInt, mapper);
     }
 
     public <T> ImmutableMap<Long, T> mapToLongMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return fields.stream().collect(toImmutableMap(Primitive::getLong, key -> mapper.map(cast(valueProvider.apply(key)))));
+        return mapToMap(toLong, mapper);
     }
 
     public <T> ImmutableMap<Double, T> mapToDoubleMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return fields.stream().collect(toImmutableMap(Primitive::getDouble, key -> mapper.map(cast(valueProvider.apply(key)))));
+        return mapToMap(toDouble, mapper);
     }
 
     public <T> ImmutableMap<Float, T> mapToFloatMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return fields.stream().collect(toImmutableMap(Primitive::getFloat, key -> mapper.map(cast(valueProvider.apply(key)))));
+        return mapToMap(toFloat, mapper);
     }
 
     public <T> ImmutableMap<Boolean, T> mapToBoolMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return fields.stream().collect(toImmutableMap(Primitive::getBool, key -> mapper.map(cast(valueProvider.apply(key)))));
+        return mapToMap(toBool, mapper);
     }
 
 
-    public <T> ImmutableMap<Primitive, ? extends Value> toMap() {
-        return fields.stream().collect(toImmutableMap(Function.identity(), key -> cast(valueProvider.apply(key))));
+    public ImmutableMap<Primitive, ? extends Value> toMap() {
+        return mapToMap(key -> key, value -> value);
     }
 
     public Map<Primitive, ? extends Value> asMap() {
         return new ProxyMap<>(identity());
-    }
-
-    public <T> Map<String, T> asStringMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return new ProxyMap<>(mapper);
-    }
-
-    public <T> Map<Integer, T> asIntMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return new ProxyMap<>(mapper);
-    }
-
-    public <T> Map<Double, T> asDoubleMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return new ProxyMap<>(mapper);
-    }
-
-    public <T> Map<Float, T> asFloatMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return new ProxyMap<>(mapper);
-    }
-
-    public <T> Map<Boolean, T> asBoolMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return new ProxyMap<>(mapper);
-    }
-
-    public <T> Map<Long, T> asLongMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return new ProxyMap<>(mapper);
     }
 
 
@@ -151,6 +133,9 @@ public class Entity implements Value {
     }
 
     public Value get(Primitive primitive) {
+        if (Value.isEmpty(primitive)) {
+            return null;
+        }
         return valueProvider.apply(primitive);
     }
 
@@ -184,7 +169,7 @@ public class Entity implements Value {
     }
 
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
-        return mapper.map(cast(get(primitive)));
+        return let(cast(get(primitive)), mapper::map);
     }
 
 
@@ -217,7 +202,7 @@ public class Entity implements Value {
         return EmptinessChecker.isEmpty(fields);
     }
 
-    public class ProxyMap<K, V> implements Map<K, V> {
+    public class ProxyMap<V> implements Map<Primitive, V> {
         private final ValueToModelMapper<V, ? extends Value> mapper;
         private final LazyValue<ImmutableMap<Primitive, V>> evaluated;
 
@@ -257,11 +242,11 @@ public class Entity implements Value {
             if (isNull(key)) {
                 return null;
             }
-            return mapper.map(cast(valueProvider.apply(stringPrimitive(key.toString()))));
+            return let(cast(valueProvider.apply(stringPrimitive(key.toString()))), mapper::map);
         }
 
         @Override
-        public V put(K key, V value) {
+        public V put(Primitive key, V value) {
             throw new ValueMethodNotImplementedException("put");
         }
 
@@ -271,7 +256,7 @@ public class Entity implements Value {
         }
 
         @Override
-        public void putAll(@Nonnull Map<? extends K, ? extends V> map) {
+        public void putAll(@Nonnull Map<? extends Primitive, ? extends V> map) {
             throw new ValueMethodNotImplementedException("putAll");
         }
 
@@ -282,8 +267,8 @@ public class Entity implements Value {
 
         @Override
         @Nonnull
-        public Set<K> keySet() {
-            return fields.stream().map(Caster::<K>cast).collect(toSet());
+        public Set<Primitive> keySet() {
+            return fields;
         }
 
         @Override
@@ -294,9 +279,8 @@ public class Entity implements Value {
 
         @Override
         @Nonnull
-        public Set<Entry<K, V>> entrySet() {
-            ImmutableMap<K, V> map = mapToMap(mapper);
-            return map.entrySet();
+        public Set<Entry<Primitive, V>> entrySet() {
+            return mapToMap(key -> key, mapper).entrySet();
         }
     }
 

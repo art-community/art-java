@@ -25,12 +25,10 @@ import static java.util.Objects.*;
 
 public interface ServiceExecutionInterceptor {
     static RequestInterceptor interceptRequest(ServiceRequestInterception interception) {
-        if (isNull(interception)) throw new ServiceInternalException(ServiceExceptionsMessages.INTERCEPTION_IS_NULL);
         return new RequestInterceptor(interception);
     }
 
     static ResponseInterceptor interceptResponse(ServiceResponseInterception interception) {
-        if (isNull(interception)) throw new ServiceInternalException(ServiceExceptionsMessages.INTERCEPTION_IS_NULL);
         return new ResponseInterceptor(interception);
     }
 

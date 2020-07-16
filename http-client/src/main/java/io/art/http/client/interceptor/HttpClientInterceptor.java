@@ -42,15 +42,12 @@ public class HttpClientInterceptor {
     }
 
     public static HttpClientInterceptor interceptRequest(HttpClientRequestInterception interception) {
-        if (isNull(interception))
-            throw new HttpClientException(HttpClientExceptionMessages.REQUEST_INTERCEPTION_IS_NULL);
         return HttpClientInterceptor.builder()
                 .requestInterception(interception)
                 .build();
     }
 
     public static HttpClientInterceptor interceptResponse(HttpClientResponseInterception interception) {
-        if (isNull(interception)) throw new HttpClientException(RESPONSE_INTERCEPTION_IS_NULL);
         return HttpClientInterceptor.builder()
                 .responseInterception(interception)
                 .build();

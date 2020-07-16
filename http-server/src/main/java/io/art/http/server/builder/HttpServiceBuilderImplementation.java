@@ -18,17 +18,16 @@
 
 package io.art.http.server.builder;
 
-import lombok.*;
 import io.art.http.server.constants.*;
 import io.art.http.server.exception.*;
 import io.art.http.server.interceptor.*;
 import io.art.http.server.model.*;
-import static java.util.Objects.*;
+import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.http.constants.HttpExceptionsMessages.*;
 import static io.art.http.constants.HttpMethodType.*;
 import static io.art.http.server.constants.HttpServerExceptionMessages.*;
+import static java.util.Objects.*;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -93,14 +92,12 @@ public class HttpServiceBuilderImplementation implements HttpServiceBuilder {
 
     @Override
     public HttpServiceBuilder addRequestInterceptor(HttpServerInterceptor interceptor) {
-        if (isNull(interceptor)) throw new HttpServerException(REQUEST_INTERCEPTOR_IS_NULL);
         requestInterceptors.add(interceptor);
         return this;
     }
 
     @Override
     public HttpServiceBuilder addResponseInterceptor(HttpServerInterceptor interceptor) {
-        if (isNull(interceptor)) throw new HttpServerException(REQUEST_INTERCEPTOR_IS_NULL);
         responseInterceptors.add(interceptor);
         return this;
     }
@@ -112,7 +109,6 @@ public class HttpServiceBuilderImplementation implements HttpServiceBuilder {
     }
 
     HttpServiceBuilder add(HttpService.HttpMethod method) {
-        if (isNull(method)) throw new HttpServerException(HTTP_METHOD_IS_NULL);
         methods.add(method);
         return this;
     }

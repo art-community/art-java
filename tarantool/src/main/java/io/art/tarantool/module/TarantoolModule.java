@@ -60,9 +60,6 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
     }
 
     public static TarantoolModuleConfiguration tarantoolModule() {
-        if (contextIsNotReady()) {
-            return DEFAULT_CONFIGURATION;
-        }
         return getTarantoolModule();
     }
 

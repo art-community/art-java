@@ -18,6 +18,7 @@
 
 package io.art.http.server;
 
+import io.art.entity.builder.*;
 import io.art.entity.immutable.*;
 import io.art.entity.immutable.Value;
 import lombok.*;
@@ -30,6 +31,7 @@ import io.art.http.server.exception.*;
 import io.art.http.server.model.HttpService.*;
 import io.art.service.exception.*;
 import io.art.service.model.*;
+import static io.art.entity.immutable.BinaryValue.binary;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
@@ -149,7 +151,7 @@ class HttpServerRequestHandler {
                 InputStream is = part.getInputStream();
                 byte[] value = toByteArraySafety(is);
                 if (!isEmpty(value)) {
-                    entityBuilder.byteArrayField(submittedFileName, value);
+                    entityBuilder.put(submittedFileName, binary(value));
                 }
             } catch (IOException ioException) {
                 loggingModule()
@@ -182,7 +184,7 @@ class HttpServerRequestHandler {
                 }
                 return mapResponseObject(serviceException, cast(exceptionMapper));
             default:
-                throw new HttpServerException(HTTP_RESPONSE_MODE_IS_NULL);
+                throw new HttpServerException(format(UNKNOWN_RESPONSE_MODE, httpMethod.getResponseHandlingMode()));
         }
     }
 

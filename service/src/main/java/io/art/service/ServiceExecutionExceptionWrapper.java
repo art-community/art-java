@@ -44,9 +44,6 @@ public class ServiceExecutionExceptionWrapper {
     }
 
     public ServiceExecutionExceptionWrapper addExceptionWrapper(ServiceExecutionExceptionWrapper wrapper) {
-        if (isNull(wrapper)) {
-            throw new NullPointerException(WRAPPER_IS_NULL);
-        }
         if (isNull(previousWrapper)) {
             previousWrapper = wrapper;
             return this;
