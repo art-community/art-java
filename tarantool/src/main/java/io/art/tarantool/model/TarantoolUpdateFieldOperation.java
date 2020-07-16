@@ -19,13 +19,13 @@
 package io.art.tarantool.model;
 
 import lombok.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.Entity.*;
+import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.tuple.PlainTupleWriter.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolOperator.*;
 import java.util.*;

@@ -19,7 +19,7 @@
 package io.art.http.server.model;
 
 import lombok.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.http.constants.*;

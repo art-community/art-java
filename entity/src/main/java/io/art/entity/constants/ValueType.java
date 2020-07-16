@@ -33,7 +33,8 @@ public enum ValueType {
     FLOAT,
     INT,
     BOOL,
-    BYTE;
+    BYTE,
+    BINARY,;
 
     public static PrimitiveType asPrimitiveType(ValueType valueType) {
         if (isNull(valueType)) throw new ValueMappingException(VALUE_TYPE_IS_NULL);

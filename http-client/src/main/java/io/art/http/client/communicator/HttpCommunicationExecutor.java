@@ -29,7 +29,7 @@ import org.apache.http.nio.client.methods.*;
 import org.zalando.logbook.httpclient.*;
 import io.art.core.constants.*;
 import io.art.core.mime.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.http.client.exception.*;

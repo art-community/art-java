@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.entity;
+package io.art.entity.immutable;
 
 import io.art.entity.constants.*;
 import static io.art.entity.constants.ValueType.*;
@@ -33,6 +33,10 @@ public interface Value {
 
     static ArrayValue asCollection(Value value) {
         return (ArrayValue) value;
+    }
+
+    static BinaryValue asBinary(Value value) {
+        return (BinaryValue) value;
     }
 
     static boolean isEmpty(Value value) {
@@ -53,14 +57,19 @@ public interface Value {
         return isEntityType(value.getType());
     }
 
-    static boolean isCollection(Value value) {
+    static boolean isArray(Value value) {
         if (isNull(value)) return false;
-        return isCollectionType(value.getType());
+        return isArrayType(value.getType());
     }
 
-    static boolean isXmlEntity(Value value) {
+    static boolean isXml(Value value) {
         if (isNull(value)) return false;
-        return isXmlEntityType(value.getType());
+        return isXmlType(value.getType());
+    }
+
+    static boolean isBinary(Value value) {
+        if (isNull(value)) return false;
+        return isBinaryType(value.getType());
     }
 
     static boolean isPrimitiveType(ValueType type) {
@@ -84,14 +93,19 @@ public interface Value {
         return type == ENTITY;
     }
 
-    static boolean isCollectionType(ValueType type) {
+    static boolean isArrayType(ValueType type) {
         if (isNull(type)) return false;
         return type == ARRAY;
     }
 
-    static boolean isXmlEntityType(ValueType type) {
+    static boolean isXmlType(ValueType type) {
         if (isNull(type)) return false;
         return type == ENTITY;
+    }
+
+    static boolean isBinaryType(ValueType type) {
+        if (isNull(type)) return false;
+        return type == BINARY;
     }
 
     boolean isEmpty();

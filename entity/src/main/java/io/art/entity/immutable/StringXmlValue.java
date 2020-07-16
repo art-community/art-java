@@ -16,9 +16,15 @@
  * limitations under the License.
  */
 
-package io.art.entity.constants;
+package io.art.entity.immutable;
 
-public enum CollectionMode {
-    PRIMITIVE_ARRAY,
-    COLLECTION
+import lombok.*;
+import static io.art.entity.constants.ValueType.*;
+import static io.art.entity.constants.ValueType.XmlValueType.STRING;
+
+@Getter
+@AllArgsConstructor
+public class StringXmlValue implements XmlValue<String> {
+    private final XmlValueType type = STRING;
+    private final String value;
 }

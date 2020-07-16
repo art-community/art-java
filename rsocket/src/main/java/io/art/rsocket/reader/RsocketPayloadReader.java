@@ -18,10 +18,10 @@
 
 package io.art.rsocket.reader;
 
+import io.art.entity.immutable.*;
 import io.netty.buffer.*;
 import io.rsocket.*;
 import lombok.experimental.*;
-import io.art.entity.*;
 import io.art.rsocket.exception.*;
 import static java.text.MessageFormat.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;

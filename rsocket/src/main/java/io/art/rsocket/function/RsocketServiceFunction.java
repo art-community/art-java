@@ -18,7 +18,7 @@
 
 package io.art.rsocket.function;
 
-import io.art.entity.*;
+import io.art.entity.immutable.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.reactive.service.constants.ReactiveServiceModuleConstants.*;

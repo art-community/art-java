@@ -18,9 +18,9 @@
 
 package io.art.soap.server.model;
 
+import io.art.entity.immutable.*;
 import lombok.*;
 import lombok.experimental.*;
-import io.art.entity.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.ValueToModelMapper.*;

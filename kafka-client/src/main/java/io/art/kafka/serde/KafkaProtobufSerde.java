@@ -18,8 +18,8 @@
 
 package io.art.kafka.serde;
 
+import io.art.entity.immutable.*;
 import org.apache.kafka.common.serialization.*;
-import io.art.entity.*;
 import io.art.kafka.deserializer.*;
 import io.art.kafka.serializer.*;
 import java.util.*;

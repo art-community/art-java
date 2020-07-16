@@ -18,14 +18,14 @@
 
 package io.art.service.mapping;
 
-import io.art.entity.*;
+import io.art.entity.immutable.*;
 import io.art.entity.mapper.*;
 import io.art.service.constants.*;
 import io.art.service.exception.*;
 import io.art.service.model.*;
 import static java.util.Objects.*;
 import static org.apache.logging.log4j.core.util.Assert.isEmpty;
-import static io.art.entity.Entity.*;
+import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.mapper.ValueMapper.*;
 import static io.art.service.constants.RequestValidationPolicy.*;
 import static io.art.service.constants.ServiceExceptionsMessages.*;
@@ -50,7 +50,7 @@ public interface ServiceRequestMapping {
             RequestValidationPolicy requestValidationPolicy = isEmpty(validationPolicyAsString)
                     ? NON_VALIDATABLE :
                     RequestValidationPolicy.valueOf(validationPolicyAsString);
-            D requestData = isNull(requestDataMapper) ? null : value.getValue(REQUEST_DATA, requestDataMapper);
+            D requestData = isNull(requestDataMapper) ? null : value.map(REQUEST_DATA, requestDataMapper);
             return new ServiceRequest<>(new ServiceMethodCommand(serviceId, methodId), requestValidationPolicy, requestData);
         };
     }

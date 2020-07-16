@@ -1,6 +1,6 @@
 package io.art.json.descriptor;
 
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.json.exception.JsonMappingException;
 
 import java.io.IOException;

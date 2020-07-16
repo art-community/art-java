@@ -20,14 +20,14 @@ package io.art.logging;
 
 import lombok.*;
 import org.apache.logging.log4j.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.entity.interceptor.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static org.apache.logging.log4j.ThreadContext.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.entity.Value.*;
+import static io.art.entity.immutable.Value.*;
 import static io.art.entity.interceptor.ValueInterceptionResult.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;

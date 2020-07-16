@@ -18,10 +18,10 @@
 
 package io.art.rsocket.writer;
 
+import io.art.entity.immutable.*;
 import io.rsocket.*;
 import lombok.experimental.*;
 import reactor.core.publisher.*;
-import io.art.entity.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.reactive.service.wrapper.*;

@@ -18,7 +18,7 @@
 
 package io.art.service.mapping;
 
-import io.art.entity.*;
+import io.art.entity.immutable.*;
 import io.art.entity.mapper.*;
 import io.art.service.exception.*;
 import static io.art.entity.mapper.ValueMapper.*;

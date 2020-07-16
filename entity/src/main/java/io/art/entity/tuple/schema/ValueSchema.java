@@ -19,7 +19,7 @@
 package io.art.entity.tuple.schema;
 
 import lombok.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.entity.constants.*;
 import static java.util.Objects.*;
 import static io.art.core.checker.EmptinessChecker.*;

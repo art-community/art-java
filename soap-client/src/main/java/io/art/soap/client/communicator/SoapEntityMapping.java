@@ -18,8 +18,8 @@
 
 package io.art.soap.client.communicator;
 
+import io.art.entity.immutable.*;
 import lombok.*;
-import io.art.entity.*;
 import io.art.entity.mapper.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.ValueToModelMapper.*;

@@ -18,8 +18,8 @@
 
 package io.art.rsocket.writer;
 
+import io.art.entity.immutable.*;
 import io.rsocket.*;
-import io.art.entity.*;
 import io.art.entity.interceptor.*;
 import static io.rsocket.util.DefaultPayload.*;
 import static java.util.Objects.*;

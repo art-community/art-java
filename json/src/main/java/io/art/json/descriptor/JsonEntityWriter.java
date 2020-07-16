@@ -19,11 +19,10 @@
 package io.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
+import io.art.entity.immutable.*;
 import lombok.experimental.*;
 import io.art.core.checker.*;
-import io.art.entity.*;
 import io.art.entity.constants.*;
-import io.art.entity.constants.ValueType.*;
 import io.art.json.exception.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
@@ -32,7 +31,7 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.StringExtensions.*;
-import static io.art.entity.Value.*;
+import static io.art.entity.immutable.Value.*;
 import static io.art.json.constants.JsonLoggingMessages.*;
 import static io.art.json.constants.JsonMappingExceptionMessages.*;
 import static io.art.json.module.JsonModule.*;
@@ -72,7 +71,7 @@ public class JsonEntityWriter {
             return BRACES;
         }
         if (isEmpty(value)) {
-            if (isCollection(value)) {
+            if (isArray(value)) {
                 return SQUARE_BRACES;
             }
             return BRACES;

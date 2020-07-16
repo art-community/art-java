@@ -22,7 +22,7 @@ import lombok.*;
 import org.zalando.logbook.*;
 import io.art.core.mime.*;
 import io.art.core.module.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.entity.interceptor.*;
 import io.art.http.constants.*;
 import io.art.http.logger.*;

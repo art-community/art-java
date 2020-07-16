@@ -16,15 +16,21 @@
  * limitations under the License.
  */
 
-package io.art.entity;
+package io.art.entity.immutable;
 
+import io.art.core.checker.*;
+import io.art.entity.constants.*;
 import lombok.*;
 import static io.art.entity.constants.ValueType.*;
-import static io.art.entity.constants.ValueType.XmlValueType.STRING;
 
 @Getter
-@AllArgsConstructor
-public class StringXmlValue implements XmlValue<String> {
-    private final XmlValueType type = STRING;
-    private String value;
+@RequiredArgsConstructor
+public class BinaryValue implements Value {
+    private final byte[] content;
+    private final ValueType type = BINARY;
+
+    @Override
+    public boolean isEmpty() {
+        return EmptinessChecker.isEmpty(content);
+    }
 }

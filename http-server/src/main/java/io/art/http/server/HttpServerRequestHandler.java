@@ -18,10 +18,10 @@
 
 package io.art.http.server;
 
+import io.art.entity.immutable.*;
+import io.art.entity.immutable.Value;
 import lombok.*;
 import io.art.core.mime.*;
-import io.art.entity.Value;
-import io.art.entity.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.http.constants.*;
@@ -40,7 +40,7 @@ import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
-import static io.art.entity.Entity.*;
+import static io.art.entity.immutable.Entity.*;
 import static io.art.http.server.body.descriptor.HttpBodyDescriptor.*;
 import static io.art.http.server.constants.HttpServerExceptionMessages.*;
 import static io.art.http.server.module.HttpServerModule.*;

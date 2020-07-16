@@ -18,8 +18,8 @@
 
 package io.art.xml.descriptor;
 
+import io.art.entity.immutable.*;
 import lombok.experimental.*;
-import io.art.entity.*;
 import io.art.entity.constants.*;
 import io.art.xml.exception.*;
 import static java.nio.charset.StandardCharsets.*;

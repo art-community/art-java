@@ -18,9 +18,9 @@
 
 package io.art.http.server.specification;
 
+import io.art.entity.immutable.*;
 import lombok.*;
 import io.art.core.caster.*;
-import io.art.entity.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
 import io.art.http.server.HttpServerModuleConfiguration.*;
 import io.art.http.server.model.*;

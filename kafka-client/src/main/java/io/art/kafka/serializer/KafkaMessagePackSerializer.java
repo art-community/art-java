@@ -18,8 +18,8 @@
 
 package io.art.kafka.serializer;
 
+import io.art.entity.immutable.*;
 import org.apache.kafka.common.serialization.*;
-import io.art.entity.*;
 import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
 import java.util.*;
 

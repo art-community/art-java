@@ -18,9 +18,9 @@
 
 package io.art.xml.descriptor;
 
+import io.art.entity.immutable.*;
 import lombok.experimental.*;
-import io.art.entity.*;
-import io.art.entity.XmlEntity.*;
+import io.art.entity.immutable.XmlEntity.*;
 import io.art.xml.exception.*;
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.Collections.*;
@@ -31,7 +31,7 @@ import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.XmlEntity.*;
+import static io.art.entity.immutable.XmlEntity.*;
 import static io.art.xml.constants.XmlMappingExceptionMessages.*;
 import static io.art.xml.module.XmlModule.*;
 import javax.xml.stream.*;

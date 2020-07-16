@@ -18,14 +18,14 @@
 
 package io.art.service.mapping;
 
-import io.art.entity.*;
+import io.art.entity.immutable.*;
 import io.art.entity.mapper.*;
 import io.art.service.exception.*;
 import io.art.service.model.*;
 import io.art.service.model.ServiceResponse.*;
 import static java.util.Objects.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
-import static io.art.entity.Entity.*;
+import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.mapper.ValueMapper.*;
 import static io.art.service.constants.ServiceExceptionsMessages.*;
 
@@ -50,7 +50,7 @@ public interface ServiceResponseMapping {
                 String methodId = commandEntity.getString(METHOD_ID);
                 serviceResponseBuilder.command(command = new ServiceMethodCommand(serviceId, methodId));
             }
-            V responseData = isNull(responseDataMapper) ? null : value.getValue(RESPONSE_DATA, responseDataMapper);
+            V responseData = isNull(responseDataMapper) ? null : value.map(RESPONSE_DATA, responseDataMapper);
             if (nonNull(responseData)) {
                 serviceResponseBuilder.responseData(responseData);
             }

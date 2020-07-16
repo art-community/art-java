@@ -18,9 +18,9 @@
 
 package io.art.entity.xml;
 
+import io.art.entity.immutable.*;
+import io.art.entity.immutable.Value;
 import lombok.*;
-import io.art.entity.Value;
-import io.art.entity.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
@@ -29,10 +29,10 @@ import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.CollectionValuesFactory.*;
-import static io.art.entity.Entity.*;
-import static io.art.entity.PrimitivesFactory.*;
-import static io.art.entity.Value.isEmpty;
+import static io.art.entity.array.ArrayValuesFactory.*;
+import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.primitive.PrimitivesFactory.*;
+import static io.art.entity.immutable.Value.isEmpty;
 import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
@@ -57,7 +57,7 @@ public final class XmlEntityToEntityConverter {
                     innerEntityBuilder.stringField(child.getTag(), child.getValue());
                     continue;
                 }
-                innerEntityBuilder.valueField(child.getTag(), toEntityFromTags(child).getValue(child.getTag()));
+                innerEntityBuilder.valueField(child.getTag(), toEntityFromTags(child).get(child.getTag()));
             }
             return entityBuilder.entityField(xmlEntity.getTag(), innerEntityBuilder.build()).build();
         }
@@ -82,9 +82,9 @@ public final class XmlEntityToEntityConverter {
                 collection.add(cast(entityBuilder().stringField(child.getTag(), child.getValue()).build()));
                 continue;
             }
-            collection.add(cast(entityBuilder().valueField(child.getTag(), toEntityFromTags(child).getValue(child.getTag())).build()));
+            collection.add(cast(entityBuilder().valueField(child.getTag(), toEntityFromTags(child).get(child.getTag())).build()));
         }
-        return entityBuilder.valueField(xmlEntity.getTag(), valueCollection(cast(collection))).build();
+        return entityBuilder.valueField(xmlEntity.getTag(), valueArray(cast(collection))).build();
     }
 
     public static Entity toEntityFromAttributes(XmlEntity xmlEntity) {

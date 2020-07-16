@@ -19,13 +19,14 @@
 package io.art.http.mapper;
 
 import io.art.core.mime.*;
-import io.art.entity.*;
+import io.art.entity.array.*;
+import io.art.entity.immutable.*;
 import io.art.http.exception.*;
 import static java.util.Objects.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.entity.CollectionValuesFactory.*;
-import static io.art.entity.Value.*;
+import static io.art.entity.array.ArrayValuesFactory.*;
+import static io.art.entity.immutable.Value.*;
 import static io.art.http.constants.HttpExceptionsMessages.*;
 import java.nio.charset.*;
 
@@ -34,15 +35,15 @@ public class HttpBytesMapper implements HttpContentMapper.HttpEntityToContentMap
     public byte[] mapToBytes(Value value, MimeType mimeType, Charset charset) {
         if (isNull(mimeType)) throw new HttpTextMapperException(CONTENT_TYPE_IS_NULL);
         if (isNull(value)) return EMPTY_BYTES;
-        if (!isCollection(value)) return EMPTY_BYTES;
+        if (!isArray(value)) return EMPTY_BYTES;
         return asCollection(value).getByteArray();
     }
 
     @Override
     public Value mapFromBytes(byte[] content, MimeType mimeType, Charset charset) {
         if (isNull(mimeType)) throw new HttpTextMapperException(CONTENT_TYPE_IS_NULL);
-        if (isNull(charset)) return emptyCollection();
-        if (isEmpty(content)) return emptyCollection();
-        return CollectionValuesFactory.byteCollection(content);
+        if (isNull(charset)) return emptyArray();
+        if (isEmpty(content)) return emptyArray();
+        return ArrayValuesFactory.byteArray(content);
     }
 }

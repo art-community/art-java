@@ -20,8 +20,8 @@ package io.art.entity.tuple.schema;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import io.art.entity.Entity;
-import io.art.entity.Value;
+import io.art.entity.immutable.Entity;
+import io.art.entity.immutable.Value;
 import io.art.entity.constants.ValueType;
 import io.art.entity.exception.ValueMappingException;
 
@@ -33,8 +33,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Objects.isNull;
 import static io.art.core.caster.Caster.cast;
 import static io.art.core.factory.CollectionsFactory.dynamicArrayOf;
-import static io.art.entity.Value.isPrimitive;
-import static io.art.entity.Value.isPrimitiveType;
+import static io.art.entity.immutable.Value.isPrimitive;
+import static io.art.entity.immutable.Value.isPrimitiveType;
 import static io.art.entity.constants.ExceptionMessages.VALUE_TYPE_IS_NULL;
 import static io.art.entity.constants.ValueType.ENTITY;
 

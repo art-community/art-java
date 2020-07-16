@@ -18,9 +18,9 @@
 
 package io.art.soap.server.mapper;
 
-import io.art.entity.*;
+import io.art.entity.immutable.*;
 import io.art.soap.server.model.*;
-import static io.art.entity.XmlEntity.*;
+import static io.art.entity.immutable.XmlEntity.*;
 import static io.art.entity.mapper.ValueFromModelMapper.*;
 import static io.art.entity.mapper.ValueToModelMapper.*;
 import static io.art.soap.server.constans.SoapServerModuleConstants.*;

@@ -19,13 +19,13 @@
 package io.art.http.xml;
 
 import io.art.core.mime.*;
-import io.art.entity.*;
+import io.art.entity.immutable.*;
 import io.art.http.exception.*;
 import static java.util.Objects.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.entity.Value.*;
-import static io.art.entity.XmlEntity.*;
+import static io.art.entity.immutable.Value.*;
+import static io.art.entity.immutable.XmlEntity.*;
 import static io.art.entity.constants.ValueType.*;
 import static io.art.http.constants.HttpExceptionsMessages.*;
 import static io.art.http.mapper.HttpContentMapper.*;

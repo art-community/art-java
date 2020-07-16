@@ -25,7 +25,7 @@ import org.apache.http.impl.client.*;
 import org.apache.http.impl.nio.client.*;
 import org.apache.logging.log4j.*;
 import io.art.core.validator.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.http.client.communicator.HttpCommunicator.*;

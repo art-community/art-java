@@ -19,7 +19,7 @@
 package io.art.http.json;
 
 import io.art.core.mime.*;
-import io.art.entity.*;
+import io.art.entity.immutable.*;
 import io.art.http.mapper.HttpContentMapper.*;
 import static java.util.Objects.*;
 import static io.art.core.checker.EmptinessChecker.*;

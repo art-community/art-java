@@ -18,8 +18,8 @@
 
 package io.art.entity.tuple;
 
+import io.art.entity.immutable.*;
 import lombok.experimental.*;
-import io.art.entity.*;
 import io.art.entity.constants.*;
 import io.art.entity.tuple.schema.*;
 import static java.util.Objects.*;
@@ -27,10 +27,10 @@ import static java.util.stream.Collectors.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.CollectionValuesFactory.*;
-import static io.art.entity.Value.*;
-import static io.art.entity.Entity.*;
-import static io.art.entity.PrimitivesFactory.*;
+import static io.art.entity.array.ArrayValuesFactory.*;
+import static io.art.entity.immutable.Value.*;
+import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.primitive.PrimitivesFactory.*;
 import java.util.*;
 
 @UtilityClass
@@ -117,7 +117,7 @@ public class PlainTupleReader {
 
     private static ArrayValue<?> readCollectionValue(List<?> collection, CollectionValueSchema schema) {
         if (isNull(schema)) return null;
-        if (isEmpty(collection)) return emptyCollection();
+        if (isEmpty(collection)) return emptyArray();
         List<?> elements = dynamicArrayOf();
         List<ValueSchema> elementsSchema = schema.getElementsSchema();
         switch (schema.getElementsType()) {
@@ -126,16 +126,16 @@ public class PlainTupleReader {
             case BOOL:
             case DOUBLE:
             case FLOAT:
-                return collectionValue(schema.getElementsType(), cast(collection));
+                return array(schema.getElementsType(), cast(collection));
             case LONG:
-                return longCollection(collection.stream().filter(Objects::nonNull).map(element -> ((Number) element).longValue()).collect(toList()));
+                return longArray(collection.stream().filter(Objects::nonNull).map(element -> ((Number) element).longValue()).collect(toList()));
             case INT:
-                return intCollection(collection.stream().filter(Objects::nonNull).map(element -> ((Number) element).intValue()).collect(toList()));
+                return intArray(collection.stream().filter(Objects::nonNull).map(element -> ((Number) element).intValue()).collect(toList()));
             case ENTITY:
                 for (int i = 0; i < elementsSchema.size(); i++) {
                     elements.add(cast(readEntity((List<?>) collection.get(i), (EntitySchema) elementsSchema.get(i))));
                 }
-                return entityCollection(cast(elements));
+                return entityArray(cast(elements));
             case COLLECTION:
                 for (int i = 0; i < elementsSchema.size(); i++) {
                     elements.add(cast(readCollectionValue((List<?>) collection.get(i), (CollectionValueSchema) elementsSchema.get(i))));
@@ -145,9 +145,9 @@ public class PlainTupleReader {
                 for (int i = 0; i < elementsSchema.size(); i++) {
                     elements.add(cast(readTuple((List<?>) collection.get(i), elementsSchema.get(i))));
                 }
-                return valueCollection(cast(elements));
+                return valueArray(cast(elements));
 
         }
-        return emptyCollection();
+        return emptyArray();
     }
 }

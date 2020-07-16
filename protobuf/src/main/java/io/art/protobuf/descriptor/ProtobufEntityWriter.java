@@ -19,28 +19,26 @@
 package io.art.protobuf.descriptor;
 
 import com.google.protobuf.*;
+import io.art.entity.immutable.*;
 import lombok.experimental.*;
-import io.art.entity.Value;
-import io.art.entity.*;
-import io.art.entity.constants.ValueType.*;
 import io.art.protobuf.exception.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.entity.Value.*;
+import static io.art.entity.immutable.Value.*;
 import static io.art.protobuf.constants.ProtobufExceptionMessages.*;
 import java.io.*;
 import java.nio.file.*;
 
 @UtilityClass
 public class ProtobufEntityWriter {
-    public static byte[] writeProtobufToBytes(Value value) {
+    public static byte[] writeProtobufToBytes(io.art.entity.immutable.Value value) {
         return writeProtobuf(value).toByteArray();
     }
 
-    public static void writeProtobuf(Value value, OutputStream outputStream) {
+    public static void writeProtobuf(io.art.entity.immutable.Value value, OutputStream outputStream) {
         try {
             writeProtobuf(value).writeTo(outputStream);
         } catch (IOException ioException) {
@@ -48,11 +46,11 @@ public class ProtobufEntityWriter {
         }
     }
 
-    public static void writeProtobuf(Value value, Path path) {
+    public static void writeProtobuf(io.art.entity.immutable.Value value, Path path) {
         writeFileQuietly(path, writeProtobuf(value).toByteArray());
     }
 
-    public static com.google.protobuf.Value writeProtobuf(Value value) {
+    public static com.google.protobuf.Value writeProtobuf(io.art.entity.immutable.Value value) {
         if (isEmpty(value)) return com.google.protobuf.Value.getDefaultInstance();
         switch (value.getType()) {
             case STRING:
@@ -102,7 +100,7 @@ public class ProtobufEntityWriter {
             case COLLECTION:
                 return writeCollectionToProtobuf((ArrayValue<?>) value);
             case VALUE:
-                return writeProtobuf((Value) value);
+                return writeProtobuf((io.art.entity.immutable.Value) value);
         }
         throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, type));
     }

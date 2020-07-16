@@ -18,6 +18,8 @@
 
 package io.art.rsocket.interceptor;
 
+import io.art.entity.immutable.*;
+import io.art.entity.immutable.Value;
 import io.rsocket.*;
 import io.rsocket.plugins.*;
 import io.rsocket.util.*;
@@ -25,8 +27,6 @@ import lombok.*;
 import lombok.experimental.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
-import io.art.entity.Value;
-import io.art.entity.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
@@ -36,7 +36,7 @@ import io.art.service.exception.*;
 import io.art.service.model.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Mono.*;
-import static io.art.entity.Value.*;
+import static io.art.entity.immutable.Value.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketInterceptingDataType.*;
 import static io.art.rsocket.module.RsocketModule.*;
@@ -90,7 +90,7 @@ public class RsocketValueInterceptor implements RSocketInterceptor {
                     return super.fireAndForget(payload);
                 }
                 if (testServiceMethodCommand(data)) {
-                    RsocketInterceptedResultAction action = onMetadataPush.apply(new RsocketPayloadValue(payload, asEntity(data).getValue(REQUEST_DATA)), rsocket);
+                    RsocketInterceptedResultAction action = onMetadataPush.apply(new RsocketPayloadValue(payload, asEntity(data).get(REQUEST_DATA)), rsocket);
                     switch (action) {
                         case RETURN:
                             return never();
@@ -112,7 +112,7 @@ public class RsocketValueInterceptor implements RSocketInterceptor {
                     return super.requestResponse(payload);
                 }
                 if (testServiceMethodCommand(data)) {
-                    RsocketValueInterceptionResult result = onRequestResponse.apply(new RsocketPayloadValue(payload, asEntity(data).getValue(REQUEST_DATA)), rsocket);
+                    RsocketValueInterceptionResult result = onRequestResponse.apply(new RsocketPayloadValue(payload, asEntity(data).get(REQUEST_DATA)), rsocket);
                     switch (result.getAction()) {
                         case RETURN:
                             return Mono.just(writePayloadData(result.getValue(), state.getDataFormat()));
@@ -135,7 +135,7 @@ public class RsocketValueInterceptor implements RSocketInterceptor {
                 }
 
                 if (testServiceMethodCommand(data)) {
-                    RsocketValueInterceptionResult result = onRequestStream.apply(new RsocketPayloadValue(payload, asEntity(data).getValue(REQUEST_DATA)), rsocket);
+                    RsocketValueInterceptionResult result = onRequestStream.apply(new RsocketPayloadValue(payload, asEntity(data).get(REQUEST_DATA)), rsocket);
                     switch (result.getAction()) {
                         case RETURN:
                             return Flux.just(writePayloadData(result.getValue(), state.getDataFormat()));
@@ -187,7 +187,7 @@ public class RsocketValueInterceptor implements RSocketInterceptor {
                         }
 
                         if (testServiceMethodCommand(data)) {
-                            RsocketValueInterceptionResult result = onRequestChannel.apply(new RsocketPayloadValue(payload, asEntity(data).getValue(REQUEST_DATA)), rsocket);
+                            RsocketValueInterceptionResult result = onRequestChannel.apply(new RsocketPayloadValue(payload, asEntity(data).get(REQUEST_DATA)), rsocket);
                             switch (result.getAction()) {
                                 case RETURN:
                                     interceptedResponseEmitter.next(writePayloadData(result.getValue(), state.getDataFormat()));
@@ -232,7 +232,7 @@ public class RsocketValueInterceptor implements RSocketInterceptor {
                     return super.metadataPush(payload);
                 }
                 if (testServiceMethodCommand(data)) {
-                    RsocketInterceptedResultAction action = onMetadataPush.apply(new RsocketPayloadValue(payload, asEntity(data).getValue(REQUEST_DATA)), rsocket);
+                    RsocketInterceptedResultAction action = onMetadataPush.apply(new RsocketPayloadValue(payload, asEntity(data).get(REQUEST_DATA)), rsocket);
                     switch (action) {
                         case RETURN:
                             return never();

@@ -20,7 +20,7 @@ package io.art.service.state;
 
 import lombok.*;
 import io.art.core.module.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.service.registry.*;
 import static java.util.Optional.*;
 import java.util.*;

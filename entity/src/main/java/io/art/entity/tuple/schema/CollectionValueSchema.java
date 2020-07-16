@@ -18,9 +18,9 @@
 
 package io.art.entity.tuple.schema;
 
+import io.art.entity.immutable.*;
+import io.art.entity.immutable.Value;
 import lombok.*;
-import io.art.entity.Value;
-import io.art.entity.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.constants.ValueType.*;

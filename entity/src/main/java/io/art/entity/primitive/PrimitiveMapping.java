@@ -16,8 +16,9 @@
  * limitations under the License.
  */
 
-package io.art.entity;
+package io.art.entity.primitive;
 
+import io.art.entity.immutable.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.*;
 import io.art.entity.mapper.ValueToModelMapper.*;

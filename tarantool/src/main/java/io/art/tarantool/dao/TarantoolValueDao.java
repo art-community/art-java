@@ -18,7 +18,7 @@
 
 package io.art.tarantool.dao;
 
-import io.art.entity.*;
+import io.art.entity.immutable.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.*;
 import static java.text.MessageFormat.*;
@@ -30,8 +30,8 @@ import static java.util.stream.Collectors.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.Entity.*;
-import static io.art.entity.PrimitivesFactory.*;
+import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.primitive.PrimitivesFactory.*;
 import static io.art.entity.tuple.PlainTupleReader.*;
 import static io.art.entity.tuple.PlainTupleWriter.*;
 import static io.art.entity.tuple.schema.ValueSchema.*;
@@ -106,7 +106,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
 
 
     public Optional<Primitive> getPrimitive(String spaceName, long id) {
-        return get(spaceName, id).map(value -> asPrimitive(asEntity(value).getValue(VALUE)));
+        return get(spaceName, id).map(value -> asPrimitive(asEntity(value).get(VALUE)));
     }
 
     public Optional<Primitive> getPrimitive(String spaceName) {
@@ -115,7 +115,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
 
 
     public Optional<ArrayValue<?>> getCollectionValue(String spaceName, long id) {
-        return get(spaceName, id).map(value -> asCollection(asEntity(value).getValue(VALUE)));
+        return get(spaceName, id).map(value -> asCollection(asEntity(value).get(VALUE)));
     }
 
     public Optional<ArrayValue<?>> getCollectionValue(String spaceName) {
@@ -148,7 +148,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
 
 
     public List<Primitive> selectPrimitives(String spaceName, Collection<?> keys) {
-        return select(spaceName, keys).stream().map(entity -> asPrimitive(entity.getValue(VALUE))).collect(toList());
+        return select(spaceName, keys).stream().map(entity -> asPrimitive(entity.get(VALUE))).collect(toList());
     }
 
     public List<Primitive> selectPrimitives(String spaceName, long id) {
@@ -161,7 +161,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
 
 
     public List<ArrayValue<?>> selectCollections(String spaceName, Collection<?> keys) {
-        return select(spaceName, keys).stream().map(entity -> asCollection(entity.getValue(VALUE))).collect(toList());
+        return select(spaceName, keys).stream().map(entity -> asCollection(entity.get(VALUE))).collect(toList());
     }
 
     public List<ArrayValue<?>> selectCollections(String spaceName, long id) {

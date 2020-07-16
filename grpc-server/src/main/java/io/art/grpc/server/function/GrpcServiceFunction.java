@@ -18,7 +18,7 @@
 
 package io.art.grpc.server.function;
 
-import io.art.entity.*;
+import io.art.entity.immutable.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.grpc.server.model.GrpcService.*;

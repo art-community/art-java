@@ -18,8 +18,8 @@
 
 package io.art.soap.server.model;
 
+import io.art.entity.immutable.*;
 import lombok.*;
-import io.art.entity.*;
 
 @Getter
 @Builder

@@ -18,6 +18,7 @@
 
 package io.art.rsocket.configuration;
 
+import io.art.entity.immutable.*;
 import io.rsocket.RSocketFactory.*;
 import io.rsocket.plugins.*;
 import io.rsocket.transport.netty.server.*;
@@ -25,7 +26,6 @@ import lombok.*;
 import reactor.netty.http.server.*;
 import reactor.netty.tcp.*;
 import io.art.core.module.*;
-import io.art.entity.*;
 import io.art.entity.interceptor.*;
 import io.art.logging.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;

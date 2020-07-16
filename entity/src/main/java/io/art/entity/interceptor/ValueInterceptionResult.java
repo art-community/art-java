@@ -20,7 +20,7 @@ package io.art.entity.interceptor;
 
 import lombok.*;
 import io.art.core.constants.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import static io.art.core.constants.InterceptionStrategy.*;
 
 @Getter

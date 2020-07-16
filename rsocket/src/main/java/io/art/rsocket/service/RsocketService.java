@@ -18,9 +18,9 @@
 
 package io.art.rsocket.service;
 
+import io.art.entity.immutable.*;
 import lombok.*;
 import lombok.experimental.*;
-import io.art.entity.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.service.constants.*;

@@ -19,7 +19,7 @@
 package io.art.entity.mapper;
 
 import lombok.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.entity.exception.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;

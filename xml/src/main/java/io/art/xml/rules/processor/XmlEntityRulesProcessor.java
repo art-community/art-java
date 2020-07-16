@@ -18,14 +18,14 @@
 
 package io.art.xml.rules.processor;
 
-import io.art.entity.*;
-import io.art.entity.XmlEntity.*;
+import io.art.entity.immutable.*;
+import io.art.entity.immutable.XmlEntity.*;
 import io.art.xml.constants.*;
 import io.art.xml.exception.*;
 import io.art.xml.rules.builder.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.extensions.NullCheckingExtensions.*;
-import static io.art.entity.XmlEntity.*;
+import static io.art.entity.immutable.XmlEntity.*;
 import static io.art.xml.constants.XmlMappingExceptionMessages.*;
 import java.util.*;
 import java.util.Map.*;

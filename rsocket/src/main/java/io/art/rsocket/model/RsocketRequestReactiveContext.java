@@ -18,10 +18,10 @@
 
 package io.art.rsocket.model;
 
+import io.art.entity.immutable.*;
+import io.art.entity.immutable.Value;
 import io.rsocket.*;
 import lombok.*;
-import io.art.entity.Value;
-import io.art.entity.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.service.model.*;
@@ -30,7 +30,7 @@ import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.InterceptionStrategy.*;
-import static io.art.entity.Value.*;
+import static io.art.entity.immutable.Value.*;
 import static io.art.logging.LoggingModule.loggingModule;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.FAILED_TO_READ_PAYLOAD;
 import static io.art.rsocket.constants.RsocketModuleConstants.REQUEST_DATA;
@@ -90,7 +90,7 @@ public class RsocketRequestReactiveContext {
         Value requestDataValue;
         if (isNull(requestValue) ||
                 isNull(requestMapper = rsocketServiceMethods.getRsocketMethod().requestMapper()) ||
-                isEmpty(requestDataValue = requestValue.getValue(REQUEST_DATA))) {
+                isEmpty(requestDataValue = requestValue.get(REQUEST_DATA))) {
             return RsocketRequestReactiveContext.builder()
                     .rsocketReactiveGroupKey(RsocketReactiveGroupKey.builder()
                             .serviceMethodCommand(command)

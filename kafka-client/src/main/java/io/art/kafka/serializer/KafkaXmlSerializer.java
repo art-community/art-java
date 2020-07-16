@@ -18,11 +18,11 @@
 
 package io.art.kafka.serializer;
 
+import io.art.entity.immutable.*;
 import org.apache.kafka.common.serialization.*;
-import io.art.entity.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.entity.Value.*;
+import static io.art.entity.immutable.Value.*;
 import static io.art.entity.xml.XmlEntityFromEntityConverter.*;
 import static io.art.xml.descriptor.XmlEntityWriter.*;
 import java.util.*;
@@ -36,7 +36,7 @@ public class KafkaXmlSerializer implements Serializer<Value> {
     @Override
     public byte[] serialize(String topic, Value data) {
         if (isEmpty(data)) return EMPTY_BYTES;
-        return isXmlEntity(data) ? writeXmlToBytes(asXmlEntity(data)) : isEntity(data) ? writeXmlToBytes(fromEntityAsTags(asEntity(data))) : EMPTY_BYTES;
+        return isXml(data) ? writeXmlToBytes(asXmlEntity(data)) : isEntity(data) ? writeXmlToBytes(fromEntityAsTags(asEntity(data))) : EMPTY_BYTES;
     }
 
     @Override

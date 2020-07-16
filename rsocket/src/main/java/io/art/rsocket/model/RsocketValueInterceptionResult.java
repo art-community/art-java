@@ -1,7 +1,7 @@
 package io.art.rsocket.model;
 
 import lombok.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 
 @Getter

@@ -18,8 +18,8 @@
 
 package io.art.kafka.deserializer;
 
+import io.art.entity.immutable.*;
 import org.apache.kafka.common.serialization.*;
-import io.art.entity.*;
 import io.art.kafka.exception.*;
 import static io.art.protobuf.descriptor.ProtobufEntityReader.*;
 import java.util.*;

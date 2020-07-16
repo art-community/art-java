@@ -19,8 +19,8 @@
 package io.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
+import io.art.entity.immutable.*;
 import lombok.experimental.*;
-import io.art.entity.*;
 import io.art.json.exception.*;
 import static com.fasterxml.jackson.core.JsonToken.*;
 import static java.util.Objects.*;
@@ -30,9 +30,9 @@ import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.CollectionValuesFactory.*;
-import static io.art.entity.Entity.*;
-import static io.art.entity.PrimitivesFactory.*;
+import static io.art.entity.array.ArrayValuesFactory.*;
+import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.primitive.PrimitivesFactory.*;
 import static io.art.json.constants.JsonMappingExceptionMessages.*;
 import static io.art.json.module.JsonModule.*;
 import java.io.*;
@@ -183,22 +183,22 @@ public class JsonEntityReader {
             case FIELD_NAME:
             case VALUE_EMBEDDED_OBJECT:
             case VALUE_NULL:
-                return emptyCollection();
+                return emptyArray();
             case START_OBJECT:
-                return entityCollection(parseEntityArray(parser));
+                return entityArray(parseEntityArray(parser));
             case START_ARRAY:
                 return parseArray(parser);
             case VALUE_STRING:
-                return stringCollection(parseStringArray(parser));
+                return stringArray(parseStringArray(parser));
             case VALUE_NUMBER_INT:
-                return longCollection(parseLongArray(parser));
+                return longArray(parseLongArray(parser));
             case VALUE_NUMBER_FLOAT:
-                return doubleCollection(parseDoubleArray(parser));
+                return doubleArray(parseDoubleArray(parser));
             case VALUE_TRUE:
             case VALUE_FALSE:
-                return boolCollection(parseBooleanArray(parser));
+                return boolArray(parseBooleanArray(parser));
         }
-        return emptyCollection();
+        return emptyArray();
     }
 
 

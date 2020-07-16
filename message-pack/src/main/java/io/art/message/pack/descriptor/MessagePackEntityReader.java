@@ -18,19 +18,19 @@
 
 package io.art.message.pack.descriptor;
 
-import io.art.entity.ArrayValue;
+import io.art.entity.immutable.ArrayValue;
 import lombok.experimental.*;
 import org.msgpack.value.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.message.pack.exception.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static org.msgpack.core.MessagePack.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
-import static io.art.entity.CollectionValuesFactory.*;
-import static io.art.entity.Entity.*;
-import static io.art.entity.PrimitivesFactory.*;
+import static io.art.entity.array.ArrayValuesFactory.*;
+import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.primitive.PrimitivesFactory.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -80,7 +80,7 @@ public class MessagePackEntityReader {
             case STRING:
                 return stringPrimitive(value.asStringValue().toString());
             case BINARY:
-                return byteCollection(value.asBinaryValue().asByteArray());
+                return byteArray(value.asBinaryValue().asByteArray());
             case ARRAY:
                 return readCollectionValue(value.asArrayValue());
             case MAP:
@@ -147,8 +147,8 @@ public class MessagePackEntityReader {
     }
 
     private static ArrayValue readCollectionValue(org.msgpack.value.ArrayValue array) {
-        if (array.size() == 0) return emptyCollection();
-        return valueCollection(array.list()
+        if (array.size() == 0) return emptyArray();
+        return valueArray(array.list()
                 .stream()
                 .filter(Objects::nonNull)
                 .filter(element -> !element.isNilValue() && !element.isExtensionValue())

@@ -18,8 +18,8 @@
 
 package io.art.rsocket.processor;
 
+import io.art.entity.immutable.*;
 import lombok.experimental.*;
-import io.art.entity.*;
 import io.art.entity.interceptor.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;

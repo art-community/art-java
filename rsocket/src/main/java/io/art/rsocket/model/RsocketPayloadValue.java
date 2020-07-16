@@ -2,7 +2,7 @@ package io.art.rsocket.model;
 
 import io.rsocket.*;
 import lombok.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 
 @Getter
 @AllArgsConstructor

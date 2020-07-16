@@ -18,10 +18,10 @@
 
 package io.art.grpc.client.communicator;
 
+import io.art.entity.immutable.*;
+import io.art.entity.immutable.Value;
 import io.grpc.*;
 import lombok.*;
-import io.art.entity.Value;
-import io.art.entity.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.grpc.client.exception.*;

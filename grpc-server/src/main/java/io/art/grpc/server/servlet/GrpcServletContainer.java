@@ -18,9 +18,9 @@
 
 package io.art.grpc.server.servlet;
 
+import io.art.entity.immutable.*;
 import io.grpc.stub.*;
 import lombok.*;
-import io.art.entity.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
 import io.art.grpc.server.exception.*;
@@ -38,7 +38,7 @@ import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
-import static io.art.entity.Value.*;
+import static io.art.entity.immutable.Value.*;
 import static io.art.entity.mapper.ValueFromModelMapper.*;
 import static io.art.grpc.server.constants.GrpcServerExceptionMessages.*;
 import static io.art.grpc.server.constants.GrpcServerLoggingMessages.*;
@@ -146,7 +146,7 @@ public class GrpcServletContainer extends GrpcServlet {
             }
             EntityToModelMapper<ServiceRequest<?>> toServiceRequest = cast(toServiceRequest(cast(grpcMethod.requestMapper())));
             ServiceRequest<?> mappedServiceRequest = toServiceRequest.map(asEntity(serviceRequestEntity));
-            ServiceRequest<?> serviceRequest = isEmpty(serviceRequestEntity.getValue(REQUEST_DATA)) || isNull(grpcMethod.requestMapper())
+            ServiceRequest<?> serviceRequest = isEmpty(serviceRequestEntity.get(REQUEST_DATA)) || isNull(grpcMethod.requestMapper())
                     ? newServiceRequest(command, getOrElse(grpcMethod.validationPolicy(), NON_VALIDATABLE))
                     : newServiceRequest(command, mappedServiceRequest.getRequestData(), getOrElse(grpcMethod.validationPolicy(), NON_VALIDATABLE));
             ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);

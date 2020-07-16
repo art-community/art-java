@@ -18,14 +18,14 @@
 
 package io.art.entity.tuple;
 
+import io.art.entity.immutable.*;
 import lombok.experimental.*;
-import io.art.entity.*;
 import io.art.entity.constants.*;
 import static java.util.Collections.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.Value.*;
+import static io.art.entity.immutable.Value.*;
 import java.util.*;
 
 @UtilityClass

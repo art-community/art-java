@@ -18,14 +18,14 @@
 
 package io.art.rsocket.writer;
 
+import io.art.entity.immutable.*;
 import io.rsocket.*;
 import lombok.experimental.*;
-import io.art.entity.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.exception.*;
 import static io.rsocket.util.DefaultPayload.*;
 import static java.text.MessageFormat.*;
-import static io.art.entity.Value.*;
+import static io.art.entity.immutable.Value.*;
 import static io.art.json.descriptor.JsonEntityWriter.*;
 import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
 import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;

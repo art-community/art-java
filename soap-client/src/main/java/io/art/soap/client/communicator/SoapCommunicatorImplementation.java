@@ -18,12 +18,12 @@
 
 package io.art.soap.client.communicator;
 
+import io.art.entity.immutable.*;
 import org.apache.http.*;
 import org.apache.http.client.config.*;
 import org.apache.http.impl.client.*;
 import org.apache.http.impl.nio.client.*;
 import io.art.core.validator.*;
-import io.art.entity.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.http.client.constants.*;

@@ -18,7 +18,7 @@
 
 package io.art.entity.interceptor;
 
-import io.art.entity.*;
+import io.art.entity.immutable.*;
 import static io.art.entity.interceptor.ValueInterceptionResult.*;
 import java.util.function.*;
 

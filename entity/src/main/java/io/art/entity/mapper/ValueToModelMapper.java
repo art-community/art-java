@@ -18,7 +18,7 @@
 
 package io.art.entity.mapper;
 
-import io.art.entity.*;
+import io.art.entity.immutable.*;
 import java.io.*;
 
 public interface ValueToModelMapper<T, V extends Value> extends Serializable {

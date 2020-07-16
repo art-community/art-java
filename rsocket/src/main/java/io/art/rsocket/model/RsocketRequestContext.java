@@ -18,11 +18,11 @@
 
 package io.art.rsocket.model;
 
+import io.art.entity.immutable.*;
+import io.art.entity.immutable.Value;
 import io.rsocket.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
-import io.art.entity.Value;
-import io.art.entity.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.reactive.service.model.*;
@@ -35,7 +35,7 @@ import static reactor.core.publisher.Flux.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.InterceptionStrategy.*;
-import static io.art.entity.Value.*;
+import static io.art.entity.immutable.Value.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
@@ -97,7 +97,7 @@ public class RsocketRequestContext {
         Value requestDataValue;
         if (isNull(requestValue) ||
                 isNull(requestMapper = rsocketServiceMethods.getRsocketMethod().requestMapper()) ||
-                isEmpty(requestDataValue = requestValue.getValue(REQUEST_DATA))) {
+                isEmpty(requestDataValue = requestValue.get(REQUEST_DATA))) {
             return RsocketRequestContext.builder()
                     .request(newServiceRequest(command, rsocketServiceMethods.getRsocketMethod().validationPolicy()))
                     .rsocketReactiveMethods(rsocketServiceMethods)

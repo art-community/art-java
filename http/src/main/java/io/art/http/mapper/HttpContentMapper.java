@@ -20,7 +20,7 @@ package io.art.http.mapper;
 
 import lombok.*;
 import io.art.core.mime.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import java.nio.charset.*;
 
 @Getter

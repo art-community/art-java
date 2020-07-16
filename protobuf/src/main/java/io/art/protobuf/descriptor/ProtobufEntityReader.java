@@ -20,16 +20,16 @@ package io.art.protobuf.descriptor;
 
 import com.google.protobuf.*;
 import lombok.experimental.*;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.protobuf.exception.*;
 import static com.google.protobuf.Value.KindCase.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.entity.CollectionValuesFactory.*;
-import static io.art.entity.Entity.*;
-import static io.art.entity.PrimitivesFactory.*;
+import static io.art.entity.array.ArrayValuesFactory.*;
+import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.primitive.PrimitivesFactory.*;
 import static io.art.protobuf.constants.ProtobufExceptionMessages.*;
 import java.io.*;
 import java.nio.file.*;
@@ -80,7 +80,7 @@ public class ProtobufEntityReader {
     }
 
     private static Value readCollectionFromProtobuf(ListValue protobufCollection) {
-        return valueCollection(protobufCollection.getValuesList().stream().map(ProtobufEntityReader::readProtobuf).collect(toList()));
+        return valueArray(protobufCollection.getValuesList().stream().map(ProtobufEntityReader::readProtobuf).collect(toList()));
     }
 
     private static Value readStructFromProtobuf(Struct protobufEntity) {

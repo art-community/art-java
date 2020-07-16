@@ -18,7 +18,7 @@
 
 package io.art.soap.server.function;
 
-import io.art.entity.*;
+import io.art.entity.immutable.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.ValueToModelMapper.*;

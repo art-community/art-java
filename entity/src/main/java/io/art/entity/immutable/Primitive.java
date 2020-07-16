@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.entity;
+package io.art.entity.immutable;
 
 import io.art.entity.constants.*;
 import io.art.entity.constants.ValueType.*;

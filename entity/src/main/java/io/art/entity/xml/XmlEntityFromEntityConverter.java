@@ -18,15 +18,15 @@
 
 package io.art.entity.xml;
 
+import io.art.entity.immutable.*;
+import io.art.entity.immutable.Value;
 import lombok.*;
 import io.art.core.checker.*;
-import io.art.entity.Value;
-import io.art.entity.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.entity.Value.*;
-import static io.art.entity.XmlEntity.*;
+import static io.art.entity.immutable.Value.*;
+import static io.art.entity.immutable.XmlEntity.*;
 import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)

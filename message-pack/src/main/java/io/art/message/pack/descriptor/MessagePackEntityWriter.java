@@ -18,13 +18,13 @@
 
 package io.art.message.pack.descriptor;
 
-import io.art.entity.ArrayValue;
+import io.art.entity.immutable.*;
+import io.art.entity.immutable.ArrayValue;
+import io.art.entity.immutable.Value;
 import lombok.experimental.*;
 import org.msgpack.core.buffer.*;
 import org.msgpack.value.*;
 import io.art.core.checker.*;
-import io.art.entity.Value;
-import io.art.entity.*;
 import io.art.message.pack.exception.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
@@ -34,7 +34,7 @@ import static org.msgpack.value.ValueFactory.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.entity.Value.*;
+import static io.art.entity.immutable.Value.*;
 import static io.art.entity.constants.CollectionMode.*;
 import java.io.*;
 import java.nio.file.*;

@@ -18,6 +18,8 @@
 
 package io.art.rsocket.communicator;
 
+import io.art.entity.immutable.*;
+import io.art.entity.immutable.Value;
 import io.rsocket.*;
 import io.rsocket.transport.netty.client.*;
 import lombok.*;
@@ -25,8 +27,6 @@ import org.apache.logging.log4j.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import io.art.core.validator.*;
-import io.art.entity.Value;
-import io.art.entity.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -44,7 +44,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.Value.*;
+import static io.art.entity.immutable.Value.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;

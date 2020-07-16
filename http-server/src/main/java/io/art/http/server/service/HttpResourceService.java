@@ -20,8 +20,8 @@ package io.art.http.server.service;
 
 import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
+import io.art.entity.immutable.*;
 import lombok.experimental.*;
-import io.art.entity.*;
 import io.art.http.server.HttpServerModuleConfiguration.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
@@ -32,8 +32,8 @@ import static io.art.core.context.Context.*;
 import static io.art.core.extensions.InputOutputStreamExtensions.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.CollectionValuesFactory.*;
-import static io.art.entity.PrimitivesFactory.*;
+import static io.art.entity.array.ArrayValuesFactory.*;
+import static io.art.entity.primitive.PrimitivesFactory.*;
 import static io.art.http.server.constants.HttpServerExceptionMessages.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;
 import static io.art.http.server.module.HttpServerModule.*;
@@ -62,7 +62,7 @@ public class HttpResourceService {
         if (nonNull(resource = resourcePathMappings.get(resourcePath))) {
             return cast(resource.getType() == STRING
                     ? stringPrimitive(getStringResource(resource.getPath(), getOrElse(resource.getCharset(), charset), resourceConfiguration))
-                    : byteCollection(getBinaryResource(resource.getPath(), resourceConfiguration)));
+                    : byteArray(getBinaryResource(resource.getPath(), resourceConfiguration)));
         }
 
         HttpResourceExtensionMapping resourceExtensionMapping;
@@ -73,16 +73,16 @@ public class HttpResourceService {
             if (nonNull(customResource = resourceExtensionMapping.getCustomHttpResource())) {
                 return cast(customResource.getType() == STRING
                         ? stringPrimitive(getStringResource(customResource.getPath(), getOrElse(customResource.getCharset(), charset), resourceConfiguration))
-                        : byteCollection(getBinaryResource(customResource.getPath(), resourceConfiguration)));
+                        : byteArray(getBinaryResource(customResource.getPath(), resourceConfiguration)));
             }
             return cast(resourceExtensionMapping.getResourceType() == STRING
                     ? stringPrimitive(getStringResource(resourcePath, getOrElse(resourceExtensionMapping.getMimeType().getCharset(), charset), resourceConfiguration))
-                    : byteCollection(getBinaryResource(resourcePath, resourceConfiguration)));
+                    : byteArray(getBinaryResource(resourcePath, resourceConfiguration)));
         }
         HttpResource defaultResource = resourceConfiguration.getDefaultResource();
         return cast(defaultResource.getType() == STRING
                 ? stringPrimitive(getStringResource(defaultResource.getPath(), getOrElse(defaultResource.getCharset(), charset), resourceConfiguration))
-                : byteCollection(getBinaryResource(defaultResource.getPath(), resourceConfiguration)));
+                : byteArray(getBinaryResource(defaultResource.getPath(), resourceConfiguration)));
 
     }
 

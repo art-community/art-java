@@ -20,7 +20,7 @@ package io.art.http.server.builder;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import io.art.entity.Value;
+import io.art.entity.immutable.Value;
 import io.art.entity.interceptor.ValueInterceptor;
 import io.art.entity.mapper.ValueFromModelMapper;
 import io.art.entity.mapper.ValueToModelMapper;

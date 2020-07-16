@@ -16,13 +16,15 @@
  * limitations under the License.
  */
 
-package io.art.entity;
+package io.art.entity.immutable;
 
+import lombok.*;
 import static io.art.entity.constants.ValueType.*;
+import static io.art.entity.constants.ValueType.XmlValueType.*;
 
-public interface XmlValue<T> {
-    T getValue();
-
-    XmlValueType getType();
+@Getter
+@AllArgsConstructor
+public class CdataXmlValue implements XmlValue<XmlEntity> {
+    private final XmlValueType type = CDATA;
+    private final XmlEntity value;
 }
-
