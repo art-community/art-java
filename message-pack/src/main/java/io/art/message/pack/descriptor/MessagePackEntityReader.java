@@ -101,7 +101,6 @@ public class MessagePackEntityReader {
             for (Map.Entry<org.msgpack.value.Value, org.msgpack.value.Value> entry : map.map().entrySet()) {
                 if (isNull(entry.getKey())) continue;
                 org.msgpack.value.Value value = entry.getValue();
-                if (isNull(value)) continue;
                 String key = entry.getKey().asStringValue().toString();
                 switch (value.getValueType()) {
                     case BOOLEAN:
@@ -153,10 +152,8 @@ public class MessagePackEntityReader {
         if (array.size() == 0) return emptyArray();
         return array(array.list()
                 .stream()
-                .filter(Objects::nonNull)
-                .filter(element -> !element.isNilValue() && !element.isExtensionValue())
+                .filter(element -> !element.isExtensionValue())
                 .map(MessagePackEntityReader::readMessagePack)
-                .filter(Objects::nonNull)
                 .collect(toList()));
     }
 }

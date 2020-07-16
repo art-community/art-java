@@ -33,7 +33,6 @@ public class ArrayMapping {
     public static <T> ValueToModelMapper<Collection<T>, ArrayValue> toArray(ValueToModelMapper<T, Value> elementMapper) {
         return collection -> isEmpty(collection) ? emptyList() : collection.mapToList(elementMapper)
                 .stream()
-                .filter(Objects::nonNull)
                 .map(element -> elementMapper.map(cast(element)))
                 .collect(toList());
     }
@@ -41,7 +40,6 @@ public class ArrayMapping {
     public static <T> ValueFromModelMapper<Collection<T>, ArrayValue> fromArray(ValueFromModelMapper<T, ? extends Value> elementMapper) {
         return collection -> isEmpty(collection) ? cast(emptyArray()) : array(collection
                 .stream()
-                .filter(Objects::nonNull)
                 .map(element -> elementMapper.map(cast(element)))
                 .collect(toList()));
     }
