@@ -124,7 +124,7 @@ public interface Value {
 
         public ValueToModelMapper<Request, Entity> toRequest = entity -> Request.builder()
                 .strValue(asPrimitive(entity.get("strValue")).getString())
-                .inner(asEntity(entity.get("strValue")).toMap())
+                .inner(asEntity(entity.get("strValue")).toStringMap(value -> asPrimitive(value).getString()))
                 .build();
 
     }
