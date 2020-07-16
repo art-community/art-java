@@ -22,7 +22,8 @@ import io.art.entity.constants.*;
 import io.art.entity.mapper.*;
 import lombok.*;
 import static io.art.entity.constants.ValueType.*;
-import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.immutable.Entity.entityBuilder;
+import static io.art.entity.immutable.Value.*;
 import static io.art.entity.mapping.PrimitiveMapping.*;
 import static java.util.Objects.*;
 import java.util.*;
@@ -54,27 +55,27 @@ public interface Value {
 
     static boolean isPrimitive(Value value) {
         if (isNull(value)) return false;
-        return isPrimitiveType(value.getType());
+        return Value.isPrimitiveType(value.getType());
     }
 
     static boolean isEntity(Value value) {
         if (isNull(value)) return false;
-        return isEntityType(value.getType());
+        return Value.isEntityType(value.getType());
     }
 
     static boolean isArray(Value value) {
         if (isNull(value)) return false;
-        return isArrayType(value.getType());
+        return Value.isArrayType(value.getType());
     }
 
     static boolean isXml(Value value) {
         if (isNull(value)) return false;
-        return isXmlType(value.getType());
+        return Value.isXmlType(value.getType());
     }
 
     static boolean isBinary(Value value) {
         if (isNull(value)) return false;
-        return isBinaryType(value.getType());
+        return Value.isBinaryType(value.getType());
     }
 
     static boolean isPrimitiveType(ValueType type) {
@@ -126,9 +127,9 @@ public interface Value {
 
 
         public ValueToModelMapper<Request, Entity> toRequest = entity -> Request.builder()
-                .strValue(asPrimitive(entity.get("strValue")).getString())
-                .inner(asEntity(entity.get("strValue")).asStringMap(value -> asPrimitive(value).getString()))
-                .inner2(asEntity(entity.get("strValue")).asIntMap(value -> asPrimitive(value).getString()))
+                .strValue(Value.asPrimitive(entity.get("strValue")).getString())
+                .inner(Value.asEntity(entity.get("strValue")).asStringMap(value -> asPrimitive(value).getString()))
+                .inner2(Value.asEntity(entity.get("strValue")).asIntMap(value -> asPrimitive(value).getString()))
                 .build();
 
         public ValueFromModelMapper<Request, Entity> fromRequest = request -> entityBuilder()
