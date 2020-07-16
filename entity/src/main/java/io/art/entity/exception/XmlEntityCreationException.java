@@ -18,6 +18,8 @@
 
 package io.art.entity.exception;
 
+import io.art.core.exception.*;
+
 public class XmlEntityCreationException extends RuntimeException {
     public XmlEntityCreationException(String message) {
         super(message);

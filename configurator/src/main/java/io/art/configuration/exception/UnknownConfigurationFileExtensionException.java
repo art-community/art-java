@@ -18,11 +18,10 @@
 
 package io.art.configuration.exception;
 
-import io.art.core.exception.*;
 import static io.art.configuration.constants.ConfiguratorConstants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
 
-public class UnknownConfigurationFileExtensionException extends InternalRuntimeException {
+public class UnknownConfigurationFileExtensionException extends RuntimeException {
     public UnknownConfigurationFileExtensionException(String extension) {
         super(format(UNKNOWN_CONFIGURATION_SOURCE_FILE_EXTENSION, extension));
     }

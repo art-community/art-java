@@ -18,6 +18,8 @@
 
 package io.art.http.json;
 
+import io.art.core.exception.*;
+
 public class HttpJsonMapperException extends RuntimeException {
     public HttpJsonMapperException(String message) {
         super(message);

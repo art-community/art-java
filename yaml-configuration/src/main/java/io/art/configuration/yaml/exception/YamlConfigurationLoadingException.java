@@ -18,9 +18,7 @@
 
 package io.art.configuration.yaml.exception;
 
-import io.art.core.exception.*;
-
-public class YamlConfigurationLoadingException extends InternalRuntimeException  {
+public class YamlConfigurationLoadingException extends RuntimeException {
     public YamlConfigurationLoadingException(Throwable throwable) {
         super(throwable);
     }

@@ -18,7 +18,7 @@
 
 package io.art.core.exception;
 
-public class BuilderValidationException extends InternalRuntimeException {
+public class BuilderValidationException extends RuntimeException {
     public BuilderValidationException(String message) {
         super(message);
     }

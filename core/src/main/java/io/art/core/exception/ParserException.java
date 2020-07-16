@@ -18,7 +18,7 @@
 
 package io.art.core.exception;
 
-public class ParserException extends InternalRuntimeException {
+public class ParserException extends RuntimeException {
     public ParserException(String message) {
         super(message);
     }
