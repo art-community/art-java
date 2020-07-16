@@ -19,23 +19,17 @@
 package io.art.message.pack.descriptor;
 
 import io.art.entity.immutable.*;
-import io.art.entity.immutable.ArrayValue;
-import io.art.entity.immutable.Value;
+import io.art.message.pack.exception.*;
 import lombok.experimental.*;
 import org.msgpack.core.buffer.*;
-import org.msgpack.value.*;
-import io.art.core.checker.*;
-import io.art.message.pack.exception.*;
-import static java.util.Objects.*;
-import static java.util.stream.Collectors.*;
-import static org.msgpack.core.MessagePack.*;
-import static org.msgpack.value.ValueFactory.MapBuilder;
-import static org.msgpack.value.ValueFactory.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.entity.immutable.Value.*;
-import static io.art.entity.constants.CollectionMode.*;
+import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
+import static org.msgpack.core.MessagePack.*;
+import static org.msgpack.value.ValueFactory.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -78,7 +72,7 @@ public class MessagePackEntityWriter {
             case ENTITY:
                 return writeEntity(asEntity(value));
             case ARRAY:
-                return writeCollectionValue(asArray(value));
+                return writeArray(asArray(value));
         }
         return newNil();
     }
@@ -107,87 +101,11 @@ public class MessagePackEntityWriter {
         return newNil();
     }
 
-    private static org.msgpack.value.Value writeCollectionValue(ArrayValue<?> collectionValue) {
-        if (Value.isEmpty(collectionValue)) {
+    private static org.msgpack.value.Value writeArray(ArrayValue array) {
+        if (Value.isEmpty(array)) {
             return newArray();
         }
-        switch (collectionValue.getElementsType()) {
-            case STRING:
-                return newArray(collectionValue.getStringList()
-                        .stream()
-                        .filter(EmptinessChecker::isNotEmpty)
-                        .map(ValueFactory::newString)
-                        .collect(toList()));
-            case LONG:
-                return newArray((collectionValue.getCollectionMode() == PRIMITIVE_ARRAY
-                        ? fixedArrayOf(collectionValue.getLongArray())
-                        : collectionValue.getLongList())
-                        .stream()
-                        .filter(EmptinessChecker::isNotEmpty)
-                        .map(primitive -> newInteger((Long) primitive))
-                        .collect(toList()));
-            case DOUBLE:
-                return newArray((collectionValue.getCollectionMode() == PRIMITIVE_ARRAY
-                        ? fixedArrayOf(collectionValue.getDoubleArray())
-                        : collectionValue.getDoubleList())
-                        .stream()
-                        .filter(EmptinessChecker::isNotEmpty)
-                        .map(primitive -> newFloat((Double) primitive))
-                        .collect(toList()));
-            case FLOAT:
-                return newArray((collectionValue.getCollectionMode() == PRIMITIVE_ARRAY
-                        ? fixedArrayOf(collectionValue.getFloatArray())
-                        : collectionValue.getFloatList())
-                        .stream()
-                        .filter(EmptinessChecker::isNotEmpty)
-                        .map(primitive -> newFloat((Float) primitive))
-                        .collect(toList()));
-            case INT:
-                return newArray((collectionValue.getCollectionMode() == PRIMITIVE_ARRAY
-                        ? fixedArrayOf(collectionValue.getIntArray())
-                        : collectionValue.getIntList())
-                        .stream()
-                        .filter(EmptinessChecker::isNotEmpty)
-                        .map(primitive -> newInteger((Integer) primitive))
-                        .collect(toList()));
-            case BOOL:
-                return newArray((collectionValue.getCollectionMode() == PRIMITIVE_ARRAY
-                        ? fixedArrayOf(collectionValue.getBoolArray())
-                        : collectionValue.getBoolList())
-                        .stream()
-                        .filter(EmptinessChecker::isNotEmpty)
-                        .map(primitive -> newBoolean((Boolean) primitive))
-                        .collect(toList()));
-            case BYTE:
-                if (collectionValue.getCollectionMode() == PRIMITIVE_ARRAY) {
-                    return newBinary(collectionValue.getByteArray());
-                }
-                return newArray(collectionValue.getByteList()
-                        .stream()
-                        .filter(EmptinessChecker::isNotEmpty)
-                        .map(ValueFactory::newInteger)
-                        .collect(toList()));
-            case COLLECTION:
-                return newArray(collectionValue.getCollectionsList()
-                        .stream()
-                        .filter(EmptinessChecker::isNotEmpty)
-                        .map(MessagePackEntityWriter::writeCollectionValue)
-                        .collect(toList()));
-            case ENTITY:
-                return newArray(collectionValue.getEntityList()
-                        .stream()
-                        .filter(EmptinessChecker::isNotEmpty)
-                        .map(MessagePackEntityWriter::writeEntity)
-                        .collect(toList()));
-            case VALUE:
-                return newArray(collectionValue.getValueList()
-                        .stream()
-                        .filter(EmptinessChecker::isNotEmpty)
-                        .map(MessagePackEntityWriter::writeMessagePack)
-                        .collect(toList()));
-
-        }
-        return emptyArray();
+        return newArray(array.asStream().map(MessagePackEntityWriter::writeMessagePack).collect(toList()));
     }
 
     private static org.msgpack.value.Value writeEntity(Entity entity) {
@@ -195,11 +113,11 @@ public class MessagePackEntityWriter {
             return emptyMap();
         }
         MapBuilder mapBuilder = newMapBuilder();
-        entity.getFields().entrySet().forEach(entry -> writeEntityEntry(mapBuilder, entry));
+        entity.asMap().entrySet().forEach(entry -> writeEntityField(mapBuilder, entry));
         return mapBuilder.build();
     }
 
-    private static void writeEntityEntry(MapBuilder mapBuilder, Map.Entry<? extends Value, ? extends Value> entry) {
+    private static void writeEntityField(MapBuilder mapBuilder, Map.Entry<? extends Value, ? extends Value> entry) {
         final Value key = entry.getKey();
         if (isEmpty(key) || !isPrimitive(key) || isEmpty(entry.getValue())) {
             return;
@@ -216,7 +134,7 @@ public class MessagePackEntityWriter {
                 mapBuilder.put(newString(key.toString()), writePrimitive(asPrimitive(value)));
                 return;
             case ARRAY:
-                mapBuilder.put(newString(key.toString()), writeCollectionValue(asArray(value)));
+                mapBuilder.put(newString(key.toString()), writeArray(asArray(value)));
                 return;
             case ENTITY:
                 mapBuilder.put(newString(key.toString()), writeEntity(asEntity(value)));

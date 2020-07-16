@@ -18,19 +18,23 @@
 
 package io.art.message.pack.descriptor;
 
+import io.art.entity.builder.*;
 import io.art.entity.immutable.ArrayValue;
-import lombok.experimental.*;
-import org.msgpack.value.*;
 import io.art.entity.immutable.Value;
 import io.art.message.pack.exception.*;
-import static java.util.Objects.*;
-import static java.util.stream.Collectors.*;
-import static org.msgpack.core.MessagePack.*;
+import lombok.experimental.*;
+import org.msgpack.value.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.entity.factory.ArrayFactory.*;
-import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.BinaryValue.*;
+import static io.art.entity.immutable.Entity.asPrimitive;
+import static io.art.entity.immutable.Entity.isPrimitive;
+import static io.art.entity.immutable.Entity.*;
+import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
+import static org.msgpack.core.MessagePack.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -82,12 +86,13 @@ public class MessagePackEntityReader {
             case BINARY:
                 return byteArray(value.asBinaryValue().asByteArray());
             case ARRAY:
-                return readCollectionValue(value.asArrayValue());
+                return readArray(value.asArrayValue());
             case MAP:
                 return readMap(value.asMapValue());
         }
         return null;
     }
+
 
     private static Value readMap(org.msgpack.value.MapValue map) {
         if (map.size() == 0) return entityBuilder().build();
@@ -100,34 +105,34 @@ public class MessagePackEntityReader {
                 String key = entry.getKey().asStringValue().toString();
                 switch (value.getValueType()) {
                     case BOOLEAN:
-                        entityBuilder.boolField(key, value.asBooleanValue().getBoolean());
+                        entityBuilder.lazyPut(key, () -> boolPrimitive(value.asBooleanValue().getBoolean()));
                         break;
                     case INTEGER:
                         IntegerValue integerValue = value.asIntegerValue();
                         if (integerValue.isInByteRange()) {
-                            entityBuilder.byteField(key, integerValue.toByte());
+                            entityBuilder.lazyPut(key, () -> bytePrimitive(integerValue.asByte()));
                         }
                         if (integerValue.isInIntRange()) {
-                            entityBuilder.intField(key, integerValue.toInt());
+                            entityBuilder.lazyPut(key, () -> intPrimitive(integerValue.asInt()));
                         }
                         if (integerValue.isInLongRange()) {
-                            entityBuilder.longField(key, integerValue.toLong());
+                            entityBuilder.lazyPut(key, () -> longPrimitive(integerValue.asLong()));
                         }
                         break;
                     case FLOAT:
-                        entityBuilder.doubleField(key, value.asFloatValue().toDouble());
+                        entityBuilder.lazyPut(key, () -> floatPrimitive(value.asFloatValue().toFloat()));
                         break;
                     case STRING:
-                        entityBuilder.stringField(key, value.asStringValue().toString());
+                        entityBuilder.lazyPut(key, () -> stringPrimitive(value.asStringValue().asString()));
                         break;
                     case BINARY:
-                        entityBuilder.byteArrayField(key, value.asBinaryValue().asByteArray());
+                        entityBuilder.lazyPut(key, () -> binary(value.asBinaryValue().asByteArray()));
                         break;
                     case ARRAY:
-                        entityBuilder.valueField(key, readCollectionValue(value.asArrayValue()));
+                        entityBuilder.lazyPut(key, () -> readArray(value.asArrayValue()));
                         break;
                     case MAP:
-                        entityBuilder.valueField(key, readMap(value.asMapValue()));
+                        entityBuilder.lazyPut(key, () -> readMap(value.asMapValue()));
                 }
             }
             return entityBuilder.build();
@@ -137,18 +142,16 @@ public class MessagePackEntityReader {
             org.msgpack.value.Value key = entry.getKey();
             org.msgpack.value.Value value = entry.getValue();
             if (isNull(key)) continue;
-            if (isNull(value)) continue;
             Value keyValue = readMessagePack(key);
-            if (nonNull(keyValue)) {
-                valueBuilder.valueField(keyValue, readMessagePack(value));
-            }
+            if (!isPrimitive(keyValue)) continue;
+            valueBuilder.lazyPut(asPrimitive(keyValue), () -> readMessagePack(value));
         }
         return valueBuilder.build();
     }
 
-    private static ArrayValue readCollectionValue(org.msgpack.value.ArrayValue array) {
+    private static ArrayValue readArray(org.msgpack.value.ArrayValue array) {
         if (array.size() == 0) return emptyArray();
-        return valueArray(array.list()
+        return array(array.list()
                 .stream()
                 .filter(Objects::nonNull)
                 .filter(element -> !element.isNilValue() && !element.isExtensionValue())
