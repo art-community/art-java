@@ -20,6 +20,7 @@ package io.art.core.parser;
 
 import io.art.core.exception.*;
 import lombok.experimental.*;
+import static io.art.core.constants.ExceptionMessages.*;
 import static java.lang.Character.*;
 import static java.lang.Double.*;
 import static java.lang.Long.*;
@@ -79,7 +80,7 @@ public class DurationParser {
                 units = MINUTES;
                 break;
             default:
-                throw new ParserException(format("Unknown duration time units: {0}", unitString));
+                throw new ParserException(format(UNKNOWN_DURATION_TIME_UNITS, unitString));
         }
 
         if (numberString.matches("[+-]?[0-9]+")) {

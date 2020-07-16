@@ -19,8 +19,8 @@
 package io.art.entity;
 
 import io.art.entity.constants.*;
-import static java.util.Objects.*;
 import static io.art.entity.constants.ValueType.*;
+import static java.util.Objects.*;
 
 public interface Value {
     static Primitive asPrimitive(Value value) {
@@ -31,9 +31,8 @@ public interface Value {
         return (Entity) value;
     }
 
-    @SuppressWarnings("unchecked")
-    static <C> CollectionValue<C> asCollection(Value value) {
-        return (CollectionValue<C>) value;
+    static CollectionValue asCollection(Value value) {
+        return (CollectionValue) value;
     }
 
     static boolean isEmpty(Value value) {

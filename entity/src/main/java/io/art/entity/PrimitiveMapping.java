@@ -21,78 +21,34 @@ package io.art.entity;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
-import static io.art.core.caster.Caster.*;
-import static io.art.entity.PrimitivesFactory.*;
-import static io.art.entity.constants.ValueType.PrimitiveType.*;
 import static io.art.entity.mapper.ValueMapper.*;
 
 public interface PrimitiveMapping {
-    ValueMapper<String, Primitive> stringMapper = mapper(StringPrimitive.fromModel, StringPrimitive.toModel);
-    ValueMapper<Integer, Primitive> intMapper = mapper(IntPrimitive.fromModel, IntPrimitive.toModel);
-    ValueMapper<Long, Primitive> longMapper = mapper(LongPrimitive.fromModel, LongPrimitive.toModel);
-    ValueMapper<Double, Primitive> doubleMapper = mapper(DoublePrimitive.fromModel, DoublePrimitive.toModel);
-    ValueMapper<Boolean, Primitive> boolMapper = mapper(BoolPrimitive.fromModel, BoolPrimitive.toModel);
-    ValueMapper<Byte, Primitive> byteMapper = mapper(BytePrimitive.fromModel, BytePrimitive.toModel);
-    ValueMapper<Float, Primitive> floatMapper = mapper(FloatPrimitive.fromModel, FloatPrimitive.toModel);
+    PrimitiveFromModelMapper<String> fromString = PrimitivesFactory::stringPrimitive;
+    PrimitiveToModelMapper<String> toString = Primitive::getString;
+    ValueMapper<String, Primitive> stringMapper = mapper(fromString, toString);
 
-    ValueMapper<Integer, Primitive> intFromStringMapper = mapper(cast(StringPrimitive.intFromStringModel), IntPrimitive.toModel);
-    ValueMapper<Double, Primitive> doubleFromStringMapper = mapper(cast(StringPrimitive.doubleFromStringModel), DoublePrimitive.toModel);
-    ValueMapper<Long, Primitive> longFromStringMapper = mapper(cast(StringPrimitive.longFromStringModel), LongPrimitive.toModel);
-    ValueMapper<Boolean, Primitive> boolFromStringMapper = mapper(cast(StringPrimitive.boolFromStringModel), BoolPrimitive.toModel);
-    ValueMapper<Byte, Primitive> byteFromStringMapper = mapper(cast(StringPrimitive.byteFromStringModel), BytePrimitive.toModel);
-    ValueMapper<Float, Primitive> floatFromStringMapper = mapper(cast(StringPrimitive.floatFromStringModel), FloatPrimitive.toModel);
+    PrimitiveFromModelMapper<Integer> fromInt = PrimitivesFactory::intPrimitive;
+    PrimitiveToModelMapper<Integer> toInt = Primitive::getInt;
+    ValueMapper<Integer, Primitive> intMapper = mapper(fromInt, toInt);
 
-    interface StringPrimitive {
-        PrimitiveFromModelMapper<String> fromModel = PrimitivesFactory::stringPrimitive;
-        PrimitiveToModelMapper<String> toModel = Primitive::getString;
+    PrimitiveFromModelMapper<Long> fromLong = PrimitivesFactory::longPrimitive;
+    PrimitiveToModelMapper<Long> toLong = Primitive::getLong;
+    ValueMapper<Long, Primitive> longMapper = mapper(fromLong, toLong);
 
-        StringDataPrimitiveFromModelMapper intFromStringModel = str -> primitiveFromString(str, INT);
-        StringDataPrimitiveFromModelMapper longFromStringModel = str -> primitiveFromString(str, LONG);
-        StringDataPrimitiveFromModelMapper doubleFromStringModel = str -> primitiveFromString(str, DOUBLE);
-        StringDataPrimitiveFromModelMapper boolFromStringModel = str -> primitiveFromString(str, BOOL);
-        StringDataPrimitiveFromModelMapper byteFromStringModel = str -> primitiveFromString(str, BYTE);
-        StringDataPrimitiveFromModelMapper floatFromStringModel = str -> primitiveFromString(str, FLOAT);
-    }
+    PrimitiveFromModelMapper<Double> fromDouble = PrimitivesFactory::doublePrimitive;
+    PrimitiveToModelMapper<Double> toDouble = Primitive::getDouble;
+    ValueMapper<Double, Primitive> doubleMapper = mapper(fromDouble, toDouble);
 
-    interface IntPrimitive {
-        PrimitiveFromModelMapper<Integer> fromModel = PrimitivesFactory::intPrimitive;
-        PrimitiveToModelMapper<Integer> toModel = Primitive::getInt;
+    PrimitiveFromModelMapper<Boolean> fromBool = PrimitivesFactory::boolPrimitive;
+    PrimitiveToModelMapper<Boolean> toBool = Primitive::getBool;
+    ValueMapper<Boolean, Primitive> boolMapper = mapper(fromBool, toBool);
 
-        StringDataPrimitiveToModelMapper<Integer> parseToModel = Primitive::parseInt;
-    }
+    PrimitiveFromModelMapper<Byte> fromByte = PrimitivesFactory::bytePrimitive;
+    PrimitiveToModelMapper<Byte> toByte = Primitive::getByte;
+    ValueMapper<Byte, Primitive> byteMapper = mapper(fromByte, toByte);
 
-    interface LongPrimitive {
-        PrimitiveFromModelMapper<Long> fromModel = PrimitivesFactory::longPrimitive;
-        PrimitiveToModelMapper<Long> toModel = Primitive::getLong;
-
-        StringDataPrimitiveToModelMapper<Long> parseToModel = Primitive::parseLong;
-    }
-
-    interface DoublePrimitive {
-        PrimitiveFromModelMapper<Double> fromModel = PrimitivesFactory::doublePrimitive;
-        PrimitiveToModelMapper<Double> toModel = Primitive::getDouble;
-
-        StringDataPrimitiveToModelMapper<Double> parseToModel = Primitive::parseDouble;
-    }
-
-    interface BoolPrimitive {
-        PrimitiveFromModelMapper<Boolean> fromModel = PrimitivesFactory::boolPrimitive;
-        PrimitiveToModelMapper<Boolean> toModel = Primitive::getBool;
-
-        StringDataPrimitiveToModelMapper<Boolean> parseToModel = Primitive::parseBool;
-    }
-
-    interface BytePrimitive {
-        PrimitiveFromModelMapper<Byte> fromModel = PrimitivesFactory::bytePrimitive;
-        PrimitiveToModelMapper<Byte> toModel = Primitive::getByte;
-
-        StringDataPrimitiveToModelMapper<Byte> parseToModel = Primitive::parseByte;
-    }
-
-    interface FloatPrimitive {
-        PrimitiveFromModelMapper<Float> fromModel = PrimitivesFactory::floatPrimitive;
-        PrimitiveToModelMapper<Float> toModel = Primitive::getFloat;
-
-        StringDataPrimitiveToModelMapper<Float> parseToModel = Primitive::parseFloat;
-    }
+    PrimitiveFromModelMapper<Float> fromFloat = PrimitivesFactory::floatPrimitive;
+    PrimitiveToModelMapper<Float> toFloat = Primitive::getFloat;
+    ValueMapper<Float, Primitive> floatMapper = mapper(fromFloat, toFloat);
 }

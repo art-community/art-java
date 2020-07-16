@@ -18,54 +18,23 @@
 
 package io.art.entity;
 
-import lombok.*;
 import io.art.entity.constants.*;
 import io.art.entity.constants.ValueType.*;
-import io.art.entity.exception.*;
-import static java.util.Objects.*;
+import lombok.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.StringExtensions.*;
-import static io.art.entity.constants.ValueMappingExceptionMessages.*;
-import static io.art.entity.constants.ValueType.PrimitiveType.BOOL;
-import static io.art.entity.constants.ValueType.PrimitiveType.BYTE;
-import static io.art.entity.constants.ValueType.PrimitiveType.DOUBLE;
-import static io.art.entity.constants.ValueType.PrimitiveType.FLOAT;
-import static io.art.entity.constants.ValueType.PrimitiveType.INT;
-import static io.art.entity.constants.ValueType.PrimitiveType.LONG;
 import static io.art.entity.constants.ValueType.PrimitiveType.STRING;
-import java.text.*;
-
+import static java.util.Objects.*;
 
 @Getter
 @AllArgsConstructor
 public class Primitive implements Value {
-    private Object value;
-    private PrimitiveType primitiveType;
-
-    public static Primitive parseStringByType(String value, PrimitiveType primitiveType) {
-        switch (primitiveType) {
-            case INT:
-                return new Primitive(Integer.valueOf(value), INT);
-            case STRING:
-                return new Primitive(value, STRING);
-            case LONG:
-                return new Primitive(Long.valueOf(value), LONG);
-            case BOOL:
-                return new Primitive(Boolean.valueOf(value), BOOL);
-            case BYTE:
-                return new Primitive(Byte.valueOf(value), BYTE);
-            case DOUBLE:
-                return new Primitive(Double.valueOf(value), DOUBLE);
-            case FLOAT:
-                return new Primitive(Float.valueOf(value), FLOAT);
-            default:
-                throw new ValueMappingException(MessageFormat.format(NOT_PRIMITIVE_TYPE, primitiveType));
-        }
-    }
+    private final Object value;
+    private final PrimitiveType primitiveType;
 
     public String getString() {
+        if (isNull(value)) return null;
         if (primitiveType != STRING) {
-            return emptyIfNull(value);
+            return value.toString();
         }
         return (String) value;
     }
@@ -116,90 +85,6 @@ public class Primitive implements Value {
             return Byte.parseByte((String) value);
         }
         return ((Number) value).byteValue();
-    }
-
-    public Integer parseInt() {
-        if (isNull(value)) {
-            return null;
-        }
-        switch (primitiveType) {
-            case STRING:
-                return Integer.parseInt((String) value);
-            case INT:
-                return (Integer) value;
-            default:
-                return null;
-        }
-    }
-
-    public Double parseDouble() {
-        if (isNull(value)) {
-            return null;
-        }
-        switch (primitiveType) {
-            case STRING:
-                return Double.parseDouble((String) value);
-            case DOUBLE:
-                return (Double) value;
-            default:
-                return null;
-        }
-    }
-
-    public Long parseLong() {
-        if (isNull(value)) {
-            return null;
-        }
-        switch (primitiveType) {
-            case STRING:
-                return Long.parseLong((String) value);
-            case LONG:
-                return (Long) value;
-            default:
-                return null;
-        }
-    }
-
-    public Boolean parseBool() {
-        if (isNull(value)) {
-            return null;
-        }
-        switch (primitiveType) {
-            case STRING:
-                return Boolean.parseBoolean((String) value);
-            case BOOL:
-                return (Boolean) value;
-            default:
-                return null;
-        }
-    }
-
-    public Byte parseByte() {
-        if (isNull(value)) {
-            return null;
-        }
-        switch (primitiveType) {
-            case STRING:
-                return Byte.parseByte((String) value);
-            case BYTE:
-                return (Byte) value;
-            default:
-                return null;
-        }
-    }
-
-    public Float parseFloat() {
-        if (isNull(value)) {
-            return null;
-        }
-        switch (primitiveType) {
-            case STRING:
-                return Float.parseFloat((String) value);
-            case FLOAT:
-                return (Float) value;
-            default:
-                return null;
-        }
     }
 
     @Override

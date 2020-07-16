@@ -27,7 +27,7 @@ public interface ValueToModelMapper<T, V extends Value> extends Serializable {
     interface EntityToModelMapper<T> extends ValueToModelMapper<T, Entity> {
     }
 
-    interface CollectionValueToModelMapper<T> extends ValueToModelMapper<T, CollectionValue<?>> {
+    interface CollectionValueToModelMapper<T> extends ValueToModelMapper<T, CollectionValue> {
     }
 
     interface PrimitiveToModelMapper<T> extends ValueToModelMapper<T, Primitive> {

@@ -57,9 +57,9 @@ import static io.art.entity.constants.ValueType.CollectionElementsType.*;
 import java.util.*;
 
 @Getter
-public class CollectionValue<T> implements Value {
+public class CollectionValue implements Value {
     private final CollectionElementsType elementsType;
-    private final Collection<T> elements;
+    private final Collection<Value> elements;
     private final ValueType type = ValueType.COLLECTION;
     private final CollectionMode collectionMode;
     private byte[] byteElements;
@@ -75,7 +75,7 @@ public class CollectionValue<T> implements Value {
         collectionMode = COLLECTION;
     }
 
-    CollectionValue(CollectionElementsType elementsType, Collection<T> elements) {
+    CollectionValue(CollectionElementsType elementsType, Collection<Value> elements) {
         this.elementsType = elementsType;
         this.elements = elements;
         collectionMode = COLLECTION;
@@ -124,7 +124,7 @@ public class CollectionValue<T> implements Value {
     }
 
 
-    public List<T> getList() {
+    public List<Value> getList() {
         if (isEmpty()) return emptyList();
         if (collectionMode == PRIMITIVE_ARRAY) {
             switch (elementsType) {
@@ -145,7 +145,7 @@ public class CollectionValue<T> implements Value {
         return fixedArrayOf(elements);
     }
 
-    public Set<T> getSet() {
+    public Set<Value> getSet() {
         if (isEmpty()) return emptySet();
         if (collectionMode == PRIMITIVE_ARRAY) {
             switch (elementsType) {
@@ -163,10 +163,10 @@ public class CollectionValue<T> implements Value {
                     return cast(setOf(byteElements));
             }
         }
-        return cast(setOf((Collection<?>) elements));
+        return cast(setOf(elements));
     }
 
-    public Queue<T> getQueue() {
+    public Queue<Value> getQueue() {
         if (isEmpty()) return queueOf();
         if (collectionMode == PRIMITIVE_ARRAY) {
             switch (elementsType) {
@@ -184,7 +184,7 @@ public class CollectionValue<T> implements Value {
                     return cast(queueOf(byteElements));
             }
         }
-        return cast(queueOf((Collection<?>) elements));
+        return cast(queueOf(elements));
     }
 
 
@@ -280,7 +280,7 @@ public class CollectionValue<T> implements Value {
         return cast(getList());
     }
 
-    public List<CollectionValue<?>> getCollectionsList() {
+    public List<CollectionValue> getCollectionsList() {
         if (isEmpty()) return emptyList();
         if (elementsType != CollectionElementsType.COLLECTION && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_LIST_ELEMENTS_TYPE_INVALID, COLLECTION.toString(), elementsType.toString()));
@@ -855,7 +855,7 @@ public class CollectionValue<T> implements Value {
         return cast(getSet());
     }
 
-    public Set<CollectionValue<?>> getCollectionsSet() {
+    public Set<CollectionValue> getCollectionsSet() {
         if (isEmpty()) return emptySet();
         if (elementsType != CollectionElementsType.COLLECTION && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_SET_ELEMENTS_TYPE_INVALID, COLLECTION.toString(), elementsType.toString()));
@@ -1433,7 +1433,7 @@ public class CollectionValue<T> implements Value {
         return cast(getQueue());
     }
 
-    public Queue<CollectionValue<?>> getCollectionsQueue() {
+    public Queue<CollectionValue> getCollectionsQueue() {
         if (isEmpty()) return queueOf();
         if (elementsType != CollectionElementsType.COLLECTION && elementsType != VALUE) {
             throw new ValueMappingException(format(REQUEST_QUEUE_ELEMENTS_TYPE_INVALID, COLLECTION.toString(), elementsType.toString()));
@@ -2372,7 +2372,7 @@ public class CollectionValue<T> implements Value {
     public boolean equals(Object other) {
         if (this == other) return true;
         if (other == null || getClass() != other.getClass()) return false;
-        CollectionValue<?> otherValue = (CollectionValue<?>) other;
+        CollectionValue otherValue = (CollectionValue) other;
         if (otherValue.elementsType == VALUE
                 || otherValue.elementsType == CollectionElementsType.COLLECTION
                 || otherValue.elementsType == ENTITY) {
@@ -2410,7 +2410,7 @@ public class CollectionValue<T> implements Value {
 
     @Override
     public int hashCode() {
-        List<T> elements = getList();
+        List<Value> elements = getList();
         return elements != null ? elements.hashCode() : 0;
     }
 }

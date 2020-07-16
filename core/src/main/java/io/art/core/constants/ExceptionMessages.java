@@ -40,4 +40,5 @@ public interface ExceptionMessages {
     String EXCEPTION_WRAPPER_IS_NULL = "Exception wrapper is null";
     String EXCEPTION_HANDLER_IS_NULL = "Exception handler is null";
     String FILE_PATH_NOT_VALID = "File path is not valid: {0}";
+    String UNKNOWN_DURATION_TIME_UNITS = "Unknown duration time units: {0}";
 }

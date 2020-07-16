@@ -149,10 +149,8 @@ public enum ValueType {
         VALUE
     }
 
-
     public enum XmlValueType {
         STRING,
         CDATA
     }
-
 }
