@@ -1,16 +1,13 @@
 package io.art.json.descriptor;
 
-import io.art.entity.immutable.Value;
-import io.art.json.exception.JsonMappingException;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Path;
-
-import static java.util.Objects.isNull;
-import static io.art.core.context.Context.contextConfiguration;
-import static io.art.core.extensions.FileExtensions.writeFileQuietly;
-import static io.art.json.module.JsonModule.jsonModule;
+import io.art.entity.immutable.*;
+import io.art.json.exception.*;
+import static io.art.core.context.Context.*;
+import static io.art.core.extensions.FileExtensions.*;
+import static io.art.json.module.JsonModule.*;
+import static java.util.Objects.*;
+import java.io.*;
+import java.nio.file.*;
 
 public class JsonEntityPrettyWriter {
     public static byte[] prettyWriteJsonToBytes(Value value) {
@@ -33,6 +30,6 @@ public class JsonEntityPrettyWriter {
     }
 
     public static String prettyWriteJson(Value value) {
-        return JsonEntityWriter.writeJson(jsonModule().getObjectMapper().getFactory(), value, true);
+        return JsonEntityWriter.writeJson(jsonModule().getConfiguration().getObjectMapper().getFactory(), value, true);
     }
 }

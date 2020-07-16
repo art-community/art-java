@@ -60,7 +60,7 @@ public class JsonEntityWriter {
     }
 
     public static String writeJson(Value value) {
-        return writeJson(jsonModule().getObjectMapper().getFactory(), value, false);
+        return writeJson(jsonModule().getConfiguration().getObjectMapper().getFactory(), value, false);
     }
 
     public static String writeJson(JsonFactory jsonFactory, Value value, boolean prettyOutput) {
