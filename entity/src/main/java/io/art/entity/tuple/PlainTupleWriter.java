@@ -18,18 +18,18 @@
 
 package io.art.entity.tuple;
 
-import io.art.entity.immutable.*;
 import io.art.entity.immutable.Value;
+import io.art.entity.immutable.*;
+import io.art.entity.tuple.schema.*;
 import lombok.*;
 import lombok.experimental.*;
-import io.art.entity.tuple.schema.*;
-import static java.util.Collections.*;
-import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.tuple.schema.ValueSchema.*;
+import static java.util.Collections.*;
+import static java.util.Objects.*;
 import java.util.*;
 
 @UtilityClass
@@ -60,10 +60,8 @@ public class PlainTupleWriter {
 
     private static List<?> writeEntity(Entity entity) {
         List<?> tuple = dynamicArrayOf();
-        Map<? extends Value, ? extends Value> fields = entity.asMap();
-        for (Map.Entry<? extends Value, ? extends Value> entry : fields.entrySet()) {
-            Value key = entry.getKey();
-            if (!isPrimitive(key)) continue;
+        Map<Primitive, ? extends Value> fields = entity.asMap();
+        for (Map.Entry<Primitive, ? extends Value> entry : fields.entrySet()) {
             Value value = entry.getValue();
             if (isPrimitive(value)) {
                 tuple.add(cast(asPrimitive(value).getValue()));

@@ -51,11 +51,10 @@ public class TupleWriter {
 
     private static void writeEntity(List<?> tuple, Entity entity) {
         List<?> entityTuple = dynamicArrayOf();
-        Map<? extends Value, ? extends Value> fields = entity.asMap();
+        Map<Primitive, ? extends Value> fields = entity.asMap();
         tuple.add(cast(entity.getType().ordinal()));
-        for (Map.Entry<? extends Value, ? extends Value> entry : fields.entrySet()) {
-            Value key = entry.getKey();
-            if (!isPrimitive(key)) continue;
+        for (Map.Entry<Primitive, ? extends Value> entry : fields.entrySet()) {
+            Primitive key = entry.getKey();
             Value value = entry.getValue();
             entityTuple.add(cast(asPrimitive(key).getValue()));
             if (isPrimitive(value)) {
