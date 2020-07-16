@@ -40,7 +40,7 @@ import java.util.*;
 public final class XmlEntityToEntityConverter {
     public static Entity toEntityFromTags(XmlEntity xmlEntity) {
         if (isEmpty(xmlEntity)) {
-            return entityBuilder().build();
+            return null;
         }
         EntityBuilder entityBuilder = entityBuilder();
         List<Value> values = dynamicArrayOf();
@@ -90,7 +90,7 @@ public final class XmlEntityToEntityConverter {
 
     public static Entity toEntityFromAttributes(XmlEntity xmlEntity) {
         if (isEmpty(xmlEntity)) {
-            return entityBuilder().build();
+            return null;
         }
         Map<Primitive, Primitive> attributes = xmlEntity.getAttributes()
                 .entrySet()

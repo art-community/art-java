@@ -33,12 +33,12 @@ import java.util.*;
 
 public interface HttpParametersParser {
     static Entity parseQueryParameters(HttpServletRequest request) {
-        Map<Value, Value> parameters = request
+        Map<Primitive, Value> parameters = request
                 .getParameterMap()
                 .keySet()
                 .stream()
                 .collect(toMap(PrimitivesFactory::stringPrimitive, name -> stringPrimitive(request.getParameterValues(name)[0])));
-        return entityBuilder().putFields(parameters).build();
+        return entityBuilder().putAll(parameters).build();
     }
 
     static Entity parsePathParameters(HttpServletRequest request, HttpService.HttpMethod methodConfig) {
@@ -52,7 +52,7 @@ public interface HttpParametersParser {
             return entityBuilder().build();
         }
         int parameterIndex = 1;
-        MapBuilder<Value, Value> parameters = mapOf();
+        MapBuilder<Primitive, Value> parameters = mapOf();
         String lastParameter = EMPTY_STRING;
         for (String name : parameterNames) {
             lastParameter = name;
@@ -68,7 +68,7 @@ public interface HttpParametersParser {
                 parameters.computeIfPresent(stringPrimitive(lastParameter), (key, value) -> stringPrimitive(value + SLASH + parameterValues[index]));
             }
         }
-        return entityBuilder().putFields(parameters).build();
+        return entityBuilder().putAll(parameters).build();
     }
 }
 

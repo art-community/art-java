@@ -159,7 +159,7 @@ class HttpServerRequestHandler {
                         .error(EXCEPTION_OCCURRED_DURING_READING_PART, ioException);
             }
         }
-        return entityBuilder.build();
+        return null;
     }
 
     private static Value mapResponseValue(HttpMethod httpMethod, ServiceResponse<?> serviceResponse) {
