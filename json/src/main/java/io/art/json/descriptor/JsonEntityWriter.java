@@ -88,7 +88,7 @@ public class JsonEntityWriter {
                     writeJsonEntity(generator, asEntity(value));
                     break;
                 case ARRAY:
-                    writeArray(generator, asCollection(value));
+                    writeArray(generator, asArray(value));
                     break;
                 case STRING:
                     return emptyIfNull(asPrimitive(value).getString());
@@ -185,7 +185,7 @@ public class JsonEntityWriter {
                 writeJsonEntity(jsonGenerator, name, asEntity(value));
                 return;
             case ARRAY:
-                writeArray(jsonGenerator, name, asCollection(value));
+                writeArray(jsonGenerator, name, asArray(value));
                 return;
             case STRING:
             case INT:
@@ -229,7 +229,7 @@ public class JsonEntityWriter {
         if (isNull(value)) return;
         switch (type) {
             case COLLECTION:
-                writeArray(jsonGenerator, asCollection(cast(value)));
+                writeArray(jsonGenerator, asArray(cast(value)));
                 return;
             case ENTITY:
                 writeJsonEntity(jsonGenerator, asEntity(cast(value)));
@@ -266,7 +266,7 @@ public class JsonEntityWriter {
         if (isNull(value)) return;
         switch (type) {
             case ARRAY:
-                writeArray(jsonGenerator, asCollection(cast(value)));
+                writeArray(jsonGenerator, asArray(cast(value)));
                 return;
             case ENTITY:
                 writeJsonEntity(jsonGenerator, asEntity(cast(value)));

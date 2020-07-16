@@ -16,26 +16,16 @@
  * limitations under the License.
  */
 
-package io.art.entity.mapper;
+package io.art.entity.mapping;
 
 import io.art.entity.immutable.*;
-import java.io.*;
+import io.art.entity.mapper.ValueFromModelMapper.*;
+import io.art.entity.mapper.*;
+import io.art.entity.mapper.ValueToModelMapper.*;
+import static io.art.entity.mapper.ValueMapper.*;
 
-public interface ValueFromModelMapper<T, V extends Value> extends Serializable {
-    V map(T model);
-
-    interface EntityFromModelMapper<T> extends ValueFromModelMapper<T, Entity> {
-    }
-
-    interface ArrayValueFromModelMapper<T> extends ValueFromModelMapper<T, ArrayValue> {
-    }
-
-    interface PrimitiveFromModelMapper<T> extends ValueFromModelMapper<T, Primitive> {
-    }
-
-    interface BinaryFromModelMapper<T> extends ValueFromModelMapper<T, BinaryValue> {
-    }
-
-    interface XmlEntityFromModelMapper<T> extends ValueFromModelMapper<T, XmlEntity> {
-    }
+public interface BinaryMapping {
+    BinaryFromModelMapper<byte[]> fromBinaryArray = BinaryValue::new;
+    BinaryToModelMapper<byte[]> toBinaryArray = BinaryValue::getContent;
+    ValueMapper<byte[], BinaryValue> binaryArrayMapper = mapper(fromBinaryArray, toBinaryArray);
 }

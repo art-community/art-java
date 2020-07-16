@@ -70,7 +70,7 @@ public class ProtobufEntityWriter {
             case ENTITY:
                 return writeEntityToProtobuf(asEntity(value));
             case ARRAY:
-                return writeCollectionToProtobuf(asCollection(value));
+                return writeCollectionToProtobuf(asArray(value));
         }
         throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, value.getType()));
     }

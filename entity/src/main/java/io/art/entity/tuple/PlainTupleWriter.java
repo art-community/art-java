@@ -50,7 +50,7 @@ public class PlainTupleWriter {
             case ENTITY:
                 return writeEntity(asEntity(value));
             case ARRAY:
-                return writeCollectionValue(asCollection(value));
+                return writeCollectionValue(asArray(value));
         }
 
         return emptyList();

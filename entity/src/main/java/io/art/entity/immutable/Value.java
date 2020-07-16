@@ -37,7 +37,7 @@ public interface Value {
         return (Entity) value;
     }
 
-    static ArrayValue asCollection(Value value) {
+    static ArrayValue asArray(Value value) {
         return (ArrayValue) value;
     }
 

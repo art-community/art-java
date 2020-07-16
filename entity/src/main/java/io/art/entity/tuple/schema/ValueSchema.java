@@ -45,7 +45,7 @@ public class ValueSchema {
             case ENTITY:
                 return new EntitySchema(Value.asEntity(value));
             case ARRAY:
-                return new CollectionValueSchema(Value.asCollection(value), Value.asCollection(value).getElementsType());
+                return new CollectionValueSchema(Value.asArray(value), Value.asArray(value).getElementsType());
         }
         return null;
     }

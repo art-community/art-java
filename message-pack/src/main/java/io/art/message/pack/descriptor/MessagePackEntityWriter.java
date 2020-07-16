@@ -78,7 +78,7 @@ public class MessagePackEntityWriter {
             case ENTITY:
                 return writeEntity(asEntity(value));
             case ARRAY:
-                return writeCollectionValue(asCollection(value));
+                return writeCollectionValue(asArray(value));
         }
         return newNil();
     }
@@ -216,7 +216,7 @@ public class MessagePackEntityWriter {
                 mapBuilder.put(newString(key.toString()), writePrimitive(asPrimitive(value)));
                 return;
             case ARRAY:
-                mapBuilder.put(newString(key.toString()), writeCollectionValue(asCollection(value)));
+                mapBuilder.put(newString(key.toString()), writeCollectionValue(asArray(value)));
                 return;
             case ENTITY:
                 mapBuilder.put(newString(key.toString()), writeEntity(asEntity(value)));

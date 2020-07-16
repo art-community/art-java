@@ -92,7 +92,7 @@ public interface RocksDbValueDao {
                 put(entityKey, asEntity(value));
                 break;
             case ARRAY:
-                put(entityKey, asCollection(value));
+                put(entityKey, asArray(value));
                 break;
             case STRING:
             case LONG:

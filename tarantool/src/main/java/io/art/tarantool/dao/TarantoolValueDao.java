@@ -115,7 +115,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
 
 
     public Optional<ArrayValue<?>> getCollectionValue(String spaceName, long id) {
-        return get(spaceName, id).map(value -> asCollection(asEntity(value).get(VALUE)));
+        return get(spaceName, id).map(value -> asArray(asEntity(value).get(VALUE)));
     }
 
     public Optional<ArrayValue<?>> getCollectionValue(String spaceName) {
@@ -161,7 +161,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
 
 
     public List<ArrayValue<?>> selectCollections(String spaceName, Collection<?> keys) {
-        return select(spaceName, keys).stream().map(entity -> asCollection(entity.get(VALUE))).collect(toList());
+        return select(spaceName, keys).stream().map(entity -> asArray(entity.get(VALUE))).collect(toList());
     }
 
     public List<ArrayValue<?>> selectCollections(String spaceName, long id) {

@@ -33,6 +33,9 @@ public interface ValueToModelMapper<T, V extends Value> extends Serializable {
     interface PrimitiveToModelMapper<T> extends ValueToModelMapper<T, Primitive> {
     }
 
+    interface BinaryToModelMapper<T> extends ValueToModelMapper<T, BinaryValue> {
+    }
+
     interface XmlEntityToModelMapper<T> extends ValueToModelMapper<T, XmlEntity> {
     }
 }

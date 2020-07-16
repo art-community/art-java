@@ -41,7 +41,7 @@ public class TupleWriter {
                 writeEntity(tuple, asEntity(value));
                 break;
             case ARRAY:
-                writeCollectionValue(tuple, asCollection(value));
+                writeCollectionValue(tuple, asArray(value));
                 break;
         }
         return tuple;
@@ -67,7 +67,7 @@ public class TupleWriter {
                     writeEntity(entityTuple, asEntity(value));
                     break;
                 case ARRAY:
-                    writeCollectionValue(entityTuple, asCollection(value));
+                    writeCollectionValue(entityTuple, asArray(value));
                     break;
             }
         }
@@ -113,7 +113,7 @@ public class TupleWriter {
                     writeEntity(collectionValueTuple, asEntity((Value) value));
                     break;
                 case COLLECTION:
-                    writeCollectionValue(collectionValueTuple, asCollection((Value) value));
+                    writeCollectionValue(collectionValueTuple, asArray((Value) value));
                     break;
             }
         }

@@ -36,7 +36,7 @@ public class HttpBytesMapper implements HttpContentMapper.HttpEntityToContentMap
         if (isNull(mimeType)) throw new HttpTextMapperException(CONTENT_TYPE_IS_NULL);
         if (isNull(value)) return EMPTY_BYTES;
         if (!isArray(value)) return EMPTY_BYTES;
-        return asCollection(value).getByteArray();
+        return asArray(value).getByteArray();
     }
 
     @Override
