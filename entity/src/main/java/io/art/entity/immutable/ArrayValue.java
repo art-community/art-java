@@ -50,7 +50,7 @@ public class ArrayValue implements Value {
         return mapper.map(cast(get(index)));
     }
 
-    public <T> ImmutableList<T> toList(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> ImmutableList<T> copyToList(ValueToModelMapper<T, ? extends Value> mapper) {
         ImmutableList.Builder<T> list = ImmutableList.builderWithExpectedSize(size.get());
         for (int index = 0; index < size(); index++) {
             list.add(mapper.map(cast(valuesProvider.apply(index))));
@@ -58,7 +58,7 @@ public class ArrayValue implements Value {
         return list.build();
     }
 
-    public <T> ImmutableSet<T> toSet(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> ImmutableSet<T> copyToSet(ValueToModelMapper<T, ? extends Value> mapper) {
         ImmutableSet.Builder<T> set = ImmutableSet.builderWithExpectedSize(size.get());
         for (int index = 0; index < size(); index++) {
             set.add(mapper.map(cast(valuesProvider.apply(index))));
@@ -86,7 +86,7 @@ public class ArrayValue implements Value {
     @RequiredArgsConstructor
     public class ProxyList<T> implements List<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
-        private final LazyValue<ImmutableList<T>> evaluated = lazy(() -> ArrayValue.this.toList(mapper));
+        private final LazyValue<ImmutableList<T>> evaluated = lazy(() -> ArrayValue.this.copyToList(mapper));
 
         private final Iterator<T> iterator = new Iterator<T>() {
             private int index = 0;
@@ -276,7 +276,7 @@ public class ArrayValue implements Value {
     @RequiredArgsConstructor
     public class ProxySet<T> implements Set<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
-        private final LazyValue<ImmutableSet<T>> evaluated = lazy(() -> ArrayValue.this.toSet(mapper));
+        private final LazyValue<ImmutableSet<T>> evaluated = lazy(() -> ArrayValue.this.copyToSet(mapper));
 
         private final Iterator<T> iterator = new Iterator<T>() {
             private int index = 0;

@@ -38,7 +38,7 @@ public class EntityBuilder {
         EntityBuilder entityBuilder = entityBuilder();
         for (Entity entity : entities) {
             if (nonNull(entity)) {
-                entity.toMap().forEach((key, value) -> entityBuilder.fields.put(key, () -> value));
+                entity.copyToMap().forEach((key, value) -> entityBuilder.fields.put(key, () -> value));
             }
         }
         return entityBuilder.build();

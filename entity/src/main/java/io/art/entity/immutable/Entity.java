@@ -52,11 +52,11 @@ public class Entity implements Value {
         return new EntityBuilder();
     }
 
-    public <T> ImmutableMap<Primitive, T> toMap(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> ImmutableMap<Primitive, T> copyToMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return fields.stream().collect(toImmutableMap(identity(), key -> mapper.map(cast(valueProvider.apply(key)))));
     }
 
-    public <T> ImmutableMap<String, T> toStringMap(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> ImmutableMap<String, T> copyToStringMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return fields.stream().collect(toImmutableMap(Primitive::getString, key -> mapper.map(cast(valueProvider.apply(key)))));
     }
 
@@ -114,7 +114,7 @@ public class Entity implements Value {
     @RequiredArgsConstructor
     public class ProxyStringMap<T> implements Map<String, T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
-        private final LazyValue<ImmutableMap<Primitive, T>> evaluated = lazy(() -> Entity.this.toMap(mapper));
+        private final LazyValue<ImmutableMap<Primitive, T>> evaluated = lazy(() -> Entity.this.copyToMap(mapper));
 
         @Override
         public int size() {
@@ -168,12 +168,12 @@ public class Entity implements Value {
 
         @Override
         public Collection<T> values() {
-            return toMap(mapper).values();
+            return copyToMap(mapper).values();
         }
 
         @Override
         public Set<Entry<String, T>> entrySet() {
-            return toStringMap(mapper).entrySet();
+            return copyToStringMap(mapper).entrySet();
         }
     }
 
