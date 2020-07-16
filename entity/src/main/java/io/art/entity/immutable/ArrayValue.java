@@ -89,40 +89,40 @@ public class ArrayValue implements Value {
         private final LazyValue<ImmutableList<T>> evaluated = lazy(() -> ArrayValue.this.copyToList(mapper));
 
         private final Iterator<T> iterator = new Iterator<T>() {
-            private int index = 0;
+            private int cursor = 0;
 
             @Override
             public boolean hasNext() {
-                return index < ArrayValue.this.size();
+                return cursor != ArrayValue.this.size();
             }
 
             @Override
             public T next() {
-                T value = ArrayValue.this.map(index, mapper);
-                index++;
+                T value = ArrayValue.this.map(cursor, mapper);
+                cursor++;
                 return value;
             }
         };
 
         private ListIterator<T> createListIterator(int fromIndex) {
             return new ListIterator<T>() {
-                private int index = fromIndex;
+                private int cursor = fromIndex;
 
                 @Override
                 public boolean hasNext() {
-                    return index < size.get();
+                    return cursor != size.get();
                 }
 
                 @Override
                 public T next() {
-                    T value = ArrayValue.this.map(index, mapper);
-                    index++;
+                    T value = ArrayValue.this.map(cursor, mapper);
+                    cursor++;
                     return value;
                 }
 
                 @Override
                 public boolean hasPrevious() {
-                    return previousIndex() < size.get();
+                    return cursor != 0;
                 }
 
                 @Override
@@ -132,12 +132,12 @@ public class ArrayValue implements Value {
 
                 @Override
                 public int nextIndex() {
-                    return index + 1;
+                    return cursor;
                 }
 
                 @Override
                 public int previousIndex() {
-                    return index - 1;
+                    return cursor - 1;
                 }
 
                 @Override
