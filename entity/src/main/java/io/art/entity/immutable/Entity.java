@@ -60,9 +60,15 @@ public class Entity implements Value {
         return new EntityBuilder();
     }
 
-    public <T> ImmutableMap<Primitive, T> copyToMap(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> ImmutableMap<Primitive, T> map(ValueToModelMapper<T, ? extends Value> mapper) {
         return fields.stream().collect(toImmutableMap(identity(), key -> mapper.map(cast(valueProvider.apply(key)))));
     }
+
+
+    public <T> ImmutableMap<Primitive, ? extends Value> copyToMap() {
+        return fields.stream().collect(toImmutableMap(identity(), key -> cast(valueProvider.apply(key))));
+    }
+
 
     public <K, V> ImmutableMap<K, V> copyToPrimitiveMap(ValueToModelMapper<V, ? extends Value> mapper) {
         return fields.stream().collect(toImmutableMap(key -> cast(key.getValue()), key -> mapper.map(cast(valueProvider.apply(key)))));
@@ -97,47 +103,93 @@ public class Entity implements Value {
         return new ProxyMap<>(STRING, mapper);
     }
 
-
     public <T> Map<Integer, T> asIntMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return new ProxyMap<>(INT, mapper);
     }
-
 
     public <T> Map<Double, T> asDoubleMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return new ProxyMap<>(DOUBLE, mapper);
     }
 
-
     public <T> Map<Float, T> asFloatMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return new ProxyMap<>(FLOAT, mapper);
     }
-
 
     public <T> Map<Boolean, T> asBoolMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return new ProxyMap<>(BOOL, mapper);
     }
 
-
     public <T> Map<Long, T> asLongMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return new ProxyMap<>(LONG, mapper);
     }
 
-    public Value get(String name) {
-        return get(stringPrimitive(name));
+
+    public Value get(String key) {
+        return get(stringPrimitive(key));
+    }
+
+    public Value get(Long key) {
+        return get(longPrimitive(key));
+    }
+
+    public Value get(Integer key) {
+        return get(intPrimitive(key));
+    }
+
+    public Value get(Boolean key) {
+        return get(boolPrimitive(key));
+    }
+
+    public Value get(Double key) {
+        return get(doublePrimitive(key));
+    }
+
+    public Value get(Float key) {
+        return get(floatPrimitive(key));
+    }
+
+    public Value get(Byte key) {
+        return get(bytePrimitive(key));
     }
 
     public Value get(Primitive primitive) {
         return valueProvider.apply(primitive);
     }
 
-    public <T, V extends Value> T map(String name, ValueToModelMapper<T, V> mapper) {
-        return map(stringPrimitive(name), mapper);
+
+    public <T, V extends Value> T map(String key, ValueToModelMapper<T, V> mapper) {
+        return map(stringPrimitive(key), mapper);
+    }
+
+    public <T, V extends Value> T map(Long key, ValueToModelMapper<T, V> mapper) {
+        return map(longPrimitive(key), mapper);
+    }
+
+    public <T, V extends Value> T map(Integer key, ValueToModelMapper<T, V> mapper) {
+        return map(intPrimitive(key), mapper);
+    }
+
+    public <T, V extends Value> T map(Double key, ValueToModelMapper<T, V> mapper) {
+        return map(doublePrimitive(key), mapper);
+    }
+
+    public <T, V extends Value> T map(Boolean key, ValueToModelMapper<T, V> mapper) {
+        return map(boolPrimitive(key), mapper);
+    }
+
+    public <T, V extends Value> T map(Byte key, ValueToModelMapper<T, V> mapper) {
+        return map(bytePrimitive(key), mapper);
+    }
+
+    public <T, V extends Value> T map(Float key, ValueToModelMapper<T, V> mapper) {
+        return map(floatPrimitive(key), mapper);
     }
 
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
         if (isNull(mapper)) throw new ValueMappingException(MAPPER_IS_NULL);
         return mapper.map(cast(get(primitive)));
     }
+
 
     public Value find(String key) {
         if (EmptinessChecker.isEmpty(key)) {
@@ -159,10 +211,11 @@ public class Entity implements Value {
         return value;
     }
 
-    public <T, V extends Value> T mapNested(String name, ValueToModelMapper<T, V> mapper) {
+    public <T, V extends Value> T mapNested(String key, ValueToModelMapper<T, V> mapper) {
         if (isNull(mapper)) throw new ValueMappingException(MAPPER_IS_NULL);
-        return mapper.map(cast(find(name)));
+        return mapper.map(cast(find(key)));
     }
+
 
     @Override
     public boolean isEmpty() {
@@ -173,7 +226,7 @@ public class Entity implements Value {
     public class ProxyMap<K, V> implements Map<K, V> {
         private final PrimitiveType primitiveType;
         private final ValueToModelMapper<V, ? extends Value> mapper;
-        private final LazyValue<ImmutableMap<Primitive, V>> evaluated = lazy(() -> Entity.this.copyToMap(mapper));
+        private final LazyValue<ImmutableMap<Primitive, V>> evaluated = lazy(() -> Entity.this.map(mapper));
 
         @Override
         public int size() {
@@ -227,7 +280,7 @@ public class Entity implements Value {
 
         @Override
         public Collection<V> values() {
-            return copyToMap(mapper).values();
+            return map(mapper).values();
         }
 
         @Override

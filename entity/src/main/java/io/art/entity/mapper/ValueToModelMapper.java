@@ -27,13 +27,10 @@ public interface ValueToModelMapper<T, V extends Value> extends Serializable {
     interface EntityToModelMapper<T> extends ValueToModelMapper<T, Entity> {
     }
 
-    interface CollectionValueToModelMapper<T> extends ValueToModelMapper<T, ArrayValue> {
+    interface ArrayValueToModelMapper<T> extends ValueToModelMapper<T, ArrayValue> {
     }
 
     interface PrimitiveToModelMapper<T> extends ValueToModelMapper<T, Primitive> {
-    }
-
-    interface StringDataPrimitiveToModelMapper<T> extends ValueToModelMapper<T, Primitive> {
     }
 
     interface XmlEntityToModelMapper<T> extends ValueToModelMapper<T, XmlEntity> {

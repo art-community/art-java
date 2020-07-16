@@ -22,6 +22,8 @@ import io.art.entity.constants.*;
 import io.art.entity.mapper.*;
 import lombok.*;
 import static io.art.entity.constants.ValueType.*;
+import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.mapping.PrimitiveMapping.*;
 import static java.util.Objects.*;
 import java.util.*;
 
@@ -129,5 +131,10 @@ public interface Value {
                 .inner2(asEntity(entity.get("strValue")).asIntMap(value -> asPrimitive(value).getString()))
                 .build();
 
+        public ValueFromModelMapper<Request, Entity> fromRequest = request -> entityBuilder()
+                .put("strValue", request.strValue, fromString)
+                .put("inner", entityBuilder().putAllStrings(request.inner, fromString).build())
+                .put("inner2", entityBuilder().putAllInts(request.inner2, fromString).build())
+                .build();
     }
 }
