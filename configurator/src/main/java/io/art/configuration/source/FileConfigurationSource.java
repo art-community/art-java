@@ -16,13 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.configurator.source;
+package io.art.configuration.source;
 
-import io.art.configurator.exception.*;
+import io.art.configuration.exception.*;
+import io.art.configuration.yaml.source.*;
 import io.art.core.module.*;
 import lombok.*;
 import static com.typesafe.config.ConfigFactory.*;
-import static io.art.configurator.constants.ConfiguratorConstants.*;
+import static io.art.configuration.constants.ConfiguratorConstants.FileConfigurationExtensions.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
 import java.io.*;
@@ -31,14 +32,12 @@ import java.util.*;
 
 @Getter
 public class FileConfigurationSource implements ModuleConfigurationSource {
-    private final String path;
     private final String type;
     private final ModuleConfigurationSource source;
 
-    public FileConfigurationSource(String path) {
-        this.path = path;
-        type = FileConfigurationSource.class.getSimpleName() + COLON + path;
-        source = selectSource(path);
+    public FileConfigurationSource(File file) {
+        type = FileConfigurationSource.class.getSimpleName() + COLON + file.getAbsolutePath();
+        source = selectSource(file);
     }
 
     @Override
@@ -156,14 +155,17 @@ public class FileConfigurationSource implements ModuleConfigurationSource {
         return source.has(path);
     }
 
-    private static ModuleConfigurationSource selectSource(String path) {
-        String extension = parseExtension(path);
+    private static ModuleConfigurationSource selectSource(File file) {
+        String extension = parseExtension(file.getAbsolutePath());
         switch (extension) {
             case HOCON_EXTENSION:
             case JSON_EXTENSION:
             case CONF_EXTENSION:
             case PROPERTIES_EXTENSION:
-                return new TypesafeConfigurationSource(parseFile(new File(path)));
+                return new TypesafeConfigurationSource(parseFile(file));
+            case YAML_EXTENSION:
+            case YML_EXTENSION:
+                return new YamlConfigurationSource(file);
         }
         throw new UnknownConfigurationFileExtensionException(extension);
     }

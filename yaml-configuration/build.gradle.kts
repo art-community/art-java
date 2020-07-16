@@ -18,6 +18,9 @@
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":logging"))
-    implementation(project(":entity"))
+
+    val jacksonVersion: String by project
+    api("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
+    api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
+    api("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)
 }

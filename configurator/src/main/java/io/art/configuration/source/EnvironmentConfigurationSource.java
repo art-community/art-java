@@ -16,11 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.configurator.source;
+package io.art.configuration.source;
 
 import io.art.core.module.*;
 import lombok.*;
-import lombok.experimental.Delegate;
 import static com.typesafe.config.ConfigFactory.*;
 import java.time.*;
 import java.util.*;

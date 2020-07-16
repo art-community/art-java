@@ -44,7 +44,7 @@ import java.nio.file.*;
 public class FileExtensions {
     public static String parseExtension(String path) {
         if (isEmpty(path)) {
-            throw new ParseException(format(FILE_PATH_NOT_VALID, path));
+            throw new ParserException(format(FILE_PATH_NOT_VALID, path));
         }
         return path.substring(path.lastIndexOf(DOT) + 1);
     }

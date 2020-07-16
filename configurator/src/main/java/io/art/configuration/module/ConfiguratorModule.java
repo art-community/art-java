@@ -16,16 +16,24 @@
  * limitations under the License.
  */
 
-package io.art.configurator.module;
+package io.art.configuration.module;
 
-import io.art.configurator.module.ConfiguratorModuleConfiguration.*;
-import io.art.configurator.source.*;
+import io.art.configuration.module.ConfiguratorModuleConfiguration.*;
+import io.art.configuration.source.*;
+import io.art.core.exception.*;
+import io.art.core.handler.*;
 import io.art.core.module.*;
 import lombok.*;
-import static io.art.configurator.constants.ConfiguratorConstants.ConfiguratorKeys.*;
+import static io.art.configuration.constants.ConfiguratorConstants.ConfiguratorKeys.*;
+import static io.art.configuration.constants.ConfiguratorConstants.*;
+import static io.art.configuration.constants.ConfiguratorConstants.FileConfigurationExtensions.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static java.nio.file.Paths.*;
 import static java.util.Optional.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 @Getter
 public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleConfiguration, Configurator> {
@@ -41,22 +49,31 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .from(new EnvironmentConfigurationSource())
                 .from(new PropertiesConfigurationSource())
         );
+        FILE_CONFIGURATION_EXTENSIONS.stream()
+                .map(extension -> ConfiguratorModule.class.getClassLoader().getResource(DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension))
+                .filter(Objects::nonNull)
+                .map(resource -> new FileConfigurationSource(new File(ExceptionHandler.<URI>wrapException(InternalRuntimeException::new).call(resource::toURI))))
+                .forEach(source -> configure(configurator -> configurator.from(source)));
         EnvironmentConfigurationSource environment = getConfiguration().getEnvironment();
         PropertiesConfigurationSource properties = getConfiguration().getProperties();
         ofNullable(environment.getString(MODULE_CONFIG_FILE_ENVIRONMENT))
-                .filter(path -> get(path).toFile().exists())
-                .ifPresent(path -> configure(configurator -> configurator.from(new FileConfigurationSource(path))));
+                .map(path -> get(path).toFile())
+                .filter(File::exists)
+                .ifPresent(file -> configure(configurator -> configurator.from(new FileConfigurationSource(file))));
         environment.getStringList(MODULE_CONFIG_FILES_ENVIRONMENT)
                 .stream()
-                .filter(path -> get(path).toFile().exists())
-                .forEach(path -> configure(configurator -> configurator.from(new FileConfigurationSource(path))));
+                .map(path -> get(path).toFile())
+                .filter(File::exists)
+                .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(file))));
         ofNullable(properties.getString(MODULE_CONFIG_FILE_PROPERTY))
-                .filter(path -> get(path).toFile().exists())
-                .ifPresent(path -> configure(configurator -> configurator.from(new FileConfigurationSource(path))));
+                .map(path -> get(path).toFile())
+                .filter(File::exists)
+                .ifPresent(file -> configure(configurator -> configurator.from(new FileConfigurationSource(file))));
         properties.getStringList(MODULE_CONFIG_FILES_PROPERTY)
                 .stream()
-                .filter(path -> get(path).toFile().exists())
-                .forEach(path -> configure(configurator -> configurator.from(new FileConfigurationSource(path))));
+                .map(path -> get(path).toFile())
+                .filter(File::exists)
+                .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(file))));
     }
 
     public static StatelessModuleProvider<ConfiguratorModuleConfiguration> configuratorModule() {

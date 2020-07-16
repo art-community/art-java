@@ -16,40 +16,64 @@
  * limitations under the License.
  */
 
-package io.art.configurator.module;
+package io.art.configuration.module;
 
 import com.google.common.collect.*;
-import io.art.configurator.source.*;
+import io.art.configuration.source.*;
 import io.art.core.module.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.constants.StringConstants.*;
+import java.io.*;
+import java.util.*;
 
 @Getter
 public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, ModuleConfigurationSource> sources = of();
 
     public PropertiesConfigurationSource getProperties() {
-        return cast(getSources().get(PropertiesConfigurationSource.class.getSimpleName()));
+        return cast(sources.get(PropertiesConfigurationSource.class.getSimpleName()));
     }
 
     public EnvironmentConfigurationSource getEnvironment() {
-        return cast(getSources().get(EnvironmentConfigurationSource.class.getSimpleName()));
+        return cast(sources.get(EnvironmentConfigurationSource.class.getSimpleName()));
     }
 
     public ImmutableMap<String, FileConfigurationSource> getFiles() {
-        return getSources()
+        return sources
                 .entrySet()
                 .stream()
                 .filter(entry -> entry.getKey().startsWith(FileConfigurationSource.class.getSimpleName()))
                 .collect(toImmutableMap(
-                        entry -> entry.getKey().substring(entry.getKey().indexOf(FileConfigurationSource.class.getSimpleName() + 1)),
+                        entry -> entry.getKey().substring(entry.getKey().indexOf(COLON) + 1),
                         entry -> cast(entry.getValue()))
                 );
     }
 
-    public FileConfigurationSource getFiles(String path) {
+    public FileConfigurationSource getFile(String path) {
         return getFiles().get(path);
+    }
+
+    public ImmutableMap<String, FileConfigurationSource> getFilesByName(String name) {
+        return getFiles()
+                .entrySet()
+                .stream()
+                .filter(entry -> new File(entry.getKey()).getName().equals(name))
+                .collect(toImmutableMap(Entry::getKey, Entry::getValue));
+    }
+
+    public Optional<FileConfigurationSource> getFirstFileByName(String name) {
+        return getFiles()
+                .entrySet()
+                .stream()
+                .filter(entry -> new File(entry.getKey()).getName().equals(name))
+                .findFirst()
+                .map(Entry::getValue);
+    }
+
+    public Set<String> getSourceNames() {
+        return sources.keySet();
     }
 
     @RequiredArgsConstructor

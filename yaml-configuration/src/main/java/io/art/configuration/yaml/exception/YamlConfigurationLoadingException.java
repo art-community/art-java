@@ -16,8 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.config;
+package io.art.configuration.yaml.exception;
 
-public interface YamlConfigLoaderConstants {
-    String DEFAULT_YAML_CONFIG_FILE_NAME = "module-config.yml";
+import io.art.core.exception.*;
+
+public class YamlConfigurationLoadingException extends InternalRuntimeException  {
+    public YamlConfigurationLoadingException(Throwable throwable) {
+        super(throwable);
+    }
 }

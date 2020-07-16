@@ -16,9 +16,13 @@
  * limitations under the License.
  */
 
-package io.art.configurator.constants;
+package io.art.configuration.constants;
+
+import com.google.common.collect.*;
 
 public interface ConfiguratorConstants {
+    String DEFAULT_MODULE_CONFIGURATION_FILE = "module-config";
+
     interface ConfiguratorKeys {
         String MODULE_CONFIG_FILE_ENVIRONMENT = "MODULE_CONFIG_FILE";
         String MODULE_CONFIG_FILES_ENVIRONMENT = "MODULE_CONFIG_FILES";
@@ -26,12 +30,22 @@ public interface ConfiguratorConstants {
         String MODULE_CONFIG_FILES_PROPERTY = "module.config.files";
     }
 
-    String HOCON_EXTENSION = "hocon";
-    String CONF_EXTENSION = "conf";
-    String PROPERTIES_EXTENSION = "properties";
-    String JSON_EXTENSION = "json";
-    String YAML_EXTENSION = "yaml";
-    String YML_EXTENSION = "yml";
+    interface FileConfigurationExtensions {
+        String PROPERTIES_EXTENSION = "properties";
+        String HOCON_EXTENSION = "hocon";
+        String CONF_EXTENSION = "conf";
+        String JSON_EXTENSION = "json";
+        String YAML_EXTENSION = "yaml";
+        String YML_EXTENSION = "yml";
+        ImmutableSet<String> FILE_CONFIGURATION_EXTENSIONS = ImmutableSet.of(
+                HOCON_EXTENSION,
+                CONF_EXTENSION,
+                PROPERTIES_EXTENSION,
+                JSON_EXTENSION,
+                YAML_EXTENSION,
+                YML_EXTENSION
+        );
+    }
 
     interface ExceptionMessages {
         String UNKNOWN_CONFIGURATION_SOURCE_FILE_EXTENSION = "Unknown configuration source file extension: {0}";

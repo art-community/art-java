@@ -18,7 +18,7 @@
 
 package io.art.launcher;
 
-import io.art.configurator.module.*;
+import io.art.configuration.module.*;
 import io.art.model.communicator.*;
 import io.art.model.module.*;
 import static io.art.core.context.Context.*;

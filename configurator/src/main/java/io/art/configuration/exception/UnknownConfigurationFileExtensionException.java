@@ -16,15 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.config;
+package io.art.configuration.exception;
 
-@SuppressWarnings("SameParameterValue")
-class YamlLoadingException extends RuntimeException {
-    YamlLoadingException(Throwable cause) {
-        super(cause);
-    }
+import io.art.core.exception.*;
+import static io.art.configuration.constants.ConfiguratorConstants.ExceptionMessages.*;
+import static java.text.MessageFormat.*;
 
-    YamlLoadingException(String message) {
-        super(message);
+public class UnknownConfigurationFileExtensionException extends InternalRuntimeException {
+    public UnknownConfigurationFileExtensionException(String extension) {
+        super(format(UNKNOWN_CONFIGURATION_SOURCE_FILE_EXTENSION, extension));
     }
 }

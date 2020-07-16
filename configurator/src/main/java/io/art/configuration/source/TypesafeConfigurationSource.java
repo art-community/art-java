@@ -16,10 +16,9 @@
  * limitations under the License.
  */
 
-package io.art.configurator.source;
+package io.art.configuration.source;
 
 import com.typesafe.config.*;
-import io.art.core.extensions.*;
 import io.art.core.module.*;
 import lombok.*;
 import static io.art.core.extensions.CollectionExtensions.orEmptyList;

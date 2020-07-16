@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.configurator.model;
+package io.art.configuration.model;
 
 import lombok.*;
 

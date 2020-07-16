@@ -18,8 +18,8 @@
 
 package io.art.core.exception;
 
-public class ParseException extends InternalRuntimeException {
-    public ParseException(String message) {
+public class ParserException extends InternalRuntimeException {
+    public ParserException(String message) {
         super(message);
     }
 }
