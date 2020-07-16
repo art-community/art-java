@@ -19,10 +19,12 @@
 package io.art.protobuf.descriptor;
 
 import com.google.protobuf.*;
+import io.art.entity.builder.*;
 import lombok.experimental.*;
 import io.art.entity.immutable.Value;
 import io.art.protobuf.exception.*;
 import static com.google.protobuf.Value.KindCase.*;
+import static io.art.entity.factory.ArrayFactory.array;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
@@ -79,12 +81,12 @@ public class ProtobufEntityReader {
     }
 
     private static Value readCollectionFromProtobuf(ListValue protobufCollection) {
-        return valueArray(protobufCollection.getValuesList().stream().map(ProtobufEntityReader::readProtobuf).collect(toList()));
+        return array(protobufCollection.getValuesList().stream().map(ProtobufEntityReader::readProtobuf).collect(toList()));
     }
 
     private static Value readStructFromProtobuf(Struct protobufEntity) {
         EntityBuilder entityBuilder = entityBuilder();
-        protobufEntity.getFieldsMap().forEach((key, value) -> entityBuilder.valueField(key, readProtobuf(value)));
+        protobufEntity.getFieldsMap().forEach((key, value) -> entityBuilder.put(key, readProtobuf(value)));
         return entityBuilder.build();
     }
 }

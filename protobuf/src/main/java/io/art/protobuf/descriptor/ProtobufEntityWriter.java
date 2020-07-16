@@ -20,15 +20,14 @@ package io.art.protobuf.descriptor;
 
 import com.google.protobuf.*;
 import io.art.entity.immutable.*;
-import lombok.experimental.*;
 import io.art.protobuf.exception.*;
-import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
-import static java.util.stream.Collectors.*;
-import static io.art.core.caster.Caster.*;
+import lombok.experimental.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.protobuf.constants.ProtobufExceptionMessages.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
 import java.io.*;
 import java.nio.file.*;
 
@@ -68,46 +67,25 @@ public class ProtobufEntityWriter {
             case BOOL:
                 return com.google.protobuf.Value.newBuilder().setBoolValue(asPrimitive(value).getBool()).build();
             case ENTITY:
-                return writeEntityToProtobuf(asEntity(value));
+                return writeEntity(asEntity(value));
             case ARRAY:
-                return writeCollectionToProtobuf(asArray(value));
+                return writeArray(asArray(value));
         }
         throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, value.getType()));
     }
 
-    private static com.google.protobuf.Value writeCollectionToProtobuf(ArrayValue<?> collectionValue) {
-        ListValue protobufValues = ListValue.newBuilder().addAllValues(collectionValue.getElements()
-                .stream()
-                .map(element -> writeCollectionValueToProtobuf(collectionValue.getElementsType(), element))
-                .collect(toList())).build();
+    private static com.google.protobuf.Value writeArray(ArrayValue array) {
+        ListValue protobufValues = ListValue.newBuilder()
+                .addAllValues(array.asStream()
+                        .map(ProtobufEntityWriter::writeProtobuf)
+                        .collect(toList()))
+                .build();
         return com.google.protobuf.Value.newBuilder().setListValue(protobufValues).build();
     }
 
-    private static <T> com.google.protobuf.Value writeCollectionValueToProtobuf(CollectionElementsType type, T value) {
-        switch (type) {
-            case STRING:
-                return com.google.protobuf.Value.newBuilder().setStringValue(cast(value)).build();
-            case LONG:
-            case DOUBLE:
-            case FLOAT:
-            case INT:
-            case BYTE:
-                return com.google.protobuf.Value.newBuilder().setNumberValue(cast(value)).build();
-            case BOOL:
-                return com.google.protobuf.Value.newBuilder().setBoolValue(cast(value)).build();
-            case ENTITY:
-                return writeEntityToProtobuf((Entity) value);
-            case COLLECTION:
-                return writeCollectionToProtobuf((ArrayValue<?>) value);
-            case VALUE:
-                return writeProtobuf((io.art.entity.immutable.Value) value);
-        }
-        throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, type));
-    }
-
-    private static com.google.protobuf.Value writeEntityToProtobuf(Entity entity) {
+    private static com.google.protobuf.Value writeEntity(Entity entity) {
         Struct protobufEntity = Struct.newBuilder()
-                .putAllFields(entity.getFields().entrySet()
+                .putAllFields(entity.asMap().entrySet()
                         .stream()
                         .filter(entry -> isPrimitive(entry.getKey()))
                         .filter(entry -> nonNull(entry.getValue()))
