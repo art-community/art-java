@@ -27,6 +27,7 @@ import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.entity.factory.ArrayFactory.array;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.immutable.Value.isEmpty;
@@ -84,7 +85,7 @@ public final class XmlEntityToEntityConverter {
             }
             collection.add(cast(entityBuilder().put(child.getTag(), toEntityFromTags(child).get(child.getTag())).build()));
         }
-        return entityBuilder.put(xmlEntity.getTag(), valueArray(cast(collection))).build();
+        return entityBuilder.put(xmlEntity.getTag(), array(collection)).build();
     }
 
     public static Entity toEntityFromAttributes(XmlEntity xmlEntity) {

@@ -26,7 +26,7 @@ import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
-import static io.art.entity.immutable.BinaryValue.isPrimitiveType;
+import static io.art.entity.immutable.Value.isPrimitiveType;
 import static io.art.entity.immutable.BinaryValue.*;
 import static io.art.entity.immutable.Entity.*;
 import static java.util.Objects.*;

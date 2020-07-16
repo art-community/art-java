@@ -48,11 +48,13 @@ public class ArrayValue implements Value {
         return valuesProvider.apply(index);
     }
 
+
     public <T> T map(int index, ValueToModelMapper<T, ? extends Value> mapper) {
         return mapper.map(cast(get(index)));
     }
 
-    public <T> ImmutableList<T> copyToList(ValueToModelMapper<T, ? extends Value> mapper) {
+
+    public <T> ImmutableList<T> mapToList(ValueToModelMapper<T, ? extends Value> mapper) {
         ImmutableList.Builder<T> list = ImmutableList.builderWithExpectedSize(size.get());
         for (int index = 0; index < size(); index++) {
             list.add(mapper.map(cast(valuesProvider.apply(index))));
@@ -60,7 +62,7 @@ public class ArrayValue implements Value {
         return list.build();
     }
 
-    public <T> ImmutableSet<T> copyToSet(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> ImmutableSet<T> mapToSet(ValueToModelMapper<T, ? extends Value> mapper) {
         ImmutableSet.Builder<T> set = ImmutableSet.builderWithExpectedSize(size.get());
         for (int index = 0; index < size(); index++) {
             set.add(mapper.map(cast(valuesProvider.apply(index))));
@@ -68,39 +70,46 @@ public class ArrayValue implements Value {
         return set.build();
     }
 
-    public <T> List<T> asList(ValueToModelMapper<T, ? extends Value> mapper) {
-        return new ProxyList<>(mapper);
-    }
-
-    public <T> Stream<T> asStream(ValueToModelMapper<T, ? extends Value> mapper) {
-        return asList(mapper).stream();
-    }
-
-    public <T> Set<T> asSet(ValueToModelMapper<T, ? extends Value> mapper) {
-        return new ProxySet<>(mapper);
-    }
 
     public List<Value> asList() {
-        return new ProxyList<>(identity());
+        return mapAsList(identity());
     }
 
     public Stream<Value> asStream() {
-        return asList(identity()).stream();
+        return mapAsStream(identity());
     }
 
     public Set<Value> asSet() {
-        return new ProxySet<>(identity());
+        return mapAsSet(identity());
     }
+
+
+    public <T> List<T> mapAsList(ValueToModelMapper<T, ? extends Value> mapper) {
+        return new ProxyList<>(mapper);
+    }
+
+    public <T> Stream<T> mapAsStream(ValueToModelMapper<T, ? extends Value> mapper) {
+        return mapAsList(mapper).stream();
+    }
+
+    public <T> Set<T> mapAsSet(ValueToModelMapper<T, ? extends Value> mapper) {
+        return new ProxySet<>(mapper);
+    }
+
 
     @Override
     public boolean isEmpty() {
         return size() == 0;
     }
 
-    @RequiredArgsConstructor
     public class ProxyList<T> implements List<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
-        private final LazyValue<ImmutableList<T>> evaluated = lazy(() -> ArrayValue.this.copyToList(mapper));
+        private final LazyValue<ImmutableList<T>> evaluated;
+
+        public ProxyList(ValueToModelMapper<T, ? extends Value> mapper) {
+            this.mapper = mapper;
+            this.evaluated = lazy(() -> ArrayValue.this.mapToList(mapper));
+        }
 
         private final Iterator<T> iterator = new Iterator<T>() {
             private int cursor = 0;
@@ -293,10 +302,14 @@ public class ArrayValue implements Value {
         }
     }
 
-    @RequiredArgsConstructor
     public class ProxySet<T> implements Set<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
-        private final LazyValue<ImmutableSet<T>> evaluated = lazy(() -> ArrayValue.this.copyToSet(mapper));
+        private final LazyValue<ImmutableSet<T>> evaluated;
+
+        public ProxySet(ValueToModelMapper<T, ? extends Value> mapper) {
+            this.mapper = mapper;
+            this.evaluated = lazy(() -> ArrayValue.this.mapToSet(mapper));
+        }
 
         private final Iterator<T> iterator = new Iterator<T>() {
             private int index = 0;

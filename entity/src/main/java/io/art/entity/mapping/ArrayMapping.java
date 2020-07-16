@@ -31,7 +31,7 @@ import java.util.*;
 @UtilityClass
 public class ArrayMapping {
     public static <T> ValueToModelMapper<Collection<T>, ArrayValue> toArray(ValueToModelMapper<T, Value> elementMapper) {
-        return collection -> isEmpty(collection) ? emptyList() : collection.copyToList(elementMapper)
+        return collection -> isEmpty(collection) ? emptyList() : collection.mapToList(elementMapper)
                 .stream()
                 .filter(Objects::nonNull)
                 .map(element -> elementMapper.map(cast(element)))
@@ -39,7 +39,7 @@ public class ArrayMapping {
     }
 
     public static <T> ValueFromModelMapper<Collection<T>, ArrayValue> fromArray(ValueFromModelMapper<T, ? extends Value> elementMapper) {
-        return collection -> isEmpty(collection) ? cast(emptyArray()) : valueArray(collection
+        return collection -> isEmpty(collection) ? cast(emptyArray()) : array(collection
                 .stream()
                 .filter(Objects::nonNull)
                 .map(element -> elementMapper.map(cast(element)))

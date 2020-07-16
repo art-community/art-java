@@ -21,13 +21,19 @@ package io.art.entity.immutable;
 import io.art.entity.constants.*;
 import io.art.entity.constants.ValueType.*;
 import lombok.*;
+import lombok.experimental.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.entity.constants.ValueType.PrimitiveType.STRING;
 import static java.util.Objects.*;
+import java.util.*;
 
 @Getter
 @AllArgsConstructor
 public class Primitive implements Value {
+    @Getter(lazy = true)
+    @Accessors(fluent = true)
+    private final int hashCode = Objects.hashCode(getString());
+
     private final Object value;
     private final PrimitiveType primitiveType;
 
@@ -122,12 +128,5 @@ public class Primitive implements Value {
             return getString().equals(otherPrimitive.getString());
         }
         return false;
-    }
-
-    public int hashCode() {
-        if (isNull(value)) {
-            return super.hashCode();
-        }
-        return value.hashCode();
     }
 }
