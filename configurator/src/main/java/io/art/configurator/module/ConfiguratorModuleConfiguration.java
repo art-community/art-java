@@ -37,6 +37,21 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
         return cast(getSources().get(EnvironmentConfigurationSource.class.getSimpleName()));
     }
 
+    public ImmutableMap<String, FileConfigurationSource> getFiles() {
+        return getSources()
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().startsWith(FileConfigurationSource.class.getSimpleName()))
+                .collect(toImmutableMap(
+                        entry -> entry.getKey().substring(entry.getKey().indexOf(FileConfigurationSource.class.getSimpleName() + 1)),
+                        entry -> cast(entry.getValue()))
+                );
+    }
+
+    public FileConfigurationSource getFiles(String path) {
+        return getFiles().get(path);
+    }
+
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<Configurator> {
         private final ConfiguratorModuleConfiguration configuration;

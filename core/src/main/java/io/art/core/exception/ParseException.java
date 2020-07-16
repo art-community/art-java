@@ -16,14 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.configurator.exception;
+package io.art.core.exception;
 
-import io.art.core.exception.*;
-import static io.art.configurator.constants.ConfiguratorConstants.ExceptionMessages.*;
-import static java.text.MessageFormat.*;
-
-public class UnableToProvideConfigurationValueException extends InternalRuntimeException  {
-    public UnableToProvideConfigurationValueException(String provider, Class<?> source) {
-        super(format(UNABLE_TO_PROVIDE_CONFIGURATION_VALUE, provider, source.getSimpleName()));
+public class ParseException extends InternalRuntimeException {
+    public ParseException(String message) {
+        super(message);
     }
 }

@@ -18,20 +18,22 @@
 
 package io.art.core.extensions;
 
-import lombok.experimental.*;
 import io.art.core.exception.*;
+import lombok.experimental.*;
+import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.constants.ArrayConstants.*;
+import static io.art.core.constants.BufferConstants.*;
+import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.StringConstants.*;
+import static io.art.core.context.Context.*;
 import static java.lang.System.*;
 import static java.nio.ByteBuffer.*;
 import static java.nio.channels.FileChannel.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
 import static java.nio.file.StandardOpenOption.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.constants.ArrayConstants.*;
-import static io.art.core.constants.BufferConstants.*;
-import static io.art.core.constants.StringConstants.*;
-import static io.art.core.context.Context.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
@@ -40,6 +42,13 @@ import java.nio.file.*;
 
 @UtilityClass
 public class FileExtensions {
+    public static String parseExtension(String path) {
+        if (isEmpty(path)) {
+            throw new ParseException(format(FILE_PATH_NOT_VALID, path));
+        }
+        return path.substring(path.lastIndexOf(DOT) + 1);
+    }
+
     public static String readFile(String path) {
         return readFile(get(path), DEFAULT_BUFFER_SIZE);
     }

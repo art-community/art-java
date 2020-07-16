@@ -19,7 +19,21 @@
 package io.art.configurator.constants;
 
 public interface ConfiguratorConstants {
+    interface ConfiguratorKeys {
+        String MODULE_CONFIG_FILE_ENVIRONMENT = "MODULE_CONFIG_FILE";
+        String MODULE_CONFIG_FILES_ENVIRONMENT = "MODULE_CONFIG_FILES";
+        String MODULE_CONFIG_FILE_PROPERTY = "module.config.file";
+        String MODULE_CONFIG_FILES_PROPERTY = "module.config.files";
+    }
+
+    String HOCON_EXTENSION = "hocon";
+    String CONF_EXTENSION = "conf";
+    String PROPERTIES_EXTENSION = "properties";
+    String JSON_EXTENSION = "json";
+    String YAML_EXTENSION = "yaml";
+    String YML_EXTENSION = "yml";
+
     interface ExceptionMessages {
-        String UNABLE_TO_PROVIDE_CONFIGURATION_VALUE = "Unable to provide {0} value from source {1}";
+        String UNKNOWN_CONFIGURATION_SOURCE_FILE_EXTENSION = "Unknown configuration source file extension: {0}";
     }
 }

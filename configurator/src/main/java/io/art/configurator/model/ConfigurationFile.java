@@ -16,20 +16,13 @@
  * limitations under the License.
  */
 
-package io.art.core.extensions;
+package io.art.configurator.model;
 
-import lombok.experimental.*;
-import static java.util.Collections.emptyList;
-import java.util.*;
-import java.util.function.*;
+import lombok.*;
 
-@UtilityClass
-public final class CollectionExtensions {
-    public static <T, R> List<R> orEmptyList(T value, Predicate<T> condition, Function<T, List<R>> action) {
-        return condition.test(value) ? action.apply(value) : emptyList();
-    }
-
-    public static boolean areAllUnique(Collection<?> collection) {
-        return collection.stream().allMatch(new HashSet<>()::add);
-    }
+@Getter
+@AllArgsConstructor
+public class ConfigurationFile {
+    private final String path;
+    private final String type;
 }

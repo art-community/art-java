@@ -19,8 +19,10 @@
 package io.art.configurator.source;
 
 import com.typesafe.config.*;
+import io.art.core.extensions.*;
 import io.art.core.module.*;
 import lombok.*;
+import static io.art.core.extensions.CollectionExtensions.orEmptyList;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
@@ -70,37 +72,37 @@ public class TypesafeConfigurationSource implements ModuleConfigurationSource {
 
     @Override
     public List<Integer> getIntList(String path) {
-        return typesafeConfiguration.getIntList(path);
+        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getIntList);
     }
 
     @Override
     public List<Long> getLongList(String path) {
-        return typesafeConfiguration.getLongList(path);
+        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getLongList);
     }
 
     @Override
     public List<Boolean> getBoolList(String path) {
-        return typesafeConfiguration.getBooleanList(path);
+        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getBooleanList);
     }
 
     @Override
     public List<Double> getDoubleList(String path) {
-        return typesafeConfiguration.getDoubleList(path);
+        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getDoubleList);
     }
 
     @Override
     public List<String> getStringList(String path) {
-        return typesafeConfiguration.getStringList(path);
+        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getStringList);
     }
 
     @Override
     public List<Duration> getDurationList(String path) {
-        return typesafeConfiguration.getDurationList(path);
+        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getDurationList);
     }
 
     @Override
     public List<ModuleConfigurationSource> getInnerList(String path) {
-        return typesafeConfiguration.getConfigList(path)
+        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getConfigList)
                 .stream()
                 .map(TypesafeConfigurationSource::new)
                 .collect(toList());

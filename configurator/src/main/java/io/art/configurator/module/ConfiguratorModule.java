@@ -22,7 +22,10 @@ import io.art.configurator.module.ConfiguratorModuleConfiguration.*;
 import io.art.configurator.source.*;
 import io.art.core.module.*;
 import lombok.*;
+import static io.art.configurator.constants.ConfiguratorConstants.ConfiguratorKeys.*;
 import static io.art.core.context.Context.*;
+import static java.nio.file.Paths.*;
+import static java.util.Optional.*;
 
 @Getter
 public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleConfiguration, Configurator> {
@@ -38,9 +41,30 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .from(new EnvironmentConfigurationSource())
                 .from(new PropertiesConfigurationSource())
         );
+        EnvironmentConfigurationSource environment = getConfiguration().getEnvironment();
+        PropertiesConfigurationSource properties = getConfiguration().getProperties();
+        ofNullable(environment.getString(MODULE_CONFIG_FILE_ENVIRONMENT))
+                .filter(path -> get(path).toFile().exists())
+                .ifPresent(path -> configure(configurator -> configurator.from(new FileConfigurationSource(path))));
+        environment.getStringList(MODULE_CONFIG_FILES_ENVIRONMENT)
+                .stream()
+                .filter(path -> get(path).toFile().exists())
+                .forEach(path -> configure(configurator -> configurator.from(new FileConfigurationSource(path))));
+        ofNullable(properties.getString(MODULE_CONFIG_FILE_PROPERTY))
+                .filter(path -> get(path).toFile().exists())
+                .ifPresent(path -> configure(configurator -> configurator.from(new FileConfigurationSource(path))));
+        properties.getStringList(MODULE_CONFIG_FILES_PROPERTY)
+                .stream()
+                .filter(path -> get(path).toFile().exists())
+                .forEach(path -> configure(configurator -> configurator.from(new FileConfigurationSource(path))));
     }
 
     public static StatelessModuleProvider<ConfiguratorModuleConfiguration> configuratorModule() {
         return getConfiguratorModule();
+    }
+
+    public static void main(String[] args) {
+        context().loadModule(new ConfiguratorModule());
+        System.out.println(configuratorModule().getConfiguration());
     }
 }
