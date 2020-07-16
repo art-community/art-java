@@ -18,6 +18,16 @@
 
 package io.art.core.module;
 
+import static io.art.core.caster.Caster.*;
+import java.util.*;
+
 public interface ModuleConfigurator<C extends ModuleConfigurator<C>> {
-    C from(ModuleConfigurationSource source);
+    default C from(ModuleConfigurationSource source) {
+        return cast(this);
+    }
+
+    default C from(Collection<ModuleConfigurationSource> sources) {
+        sources.forEach(this::from);
+        return cast(this);
+    }
 }

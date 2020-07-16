@@ -19,16 +19,23 @@
 package io.art.json.configuration;
 
 import com.fasterxml.jackson.databind.*;
-import lombok.*;
 import io.art.core.module.*;
+import lombok.*;
+import static com.fasterxml.jackson.core.JsonParser.Feature.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 
-public interface JsonModuleConfiguration extends ModuleConfiguration {
-    ObjectMapper getObjectMapper();
+@Getter
+public class JsonModuleConfiguration implements ModuleConfiguration {
+    ObjectMapper objectMapper = new ObjectMapper();
 
-    JsonModuleConfiguration DEFAULT_CONFIGURATION = new JsonModuleDefaultConfiguration();
+    @RequiredArgsConstructor
+    public static class Configurator implements ModuleConfigurator<Configurator> {
+        private final JsonModuleConfiguration configuration;
 
-    class JsonModuleDefaultConfiguration implements JsonModuleConfiguration {
-        @Getter
-        private final ObjectMapper objectMapper = new ObjectMapper();
+        @Override
+        public Configurator from(ModuleConfigurationSource source) {
+            let(source.getBool("json.allowComments"), value -> configuration.objectMapper.configure(ALLOW_COMMENTS, value));
+            return this;
+        }
     }
 }

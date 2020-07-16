@@ -18,9 +18,12 @@
 
 package io.art.launcher;
 
+import com.google.common.collect.*;
 import io.art.configuration.module.*;
-import io.art.model.communicator.*;
+import io.art.core.module.*;
+import io.art.json.module.*;
 import io.art.model.module.*;
+import static io.art.configuration.module.ConfiguratorModule.*;
 import static io.art.core.context.Context.*;
 import java.util.concurrent.atomic.*;
 
@@ -30,7 +33,9 @@ public class ModuleLauncher {
     public static void launch(ModuleModel model) {
         if (launched.compareAndSet(false, true)) {
             context().loadModule(new ConfiguratorModule());
-            GrpcCommunicatorModel grpcModel = model.getCommunicatorModel().getGrpcModel();
+            ImmutableCollection<ModuleConfigurationSource> sources = configuratorModule().getConfiguration().orderedSources();
+            context()
+                    .loadModule(new JsonModule().configure(configurator -> configurator.from(sources)));
         }
     }
 }

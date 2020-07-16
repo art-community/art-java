@@ -76,6 +76,10 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
         return sources.keySet();
     }
 
+    public ImmutableCollection<ModuleConfigurationSource> orderedSources() {
+        return sources.values();
+    }
+
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<Configurator> {
         private final ConfiguratorModuleConfiguration configuration;

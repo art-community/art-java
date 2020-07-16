@@ -18,26 +18,22 @@
 
 package io.art.json.module;
 
-import lombok.*;
-import io.art.core.module.Module;
 import io.art.core.module.*;
 import io.art.json.configuration.*;
-import static lombok.AccessLevel.*;
+import lombok.*;
 import static io.art.core.context.Context.*;
-import static io.art.json.configuration.JsonModuleConfiguration.*;
 import static io.art.json.constants.JsonModuleConstants.*;
+import static lombok.AccessLevel.*;
 
 @Getter
-public class JsonModule implements Module<JsonModuleConfiguration, ModuleState> {
+public class JsonModule implements StatelessModule<JsonModuleConfiguration, JsonModuleConfiguration.Configurator> {
     @Getter(lazy = true, value = PRIVATE)
-    private final static JsonModuleConfiguration jsonModule = context().getModule(JSON_MODULE_ID, JsonModule::new);
+    private final static StatelessModuleProvider<JsonModuleConfiguration> jsonModule = context().getModule(JSON_MODULE_ID);
     private final String id = JSON_MODULE_ID;
-    private final JsonModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
+    private final JsonModuleConfiguration configuration = new JsonModuleConfiguration();
+    private final JsonModuleConfiguration.Configurator configurator = new JsonModuleConfiguration.Configurator(configuration);
 
-    public static JsonModuleConfiguration jsonModule() {
-        if (contextIsNotReady()) {
-            return DEFAULT_CONFIGURATION;
-        }
+    public static StatelessModuleProvider<JsonModuleConfiguration> jsonModule() {
         return getJsonModule();
     }
 }

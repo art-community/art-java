@@ -32,7 +32,8 @@ public interface StatelessModule<Configuration extends ModuleConfiguration, Conf
 
     Configurator getConfigurator();
 
-    default void configure(UnaryOperator<Configurator> configurator) {
+    default StatelessModule configure(UnaryOperator<Configurator> configurator) {
         configurator.apply(cast(getConfigurator()));
+        return this;
     }
 }
