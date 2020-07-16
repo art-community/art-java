@@ -25,6 +25,7 @@ import io.art.entity.exception.*;
 import io.art.entity.mapper.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.entity.constants.ValueType.*;
 import static io.art.entity.mapper.ValueToModelMapper.*;
@@ -50,14 +51,14 @@ public class ArrayValue implements Value {
 
 
     public <T> T map(int index, ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapper.map(cast(get(index)));
+        return let(cast(get(index)), mapper::map);
     }
 
 
     public <T> ImmutableList<T> mapToList(ValueToModelMapper<T, ? extends Value> mapper) {
         ImmutableList.Builder<T> list = ImmutableList.builderWithExpectedSize(size.get());
         for (int index = 0; index < size(); index++) {
-            list.add(mapper.map(cast(valuesProvider.apply(index))));
+            apply(map(index, mapper), list::add);
         }
         return list.build();
     }
@@ -65,7 +66,7 @@ public class ArrayValue implements Value {
     public <T> ImmutableSet<T> mapToSet(ValueToModelMapper<T, ? extends Value> mapper) {
         ImmutableSet.Builder<T> set = ImmutableSet.builderWithExpectedSize(size.get());
         for (int index = 0; index < size(); index++) {
-            set.add(mapper.map(cast(valuesProvider.apply(index))));
+            apply(map(index, mapper), set::add);
         }
         return set.build();
     }

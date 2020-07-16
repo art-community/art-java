@@ -20,8 +20,6 @@ package io.art.task.deferred.executor;
 
 import static java.lang.Integer.*;
 import static java.time.LocalDateTime.*;
-import static java.util.Objects.*;
-import static io.art.task.deferred.executor.DeferredExecutionExceptionMessages.*;
 import java.time.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.*;
@@ -43,12 +41,6 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
 
     @Override
     public <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
-        if (isNull(eventTask)) {
-            throw new DeferredExecutionException(DEFERRED_TASK_IS_NULL);
-        }
-        if (isNull(triggerTime)) {
-            throw new DeferredExecutionException(DEFERRED_TASK_TRIGGER_TIME_IS_NULL);
-        }
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
@@ -65,12 +57,6 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
 
     @Override
     public Future<?> execute(Runnable task, LocalDateTime triggerTime) {
-        if (isNull(task)) {
-            throw new DeferredExecutionException(DEFERRED_TASK_IS_NULL);
-        }
-        if (isNull(triggerTime)) {
-            throw new DeferredExecutionException(DEFERRED_TASK_TRIGGER_TIME_IS_NULL);
-        }
         return submit(() -> {
             task.run();
             return null;

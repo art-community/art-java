@@ -37,7 +37,6 @@ public enum ValueType {
     BINARY;
 
     public static PrimitiveType asPrimitiveType(ValueType valueType) {
-        if (isNull(valueType)) throw new ValueMappingException(VALUE_TYPE_IS_NULL);
         switch (valueType) {
             case STRING:
                 return PrimitiveType.STRING;
@@ -85,7 +84,6 @@ public enum ValueType {
         }
 
         public static ValueType asValueType(PrimitiveType primitiveType) {
-            if (isNull(primitiveType)) throw new ValueMappingException(PRIMITIVE_TYPE_IS_NULL);
             switch (primitiveType) {
                 case STRING:
                     return ValueType.STRING;

@@ -32,8 +32,6 @@ public class ValueMapper<T, V extends Value> {
     private final ValueToModelMapper<T, V> toModel;
 
     public static <T, V extends Value> ValueMapper<T, V> mapper(ValueFromModelMapper<T, V> fromModel, ValueToModelMapper<T, V> toModel) {
-        if (isNull(fromModel)) throw new ValueMappingException(FROM_MODULE_MAPPER_IS_NULL);
-        if (isNull(toModel)) throw new ValueMappingException(TO_MODULE_MAPPER_IS_NULL);
         return new ValueMapper<>(fromModel, toModel);
     }
 

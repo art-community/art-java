@@ -80,7 +80,6 @@ public class ModuleModel {
     }
 
     public static ModuleModel module(String id) {
-        requireNonNull(id, MODULE_ID_IS_NULL);
         return new ModuleModel(id);
     }
 

@@ -49,22 +49,20 @@ public class Context {
 
     private Context() {
         if (nonNull(INSTANCE)) {
-            out.println(format(CONTEXT_CHANGED, configuration.getClass().getName()));
+            return;
         }
         getRuntime().addShutdownHook(new Thread(this::unloadModules));
     }
 
     private Context(ContextConfiguration configuration) {
         if (nonNull(INSTANCE)) {
-            out.println(format(CONTEXT_CHANGED, configuration.getClass().getName()));
+            return;
         }
         this.configuration = configuration;
         getRuntime().addShutdownHook(new Thread(this::unloadModules));
     }
 
     public static Context initContext(ContextConfiguration contextConfiguration) {
-        if (isNull(contextConfiguration))
-            throw new ContextInitializationException(CONTEXT_INITIAL_CONFIGURATION_IS_NULL);
         return INSTANCE = new Context(contextConfiguration);
     }
 
@@ -77,7 +75,6 @@ public class Context {
     }
 
     public <M extends StatelessModuleProvider<?>> M getModule(String moduleId) {
-        if (isNull(moduleId)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         if (isNull(INSTANCE) || state != READY) {
             throw new ContextInitializationException(CONTEXT_NOT_READY);
         }
@@ -85,7 +82,6 @@ public class Context {
     }
 
     public <M extends StatelessModule<?, ?>> Context loadModule(M module) {
-        if (isNull(module)) throw new ContextInitializationException(MODULE_ID_IS_NULL);
         ContextState currentState = state;
         state = LOADING;
         modules.put(module.getId(), module);

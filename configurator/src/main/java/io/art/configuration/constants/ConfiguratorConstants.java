@@ -48,6 +48,6 @@ public interface ConfiguratorConstants {
     }
 
     interface ExceptionMessages {
-        String UNKNOWN_CONFIGURATION_SOURCE_FILE_EXTENSION = "Unknown configuration source file extension: {0}";
+        String UNKNOWN_CONFIGURATION_SOURCE_FILE_EXTENSION = "Unknown configuration source file extension: ''{0}''";
     }
 }

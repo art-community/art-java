@@ -19,15 +19,11 @@
 package io.art.core.constants;
 
 public interface ExceptionMessages {
-    String EXCEPTION_WRAPPER_ACTION_IS_NULL = "Exception wrapped action is null";
-    String EXCEPTION_WRAPPER_FACTORY_IS_NULL = "ExceptionFactory is null";
-    String CONTEXT_INITIAL_CONFIGURATION_IS_NULL = "ContextInitialConfiguration is null";
-    String MODULE_ID_IS_NULL = "ModuleId is null";
     String CONTEXT_NOT_READY = "Context not ready";
     String MODULE_HAS_NOT_STATE = "Module ''{0}'' has not state";
     String BUILDER_VALIDATOR_HAS_NEXT_ERRORS = "Builder validator for ''{0}'' has next error fields:";
-    String COULD_NOT_FIND_AVAILABLE_PORT_AFTER_ATTEMPTS = "Could not find an available {0} port in the range [{1,number,#}, {2,number,#}] after {3,number,#} attempts";
-    String COULD_NOT_FIND_AVAILABLE_PORTS_IN_THE_RANGE = "Could not find {0,number,#} available {1} ports in the range [{2,number,#}, {3,number,#}]";
+    String COULD_NOT_FIND_AVAILABLE_PORT_AFTER_ATTEMPTS = "Could not find an available ''{0}'' port in the range [{1,number,#}, {2,number,#}] after {3,number,#} attempts";
+    String COULD_NOT_FIND_AVAILABLE_PORTS_IN_THE_RANGE = "Could not find {0,number,#} available ''{1}'' ports in the range [{2,number,#}, {3,number,#}]";
     String MIME_TYPE_MUST_NOT_BE_EMPTY = "Type must not be empty";
     String MIME_SUBTYPE_MUST_NOT_BE_EMPTY = "Subtype must not be empty";
     String MIME_DOES_NOT_CONTAIN_SLASH = "Does not contain '/'";
@@ -36,9 +32,6 @@ public interface ExceptionMessages {
     String INVALID_TOKEN = "Invalid token character ''{0}'' in token ''{1}''";
     String PARAMETER_ATTRIBUTE_MUST_NOT_BE_EMPTY = "Parameter 'attribute' must not be empty";
     String PARAMETER_VALUE_MUST_NOT_BE_EMPTY = "Parameter 'value' must not be empty";
-    String EXCEPTION_CONSUMER_IS_NULL = "Exception consumer is null";
-    String EXCEPTION_WRAPPER_IS_NULL = "Exception wrapper is null";
-    String EXCEPTION_HANDLER_IS_NULL = "Exception handler is null";
-    String FILE_PATH_NOT_VALID = "File path is not valid: {0}";
-    String UNKNOWN_DURATION_TIME_UNITS = "Unknown duration time units: {0}";
+    String FILE_PATH_NOT_VALID = "File path is not valid: ''{0}''";
+    String UNKNOWN_DURATION_TIME_UNITS = "Unknown duration time units: ''{0}''";
 }

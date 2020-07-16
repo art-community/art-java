@@ -21,11 +21,5 @@ package io.art.core.constants;
 import static io.art.core.colorizer.AnsiColorizer.*;
 
 public interface LoggingMessages {
-    String CONTEXT_RELOADED_MESSAGE = success("Context has been reloaded in {0}[ms]");
-    String CONTEXT_CHANGED = success("Context has been changed. New configuration class is {0}");
     String MODULE_LOADED_MESSAGE = success("Module: ''{0}'' was loaded in {1}[ms] with configuration class {2}");
-    String MODULE_OVERRIDDEN_MESSAGE = success("Module: ''{0}'' was overridden in {1}[ms]");
-    String MODULE_RELOADED_MESSAGE = success("Module: ''{0}'' was reloaded in {1}[ms]");
-    String MODULE_REFRESHED_MESSAGE = success("Module: ''{0}'' was refreshed in {1}[ms]");
-    String MODULE_REFRESHED_AND_RELOADED_MESSAGE = success("Module: ''{0}'' was refreshed and reloaded in {1}[ms]");
 }

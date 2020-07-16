@@ -93,7 +93,6 @@ public class MessagePackEntityReader {
         return null;
     }
 
-
     private static Value readMap(org.msgpack.value.MapValue map) {
         if (map.size() == 0) return entityBuilder().build();
         if (map.keySet().stream().filter(Objects::nonNull).allMatch(org.msgpack.value.Value::isStringValue)) {

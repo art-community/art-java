@@ -36,14 +36,12 @@ public class ExceptionHandler<T> {
     }
 
     public static <T> ExceptionCallableWrapper<T> wrapException(Function<Throwable, RuntimeException> wrapper) {
-        requireNonNull(wrapper, EXCEPTION_WRAPPER_IS_NULL);
         ExceptionCallableWrapper<T> callableWrapper = new ExceptionCallableWrapper<>();
         callableWrapper.wrapper = wrapper;
         return callableWrapper;
     }
 
     public static <T> ExceptionCallableHandler<T> handleException(Function<Throwable, T> handler) {
-        requireNonNull(handler, EXCEPTION_HANDLER_IS_NULL);
         ExceptionCallableHandler<T> callableHandler = new ExceptionCallableHandler<>();
         callableHandler.handler = handler;
         return callableHandler;
@@ -58,7 +56,6 @@ public class ExceptionHandler<T> {
     }
 
     public static ExceptionRunnableHandler consumeException(Consumer<Throwable> consumer) {
-        requireNonNull(consumer, EXCEPTION_CONSUMER_IS_NULL);
         return new ExceptionRunnableHandler(consumer);
     }
 

@@ -18,14 +18,11 @@
 
 package io.art.core.wrapper;
 
-import lombok.*;
-import lombok.experimental.*;
 import io.art.core.callable.*;
-import io.art.core.exception.*;
 import io.art.core.factory.*;
 import io.art.core.runnable.*;
-import static java.util.Objects.*;
-import static io.art.core.constants.ExceptionMessages.*;
+import lombok.*;
+import lombok.experimental.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
@@ -33,18 +30,15 @@ import java.util.function.*;
 public class ExceptionWrapper {
     @SneakyThrows
     public static void wrapException(Runnable action) {
-        if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         action.run();
     }
 
     @SneakyThrows
     public static <T> T wrapException(Callable<T> action) {
-        if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         return action.call();
     }
 
     public static void ignoreException(ExceptionRunnable action) {
-        if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             action.run();
         } catch (Throwable throwable) {
@@ -53,7 +47,6 @@ public class ExceptionWrapper {
     }
 
     public static void ignoreException(ExceptionRunnable action, Consumer<Throwable> onException) {
-        if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             action.run();
         } catch (Throwable throwable) {
@@ -62,7 +55,6 @@ public class ExceptionWrapper {
     }
 
     public static <T> T ignoreException(ExceptionCallable<T> action, Function<Throwable, T> onException) {
-        if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
         try {
             return action.call();
         } catch (Throwable throwable) {
@@ -71,8 +63,6 @@ public class ExceptionWrapper {
     }
 
     public static void wrapException(Runnable action, ExceptionFactory<?> exceptionFactory) {
-        if (isNull(action)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_ACTION_IS_NULL);
-        if (isNull(exceptionFactory)) throw new InternalRuntimeException(EXCEPTION_WRAPPER_FACTORY_IS_NULL);
         try {
             action.run();
         } catch (Throwable throwable) {

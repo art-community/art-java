@@ -19,12 +19,8 @@
 package io.art.entity.constants;
 
 public interface ExceptionMessages {
-    String FROM_MODULE_MAPPER_IS_NULL = "FromModel mapper is null";
-    String TO_MODULE_MAPPER_IS_NULL = "ToModel mapper is null";
-    String MAPPER_IS_NULL = "Mapper mapper is null";
-    String VALUE_TYPE_IS_NULL = "Value type is null";
-    String PRIMITIVE_TYPE_IS_NULL = "Primitive type is null";
+    String UNKNOWN_VALUE_TYPE = "Unknown value type: ''{0}''";
     String NOT_PRIMITIVE_TYPE = "Not primitive type: ''{0}''";
     String XML_TAG_IS_EMPTY = "Xml tag is empty";
-    String VALUE_METHOD_NOT_IMPLEMENTED = "Value method not implemented: {0}";
+    String VALUE_METHOD_NOT_IMPLEMENTED = "Value method not implemented: ''{0}''";
 }

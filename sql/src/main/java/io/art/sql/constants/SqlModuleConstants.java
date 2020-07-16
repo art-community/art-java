@@ -27,8 +27,8 @@ public interface SqlModuleConstants {
     }
 
     interface LoggingMessages {
-        String CLOSING_POOL = "Closing DB connection pool: {0}";
-        String STARING_POOL = "Starting connection pool to DataSource: {0}";
+        String CLOSING_POOL = "Closing DB connection pool: ''{0}''";
+        String STARING_POOL = "Starting connection pool to DataSource: ''{0}''";
         String EXECUTING_QUERY = "Executing SQL query: {0}";
         String EXECUTING_BATCH_QUERY = "Executing batch SQL query: {0}";
         String EXECUTING_ROUTINE = "Executing SQL routine: {0}";

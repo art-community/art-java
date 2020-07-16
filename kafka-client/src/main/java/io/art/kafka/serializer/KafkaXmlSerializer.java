@@ -36,7 +36,11 @@ public class KafkaXmlSerializer implements Serializer<Value> {
     @Override
     public byte[] serialize(String topic, Value data) {
         if (isEmpty(data)) return EMPTY_BYTES;
-        return isXml(data) ? writeXmlToBytes(asXmlEntity(data)) : isEntity(data) ? writeXmlToBytes(fromEntityAsTags(asEntity(data))) : EMPTY_BYTES;
+        return isXml(data)
+                ? writeXmlToBytes(asXmlEntity(data))
+                : isEntity(data)
+                ? writeXmlToBytes(fromEntityAsTags(asEntity(data)))
+                : EMPTY_BYTES;
     }
 
     @Override

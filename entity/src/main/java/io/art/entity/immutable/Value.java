@@ -19,14 +19,8 @@
 package io.art.entity.immutable;
 
 import io.art.entity.constants.*;
-import io.art.entity.mapper.*;
-import lombok.*;
 import static io.art.entity.constants.ValueType.*;
-import static io.art.entity.immutable.Entity.entityBuilder;
-import static io.art.entity.immutable.Value.*;
-import static io.art.entity.mapping.PrimitiveMapping.*;
 import static java.util.Objects.*;
-import java.util.*;
 
 public interface Value {
     static Primitive asPrimitive(Value value) {

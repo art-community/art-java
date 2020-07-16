@@ -21,7 +21,7 @@ package io.art.task.deferred.executor;
 import lombok.*;
 
 public interface SchedulerModuleExceptions {
-    String EXCEPTION_OCCURRED_DURING = "Exception occurred during {0}: ''{1}''";
+    String EXCEPTION_OCCURRED_DURING = "Exception occurred during ''{0}'': {1}";
 
     @Getter
     @AllArgsConstructor

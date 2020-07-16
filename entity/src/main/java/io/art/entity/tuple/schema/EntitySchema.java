@@ -104,7 +104,8 @@ public class EntitySchema extends ValueSchema {
                 case ARRAY:
                     return new EntityFieldSchema(type, name, ArraySchema.fromTuple((List<?>) tuple.get(2)));
             }
-            throw new ValueMappingException(VALUE_TYPE_IS_NULL);
+
+            throw new ValueMappingException(UNKNOWN_VALUE_TYPE);
         }
     }
 }

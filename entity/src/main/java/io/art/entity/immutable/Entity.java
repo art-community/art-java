@@ -30,9 +30,9 @@ import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.lazy.LazyValue.*;
-import static io.art.entity.constants.ExceptionMessages.*;
 import static io.art.entity.constants.ValueType.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Value.*;
@@ -56,6 +56,7 @@ public class Entity implements Value {
 
 
     public <T> ImmutableMap<Primitive, T> mapValues(ValueToModelMapper<T, ? extends Value> mapper) {
+
         return fields.stream().collect(toImmutableMap(Function.identity(), key -> mapper.map(cast(valueProvider.apply(key)))));
     }
 
@@ -183,7 +184,6 @@ public class Entity implements Value {
     }
 
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
-        if (isNull(mapper)) throw new ValueMappingException(MAPPER_IS_NULL);
         return mapper.map(cast(get(primitive)));
     }
 
@@ -209,8 +209,7 @@ public class Entity implements Value {
     }
 
     public <T, V extends Value> T mapNested(String key, ValueToModelMapper<T, V> mapper) {
-        if (isNull(mapper)) throw new ValueMappingException(MAPPER_IS_NULL);
-        return mapper.map(cast(find(key)));
+        return let(cast(find(key)), mapper::map);
     }
 
     @Override
@@ -239,16 +238,25 @@ public class Entity implements Value {
 
         @Override
         public boolean containsKey(Object key) {
+            if (isNull(key)) {
+                return false;
+            }
             return fields.contains(stringPrimitive(key.toString()));
         }
 
         @Override
         public boolean containsValue(Object value) {
+            if (isNull(value)) {
+                return false;
+            }
             return evaluated.get().containsValue(value);
         }
 
         @Override
         public V get(Object key) {
+            if (isNull(key)) {
+                return null;
+            }
             return mapper.map(cast(valueProvider.apply(stringPrimitive(key.toString()))));
         }
 

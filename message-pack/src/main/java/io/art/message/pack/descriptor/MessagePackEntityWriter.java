@@ -77,7 +77,6 @@ public class MessagePackEntityWriter {
         return newNil();
     }
 
-
     private static org.msgpack.value.Value writePrimitive(Primitive primitive) {
         if (Value.isEmpty(primitive)) {
             return newNil();
