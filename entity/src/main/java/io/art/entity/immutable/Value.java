@@ -120,11 +120,13 @@ public interface Value {
     class Request {
         String strValue;
         Map<String, String> inner;
+        Map<Integer, String> inner2;
 
 
         public ValueToModelMapper<Request, Entity> toRequest = entity -> Request.builder()
                 .strValue(asPrimitive(entity.get("strValue")).getString())
                 .inner(asEntity(entity.get("strValue")).asStringMap(value -> asPrimitive(value).getString()))
+                .inner2(asEntity(entity.get("strValue")).asIntMap(value -> asPrimitive(value).getString()))
                 .build();
 
     }
