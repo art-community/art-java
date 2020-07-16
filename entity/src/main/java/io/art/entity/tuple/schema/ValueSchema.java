@@ -44,6 +44,8 @@ public class ValueSchema {
         switch (value.getType()) {
             case ENTITY:
                 return new EntitySchema(Value.asEntity(value));
+            case BINARY:
+                return new ValueSchema(value.getType());
             case ARRAY:
                 return new ArraySchema(Value.asArray(value));
         }
@@ -71,6 +73,8 @@ public class ValueSchema {
         switch (valueType) {
             case ENTITY:
                 return EntitySchema.fromTuple(tuple);
+            case BINARY:
+                return ValueSchema.fromTuple(tuple);
             case ARRAY:
                 return ArraySchema.fromTuple(tuple);
         }

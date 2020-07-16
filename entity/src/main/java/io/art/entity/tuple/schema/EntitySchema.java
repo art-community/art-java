@@ -18,12 +18,15 @@
 
 package io.art.entity.tuple.schema;
 
+import com.google.common.collect.*;
 import io.art.entity.constants.*;
 import io.art.entity.exception.*;
 import io.art.entity.immutable.Value;
 import io.art.entity.immutable.*;
 import lombok.*;
+import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.constants.ExceptionMessages.*;
 import static io.art.entity.constants.ValueType.*;
@@ -35,23 +38,26 @@ import java.util.Map.*;
 
 @Getter
 public class EntitySchema extends ValueSchema {
-    private final List<EntityFieldSchema> fieldsSchema = dynamicArrayOf();
+    private final ImmutableList<EntityFieldSchema> fieldsSchema;
 
     EntitySchema(Entity entity) {
         super(ENTITY);
         Set<? extends Entry<Primitive, ? extends Value>> fields = entity.asMap().entrySet();
+        ImmutableList.Builder<EntityFieldSchema> schemaBuilder = ImmutableList.builder();
         for (Entry<Primitive, ? extends Value> entry : fields) {
             Primitive key = entry.getKey();
-            if (isEmpty(key)) {
+            Value value = entry.getValue();
+            if (isEmpty(key) || isNull(value)) {
                 continue;
             }
-            Value value = entry.getValue();
-            fieldsSchema.add(new EntityFieldSchema(value.getType(), key.getString(), fromValue(value)));
+            let(fromValue(value), schema -> schemaBuilder.add(new EntityFieldSchema(value.getType(), key.getString(), schema)));
         }
+        fieldsSchema = schemaBuilder.build();
     }
 
-    private EntitySchema() {
+    private EntitySchema(ImmutableList<EntityFieldSchema> fieldsSchema) {
         super(ENTITY);
+        this.fieldsSchema = fieldsSchema;
     }
 
     @Override
@@ -62,13 +68,11 @@ public class EntitySchema extends ValueSchema {
     }
 
     public static EntitySchema fromTuple(List<?> tuple) {
-        EntitySchema schema = new EntitySchema();
-        tuple.stream()
+        return new EntitySchema(tuple.stream()
                 .skip(1)
                 .map(element -> (List<?>) element)
                 .map(EntityFieldSchema::fromTuple)
-                .forEach(schema.fieldsSchema::add);
-        return schema;
+                .collect(toImmutableList()));
     }
 
     @Getter
@@ -101,6 +105,8 @@ public class EntitySchema extends ValueSchema {
             switch (type) {
                 case ENTITY:
                     return new EntityFieldSchema(type, name, EntitySchema.fromTuple((List<?>) tuple.get(2)));
+                case BINARY:
+                    return new EntityFieldSchema(type, name, new ValueSchema(type));
                 case ARRAY:
                     return new EntityFieldSchema(type, name, ArraySchema.fromTuple((List<?>) tuple.get(2)));
             }

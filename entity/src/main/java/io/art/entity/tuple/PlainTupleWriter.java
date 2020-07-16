@@ -36,7 +36,7 @@ import java.util.*;
 public class PlainTupleWriter {
     public static PlainTupleWriterResult writeTuple(Value value) {
         ValueSchema schema = fromValue(value);
-        if (isEmpty(value)) return null;
+        if (isNull(schema) || isEmpty(value)) return null;
         if (isPrimitive(value)) {
             return new PlainTupleWriterResult(fixedArrayOf(asPrimitive(value).getValue()), schema);
         }

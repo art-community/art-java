@@ -33,7 +33,10 @@ public class ArraySchema extends ValueSchema {
 
     ArraySchema(ArrayValue array) {
         super(ARRAY);
-        elements = array.asStream().map(ValueSchema::fromValue).collect(toImmutableList());
+        elements = array.asStream()
+                .map(ValueSchema::fromValue)
+                .filter(Objects::nonNull)
+                .collect(toImmutableList());
     }
 
     ArraySchema(ImmutableList<ValueSchema> elements) {
@@ -53,6 +56,7 @@ public class ArraySchema extends ValueSchema {
                 .skip(1)
                 .map(element -> (List<?>) element)
                 .map(ValueSchema::fromTuple)
+                .filter(Objects::nonNull)
                 .collect(toImmutableList()));
     }
 }
