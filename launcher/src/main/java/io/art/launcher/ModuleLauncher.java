@@ -31,7 +31,7 @@ public class ModuleLauncher {
     private final static AtomicBoolean launched = new AtomicBoolean(false);
 
     public static void launch(ModuleModel model) {
-        if (launched.compareAndSet(false, true)) {
+        if (launched.compareAndSet(true, false)) {
             context().loadModule(new ConfiguratorModule());
             ImmutableCollection<ModuleConfigurationSource> sources = configuratorModule().getConfiguration().orderedSources();
             context()
