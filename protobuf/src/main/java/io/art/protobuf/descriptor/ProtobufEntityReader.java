@@ -27,7 +27,6 @@ import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.entity.factory.ArrayValuesFactory.*;
 import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.protobuf.constants.ProtobufExceptionMessages.*;

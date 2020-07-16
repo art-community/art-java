@@ -25,7 +25,7 @@ import io.art.http.exception.*;
 import static java.util.Objects.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.entity.factory.ArrayValuesFactory.*;
+import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.http.constants.HttpExceptionsMessages.*;
 import java.nio.charset.*;
@@ -44,6 +44,6 @@ public class HttpBytesMapper implements HttpContentMapper.HttpEntityToContentMap
         if (isNull(mimeType)) throw new HttpTextMapperException(CONTENT_TYPE_IS_NULL);
         if (isNull(charset)) return emptyArray();
         if (isEmpty(content)) return emptyArray();
-        return ArrayValuesFactory.byteArray(content);
+        return ArrayFactory.byteArray(content);
     }
 }

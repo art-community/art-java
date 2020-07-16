@@ -117,25 +117,4 @@ public interface Value {
     boolean isEmpty();
 
     ValueType getType();
-
-    @Builder
-    @lombok.Value
-    class Request {
-        String strValue;
-        Map<String, String> inner;
-        Map<Integer, String> inner2;
-
-
-        public ValueToModelMapper<Request, Entity> toRequest = entity -> Request.builder()
-                .strValue(Value.asPrimitive(entity.get("strValue")).getString())
-                .inner(Value.asEntity(entity.get("strValue")).asStringMap(value -> asPrimitive(value).getString()))
-                .inner2(Value.asEntity(entity.get("strValue")).asIntMap(value -> asPrimitive(value).getString()))
-                .build();
-
-        public ValueFromModelMapper<Request, Entity> fromRequest = request -> entityBuilder()
-                .put("strValue", request.strValue, fromString)
-                .put("inner", entityBuilder().putAllStrings(request.inner, fromString).build())
-                .put("inner2", entityBuilder().putAllInts(request.inner2, fromString).build())
-                .build();
-    }
 }

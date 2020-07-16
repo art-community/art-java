@@ -25,12 +25,13 @@ import lombok.experimental.*;
 import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.lazy.LazyValue.*;
-import static io.art.entity.immutable.ArrayValue.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.ArrayValue.*;
 import java.util.*;
+import java.util.function.*;
 
 @UtilityClass
-public class ArrayValuesFactory {
+public class ArrayFactory {
     public static ArrayValue stringArray(Collection<String> value) {
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         ImmutableList<Collection<String>> list = of(value);
@@ -110,24 +111,21 @@ public class ArrayValuesFactory {
         return new ArrayValue(index -> cast(list.get(index)), lazy(value::size));
     }
 
+    public static <T extends Value> ArrayValue array(Function<Integer, T> valueProvider, Supplier<Integer> sizeProvider) {
+        return new ArrayValue(valueProvider, lazy(sizeProvider));
+    }
+
     public static <T extends Entity> ArrayValue entityArray(Collection<T> value) {
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         ImmutableList<Collection<T>> list = of(value);
         return new ArrayValue(index -> cast(list.get(index)), lazy(value::size));
     }
 
-    public static <T extends Value> ArrayValue valueArray(Collection<T> value) {
+    public static <T extends ArrayValue> ArrayValue arrayOfArrays(Collection<T> value) {
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         ImmutableList<Collection<T>> list = of(value);
         return new ArrayValue(index -> cast(list.get(index)), lazy(value::size));
     }
-
-    public static <T extends ArrayValue> ArrayValue collectionOfCollections(Collection<T> value) {
-        if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        ImmutableList<Collection<T>> list = of(value);
-        return new ArrayValue(index -> cast(list.get(index)), lazy(value::size));
-    }
-
 
     public static ArrayValue emptyArray() {
         return EMPTY;

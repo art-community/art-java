@@ -18,19 +18,18 @@
 
 package io.art.entity.tuple;
 
-import io.art.entity.immutable.*;
-import lombok.experimental.*;
+import io.art.entity.builder.*;
 import io.art.entity.constants.*;
+import io.art.entity.immutable.*;
 import io.art.entity.tuple.schema.*;
-import static java.util.Objects.*;
-import static java.util.stream.Collectors.*;
-import static io.art.core.caster.Caster.*;
+import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
-import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.factory.ArrayValuesFactory.*;
-import static io.art.entity.immutable.Value.*;
-import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.BinaryValue.isPrimitiveType;
+import static io.art.entity.immutable.BinaryValue.*;
+import static io.art.entity.immutable.Entity.*;
+import static java.util.Objects.*;
 import java.util.*;
 
 @UtilityClass
@@ -43,8 +42,10 @@ public class PlainTupleReader {
         switch (schema.getType()) {
             case ENTITY:
                 return readEntity(tuple, (EntitySchema) schema);
+            case BINARY:
+                return binary((byte[]) tuple.get(0));
             case ARRAY:
-                return readCollectionValue(tuple, (CollectionValueSchema) schema);
+                return readArray(tuple, (ArraySchema) schema);
         }
         return null;
     }
@@ -55,7 +56,10 @@ public class PlainTupleReader {
             case STRING:
                 return stringPrimitive((String) value);
             case LONG:
-                return longPrimitive(((Number) value).longValue());
+                if (nonNull(value)) {
+                    return longPrimitive(((Number) value).longValue());
+                }
+                return null;
             case DOUBLE:
                 return doublePrimitive((Double) value);
             case FLOAT:
@@ -72,82 +76,53 @@ public class PlainTupleReader {
 
     private static Entity readEntity(List<?> entity, EntitySchema schema) {
         if (isNull(schema)) return null;
+        if (isEmpty(entity)) return null;
         EntityBuilder entityBuilder = entityBuilder();
-        if (isEmpty(entity)) return entityBuilder.build();
         List<EntitySchema.EntityFieldSchema> fieldsSchema = schema.getFieldsSchema();
-        for (int i = 0, fieldsSchemaSize = fieldsSchema.size(); i < fieldsSchemaSize; i++) {
-            EntitySchema.EntityFieldSchema fieldSchema = fieldsSchema.get(i);
+        for (int index = 0, fieldsSchemaSize = fieldsSchema.size(); index < fieldsSchemaSize; index++) {
+            int finalIndex = index;
+            EntitySchema.EntityFieldSchema fieldSchema = fieldsSchema.get(index);
             switch (fieldSchema.getType()) {
                 case STRING:
-                    entityBuilder.stringField(fieldSchema.getName(), (String) entity.get(i));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> stringPrimitive((String) entity.get(finalIndex)));
                     break;
                 case LONG:
-                    Number number = (Number) entity.get(i);
+                    Number number = (Number) entity.get(index);
                     if (nonNull(number)) {
-                        entityBuilder.longField(fieldSchema.getName(), number.longValue());
+                        entityBuilder.lazyPut(fieldSchema.getName(), () -> longPrimitive(number.longValue()));
                         break;
                     }
-                    entityBuilder.longField(fieldSchema.getName(), null);
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> null);
                     break;
                 case DOUBLE:
-                    entityBuilder.doubleField(fieldSchema.getName(), (Double) entity.get(i));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> doublePrimitive((Double) entity.get(finalIndex)));
                     break;
                 case FLOAT:
-                    entityBuilder.floatField(fieldSchema.getName(), (Float) entity.get(i));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> floatPrimitive((Float) entity.get(finalIndex)));
                     break;
                 case INT:
-                    entityBuilder.intField(fieldSchema.getName(), (Integer) entity.get(i));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> intPrimitive((Integer) entity.get(finalIndex)));
                     break;
                 case BOOL:
-                    entityBuilder.boolField(fieldSchema.getName(), (Boolean) entity.get(i));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> boolPrimitive((Boolean) entity.get(finalIndex)));
                     break;
                 case BYTE:
-                    entityBuilder.byteField(fieldSchema.getName(), (Byte) entity.get(i));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> bytePrimitive((Byte) entity.get(finalIndex)));
                     break;
                 case ENTITY:
-                    entityBuilder.entityField(fieldSchema.getName(), readEntity((List<?>) entity.get(i), (EntitySchema) fieldSchema.getSchema()));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> readEntity((List<?>) entity.get(finalIndex), (EntitySchema) fieldSchema.getSchema()));
                     break;
                 case ARRAY:
-                    entityBuilder.valueField(fieldSchema.getName(), readCollectionValue((List<?>) entity.get(i), (CollectionValueSchema) fieldSchema.getSchema()));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> readArray((List<?>) entity.get(finalIndex), (ArraySchema) fieldSchema.getSchema()));
                     break;
             }
         }
         return entityBuilder.build();
     }
 
-    private static ArrayValue<?> readCollectionValue(List<?> collection, CollectionValueSchema schema) {
+    private static ArrayValue readArray(List<?> array, ArraySchema schema) {
         if (isNull(schema)) return null;
-        if (isEmpty(collection)) return emptyArray();
-        List<?> elements = dynamicArrayOf();
-        List<ValueSchema> elementsSchema = schema.getElementsSchema();
-        switch (schema.getElementsType()) {
-            case BYTE:
-            case STRING:
-            case BOOL:
-            case DOUBLE:
-            case FLOAT:
-                return array(schema.getElementsType(), cast(collection));
-            case LONG:
-                return longArray(collection.stream().filter(Objects::nonNull).map(element -> ((Number) element).longValue()).collect(toList()));
-            case INT:
-                return intArray(collection.stream().filter(Objects::nonNull).map(element -> ((Number) element).intValue()).collect(toList()));
-            case ENTITY:
-                for (int i = 0; i < elementsSchema.size(); i++) {
-                    elements.add(cast(readEntity((List<?>) collection.get(i), (EntitySchema) elementsSchema.get(i))));
-                }
-                return entityArray(cast(elements));
-            case COLLECTION:
-                for (int i = 0; i < elementsSchema.size(); i++) {
-                    elements.add(cast(readCollectionValue((List<?>) collection.get(i), (CollectionValueSchema) elementsSchema.get(i))));
-                }
-                return collectionOfCollections(cast(elements));
-            case VALUE:
-                for (int i = 0; i < elementsSchema.size(); i++) {
-                    elements.add(cast(readTuple((List<?>) collection.get(i), elementsSchema.get(i))));
-                }
-                return valueArray(cast(elements));
-
-        }
-        return emptyArray();
+        if (isEmpty(array)) return null;
+        return array(index -> readTuple((List<?>) array.get(index), schema.getElements().get(index)), array::size);
     }
 }

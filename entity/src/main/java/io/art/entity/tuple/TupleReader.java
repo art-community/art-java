@@ -18,17 +18,17 @@
 
 package io.art.entity.tuple;
 
-import io.art.entity.immutable.*;
+import io.art.entity.builder.*;
+import io.art.entity.constants.*;
 import io.art.entity.immutable.Value;
+import io.art.entity.immutable.*;
 import lombok.*;
 import lombok.experimental.*;
-import io.art.entity.constants.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
-import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.factory.ArrayValuesFactory.*;
-import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.BinaryValue.*;
+import static io.art.entity.immutable.Entity.*;
 import java.util.*;
 
 @UtilityClass
@@ -40,10 +40,12 @@ public class TupleReader {
         }
         int type = (Integer) tuple.get(0);
         switch (ValueType.values()[type]) {
+            case BINARY:
+                return binary((byte[]) tuple.get(1));
             case ENTITY:
                 return readEntity(tuple.subList(1, tuple.size())).value;
             case ARRAY:
-                return readCollectionValue(tuple.subList(1, tuple.size())).value;
+                return readArray(tuple.subList(1, tuple.size())).value;
         }
         return null;
     }
@@ -72,40 +74,43 @@ public class TupleReader {
     private static TupleReadingResult<Entity> readEntity(List<?> entity) {
         int size = (Integer) entity.get(0);
         EntityBuilder entityBuilder = entityBuilder();
-        for (int i = 0; i < size; i += 3) {
-            String name = (String) entity.get(i + 1);
-            ValueType type = ValueType.values()[(Integer) entity.get(i + 2)];
+        for (int index = 0; index < size; index += 3) {
+            String name = (String) entity.get(index + 1);
+            ValueType type = ValueType.values()[(Integer) entity.get(index + 2)];
             switch (type) {
                 case STRING:
-                    entityBuilder.stringField(name, (String) entity.get(i + 3));
+                    entityBuilder.put(name, stringPrimitive((String) entity.get(index + 3)));
                     break;
                 case LONG:
-                    entityBuilder.longField(name, (Long) entity.get(i + 3));
+                    entityBuilder.put(name, longPrimitive((Long) entity.get(index + 3)));
                     break;
                 case DOUBLE:
-                    entityBuilder.doubleField(name, (Double) entity.get(i + 3));
+                    entityBuilder.put(name, doublePrimitive((Double) entity.get(index + 3)));
                     break;
                 case FLOAT:
-                    entityBuilder.floatField(name, (Float) entity.get(i + 3));
+                    entityBuilder.put(name, floatPrimitive((Float) entity.get(index + 3)));
                     break;
                 case INT:
-                    entityBuilder.intField(name, (Integer) entity.get(i + 3));
+                    entityBuilder.put(name, intPrimitive((Integer) entity.get(index + 3)));
                     break;
                 case BOOL:
-                    entityBuilder.boolField(name, (Boolean) entity.get(i + 3));
+                    entityBuilder.put(name, boolPrimitive((Boolean) entity.get(index + 3)));
                     break;
                 case BYTE:
-                    entityBuilder.byteField(name, (Byte) entity.get(i + 3));
+                    entityBuilder.put(name, bytePrimitive((Byte) entity.get(index + 3)));
+                    break;
+                case BINARY:
+                    entityBuilder.put(name, binary((byte[]) entity.get(index + 3)));
                     break;
                 case ENTITY:
-                    TupleReadingResult<Entity> entityField = readEntity(entity.subList(i + 3, entity.size()));
-                    entityBuilder.valueField(name, entityField.value);
-                    i += entityField.offset;
+                    TupleReadingResult<Entity> entityField = readEntity(entity.subList(index + 3, entity.size()));
+                    entityBuilder.put(name, entityField.value);
+                    index += entityField.offset;
                     break;
                 case ARRAY:
-                    TupleReadingResult<ArrayValue<Value>> collection = readCollectionValue(entity.subList(i + 3, entity.size()));
-                    entityBuilder.valueField(name, collection.value);
-                    i += collection.offset;
+                    TupleReadingResult<ArrayValue> array = readArray(entity.subList(index + 3, entity.size()));
+                    entityBuilder.put(name, array.value);
+                    index += array.offset;
                     break;
             }
         }
@@ -115,39 +120,14 @@ public class TupleReader {
                 .build();
     }
 
-    private static TupleReadingResult<ArrayValue<Value>> readCollectionValue(List<?> collection) {
-        int size = (Integer) collection.get(0);
-        List<Value> elements = dynamicArrayOf();
-        for (int i = 0; i < size; i += 2) {
-            Integer elementsType = (Integer) collection.get(i + 1);
-            ValueType collectionElementsType = ValueType.values()[elementsType];
-            switch (collectionElementsType) {
-                case STRING:
-                case LONG:
-                case DOUBLE:
-                case FLOAT:
-                case INT:
-                case BOOL:
-                case BYTE:
-                    elements.add(cast(collection.get(i + 2)));
-                    break;
-                case ENTITY:
-                    TupleReadingResult<Entity> entityElement = readEntity(collection.subList(i + 2, collection.size()));
-                    elements.add(entityElement.value);
-                    i += entityElement.offset;
-                    break;
-                case ARRAY:
-                    TupleReadingResult<ArrayValue<Value>> collectionElement = readCollectionValue(collection.subList(i + 2, collection.size()));
-                    elements.add(collectionElement.value);
-                    i += collectionElement.offset;
-                    break;
-            }
-        }
-        return TupleReadingResult.<ArrayValue<Value>>builder()
+    private static TupleReadingResult<ArrayValue> readArray(List<?> array) {
+        int size = (Integer) array.get(0);
+        return TupleReadingResult.<ArrayValue>builder()
                 .offset(size)
-                .value(valueArray(elements))
+                .value(array(index -> readTuple((List<?>) array.get(index)), array::size))
                 .build();
     }
+
     @Builder
     private static class TupleReadingResult<T> {
         T value;

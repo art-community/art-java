@@ -16,13 +16,15 @@
  * limitations under the License.
  */
 
-package io.art.entity.exception;
+package io.art.entity.factory;
 
-import static io.art.entity.constants.ExceptionMessages.*;
-import static java.text.MessageFormat.*;
+import io.art.entity.immutable.*;
+import lombok.experimental.*;
+import static io.art.entity.immutable.XmlEntity.*;
 
-public class ValueMethodNotImplementedException extends RuntimeException  {
-    public ValueMethodNotImplementedException(String method) {
-        super(format(VALUE_METHOD_NOT_IMPLEMENTED, method));
+@UtilityClass
+public class XmlFactory {
+    public static XmlEntity emptyXml() {
+        return EMPTY;
     }
 }

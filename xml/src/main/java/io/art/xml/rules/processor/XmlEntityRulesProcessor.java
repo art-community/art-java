@@ -45,7 +45,7 @@ public class XmlEntityRulesProcessor {
         Set<Entry<String, String>> attributes = entity.getAttributes().entrySet();
         for (Entry<String, String> attribute : attributes) {
             String mappedAttribute = getOrElse(getAttributeFromRules(attribute.getValue(), rules), attribute.getValue());
-            builder.attributeField(attribute.getKey(), mappedAttribute);
+            builder.attribute(attribute.getKey(), mappedAttribute);
         }
     }
 

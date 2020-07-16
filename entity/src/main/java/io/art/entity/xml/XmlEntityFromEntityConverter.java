@@ -18,15 +18,14 @@
 
 package io.art.entity.xml;
 
-import io.art.entity.immutable.*;
-import io.art.entity.immutable.Value;
-import lombok.*;
 import io.art.core.checker.*;
-import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
-import static io.art.core.caster.Caster.*;
+import io.art.entity.immutable.Value;
+import io.art.entity.immutable.*;
+import lombok.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.immutable.XmlEntity.*;
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
 import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
@@ -34,9 +33,9 @@ public final class XmlEntityFromEntityConverter {
     public static XmlEntity fromEntityAsTags(Entity entity) {
         XmlEntity.XmlEntityBuilder xmlEntityBuilder = xmlEntityBuilder();
         if (Value.isEmpty(entity)) {
-            return xmlEntityBuilder.create();
+            return EMPTY;
         }
-        entity.getFields()
+        entity.asMap()
                 .entrySet()
                 .stream()
                 .filter(entry -> isPrimitive(entry.getKey()))
@@ -49,10 +48,11 @@ public final class XmlEntityFromEntityConverter {
         if (Value.isEmpty(entity)) {
             return builder.create();
         }
-        entity.getFields().entrySet()
+        entity.asMap()
+                .entrySet()
                 .stream()
                 .filter(entry -> isPrimitive(entry.getKey()) && isPrimitive(entry.getValue()))
-                .forEach(entry -> builder.stringAttributeField(entry.getKey().toString(), asPrimitive(entry.getValue()).toString()));
+                .forEach(entry -> builder.attribute(entry.getKey().toString(), asPrimitive(entry.getValue()).toString()));
         return builder.create();
     }
 
@@ -75,32 +75,17 @@ public final class XmlEntityFromEntityConverter {
                 builder.value(value.toString()).build();
                 return;
             case ARRAY:
-                addCollectionValue(builder, (ArrayValue<?>) value);
+                addCollectionValue(builder, (ArrayValue) value);
                 builder.build();
         }
     }
 
-    private static void addCollectionValue(XmlEntity.XmlEntityBuilder builder, ArrayValue<?> value) {
+    private static void addCollectionValue(XmlEntity.XmlEntityBuilder builder, ArrayValue value) {
         if (isNull(value)) {
             return;
         }
-        Collection<?> elements = cast(value.getElements());
+        Collection<?> elements = value.asList();
         for (Object element : elements) {
-            switch (value.getElementsType()) {
-                case STRING:
-                case LONG:
-                case DOUBLE:
-                case FLOAT:
-                case INT:
-                case BOOL:
-                case BYTE:
-                    builder.child().tag(element.toString()).build();
-                    continue;
-                case ENTITY:
-                case COLLECTION:
-                case VALUE:
-                    break;
-            }
             Value elementValue = (Value) element;
             switch (elementValue.getType()) {
                 case ENTITY:

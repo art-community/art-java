@@ -40,17 +40,19 @@ public class PlainTupleWriter {
         if (isPrimitive(value)) {
             return new PlainTupleWriterResult(fixedArrayOf(asPrimitive(value).getValue()), schema);
         }
-        return new PlainTupleWriterResult(writeComplexTypeValue(value), schema);
+        return new PlainTupleWriterResult(writeValue(value), schema);
     }
 
-    private static List<?> writeComplexTypeValue(Value value) {
+    private static List<?> writeValue(Value value) {
         if (isEmpty(value)) return emptyList();
 
         switch (value.getType()) {
             case ENTITY:
                 return writeEntity(asEntity(value));
+            case BINARY:
+                return fixedArrayOf(asBinary(value));
             case ARRAY:
-                return writeCollectionValue(asArray(value));
+                return writeArray(asArray(value));
         }
 
         return emptyList();
@@ -58,7 +60,7 @@ public class PlainTupleWriter {
 
     private static List<?> writeEntity(Entity entity) {
         List<?> tuple = dynamicArrayOf();
-        Map<? extends Value, ? extends Value> fields = entity.getFields();
+        Map<? extends Value, ? extends Value> fields = entity.asMap();
         for (Map.Entry<? extends Value, ? extends Value> entry : fields.entrySet()) {
             Value key = entry.getKey();
             if (!isPrimitive(key)) continue;
@@ -68,33 +70,17 @@ public class PlainTupleWriter {
                 continue;
             }
             if (nonNull(value)) {
-                tuple.add(cast(writeComplexTypeValue(value)));
+                tuple.add(cast(writeValue(value)));
             }
         }
         return tuple;
     }
 
-    private static List<?> writeCollectionValue(ArrayValue<?> collectionValue) {
+    private static List<?> writeArray(ArrayValue array) {
         List<?> tuple = dynamicArrayOf();
-        List<?> valueList = collectionValue.getList();
-        for (Object value : valueList) {
-            if (isNull(value)) continue;
-
-            switch (collectionValue.getElementsType()) {
-                case STRING:
-                case LONG:
-                case DOUBLE:
-                case FLOAT:
-                case INT:
-                case BOOL:
-                case BYTE:
-                    tuple.add(cast(value));
-                    break;
-                case ENTITY:
-                case COLLECTION:
-                    tuple.add(cast(writeComplexTypeValue((Value) value)));
-                    break;
-            }
+        List<Value> valueList = array.asList();
+        for (Value value : valueList) {
+            tuple.add(cast(writeValue(value)));
         }
         return tuple;
     }
@@ -102,7 +88,7 @@ public class PlainTupleWriter {
     @Getter
     @AllArgsConstructor
     public static class PlainTupleWriterResult {
-        private List<?> tuple;
+        private final List<?> tuple;
         private final ValueSchema schema;
     }
 }

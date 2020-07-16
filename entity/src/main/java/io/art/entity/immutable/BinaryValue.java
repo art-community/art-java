@@ -33,4 +33,8 @@ public class BinaryValue implements Value {
     public boolean isEmpty() {
         return EmptinessChecker.isEmpty(content);
     }
+
+    public static BinaryValue binary(byte[] array) {
+        return new BinaryValue(array);
+    }
 }

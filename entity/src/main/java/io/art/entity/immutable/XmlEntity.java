@@ -18,21 +18,21 @@
 
 package io.art.entity.immutable;
 
-import lombok.*;
+import com.google.common.collect.*;
 import io.art.core.checker.*;
 import io.art.core.extensions.*;
 import io.art.entity.constants.*;
 import io.art.entity.exception.*;
+import lombok.*;
+import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.StringExtensions.*;
+import static io.art.entity.constants.ExceptionMessages.*;
+import static io.art.entity.constants.ValueType.*;
 import static java.util.Collections.*;
 import static java.util.Map.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
-import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.StringExtensions.*;
-import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.constants.ExceptionMessages.*;
-import static io.art.entity.constants.ValueType.*;
 import java.util.*;
 
 @Getter
@@ -45,9 +45,9 @@ public class XmlEntity implements Value {
     private String prefix;
     private XmlValue<?> value;
     private String namespace;
-    private Map<String, String> attributes;
-    private Map<String, String> namespaces;
-    private List<XmlEntity> children;
+    private ImmutableMap<String, String> attributes;
+    private ImmutableMap<String, String> namespaces;
+    private ImmutableList<XmlEntity> children;
     private boolean cData;
 
     public static XmlEntityBuilder xmlEntityBuilder() {
@@ -59,7 +59,10 @@ public class XmlEntity implements Value {
     }
 
     public static XmlEntity createChild(String prefix, String namespace, String tag, Object value) {
-        return value == null ? null : xmlEntityBuilder()
+        if (isNull(value)) {
+            return null;
+        }
+        return xmlEntityBuilder()
                 .prefix(prefix)
                 .namespace(namespace)
                 .namespaceField(prefix, namespace)
@@ -69,12 +72,15 @@ public class XmlEntity implements Value {
     }
 
     public static XmlEntity createEntity(String prefix, String namespace, String tag, XmlEntity value) {
-        return value == null ? null : xmlEntityBuilder()
+        if (isNull(value)) {
+            return null;
+        }
+        return xmlEntityBuilder()
                 .prefix(prefix)
                 .namespace(namespace)
                 .namespaceField(prefix, namespace)
                 .tag(tag)
-                .cDataValue(value)
+                .cData(value)
                 .create();
     }
 
@@ -88,11 +94,11 @@ public class XmlEntity implements Value {
 
     public XmlEntity find(String tag) {
         if (EmptinessChecker.isEmpty(tag)) {
-            return xmlEntityBuilder().emptyXmlEntity();
+            return EMPTY;
         }
         XmlEntity found = findRecursive(tag);
         if (isNull(found)) {
-            return xmlEntityBuilder().emptyXmlEntity();
+            return EMPTY;
         }
         return found;
     }
@@ -171,7 +177,7 @@ public class XmlEntity implements Value {
         return EMPTY_STRING;
     }
 
-    public boolean existTag(String tag) {
+    public boolean exists(String tag) {
         return !find(tag).isEmpty();
     }
 
@@ -180,72 +186,57 @@ public class XmlEntity implements Value {
         return EmptinessChecker.isEmpty(tag);
     }
 
+
+    public static final XmlEntity EMPTY = new XmlEntity();
+
+
     @NoArgsConstructor(access = PRIVATE)
     public static class XmlEntityBuilder {
-        private final Map<String, String> attributes = mapOf();
-        private final Map<String, String> namespaces = mapOf();
-        private final List<XmlEntity> children = dynamicArrayOf();
+        private final ImmutableMap.Builder<String, String> attributes = ImmutableMap.builder();
+        private final ImmutableMap.Builder<String, String> namespaces = ImmutableMap.builder();
+        private final ImmutableList.Builder<XmlEntity> children = ImmutableList.builder();
         private XmlEntityBuilder parent;
         private String tag;
         private XmlValue<?> value;
         private String prefix;
         private String namespace;
         private boolean cData;
-        private boolean deleteEmptyValueAttribute = false;
+        private boolean ignoreEmpty = false;
 
         XmlEntityBuilder(XmlEntityBuilder parent) {
             this.parent = parent;
         }
 
-        public XmlEntityBuilder deleteEmptyValueAttribute() {
-            this.deleteEmptyValueAttribute = true;
+        public XmlEntityBuilder ignoreEmpty() {
+            this.ignoreEmpty = true;
             return this;
         }
 
-        public XmlEntityBuilder stringAttributeField(String name, String value) {
-            attributes.put(name, value);
-            return this;
-        }
-
-        public XmlEntityBuilder intAttributeField(String name, Integer value) {
+        public XmlEntityBuilder boolAttributeStringFormat(String name, Boolean value) {
             attributes.put(name, emptyIfNull(value));
             return this;
         }
 
-        public XmlEntityBuilder longAttributeField(String name, Long value) {
-            attributes.put(name, emptyIfNull(value));
-            return this;
-        }
-
-        public XmlEntityBuilder doubleAttributeField(String name, Double value) {
-            attributes.put(name, emptyIfNull(value));
-            return this;
-        }
-
-        public XmlEntityBuilder booleanAttributeFieldStringFormat(String name, Boolean value) {
-            attributes.put(name, emptyIfNull(value));
-            return this;
-        }
-
-        public XmlEntityBuilder booleanAttributeFieldNumericFormat(String name, Boolean value) {
+        public XmlEntityBuilder boolAttributeNumericFormat(String name, Boolean value) {
             attributes.put(name, value ? TRUE_NUMERIC : FALSE_NUMERIC);
             return this;
         }
 
-        public <T> XmlEntityBuilder attributeField(String name, T value) {
+        public XmlEntityBuilder attribute(String name, Object value) {
             attributes.put(name, emptyIfNull(value));
             return this;
         }
 
-
-        public XmlEntityBuilder stringAttributeFields(Map<String, String> attributes) {
+        public XmlEntityBuilder stringAttributes(Map<String, String> attributes) {
             this.attributes.putAll(attributes);
             return this;
         }
 
-        public <T> XmlEntityBuilder attributeFields(Map<String, T> attributes) {
-            this.attributes
-                    .putAll(attributes.entrySet().stream().collect(toMap(Entry::getKey, StringExtensions::emptyIfNull)));
+        public XmlEntityBuilder attributes(Map<String, ?> attributes) {
+            this.attributes.putAll(attributes
+                    .entrySet()
+                    .stream()
+                    .collect(toMap(Entry::getKey, StringExtensions::emptyIfNull)));
             return this;
         }
 
@@ -254,28 +245,8 @@ public class XmlEntity implements Value {
             return this;
         }
 
-        public XmlEntityBuilder stringValue(String value) {
+        public XmlEntityBuilder value(Object value) {
             return value(emptyIfNull(value));
-        }
-
-        public XmlEntityBuilder intValue(Integer value) {
-            return value(emptyIfNull(value));
-        }
-
-        public XmlEntityBuilder doubleValue(Double value) {
-            return value(emptyIfNull(value));
-        }
-
-        public XmlEntityBuilder longValue(Long value) {
-            return value(emptyIfNull(value));
-        }
-
-        public XmlEntityBuilder booleanValueStringFormat(Boolean value) {
-            return value(emptyIfNull(value));
-        }
-
-        public XmlEntityBuilder booleanValueNumericFormat(Boolean value) {
-            return value(value ? TRUE_NUMERIC : FALSE_NUMERIC);
         }
 
         public XmlEntityBuilder value(String value) {
@@ -283,7 +254,16 @@ public class XmlEntity implements Value {
             return this;
         }
 
-        public XmlEntityBuilder cDataValue(XmlEntity value) {
+
+        public XmlEntityBuilder boolValueStringFormat(Boolean value) {
+            return value(emptyIfNull(value));
+        }
+
+        public XmlEntityBuilder boolValueNumericFormat(Boolean value) {
+            return value(value ? TRUE_NUMERIC : FALSE_NUMERIC);
+        }
+
+        public XmlEntityBuilder cData(XmlEntity value) {
             this.cData = true;
             this.value = new CdataXmlValue(value);
             return this;
@@ -306,7 +286,7 @@ public class XmlEntity implements Value {
 
         public XmlEntityBuilder child() {
             XmlEntityBuilder child = new XmlEntityBuilder(this);
-            child.deleteEmptyValueAttribute = deleteEmptyValueAttribute;
+            child.ignoreEmpty = ignoreEmpty;
             return child;
         }
 
@@ -332,18 +312,14 @@ public class XmlEntity implements Value {
             }
             XmlEntity entity = new XmlEntity();
             entity.namespace = namespace;
-            entity.namespaces = namespaces;
-            entity.children = children;
+            entity.namespaces = namespaces.build();
+            entity.children = children.build();
             entity.tag = tag;
             entity.prefix = prefix;
             entity.value = value;
-            entity.attributes = attributes;
+            entity.attributes = attributes.build();
             entity.cData = cData;
             return entity;
-        }
-
-        public XmlEntity emptyXmlEntity() {
-            return new XmlEntity();
         }
 
         @SuppressWarnings("Duplicates")
@@ -351,17 +327,17 @@ public class XmlEntity implements Value {
             if (isNull(tag)) {
                 throw new XmlEntityCreationException(XML_TAG_IS_EMPTY);
             }
-            if (deleteEmptyValueAttribute && EmptinessChecker.isEmpty(value.getValue())) {
+            if (ignoreEmpty && EmptinessChecker.isEmpty(value.getValue())) {
                 return parent;
             }
             XmlEntity entity = new XmlEntity();
             entity.namespace = namespace;
-            entity.namespaces = namespaces;
-            entity.children = children;
+            entity.namespaces = namespaces.build();
+            entity.children = children.build();
             entity.tag = tag;
             entity.prefix = prefix;
             entity.value = value;
-            entity.attributes = attributes;
+            entity.attributes = attributes.build();
             return parent.child(entity);
         }
     }

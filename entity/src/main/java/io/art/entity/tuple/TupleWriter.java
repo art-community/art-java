@@ -20,12 +20,11 @@ package io.art.entity.tuple;
 
 import io.art.entity.immutable.*;
 import lombok.experimental.*;
-import io.art.entity.constants.*;
-import static java.util.Collections.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.immutable.Value.*;
+import static java.util.Collections.*;
 import java.util.*;
 
 @UtilityClass
@@ -40,8 +39,11 @@ public class TupleWriter {
             case ENTITY:
                 writeEntity(tuple, asEntity(value));
                 break;
+            case BINARY:
+                tuple.add(cast(asBinary(value).getContent()));
+                break;
             case ARRAY:
-                writeCollectionValue(tuple, asArray(value));
+                writeArray(tuple, asArray(value));
                 break;
         }
         return tuple;
@@ -49,7 +51,7 @@ public class TupleWriter {
 
     private static void writeEntity(List<?> tuple, Entity entity) {
         List<?> entityTuple = dynamicArrayOf();
-        Map<? extends Value, ? extends Value> fields = entity.getFields();
+        Map<? extends Value, ? extends Value> fields = entity.asMap();
         tuple.add(cast(entity.getType().ordinal()));
         for (Map.Entry<? extends Value, ? extends Value> entry : fields.entrySet()) {
             Value key = entry.getKey();
@@ -61,13 +63,15 @@ public class TupleWriter {
                 entityTuple.add(cast(asPrimitive(value).getValue()));
                 continue;
             }
-
             switch (value.getType()) {
                 case ENTITY:
                     writeEntity(entityTuple, asEntity(value));
                     break;
+                case BINARY:
+                    entityTuple.add(cast(asBinary(value).getContent()));
+                    break;
                 case ARRAY:
-                    writeCollectionValue(entityTuple, asArray(value));
+                    writeArray(entityTuple, asArray(value));
                     break;
             }
         }
@@ -75,49 +79,14 @@ public class TupleWriter {
         tuple.addAll(cast(entityTuple));
     }
 
-    private static void writeCollectionValue(List<?> tuple, ArrayValue<?> collectionValue) {
-        List<?> collectionValueTuple = dynamicArrayOf();
-        List<?> valueList = collectionValue.getValueList();
-        tuple.add(cast(collectionValue.getType().ordinal()));
-        for (Object value : valueList) {
-            switch (collectionValue.getElementsType()) {
-                case STRING:
-                    collectionValueTuple.add(cast(ValueType.STRING.ordinal()));
-                    collectionValueTuple.add(cast(value));
-                    break;
-                case LONG:
-                    collectionValueTuple.add(cast(ValueType.LONG.ordinal()));
-                    collectionValueTuple.add(cast(value));
-                    break;
-                case DOUBLE:
-                    collectionValueTuple.add(cast(ValueType.DOUBLE.ordinal()));
-                    collectionValueTuple.add(cast(value));
-                    break;
-                case FLOAT:
-                    collectionValueTuple.add(cast(ValueType.FLOAT.ordinal()));
-                    collectionValueTuple.add(cast(value));
-                    break;
-                case INT:
-                    collectionValueTuple.add(cast(ValueType.INT.ordinal()));
-                    collectionValueTuple.add(cast(value));
-                    break;
-                case BOOL:
-                    collectionValueTuple.add(cast(ValueType.BOOL.ordinal()));
-                    collectionValueTuple.add(cast(value));
-                    break;
-                case BYTE:
-                    collectionValueTuple.add(cast(ValueType.BYTE.ordinal()));
-                    collectionValueTuple.add(cast(value));
-                    break;
-                case ENTITY:
-                    writeEntity(collectionValueTuple, asEntity((Value) value));
-                    break;
-                case COLLECTION:
-                    writeCollectionValue(collectionValueTuple, asArray((Value) value));
-                    break;
-            }
+    private static void writeArray(List<?> tuple, ArrayValue array) {
+        List<?> arrayTuple = dynamicArrayOf();
+        List<Value> valueList = array.asList();
+        tuple.add(cast(array.getType().ordinal()));
+        for (Value value : valueList) {
+            arrayTuple.add(cast(writeTuple(value)));
         }
-        tuple.add(cast(collectionValueTuple.size()));
-        tuple.addAll(cast(collectionValueTuple));
+        tuple.add(cast(arrayTuple.size()));
+        tuple.addAll(cast(arrayTuple));
     }
 }

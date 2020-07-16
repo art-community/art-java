@@ -18,12 +18,12 @@
 
 package io.art.entity.tuple.schema;
 
-import lombok.*;
-import io.art.entity.immutable.Value;
 import io.art.entity.constants.*;
-import static java.util.Objects.*;
+import io.art.entity.immutable.Value;
+import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.factory.CollectionsFactory.*;
+import static java.util.Objects.*;
 import java.util.*;
 
 @Getter
@@ -45,7 +45,7 @@ public class ValueSchema {
             case ENTITY:
                 return new EntitySchema(Value.asEntity(value));
             case ARRAY:
-                return new CollectionValueSchema(Value.asArray(value), Value.asArray(value).getElementsType());
+                return new ArraySchema(Value.asArray(value));
         }
         return null;
     }
@@ -72,7 +72,7 @@ public class ValueSchema {
             case ENTITY:
                 return EntitySchema.fromTuple(tuple);
             case ARRAY:
-                return CollectionValueSchema.fromTuple(tuple);
+                return ArraySchema.fromTuple(tuple);
         }
 
         return null;

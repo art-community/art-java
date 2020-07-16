@@ -18,25 +18,20 @@
 
 package io.art.entity.tuple.schema;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import io.art.entity.immutable.Entity;
+import io.art.entity.constants.*;
+import io.art.entity.exception.*;
 import io.art.entity.immutable.Value;
-import io.art.entity.constants.ValueType;
-import io.art.entity.exception.ValueMappingException;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.Collections.emptyList;
-import static java.util.Objects.isNull;
-import static io.art.core.caster.Caster.cast;
-import static io.art.core.factory.CollectionsFactory.dynamicArrayOf;
-import static io.art.entity.immutable.Value.isPrimitive;
-import static io.art.entity.immutable.Value.isPrimitiveType;
-import static io.art.entity.constants.ExceptionMessages.VALUE_TYPE_IS_NULL;
-import static io.art.entity.constants.ValueType.ENTITY;
+import io.art.entity.immutable.*;
+import lombok.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.entity.constants.ExceptionMessages.*;
+import static io.art.entity.constants.ValueType.*;
+import static io.art.entity.immutable.Value.*;
+import static java.util.Collections.*;
+import static java.util.Objects.*;
+import java.util.*;
+import java.util.Map.*;
 
 @Getter
 public class EntitySchema extends ValueSchema {
@@ -44,13 +39,14 @@ public class EntitySchema extends ValueSchema {
 
     EntitySchema(Entity entity) {
         super(ENTITY);
-        Set<? extends Map.Entry<? extends Value, ? extends Value>> fields = entity.getFields().entrySet();
-        for (Map.Entry<? extends Value, ? extends Value> entry : fields) {
-            Value key = entry.getKey();
-            if (!isPrimitive(key)) continue;;
+        Set<? extends Entry<Primitive, ? extends Value>> fields = entity.asMap().entrySet();
+        for (Entry<Primitive, ? extends Value> entry : fields) {
+            Primitive key = entry.getKey();
+            if (isEmpty(key)) {
+                continue;
+            }
             Value value = entry.getValue();
-            if (isNull(value)) continue;
-            fieldsSchema.add(new EntityFieldSchema(value.getType(), key.toString(), fromValue(value)));
+            fieldsSchema.add(new EntityFieldSchema(value.getType(), key.getString(), fromValue(value)));
         }
     }
 
@@ -106,7 +102,7 @@ public class EntitySchema extends ValueSchema {
                 case ENTITY:
                     return new EntityFieldSchema(type, name, EntitySchema.fromTuple((List<?>) tuple.get(2)));
                 case ARRAY:
-                    return new EntityFieldSchema(type, name, CollectionValueSchema.fromTuple((List<?>) tuple.get(2)));
+                    return new EntityFieldSchema(type, name, ArraySchema.fromTuple((List<?>) tuple.get(2)));
             }
             throw new ValueMappingException(VALUE_TYPE_IS_NULL);
         }

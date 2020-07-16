@@ -28,7 +28,7 @@ import static java.util.stream.Collectors.*;
 import static org.msgpack.core.MessagePack.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
-import static io.art.entity.factory.ArrayValuesFactory.*;
+import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import java.io.*;

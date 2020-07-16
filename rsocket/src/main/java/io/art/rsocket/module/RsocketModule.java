@@ -92,7 +92,6 @@ public class RsocketModule implements Module<RsocketModuleConfiguration, Rsocket
                 .block();
         create()
                 .compress(true)
-                .bindUntilJavaShutdown()
                 .route(routes -> routes
                         .get("/test", (request, response) -> {
                             HttpHeaders headers = request.requestHeaders();

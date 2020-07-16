@@ -18,21 +18,21 @@
 
 package io.art.entity.xml;
 
-import io.art.entity.immutable.*;
+import io.art.entity.builder.*;
 import io.art.entity.immutable.Value;
+import io.art.entity.immutable.*;
 import lombok.*;
-import static java.util.Collections.*;
-import static java.util.stream.Collectors.*;
-import static lombok.AccessLevel.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.factory.ArrayValuesFactory.*;
-import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.immutable.Value.isEmpty;
+import static java.util.Collections.*;
+import static java.util.stream.Collectors.*;
+import static lombok.AccessLevel.*;
 import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
@@ -45,7 +45,7 @@ public final class XmlEntityToEntityConverter {
         List<Value> values = dynamicArrayOf();
         String value = xmlEntity.getValue();
         if (isNotEmpty(value)) {
-            entityBuilder.stringField(xmlEntity.getTag(), value);
+            entityBuilder.put(xmlEntity.getTag(), stringPrimitive(value));
         }
         if (isEmpty(xmlEntity.getChildren())) {
             return entityBuilder.build();
@@ -54,12 +54,12 @@ public final class XmlEntityToEntityConverter {
             EntityBuilder innerEntityBuilder = entityBuilder();
             for (XmlEntity child : xmlEntity.getChildren()) {
                 if (isEmpty(child.getChildren())) {
-                    innerEntityBuilder.stringField(child.getTag(), child.getValue());
+                    innerEntityBuilder.put(child.getTag(), stringPrimitive(child.getValue()));
                     continue;
                 }
-                innerEntityBuilder.valueField(child.getTag(), toEntityFromTags(child).get(child.getTag()));
+                innerEntityBuilder.put(child.getTag(), toEntityFromTags(child).get(child.getTag()));
             }
-            return entityBuilder.entityField(xmlEntity.getTag(), innerEntityBuilder.build()).build();
+            return entityBuilder.put(xmlEntity.getTag(), innerEntityBuilder.build()).build();
         }
         List<XmlEntity> childrenCollection = xmlEntity.getChildren()
                 .stream()
@@ -79,23 +79,22 @@ public final class XmlEntityToEntityConverter {
                 continue;
             }
             if (isEmpty(child.getChildren())) {
-                collection.add(cast(entityBuilder().stringField(child.getTag(), child.getValue()).build()));
+                collection.add(cast(entityBuilder().put(child.getTag(), stringPrimitive(child.getValue())).build()));
                 continue;
             }
-            collection.add(cast(entityBuilder().valueField(child.getTag(), toEntityFromTags(child).get(child.getTag())).build()));
+            collection.add(cast(entityBuilder().put(child.getTag(), toEntityFromTags(child).get(child.getTag())).build()));
         }
-        return entityBuilder.valueField(xmlEntity.getTag(), valueArray(cast(collection))).build();
+        return entityBuilder.put(xmlEntity.getTag(), valueArray(cast(collection))).build();
     }
 
     public static Entity toEntityFromAttributes(XmlEntity xmlEntity) {
         if (isEmpty(xmlEntity)) {
             return entityBuilder().build();
         }
-        return entityBuilder()
-                .mapField(xmlEntity.getTag(), xmlEntity.getAttributes()
-                        .entrySet()
-                        .stream()
-                        .collect(toMap(entry -> stringPrimitive(entry.getKey()), entry -> stringPrimitive(entry.getValue()))))
-                .build();
+        Map<Primitive, Primitive> attributes = xmlEntity.getAttributes()
+                .entrySet()
+                .stream()
+                .collect(toMap(entry -> stringPrimitive(entry.getKey()), entry -> stringPrimitive(entry.getValue())));
+        return entityBuilder().put(xmlEntity.getTag(), entityBuilder().putAll(attributes).build()).build();
     }
 }

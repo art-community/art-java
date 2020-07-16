@@ -38,4 +38,8 @@ public interface ValueToModelMapper<T, V extends Value> extends Serializable {
 
     interface XmlEntityToModelMapper<T> extends ValueToModelMapper<T, XmlEntity> {
     }
+
+    static <V extends Value> ValueToModelMapper<V, V> identity() {
+        return value -> value;
+    }
 }

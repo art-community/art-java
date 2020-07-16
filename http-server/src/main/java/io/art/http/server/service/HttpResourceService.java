@@ -32,7 +32,7 @@ import static io.art.core.context.Context.*;
 import static io.art.core.extensions.InputOutputStreamExtensions.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.factory.ArrayValuesFactory.*;
+import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.http.server.constants.HttpServerExceptionMessages.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;

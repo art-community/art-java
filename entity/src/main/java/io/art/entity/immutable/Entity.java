@@ -43,9 +43,10 @@ import static io.art.entity.constants.ValueType.PrimitiveType.LONG;
 import static io.art.entity.constants.ValueType.PrimitiveType.STRING;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Value.*;
+import static io.art.entity.mapper.ValueToModelMapper.*;
 import static java.util.Objects.*;
-import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
+import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -53,7 +54,7 @@ import java.util.function.*;
 public class Entity implements Value {
     @Getter
     private final ValueType type = ENTITY;
-    private final Set<Primitive> fields;
+    private final ImmutableSet<Primitive> fields;
     private final Function<Primitive, ? extends Value> valueProvider;
 
     public static EntityBuilder entityBuilder() {
@@ -61,12 +62,12 @@ public class Entity implements Value {
     }
 
     public <T> ImmutableMap<Primitive, T> map(ValueToModelMapper<T, ? extends Value> mapper) {
-        return fields.stream().collect(toImmutableMap(identity(), key -> mapper.map(cast(valueProvider.apply(key)))));
+        return fields.stream().collect(toImmutableMap(Function.identity(), key -> mapper.map(cast(valueProvider.apply(key)))));
     }
 
 
     public <T> ImmutableMap<Primitive, ? extends Value> copyToMap() {
-        return fields.stream().collect(toImmutableMap(identity(), key -> cast(valueProvider.apply(key))));
+        return fields.stream().collect(toImmutableMap(Function.identity(), key -> cast(valueProvider.apply(key))));
     }
 
 
@@ -98,6 +99,10 @@ public class Entity implements Value {
         return fields.stream().collect(toImmutableMap(Primitive::getBool, key -> mapper.map(cast(valueProvider.apply(key)))));
     }
 
+
+    public Map<Primitive, ? extends Value> asMap() {
+        return new ProxyMap<>(STRING, identity());
+    }
 
     public <T> Map<String, T> asStringMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return new ProxyMap<>(STRING, mapper);
@@ -216,7 +221,6 @@ public class Entity implements Value {
         return mapper.map(cast(find(key)));
     }
 
-
     @Override
     public boolean isEmpty() {
         return EmptinessChecker.isEmpty(fields);
@@ -264,7 +268,7 @@ public class Entity implements Value {
         }
 
         @Override
-        public void putAll(Map<? extends K, ? extends V> map) {
+        public void putAll(@Nonnull Map<? extends K, ? extends V> map) {
             throw new ValueMethodNotImplementedException("putAll");
         }
 
@@ -274,19 +278,24 @@ public class Entity implements Value {
         }
 
         @Override
+        @Nonnull
         public Set<K> keySet() {
             return fields.stream().map(Caster::<K>cast).collect(toSet());
         }
 
         @Override
+        @Nonnull
         public Collection<V> values() {
             return map(mapper).values();
         }
 
         @Override
+        @Nonnull
         public Set<Entry<K, V>> entrySet() {
             ImmutableMap<K, V> map = copyToPrimitiveMap(mapper);
             return map.entrySet();
         }
     }
+
+    public static Entity EMPTY = entityBuilder().build();
 }

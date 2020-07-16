@@ -27,6 +27,7 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.entity.constants.ValueType.*;
+import static io.art.entity.mapper.ValueToModelMapper.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -36,7 +37,7 @@ import java.util.stream.*;
 public class ArrayValue implements Value {
     @Getter
     private final ValueType type = ARRAY;
-    private final Function<Integer, Value> valuesProvider;
+    private final Function<Integer, ? extends Value> valuesProvider;
     private final LazyValue<Integer> size;
 
     public int size() {
@@ -77,6 +78,18 @@ public class ArrayValue implements Value {
 
     public <T> Set<T> asSet(ValueToModelMapper<T, ? extends Value> mapper) {
         return new ProxySet<>(mapper);
+    }
+
+    public List<Value> asList() {
+        return new ProxyList<>(identity());
+    }
+
+    public Stream<Value> asStream() {
+        return asList(identity()).stream();
+    }
+
+    public Set<Value> asSet() {
+        return new ProxySet<>(identity());
     }
 
     @Override
@@ -335,12 +348,12 @@ public class ArrayValue implements Value {
         }
 
         @Override
-        public boolean add(T t) {
+        public boolean add(T element) {
             throw new ValueMethodNotImplementedException("add");
         }
 
         @Override
-        public boolean remove(Object o) {
+        public boolean remove(Object object) {
             throw new ValueMethodNotImplementedException("remove");
         }
 

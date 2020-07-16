@@ -77,7 +77,7 @@ public class XmlEntityReader {
             Map<String, String> attributes = getAttributes(parser);
             Map<String, String> namespaces = getNamespaces(parser);
             XmlEntityBuilder rootElement = parseXml(parser);
-            rootElement.stringAttributeFields(attributes);
+            rootElement.stringAttributes(attributes);
             rootElement.namespaceFields(namespaces);
             rootElement.prefix(prefix);
             return rootElement;
@@ -103,7 +103,7 @@ public class XmlEntityReader {
                     Map<String, String> attributes = getAttributes(parser);
                     Map<String, String> namespaces = getNamespaces(parser);
                     XmlEntityBuilder child = parseXml(parser);
-                    child.stringAttributeFields(attributes);
+                    child.stringAttributes(attributes);
                     child.namespaceFields(namespaces);
                     xmlEntityBuilder.child(child.create());
                     break;

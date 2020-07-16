@@ -23,7 +23,7 @@ import io.art.entity.mapper.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.entity.factory.ArrayValuesFactory.*;
+import static io.art.entity.factory.ArrayFactory.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import java.util.*;
