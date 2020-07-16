@@ -40,7 +40,7 @@ public class TupleWriter {
             case ENTITY:
                 writeEntity(tuple, asEntity(value));
                 break;
-            case COLLECTION:
+            case ARRAY:
                 writeCollectionValue(tuple, asCollection(value));
                 break;
         }
@@ -66,7 +66,7 @@ public class TupleWriter {
                 case ENTITY:
                     writeEntity(entityTuple, asEntity(value));
                     break;
-                case COLLECTION:
+                case ARRAY:
                     writeCollectionValue(entityTuple, asCollection(value));
                     break;
             }
@@ -75,7 +75,7 @@ public class TupleWriter {
         tuple.addAll(cast(entityTuple));
     }
 
-    private static void writeCollectionValue(List<?> tuple, CollectionValue<?> collectionValue) {
+    private static void writeCollectionValue(List<?> tuple, ArrayValue<?> collectionValue) {
         List<?> collectionValueTuple = dynamicArrayOf();
         List<?> valueList = collectionValue.getValueList();
         tuple.add(cast(collectionValue.getType().ordinal()));

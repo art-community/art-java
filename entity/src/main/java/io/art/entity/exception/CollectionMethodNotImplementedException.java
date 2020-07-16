@@ -16,15 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.entity;
+package io.art.entity.exception;
 
-import lombok.*;
-import static io.art.entity.constants.ValueType.*;
-import static io.art.entity.constants.ValueType.XmlValueType.*;
+import io.art.core.exception.*;
+import static io.art.entity.constants.ExceptionMessages.*;
+import static java.text.MessageFormat.*;
 
-@Getter
-@AllArgsConstructor
-public class CdataXmlValue implements XmlValue<XmlEntity> {
-    private final XmlValueType type = CDATA;
-    private final XmlEntity value;
+public class CollectionMethodNotImplementedException extends InternalRuntimeException  {
+    public CollectionMethodNotImplementedException(String method) {
+        super(format(COLLECTION_METHOD_NOT_IMPLEMENTED, method));
+    }
 }

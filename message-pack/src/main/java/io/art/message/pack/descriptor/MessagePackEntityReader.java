@@ -18,10 +18,10 @@
 
 package io.art.message.pack.descriptor;
 
+import io.art.entity.ArrayValue;
 import lombok.experimental.*;
 import org.msgpack.value.*;
 import io.art.entity.Value;
-import io.art.entity.*;
 import io.art.message.pack.exception.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
@@ -146,7 +146,7 @@ public class MessagePackEntityReader {
         return valueBuilder.build();
     }
 
-    private static CollectionValue<?> readCollectionValue(ArrayValue array) {
+    private static ArrayValue readCollectionValue(org.msgpack.value.ArrayValue array) {
         if (array.size() == 0) return emptyCollection();
         return valueCollection(array.list()
                 .stream()

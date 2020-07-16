@@ -74,13 +74,13 @@ public final class XmlEntityFromEntityConverter {
             case BYTE:
                 builder.value(value.toString()).build();
                 return;
-            case COLLECTION:
-                addCollectionValue(builder, (CollectionValue<?>) value);
+            case ARRAY:
+                addCollectionValue(builder, (ArrayValue<?>) value);
                 builder.build();
         }
     }
 
-    private static void addCollectionValue(XmlEntity.XmlEntityBuilder builder, CollectionValue<?> value) {
+    private static void addCollectionValue(XmlEntity.XmlEntityBuilder builder, ArrayValue<?> value) {
         if (isNull(value)) {
             return;
         }
@@ -114,9 +114,9 @@ public final class XmlEntityFromEntityConverter {
                 case BOOL:
                 case BYTE:
                     break;
-                case COLLECTION:
+                case ARRAY:
                     builder = builder.child();
-                    addCollectionValue(builder, (CollectionValue) elementValue);
+                    addCollectionValue(builder, (ArrayValue) elementValue);
                     builder = builder.build();
                     break;
             }

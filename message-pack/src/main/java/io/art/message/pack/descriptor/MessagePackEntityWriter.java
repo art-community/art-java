@@ -18,6 +18,7 @@
 
 package io.art.message.pack.descriptor;
 
+import io.art.entity.ArrayValue;
 import lombok.experimental.*;
 import org.msgpack.core.buffer.*;
 import org.msgpack.value.*;
@@ -33,7 +34,6 @@ import static org.msgpack.value.ValueFactory.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.Value.*;
 import static io.art.entity.constants.CollectionMode.*;
 import java.io.*;
@@ -77,7 +77,7 @@ public class MessagePackEntityWriter {
         switch (value.getType()) {
             case ENTITY:
                 return writeEntity(asEntity(value));
-            case COLLECTION:
+            case ARRAY:
                 return writeCollectionValue(asCollection(value));
         }
         return newNil();
@@ -107,7 +107,7 @@ public class MessagePackEntityWriter {
         return newNil();
     }
 
-    private static org.msgpack.value.Value writeCollectionValue(CollectionValue<?> collectionValue) {
+    private static org.msgpack.value.Value writeCollectionValue(ArrayValue<?> collectionValue) {
         if (Value.isEmpty(collectionValue)) {
             return newArray();
         }
@@ -215,7 +215,7 @@ public class MessagePackEntityWriter {
             case FLOAT:
                 mapBuilder.put(newString(key.toString()), writePrimitive(asPrimitive(value)));
                 return;
-            case COLLECTION:
+            case ARRAY:
                 mapBuilder.put(newString(key.toString()), writeCollectionValue(asCollection(value)));
                 return;
             case ENTITY:

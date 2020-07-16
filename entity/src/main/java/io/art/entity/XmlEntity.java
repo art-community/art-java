@@ -31,7 +31,7 @@ import static lombok.AccessLevel.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.constants.ValueMappingExceptionMessages.*;
+import static io.art.entity.constants.ExceptionMessages.*;
 import static io.art.entity.constants.ValueType.*;
 import java.util.*;
 
@@ -40,7 +40,7 @@ import java.util.*;
 @EqualsAndHashCode
 @NoArgsConstructor(access = PRIVATE)
 public class XmlEntity implements Value {
-    private final ValueType type = XML_ENTITY;
+    private final ValueType type = XML;
     private String tag;
     private String prefix;
     private XmlValue<?> value;

@@ -32,8 +32,8 @@ public class CollectionValueSchema extends ValueSchema {
     private final CollectionElementsType elementsType;
     private final List<ValueSchema> elementsSchema = dynamicArrayOf();
 
-    CollectionValueSchema(CollectionValue<?> collectionValue, CollectionElementsType elementsType) {
-        super(COLLECTION);
+    CollectionValueSchema(ArrayValue<?> collectionValue, CollectionElementsType elementsType) {
+        super(ARRAY);
         this.elementsType = elementsType;
         switch (collectionValue.getElementsType()) {
             case STRING:
@@ -84,7 +84,7 @@ public class CollectionValueSchema extends ValueSchema {
                         .forEach(element -> elementsSchema.add(new ValueSchema(BYTE)));
                 break;
             case ENTITY:
-            case COLLECTION:
+            case ARRAY:
             case VALUE:
                 collectionValue
                         .getElements()
@@ -96,7 +96,7 @@ public class CollectionValueSchema extends ValueSchema {
     }
 
     private CollectionValueSchema(CollectionElementsType elementsType) {
-        super(COLLECTION);
+        super(ARRAY);
         this.elementsType = elementsType;
     }
 

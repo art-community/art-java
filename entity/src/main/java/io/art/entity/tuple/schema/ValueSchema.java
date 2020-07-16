@@ -44,7 +44,7 @@ public class ValueSchema {
         switch (value.getType()) {
             case ENTITY:
                 return new EntitySchema(Value.asEntity(value));
-            case COLLECTION:
+            case ARRAY:
                 return new CollectionValueSchema(Value.asCollection(value), Value.asCollection(value).getElementsType());
         }
         return null;
@@ -71,7 +71,7 @@ public class ValueSchema {
         switch (valueType) {
             case ENTITY:
                 return EntitySchema.fromTuple(tuple);
-            case COLLECTION:
+            case ARRAY:
                 return CollectionValueSchema.fromTuple(tuple);
         }
 

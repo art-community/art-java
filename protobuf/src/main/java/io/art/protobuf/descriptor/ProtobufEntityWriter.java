@@ -71,13 +71,13 @@ public class ProtobufEntityWriter {
                 return com.google.protobuf.Value.newBuilder().setBoolValue(asPrimitive(value).getBool()).build();
             case ENTITY:
                 return writeEntityToProtobuf(asEntity(value));
-            case COLLECTION:
+            case ARRAY:
                 return writeCollectionToProtobuf(asCollection(value));
         }
         throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, value.getType()));
     }
 
-    private static com.google.protobuf.Value writeCollectionToProtobuf(CollectionValue<?> collectionValue) {
+    private static com.google.protobuf.Value writeCollectionToProtobuf(ArrayValue<?> collectionValue) {
         ListValue protobufValues = ListValue.newBuilder().addAllValues(collectionValue.getElements()
                 .stream()
                 .map(element -> writeCollectionValueToProtobuf(collectionValue.getElementsType(), element))
@@ -100,7 +100,7 @@ public class ProtobufEntityWriter {
             case ENTITY:
                 return writeEntityToProtobuf((Entity) value);
             case COLLECTION:
-                return writeCollectionToProtobuf((CollectionValue<?>) value);
+                return writeCollectionToProtobuf((ArrayValue<?>) value);
             case VALUE:
                 return writeProtobuf((Value) value);
         }

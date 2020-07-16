@@ -31,8 +31,8 @@ public interface Value {
         return (Entity) value;
     }
 
-    static CollectionValue asCollection(Value value) {
-        return (CollectionValue) value;
+    static ArrayValue asCollection(Value value) {
+        return (ArrayValue) value;
     }
 
     static boolean isEmpty(Value value) {
@@ -86,7 +86,7 @@ public interface Value {
 
     static boolean isCollectionType(ValueType type) {
         if (isNull(type)) return false;
-        return type == COLLECTION;
+        return type == ARRAY;
     }
 
     static boolean isXmlEntityType(ValueType type) {

@@ -174,7 +174,7 @@ public class JsonEntityReader {
     }
 
 
-    private static CollectionValue<?> parseArray(JsonParser parser) throws IOException {
+    private static ArrayValue<?> parseArray(JsonParser parser) throws IOException {
         JsonToken currentToken = parser.nextToken();
         switch (currentToken) {
             case NOT_AVAILABLE:

@@ -76,7 +76,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         return put(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, primitive).build());
     }
 
-    public Entity put(String spaceName, Long id, CollectionValue<?> collectionValue) {
+    public Entity put(String spaceName, Long id, ArrayValue<?> collectionValue) {
         return put(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, collectionValue).build());
     }
 
@@ -84,7 +84,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         return put(spaceName, entityBuilder().valueField(VALUE, primitive).build());
     }
 
-    public Entity put(String spaceName, CollectionValue<?> collectionValue) {
+    public Entity put(String spaceName, ArrayValue<?> collectionValue) {
         return put(spaceName, entityBuilder().valueField(VALUE, collectionValue).build());
     }
 
@@ -114,11 +114,11 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
 
-    public Optional<CollectionValue<?>> getCollectionValue(String spaceName, long id) {
+    public Optional<ArrayValue<?>> getCollectionValue(String spaceName, long id) {
         return get(spaceName, id).map(value -> asCollection(asEntity(value).getValue(VALUE)));
     }
 
-    public Optional<CollectionValue<?>> getCollectionValue(String spaceName) {
+    public Optional<ArrayValue<?>> getCollectionValue(String spaceName) {
         return getCollectionValue(spaceName, 1);
     }
 
@@ -160,15 +160,15 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     }
 
 
-    public List<CollectionValue<?>> selectCollections(String spaceName, Collection<?> keys) {
+    public List<ArrayValue<?>> selectCollections(String spaceName, Collection<?> keys) {
         return select(spaceName, keys).stream().map(entity -> asCollection(entity.getValue(VALUE))).collect(toList());
     }
 
-    public List<CollectionValue<?>> selectCollections(String spaceName, long id) {
+    public List<ArrayValue<?>> selectCollections(String spaceName, long id) {
         return selectCollections(spaceName, setOf(id));
     }
 
-    public List<CollectionValue<?>> selectAllCollections(String spaceName) {
+    public List<ArrayValue<?>> selectAllCollections(String spaceName) {
         return selectCollections(spaceName, emptySet());
     }
 
@@ -199,7 +199,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         return insert(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, primitive).build());
     }
 
-    public Entity insert(String spaceName, Long id, CollectionValue<?> collectionValue) {
+    public Entity insert(String spaceName, Long id, ArrayValue<?> collectionValue) {
         return insert(spaceName, entityBuilder().longField(ID_FIELD, id).valueField(VALUE, collectionValue).build());
     }
 
@@ -207,7 +207,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         return put(spaceName, entityBuilder().valueField(VALUE, primitive).build());
     }
 
-    public Entity insert(String spaceName, CollectionValue<?> collectionValue) {
+    public Entity insert(String spaceName, ArrayValue<?> collectionValue) {
         return put(spaceName, entityBuilder().valueField(VALUE, collectionValue).build());
     }
 

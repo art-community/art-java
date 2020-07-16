@@ -91,7 +91,7 @@ public interface RocksDbValueDao {
             case ENTITY:
                 put(entityKey, asEntity(value));
                 break;
-            case COLLECTION:
+            case ARRAY:
                 put(entityKey, asCollection(value));
                 break;
             case STRING:
@@ -138,7 +138,7 @@ public interface RocksDbValueDao {
         }
     }
 
-    static void put(String entityKey, CollectionValue<?> collectionValue) {
+    static void put(String entityKey, ArrayValue<?> collectionValue) {
         if (isEmpty(entityKey)) return;
         if (isEmpty(collectionValue)) return;
         switch (collectionValue.getElementsType()) {

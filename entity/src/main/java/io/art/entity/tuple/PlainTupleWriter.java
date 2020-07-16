@@ -49,7 +49,7 @@ public class PlainTupleWriter {
         switch (value.getType()) {
             case ENTITY:
                 return writeEntity(asEntity(value));
-            case COLLECTION:
+            case ARRAY:
                 return writeCollectionValue(asCollection(value));
         }
 
@@ -74,7 +74,7 @@ public class PlainTupleWriter {
         return tuple;
     }
 
-    private static List<?> writeCollectionValue(CollectionValue<?> collectionValue) {
+    private static List<?> writeCollectionValue(ArrayValue<?> collectionValue) {
         List<?> tuple = dynamicArrayOf();
         List<?> valueList = collectionValue.getList();
         for (Object value : valueList) {

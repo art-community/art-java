@@ -30,24 +30,24 @@ import java.util.*;
 
 @UtilityClass
 public class CollectionMapping {
-    public static ValueMapper<Collection<String>, CollectionValue<String>> stringCollectionMapper = mapper(CollectionValuesFactory::stringCollection, CollectionValue::getElements);
-    public static ValueMapper<Collection<Integer>, CollectionValue<Integer>> intCollectionMapper = mapper(CollectionValuesFactory::intCollection, CollectionValue::getElements);
-    public static ValueMapper<Collection<Double>, CollectionValue<Double>> doubleCollectionMapper = mapper(CollectionValuesFactory::doubleCollection, CollectionValue::getElements);
-    public static ValueMapper<Collection<Float>, CollectionValue<Float>> floatCollectionMapper = mapper(CollectionValuesFactory::floatCollection, CollectionValue::getElements);
-    public static ValueMapper<Collection<Boolean>, CollectionValue<Boolean>> boolCollectionMapper = mapper(CollectionValuesFactory::boolCollection, CollectionValue::getElements);
-    public static ValueMapper<Collection<Long>, CollectionValue<Long>> longCollectionMapper = mapper(CollectionValuesFactory::longCollection, CollectionValue::getElements);
-    public static ValueMapper<Collection<Entity>, CollectionValue<Entity>> entityCollectionMapper = mapper(CollectionValuesFactory::entityCollection, CollectionValue::getElements);
-    public static ValueMapper<Collection<Value>, CollectionValue<Value>> valueCollectionMapper = mapper(CollectionValuesFactory::valueCollection, CollectionValue::getElements);
+    public static ValueMapper<Collection<String>, ArrayValue> stringCollectionMapper = mapper(CollectionValuesFactory::stringCollection, ArrayValue::getElements);
+    public static ValueMapper<Collection<Integer>, ArrayValue> intCollectionMapper = mapper(CollectionValuesFactory::intCollection, ArrayValue::getElements);
+    public static ValueMapper<Collection<Double>, ArrayValue> doubleCollectionMapper = mapper(CollectionValuesFactory::doubleCollection, ArrayValue::getElements);
+    public static ValueMapper<Collection<Float>, ArrayValue> floatCollectionMapper = mapper(CollectionValuesFactory::floatCollection, ArrayValue::getElements);
+    public static ValueMapper<Collection<Boolean>, ArrayValue> boolCollectionMapper = mapper(CollectionValuesFactory::boolCollection, ArrayValue::getElements);
+    public static ValueMapper<Collection<Long>, ArrayValue> longCollectionMapper = mapper(CollectionValuesFactory::longCollection, ArrayValue::getElements);
+    public static ValueMapper<Collection<Entity>, ArrayValue> entityCollectionMapper = mapper(CollectionValuesFactory::entityCollection, ArrayValue::getElements);
+    public static ValueMapper<Collection<Value>, ArrayValue> valueCollectionMapper = mapper(CollectionValuesFactory::valueCollection, ArrayValue::getElements);
 
-    public static <T> ValueToModelMapper<Collection<T>, CollectionValue<? extends Value>> collectionValueToModel(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return collection -> isEmpty(collection) ? emptyList() : collection.getElements()
+    public static <T> ValueToModelMapper<Collection<T>, ArrayValue> collectionValueToModel(ValueToModelMapper<T, Value> elementMapper) {
+        return collection -> isEmpty(collection) ? emptyList() : collection.toList(elementMapper)
                 .stream()
                 .filter(Objects::nonNull)
                 .map(element -> elementMapper.map(cast(element)))
                 .collect(toList());
     }
 
-    public static <T> ValueFromModelMapper<Collection<T>, CollectionValue<? extends Value>> collectionValueFromModel(ValueFromModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ValueFromModelMapper<Collection<T>, ArrayValue> collectionValueFromModel(ValueFromModelMapper<T, ? extends Value> elementMapper) {
         return collection -> isEmpty(collection) ? cast(emptyCollection()) : valueCollection(collection
                 .stream()
                 .filter(Objects::nonNull)

@@ -42,7 +42,7 @@ public class TupleReader {
         switch (ValueType.values()[type]) {
             case ENTITY:
                 return readEntity(tuple.subList(1, tuple.size())).value;
-            case COLLECTION:
+            case ARRAY:
                 return readCollectionValue(tuple.subList(1, tuple.size())).value;
         }
         return null;
@@ -102,8 +102,8 @@ public class TupleReader {
                     entityBuilder.valueField(name, entityField.value);
                     i += entityField.offset;
                     break;
-                case COLLECTION:
-                    TupleReadingResult<CollectionValue<Value>> collection = readCollectionValue(entity.subList(i + 3, entity.size()));
+                case ARRAY:
+                    TupleReadingResult<ArrayValue<Value>> collection = readCollectionValue(entity.subList(i + 3, entity.size()));
                     entityBuilder.valueField(name, collection.value);
                     i += collection.offset;
                     break;
@@ -115,7 +115,7 @@ public class TupleReader {
                 .build();
     }
 
-    private static TupleReadingResult<CollectionValue<Value>> readCollectionValue(List<?> collection) {
+    private static TupleReadingResult<ArrayValue<Value>> readCollectionValue(List<?> collection) {
         int size = (Integer) collection.get(0);
         List<Value> elements = dynamicArrayOf();
         for (int i = 0; i < size; i += 2) {
@@ -136,14 +136,14 @@ public class TupleReader {
                     elements.add(entityElement.value);
                     i += entityElement.offset;
                     break;
-                case COLLECTION:
-                    TupleReadingResult<CollectionValue<Value>> collectionElement = readCollectionValue(collection.subList(i + 2, collection.size()));
+                case ARRAY:
+                    TupleReadingResult<ArrayValue<Value>> collectionElement = readCollectionValue(collection.subList(i + 2, collection.size()));
                     elements.add(collectionElement.value);
                     i += collectionElement.offset;
                     break;
             }
         }
-        return TupleReadingResult.<CollectionValue<Value>>builder()
+        return TupleReadingResult.<ArrayValue<Value>>builder()
                 .offset(size)
                 .value(valueCollection(elements))
                 .build();

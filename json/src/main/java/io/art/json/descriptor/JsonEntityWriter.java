@@ -88,7 +88,7 @@ public class JsonEntityWriter {
                 case ENTITY:
                     writeJsonEntity(generator, asEntity(value));
                     break;
-                case COLLECTION:
+                case ARRAY:
                     writeArray(generator, asCollection(value));
                     break;
                 case STRING:
@@ -150,7 +150,7 @@ public class JsonEntityWriter {
         jsonGenerator.writeEndObject();
     }
 
-    private static void writeArray(JsonGenerator jsonGenerator, String fieldName, CollectionValue<?> array) throws IOException {
+    private static void writeArray(JsonGenerator jsonGenerator, String fieldName, ArrayValue<?> array) throws IOException {
         if (isNull(array)) return;
         jsonGenerator.writeArrayFieldStart(fieldName);
         switch (array.getCollectionMode()) {
@@ -164,7 +164,7 @@ public class JsonEntityWriter {
         jsonGenerator.writeEndArray();
     }
 
-    private static void writeArray(JsonGenerator jsonGenerator, CollectionValue<?> array) throws IOException {
+    private static void writeArray(JsonGenerator jsonGenerator, ArrayValue<?> array) throws IOException {
         if (isNull(array)) return;
         jsonGenerator.writeStartArray();
         switch (array.getCollectionMode()) {
@@ -185,7 +185,7 @@ public class JsonEntityWriter {
             case ENTITY:
                 writeJsonEntity(jsonGenerator, name, asEntity(value));
                 return;
-            case COLLECTION:
+            case ARRAY:
                 writeArray(jsonGenerator, name, asCollection(value));
                 return;
             case STRING:
@@ -266,7 +266,7 @@ public class JsonEntityWriter {
     private static void writeCollectionValue(JsonGenerator jsonGenerator, ValueType type, Value value) throws IOException {
         if (isNull(value)) return;
         switch (type) {
-            case COLLECTION:
+            case ARRAY:
                 writeArray(jsonGenerator, asCollection(cast(value)));
                 return;
             case ENTITY:
@@ -305,14 +305,14 @@ public class JsonEntityWriter {
     }
 
 
-    private static void writeCollectionElements(JsonGenerator jsonGenerator, CollectionValue<?> array) throws IOException {
+    private static void writeCollectionElements(JsonGenerator jsonGenerator, ArrayValue<?> array) throws IOException {
         CollectionElementsType valueType = array.getElementsType();
         for (Object value : array.getElements()) {
             writeCollectionValue(jsonGenerator, valueType, value);
         }
     }
 
-    private static void writePrimitiveElements(JsonGenerator jsonGenerator, CollectionValue<?> array) throws IOException {
+    private static void writePrimitiveElements(JsonGenerator jsonGenerator, ArrayValue<?> array) throws IOException {
         CollectionElementsType valueType = array.getElementsType();
         switch (valueType) {
             case INT:

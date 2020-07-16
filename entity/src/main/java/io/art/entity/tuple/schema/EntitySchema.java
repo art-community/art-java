@@ -35,7 +35,7 @@ import static io.art.core.caster.Caster.cast;
 import static io.art.core.factory.CollectionsFactory.dynamicArrayOf;
 import static io.art.entity.Value.isPrimitive;
 import static io.art.entity.Value.isPrimitiveType;
-import static io.art.entity.constants.ValueMappingExceptionMessages.VALUE_TYPE_IS_NULL;
+import static io.art.entity.constants.ExceptionMessages.VALUE_TYPE_IS_NULL;
 import static io.art.entity.constants.ValueType.ENTITY;
 
 @Getter
@@ -105,7 +105,7 @@ public class EntitySchema extends ValueSchema {
             switch (type) {
                 case ENTITY:
                     return new EntityFieldSchema(type, name, EntitySchema.fromTuple((List<?>) tuple.get(2)));
-                case COLLECTION:
+                case ARRAY:
                     return new EntityFieldSchema(type, name, CollectionValueSchema.fromTuple((List<?>) tuple.get(2)));
             }
             throw new ValueMappingException(VALUE_TYPE_IS_NULL);

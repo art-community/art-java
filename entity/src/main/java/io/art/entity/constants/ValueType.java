@@ -19,14 +19,14 @@
 package io.art.entity.constants;
 
 import io.art.entity.exception.*;
+import static io.art.entity.constants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static io.art.entity.constants.ValueMappingExceptionMessages.*;
 
 public enum ValueType {
     ENTITY,
-    COLLECTION,
-    XML_ENTITY,
+    ARRAY,
+    XML,
     STRING,
     LONG,
     DOUBLE,
@@ -54,32 +54,6 @@ public enum ValueType {
                 return PrimitiveType.FLOAT;
             default:
                 throw new ValueMappingException(format(NOT_PRIMITIVE_TYPE, valueType));
-        }
-    }
-
-    public static CollectionElementsType asCollectionElementsType(ValueType valueType) {
-        if (isNull(valueType)) throw new ValueMappingException(VALUE_TYPE_IS_NULL);
-        switch (valueType) {
-            case ENTITY:
-                return CollectionElementsType.ENTITY;
-            case COLLECTION:
-                return CollectionElementsType.COLLECTION;
-            case STRING:
-                return CollectionElementsType.STRING;
-            case LONG:
-                return CollectionElementsType.LONG;
-            case DOUBLE:
-                return CollectionElementsType.DOUBLE;
-            case INT:
-                return CollectionElementsType.INT;
-            case BOOL:
-                return CollectionElementsType.BOOL;
-            case BYTE:
-                return CollectionElementsType.BYTE;
-            case FLOAT:
-                return CollectionElementsType.FLOAT;
-            default:
-                throw new ValueMappingException(format(NFL_COLLECTIONS_ELEMENTS, valueType));
         }
     }
 
@@ -134,19 +108,6 @@ public enum ValueType {
         public String getClassName() {
             return className;
         }
-    }
-
-    public enum CollectionElementsType {
-        STRING,
-        LONG,
-        DOUBLE,
-        FLOAT,
-        INT,
-        BOOL,
-        BYTE,
-        ENTITY,
-        COLLECTION,
-        VALUE
     }
 
     public enum XmlValueType {

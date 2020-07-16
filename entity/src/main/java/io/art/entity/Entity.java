@@ -34,7 +34,7 @@ import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.CollectionValuesFactory.*;
 import static io.art.entity.PrimitivesFactory.*;
 import static io.art.entity.Value.*;
-import static io.art.entity.constants.ValueMappingExceptionMessages.*;
+import static io.art.entity.constants.ExceptionMessages.*;
 import static io.art.entity.constants.ValueType.*;
 import java.text.*;
 import java.util.*;
@@ -146,8 +146,8 @@ public class Entity implements Value {
                 .collect(toMap(entry -> keyMapper.map(cast(entry.getKey())), entry -> valueMapper.map(cast(entry.getValue()))));
     }
 
-    public <C> CollectionValue<C> getCollectionValue(String name) {
-        CollectionValue<C> collection = asCollection(fields.get(stringPrimitive(name)));
+    public <C> ArrayValue<C> getCollectionValue(String name) {
+        ArrayValue<C> collection = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collection) ? null : collection;
     }
 
@@ -207,264 +207,264 @@ public class Entity implements Value {
         return asEntity(find(name));
     }
 
-    public <T> CollectionValue<T> findCollectionValue(String name) {
+    public <T> ArrayValue<T> findCollectionValue(String name) {
         return asCollection(find(name));
     }
 
 
     public List<String> findStringList(String name) {
-        CollectionValue<String> collection = asCollection(find(name));
+        ArrayValue<String> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getStringList();
     }
 
     public List<Integer> findIntList(String name) {
-        CollectionValue<Integer> collection = asCollection(find(name));
+        ArrayValue<Integer> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getIntList();
     }
 
     public List<Double> findDoubleList(String name) {
-        CollectionValue<Double> collection = asCollection(find(name));
+        ArrayValue<Double> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getDoubleList();
     }
 
     public List<Long> findLongList(String name) {
-        CollectionValue<Long> collection = asCollection(find(name));
+        ArrayValue<Long> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getLongList();
     }
 
     public List<Boolean> findBoolList(String name) {
-        CollectionValue<Integer> collection = asCollection(find(name));
+        ArrayValue<Integer> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getBoolList();
     }
 
     public List<Float> findFloatList(String name) {
-        CollectionValue<Float> collection = asCollection(find(name));
+        ArrayValue<Float> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getFloatList();
     }
 
     public List<Entity> findEntityList(String name) {
-        CollectionValue<?> collectionValue = findCollectionValue(name);
+        ArrayValue<?> collectionValue = findCollectionValue(name);
         return isNull(collectionValue) ? emptyList() : collectionValue.getEntityList();
     }
 
-    public <T> List<CollectionValue<T>> findCollectionValueList(String name) {
-        CollectionValue<?> collectionValue = findCollectionValue(name);
+    public <T> List<ArrayValue<T>> findCollectionValueList(String name) {
+        ArrayValue<?> collectionValue = findCollectionValue(name);
         return isNull(collectionValue) ? emptyList() : cast(collectionValue.getCollectionsList());
     }
 
 
     public List<String> findStringSet(String name) {
-        CollectionValue<String> collection = asCollection(find(name));
+        ArrayValue<String> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getStringList();
     }
 
     public List<Integer> findIntSet(String name) {
-        CollectionValue<Integer> collection = asCollection(find(name));
+        ArrayValue<Integer> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getIntList();
     }
 
     public List<Double> findDoubleSet(String name) {
-        CollectionValue<Double> collection = asCollection(find(name));
+        ArrayValue<Double> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getDoubleList();
     }
 
     public Set<Long> findLongSet(String name) {
-        CollectionValue<Long> collection = asCollection(find(name));
+        ArrayValue<Long> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getLongSet();
     }
 
     public Set<Boolean> findBoolSet(String name) {
-        CollectionValue<Integer> collection = asCollection(find(name));
+        ArrayValue<Integer> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getBoolSet();
     }
 
     public Set<Float> findFloatSet(String name) {
-        CollectionValue<Float> collection = asCollection(find(name));
+        ArrayValue<Float> collection = asCollection(find(name));
         return isNull(collection) ? null : collection.getFloatSet();
     }
 
     public Set<Entity> findEntitySet(String name) {
-        CollectionValue<?> collectionValue = findCollectionValue(name);
+        ArrayValue<?> collectionValue = findCollectionValue(name);
         return isNull(collectionValue) ? emptySet() : collectionValue.getEntitySet();
     }
 
-    public <T> Set<CollectionValue<T>> findCollectionValueSet(String name) {
-        CollectionValue<?> collectionValue = findCollectionValue(name);
+    public <T> Set<ArrayValue<T>> findCollectionValueSet(String name) {
+        ArrayValue<?> collectionValue = findCollectionValue(name);
         return isNull(collectionValue) ? emptySet() : cast(collectionValue.getCollectionsSet());
     }
 
 
     public <T> List<T> getEntityList(String name, ValueToModelMapper<T, Entity> mapper) {
-        CollectionValue<Entity> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Entity> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptyList() : collectionValue.getEntityList().stream().filter(Objects::nonNull)
                 .map(mapper::map)
                 .collect(toList());
     }
 
     public List<Entity> getEntityList(String name) {
-        CollectionValue<Entity> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Entity> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptyList() : collectionValue.getEntityList();
     }
 
     public List<Value> getValueList(String name) {
-        CollectionValue<Value> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Value> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptyList() : collectionValue.getValueList();
     }
 
-    public <C> List<CollectionValue<C>> getCollectionValueList(String name) {
-        CollectionValue<CollectionValue<C>> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+    public <C> List<ArrayValue<C>> getCollectionValueList(String name) {
+        ArrayValue<ArrayValue<C>> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptyList() : cast(collectionValue.getCollectionsList());
     }
 
     public List<Long> getLongList(String name) {
-        CollectionValue<Long> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Long> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptyList() : collectionValue.getLongList();
     }
 
     public List<String> getStringList(String name) {
-        CollectionValue<String> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<String> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptyList() : collectionValue.getStringList();
     }
 
     public List<Boolean> getBoolList(String name) {
-        CollectionValue<Boolean> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Boolean> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptyList() : collectionValue.getBoolList();
     }
 
     public List<Integer> getIntList(String name) {
-        CollectionValue<Integer> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Integer> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptyList() : collectionValue.getIntList();
     }
 
     public List<Double> getDoubleList(String name) {
-        CollectionValue<Double> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Double> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptyList() : collectionValue.getDoubleList();
     }
 
     public List<Byte> getByteList(String name) {
-        CollectionValue<Byte> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Byte> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptyList() : collectionValue.getByteList();
     }
 
     public List<Float> getFloatList(String name) {
-        CollectionValue<Float> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Float> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptyList() : collectionValue.getFloatList();
     }
 
 
     public <T> Set<T> getEntitySet(String name, ValueToModelMapper<T, Entity> mapper) {
-        CollectionValue<Entity> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Entity> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptySet() : collectionValue.getEntitySet().stream().filter(Objects::nonNull)
                 .map(mapper::map)
                 .collect(toSet());
     }
 
     public Set<Entity> getEntitySet(String name) {
-        CollectionValue<Entity> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Entity> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptySet() : collectionValue.getEntitySet();
     }
 
     public Set<Value> getValueSet(String name) {
-        CollectionValue<Value> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Value> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptySet() : collectionValue.getValueSet();
     }
 
-    public <C> Set<CollectionValue<C>> getCollectionValueSet(String name) {
-        CollectionValue<CollectionValue<C>> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+    public <C> Set<ArrayValue<C>> getCollectionValueSet(String name) {
+        ArrayValue<ArrayValue<C>> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptySet() : cast(collectionValue.getCollectionsSet());
     }
 
     public Set<Long> getLongSet(String name) {
-        CollectionValue<Long> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Long> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptySet() : collectionValue.getLongSet();
     }
 
     public Set<String> getStringSet(String name) {
-        CollectionValue<String> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<String> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptySet() : collectionValue.getStringSet();
     }
 
     public Set<Boolean> getBoolSet(String name) {
-        CollectionValue<Boolean> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Boolean> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptySet() : collectionValue.getBoolSet();
 
     }
 
     public Set<Integer> getIntSet(String name) {
-        CollectionValue<Integer> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Integer> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptySet() : collectionValue.getIntSet();
     }
 
     public Set<Double> getDoubleSet(String name) {
-        CollectionValue<Double> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Double> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptySet() : collectionValue.getDoubleSet();
     }
 
     public Set<Byte> getByteSet(String name) {
-        CollectionValue<Byte> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Byte> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptySet() : collectionValue.getByteSet();
     }
 
     public Set<Float> getFloatSet(String name) {
-        CollectionValue<Float> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Float> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? emptySet() : collectionValue.getFloatSet();
     }
 
 
     public <T> Queue<T> getEntityQueue(String name, ValueToModelMapper<T, Entity> mapper) {
-        CollectionValue<Entity> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Entity> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? new LinkedList<>() : collectionValue.getEntityQueue().stream().filter(Objects::nonNull)
                 .map(mapper::map)
                 .collect(toCollection(LinkedList::new));
     }
 
     public Queue<Entity> getEntityQueue(String name) {
-        CollectionValue<Entity> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Entity> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? new LinkedList<>() : collectionValue.getEntityQueue();
     }
 
     public Queue<Value> getValueQueue(String name) {
-        CollectionValue<Value> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Value> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? new LinkedList<>() : collectionValue.getValueQueue();
     }
 
-    public <C> Queue<CollectionValue<C>> getCollectionValueQueue(String name) {
-        CollectionValue<CollectionValue<C>> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+    public <C> Queue<ArrayValue<C>> getCollectionValueQueue(String name) {
+        ArrayValue<ArrayValue<C>> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? new LinkedList<>() : cast(collectionValue.getCollectionsQueue());
     }
 
     public Queue<Long> getLongQueue(String name) {
-        CollectionValue<Long> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Long> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? new LinkedList<>() : collectionValue.getLongQueue();
     }
 
     public Queue<String> getStringQueue(String name) {
-        CollectionValue<String> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<String> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? new LinkedList<>() : collectionValue.getStringQueue();
     }
 
     public Queue<Boolean> getBoolQueue(String name) {
-        CollectionValue<Boolean> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Boolean> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? new LinkedList<>() : collectionValue.getBoolQueue();
     }
 
     public Queue<Integer> getIntQueue(String name) {
-        CollectionValue<Integer> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Integer> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? new LinkedList<>() : collectionValue.getIntQueue();
     }
 
     public Queue<Double> getDoubleQueue(String name) {
-        CollectionValue<Double> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Double> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? new LinkedList<>() : collectionValue.getDoubleQueue();
     }
 
     public Queue<Byte> getByteQueue(String name) {
-        CollectionValue<Byte> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Byte> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? new LinkedList<>() : collectionValue.getByteQueue();
     }
 
     public Queue<Float> getFloatQueue(String name) {
-        CollectionValue<Float> collectionValue = asCollection(fields.get(stringPrimitive(name)));
+        ArrayValue<Float> collectionValue = asCollection(fields.get(stringPrimitive(name)));
         return isNull(collectionValue) ? new LinkedList<>() : collectionValue.getFloatQueue();
     }
 
@@ -677,7 +677,7 @@ public class Entity implements Value {
             return this;
         }
 
-        public EntityBuilder collectionValueCollectionField(String name, Collection<CollectionValue<?>> value) {
+        public EntityBuilder collectionValueCollectionField(String name, Collection<ArrayValue<?>> value) {
             fields.put(stringPrimitive(name), collectionValue(CollectionElementsType.COLLECTION, value));
             return this;
         }

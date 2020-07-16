@@ -35,94 +35,94 @@ import java.util.*;
 
 @UtilityClass
 public class CollectionValuesFactory {
-    public static CollectionValue<String> stringCollection(Collection<String> value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(STRING, value);
+    public static ArrayValue<String> stringCollection(Collection<String> value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(STRING, value);
     }
 
-    public static CollectionValue<Long> longCollection(Collection<Long> value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(LONG, value);
+    public static ArrayValue<Long> longCollection(Collection<Long> value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(LONG, value);
     }
 
-    public static CollectionValue<Integer> intCollection(Collection<Integer> value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(INT, value);
+    public static ArrayValue<Integer> intCollection(Collection<Integer> value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(INT, value);
     }
 
-    public static CollectionValue<Boolean> boolCollection(Collection<Boolean> value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(BOOL, value);
+    public static ArrayValue<Boolean> boolCollection(Collection<Boolean> value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(BOOL, value);
     }
 
-    public static CollectionValue<Double> doubleCollection(Collection<Double> value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(DOUBLE, value);
+    public static ArrayValue<Double> doubleCollection(Collection<Double> value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(DOUBLE, value);
     }
 
-    public static CollectionValue<Float> floatCollection(Collection<Float> value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(FLOAT, value);
+    public static ArrayValue<Float> floatCollection(Collection<Float> value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(FLOAT, value);
     }
 
-    public static CollectionValue<Byte> byteCollection(Collection<Byte> value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(BYTE, value);
-    }
-
-
-    public static CollectionValue<Long> longCollection(long[] value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(value);
-    }
-
-    public static CollectionValue<Integer> intCollection(int[] value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(value);
-    }
-
-    public static CollectionValue<Boolean> boolCollection(boolean[] value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(value);
-    }
-
-    public static CollectionValue<Double> doubleCollection(double[] value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(value);
-    }
-
-    public static CollectionValue<Float> floatCollection(float[] value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(value);
-    }
-
-    public static CollectionValue<Byte> byteCollection(byte[] value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(value);
+    public static ArrayValue<Byte> byteCollection(Collection<Byte> value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(BYTE, value);
     }
 
 
-    public static <T extends Value> CollectionValue<T> collectionValue(CollectionElementsType type, Collection<T> value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(type, value);
+    public static ArrayValue<Long> longCollection(long[] value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(value);
     }
 
-    public static <T extends Entity> CollectionValue<T> entityCollection(Collection<T> value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(ENTITY, value);
+    public static ArrayValue<Integer> intCollection(int[] value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(value);
     }
 
-    public static <T extends Value> CollectionValue<T> valueCollection(Collection<T> value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(VALUE, value);
+    public static ArrayValue<Boolean> boolCollection(boolean[] value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(value);
     }
 
-    public static <T extends CollectionValue<?>> CollectionValue<T> collectionOfCollections(Collection<T> value) {
-        if (isNull(value)) return new CollectionValue<>();
-        return new CollectionValue<>(COLLECTION, value);
+    public static ArrayValue<Double> doubleCollection(double[] value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(value);
     }
 
-    public static CollectionValue<?> emptyCollection() {
-        return new CollectionValue<>();
+    public static ArrayValue<Float> floatCollection(float[] value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(value);
+    }
+
+    public static ArrayValue<Byte> byteCollection(byte[] value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(value);
+    }
+
+
+    public static <T extends Value> ArrayValue<T> collectionValue(CollectionElementsType type, Collection<T> value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(type, value);
+    }
+
+    public static <T extends Entity> ArrayValue<T> entityCollection(Collection<T> value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(ENTITY, value);
+    }
+
+    public static <T extends Value> ArrayValue<T> valueCollection(Collection<T> value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(VALUE, value);
+    }
+
+    public static <T extends ArrayValue<?>> ArrayValue<T> collectionOfCollections(Collection<T> value) {
+        if (isNull(value)) return new ArrayValue<>();
+        return new ArrayValue<>(COLLECTION, value);
+    }
+
+    public static ArrayValue<?> emptyCollection() {
+        return new ArrayValue<>();
     }
 }

@@ -43,7 +43,7 @@ public class PlainTupleReader {
         switch (schema.getType()) {
             case ENTITY:
                 return readEntity(tuple, (EntitySchema) schema);
-            case COLLECTION:
+            case ARRAY:
                 return readCollectionValue(tuple, (CollectionValueSchema) schema);
         }
         return null;
@@ -107,7 +107,7 @@ public class PlainTupleReader {
                 case ENTITY:
                     entityBuilder.entityField(fieldSchema.getName(), readEntity((List<?>) entity.get(i), (EntitySchema) fieldSchema.getSchema()));
                     break;
-                case COLLECTION:
+                case ARRAY:
                     entityBuilder.valueField(fieldSchema.getName(), readCollectionValue((List<?>) entity.get(i), (CollectionValueSchema) fieldSchema.getSchema()));
                     break;
             }
@@ -115,7 +115,7 @@ public class PlainTupleReader {
         return entityBuilder.build();
     }
 
-    private static CollectionValue<?> readCollectionValue(List<?> collection, CollectionValueSchema schema) {
+    private static ArrayValue<?> readCollectionValue(List<?> collection, CollectionValueSchema schema) {
         if (isNull(schema)) return null;
         if (isEmpty(collection)) return emptyCollection();
         List<?> elements = dynamicArrayOf();
