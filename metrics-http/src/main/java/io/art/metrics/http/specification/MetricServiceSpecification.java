@@ -24,7 +24,7 @@ import io.art.http.server.specification.*;
 import io.art.service.exception.*;
 import static java.util.Collections.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.entity.primitive.PrimitiveMapping.*;
+import static io.art.entity.mapping.PrimitiveMapping.*;
 import static io.art.http.server.model.HttpService.*;
 import static io.art.metrics.constants.MetricsModuleConstants.*;
 import static io.art.metrics.http.constants.MetricsModuleHttpConstants.*;

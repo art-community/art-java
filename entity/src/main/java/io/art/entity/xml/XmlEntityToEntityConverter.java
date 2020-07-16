@@ -29,9 +29,9 @@ import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.array.ArrayValuesFactory.*;
+import static io.art.entity.factory.ArrayValuesFactory.*;
 import static io.art.entity.immutable.Entity.*;
-import static io.art.entity.primitive.PrimitivesFactory.*;
+import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Value.isEmpty;
 import java.util.*;
 

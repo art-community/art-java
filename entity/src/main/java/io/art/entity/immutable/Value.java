@@ -19,8 +19,11 @@
 package io.art.entity.immutable;
 
 import io.art.entity.constants.*;
+import io.art.entity.mapper.*;
+import lombok.*;
 import static io.art.entity.constants.ValueType.*;
 import static java.util.Objects.*;
+import java.util.*;
 
 public interface Value {
     static Primitive asPrimitive(Value value) {
@@ -111,4 +114,18 @@ public interface Value {
     boolean isEmpty();
 
     ValueType getType();
+
+    @Builder
+    @lombok.Value
+    class Request {
+        String strValue;
+        Map<String, String> inner;
+
+
+        public ValueToModelMapper<Request, Entity> toRequest = entity -> Request.builder()
+                .strValue(asPrimitive(entity.get("strValue")).getString())
+                .inner(asEntity(entity.get("strValue")).toMap())
+                .build();
+
+    }
 }

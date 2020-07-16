@@ -26,5 +26,5 @@ public interface ExceptionMessages {
     String PRIMITIVE_TYPE_IS_NULL = "Primitive type is null";
     String NOT_PRIMITIVE_TYPE = "Not primitive type: ''{0}''";
     String XML_TAG_IS_EMPTY = "Xml tag is empty";
-    String COLLECTION_METHOD_NOT_IMPLEMENTED = "Collection method not implemented: {0}";
+    String VALUE_METHOD_NOT_IMPLEMENTED = "Value method not implemented: {0}";
 }

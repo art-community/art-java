@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.entity.array;
+package io.art.entity.mapping;
 
 import io.art.entity.immutable.*;
 import io.art.entity.mapper.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.entity.array.ArrayValuesFactory.*;
+import static io.art.entity.factory.ArrayValuesFactory.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import java.util.*;
@@ -31,7 +31,7 @@ import java.util.*;
 @UtilityClass
 public class ArrayMapping {
     public static <T> ValueToModelMapper<Collection<T>, ArrayValue> arrayToModel(ValueToModelMapper<T, Value> elementMapper) {
-        return collection -> isEmpty(collection) ? emptyList() : collection.copyToList(elementMapper)
+        return collection -> isEmpty(collection) ? emptyList() : collection.toList(elementMapper)
                 .stream()
                 .filter(Objects::nonNull)
                 .map(element -> elementMapper.map(cast(element)))

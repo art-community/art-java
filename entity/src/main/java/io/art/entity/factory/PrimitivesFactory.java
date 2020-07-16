@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.entity.primitive;
+package io.art.entity.factory;
 
 import io.art.entity.immutable.*;
 import static io.art.entity.constants.ValueType.PrimitiveType.*;

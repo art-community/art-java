@@ -19,13 +19,13 @@
 package io.art.http.mapper;
 
 import io.art.core.mime.*;
-import io.art.entity.array.*;
+import io.art.entity.factory.*;
 import io.art.entity.immutable.*;
 import io.art.http.exception.*;
 import static java.util.Objects.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.entity.array.ArrayValuesFactory.*;
+import static io.art.entity.factory.ArrayValuesFactory.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.http.constants.HttpExceptionsMessages.*;
 import java.nio.charset.*;

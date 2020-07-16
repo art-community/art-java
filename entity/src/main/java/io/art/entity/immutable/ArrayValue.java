@@ -50,7 +50,7 @@ public class ArrayValue implements Value {
         return mapper.map(cast(get(index)));
     }
 
-    public <T> ImmutableList<T> copyToList(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> ImmutableList<T> toList(ValueToModelMapper<T, ? extends Value> mapper) {
         ImmutableList.Builder<T> list = ImmutableList.builderWithExpectedSize(size.get());
         for (int index = 0; index < size(); index++) {
             list.add(mapper.map(cast(valuesProvider.apply(index))));
@@ -58,7 +58,7 @@ public class ArrayValue implements Value {
         return list.build();
     }
 
-    public <T> ImmutableSet<T> copyToSet(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> ImmutableSet<T> toSet(ValueToModelMapper<T, ? extends Value> mapper) {
         ImmutableSet.Builder<T> set = ImmutableSet.builderWithExpectedSize(size.get());
         for (int index = 0; index < size(); index++) {
             set.add(mapper.map(cast(valuesProvider.apply(index))));
@@ -86,7 +86,7 @@ public class ArrayValue implements Value {
     @RequiredArgsConstructor
     public class ProxyList<T> implements List<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
-        private final LazyValue<ImmutableList<T>> evaluated = lazy(() -> ArrayValue.this.copyToList(mapper));
+        private final LazyValue<ImmutableList<T>> evaluated = lazy(() -> ArrayValue.this.toList(mapper));
 
         private final Iterator<T> iterator = new Iterator<T>() {
             private int index = 0;
@@ -142,17 +142,17 @@ public class ArrayValue implements Value {
 
                 @Override
                 public void remove() {
-                    throw new CollectionMethodNotImplementedException("iterator.remove");
+                    throw new ValueMethodNotImplementedException("iterator.remove");
                 }
 
                 @Override
                 public void set(T element) {
-                    throw new CollectionMethodNotImplementedException("iterator.set");
+                    throw new ValueMethodNotImplementedException("iterator.set");
                 }
 
                 @Override
                 public void add(T t) {
-                    throw new CollectionMethodNotImplementedException("iterator.add");
+                    throw new ValueMethodNotImplementedException("iterator.add");
                 }
             };
         }
@@ -189,12 +189,12 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean add(T element) {
-            throw new CollectionMethodNotImplementedException("add");
+            throw new ValueMethodNotImplementedException("add");
         }
 
         @Override
         public boolean remove(Object object) {
-            throw new CollectionMethodNotImplementedException("remove");
+            throw new ValueMethodNotImplementedException("remove");
         }
 
         @Override
@@ -204,27 +204,27 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean addAll(Collection<? extends T> collection) {
-            throw new CollectionMethodNotImplementedException("addAll");
+            throw new ValueMethodNotImplementedException("addAll");
         }
 
         @Override
         public boolean addAll(int index, Collection<? extends T> collection) {
-            throw new CollectionMethodNotImplementedException("addAll");
+            throw new ValueMethodNotImplementedException("addAll");
         }
 
         @Override
         public boolean removeAll(Collection<?> collection) {
-            throw new CollectionMethodNotImplementedException("removeAll");
+            throw new ValueMethodNotImplementedException("removeAll");
         }
 
         @Override
         public boolean retainAll(Collection<?> collection) {
-            throw new CollectionMethodNotImplementedException("retainAll");
+            throw new ValueMethodNotImplementedException("retainAll");
         }
 
         @Override
         public void clear() {
-            throw new CollectionMethodNotImplementedException("clear");
+            throw new ValueMethodNotImplementedException("clear");
         }
 
         @Override
@@ -234,17 +234,17 @@ public class ArrayValue implements Value {
 
         @Override
         public T set(int index, T element) {
-            throw new CollectionMethodNotImplementedException("set");
+            throw new ValueMethodNotImplementedException("set");
         }
 
         @Override
         public void add(int index, T element) {
-            throw new CollectionMethodNotImplementedException("add");
+            throw new ValueMethodNotImplementedException("add");
         }
 
         @Override
         public T remove(int index) {
-            throw new CollectionMethodNotImplementedException("remove");
+            throw new ValueMethodNotImplementedException("remove");
         }
 
         @Override
@@ -276,7 +276,7 @@ public class ArrayValue implements Value {
     @RequiredArgsConstructor
     public class ProxySet<T> implements Set<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
-        private final LazyValue<ImmutableSet<T>> evaluated = lazy(() -> ArrayValue.this.copyToSet(mapper));
+        private final LazyValue<ImmutableSet<T>> evaluated = lazy(() -> ArrayValue.this.toSet(mapper));
 
         private final Iterator<T> iterator = new Iterator<T>() {
             private int index = 0;
@@ -326,12 +326,12 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean add(T t) {
-            throw new CollectionMethodNotImplementedException("add");
+            throw new ValueMethodNotImplementedException("add");
         }
 
         @Override
         public boolean remove(Object o) {
-            throw new CollectionMethodNotImplementedException("remove");
+            throw new ValueMethodNotImplementedException("remove");
         }
 
         @Override
@@ -341,22 +341,22 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean addAll(Collection<? extends T> collection) {
-            throw new CollectionMethodNotImplementedException("addAll");
+            throw new ValueMethodNotImplementedException("addAll");
         }
 
         @Override
         public boolean removeAll(Collection<?> collection) {
-            throw new CollectionMethodNotImplementedException("removeAll");
+            throw new ValueMethodNotImplementedException("removeAll");
         }
 
         @Override
         public boolean retainAll(Collection<?> collection) {
-            throw new CollectionMethodNotImplementedException("retainAll");
+            throw new ValueMethodNotImplementedException("retainAll");
         }
 
         @Override
         public void clear() {
-            throw new CollectionMethodNotImplementedException("clear");
+            throw new ValueMethodNotImplementedException("clear");
         }
     }
 

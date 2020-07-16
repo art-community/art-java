@@ -25,7 +25,7 @@ import io.art.http.mapper.HttpContentMapper.*;
 import static java.util.Objects.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.entity.primitive.PrimitivesFactory.*;
+import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.http.constants.HttpExceptionsMessages.*;
 import java.nio.charset.*;
 

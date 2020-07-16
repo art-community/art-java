@@ -27,7 +27,6 @@ import static java.util.Objects.*;
 
 @Getter
 @AllArgsConstructor
-@EqualsAndHashCode
 public class Primitive implements Value {
     private final Object value;
     private final PrimitiveType primitiveType;
@@ -102,5 +101,33 @@ public class Primitive implements Value {
     @Override
     public ValueType getType() {
         return PrimitiveType.asValueType(primitiveType);
+    }
+
+    public boolean equals(final Object other) {
+        if (other == this) return true;
+        if (other instanceof Primitive) {
+            Primitive otherPrimitive = (Primitive) other;
+            if (isNull(this.value) && isNull(otherPrimitive.value)) {
+                return true;
+            }
+            if (isNull(this.value)) {
+                return false;
+            }
+            if (this.value == otherPrimitive.value) {
+                return true;
+            }
+            if (primitiveType == otherPrimitive.primitiveType) {
+                return this.value.equals(otherPrimitive.value);
+            }
+            return getString().equals(otherPrimitive.getString());
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        if (isNull(value)) {
+            return super.hashCode();
+        }
+        return value.hashCode();
     }
 }

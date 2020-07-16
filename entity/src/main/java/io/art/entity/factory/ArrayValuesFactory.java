@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.entity.array;
+package io.art.entity.factory;
 
 import com.google.common.collect.*;
 import io.art.core.checker.*;
@@ -26,7 +26,7 @@ import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.entity.immutable.ArrayValue.*;
-import static io.art.entity.primitive.PrimitivesFactory.*;
+import static io.art.entity.factory.PrimitivesFactory.*;
 import java.util.*;
 
 @UtilityClass

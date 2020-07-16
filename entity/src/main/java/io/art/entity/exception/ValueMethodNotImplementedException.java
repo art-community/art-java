@@ -22,8 +22,8 @@ import io.art.core.exception.*;
 import static io.art.entity.constants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
 
-public class CollectionMethodNotImplementedException extends InternalRuntimeException  {
-    public CollectionMethodNotImplementedException(String method) {
-        super(format(COLLECTION_METHOD_NOT_IMPLEMENTED, method));
+public class ValueMethodNotImplementedException extends InternalRuntimeException  {
+    public ValueMethodNotImplementedException(String method) {
+        super(format(VALUE_METHOD_NOT_IMPLEMENTED, method));
     }
 }
