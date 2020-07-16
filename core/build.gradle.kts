@@ -19,7 +19,10 @@
 dependencies {
     val guavaVersion: String by project
     val vavrVersion: String by project
+    val nettyVersion: String by project
 
     api("com.google.guava", "guava", guavaVersion)
     api("io.vavr", "vavr", vavrVersion)
+    api("io.netty", "netty-buffer", nettyVersion)
+            .exclude("org.slf4j")
 }

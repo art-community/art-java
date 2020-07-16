@@ -18,9 +18,11 @@
 
 package io.art.core.checker;
 
+import io.netty.buffer.*;
 import lombok.experimental.*;
 import static io.art.core.constants.StringConstants.*;
 import static java.util.Objects.*;
+import java.nio.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -86,6 +88,14 @@ public class EmptinessChecker {
 
     public static boolean isEmpty(Stream<?> stream) {
         return isNull(stream) || stream.count() == 0;
+    }
+
+    public static boolean isEmpty(ByteBuffer buffer) {
+        return isNull(buffer) || buffer.remaining() == 0;
+    }
+
+    public static boolean isEmpty(ByteBuf buffer) {
+        return isNull(buffer) || buffer.readableBytes() == 0;
     }
 
     public static boolean isNotEmpty(Stream<?> stream) {

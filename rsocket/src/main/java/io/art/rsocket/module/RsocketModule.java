@@ -18,20 +18,29 @@
 
 package io.art.rsocket.module;
 
-import io.rsocket.*;
-import lombok.*;
-import org.apache.logging.log4j.*;
 import io.art.core.module.Module;
+import io.art.json.descriptor.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.server.*;
 import io.art.rsocket.state.*;
-import static lombok.AccessLevel.*;
+import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.cookie.Cookie;
+import io.rsocket.*;
+import lombok.*;
+import org.apache.logging.log4j.*;
+import reactor.netty.http.client.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
+import static io.netty.handler.codec.http.HttpHeaderNames.*;
+import static lombok.AccessLevel.*;
+import static reactor.core.publisher.Flux.*;
+import static reactor.netty.ByteBufFlux.*;
+import static reactor.netty.http.server.HttpServer.create;
+import java.util.*;
 
 @Getter
 public class RsocketModule implements Module<RsocketModuleConfiguration, RsocketModuleState> {
@@ -69,5 +78,33 @@ public class RsocketModule implements Module<RsocketModuleConfiguration, Rsocket
         }
         getLogger().info(RSOCKET_CLIENT_DISPOSING);
         ignoreException(rsocket::dispose, getLogger()::error);
+    }
+
+    public static void main(String[] args) {
+        HttpClient client = HttpClient.create();
+        client
+                .post()
+                .send(fromString(just("Test")))
+                .responseSingle((response, byteBufFlux) -> {
+                    HttpHeaders httpHeaders = response.responseHeaders();
+                    return byteBufFlux.asString().map();
+                })
+                .block();
+        create()
+                .compress(true)
+                .bindUntilJavaShutdown()
+                .route(routes -> routes
+                        .get("/test", (request, response) -> {
+                            HttpHeaders headers = request.requestHeaders();
+                            Map<CharSequence, Set<Cookie>> cookies = request.cookies();
+                            Map<String, String> params = request.params();
+                            String path = request.path();
+                            headers.get(CONTENT_TYPE);
+                            return response.sendString(request.receive()
+                                    .asByteArray()
+                                    .map(JsonEntityReader::readJson)
+                                    .map(JsonEntityWriter::writeJson));
+                        }))
+                .bindNow();
     }
 }

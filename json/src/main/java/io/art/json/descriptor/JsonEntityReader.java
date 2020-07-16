@@ -19,15 +19,16 @@
 package io.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
+import io.art.core.extensions.*;
 import io.art.entity.builder.*;
 import io.art.entity.immutable.*;
 import io.art.json.exception.*;
+import io.netty.buffer.*;
 import lombok.experimental.*;
 import static com.fasterxml.jackson.core.JsonToken.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.factory.ArrayValuesFactory.*;
@@ -38,6 +39,7 @@ import static io.art.json.constants.JsonMappingExceptionMessages.*;
 import static io.art.json.module.JsonModule.*;
 import static java.util.Objects.*;
 import java.io.*;
+import java.nio.*;
 import java.nio.file.*;
 import java.util.*;
 
@@ -45,11 +47,19 @@ import java.util.*;
 @UtilityClass
 public class JsonEntityReader {
     public static Value readJson(byte[] jsonBytes) {
-        return readJson(jsonModule().getObjectMapper().getFactory(), new String(jsonBytes, contextConfiguration().getCharset()));
+        return readJson(jsonModule().getConfiguration().getObjectMapper().getFactory(), new String(jsonBytes, contextConfiguration().getCharset()));
+    }
+
+    public static Value readJson(ByteBuffer byteBuf) {
+        return readJson(NioBufferExtensions.toByteArray(byteBuf));
+    }
+
+    public static Value readJson(ByteBuf byteBuf) {
+        return readJson(NettyBufferExtensions.toByteArray(byteBuf));
     }
 
     public static Value readJson(InputStream inputStream) {
-        return readJson(toByteArray(inputStream));
+        return readJson(InputStreamExtensions.toByteArray(inputStream));
     }
 
     public static Value readJson(Path path) {
@@ -57,7 +67,7 @@ public class JsonEntityReader {
     }
 
     public static Value readJson(String json) {
-        return readJson(jsonModule().getObjectMapper().getFactory(), json);
+        return readJson(jsonModule().getConfiguration().getObjectMapper().getFactory(), json);
     }
 
     public static Value readJson(JsonFactory jsonFactory, String json) {
