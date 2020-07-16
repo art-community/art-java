@@ -19,11 +19,11 @@
 package io.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
+import io.art.entity.builder.*;
 import io.art.entity.immutable.*;
-import lombok.experimental.*;
 import io.art.json.exception.*;
+import lombok.experimental.*;
 import static com.fasterxml.jackson.core.JsonToken.*;
-import static java.util.Objects.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
@@ -31,10 +31,12 @@ import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.factory.ArrayValuesFactory.*;
-import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.mapping.PrimitiveMapping.*;
 import static io.art.json.constants.JsonMappingExceptionMessages.*;
 import static io.art.json.module.JsonModule.*;
+import static java.util.Objects.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -111,25 +113,25 @@ public class JsonEntityReader {
                 case END_OBJECT:
                     return entityBuilder.build();
                 case START_OBJECT:
-                    entityBuilder.entityField(currentName, parseJsonEntity(parser));
+                    entityBuilder.put(currentName, parseJsonEntity(parser));
                     break;
                 case START_ARRAY:
                     parseArray(entityBuilder, parser);
                     break;
                 case VALUE_STRING:
-                    entityBuilder.stringField(currentName, parser.getText());
+                    entityBuilder.put(currentName, parser.getText(), fromString);
                     break;
                 case VALUE_NUMBER_INT:
-                    entityBuilder.longField(currentName, parser.getLongValue());
+                    entityBuilder.put(currentName, parser.getLongValue(), fromLong);
                     break;
                 case VALUE_NUMBER_FLOAT:
-                    entityBuilder.floatField(currentName, parser.getFloatValue());
+                    entityBuilder.put(currentName, parser.getFloatValue(), fromFloat);
                     break;
                 case VALUE_TRUE:
-                    entityBuilder.boolField(currentName, true);
+                    entityBuilder.put(currentName, true, fromBool);
                     break;
                 case VALUE_FALSE:
-                    entityBuilder.boolField(currentName, false);
+                    entityBuilder.put(currentName, false, fromBool);
                     break;
                 case VALUE_NULL:
                     break;
@@ -150,31 +152,21 @@ public class JsonEntityReader {
             case VALUE_EMBEDDED_OBJECT:
             case VALUE_NULL:
                 return;
-            case START_OBJECT:
-                entityBuilder.entityCollectionField(currentName, parseEntityArray(parser));
-                return;
             case START_ARRAY:
                 parseArray(entityBuilder, parser);
                 return;
+            case START_OBJECT:
             case VALUE_STRING:
-                entityBuilder.stringCollectionField(currentName, parseStringArray(parser));
-                return;
             case VALUE_NUMBER_INT:
-                entityBuilder.longCollectionField(currentName, parseLongArray(parser));
-                return;
             case VALUE_NUMBER_FLOAT:
-                entityBuilder.floatCollectionField(currentName, parseFloatArray(parser));
-                return;
             case VALUE_TRUE:
-                entityBuilder.boolCollectionField(currentName, parseBooleanArray(parser));
-                return;
             case VALUE_FALSE:
-                entityBuilder.boolCollectionField(currentName, parseBooleanArray(parser));
+                entityBuilder.put(currentName, parseArray(parser));
         }
     }
 
 
-    private static ArrayValue<?> parseArray(JsonParser parser) throws IOException {
+    private static ArrayValue parseArray(JsonParser parser) throws IOException {
         JsonToken currentToken = parser.nextToken();
         switch (currentToken) {
             case NOT_AVAILABLE:
