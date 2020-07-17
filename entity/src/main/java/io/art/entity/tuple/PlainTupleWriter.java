@@ -50,7 +50,7 @@ public class PlainTupleWriter {
             case ENTITY:
                 return writeEntity(asEntity(value));
             case BINARY:
-                return fixedArrayOf(asBinary(value));
+                return fixedArrayOf(asBinary(value).getContent());
             case ARRAY:
                 return writeArray(asArray(value));
         }

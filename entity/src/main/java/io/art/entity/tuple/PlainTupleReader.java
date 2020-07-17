@@ -109,7 +109,7 @@ public class PlainTupleReader {
                     entityBuilder.lazyPut(fieldSchema.getName(), () -> readEntity((List<?>) value, (EntitySchema) fieldSchema.getSchema()));
                     break;
                 case BINARY:
-                    entityBuilder.lazyPut(fieldSchema.getName(), () -> binary((byte[]) value));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> binary((byte[]) ((List<?>) value).get(0)));
                     break;
                 case ARRAY:
                     entityBuilder.lazyPut(fieldSchema.getName(), () -> readArray((List<?>) value, (ArraySchema) fieldSchema.getSchema()));

@@ -19,7 +19,7 @@
 package io.art.protobuf.constants;
 
 public interface ProtobufConstants {
-    int BINARY_UNKNOWN_FIELD_NUMBER = 0;
+    int BINARY_UNKNOWN_FIELD_NUMBER = 1;
     interface ExceptionMessages {
         String VALUE_TYPE_NOT_SUPPORTED = "Protobuf value type ''{0}'' not supported";
     }
