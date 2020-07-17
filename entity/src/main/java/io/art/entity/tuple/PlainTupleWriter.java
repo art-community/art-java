@@ -62,14 +62,13 @@ public class PlainTupleWriter {
         List<?> tuple = dynamicArrayOf();
         Map<Primitive, ? extends Value> fields = entity.asMap();
         for (Map.Entry<Primitive, ? extends Value> entry : fields.entrySet()) {
+            if (isEmpty(entry.getKey()) || isNull(entry.getValue())) continue;
             Value value = entry.getValue();
             if (isPrimitive(value)) {
                 tuple.add(cast(asPrimitive(value).getValue()));
                 continue;
             }
-            if (nonNull(value)) {
-                tuple.add(cast(writeValue(value)));
-            }
+            tuple.add(cast(writeValue(value)));
         }
         return tuple;
     }

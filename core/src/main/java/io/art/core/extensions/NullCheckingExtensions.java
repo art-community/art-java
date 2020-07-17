@@ -53,4 +53,8 @@ public class NullCheckingExtensions {
     public static <T, R> R let(T value, Function<T, R> action, Supplier<R> orElse) {
         return nonNull(value) ? action.apply(value) : orElse.get();
     }
+
+    public static <T, R> R let(T value, Function<T, R> action, R orElse) {
+        return nonNull(value) ? action.apply(value) : orElse;
+    }
 }

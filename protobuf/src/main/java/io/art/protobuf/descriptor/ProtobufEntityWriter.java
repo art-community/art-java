@@ -18,39 +18,47 @@
 
 package io.art.protobuf.descriptor;
 
+import com.google.protobuf.Value;
 import com.google.protobuf.*;
 import io.art.entity.immutable.*;
 import io.art.protobuf.exception.*;
 import lombok.experimental.*;
+import static com.google.protobuf.UnknownFieldSet.*;
+import static com.google.protobuf.UnsafeByteOperations.*;
+import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.handler.ExceptionHandler.*;
 import static io.art.entity.immutable.Value.*;
-import static io.art.protobuf.constants.ProtobufExceptionMessages.*;
+import static io.art.protobuf.constants.ProtobufConstants.*;
+import static io.art.protobuf.constants.ProtobufConstants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
+import java.util.Map.*;
+import java.util.function.*;
 
 @UtilityClass
 public class ProtobufEntityWriter {
     public static byte[] writeProtobufToBytes(io.art.entity.immutable.Value value) {
-        return writeProtobuf(value).toByteArray();
+        return let(writeProtobuf(value), MessageLite::toByteArray, EMPTY_BYTES);
     }
 
     public static void writeProtobuf(io.art.entity.immutable.Value value, OutputStream outputStream) {
-        try {
-            writeProtobuf(value).writeTo(outputStream);
-        } catch (IOException ioException) {
-            throw new ProtobufException(ioException);
-        }
+        apply(writeProtobuf(value), result -> consumeException((Function<Throwable, RuntimeException>) ProtobufException::new).run(() -> result.writeTo(outputStream)));
     }
 
     public static void writeProtobuf(io.art.entity.immutable.Value value, Path path) {
-        writeFileQuietly(path, writeProtobuf(value).toByteArray());
+        Value protobuf = writeProtobuf(value);
+        apply(protobuf, result -> writeFileQuietly(path, result.toByteArray()));
     }
 
     public static com.google.protobuf.Value writeProtobuf(io.art.entity.immutable.Value value) {
-        if (isEmpty(value)) return com.google.protobuf.Value.getDefaultInstance();
+        if (isEmpty(value)) return null;
         switch (value.getType()) {
             case STRING:
                 return com.google.protobuf.Value.newBuilder().setStringValue(asPrimitive(value).getString()).build();
@@ -66,6 +74,15 @@ public class ProtobufEntityWriter {
                 return com.google.protobuf.Value.newBuilder().setNumberValue(asPrimitive(value).getByte()).build();
             case BOOL:
                 return com.google.protobuf.Value.newBuilder().setBoolValue(asPrimitive(value).getBool()).build();
+            case BINARY:
+                return com.google.protobuf.Value.newBuilder()
+                        .setUnknownFields(newBuilder()
+                                .addField(BINARY_UNKNOWN_FIELD_NUMBER, UnknownFieldSet.Field
+                                        .newBuilder()
+                                        .addLengthDelimited(unsafeWrap(asBinary(value).getContent()))
+                                        .build())
+                                .build())
+                        .build();
             case ENTITY:
                 return writeEntity(asEntity(value));
             case ARRAY:
@@ -75,25 +92,24 @@ public class ProtobufEntityWriter {
     }
 
     private static com.google.protobuf.Value writeArray(ArrayValue array) {
-        ListValue protobufValues = ListValue.newBuilder()
-                .addAllValues(array.asStream()
-                        .map(ProtobufEntityWriter::writeProtobuf)
-                        .collect(toList()))
+        ListValue protobufValues = ListValue.newBuilder().addAllValues(array.asStream()
+                .filter(Objects::nonNull)
+                .map(ProtobufEntityWriter::writeProtobuf)
+                .collect(toList()))
                 .build();
         return com.google.protobuf.Value.newBuilder().setListValue(protobufValues).build();
     }
 
     private static com.google.protobuf.Value writeEntity(Entity entity) {
-        Struct protobufEntity = Struct.newBuilder()
-                .putAllFields(entity.asMap().entrySet()
-                        .stream()
-                        .filter(entry -> isPrimitive(entry.getKey()))
-                        .filter(entry -> nonNull(entry.getValue()))
-                        .filter(entry -> !entry.getValue().isEmpty())
-                        .collect(toMap(entry -> entry.getKey().toString(), entry -> writeProtobuf(entry.getValue()))))
-                .build();
+        Map<String, Value> map = mapOf();
+        for (Entry<Primitive, ? extends io.art.entity.immutable.Value> entry : entity.asMap().entrySet()) {
+            if (isEmpty(entry.getValue())) continue;
+            Value protobuf = writeProtobuf(entry.getValue());
+            if (isNull(protobuf)) continue;
+            map.put(entry.getKey().toString(), protobuf);
+        }
         return com.google.protobuf.Value.newBuilder()
-                .setStructValue(protobufEntity)
+                .setStructValue(Struct.newBuilder().putAllFields(map).build())
                 .build();
     }
 }

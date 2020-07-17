@@ -26,9 +26,9 @@ import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.BinaryValue.isPrimitiveType;
 import static io.art.entity.immutable.BinaryValue.*;
 import static io.art.entity.immutable.Entity.*;
-import static io.art.entity.immutable.Value.*;
 import static java.util.Objects.*;
 import java.util.*;
 
@@ -52,14 +52,14 @@ public class PlainTupleReader {
 
     @SuppressWarnings("Duplicates")
     private static Primitive readPrimitive(ValueType type, Object value) {
+        if (isNull(value)) {
+            return null;
+        }
         switch (type) {
             case STRING:
                 return stringPrimitive((String) value);
             case LONG:
-                if (nonNull(value)) {
-                    return longPrimitive(((Number) value).longValue());
-                }
-                return null;
+                return longPrimitive(((Number) value).longValue());
             case DOUBLE:
                 return doublePrimitive((Double) value);
             case FLOAT:
@@ -80,43 +80,39 @@ public class PlainTupleReader {
         EntityBuilder entityBuilder = entityBuilder();
         List<EntitySchema.EntityFieldSchema> fieldsSchema = schema.getFieldsSchema();
         for (int index = 0, fieldsSchemaSize = fieldsSchema.size(); index < fieldsSchemaSize; index++) {
-            int finalIndex = index;
             EntitySchema.EntityFieldSchema fieldSchema = fieldsSchema.get(index);
+            Object value = entity.get(index);
+            if (isNull(value) || isNull(fieldSchema)) continue;
             switch (fieldSchema.getType()) {
                 case STRING:
-                    entityBuilder.lazyPut(fieldSchema.getName(), () -> stringPrimitive((String) entity.get(finalIndex)));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> stringPrimitive((String) value));
                     break;
                 case LONG:
-                    Number number = (Number) entity.get(index);
-                    if (nonNull(number)) {
-                        entityBuilder.lazyPut(fieldSchema.getName(), () -> longPrimitive(number.longValue()));
-                        break;
-                    }
-                    entityBuilder.lazyPut(fieldSchema.getName(), () -> null);
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> longPrimitive(((Number) value).longValue()));
                     break;
                 case DOUBLE:
-                    entityBuilder.lazyPut(fieldSchema.getName(), () -> doublePrimitive((Double) entity.get(finalIndex)));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> doublePrimitive((Double) value));
                     break;
                 case FLOAT:
-                    entityBuilder.lazyPut(fieldSchema.getName(), () -> floatPrimitive((Float) entity.get(finalIndex)));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> floatPrimitive((Float) value));
                     break;
                 case INT:
-                    entityBuilder.lazyPut(fieldSchema.getName(), () -> intPrimitive((Integer) entity.get(finalIndex)));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> intPrimitive((Integer) value));
                     break;
                 case BOOL:
-                    entityBuilder.lazyPut(fieldSchema.getName(), () -> boolPrimitive((Boolean) entity.get(finalIndex)));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> boolPrimitive((Boolean) value));
                     break;
                 case BYTE:
-                    entityBuilder.lazyPut(fieldSchema.getName(), () -> bytePrimitive((Byte) entity.get(finalIndex)));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> bytePrimitive((Byte) value));
                     break;
                 case ENTITY:
-                    entityBuilder.lazyPut(fieldSchema.getName(), () -> readEntity((List<?>) entity.get(finalIndex), (EntitySchema) fieldSchema.getSchema()));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> readEntity((List<?>) value, (EntitySchema) fieldSchema.getSchema()));
                     break;
                 case BINARY:
-                    entityBuilder.lazyPut(fieldSchema.getName(), () -> binary((byte[]) entity.get(finalIndex)));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> binary((byte[]) value));
                     break;
                 case ARRAY:
-                    entityBuilder.lazyPut(fieldSchema.getName(), () -> readArray((List<?>) entity.get(finalIndex), (ArraySchema) fieldSchema.getSchema()));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> readArray((List<?>) value, (ArraySchema) fieldSchema.getSchema()));
                     break;
             }
         }

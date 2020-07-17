@@ -20,20 +20,23 @@ package io.art.protobuf.descriptor;
 
 import com.google.protobuf.*;
 import io.art.entity.builder.*;
-import lombok.experimental.*;
 import io.art.entity.immutable.Value;
 import io.art.protobuf.exception.*;
+import lombok.experimental.*;
 import static com.google.protobuf.Value.KindCase.*;
-import static io.art.entity.factory.ArrayFactory.array;
+import static io.art.core.extensions.FileExtensions.*;
+import static io.art.core.extensions.NioBufferExtensions.*;
+import static io.art.entity.factory.ArrayFactory.*;
+import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.BinaryValue.*;
+import static io.art.entity.immutable.Entity.*;
+import static io.art.protobuf.constants.ProtobufConstants.*;
+import static io.art.protobuf.constants.ProtobufConstants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static java.util.stream.Collectors.*;
-import static io.art.core.extensions.FileExtensions.*;
-import static io.art.entity.immutable.Entity.*;
-import static io.art.entity.factory.PrimitivesFactory.*;
-import static io.art.protobuf.constants.ProtobufExceptionMessages.*;
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 
 @UtilityClass
 public class ProtobufEntityReader {
@@ -71,22 +74,27 @@ public class ProtobufEntityReader {
             case BOOL_VALUE:
                 return boolPrimitive(protobufValue.getBoolValue());
             case STRUCT_VALUE:
-                return readStructFromProtobuf(protobufValue.getStructValue());
+                return readEntity(protobufValue.getStructValue());
             case LIST_VALUE:
-                return readCollectionFromProtobuf(protobufValue.getListValue());
+                return readArray(protobufValue.getListValue());
             case KIND_NOT_SET:
-                return null;
+                List<ByteString> byteStrings = protobufValue.getUnknownFields().getField(BINARY_UNKNOWN_FIELD_NUMBER).getLengthDelimitedList();
+                if (byteStrings.isEmpty()) {
+                    return null;
+                }
+                return binary(toByteArray(byteStrings.get(0).asReadOnlyByteBuffer()));
         }
         throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, protobufValue.getKindCase()));
     }
 
-    private static Value readCollectionFromProtobuf(ListValue protobufCollection) {
-        return array(protobufCollection.getValuesList().stream().map(ProtobufEntityReader::readProtobuf).collect(toList()));
+    private static Value readArray(ListValue protobufCollection) {
+        List<com.google.protobuf.Value> values = protobufCollection.getValuesList();
+        return array(index -> readProtobuf(values.get(index)), values::size);
     }
 
-    private static Value readStructFromProtobuf(Struct protobufEntity) {
+    private static Value readEntity(Struct protobufEntity) {
         EntityBuilder entityBuilder = entityBuilder();
-        protobufEntity.getFieldsMap().forEach((key, value) -> entityBuilder.put(key, readProtobuf(value)));
+        protobufEntity.getFieldsMap().forEach((key, value) -> entityBuilder.lazyPut(key, () -> readProtobuf(value)));
         return entityBuilder.build();
     }
 }

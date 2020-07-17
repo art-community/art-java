@@ -5,7 +5,6 @@ import io.art.core.runnable.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.StringConstants.*;
 import static java.util.Objects.*;
 import static java.util.Optional.ofNullable;
@@ -35,6 +34,16 @@ public class ExceptionHandler<T> {
         return value;
     }
 
+    public static ExceptionRunnableWrapper consumeException(Function<Throwable, RuntimeException> wrapper) {
+        ExceptionRunnableWrapper runnableWrapper = new ExceptionRunnableWrapper();
+        runnableWrapper.wrapper = wrapper;
+        return runnableWrapper;
+    }
+
+    public static ExceptionRunnableHandler consumeException(Consumer<Throwable> consumer) {
+        return new ExceptionRunnableHandler(consumer);
+    }
+
     public static <T> ExceptionCallableWrapper<T> wrapException(Function<Throwable, RuntimeException> wrapper) {
         ExceptionCallableWrapper<T> callableWrapper = new ExceptionCallableWrapper<>();
         callableWrapper.wrapper = wrapper;
@@ -53,10 +62,6 @@ public class ExceptionHandler<T> {
 
     public static <T> Optional<T> optionalIfException(ExceptionCallable<T> callable) {
         return ofNullable(new ExceptionCallableHandler<T>().orNull().call(callable));
-    }
-
-    public static ExceptionRunnableHandler consumeException(Consumer<Throwable> consumer) {
-        return new ExceptionRunnableHandler(consumer);
     }
 
     @AllArgsConstructor(access = PRIVATE)
@@ -117,6 +122,22 @@ public class ExceptionHandler<T> {
         public T call(ExceptionCallable<T> callable) {
             try {
                 return cast(callable.call());
+            } catch (Throwable throwable) {
+                if (nonNull(wrapper)) {
+                    throw wrapper.apply(throwable);
+                }
+                throw new RuntimeException(throwable);
+            }
+        }
+    }
+
+    @NoArgsConstructor(access = PRIVATE)
+    public static class ExceptionRunnableWrapper {
+        private Function<Throwable, RuntimeException> wrapper;
+
+        public void run(ExceptionRunnable runnable) {
+            try {
+                runnable.run();
             } catch (Throwable throwable) {
                 if (nonNull(wrapper)) {
                     throw wrapper.apply(throwable);
