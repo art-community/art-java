@@ -37,18 +37,23 @@ import java.util.*;
 @UtilityClass
 public class MessagePackEntityWriter {
     public static void writeMessagePack(Value value, OutputStream outputStream) {
-        if (isNull(outputStream)) {
-            return;
-        }
         try {
-            outputStream.write(writeMessagePackToBytes(value));
+            byte[] bytes = writeMessagePackToBytes(value);
+            if (bytes == EMPTY_BYTES) {
+                return;
+            }
+            outputStream.write(bytes);
         } catch (Throwable throwable) {
             throw new MessagePackMappingException(throwable);
         }
     }
 
     public static void writeMessagePack(Value value, Path path) {
-        writeFileQuietly(path, writeMessagePackToBytes(value));
+        byte[] bytes = writeMessagePackToBytes(value);
+        if (bytes == EMPTY_BYTES) {
+            return;
+        }
+        writeFileQuietly(path, bytes);
     }
 
     public static byte[] writeMessagePackToBytes(Value value) {
@@ -58,7 +63,9 @@ public class MessagePackEntityWriter {
         ArrayBufferOutput output = new ArrayBufferOutput();
         try {
             newDefaultPacker(output).packValue(writeMessagePack(value)).close();
-            return output.toByteArray();
+            byte[] bytes = output.toByteArray();
+            output.close();
+            return bytes;
         } catch (Throwable throwable) {
             throw new MessagePackMappingException(throwable);
         }
@@ -71,6 +78,8 @@ public class MessagePackEntityWriter {
         switch (value.getType()) {
             case ENTITY:
                 return writeEntity(asEntity(value));
+            case BINARY:
+                return newBinary(asBinary(value).getContent());
             case ARRAY:
                 return writeArray(asArray(value));
         }
@@ -116,27 +125,33 @@ public class MessagePackEntityWriter {
         return mapBuilder.build();
     }
 
-    private static void writeEntityField(MapBuilder mapBuilder, Map.Entry<? extends Value, ? extends Value> entry) {
-        final Value key = entry.getKey();
-        if (isEmpty(key) || !isPrimitive(key) || isEmpty(entry.getValue())) {
+    private static void writeEntityField(MapBuilder mapBuilder, Map.Entry<Primitive, ? extends Value> entry) {
+        final Primitive key = entry.getKey();
+        if (isEmpty(key) || isNull(entry.getValue())) {
             return;
         }
         Value value = entry.getValue();
-        switch (value.getType()) {
+        switch (key.getType()) {
             case STRING:
+                mapBuilder.put(newString(key.getString()), writeMessagePack(value));
+                return;
             case INT:
+                mapBuilder.put(newInteger(key.getInt()), writeMessagePack(value));
+                return;
             case BOOL:
+                mapBuilder.put(newBoolean(key.getBool()), writeMessagePack(value));
+                return;
             case LONG:
+                mapBuilder.put(newInteger(key.getLong()), writeMessagePack(value));
+                return;
             case BYTE:
+                mapBuilder.put(newInteger(key.getByte()), writeMessagePack(value));
+                return;
             case DOUBLE:
+                mapBuilder.put(newFloat(key.getDouble()), writeMessagePack(value));
+                return;
             case FLOAT:
-                mapBuilder.put(newString(key.toString()), writePrimitive(asPrimitive(value)));
-                return;
-            case ARRAY:
-                mapBuilder.put(newString(key.toString()), writeArray(asArray(value)));
-                return;
-            case ENTITY:
-                mapBuilder.put(newString(key.toString()), writeEntity(asEntity(value)));
+                mapBuilder.put(newFloat(key.getFloat()), writeMessagePack(value));
         }
     }
 }

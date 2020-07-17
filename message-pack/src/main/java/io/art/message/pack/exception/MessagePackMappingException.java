@@ -22,4 +22,8 @@ public class MessagePackMappingException extends RuntimeException {
     public MessagePackMappingException(Throwable throwable) {
         super(throwable);
     }
+
+    public MessagePackMappingException(String message) {
+        super(message);
+    }
 }
