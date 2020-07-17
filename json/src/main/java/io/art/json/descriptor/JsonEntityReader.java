@@ -35,7 +35,6 @@ import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.mapping.PrimitiveMapping.*;
-import static io.art.json.constants.JsonMappingExceptionMessages.*;
 import static io.art.json.module.JsonModule.*;
 import static java.util.Objects.*;
 import java.io.*;
@@ -47,7 +46,7 @@ import java.util.*;
 @UtilityClass
 public class JsonEntityReader {
     public static Value readJson(byte[] jsonBytes) {
-        return readJson(jsonModule().getConfiguration().getObjectMapper().getFactory(), new String(jsonBytes, contextConfiguration().getCharset()));
+        return readJson(jsonModule().configuration().getObjectMapper().getFactory(), new String(jsonBytes, contextConfiguration().getCharset()));
     }
 
     public static Value readJson(ByteBuffer byteBuf) {
@@ -67,7 +66,7 @@ public class JsonEntityReader {
     }
 
     public static Value readJson(String json) {
-        return readJson(jsonModule().getConfiguration().getObjectMapper().getFactory(), json);
+        return readJson(jsonModule().configuration().getObjectMapper().getFactory(), json);
     }
 
     public static Value readJson(JsonFactory jsonFactory, String json) {
@@ -184,7 +183,7 @@ public class JsonEntityReader {
             case FIELD_NAME:
             case VALUE_EMBEDDED_OBJECT:
             case VALUE_NULL:
-                return emptyArray();
+                return null;
             case START_OBJECT:
                 return entityArray(parseEntityArray(parser));
             case START_ARRAY:
@@ -199,7 +198,7 @@ public class JsonEntityReader {
             case VALUE_FALSE:
                 return boolArray(parseBooleanArray(parser));
         }
-        return emptyArray();
+        return null;
     }
 
 

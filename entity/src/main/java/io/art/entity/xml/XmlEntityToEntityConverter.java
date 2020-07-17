@@ -32,6 +32,7 @@ import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.immutable.Value.isEmpty;
 import static java.util.Collections.*;
+import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -83,7 +84,10 @@ public final class XmlEntityToEntityConverter {
                 collection.add(cast(entityBuilder().put(child.getTag(), stringPrimitive(child.getValue())).build()));
                 continue;
             }
-            collection.add(cast(entityBuilder().put(child.getTag(), toEntityFromTags(child).get(child.getTag())).build()));
+            Entity entity = toEntityFromTags(child);
+            if (nonNull(entity)) {
+                collection.add(cast(entityBuilder().put(child.getTag(), entity.get(child.getTag())).build()));
+            }
         }
         return entityBuilder.put(xmlEntity.getTag(), array(collection)).build();
     }

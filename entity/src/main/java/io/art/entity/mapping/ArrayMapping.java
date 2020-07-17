@@ -23,24 +23,24 @@ import io.art.entity.mapper.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.entity.factory.ArrayFactory.*;
-import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import java.util.*;
 
 @UtilityClass
 public class ArrayMapping {
     public static <T> ValueToModelMapper<Collection<T>, ArrayValue> toArray(ValueToModelMapper<T, Value> elementMapper) {
-        return collection -> isEmpty(collection) ? emptyList() : collection.mapToList(elementMapper)
+        return collection -> isEmpty(collection) ? null : collection.mapToList(elementMapper)
                 .stream()
                 .map(element -> elementMapper.map(cast(element)))
                 .collect(toList());
     }
 
     public static <T> ValueFromModelMapper<Collection<T>, ArrayValue> fromArray(ValueFromModelMapper<T, ? extends Value> elementMapper) {
-        return collection -> isEmpty(collection) ? cast(emptyArray()) : array(collection
+        return collection -> let(collection, notNullCollection -> array(collection
                 .stream()
                 .map(element -> elementMapper.map(cast(element)))
-                .collect(toList()));
+                .collect(toList())));
     }
 }

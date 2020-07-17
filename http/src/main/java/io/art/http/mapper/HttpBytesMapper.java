@@ -37,8 +37,8 @@ public class HttpBytesMapper implements HttpContentMapper.HttpEntityToContentMap
 
     @Override
     public Value mapFromBytes(byte[] content, MimeType mimeType, Charset charset) {
-        if (isNull(charset)) return emptyArray();
-        if (isEmpty(content)) return emptyArray();
+        if (isNull(charset)) return null;
+        if (isEmpty(content)) return null;
         return binary(content);
     }
 }

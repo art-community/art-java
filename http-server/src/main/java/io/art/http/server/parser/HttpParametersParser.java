@@ -43,13 +43,13 @@ public interface HttpParametersParser {
 
     static Entity parsePathParameters(HttpServletRequest request, HttpService.HttpMethod methodConfig) {
         String parameterString = request.getPathInfo();
-        if (isEmpty(parameterString)) return entityBuilder().build();
+        if (isEmpty(parameterString)) return null;
         String[] parameterValues = parameterString.split(SLASH);
         if (isEmpty(parameterValues) || parameterValues.length == 1)
-            return entityBuilder().build();
+            return null;
         Set<String> parameterNames = methodConfig.getPath().getParameters();
         if (isEmpty(parameterNames)) {
-            return entityBuilder().build();
+            return null;
         }
         int parameterIndex = 1;
         MapBuilder<Primitive, Value> parameters = mapOf();
@@ -60,7 +60,7 @@ public interface HttpParametersParser {
             parameterIndex++;
         }
         if (isEmpty(lastParameter)) {
-            return entityBuilder().build();
+            return null;
         }
         if (parameters.size() < parameterIndex) {
             for (int i = parameterIndex; i < parameterValues.length; i++) {

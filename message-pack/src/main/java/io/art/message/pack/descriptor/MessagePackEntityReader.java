@@ -148,7 +148,7 @@ public class MessagePackEntityReader {
     }
 
     private static ArrayValue readArray(org.msgpack.value.ArrayValue array) {
-        if (array.size() == 0) return emptyArray();
+        if (array.size() == 0) return null;
         return array(array.list()
                 .stream()
                 .filter(element -> !element.isExtensionValue())
