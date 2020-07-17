@@ -18,26 +18,21 @@
 
 package io.art.xml.module;
 
-import lombok.*;
-import io.art.core.module.Module;
 import io.art.core.module.*;
 import io.art.xml.configuration.*;
-import static lombok.AccessLevel.*;
+import lombok.*;
 import static io.art.core.context.Context.*;
-import static io.art.xml.configuration.XmlModuleConfiguration.*;
-import static io.art.xml.constants.XmlModuleConstants.*;
+import static lombok.AccessLevel.*;
 
 @Getter
-public class XmlModule implements Module<XmlModuleConfiguration, ModuleState> {
+public class XmlModule implements StatelessModule<XmlModuleConfiguration, XmlModuleConfiguration.Configurator> {
     @Getter(lazy = true, value = PRIVATE)
-    private final static XmlModuleConfiguration xmlModule = context().getModule(XML_MODULE_ID, XmlModule::new);
-    private final String id = XML_MODULE_ID;
-    private final XmlModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
+    private final static StatelessModuleProxy<XmlModuleConfiguration> xmlModule = context().getStatelessModule(XmlModule.class.getSimpleName());
+    private final String id = XmlModule.class.getSimpleName();
+    private final XmlModuleConfiguration configuration = new XmlModuleConfiguration();
+    private final XmlModuleConfiguration.Configurator configurator = new XmlModuleConfiguration.Configurator(configuration);
 
-    public static XmlModuleConfiguration xmlModule() {
-        if (contextIsNotReady()) {
-            return DEFAULT_CONFIGURATION;
-        }
+    public static StatelessModuleProxy<XmlModuleConfiguration> xmlModule() {
         return getXmlModule();
     }
 }

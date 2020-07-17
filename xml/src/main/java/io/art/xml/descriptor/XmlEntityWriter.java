@@ -40,7 +40,7 @@ import java.util.*;
 @UtilityClass
 public class XmlEntityWriter {
     public static byte[] writeXmlToBytes(XmlEntity xmlEntity) throws XmlMappingException {
-        return writeXml(xmlModule().getXmlOutputFactory(), xmlEntity).getBytes(contextConfiguration().getCharset());
+        return writeXml(xmlModule().configuration().getXmlOutputFactory(), xmlEntity).getBytes(contextConfiguration().getCharset());
     }
 
     public static void writeXml(XmlEntity xmlEntity, OutputStream outputStream) throws XmlMappingException {
@@ -48,18 +48,18 @@ public class XmlEntityWriter {
             return;
         }
         try {
-            outputStream.write(writeXml(xmlModule().getXmlOutputFactory(), xmlEntity).getBytes());
+            outputStream.write(writeXml(xmlModule().configuration().getXmlOutputFactory(), xmlEntity).getBytes());
         } catch (Throwable throwable) {
             throw new XmlMappingException(throwable);
         }
     }
 
     public static void writeXml(XmlEntity xmlEntity, Path path) throws XmlMappingException {
-        writeFileQuietly(path, writeXml(xmlModule().getXmlOutputFactory(), xmlEntity));
+        writeFileQuietly(path, writeXml(xmlModule().configuration().getXmlOutputFactory(), xmlEntity));
     }
 
     public static String writeXml(XmlEntity xmlEntity) throws XmlMappingException {
-        return writeXml(xmlModule().getXmlOutputFactory(), xmlEntity);
+        return writeXml(xmlModule().configuration().getXmlOutputFactory(), xmlEntity);
     }
 
     public static String writeXml(XMLOutputFactory xmlOutputFactory, XmlEntity xmlEntity) throws XmlMappingException {
@@ -163,7 +163,7 @@ public class XmlEntityWriter {
     private static void writeCData(XMLStreamWriter xmlStreamWriter, XmlEntity entity) throws XMLStreamException {
         XmlValue<?> xmlValue = entity.getXmlValue();
         if (ValueType.XmlValueType.CDATA.equals(xmlValue.getType())) {
-            String cDataValue = writeXml(xmlModule().getXmlOutputFactory(), (XmlEntity) xmlValue.getValue());
+            String cDataValue = writeXml(xmlModule().configuration().getXmlOutputFactory(), (XmlEntity) xmlValue.getValue());
 
             if (!isEmpty(xmlValue)) {
                 xmlStreamWriter.writeCData(cDataValue);

@@ -19,14 +19,14 @@
 package io.art.soap.client.communicator;
 
 import io.art.entity.immutable.*;
-import lombok.*;
 import io.art.soap.client.exception.*;
-import static lombok.AccessLevel.*;
+import lombok.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.entity.immutable.XmlEntity.*;
+import static io.art.soap.client.constants.SoapClientModuleConstants.OperationIdSource.*;
 import static io.art.soap.client.constants.SoapClientModuleConstants.*;
-import static io.art.soap.client.constants.SoapClientModuleConstants.OperationIdSource.REQUEST;
 import static io.art.soap.client.constants.SoapClientModuleExceptionMessages.*;
+import static lombok.AccessLevel.*;
 import java.util.*;
 
 @NoArgsConstructor(access = PACKAGE)
@@ -84,7 +84,7 @@ class SoapEnvelopWrappingManager {
         List<XmlEntity> bodyChildren = bodyEntity.getChildren();
         XmlEntity requestEntity;
         if (isEmpty(bodyChildren) || isEmpty(requestEntity = bodyChildren.get(0))) {
-            return xmlEntityBuilder().create();
+            return null;
         }
         return requestEntity;
     }

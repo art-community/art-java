@@ -22,16 +22,13 @@ import lombok.*;
 import io.art.core.module.*;
 import javax.xml.stream.*;
 
-public interface XmlModuleConfiguration extends ModuleConfiguration {
-    XMLInputFactory getXmlInputFactory();
+@Getter
+public class XmlModuleConfiguration implements ModuleConfiguration {
+    private final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+    private final XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newFactory();
 
-    XMLOutputFactory getXmlOutputFactory();
-
-    XmlModuleDefaultConfiguration DEFAULT_CONFIGURATION = new XmlModuleDefaultConfiguration();
-
-    @Getter
-    class XmlModuleDefaultConfiguration implements XmlModuleConfiguration {
-        private final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-        private final XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newFactory();
+    @RequiredArgsConstructor
+    public static class Configurator implements ModuleConfigurator<Configurator> {
+        private final XmlModuleConfiguration configuration;
     }
 }

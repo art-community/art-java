@@ -53,11 +53,11 @@ public class XmlEntityReader {
     }
 
     public static XmlEntity readXml(String xml) {
-        return readXml(xmlModule().getXmlInputFactory(), xml);
+        return readXml(xmlModule().configuration().getXmlInputFactory(), xml);
     }
 
     public static XmlEntity readXml(XMLInputFactory xmlInputFactory, String xml) {
-        if (isEmpty(xml)) return xmlEntityBuilder().create();
+        if (isEmpty(xml)) return null;
         try {
             InputStream is = new ByteArrayInputStream(xml.getBytes(UTF_8));
             XMLStreamReader parser = xmlInputFactory.createXMLStreamReader(is);
