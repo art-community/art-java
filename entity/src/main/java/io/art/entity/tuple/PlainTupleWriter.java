@@ -26,6 +26,7 @@ import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.entity.constants.ValueType.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.tuple.schema.ValueSchema.*;
 import static java.util.Collections.*;
@@ -40,6 +41,10 @@ public class PlainTupleWriter {
         if (isPrimitive(value)) {
             return new PlainTupleWriterResult(fixedArrayOf(asPrimitive(value).getValue()), schema);
         }
+        if (value.getType() == BINARY) {
+            return new PlainTupleWriterResult(fixedArrayOf(asBinary(value).getContent()), schema);
+
+        }
         return new PlainTupleWriterResult(writeValue(value), schema);
     }
 
@@ -49,8 +54,6 @@ public class PlainTupleWriter {
         switch (value.getType()) {
             case ENTITY:
                 return writeEntity(asEntity(value));
-            case BINARY:
-                return fixedArrayOf(asBinary(value).getContent());
             case ARRAY:
                 return writeArray(asArray(value));
         }
@@ -68,6 +71,10 @@ public class PlainTupleWriter {
                 tuple.add(cast(asPrimitive(value).getValue()));
                 continue;
             }
+            if (value.getType() == BINARY) {
+                tuple.add(cast(asBinary(value).getContent()));
+                continue;
+            }
             tuple.add(cast(writeValue(value)));
         }
         return tuple;
@@ -77,6 +84,14 @@ public class PlainTupleWriter {
         List<?> tuple = dynamicArrayOf();
         List<Value> valueList = array.asList();
         for (Value value : valueList) {
+            if (isPrimitive(value)) {
+                tuple.add(cast(asPrimitive(value).getValue()));
+                continue;
+            }
+            if (value.getType() == BINARY) {
+                tuple.add(cast(asBinary(value).getContent()));
+                continue;
+            }
             tuple.add(cast(writeValue(value)));
         }
         return tuple;

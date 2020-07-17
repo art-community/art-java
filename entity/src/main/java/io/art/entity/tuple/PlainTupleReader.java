@@ -26,9 +26,9 @@ import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
-import static io.art.entity.immutable.Value.isPrimitiveType;
 import static io.art.entity.immutable.BinaryValue.*;
 import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.immutable.Value.*;
 import static java.util.Objects.*;
 import java.util.*;
 
@@ -109,7 +109,7 @@ public class PlainTupleReader {
                     entityBuilder.lazyPut(fieldSchema.getName(), () -> readEntity((List<?>) value, (EntitySchema) fieldSchema.getSchema()));
                     break;
                 case BINARY:
-                    entityBuilder.lazyPut(fieldSchema.getName(), () -> binary((byte[]) ((List<?>) value).get(0)));
+                    entityBuilder.lazyPut(fieldSchema.getName(), () -> binary((byte[]) value));
                     break;
                 case ARRAY:
                     entityBuilder.lazyPut(fieldSchema.getName(), () -> readArray((List<?>) value, (ArraySchema) fieldSchema.getSchema()));
