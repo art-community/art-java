@@ -22,7 +22,6 @@ dependencies {
 
     implementation(project(":core"))
     implementation(project(":entity"))
-    implementation(project(":service"))
 
     api("io.grpc", "grpc-protobuf", grpcVersion)
             .exclude("com.google.guava")

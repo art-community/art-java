@@ -79,14 +79,18 @@ public class Context {
         if (isNull(INSTANCE) || state != READY) {
             throw new ContextInitializationException(CONTEXT_NOT_READY);
         }
-        return new StatelessModuleProxy<>(cast(modules.get(moduleId)));
+        Module module = modules.get(moduleId);
+        if (isNull(module)) throw new InternalRuntimeException(format(MODULE_WAS_NOT_FOUND, moduleId));
+        return new StatelessModuleProxy<>(cast(module));
     }
 
     public <C extends ModuleConfiguration, S extends ModuleState> StatefulModuleProxy<C, S> getStatefulModule(String moduleId) {
         if (isNull(INSTANCE) || state != READY) {
             throw new ContextInitializationException(CONTEXT_NOT_READY);
         }
-        return new StatefulModuleProxy<>(cast(modules.get(moduleId)));
+        Module module = modules.get(moduleId);
+        if (isNull(module)) throw new InternalRuntimeException(format(MODULE_WAS_NOT_FOUND, moduleId));
+        return new StatefulModuleProxy<>(cast(module));
     }
 
     public Context loadModule(Module module) {

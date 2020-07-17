@@ -105,26 +105,23 @@ public class ArrayFactory {
     }
 
 
-    public static <T extends Value> ArrayValue array(Collection<T> value) {
+    public static <T extends Value> ArrayValue array(List<T> value) {
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        ImmutableList<Collection<T>> list = of(value);
-        return new ArrayValue(index -> cast(list.get(index)), lazy(value::size));
+        return new ArrayValue(value::get, lazy(value::size));
     }
 
     public static <T extends Value> ArrayValue array(Function<Integer, T> valueProvider, Supplier<Integer> sizeProvider) {
         return new ArrayValue(valueProvider, lazy(sizeProvider));
     }
 
-    public static <T extends Entity> ArrayValue entityArray(Collection<T> value) {
+    public static <T extends Entity> ArrayValue entityArray(List<T> value) {
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        ImmutableList<Collection<T>> list = of(value);
-        return new ArrayValue(index -> cast(list.get(index)), lazy(value::size));
+        return new ArrayValue(value::get, lazy(value::size));
     }
 
-    public static <T extends ArrayValue> ArrayValue arrayOfArrays(Collection<T> value) {
+    public static <T extends ArrayValue> ArrayValue arrayOfArrays(List<T> value) {
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        ImmutableList<Collection<T>> list = of(value);
-        return new ArrayValue(index -> cast(list.get(index)), lazy(value::size));
+        return new ArrayValue(value::get, lazy(value::size));
     }
 
     public static ArrayValue emptyArray() {

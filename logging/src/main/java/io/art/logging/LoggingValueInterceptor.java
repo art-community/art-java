@@ -43,17 +43,7 @@ public class LoggingValueInterceptor<InValue extends Value, OutValue extends Val
     @Override
     public ValueInterceptionResult<InValue, OutValue> intercept(Value value) {
         putIfNotNull(REQUEST_VALUE_KEY, value);
-        if (enableTracing.get()) {
-            Map<String, String> dump = emptyMap();
-            if (isEntity(value)) {
-                dump = asEntity(value).dump();
-                dump.forEach((key, field) -> putIfNotNull(REQUEST_VALUE_KEY + DOT + key, field));
-            }
-            loggingModule()
-                    .getLogger(LoggingValueInterceptor.class)
-                    .info(format(VALUE_LOG_MESSAGE, value));
-            dump.keySet().forEach(ThreadContext::remove);
-        }
+        loggingModule().configuration().getLogger(LoggingValueInterceptor.class).info(format(VALUE_LOG_MESSAGE, value));
         remove(REQUEST_VALUE_KEY);
         return cast(nextInterceptor(value));
     }

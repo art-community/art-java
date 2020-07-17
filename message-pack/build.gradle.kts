@@ -22,7 +22,6 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":logging"))
     implementation(project(":entity"))
-    implementation(project(":json"))
 
     api("org.msgpack", "msgpack-core", messagePackVersion)
 }

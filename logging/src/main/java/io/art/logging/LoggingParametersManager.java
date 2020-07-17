@@ -23,11 +23,12 @@ import static io.art.core.constants.DateTimeConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static io.art.logging.ThreadContextExtensions.*;
+import java.time.*;
 import java.util.*;
 
 public interface LoggingParametersManager {
     static void putModuleLoggingParameters() {
-        putIfNotNull(LOG_TIMESTAMP, YYYY_MM_DD_T_HH_MM_SS_24H_SSS_DASH_FORMAT.get().format(new Date()));
+        putIfNotNull(LOG_TIMESTAMP, LocalDateTime.now().format(YYYY_MM_DD_T_HH_MM_SS_24H_SSS_DASH_FORMAT));
         putIfNotNull(MAIN_MODULE_ID_KEY, contextConfiguration().getMainModuleId());
         putIfNotNull(MODULES_KEY, context().getModuleNames());
         putIfNotNull(MODULE_JAR_KEY, contextConfiguration().getModuleJarName());
@@ -39,7 +40,7 @@ public interface LoggingParametersManager {
         putIfNotNull(SERVICE_METHOD_ID_KEY, parameters.getServiceMethodId());
         putIfNotNull(SERVICE_METHOD_COMMAND_KEY, parameters.getServiceMethodCommand());
         putIfNotNull(LOG_EVENT_TYPE, parameters.getLogEventType());
-        putIfNotNull(REQUEST_START_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT.get().format(new Date()));
+        putIfNotNull(REQUEST_START_TIME_KEY, LocalDateTime.now().format(YYYY_MM_DD_T_HH_MM_SS_24H_SSS_DASH_FORMAT));
         putIfNotNull(SERVICES_KEY, parameters.getLoadedServices());
     }
 

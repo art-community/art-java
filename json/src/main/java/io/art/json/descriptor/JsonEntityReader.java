@@ -247,7 +247,7 @@ public class JsonEntityReader {
         return array;
     }
 
-    private static Collection<Entity> parseEntityArray(JsonParser parser) throws IOException {
+    private static List<Entity> parseEntityArray(JsonParser parser) throws IOException {
         List<Entity> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {

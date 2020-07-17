@@ -32,65 +32,42 @@ import static io.art.logging.LoggerConfigurationService.*;
 import static io.art.logging.LoggingModuleConstants.LoggingMode.*;
 import java.util.*;
 
-public interface LoggingModuleConfiguration extends ModuleConfiguration {
-    Logger getLogger();
+@Getter
+public class LoggingModuleConfiguration implements ModuleConfiguration {
+    @Getter(lazy = true)
+    private final Level level = loadLoggingLevel();
+    @Getter(lazy = true)
+    private final SocketAppenderConfiguration socketAppenderConfiguration = loadSocketAppenderCurrentConfiguration();
+    @Getter(lazy = true)
+    private final Set<LoggingMode> loggingModes = loadLoggingModes();
+    private final boolean enabledColoredLogs = false;
+    private final boolean enabledAsynchronousLogging = false;
 
-    Logger getLogger(String topic);
-
-    Logger getLogger(Class<?> topicClass);
-
-    Level getLevel();
-
-    Set<LoggingMode> getLoggingModes();
-
-    SocketAppenderConfiguration getSocketAppenderConfiguration();
-
-    LoggingModuleDefaultConfiguration DEFAULT_CONFIGURATION = new LoggingModuleDefaultConfiguration();
-
-    boolean isEnabledColoredLogs();
-
-    boolean isEnabledAsynchronousLogging();
-
-    @Getter
-    class LoggingModuleDefaultConfiguration implements LoggingModuleConfiguration {
-        @Getter(lazy = true)
-        private final Level level = loadLoggingLevel();
-        @Getter(lazy = true)
-        private final SocketAppenderConfiguration socketAppenderConfiguration = loadSocketAppenderCurrentConfiguration();
-        @Getter(lazy = true)
-        private final Set<LoggingMode> loggingModes = loadLoggingModes();
-        private final boolean enabledColoredLogs = false;
-        private final boolean enabledAsynchronousLogging = false;
-
-        protected LoggingModuleDefaultConfiguration() {
-            refresh();
+    public LoggingModuleConfiguration() {
+        if (isEnabledAsynchronousLogging()) {
+            setProperty(LOG4J_CONTEXT_SELECTOR, AsyncLoggerContextSelector.class.getName());
         }
-
-        @Override
-        public Logger getLogger() {
-            return isEnabledColoredLogs() ? new ColoredLogger(cast(LogManager.getLogger())) : LogManager.getLogger();
+        setLoggingModes(getLoggingModes());
+        if (getLoggingModes().contains(SOCKET)) {
+            updateSocketAppender(getSocketAppenderConfiguration());
         }
+        setAllLevels(getRootLogger().getName(), getLevel());
+    }
 
-        @Override
-        public Logger getLogger(String topic) {
-            return isEnabledColoredLogs() ? new ColoredLogger(cast(LogManager.getLogger(topic))) : LogManager.getLogger(topic);
-        }
+    public Logger getLogger() {
+        return isEnabledColoredLogs() ? new ColoredLogger(cast(LogManager.getLogger())) : LogManager.getLogger();
+    }
 
-        @Override
-        public Logger getLogger(Class<?> topicClass) {
-            return isEnabledColoredLogs() ? new ColoredLogger(cast(LogManager.getLogger(topicClass))) : LogManager.getLogger(topicClass);
-        }
+    public Logger getLogger(String topic) {
+        return isEnabledColoredLogs() ? new ColoredLogger(cast(LogManager.getLogger(topic))) : LogManager.getLogger(topic);
+    }
 
-        @Override
-        public void refresh() {
-            if (isEnabledAsynchronousLogging()) {
-                setProperty(LOG4J_CONTEXT_SELECTOR, AsyncLoggerContextSelector.class.getName());
-            }
-            setLoggingModes(getLoggingModes());
-            if (getLoggingModes().contains(SOCKET)) {
-                updateSocketAppender(getSocketAppenderConfiguration());
-            }
-            setAllLevels(getRootLogger().getName(), getLevel());
-        }
+    public Logger getLogger(Class<?> topicClass) {
+        return isEnabledColoredLogs() ? new ColoredLogger(cast(LogManager.getLogger(topicClass))) : LogManager.getLogger(topicClass);
+    }
+
+    @RequiredArgsConstructor
+    public static class Configurator implements ModuleConfigurator<Configurator> {
+        private final LoggingModuleConfiguration configuration;
     }
 }

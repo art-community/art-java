@@ -42,7 +42,7 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
     }
 
     public List<ModuleConfigurationSource> orderedSources() {
-        return from(comparingInt((ModuleConfigurationSource source) -> source.getType().getOrder())).sortedCopy(getSources().values());
+        return from(Comparator.comparingInt((ModuleConfigurationSource source) -> source.getType().getOrder())).sortedCopy(getSources().values());
     }
 
     @RequiredArgsConstructor

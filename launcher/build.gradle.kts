@@ -18,7 +18,9 @@
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":configurator"))
-    implementation(project(":model"))
+    implementation(project(":entity"))
     implementation(project(":json"))
+    implementation(project(":protobuf"))
+    implementation(project(":message-pack"))
+    implementation(project(":xml"))
 }

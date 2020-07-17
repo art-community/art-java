@@ -18,30 +18,25 @@
 
 package io.art.logging;
 
-import lombok.*;
-import io.art.core.module.Module;
 import io.art.core.module.*;
+import lombok.*;
+import static io.art.core.context.Context.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
-import static io.art.core.context.Context.*;
-import static io.art.logging.LoggingModuleConfiguration.*;
-import static io.art.logging.LoggingModuleConstants.*;
 
 @Getter
-public class LoggingModule implements Module<LoggingModuleConfiguration, ModuleState> {
+public class LoggingModule implements StatelessModule<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final LoggingModuleConfiguration loggingModule = context().getModule(LOGGING_MODULE_ID, LoggingModule::new);
-    private final String id = LOGGING_MODULE_ID;
-    private final LoggingModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
+    private static final StatelessModuleProxy<LoggingModuleConfiguration> loggingModule = context().getStatelessModule(LoggingModule.class.getSimpleName());
+    private final String id = LoggingModule.class.getSimpleName();
+    private final LoggingModuleConfiguration configuration = new LoggingModuleConfiguration();
+    private final LoggingModuleConfiguration.Configurator configurator = new LoggingModuleConfiguration.Configurator(configuration);
 
     static {
         getLogManager().reset();
     }
 
-    public static LoggingModuleConfiguration loggingModule() {
-        if (contextIsNotReady()) {
-            return DEFAULT_CONFIGURATION;
-        }
+    public static StatelessModuleProxy<LoggingModuleConfiguration> loggingModule() {
         return getLoggingModule();
     }
 }

@@ -18,24 +18,47 @@
 
 package io.art.launcher;
 
-import io.art.configuration.module.*;
-import io.art.core.module.*;
+import io.art.core.factory.*;
+import io.art.entity.immutable.*;
+import io.art.entity.tuple.*;
 import io.art.json.module.*;
-import io.art.model.module.*;
-import static io.art.configuration.module.ConfiguratorModule.*;
+import io.art.xml.module.*;
 import static io.art.core.context.Context.*;
-import java.util.*;
+import static io.art.core.factory.CollectionsFactory.fixedArrayOf;
+import static io.art.entity.factory.ArrayFactory.array;
+import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.xml.XmlEntityFromEntityConverter.*;
+import static io.art.json.descriptor.JsonEntityWriter.*;
+import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
+import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;
+import static io.art.xml.descriptor.XmlEntityWriter.*;
 import java.util.concurrent.atomic.*;
 
 public class ModuleLauncher {
     private final static AtomicBoolean launched = new AtomicBoolean(false);
 
-    public static void launch(ModuleModel model) {
-        if (launched.compareAndSet(false, true)) {
-            context().loadModule(new ConfiguratorModule());
-            List<ModuleConfigurationSource> sources = configuratorModule().configuration().orderedSources();
-            context()
-                    .loadModule(new JsonModule().configure(configurator -> configurator.from(sources)));
-        }
+    public static void main(String[] args) {
+        context().loadModule(new JsonModule()).loadModule(new XmlModule());
+        Entity entity = entityBuilder()
+                .lazyPut("int", () -> intPrimitive(123))
+                .lazyPut("bool", () -> boolPrimitive(false))
+                .lazyPut("float", () -> floatPrimitive(123))
+                .lazyPut("double", () -> doublePrimitive(123))
+                .lazyPut("long", () -> longPrimitive(123L))
+                .lazyPut("string", () -> stringPrimitive("test"))
+                .lazyPut("embedded", () -> entityBuilder()
+                        .lazyPut("string", () -> stringPrimitive("test"))
+                        .build()
+                )
+                .lazyPut("array", () -> array(fixedArrayOf(stringPrimitive("test"))))
+                .build();
+        System.out.println(writeJson(entity));
+        System.out.println(writeProtobuf(entity));
+        System.out.println(writeMessagePack(entity));
+        System.out.println(PlainTupleWriter.writeTuple(entity).getSchema());
+        System.out.println(PlainTupleWriter.writeTuple(entity).getTuple());
+        System.out.println(TupleWriter.writeTuple(entity));
+        System.out.println(writeXml(fromEntityAsTags(entity)));
     }
 }

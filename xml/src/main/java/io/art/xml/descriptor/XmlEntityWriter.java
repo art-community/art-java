@@ -82,7 +82,7 @@ public class XmlEntityWriter {
                     xmlStreamWriter.flush();
                     xmlStreamWriter.close();
                 } catch (Throwable throwable) {
-                    loggingModule().getLogger(XmlEntityWriter.class).error(XML_GENERATOR_CLOSING_ERROR, throwable);
+                    loggingModule().configuration().getLogger(XmlEntityWriter.class).error(XML_GENERATOR_CLOSING_ERROR, throwable);
                 }
             }
         }

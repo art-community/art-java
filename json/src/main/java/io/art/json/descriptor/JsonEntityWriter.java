@@ -114,7 +114,7 @@ public class JsonEntityWriter {
                     generator.flush();
                     generator.close();
                 } catch (IOException ioException) {
-                    loggingModule().getLogger(JsonEntityWriter.class).error(JSON_GENERATOR_CLOSING_ERROR, ioException);
+                    loggingModule().configuration().getLogger(JsonEntityWriter.class).error(JSON_GENERATOR_CLOSING_ERROR, ioException);
                 }
             }
         }

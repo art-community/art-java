@@ -25,6 +25,7 @@ import io.art.entity.mapper.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.immutable.Value.isEmpty;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
