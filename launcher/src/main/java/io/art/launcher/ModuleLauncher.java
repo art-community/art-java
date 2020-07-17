@@ -21,7 +21,12 @@ package io.art.launcher;
 import io.art.core.factory.*;
 import io.art.entity.immutable.*;
 import io.art.entity.tuple.*;
+import io.art.entity.xml.*;
+import io.art.json.descriptor.*;
 import io.art.json.module.*;
+import io.art.message.pack.descriptor.*;
+import io.art.protobuf.descriptor.*;
+import io.art.xml.descriptor.*;
 import io.art.xml.module.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.CollectionsFactory.fixedArrayOf;
@@ -29,9 +34,14 @@ import static io.art.entity.factory.ArrayFactory.array;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.xml.XmlEntityFromEntityConverter.*;
+import static io.art.entity.xml.XmlEntityToEntityConverter.*;
+import static io.art.json.descriptor.JsonEntityReader.*;
 import static io.art.json.descriptor.JsonEntityWriter.*;
+import static io.art.message.pack.descriptor.MessagePackEntityReader.readMessagePack;
 import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
+import static io.art.protobuf.descriptor.ProtobufEntityReader.*;
 import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;
+import static io.art.xml.descriptor.XmlEntityReader.*;
 import static io.art.xml.descriptor.XmlEntityWriter.*;
 import java.util.concurrent.atomic.*;
 
@@ -53,12 +63,11 @@ public class ModuleLauncher {
                 )
                 .lazyPut("array", () -> array(fixedArrayOf(stringPrimitive("test"))))
                 .build();
-        System.out.println(writeJson(entity));
-        System.out.println(writeProtobuf(entity));
-        System.out.println(writeMessagePack(entity));
-        System.out.println(PlainTupleWriter.writeTuple(entity).getSchema());
-        System.out.println(PlainTupleWriter.writeTuple(entity).getTuple());
-        System.out.println(TupleWriter.writeTuple(entity));
-        System.out.println(writeXml(fromEntityAsTags(entity)));
+        System.out.println(writeJson(readJson(writeJson(entity))));
+        System.out.println(writeProtobuf(readProtobuf(writeProtobuf(entity))));
+        System.out.println(writeMessagePack(readMessagePack(writeMessagePack(entity))));
+        System.out.println(PlainTupleWriter.writeTuple(PlainTupleReader.readTuple(PlainTupleWriter.writeTuple(entity).getTuple(),PlainTupleWriter.writeTuple(entity).getSchema())));
+        System.out.println(writeXml(fromEntityAsTags(toEntityFromTags(readXml(writeXml(fromEntityAsTags(entity)))))));
+        System.out.println(writeXml(fromEntityAsAttributes("root", toEntityFromAttributes(readXml(writeXml(fromEntityAsAttributes("root", entity)))))));
     }
 }
