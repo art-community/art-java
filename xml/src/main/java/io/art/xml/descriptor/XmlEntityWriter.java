@@ -23,6 +23,7 @@ import io.art.entity.immutable.*;
 import io.art.xml.exception.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
@@ -39,37 +40,40 @@ import java.util.*;
 
 @UtilityClass
 public class XmlEntityWriter {
-    public static byte[] writeXmlToBytes(XmlEntity xmlEntity) throws XmlMappingException {
-        return writeXml(xmlModule().configuration().getXmlOutputFactory(), xmlEntity).getBytes(contextConfiguration().getCharset());
+    public static byte[] writeXmlToBytes(XmlEntity entity) throws XmlMappingException {
+        String xml = writeXml(xmlModule().configuration().getXmlOutputFactory(), entity);
+        if (isNull(xml) || isEmpty(xml)) return EMPTY_BYTES;
+        return xml.getBytes(contextConfiguration().getCharset());
     }
 
-    public static void writeXml(XmlEntity xmlEntity, OutputStream outputStream) throws XmlMappingException {
-        if (isNull(outputStream)) {
-            return;
-        }
+    public static void writeXml(XmlEntity entity, OutputStream outputStream) throws XmlMappingException {
         try {
-            outputStream.write(writeXml(xmlModule().configuration().getXmlOutputFactory(), xmlEntity).getBytes());
+            String xml = writeXml(xmlModule().configuration().getXmlOutputFactory(), entity);
+            if (isNull(xml) || isEmpty(xml)) return;
+            outputStream.write(xml.getBytes());
         } catch (Throwable throwable) {
             throw new XmlMappingException(throwable);
         }
     }
 
-    public static void writeXml(XmlEntity xmlEntity, Path path) throws XmlMappingException {
-        writeFileQuietly(path, writeXml(xmlModule().configuration().getXmlOutputFactory(), xmlEntity));
+    public static void writeXml(XmlEntity entity, Path path) throws XmlMappingException {
+        String xml = writeXml(xmlModule().configuration().getXmlOutputFactory(), entity);
+        if (isNull(xml) || isEmpty(xml)) return;
+        writeFileQuietly(path, xml);
     }
 
-    public static String writeXml(XmlEntity xmlEntity) throws XmlMappingException {
-        return writeXml(xmlModule().configuration().getXmlOutputFactory(), xmlEntity);
+    public static String writeXml(XmlEntity entity) throws XmlMappingException {
+        return writeXml(xmlModule().configuration().getXmlOutputFactory(), entity);
     }
 
-    public static String writeXml(XMLOutputFactory xmlOutputFactory, XmlEntity xmlEntity) throws XmlMappingException {
-        if (isNull(xmlEntity)) return EMPTY_STRING;
+    public static String writeXml(XMLOutputFactory outputFactory, XmlEntity entity) throws XmlMappingException {
+        if (isNull(entity)) return null;
         XMLStreamWriter xmlStreamWriter = null;
         try {
-            OutputStream os = new ByteArrayOutputStream();
-            xmlStreamWriter = xmlOutputFactory.createXMLStreamWriter(os, UTF_8.name());
-            writeAllElements(xmlStreamWriter, xmlEntity);
-            return os.toString();
+            OutputStream outputStream = new ByteArrayOutputStream();
+            xmlStreamWriter = outputFactory.createXMLStreamWriter(outputStream, UTF_8.name());
+            writeAllElements(xmlStreamWriter, entity);
+            return outputStream.toString();
         } catch (Throwable throwable) {
             throw new XmlMappingException(throwable);
         } finally {
@@ -92,7 +96,6 @@ public class XmlEntityWriter {
     }
 
     private static void writeXmlEntity(XMLStreamWriter xmlStreamWriter, XmlEntity entity) throws XMLStreamException {
-        //gather all child elements
         List<XmlEntity> children = entity.getChildren();
 
         if (isEmpty(children) && isEmpty(entity.getValue())) return;
@@ -109,7 +112,6 @@ public class XmlEntityWriter {
         writeNamespaces(xmlStreamWriter, entity);
         writeAttributes(xmlStreamWriter, entity);
 
-        //gather elements sequence
         for (XmlEntity xmlEntity : children) {
             if (isEmpty(xmlEntity)) continue;
             writeXmlEntity(xmlStreamWriter, xmlEntity);
