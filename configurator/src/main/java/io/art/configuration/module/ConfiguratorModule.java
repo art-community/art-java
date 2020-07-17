@@ -24,6 +24,8 @@ import io.art.core.exception.*;
 import io.art.core.handler.*;
 import io.art.core.module.*;
 import lombok.*;
+import static io.art.configuration.constants.ConfiguratorConstants.ConfigurationSourceType.CUSTOM_FILE;
+import static io.art.configuration.constants.ConfiguratorConstants.ConfigurationSourceType.RESOURCES_FILE;
 import static io.art.configuration.constants.ConfiguratorConstants.ConfiguratorKeys.*;
 import static io.art.configuration.constants.ConfiguratorConstants.*;
 import static io.art.configuration.constants.ConfiguratorConstants.FileConfigurationExtensions.*;
@@ -41,7 +43,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     private final ConfiguratorModuleConfiguration configuration = new ConfiguratorModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
     @Getter(lazy = true)
-    private static final StatelessModuleProvider<ConfiguratorModuleConfiguration> configuratorModule = context().getModule(ConfiguratorModule.class.getSimpleName());
+    private static final StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule = context().getStatelessModule(ConfiguratorModule.class.getSimpleName());
 
     @Override
     public void onLoad() {
@@ -49,39 +51,32 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .from(new EnvironmentConfigurationSource())
                 .from(new PropertiesConfigurationSource())
         );
+        ClassLoader loader = ConfiguratorModule.class.getClassLoader();
         FILE_CONFIGURATION_EXTENSIONS.stream()
-                .map(extension -> ConfiguratorModule.class.getClassLoader().getResource(DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension))
+                .map(extension -> loader.getResource(DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension))
                 .filter(Objects::nonNull)
-                .map(resource -> new FileConfigurationSource(new File(ExceptionHandler.<URI>wrapException(InternalRuntimeException::new).call(resource::toURI))))
-                .forEach(source -> configure(configurator -> configurator.from(source)));
+                .findFirst()
+                .map(resource -> new FileConfigurationSource(RESOURCES_FILE, new File(ExceptionHandler.<URI>wrapException(InternalRuntimeException::new).call(resource::toURI))))
+                .ifPresent(source -> configure(configurator -> configurator.from(source)));
         EnvironmentConfigurationSource environment = getConfiguration().getEnvironment();
         PropertiesConfigurationSource properties = getConfiguration().getProperties();
-        ofNullable(environment.getString(MODULE_CONFIG_FILE_ENVIRONMENT))
-                .map(path -> get(path).toFile())
-                .filter(File::exists)
-                .ifPresent(file -> configure(configurator -> configurator.from(new FileConfigurationSource(file))));
-        environment.getStringList(MODULE_CONFIG_FILES_ENVIRONMENT)
-                .stream()
-                .map(path -> get(path).toFile())
-                .filter(File::exists)
-                .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(file))));
-        ofNullable(properties.getString(MODULE_CONFIG_FILE_PROPERTY))
-                .map(path -> get(path).toFile())
-                .filter(File::exists)
-                .ifPresent(file -> configure(configurator -> configurator.from(new FileConfigurationSource(file))));
-        properties.getStringList(MODULE_CONFIG_FILES_PROPERTY)
-                .stream()
-                .map(path -> get(path).toFile())
-                .filter(File::exists)
-                .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(file))));
+        configureByFile(environment.getString(MODULE_CONFIG_FILE_ENVIRONMENT), environment.getStringList(MODULE_CONFIG_FILES_ENVIRONMENT));
+        configureByFile(properties.getString(MODULE_CONFIG_FILE_PROPERTY), properties.getStringList(MODULE_CONFIG_FILES_PROPERTY));
     }
 
-    public static StatelessModuleProvider<ConfiguratorModuleConfiguration> configuratorModule() {
+    private void configureByFile(String singlePath, List<String> multiplePaths) {
+        ofNullable(singlePath)
+                .map(path -> get(path).toFile())
+                .filter(File::exists)
+                .ifPresent(file -> configure(configurator -> configurator.from(new FileConfigurationSource(CUSTOM_FILE, file))));
+        multiplePaths
+                .stream()
+                .map(path -> get(path).toFile())
+                .filter(File::exists)
+                .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(CUSTOM_FILE, file))));
+    }
+
+    public static StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule() {
         return getConfiguratorModule();
-    }
-
-    public static void main(String[] args) {
-        context().loadModule(new ConfiguratorModule());
-        System.out.println(configuratorModule().getConfiguration());
     }
 }

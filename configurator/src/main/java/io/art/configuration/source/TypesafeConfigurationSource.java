@@ -21,7 +21,7 @@ package io.art.configuration.source;
 import com.typesafe.config.*;
 import io.art.core.module.*;
 import lombok.*;
-import static io.art.core.extensions.CollectionExtensions.orEmptyList;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
@@ -31,7 +31,7 @@ import java.util.*;
 @Getter
 @RequiredArgsConstructor
 public class TypesafeConfigurationSource implements ModuleConfigurationSource {
-    private final String type = TypesafeConfigurationSource.class.getSimpleName();
+    private final ModuleConfigurationSourceType type;
     private final Config typesafeConfiguration;
 
     @Override
@@ -66,7 +66,7 @@ public class TypesafeConfigurationSource implements ModuleConfigurationSource {
 
     @Override
     public ModuleConfigurationSource getInner(String path) {
-        return new TypesafeConfigurationSource(typesafeConfiguration.getConfig(path));
+        return new TypesafeConfigurationSource(type, typesafeConfiguration.getConfig(path));
     }
 
     @Override
@@ -103,7 +103,7 @@ public class TypesafeConfigurationSource implements ModuleConfigurationSource {
     public List<ModuleConfigurationSource> getInnerList(String path) {
         return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getConfigList)
                 .stream()
-                .map(TypesafeConfigurationSource::new)
+                .map(config -> new TypesafeConfigurationSource(type, config))
                 .collect(toList());
     }
 

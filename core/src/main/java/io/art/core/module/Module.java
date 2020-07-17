@@ -18,7 +18,12 @@
 
 package io.art.core.module;
 
-public interface Module<Configuration extends ModuleConfiguration, Configurator extends ModuleConfigurator<Configurator>, State extends ModuleState> extends
-        ModuleProvider<Configuration, State>,
-        StatelessModule<Configuration, Configurator> {
+import io.art.core.identified.*;
+
+public interface Module extends UniqueIdentified {
+    default void onLoad() {
+    }
+
+    default void onUnload() {
+    }
 }

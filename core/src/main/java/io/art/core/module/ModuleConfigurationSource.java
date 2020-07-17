@@ -64,9 +64,13 @@ public interface ModuleConfigurationSource {
 
     Map<String, ModuleConfigurationSource> getInnerMap(String path);
 
-    String getType();
+    ModuleConfigurationSourceType getType();
 
     Set<String> getKeys();
 
     boolean has(String path);
+
+    interface ModuleConfigurationSourceType {
+        int getOrder();
+    }
 }

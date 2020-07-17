@@ -21,13 +21,14 @@ package io.art.configuration.source;
 import io.art.core.module.*;
 import lombok.*;
 import static com.typesafe.config.ConfigFactory.*;
+import static io.art.configuration.constants.ConfiguratorConstants.ConfigurationSourceType.*;
 import java.time.*;
 import java.util.*;
 
 @Getter
 public class EnvironmentConfigurationSource implements ModuleConfigurationSource {
-    private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(systemEnvironment());
-    private final String type = EnvironmentConfigurationSource.class.getSimpleName();
+    private final ModuleConfigurationSourceType type = ENVIRONMENT;
+    private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(ENVIRONMENT, systemEnvironment());
 
     @Override
     public Integer getInt(String path) {

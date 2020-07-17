@@ -18,13 +18,13 @@
 
 package io.art.configuration.source;
 
+import io.art.configuration.constants.ConfiguratorConstants.*;
 import io.art.configuration.exception.*;
 import io.art.configuration.yaml.source.*;
 import io.art.core.module.*;
 import lombok.*;
 import static com.typesafe.config.ConfigFactory.*;
 import static io.art.configuration.constants.ConfiguratorConstants.FileConfigurationExtensions.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
 import java.io.*;
 import java.time.*;
@@ -32,12 +32,12 @@ import java.util.*;
 
 @Getter
 public class FileConfigurationSource implements ModuleConfigurationSource {
-    private final String type;
+    private final ConfigurationSourceType type;
     private final ModuleConfigurationSource source;
 
-    public FileConfigurationSource(File file) {
-        type = FileConfigurationSource.class.getSimpleName() + COLON + file.getAbsolutePath();
-        source = selectSource(file);
+    public FileConfigurationSource(ConfigurationSourceType type, File file) {
+        this.type = type;
+        source = selectSource(type, file);
     }
 
     @Override
@@ -155,17 +155,17 @@ public class FileConfigurationSource implements ModuleConfigurationSource {
         return source.has(path);
     }
 
-    private static ModuleConfigurationSource selectSource(File file) {
+    private static ModuleConfigurationSource selectSource(ConfigurationSourceType type, File file) {
         String extension = parseExtension(file.getAbsolutePath());
         switch (extension) {
             case HOCON_EXTENSION:
             case JSON_EXTENSION:
             case CONF_EXTENSION:
             case PROPERTIES_EXTENSION:
-                return new TypesafeConfigurationSource(parseFile(file));
+                return new TypesafeConfigurationSource(type, parseFile(file));
             case YAML_EXTENSION:
             case YML_EXTENSION:
-                return new YamlConfigurationSource(file);
+                return new YamlConfigurationSource(type, file);
         }
         throw new UnknownConfigurationFileExtensionException(extension);
     }

@@ -18,13 +18,13 @@
 
 package io.art.launcher;
 
-import com.google.common.collect.*;
 import io.art.configuration.module.*;
 import io.art.core.module.*;
 import io.art.json.module.*;
 import io.art.model.module.*;
 import static io.art.configuration.module.ConfiguratorModule.*;
 import static io.art.core.context.Context.*;
+import java.util.*;
 import java.util.concurrent.atomic.*;
 
 public class ModuleLauncher {
@@ -33,7 +33,7 @@ public class ModuleLauncher {
     public static void launch(ModuleModel model) {
         if (launched.compareAndSet(false, true)) {
             context().loadModule(new ConfiguratorModule());
-            ImmutableCollection<ModuleConfigurationSource> sources = configuratorModule().getConfiguration().orderedSources();
+            List<ModuleConfigurationSource> sources = configuratorModule().configuration().orderedSources();
             context()
                     .loadModule(new JsonModule().configure(configurator -> configurator.from(sources)));
         }

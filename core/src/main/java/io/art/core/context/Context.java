@@ -22,6 +22,7 @@ import io.art.core.configuration.*;
 import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
+import io.art.core.module.Module;
 import io.art.core.module.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -38,10 +39,10 @@ import java.util.*;
 
 public class Context {
     private static Context INSTANCE;
-    private volatile ContextConfiguration configuration = new DefaultContextConfiguration();
-    private volatile ContextState state = READY;
-    private volatile Long lastActionTimestamp = currentTimeMillis();
-    private final Map<String, StatelessModule<?, ?>> modules = concurrentHashMap();
+    private ContextConfiguration configuration = new DefaultContextConfiguration();
+    private ContextState state = READY;
+    private Long lastActionTimestamp = currentTimeMillis();
+    private final Map<String, Module> modules = concurrentHashMap();
 
     static {
         out.println(ART_BANNER);
@@ -74,18 +75,25 @@ public class Context {
         return context().configuration;
     }
 
-    public <M extends StatelessModuleProvider<?>> M getModule(String moduleId) {
+    public <C extends ModuleConfiguration> StatelessModuleProxy<C> getStatelessModule(String moduleId) {
         if (isNull(INSTANCE) || state != READY) {
             throw new ContextInitializationException(CONTEXT_NOT_READY);
         }
-        return cast(modules.get(moduleId));
+        return new StatelessModuleProxy<>(cast(modules.get(moduleId)));
     }
 
-    public <M extends StatelessModule<?, ?>> Context loadModule(M module) {
+    public <C extends ModuleConfiguration, S extends ModuleState> StatefulModuleProxy<C, S> getStatefulModule(String moduleId) {
+        if (isNull(INSTANCE) || state != READY) {
+            throw new ContextInitializationException(CONTEXT_NOT_READY);
+        }
+        return new StatefulModuleProxy<>(cast(modules.get(moduleId)));
+    }
+
+    public Context loadModule(Module module) {
         ContextState currentState = state;
         state = LOADING;
         modules.put(module.getId(), module);
-        out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, module.getConfiguration().getClass().getName()));
+        out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, module.getClass()));
         state = currentState;
         module.onLoad();
         lastActionTimestamp = currentTimeMillis();
@@ -106,7 +114,7 @@ public class Context {
 
     private void unloadModules() {
         state = UNLOADING;
-        modules.values().forEach(StatelessModule::onUnload);
+        modules.values().forEach(Module::onUnload);
         modules.clear();
         state = EMPTY;
     }

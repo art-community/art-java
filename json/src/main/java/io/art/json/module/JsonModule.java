@@ -22,18 +22,17 @@ import io.art.core.module.*;
 import io.art.json.configuration.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
-import static io.art.json.constants.JsonModuleConstants.*;
 import static lombok.AccessLevel.*;
 
 @Getter
 public class JsonModule implements StatelessModule<JsonModuleConfiguration, JsonModuleConfiguration.Configurator> {
     @Getter(lazy = true, value = PRIVATE)
-    private final static StatelessModuleProvider<JsonModuleConfiguration> jsonModule = context().getModule(JSON_MODULE_ID);
-    private final String id = JSON_MODULE_ID;
+    private final static StatelessModuleProxy<JsonModuleConfiguration> jsonModule = context().getStatelessModule(JsonModule.class.getSimpleName());
+    private final String id = JsonModule.class.getSimpleName();
     private final JsonModuleConfiguration configuration = new JsonModuleConfiguration();
     private final JsonModuleConfiguration.Configurator configurator = new JsonModuleConfiguration.Configurator(configuration);
 
-    public static StatelessModuleProvider<JsonModuleConfiguration> jsonModule() {
+    public static StatelessModuleProxy<JsonModuleConfiguration> jsonModule() {
         return getJsonModule();
     }
 }

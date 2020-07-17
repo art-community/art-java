@@ -16,10 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.core.constants;
+package io.art.core.module;
 
-import static io.art.core.colorizer.AnsiColorizer.*;
+import io.art.core.exception.*;
+import static io.art.core.constants.ExceptionMessages.*;
+import static java.text.MessageFormat.*;
 
-public interface LoggingMessages {
-    String MODULE_LOADED_MESSAGE = success("Module: ''{0}'' was loaded in {1}[ms] with class {2}");
+public interface ModuleStateProvider<State extends ModuleState> extends Module {
+    default State getState() {
+        throw new InternalRuntimeException(format(MODULE_HAS_NOT_STATE, getId()));
+    }
 }

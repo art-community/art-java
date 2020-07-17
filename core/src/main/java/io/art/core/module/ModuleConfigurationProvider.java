@@ -18,6 +18,6 @@
 
 package io.art.core.module;
 
-public interface StatelessModuleProvider<Configuration extends ModuleConfiguration> {
+public interface ModuleConfigurationProvider<Configuration extends ModuleConfiguration> extends Module {
     Configuration getConfiguration();
 }

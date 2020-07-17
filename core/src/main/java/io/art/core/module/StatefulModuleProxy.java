@@ -16,10 +16,19 @@
  * limitations under the License.
  */
 
-package io.art.core.constants;
+package io.art.core.module;
 
-import static io.art.core.colorizer.AnsiColorizer.*;
+import lombok.*;
 
-public interface LoggingMessages {
-    String MODULE_LOADED_MESSAGE = success("Module: ''{0}'' was loaded in {1}[ms] with class {2}");
+@RequiredArgsConstructor
+public class StatefulModuleProxy<Configuration extends ModuleConfiguration, State extends ModuleState> {
+    private final StatefulModule<Configuration, ?, State> module;
+
+    public Configuration configuration() {
+        return module.getConfiguration();
+    }
+
+    public State state() {
+        return module.getState();
+    }
 }

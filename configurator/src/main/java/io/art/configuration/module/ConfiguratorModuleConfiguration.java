@@ -21,63 +21,28 @@ package io.art.configuration.module;
 import com.google.common.collect.*;
 import io.art.configuration.source.*;
 import io.art.core.module.*;
+import io.art.core.module.ModuleConfigurationSource.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
+import static com.google.common.collect.Ordering.*;
+import static io.art.configuration.constants.ConfiguratorConstants.ConfigurationSourceType.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.constants.StringConstants.*;
-import java.io.*;
 import java.util.*;
 
 @Getter
 public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
-    private ImmutableMap<String, ModuleConfigurationSource> sources = of();
+    private ImmutableMap<ModuleConfigurationSourceType, ModuleConfigurationSource> sources = of();
 
     public PropertiesConfigurationSource getProperties() {
-        return cast(sources.get(PropertiesConfigurationSource.class.getSimpleName()));
+        return cast(sources.get(PROPERTIES));
     }
 
     public EnvironmentConfigurationSource getEnvironment() {
-        return cast(sources.get(EnvironmentConfigurationSource.class.getSimpleName()));
+        return cast(sources.get(ENVIRONMENT));
     }
 
-    public ImmutableMap<String, FileConfigurationSource> getFiles() {
-        return sources
-                .entrySet()
-                .stream()
-                .filter(entry -> entry.getKey().startsWith(FileConfigurationSource.class.getSimpleName()))
-                .collect(toImmutableMap(
-                        entry -> entry.getKey().substring(entry.getKey().indexOf(COLON) + 1),
-                        entry -> cast(entry.getValue()))
-                );
-    }
-
-    public FileConfigurationSource getFile(String path) {
-        return getFiles().get(path);
-    }
-
-    public ImmutableMap<String, FileConfigurationSource> getFilesByName(String name) {
-        return getFiles()
-                .entrySet()
-                .stream()
-                .filter(entry -> new File(entry.getKey()).getName().equals(name))
-                .collect(toImmutableMap(Entry::getKey, Entry::getValue));
-    }
-
-    public Optional<FileConfigurationSource> getFirstFileByName(String name) {
-        return getFiles()
-                .entrySet()
-                .stream()
-                .filter(entry -> new File(entry.getKey()).getName().equals(name))
-                .findFirst()
-                .map(Entry::getValue);
-    }
-
-    public Set<String> getSourceNames() {
-        return sources.keySet();
-    }
-
-    public ImmutableCollection<ModuleConfigurationSource> orderedSources() {
-        return sources.values();
+    public List<ModuleConfigurationSource> orderedSources() {
+        return from(comparingInt((ModuleConfigurationSource source) -> source.getType().getOrder())).sortedCopy(getSources().values());
     }
 
     @RequiredArgsConstructor
@@ -86,7 +51,7 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ModuleConfigurationSource source) {
-            configuration.sources = ImmutableMap.<String, ModuleConfigurationSource>builder()
+            configuration.sources = ImmutableMap.<ModuleConfigurationSourceType, ModuleConfigurationSource>builder()
                     .putAll(configuration.sources)
                     .put(source.getType(), source)
                     .build();

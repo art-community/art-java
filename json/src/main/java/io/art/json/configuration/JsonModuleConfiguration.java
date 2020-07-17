@@ -21,8 +21,6 @@ package io.art.json.configuration;
 import com.fasterxml.jackson.databind.*;
 import io.art.core.module.*;
 import lombok.*;
-import static com.fasterxml.jackson.core.JsonParser.Feature.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
 
 @Getter
 public class JsonModuleConfiguration implements ModuleConfiguration {
@@ -34,7 +32,6 @@ public class JsonModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ModuleConfigurationSource source) {
-            let(source.getBool("json.allowComments"), value -> configuration.objectMapper.configure(ALLOW_COMMENTS, value));
             return this;
         }
     }

@@ -19,9 +19,22 @@
 package io.art.configuration.constants;
 
 import com.google.common.collect.*;
+import io.art.core.module.ModuleConfigurationSource.*;
+import lombok.*;
 
 public interface ConfiguratorConstants {
     String DEFAULT_MODULE_CONFIGURATION_FILE = "module-config";
+
+    @Getter
+    @AllArgsConstructor
+    enum ConfigurationSourceType implements ModuleConfigurationSourceType {
+        ENVIRONMENT(0),
+        PROPERTIES(1),
+        RESOURCES_FILE(2),
+        CUSTOM_FILE(3);
+
+        private final int order;
+    }
 
     interface ConfiguratorKeys {
         String MODULE_CONFIG_FILE_ENVIRONMENT = "MODULE_CONFIG_FILE";
@@ -32,11 +45,11 @@ public interface ConfiguratorConstants {
 
     interface FileConfigurationExtensions {
         String PROPERTIES_EXTENSION = "properties";
-        String HOCON_EXTENSION = "hocon";
-        String CONF_EXTENSION = "conf";
-        String JSON_EXTENSION = "json";
         String YAML_EXTENSION = "yaml";
         String YML_EXTENSION = "yml";
+        String JSON_EXTENSION = "json";
+        String CONF_EXTENSION = "conf";
+        String HOCON_EXTENSION = "hocon";
         ImmutableSet<String> FILE_CONFIGURATION_EXTENSIONS = ImmutableSet.of(
                 HOCON_EXTENSION,
                 CONF_EXTENSION,

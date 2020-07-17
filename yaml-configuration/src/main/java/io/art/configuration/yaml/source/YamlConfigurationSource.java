@@ -28,24 +28,23 @@ import static com.fasterxml.jackson.databind.node.JsonNodeType.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.core.parser.DurationParser.*;
-import static java.util.function.Function.identity;
+import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import static java.util.stream.StreamSupport.*;
 import java.io.*;
 import java.time.*;
 import java.util.*;
-import java.util.function.*;
 
 @Getter
 public class YamlConfigurationSource implements ModuleConfigurationSource {
-    private final String type;
+    private final ModuleConfigurationSourceType type;
     private final File file;
     private final JsonNode configuration;
     private final static YAMLMapper yamlMapper = new YAMLMapper();
 
-    public YamlConfigurationSource(File file) {
+    public YamlConfigurationSource(ModuleConfigurationSourceType type, File file) {
+        this.type = type;
         this.file = file;
-        type = YamlConfigurationSource.class.getSimpleName() + COLON + file.getAbsolutePath();
         try {
             configuration = yamlMapper.readTree(file);
         } catch (IOException exception) {
@@ -53,9 +52,9 @@ public class YamlConfigurationSource implements ModuleConfigurationSource {
         }
     }
 
-    public YamlConfigurationSource(File file, JsonNode configuration) {
+    public YamlConfigurationSource(ModuleConfigurationSourceType type, File file, JsonNode configuration) {
+        this.type = type;
         this.file = file;
-        type = YamlConfigurationSource.class.getSimpleName() + COLON + file.getAbsolutePath();
         this.configuration = configuration;
     }
 
@@ -91,7 +90,7 @@ public class YamlConfigurationSource implements ModuleConfigurationSource {
 
     @Override
     public ModuleConfigurationSource getInner(String path) {
-        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), node -> new YamlConfigurationSource(file, node));
+        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), node -> new YamlConfigurationSource(type, file, node));
     }
 
     @Override
@@ -141,7 +140,7 @@ public class YamlConfigurationSource implements ModuleConfigurationSource {
     @Override
     public List<ModuleConfigurationSource> getInnerList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
-                .map(node -> new YamlConfigurationSource(file, node))
+                .map(node -> new YamlConfigurationSource(type, file, node))
                 .collect(toList());
     }
 

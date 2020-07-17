@@ -16,10 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.core.constants;
+package io.art.core.module;
 
-import static io.art.core.colorizer.AnsiColorizer.*;
-
-public interface LoggingMessages {
-    String MODULE_LOADED_MESSAGE = success("Module: ''{0}'' was loaded in {1}[ms] with class {2}");
+public interface StatefulModule<
+        Configuration extends ModuleConfiguration,
+        Configurator extends ModuleConfigurator<Configurator>,
+        State extends ModuleState
+        >
+        extends ModuleStateProvider<State>, StatelessModule<Configuration, Configurator> {
 }

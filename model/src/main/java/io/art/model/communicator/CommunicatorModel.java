@@ -20,6 +20,7 @@ package io.art.model.communicator;
 
 import lombok.*;
 import static java.util.function.UnaryOperator.identity;
+import static lombok.AccessLevel.PRIVATE;
 import java.util.function.*;
 
 @Getter

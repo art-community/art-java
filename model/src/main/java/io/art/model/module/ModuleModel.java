@@ -18,24 +18,19 @@
 
 package io.art.model.module;
 
-import io.art.grpc.client.module.*;
-import io.art.http.client.module.*;
 import io.art.model.communicator.*;
 import io.art.model.configurator.*;
 import io.art.model.consumer.*;
 import io.art.model.producer.*;
 import io.art.model.server.*;
 import io.art.model.storage.*;
-import io.art.rsocket.module.*;
-import io.art.soap.client.module.*;
 import lombok.*;
 import static io.art.model.constants.ModelConstants.*;
-import static io.art.model.constants.ModelConstants.ExceptionMessages.*;
-import static java.util.Objects.*;
+import static lombok.AccessLevel.PRIVATE;
 import java.util.function.*;
 
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = PRIVATE)
 public class ModuleModel {
     private final String mainModuleId;
     private final CommunicatorModel communicatorModel = new CommunicatorModel();
@@ -81,15 +76,5 @@ public class ModuleModel {
 
     public static ModuleModel module(String id) {
         return new ModuleModel(id);
-    }
-
-    public static void main(String[] args) {
-        module()
-                .communicate(communicator -> communicator
-                        .grpc("client-1", GrpcClientModule.class)
-                        .rsocket("client-1", RsocketModule.class)
-                        .http("client-1", HttpClientModule.class)
-                        .soap("client-1", SoapClientModule.class)
-                );
     }
 }

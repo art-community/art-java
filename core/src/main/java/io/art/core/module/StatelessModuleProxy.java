@@ -18,13 +18,13 @@
 
 package io.art.core.module;
 
-import io.art.core.exception.*;
-import io.art.core.identified.*;
-import static io.art.core.constants.ExceptionMessages.*;
-import static java.text.MessageFormat.*;
+import lombok.*;
 
-public interface ModuleProvider<Configuration extends ModuleConfiguration, State extends ModuleState> extends StatelessModuleProvider<Configuration>, UniqueIdentified {
-    default State getState() {
-        throw new InternalRuntimeException(format(MODULE_HAS_NOT_STATE, getId()));
+@RequiredArgsConstructor
+public class StatelessModuleProxy<Configuration extends ModuleConfiguration> {
+    private final StatelessModule<Configuration, ?> module;
+
+    public Configuration configuration() {
+        return module.getConfiguration();
     }
 }
