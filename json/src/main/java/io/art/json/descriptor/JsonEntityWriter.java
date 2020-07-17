@@ -24,7 +24,7 @@ import io.art.entity.immutable.*;
 import io.art.json.exception.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.constants.StringConstants.*;
+import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.StringExtensions.*;
@@ -40,37 +40,40 @@ import java.util.*;
 @UtilityClass
 public class JsonEntityWriter {
     public static byte[] writeJsonToBytes(Value value) {
-        return writeJson(value).getBytes(contextConfiguration().getCharset());
+        String json = writeJson(value);
+        if (EmptinessChecker.isEmpty(json)) {
+            return EMPTY_BYTES;
+        }
+        return json.getBytes(contextConfiguration().getCharset());
     }
 
     public static void writeJson(Value value, OutputStream outputStream) {
-        if (isNull(outputStream)) {
-            return;
-        }
         try {
-            outputStream.write(writeJson(value).getBytes(contextConfiguration().getCharset()));
+            String json = writeJson(value);
+            if (EmptinessChecker.isEmpty(json)) {
+                return;
+            }
+            outputStream.write(json.getBytes());
         } catch (IOException ioException) {
             throw new JsonMappingException(ioException);
         }
     }
 
     public static void writeJson(Value value, Path path) {
-        writeFileQuietly(path, writeJson(value));
+        String json = writeJson(value);
+        if (EmptinessChecker.isEmpty(json)) {
+            return;
+        }
+        writeFileQuietly(path, json);
     }
 
     public static String writeJson(Value value) {
-        return writeJson(jsonModule().getConfiguration().getObjectMapper().getFactory(), value, false);
+        return writeJson(jsonModule().configuration().getObjectMapper().getFactory(), value, false);
     }
 
     public static String writeJson(JsonFactory jsonFactory, Value value, boolean prettyOutput) {
-        if (isNull(value)) {
-            return BRACES;
-        }
         if (isEmpty(value)) {
-            if (isArray(value)) {
-                return SQUARE_BRACES;
-            }
-            return BRACES;
+            return null;
         }
         StringWriter stringWriter = new StringWriter();
         JsonGenerator generator = null;
@@ -86,6 +89,8 @@ public class JsonEntityWriter {
                 case ARRAY:
                     writeArray(generator, asArray(value));
                     break;
+                case BINARY:
+                    return Arrays.toString(asBinary(value).getContent());
                 case STRING:
                     return emptyIfNull(asPrimitive(value).getString());
                 case LONG:
@@ -122,7 +127,9 @@ public class JsonEntityWriter {
         generator.writeStartObject();
         Map<Primitive, ? extends Value> fields = entity.toMap();
         for (Primitive field : fields.keySet()) {
-            writeField(generator, field.getString(), fields.get(field));
+            Value value = fields.get(field);
+            if (isNull(value)) continue;
+            writeField(generator, field.getString(), value);
         }
         generator.writeEndObject();
     }
@@ -150,7 +157,9 @@ public class JsonEntityWriter {
         if (isNull(array)) return;
         jsonGenerator.writeStartArray();
         for (int index = 0; index < array.size(); index++) {
-            writeArrayElement(jsonGenerator, array.get(index));
+            Value value = array.get(index);
+            if (isNull(value)) continue;
+            writeArrayElement(jsonGenerator, value);
         }
         jsonGenerator.writeEndArray();
     }
@@ -214,6 +223,9 @@ public class JsonEntityWriter {
                 return;
             case ENTITY:
                 writeJsonEntity(jsonGenerator, asEntity(cast(value)));
+                return;
+            case BINARY:
+                jsonGenerator.writeBinary(asBinary(value).getContent());
                 return;
             case STRING:
                 jsonGenerator.writeString(asPrimitive(value).getString());

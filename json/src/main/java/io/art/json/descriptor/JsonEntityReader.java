@@ -20,6 +20,7 @@ package io.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
 import io.art.core.extensions.*;
+import io.art.core.handler.*;
 import io.art.entity.builder.*;
 import io.art.entity.immutable.*;
 import io.art.json.exception.*;
@@ -121,25 +122,25 @@ public class JsonEntityReader {
                 case END_OBJECT:
                     return entityBuilder.build();
                 case START_OBJECT:
-                    entityBuilder.put(currentName, parseJsonEntity(parser));
+                    entityBuilder.lazyPut(currentName, () -> ExceptionHandler.<Entity>wrapException(JsonMappingException::new).call(() -> parseJsonEntity(parser)));
                     break;
                 case START_ARRAY:
                     parseArray(entityBuilder, parser);
                     break;
                 case VALUE_STRING:
-                    entityBuilder.put(currentName, parser.getText(), fromString);
+                    entityBuilder.lazyPut(currentName, () -> ExceptionHandler.<String>wrapException(JsonMappingException::new).call(parser::getText), fromString);
                     break;
                 case VALUE_NUMBER_INT:
-                    entityBuilder.put(currentName, parser.getLongValue(), fromLong);
+                    entityBuilder.lazyPut(currentName, () -> ExceptionHandler.<Long>wrapException(JsonMappingException::new).call(parser::getLongValue), fromLong);
                     break;
                 case VALUE_NUMBER_FLOAT:
-                    entityBuilder.put(currentName, parser.getFloatValue(), fromFloat);
+                    entityBuilder.lazyPut(currentName, () -> ExceptionHandler.<Float>wrapException(JsonMappingException::new).call(parser::getFloatValue), fromFloat);
                     break;
                 case VALUE_TRUE:
-                    entityBuilder.put(currentName, true, fromBool);
+                    entityBuilder.lazyPut(currentName, () -> true, fromBool);
                     break;
                 case VALUE_FALSE:
-                    entityBuilder.put(currentName, false, fromBool);
+                    entityBuilder.lazyPut(currentName, () -> false, fromBool);
                     break;
                 case VALUE_NULL:
                     break;
@@ -169,7 +170,7 @@ public class JsonEntityReader {
             case VALUE_NUMBER_FLOAT:
             case VALUE_TRUE:
             case VALUE_FALSE:
-                entityBuilder.put(currentName, parseArray(parser));
+                entityBuilder.lazyPut(currentName, () -> ExceptionHandler.<ArrayValue>wrapException(JsonMappingException::new).call(() -> parseArray(parser)));
         }
     }
 
@@ -193,7 +194,7 @@ public class JsonEntityReader {
             case VALUE_NUMBER_INT:
                 return longArray(parseLongArray(parser));
             case VALUE_NUMBER_FLOAT:
-                return doubleArray(parseDoubleArray(parser));
+                return floatArray(parseFloatArray(parser));
             case VALUE_TRUE:
             case VALUE_FALSE:
                 return boolArray(parseBooleanArray(parser));
@@ -208,17 +209,6 @@ public class JsonEntityReader {
         do {
             if (currentToken != VALUE_STRING) return array;
             array.add(parser.getText());
-            currentToken = parser.nextToken();
-        } while (!parser.isClosed() && currentToken != END_ARRAY);
-        return array;
-    }
-
-    private static Collection<Double> parseDoubleArray(JsonParser parser) throws IOException {
-        List<Double> array = dynamicArrayOf();
-        JsonToken currentToken = parser.currentToken();
-        do {
-            if (currentToken != VALUE_NUMBER_FLOAT) return array;
-            array.add(parser.getDoubleValue());
             currentToken = parser.nextToken();
         } while (!parser.isClosed() && currentToken != END_ARRAY);
         return array;
