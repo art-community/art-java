@@ -64,27 +64,31 @@ public class ProtobufEntityReader {
         }
     }
 
-    public static Value readProtobuf(com.google.protobuf.Value protobufValue) {
-        if (isNull(protobufValue) || protobufValue.getKindCase() == NULL_VALUE) return null;
-        switch (protobufValue.getKindCase()) {
+    public static Value readProtobuf(com.google.protobuf.Value value) {
+        if (isNull(value) || value.getKindCase() == NULL_VALUE) return null;
+        switch (value.getKindCase()) {
             case NUMBER_VALUE:
-                return doublePrimitive(protobufValue.getNumberValue());
+                return doublePrimitive(value.getNumberValue());
             case STRING_VALUE:
-                return stringPrimitive(protobufValue.getStringValue());
+                return stringPrimitive(value.getStringValue());
             case BOOL_VALUE:
-                return boolPrimitive(protobufValue.getBoolValue());
+                return boolPrimitive(value.getBoolValue());
             case STRUCT_VALUE:
-                return readEntity(protobufValue.getStructValue());
+                return readEntity(value.getStructValue());
             case LIST_VALUE:
-                return readArray(protobufValue.getListValue());
+                return readArray(value.getListValue());
             case KIND_NOT_SET:
-                List<ByteString> byteStrings = protobufValue.getUnknownFields().getField(BINARY_UNKNOWN_FIELD_NUMBER).getLengthDelimitedList();
-                if (byteStrings.isEmpty()) {
+                UnknownFieldSet.Field bytesField = value.getUnknownFields().getField(BINARY_UNKNOWN_FIELD_NUMBER);
+                if (isNull(bytesField)) {
                     return null;
                 }
-                return binary(toByteArray(byteStrings.get(0).asReadOnlyByteBuffer()));
+                ByteString bytes = bytesField.getLengthDelimitedList().get(0);
+                if (isNull(bytes)) {
+                    return null;
+                }
+                return binary(toByteArray(bytes.asReadOnlyByteBuffer()));
         }
-        throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, protobufValue.getKindCase()));
+        throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, value.getKindCase()));
     }
 
     private static Value readArray(ListValue protobufCollection) {
@@ -94,7 +98,14 @@ public class ProtobufEntityReader {
 
     private static Value readEntity(Struct protobufEntity) {
         EntityBuilder entityBuilder = entityBuilder();
-        protobufEntity.getFieldsMap().forEach((key, value) -> entityBuilder.lazyPut(key, () -> readProtobuf(value)));
+        Map<String, com.google.protobuf.Value> fields = protobufEntity.getFieldsMap();
+        for (Map.Entry<String, com.google.protobuf.Value> entry : fields.entrySet()) {
+            String key = entry.getKey();
+            if (isNull(key)) continue;
+            com.google.protobuf.Value value = entry.getValue();
+            if (isNull(value) || value.getKindCase() == NULL_VALUE) continue;
+            entityBuilder.lazyPut(key, () -> readProtobuf(value));
+        }
         return entityBuilder.build();
     }
 }

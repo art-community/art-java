@@ -91,8 +91,8 @@ public class ProtobufEntityWriter {
 
     private static com.google.protobuf.Value writeArray(ArrayValue array) {
         ListValue protobufValues = ListValue.newBuilder().addAllValues(array.asStream()
-                .filter(Objects::nonNull)
                 .map(ProtobufEntityWriter::writeProtobuf)
+                .filter(Objects::nonNull)
                 .collect(toList()))
                 .build();
         return com.google.protobuf.Value.newBuilder().setListValue(protobufValues).build();
@@ -100,9 +100,9 @@ public class ProtobufEntityWriter {
 
     private static com.google.protobuf.Value writeEntity(Entity entity) {
         Map<String, Value> map = mapOf();
-        Set<Primitive> fields = entity.asMap().keySet();
-        for (Primitive key : fields) {
-            if (valueIsEmpty(key)) continue;
+        Set<Primitive> keys = entity.asMap().keySet();
+        for (Primitive key : keys) {
+            if (valueIsNull(key)) continue;
             io.art.entity.immutable.Value value = entity.get(key);
             if (valueIsNull(value)) continue;
             Value protobuf = writeProtobuf(value);
