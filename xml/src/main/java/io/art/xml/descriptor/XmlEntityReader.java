@@ -18,21 +18,21 @@
 
 package io.art.xml.descriptor;
 
+import com.google.common.collect.*;
 import io.art.entity.immutable.*;
-import lombok.experimental.*;
 import io.art.entity.immutable.XmlEntity.*;
 import io.art.xml.exception.*;
-import static java.nio.charset.StandardCharsets.*;
-import static java.util.Collections.*;
-import static javax.xml.stream.XMLStreamConstants.*;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
+import lombok.experimental.*;
+import static com.google.common.collect.ImmutableMap.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.immutable.XmlEntity.*;
 import static io.art.xml.constants.XmlMappingExceptionMessages.*;
 import static io.art.xml.module.XmlModule.*;
+import static java.nio.charset.StandardCharsets.*;
+import static javax.xml.stream.XMLStreamConstants.*;
 import javax.xml.stream.*;
 import java.io.*;
 import java.nio.file.*;
@@ -58,9 +58,8 @@ public class XmlEntityReader {
 
     public static XmlEntity readXml(XMLInputFactory xmlInputFactory, String xml) {
         if (isEmpty(xml)) return null;
-        try {
-            InputStream is = new ByteArrayInputStream(xml.getBytes(UTF_8));
-            XMLStreamReader parser = xmlInputFactory.createXMLStreamReader(is);
+        try (InputStream inputStream = new ByteArrayInputStream(xml.getBytes(UTF_8))) {
+            XMLStreamReader parser = xmlInputFactory.createXMLStreamReader(inputStream);
             XmlEntityBuilder root = getRootElement(parser);
             return root.create();
         } catch (Throwable throwable) {
@@ -126,29 +125,29 @@ public class XmlEntityReader {
         throw new XmlMappingException(XML_FILE_HAS_NOT_END_DOCUMENT_TAG);
     }
 
-    private static Map<String, String> getAttributes(XMLStreamReader parser) {
+    private static ImmutableMap<String, String> getAttributes(XMLStreamReader parser) {
         int attributeCount = parser.getAttributeCount();
         if (attributeCount == 0) {
-            return emptyMap();
+            return ImmutableMap.of();
         }
 
-        Map<String, String> attributes = mapOf(attributeCount);
-        for (int i = 0; i < attributeCount; i++) {
-            attributes.put(parser.getAttributeLocalName(i), parser.getAttributeValue(i));
+        ImmutableMap.Builder<String, String> attributes = builderWithExpectedSize(attributeCount);
+        for (int index = 0; index < attributeCount; index++) {
+            attributes.put(parser.getAttributeLocalName(index), parser.getAttributeValue(index));
         }
-        return attributes;
+        return attributes.build();
     }
 
-    private static Map<String, String> getNamespaces(XMLStreamReader parser) {
+    private static ImmutableMap<String, String> getNamespaces(XMLStreamReader parser) {
         int namespaceCount = parser.getNamespaceCount();
         if (namespaceCount == 0) {
-            return emptyMap();
+            return ImmutableMap.of();
         }
 
-        Map<String, String> namespaces = mapOf(namespaceCount);
-        for (int i = 0; i < namespaceCount; i++) {
-            namespaces.put(parser.getNamespacePrefix(i), parser.getNamespaceURI(i));
+        ImmutableMap.Builder<String, String> namespaces = builderWithExpectedSize(namespaceCount);
+        for (int index = 0; index < namespaceCount; index++) {
+            namespaces.put(parser.getNamespacePrefix(index), parser.getNamespaceURI(index));
         }
-        return namespaces;
+        return namespaces.build();
     }
 }

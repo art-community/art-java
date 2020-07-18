@@ -30,6 +30,7 @@ import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.EntityFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.immutable.Value.valueIsEmpty;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
@@ -39,7 +40,7 @@ import java.util.*;
 @NoArgsConstructor(access = PRIVATE)
 public final class XmlEntityToEntityConverter {
     public static Entity toEntityFromTags(XmlEntity xmlEntity) {
-        if (Value.valueIsEmpty(xmlEntity)) {
+        if (valueIsEmpty(xmlEntity)) {
             return null;
         }
         EntityBuilder entityBuilder = entityBuilder();
@@ -93,7 +94,7 @@ public final class XmlEntityToEntityConverter {
     }
 
     public static Entity toEntityFromAttributes(XmlEntity xmlEntity) {
-        if (Value.valueIsEmpty(xmlEntity)) {
+        if (valueIsEmpty(xmlEntity)) {
             return null;
         }
         Map<Primitive, Primitive> attributes = xmlEntity.getAttributes()
