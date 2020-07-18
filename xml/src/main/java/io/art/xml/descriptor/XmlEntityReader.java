@@ -29,9 +29,11 @@ import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.entity.immutable.XmlEntity.*;
+import static io.art.logging.LoggingModule.*;
 import static io.art.xml.constants.XmlMappingExceptionMessages.*;
 import static io.art.xml.module.XmlModule.*;
 import static java.nio.charset.StandardCharsets.*;
+import static java.util.Objects.*;
 import static javax.xml.stream.XMLStreamConstants.*;
 import javax.xml.stream.*;
 import java.io.*;
@@ -58,12 +60,21 @@ public class XmlEntityReader {
 
     public static XmlEntity readXml(XMLInputFactory xmlInputFactory, String xml) {
         if (isEmpty(xml)) return null;
-        try (InputStream inputStream = new ByteArrayInputStream(xml.getBytes(UTF_8))) {
-            XMLStreamReader parser = xmlInputFactory.createXMLStreamReader(inputStream);
-            XmlEntityBuilder root = getRootElement(parser);
+        XMLStreamReader reader = null;
+        try (InputStream inputStream = new ByteArrayInputStream(xml.getBytes(contextConfiguration().getCharset()))) {
+            reader = xmlInputFactory.createXMLStreamReader(inputStream);
+            XmlEntityBuilder root = getRootElement(reader);
             return root.create();
         } catch (Throwable throwable) {
             throw new XmlMappingException(throwable);
+        } finally {
+            if (nonNull(reader)) {
+                try {
+                    reader.close();
+                } catch (Throwable throwable) {
+                    logger(XmlEntityWriter.class).error(throwable.getMessage(), throwable);
+                }
+            }
         }
     }
 

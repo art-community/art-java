@@ -67,17 +67,17 @@ public class XmlEntityWriter {
 
     public static String writeXml(XMLOutputFactory outputFactory, XmlEntity entity) throws XmlMappingException {
         if (isNull(entity)) return null;
-        XMLStreamWriter xmlStreamWriter = null;
+        XMLStreamWriter writer = null;
         try (OutputStream outputStream = new ByteArrayOutputStream()) {
-            xmlStreamWriter = outputFactory.createXMLStreamWriter(outputStream, UTF_8.name());
-            writeAllElements(xmlStreamWriter, entity);
+            writer = outputFactory.createXMLStreamWriter(outputStream, contextConfiguration().getCharset().name());
+            writeAllElements(writer, entity);
             return outputStream.toString();
         } catch (Throwable throwable) {
             throw new XmlMappingException(throwable);
         } finally {
-            if (nonNull(xmlStreamWriter)) {
+            if (nonNull(writer)) {
                 try {
-                    xmlStreamWriter.close();
+                    writer.close();
                 } catch (Throwable throwable) {
                     logger(XmlEntityWriter.class).error(throwable.getMessage(), throwable);
                 }
