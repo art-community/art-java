@@ -52,7 +52,7 @@ public class ArrayValue implements Value {
     }
 
     public <T> T map(int index, ValueToModelMapper<T, ? extends Value> mapper) {
-        return cast(let(mappedValueCache.putIfAbsent(index, lazy(() -> mapper.map(cast(get(index))))), LazyValue::get));
+        return cast(let(mappedValueCache.getOrDefault(index, lazy(() -> mapper.map(cast(get(index))))), LazyValue::get));
     }
 
 
