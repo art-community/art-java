@@ -158,7 +158,7 @@ public class JsonEntityReader {
         JsonToken currentToken = parser.nextToken();
         switch (currentToken) {
             case END_ARRAY:
-                return ArrayValue.EMPTY;
+                return emptyArray();
             case NOT_AVAILABLE:
             case END_OBJECT:
             case FIELD_NAME:

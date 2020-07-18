@@ -22,6 +22,7 @@ import io.art.core.checker.*;
 import io.art.entity.immutable.Value;
 import io.art.entity.immutable.*;
 import lombok.*;
+import static io.art.entity.factory.XmlEntityFactory.emptyXmlEntity;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.immutable.XmlEntity.*;
 import static lombok.AccessLevel.*;
@@ -35,7 +36,7 @@ public final class XmlEntityFromEntityConverter {
         }
         XmlEntity.XmlEntityBuilder builder = xmlEntityBuilder();
         if (Value.valueIsEmpty(entity)) {
-            return EMPTY;
+            return emptyXmlEntity();
         }
         Set<Primitive> keys = entity.asMap().keySet();
         for (Primitive key : keys) {

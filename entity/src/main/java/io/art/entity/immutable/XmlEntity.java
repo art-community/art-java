@@ -28,6 +28,7 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.entity.constants.ExceptionMessages.*;
 import static io.art.entity.constants.ValueType.*;
+import static io.art.entity.factory.XmlEntityFactory.*;
 import static java.util.Collections.*;
 import static java.util.Map.*;
 import static java.util.Objects.*;
@@ -94,11 +95,11 @@ public class XmlEntity implements Value {
 
     public XmlEntity find(String tag) {
         if (EmptinessChecker.isEmpty(tag)) {
-            return EMPTY;
+            return emptyXmlEntity();
         }
         XmlEntity found = findRecursive(tag);
         if (Objects.isNull(found)) {
-            return EMPTY;
+            return emptyXmlEntity();
         }
         return found;
     }
