@@ -19,14 +19,14 @@
 package io.art.core.factory;
 
 
+import io.art.core.model.*;
 import lombok.*;
 import lombok.experimental.*;
-import io.art.core.model.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
-import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.EmptinessChecker.*;
 import java.util.ArrayList;
 import java.util.*;
 import java.util.concurrent.*;
@@ -459,6 +459,10 @@ public class CollectionsFactory {
     }
 
 
+    public static <T> Queue<T> queueOf(Collection<T> elements) {
+        return isEmpty(elements) ? new LinkedList<>() : new LinkedList<>(elements);
+    }
+
     @SafeVarargs
     public static <T> PriorityQueue<T> priorityQueueOf(Comparator<T> comparator, T... elements) {
         PriorityQueue<T> queue = new PriorityQueue<>(comparator);
@@ -532,6 +536,13 @@ public class CollectionsFactory {
         return isEmpty(elements) ? new PriorityQueue<>(comparator) : queue;
     }
 
+
+    public static <T> Stack<T> stackOf(Collection<T> elements) {
+        if (isEmpty(elements)) return new Stack<>();
+        Stack<T> stack = new Stack<>();
+        stack.addAll(elements);
+        return stack;
+    }
 
     @SafeVarargs
     public static <T> Stack<T> stackOf(T... elements) {

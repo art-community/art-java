@@ -19,8 +19,16 @@
 package io.art.entity.immutable;
 
 import io.art.entity.constants.*;
+import io.art.entity.mapper.ValueFromModelMapper.*;
+import io.art.entity.mapper.ValueToModelMapper.*;
 import static io.art.entity.constants.ValueType.*;
+import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.immutable.Value.Model.*;
+import static io.art.entity.mapping.ArrayMapping.*;
+import static io.art.entity.mapping.PrimitiveMapping.toString;
+import static io.art.entity.mapping.PrimitiveMapping.*;
 import static java.util.Objects.*;
+import java.util.*;
 
 public interface Value {
     static Primitive asPrimitive(Value value) {
@@ -111,4 +119,47 @@ public interface Value {
     boolean isEmpty();
 
     ValueType getType();
+
+    class Model {
+        String value;
+
+        public static EntityFromModelMapper<Model> fromModel = model -> isNull(model)
+                ? null
+                : entityBuilder().put("value", model.value, fromString).build();
+
+        public static EntityToModelMapper<Model> toModel = entity -> {
+            if (isNull(entity)) return null;
+            Model model = new Model();
+            model.value = Value.asPrimitive(entity.get("value")).getString();
+            return model;
+        };
+    }
+
+    class Request {
+        List<String> list;
+        Set<String> set;
+        Map<String, String> stringMap;
+        Map<String, Model> map;
+        Model model;
+
+        public static EntityFromModelMapper<Request> fromRequest = request -> isNull(request)
+                ? null
+                : entityBuilder()
+                .put("list", request.list, fromList(fromString))
+                .put("set", request.set, fromSet(fromString))
+                .put("stringMap", entityBuilder().putAllStrings(request.stringMap, fromString).build())
+                .put("map", entityBuilder().putAllStrings(request.map, fromModel).build())
+                .build();
+
+        public static EntityToModelMapper<Request> toRequest = entity -> {
+            if (isNull(entity)) return null;
+            Request request = new Request();
+            request.list = toList(toString).map(Value.asArray(entity.get("list")));
+            request.set = toSet(toString).map(Value.asArray(entity.get("list")));
+            request.stringMap = Value.asEntity(entity.get("stringMap")).asMap(toString, fromString, toString);
+            request.map = Value.asEntity(entity.get("map")).asMap(toString, fromString, toModel);
+            request.model = entity.map("model", toModel);
+            return request;
+        };
+    }
 }

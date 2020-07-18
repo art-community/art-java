@@ -125,7 +125,7 @@ public class JsonEntityWriter {
     private static void writeJsonEntity(JsonGenerator generator, Entity entity) throws IOException {
         if (isNull(entity)) return;
         generator.writeStartObject();
-        Map<Primitive, ? extends Value> fields = entity.toMap();
+        Map<Primitive, ? extends Value> fields = entity.mapToMap();
         for (Primitive field : fields.keySet()) {
             Value value = fields.get(field);
             if (isNull(value)) continue;
@@ -137,7 +137,7 @@ public class JsonEntityWriter {
     private static void writeJsonEntity(JsonGenerator jsonGenerator, String name, Entity entity) throws IOException {
         if (isNull(entity)) return;
         jsonGenerator.writeObjectFieldStart(name);
-        Map<Primitive, ? extends Value> fields = entity.toMap();
+        Map<Primitive, ? extends Value> fields = entity.mapToMap();
         for (Primitive field : fields.keySet()) {
             writeField(jsonGenerator, field.getString(), fields.get(field));
         }

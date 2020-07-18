@@ -26,7 +26,7 @@ import static io.art.entity.factory.ArrayFactory.*;
 import java.util.*;
 
 @UtilityClass
-public class ArrayMapping {
+public class EntityMapping {
     public static <T> ValueToModelMapper<List<T>, ArrayValue> toList(ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.mapAsList(elementMapper));
     }

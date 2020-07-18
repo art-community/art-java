@@ -25,7 +25,6 @@ import io.art.entity.mapper.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Entity.*;
-import static io.art.entity.immutable.Value.isEmpty;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
@@ -40,45 +39,10 @@ public class EntityBuilder {
         EntityBuilder entityBuilder = entityBuilder();
         for (Entity entity : entities) {
             if (nonNull(entity)) {
-                entity.toMap().forEach((key, value) -> entityBuilder.fields.put(key, () -> value));
+                entity.mapToMap().forEach((key, value) -> entityBuilder.fields.put(key, () -> value));
             }
         }
         return entityBuilder.build();
-    }
-
-    public EntityBuilder lazyPut(String key, Supplier<? extends Value> value) {
-        return lazyPut(stringPrimitive(key), value);
-    }
-
-    public EntityBuilder lazyPut(Integer key, Supplier<? extends Value> value) {
-        return lazyPut(intPrimitive(key), value);
-    }
-
-    public EntityBuilder lazyPut(Byte key, Supplier<? extends Value> value) {
-        return lazyPut(bytePrimitive(key), value);
-    }
-
-    public EntityBuilder lazyPut(Boolean key, Supplier<? extends Value> value) {
-        return lazyPut(boolPrimitive(key), value);
-    }
-
-    public EntityBuilder lazyPut(Long key, Supplier<? extends Value> value) {
-        return lazyPut(longPrimitive(key), value);
-    }
-
-    public EntityBuilder lazyPut(Double key, Supplier<? extends Value> value) {
-        return lazyPut(doublePrimitive(key), value);
-    }
-
-    public EntityBuilder lazyPut(Float key, Supplier<? extends Value> value) {
-        return lazyPut(floatPrimitive(key), value);
-    }
-
-    public EntityBuilder lazyPut(Primitive primitive, Supplier<? extends Value> value) {
-        if (!isEmpty(primitive) && nonNull(value)) {
-            fields.put(primitive, value);
-        }
-        return this;
     }
 
 
@@ -115,43 +79,36 @@ public class EntityBuilder {
     }
 
 
-    public EntityBuilder lazyPutAll(Map<Primitive, Supplier<? extends Value>> map) {
-        map.forEach(this::lazyPut);
-        return this;
+    public <T> EntityBuilder put(String key, T value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        return put(stringPrimitive(key), value, mapper);
     }
 
-    public EntityBuilder lazyPutAllStrings(Map<String, Supplier<? extends Value>> map) {
-        map.forEach(this::lazyPut);
-        return this;
+    public <T> EntityBuilder put(Integer key, T value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        return put(intPrimitive(key), value, mapper);
     }
 
-    public EntityBuilder lazyPutAllLongs(Map<Long, Supplier<? extends Value>> map) {
-        map.forEach(this::lazyPut);
-        return this;
+    public <T> EntityBuilder put(Long key, T value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        return put(longPrimitive(key), value, mapper);
     }
 
-    public EntityBuilder lazyPutAllInts(Map<Integer, Supplier<? extends Value>> map) {
-        map.forEach(this::lazyPut);
-        return this;
+    public <T> EntityBuilder put(Byte key, T value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        return put(bytePrimitive(key), value, mapper);
     }
 
-    public EntityBuilder lazyPutAllBools(Map<Boolean, Supplier<? extends Value>> map) {
-        map.forEach(this::lazyPut);
-        return this;
+    public <T> EntityBuilder put(Boolean key, T value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        return put(boolPrimitive(key), value, mapper);
     }
 
-    public EntityBuilder lazyPutAllBytes(Map<Byte, Supplier<? extends Value>> map) {
-        map.forEach(this::lazyPut);
-        return this;
+    public <T> EntityBuilder put(Double key, T value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        return put(doublePrimitive(key), value, mapper);
     }
 
-    public EntityBuilder lazyPutAllFloats(Map<Float, Supplier<? extends Value>> map) {
-        map.forEach(this::lazyPut);
-        return this;
+    public <T> EntityBuilder put(Float key, T value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        return put(floatPrimitive(key), value, mapper);
     }
 
-    public EntityBuilder lazyPutAllDoubles(Map<Double, Supplier<? extends Value>> map) {
-        map.forEach(this::lazyPut);
+    public <T> EntityBuilder put(Primitive primitive, T value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        fields.put(primitive, () -> mapper.map(value));
         return this;
     }
 
@@ -197,35 +154,107 @@ public class EntityBuilder {
     }
 
 
-    public <T, V extends Value> EntityBuilder lazyPut(String key, Supplier<T> value, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder putAllStrings(Map<String, T> map, ValueFromModelMapper<T, ? extends Value> mapper) {
+        map.forEach((key, value) -> put(key, value, mapper));
+        return this;
+    }
+
+    public <T> EntityBuilder putAllLongs(Map<Long, T> map, ValueFromModelMapper<T, ? extends Value> mapper) {
+        map.forEach((key, value) -> put(key, value, mapper));
+        return this;
+    }
+
+    public <T> EntityBuilder putAllInts(Map<Integer, T> map, ValueFromModelMapper<T, ? extends Value> mapper) {
+        map.forEach((key, value) -> put(key, value, mapper));
+        return this;
+    }
+
+    public <T> EntityBuilder putAllBools(Map<Boolean, T> map, ValueFromModelMapper<T, ? extends Value> mapper) {
+        map.forEach((key, value) -> put(key, value, mapper));
+        return this;
+    }
+
+    public <T> EntityBuilder putAllBytes(Map<Byte, T> map, ValueFromModelMapper<T, ? extends Value> mapper) {
+        map.forEach((key, value) -> put(key, value, mapper));
+        return this;
+    }
+
+    public <T> EntityBuilder putAllFloats(Map<Float, T> map, ValueFromModelMapper<T, ? extends Value> mapper) {
+        map.forEach((key, value) -> put(key, value, mapper));
+        return this;
+    }
+
+    public <T> EntityBuilder putAllDoubles(Map<Double, T> map, ValueFromModelMapper<T, ? extends Value> mapper) {
+        map.forEach((key, value) -> put(key, value, mapper));
+        return this;
+    }
+
+
+    public EntityBuilder lazyPut(String key, Supplier<? extends Value> value) {
+        return lazyPut(stringPrimitive(key), value);
+    }
+
+    public EntityBuilder lazyPut(Integer key, Supplier<? extends Value> value) {
+        return lazyPut(intPrimitive(key), value);
+    }
+
+    public EntityBuilder lazyPut(Byte key, Supplier<? extends Value> value) {
+        return lazyPut(bytePrimitive(key), value);
+    }
+
+    public EntityBuilder lazyPut(Boolean key, Supplier<? extends Value> value) {
+        return lazyPut(boolPrimitive(key), value);
+    }
+
+    public EntityBuilder lazyPut(Long key, Supplier<? extends Value> value) {
+        return lazyPut(longPrimitive(key), value);
+    }
+
+    public EntityBuilder lazyPut(Double key, Supplier<? extends Value> value) {
+        return lazyPut(doublePrimitive(key), value);
+    }
+
+    public EntityBuilder lazyPut(Float key, Supplier<? extends Value> value) {
+        return lazyPut(floatPrimitive(key), value);
+    }
+
+    public EntityBuilder lazyPut(Primitive primitive, Supplier<? extends Value> value) {
+        if (!isEmpty(primitive) && nonNull(value)) {
+            fields.put(primitive, value);
+        }
+        return this;
+    }
+
+
+    public <T> EntityBuilder lazyPut(String key, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
         return lazyPut(stringPrimitive(key), value, mapper);
     }
 
-    public <T, V extends Value> EntityBuilder lazyPut(Integer key, Supplier<T> value, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder lazyPut(Integer key, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
         return lazyPut(intPrimitive(key), value, mapper);
     }
 
-    public <T, V extends Value> EntityBuilder lazyPut(Long key, Supplier<T> value, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder lazyPut(Long key, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
         return lazyPut(longPrimitive(key), value, mapper);
     }
 
-    public <T, V extends Value> EntityBuilder lazyPut(Byte key, Supplier<T> value, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder lazyPut(Byte key, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
         return lazyPut(bytePrimitive(key), value, mapper);
     }
 
-    public <T, V extends Value> EntityBuilder lazyPut(Boolean key, Supplier<T> value, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder lazyPut(Boolean key, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
         return lazyPut(boolPrimitive(key), value, mapper);
     }
 
-    public <T, V extends Value> EntityBuilder lazyPut(Double key, Supplier<T> value, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder lazyPut(Double key, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
         return lazyPut(doublePrimitive(key), value, mapper);
     }
 
-    public <T, V extends Value> EntityBuilder lazyPut(Float key, Supplier<T> value, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder lazyPut(Float key, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
         return lazyPut(floatPrimitive(key), value, mapper);
     }
 
-    public <T, V extends Value> EntityBuilder lazyPut(Primitive primitive, Supplier<T> value, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder lazyPut(Primitive primitive, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
         if (!isEmpty(primitive)) {
             fields.put(primitive, () -> mapper.map(value.get()));
         }
@@ -233,108 +262,79 @@ public class EntityBuilder {
     }
 
 
-    public <T, V extends Value> EntityBuilder lazyPutAllStrings(Map<String, Supplier<T>> map, ValueFromModelMapper<T, V> mapper) {
+    public EntityBuilder lazyPutAll(Map<Primitive, Supplier<? extends Value>> map) {
+        map.forEach(this::lazyPut);
+        return this;
+    }
+
+    public EntityBuilder lazyPutAllStrings(Map<String, Supplier<? extends Value>> map) {
+        map.forEach(this::lazyPut);
+        return this;
+    }
+
+    public EntityBuilder lazyPutAllLongs(Map<Long, Supplier<? extends Value>> map) {
+        map.forEach(this::lazyPut);
+        return this;
+    }
+
+    public EntityBuilder lazyPutAllInts(Map<Integer, Supplier<? extends Value>> map) {
+        map.forEach(this::lazyPut);
+        return this;
+    }
+
+    public EntityBuilder lazyPutAllBools(Map<Boolean, Supplier<? extends Value>> map) {
+        map.forEach(this::lazyPut);
+        return this;
+    }
+
+    public EntityBuilder lazyPutAllBytes(Map<Byte, Supplier<? extends Value>> map) {
+        map.forEach(this::lazyPut);
+        return this;
+    }
+
+    public EntityBuilder lazyPutAllFloats(Map<Float, Supplier<? extends Value>> map) {
+        map.forEach(this::lazyPut);
+        return this;
+    }
+
+    public EntityBuilder lazyPutAllDoubles(Map<Double, Supplier<? extends Value>> map) {
+        map.forEach(this::lazyPut);
+        return this;
+    }
+
+
+    public <T> EntityBuilder lazyPutAllStrings(Map<String, Supplier<T>> map, ValueFromModelMapper<T, ? extends Value> mapper) {
         map.forEach((key, value) -> lazyPut(key, value, mapper));
         return this;
     }
 
-    public <T, V extends Value> EntityBuilder lazyPutAllLongs(Map<Long, Supplier<T>> map, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder lazyPutAllLongs(Map<Long, Supplier<T>> map, ValueFromModelMapper<T, ? extends Value> mapper) {
         map.forEach((key, value) -> lazyPut(key, value, mapper));
         return this;
     }
 
-    public <T, V extends Value> EntityBuilder lazyPutAllInts(Map<Integer, Supplier<T>> map, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder lazyPutAllInts(Map<Integer, Supplier<T>> map, ValueFromModelMapper<T, ? extends Value> mapper) {
         map.forEach((key, value) -> lazyPut(key, value, mapper));
         return this;
     }
 
-    public <T, V extends Value> EntityBuilder lazyPutAllBools(Map<Boolean, Supplier<T>> map, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder lazyPutAllBools(Map<Boolean, Supplier<T>> map, ValueFromModelMapper<T, ? extends Value> mapper) {
         map.forEach((key, value) -> lazyPut(key, value, mapper));
         return this;
     }
 
-    public <T, V extends Value> EntityBuilder lazyPutAllBytes(Map<Byte, Supplier<T>> map, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder lazyPutAllBytes(Map<Byte, Supplier<T>> map, ValueFromModelMapper<T, ? extends Value> mapper) {
         map.forEach((key, value) -> lazyPut(key, value, mapper));
         return this;
     }
 
-    public <T, V extends Value> EntityBuilder lazyPutAllFloats(Map<Float, Supplier<T>> map, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder lazyPutAllFloats(Map<Float, Supplier<T>> map, ValueFromModelMapper<T, ? extends Value> mapper) {
         map.forEach((key, value) -> lazyPut(key, value, mapper));
         return this;
     }
 
-    public <T, V extends Value> EntityBuilder lazyPutAllDoubles(Map<Double, Supplier<T>> map, ValueFromModelMapper<T, V> mapper) {
+    public <T> EntityBuilder lazyPutAllDoubles(Map<Double, Supplier<T>> map, ValueFromModelMapper<T, ? extends Value> mapper) {
         map.forEach((key, value) -> lazyPut(key, value, mapper));
-        return this;
-    }
-
-
-    public <T, V extends Value> EntityBuilder put(String key, T value, ValueFromModelMapper<T, V> mapper) {
-        return put(stringPrimitive(key), value, mapper);
-    }
-
-    public <T, V extends Value> EntityBuilder put(Integer key, T value, ValueFromModelMapper<T, V> mapper) {
-        return put(intPrimitive(key), value, mapper);
-    }
-
-    public <T, V extends Value> EntityBuilder put(Long key, T value, ValueFromModelMapper<T, V> mapper) {
-        return put(longPrimitive(key), value, mapper);
-    }
-
-    public <T, V extends Value> EntityBuilder put(Byte key, T value, ValueFromModelMapper<T, V> mapper) {
-        return put(bytePrimitive(key), value, mapper);
-    }
-
-    public <T, V extends Value> EntityBuilder put(Boolean key, T value, ValueFromModelMapper<T, V> mapper) {
-        return put(boolPrimitive(key), value, mapper);
-    }
-
-    public <T, V extends Value> EntityBuilder put(Double key, T value, ValueFromModelMapper<T, V> mapper) {
-        return put(doublePrimitive(key), value, mapper);
-    }
-
-    public <T, V extends Value> EntityBuilder put(Float key, T value, ValueFromModelMapper<T, V> mapper) {
-        return put(floatPrimitive(key), value, mapper);
-    }
-
-    public <T, V extends Value> EntityBuilder put(Primitive primitive, T value, ValueFromModelMapper<T, V> mapper) {
-        fields.put(primitive, () -> mapper.map(value));
-        return this;
-    }
-
-
-    public <T, V extends Value> EntityBuilder putAllStrings(Map<String, T> map, ValueFromModelMapper<T, V> mapper) {
-        map.forEach((key, value) -> put(key, value, mapper));
-        return this;
-    }
-
-    public <T, V extends Value> EntityBuilder putAllLongs(Map<Long, T> map, ValueFromModelMapper<T, V> mapper) {
-        map.forEach((key, value) -> put(key, value, mapper));
-        return this;
-    }
-
-    public <T, V extends Value> EntityBuilder putAllInts(Map<Integer, T> map, ValueFromModelMapper<T, V> mapper) {
-        map.forEach((key, value) -> put(key, value, mapper));
-        return this;
-    }
-
-    public <T, V extends Value> EntityBuilder putAllBools(Map<Boolean, T> map, ValueFromModelMapper<T, V> mapper) {
-        map.forEach((key, value) -> put(key, value, mapper));
-        return this;
-    }
-
-    public <T, V extends Value> EntityBuilder putAllBytes(Map<Byte, T> map, ValueFromModelMapper<T, V> mapper) {
-        map.forEach((key, value) -> put(key, value, mapper));
-        return this;
-    }
-
-    public <T, V extends Value> EntityBuilder putAllFloats(Map<Float, T> map, ValueFromModelMapper<T, V> mapper) {
-        map.forEach((key, value) -> put(key, value, mapper));
-        return this;
-    }
-
-    public <T, V extends Value> EntityBuilder putAllDoubles(Map<Double, T> map, ValueFromModelMapper<T, V> mapper) {
-        map.forEach((key, value) -> put(key, value, mapper));
         return this;
     }
 

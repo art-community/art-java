@@ -21,6 +21,10 @@ public class LazyValue<T> {
         return this.value.get();
     }
 
+    public <R> LazyValue<R> map(Function<T, R> mapper) {
+        return new LazyValue<>(() -> mapper.apply(get()));
+    }
+
     public static <T> LazyValue<T> lazy(Supplier<T> factory) {
         return new LazyValue<T>(factory);
     }

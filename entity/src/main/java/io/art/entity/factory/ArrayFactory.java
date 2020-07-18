@@ -20,8 +20,10 @@ package io.art.entity.factory;
 
 import io.art.core.checker.*;
 import io.art.entity.immutable.*;
+import io.art.entity.mapper.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.ArrayValue.*;
@@ -74,6 +76,47 @@ public class ArrayFactory {
     }
 
 
+    public static ArrayValue stringArray(Collection<String> value) {
+        return stringArray(fixedArrayOf(value));
+    }
+
+    public static ArrayValue longArray(Collection<Long> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return longArray(fixedArrayOf(value));
+    }
+
+    public static ArrayValue intArray(Collection<Integer> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return intArray(fixedArrayOf(value));
+    }
+
+    public static ArrayValue boolArray(Collection<Boolean> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return boolArray(fixedArrayOf(value));
+    }
+
+    public static ArrayValue doubleArray(Collection<Double> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return doubleArray(fixedArrayOf(value));
+    }
+
+    public static ArrayValue floatArray(Collection<Float> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return floatArray(fixedArrayOf(value));
+    }
+
+    public static ArrayValue byteArray(Collection<Byte> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return byteArray(fixedArrayOf(value));
+    }
+
+
     public static ArrayValue longArray(long[] value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
@@ -117,6 +160,25 @@ public class ArrayFactory {
         return new ArrayValue(value::get, lazy(value::size));
     }
 
+    public static <T> ArrayValue array(List<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return new ArrayValue(index -> mapper.map(value.get(index)), lazy(value::size));
+    }
+
+    public static <T extends Value> ArrayValue array(Collection<T> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return array(fixedArrayOf(value));
+    }
+
+    public static <T> ArrayValue array(Collection<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return array(fixedArrayOf(value), mapper);
+    }
+
+
     public static <T extends Value> ArrayValue array(Function<Integer, T> valueProvider, Supplier<Integer> sizeProvider) {
         return new ArrayValue(valueProvider, lazy(sizeProvider));
     }
@@ -131,6 +193,18 @@ public class ArrayFactory {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(value::get, lazy(value::size));
+    }
+
+    public static <T extends Entity> ArrayValue entityArray(Collection<T> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return entityArray(fixedArrayOf(value));
+    }
+
+    public static <T extends ArrayValue> ArrayValue arrayOfArrays(Collection<T> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return arrayOfArrays(fixedArrayOf(value));
     }
 
     public static ArrayValue emptyArray() {

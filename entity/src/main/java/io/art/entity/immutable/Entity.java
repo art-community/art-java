@@ -24,6 +24,7 @@ import io.art.core.lazy.*;
 import io.art.entity.builder.*;
 import io.art.entity.constants.*;
 import io.art.entity.exception.*;
+import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
@@ -54,53 +55,58 @@ public class Entity implements Value {
     }
 
 
-    public <T> ImmutableMap<Primitive, T> mapValues(ValueToModelMapper<T, ? extends Value> mapper) {
-        ImmutableMap.Builder<Primitive, T> map = ImmutableMap.builder();
+    public <T> Map<Primitive, T> mapValues(ValueToModelMapper<T, ? extends Value> mapper) {
+        Map<Primitive, T> map = mapOf();
         for (Primitive field : fields) {
             let(map(field, mapper), value -> map.put(field, value));
         }
-        return map.build();
+        return map;
     }
 
-    public <K, V> ImmutableMap<K, V> mapToMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
-        ImmutableMap.Builder<K, V> map = ImmutableMap.builder();
+
+    public Map<Primitive, ? extends Value> mapToMap() {
+        return mapToMap(key -> key, value -> value);
+    }
+
+    public <K, V> Map<K, V> mapToMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
+        Map<K, V> map = mapOf();
         for (Primitive field : fields) {
             let(map(field, valueMapper), value -> map.put(keyMapper.map(field), value));
         }
-        return map.build();
+        return map;
     }
 
-    public <T> ImmutableMap<String, T> mapToStringMap(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> Map<String, T> mapToStringMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return mapToMap(toString, mapper);
     }
 
-    public <T> ImmutableMap<Integer, T> mapToIntMap(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> Map<Integer, T> mapToIntMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return mapToMap(toInt, mapper);
     }
 
-    public <T> ImmutableMap<Long, T> mapToLongMap(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> Map<Long, T> mapToLongMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return mapToMap(toLong, mapper);
     }
 
-    public <T> ImmutableMap<Double, T> mapToDoubleMap(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> Map<Double, T> mapToDoubleMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return mapToMap(toDouble, mapper);
     }
 
-    public <T> ImmutableMap<Float, T> mapToFloatMap(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> Map<Float, T> mapToFloatMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return mapToMap(toFloat, mapper);
     }
 
-    public <T> ImmutableMap<Boolean, T> mapToBoolMap(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> Map<Boolean, T> mapToBoolMap(ValueToModelMapper<T, ? extends Value> mapper) {
         return mapToMap(toBool, mapper);
     }
 
 
-    public ImmutableMap<Primitive, ? extends Value> toMap() {
-        return mapToMap(key -> key, value -> value);
+    public Map<Primitive, ? extends Value> asMap() {
+        return asMap(key -> key, key -> key, value -> value);
     }
 
-    public Map<Primitive, ? extends Value> asMap() {
-        return new ProxyMap<>(identity());
+    public <K, V> Map<K, V> asMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
+        return new ProxyMap<>(toKeyMapper, fromKeyMapper, valueMapper);
     }
 
 
@@ -202,13 +208,15 @@ public class Entity implements Value {
         return EmptinessChecker.isEmpty(fields);
     }
 
-    public class ProxyMap<V> implements Map<Primitive, V> {
-        private final ValueToModelMapper<V, ? extends Value> mapper;
-        private final LazyValue<ImmutableMap<Primitive, V>> evaluated;
+    public class ProxyMap<K, V> implements Map<K, V> {
+        private final ValueToModelMapper<V, ? extends Value> valueMapper;
+        private final PrimitiveFromModelMapper<K> fromKeyMapper;
+        private final LazyValue<Map<K, V>> evaluated;
 
-        public ProxyMap(ValueToModelMapper<V, ? extends Value> mapper) {
-            this.mapper = mapper;
-            this.evaluated = lazy(() -> Entity.this.mapValues(mapper));
+        public ProxyMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
+            this.valueMapper = valueMapper;
+            this.fromKeyMapper = fromKeyMapper;
+            this.evaluated = lazy(() -> Entity.this.mapToMap(toKeyMapper, valueMapper));
         }
 
         @Override
@@ -242,11 +250,11 @@ public class Entity implements Value {
             if (isNull(key)) {
                 return null;
             }
-            return let(cast(valueProvider.apply(stringPrimitive(key.toString()))), mapper::map);
+            return let(cast(valueProvider.apply(fromKeyMapper.map(cast(key)))), valueMapper::map);
         }
 
         @Override
-        public V put(Primitive key, V value) {
+        public V put(K key, V value) {
             throw new ValueMethodNotImplementedException("put");
         }
 
@@ -256,7 +264,7 @@ public class Entity implements Value {
         }
 
         @Override
-        public void putAll(@Nonnull Map<? extends Primitive, ? extends V> map) {
+        public void putAll(@Nonnull Map<? extends K, ? extends V> map) {
             throw new ValueMethodNotImplementedException("putAll");
         }
 
@@ -267,20 +275,20 @@ public class Entity implements Value {
 
         @Override
         @Nonnull
-        public Set<Primitive> keySet() {
-            return fields;
+        public Set<K> keySet() {
+            return evaluated.get().keySet();
         }
 
         @Override
         @Nonnull
         public Collection<V> values() {
-            return mapValues(mapper).values();
+            return evaluated.get().values();
         }
 
         @Override
         @Nonnull
-        public Set<Entry<Primitive, V>> entrySet() {
-            return mapToMap(key -> key, mapper).entrySet();
+        public Set<Entry<K, V>> entrySet() {
+            return evaluated.get().entrySet();
         }
     }
 
