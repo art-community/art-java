@@ -135,7 +135,7 @@ public class Entity implements Value {
     }
 
     public Value get(Primitive primitive) {
-        if (Value.valueIsEmpty(primitive)) {
+        if (Value.valueIsNull(primitive)) {
             return null;
         }
         return valueProvider.apply(primitive);
@@ -185,7 +185,7 @@ public class Entity implements Value {
         String section;
         while ((section = sections.poll()) != null) {
             value = entity.get(section);
-            if (Value.valueIsEmpty(value)) return null;
+            if (Value.valueIsNull(value)) return null;
             if (!isEntity(value)) {
                 if (sections.size() > 1) return null;
                 return value;

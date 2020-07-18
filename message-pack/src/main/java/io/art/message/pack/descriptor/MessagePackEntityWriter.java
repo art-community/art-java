@@ -55,7 +55,7 @@ public class MessagePackEntityWriter {
     }
 
     public static byte[] writeMessagePackToBytes(Value value) {
-        if (Value.valueIsEmpty(value)) {
+        if (Value.valueIsNull(value)) {
             return EMPTY_BYTES;
         }
         try (ArrayBufferOutput output = new ArrayBufferOutput()) {

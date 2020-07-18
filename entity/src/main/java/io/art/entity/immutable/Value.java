@@ -108,7 +108,7 @@ public interface Value {
 
     static boolean isXmlType(ValueType type) {
         if (Objects.isNull(type)) return false;
-        return type == ENTITY;
+        return type == XML;
     }
 
     static boolean isBinaryType(ValueType type) {
@@ -122,7 +122,7 @@ public interface Value {
             return true;
         }
         if (Value.isPrimitive(value)) {
-            return false;
+            return EmptinessChecker.isEmpty(Value.asPrimitive(value).getString());
         }
         if (Value.isEntity(value)) {
             return Value.asEntity(value).size() == 0;
@@ -138,7 +138,6 @@ public interface Value {
         }
         throw new ValueMappingException(format(value.getType().name(), UNKNOWN_VALUE_TYPE));
     }
-
 
     static boolean valueIsNull(Value value) {
         if (Objects.isNull(value)) {

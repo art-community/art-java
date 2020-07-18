@@ -26,10 +26,9 @@ import io.art.json.exception.*;
 import io.netty.buffer.*;
 import lombok.experimental.*;
 import static com.fasterxml.jackson.core.JsonToken.*;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
@@ -77,7 +76,7 @@ public class JsonEntityReader {
             if (isNull(nextToken)) return null;
             switch (nextToken) {
                 case START_OBJECT:
-                    return parseJsonEntity(parser);
+                    return parseEntity(parser);
                 case START_ARRAY:
                     return parseArray(parser);
                 case VALUE_STRING:
@@ -105,81 +104,63 @@ public class JsonEntityReader {
     }
 
 
-    private static Entity parseJsonEntity(JsonParser parser) throws IOException {
+    private static Entity parseEntity(JsonParser parser) throws IOException {
         EntityBuilder entityBuilder = entityBuilder();
         JsonToken currentToken = parser.nextToken();
         do {
-            String currentName = parser.getCurrentName();
-            if (isNull(currentToken)) {
+            if (currentToken == END_OBJECT) {
+                return entityBuilder.build();
+            }
+            if (currentToken != FIELD_NAME) {
                 currentToken = parser.nextToken();
                 continue;
             }
-            currentName = emptyIfNull(currentName);
-            switch (currentToken) {
+            String field = parser.getCurrentName();
+            if (isEmpty(field)) {
+                currentToken = parser.nextToken();
+                continue;
+            }
+            switch (currentToken = parser.nextToken()) {
                 case NOT_AVAILABLE:
-                case END_ARRAY:
                 case END_OBJECT:
-                    return entityBuilder.build();
+                case FIELD_NAME:
+                case VALUE_EMBEDDED_OBJECT:
+                case END_ARRAY:
+                    break;
                 case START_OBJECT:
-                    entityBuilder.put(currentName, parseJsonEntity(parser));
+                    entityBuilder.put(field, parseEntity(parser));
                     break;
                 case START_ARRAY:
-                    parseArray(entityBuilder, parser);
+                    entityBuilder.put(field, parseArray(parser));
                     break;
                 case VALUE_STRING:
-                    entityBuilder.put(currentName, parser.getText(), fromString);
+                    entityBuilder.put(field, parser.getText(), fromString);
                     break;
                 case VALUE_NUMBER_INT:
-                    entityBuilder.put(currentName, parser.getLongValue(), fromLong);
+                    entityBuilder.put(field, parser.getLongValue(), fromLong);
                     break;
                 case VALUE_NUMBER_FLOAT:
-                    entityBuilder.put(currentName, parser.getFloatValue(), fromFloat);
+                    entityBuilder.put(field, parser.getFloatValue(), fromFloat);
                     break;
                 case VALUE_TRUE:
-                    entityBuilder.put(currentName, true, fromBool);
+                    entityBuilder.put(field, true, fromBool);
                     break;
                 case VALUE_FALSE:
-                    entityBuilder.put(currentName, false, fromBool);
+                    entityBuilder.put(field, false, fromBool);
                     break;
                 case VALUE_NULL:
-                    break;
             }
-            currentToken = parser.nextToken();
         } while (!parser.isClosed());
         return entityBuilder.build();
     }
 
-    private static void parseArray(EntityBuilder entityBuilder, JsonParser parser) throws IOException {
-        String currentName = emptyIfNull(parser.getCurrentName());
-        JsonToken currentToken = parser.nextToken();
-        switch (currentToken) {
-            case NOT_AVAILABLE:
-            case END_OBJECT:
-            case END_ARRAY:
-            case FIELD_NAME:
-            case VALUE_EMBEDDED_OBJECT:
-            case VALUE_NULL:
-                return;
-            case START_ARRAY:
-                parseArray(entityBuilder, parser);
-                return;
-            case START_OBJECT:
-            case VALUE_STRING:
-            case VALUE_NUMBER_INT:
-            case VALUE_NUMBER_FLOAT:
-            case VALUE_TRUE:
-            case VALUE_FALSE:
-                entityBuilder.put(currentName, parseArray(parser));
-        }
-    }
-
-
     private static ArrayValue parseArray(JsonParser parser) throws IOException {
         JsonToken currentToken = parser.nextToken();
         switch (currentToken) {
+            case END_ARRAY:
+                return ArrayValue.EMPTY;
             case NOT_AVAILABLE:
             case END_OBJECT:
-            case END_ARRAY:
             case FIELD_NAME:
             case VALUE_EMBEDDED_OBJECT:
             case VALUE_NULL:
@@ -251,7 +232,7 @@ public class JsonEntityReader {
         JsonToken currentToken = parser.currentToken();
         do {
             if (currentToken != START_OBJECT) return array;
-            array.add(parseJsonEntity(parser));
+            array.add(parseEntity(parser));
             currentToken = parser.nextToken();
         } while (!parser.isClosed() && currentToken != END_ARRAY);
         return array;

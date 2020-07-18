@@ -18,11 +18,10 @@
 
 package io.art.http.server;
 
-import io.art.entity.builder.*;
-import io.art.entity.immutable.*;
-import io.art.entity.immutable.Value;
-import lombok.*;
 import io.art.core.mime.*;
+import io.art.entity.builder.*;
+import io.art.entity.immutable.Value;
+import io.art.entity.immutable.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.http.constants.*;
@@ -31,17 +30,17 @@ import io.art.http.server.exception.*;
 import io.art.http.server.model.HttpService.*;
 import io.art.service.exception.*;
 import io.art.service.model.*;
-import static io.art.entity.immutable.BinaryValue.binary;
-import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
+import lombok.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.entity.immutable.BinaryValue.*;
+import static io.art.entity.immutable.Entity.valueIsEmpty;
+import static io.art.entity.immutable.Entity.valueIsNull;
 import static io.art.entity.immutable.Entity.*;
 import static io.art.http.server.body.descriptor.HttpBodyDescriptor.*;
 import static io.art.http.server.constants.HttpServerExceptionMessages.*;
@@ -51,6 +50,9 @@ import static io.art.logging.LoggingModule.*;
 import static io.art.service.ServiceController.*;
 import static io.art.service.factory.ServiceRequestFactory.*;
 import static io.art.service.mapping.ServiceResponseMapping.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
 import javax.servlet.http.*;
 import java.io.*;
 import java.nio.charset.*;
@@ -126,7 +128,7 @@ class HttpServerRequestHandler {
                 return parseQueryParameters(request);
             case MULTIPART:
                 Entity multipartEntity = readMultiParts(request);
-                if (valueIsNull(multipartEntity) || multipartEntity.valueIsEmpty()) return null;
+                if (valueIsEmpty(multipartEntity)) return null;
                 return multipartEntity;
             default:
                 throw new HttpServerException(format(UNKNOWN_HTTP_REQUEST_DATA_SOURCE, methodConfig.getRequestDataSource()));
@@ -155,6 +157,7 @@ class HttpServerRequestHandler {
                 }
             } catch (IOException ioException) {
                 loggingModule()
+                        .configuration()
                         .getLogger(HttpServerRequestHandler.class)
                         .error(EXCEPTION_OCCURRED_DURING_READING_PART, ioException);
             }

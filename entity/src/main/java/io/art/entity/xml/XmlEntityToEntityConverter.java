@@ -18,13 +18,11 @@
 
 package io.art.entity.xml;
 
-import io.art.core.checker.*;
 import io.art.entity.builder.*;
 import io.art.entity.immutable.Value;
 import io.art.entity.immutable.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
@@ -41,11 +39,10 @@ import java.util.*;
 @NoArgsConstructor(access = PRIVATE)
 public final class XmlEntityToEntityConverter {
     public static Entity toEntityFromTags(XmlEntity xmlEntity) {
-        if (EmptinessChecker.valueIsEmpty(xmlEntity)) {
+        if (Value.valueIsEmpty(xmlEntity)) {
             return null;
         }
         EntityBuilder entityBuilder = entityBuilder();
-        List<Value> values = dynamicArrayOf();
         String value = xmlEntity.getValue();
         if (isNotEmpty(value)) {
             entityBuilder.put(xmlEntity.getTag(), stringPrimitive(value));
@@ -60,7 +57,9 @@ public final class XmlEntityToEntityConverter {
                     innerEntityBuilder.put(child.getTag(), stringPrimitive(child.getValue()));
                     continue;
                 }
-                innerEntityBuilder.put(child.getTag(), toEntityFromTags(child).get(child.getTag()));
+                Entity innerEntity = toEntityFromTags(child);
+                if (isNull(innerEntity)) continue;
+                innerEntityBuilder.put(child.getTag(), innerEntity.get(child.getTag()));
             }
             return entityBuilder.put(xmlEntity.getTag(), innerEntityBuilder.build()).build();
         }
@@ -94,7 +93,7 @@ public final class XmlEntityToEntityConverter {
     }
 
     public static Entity toEntityFromAttributes(XmlEntity xmlEntity) {
-        if (EmptinessChecker.valueIsEmpty(xmlEntity)) {
+        if (Value.valueIsEmpty(xmlEntity)) {
             return null;
         }
         Map<Primitive, Primitive> attributes = xmlEntity.getAttributes()

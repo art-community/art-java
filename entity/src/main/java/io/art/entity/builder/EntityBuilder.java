@@ -126,7 +126,7 @@ public class EntityBuilder {
     }
 
     public EntityBuilder lazyPut(Primitive primitive, Supplier<? extends Value> value) {
-        if (!Value.valueIsEmpty(primitive) && nonNull(value)) {
+        if (!Value.valueIsNull(primitive) && nonNull(value)) {
             fields.put(primitive, value);
         }
         return this;
@@ -162,7 +162,7 @@ public class EntityBuilder {
     }
 
     public <T> EntityBuilder lazyPut(Primitive primitive, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
-        if (!Value.valueIsEmpty(primitive)) {
+        if (!Value.valueIsNull(primitive)) {
             fields.put(primitive, () -> mapper.map(value.get()));
         }
         return this;

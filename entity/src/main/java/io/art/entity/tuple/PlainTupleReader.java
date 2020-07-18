@@ -23,7 +23,7 @@ import io.art.entity.constants.*;
 import io.art.entity.immutable.*;
 import io.art.entity.tuple.schema.*;
 import lombok.experimental.*;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.BinaryValue.*;
@@ -35,7 +35,7 @@ import java.util.*;
 public class PlainTupleReader {
     public static Value readTuple(List<?> tuple, ValueSchema schema) {
         if (isEmpty(tuple) || isNull(schema)) return null;
-        if (isPrimitiveType(schema.getType())) {
+        if (Value.isPrimitiveType(schema.getType())) {
             return readPrimitive(schema.getType(), tuple.get(0));
         }
         switch (schema.getType()) {
