@@ -25,6 +25,7 @@ import static io.art.entity.constants.ValueType.*;
 import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.immutable.Value.Model.*;
 import static io.art.entity.mapping.ArrayMapping.*;
+import static io.art.entity.mapping.EntityMapping.*;
 import static io.art.entity.mapping.PrimitiveMapping.toString;
 import static io.art.entity.mapping.PrimitiveMapping.*;
 import static java.util.Objects.*;
@@ -131,7 +132,7 @@ public interface Value {
         public static EntityToModelMapper<Model> toModel = entity -> {
             if (isNull(entity)) return null;
             Model model = new Model();
-            model.value = Value.asPrimitive(entity.get("value")).getString();
+            model.value = entity.map("value", toString);
             return model;
         };
     }
@@ -148,8 +149,8 @@ public interface Value {
             return entityBuilder()
                     .put("list", model.list, fromList(fromString))
                     .put("set", model.set, fromSet(fromString))
-                    .put("stringMap", entityBuilder().putAllStrings(model.stringMap, fromString).build())
-                    .put("map", entityBuilder().putAllStrings(model.map, fromModel).build())
+                    .put("stringMap", model.stringMap, fromMap(toString, fromString, fromString))
+                    .put("map", model.map, fromMap(toString, fromString, fromModel))
                     .build();
         };
 
@@ -158,8 +159,8 @@ public interface Value {
             Request request = new Request();
             request.list = entity.map("list", toList(toString));
             request.set = entity.map("list", toSet(toString));
-            request.stringMap = Value.asEntity(entity.get("stringMap")).asMap(toString, fromString, toString);
-            request.map = Value.asEntity(entity.get("map")).asMap(toString, fromString, toModel);
+            request.stringMap = entity.map("stringMap", toMap(toString, fromString, toString));
+            request.map = entity.map("map", toMap(toString, fromString, toModel));
             request.model = entity.map("model", toModel);
             return request;
         };

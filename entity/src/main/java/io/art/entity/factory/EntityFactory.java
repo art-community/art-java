@@ -32,39 +32,39 @@ public class EntityFactory {
         return EMPTY;
     }
 
-    public Entity entity(ImmutableSet<Primitive> fields, Function<Primitive, ? extends Value> valueProvider) {
+    public static Entity entity(ImmutableSet<Primitive> fields, Function<Primitive, ? extends Value> valueProvider) {
         return new Entity(fields, valueProvider);
     }
 
-    public Entity entity(Set<Primitive> fields, Function<Primitive, ? extends Value> valueProvider) {
+    public static Entity entity(Set<Primitive> fields, Function<Primitive, ? extends Value> valueProvider) {
         return new Entity(copyOf(fields), valueProvider);
     }
 
-    public Entity stringEntity(Set<String> fields, Function<String, ? extends Value> valueProvider) {
+    public static Entity stringEntity(Set<String> fields, Function<String, ? extends Value> valueProvider) {
         return new Entity(fields.stream().map(PrimitivesFactory::stringPrimitive).collect(toImmutableSet()), key -> valueProvider.apply(key.getString()));
     }
 
-    public Entity intEntity(Set<Integer> fields, Function<Integer, ? extends Value> valueProvider) {
+    public static Entity intEntity(Set<Integer> fields, Function<Integer, ? extends Value> valueProvider) {
         return new Entity(fields.stream().map(PrimitivesFactory::intPrimitive).collect(toImmutableSet()), key -> valueProvider.apply(key.getInt()));
     }
 
-    public Entity longEntity(Set<Long> fields, Function<Long, ? extends Value> valueProvider) {
+    public static Entity longEntity(Set<Long> fields, Function<Long, ? extends Value> valueProvider) {
         return new Entity(fields.stream().map(PrimitivesFactory::longPrimitive).collect(toImmutableSet()), key -> valueProvider.apply(key.getLong()));
     }
 
-    public Entity doubleEntity(Set<Double> fields, Function<Double, ? extends Value> valueProvider) {
+    public static Entity doubleEntity(Set<Double> fields, Function<Double, ? extends Value> valueProvider) {
         return new Entity(fields.stream().map(PrimitivesFactory::doublePrimitive).collect(toImmutableSet()), key -> valueProvider.apply(key.getDouble()));
     }
 
-    public Entity floatEntity(Set<Float> fields, Function<Float, ? extends Value> valueProvider) {
+    public static Entity floatEntity(Set<Float> fields, Function<Float, ? extends Value> valueProvider) {
         return new Entity(fields.stream().map(PrimitivesFactory::floatPrimitive).collect(toImmutableSet()), key -> valueProvider.apply(key.getFloat()));
     }
 
-    public Entity boolEntity(Set<Boolean> fields, Function<Boolean, ? extends Value> valueProvider) {
+    public static Entity boolEntity(Set<Boolean> fields, Function<Boolean, ? extends Value> valueProvider) {
         return new Entity(fields.stream().map(PrimitivesFactory::boolPrimitive).collect(toImmutableSet()), key -> valueProvider.apply(key.getBool()));
     }
 
-    public Entity byteEntity(Set<Byte> fields, Function<Byte, ? extends Value> valueProvider) {
+    public static Entity byteEntity(Set<Byte> fields, Function<Byte, ? extends Value> valueProvider) {
         return new Entity(fields.stream().map(PrimitivesFactory::bytePrimitive).collect(toImmutableSet()), key -> valueProvider.apply(key.getByte()));
     }
 }

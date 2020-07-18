@@ -21,6 +21,7 @@ package io.art.entity.immutable;
 import io.art.core.checker.*;
 import io.art.entity.constants.*;
 import lombok.*;
+import static io.art.core.constants.ArrayConstants.EMPTY_BYTES;
 import static io.art.entity.constants.ValueType.*;
 
 @Getter
@@ -37,4 +38,6 @@ public class BinaryValue implements Value {
     public static BinaryValue binary(byte[] array) {
         return new BinaryValue(array);
     }
+
+    public static BinaryValue EMPTY = binary(EMPTY_BYTES);
 }

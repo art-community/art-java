@@ -20,12 +20,9 @@ package io.art.entity.mapping;
 
 import io.art.entity.immutable.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
-import io.art.entity.mapper.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
-import static io.art.entity.mapper.ValueMapper.*;
 
 public interface BinaryMapping {
-    BinaryFromModelMapper<byte[]> fromBinaryArray = BinaryValue::new;
-    BinaryToModelMapper<byte[]> toBinaryArray = BinaryValue::getContent;
-    ValueMapper<byte[], BinaryValue> binaryArrayMapper = mapper(fromBinaryArray, toBinaryArray);
+    BinaryFromModelMapper<byte[]> fromBinary = BinaryValue::new;
+    BinaryToModelMapper<byte[]> toBinary = BinaryValue::getContent;
 }

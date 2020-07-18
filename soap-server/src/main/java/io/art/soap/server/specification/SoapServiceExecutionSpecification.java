@@ -49,7 +49,7 @@ public class SoapServiceExecutionSpecification implements HttpServiceSpecificati
     private HttpService createHttpService() {
         return addExecuteSoapServiceOperation(httpService())
                 .get(GET_SERVICE_WSDL)
-                .responseMapper(stringMapper.getFromModel())
+                .responseMapper(fromString)
                 .listen(soapServiceSpecification.getSoapService().getPath())
 
                 .serve(EMPTY_STRING);

@@ -82,7 +82,7 @@ public class SoapServiceFunction {
         return this;
     }
 
-    public <FaultType> SoapServiceFunction defaultFaultMapper(XmlEntityFromModelMapper<FaultType> mapper) {
+    public <FaultType> SoapServiceFunction defaultFaultMapper(XmlFromModelMapper<FaultType> mapper) {
         soapService.defaultFaultMapper(mapper);
         return this;
     }
@@ -102,17 +102,17 @@ public class SoapServiceFunction {
         return this;
     }
 
-    public <RequestType> SoapServiceFunction requestMapper(XmlEntityToModelMapper<RequestType> requestMapper) {
+    public <RequestType> SoapServiceFunction requestMapper(XmlToModelMapper<RequestType> requestMapper) {
         soapOperation.requestMapper(requestMapper);
         return this;
     }
 
-    public <ResponseType> SoapServiceFunction responseMapper(XmlEntityFromModelMapper<ResponseType> responseMapper) {
+    public <ResponseType> SoapServiceFunction responseMapper(XmlFromModelMapper<ResponseType> responseMapper) {
         soapOperation.responseMapper(responseMapper);
         return this;
     }
 
-    public <ExceptionType extends Throwable> SoapServiceFunction addFaultMapping(Class<ExceptionType> exceptionClass, XmlEntityFromModelMapper<ExceptionType> mapper) {
+    public <ExceptionType extends Throwable> SoapServiceFunction addFaultMapping(Class<ExceptionType> exceptionClass, XmlFromModelMapper<ExceptionType> mapper) {
         soapOperation.faultMapper(exceptionClass, mapper);
         return this;
     }

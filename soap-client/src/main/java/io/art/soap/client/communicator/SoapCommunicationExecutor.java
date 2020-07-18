@@ -48,11 +48,11 @@ class SoapCommunicationExecutor {
                 .requestCharset(configuration.getRequestCharset())
                 .addHeader(ACCEPT, configuration.getConsumesMimeType().getMimeType().toString())
                 .addHeader(CONTENT_TYPE, configuration.getConsumesMimeType().getMimeType().toString());
-        XmlEntityToModelMapper<?> responseMapper = soapResponseToModel(configuration);
+        XmlToModelMapper<?> responseMapper = soapResponseToModel(configuration);
         if (nonNull(responseMapper)) {
             httpCommunicator.responseMapper(responseMapper);
         }
-        XmlEntityFromModelMapper<?> requestMapper = soapRequestFromModel(configuration);
+        XmlFromModelMapper<?> requestMapper = soapRequestFromModel(configuration);
         if (nonNull(requestMapper)) {
             httpCommunicator.requestMapper(requestMapper);
         }
@@ -80,11 +80,11 @@ class SoapCommunicationExecutor {
                 .requestCharset(configuration.getRequestCharset())
                 .addHeader(ACCEPT, configuration.getConsumesMimeType().getMimeType().toString())
                 .addHeader(CONTENT_TYPE, configuration.getConsumesMimeType().getMimeType().toString());
-        XmlEntityToModelMapper<?> responseMapper = soapResponseToModel(configuration);
+        XmlToModelMapper<?> responseMapper = soapResponseToModel(configuration);
         if (nonNull(responseMapper)) {
             httpCommunicator.responseMapper(responseMapper);
         }
-        XmlEntityFromModelMapper<?> requestMapper = soapRequestFromModel(configuration);
+        XmlFromModelMapper<?> requestMapper = soapRequestFromModel(configuration);
         if (nonNull(requestMapper)) {
             httpCommunicator.requestMapper(requestMapper);
         }

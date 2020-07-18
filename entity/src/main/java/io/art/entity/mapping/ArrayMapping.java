@@ -20,6 +20,8 @@ package io.art.entity.mapping;
 
 import io.art.entity.immutable.*;
 import io.art.entity.mapper.*;
+import io.art.entity.mapper.ValueFromModelMapper.*;
+import io.art.entity.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.entity.factory.ArrayFactory.*;
@@ -27,53 +29,53 @@ import java.util.*;
 
 @UtilityClass
 public class ArrayMapping {
-    public static <T> ValueToModelMapper<List<T>, ArrayValue> toList(ValueToModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ArrayToModelMapper<List<T>> toList(ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.mapAsList(elementMapper));
     }
 
-    public static <T> ValueToModelMapper<Set<T>, ArrayValue> toSet(ValueToModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ArrayToModelMapper<Set<T>> toSet(ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.mapAsSet(elementMapper));
     }
 
-    public static <T> ValueToModelMapper<Queue<T>, ArrayValue> toQueue(ValueToModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ArrayToModelMapper<Queue<T>> toQueue(ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.mapAsQueue(elementMapper));
     }
 
-    public static <T> ValueToModelMapper<Deque<T>, ArrayValue> toDeque(ValueToModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ArrayToModelMapper<Deque<T>> toDeque(ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.mapAsDeque(elementMapper));
     }
 
 
-    public static <T> ValueToModelMapper<List<T>, ArrayValue> toMutableList(ValueToModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ArrayToModelMapper<List<T>> toMutableList(ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.mapToList(elementMapper));
     }
 
-    public static <T> ValueToModelMapper<Set<T>, ArrayValue> toMutableSet(ValueToModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ArrayToModelMapper<Set<T>> toMutableSet(ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.mapToSet(elementMapper));
     }
 
-    public static <T> ValueToModelMapper<Queue<T>, ArrayValue> toMutableQueue(ValueToModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ArrayToModelMapper<Queue<T>> toMutableQueue(ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.mapToQueue(elementMapper));
     }
 
-    public static <T> ValueToModelMapper<Deque<T>, ArrayValue> toMutableDeque(ValueToModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ArrayToModelMapper<Deque<T>> toMutableDeque(ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.mapToDeque(elementMapper));
     }
 
 
-    public static <T> ValueFromModelMapper<List<T>, ArrayValue> fromList(ValueFromModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ArrayFromModelMapper<List<T>> fromList(ValueFromModelMapper<T, ? extends Value> elementMapper) {
         return list -> let(list, notNull -> array(list, elementMapper));
     }
 
-    public static <T> ValueFromModelMapper<Set<T>, ArrayValue> fromSet(ValueFromModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ArrayFromModelMapper<Set<T>> fromSet(ValueFromModelMapper<T, ? extends Value> elementMapper) {
         return collection -> let(collection, notNull -> array(collection, elementMapper));
     }
 
-    public static <T> ValueFromModelMapper<Queue<T>, ArrayValue> fromQueue(ValueFromModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ArrayFromModelMapper<Queue<T>> fromQueue(ValueFromModelMapper<T, ? extends Value> elementMapper) {
         return collection -> let(collection, notNull -> array(collection, elementMapper));
     }
 
-    public static <T> ValueFromModelMapper<Deque<T>, ArrayValue> fromDeque(ValueFromModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ArrayFromModelMapper<Deque<T>> fromDeque(ValueFromModelMapper<T, ? extends Value> elementMapper) {
         return collection -> let(collection, notNull -> array(collection, elementMapper));
     }
 }

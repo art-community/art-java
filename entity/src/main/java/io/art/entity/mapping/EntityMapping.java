@@ -20,60 +20,34 @@ package io.art.entity.mapping;
 
 import io.art.entity.immutable.*;
 import io.art.entity.mapper.*;
+import io.art.entity.mapper.ValueFromModelMapper.*;
+import io.art.entity.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
+import static com.google.common.collect.ImmutableSet.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
-import static io.art.entity.factory.ArrayFactory.*;
+import static io.art.entity.factory.EntityFactory.*;
 import java.util.*;
 
 @UtilityClass
 public class EntityMapping {
-    public static <T> ValueToModelMapper<List<T>, ArrayValue> toList(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.mapAsList(elementMapper));
+    public static <K, V> EntityToModelMapper<Map<K, V>> toMap(
+            PrimitiveToModelMapper<K> toKeyMapper,
+            PrimitiveFromModelMapper<K> fromKeyMapper,
+            ValueToModelMapper<V, ? extends Value> valueMapper) {
+        return entity -> let(entity, notNull -> notNull.asMap(toKeyMapper, fromKeyMapper, valueMapper));
     }
 
-    public static <T> ValueToModelMapper<Set<T>, ArrayValue> toSet(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.mapAsSet(elementMapper));
+    public static <K, V> EntityToModelMapper<Map<K, V>> toMutableMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
+        return entity -> let(entity, notNull -> notNull.mapToMap(keyMapper, valueMapper));
     }
 
-    public static <T> ValueToModelMapper<Queue<T>, ArrayValue> toQueue(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.mapAsQueue(elementMapper));
-    }
-
-    public static <T> ValueToModelMapper<Deque<T>, ArrayValue> toDeque(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.mapAsDeque(elementMapper));
-    }
-
-
-    public static <T> ValueToModelMapper<List<T>, ArrayValue> toMutableList(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.mapToList(elementMapper));
-    }
-
-    public static <T> ValueToModelMapper<Set<T>, ArrayValue> toMutableSet(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.mapToSet(elementMapper));
-    }
-
-    public static <T> ValueToModelMapper<Queue<T>, ArrayValue> toMutableQueue(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.mapToQueue(elementMapper));
-    }
-
-    public static <T> ValueToModelMapper<Deque<T>, ArrayValue> toMutableDeque(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.mapToDeque(elementMapper));
-    }
-
-
-    public static <T> ValueFromModelMapper<List<T>, ArrayValue> fromList(ValueFromModelMapper<T, ? extends Value> elementMapper) {
-        return list -> let(list, notNull -> array(list, elementMapper));
-    }
-
-    public static <T> ValueFromModelMapper<Set<T>, ArrayValue> fromSet(ValueFromModelMapper<T, ? extends Value> elementMapper) {
-        return collection -> let(collection, notNull -> array(collection, elementMapper));
-    }
-
-    public static <T> ValueFromModelMapper<Queue<T>, ArrayValue> fromQueue(ValueFromModelMapper<T, ? extends Value> elementMapper) {
-        return collection -> let(collection, notNull -> array(collection, elementMapper));
-    }
-
-    public static <T> ValueFromModelMapper<Deque<T>, ArrayValue> fromDeque(ValueFromModelMapper<T, ? extends Value> elementMapper) {
-        return collection -> let(collection, notNull -> array(collection, elementMapper));
+    public static <K, V> EntityFromModelMapper<Map<K, V>> fromMap(
+            PrimitiveToModelMapper<K> toKeyMapper,
+            PrimitiveFromModelMapper<K> fromKeyMapper,
+            ValueFromModelMapper<V, ? extends Value> valueMapper) {
+        return entity -> let(
+                entity,
+                notNull -> entity(entity.keySet().stream().map(fromKeyMapper::map).collect(toImmutableSet()), key -> valueMapper.map(entity.get(toKeyMapper.map(key))))
+        );
     }
 }

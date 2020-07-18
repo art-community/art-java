@@ -43,7 +43,7 @@ public class MetricServiceSpecification implements HttpServiceSpecification {
     private final HttpService httpService = httpService()
             .get(METRICS_METHOD_ID)
             .produces(METRICS_CONTENT_TYPE)
-            .responseMapper(stringMapper.getFromModel())
+            .responseMapper(fromString)
             .listen(METRICS_PATH)
             .serve(path);
 

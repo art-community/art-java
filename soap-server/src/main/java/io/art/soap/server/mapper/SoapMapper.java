@@ -26,8 +26,8 @@ import static io.art.entity.mapper.ValueToModelMapper.*;
 import static io.art.soap.server.constans.SoapServerModuleConstants.*;
 
 public interface SoapMapper {
-    XmlEntityToModelMapper<SoapRequest> soapRequestToModelMapper = SoapMapper::buildRequest;
-    XmlEntityFromModelMapper<SoapResponse> soapResponseFromModelMapper = response -> xmlEntityBuilder()
+    XmlToModelMapper<SoapRequest> soapRequestToModelMapper = SoapMapper::buildRequest;
+    XmlFromModelMapper<SoapResponse> soapResponseFromModelMapper = response -> xmlEntityBuilder()
             .tag(ENVELOPE)
             .prefix(PREFIX)
             .namespace(NAMESPACE)
@@ -46,7 +46,7 @@ public interface SoapMapper {
                     .child(response.getXmlEntity())
                     .create())
             .create();
-    XmlEntityFromModelMapper<SoapFault> soapResponseFaultMapper = response -> xmlEntityBuilder()
+    XmlFromModelMapper<SoapFault> soapResponseFaultMapper = response -> xmlEntityBuilder()
             .tag(FAULT)
             .prefix(PREFIX)
             .namespace(NAMESPACE)

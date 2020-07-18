@@ -30,7 +30,7 @@ import static io.art.soap.client.communicator.SoapEnvelopWrappingManager.*;
 
 @NoArgsConstructor(access = PACKAGE)
 class SoapEntityMapping {
-    static <T> XmlEntityToModelMapper<T> soapResponseToModel(SoapCommunicationConfiguration configuration) {
+    static <T> XmlToModelMapper<T> soapResponseToModel(SoapCommunicationConfiguration configuration) {
         ValueToModelMapper<?, XmlEntity> responseMapper = configuration.getResponseMapper();
         if (isNull(responseMapper)) {
             return null;
@@ -38,7 +38,7 @@ class SoapEntityMapping {
         return entity -> cast(responseMapper.map(unwrapFromSoapEnvelope(entity)));
     }
 
-    static <T> XmlEntityFromModelMapper<T> soapRequestFromModel(SoapCommunicationConfiguration configuration) {
+    static <T> XmlFromModelMapper<T> soapRequestFromModel(SoapCommunicationConfiguration configuration) {
         ValueFromModelMapper<?, XmlEntity> requestMapper = configuration.getRequestMapper();
         if (isNull(requestMapper)) {
             return null;

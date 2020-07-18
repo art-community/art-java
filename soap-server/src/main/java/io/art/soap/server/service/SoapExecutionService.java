@@ -47,7 +47,7 @@ public class SoapExecutionService {
         SoapOperation soapOperation = operationServiceSpecifications.get(soapRequest.getOperationId());
         Object requestObject = soapOperation.requestMapper().map(soapRequest.getEntity());
         Object responseObject;
-        Map<Class<? extends Throwable>, XmlEntityFromModelMapper<?>> faultMapping = soapOperation.faultMapping();
+        Map<Class<? extends Throwable>, XmlFromModelMapper<?>> faultMapping = soapOperation.faultMapping();
         try {
             String serviceId = soapServiceSpecification.getServiceId();
             String methodId = soapOperation.methodId();
@@ -57,7 +57,7 @@ public class SoapExecutionService {
             ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);
             ServiceExecutionException exception;
             if (nonNull(exception = serviceResponse.getServiceException())) {
-                XmlEntityFromModelMapper<?> faultMapper;
+                XmlFromModelMapper<?> faultMapper;
                 if (isNotEmpty(faultMapper = faultMapping.get(((Throwable) exception).getClass()))) {
                     return SoapResponse.builder().xmlEntity(faultMapper.map(cast((Throwable) exception))).build();
                 }
@@ -70,7 +70,7 @@ public class SoapExecutionService {
             responseObject = serviceResponse.getResponseData();
             return SoapResponse.builder().xmlEntity(soapOperation.responseMapper().map(cast(responseObject))).build();
         } catch (Throwable exception) {
-            XmlEntityFromModelMapper<?> faultMapper;
+            XmlFromModelMapper<?> faultMapper;
             if (isNotEmpty(faultMapper = faultMapping.get(exception.getClass()))) {
                 return SoapResponse.builder().xmlEntity(faultMapper.map(cast(exception))).build();
             }

@@ -28,7 +28,7 @@ import static io.art.soap.server.mapper.SoapMapper.*;
 public interface SoapServerModuleConfiguration extends ModuleConfiguration {
     <T extends Throwable> T getDefaultFaultResponse();
 
-    <T extends Throwable> XmlEntityFromModelMapper<T> getDefaultFaultMapper();
+    <T extends Throwable> XmlFromModelMapper<T> getDefaultFaultMapper();
 
     SoapServerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new SoapServerModuleDefaultConfiguration();
 
@@ -37,13 +37,13 @@ public interface SoapServerModuleConfiguration extends ModuleConfiguration {
                 .codeValue(UNEXPECTED_ERROR)
                 .reasonText(UNEXPECTED_ERROR_TEXT)
                 .build();
-        private XmlEntityFromModelMapper<SoapFault> defaultFaultMapper = soapResponseFaultMapper;
+        private XmlFromModelMapper<SoapFault> defaultFaultMapper = soapResponseFaultMapper;
 
         public <T extends Throwable> T getDefaultFaultResponse() {
             return cast(this.defaultFaultResponse);
         }
 
-        public <T extends Throwable> XmlEntityFromModelMapper<T> getDefaultFaultMapper() {
+        public <T extends Throwable> XmlFromModelMapper<T> getDefaultFaultMapper() {
             return cast(this.defaultFaultMapper);
         }
     }

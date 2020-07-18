@@ -43,7 +43,7 @@ public class SoapService {
     private Object defaultFaultResponse;
     private boolean ignoreRequestAcceptType;
     private boolean ignoreRequestContentType;
-    private XmlEntityFromModelMapper<?> defaultFaultMapper;
+    private XmlFromModelMapper<?> defaultFaultMapper;
     private final SoapMimeToContentTypeMapper consumes;
     private final SoapMimeToContentTypeMapper produces;
     private List<HttpServerInterceptor> requestInterceptors;
@@ -59,17 +59,17 @@ public class SoapService {
     @Accessors(fluent = true)
     @NoArgsConstructor(staticName = "soapOperation")
     public static class SoapOperation {
-        private XmlEntityToModelMapper<?> requestMapper;
-        private XmlEntityFromModelMapper<?> responseMapper;
+        private XmlToModelMapper<?> requestMapper;
+        private XmlFromModelMapper<?> responseMapper;
         private RequestValidationPolicy validationPolicy = RequestValidationPolicy.NON_VALIDATABLE;
         private List<HttpServerInterceptor> requestInterceptors = linkedListOf();
         private List<HttpServerInterceptor> responseInterceptors = linkedListOf();
         private List<ValueInterceptor<XmlEntity, XmlEntity>> requestValueInterceptors = linkedListOf();
         private List<ValueInterceptor<XmlEntity, XmlEntity>> responseValueInterceptors = linkedListOf();
-        private Map<Class<? extends Throwable>, XmlEntityFromModelMapper<?>> faultMapping = mapOf();
+        private Map<Class<? extends Throwable>, XmlFromModelMapper<?>> faultMapping = mapOf();
         private String methodId;
 
-        public SoapOperation faultMapper(Class<? extends Throwable> exceptionClass, XmlEntityFromModelMapper<?> mapper) {
+        public SoapOperation faultMapper(Class<? extends Throwable> exceptionClass, XmlFromModelMapper<?> mapper) {
             faultMapping.put(exceptionClass, mapper);
             return this;
         }
@@ -104,7 +104,7 @@ public class SoapService {
         private Object defaultFaultResponse;
         private boolean ignoreRequestAcceptType;
         private boolean ignoreRequestContentType;
-        private XmlEntityFromModelMapper<?> defaultFaultMapper;
+        private XmlFromModelMapper<?> defaultFaultMapper;
         private SoapMimeToContentTypeMapper consumes = textXml();
         private SoapMimeToContentTypeMapper produces = textXml();
         private List<HttpServerInterceptor> requestInterceptors = linkedListOf();
@@ -155,7 +155,7 @@ public class SoapService {
             return this;
         }
 
-        public SoapServiceBuilder defaultFaultMapper(XmlEntityFromModelMapper<?> defaultFaultMapper) {
+        public SoapServiceBuilder defaultFaultMapper(XmlFromModelMapper<?> defaultFaultMapper) {
             this.defaultFaultMapper = defaultFaultMapper;
             return this;
         }

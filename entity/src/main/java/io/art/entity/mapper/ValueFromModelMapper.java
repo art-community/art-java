@@ -27,7 +27,7 @@ public interface ValueFromModelMapper<T, V extends Value> extends Serializable {
     interface EntityFromModelMapper<T> extends ValueFromModelMapper<T, Entity> {
     }
 
-    interface ArrayValueFromModelMapper<T> extends ValueFromModelMapper<T, ArrayValue> {
+    interface ArrayFromModelMapper<T> extends ValueFromModelMapper<T, ArrayValue> {
     }
 
     interface PrimitiveFromModelMapper<T> extends ValueFromModelMapper<T, Primitive> {
@@ -36,7 +36,7 @@ public interface ValueFromModelMapper<T, V extends Value> extends Serializable {
     interface BinaryFromModelMapper<T> extends ValueFromModelMapper<T, BinaryValue> {
     }
 
-    interface XmlEntityFromModelMapper<T> extends ValueFromModelMapper<T, XmlEntity> {
+    interface XmlFromModelMapper<T> extends ValueFromModelMapper<T, XmlEntity> {
     }
 
     static <V extends Value> ValueFromModelMapper<V, V> identity() {
