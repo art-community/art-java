@@ -85,6 +85,7 @@ public class PlainTupleWriter {
         List<?> tuple = dynamicArrayOf();
         List<Value> valueList = array.asList();
         for (Value value : valueList) {
+            if (isNull(value)) continue;
             if (isPrimitive(value)) {
                 tuple.add(cast(asPrimitive(value).getValue()));
                 continue;

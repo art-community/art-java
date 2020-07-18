@@ -46,6 +46,7 @@ public class ModuleLauncher {
         context().loadModule(new JsonModule()).loadModule(new XmlModule());
         Entity entity = entityBuilder()
                 .lazyPut("int", () -> intPrimitive(123))
+                .lazyPut("null", () -> null)
                 .lazyPut("bool", () -> boolPrimitive(false))
                 .lazyPut("float", () -> floatPrimitive(123))
                 .lazyPut("double", () -> doublePrimitive(123))
@@ -54,9 +55,10 @@ public class ModuleLauncher {
                 .lazyPut("binary", () -> BinaryValue.binary(new byte[]{1, 2, 3}))
                 .lazyPut("embedded", () -> entityBuilder()
                         .lazyPut("string", () -> stringPrimitive("test"))
+                        .lazyPut("null", () -> null)
                         .build()
                 )
-                .lazyPut("array", () -> array(fixedArrayOf(stringPrimitive("test"))))
+                .lazyPut("array", () -> array(fixedArrayOf(stringPrimitive("test"), null, stringPrimitive("test"))))
                 .build();
         System.out.println(writeJson(readJson(writeJson(entity))));
         System.out.println(writeProtobuf(readProtobuf(writeProtobuf(entity))));

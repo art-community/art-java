@@ -72,6 +72,9 @@ public class MessagePackEntityWriter {
     }
 
     public static org.msgpack.value.Value writeMessagePack(Value value) {
+        if (isNull(value)) {
+            return newNil();
+        }
         if (isPrimitive(value)) {
             return writePrimitive(asPrimitive(value));
         }

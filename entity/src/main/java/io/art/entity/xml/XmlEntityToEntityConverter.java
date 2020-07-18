@@ -27,12 +27,13 @@ import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.factory.ArrayFactory.array;
+import static io.art.entity.factory.ArrayFactory.*;
+import static io.art.entity.factory.EntityFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.immutable.Value.isEmpty;
 import static java.util.Collections.*;
-import static java.util.Objects.nonNull;
+import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -100,6 +101,6 @@ public final class XmlEntityToEntityConverter {
                 .entrySet()
                 .stream()
                 .collect(toMap(entry -> stringPrimitive(entry.getKey()), entry -> stringPrimitive(entry.getValue())));
-        return entityBuilder().put(xmlEntity.getTag(), entityBuilder().putAll(attributes).build()).build();
+        return entityBuilder().put(xmlEntity.getTag(), entity(attributes.keySet(), attributes::get)).build();
     }
 }
