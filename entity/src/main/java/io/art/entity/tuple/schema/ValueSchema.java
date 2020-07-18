@@ -21,9 +21,9 @@ package io.art.entity.tuple.schema;
 import io.art.entity.constants.*;
 import io.art.entity.immutable.Value;
 import lombok.*;
-import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.factory.CollectionsFactory.*;
-import static java.util.Objects.*;
+import static io.art.entity.immutable.Value.*;
 import java.util.*;
 
 @Getter
@@ -33,7 +33,7 @@ public class ValueSchema {
     private final ValueType type;
 
     public static ValueSchema fromValue(Value value) {
-        if (isNull(value)) {
+        if (valueIsNull(value)) {
             return null;
         }
 

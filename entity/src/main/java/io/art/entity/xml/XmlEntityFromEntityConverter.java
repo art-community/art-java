@@ -24,25 +24,24 @@ import io.art.entity.immutable.*;
 import lombok.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.immutable.XmlEntity.*;
-import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class XmlEntityFromEntityConverter {
     public static XmlEntity fromEntityAsTags(Entity entity) {
-        if (isNull(entity)) {
+        if (valueIsNull(entity)) {
             return null;
         }
         XmlEntity.XmlEntityBuilder builder = xmlEntityBuilder();
-        if (Value.isEmpty(entity)) {
+        if (Value.valueIsEmpty(entity)) {
             return EMPTY;
         }
         Set<Primitive> keys = entity.asMap().keySet();
         for (Primitive key : keys) {
-            if (isEmpty(key)) continue;
+            if (valueIsEmpty(key)) continue;
             Value value = entity.get(key);
-            if (isNull(value)) continue;
+            if (valueIsNull(value)) continue;
             addValue(builder, key.getString(), value);
         }
         return builder.create();
@@ -50,7 +49,7 @@ public final class XmlEntityFromEntityConverter {
 
     public static XmlEntity fromEntityAsAttributes(String tag, Entity entity) {
         XmlEntity.XmlEntityBuilder builder = xmlEntityBuilder().tag(tag);
-        if (Value.isEmpty(entity)) {
+        if (Value.valueIsEmpty(entity)) {
             return builder.create();
         }
         Set<Primitive> keys = entity.asMap().keySet();
@@ -59,7 +58,7 @@ public final class XmlEntityFromEntityConverter {
             if (EmptinessChecker.isEmpty(keyAsString)) continue;
             Value value = entity.get(key);
             String valueAsString;
-            if (isNull(value) || !isPrimitive(value) || EmptinessChecker.isEmpty(valueAsString = asPrimitive(value).getString())) {
+            if (valueIsNull(value) || !isPrimitive(value) || EmptinessChecker.isEmpty(valueAsString = asPrimitive(value).getString())) {
                 continue;
             }
             builder.attribute(keyAsString, valueAsString);
@@ -68,7 +67,7 @@ public final class XmlEntityFromEntityConverter {
     }
 
     private static void addValue(XmlEntity.XmlEntityBuilder builder, String name, Value value) {
-        if (EmptinessChecker.isEmpty(name) || isNull(value)) {
+        if (EmptinessChecker.isEmpty(name) || valueIsNull(value)) {
             return;
         }
         builder = builder.child().tag(name);
@@ -92,13 +91,13 @@ public final class XmlEntityFromEntityConverter {
     }
 
     private static void addCollectionValue(XmlEntity.XmlEntityBuilder builder, ArrayValue value) {
-        if (isNull(value)) {
+        if (valueIsNull(value)) {
             return;
         }
         Collection<?> elements = value.asList();
         for (Object element : elements) {
             Value elementValue = (Value) element;
-            if (isNull(elementValue)) continue;
+            if (valueIsNull(elementValue)) continue;
             switch (elementValue.getType()) {
                 case ENTITY:
                     builder.child(fromEntityAsTags((Entity) elementValue));

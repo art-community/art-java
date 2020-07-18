@@ -55,7 +55,7 @@ public interface ServiceResponseMapping {
                 serviceResponseBuilder.responseData(responseData);
             }
             Entity serviceExceptionEntity = value.getEntity(SERVICE_EXECUTION_EXCEPTION);
-            if (isNull(serviceExceptionEntity)) {
+            if (valueIsNull(serviceExceptionEntity)) {
                 return serviceResponseBuilder.build();
             }
             String errorCode = serviceExceptionEntity.getString(ERROR_CODE);

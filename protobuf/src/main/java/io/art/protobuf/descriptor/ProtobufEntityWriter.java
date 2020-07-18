@@ -34,7 +34,6 @@ import static io.art.entity.immutable.Value.*;
 import static io.art.protobuf.constants.ProtobufConstants.*;
 import static io.art.protobuf.constants.ProtobufConstants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import java.io.*;
 import java.nio.file.*;
@@ -57,7 +56,7 @@ public class ProtobufEntityWriter {
     }
 
     public static com.google.protobuf.Value writeProtobuf(io.art.entity.immutable.Value value) {
-        if (isNull(value)) return null;
+        if (valueIsNull(value)) return null;
         switch (value.getType()) {
             case STRING:
                 return com.google.protobuf.Value.newBuilder().setStringValue(asPrimitive(value).getString()).build();
@@ -103,9 +102,9 @@ public class ProtobufEntityWriter {
         Map<String, Value> map = mapOf();
         Set<Primitive> fields = entity.asMap().keySet();
         for (Primitive key : fields) {
-            if (isEmpty(key)) continue;
+            if (valueIsEmpty(key)) continue;
             io.art.entity.immutable.Value value = entity.get(key);
-            if (isNull(value)) continue;
+            if (valueIsNull(value)) continue;
             Value protobuf = writeProtobuf(value);
             map.put(key.getString(), protobuf);
         }

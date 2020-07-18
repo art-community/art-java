@@ -74,7 +74,7 @@ class HttpServerRequestHandler {
                 break;
             }
             if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
-                if (isNull(result.getOutValue())) return EMPTY_BYTES;
+                if (valueIsNull(result.getOutValue())) return EMPTY_BYTES;
                 return contentMapper.getToContent().mapToBytes(result.getOutValue(), responseContentType, acceptCharset);
             }
         }
@@ -97,11 +97,11 @@ class HttpServerRequestHandler {
                 break;
             }
             if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
-                if (isNull(result.getOutValue())) return EMPTY_BYTES;
+                if (valueIsNull(result.getOutValue())) return EMPTY_BYTES;
                 return contentMapper.getToContent().mapToBytes(result.getOutValue(), responseContentType, acceptCharset);
             }
         }
-        if (isNull(responseValue)) return EMPTY_BYTES;
+        if (valueIsNull(responseValue)) return EMPTY_BYTES;
         return contentMapper.getToContent().mapToBytes(responseValue, responseContentType, acceptCharset);
     }
 
@@ -118,7 +118,7 @@ class HttpServerRequestHandler {
                 Value value = contentMapper
                         .getFromContent()
                         .mapFromBytes(readRequestBody(request), requestContentType, getOrElse(requestContentType.getCharset(), contextConfiguration().getCharset()));
-                if (isNull(value)) return null;
+                if (valueIsNull(value)) return null;
                 return value;
             case PATH_PARAMETERS:
                 return parsePathParameters(request, methodConfig);
@@ -126,7 +126,7 @@ class HttpServerRequestHandler {
                 return parseQueryParameters(request);
             case MULTIPART:
                 Entity multipartEntity = readMultiParts(request);
-                if (isNull(multipartEntity) || multipartEntity.isEmpty()) return null;
+                if (valueIsNull(multipartEntity) || multipartEntity.valueIsEmpty()) return null;
                 return multipartEntity;
             default:
                 throw new HttpServerException(format(UNKNOWN_HTTP_REQUEST_DATA_SOURCE, methodConfig.getRequestDataSource()));

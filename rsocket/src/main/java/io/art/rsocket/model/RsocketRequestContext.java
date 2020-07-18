@@ -84,7 +84,7 @@ public class RsocketRequestContext {
                 break;
             }
             if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
-                if (isNull(result.getOutValue())) {
+                if (valueIsNull(result.getOutValue())) {
                     return RsocketRequestContext.builder().stopHandling(true).build();
                 }
                 return RsocketRequestContext.builder()
@@ -95,7 +95,7 @@ public class RsocketRequestContext {
         }
         ValueToModelMapper<?, ?> requestMapper;
         Value requestDataValue;
-        if (isNull(requestValue) ||
+        if (valueIsNull(requestValue) ||
                 isNull(requestMapper = rsocketServiceMethods.getRsocketMethod().requestMapper()) ||
                 isEmpty(requestDataValue = requestValue.get(REQUEST_DATA))) {
             return RsocketRequestContext.builder()

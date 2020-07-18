@@ -18,7 +18,6 @@
 
 package io.art.service.mapping;
 
-import io.art.entity.factory.*;
 import io.art.entity.immutable.*;
 import io.art.entity.mapper.*;
 import io.art.service.constants.*;
@@ -43,7 +42,7 @@ public interface ServiceRequestMapping {
     static <D> ValueToModelMapper.EntityToModelMapper<ServiceRequest<D>> toServiceRequest(final ValueToModelMapper<D, Value> requestDataMapper) {
         return value -> {
             Entity serviceMethodCommandEntity = asEntity(value.get(SERVICE_METHOD_COMMAND));
-            if (isNull(serviceMethodCommandEntity)) throw new ServiceMappingException(SERVICE_COMMAND_IS_NULL);
+            if (valueIsNull(serviceMethodCommandEntity)) throw new ServiceMappingException(SERVICE_COMMAND_IS_NULL);
             String serviceId = asPrimitive(serviceMethodCommandEntity.get(SERVICE_ID)).getString();
             if (isNull(serviceId)) throw new ServiceMappingException(SERVICE_ID_IS_NULL);
             String methodId = asPrimitive(serviceMethodCommandEntity.get(METHOD_ID)).getString();

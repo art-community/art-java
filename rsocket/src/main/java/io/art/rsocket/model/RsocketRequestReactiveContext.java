@@ -77,7 +77,7 @@ public class RsocketRequestReactiveContext {
                 break;
             }
             if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
-                if (isNull(result.getOutValue())) {
+                if (valueIsNull(result.getOutValue())) {
                     return RsocketRequestReactiveContext.builder().stopHandling(true).build();
                 }
                 return RsocketRequestReactiveContext.builder()
@@ -88,7 +88,7 @@ public class RsocketRequestReactiveContext {
         }
         ValueToModelMapper<?, ?> requestMapper;
         Value requestDataValue;
-        if (isNull(requestValue) ||
+        if (valueIsNull(requestValue) ||
                 isNull(requestMapper = rsocketServiceMethods.getRsocketMethod().requestMapper()) ||
                 isEmpty(requestDataValue = requestValue.get(REQUEST_DATA))) {
             return RsocketRequestReactiveContext.builder()

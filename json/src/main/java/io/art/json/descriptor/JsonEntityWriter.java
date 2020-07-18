@@ -72,7 +72,7 @@ public class JsonEntityWriter {
     }
 
     public static String writeJson(JsonFactory jsonFactory, Value value, boolean prettyOutput) {
-        if (isEmpty(value)) {
+        if (valueIsEmpty(value)) {
             return null;
         }
         StringWriter stringWriter = new StringWriter();
@@ -123,14 +123,14 @@ public class JsonEntityWriter {
 
 
     private static void writeJsonEntity(JsonGenerator generator, Entity entity) throws IOException {
-        if (isNull(entity)) return;
+        if (valueIsNull(entity)) return;
         generator.writeStartObject();
         writeJsonFields(generator, entity);
         generator.writeEndObject();
     }
 
     private static void writeJsonEntity(JsonGenerator jsonGenerator, String name, Entity entity) throws IOException {
-        if (isNull(entity)) return;
+        if (valueIsNull(entity)) return;
         jsonGenerator.writeObjectFieldStart(name);
         writeJsonFields(jsonGenerator, entity);
         jsonGenerator.writeEndObject();
@@ -139,15 +139,15 @@ public class JsonEntityWriter {
     private static void writeJsonFields(JsonGenerator generator, Entity entity) throws IOException {
         Set<Primitive> keys = entity.asMap().keySet();
         for (Primitive key : keys) {
-            if (isEmpty(key)) continue;
+            if (valueIsEmpty(key)) continue;
             Value value = entity.get(key);
-            if (isNull(value)) continue;
+            if (valueIsNull(value)) continue;
             writeField(generator, key.getString(), value);
         }
     }
 
     private static void writeArray(JsonGenerator jsonGenerator, String fieldName, ArrayValue array) throws IOException {
-        if (isNull(array)) return;
+        if (valueIsNull(array)) return;
         jsonGenerator.writeArrayFieldStart(fieldName);
         for (int index = 0; index < array.size(); index++) {
             writeArrayElement(jsonGenerator, array.get(index));
@@ -156,11 +156,11 @@ public class JsonEntityWriter {
     }
 
     private static void writeArray(JsonGenerator jsonGenerator, ArrayValue array) throws IOException {
-        if (isNull(array)) return;
+        if (valueIsNull(array)) return;
         jsonGenerator.writeStartArray();
         for (int index = 0; index < array.size(); index++) {
             Value value = array.get(index);
-            if (isNull(value)) continue;
+            if (valueIsNull(value)) continue;
             writeArrayElement(jsonGenerator, value);
         }
         jsonGenerator.writeEndArray();
@@ -168,7 +168,7 @@ public class JsonEntityWriter {
 
 
     private static void writeField(JsonGenerator jsonGenerator, String name, Value value) throws IOException {
-        if (isNull(value)) return;
+        if (valueIsNull(value)) return;
         switch (value.getType()) {
             case ENTITY:
                 writeJsonEntity(jsonGenerator, name, asEntity(value));
@@ -191,7 +191,7 @@ public class JsonEntityWriter {
     }
 
     private static void writeField(JsonGenerator jsonGenerator, String name, Primitive value) throws IOException {
-        if (isEmpty(value) || EmptinessChecker.isEmpty(value.getValue())) return;
+        if (valueIsEmpty(value) || EmptinessChecker.isEmpty(value.getValue())) return;
         switch (value.getType()) {
             case STRING:
                 jsonGenerator.writeStringField(name, value.getString());
@@ -218,7 +218,7 @@ public class JsonEntityWriter {
 
 
     private static void writeArrayElement(JsonGenerator jsonGenerator, Value value) throws IOException {
-        if (isNull(value)) return;
+        if (valueIsNull(value)) return;
         switch (value.getType()) {
             case ARRAY:
                 writeArray(jsonGenerator, asArray(cast(value)));

@@ -24,20 +24,19 @@ import io.art.entity.tuple.schema.*;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.constants.ValueType.*;
+import static io.art.entity.immutable.Value.valueIsNull;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.tuple.schema.ValueSchema.*;
-import static java.util.Collections.*;
-import static java.util.Objects.*;
+import static java.util.Objects.isNull;
 import java.util.*;
 
 @UtilityClass
 public class PlainTupleWriter {
     public static PlainTupleWriterResult writeTuple(Value value) {
         ValueSchema schema = fromValue(value);
-        if (isNull(schema) || isEmpty(value)) return null;
+        if (isNull(schema) || valueIsNull(value)) return null;
         if (isPrimitive(value)) {
             return new PlainTupleWriterResult(fixedArrayOf(asPrimitive(value).getValue()), schema);
         }
@@ -45,11 +44,11 @@ public class PlainTupleWriter {
             return new PlainTupleWriterResult(fixedArrayOf(asBinary(value).getContent()), schema);
 
         }
-        return new PlainTupleWriterResult(writeValue(value), schema);
+        return new PlainTupleWriterResult(writeComplexValue(value), schema);
     }
 
-    private static List<?> writeValue(Value value) {
-        if (isEmpty(value)) return emptyList();
+    private static List<?> writeComplexValue(Value value) {
+        if (valueIsNull(value)) return null;
 
         switch (value.getType()) {
             case ENTITY:
@@ -58,16 +57,16 @@ public class PlainTupleWriter {
                 return writeArray(asArray(value));
         }
 
-        return emptyList();
+        return null;
     }
 
     private static List<?> writeEntity(Entity entity) {
         List<?> tuple = dynamicArrayOf();
-        Map<Primitive, ? extends Value> fields = entity.asMap();
-        for (Primitive key : fields.keySet()) {
-            if (isEmpty(key)) continue;
+        Set<Primitive> keys = entity.asMap().keySet();
+        for (Primitive key : keys) {
+            if (valueIsNull(key)) continue;
             Value value = entity.get(key);
-            if (isNull(value)) continue;
+            if (valueIsNull(value)) continue;
             if (isPrimitive(value)) {
                 tuple.add(cast(asPrimitive(value).getValue()));
                 continue;
@@ -76,7 +75,7 @@ public class PlainTupleWriter {
                 tuple.add(cast(asBinary(value).getContent()));
                 continue;
             }
-            tuple.add(cast(writeValue(value)));
+            tuple.add(cast(writeComplexValue(value)));
         }
         return tuple;
     }
@@ -85,7 +84,7 @@ public class PlainTupleWriter {
         List<?> tuple = dynamicArrayOf();
         List<Value> valueList = array.asList();
         for (Value value : valueList) {
-            if (isNull(value)) continue;
+            if (valueIsNull(value)) continue;
             if (isPrimitive(value)) {
                 tuple.add(cast(asPrimitive(value).getValue()));
                 continue;
@@ -94,7 +93,7 @@ public class PlainTupleWriter {
                 tuple.add(cast(asBinary(value).getContent()));
                 continue;
             }
-            tuple.add(cast(writeValue(value)));
+            tuple.add(cast(writeComplexValue(value)));
         }
         return tuple;
     }

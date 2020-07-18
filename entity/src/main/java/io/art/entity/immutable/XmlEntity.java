@@ -59,7 +59,7 @@ public class XmlEntity implements Value {
     }
 
     public static XmlEntity createChild(String prefix, String namespace, String tag, Object value) {
-        if (isNull(value)) {
+        if (Objects.isNull(value)) {
             return null;
         }
         return xmlEntityBuilder()
@@ -72,7 +72,7 @@ public class XmlEntity implements Value {
     }
 
     public static XmlEntity createEntity(String prefix, String namespace, String tag, XmlEntity value) {
-        if (isNull(value)) {
+        if (Objects.isNull(value)) {
             return null;
         }
         return xmlEntityBuilder()
@@ -85,7 +85,7 @@ public class XmlEntity implements Value {
     }
 
     public String getValue() {
-        return (isNull(value)) ? null : emptyIfNull(value.getValue());
+        return (Objects.isNull(value)) ? null : emptyIfNull(value.getValue());
     }
 
     public XmlValue<?> getXmlValue() {
@@ -97,7 +97,7 @@ public class XmlEntity implements Value {
             return EMPTY;
         }
         XmlEntity found = findRecursive(tag);
-        if (isNull(found)) {
+        if (Objects.isNull(found)) {
             return EMPTY;
         }
         return found;
@@ -108,7 +108,7 @@ public class XmlEntity implements Value {
             return this;
         }
 
-        if (!Value.isEmpty(this) || isNull(this.children)) {
+        if (!Value.valueIsEmpty(this) || Objects.isNull(this.children)) {
             return null;
         }
 
@@ -123,7 +123,7 @@ public class XmlEntity implements Value {
 
     public List<XmlEntity> getChildren(String tagName) {
         XmlEntity xmlEntity = find(tagName);
-        if (!Value.isEmpty(xmlEntity)) {
+        if (!Value.valueIsEmpty(xmlEntity)) {
             return xmlEntity.getChildren();
         }
         return emptyList();
@@ -139,7 +139,7 @@ public class XmlEntity implements Value {
 
     public Map<String, String> getAttributes(String tagName) {
         XmlEntity xmlEntity = find(tagName);
-        if (!Value.isEmpty(xmlEntity)) {
+        if (!Value.valueIsEmpty(xmlEntity)) {
             return xmlEntity.getAttributes();
         }
         return emptyMap();
@@ -147,7 +147,7 @@ public class XmlEntity implements Value {
 
     public Map<String, String> getNamespaces(String tagName) {
         XmlEntity xmlEntity = find(tagName);
-        if (!Value.isEmpty(xmlEntity)) {
+        if (!Value.valueIsEmpty(xmlEntity)) {
             return xmlEntity.getNamespaces();
         }
         return emptyMap();
@@ -155,7 +155,7 @@ public class XmlEntity implements Value {
 
     public String getValueByTag(String tag) {
         XmlEntity xmlEntity = find(tag);
-        if (!Value.isEmpty(xmlEntity)) {
+        if (!Value.valueIsEmpty(xmlEntity)) {
             return xmlEntity.getValue();
         }
         return EMPTY_STRING;
@@ -163,7 +163,7 @@ public class XmlEntity implements Value {
 
     public String getNamespaceByTag(String tag) {
         XmlEntity xmlEntity = find(tag);
-        if (!Value.isEmpty(xmlEntity)) {
+        if (!Value.valueIsEmpty(xmlEntity)) {
             return xmlEntity.getNamespace();
         }
         return EMPTY_STRING;
@@ -171,14 +171,14 @@ public class XmlEntity implements Value {
 
     public String getPrefixByTag(String tag) {
         XmlEntity xmlEntity = find(tag);
-        if (!Value.isEmpty(xmlEntity)) {
+        if (!Value.valueIsEmpty(xmlEntity)) {
             return xmlEntity.getPrefix();
         }
         return EMPTY_STRING;
     }
 
     public boolean exists(String tag) {
-        return !Value.isEmpty(find(tag));
+        return !Value.valueIsEmpty(find(tag));
     }
 
     public static final XmlEntity EMPTY = new XmlEntity();
@@ -317,7 +317,7 @@ public class XmlEntity implements Value {
 
         @SuppressWarnings("Duplicates")
         public XmlEntityBuilder build() {
-            if (isNull(tag)) {
+            if (Objects.isNull(tag)) {
                 throw new XmlEntityCreationException(XML_TAG_IS_EMPTY);
             }
             if (ignoreEmpty && EmptinessChecker.isEmpty(value.getValue())) {

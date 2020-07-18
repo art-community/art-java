@@ -134,7 +134,7 @@ public class GrpcServletContainer extends GrpcServlet {
                     break;
                 }
                 if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
-                    if (isNull(result.getOutValue())) {
+                    if (valueIsNull(result.getOutValue())) {
                         responseObserver.onNext(writeProtobuf(fromServiceResponse().map(okResponse(command))));
                         responseObserver.onCompleted();
                         return;
@@ -185,7 +185,7 @@ public class GrpcServletContainer extends GrpcServlet {
                     break;
                 }
                 if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
-                    if (isNull(result.getOutValue())) {
+                    if (valueIsNull(result.getOutValue())) {
                         responseObserver.onNext(writeProtobuf(serviceResponseEntity));
                         responseObserver.onCompleted();
                         return;

@@ -26,7 +26,6 @@ import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.entity.immutable.Value.*;
-import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static org.msgpack.core.MessagePack.*;
 import static org.msgpack.value.ValueFactory.*;
@@ -57,7 +56,7 @@ public class MessagePackEntityWriter {
     }
 
     public static byte[] writeMessagePackToBytes(Value value) {
-        if (Value.isEmpty(value)) {
+        if (Value.valueIsEmpty(value)) {
             return EMPTY_BYTES;
         }
         ArrayBufferOutput output = new ArrayBufferOutput();
@@ -72,7 +71,7 @@ public class MessagePackEntityWriter {
     }
 
     public static org.msgpack.value.Value writeMessagePack(Value value) {
-        if (isNull(value)) {
+        if (valueIsNull(value)) {
             return newNil();
         }
         if (isPrimitive(value)) {
@@ -90,7 +89,7 @@ public class MessagePackEntityWriter {
     }
 
     private static org.msgpack.value.Value writePrimitive(Primitive primitive) {
-        if (Value.isEmpty(primitive)) {
+        if (Value.valueIsEmpty(primitive)) {
             return newNil();
         }
         switch (primitive.getPrimitiveType()) {
@@ -113,14 +112,14 @@ public class MessagePackEntityWriter {
     }
 
     private static org.msgpack.value.Value writeArray(ArrayValue array) {
-        if (Value.isEmpty(array)) {
+        if (Value.valueIsEmpty(array)) {
             return newArray();
         }
         return newArray(array.asStream().map(MessagePackEntityWriter::writeMessagePack).collect(toList()));
     }
 
     private static org.msgpack.value.Value writeEntity(Entity entity) {
-        if (Value.isEmpty(entity)) {
+        if (Value.valueIsEmpty(entity)) {
             return emptyMap();
         }
         MapBuilder mapBuilder = newMapBuilder();
@@ -128,7 +127,7 @@ public class MessagePackEntityWriter {
         for (Primitive key : keys) {
             if (isEmpty(key)) continue;
             Value value = entity.get(key);
-            if (isNull(value)) continue;
+            if (valueIsNull(value)) continue;
             writeEntityField(mapBuilder, key, value);
         }
         return mapBuilder.build();

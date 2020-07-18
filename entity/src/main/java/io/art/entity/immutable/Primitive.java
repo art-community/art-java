@@ -38,7 +38,7 @@ public class Primitive implements Value {
     private final PrimitiveType primitiveType;
 
     public String getString() {
-        if (isNull(value)) return null;
+        if (Objects.isNull(value)) return null;
         if (primitiveType != STRING) {
             return value.toString();
         }
@@ -46,7 +46,7 @@ public class Primitive implements Value {
     }
 
     public Integer getInt() {
-        if (isNull(value)) return null;
+        if (Objects.isNull(value)) return null;
         if (primitiveType == STRING) {
             return Integer.parseInt((String) value);
         }
@@ -54,7 +54,7 @@ public class Primitive implements Value {
     }
 
     public Double getDouble() {
-        if (isNull(value)) return null;
+        if (Objects.isNull(value)) return null;
         if (primitiveType == STRING) {
             return Double.parseDouble((String) value);
         }
@@ -62,7 +62,7 @@ public class Primitive implements Value {
     }
 
     public Float getFloat() {
-        if (isNull(value)) return null;
+        if (Objects.isNull(value)) return null;
         if (primitiveType == STRING) {
             return Float.parseFloat((String) value);
         }
@@ -70,7 +70,7 @@ public class Primitive implements Value {
     }
 
     public Long getLong() {
-        if (isNull(value)) return null;
+        if (Objects.isNull(value)) return null;
         if (primitiveType == STRING) {
             return Long.parseLong((String) value);
         }
@@ -78,7 +78,7 @@ public class Primitive implements Value {
     }
 
     public Boolean getBool() {
-        if (isNull(value)) return null;
+        if (Objects.isNull(value)) return null;
         if (primitiveType == STRING) {
             return Boolean.parseBoolean((String) value);
         }
@@ -86,7 +86,7 @@ public class Primitive implements Value {
     }
 
     public Byte getByte() {
-        if (isNull(value)) return null;
+        if (Objects.isNull(value)) return null;
         if (primitiveType == STRING) {
             return Byte.parseByte((String) value);
         }
@@ -95,7 +95,7 @@ public class Primitive implements Value {
 
     @Override
     public String toString() {
-        if (isNull(value)) return EMPTY_STRING;
+        if (Objects.isNull(value)) return EMPTY_STRING;
         return value.toString();
     }
 
@@ -108,10 +108,10 @@ public class Primitive implements Value {
         if (other == this) return true;
         if (other instanceof Primitive) {
             Primitive otherPrimitive = (Primitive) other;
-            if (isNull(this.value) && isNull(otherPrimitive.value)) {
+            if (Objects.isNull(this.value) && Objects.isNull(otherPrimitive.value)) {
                 return true;
             }
-            if (isNull(this.value)) {
+            if (Objects.isNull(this.value)) {
                 return false;
             }
             if (this.value == otherPrimitive.value) {

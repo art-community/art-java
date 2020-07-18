@@ -31,8 +31,6 @@ import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.constants.ExceptionMessages.*;
 import static io.art.entity.constants.ValueType.*;
 import static io.art.entity.immutable.Value.*;
-import static java.util.Collections.*;
-import static java.util.Objects.*;
 import java.util.*;
 
 @Getter
@@ -44,9 +42,9 @@ public class EntitySchema extends ValueSchema {
         Set<Primitive> keys = entity.asMap().keySet();
         ImmutableList.Builder<EntityFieldSchema> schemaBuilder = ImmutableList.builder();
         for (Primitive key : keys) {
-            if (isEmpty(key)) continue;
+            if (valueIsNull(key)) continue;
             Value value = entity.get(key);
-            if (isNull(value)) continue;
+            if (valueIsNull(value)) continue;
             let(fromValue(value), schema -> schemaBuilder.add(new EntityFieldSchema(value.getType(), key.getString(), schema)));
         }
         fieldsSchema = schemaBuilder.build();
@@ -86,15 +84,13 @@ public class EntitySchema extends ValueSchema {
         }
 
         public List<?> toTuple() {
-            if (isNull(schema)) {
-                return dynamicArrayOf(type.ordinal(), name, emptyList());
-            }
             return dynamicArrayOf(type.ordinal(), name, schema.toTuple());
         }
 
         public static EntityFieldSchema fromTuple(List<?> tuple) {
             ValueType type = ValueType.values()[((Integer) tuple.get(0))];
             String name = (String) tuple.get(1);
+
             if (isPrimitiveType(type)) {
                 return new EntityFieldSchema(type, name, new ValueSchema(type));
             }
@@ -102,10 +98,10 @@ public class EntitySchema extends ValueSchema {
             switch (type) {
                 case ENTITY:
                     return new EntityFieldSchema(type, name, EntitySchema.fromTuple((List<?>) tuple.get(2)));
-                case BINARY:
-                    return new EntityFieldSchema(type, name, new ValueSchema(type));
                 case ARRAY:
                     return new EntityFieldSchema(type, name, ArraySchema.fromTuple((List<?>) tuple.get(2)));
+                case BINARY:
+                    return new EntityFieldSchema(type, name, new ValueSchema(type));
             }
 
             throw new ValueMappingException(UNKNOWN_VALUE_TYPE);

@@ -19,12 +19,10 @@
 package io.art.entity.builder;
 
 import com.google.common.collect.*;
-import io.art.core.checker.*;
 import io.art.entity.immutable.*;
 import io.art.entity.mapper.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
-import static io.art.entity.immutable.Entity.*;
 import static java.util.Objects.*;
 import java.util.function.*;
 
@@ -128,7 +126,7 @@ public class EntityBuilder {
     }
 
     public EntityBuilder lazyPut(Primitive primitive, Supplier<? extends Value> value) {
-        if (!Value.isEmpty(primitive) && nonNull(value)) {
+        if (!Value.valueIsEmpty(primitive) && nonNull(value)) {
             fields.put(primitive, value);
         }
         return this;
@@ -164,7 +162,7 @@ public class EntityBuilder {
     }
 
     public <T> EntityBuilder lazyPut(Primitive primitive, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
-        if (!Value.isEmpty(primitive)) {
+        if (!Value.valueIsEmpty(primitive)) {
             fields.put(primitive, () -> mapper.map(value.get()));
         }
         return this;

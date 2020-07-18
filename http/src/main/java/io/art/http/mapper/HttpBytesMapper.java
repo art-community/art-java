@@ -22,7 +22,6 @@ import io.art.core.mime.*;
 import io.art.entity.immutable.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.immutable.BinaryValue.*;
 import static java.util.Objects.*;
 import java.nio.charset.*;
@@ -30,7 +29,7 @@ import java.nio.charset.*;
 public class HttpBytesMapper implements HttpContentMapper.HttpEntityToContentMapper, HttpContentMapper.HttpContentToValueMapper {
     @Override
     public byte[] mapToBytes(Value value, MimeType mimeType, Charset charset) {
-        if (isNull(value)) return EMPTY_BYTES;
+        if (valueIsNull(value)) return EMPTY_BYTES;
         if (isBinary(value)) return asBinary(value).getContent();
         return EMPTY_BYTES;
     }

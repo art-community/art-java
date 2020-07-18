@@ -119,8 +119,8 @@ public class PlainTupleReader {
     }
 
     private static ArrayValue readArray(List<?> array, ArraySchema schema) {
-        if (isNull(schema)) return null;
         if (isEmpty(array)) return null;
+        if (isNull(schema)) return null;
         return array(index -> readTuple((List<?>) array.get(index), schema.getElements().get(index)), array::size);
     }
 }
