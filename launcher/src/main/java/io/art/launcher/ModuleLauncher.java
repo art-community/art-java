@@ -27,21 +27,14 @@ import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.BinaryValue.*;
 import static io.art.entity.immutable.Entity.*;
-import static io.art.entity.tuple.PlainTupleReader.readTuple;
-import static io.art.entity.tuple.PlainTupleWriter.writeTuple;
-import static io.art.entity.xml.XmlEntityFromEntityConverter.fromEntityAsAttributes;
-import static io.art.entity.xml.XmlEntityFromEntityConverter.fromEntityAsTags;
-import static io.art.entity.xml.XmlEntityToEntityConverter.toEntityFromAttributes;
-import static io.art.entity.xml.XmlEntityToEntityConverter.toEntityFromTags;
-import static io.art.json.descriptor.JsonEntityPrettyWriter.prettyWriteJson;
-import static io.art.json.descriptor.JsonEntityReader.readJson;
+import static io.art.entity.tuple.PlainTupleReader.*;
+import static io.art.entity.tuple.PlainTupleWriter.*;
+import static io.art.json.descriptor.JsonEntityReader.*;
 import static io.art.json.descriptor.JsonEntityWriter.*;
-import static io.art.message.pack.descriptor.MessagePackEntityReader.readMessagePack;
-import static io.art.message.pack.descriptor.MessagePackEntityWriter.writeMessagePack;
-import static io.art.protobuf.descriptor.ProtobufEntityReader.readProtobuf;
-import static io.art.protobuf.descriptor.ProtobufEntityWriter.writeProtobuf;
-import static io.art.xml.descriptor.XmlEntityReader.readXml;
-import static io.art.xml.descriptor.XmlEntityWriter.writeXml;
+import static io.art.message.pack.descriptor.MessagePackEntityReader.*;
+import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
+import static io.art.protobuf.descriptor.ProtobufEntityReader.*;
+import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;
 import java.util.concurrent.atomic.*;
 
 public class ModuleLauncher {
@@ -51,6 +44,8 @@ public class ModuleLauncher {
         context().loadModule(new JsonModule()).loadModule(new XmlModule());
         Entity entity = entityBuilder()
                 .lazyPut("int", () -> intPrimitive(123))
+                .lazyPut(123, () -> intPrimitive(123))
+                .lazyPut(456, () -> intPrimitive(123))
                 .lazyPut("null", () -> stringPrimitive(null))
                 .lazyPut("bool", () -> boolPrimitive(false))
                 .lazyPut("float", () -> floatPrimitive(123))

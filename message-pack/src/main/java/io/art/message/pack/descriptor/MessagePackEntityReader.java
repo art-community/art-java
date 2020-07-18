@@ -104,27 +104,30 @@ public class MessagePackEntityReader {
                 case ARRAY:
                 case MAP:
                 case EXTENSION:
-                    continue;
+                    break;
                 case BOOLEAN:
                     entityBuilder.lazyPut(key.asBooleanValue().getBoolean(), () -> readEntityField(value));
-                    continue;
+                    break;
                 case INTEGER:
-                    IntegerValue integerValue = value.asIntegerValue();
+                    IntegerValue integerValue = key.asIntegerValue();
                     if (integerValue.isInByteRange()) {
                         entityBuilder.lazyPut(bytePrimitive(integerValue.toByte()), () -> readEntityField(value));
+                        break;
                     }
                     if (integerValue.isInIntRange()) {
                         entityBuilder.lazyPut(intPrimitive(integerValue.toInt()), () -> readEntityField(value));
+                        break;
                     }
                     if (integerValue.isInLongRange()) {
                         entityBuilder.lazyPut(longPrimitive(integerValue.toLong()), () -> readEntityField(value));
+                        break;
                     }
-                    continue;
                 case FLOAT:
                     entityBuilder.lazyPut(key.asFloatValue().toFloat(), () -> readEntityField(value));
-                    continue;
+                    break;
                 case STRING:
                     entityBuilder.lazyPut(key.asStringValue().toString(), () -> readEntityField(value));
+                    break;
             }
         }
         return entityBuilder.build();
