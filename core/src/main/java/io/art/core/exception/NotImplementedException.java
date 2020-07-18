@@ -18,8 +18,11 @@
 
 package io.art.core.exception;
 
-public class ParserException extends RuntimeException {
-    public ParserException(String message) {
-        super(message);
+import static io.art.core.constants.ExceptionMessages.*;
+import static java.text.MessageFormat.*;
+
+public class NotImplementedException extends RuntimeException  {
+    public NotImplementedException(String method) {
+        super(format(METHOD_NOT_IMPLEMENTED, method));
     }
 }

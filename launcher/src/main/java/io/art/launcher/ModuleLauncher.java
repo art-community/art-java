@@ -26,6 +26,7 @@ import static io.art.core.context.Context.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.BinaryValue.*;
 import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.xml.XmlEntityFromEntityConverter.*;
 import static io.art.entity.xml.XmlEntityToEntityConverter.*;
@@ -52,7 +53,7 @@ public class ModuleLauncher {
                 .lazyPut("double", () -> doublePrimitive(123))
                 .lazyPut("long", () -> longPrimitive(123L))
                 .lazyPut("string", () -> stringPrimitive("test"))
-                .lazyPut("binary", () -> BinaryValue.binary(new byte[]{1, 2, 3}))
+                .lazyPut("binary", () -> binary(new byte[]{1, 2, 3}))
                 .lazyPut("embedded", () -> entityBuilder()
                         .lazyPut("string", () -> stringPrimitive("test"))
                         .lazyPut("null", () -> null)

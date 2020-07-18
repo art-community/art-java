@@ -80,7 +80,7 @@ public class DurationParser {
                 units = MINUTES;
                 break;
             default:
-                throw new ParserException(format(UNKNOWN_DURATION_TIME_UNITS, unitString));
+                throw new ParseException(format(UNKNOWN_DURATION_TIME_UNITS, unitString));
         }
 
         if (numberString.matches("[+-]?[0-9]+")) {

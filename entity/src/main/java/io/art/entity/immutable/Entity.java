@@ -20,10 +20,10 @@ package io.art.entity.immutable;
 
 import com.google.common.collect.*;
 import io.art.core.checker.*;
+import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.entity.builder.*;
 import io.art.entity.constants.*;
-import io.art.entity.exception.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.*;
 import lombok.*;
@@ -202,6 +202,7 @@ public class Entity implements Value {
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
         private final LazyValue<Map<K, V>> evaluated;
         private final LazyValue<Set<K>> evaluatedFields;
+        private final Map<K, LazyValue<V>> cache = concurrentHashMap();
 
         public ProxyMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
             this.valueMapper = valueMapper;
@@ -241,27 +242,29 @@ public class Entity implements Value {
             if (isNull(key)) {
                 return null;
             }
-            return let(cast(valueProvider.apply(fromKeyMapper.map(cast(key)))), valueMapper::map);
+            K casted = cast(key);
+            Primitive keyPrimitive = fromKeyMapper.map(casted);
+            return let(cache.putIfAbsent(casted, lazy(() -> let(cast(valueProvider.apply(keyPrimitive)), valueMapper::map))), LazyValue::get);
         }
 
         @Override
         public V put(K key, V value) {
-            throw new ValueMethodNotImplementedException("put");
+            throw new NotImplementedException("put");
         }
 
         @Override
         public V remove(Object key) {
-            throw new ValueMethodNotImplementedException("remove");
+            throw new NotImplementedException("remove");
         }
 
         @Override
         public void putAll(@Nonnull Map<? extends K, ? extends V> map) {
-            throw new ValueMethodNotImplementedException("putAll");
+            throw new NotImplementedException("putAll");
         }
 
         @Override
         public void clear() {
-            throw new ValueMethodNotImplementedException("clear");
+            throw new NotImplementedException("clear");
         }
 
         @Override

@@ -18,9 +18,9 @@
 
 package io.art.entity.immutable;
 
+import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.entity.constants.*;
-import io.art.entity.exception.*;
 import io.art.entity.mapper.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
@@ -171,13 +171,14 @@ public class ArrayValue implements Value {
     private class ProxyList<T> implements List<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
         private final LazyValue<List<T>> evaluated;
+        private final Map<Integer, LazyValue<T>> cache = concurrentHashMap();
 
         public ProxyList(ValueToModelMapper<T, ? extends Value> mapper) {
             this.mapper = mapper;
             this.evaluated = lazy(() -> ArrayValue.this.mapToList(mapper));
         }
 
-        private final Iterator<T> iterator = new Iterator<T>() {
+        private class ProxyIterator implements Iterator<T> {
             private int cursor = 0;
 
             @Override
@@ -187,63 +188,63 @@ public class ArrayValue implements Value {
 
             @Override
             public T next() {
-                T value = ArrayValue.this.map(cursor, mapper);
+                T value = let(cache.putIfAbsent(cursor, lazy(() -> ArrayValue.this.map(cursor, mapper))), LazyValue::get);
                 cursor++;
                 return value;
             }
-        };
+        }
 
-        private ListIterator<T> createListIterator(int fromIndex) {
-            return new ListIterator<T>() {
-                private int cursor = fromIndex;
+        @AllArgsConstructor
+        private class ProxyListIterator implements ListIterator<T> {
+            private int cursor;
 
-                @Override
-                public boolean hasNext() {
-                    return cursor != size.get();
-                }
+            @Override
+            public boolean hasNext() {
+                return cursor != size.get();
+            }
 
-                @Override
-                public T next() {
-                    T value = ArrayValue.this.map(cursor, mapper);
-                    cursor++;
-                    return value;
-                }
+            @Override
+            public T next() {
+                T value = let(cache.putIfAbsent(cursor, lazy(() -> ArrayValue.this.map(cursor, mapper))), LazyValue::get);
+                cursor++;
+                return value;
+            }
 
-                @Override
-                public boolean hasPrevious() {
-                    return cursor != 0;
-                }
+            @Override
+            public boolean hasPrevious() {
+                return cursor != 0;
+            }
 
-                @Override
-                public T previous() {
-                    return ArrayValue.this.map(previousIndex(), mapper);
-                }
+            @Override
+            public T previous() {
+                int index = previousIndex();
+                return let(cache.putIfAbsent(index, lazy(() -> ArrayValue.this.map(index, mapper))), LazyValue::get);
+            }
 
-                @Override
-                public int nextIndex() {
-                    return cursor;
-                }
+            @Override
+            public int nextIndex() {
+                return cursor;
+            }
 
-                @Override
-                public int previousIndex() {
-                    return cursor - 1;
-                }
+            @Override
+            public int previousIndex() {
+                return cursor - 1;
+            }
 
-                @Override
-                public void remove() {
-                    throw new ValueMethodNotImplementedException("iterator.remove");
-                }
+            @Override
+            public void remove() {
+                throw new NotImplementedException("iterator.remove");
+            }
 
-                @Override
-                public void set(T element) {
-                    throw new ValueMethodNotImplementedException("iterator.set");
-                }
+            @Override
+            public void set(T element) {
+                throw new NotImplementedException("iterator.set");
+            }
 
-                @Override
-                public void add(T t) {
-                    throw new ValueMethodNotImplementedException("iterator.add");
-                }
-            };
+            @Override
+            public void add(T t) {
+                throw new NotImplementedException("iterator.add");
+            }
         }
 
         @Override
@@ -264,7 +265,7 @@ public class ArrayValue implements Value {
         @Override
         @Nonnull
         public Iterator<T> iterator() {
-            return iterator;
+            return new ProxyIterator();
         }
 
         @Override
@@ -281,12 +282,12 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean add(T element) {
-            throw new ValueMethodNotImplementedException("add");
+            throw new NotImplementedException("add");
         }
 
         @Override
         public boolean remove(Object object) {
-            throw new ValueMethodNotImplementedException("remove");
+            throw new NotImplementedException("remove");
         }
 
         @Override
@@ -296,47 +297,47 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean addAll(@Nonnull Collection<? extends T> collection) {
-            throw new ValueMethodNotImplementedException("addAll");
+            throw new NotImplementedException("addAll");
         }
 
         @Override
         public boolean addAll(int index, @Nonnull Collection<? extends T> collection) {
-            throw new ValueMethodNotImplementedException("addAll");
+            throw new NotImplementedException("addAll");
         }
 
         @Override
         public boolean removeAll(@Nonnull Collection<?> collection) {
-            throw new ValueMethodNotImplementedException("removeAll");
+            throw new NotImplementedException("removeAll");
         }
 
         @Override
         public boolean retainAll(@Nonnull Collection<?> collection) {
-            throw new ValueMethodNotImplementedException("retainAll");
+            throw new NotImplementedException("retainAll");
         }
 
         @Override
         public void clear() {
-            throw new ValueMethodNotImplementedException("clear");
+            throw new NotImplementedException("clear");
         }
 
         @Override
         public T get(int index) {
-            return ArrayValue.this.map(index, mapper);
+            return let(cache.putIfAbsent(index, lazy(() -> ArrayValue.this.map(index, mapper))), LazyValue::get);
         }
 
         @Override
         public T set(int index, T element) {
-            throw new ValueMethodNotImplementedException("set");
+            throw new NotImplementedException("set");
         }
 
         @Override
         public void add(int index, T element) {
-            throw new ValueMethodNotImplementedException("add");
+            throw new NotImplementedException("add");
         }
 
         @Override
         public T remove(int index) {
-            throw new ValueMethodNotImplementedException("remove");
+            throw new NotImplementedException("remove");
         }
 
         @Override
@@ -352,13 +353,13 @@ public class ArrayValue implements Value {
         @Override
         @Nonnull
         public ListIterator<T> listIterator() {
-            return createListIterator(0);
+            return new ProxyListIterator(0);
         }
 
         @Override
         @Nonnull
         public ListIterator<T> listIterator(int index) {
-            return createListIterator(index);
+            return new ProxyListIterator(index);
         }
 
         @Override
@@ -371,27 +372,28 @@ public class ArrayValue implements Value {
     private class ProxySet<T> implements Set<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
         private final LazyValue<Set<T>> evaluated;
+        private final Map<Integer, LazyValue<T>> cache = concurrentHashMap();
 
         public ProxySet(ValueToModelMapper<T, ? extends Value> mapper) {
             this.mapper = mapper;
             this.evaluated = lazy(() -> ArrayValue.this.mapToSet(mapper));
         }
 
-        private final Iterator<T> iterator = new Iterator<T>() {
-            private int index = 0;
+        private class ProxyIterator implements Iterator<T> {
+            private int cursor = 0;
 
             @Override
             public boolean hasNext() {
-                return index < ArrayValue.this.size();
+                return cursor != ArrayValue.this.size();
             }
 
             @Override
             public T next() {
-                T value = ArrayValue.this.map(index, mapper);
-                index++;
+                T value = let(cache.putIfAbsent(cursor, lazy(() -> ArrayValue.this.map(cursor, mapper))), LazyValue::get);
+                cursor++;
                 return value;
             }
-        };
+        }
 
         @Override
         public int size() {
@@ -411,7 +413,7 @@ public class ArrayValue implements Value {
         @Override
         @Nonnull
         public Iterator<T> iterator() {
-            return iterator;
+            return new ProxyIterator();
         }
 
         @Override
@@ -428,12 +430,12 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean add(T element) {
-            throw new ValueMethodNotImplementedException("add");
+            throw new NotImplementedException("add");
         }
 
         @Override
         public boolean remove(Object object) {
-            throw new ValueMethodNotImplementedException("remove");
+            throw new NotImplementedException("remove");
         }
 
         @Override
@@ -443,50 +445,52 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean addAll(@Nonnull Collection<? extends T> collection) {
-            throw new ValueMethodNotImplementedException("addAll");
+            throw new NotImplementedException("addAll");
         }
 
         @Override
         public boolean removeAll(@Nonnull Collection<?> collection) {
-            throw new ValueMethodNotImplementedException("removeAll");
+            throw new NotImplementedException("removeAll");
         }
 
         @Override
         public boolean retainAll(@Nonnull Collection<?> collection) {
-            throw new ValueMethodNotImplementedException("retainAll");
+            throw new NotImplementedException("retainAll");
         }
 
         @Override
         public void clear() {
-            throw new ValueMethodNotImplementedException("clear");
+            throw new NotImplementedException("clear");
         }
     }
 
     private class ProxyQueue<T> implements Queue<T> {
         protected final ValueToModelMapper<T, ? extends Value> mapper;
+        protected final Map<Integer, LazyValue<T>> cache = concurrentHashMap();
         private final LazyValue<Queue<T>> evaluated;
-        private int cursor = 0;
+        private int index = 0;
 
         public ProxyQueue(ValueToModelMapper<T, ? extends Value> mapper) {
             this.mapper = mapper;
             this.evaluated = lazy(() -> ArrayValue.this.mapToQueue(mapper));
         }
 
-        private final Iterator<T> iterator = new Iterator<T>() {
-            private int index = 0;
+        private class ProxyIterator implements Iterator<T> {
+            private int cursor = 0;
 
             @Override
             public boolean hasNext() {
-                return index < ArrayValue.this.size();
+                return cursor != ArrayValue.this.size();
             }
 
             @Override
             public T next() {
-                T value = ArrayValue.this.map(index, mapper);
-                index++;
+                T value = let(cache.putIfAbsent(cursor, lazy(() -> ArrayValue.this.map(cursor, mapper))), LazyValue::get);
+                cursor++;
                 return value;
             }
-        };
+        }
+
 
         @Override
         public int size() {
@@ -506,7 +510,7 @@ public class ArrayValue implements Value {
         @Override
         @Nonnull
         public Iterator<T> iterator() {
-            return iterator;
+            return new ProxyIterator();
         }
 
         @Override
@@ -523,22 +527,22 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean add(T element) {
-            throw new ValueMethodNotImplementedException("add");
+            throw new NotImplementedException("add");
         }
 
         @Override
         public boolean offer(T t) {
-            throw new ValueMethodNotImplementedException("offer");
+            throw new NotImplementedException("offer");
         }
 
         @Override
         public T remove() {
-            throw new ValueMethodNotImplementedException("offer");
+            throw new NotImplementedException("offer");
         }
 
         @Override
         public T poll() {
-            throw new ValueMethodNotImplementedException("offer");
+            throw new NotImplementedException("offer");
         }
 
         @Override
@@ -551,14 +555,14 @@ public class ArrayValue implements Value {
 
         @Override
         public T peek() {
-            T element = ArrayValue.this.map(cursor, mapper);
-            cursor++;
-            return element;
+            T value = let(cache.putIfAbsent(index, lazy(() -> ArrayValue.this.map(index, mapper))), LazyValue::get);
+            index++;
+            return value;
         }
 
         @Override
         public boolean remove(Object object) {
-            throw new ValueMethodNotImplementedException("remove");
+            throw new NotImplementedException("remove");
         }
 
         @Override
@@ -568,22 +572,22 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean addAll(@Nonnull Collection<? extends T> collection) {
-            throw new ValueMethodNotImplementedException("addAll");
+            throw new NotImplementedException("addAll");
         }
 
         @Override
         public boolean removeAll(@Nonnull Collection<?> collection) {
-            throw new ValueMethodNotImplementedException("removeAll");
+            throw new NotImplementedException("removeAll");
         }
 
         @Override
         public boolean retainAll(@Nonnull Collection<?> collection) {
-            throw new ValueMethodNotImplementedException("retainAll");
+            throw new NotImplementedException("retainAll");
         }
 
         @Override
         public void clear() {
-            throw new ValueMethodNotImplementedException("clear");
+            throw new NotImplementedException("clear");
         }
     }
 
@@ -592,7 +596,7 @@ public class ArrayValue implements Value {
             super(mapper);
         }
 
-        private final ListIterator<T> descendingIterator = new ListIterator<T>() {
+        private class ProxyDescendingIterator implements ListIterator<T> {
             private final int index = size.get();
 
             @Override
@@ -612,7 +616,8 @@ public class ArrayValue implements Value {
 
             @Override
             public T previous() {
-                return ArrayValue.this.map(previousIndex(), mapper);
+                int index = previousIndex();
+                return let(cache.putIfAbsent(index, lazy(() -> ArrayValue.this.map(index, mapper))), LazyValue::get);
             }
 
             @Override
@@ -627,68 +632,71 @@ public class ArrayValue implements Value {
 
             @Override
             public void remove() {
-                throw new ValueMethodNotImplementedException("iterator.remove");
+                throw new NotImplementedException("iterator.remove");
             }
 
             @Override
             public void set(T element) {
-                throw new ValueMethodNotImplementedException("iterator.set");
+                throw new NotImplementedException("iterator.set");
             }
 
             @Override
             public void add(T t) {
-                throw new ValueMethodNotImplementedException("iterator.add");
+                throw new NotImplementedException("iterator.add");
             }
-        };
+        }
+
+        ;
 
         @Override
         public void addFirst(T t) {
-            throw new ValueMethodNotImplementedException("addFirst");
+            throw new NotImplementedException("addFirst");
         }
 
         @Override
         public void addLast(T t) {
-            throw new ValueMethodNotImplementedException("addLast");
+            throw new NotImplementedException("addLast");
         }
 
         @Override
         public boolean offerFirst(T t) {
-            throw new ValueMethodNotImplementedException("offerFirst");
+            throw new NotImplementedException("offerFirst");
         }
 
         @Override
         public boolean offerLast(T t) {
-            throw new ValueMethodNotImplementedException("offerLast");
+            throw new NotImplementedException("offerLast");
         }
 
         @Override
         public T removeFirst() {
-            throw new ValueMethodNotImplementedException("removeFirst");
+            throw new NotImplementedException("removeFirst");
         }
 
         @Override
         public T removeLast() {
-            throw new ValueMethodNotImplementedException("removeLast");
+            throw new NotImplementedException("removeLast");
         }
 
         @Override
         public T pollFirst() {
-            throw new ValueMethodNotImplementedException("pollFirst");
+            throw new NotImplementedException("pollFirst");
         }
 
         @Override
         public T pollLast() {
-            throw new ValueMethodNotImplementedException("pollLast");
+            throw new NotImplementedException("pollLast");
         }
 
         @Override
         public T getFirst() {
-            return ArrayValue.this.map(0, mapper);
+            return let(cache.putIfAbsent(0, lazy(() -> ArrayValue.this.map(0, mapper))), LazyValue::get);
         }
 
         @Override
         public T getLast() {
-            return ArrayValue.this.map(size.get() - 1, mapper);
+            int index = size.get() - 1;
+            return let(cache.putIfAbsent(index, lazy(() -> ArrayValue.this.map(index, mapper))), LazyValue::get);
         }
 
         @Override
@@ -709,29 +717,30 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean removeFirstOccurrence(Object o) {
-            throw new ValueMethodNotImplementedException("removeFirstOccurrence");
+            throw new NotImplementedException("removeFirstOccurrence");
         }
 
         @Override
         public boolean removeLastOccurrence(Object o) {
-            throw new ValueMethodNotImplementedException("removeLastOccurrence");
+            throw new NotImplementedException("removeLastOccurrence");
         }
 
         @Override
         public void push(T t) {
-            throw new ValueMethodNotImplementedException("push");
+            throw new NotImplementedException("push");
         }
 
         @Override
         public T pop() {
-            throw new ValueMethodNotImplementedException("pop");
+            throw new NotImplementedException("pop");
         }
 
         @Override
         @Nonnull
         public Iterator<T> descendingIterator() {
-            return descendingIterator;
+            return new ProxyDescendingIterator();
         }
+
     }
 
     public static ArrayValue EMPTY = new ArrayValue(index -> null, lazy(() -> 0));

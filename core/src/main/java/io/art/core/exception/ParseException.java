@@ -16,13 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.entity.exception;
+package io.art.core.exception;
 
-import static io.art.entity.constants.ExceptionMessages.*;
-import static java.text.MessageFormat.*;
-
-public class ValueMethodNotImplementedException extends RuntimeException  {
-    public ValueMethodNotImplementedException(String method) {
-        super(format(VALUE_METHOD_NOT_IMPLEMENTED, method));
+public class ParseException extends RuntimeException {
+    public ParseException(String message) {
+        super(message);
     }
 }

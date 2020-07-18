@@ -35,4 +35,5 @@ public interface ExceptionMessages {
     String PARAMETER_VALUE_MUST_NOT_BE_EMPTY = "Parameter 'value' must not be empty";
     String FILE_PATH_NOT_VALID = "File path is not valid: ''{0}''";
     String UNKNOWN_DURATION_TIME_UNITS = "Unknown duration time units: ''{0}''";
+    String METHOD_NOT_IMPLEMENTED = "Method not implemented: ''{0}''";
 }

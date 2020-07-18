@@ -22,5 +22,4 @@ public interface ExceptionMessages {
     String UNKNOWN_VALUE_TYPE = "Unknown value type: ''{0}''";
     String NOT_PRIMITIVE_TYPE = "Not primitive type: ''{0}''";
     String XML_TAG_IS_EMPTY = "Xml tag is empty";
-    String VALUE_METHOD_NOT_IMPLEMENTED = "Value method not implemented: ''{0}''";
 }
