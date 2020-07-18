@@ -57,7 +57,7 @@ public class ProtobufEntityWriter {
     }
 
     public static com.google.protobuf.Value writeProtobuf(io.art.entity.immutable.Value value) {
-        if (isEmpty(value)) return null;
+        if (isNull(value)) return null;
         switch (value.getType()) {
             case STRING:
                 return com.google.protobuf.Value.newBuilder().setStringValue(asPrimitive(value).getString()).build();

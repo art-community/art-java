@@ -98,6 +98,7 @@ public final class XmlEntityFromEntityConverter {
         Collection<?> elements = value.asList();
         for (Object element : elements) {
             Value elementValue = (Value) element;
+            if (isNull(elementValue)) continue;
             switch (elementValue.getType()) {
                 case ENTITY:
                     builder.child(fromEntityAsTags((Entity) elementValue));

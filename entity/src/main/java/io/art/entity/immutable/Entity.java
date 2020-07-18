@@ -60,6 +60,7 @@ public class Entity implements Value {
         return mapToMap(key -> key, value -> value);
     }
 
+
     public <K, V> Map<K, V> mapToMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
         Map<K, V> map = mapOf();
         for (Primitive field : fields) {
