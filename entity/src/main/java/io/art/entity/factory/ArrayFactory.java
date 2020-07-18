@@ -189,7 +189,7 @@ public class ArrayFactory {
         return new ArrayValue(value::get, lazy(value::size));
     }
 
-    public static <T extends ArrayValue> ArrayValue arrayOfArrays(List<T> value) {
+    public static <T extends ArrayValue> ArrayValue innerArray(List<T> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(value::get, lazy(value::size));
@@ -201,10 +201,10 @@ public class ArrayFactory {
         return entityArray(fixedArrayOf(value));
     }
 
-    public static <T extends ArrayValue> ArrayValue arrayOfArrays(Collection<T> value) {
+    public static <T extends ArrayValue> ArrayValue innerArray(Collection<T> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        return arrayOfArrays(fixedArrayOf(value));
+        return innerArray(fixedArrayOf(value));
     }
 
     public static ArrayValue emptyArray() {

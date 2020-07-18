@@ -148,7 +148,6 @@ public class JsonEntityReader {
                 case VALUE_FALSE:
                     entityBuilder.put(field, false, fromBool);
                     break;
-                case VALUE_NULL:
             }
         } while (!parser.isClosed());
         return entityBuilder.build();
@@ -168,7 +167,7 @@ public class JsonEntityReader {
             case START_OBJECT:
                 return entityArray(parseEntityArray(parser));
             case START_ARRAY:
-                return parseArray(parser);
+                return innerArray(parseInnerArray(parser));
             case VALUE_STRING:
                 return stringArray(parseStringArray(parser));
             case VALUE_NUMBER_INT:
@@ -233,6 +232,17 @@ public class JsonEntityReader {
         do {
             if (currentToken != START_OBJECT) return array;
             array.add(parseEntity(parser));
+            currentToken = parser.nextToken();
+        } while (!parser.isClosed() && currentToken != END_ARRAY);
+        return array;
+    }
+
+    private static List<ArrayValue> parseInnerArray(JsonParser parser) throws IOException {
+        List<ArrayValue> array = dynamicArrayOf();
+        JsonToken currentToken = parser.currentToken();
+        do {
+            if (currentToken != START_ARRAY) return array;
+            array.add(parseArray(parser));
             currentToken = parser.nextToken();
         } while (!parser.isClosed() && currentToken != END_ARRAY);
         return array;

@@ -28,13 +28,12 @@ import static com.google.protobuf.UnsafeByteOperations.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.handler.ExceptionHandler.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.protobuf.constants.ProtobufConstants.*;
 import static io.art.protobuf.constants.ProtobufConstants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
-import static java.util.stream.Collectors.*;
+import static java.util.Objects.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -90,26 +89,25 @@ public class ProtobufEntityWriter {
     }
 
     private static com.google.protobuf.Value writeArray(ArrayValue array) {
-        ListValue protobufValues = ListValue.newBuilder().addAllValues(array.asStream()
-                .map(ProtobufEntityWriter::writeProtobuf)
-                .filter(Objects::nonNull)
-                .collect(toList()))
-                .build();
-        return com.google.protobuf.Value.newBuilder().setListValue(protobufValues).build();
+        ListValue.Builder listBuilder = ListValue.newBuilder();
+        for (io.art.entity.immutable.Value element : array.asList()) {
+            Value protobuf = writeProtobuf(element);
+            if (isNull(protobuf)) continue;
+            listBuilder.addValues(protobuf);
+        }
+        return com.google.protobuf.Value.newBuilder().setListValue(listBuilder.build()).build();
     }
 
     private static com.google.protobuf.Value writeEntity(Entity entity) {
-        Map<String, Value> map = mapOf();
+        Struct.Builder builder = Struct.newBuilder();
         Set<Primitive> keys = entity.asMap().keySet();
         for (Primitive key : keys) {
             if (valueIsNull(key)) continue;
             io.art.entity.immutable.Value value = entity.get(key);
-            if (valueIsNull(value)) continue;
             Value protobuf = writeProtobuf(value);
-            map.put(key.getString(), protobuf);
+            if (isNull(protobuf)) continue;
+            builder.putFields(key.getString(), protobuf);
         }
-        return com.google.protobuf.Value.newBuilder()
-                .setStructValue(Struct.newBuilder().putAllFields(map).build())
-                .build();
+        return com.google.protobuf.Value.newBuilder().setStructValue(builder.build()).build();
     }
 }
