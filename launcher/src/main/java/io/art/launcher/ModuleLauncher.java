@@ -19,7 +19,6 @@
 package io.art.launcher;
 
 import io.art.entity.immutable.*;
-import io.art.entity.tuple.*;
 import io.art.json.module.*;
 import io.art.xml.module.*;
 import static io.art.core.context.Context.*;
@@ -28,6 +27,8 @@ import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.BinaryValue.*;
 import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.tuple.PlainTupleReader.*;
+import static io.art.entity.tuple.PlainTupleWriter.*;
 import static io.art.entity.xml.XmlEntityFromEntityConverter.*;
 import static io.art.entity.xml.XmlEntityToEntityConverter.*;
 import static io.art.json.descriptor.JsonEntityReader.*;
@@ -47,7 +48,7 @@ public class ModuleLauncher {
         context().loadModule(new JsonModule()).loadModule(new XmlModule());
         Entity entity = entityBuilder()
                 .lazyPut("int", () -> intPrimitive(123))
-                .lazyPut("null", () -> null)
+                .lazyPut("null", () -> stringPrimitive(null))
                 .lazyPut("bool", () -> boolPrimitive(false))
                 .lazyPut("float", () -> floatPrimitive(123))
                 .lazyPut("double", () -> doublePrimitive(123))
@@ -64,7 +65,7 @@ public class ModuleLauncher {
         System.out.println(writeJson(readJson(writeJson(entity))));
         System.out.println(writeProtobuf(readProtobuf(writeProtobuf(entity))));
         System.out.println(writeMessagePack(readMessagePack(writeMessagePack(entity))));
-        System.out.println(PlainTupleWriter.writeTuple(PlainTupleReader.readTuple(PlainTupleWriter.writeTuple(entity).getTuple(), PlainTupleWriter.writeTuple(entity).getSchema())));
+        System.out.println(writeTuple(readTuple(writeTuple(entity).getTuple(), writeTuple(entity).getSchema())));
         System.out.println(writeXml(fromEntityAsTags(toEntityFromTags(readXml(writeXml(fromEntityAsTags(entity)))))));
         System.out.println(writeXml(fromEntityAsAttributes("root", toEntityFromAttributes(readXml(writeXml(fromEntityAsAttributes("root", entity)))))));
     }
