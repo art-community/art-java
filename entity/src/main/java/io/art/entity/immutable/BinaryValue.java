@@ -29,11 +29,6 @@ public class BinaryValue implements Value {
     private final byte[] content;
     private final ValueType type = BINARY;
 
-    @Override
-    public boolean isEmpty() {
-        return content == EMPTY_BYTES;
-    }
-
     public static BinaryValue binary(byte[] array) {
         return new BinaryValue(array);
     }

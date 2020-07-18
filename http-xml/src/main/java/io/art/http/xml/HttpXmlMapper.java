@@ -20,14 +20,10 @@ package io.art.http.xml;
 
 import io.art.core.mime.*;
 import io.art.entity.immutable.*;
-import io.art.http.exception.*;
-import static java.util.Objects.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.entity.immutable.Value.*;
-import static io.art.entity.immutable.XmlEntity.*;
 import static io.art.entity.constants.ValueType.*;
-import static io.art.http.constants.HttpExceptionsMessages.*;
 import static io.art.http.mapper.HttpContentMapper.*;
 import static io.art.http.xml.HttpXmlMapperConstants.*;
 import static io.art.xml.descriptor.XmlEntityReader.*;
@@ -46,6 +42,6 @@ public class HttpXmlMapper implements HttpContentToValueMapper, HttpEntityToCont
     public byte[] mapToBytes(Value value, MimeType mimeType, Charset charset) {
         if (isEmpty(value)) return EMPTY_BYTES;
         if (value.getType() != XML) throw new HttpXmlMapperException(HTTP_XML_MAPPER_SUPPORT_ONLY_XML_ENTITIES);
-        return writeXml(xmlModule().configuration().getXmlOutputFactory(), asXmlEntity(value)).getBytes(charset);
+        return writeXml(xmlModule().configuration().getXmlOutputFactory(), asXml(value)).getBytes(charset);
     }
 }

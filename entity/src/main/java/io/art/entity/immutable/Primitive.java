@@ -100,11 +100,6 @@ public class Primitive implements Value {
     }
 
     @Override
-    public boolean isEmpty() {
-        return isNull(value);
-    }
-
-    @Override
     public ValueType getType() {
         return PrimitiveType.asValueType(primitiveType);
     }

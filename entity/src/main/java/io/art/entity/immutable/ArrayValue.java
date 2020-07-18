@@ -164,11 +164,6 @@ public class ArrayValue implements Value {
     }
 
 
-    @Override
-    public boolean isEmpty() {
-        return size() == 0;
-    }
-
     private class ProxyList<T> implements List<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
         private final LazyValue<List<T>> evaluated;
@@ -253,7 +248,7 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean isEmpty() {
-            return ArrayValue.this.isEmpty();
+            return size() == 0;
         }
 
         @Override
@@ -400,7 +395,7 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean isEmpty() {
-            return ArrayValue.this.isEmpty();
+            return size() == 0;
         }
 
         @Override
@@ -496,7 +491,7 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean isEmpty() {
-            return ArrayValue.this.isEmpty();
+            return size() == 0;
         }
 
         @Override

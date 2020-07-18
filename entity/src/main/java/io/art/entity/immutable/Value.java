@@ -18,9 +18,13 @@
 
 package io.art.entity.immutable;
 
+import io.art.core.checker.*;
 import io.art.entity.constants.*;
+import io.art.entity.exception.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
+import static io.art.core.constants.ArrayConstants.*;
+import static io.art.entity.constants.ExceptionMessages.*;
 import static io.art.entity.constants.ValueType.*;
 import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.immutable.Value.Model.*;
@@ -28,6 +32,7 @@ import static io.art.entity.mapping.ArrayMapping.*;
 import static io.art.entity.mapping.EntityMapping.*;
 import static io.art.entity.mapping.PrimitiveMapping.toString;
 import static io.art.entity.mapping.PrimitiveMapping.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.util.*;
 
@@ -48,11 +53,7 @@ public interface Value {
         return (BinaryValue) value;
     }
 
-    static boolean isEmpty(Value value) {
-        return isNull(value) || value.isEmpty();
-    }
-
-    static XmlEntity asXmlEntity(Value value) {
+    static XmlEntity asXml(Value value) {
         return (XmlEntity) value;
     }
 
@@ -117,7 +118,29 @@ public interface Value {
         return type == BINARY;
     }
 
-    boolean isEmpty();
+
+    static boolean isEmpty(Value value) {
+        if (isNull(value)) {
+            return true;
+        }
+        if (Value.isPrimitive(value)) {
+            return false;
+        }
+        if (Value.isEntity(value)) {
+            return Value.asEntity(value).size() == 0;
+        }
+        if (Value.isArray(value)) {
+            return Value.asArray(value).size() == 0;
+        }
+        if (Value.isBinary(value)) {
+            return Value.asBinary(value).getContent() == EMPTY_BYTES;
+        }
+        if (Value.isXml(value)) {
+            return EmptinessChecker.isEmpty(Value.asXml(value).getTag());
+        }
+        throw new ValueMappingException(format(value.getType().name(), UNKNOWN_VALUE_TYPE));
+    }
+
 
     ValueType getType();
 

@@ -42,7 +42,7 @@ public class RsocketPayloadWriter {
             case JSON:
                 return create(writeJsonToBytes(value));
             case XML:
-                return create(writeXmlToBytes(asXmlEntity(value)));
+                return create(writeXmlToBytes(asXml(value)));
             case MESSAGE_PACK:
                 return create(writeMessagePackToBytes(value));
 
@@ -57,7 +57,7 @@ public class RsocketPayloadWriter {
             case JSON:
                 return create(writeJsonToBytes(dataValue), writeJsonToBytes(metadataValue));
             case XML:
-                return create(writeXmlToBytes(asXmlEntity(dataValue)), writeXmlToBytes(asXmlEntity(metadataValue)));
+                return create(writeXmlToBytes(asXml(dataValue)), writeXmlToBytes(asXml(metadataValue)));
             case MESSAGE_PACK:
                 return create(writeMessagePackToBytes(dataValue), writeMessagePackToBytes(metadataValue));
 

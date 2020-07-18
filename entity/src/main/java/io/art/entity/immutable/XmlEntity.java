@@ -108,7 +108,7 @@ public class XmlEntity implements Value {
             return this;
         }
 
-        if (this.isEmpty() || isNull(this.children)) {
+        if (!Value.isEmpty(this) || isNull(this.children)) {
             return null;
         }
 
@@ -123,7 +123,7 @@ public class XmlEntity implements Value {
 
     public List<XmlEntity> getChildren(String tagName) {
         XmlEntity xmlEntity = find(tagName);
-        if (!xmlEntity.isEmpty()) {
+        if (!Value.isEmpty(xmlEntity)) {
             return xmlEntity.getChildren();
         }
         return emptyList();
@@ -139,7 +139,7 @@ public class XmlEntity implements Value {
 
     public Map<String, String> getAttributes(String tagName) {
         XmlEntity xmlEntity = find(tagName);
-        if (!xmlEntity.isEmpty()) {
+        if (!Value.isEmpty(xmlEntity)) {
             return xmlEntity.getAttributes();
         }
         return emptyMap();
@@ -147,7 +147,7 @@ public class XmlEntity implements Value {
 
     public Map<String, String> getNamespaces(String tagName) {
         XmlEntity xmlEntity = find(tagName);
-        if (!xmlEntity.isEmpty()) {
+        if (!Value.isEmpty(xmlEntity)) {
             return xmlEntity.getNamespaces();
         }
         return emptyMap();
@@ -155,7 +155,7 @@ public class XmlEntity implements Value {
 
     public String getValueByTag(String tag) {
         XmlEntity xmlEntity = find(tag);
-        if (!xmlEntity.isEmpty()) {
+        if (!Value.isEmpty(xmlEntity)) {
             return xmlEntity.getValue();
         }
         return EMPTY_STRING;
@@ -163,7 +163,7 @@ public class XmlEntity implements Value {
 
     public String getNamespaceByTag(String tag) {
         XmlEntity xmlEntity = find(tag);
-        if (!xmlEntity.isEmpty()) {
+        if (!Value.isEmpty(xmlEntity)) {
             return xmlEntity.getNamespace();
         }
         return EMPTY_STRING;
@@ -171,21 +171,15 @@ public class XmlEntity implements Value {
 
     public String getPrefixByTag(String tag) {
         XmlEntity xmlEntity = find(tag);
-        if (!xmlEntity.isEmpty()) {
+        if (!Value.isEmpty(xmlEntity)) {
             return xmlEntity.getPrefix();
         }
         return EMPTY_STRING;
     }
 
     public boolean exists(String tag) {
-        return !find(tag).isEmpty();
+        return !Value.isEmpty(find(tag));
     }
-
-    @Override
-    public boolean isEmpty() {
-        return EmptinessChecker.isEmpty(tag);
-    }
-
 
     public static final XmlEntity EMPTY = new XmlEntity();
 

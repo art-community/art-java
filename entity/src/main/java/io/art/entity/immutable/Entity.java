@@ -56,6 +56,10 @@ public class Entity implements Value {
         return new EntityBuilder();
     }
 
+    public int size() {
+        return keys.size();
+    }
+
     public Map<Primitive, ? extends Value> toMap() {
         return mapToMap(key -> key, value -> value);
     }
@@ -191,11 +195,6 @@ public class Entity implements Value {
         return value;
     }
 
-
-    @Override
-    public boolean isEmpty() {
-        return EmptinessChecker.isEmpty(keys);
-    }
 
     public class ProxyMap<K, V> implements Map<K, V> {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;
