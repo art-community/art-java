@@ -25,10 +25,11 @@ import io.art.entity.mapping.*;
 import lombok.*;
 import static io.art.configuration.constants.ConfiguratorConstants.ConfigurationSourceType.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
-import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.mapping.EntityMapping.toMap;
+import static io.art.entity.mapping.PrimitiveMapping.toString;
 import static io.art.entity.mapping.PrimitiveMapping.*;
+import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import java.time.*;
 import java.util.*;
@@ -151,6 +152,6 @@ public class EntityConfigurationSource implements ModuleConfigurationSource {
 
     @Override
     public boolean has(String path) {
-        return entity.asMap().containsKey(stringPrimitive(path));
+        return nonNull(entity.find(path));
     }
 }
