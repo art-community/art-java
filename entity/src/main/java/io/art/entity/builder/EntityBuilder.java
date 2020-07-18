@@ -31,19 +31,6 @@ import java.util.function.*;
 public class EntityBuilder {
     private final ImmutableMap.Builder<Primitive, Supplier<? extends Value>> fields = ImmutableMap.builder();
 
-    public static Entity merge(Entity... entities) {
-        if (EmptinessChecker.isEmpty(entities)) {
-            return null;
-        }
-        EntityBuilder entityBuilder = entityBuilder();
-        for (Entity entity : entities) {
-            if (nonNull(entity)) {
-                entity.toMap().forEach((key, value) -> entityBuilder.fields.put(key, () -> value));
-            }
-        }
-        return entityBuilder.build();
-    }
-
 
     public EntityBuilder put(String key, Value value) {
         return lazyPut(key, () -> value);

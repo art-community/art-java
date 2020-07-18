@@ -28,14 +28,13 @@ import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.BinaryValue.*;
 import static io.art.entity.immutable.Entity.*;
-import static io.art.entity.immutable.Value.*;
 import static java.util.Objects.*;
 import java.util.*;
 
 @UtilityClass
 public class PlainTupleReader {
     public static Value readTuple(List<?> tuple, ValueSchema schema) {
-        if (isEmpty(tuple) || isNull(schema) || isEmpty(schema)) return null;
+        if (isEmpty(tuple) || isNull(schema)) return null;
         if (isPrimitiveType(schema.getType())) {
             return readPrimitive(schema.getType(), tuple.get(0));
         }
