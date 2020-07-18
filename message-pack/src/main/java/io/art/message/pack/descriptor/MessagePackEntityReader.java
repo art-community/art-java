@@ -93,7 +93,7 @@ public class MessagePackEntityReader {
     }
 
     private static Value readMap(org.msgpack.value.MapValue map) {
-        if (map.size() == 0 || map.isNilValue()) return null;
+        if (isNull(map) || map.isNilValue()) return null;
         EntityBuilder entityBuilder = entityBuilder();
         for (Map.Entry<org.msgpack.value.Value, org.msgpack.value.Value> entry : map.entrySet()) {
             org.msgpack.value.Value key = entry.getKey();
@@ -111,7 +111,16 @@ public class MessagePackEntityReader {
                     entityBuilder.lazyPut(key.asBooleanValue().getBoolean(), () -> readEntityField(value));
                     continue;
                 case INTEGER:
-                    entityBuilder.lazyPut(key.asIntegerValue().toInt(), () -> readEntityField(value));
+                    IntegerValue integerValue = value.asIntegerValue();
+                    if (integerValue.isInByteRange()) {
+                        entityBuilder.lazyPut(bytePrimitive(integerValue.toByte()), () -> readEntityField(value));
+                    }
+                    if (integerValue.isInIntRange()) {
+                        entityBuilder.lazyPut(intPrimitive(integerValue.toInt()), () -> readEntityField(value));
+                    }
+                    if (integerValue.isInLongRange()) {
+                        entityBuilder.lazyPut(longPrimitive(integerValue.toLong()), () -> readEntityField(value));
+                    }
                     continue;
                 case FLOAT:
                     entityBuilder.lazyPut(key.asFloatValue().toFloat(), () -> readEntityField(value));
@@ -156,7 +165,7 @@ public class MessagePackEntityReader {
     }
 
     private static ArrayValue readArray(org.msgpack.value.ArrayValue array) {
-        if (array.size() == 0 || array.isNilValue()) return null;
+        if (isNull(array) || array.isNilValue()) return null;
         return array(index -> readMessagePack(array.get(index)), array::size);
     }
 }
