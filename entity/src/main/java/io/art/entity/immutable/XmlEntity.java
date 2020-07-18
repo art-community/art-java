@@ -182,7 +182,7 @@ public class XmlEntity implements Value {
         return !Value.valueIsEmpty(find(tag));
     }
 
-    public static final XmlEntity EMPTY = new XmlEntity();
+    public static final XmlEntity EMPTY = xmlEntityBuilder().create();
 
     @NoArgsConstructor(access = PRIVATE)
     public static class XmlEntityBuilder {
@@ -317,7 +317,7 @@ public class XmlEntity implements Value {
         }
 
         @SuppressWarnings("Duplicates")
-        public XmlEntityBuilder build() {
+        public XmlEntityBuilder attach() {
             if (Objects.isNull(tag)) {
                 throw new XmlEntityCreationException(XML_TAG_IS_EMPTY);
             }

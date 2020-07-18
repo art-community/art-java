@@ -146,9 +146,6 @@ public interface Value {
         if (Value.isPrimitive(value)) {
             return Objects.isNull(Value.asPrimitive(value).getValue());
         }
-        if (Value.isXml(value)) {
-            return Objects.isNull(Value.asXml(value).getTag());
-        }
         return false;
     }
 

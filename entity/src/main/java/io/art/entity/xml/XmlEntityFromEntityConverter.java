@@ -22,7 +22,7 @@ import io.art.core.checker.*;
 import io.art.entity.immutable.Value;
 import io.art.entity.immutable.*;
 import lombok.*;
-import static io.art.entity.factory.XmlEntityFactory.emptyXmlEntity;
+import static io.art.entity.factory.XmlEntityFactory.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.immutable.XmlEntity.*;
 import static lombok.AccessLevel.*;
@@ -31,19 +31,15 @@ import java.util.*;
 @NoArgsConstructor(access = PRIVATE)
 public final class XmlEntityFromEntityConverter {
     public static XmlEntity fromEntityAsTags(Entity entity) {
-        if (valueIsNull(entity)) {
-            return null;
-        }
-        XmlEntity.XmlEntityBuilder builder = xmlEntityBuilder();
-        if (Value.valueIsEmpty(entity)) {
-            return emptyXmlEntity();
-        }
+        if (valueIsNull(entity)) return null;
+        XmlEntityBuilder builder = xmlEntityBuilder();
+        if (valueIsEmpty(entity)) return emptyXmlEntity();
         Set<Primitive> keys = entity.asMap().keySet();
         for (Primitive key : keys) {
             if (valueIsNull(key)) continue;
             Value value = entity.get(key);
             if (valueIsNull(value)) continue;
-            addValue(builder, key.getString(), value);
+            addFieldValue(builder, key.getString(), value);
         }
         return builder.create();
     }
@@ -52,8 +48,8 @@ public final class XmlEntityFromEntityConverter {
         if (EmptinessChecker.isEmpty(tag) || valueIsNull(entity)) {
             return null;
         }
-        XmlEntity.XmlEntityBuilder builder = xmlEntityBuilder().tag(tag);
-        if (Value.valueIsEmpty(entity)) {
+        XmlEntityBuilder builder = xmlEntityBuilder().tag(tag);
+        if (valueIsEmpty(entity)) {
             return builder.create();
         }
         Set<Primitive> keys = entity.asMap().keySet();
@@ -70,14 +66,14 @@ public final class XmlEntityFromEntityConverter {
         return builder.create();
     }
 
-    private static void addValue(XmlEntity.XmlEntityBuilder builder, String name, Value value) {
+    private static void addFieldValue(XmlEntityBuilder builder, String name, Value value) {
         if (EmptinessChecker.isEmpty(name) || valueIsNull(value)) {
             return;
         }
         builder = builder.child().tag(name);
         switch (value.getType()) {
             case ENTITY:
-                builder.child(fromEntityAsTags(asEntity(value))).build();
+                builder.child(fromEntityAsTags(asEntity(value))).attach();
                 return;
             case STRING:
             case LONG:
@@ -86,25 +82,23 @@ public final class XmlEntityFromEntityConverter {
             case INT:
             case BOOL:
             case BYTE:
-                builder.value(value.toString()).build();
+                builder.value(value.toString()).attach();
                 return;
             case ARRAY:
-                addCollectionValue(builder, (ArrayValue) value);
-                builder.build();
+                addArrayValue(builder, (ArrayValue) value);
+                builder.attach();
+                break;
         }
     }
 
-    private static void addCollectionValue(XmlEntity.XmlEntityBuilder builder, ArrayValue value) {
-        if (valueIsNull(value)) {
-            return;
-        }
-        Collection<?> elements = value.asList();
-        for (Object element : elements) {
-            Value elementValue = (Value) element;
-            if (valueIsNull(elementValue)) continue;
-            switch (elementValue.getType()) {
+    private static void addArrayValue(XmlEntityBuilder builder, ArrayValue value) {
+        if (valueIsNull(value)) return;
+        Collection<Value> elements = value.asList();
+        for (Value element : elements) {
+            if (valueIsNull(element)) continue;
+            switch (element.getType()) {
                 case ENTITY:
-                    builder.child(fromEntityAsTags((Entity) elementValue));
+                    builder.child(fromEntityAsTags(asEntity(element)));
                     break;
                 case STRING:
                 case LONG:
@@ -113,11 +107,10 @@ public final class XmlEntityFromEntityConverter {
                 case INT:
                 case BOOL:
                 case BYTE:
+                    builder.child().tag(asPrimitive(element).getString()).attach();
                     break;
                 case ARRAY:
-                    builder = builder.child();
-                    addCollectionValue(builder, (ArrayValue) elementValue);
-                    builder = builder.build();
+                    addArrayValue(builder, (ArrayValue) element);
                     break;
             }
         }

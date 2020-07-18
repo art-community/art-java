@@ -29,12 +29,16 @@ import static io.art.entity.immutable.BinaryValue.*;
 import static io.art.entity.immutable.Entity.*;
 import static io.art.entity.tuple.PlainTupleReader.*;
 import static io.art.entity.tuple.PlainTupleWriter.*;
+import static io.art.entity.xml.XmlEntityFromEntityConverter.fromEntityAsTags;
+import static io.art.entity.xml.XmlEntityToEntityConverter.toEntityFromTags;
 import static io.art.json.descriptor.JsonEntityReader.*;
 import static io.art.json.descriptor.JsonEntityWriter.*;
 import static io.art.message.pack.descriptor.MessagePackEntityReader.*;
 import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
 import static io.art.protobuf.descriptor.ProtobufEntityReader.*;
 import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;
+import static io.art.xml.descriptor.XmlEntityReader.readXml;
+import static io.art.xml.descriptor.XmlEntityWriter.writeXml;
 import java.util.concurrent.atomic.*;
 
 public class ModuleLauncher {
@@ -56,6 +60,7 @@ public class ModuleLauncher {
                 .lazyPut("object", () -> entityBuilder()
                         .lazyPut("string", () -> stringPrimitive("test"))
                         .lazyPut("null", () -> null)
+                        .lazyPut("string-2", () -> stringPrimitive("test"))
                         .build()
                 )
                 .lazyPut("array", () -> array(fixedArrayOf(stringPrimitive("test"), null, stringPrimitive("test"))))
@@ -104,7 +109,7 @@ public class ModuleLauncher {
         System.out.println(writeProtobuf(readProtobuf(writeProtobuf(entity))));
         System.out.println(writeMessagePack(readMessagePack(writeMessagePack(entity))));
         System.out.println(writeTuple(readTuple(writeTuple(entity).getTuple(), writeTuple(entity).getSchema())));
-//        System.out.println(writeXml(fromEntityAsTags(toEntityFromTags(readXml(writeXml(fromEntityAsTags(entity)))))));
+        System.out.println(writeXml(fromEntityAsTags(entity)));
 //        System.out.println(writeXml(fromEntityAsAttributes("root", toEntityFromAttributes(readXml(writeXml(fromEntityAsAttributes("root", entity)))))));
     }
 }

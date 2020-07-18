@@ -18,7 +18,6 @@
 
 package io.art.xml.descriptor;
 
-import io.art.entity.constants.*;
 import io.art.entity.immutable.*;
 import io.art.xml.exception.*;
 import lombok.experimental.*;
@@ -27,6 +26,7 @@ import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
+import static io.art.entity.constants.ValueType.XmlValueType.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.xml.constants.XmlDocumentConstants.*;
 import static io.art.xml.constants.XmlLoggingMessages.*;
@@ -98,11 +98,9 @@ public class XmlEntityWriter {
     private static void writeXmlEntity(XMLStreamWriter xmlStreamWriter, XmlEntity entity) throws XMLStreamException {
         List<XmlEntity> children = entity.getChildren();
 
-        if (isEmpty(children) && isEmpty(entity.getValue())) return;
-
         if (isEmpty(entity.getTag())) {
             for (XmlEntity xmlEntity : children) {
-                if (isEmpty(xmlEntity)) continue;
+                if (isNull(xmlEntity)) continue;
                 writeXmlEntity(xmlStreamWriter, xmlEntity);
             }
             return;
@@ -113,7 +111,7 @@ public class XmlEntityWriter {
         writeAttributes(xmlStreamWriter, entity);
 
         for (XmlEntity xmlEntity : children) {
-            if (isEmpty(xmlEntity)) continue;
+            if (isNull(xmlEntity)) continue;
             writeXmlEntity(xmlStreamWriter, xmlEntity);
         }
 
@@ -134,7 +132,7 @@ public class XmlEntityWriter {
         String prefix = entity.getPrefix();
 
         xmlStreamWriter.writeCharacters(NEW_LINE);
-        if (!isEmpty(prefix) && !isEmpty(namespace)) {
+        if (isNotEmpty(prefix) && isNotEmpty(namespace)) {
             xmlStreamWriter.writeStartElement(prefix, entity.getTag(), namespace);
             return;
         }
@@ -157,17 +155,16 @@ public class XmlEntityWriter {
 
     private static void writeCharacters(XMLStreamWriter xmlStreamWriter, XmlEntity entity) throws XMLStreamException {
         String value = entity.getValue();
-        if (!isEmpty(value)) {
+        if (nonNull(value)) {
             xmlStreamWriter.writeCharacters(value);
         }
     }
 
     private static void writeCData(XMLStreamWriter xmlStreamWriter, XmlEntity entity) throws XMLStreamException {
         XmlValue<?> xmlValue = entity.getXmlValue();
-        if (ValueType.XmlValueType.CDATA.equals(xmlValue.getType())) {
+        if (CDATA.equals(xmlValue.getType())) {
             String cDataValue = writeXml(xmlModule().configuration().getXmlOutputFactory(), (XmlEntity) xmlValue.getValue());
-
-            if (!isEmpty(xmlValue)) {
+            if (nonNull(cDataValue)) {
                 xmlStreamWriter.writeCData(cDataValue);
             }
         }
