@@ -57,7 +57,7 @@ public class ModuleLauncher {
                 .lazyPut("double", () -> doublePrimitive(123))
                 .lazyPut("long", () -> longPrimitive(123L))
                 .lazyPut("string", () -> stringPrimitive("test"))
-                .lazyPut("binary", () -> binary(new byte[]{1, 2, 3}))
+                //.lazyPut("binary", () -> binary(new byte[]{1, 2, 3}))
                 .lazyPut("object", () -> entityBuilder()
                         .lazyPut("string", () -> stringPrimitive("test"))
                         .lazyPut("null", () -> null)
@@ -105,9 +105,9 @@ public class ModuleLauncher {
                                         .build()
                         )))))
                 .build();
-        System.out.println(prettyWriteJson(readJson(writeJson(entity))));
-        System.out.println(writeProtobuf(readProtobuf(writeProtobuf(entity))));
-        System.out.println(writeMessagePack(entity));
+        System.out.println(writeJson(readJson(writeJson(entity))));
+        //System.out.println(writeProtobuf(readProtobuf(writeProtobuf(entity))));
+        System.out.println((writeMessagePack(entity)));
 //        System.out.println(writeTuple(readTuple(writeTuple(entity).getTuple(), writeTuple(entity).getSchema())));
 //        System.out.println(writeXml(fromEntityAsTags(toEntityFromTags(readXml(writeXml(fromEntityAsTags(entity)))))));
 //        System.out.println(writeXml(fromEntityAsAttributes("root", toEntityFromAttributes(readXml(writeXml(fromEntityAsAttributes("root", entity)))))));

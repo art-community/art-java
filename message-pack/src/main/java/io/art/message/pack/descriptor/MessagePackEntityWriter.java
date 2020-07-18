@@ -27,7 +27,6 @@ import static io.art.core.extensions.FileExtensions.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.message.pack.constants.MessagePackConstants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
-import static java.util.stream.Collectors.*;
 import static org.msgpack.core.MessagePack.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.io.*;
@@ -109,7 +108,17 @@ public class MessagePackEntityWriter {
 
     private static org.msgpack.value.Value writeArray(ArrayValue array) {
         if (valueIsNull(array)) return null;
-        return newArray(array.asStream().map(MessagePackEntityWriter::writeMessagePack).filter(Objects::nonNull).collect(toList()));
+        org.msgpack.value.Value[] values = new org.msgpack.value.Value[array.size()];
+        List<Value> list = array.asList();
+        int newArrayIndex = 0;
+        for (Value value : list) {
+            org.msgpack.value.Value element = writeMessagePack(value);
+            if (Objects.isNull(element)) {
+                continue;
+            }
+            values[newArrayIndex++] = element;
+        }
+        return newArray(Arrays.copyOf(values, newArrayIndex), true);
     }
 
     private static org.msgpack.value.Value writeEntity(Entity entity) {
