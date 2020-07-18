@@ -27,7 +27,6 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.core.extensions.StringExtensions.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.json.constants.JsonLoggingMessages.*;
 import static io.art.json.module.JsonModule.*;
@@ -72,7 +71,7 @@ public class JsonEntityWriter {
     }
 
     public static String writeJson(JsonFactory jsonFactory, Value value, boolean prettyOutput) {
-        if (valueIsEmpty(value)) {
+        if (valueIsNull(value)) {
             return null;
         }
         StringWriter stringWriter = new StringWriter();
@@ -92,19 +91,19 @@ public class JsonEntityWriter {
                 case BINARY:
                     return Arrays.toString(asBinary(value).getContent());
                 case STRING:
-                    return emptyIfNull(asPrimitive(value).getString());
+                    return asPrimitive(value).getString();
                 case LONG:
-                    return emptyIfNull(asPrimitive(value).getLong());
+                    return asPrimitive(value).getLong().toString();
                 case DOUBLE:
-                    return emptyIfNull(asPrimitive(value).getDouble());
+                    return asPrimitive(value).getDouble().toString();
                 case FLOAT:
-                    return emptyIfNull(asPrimitive(value).getFloat());
+                    return asPrimitive(value).getFloat().toString();
                 case INT:
-                    return emptyIfNull(asPrimitive(value).getInt());
+                    return asPrimitive(value).getInt().toString();
                 case BOOL:
-                    return emptyIfNull(asPrimitive(value).getBool());
+                    return asPrimitive(value).getBool().toString();
                 case BYTE:
-                    return emptyIfNull(asPrimitive(value).getByte());
+                    return asPrimitive(value).getByte().toString();
             }
         } catch (IOException ioException) {
             throw new JsonMappingException(ioException);
@@ -139,7 +138,7 @@ public class JsonEntityWriter {
     private static void writeJsonFields(JsonGenerator generator, Entity entity) throws IOException {
         Set<Primitive> keys = entity.asMap().keySet();
         for (Primitive key : keys) {
-            if (valueIsEmpty(key)) continue;
+            if (valueIsNull(key)) continue;
             Value value = entity.get(key);
             if (valueIsNull(value)) continue;
             writeField(generator, key.getString(), value);
@@ -150,7 +149,9 @@ public class JsonEntityWriter {
         if (valueIsNull(array)) return;
         jsonGenerator.writeArrayFieldStart(fieldName);
         for (int index = 0; index < array.size(); index++) {
-            writeArrayElement(jsonGenerator, array.get(index));
+            Value value = array.get(index);
+            if (valueIsNull(value)) continue;
+            writeArrayElement(jsonGenerator, value);
         }
         jsonGenerator.writeEndArray();
     }

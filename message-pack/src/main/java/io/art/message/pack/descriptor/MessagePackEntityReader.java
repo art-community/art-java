@@ -33,7 +33,6 @@ import static io.art.entity.immutable.Entity.*;
 import static io.art.message.pack.constants.MessagePackConstants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static java.util.stream.Collectors.*;
 import static org.msgpack.core.MessagePack.*;
 import java.io.*;
 import java.nio.file.*;
@@ -59,7 +58,7 @@ public class MessagePackEntityReader {
     }
 
     public static Value readMessagePack(org.msgpack.value.Value value) {
-        if (isNull(value)) {
+        if (isNull(value) || value.isNilValue()) {
             return null;
         }
         switch (value.getValueType()) {
@@ -94,13 +93,13 @@ public class MessagePackEntityReader {
     }
 
     private static Value readMap(org.msgpack.value.MapValue map) {
-        if (map.size() == 0) return null;
+        if (map.size() == 0 || map.isNilValue()) return null;
         EntityBuilder entityBuilder = entityBuilder();
         for (Map.Entry<org.msgpack.value.Value, org.msgpack.value.Value> entry : map.entrySet()) {
             org.msgpack.value.Value key = entry.getKey();
-            if (isNull(key)) continue;
+            if (isNull(key) || key.isNilValue()) continue;
             org.msgpack.value.Value value = entry.getValue();
-            if (isNull(value)) continue;
+            if (isNull(value) || value.isNilValue()) continue;
             switch (key.getValueType()) {
                 case NIL:
                 case BINARY:
@@ -157,11 +156,7 @@ public class MessagePackEntityReader {
     }
 
     private static ArrayValue readArray(org.msgpack.value.ArrayValue array) {
-        if (array.size() == 0) return null;
-        return array(array.list()
-                .stream()
-                .map(MessagePackEntityReader::readMessagePack)
-                .filter(Objects::nonNull)
-                .collect(toList()));
+        if (array.size() == 0 || array.isNilValue()) return null;
+        return array(index -> readMessagePack(array.get(index)), array::size);
     }
 }

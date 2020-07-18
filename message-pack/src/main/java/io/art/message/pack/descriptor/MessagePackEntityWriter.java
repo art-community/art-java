@@ -22,7 +22,6 @@ import io.art.entity.immutable.*;
 import io.art.message.pack.exception.*;
 import lombok.experimental.*;
 import org.msgpack.core.buffer.*;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.entity.immutable.Value.*;
@@ -59,12 +58,9 @@ public class MessagePackEntityWriter {
         if (Value.valueIsEmpty(value)) {
             return EMPTY_BYTES;
         }
-        ArrayBufferOutput output = new ArrayBufferOutput();
-        try {
+        try (ArrayBufferOutput output = new ArrayBufferOutput()) {
             newDefaultPacker(output).packValue(writeMessagePack(value)).close();
-            byte[] bytes = output.toByteArray();
-            output.close();
-            return bytes;
+            return output.toByteArray();
         } catch (Throwable throwable) {
             throw new MessagePackMappingException(throwable);
         }
@@ -72,7 +68,7 @@ public class MessagePackEntityWriter {
 
     public static org.msgpack.value.Value writeMessagePack(Value value) {
         if (valueIsNull(value)) {
-            return newNil();
+            return null;
         }
         if (isPrimitive(value)) {
             return writePrimitive(asPrimitive(value));
@@ -85,12 +81,12 @@ public class MessagePackEntityWriter {
             case ARRAY:
                 return writeArray(asArray(value));
         }
-        return newNil();
+        return null;
     }
 
     private static org.msgpack.value.Value writePrimitive(Primitive primitive) {
-        if (Value.valueIsEmpty(primitive)) {
-            return newNil();
+        if (valueIsNull(primitive)) {
+            return null;
         }
         switch (primitive.getPrimitiveType()) {
             case STRING:
@@ -108,24 +104,24 @@ public class MessagePackEntityWriter {
             case BYTE:
                 return newBinary(new byte[]{primitive.getByte()});
         }
-        return newNil();
+        return null;
     }
 
     private static org.msgpack.value.Value writeArray(ArrayValue array) {
-        if (Value.valueIsEmpty(array)) {
-            return newArray();
+        if (valueIsNull(array)) {
+            return null;
         }
         return newArray(array.asStream().map(MessagePackEntityWriter::writeMessagePack).collect(toList()));
     }
 
     private static org.msgpack.value.Value writeEntity(Entity entity) {
-        if (Value.valueIsEmpty(entity)) {
-            return emptyMap();
+        if (valueIsNull(entity)) {
+            return null;
         }
         MapBuilder mapBuilder = newMapBuilder();
         Set<Primitive> keys = entity.asMap().keySet();
         for (Primitive key : keys) {
-            if (isEmpty(key)) continue;
+            if (valueIsNull(key)) continue;
             Value value = entity.get(key);
             if (valueIsNull(value)) continue;
             writeEntityField(mapBuilder, key, value);
