@@ -32,7 +32,6 @@ import static io.art.entity.immutable.XmlEntity.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.xml.constants.XmlMappingExceptionMessages.*;
 import static io.art.xml.module.XmlModule.*;
-import static java.nio.charset.StandardCharsets.*;
 import static java.util.Objects.*;
 import static javax.xml.stream.XMLStreamConstants.*;
 import javax.xml.stream.*;

@@ -30,7 +30,6 @@ import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.EntityFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Entity.*;
-import static io.art.entity.immutable.Value.valueIsEmpty;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
@@ -40,17 +39,13 @@ import java.util.*;
 @NoArgsConstructor(access = PRIVATE)
 public final class XmlEntityToEntityConverter {
     public static Entity toEntityFromTags(XmlEntity xmlEntity) {
-        if (valueIsEmpty(xmlEntity)) {
-            return null;
-        }
+        if (Value.valueIsNull(xmlEntity)) return null;
         EntityBuilder entityBuilder = entityBuilder();
         String value = xmlEntity.getValue();
         if (isNotEmpty(value)) {
             entityBuilder.put(xmlEntity.getTag(), stringPrimitive(value));
         }
-        if (isEmpty(xmlEntity.getChildren())) {
-            return entityBuilder.build();
-        }
+        if (isEmpty(xmlEntity.getChildren())) return entityBuilder.build();
         if (areAllUnique(xmlEntity.getChildren().stream().map(XmlEntity::getTag).collect(toList()))) {
             EntityBuilder innerEntityBuilder = entityBuilder();
             for (XmlEntity child : xmlEntity.getChildren()) {
@@ -66,10 +61,10 @@ public final class XmlEntityToEntityConverter {
         }
         List<XmlEntity> childrenCollection = xmlEntity.getChildren()
                 .stream()
+                .filter(entity -> nonNull(entity.getTag()))
                 .collect(groupingBy(XmlEntity::getTag))
                 .entrySet()
                 .stream()
-                .filter(entry -> entry.getValue().size() > 1)
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))
                 .values()
                 .stream()
@@ -83,7 +78,6 @@ public final class XmlEntityToEntityConverter {
             }
             if (isEmpty(child.getChildren())) {
                 collection.add(cast(entityBuilder().put(child.getTag(), stringPrimitive(child.getValue())).build()));
-                continue;
             }
             Entity entity = toEntityFromTags(child);
             if (nonNull(entity)) {
@@ -94,7 +88,7 @@ public final class XmlEntityToEntityConverter {
     }
 
     public static Entity toEntityFromAttributes(XmlEntity xmlEntity) {
-        if (valueIsEmpty(xmlEntity)) {
+        if (Value.valueIsEmpty(xmlEntity)) {
             return null;
         }
         Map<Primitive, Primitive> attributes = xmlEntity.getAttributes()

@@ -27,21 +27,19 @@ import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.BinaryValue.*;
 import static io.art.entity.immutable.Entity.*;
-import static io.art.entity.immutable.Value.asEntity;
+import static io.art.entity.immutable.Value.*;
 import static io.art.entity.tuple.PlainTupleReader.*;
 import static io.art.entity.tuple.PlainTupleWriter.*;
-import static io.art.entity.xml.XmlEntityFromEntityConverter.fromEntityAsAttributes;
-import static io.art.entity.xml.XmlEntityFromEntityConverter.fromEntityAsTags;
-import static io.art.entity.xml.XmlEntityToEntityConverter.toEntityFromAttributes;
-import static io.art.entity.xml.XmlEntityToEntityConverter.toEntityFromTags;
+import static io.art.entity.xml.XmlEntityFromEntityConverter.*;
+import static io.art.entity.xml.XmlEntityToEntityConverter.*;
 import static io.art.json.descriptor.JsonEntityReader.*;
 import static io.art.json.descriptor.JsonEntityWriter.*;
 import static io.art.message.pack.descriptor.MessagePackEntityReader.*;
 import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
 import static io.art.protobuf.descriptor.ProtobufEntityReader.*;
 import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;
-import static io.art.xml.descriptor.XmlEntityReader.readXml;
-import static io.art.xml.descriptor.XmlEntityWriter.writeXml;
+import static io.art.xml.descriptor.XmlEntityReader.*;
+import static io.art.xml.descriptor.XmlEntityWriter.*;
 import java.util.concurrent.atomic.*;
 
 public class ModuleLauncher {
@@ -91,7 +89,6 @@ public class ModuleLauncher {
                                                                 .build()
                                                 )))))
                                         .build(),
-
                                 entityBuilder()
                                         .lazyPut("string", () -> stringPrimitive("test"))
                                         .lazyPut("null", () -> null)
@@ -110,7 +107,7 @@ public class ModuleLauncher {
         System.out.println(writeProtobuf(readProtobuf(writeProtobuf(entity))));
         System.out.println(writeMessagePack(readMessagePack(writeMessagePack(entity))));
         System.out.println(writeTuple(readTuple(writeTuple(entity).getTuple(), writeTuple(entity).getSchema())));
-        System.out.println(writeXml(fromEntityAsTags(toEntityFromTags(readXml(writeXml(fromEntityAsTags(entityBuilder().put("entity", entity).build())))))));
+        System.out.println(writeXml(readXml(writeXml(fromEntityAsTags(entityBuilder().put("entity", entity).build())))));
         System.out.println(writeXml(fromEntityAsAttributes("root", asEntity(toEntityFromAttributes(readXml(writeXml(fromEntityAsAttributes("root", entity)))).get("root")))));
     }
 }
