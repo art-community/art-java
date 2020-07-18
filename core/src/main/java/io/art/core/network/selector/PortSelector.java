@@ -76,9 +76,7 @@ public class PortSelector {
             @Override
             protected boolean isPortAvailable(int port) {
                 try {
-                    getDefault()
-                            .createServerSocket(port, 1, getByName(LOCALHOST))
-                            .close();
+                    getDefault().createServerSocket(port, 1, getByName(LOCALHOST)).close();
                     return true;
                 } catch (Throwable ex) {
                     return false;

@@ -63,7 +63,7 @@ public class MessagePackEntityWriter {
         }
         try (ArrayBufferOutput output = new ArrayBufferOutput();
              MessagePacker packer = newDefaultPacker(output)) {
-            packer.packValue(writeMessagePack(value)).close();
+            packer.packValue(writeMessagePack(value));
             return output.toByteArray();
         } catch (Throwable throwable) {
             throw new MessagePackMappingException(throwable);

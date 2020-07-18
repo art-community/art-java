@@ -200,9 +200,9 @@ public class FileExtensions {
             if (nonNull(parent)) {
                 createDirectories(parent);
             }
-            FileChannel fileChannel = open(path, CREATE, TRUNCATE_EXISTING, WRITE);
-            fileChannel.write(byteBuffer);
-            fileChannel.close();
+            try (FileChannel fileChannel = open(path, CREATE, TRUNCATE_EXISTING, WRITE)) {
+                fileChannel.write(byteBuffer);
+            }
         } catch (IOException ioException) {
             throw new InternalRuntimeException(ioException);
         }
@@ -215,9 +215,9 @@ public class FileExtensions {
             if (nonNull(parent)) {
                 createDirectories(parent);
             }
-            FileChannel fileChannel = open(path, CREATE, TRUNCATE_EXISTING, WRITE);
-            fileChannel.write(byteBuffer);
-            fileChannel.close();
+            try (FileChannel fileChannel = open(path, CREATE, TRUNCATE_EXISTING, WRITE)) {
+                fileChannel.write(byteBuffer);
+            }
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }

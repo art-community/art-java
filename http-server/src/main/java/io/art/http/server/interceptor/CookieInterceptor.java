@@ -18,18 +18,19 @@
 
 package io.art.http.server.interceptor;
 
-import lombok.*;
-import lombok.experimental.*;
 import io.art.core.constants.*;
 import io.art.core.mime.*;
 import io.art.http.server.exception.*;
-import static java.util.Arrays.*;
-import static java.util.Objects.*;
+import lombok.*;
+import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.context.Context.*;
 import static io.art.http.constants.HttpMethodType.*;
 import static io.art.http.constants.HttpMimeTypes.*;
+import static java.util.Arrays.*;
+import static java.util.Objects.*;
+import javax.servlet.*;
 import javax.servlet.http.*;
 import java.nio.charset.*;
 import java.util.*;
@@ -47,7 +48,7 @@ public class CookieInterceptor implements HttpServerInterception {
         if (pathFilter.test(request.getRequestURI()) || request.getMethod().equals(OPTIONS.name()) || hasTokenCookie(request)) {
             return NEXT_INTERCEPTOR;
         }
-        try {
+        try (ServletOutputStream outputStream = response.getOutputStream()) {
             if (isNull(errorProvider)) {
                 return STOP_HANDLING;
             }
@@ -57,9 +58,9 @@ public class CookieInterceptor implements HttpServerInterception {
             response.setContentType(error.contentType.toString());
             response.setStatus(error.status);
             if (isNotEmpty(error.content)) {
-                response.getOutputStream().write(error.content.getBytes(charset));
+                outputStream.write(error.content.getBytes(charset));
             }
-            response.getOutputStream().close();
+            outputStream.close();
             return STOP_HANDLING;
         } catch (Throwable throwable) {
             throw new HttpServerException(throwable);
