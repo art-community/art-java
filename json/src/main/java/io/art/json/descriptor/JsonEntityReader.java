@@ -193,7 +193,7 @@ public class JsonEntityReader {
             case VALUE_NUMBER_INT:
                 return longArray(parseLongArray(parser));
             case VALUE_NUMBER_FLOAT:
-                return doubleArray(parseDoubleArray(parser));
+                return floatArray(parseFloatArray(parser));
             case VALUE_TRUE:
             case VALUE_FALSE:
                 return boolArray(parseBooleanArray(parser));
@@ -202,7 +202,7 @@ public class JsonEntityReader {
     }
 
 
-    private static Collection<String> parseStringArray(JsonParser parser) throws IOException {
+    private static List<String> parseStringArray(JsonParser parser) throws IOException {
         List<String> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {
@@ -213,18 +213,7 @@ public class JsonEntityReader {
         return array;
     }
 
-    private static Collection<Double> parseDoubleArray(JsonParser parser) throws IOException {
-        List<Double> array = dynamicArrayOf();
-        JsonToken currentToken = parser.currentToken();
-        do {
-            if (currentToken != VALUE_NUMBER_FLOAT) return array;
-            array.add(parser.getDoubleValue());
-            currentToken = parser.nextToken();
-        } while (!parser.isClosed() && currentToken != END_ARRAY);
-        return array;
-    }
-
-    private static Collection<Boolean> parseBooleanArray(JsonParser parser) throws IOException {
+    private static List<Boolean> parseBooleanArray(JsonParser parser) throws IOException {
         List<Boolean> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {
@@ -235,7 +224,7 @@ public class JsonEntityReader {
         return array;
     }
 
-    private static Collection<Long> parseLongArray(JsonParser parser) throws IOException {
+    private static List<Long> parseLongArray(JsonParser parser) throws IOException {
         List<Long> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {
@@ -246,7 +235,7 @@ public class JsonEntityReader {
         return array;
     }
 
-    private static Collection<Float> parseFloatArray(JsonParser parser) throws IOException {
+    private static List<Float> parseFloatArray(JsonParser parser) throws IOException {
         List<Float> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {

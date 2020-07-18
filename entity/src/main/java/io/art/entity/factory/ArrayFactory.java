@@ -18,59 +18,54 @@
 
 package io.art.entity.factory;
 
-import com.google.common.collect.*;
 import io.art.core.checker.*;
 import io.art.entity.immutable.*;
 import lombok.experimental.*;
-import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.ArrayValue.*;
+import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
 
 @UtilityClass
 public class ArrayFactory {
-    public static ArrayValue stringArray(Collection<String> value) {
+    public static ArrayValue stringArray(List<String> value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        ImmutableList<Collection<String>> list = of(value);
-        return new ArrayValue(index -> stringPrimitive(cast(list.get(index))), lazy(value::size));
+        return new ArrayValue(index -> stringPrimitive(cast(value.get(index))), lazy(value::size));
     }
 
-    public static ArrayValue longArray(Collection<Long> value) {
+    public static ArrayValue longArray(List<Long> value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        ImmutableList<Collection<Long>> list = of(value);
-        return new ArrayValue(index -> longPrimitive(cast(list.get(index))), lazy(value::size));
+        return new ArrayValue(index -> longPrimitive(cast(value.get(index))), lazy(value::size));
     }
 
-    public static ArrayValue intArray(Collection<Integer> value) {
+    public static ArrayValue intArray(List<Integer> value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        ImmutableList<Collection<Integer>> list = of(value);
-        return new ArrayValue(index -> intPrimitive(cast(list.get(index))), lazy(value::size));
+        return new ArrayValue(index -> intPrimitive(cast(value.get(index))), lazy(value::size));
     }
 
-    public static ArrayValue boolArray(Collection<Boolean> value) {
-        ImmutableList<Collection<Boolean>> list = of(value);
-        return new ArrayValue(index -> boolPrimitive(cast(list.get(index))), lazy(value::size));
+    public static ArrayValue boolArray(List<Boolean> value) {
+        return new ArrayValue(index -> boolPrimitive(cast(value.get(index))), lazy(value::size));
     }
 
-    public static ArrayValue doubleArray(Collection<Double> value) {
+    public static ArrayValue doubleArray(List<Double> value) {
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        ImmutableList<Collection<Double>> list = of(value);
-        return new ArrayValue(index -> doublePrimitive(cast(list.get(index))), lazy(value::size));
+        return new ArrayValue(index -> doublePrimitive(cast(value.get(index))), lazy(value::size));
     }
 
-    public static ArrayValue floatArray(Collection<Float> value) {
+    public static ArrayValue floatArray(List<Float> value) {
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        ImmutableList<Collection<Float>> list = of(value);
-        return new ArrayValue(index -> floatPrimitive(cast(list.get(index))), lazy(value::size));
+        return new ArrayValue(index -> floatPrimitive(cast(value.get(index))), lazy(value::size));
     }
 
-    public static ArrayValue byteArray(Collection<Byte> value) {
+    public static ArrayValue byteArray(List<Byte> value) {
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        ImmutableList<Collection<Byte>> list = of(value);
-        return new ArrayValue(index -> bytePrimitive(cast(list.get(index))), lazy(value::size));
+        return new ArrayValue(index -> bytePrimitive(cast(value.get(index))), lazy(value::size));
     }
 
 
@@ -106,6 +101,7 @@ public class ArrayFactory {
 
 
     public static <T extends Value> ArrayValue array(List<T> value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(value::get, lazy(value::size));
     }
