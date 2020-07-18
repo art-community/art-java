@@ -25,6 +25,8 @@ import org.msgpack.core.buffer.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.entity.immutable.Value.*;
+import static io.art.message.pack.constants.MessagePackConstants.ExceptionMessages.*;
+import static java.text.MessageFormat.*;
 import static java.util.stream.Collectors.*;
 import static org.msgpack.core.MessagePack.*;
 import static org.msgpack.value.ValueFactory.*;
@@ -85,9 +87,7 @@ public class MessagePackEntityWriter {
     }
 
     private static org.msgpack.value.Value writePrimitive(Primitive primitive) {
-        if (valueIsNull(primitive)) {
-            return null;
-        }
+        if (valueIsNull(primitive)) return null;
         switch (primitive.getPrimitiveType()) {
             case STRING:
                 return newString(primitive.getString());
@@ -104,20 +104,16 @@ public class MessagePackEntityWriter {
             case BYTE:
                 return newBinary(new byte[]{primitive.getByte()});
         }
-        return null;
+        throw new MessagePackMappingException(format(VALUE_TYPE_NOT_SUPPORTED, primitive.getType()));
     }
 
     private static org.msgpack.value.Value writeArray(ArrayValue array) {
-        if (valueIsNull(array)) {
-            return null;
-        }
-        return newArray(array.asStream().map(MessagePackEntityWriter::writeMessagePack).collect(toList()));
+        if (valueIsNull(array)) return null;
+        return newArray(array.asStream().map(MessagePackEntityWriter::writeMessagePack).filter(Objects::nonNull).collect(toList()));
     }
 
     private static org.msgpack.value.Value writeEntity(Entity entity) {
-        if (valueIsNull(entity)) {
-            return null;
-        }
+        if (valueIsNull(entity)) return null;
         MapBuilder mapBuilder = newMapBuilder();
         Set<Primitive> keys = entity.asMap().keySet();
         for (Primitive key : keys) {

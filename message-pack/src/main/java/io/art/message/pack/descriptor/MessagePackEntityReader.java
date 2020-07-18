@@ -152,7 +152,7 @@ public class MessagePackEntityReader {
             case NIL:
                 return null;
         }
-        throw new MessagePackMappingException(format(UNKNOWN_VALUE_TYPE, value.getValueType()));
+        throw new MessagePackMappingException(format(VALUE_TYPE_NOT_SUPPORTED, value.getValueType()));
     }
 
     private static ArrayValue readArray(org.msgpack.value.ArrayValue array) {

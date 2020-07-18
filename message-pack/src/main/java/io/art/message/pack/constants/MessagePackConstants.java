@@ -27,6 +27,6 @@ public interface MessagePackConstants {
     MimeType APPLICATION_MESSAGE_PACK_UTF_8 = mimeType("application", "message-pack", UTF_8);
 
     interface ExceptionMessages {
-        String UNKNOWN_VALUE_TYPE = "Unknown MessagePack value type: ''{0}''";
+        String VALUE_TYPE_NOT_SUPPORTED = "MessagePack value type ''{0}'' not supported";
     }
 }
