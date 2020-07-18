@@ -135,7 +135,7 @@ public class Entity implements Value {
     }
 
     public Value get(Primitive primitive) {
-        if (Value.valueIsNull(primitive)) {
+        if (valueIsNull(primitive)) {
             return null;
         }
         return valueProvider.apply(primitive);
@@ -179,13 +179,16 @@ public class Entity implements Value {
         if (EmptinessChecker.isEmpty(key)) {
             return null;
         }
+        Value value;
+        if (nonNull(value = get(key))) {
+            return value;
+        }
         Queue<String> sections = queueOf(key.split(ESCAPED_DOT));
         Entity entity = this;
-        Value value = null;
         String section;
         while ((section = sections.poll()) != null) {
             value = entity.get(section);
-            if (Value.valueIsNull(value)) return null;
+            if (valueIsNull(value)) return null;
             if (!isEntity(value)) {
                 if (sections.size() > 1) return null;
                 return value;
