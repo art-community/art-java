@@ -32,12 +32,12 @@ public class EntityFactory {
         return EMPTY;
     }
 
-    public static Entity entity(ImmutableSet<Primitive> fields, Function<Primitive, ? extends Value> valueProvider) {
-        return new Entity(fields, valueProvider);
+    public static Entity entity(ImmutableSet<Primitive> keys, Function<Primitive, ? extends Value> valueProvider) {
+        return new Entity(keys, valueProvider);
     }
 
-    public static Entity entity(Set<Primitive> fields, Function<Primitive, ? extends Value> valueProvider) {
-        return new Entity(copyOf(fields), valueProvider);
+    public static Entity entity(Set<Primitive> keys, Function<Primitive, ? extends Value> valueProvider) {
+        return new Entity(copyOf(keys), valueProvider);
     }
 
     public static Entity stringEntity(Set<String> fields, Function<String, ? extends Value> valueProvider) {

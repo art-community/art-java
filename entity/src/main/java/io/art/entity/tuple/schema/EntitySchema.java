@@ -41,9 +41,9 @@ public class EntitySchema extends ValueSchema {
 
     EntitySchema(Entity entity) {
         super(ENTITY);
-        Set<Primitive> fields = entity.asMap().keySet();
+        Set<Primitive> keys = entity.asMap().keySet();
         ImmutableList.Builder<EntityFieldSchema> schemaBuilder = ImmutableList.builder();
-        for (Primitive key : fields) {
+        for (Primitive key : keys) {
             if (isEmpty(key)) continue;
             Value value = entity.get(key);
             if (isNull(value)) continue;

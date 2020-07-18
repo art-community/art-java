@@ -38,8 +38,8 @@ public final class XmlEntityFromEntityConverter {
         if (Value.isEmpty(entity)) {
             return EMPTY;
         }
-        Set<Primitive> fields = entity.asMap().keySet();
-        for (Primitive key : fields) {
+        Set<Primitive> keys = entity.asMap().keySet();
+        for (Primitive key : keys) {
             if (isEmpty(key)) continue;
             Value value = entity.get(key);
             if (isNull(value)) continue;
@@ -53,8 +53,8 @@ public final class XmlEntityFromEntityConverter {
         if (Value.isEmpty(entity)) {
             return builder.create();
         }
-        Set<Primitive> fields = entity.asMap().keySet();
-        for (Primitive key : fields) {
+        Set<Primitive> keys = entity.asMap().keySet();
+        for (Primitive key : keys) {
             String keyAsString = key.getString();
             if (EmptinessChecker.isEmpty(keyAsString)) continue;
             Value value = entity.get(key);

@@ -137,12 +137,12 @@ public class JsonEntityWriter {
     }
 
     private static void writeJsonFields(JsonGenerator generator, Entity entity) throws IOException {
-        Set<Primitive> fields = entity.asMap().keySet();
-        for (Primitive field : fields) {
-            if (isEmpty(field)) continue;
-            Value value = entity.get(field);
+        Set<Primitive> keys = entity.asMap().keySet();
+        for (Primitive key : keys) {
+            if (isEmpty(key)) continue;
+            Value value = entity.get(key);
             if (isNull(value)) continue;
-            writeField(generator, field.getString(), value);
+            writeField(generator, key.getString(), value);
         }
     }
 

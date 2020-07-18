@@ -38,8 +38,9 @@ import java.util.stream.*;
 public class ArrayValue implements Value {
     @Getter
     private final ValueType type = ARRAY;
-    private final Function<Integer, ? extends Value> valuesProvider;
+    private final Function<Integer, ? extends Value> valueProvider;
     private final LazyValue<Integer> size;
+    private final Map<Integer, LazyValue<?>> mappedValueCache = concurrentHashMap();
 
     public int size() {
         return size.get();
@@ -47,11 +48,11 @@ public class ArrayValue implements Value {
 
 
     public Value get(int index) {
-        return valuesProvider.apply(index);
+        return valueProvider.apply(index);
     }
 
     public <T> T map(int index, ValueToModelMapper<T, ? extends Value> mapper) {
-        return let(cast(get(index)), mapper::map);
+        return cast(let(mappedValueCache.putIfAbsent(index, lazy(() -> mapper.map(cast(get(index))))), LazyValue::get));
     }
 
 
@@ -171,7 +172,6 @@ public class ArrayValue implements Value {
     private class ProxyList<T> implements List<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
         private final LazyValue<List<T>> evaluated;
-        private final Map<Integer, LazyValue<T>> cache = concurrentHashMap();
 
         public ProxyList(ValueToModelMapper<T, ? extends Value> mapper) {
             this.mapper = mapper;
@@ -188,7 +188,7 @@ public class ArrayValue implements Value {
 
             @Override
             public T next() {
-                T value = let(cache.putIfAbsent(cursor, lazy(() -> ArrayValue.this.map(cursor, mapper))), LazyValue::get);
+                T value = ArrayValue.this.map(cursor, mapper);
                 cursor++;
                 return value;
             }
@@ -205,7 +205,7 @@ public class ArrayValue implements Value {
 
             @Override
             public T next() {
-                T value = let(cache.putIfAbsent(cursor, lazy(() -> ArrayValue.this.map(cursor, mapper))), LazyValue::get);
+                T value = ArrayValue.this.map(cursor, mapper);
                 cursor++;
                 return value;
             }
@@ -217,8 +217,7 @@ public class ArrayValue implements Value {
 
             @Override
             public T previous() {
-                int index = previousIndex();
-                return let(cache.putIfAbsent(index, lazy(() -> ArrayValue.this.map(index, mapper))), LazyValue::get);
+                return ArrayValue.this.map(previousIndex(), mapper);
             }
 
             @Override
@@ -322,7 +321,7 @@ public class ArrayValue implements Value {
 
         @Override
         public T get(int index) {
-            return let(cache.putIfAbsent(index, lazy(() -> ArrayValue.this.map(index, mapper))), LazyValue::get);
+            return ArrayValue.this.map(index, mapper);
         }
 
         @Override
@@ -372,7 +371,6 @@ public class ArrayValue implements Value {
     private class ProxySet<T> implements Set<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
         private final LazyValue<Set<T>> evaluated;
-        private final Map<Integer, LazyValue<T>> cache = concurrentHashMap();
 
         public ProxySet(ValueToModelMapper<T, ? extends Value> mapper) {
             this.mapper = mapper;
@@ -389,7 +387,7 @@ public class ArrayValue implements Value {
 
             @Override
             public T next() {
-                T value = let(cache.putIfAbsent(cursor, lazy(() -> ArrayValue.this.map(cursor, mapper))), LazyValue::get);
+                T value = ArrayValue.this.map(cursor, mapper);
                 cursor++;
                 return value;
             }
@@ -466,7 +464,6 @@ public class ArrayValue implements Value {
 
     private class ProxyQueue<T> implements Queue<T> {
         protected final ValueToModelMapper<T, ? extends Value> mapper;
-        protected final Map<Integer, LazyValue<T>> cache = concurrentHashMap();
         private final LazyValue<Queue<T>> evaluated;
         private int index = 0;
 
@@ -485,7 +482,7 @@ public class ArrayValue implements Value {
 
             @Override
             public T next() {
-                T value = let(cache.putIfAbsent(cursor, lazy(() -> ArrayValue.this.map(cursor, mapper))), LazyValue::get);
+                T value = ArrayValue.this.map(cursor, mapper);
                 cursor++;
                 return value;
             }
@@ -555,7 +552,7 @@ public class ArrayValue implements Value {
 
         @Override
         public T peek() {
-            T value = let(cache.putIfAbsent(index, lazy(() -> ArrayValue.this.map(index, mapper))), LazyValue::get);
+            T value = ArrayValue.this.map(index, mapper);
             index++;
             return value;
         }
@@ -616,8 +613,7 @@ public class ArrayValue implements Value {
 
             @Override
             public T previous() {
-                int index = previousIndex();
-                return let(cache.putIfAbsent(index, lazy(() -> ArrayValue.this.map(index, mapper))), LazyValue::get);
+                return ArrayValue.this.map(previousIndex(), mapper);
             }
 
             @Override
@@ -690,13 +686,12 @@ public class ArrayValue implements Value {
 
         @Override
         public T getFirst() {
-            return let(cache.putIfAbsent(0, lazy(() -> ArrayValue.this.map(0, mapper))), LazyValue::get);
+            return ArrayValue.this.map(0, mapper);
         }
 
         @Override
         public T getLast() {
-            int index = size.get() - 1;
-            return let(cache.putIfAbsent(index, lazy(() -> ArrayValue.this.map(index, mapper))), LazyValue::get);
+            return ArrayValue.this.map(size.get() - 1, mapper);
         }
 
         @Override

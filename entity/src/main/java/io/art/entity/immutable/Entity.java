@@ -48,23 +48,22 @@ import java.util.function.*;
 public class Entity implements Value {
     @Getter
     private final ValueType type = ENTITY;
-    private final ImmutableSet<Primitive> fields;
+    private final ImmutableSet<Primitive> keys;
     private final Function<Primitive, ? extends Value> valueProvider;
+    private final Map<Primitive, LazyValue<?>> mappedValueCache = concurrentHashMap();
 
     public static EntityBuilder entityBuilder() {
         return new EntityBuilder();
     }
 
-
     public Map<Primitive, ? extends Value> toMap() {
         return mapToMap(key -> key, value -> value);
     }
 
-
     public <K, V> Map<K, V> mapToMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
         Map<K, V> map = mapOf();
-        for (Primitive field : fields) {
-            let(map(field, valueMapper), value -> map.put(keyMapper.map(field), value));
+        for (Primitive key : keys) {
+            let(map(key, valueMapper), value -> map.put(keyMapper.map(key), value));
         }
         return map;
     }
@@ -168,7 +167,7 @@ public class Entity implements Value {
     }
 
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
-        return let(cast(get(primitive)), mapper::map);
+        return cast(let(mappedValueCache.putIfAbsent(primitive, lazy(() -> let(cast(valueProvider.apply(primitive)), mapper::map))), LazyValue::get));
     }
 
 
@@ -195,7 +194,7 @@ public class Entity implements Value {
 
     @Override
     public boolean isEmpty() {
-        return EmptinessChecker.isEmpty(fields);
+        return EmptinessChecker.isEmpty(keys);
     }
 
     public class ProxyMap<K, V> implements Map<K, V> {
@@ -203,23 +202,22 @@ public class Entity implements Value {
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
         private final LazyValue<Map<K, V>> evaluated;
         private final LazyValue<Set<K>> evaluatedFields;
-        private final Map<K, LazyValue<V>> cache = concurrentHashMap();
 
         public ProxyMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
             this.valueMapper = valueMapper;
             this.fromKeyMapper = fromKeyMapper;
             this.evaluated = lazy(() -> Entity.this.mapToMap(toKeyMapper, valueMapper));
-            this.evaluatedFields = lazy(() -> fields.stream().map(toKeyMapper::map).collect(toImmutableSet()));
+            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toImmutableSet()));
         }
 
         @Override
         public int size() {
-            return fields.size();
+            return keys.size();
         }
 
         @Override
         public boolean isEmpty() {
-            return fields.isEmpty();
+            return keys.isEmpty();
         }
 
         @Override
@@ -227,7 +225,7 @@ public class Entity implements Value {
             if (isNull(key)) {
                 return false;
             }
-            return fields.contains(fromKeyMapper.map(cast(key)));
+            return keys.contains(fromKeyMapper.map(cast(key)));
         }
 
         @Override
@@ -243,9 +241,7 @@ public class Entity implements Value {
             if (isNull(key)) {
                 return null;
             }
-            K casted = cast(key);
-            Primitive keyPrimitive = fromKeyMapper.map(casted);
-            return let(cache.putIfAbsent(casted, lazy(() -> let(cast(valueProvider.apply(keyPrimitive)), valueMapper::map))), LazyValue::get);
+            return Entity.this.map(fromKeyMapper.map(cast(key)), valueMapper);
         }
 
         @Override

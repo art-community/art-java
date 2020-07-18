@@ -124,8 +124,8 @@ public class MessagePackEntityWriter {
             return emptyMap();
         }
         MapBuilder mapBuilder = newMapBuilder();
-        Set<Primitive> fields = entity.asMap().keySet();
-        for (Primitive key : fields) {
+        Set<Primitive> keys = entity.asMap().keySet();
+        for (Primitive key : keys) {
             if (isEmpty(key)) continue;
             Value value = entity.get(key);
             if (isNull(value)) continue;

@@ -101,8 +101,8 @@ public class ProtobufEntityWriter {
 
     private static com.google.protobuf.Value writeEntity(Entity entity) {
         Map<String, Value> map = mapOf();
-        Set<Primitive> fields = entity.asMap().keySet();
-        for (Primitive key : fields) {
+        Set<Primitive> keys = entity.asMap().keySet();
+        for (Primitive key : keys) {
             if (isEmpty(key)) continue;
             io.art.entity.immutable.Value value = entity.get(key);
             if (isNull(value)) continue;
