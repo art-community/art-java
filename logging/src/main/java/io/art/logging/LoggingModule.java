@@ -20,6 +20,7 @@ package io.art.logging;
 
 import io.art.core.module.*;
 import lombok.*;
+import org.apache.logging.log4j.*;
 import static io.art.core.context.Context.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
@@ -38,5 +39,17 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
 
     public static StatelessModuleProxy<LoggingModuleConfiguration> loggingModule() {
         return getLoggingModule();
+    }
+
+    public static Logger logger() {
+        return loggingModule().configuration().getLogger();
+    }
+
+    public static Logger logger(String topic) {
+        return loggingModule().configuration().getLogger(topic);
+    }
+
+    public static Logger logger(Class<?> topicClass) {
+        return loggingModule().configuration().getLogger(topicClass);
     }
 }

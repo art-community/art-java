@@ -196,7 +196,10 @@ public class FileExtensions {
     public static void writeFile(Path path, byte[] content) {
         ByteBuffer byteBuffer = wrap(content);
         try {
-            createDirectories(path.getParent());
+            Path parent = path.getParent();
+            if (nonNull(parent)) {
+                createDirectories(parent);
+            }
             FileChannel fileChannel = open(path, CREATE, TRUNCATE_EXISTING, WRITE);
             fileChannel.write(byteBuffer);
             fileChannel.close();
@@ -208,7 +211,10 @@ public class FileExtensions {
     public static void writeFileQuietly(Path path, byte[] content) {
         ByteBuffer byteBuffer = wrap(content);
         try {
-            createDirectories(path.getParent());
+            Path parent = path.getParent();
+            if (nonNull(parent)) {
+                createDirectories(parent);
+            }
             FileChannel fileChannel = open(path, CREATE, TRUNCATE_EXISTING, WRITE);
             fileChannel.write(byteBuffer);
             fileChannel.close();
