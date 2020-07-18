@@ -34,16 +34,18 @@ public final class XmlEntityFromEntityConverter {
         if (isNull(entity)) {
             return null;
         }
-        XmlEntity.XmlEntityBuilder xmlEntityBuilder = xmlEntityBuilder();
+        XmlEntity.XmlEntityBuilder builder = xmlEntityBuilder();
         if (Value.isEmpty(entity)) {
             return EMPTY;
         }
-        entity.asMap()
-                .entrySet()
-                .stream()
-                .filter(entry -> isPrimitive(entry.getKey()))
-                .forEach(entry -> addValue(xmlEntityBuilder, entry.getKey().toString(), entry.getValue()));
-        return xmlEntityBuilder.create();
+        Set<Primitive> fields = entity.asMap().keySet();
+        for (Primitive key : fields) {
+            if (isEmpty(key)) continue;
+            Value value = entity.get(key);
+            if (isNull(value)) continue;
+            addValue(builder, key.getString(), value);
+        }
+        return builder.create();
     }
 
     public static XmlEntity fromEntityAsAttributes(String tag, Entity entity) {
@@ -51,11 +53,17 @@ public final class XmlEntityFromEntityConverter {
         if (Value.isEmpty(entity)) {
             return builder.create();
         }
-        entity.asMap()
-                .entrySet()
-                .stream()
-                .filter(entry -> isPrimitive(entry.getKey()) && isPrimitive(entry.getValue()))
-                .forEach(entry -> builder.attribute(entry.getKey().toString(), asPrimitive(entry.getValue()).toString()));
+        Set<Primitive> fields = entity.asMap().keySet();
+        for (Primitive key : fields) {
+            String keyAsString = key.getString();
+            if (EmptinessChecker.isEmpty(keyAsString)) continue;
+            Value value = entity.get(key);
+            String valueAsString;
+            if (isNull(value) || !isPrimitive(value) || EmptinessChecker.isEmpty(valueAsString = asPrimitive(value).getString())) {
+                continue;
+            }
+            builder.attribute(keyAsString, valueAsString);
+        }
         return builder.create();
     }
 

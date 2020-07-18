@@ -125,23 +125,25 @@ public class JsonEntityWriter {
     private static void writeJsonEntity(JsonGenerator generator, Entity entity) throws IOException {
         if (isNull(entity)) return;
         generator.writeStartObject();
-        Map<Primitive, ? extends Value> fields = entity.toMap();
-        for (Primitive field : fields.keySet()) {
-            Value value = fields.get(field);
-            if (isNull(value)) continue;
-            writeField(generator, field.getString(), value);
-        }
+        writeJsonFields(generator, entity);
         generator.writeEndObject();
     }
 
     private static void writeJsonEntity(JsonGenerator jsonGenerator, String name, Entity entity) throws IOException {
         if (isNull(entity)) return;
         jsonGenerator.writeObjectFieldStart(name);
-        Map<Primitive, ? extends Value> fields = entity.toMap();
-        for (Primitive field : fields.keySet()) {
-            writeField(jsonGenerator, field.getString(), fields.get(field));
-        }
+        writeJsonFields(jsonGenerator, entity);
         jsonGenerator.writeEndObject();
+    }
+
+    private static void writeJsonFields(JsonGenerator generator, Entity entity) throws IOException {
+        Set<Primitive> fields = entity.asMap().keySet();
+        for (Primitive field : fields) {
+            if (isEmpty(field)) continue;
+            Value value = entity.get(field);
+            if (isNull(value)) continue;
+            writeField(generator, field.getString(), value);
+        }
     }
 
     private static void writeArray(JsonGenerator jsonGenerator, String fieldName, ArrayValue array) throws IOException {

@@ -34,7 +34,6 @@ import static io.art.entity.immutable.Value.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import java.util.*;
-import java.util.Map.*;
 
 @Getter
 public class EntitySchema extends ValueSchema {
@@ -42,14 +41,12 @@ public class EntitySchema extends ValueSchema {
 
     EntitySchema(Entity entity) {
         super(ENTITY);
-        Set<? extends Entry<Primitive, ? extends Value>> fields = entity.asMap().entrySet();
+        Set<Primitive> fields = entity.asMap().keySet();
         ImmutableList.Builder<EntityFieldSchema> schemaBuilder = ImmutableList.builder();
-        for (Entry<Primitive, ? extends Value> entry : fields) {
-            Primitive key = entry.getKey();
-            Value value = entry.getValue();
-            if (isEmpty(key) || isNull(value)) {
-                continue;
-            }
+        for (Primitive key : fields) {
+            if (isEmpty(key)) continue;
+            Value value = entity.get(key);
+            if (isNull(value)) continue;
             let(fromValue(value), schema -> schemaBuilder.add(new EntityFieldSchema(value.getType(), key.getString(), schema)));
         }
         fieldsSchema = schemaBuilder.build();

@@ -121,16 +121,17 @@ public class MessagePackEntityWriter {
             return emptyMap();
         }
         MapBuilder mapBuilder = newMapBuilder();
-        entity.asMap().entrySet().forEach(entry -> writeEntityField(mapBuilder, entry));
+        Set<Primitive> fields = entity.asMap().keySet();
+        for (Primitive key : fields) {
+            if (isEmpty(key)) continue;
+            Value value = entity.get(key);
+            if (isNull(value)) continue;
+            writeEntityField(mapBuilder, key, value);
+        }
         return mapBuilder.build();
     }
 
-    private static void writeEntityField(MapBuilder mapBuilder, Map.Entry<Primitive, ? extends Value> entry) {
-        final Primitive key = entry.getKey();
-        if (isEmpty(key) || isNull(entry.getValue())) {
-            return;
-        }
-        Value value = entry.getValue();
+    private static void writeEntityField(MapBuilder mapBuilder, Primitive key, Value value) {
         switch (key.getType()) {
             case STRING:
                 mapBuilder.put(newString(key.getString()), writeMessagePack(value));

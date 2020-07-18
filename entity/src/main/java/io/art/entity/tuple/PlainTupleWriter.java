@@ -64,9 +64,10 @@ public class PlainTupleWriter {
     private static List<?> writeEntity(Entity entity) {
         List<?> tuple = dynamicArrayOf();
         Map<Primitive, ? extends Value> fields = entity.asMap();
-        for (Map.Entry<Primitive, ? extends Value> entry : fields.entrySet()) {
-            if (isEmpty(entry.getKey()) || isNull(entry.getValue())) continue;
-            Value value = entry.getValue();
+        for (Primitive key : fields.keySet()) {
+            if (isEmpty(key)) continue;
+            Value value = entity.get(key);
+            if (isNull(value)) continue;
             if (isPrimitive(value)) {
                 tuple.add(cast(asPrimitive(value).getValue()));
                 continue;

@@ -27,6 +27,7 @@ import io.art.entity.exception.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.*;
 import lombok.*;
+import static com.google.common.collect.ImmutableSet.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
@@ -200,11 +201,13 @@ public class Entity implements Value {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
         private final LazyValue<Map<K, V>> evaluated;
+        private final LazyValue<Set<K>> evaluatedFields;
 
         public ProxyMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
             this.valueMapper = valueMapper;
             this.fromKeyMapper = fromKeyMapper;
             this.evaluated = lazy(() -> Entity.this.mapToMap(toKeyMapper, valueMapper));
+            this.evaluatedFields = lazy(() -> fields.stream().map(toKeyMapper::map).collect(toImmutableSet()));
         }
 
         @Override
@@ -222,7 +225,7 @@ public class Entity implements Value {
             if (isNull(key)) {
                 return false;
             }
-            return fields.contains(stringPrimitive(key.toString()));
+            return fields.contains(fromKeyMapper.map(cast(key)));
         }
 
         @Override
@@ -264,7 +267,7 @@ public class Entity implements Value {
         @Override
         @Nonnull
         public Set<K> keySet() {
-            return evaluated.get().keySet();
+            return evaluatedFields.get();
         }
 
         @Override

@@ -39,7 +39,6 @@ import static java.util.stream.Collectors.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.Map.*;
 import java.util.function.*;
 
 @UtilityClass
@@ -102,11 +101,13 @@ public class ProtobufEntityWriter {
 
     private static com.google.protobuf.Value writeEntity(Entity entity) {
         Map<String, Value> map = mapOf();
-        for (Entry<Primitive, ? extends io.art.entity.immutable.Value> entry : entity.asMap().entrySet()) {
-            if (isEmpty(entry.getValue())) continue;
-            Value protobuf = writeProtobuf(entry.getValue());
-            if (isNull(protobuf)) continue;
-            map.put(entry.getKey().toString(), protobuf);
+        Set<Primitive> fields = entity.asMap().keySet();
+        for (Primitive key : fields) {
+            if (isEmpty(key)) continue;
+            io.art.entity.immutable.Value value = entity.get(key);
+            if (isNull(value)) continue;
+            Value protobuf = writeProtobuf(value);
+            map.put(key.getString(), protobuf);
         }
         return com.google.protobuf.Value.newBuilder()
                 .setStructValue(Struct.newBuilder().putAllFields(map).build())
