@@ -150,10 +150,11 @@ class HttpServerRequestHandler {
                 if (isEmpty(submittedFileName)) {
                     continue;
                 }
-                InputStream inputStream = part.getInputStream();
-                byte[] value = toByteArray(inputStream);
-                if (!isEmpty(value)) {
-                    entityBuilder.put(submittedFileName, binary(value));
+                try (InputStream inputStream = part.getInputStream()) {
+                    byte[] value = toByteArray(inputStream);
+                    if (!isEmpty(value)) {
+                        entityBuilder.put(submittedFileName, binary(value));
+                    }
                 }
             } catch (IOException ioException) {
                 loggingModule()
