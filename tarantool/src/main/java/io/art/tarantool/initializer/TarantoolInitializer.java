@@ -20,26 +20,13 @@ package io.art.tarantool.initializer;
 
 import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
+import io.art.tarantool.configuration.*;
+import io.art.tarantool.exception.*;
+import io.art.tarantool.module.*;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
 import org.tarantool.*;
 import org.zeroturnaround.exec.*;
-import io.art.tarantool.configuration.*;
-import io.art.tarantool.exception.*;
-import io.art.tarantool.module.*;
-import static java.io.File.*;
-import static java.lang.System.*;
-import static java.lang.Thread.*;
-import static java.nio.file.Files.*;
-import static java.nio.file.Paths.*;
-import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
-import static java.util.Optional.*;
-import static java.util.concurrent.ForkJoinPool.*;
-import static java.util.concurrent.TimeUnit.*;
-import static java.util.stream.Collectors.*;
-import static lombok.AccessLevel.*;
-import static org.apache.logging.log4j.io.IoBuilder.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
@@ -47,8 +34,8 @@ import static io.art.core.constants.SystemConstants.*;
 import static io.art.core.converter.WslPathConverter.*;
 import static io.art.core.determinant.SystemDeterminant.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.extensions.JarExtensions.*;
+import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.tarantool.connector.TarantoolConnector.*;
@@ -63,6 +50,19 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.TemplateParame
 import static io.art.tarantool.constants.TarantoolModuleConstants.Templates.USER;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
 import static io.art.tarantool.module.TarantoolModule.*;
+import static java.io.File.*;
+import static java.lang.System.*;
+import static java.lang.Thread.*;
+import static java.nio.file.Files.*;
+import static java.nio.file.Paths.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static java.util.Optional.*;
+import static java.util.concurrent.ForkJoinPool.*;
+import static java.util.concurrent.TimeUnit.*;
+import static java.util.stream.Collectors.*;
+import static lombok.AccessLevel.*;
+import static org.apache.logging.log4j.io.IoBuilder.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
@@ -70,11 +70,9 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class TarantoolInitializer {
-    private final static OutputStream TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM = forLogger(loggingModule()
-            .getLogger(TarantoolInitializer.class))
-            .buildOutputStream();
+    private final static OutputStream loggerOutputStream = forLogger(logger(TarantoolInitializer.class)).buildOutputStream();
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = loggingModule().getLogger(TarantoolInitializer.class);
+    private static final Logger logger = logger(TarantoolInitializer.class);
 
     public static void initializeTarantools() {
         tarantoolModule().getTarantoolConfigurations()
@@ -84,6 +82,7 @@ public class TarantoolInitializer {
                 .map(Map.Entry::getKey)
                 .map(TarantoolInitializer::initializeTarantool)
                 .forEach(Runnable::run);
+        ignoreException(loggerOutputStream::close, logger(TarantoolInitializer.class)::error);
     }
 
     private static Runnable initializeTarantool(String instanceId) {
@@ -92,7 +91,7 @@ public class TarantoolInitializer {
             try {
                 initialTarantoolSynchronously(instanceId, tarantoolConfiguration);
             } catch (Throwable throwable) {
-                loggingModule().getLogger(TarantoolInitializer.class).error(throwable.getMessage(), throwable);
+                logger(TarantoolInitializer.class).error(throwable.getMessage(), throwable);
                 throw throwable;
             }
         });
@@ -230,8 +229,8 @@ public class TarantoolInitializer {
         StartedProcess process = new ProcessExecutor()
                 .command(executableCommand)
                 .directory(new File(workingDirectory))
-                .redirectOutputAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
-                .redirectErrorAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
+                .redirectOutputAlsoTo(loggerOutputStream)
+                .redirectErrorAlsoTo(loggerOutputStream)
                 .start();
         waitForTarantoolProcess(instanceId, localConfiguration, address, process);
     }
@@ -263,8 +262,8 @@ public class TarantoolInitializer {
         StartedProcess process = new ProcessExecutor()
                 .command(executableCommand)
                 .directory(new File(workingDirectory))
-                .redirectOutputAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
-                .redirectErrorAlsoTo(TARANTOOL_INITIALIZER_LOGGER_OUTPUT_STREAM)
+                .redirectOutputAlsoTo(loggerOutputStream)
+                .redirectErrorAlsoTo(loggerOutputStream)
                 .start();
         waitForTarantoolProcess(instanceId, localConfiguration, address, process);
     }

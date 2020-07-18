@@ -21,6 +21,7 @@ package io.art.message.pack.descriptor;
 import io.art.entity.immutable.*;
 import io.art.message.pack.exception.*;
 import lombok.experimental.*;
+import org.msgpack.core.*;
 import org.msgpack.core.buffer.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
@@ -60,8 +61,9 @@ public class MessagePackEntityWriter {
         if (Value.valueIsNull(value)) {
             return EMPTY_BYTES;
         }
-        try (ArrayBufferOutput output = new ArrayBufferOutput()) {
-            newDefaultPacker(output).packValue(writeMessagePack(value)).close();
+        try (ArrayBufferOutput output = new ArrayBufferOutput();
+             MessagePacker packer = newDefaultPacker(output)) {
+            packer.packValue(writeMessagePack(value)).close();
             return output.toByteArray();
         } catch (Throwable throwable) {
             throw new MessagePackMappingException(throwable);

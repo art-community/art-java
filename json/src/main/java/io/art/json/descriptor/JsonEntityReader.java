@@ -70,8 +70,7 @@ public class JsonEntityReader {
 
     public static Value readJson(JsonFactory jsonFactory, String json) {
         if (isEmpty(json)) return null;
-        try {
-            JsonParser parser = jsonFactory.createParser(json);
+        try (JsonParser parser = jsonFactory.createParser(json)) {
             JsonToken nextToken = parser.nextToken();
             if (isNull(nextToken)) return null;
             switch (nextToken) {

@@ -28,10 +28,7 @@ import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.entity.immutable.Value.*;
-import static io.art.json.constants.JsonLoggingMessages.*;
 import static io.art.json.module.JsonModule.*;
-import static io.art.logging.LoggingModule.*;
-import static java.util.Objects.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -74,10 +71,9 @@ public class JsonEntityWriter {
         if (valueIsNull(value)) {
             return null;
         }
-        StringWriter stringWriter = new StringWriter();
-        JsonGenerator generator = null;
-        try {
-            generator = jsonFactory.createGenerator(stringWriter);
+
+        try (StringWriter stringWriter = new StringWriter();
+             JsonGenerator generator = jsonFactory.createGenerator(stringWriter)) {
             if (prettyOutput) {
                 generator.useDefaultPrettyPrinter();
             }
@@ -105,19 +101,10 @@ public class JsonEntityWriter {
                 case BYTE:
                     return asPrimitive(value).getByte().toString();
             }
+            return stringWriter.toString();
         } catch (IOException ioException) {
             throw new JsonMappingException(ioException);
-        } finally {
-            if (nonNull(generator)) {
-                try {
-                    generator.flush();
-                    generator.close();
-                } catch (IOException ioException) {
-                    loggingModule().configuration().getLogger(JsonEntityWriter.class).error(JSON_GENERATOR_CLOSING_ERROR, ioException);
-                }
-            }
         }
-        return stringWriter.toString();
     }
 
 

@@ -19,27 +19,21 @@
 package io.art.http.client.body.descriptor;
 
 import org.apache.http.*;
-import io.art.http.client.module.*;
-import static java.util.Objects.*;
 import static io.art.core.constants.ArrayConstants.*;
+import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.http.client.constants.HttpClientExceptionMessages.*;
+import static io.art.http.client.module.HttpClientModule.*;
 import static io.art.logging.LoggingModule.*;
-import java.io.*;
+import static java.util.Objects.*;
 
 public interface HttpBodyDescriptor {
     static byte[] readResponseBody(HttpEntity responseEntity) {
         if (isNull(responseEntity)) return EMPTY_BYTES;
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        byte[] buf = new byte[HttpClientModule.httpClientModule().getResponseBodyBufferSize()];
         try {
-            InputStream inputStream = responseEntity.getContent();
-            for (int n = inputStream.read(buf); n != -1; n = inputStream.read(buf)) {
-                os.write(buf, 0, n);
-            }
+            return toByteArray(responseEntity.getContent(), httpClientModule().getResponseBodyBufferSize());
         } catch (Throwable throwable) {
-            loggingModule().getLogger(HttpBodyDescriptor.class).error(REQUEST_BODY_READING_EXCEPTION, throwable);
+            logger(HttpBodyDescriptor.class).error(REQUEST_BODY_READING_EXCEPTION, throwable);
             return EMPTY_BYTES;
         }
-        return os.toByteArray();
     }
 }

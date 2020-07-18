@@ -5,7 +5,6 @@ import io.art.json.exception.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.json.module.JsonModule.*;
-import static java.util.Objects.*;
 import java.io.*;
 import java.nio.file.*;
 
@@ -15,9 +14,6 @@ public class JsonEntityPrettyWriter {
     }
 
     public static void prettyWriteJson(Value value, OutputStream outputStream) {
-        if (isNull(outputStream)) {
-            return;
-        }
         try {
             outputStream.write(prettyWriteJson(value).getBytes(contextConfiguration().getCharset()));
         } catch (IOException ioException) {

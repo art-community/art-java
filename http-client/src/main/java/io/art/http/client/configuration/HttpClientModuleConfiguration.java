@@ -18,6 +18,10 @@
 
 package io.art.http.client.configuration;
 
+import io.art.http.client.exception.*;
+import io.art.http.client.interceptor.*;
+import io.art.http.client.model.*;
+import io.art.http.configuration.*;
 import lombok.*;
 import org.apache.http.*;
 import org.apache.http.client.config.*;
@@ -33,25 +37,20 @@ import org.apache.http.impl.nio.reactor.*;
 import org.apache.http.nio.conn.*;
 import org.apache.http.nio.conn.ssl.*;
 import org.zalando.logbook.httpclient.*;
-import io.art.http.client.exception.*;
-import io.art.http.client.interceptor.*;
-import io.art.http.client.model.*;
-import io.art.http.configuration.*;
-import static java.lang.String.*;
-import static java.util.Collections.*;
-import static java.util.Objects.*;
-import static org.apache.http.HttpVersion.*;
-import static org.apache.http.ssl.SSLContexts.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.ExceptionExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.handler.ExceptionHandler.*;
 import static io.art.http.client.constants.HttpClientExceptionMessages.*;
 import static io.art.http.client.constants.HttpClientModuleConstants.*;
 import static io.art.http.client.interceptor.HttpClientInterceptor.*;
 import static io.art.http.client.module.HttpClientModule.*;
 import static io.art.http.constants.HttpCommonConstants.*;
-import static io.art.logging.LoggingModule.*;
+import static java.lang.String.*;
+import static java.util.Collections.*;
+import static java.util.Objects.*;
+import static org.apache.http.HttpVersion.*;
+import static org.apache.http.ssl.SSLContexts.*;
 import javax.net.ssl.*;
 import java.io.*;
 import java.security.*;
@@ -101,7 +100,7 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
     Map<String, HttpCommunicationTargetConfiguration> getCommunicationTargets();
 
     default HttpCommunicationTargetConfiguration getCommunicationTargetConfiguration(String serviceId) {
-        return exceptionIfNull(getCommunicationTargets().get(serviceId), new HttpClientException(format(HTTP_COMMUNICATION_TARGET_NOT_FOUND, serviceId))).toBuilder().build();
+        return throwIfNull(getCommunicationTargets().get(serviceId), new HttpClientException(format(HTTP_COMMUNICATION_TARGET_NOT_FOUND, serviceId))).toBuilder().build();
     }
 
     HttpClientModuleDefaultConfiguration DEFAULT_CONFIGURATION = new HttpClientModuleDefaultConfiguration();
@@ -225,24 +224,14 @@ public interface HttpClientModuleConfiguration extends HttpModuleConfiguration {
         }
 
         private KeyStore loadKeyStore() {
-            FileInputStream keyStoreInputStream = null;
             try {
                 KeyStore keyStore = KeyStore.getInstance(getSslKeyStoreType());
-                keyStoreInputStream = new FileInputStream(new File(getSslKeyStoreFilePath()));
-                keyStore.load(keyStoreInputStream, getSslKeyStorePassword().toCharArray());
-                return keyStore;
+                try (FileInputStream inputStream = new FileInputStream(new File(getSslKeyStoreFilePath()))) {
+                    keyStore.load(inputStream, getSslKeyStorePassword().toCharArray());
+                    return keyStore;
+                }
             } catch (Throwable throwable) {
                 throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
-            } finally {
-                if (nonNull(keyStoreInputStream)) {
-                    try {
-                        keyStoreInputStream.close();
-                    } catch (IOException ioException) {
-                        loggingModule()
-                                .getLogger(HttpClientModuleConfiguration.class)
-                                .error(HTTP_SSL_CONFIGURATION_FAILED, ioException);
-                    }
-                }
             }
         }
 

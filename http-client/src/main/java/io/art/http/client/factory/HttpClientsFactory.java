@@ -18,6 +18,8 @@
 
 package io.art.http.client.factory;
 
+import io.art.http.client.exception.*;
+import io.art.http.client.model.*;
 import lombok.experimental.*;
 import org.apache.http.config.*;
 import org.apache.http.conn.socket.*;
@@ -32,15 +34,11 @@ import org.apache.http.nio.conn.*;
 import org.apache.http.nio.conn.ssl.*;
 import org.apache.http.ssl.SSLContexts;
 import org.zalando.logbook.httpclient.*;
-import io.art.http.client.configuration.*;
-import io.art.http.client.exception.*;
-import io.art.http.client.model.*;
-import static java.util.Objects.*;
-import static org.apache.http.ssl.SSLContexts.*;
 import static io.art.http.client.constants.HttpClientExceptionMessages.*;
 import static io.art.http.client.module.HttpClientModule.*;
 import static io.art.http.constants.HttpCommonConstants.*;
-import static io.art.logging.LoggingModule.*;
+import static java.util.Objects.*;
+import static org.apache.http.ssl.SSLContexts.*;
 import javax.net.ssl.*;
 import java.io.*;
 import java.security.*;
@@ -135,24 +133,14 @@ public class HttpClientsFactory {
     }
 
     private static KeyStore loadKeyStore(HttpClientConfiguration configuration) {
-        FileInputStream keyStoreInputStream = null;
         try {
             KeyStore keyStore = KeyStore.getInstance(configuration.getSslKeyStoreType());
-            keyStoreInputStream = new FileInputStream(new File(configuration.getSslKeyStoreFilePath()));
-            keyStore.load(keyStoreInputStream, configuration.getSslKeyStorePassword().toCharArray());
-            return keyStore;
+            try (FileInputStream inputStream = new FileInputStream(new File(configuration.getSslKeyStoreFilePath()))) {
+                keyStore.load(inputStream, configuration.getSslKeyStorePassword().toCharArray());
+                return keyStore;
+            }
         } catch (Throwable throwable) {
             throw new HttpClientException(HTTP_SSL_CONFIGURATION_FAILED, throwable);
-        } finally {
-            if (nonNull(keyStoreInputStream)) {
-                try {
-                    keyStoreInputStream.close();
-                } catch (IOException ioException) {
-                    loggingModule()
-                            .getLogger(HttpClientModuleConfiguration.class)
-                            .error(HTTP_SSL_CONFIGURATION_FAILED, ioException);
-                }
-            }
         }
     }
 }

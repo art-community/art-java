@@ -23,6 +23,7 @@ import io.art.entity.immutable.ArrayValue;
 import io.art.entity.immutable.Value;
 import io.art.message.pack.exception.*;
 import lombok.experimental.*;
+import org.msgpack.core.*;
 import org.msgpack.value.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
@@ -50,8 +51,8 @@ public class MessagePackEntityReader {
     }
 
     public static Value readMessagePack(byte[] bytes) {
-        try {
-            return readMessagePack(newDefaultUnpacker(bytes).unpackValue());
+        try (MessageUnpacker unpacker = newDefaultUnpacker(bytes)) {
+            return readMessagePack(unpacker.unpackValue());
         } catch (Throwable throwable) {
             throw new MessagePackMappingException(throwable);
         }

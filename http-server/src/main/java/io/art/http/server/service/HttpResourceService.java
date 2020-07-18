@@ -1,7 +1,7 @@
 /*
- * ART
+ * ART Java
  *
- * Copyright 2020 ART
+ * Copyright 2019 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,22 +22,22 @@ import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
 import io.art.entity.immutable.*;
 import lombok.experimental.*;
-import io.art.http.server.HttpServerModuleConfiguration.*;
-import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.InputOutputStreamExtensions.*;
+import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.BinaryValue.*;
+import static io.art.http.server.HttpServerModuleConfiguration.*;
 import static io.art.http.server.constants.HttpServerExceptionMessages.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;
 import static io.art.http.server.module.HttpServerModule.*;
 import static io.art.logging.LoggingModule.*;
+import static java.util.Objects.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
@@ -62,7 +62,7 @@ public class HttpResourceService {
         if (nonNull(resource = resourcePathMappings.get(resourcePath))) {
             return cast(resource.getType() == STRING
                     ? stringPrimitive(getStringResource(resource.getPath(), getOrElse(resource.getCharset(), charset), resourceConfiguration))
-                    : byteArray(getBinaryResource(resource.getPath(), resourceConfiguration)));
+                    : binary(getBinaryResource(resource.getPath(), resourceConfiguration)));
         }
 
         HttpResourceExtensionMapping resourceExtensionMapping;
@@ -73,16 +73,16 @@ public class HttpResourceService {
             if (nonNull(customResource = resourceExtensionMapping.getCustomHttpResource())) {
                 return cast(customResource.getType() == STRING
                         ? stringPrimitive(getStringResource(customResource.getPath(), getOrElse(customResource.getCharset(), charset), resourceConfiguration))
-                        : byteArray(getBinaryResource(customResource.getPath(), resourceConfiguration)));
+                        : binary(getBinaryResource(customResource.getPath(), resourceConfiguration)));
             }
             return cast(resourceExtensionMapping.getResourceType() == STRING
                     ? stringPrimitive(getStringResource(resourcePath, getOrElse(resourceExtensionMapping.getMimeType().getCharset(), charset), resourceConfiguration))
-                    : byteArray(getBinaryResource(resourcePath, resourceConfiguration)));
+                    : binary(getBinaryResource(resourcePath, resourceConfiguration)));
         }
         HttpResource defaultResource = resourceConfiguration.getDefaultResource();
         return cast(defaultResource.getType() == STRING
                 ? stringPrimitive(getStringResource(defaultResource.getPath(), getOrElse(defaultResource.getCharset(), charset), resourceConfiguration))
-                : byteArray(getBinaryResource(defaultResource.getPath(), resourceConfiguration)));
+                : binary(getBinaryResource(defaultResource.getPath(), resourceConfiguration)));
 
     }
 
@@ -123,10 +123,8 @@ public class HttpResourceService {
                 }
             }
             return resourceContent;
-        } catch (IOException ioException) {
-            loggingModule()
-                    .getLogger(HttpResourceService.class)
-                    .error(RESOURCE_ERROR, ioException);
+        } catch (Throwable throwable) {
+            logger(HttpResourceService.class).error(RESOURCE_ERROR, throwable);
         }
         return EMPTY_STRING;
     }
@@ -148,23 +146,18 @@ public class HttpResourceService {
     private static byte[] getBinaryResourceContent(URL resourceUrl, HttpResourceConfiguration resourceConfiguration) {
         try (InputStream pageStream = resourceUrl.openStream()) {
             return resolveResourceBinaryContent(pageStream, resourceConfiguration);
-        } catch (IOException ioException) {
-            loggingModule()
-                    .getLogger(HttpResourceService.class)
-                    .error(RESOURCE_ERROR, ioException);
+        } catch (Throwable throwable) {
+            logger(HttpResourceService.class).error(RESOURCE_ERROR, throwable);
         }
         return EMPTY_BYTES;
     }
 
-    private static String resolveResourceContent(InputStream pageStream, Charset charset, HttpResourceConfiguration resourceConfiguration) throws IOException {
+    private static String resolveResourceContent(InputStream pageStream, Charset charset, HttpResourceConfiguration resourceConfiguration) {
         return new String(resolveResourceBinaryContent(pageStream, resourceConfiguration), charset);
     }
 
-    private static byte[] resolveResourceBinaryContent(InputStream pageStream, HttpResourceConfiguration resourceConfiguration) throws IOException {
-        BufferedInputStream bufferedInputStream = new BufferedInputStream(pageStream);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        transferBytes(bufferedInputStream, byteArrayOutputStream, resourceConfiguration.getResourceBufferSize());
-        return byteArrayOutputStream.toByteArray();
+    private static byte[] resolveResourceBinaryContent(InputStream pageStream, HttpResourceConfiguration resourceConfiguration) {
+        return toByteArray(pageStream, resourceConfiguration.getResourceBufferSize());
     }
 
     private static URL mapResourceUrl(String resource, HttpResourceConfiguration resourceConfiguration) {

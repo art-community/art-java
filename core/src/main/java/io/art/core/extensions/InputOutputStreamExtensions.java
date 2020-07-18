@@ -1,7 +1,7 @@
 /*
- * ART
+ * ART Java
  *
- * Copyright 2020 ART
+ * Copyright 2019 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,13 @@ package io.art.core.extensions;
 
 import lombok.experimental.*;
 import static io.art.core.constants.BufferConstants.*;
-import static io.art.core.constants.StreamConstants.*;
+import static io.art.core.extensions.InputStreamExtensions.*;
 import java.io.*;
 
 @UtilityClass
 public class InputOutputStreamExtensions {
     public static void transferBytes(InputStream inputStream, OutputStream outputStream, int bufferSize) throws IOException {
-        byte[] bytes = new byte[bufferSize];
-        int readChars;
-        while ((readChars = inputStream.read(bytes)) != EOF) {
-            outputStream.write(bytes, 0, readChars);
-        }
+        outputStream.write(toByteArray(inputStream, bufferSize));
     }
 
     public static void transferBytes(InputStream inputStream, OutputStream outputStream) throws IOException {

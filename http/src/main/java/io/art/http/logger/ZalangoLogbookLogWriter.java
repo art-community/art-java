@@ -36,7 +36,7 @@ public class ZalangoLogbookLogWriter implements HttpLogWriter {
 
     public ZalangoLogbookLogWriter(Supplier<Boolean> enabled) {
         this.enabled = enabled;
-        this.logger = lazy(() -> loggingModule().getLogger(ZalangoLogbookLogWriter.class));
+        this.logger = lazy(() -> logger(ZalangoLogbookLogWriter.class));
         this.activator = chooseActivator(INFO);
         this.consumer = chooseConsumer(INFO);
     }

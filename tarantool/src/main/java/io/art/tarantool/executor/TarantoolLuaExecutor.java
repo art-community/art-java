@@ -18,33 +18,35 @@
 
 package io.art.tarantool.executor;
 
+import io.art.core.extensions.*;
 import lombok.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
-import io.art.core.extensions.*;
+import static io.art.logging.LoggingModule.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
+import static io.art.tarantool.module.TarantoolModule.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import static io.art.logging.LoggingModule.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
-import static io.art.tarantool.module.TarantoolModule.*;
 import java.io.*;
 
 @UtilityClass
 public final class TarantoolLuaExecutor {
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = loggingModule().getLogger(TarantoolLuaExecutor.class);
+    private static final Logger logger = logger(TarantoolLuaExecutor.class);
 
     public static void executeLuaScript(String instanceId, String scriptName) {
         String script;
-        InputStream scriptStream = TarantoolLuaExecutor.class
-                .getClassLoader()
-                .getResourceAsStream(scriptName);
-        if (isNull(scriptStream)) {
-            return;
+        try (InputStream scriptStream = TarantoolLuaExecutor.class.getClassLoader().getResourceAsStream(scriptName)) {
+            if (isNull(scriptStream)) {
+                return;
+            }
+            script = InputStreamExtensions.toString(scriptStream);
+            evaluateLuaScript(instanceId, script);
+        } catch (IOException ioException) {
+            getLogger().error(LUA_SCRIPT_READING_ERROR, ioException);
         }
-        script = InputStreamExtensions.toString(scriptStream);
-        evaluateLuaScript(instanceId, script);
     }
 
     public static void evaluateLuaScript(String instanceId, String script) {
