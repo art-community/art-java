@@ -107,7 +107,7 @@ public class ModuleLauncher {
         System.out.println(writeProtobuf(readProtobuf(writeProtobuf(entity))));
         System.out.println(writeMessagePack(readMessagePack(writeMessagePack(entity))));
         System.out.println(writeTuple(readTuple(writeTuple(entity).getTuple(), writeTuple(entity).getSchema())));
-        System.out.println(writeXml(readXml(writeXml(fromEntityAsTags(entityBuilder().put("entity", entity).build())))));
+        System.out.println(writeXml(fromEntityAsTags(toEntityFromTags(readXml(writeXml(fromEntityAsTags(entityBuilder().put("entity", entity).build())))))));
         System.out.println(writeXml(fromEntityAsAttributes("root", asEntity(toEntityFromAttributes(readXml(writeXml(fromEntityAsAttributes("root", entity)))).get("root")))));
     }
 }

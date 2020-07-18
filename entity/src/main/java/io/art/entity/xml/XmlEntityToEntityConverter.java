@@ -18,6 +18,7 @@
 
 package io.art.entity.xml;
 
+import com.google.common.collect.*;
 import io.art.entity.builder.*;
 import io.art.entity.immutable.Value;
 import io.art.entity.immutable.*;
@@ -38,6 +39,42 @@ import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class XmlEntityToEntityConverter {
+
+
+    /*
+
+<entity>
+    <int>123</int>
+    <bool>false</bool>
+    <float>123.0</float>
+    <double>123.0</double>
+    <long>123</long>
+    <string>test</string>
+    <object>
+        <string>test</string>
+        <string-2>test</string-2>
+    </object>
+    <array>
+        <test></test>
+        <test></test>
+    </array>
+    <objects>
+        <string>test</string>
+        <string>test</string>
+    </objects>
+    <innerArray>
+        <string>test</string>
+        <innerArray>
+            <string>test</string>
+        </innerArray>
+        <string>test</string>
+        <innerArray>
+            <string>test</string>
+        </innerArray>
+    </innerArray>
+</entity>
+
+     */
     public static Entity toEntityFromTags(XmlEntity xmlEntity) {
         if (Value.valueIsNull(xmlEntity)) return null;
         EntityBuilder entityBuilder = entityBuilder();
@@ -45,10 +82,11 @@ public final class XmlEntityToEntityConverter {
         if (isNotEmpty(value)) {
             entityBuilder.put(xmlEntity.getTag(), stringPrimitive(value));
         }
-        if (isEmpty(xmlEntity.getChildren())) return entityBuilder.build();
-        if (areAllUnique(xmlEntity.getChildren().stream().map(XmlEntity::getTag).collect(toList()))) {
+        ImmutableList<XmlEntity> children = xmlEntity.getChildren();
+        if (isEmpty(children)) return entityBuilder.build();
+        if (areAllUnique(children.stream().map(XmlEntity::getTag).collect(toList()))) {
             EntityBuilder innerEntityBuilder = entityBuilder();
-            for (XmlEntity child : xmlEntity.getChildren()) {
+            for (XmlEntity child : children) {
                 if (isEmpty(child.getChildren())) {
                     innerEntityBuilder.put(child.getTag(), stringPrimitive(child.getValue()));
                     continue;
@@ -59,32 +97,22 @@ public final class XmlEntityToEntityConverter {
             }
             return entityBuilder.put(xmlEntity.getTag(), innerEntityBuilder.build()).build();
         }
-        List<XmlEntity> childrenCollection = xmlEntity.getChildren()
-                .stream()
-                .filter(entity -> nonNull(entity.getTag()))
-                .collect(groupingBy(XmlEntity::getTag))
-                .entrySet()
-                .stream()
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue))
-                .values()
-                .stream()
-                .findFirst()
-                .orElse(emptyList());
-        List<Value> collection = dynamicArrayOf();
-        for (XmlEntity child : childrenCollection) {
+        ImmutableList.Builder<Value> collection = ImmutableList.builderWithExpectedSize(children.size());
+        for (XmlEntity child : children) {
             if (isEmpty(child.getChildren()) && isEmpty(child.getValue())) {
                 collection.add(stringPrimitive(child.getTag()));
                 continue;
             }
             if (isEmpty(child.getChildren())) {
-                collection.add(cast(entityBuilder().put(child.getTag(), stringPrimitive(child.getValue())).build()));
+                collection.add(entityBuilder().put(child.getTag(), stringPrimitive(child.getValue())).build());
+                continue;
             }
             Entity entity = toEntityFromTags(child);
             if (nonNull(entity)) {
-                collection.add(cast(entityBuilder().put(child.getTag(), entity.get(child.getTag())).build()));
+                collection.add(entity);
             }
         }
-        return entityBuilder.put(xmlEntity.getTag(), array(collection)).build();
+        return entityBuilder.put(xmlEntity.getTag(), array(collection.build())).build();
     }
 
     public static Entity toEntityFromAttributes(XmlEntity xmlEntity) {
