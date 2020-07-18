@@ -31,6 +31,9 @@ import java.util.*;
 @NoArgsConstructor(access = PRIVATE)
 public final class XmlEntityFromEntityConverter {
     public static XmlEntity fromEntityAsTags(Entity entity) {
+        if (isNull(entity)) {
+            return null;
+        }
         XmlEntity.XmlEntityBuilder xmlEntityBuilder = xmlEntityBuilder();
         if (Value.isEmpty(entity)) {
             return EMPTY;

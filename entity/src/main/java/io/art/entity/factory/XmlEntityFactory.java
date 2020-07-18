@@ -23,8 +23,8 @@ import lombok.experimental.*;
 import static io.art.entity.immutable.XmlEntity.*;
 
 @UtilityClass
-public class XmlFactory {
-    public static XmlEntity emptyXml() {
+public class XmlEntityFactory {
+    public static XmlEntity emptyXmlEntity() {
         return EMPTY;
     }
 }

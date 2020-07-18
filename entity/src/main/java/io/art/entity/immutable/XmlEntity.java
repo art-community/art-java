@@ -189,7 +189,6 @@ public class XmlEntity implements Value {
 
     public static final XmlEntity EMPTY = new XmlEntity();
 
-
     @NoArgsConstructor(access = PRIVATE)
     public static class XmlEntityBuilder {
         private final ImmutableMap.Builder<String, String> attributes = ImmutableMap.builder();

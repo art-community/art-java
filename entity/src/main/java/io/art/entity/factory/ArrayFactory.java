@@ -50,51 +50,62 @@ public class ArrayFactory {
     }
 
     public static ArrayValue boolArray(List<Boolean> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(index -> boolPrimitive(cast(value.get(index))), lazy(value::size));
     }
 
     public static ArrayValue doubleArray(List<Double> value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(index -> doublePrimitive(cast(value.get(index))), lazy(value::size));
     }
 
     public static ArrayValue floatArray(List<Float> value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(index -> floatPrimitive(cast(value.get(index))), lazy(value::size));
     }
 
     public static ArrayValue byteArray(List<Byte> value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(index -> bytePrimitive(cast(value.get(index))), lazy(value::size));
     }
 
 
     public static ArrayValue longArray(long[] value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(index -> longPrimitive(value[index]), lazy(() -> value.length));
     }
 
     public static ArrayValue intArray(int[] value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(index -> intPrimitive(value[index]), lazy(() -> value.length));
     }
 
     public static ArrayValue boolArray(boolean[] value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(index -> boolPrimitive(value[index]), lazy(() -> value.length));
     }
 
     public static ArrayValue doubleArray(double[] value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(index -> doublePrimitive(value[index]), lazy(() -> value.length));
     }
 
     public static ArrayValue floatArray(float[] value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(index -> floatPrimitive(value[index]), lazy(() -> value.length));
     }
 
     public static ArrayValue byteArray(byte[] value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(index -> bytePrimitive(value[index]), lazy(() -> value.length));
     }
@@ -111,11 +122,13 @@ public class ArrayFactory {
     }
 
     public static <T extends Entity> ArrayValue entityArray(List<T> value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(value::get, lazy(value::size));
     }
 
     public static <T extends ArrayValue> ArrayValue arrayOfArrays(List<T> value) {
+        if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(value::get, lazy(value::size));
     }
