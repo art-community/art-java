@@ -45,13 +45,46 @@ public class ArrayValue implements Value {
         return size.get();
     }
 
+
     public Value get(int index) {
         return valuesProvider.apply(index);
     }
 
-
     public <T> T map(int index, ValueToModelMapper<T, ? extends Value> mapper) {
         return let(cast(get(index)), mapper::map);
+    }
+
+
+    public List<Value> toList() {
+        List<Value> list = dynamicArrayOf();
+        for (int index = 0; index < size(); index++) {
+            apply(get(index), list::add);
+        }
+        return list;
+    }
+
+    public Set<Value> toSet() {
+        Set<Value> set = setOf();
+        for (int index = 0; index < size(); index++) {
+            apply(get(index), set::add);
+        }
+        return set;
+    }
+
+    public Queue<Value> toQueue() {
+        Queue<Value> queue = queueOf();
+        for (int index = 0; index < size(); index++) {
+            apply(get(index), queue::add);
+        }
+        return queue;
+    }
+
+    public Deque<Value> toDeque() {
+        Deque<Value> deque = dequeOf();
+        for (int index = 0; index < size(); index++) {
+            apply(get(index), deque::add);
+        }
+        return deque;
     }
 
 

@@ -123,9 +123,10 @@ public interface Value {
     class Model {
         String value;
 
-        public static EntityFromModelMapper<Model> fromModel = model -> isNull(model)
-                ? null
-                : entityBuilder().put("value", model.value, fromString).build();
+        public static EntityFromModelMapper<Model> fromModel = model -> {
+            if (isNull(model)) return null;
+            return entityBuilder().put("value", model.value, fromString).build();
+        };
 
         public static EntityToModelMapper<Model> toModel = entity -> {
             if (isNull(entity)) return null;
@@ -142,20 +143,21 @@ public interface Value {
         Map<String, Model> map;
         Model model;
 
-        public static EntityFromModelMapper<Request> fromRequest = request -> isNull(request)
-                ? null
-                : entityBuilder()
-                .put("list", request.list, fromList(fromString))
-                .put("set", request.set, fromSet(fromString))
-                .put("stringMap", entityBuilder().putAllStrings(request.stringMap, fromString).build())
-                .put("map", entityBuilder().putAllStrings(request.map, fromModel).build())
-                .build();
+        public static EntityFromModelMapper<Request> fromRequest = model -> {
+            if (isNull(model)) return null;
+            return entityBuilder()
+                    .put("list", model.list, fromList(fromString))
+                    .put("set", model.set, fromSet(fromString))
+                    .put("stringMap", entityBuilder().putAllStrings(model.stringMap, fromString).build())
+                    .put("map", entityBuilder().putAllStrings(model.map, fromModel).build())
+                    .build();
+        };
 
         public static EntityToModelMapper<Request> toRequest = entity -> {
             if (isNull(entity)) return null;
             Request request = new Request();
-            request.list = toList(toString).map(Value.asArray(entity.get("list")));
-            request.set = toSet(toString).map(Value.asArray(entity.get("list")));
+            request.list = entity.map("list", toList(toString));
+            request.set = entity.map("list", toSet(toString));
             request.stringMap = Value.asEntity(entity.get("stringMap")).asMap(toString, fromString, toString);
             request.map = Value.asEntity(entity.get("map")).asMap(toString, fromString, toModel);
             request.model = entity.map("model", toModel);

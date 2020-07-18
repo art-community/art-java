@@ -55,16 +55,7 @@ public class Entity implements Value {
     }
 
 
-    public <T> Map<Primitive, T> mapValues(ValueToModelMapper<T, ? extends Value> mapper) {
-        Map<Primitive, T> map = mapOf();
-        for (Primitive field : fields) {
-            let(map(field, mapper), value -> map.put(field, value));
-        }
-        return map;
-    }
-
-
-    public Map<Primitive, ? extends Value> mapToMap() {
+    public Map<Primitive, ? extends Value> toMap() {
         return mapToMap(key -> key, value -> value);
     }
 
@@ -199,9 +190,6 @@ public class Entity implements Value {
         return value;
     }
 
-    public <T, V extends Value> T mapNested(String key, ValueToModelMapper<T, V> mapper) {
-        return let(cast(find(key)), mapper::map);
-    }
 
     @Override
     public boolean isEmpty() {
