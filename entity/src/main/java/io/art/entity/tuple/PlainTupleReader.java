@@ -20,14 +20,17 @@ package io.art.entity.tuple;
 
 import io.art.entity.builder.*;
 import io.art.entity.constants.*;
+import io.art.entity.exception.*;
 import io.art.entity.immutable.*;
 import io.art.entity.tuple.schema.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.entity.constants.ExceptionMessages.*;
 import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.BinaryValue.*;
 import static io.art.entity.immutable.Entity.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.util.*;
 
@@ -46,7 +49,7 @@ public class PlainTupleReader {
             case ARRAY:
                 return readArray(tuple, (ArraySchema) schema);
         }
-        return null;
+        throw new ValueMappingException(format(schema.getType().name(), TUPLE_NOT_SUPPORTED_VALUE_TYPE));
     }
 
     @SuppressWarnings("Duplicates")
@@ -70,7 +73,7 @@ public class PlainTupleReader {
             case BYTE:
                 return bytePrimitive((Byte) value);
         }
-        return null;
+        throw new ValueMappingException(format(type.name(), TUPLE_NOT_SUPPORTED_VALUE_TYPE));
     }
 
     private static Entity readEntity(List<?> entity, EntitySchema schema) {
@@ -121,6 +124,34 @@ public class PlainTupleReader {
     private static ArrayValue readArray(List<?> array, ArraySchema schema) {
         if (isEmpty(array)) return null;
         if (isNull(schema)) return null;
-        return array(index -> readTuple((List<?>) array.get(index), schema.getElements().get(index)), array::size);
+        return array(index -> readArrayElement(array, schema, index), array::size);
+    }
+
+    private static Value readArrayElement(List<?> array, ArraySchema schema, Integer index) {
+        ValueSchema valueSchema = schema.getElements().get(index);
+        Object element = array.get(index);
+        if (isNull(element)) return null;
+        switch (valueSchema.getType()) {
+            case ENTITY:
+            case ARRAY:
+                return readTuple((List<?>) element, valueSchema);
+            case STRING:
+                return stringPrimitive((String) element);
+            case LONG:
+                return longPrimitive(((Number) element).longValue());
+            case DOUBLE:
+                return doublePrimitive(((Number) element).doubleValue());
+            case FLOAT:
+                return floatPrimitive(((Number) element).floatValue());
+            case INT:
+                return intPrimitive(((Number) element).intValue());
+            case BOOL:
+                return boolPrimitive((Boolean) element);
+            case BYTE:
+                return bytePrimitive(((Number) element).byteValue());
+            case BINARY:
+                return binary((byte[]) element);
+        }
+        throw new ValueMappingException(format(valueSchema.getType().name(), TUPLE_NOT_SUPPORTED_VALUE_TYPE));
     }
 }

@@ -20,6 +20,7 @@ package io.art.entity.constants;
 
 public interface ExceptionMessages {
     String UNKNOWN_VALUE_TYPE = "Unknown value type: ''{0}''";
+    String TUPLE_NOT_SUPPORTED_VALUE_TYPE = "Value type: ''{0}'' not support for tuples";
     String NOT_PRIMITIVE_TYPE = "Not primitive type: ''{0}''";
     String XML_TAG_IS_EMPTY = "Xml tag is empty";
 }

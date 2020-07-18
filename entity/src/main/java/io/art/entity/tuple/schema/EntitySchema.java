@@ -31,6 +31,7 @@ import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.constants.ExceptionMessages.*;
 import static io.art.entity.constants.ValueType.*;
 import static io.art.entity.immutable.Value.*;
+import static java.text.MessageFormat.format;
 import java.util.*;
 
 @Getter
@@ -104,7 +105,7 @@ public class EntitySchema extends ValueSchema {
                     return new EntityFieldSchema(type, name, new ValueSchema(type));
             }
 
-            throw new ValueMappingException(UNKNOWN_VALUE_TYPE);
+            throw new ValueMappingException(format(type.name(), TUPLE_NOT_SUPPORTED_VALUE_TYPE));
         }
     }
 }
