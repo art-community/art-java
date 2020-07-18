@@ -48,9 +48,9 @@ import java.util.function.*;
 public class Entity implements Value {
     @Getter
     private final ValueType type = ENTITY;
+    private final Map<Primitive, LazyValue<?>> mappedValueCache = concurrentHashMap();
     private final ImmutableSet<Primitive> keys;
     private final Function<Primitive, ? extends Value> valueProvider;
-    private final Map<Primitive, LazyValue<?>> mappedValueCache = concurrentHashMap();
 
     public static EntityBuilder entityBuilder() {
         return new EntityBuilder();

@@ -38,9 +38,9 @@ import java.util.stream.*;
 public class ArrayValue implements Value {
     @Getter
     private final ValueType type = ARRAY;
+    private final Map<Integer, LazyValue<?>> mappedValueCache = concurrentHashMap();
     private final Function<Integer, ? extends Value> valueProvider;
     private final LazyValue<Integer> size;
-    private final Map<Integer, LazyValue<?>> mappedValueCache = concurrentHashMap();
 
     public int size() {
         return size.get();
