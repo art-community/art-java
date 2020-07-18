@@ -71,9 +71,8 @@ public class JsonEntityWriter {
         if (valueIsNull(value)) {
             return null;
         }
-
-        try (StringWriter stringWriter = new StringWriter();
-             JsonGenerator generator = jsonFactory.createGenerator(stringWriter)) {
+        StringWriter stringWriter = new StringWriter();
+        try (JsonGenerator generator = jsonFactory.createGenerator(stringWriter)) {
             if (prettyOutput) {
                 generator.useDefaultPrettyPrinter();
             }
@@ -101,10 +100,10 @@ public class JsonEntityWriter {
                 case BYTE:
                     return asPrimitive(value).getByte().toString();
             }
-            return stringWriter.toString();
         } catch (IOException ioException) {
             throw new JsonMappingException(ioException);
         }
+        return stringWriter.toString();
     }
 
 
