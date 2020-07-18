@@ -31,7 +31,8 @@ public interface ConfiguratorConstants {
         ENVIRONMENT(0),
         PROPERTIES(1),
         RESOURCES_FILE(2),
-        CUSTOM_FILE(3);
+        CUSTOM_FILE(3),
+        ENTITY(4);
 
         private final int order;
     }

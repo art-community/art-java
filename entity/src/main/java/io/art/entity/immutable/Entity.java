@@ -176,13 +176,9 @@ public class Entity implements Value {
 
 
     public Value find(String key) {
-        if (EmptinessChecker.isEmpty(key)) {
-            return null;
-        }
+        if (EmptinessChecker.isEmpty(key)) return null;
         Value value;
-        if (nonNull(value = get(key))) {
-            return value;
-        }
+        if (nonNull(value = get(key))) return value;
         Queue<String> sections = queueOf(key.split(ESCAPED_DOT));
         Entity entity = this;
         String section;
@@ -196,6 +192,10 @@ public class Entity implements Value {
             entity = asEntity(value);
         }
         return value;
+    }
+
+    public <T, V extends Value> T mapNested(String key, ValueToModelMapper<T, V> mapper) {
+        return let(find(key), value -> mapper.map(cast(value)));
     }
 
 
