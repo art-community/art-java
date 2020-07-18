@@ -69,12 +69,8 @@ public class MessagePackEntityWriter {
     }
 
     public static org.msgpack.value.Value writeMessagePack(Value value) {
-        if (valueIsNull(value)) {
-            return null;
-        }
-        if (isPrimitive(value)) {
-            return writePrimitive(asPrimitive(value));
-        }
+        if (valueIsNull(value)) return null;
+        if (isPrimitive(value)) return writePrimitive(asPrimitive(value));
         switch (value.getType()) {
             case ENTITY:
                 return writeEntity(asEntity(value));
@@ -95,14 +91,14 @@ public class MessagePackEntityWriter {
                 return newInteger(primitive.getLong());
             case INT:
                 return newInteger(primitive.getInt());
+            case BYTE:
+                return newInteger(primitive.getByte());
             case DOUBLE:
                 return newFloat(primitive.getDouble());
             case FLOAT:
                 return newFloat(primitive.getFloat());
             case BOOL:
                 return newBoolean(primitive.getBool());
-            case BYTE:
-                return newBinary(new byte[]{primitive.getByte()});
         }
         throw new MessagePackMappingException(format(VALUE_TYPE_NOT_SUPPORTED, primitive.getType()));
     }

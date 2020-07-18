@@ -58,9 +58,7 @@ public class MessagePackEntityReader {
     }
 
     public static Value readMessagePack(org.msgpack.value.Value value) {
-        if (isNull(value) || value.isNilValue()) {
-            return null;
-        }
+        if (isNull(value) || value.isNilValue()) return null;
         switch (value.getValueType()) {
             case NIL:
             case EXTENSION:
