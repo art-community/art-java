@@ -134,7 +134,7 @@ public interface Value {
             return Value.asBinary(value).getContent() == EMPTY_BYTES;
         }
         if (Value.isXml(value)) {
-            return EmptinessChecker.isEmpty(Value.asXml(value).getTag());
+            return EmptinessChecker.isEmpty(Value.asXml(value).getTag()) && EmptinessChecker.isEmpty(Value.asXml(value).getChildren());
         }
         throw new ValueMappingException(format(value.getType().name(), UNKNOWN_VALUE_TYPE));
     }

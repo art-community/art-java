@@ -27,9 +27,12 @@ import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.BinaryValue.*;
 import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.immutable.Value.asEntity;
 import static io.art.entity.tuple.PlainTupleReader.*;
 import static io.art.entity.tuple.PlainTupleWriter.*;
+import static io.art.entity.xml.XmlEntityFromEntityConverter.fromEntityAsAttributes;
 import static io.art.entity.xml.XmlEntityFromEntityConverter.fromEntityAsTags;
+import static io.art.entity.xml.XmlEntityToEntityConverter.toEntityFromAttributes;
 import static io.art.entity.xml.XmlEntityToEntityConverter.toEntityFromTags;
 import static io.art.json.descriptor.JsonEntityReader.*;
 import static io.art.json.descriptor.JsonEntityWriter.*;
@@ -108,6 +111,6 @@ public class ModuleLauncher {
         System.out.println(writeMessagePack(readMessagePack(writeMessagePack(entity))));
         System.out.println(writeTuple(readTuple(writeTuple(entity).getTuple(), writeTuple(entity).getSchema())));
         System.out.println(writeXml(fromEntityAsTags(toEntityFromTags(readXml(writeXml(fromEntityAsTags(entityBuilder().put("entity", entity).build())))))));
-//        System.out.println(writeXml(fromEntityAsAttributes("root", toEntityFromAttributes(readXml(writeXml(fromEntityAsAttributes("root", entity)))))));
+        System.out.println(writeXml(fromEntityAsAttributes("root", asEntity(toEntityFromAttributes(readXml(writeXml(fromEntityAsAttributes("root", entity)))).get("root")))));
     }
 }

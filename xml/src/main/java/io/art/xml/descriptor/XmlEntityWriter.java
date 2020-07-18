@@ -27,9 +27,7 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.entity.constants.ValueType.XmlValueType.*;
-import static io.art.logging.LoggingModule.*;
 import static io.art.xml.constants.XmlDocumentConstants.*;
-import static io.art.xml.constants.XmlLoggingMessages.*;
 import static io.art.xml.module.XmlModule.*;
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.Objects.*;
@@ -68,23 +66,12 @@ public class XmlEntityWriter {
 
     public static String writeXml(XMLOutputFactory outputFactory, XmlEntity entity) throws XmlMappingException {
         if (isNull(entity)) return null;
-        XMLStreamWriter xmlStreamWriter = null;
-        try {
-            OutputStream outputStream = new ByteArrayOutputStream();
-            xmlStreamWriter = outputFactory.createXMLStreamWriter(outputStream, UTF_8.name());
+        try (OutputStream outputStream = new ByteArrayOutputStream()) {
+            XMLStreamWriter xmlStreamWriter = outputFactory.createXMLStreamWriter(outputStream, UTF_8.name());
             writeAllElements(xmlStreamWriter, entity);
             return outputStream.toString();
         } catch (Throwable throwable) {
             throw new XmlMappingException(throwable);
-        } finally {
-            if (nonNull(xmlStreamWriter)) {
-                try {
-                    xmlStreamWriter.flush();
-                    xmlStreamWriter.close();
-                } catch (Throwable throwable) {
-                    loggingModule().configuration().getLogger(XmlEntityWriter.class).error(XML_GENERATOR_CLOSING_ERROR, throwable);
-                }
-            }
         }
     }
 
