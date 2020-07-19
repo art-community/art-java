@@ -35,9 +35,9 @@ public class DropwizardMetricRegistryFactory {
         metricRegistry.register(GC_METRICS, new GarbageCollectorMetricSet());
         metricRegistry.register(THREADS_METRICS, new CachedThreadStatesGaugeSet(THREAD_METRICS_INTERVAL_GAUGE_SET, SECONDS));
         metricRegistry.register(MEMORY_METRICS, new MemoryUsageGaugeSet());
-        metricRegistry.register(CIRCUIT_BREAKER_METRICS, ofCircuitBreakerRegistry(serviceModule().getCircuitBreakerRegistry()));
-        metricRegistry.register(RATE_LIMITER_METRICS, ofRateLimiterRegistry(serviceModule().getRateLimiterRegistry()));
-        metricRegistry.register(RETRY_METRICS, ofRetryRegistry(serviceModule().getRetryRegistry()));
+        metricRegistry.register(CIRCUIT_BREAKER_METRICS, ofCircuitBreakerRegistry(serverModule().getCircuitBreakerRegistry()));
+        metricRegistry.register(RATE_LIMITER_METRICS, ofRateLimiterRegistry(serverModule().getRateLimiterRegistry()));
+        metricRegistry.register(RETRY_METRICS, ofRetryRegistry(serverModule().getRetryRegistry()));
         return metricRegistry;
     }
 }

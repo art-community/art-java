@@ -19,11 +19,8 @@
 package io.art.server.constants;
 
 public interface ServerModuleConstants {
-    String DEFAULT_SERVICE_TYPE = "default-service";
-    String SERVICE_COMMAND_REGEX = "[()]";
     String REQUEST_EVENT = "serviceRequest";
     String RESPONSE_EVENT = "serviceResponse";
-    String DEFAULT_REQUEST_ID = "default-service-request";
 
     enum RequestValidationPolicy {
         VALIDATABLE,

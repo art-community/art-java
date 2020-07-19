@@ -18,11 +18,10 @@
 
 package io.art.server.service.validation;
 
-import io.art.server.constants.ServiceExceptionsMessages;
-
-import java.util.Collection;
-
-import static io.art.server.constants.ValidationExpressionType.NOT_EMPTY_COLLECTION;
+import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import static java.text.MessageFormat.*;
+import java.util.*;
 
 class NotEmptyCollectionValidationExpression extends ValidationExpression<Collection<?>> {
 
@@ -42,6 +41,6 @@ class NotEmptyCollectionValidationExpression extends ValidationExpression<Collec
 
     @Override
     public String getValidationErrorMessage() {
-        return format(ServiceExceptionsMessages.EMPTY_VALIDATION_ERROR, fieldName);
+        return format(EMPTY_VALIDATION_ERROR, fieldName);
     }
 }

@@ -18,10 +18,9 @@
 
 package io.art.server.service.validation;
 
-import io.art.server.constants.ServiceExceptionsMessages;
-
-import static java.text.MessageFormat.format;
-import static io.art.server.constants.ValidationExpressionType.EQUALS;
+import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import static java.text.MessageFormat.*;
 
 class EqualsValidationExpression extends ValidationExpression<Object> {
     private final Object other;
@@ -44,6 +43,6 @@ class EqualsValidationExpression extends ValidationExpression<Object> {
 
     @Override
     public String getValidationErrorMessage() {
-        return format(ServiceExceptionsMessages.NOT_EQUALS_VALIDATION_ERROR, fieldName, value, other);
+        return format(NOT_EQUALS_VALIDATION_ERROR, fieldName, value, other);
     }
 }

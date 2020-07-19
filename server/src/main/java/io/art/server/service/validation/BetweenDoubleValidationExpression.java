@@ -19,10 +19,9 @@
 package io.art.server.service.validation;
 
 
-import io.art.server.constants.ServiceExceptionsMessages;
-
-import static java.text.MessageFormat.format;
-import static io.art.server.constants.ValidationExpressionType.BETWEEN_DOUBLE;
+import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.NOT_BETWEEN_VALIDATION_ERROR;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.BETWEEN_DOUBLE;
+import static java.text.MessageFormat.*;
 
 class BetweenDoubleValidationExpression extends ValidationExpression<Double> {
     private final double lowerValue;
@@ -48,7 +47,7 @@ class BetweenDoubleValidationExpression extends ValidationExpression<Double> {
 
     @Override
     public String getValidationErrorMessage() {
-        return format(ServiceExceptionsMessages.NOT_BETWEEN_VALIDATION_ERROR, fieldName, value, lowerValue, greaterValue);
+        return format(NOT_BETWEEN_VALIDATION_ERROR, fieldName, value, lowerValue, greaterValue);
     }
 }
 

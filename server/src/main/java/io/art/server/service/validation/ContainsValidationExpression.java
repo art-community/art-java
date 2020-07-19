@@ -18,12 +18,10 @@
 
 package io.art.server.service.validation;
 
-import io.art.server.constants.ServiceExceptionsMessages;
-
-import java.util.List;
-
-import static java.text.MessageFormat.format;
-import static io.art.server.constants.ValidationExpressionType.CONTAINS;
+import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import static java.text.MessageFormat.*;
+import java.util.*;
 
 class ContainsValidationExpression extends ValidationExpression<Object> {
     private final List<?> list;
@@ -46,6 +44,6 @@ class ContainsValidationExpression extends ValidationExpression<Object> {
 
     @Override
     public String getValidationErrorMessage() {
-        return format(ServiceExceptionsMessages.NOT_CONTAINS_VALIDATION_ERROR, fieldName, value, list.toString());
+        return format(NOT_CONTAINS_VALIDATION_ERROR, fieldName, value, list.toString());
     }
 }

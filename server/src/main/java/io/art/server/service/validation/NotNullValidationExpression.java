@@ -18,8 +18,9 @@
 
 package io.art.server.service.validation;
 
-import static io.art.server.constants.ServiceExceptionsMessages.*;
-import static io.art.server.constants.ValidationExpressionType.*;
+import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import static java.text.MessageFormat.*;
 
 class NotNullValidationExpression extends ValidationExpression<Object> {
 

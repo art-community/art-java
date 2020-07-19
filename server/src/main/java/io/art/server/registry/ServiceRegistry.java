@@ -26,20 +26,20 @@ import static java.text.MessageFormat.*;
 import java.util.*;
 
 public class ServiceRegistry {
-    private final Map<String, ServiceSpecification<?>> services = concurrentHashMap();
+    private final Map<String, ServiceSpecification> services = concurrentHashMap();
 
-    public ServiceSpecification<?> get(String serviceId) {
+    public ServiceSpecification get(String serviceId) {
         return services.get(serviceId);
     }
 
-    public Set<String> services() {
+    public Set<String> identifiers() {
         return services.keySet();
     }
 
-    public ServiceRegistry register(ServiceSpecification<?> specification) {
+    public ServiceRegistry register(ServiceSpecification specification) {
         logger(ServiceRegistry.class)
-                .info(format(SERVICE_REGISTRATION_MESSAGE, specification.getServiceId(), specification.getClass().getName()));
-        services.put(specification.getServiceId(), specification);
+                .info(format(SERVICE_REGISTRATION_MESSAGE, specification.getId(), specification.getClass().getName()));
+        services.put(specification.getId(), specification);
         return this;
     }
 }

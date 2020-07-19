@@ -18,9 +18,9 @@
 
 package io.art.server.service.validation;
 
-import static io.art.server.constants.ServiceExceptionsMessages.EQUALS_VALIDATION_ERROR;
-import static java.text.MessageFormat.format;
-import static io.art.server.constants.ValidationExpressionType.NOT_EQUALS;
+import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import static java.text.MessageFormat.*;
 
 class NotEqualsValidationExpression extends ValidationExpression<Object> {
     private final Object other;

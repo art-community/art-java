@@ -19,39 +19,57 @@
 package io.art.server.module;
 
 import io.art.core.module.*;
+import io.art.entity.factory.*;
+import io.art.entity.immutable.Value;
+import io.art.entity.mapping.*;
 import io.art.server.configuration.*;
-import lombok.*;
+import io.art.server.registry.*;
+import io.art.server.service.specification.*;
 import io.art.server.state.*;
-import static lombok.AccessLevel.*;
-import static org.apache.logging.log4j.ThreadContext.*;
+import lombok.*;
 import static io.art.core.context.Context.*;
-import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
-import static io.art.server.configuration.ServiceModuleConfiguration.*;
-import static io.art.service.constants.ServiceModuleConstants.*;
+import static io.art.entity.factory.PrimitivesFactory.stringPrimitive;
+import static io.art.entity.immutable.Value.*;
+import static io.art.entity.mapping.PrimitiveMapping.toString;
+import static io.art.server.service.implementation.ServiceMethodImplementation.*;
+import static lombok.AccessLevel.*;
 
 @Getter
-public class ServerModule implements StatefulModule<ServiceModuleConfiguration, ServerModuleState> {
+public class ServerModule implements StatefulModule<ServerModuleConfiguration, ServerModuleConfiguration.Configurator, ServerModuleState> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final ServiceModuleConfiguration serviceModule = context().getModule(SERVICE_MODULE_ID, ServerModule::new);
-    @Getter(lazy = true, value = PRIVATE)
-    private static final ServerModuleState SERVER_MODULE_STATE = context().getModuleState(SERVICE_MODULE_ID, ServerModule::new);
-    private final String id = SERVICE_MODULE_ID;
-    private final ServiceModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
+    private static final StatefulModuleProxy<ServerModuleConfiguration, ServerModuleState> serverModule = context().getStatefulModule(ServerModule.class.getSimpleName());
+    private final String id = ServerModule.class.getSimpleName();
+    private final ServerModuleConfiguration configuration = new ServerModuleConfiguration();
+    private final ServerModuleConfiguration.Configurator configurator = new ServerModuleConfiguration.Configurator(configuration);
     private final ServerModuleState state = new ServerModuleState();
 
-    public static ServiceModuleConfiguration serviceModule() {
-        if (contextIsNotReady()) {
-            return DEFAULT_CONFIGURATION;
-        }
-        return getServiceModule();
+    public static StatefulModuleProxy<ServerModuleConfiguration, ServerModuleState> serverModule() {
+        return getServerModule();
     }
 
-    public static ServerModuleState serviceModuleState() {
-        return getSERVER_MODULE_STATE();
+    public static ServiceRegistry services() {
+        return serverModule().state().getServiceRegistry();
     }
 
-    @Override
-    public void onLoad() {
-        put(REQUEST_ID_KEY, DEFAULT_REQUEST_ID);
+    public static void main(String[] args) {
+        services()
+                .register(ServiceSpecification.builder()
+                        .id("id")
+                        .method("id", ServiceMethodSpecification.builder()
+                                .implementation(handler(request -> request))
+                                .build())
+                        .build())
+                .register(ServiceSpecification.builder()
+                        .id("id")
+                        .method("id", ServiceMethodSpecification.builder()
+                                .implementation(handler(request -> request))
+                                .build())
+                        .build())
+                .register(ServiceSpecification.builder()
+                        .id("id")
+                        .method("id", ServiceMethodSpecification.builder()
+                                .implementation(handler(request -> request))
+                                .build())
+                        .build());
     }
 }

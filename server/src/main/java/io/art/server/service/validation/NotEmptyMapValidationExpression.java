@@ -18,8 +18,9 @@
 
 package io.art.server.service.validation;
 
-import static io.art.server.constants.ServiceExceptionsMessages.EMPTY_VALIDATION_ERROR;
-import static io.art.server.constants.ValidationExpressionType.*;
+import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import static java.text.MessageFormat.*;
 import java.util.*;
 
 class NotEmptyMapValidationExpression extends ValidationExpression<Map<?, ?>> {

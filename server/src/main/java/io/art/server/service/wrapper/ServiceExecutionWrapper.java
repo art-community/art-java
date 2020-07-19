@@ -34,7 +34,7 @@ public class ServiceExecutionWrapper {
         if (!executionConfiguration.isBreakable()) {
             return executeServiceWithRateLimiter(serviceExecution, command, executionConfiguration);
         }
-        return serviceModule()
+        return serverModule()
                 .getCircuitBreakerRegistry()
                 .circuitBreaker(executionConfiguration.getCircuitBreakTarget() == METHOD ? command.toString() : command.getServiceId(), executionConfiguration.getCircuitBreakerConfig())
                 .executeCallable(() -> executeServiceWithRateLimiter(serviceExecution, command, executionConfiguration));
@@ -44,7 +44,7 @@ public class ServiceExecutionWrapper {
         if (!executionConfiguration.isLimited()) {
             return executeServiceWithBulkHeaded(serviceExecution, command, executionConfiguration);
         }
-        return serviceModule()
+        return serverModule()
                 .getRateLimiterRegistry()
                 .rateLimiter(executionConfiguration.getRateLimiterTarget() == METHOD ? command.toString() : command.getServiceId(), executionConfiguration.getRateLimiterConfig())
                 .executeCallable(() -> executeServiceWithBulkHeaded(serviceExecution, command, executionConfiguration));
@@ -54,7 +54,7 @@ public class ServiceExecutionWrapper {
         if (!executionConfiguration.isBulkHeaded()) {
             return executeServiceWithRetrying(serviceExecution, command, executionConfiguration);
         }
-        return serviceModule()
+        return serverModule()
                 .getBulkheadRegistry()
                 .bulkhead(executionConfiguration.getBulkheadTarget() == METHOD ? command.toString() : command.getServiceId(), executionConfiguration.getBulkheadConfig())
                 .executeCallable(() -> executeServiceWithRetrying(serviceExecution, command, executionConfiguration));
@@ -64,7 +64,7 @@ public class ServiceExecutionWrapper {
         if (!executionConfiguration.isRetryable()) {
             return serviceExecution.call();
         }
-        return serviceModule()
+        return serverModule()
                 .getRetryRegistry()
                 .retry(executionConfiguration.getRetryTarget() == METHOD ? command.toString() : command.getServiceId(), executionConfiguration.getRetryConfig())
                 .executeCallable(serviceExecution);

@@ -21,7 +21,6 @@ package io.art.server.service.specification;
 import io.art.entity.immutable.Value;
 import io.art.entity.mapper.*;
 import io.art.server.constants.ServerModuleConstants.*;
-import io.art.server.service.configuration.*;
 import io.art.server.service.implementation.*;
 import lombok.*;
 import reactor.core.publisher.*;
@@ -33,9 +32,10 @@ import java.util.function.*;
 
 @Getter
 @Builder
-public class ServiceMethodSpecification<C extends ServiceMethodConfiguration> {
-    private final String methodId;
-    private final C configuration;
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class ServiceMethodSpecification {
+    @EqualsAndHashCode.Include
+    private final String id;
     private final ValueToModelMapper<Object, Value> requestMapper;
     private final ValueFromModelMapper<Object, Value> responseMapper;
     private final ValueFromModelMapper<Throwable, Value> exceptionMapper;

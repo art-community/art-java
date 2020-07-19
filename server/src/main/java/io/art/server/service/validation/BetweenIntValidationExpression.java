@@ -18,8 +18,8 @@
 
 package io.art.server.service.validation;
 
-
-import static io.art.server.constants.ValidationExpressionType.*;
+import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.NOT_BETWEEN_VALIDATION_ERROR;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.BETWEEN_INT;
 import static java.text.MessageFormat.*;
 
 class BetweenIntValidationExpression extends ValidationExpression<Integer> {
@@ -46,6 +46,6 @@ class BetweenIntValidationExpression extends ValidationExpression<Integer> {
 
     @Override
     public String getValidationErrorMessage() {
-        return format(ServiceExceptionsMessages.NOT_BETWEEN_VALIDATION_ERROR, fieldName, value, lowerValue, greaterValue);
+        return format(NOT_BETWEEN_VALIDATION_ERROR, fieldName, value, lowerValue, greaterValue);
     }
 }

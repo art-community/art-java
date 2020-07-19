@@ -19,7 +19,6 @@
 package io.art.server.service.specification;
 
 import io.art.entity.immutable.Value;
-import io.art.server.service.configuration.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
@@ -28,13 +27,15 @@ import java.util.function.*;
 
 @Getter
 @Builder
-public class ServiceSpecification<C extends ServiceConfiguration> {
-    private final String type;
-    private final String serviceId;
-    private final C configuration;
-    @Singular("method")
-    private final Map<String, ServiceMethodSpecification<?>> methods;
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class ServiceSpecification {
+    @EqualsAndHashCode.Include
+    private final String id;
+
     private final Supplier<Boolean> deactivated;
+
+    @Singular("method")
+    private final Map<String, ServiceMethodSpecification> methods;
 
     public void callBlocking(String methodId) {
         apply(methods.get(methodId), ServiceMethodSpecification::callBlocking);
