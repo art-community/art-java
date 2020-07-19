@@ -21,8 +21,6 @@ package io.art.logging;
 import io.art.core.module.*;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.*;
-import org.apache.logging.log4j.core.config.yaml.*;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModuleConstants.*;
 import static java.lang.System.*;
@@ -32,9 +30,6 @@ import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
-import static org.apache.logging.log4j.core.LoggerContext.*;
-import static org.apache.logging.log4j.core.config.Configurator.*;
-import java.io.*;
 import java.net.*;
 
 @Getter
@@ -49,21 +44,17 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
         return getLoggingModule();
     }
 
-    static {
+    @Override
+    public void onLoad() {
         getLogManager().reset();
-        boolean fromClasspath =
-                nonNull(LoggingModule.class.getClassLoader().getResourceAsStream(LOG4J2_YML_FILE)) ||
-                        nonNull(LoggingModule.class.getClassLoader().getResourceAsStream(LOG4J2_YAML_FILE));
+        ClassLoader loader = LoggingModule.class.getClassLoader();
+        boolean fromClasspath = nonNull(loader.getResourceAsStream(LOG4J2_YML_FILE)) || nonNull(loader.getResourceAsStream(LOG4J2_YAML_FILE));
         boolean fromFile = ofNullable(getProperty(LOG42_CONFIGURATION_FILE_PROPERTY)).map(property -> exists(get((String) property))).orElse(false);
         URL defaultConfiguration;
-        boolean fromDefault = nonNull(defaultConfiguration = LoggingModule.class.getClassLoader().getResource(LOG4J2_DEFAULT_YML_FILE));
+        boolean fromDefault = nonNull(defaultConfiguration = loader.getResource(LOG4J2_DEFAULT_YML_FILE));
         if (!fromClasspath && !fromFile && fromDefault) {
             setProperty(LOG42_CONFIGURATION_FILE_PROPERTY, defaultConfiguration.getFile());
         }
-    }
-
-    @Override
-    public void onLoad() {
     }
 
     public static Logger logger() {
