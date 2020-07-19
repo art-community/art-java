@@ -76,8 +76,4 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     public static Logger logger(Class<?> topicClass) {
         return loggingModule().configuration().getLogger(topicClass);
     }
-
-    public static void main(String[] args) {
-        context().loadModule(new LoggingModule());
-    }
 }
