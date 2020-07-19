@@ -16,9 +16,14 @@
  * limitations under the License.
  */
 
-dependencies {
-    implementation(project(":core"))
-    implementation(project(":entity"))
-    implementation(project(":server"))
-    implementation(project(":logging"))
+package io.art.logging;
+
+import lombok.*;
+import lombok.experimental.Delegate;
+import reactor.util.*;
+
+@AllArgsConstructor
+public class ReactorLogger implements Logger {
+    @Delegate
+    private final org.apache.logging.log4j.Logger logger;
 }

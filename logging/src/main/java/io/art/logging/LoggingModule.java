@@ -21,6 +21,8 @@ package io.art.logging;
 import io.art.core.module.*;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
+import reactor.core.publisher.*;
+import reactor.util.*;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModuleConstants.*;
 import static io.art.logging.LoggingModuleConstants.LoggingMessages.*;
@@ -31,6 +33,7 @@ import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
+import static reactor.util.Loggers.*;
 import java.net.*;
 
 @Getter
@@ -64,6 +67,8 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
         if (fromClasspath) {
             logger(LoggingModule.class).info(format(CONFIGURE_FROM_CLASSPATH, source.getFile()));
         }
+
+        useCustomLoggers(name -> new ReactorLogger(logger(name)));
     }
 
     public static Logger logger() {
