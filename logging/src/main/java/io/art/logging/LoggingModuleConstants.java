@@ -22,7 +22,7 @@ public interface LoggingModuleConstants {
     String DEFAULT_REQUEST_ID = "default-request-id";
     String LOG4J2_YML_FILE = "log4j2.yml";
     String LOG4J2_YAML_FILE = "log4j2.yaml";
-    String LOG4J2_DEFAULT_YML_FILE = "log4j2-default.yml";
+    String LOG4J2_DEFAULT_YML_FILE = LOG4J2_YML_FILE;
     String LOG42_CONFIGURATION_FILE_PROPERTY = "log4j2.configurationFile";
     String VALUE_LOG_MESSAGE = "Value: ''{0}''";
 
@@ -59,7 +59,7 @@ public interface LoggingModuleConstants {
     }
 
     interface LoggingMessages {
-        String CONFIGURE_BY_DEFAULT = "Configure Log4j2 from classpath by file {0}";
-        String CONFIGURE_BY_FILE = "Configure Log4j2 from by file (from -Dlog4j2.configurationFile) {0}";
+        String CONFIGURE_FROM_CLASSPATH = "Configure Log4j2 from classpath by file {0}";
+        String CONFIGURE_FROM_FILE = "Configure Log4j2 from by file (from -Dlog4j2.configurationFile) {0}";
     }
 }

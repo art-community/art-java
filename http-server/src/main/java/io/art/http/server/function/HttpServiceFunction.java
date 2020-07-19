@@ -29,7 +29,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.*;
 import static io.art.http.server.model.HttpService.*;
-import static io.art.service.ServiceModule.*;
+import static io.art.service.ServerModule.*;
 import java.util.function.*;
 
 public class HttpServiceFunction {

@@ -20,7 +20,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":entity"))
     implementation(project(":logging"))
-    implementation(project(":service"))
+    implementation(project(":server"))
     implementation(project(":protobuf"))
     implementation(project(":grpc"))
 }

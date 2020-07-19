@@ -23,10 +23,8 @@ import lombok.*;
 import org.apache.logging.log4j.Logger;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModuleConstants.*;
-import static io.art.logging.LoggingModuleConstants.LoggingMessages.CONFIGURE_BY_DEFAULT;
-import static io.art.logging.LoggingModuleConstants.LoggingMessages.CONFIGURE_BY_FILE;
+import static io.art.logging.LoggingModuleConstants.LoggingMessages.*;
 import static java.lang.System.*;
-import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -50,18 +48,21 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     @Override
     public void onLoad() {
         getLogManager().reset();
-        ClassLoader loader = LoggingModule.class.getClassLoader();
-        boolean fromClasspath = nonNull(loader.getResourceAsStream(LOG4J2_YML_FILE)) || nonNull(loader.getResourceAsStream(LOG4J2_YAML_FILE));
-        boolean fromFile = ofNullable(getProperty(LOG42_CONFIGURATION_FILE_PROPERTY)).map(property -> exists(get((String) property))).orElse(false);
-        URL defaultConfiguration;
-        boolean fromDefault = nonNull(defaultConfiguration = loader.getResource(LOG4J2_DEFAULT_YML_FILE));
-        if (!fromClasspath && !fromFile && fromDefault) {
-            setProperty(LOG42_CONFIGURATION_FILE_PROPERTY, defaultConfiguration.getFile());
-            logger(LoggingModule.class).info(format(CONFIGURE_BY_DEFAULT, defaultConfiguration.getFile()));
+
+        boolean fromFile = ofNullable(getProperty(LOG42_CONFIGURATION_FILE_PROPERTY))
+                .map(property -> get(property))
+                .map(path -> path.toFile().exists())
+                .orElse(false);
+        if (fromFile) {
+            logger(LoggingModule.class).info(format(CONFIGURE_FROM_FILE, getProperty(LOG42_CONFIGURATION_FILE_PROPERTY)));
             return;
         }
-        if (fromFile) {
-            logger(LoggingModule.class).info(format(CONFIGURE_BY_FILE, getProperty(LOG42_CONFIGURATION_FILE_PROPERTY)));
+
+        ClassLoader loader = LoggingModule.class.getClassLoader();
+        URL source;
+        boolean fromClasspath = nonNull(source = loader.getResource(LOG4J2_YML_FILE)) || nonNull(source = loader.getResource(LOG4J2_YAML_FILE));
+        if (fromClasspath) {
+            logger(LoggingModule.class).info(format(CONFIGURE_FROM_CLASSPATH, source.getFile()));
         }
     }
 

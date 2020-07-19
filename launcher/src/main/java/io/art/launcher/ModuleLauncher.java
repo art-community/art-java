@@ -22,6 +22,7 @@ import io.art.configuration.module.*;
 import io.art.core.module.*;
 import io.art.json.module.*;
 import io.art.logging.*;
+import io.art.model.communicator.*;
 import io.art.model.configurator.*;
 import io.art.model.module.*;
 import io.art.xml.module.*;
@@ -29,6 +30,7 @@ import lombok.experimental.*;
 import static io.art.configuration.module.ConfiguratorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.context.Context.*;
+import static io.art.model.module.ModuleModel.*;
 import static java.util.Optional.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -66,6 +68,8 @@ public class ModuleLauncher {
     }
 
     public static void main(String[] args) {
-        launch(ModuleModel.module());
+        launch(module()
+                .communicate(communicator -> communicator.grpc("test", GrpcCommunicatorModel.class))
+                .configure(configurator -> configurator.logging(logging -> logging.colored().asynchronous())));
     }
 }

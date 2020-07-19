@@ -27,7 +27,7 @@ import io.art.service.registry.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.grpc.server.constants.GrpcServerModuleConstants.*;
-import static io.art.service.ServiceModule.*;
+import static io.art.service.ServerModule.*;
 import java.util.function.*;
 
 public class GrpcServiceFunction {

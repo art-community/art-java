@@ -33,7 +33,7 @@ import static io.art.reactive.service.model.ReactiveService.ReactiveMethod.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.service.RsocketService.*;
-import static io.art.service.ServiceModule.*;
+import static io.art.service.ServerModule.*;
 
 @Getter
 @Builder

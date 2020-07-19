@@ -25,7 +25,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":entity"))
     implementation(project(":logging"))
-    implementation(project(":service"))
+    implementation(project(":server"))
 
     api("io.micrometer", "micrometer-registry-prometheus", micrometerPrometheusVersion)
 

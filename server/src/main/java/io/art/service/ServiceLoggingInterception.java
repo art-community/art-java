@@ -37,7 +37,7 @@ import static io.art.logging.LoggingModuleConstants.DEFAULT_REQUEST_ID;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static io.art.logging.LoggingContext.*;
 import static io.art.logging.ThreadContextExtensions.*;
-import static io.art.service.ServiceModule.*;
+import static io.art.service.ServerModule.*;
 import static io.art.service.constants.ServiceLoggingMessages.*;
 import static io.art.service.constants.ServiceModuleConstants.*;
 import static io.art.service.model.ServiceInterceptionResult.*;

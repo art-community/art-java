@@ -31,7 +31,7 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.entity.mapping.PrimitiveMapping.*;
 import static io.art.http.server.builder.HttpServiceBuilder.*;
 import static io.art.http.server.model.HttpService.*;
-import static io.art.service.ServiceModule.*;
+import static io.art.service.ServerModule.*;
 import static io.art.soap.server.constans.SoapServerModuleConstants.*;
 import static io.art.soap.server.mapper.SoapMapper.*;
 import static io.art.soap.server.model.SoapService.*;

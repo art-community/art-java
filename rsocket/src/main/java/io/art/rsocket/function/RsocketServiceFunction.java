@@ -30,7 +30,7 @@ import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.reactive.service.model.ReactiveService.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
-import static io.art.service.ServiceModule.*;
+import static io.art.service.ServerModule.*;
 import java.util.function.*;
 
 public class RsocketServiceFunction {

@@ -40,7 +40,7 @@ import static io.art.grpc.server.constants.GrpcServerLoggingMessages.*;
 import static io.art.grpc.server.constants.GrpcServerModuleConstants.*;
 import static io.art.grpc.server.module.GrpcServerModule.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.service.ServiceModule.*;
+import static io.art.service.ServerModule.*;
 import java.util.*;
 import java.util.concurrent.*;
 

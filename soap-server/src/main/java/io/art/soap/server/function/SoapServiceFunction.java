@@ -27,7 +27,7 @@ import io.art.service.constants.*;
 import io.art.soap.content.mapper.*;
 import io.art.soap.server.specification.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.service.ServiceModule.*;
+import static io.art.service.ServerModule.*;
 import static io.art.soap.server.constans.SoapServerModuleConstants.*;
 import static io.art.soap.server.model.SoapService.*;
 import static io.art.soap.server.model.SoapService.SoapOperation.*;

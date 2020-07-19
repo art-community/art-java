@@ -28,7 +28,7 @@ import static io.art.core.context.Context.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.http.server.HttpServerModuleConfiguration.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.*;
-import static io.art.service.ServiceModule.*;
+import static io.art.service.ServerModule.*;
 import java.util.*;
 
 @Getter

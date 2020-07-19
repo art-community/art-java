@@ -23,8 +23,7 @@ import io.art.service.constants.*;
 import io.art.service.exception.*;
 import io.art.service.model.*;
 import static java.util.Objects.*;
-import static io.art.service.ServiceModule.*;
-import static io.art.service.constants.ServiceExceptionsMessages.*;
+import static io.art.service.ServerModule.*;
 import static io.art.service.execution.ServiceExecutionWrapper.*;
 import static io.art.service.factory.ServiceResponseFactory.*;
 

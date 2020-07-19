@@ -30,7 +30,7 @@ import static org.apache.logging.log4j.core.util.Constants.*;
 
 @Getter
 public class LoggingModuleConfiguration implements ModuleConfiguration {
-    private boolean colored = true;
+    private boolean colored = false;
     private boolean asynchronous = false;
 
     public LoggingModuleConfiguration() {

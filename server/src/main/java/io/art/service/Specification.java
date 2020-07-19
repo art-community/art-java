@@ -21,7 +21,7 @@ package io.art.service;
 import io.art.service.interceptor.ServiceExecutionInterceptor.*;
 import io.art.service.model.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.service.ServiceModule.*;
+import static io.art.service.ServerModule.*;
 import static io.art.service.constants.ServiceModuleConstants.*;
 import java.util.*;
 
@@ -35,7 +35,7 @@ public interface Specification {
     }
 
     default List<RequestInterceptor> getRequestInterceptors() {
-        return ServiceModule.serviceModule().getRequestInterceptors();
+        return ServerModule.serviceModule().getRequestInterceptors();
     }
 
     default List<ResponseInterceptor> getResponseInterceptors() {

@@ -21,7 +21,7 @@ dependencies {
 
     implementation(project(":core"))
     implementation(project(":entity"))
-    implementation(project(":service"))
+    implementation(project(":server"))
     implementation(project(":logging"))
 
     api("io.projectreactor", "reactor-core", projectReactorVersion)

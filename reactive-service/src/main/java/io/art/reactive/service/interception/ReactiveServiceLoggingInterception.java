@@ -28,7 +28,7 @@ import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.reactive.service.constants.ReactiveServiceModuleConstants.*;
-import static io.art.service.ServiceModule.*;
+import static io.art.service.ServerModule.*;
 import static io.art.service.model.ServiceInterceptionResult.*;
 
 @SuppressWarnings("Duplicates")

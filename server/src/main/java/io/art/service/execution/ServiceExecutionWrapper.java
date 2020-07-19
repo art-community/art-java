@@ -20,7 +20,7 @@ package io.art.service.execution;
 
 import lombok.experimental.*;
 import io.art.service.model.*;
-import static io.art.service.ServiceModule.*;
+import static io.art.service.ServerModule.*;
 import static io.art.service.constants.ServiceExecutionFeatureTarget.*;
 import java.util.concurrent.*;
 

@@ -50,7 +50,7 @@ import static io.art.logging.LoggingContext.*;
 import static io.art.protobuf.descriptor.ProtobufEntityReader.*;
 import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;
 import static io.art.service.ServiceController.*;
-import static io.art.service.ServiceModule.serviceModuleState;
+import static io.art.service.ServerModule.serviceModuleState;
 import static io.art.service.constants.RequestValidationPolicy.*;
 import static io.art.service.factory.ServiceRequestFactory.*;
 import static io.art.service.factory.ServiceResponseFactory.*;

@@ -30,7 +30,7 @@ import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static io.art.logging.ThreadContextExtensions.*;
-import static io.art.service.ServiceModule.*;
+import static io.art.service.ServerModule.*;
 import static io.art.service.ServiceResponseDataExtractor.*;
 import static io.art.service.constants.RequestValidationPolicy.VALIDATABLE;
 import static io.art.service.constants.ServiceErrorCodes.*;

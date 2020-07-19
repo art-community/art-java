@@ -24,7 +24,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":entity"))
     implementation(project(":logging"))
-    implementation(project(":service"))
+    implementation(project(":server"))
     implementation(project(":http"))
     implementation(project(":metrics"))
     implementation(project(":template-engine"))

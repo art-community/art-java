@@ -19,7 +19,6 @@
 package io.art.service;
 
 import io.art.core.module.*;
-import io.art.core.module.Module;
 import lombok.*;
 import io.art.service.state.*;
 import static lombok.AccessLevel.*;
@@ -30,11 +29,11 @@ import static io.art.service.ServiceModuleConfiguration.*;
 import static io.art.service.constants.ServiceModuleConstants.*;
 
 @Getter
-public class ServiceModule implements StatefulModule<ServiceModuleConfiguration, ServiceModuleState> {
+public class ServerModule implements StatefulModule<ServiceModuleConfiguration, ServiceModuleState> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final ServiceModuleConfiguration serviceModule = context().getModule(SERVICE_MODULE_ID, ServiceModule::new);
+    private static final ServiceModuleConfiguration serviceModule = context().getModule(SERVICE_MODULE_ID, ServerModule::new);
     @Getter(lazy = true, value = PRIVATE)
-    private static final ServiceModuleState serviceModuleState = context().getModuleState(SERVICE_MODULE_ID, ServiceModule::new);
+    private static final ServiceModuleState serviceModuleState = context().getModuleState(SERVICE_MODULE_ID, ServerModule::new);
     private final String id = SERVICE_MODULE_ID;
     private final ServiceModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private final ServiceModuleState state = new ServiceModuleState();
