@@ -35,7 +35,7 @@ import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.logging.LoggingModuleConstants.DEFAULT_REQUEST_ID;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
-import static io.art.logging.LoggingParametersManager.*;
+import static io.art.logging.LoggingContext.*;
 import static io.art.logging.ThreadContextExtensions.*;
 import static io.art.service.ServiceModule.*;
 import static io.art.service.constants.ServiceLoggingMessages.*;
@@ -44,7 +44,7 @@ import static io.art.service.model.ServiceInterceptionResult.*;
 import java.util.*;
 
 public class ServiceLoggingInterception implements ServiceRequestInterception, ServiceResponseInterception {
-    private final static ThreadLocal<Stack<ServiceCallLoggingParameters>> serviceLoggingParameters = new ThreadLocal<>();
+    private final static ThreadLocal<Stack<ServiceLoggingContext>> serviceLoggingParameters = new ThreadLocal<>();
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = loggingModule().getLogger(ServiceLoggingInterception.class);
 
@@ -53,7 +53,7 @@ public class ServiceLoggingInterception implements ServiceRequestInterception, S
         if (isNull(serviceLoggingParameters.get())) {
             serviceLoggingParameters.set(stackOf());
         }
-        ServiceCallLoggingParameters parameters = ServiceCallLoggingParameters.builder()
+        ServiceLoggingContext parameters = ServiceLoggingContext.builder()
                 .serviceId(request.getServiceMethodCommand().getServiceId())
                 .serviceMethodId(request.getServiceMethodCommand().toString())
                 .serviceMethodCommand(request.getServiceMethodCommand().toString() + DOT + getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID))
@@ -93,9 +93,9 @@ public class ServiceLoggingInterception implements ServiceRequestInterception, S
         return nextInterceptor(request, response);
     }
 
-    private static void putRequestResponseParameters(ServiceRequest<?> request, ServiceCallLoggingParameters parameters) {
+    private static void putRequestResponseParameters(ServiceRequest<?> request, ServiceLoggingContext parameters) {
         putIfNotNull(REQUEST_KEY, request);
-        putServiceCallLoggingParameters(parameters);
+        putLoggingParameters(parameters);
         List<String> serviceTypes = serviceModuleState()
                 .getServiceRegistry()
                 .getService(request.getServiceMethodCommand().getServiceId())

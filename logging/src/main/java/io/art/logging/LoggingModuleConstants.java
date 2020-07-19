@@ -19,19 +19,16 @@
 package io.art.logging;
 
 public interface LoggingModuleConstants {
-    String LOGGING_MODULE_ID = "LOGGING_MODULE";
-    String DEFAULT_REQUEST_ID = "DEFAULT_REQUEST_ID";
-    String PORT = "port";
-    String PROTOCOL = "protocol";
-    String ADDRESS = "address";
-    String LOG4J2_YAML_FILE = "log4j2.yml";
-    String LOG4J2_CONFIGURATION_FILE_PROPERTY = "log4j.configurationFile";
+    String DEFAULT_REQUEST_ID = "default-request-id";
+    String LOG4J2_YML_FILE = "log4j2.yml";
+    String LOG4J2_YAML_FILE = "log4j2.yaml";
+    String LOG4J2_DEFAULT_YML_FILE = "log4j2-default.yml";
+    String LOG42_CONFIGURATION_FILE_PROPERTY = "log4j2.configurationFile";
     String VALUE_LOG_MESSAGE = "Value: ''{0}''";
 
-    enum LoggingMode {
-        CONSOLE,
-        FILE,
-        SOCKET
+    interface ConfigurationKeys {
+        String COLORED_KEY = "logging.colored";
+        String ASYNCHRONOUS_KEY = "logging.asynchronous";
     }
 
     interface LoggingParameters {

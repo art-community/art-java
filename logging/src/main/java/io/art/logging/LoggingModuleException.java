@@ -18,14 +18,8 @@
 
 package io.art.logging;
 
-import lombok.*;
-
-@Getter
-@Builder
-public class ProtocolCallLoggingParameters {
-    private final String protocol;
-    private final String traceId;
-    private final String requestId;
-    private final String environment;
-    private final String profile;
+public class LoggingModuleException  extends RuntimeException {
+    public LoggingModuleException(Throwable throwable) {
+        super(throwable);
+    }
 }

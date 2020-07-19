@@ -27,7 +27,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.*;
-import static io.art.logging.LoggingParametersManager.*;
+import static io.art.logging.LoggingContext.*;
 import javax.servlet.http.*;
 import java.util.*;
 
@@ -36,8 +36,8 @@ public class HttpServerTracingIdentifierInterception implements HttpServerInterc
     public InterceptionStrategy intercept(HttpServletRequest request, HttpServletResponse response) {
         Enumeration<String> traceIdHeader = request.getHeaders(TRACE_ID_HEADER);
         Enumeration<String> profileHeader = request.getHeaders(PROFILE_HEADER);
-        clearProtocolLoggingParameters();
-        putProtocolCallLoggingParameters(ProtocolCallLoggingParameters.builder()
+        clearTransportLoggingContext();
+        putLoggingContext(TransportLoggingContext.builder()
                 .protocol(request.getScheme())
                 .requestId(randomUUID().toString())
                 .traceId(isEmpty(traceIdHeader) || !traceIdHeader.hasMoreElements() ? randomUUID().toString() : traceIdHeader.nextElement())

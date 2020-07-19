@@ -46,7 +46,7 @@ import static io.art.grpc.server.constants.GrpcServerModuleConstants.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.logging.LoggingModuleConstants.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
-import static io.art.logging.LoggingParametersManager.*;
+import static io.art.logging.LoggingContext.*;
 import static io.art.protobuf.descriptor.ProtobufEntityReader.*;
 import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;
 import static io.art.service.ServiceController.*;
@@ -81,8 +81,8 @@ public class GrpcServletContainer extends GrpcServlet {
                     .getServiceMethodCommand();
             String serviceId = command.getServiceId();
             String serviceMethodId = serviceId + DOT + command.getMethodId() + BRACKETS;
-            clearServiceCallLoggingParameters();
-            putServiceCallLoggingParameters(ServiceCallLoggingParameters.builder()
+            clearServiceLoggingContext();
+            putLoggingParameters(ServiceLoggingContext.builder()
                     .serviceId(serviceId)
                     .serviceMethodId(serviceMethodId)
                     .serviceMethodCommand(serviceMethodId + DOT + getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID))
@@ -91,14 +91,14 @@ public class GrpcServletContainer extends GrpcServlet {
                     .build());
             try {
                 executeServiceChecked(grpcRequest, command, responseObserver);
-                clearServiceCallLoggingParameters();
+                clearServiceLoggingContext();
             } catch (Throwable throwable) {
                 loggingModule()
                         .getLogger(GrpcServletContainer.class)
                         .error(GRPC_SERVICE_EXCEPTION, throwable);
                 responseObserver.onNext(writeProtobuf(fromServiceResponse().map(errorResponse(command, GRPC_SERVLET_ERROR, throwable))));
                 responseObserver.onCompleted();
-                clearServiceCallLoggingParameters();
+                clearServiceLoggingContext();
             }
         }
 

@@ -25,21 +25,21 @@ import java.util.function.*;
 public interface ValueInterceptor<InValue extends Value, OutValue extends Value> {
     ValueInterceptionResult<InValue, OutValue> intercept(InValue value);
 
-    static <InValue extends Value> ValueInterceptor<InValue, InValue> interceptAndContinue(Consumer<InValue> consumer) {
+    static <InValue extends Value> ValueInterceptor<InValue, InValue> intercept(Consumer<InValue> consumer) {
         return value -> {
             consumer.accept(value);
             return nextInterceptor(value);
         };
     }
 
-    static <InValue extends Value> ValueInterceptor<InValue, InValue> interceptAndCall(Consumer<InValue> consumer) {
+    static <InValue extends Value> ValueInterceptor<InValue, InValue> interceptAndProcess(Consumer<InValue> consumer) {
         return value -> {
             consumer.accept(value);
             return processHandling(value);
         };
     }
 
-    static <InValue extends Value> ValueInterceptor<InValue, InValue> interceptAndReturn(Consumer<InValue> consumer) {
+    static <InValue extends Value> ValueInterceptor<InValue, InValue> interceptAndStop(Consumer<InValue> consumer) {
         return value -> {
             consumer.accept(value);
             return stopHandling(value);

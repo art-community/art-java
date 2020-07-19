@@ -18,56 +18,48 @@
 
 package io.art.logging;
 
+import io.art.core.module.*;
 import lombok.*;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.core.async.*;
-import io.art.core.module.*;
-import io.art.logging.LoggingModuleConstants.*;
-import static java.lang.System.setProperty;
-import static org.apache.logging.log4j.LogManager.getRootLogger;
-import static org.apache.logging.log4j.core.config.Configurator.*;
-import static org.apache.logging.log4j.core.util.Constants.LOG4J_CONTEXT_SELECTOR;
 import static io.art.core.caster.Caster.*;
-import static io.art.logging.LoggerConfigurationService.*;
-import static io.art.logging.LoggingModuleConstants.LoggingMode.*;
-import java.util.*;
+import static io.art.logging.LoggingModuleConstants.ConfigurationKeys.*;
+import static java.lang.System.*;
+import static org.apache.logging.log4j.core.util.Constants.*;
 
 @Getter
 public class LoggingModuleConfiguration implements ModuleConfiguration {
-    @Getter(lazy = true)
-    private final Level level = loadLoggingLevel();
-    @Getter(lazy = true)
-    private final SocketAppenderConfiguration socketAppenderConfiguration = loadSocketAppenderCurrentConfiguration();
-    @Getter(lazy = true)
-    private final Set<LoggingMode> loggingModes = loadLoggingModes();
-    private final boolean enabledColoredLogs = false;
-    private final boolean enabledAsynchronousLogging = false;
+    private boolean colored = false;
+    private boolean asynchronous = false;
 
     public LoggingModuleConfiguration() {
-        if (isEnabledAsynchronousLogging()) {
+        if (isAsynchronous()) {
             setProperty(LOG4J_CONTEXT_SELECTOR, AsyncLoggerContextSelector.class.getName());
         }
-        setLoggingModes(getLoggingModes());
-        if (getLoggingModes().contains(SOCKET)) {
-            updateSocketAppender(getSocketAppenderConfiguration());
-        }
-        setAllLevels(getRootLogger().getName(), getLevel());
     }
 
     public Logger getLogger() {
-        return isEnabledColoredLogs() ? new ColoredLogger(cast(LogManager.getLogger())) : LogManager.getLogger();
+        return isColored() ? new ColoredLogger(cast(LogManager.getLogger())) : LogManager.getLogger();
     }
 
     public Logger getLogger(String topic) {
-        return isEnabledColoredLogs() ? new ColoredLogger(cast(LogManager.getLogger(topic))) : LogManager.getLogger(topic);
+        return isColored() ? new ColoredLogger(cast(LogManager.getLogger(topic))) : LogManager.getLogger(topic);
     }
 
     public Logger getLogger(Class<?> topicClass) {
-        return isEnabledColoredLogs() ? new ColoredLogger(cast(LogManager.getLogger(topicClass))) : LogManager.getLogger(topicClass);
+        return isColored() ? new ColoredLogger(cast(LogManager.getLogger(topicClass))) : LogManager.getLogger(topicClass);
     }
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<Configurator> {
         private final LoggingModuleConfiguration configuration;
+
+        @Override
+        public Configurator from(ModuleConfigurationSource source) {
+            configuration.colored = source.getBool(COLORED_KEY);
+            configuration.asynchronous = source.getBool(ASYNCHRONOUS_KEY);
+            return null;
+        }
     }
 }

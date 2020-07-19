@@ -23,7 +23,7 @@ import java.util.*;
 
 @Getter
 @Builder
-public class ServiceCallLoggingParameters {
+public class ServiceLoggingContext {
     private final String serviceId;
     private final String serviceMethodId;
     private final String serviceMethodCommand;

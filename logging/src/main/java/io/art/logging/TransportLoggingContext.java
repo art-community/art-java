@@ -19,10 +19,13 @@
 package io.art.logging;
 
 import lombok.*;
-import org.apache.logging.log4j.core.*;
 
 @Getter
 @Builder
-public class ConsoleAppenderConfiguration {
-    private final Layout<?> patternLayout;
+public class TransportLoggingContext {
+    private final String protocol;
+    private final String traceId;
+    private final String requestId;
+    private final String environment;
+    private final String profile;
 }

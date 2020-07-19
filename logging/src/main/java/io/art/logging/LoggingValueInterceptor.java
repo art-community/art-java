@@ -18,28 +18,18 @@
 
 package io.art.logging;
 
-import lombok.*;
-import org.apache.logging.log4j.*;
-import io.art.entity.immutable.Value;
+import io.art.entity.immutable.*;
 import io.art.entity.interceptor.*;
-import static java.text.MessageFormat.*;
-import static java.util.Collections.*;
-import static org.apache.logging.log4j.ThreadContext.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.constants.StringConstants.*;
-import static io.art.entity.immutable.Value.*;
 import static io.art.entity.interceptor.ValueInterceptionResult.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static io.art.logging.LoggingModuleConstants.*;
 import static io.art.logging.ThreadContextExtensions.*;
-import java.util.*;
-import java.util.function.*;
+import static java.text.MessageFormat.*;
+import static org.apache.logging.log4j.ThreadContext.*;
 
-@AllArgsConstructor
 public class LoggingValueInterceptor<InValue extends Value, OutValue extends Value> implements ValueInterceptor<InValue, OutValue> {
-    private final Supplier<Boolean> enableTracing;
-
     @Override
     public ValueInterceptionResult<InValue, OutValue> intercept(Value value) {
         putIfNotNull(REQUEST_VALUE_KEY, value);

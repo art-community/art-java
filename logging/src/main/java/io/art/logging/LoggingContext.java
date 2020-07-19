@@ -18,33 +18,43 @@
 
 package io.art.logging;
 
-import static org.apache.logging.log4j.ThreadContext.*;
+import lombok.experimental.*;
 import static io.art.core.constants.DateTimeConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static io.art.logging.ThreadContextExtensions.*;
+import static org.apache.logging.log4j.ThreadContext.*;
 import java.time.*;
-import java.util.*;
 
-public interface LoggingParametersManager {
-    static void putModuleLoggingParameters() {
+@UtilityClass
+public class LoggingContext {
+    public static void putModuleLoggingContext() {
         putIfNotNull(LOG_TIMESTAMP, LocalDateTime.now().format(YYYY_MM_DD_T_HH_MM_SS_24H_SSS_DASH_FORMAT));
         putIfNotNull(MAIN_MODULE_ID_KEY, contextConfiguration().getMainModuleId());
         putIfNotNull(MODULES_KEY, context().getModuleNames());
         putIfNotNull(MODULE_JAR_KEY, contextConfiguration().getModuleJarName());
     }
 
-    static void putServiceCallLoggingParameters(ServiceCallLoggingParameters parameters) {
-        putModuleLoggingParameters();
-        putIfNotNull(SERVICE_ID_KEY, parameters.getServiceId());
-        putIfNotNull(SERVICE_METHOD_ID_KEY, parameters.getServiceMethodId());
-        putIfNotNull(SERVICE_METHOD_COMMAND_KEY, parameters.getServiceMethodCommand());
-        putIfNotNull(LOG_EVENT_TYPE, parameters.getLogEventType());
+    public static void putLoggingParameters(ServiceLoggingContext context) {
+        putModuleLoggingContext();
+        putIfNotNull(SERVICE_ID_KEY, context.getServiceId());
+        putIfNotNull(SERVICE_METHOD_ID_KEY, context.getServiceMethodId());
+        putIfNotNull(SERVICE_METHOD_COMMAND_KEY, context.getServiceMethodCommand());
+        putIfNotNull(LOG_EVENT_TYPE, context.getLogEventType());
         putIfNotNull(REQUEST_START_TIME_KEY, LocalDateTime.now().format(YYYY_MM_DD_T_HH_MM_SS_24H_SSS_DASH_FORMAT));
-        putIfNotNull(SERVICES_KEY, parameters.getLoadedServices());
+        putIfNotNull(SERVICES_KEY, context.getLoadedServices());
     }
 
-    static void clearServiceCallLoggingParameters() {
+    public static void putLoggingContext(TransportLoggingContext context) {
+        putModuleLoggingContext();
+        putIfNotNull(PROTOCOL_KEY, context.getProtocol());
+        putIfNotNull(TRACE_ID_KEY, context.getTraceId());
+        putIfNotNull(ENVIRONMENT_KEY, context.getEnvironment());
+        putIfNotNull(REQUEST_ID_KEY, context.getRequestId());
+        putIfNotEmpty(PROFILE_KEY, context.getProfile());
+    }
+
+    public static void clearServiceLoggingContext() {
         remove(SERVICES_KEY);
         remove(REQUEST_KEY);
         remove(RESPONSE_KEY);
@@ -59,16 +69,7 @@ public interface LoggingParametersManager {
         remove(LOG_EVENT_TYPE);
     }
 
-    static void putProtocolCallLoggingParameters(ProtocolCallLoggingParameters parameters) {
-        putModuleLoggingParameters();
-        putIfNotNull(PROTOCOL_KEY, parameters.getProtocol());
-        putIfNotNull(TRACE_ID_KEY, parameters.getTraceId());
-        putIfNotNull(ENVIRONMENT_KEY, parameters.getEnvironment());
-        putIfNotNull(REQUEST_ID_KEY, parameters.getRequestId());
-        putIfNotEmpty(PROFILE_KEY, parameters.getProfile());
-    }
-
-    static void clearProtocolLoggingParameters() {
+    public static void clearTransportLoggingContext() {
         remove(PROTOCOL_KEY);
         remove(TRACE_ID_KEY);
         remove(ENVIRONMENT_KEY);

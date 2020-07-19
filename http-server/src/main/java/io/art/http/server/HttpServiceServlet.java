@@ -57,7 +57,7 @@ import static io.art.http.server.module.HttpServerModule.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.logging.LoggingModuleConstants.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
-import static io.art.logging.LoggingParametersManager.*;
+import static io.art.logging.LoggingContext.*;
 import javax.servlet.*;
 import javax.servlet.annotation.*;
 import javax.servlet.http.*;
@@ -81,17 +81,17 @@ class HttpServiceServlet extends HttpServlet {
                     .map(method -> method.getHttpMethod().getMethodType().name())
                     .collect(joining(COMMA)));
             response.setStatus(OK.getCode());
-            clearServiceCallLoggingParameters();
+            clearServiceLoggingContext();
             return;
         }
         if (isNull(command)) {
             handleException(request, response, new HttpServerException(format(HTTP_METHOD_NOT_ALLOWED, request.getMethod())));
-            clearServiceCallLoggingParameters();
+            clearServiceLoggingContext();
             return;
         }
         ServiceMethodCommand serviceCommand = createServiceCommand(command.getServiceId(), command.getHttpMethod());
-        clearServiceCallLoggingParameters();
-        putServiceCallLoggingParameters(ServiceCallLoggingParameters.builder()
+        clearServiceLoggingContext();
+        putLoggingParameters(ServiceLoggingContext.builder()
                 .serviceId(command.getServiceId())
                 .serviceMethodId(serviceCommand.toString())
                 .serviceMethodCommand(serviceCommand.toString() + DOT + getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID))
@@ -104,10 +104,10 @@ class HttpServiceServlet extends HttpServlet {
                 response.addHeader(CONTENT_TYPE, httpServerModuleState().getRequestContext().getAcceptType().toString());
             }
             writeResponseBody(response, responseBody);
-            clearServiceCallLoggingParameters();
+            clearServiceLoggingContext();
         } catch (Throwable throwable) {
             handleException(request, response, throwable);
-            clearServiceCallLoggingParameters();
+            clearServiceLoggingContext();
         }
     }
 

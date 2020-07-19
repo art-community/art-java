@@ -37,7 +37,7 @@ import static io.art.grpc.server.constants.GrpcServerLoggingMessages.*;
 import static io.art.grpc.server.constants.GrpcServerModuleConstants.*;
 import static io.art.grpc.server.module.GrpcServerModule.grpcServerModule;
 import static io.art.logging.LoggingModule.*;
-import static io.art.logging.LoggingParametersManager.*;
+import static io.art.logging.LoggingContext.*;
 
 public class GrpcServerLoggingInterceptor implements ServerInterceptor {
     @Getter(lazy = true, value = PRIVATE)
@@ -47,8 +47,8 @@ public class GrpcServerLoggingInterceptor implements ServerInterceptor {
     public <ReqT, RespT> Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> serverCall, Metadata metadata, ServerCallHandler<ReqT, RespT> serverCallHandler) {
         String traceIdHeader = metadata.get(of(TRACE_ID_HEADER, ASCII_STRING_MARSHALLER));
         String profileHeader = metadata.get(of(PROFILE_HEADER, ASCII_STRING_MARSHALLER));
-        clearProtocolLoggingParameters();
-        putProtocolCallLoggingParameters(ProtocolCallLoggingParameters.builder()
+        clearTransportLoggingContext();
+        putLoggingContext(TransportLoggingContext.builder()
                 .profile(profileHeader)
                 .environment(getProperty(ENVIRONMENT_PROPERTY))
                 .protocol(GRPC_SERVICE_TYPE)
