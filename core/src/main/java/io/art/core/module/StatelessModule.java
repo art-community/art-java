@@ -23,7 +23,7 @@ import java.util.function.*;
 
 public interface StatelessModule<
         Configuration extends ModuleConfiguration,
-        Configurator extends ModuleConfigurator<Configurator>
+        Configurator extends ModuleConfigurator<Configuration, Configurator>
         >
         extends ModuleConfigurationProvider<Configuration> {
     Configurator getConfigurator();

@@ -18,15 +18,54 @@
 
 package io.art.launcher;
 
+import io.art.configuration.module.*;
+import io.art.core.module.*;
 import io.art.json.module.*;
+import io.art.logging.*;
+import io.art.model.configurator.*;
+import io.art.model.module.*;
 import io.art.xml.module.*;
+import lombok.experimental.*;
+import static io.art.configuration.module.ConfiguratorModule.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.context.Context.*;
+import static java.util.Optional.*;
+import java.util.*;
 import java.util.concurrent.atomic.*;
 
+@UtilityClass
 public class ModuleLauncher {
     private final static AtomicBoolean launched = new AtomicBoolean(false);
 
+    public static void launch(ModuleModel model) {
+        if (launched.compareAndSet(false, true)) {
+            context().loadModule(new ConfiguratorModule());
+            List<ModuleConfigurationSource> sources = configuratorModule().configuration().orderedSources();
+            ConfiguratorModel configuratorModel = model.getConfiguratorModel();
+
+            logging(sources, configuratorModel);
+            json(sources);
+            xml(sources);
+        }
+    }
+
+    private void logging(List<ModuleConfigurationSource> sources, ConfiguratorModel configuratorModel) {
+        LoggingModule logging = cast(new LoggingModule().configure(configurator -> configurator.from(sources)));
+        ofNullable(configuratorModel.getLoggingConfigurator())
+                .ifPresent(model -> logging.configure(configurator -> configurator.from(model.getConfiguration())));
+        context().loadModule(logging);
+    }
+
+    private void json(List<ModuleConfigurationSource> sources) {
+        context().loadModule(new JsonModule().configure(configurator -> configurator.from(sources)));
+    }
+
+
+    private void xml(List<ModuleConfigurationSource> sources) {
+        context().loadModule(new XmlModule().configure(configurator -> configurator.from(sources)));
+    }
+
     public static void main(String[] args) {
-        context().loadModule(new JsonModule()).loadModule(new XmlModule());
+        launch(ModuleModel.module());
     }
 }

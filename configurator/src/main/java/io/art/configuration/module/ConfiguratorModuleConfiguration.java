@@ -46,7 +46,7 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
     }
 
     @RequiredArgsConstructor
-    public static class Configurator implements ModuleConfigurator<Configurator> {
+    public static class Configurator implements ModuleConfigurator<ConfiguratorModuleConfiguration, Configurator> {
         private final ConfiguratorModuleConfiguration configuration;
 
         @Override

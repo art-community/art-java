@@ -18,6 +18,15 @@
 
 package io.art.model.configurator;
 
-public class ConfiguratorModel {
+import lombok.*;
+import java.util.function.*;
 
+@Getter
+public class ConfiguratorModel {
+    private LoggingConfiguratorModel loggingConfigurator;
+
+    public ConfiguratorModel logging(UnaryOperator<LoggingConfiguratorModel> configurator) {
+        this.loggingConfigurator = configurator.apply(new LoggingConfiguratorModel());
+        return this;
+    }
 }

@@ -23,6 +23,7 @@ import io.art.service.validation.Validatable;
 import io.art.service.validation.ValidationExpression;
 
 import static io.art.core.caster.Caster.cast;
+import java.util.*;
 
 public class ValidationException extends RuntimeException {
     @Getter
@@ -50,8 +51,8 @@ public class ValidationException extends RuntimeException {
         this.validatableModel = validatableModel;
     }
 
-    public ValidationException(Validatable validatableModel, ValidationExpression<?> expression, Object... params) {
-        super(expression.getValidationErrorMessageWithPattern(params));
+    public ValidationException(Validatable validatableModel, ValidationExpression<?> expression, List<?> patternParameters) {
+        super(expression.formatValidationErrorMessage(patternParameters));
         this.fieldName = expression.getFieldName();
         this.type = expression.getType();
         this.expression = expression;

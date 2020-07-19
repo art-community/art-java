@@ -18,11 +18,11 @@
 
 package io.art.service.validation;
 
-import lombok.Getter;
-
-import static java.text.MessageFormat.format;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
-import static io.art.core.constants.StringConstants.EMPTY_STRING;
+import lombok.*;
+import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.constants.StringConstants.*;
+import static java.text.MessageFormat.*;
+import java.util.*;
 
 @Getter
 public abstract class ValidationExpression<T> {
@@ -43,7 +43,7 @@ public abstract class ValidationExpression<T> {
 
     public abstract String getValidationErrorMessage();
 
-    public String getValidationErrorMessageWithPattern(Object... params) {
-        return isEmpty(pattern) ? EMPTY_STRING : format(pattern, params);
+    public String formatValidationErrorMessage(List<?> patternParameters) {
+        return isEmpty(pattern) ? EMPTY_STRING : format(pattern, patternParameters.toArray());
     }
 }

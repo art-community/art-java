@@ -46,22 +46,22 @@ import java.util.*;
 public class ServiceLoggingInterception implements ServiceRequestInterception, ServiceResponseInterception {
     private final static ThreadLocal<Stack<ServiceLoggingContext>> serviceLoggingParameters = new ThreadLocal<>();
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = loggingModule().getLogger(ServiceLoggingInterception.class);
+    private static final Logger logger = logger(ServiceLoggingInterception.class);
 
     @Override
     public ServiceInterceptionResult intercept(ServiceRequest<?> request) {
         if (isNull(serviceLoggingParameters.get())) {
             serviceLoggingParameters.set(stackOf());
         }
-        ServiceLoggingContext parameters = ServiceLoggingContext.builder()
+        ServiceLoggingContext loggingContext = ServiceLoggingContext.builder()
                 .serviceId(request.getServiceMethodCommand().getServiceId())
                 .serviceMethodId(request.getServiceMethodCommand().toString())
                 .serviceMethodCommand(request.getServiceMethodCommand().toString() + DOT + getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID))
                 .logEventType(REQUEST_EVENT)
                 .loadedServices(serviceModuleState().getServiceRegistry().getServices().keySet())
                 .build();
-        serviceLoggingParameters.get().push(parameters);
-        putRequestResponseParameters(request, parameters);
+        serviceLoggingParameters.get().push(loggingContext);
+        putRequestResponseParameters(request, loggingContext);
         getLogger().info(format(EXECUTION_SERVICE_MESSAGE, request.getServiceMethodCommand(), getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID), request));
         remove(LOG_EVENT_TYPE);
         return nextInterceptor(request);

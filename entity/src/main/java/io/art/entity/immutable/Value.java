@@ -21,16 +21,9 @@ package io.art.entity.immutable;
 import io.art.core.checker.*;
 import io.art.entity.constants.*;
 import io.art.entity.exception.*;
-import io.art.entity.mapper.ValueFromModelMapper.*;
-import io.art.entity.mapper.ValueToModelMapper.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.entity.constants.ExceptionMessages.*;
 import static io.art.entity.constants.ValueType.*;
-import static io.art.entity.immutable.Entity.*;
-import static io.art.entity.immutable.Value.Model.*;
-import static io.art.entity.mapping.ArrayMapping.*;
-import static io.art.entity.mapping.EntityMapping.*;
-import static io.art.entity.mapping.PrimitiveMapping.*;
 import static java.text.MessageFormat.*;
 import java.util.*;
 
@@ -116,7 +109,6 @@ public interface Value {
         return type == BINARY;
     }
 
-
     static boolean valueIsEmpty(Value value) {
         if (Objects.isNull(value)) {
             return true;
@@ -149,51 +141,5 @@ public interface Value {
         return false;
     }
 
-
     ValueType getType();
-
-    class Model {
-        String value;
-
-        public static EntityFromModelMapper<Model> fromModel = model -> {
-            if (Objects.isNull(model)) return null;
-            return entityBuilder().put("value", model.value, fromString).build();
-        };
-
-        public static EntityToModelMapper<Model> toModel = entity -> {
-            if (Objects.isNull(entity)) return null;
-            Model model = new Model();
-            model.value = entity.map("value", toString);
-            return model;
-        };
-    }
-
-    class Request {
-        List<String> list;
-        Set<String> set;
-        Map<String, String> stringMap;
-        Map<String, Model> map;
-        Model model;
-
-        public static EntityFromModelMapper<Request> fromRequest = model -> {
-            if (Objects.isNull(model)) return null;
-            return entityBuilder()
-                    .put("list", model.list, fromList(fromString))
-                    .put("set", model.set, fromSet(fromString))
-                    .put("stringMap", model.stringMap, fromMap(toString, fromString, fromString))
-                    .put("map", model.map, fromMap(toString, fromString, fromModel))
-                    .build();
-        };
-
-        public static EntityToModelMapper<Request> toRequest = entity -> {
-            if (Objects.isNull(entity)) return null;
-            Request request = new Request();
-            request.list = entity.map("list", toList(toString));
-            request.set = entity.map("list", toSet(toString));
-            request.stringMap = entity.map("stringMap", toMap(toString, fromString, toString));
-            request.map = entity.map("map", toMap(toString, fromString, toModel));
-            request.model = entity.map("model", toModel);
-            return request;
-        };
-    }
 }

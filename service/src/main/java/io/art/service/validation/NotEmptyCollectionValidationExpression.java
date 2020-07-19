@@ -25,7 +25,7 @@ import java.util.Collection;
 import static java.text.MessageFormat.format;
 import static io.art.service.constants.ValidationExpressionType.NOT_EMPTY_COLLECTION;
 
-class NotEmptyCollectionValidationExpression extends ValidationExpression<Collection> {
+class NotEmptyCollectionValidationExpression extends ValidationExpression<Collection<?>> {
 
     NotEmptyCollectionValidationExpression() {
         super(NOT_EMPTY_COLLECTION);
@@ -37,7 +37,7 @@ class NotEmptyCollectionValidationExpression extends ValidationExpression<Collec
     }
 
     @Override
-    public boolean evaluate(String fieldName, Collection value) {
+    public boolean evaluate(String fieldName, Collection<?> value) {
         return super.evaluate(fieldName, value) && !value.isEmpty();
     }
 

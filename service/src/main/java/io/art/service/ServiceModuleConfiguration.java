@@ -64,7 +64,10 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
         private final Map<String, ServiceExecutionConfiguration> executionConfigurations = mapOf();
         private final Map<String, DeactivationConfig> deactivationConfigurations = mapOf();
         @Getter
-        private final List<RequestInterceptor> requestInterceptors = linkedListOf(interceptRequest(new ServiceLoggingInterception()), interceptRequest(new ServiceValidationInterception()));
+        private final List<RequestInterceptor> requestInterceptors = linkedListOf(
+                interceptRequest(new ServiceLoggingInterception()),
+                interceptRequest(new ServiceValidationInterception())
+        );
         @Getter
         private final List<ResponseInterceptor> responseInterceptors = linkedListOf(interceptResponse(new ServiceLoggingInterception()));
         @Getter(lazy = true)

@@ -20,11 +20,12 @@ package io.art.service.validation;
 
 import io.art.service.constants.ServiceExceptionsMessages;
 
+import static io.art.service.constants.ServiceExceptionsMessages.EQUALS_VALIDATION_ERROR;
 import static java.text.MessageFormat.format;
 import static io.art.service.constants.ValidationExpressionType.NOT_EQUALS;
 
 class NotEqualsValidationExpression extends ValidationExpression<Object> {
-    private Object other;
+    private final Object other;
 
     NotEqualsValidationExpression(Object other) {
         super(NOT_EQUALS);
@@ -44,6 +45,6 @@ class NotEqualsValidationExpression extends ValidationExpression<Object> {
 
     @Override
     public String getValidationErrorMessage() {
-        return format(ServiceExceptionsMessages.EQUALS_VALIDATION_ERROR, fieldName, value, other);
+        return format(EQUALS_VALIDATION_ERROR, fieldName, value, other);
     }
 }

@@ -28,7 +28,7 @@ public class ServiceInterceptionResult {
     @Builder.Default
     private final InterceptionStrategy nextInterceptionStrategy = NEXT_INTERCEPTOR;
     private final ServiceRequest<?> request;
-    private ServiceResponse<?> response;
+    private final ServiceResponse<?> response;
 
     public static ServiceInterceptionResult nextInterceptor(ServiceRequest<?> request) {
         return interceptionResult().request(request).build();

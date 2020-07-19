@@ -28,7 +28,7 @@ public class XmlModuleConfiguration implements ModuleConfiguration {
     private final XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newFactory();
 
     @RequiredArgsConstructor
-    public static class Configurator implements ModuleConfigurator<Configurator> {
+    public static class Configurator implements ModuleConfigurator<XmlModuleConfiguration, Configurator> {
         private final XmlModuleConfiguration configuration;
     }
 }

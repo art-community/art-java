@@ -18,10 +18,9 @@
 
 package io.art.service.validation;
 
-import io.art.service.constants.ServiceExceptionsMessages;
-
-import static java.text.MessageFormat.format;
-import static io.art.service.constants.ValidationExpressionType.NOT_EMPTY_STRING;
+import static io.art.service.constants.ServiceExceptionsMessages.*;
+import static io.art.service.constants.ValidationExpressionType.*;
+import static java.text.MessageFormat.*;
 
 class NotEmptyStringValidationExpression extends ValidationExpression<String> {
 
@@ -41,6 +40,6 @@ class NotEmptyStringValidationExpression extends ValidationExpression<String> {
 
     @Override
     public String getValidationErrorMessage() {
-        return format(ServiceExceptionsMessages.EMPTY_VALIDATION_ERROR, fieldName);
+        return format(EMPTY_VALIDATION_ERROR, fieldName);
     }
 }

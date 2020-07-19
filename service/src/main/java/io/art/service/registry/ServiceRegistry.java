@@ -16,12 +16,12 @@
 
 package io.art.service.registry;
 
-import lombok.*;
 import io.art.service.*;
-import static java.text.MessageFormat.*;
+import lombok.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.service.constants.ServiceLoggingMessages.*;
+import static java.text.MessageFormat.*;
 import java.util.*;
 
 public class ServiceRegistry {
@@ -33,8 +33,7 @@ public class ServiceRegistry {
     }
 
     public ServiceRegistry registerService(Specification specification) {
-        loggingModule()
-                .getLogger(ServiceRegistry.class)
+        logger(ServiceRegistry.class)
                 .info(format(SERVICE_REGISTRATION_MESSAGE, specification.getServiceId(), specification.getClass().getName()));
         services.put(specification.getServiceId(), specification);
         return this;

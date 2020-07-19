@@ -19,22 +19,21 @@
 package io.art.service.validation;
 
 
-import io.art.service.constants.ServiceExceptionsMessages;
-
-import static java.text.MessageFormat.format;
-import static io.art.service.constants.ValidationExpressionType.BETWEEN_INT;
+import io.art.service.constants.*;
+import static io.art.service.constants.ValidationExpressionType.*;
+import static java.text.MessageFormat.*;
 
 class BetweenIntValidationExpression extends ValidationExpression<Integer> {
-    private Integer lowerValue;
-    private Integer greaterValue;
+    private final int lowerValue;
+    private final int greaterValue;
 
-    BetweenIntValidationExpression(Integer lowerValue, Integer greaterValue) {
+    BetweenIntValidationExpression(int lowerValue, int greaterValue) {
         super(BETWEEN_INT);
         this.lowerValue = lowerValue;
         this.greaterValue = greaterValue;
     }
 
-    BetweenIntValidationExpression(Integer lowerValue, Integer greaterValue, String pattern) {
+    BetweenIntValidationExpression(int lowerValue, int greaterValue, String pattern) {
         super(BETWEEN_INT);
         this.lowerValue = lowerValue;
         this.greaterValue = greaterValue;

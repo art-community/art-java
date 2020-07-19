@@ -26,26 +26,26 @@ import static java.text.MessageFormat.format;
 import static io.art.service.constants.ValidationExpressionType.CONTAINS;
 
 class ContainsValidationExpression extends ValidationExpression<Object> {
-    private List<?> objectList;
+    private final List<?> list;
 
     ContainsValidationExpression(List<?> objectList) {
         super(CONTAINS);
-        this.objectList = objectList;
+        this.list = objectList;
     }
 
     ContainsValidationExpression(List<?> objectList, String pattern) {
         super(CONTAINS);
-        this.objectList = objectList;
+        this.list = objectList;
         this.pattern = pattern;
     }
 
     @Override
     public boolean evaluate(String fieldName, Object value) {
-        return super.evaluate(fieldName, value) && objectList.contains(value);
+        return super.evaluate(fieldName, value) && list.contains(value);
     }
 
     @Override
     public String getValidationErrorMessage() {
-        return format(ServiceExceptionsMessages.NOT_CONTAINS_VALIDATION_ERROR, fieldName, value, objectList.toString());
+        return format(ServiceExceptionsMessages.NOT_CONTAINS_VALIDATION_ERROR, fieldName, value, list.toString());
     }
 }

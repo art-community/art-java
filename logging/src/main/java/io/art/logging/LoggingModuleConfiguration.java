@@ -52,13 +52,20 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
     }
 
     @RequiredArgsConstructor
-    public static class Configurator implements ModuleConfigurator<Configurator> {
+    public static class Configurator implements ModuleConfigurator<LoggingModuleConfiguration, Configurator> {
         private final LoggingModuleConfiguration configuration;
 
         @Override
         public Configurator from(ModuleConfigurationSource source) {
             configuration.colored = source.getBool(COLORED_KEY);
             configuration.asynchronous = source.getBool(ASYNCHRONOUS_KEY);
+            return this;
+        }
+
+        @Override
+        public Configurator from(LoggingModuleConfiguration configuration) {
+            this.configuration.colored = configuration.colored;
+            this.configuration.asynchronous = configuration.asynchronous;
             return null;
         }
     }

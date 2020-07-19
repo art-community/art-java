@@ -27,7 +27,7 @@ public class JsonModuleConfiguration implements ModuleConfiguration {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @RequiredArgsConstructor
-    public static class Configurator implements ModuleConfigurator<Configurator> {
+    public static class Configurator implements ModuleConfigurator<JsonModuleConfiguration, Configurator> {
         private final JsonModuleConfiguration configuration;
 
         @Override

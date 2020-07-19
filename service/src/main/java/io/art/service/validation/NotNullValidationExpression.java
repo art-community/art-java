@@ -18,10 +18,9 @@
 
 package io.art.service.validation;
 
-import io.art.service.constants.ServiceExceptionsMessages;
-
-import static java.text.MessageFormat.format;
-import static io.art.service.constants.ValidationExpressionType.NOT_NULL;
+import static io.art.service.constants.ServiceExceptionsMessages.*;
+import static io.art.service.constants.ValidationExpressionType.*;
+import static java.text.MessageFormat.*;
 
 class NotNullValidationExpression extends ValidationExpression<Object> {
 
@@ -41,6 +40,6 @@ class NotNullValidationExpression extends ValidationExpression<Object> {
 
     @Override
     public String getValidationErrorMessage() {
-        return format(ServiceExceptionsMessages.NULL_VALIDATION_ERROR, fieldName);
+        return format(NULL_VALIDATION_ERROR, fieldName);
     }
 }

@@ -24,7 +24,7 @@ import static java.text.MessageFormat.format;
 import static io.art.service.constants.ValidationExpressionType.EQUALS;
 
 class EqualsValidationExpression extends ValidationExpression<Object> {
-    private Object other;
+    private final Object other;
 
     EqualsValidationExpression(Object other) {
         super(EQUALS);

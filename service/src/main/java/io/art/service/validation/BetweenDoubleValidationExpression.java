@@ -25,8 +25,8 @@ import static java.text.MessageFormat.format;
 import static io.art.service.constants.ValidationExpressionType.BETWEEN_DOUBLE;
 
 class BetweenDoubleValidationExpression extends ValidationExpression<Double> {
-    private double lowerValue;
-    private double greaterValue;
+    private final double lowerValue;
+    private final double greaterValue;
 
     BetweenDoubleValidationExpression(Double lowerValue, Double greaterValue) {
         super(BETWEEN_DOUBLE);

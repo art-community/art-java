@@ -18,9 +18,9 @@
 
 package io.art.service.factory;
 
-import lombok.experimental.*;
 import io.art.service.constants.*;
 import io.art.service.model.*;
+import lombok.experimental.*;
 import static io.art.service.constants.RequestValidationPolicy.*;
 
 @UtilityClass
@@ -29,16 +29,12 @@ public class ServiceRequestFactory {
         return new ServiceRequest<>(command, NON_VALIDATABLE);
     }
 
-    public static <T> ServiceRequest<T> newServiceRequest(ServiceMethodCommand command, T primitiveData) {
-        return new ServiceRequest<>(command, NON_VALIDATABLE, primitiveData);
+    public static <T> ServiceRequest<T> newServiceRequest(ServiceMethodCommand command, T data) {
+        return new ServiceRequest<>(command, NON_VALIDATABLE, data);
     }
 
     public static <T> ServiceRequest<T> newServiceRequest(ServiceMethodCommand command, RequestValidationPolicy validationPolicy) {
         return new ServiceRequest<>(command, validationPolicy);
-    }
-
-    public static <T> ServiceRequest<T> newPrimitiveRequest(ServiceMethodCommand command, T primitiveData) {
-        return newServiceRequest(command, primitiveData, NOT_NULL);
     }
 
     public static <T> ServiceRequest<T> newServiceRequest(ServiceMethodCommand command, T requestData, RequestValidationPolicy validationPolicy) {

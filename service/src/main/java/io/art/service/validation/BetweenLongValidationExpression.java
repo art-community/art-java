@@ -25,16 +25,16 @@ import static java.text.MessageFormat.format;
 import static io.art.service.constants.ValidationExpressionType.BETWEEN_LONG;
 
 class BetweenLongValidationExpression extends ValidationExpression<Long> {
-    private long lowerValue;
-    private long greaterValue;
+    private final long lowerValue;
+    private final long greaterValue;
 
-    BetweenLongValidationExpression(Long lowerValue, Long greaterValue) {
+    BetweenLongValidationExpression(long lowerValue, long greaterValue) {
         super(BETWEEN_LONG);
         this.lowerValue = lowerValue;
         this.greaterValue = greaterValue;
     }
 
-    BetweenLongValidationExpression(Long lowerValue, Long greaterValue, String pattern) {
+    BetweenLongValidationExpression(long lowerValue, long greaterValue, String pattern) {
         super(BETWEEN_LONG);
         this.lowerValue = lowerValue;
         this.greaterValue = greaterValue;

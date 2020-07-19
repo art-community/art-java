@@ -18,14 +18,13 @@
 
 package io.art.service.exception;
 
-import lombok.*;
 import io.art.service.model.*;
+import lombok.*;
 import static com.google.common.base.Throwables.*;
-import static java.text.MessageFormat.*;
 import static io.art.service.constants.ServiceExceptionsMessages.*;
+import static java.text.MessageFormat.*;
 
 @Getter
-@EqualsAndHashCode(callSuper = true)
 public class ServiceExecutionException extends RuntimeException {
     private final String errorCode;
     private final String errorMessage;
@@ -74,11 +73,20 @@ public class ServiceExecutionException extends RuntimeException {
     }
 
     private static String formatFullErrorMessage(ServiceMethodCommand command, String errorCode, Throwable throwable) {
-        return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE, command.getServiceId(), command.getMethodId(),
-                errorCode, throwable.getMessage(), getStackTraceAsString(throwable));
+        return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE,
+                command.getServiceId(),
+                command.getMethodId(),
+                errorCode,
+                throwable.getMessage(),
+                getStackTraceAsString(throwable)
+        );
     }
 
     private static String formatFullErrorMessage(String errorCode, Throwable throwable) {
-        return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE_WITHOUT_COMMAND, errorCode, throwable.getMessage(), getStackTraceAsString(throwable));
+        return format(SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE_WITHOUT_COMMAND,
+                errorCode,
+                throwable.getMessage(),
+                getStackTraceAsString(throwable)
+        );
     }
 }

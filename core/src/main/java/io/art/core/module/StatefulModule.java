@@ -20,7 +20,7 @@ package io.art.core.module;
 
 public interface StatefulModule<
         Configuration extends ModuleConfiguration,
-        Configurator extends ModuleConfigurator<Configurator>,
+        Configurator extends ModuleConfigurator<Configuration, Configurator>,
         State extends ModuleState
         >
         extends ModuleStateProvider<State>, StatelessModule<Configuration, Configurator> {

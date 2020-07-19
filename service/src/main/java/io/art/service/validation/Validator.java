@@ -18,8 +18,9 @@
 
 package io.art.service.validation;
 
-import lombok.*;
 import io.art.service.exception.*;
+import lombok.*;
+import java.util.*;
 
 @AllArgsConstructor
 public class Validator {
@@ -34,13 +35,4 @@ public class Validator {
         }
         return this;
     }
-//
-//    @SafeVarargs
-//    public final <T> Validator validate(String fieldName, T value, ValidationExpression<T> validationExpression, Object...params) {
-//        if (!validationExpression.evaluate(fieldName, value)) {
-//            throw new ValidationException(model, validationExpression, params);
-//        }
-//
-//        return this;
-//    }
 }

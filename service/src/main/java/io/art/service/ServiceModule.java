@@ -18,8 +18,9 @@
 
 package io.art.service;
 
-import lombok.*;
+import io.art.core.module.*;
 import io.art.core.module.Module;
+import lombok.*;
 import io.art.service.state.*;
 import static lombok.AccessLevel.*;
 import static org.apache.logging.log4j.ThreadContext.*;
@@ -29,7 +30,7 @@ import static io.art.service.ServiceModuleConfiguration.*;
 import static io.art.service.constants.ServiceModuleConstants.*;
 
 @Getter
-public class ServiceModule implements Module<ServiceModuleConfiguration, ServiceModuleState> {
+public class ServiceModule implements StatefulModule<ServiceModuleConfiguration, ServiceModuleState> {
     @Getter(lazy = true, value = PRIVATE)
     private static final ServiceModuleConfiguration serviceModule = context().getModule(SERVICE_MODULE_ID, ServiceModule::new);
     @Getter(lazy = true, value = PRIVATE)

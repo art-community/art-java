@@ -16,8 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.model.configurator;
+package io.art.model.server;
 
-public class GrpcClientConfiguratorModel {
+import lombok.*;
 
+@RequiredArgsConstructor
+public class GrpcServiceModel {
+    private final String name;
+    private final Class<?> specification;
 }
