@@ -22,6 +22,10 @@ import groovy.lang.GroovyObject
 import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
 import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 
+val bintrayUser: String? by project
+val bintrayKey: String? by project
+val version: String? by project
+
 plugins {
     `maven-publish`
     idea
@@ -33,10 +37,6 @@ plugins {
 tasks.withType(Wrapper::class.java) {
     gradleVersion = "6.5.1"
 }
-
-val bintrayUser: String? by project
-val bintrayKey: String? by project
-val version: String? by project
 
 group = "io.github.art"
 

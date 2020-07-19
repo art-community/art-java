@@ -21,6 +21,7 @@ dependencies {
     val commonsLoggingVersion: String by project
     val log4jVersion: String by project
     val jacksonVersion: String by project
+    val disruptorVersion: String by project
 
     implementation(project(":core"))
     implementation(project(":entity"))
@@ -35,7 +36,7 @@ dependencies {
     api("org.apache.logging.log4j", "log4j-core", log4jVersion)
 
     api("org.apache.logging.log4j", "log4j-jul", log4jVersion)
-    api("com.lmax", "disruptor", "3.4.+")
+    api("com.lmax", "disruptor", disruptorVersion)
 
     api("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
     api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
