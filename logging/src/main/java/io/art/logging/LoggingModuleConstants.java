@@ -57,4 +57,9 @@ public interface LoggingModuleConstants {
         String SQL_QUERY_KEY = "sqlQuery";
         String SQL_ROUTINE_KEY = "sqlRoutine";
     }
+
+    interface LoggingMessages {
+        String CONFIGURE_BY_DEFAULT = "Configure Log4j2 from classpath by file {0}";
+        String CONFIGURE_BY_FILE = "Configure Log4j2 from by file (from -Dlog4j2.configurationFile) {0}";
+    }
 }

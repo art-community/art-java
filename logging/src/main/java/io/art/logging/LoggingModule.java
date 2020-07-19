@@ -23,6 +23,8 @@ import lombok.*;
 import org.apache.logging.log4j.Logger;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModuleConstants.*;
+import static io.art.logging.LoggingModuleConstants.LoggingMessages.CONFIGURE_BY_DEFAULT;
+import static io.art.logging.LoggingModuleConstants.LoggingMessages.CONFIGURE_BY_FILE;
 import static java.lang.System.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
@@ -55,11 +57,11 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
         boolean fromDefault = nonNull(defaultConfiguration = loader.getResource(LOG4J2_DEFAULT_YML_FILE));
         if (!fromClasspath && !fromFile && fromDefault) {
             setProperty(LOG42_CONFIGURATION_FILE_PROPERTY, defaultConfiguration.getFile());
-            logger(LoggingModule.class).info("Configure Log4j2 from classpath by file log4j2-default.yml");
+            logger(LoggingModule.class).info(format(CONFIGURE_BY_DEFAULT, defaultConfiguration.getFile()));
             return;
         }
         if (fromFile) {
-            logger(LoggingModule.class).info(format("Configure Log4j2 from classpath by file {0}", getProperty(LOG42_CONFIGURATION_FILE_PROPERTY)));
+            logger(LoggingModule.class).info(format(CONFIGURE_BY_FILE, getProperty(LOG42_CONFIGURATION_FILE_PROPERTY)));
         }
     }
 
