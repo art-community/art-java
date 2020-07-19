@@ -22,12 +22,12 @@ import io.art.entity.immutable.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.grpc.server.model.GrpcService.*;
-import io.art.service.constants.*;
-import io.art.service.registry.*;
+import io.art.server.constants.*;
+import io.art.server.registry.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.grpc.server.constants.GrpcServerModuleConstants.*;
-import static io.art.service.ServerModule.*;
+import static io.art.server.module.ServerModule.*;
 import java.util.function.*;
 
 public class GrpcServiceFunction {
@@ -69,7 +69,7 @@ public class GrpcServiceFunction {
         if (isNull(specification)) {
             specification = new GrpcFunctionalServiceSpecification();
             specification.addFunction(functionId, grpcMethod, function);
-            serviceRegistry.registerService(specification);
+            serviceRegistry.register(specification);
             return;
         }
         specification.addFunction(functionId, grpcMethod, function);

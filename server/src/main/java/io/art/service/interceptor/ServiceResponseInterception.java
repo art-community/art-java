@@ -18,8 +18,7 @@
 
 package io.art.service.interceptor;
 
-import io.art.service.model.*;
-import static io.art.service.model.ServiceInterceptionResult.*;
+import static io.art.server.model.ServiceInterceptionResult.*;
 import java.util.function.*;
 
 @FunctionalInterface

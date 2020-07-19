@@ -28,7 +28,6 @@ import io.art.reactive.service.wrapper.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.service.RsocketService.*;
-import io.art.service.model.*;
 import static io.rsocket.util.ByteBufPayload.create;
 import static io.rsocket.util.DefaultPayload.*;
 import static java.util.Objects.*;

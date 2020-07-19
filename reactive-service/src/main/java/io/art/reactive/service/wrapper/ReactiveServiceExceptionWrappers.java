@@ -1,8 +1,8 @@
 package io.art.reactive.service.wrapper;
 
 import lombok.*;
-import io.art.service.exception.*;
-import io.art.service.model.*;
+import io.art.server.service.exception.*;
+import io.art.server.model.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.service.constants.ServiceErrorCodes.*;
 import java.util.*;

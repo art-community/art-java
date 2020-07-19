@@ -20,24 +20,22 @@ package io.art.service;
 
 import lombok.experimental.*;
 import io.art.service.interceptor.ServiceExecutionInterceptor.*;
-import io.art.service.model.*;
-import static java.text.MessageFormat.*;
+import io.art.server.model.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.DateTimeConstants.*;
 import static io.art.core.constants.InterceptionStrategy.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static io.art.logging.ThreadContextExtensions.*;
-import static io.art.service.ServerModule.*;
+import static io.art.server.module.ServerModule.*;
 import static io.art.service.ServiceResponseDataExtractor.*;
-import static io.art.service.constants.RequestValidationPolicy.VALIDATABLE;
+import static io.art.server.constants.RequestValidationPolicy.VALIDATABLE;
 import static io.art.service.constants.ServiceErrorCodes.*;
-import static io.art.service.constants.ServiceExceptionsMessages.*;
+import static io.art.server.constants.ServiceExceptionsMessages.*;
 import static io.art.service.factory.ServiceRequestFactory.*;
 import static io.art.service.factory.ServiceResponseFactory.*;
-import static io.art.service.model.ServiceInterceptionResult.*;
+import static io.art.server.model.ServiceInterceptionResult.*;
 import java.util.*;
 
 @UtilityClass
@@ -77,7 +75,7 @@ public class ServiceController {
         putIfNotNull(REQUEST_START_TIME_KEY, YYYY_MM_DD_HH_MM_SS_24H_Z_DOT_FORMAT.get().format(startTime));
         Specification service = serviceModuleState()
                     .getServiceRegistry()
-                .getService(request.getServiceMethodCommand().getServiceId());
+                .get(request.getServiceMethodCommand().getServiceId());
         if (isNull(service)) {
             String errorMessage = format(SERVICE_WITH_ID_NOT_EXISTS, request.getServiceMethodCommand().getServiceId());
             return errorResponse(request.getServiceMethodCommand(), INTERNAL_ERROR, errorMessage);

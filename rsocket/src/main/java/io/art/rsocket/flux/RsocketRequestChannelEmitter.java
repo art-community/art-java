@@ -6,7 +6,6 @@ import reactor.core.*;
 import reactor.core.publisher.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.model.*;
-import io.art.service.model.*;
 import static java.util.Objects.*;
 import static io.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.*;
 import static io.art.rsocket.model.RsocketRequestReactiveContext.*;

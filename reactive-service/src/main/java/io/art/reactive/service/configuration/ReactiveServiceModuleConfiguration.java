@@ -23,7 +23,7 @@ import io.art.core.exception.*;
 import io.art.core.module.*;
 import io.art.reactive.service.interception.*;
 import io.art.reactive.service.wrapper.*;
-import io.art.service.exception.*;
+import io.art.server.service.exception.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.service.constants.ServiceErrorCodes.*;

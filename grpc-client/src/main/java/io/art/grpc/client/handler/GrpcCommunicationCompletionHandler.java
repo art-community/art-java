@@ -18,7 +18,6 @@
 
 package io.art.grpc.client.handler;
 
-import io.art.service.model.*;
 import java.util.*;
 
 @FunctionalInterface

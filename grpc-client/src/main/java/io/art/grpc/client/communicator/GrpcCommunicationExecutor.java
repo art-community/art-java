@@ -26,7 +26,7 @@ import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.grpc.servlet.*;
 import io.art.grpc.servlet.GrpcServlet.*;
-import io.art.service.model.*;
+import io.art.server.model.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.TimeUnit.*;
 import static lombok.AccessLevel.*;

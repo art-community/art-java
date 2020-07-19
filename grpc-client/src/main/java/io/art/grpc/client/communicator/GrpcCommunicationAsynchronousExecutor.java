@@ -28,7 +28,7 @@ import io.art.entity.mapper.*;
 import io.art.grpc.client.exception.*;
 import io.art.grpc.servlet.*;
 import io.art.grpc.servlet.GrpcServlet.*;
-import io.art.service.model.*;
+import io.art.server.model.*;
 import static com.google.common.util.concurrent.Futures.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;

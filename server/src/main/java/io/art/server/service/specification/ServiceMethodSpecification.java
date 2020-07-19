@@ -19,15 +19,21 @@
 package io.art.server.service.specification;
 
 import io.art.entity.mapper.*;
-import io.art.service.constants.*;
+import io.art.server.constants.*;
+import io.art.server.constants.ServerModuleConstants.*;
 import lombok.*;
+import java.util.function.*;
 
 @Getter
 @Builder
 public class ServiceMethodSpecification {
     private final String methodId;
+    private final ServiceMethodMode mode;
     private final RequestValidationPolicy requestValidationPolicy;
     private final ValueToModelMapper<?, ?> requestMapper;
     private final ValueFromModelMapper<?, ?> responseMapper;
     private final ValueFromModelMapper<?, ?> exceptionMapper;
+    private final Consumer<?> consumerImplementation;
+    private final Supplier<?> producerImplementation;
+    private final Function<?, ?> handlerImplementation;
 }

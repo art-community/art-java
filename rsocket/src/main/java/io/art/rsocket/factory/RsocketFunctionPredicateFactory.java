@@ -19,7 +19,7 @@
 package io.art.rsocket.factory;
 
 import lombok.experimental.*;
-import io.art.service.model.*;
+import io.art.server.model.*;
 import static java.util.Objects.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import java.util.function.*;

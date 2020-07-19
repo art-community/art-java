@@ -18,13 +18,12 @@
 
 package io.art.service.interceptor;
 
-import io.art.service.exception.*;
-import io.art.service.model.*;
-import io.art.service.validation.*;
+import io.art.server.service.exception.*;
+import io.art.server.service.validation.*;
 import static java.util.Objects.*;
-import static io.art.service.constants.RequestValidationPolicy.*;
-import static io.art.service.constants.ServiceExceptionsMessages.*;
-import static io.art.service.model.ServiceInterceptionResult.*;
+import static io.art.server.constants.RequestValidationPolicy.*;
+import static io.art.server.constants.ServiceExceptionsMessages.*;
+import static io.art.server.model.ServiceInterceptionResult.*;
 
 public class ServiceValidationInterception implements ServiceRequestInterception {
     @Override

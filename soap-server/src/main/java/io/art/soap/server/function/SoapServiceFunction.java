@@ -23,11 +23,11 @@ import io.art.entity.interceptor.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
 import io.art.http.server.interceptor.*;
-import io.art.service.constants.*;
+import io.art.server.constants.*;
 import io.art.soap.content.mapper.*;
 import io.art.soap.server.specification.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.service.ServerModule.*;
+import static io.art.server.module.ServerModule.*;
 import static io.art.soap.server.constans.SoapServerModuleConstants.*;
 import static io.art.soap.server.model.SoapService.*;
 import static io.art.soap.server.model.SoapService.SoapOperation.*;
@@ -140,7 +140,7 @@ public class SoapServiceFunction {
     public <RequestType, ResponseType> void handle(Function<RequestType, ResponseType> function) {
         serviceModuleState()
                     .getServiceRegistry()
-                .registerService(new SoapServiceExecutionSpecification(new SoapFunctionalServiceSpecification(soapService
+                .register(new SoapServiceExecutionSpecification(new SoapFunctionalServiceSpecification(soapService
                         .operation(operationId, soapOperation)
                         .serve(path), function)));
     }

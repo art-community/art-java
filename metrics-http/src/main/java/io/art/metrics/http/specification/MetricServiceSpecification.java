@@ -21,7 +21,7 @@ package io.art.metrics.http.specification;
 import lombok.*;
 import io.art.http.server.model.*;
 import io.art.http.server.specification.*;
-import io.art.service.exception.*;
+import io.art.server.service.exception.*;
 import static java.util.Collections.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.entity.mapping.PrimitiveMapping.*;

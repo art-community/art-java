@@ -24,12 +24,12 @@ import io.art.entity.mapper.*;
 import io.art.http.constants.*;
 import io.art.http.server.builder.*;
 import io.art.http.server.interceptor.*;
-import io.art.service.constants.*;
+import io.art.server.constants.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.*;
 import static io.art.http.server.model.HttpService.*;
-import static io.art.service.ServerModule.*;
+import static io.art.server.module.ServerModule.*;
 import java.util.function.*;
 
 public class HttpServiceFunction {
@@ -109,7 +109,7 @@ public class HttpServiceFunction {
     public <RequestType, ResponseType> void handle(Function<RequestType, ResponseType> function) {
         serviceModuleState()
                     .getServiceRegistry()
-                .registerService(new HttpFunctionalServiceSpecification(httpMethodBuilder.listen(path).serve(EMPTY_STRING), function));
+                .register(new HttpFunctionalServiceSpecification(httpMethodBuilder.listen(path).serve(EMPTY_STRING), function));
     }
 
     public <RequestType> void consume(Consumer<RequestType> consumer) {

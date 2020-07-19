@@ -19,7 +19,7 @@
 package io.art.rsocket.model;
 
 import lombok.*;
-import io.art.service.model.*;
+import io.art.server.model.*;
 
 @Getter
 @Builder

@@ -24,13 +24,13 @@ import io.art.entity.mapper.*;
 import io.art.reactive.service.constants.ReactiveServiceModuleConstants.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.service.RsocketService.*;
-import io.art.service.constants.*;
-import io.art.service.registry.*;
+import io.art.server.constants.*;
+import io.art.server.registry.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.reactive.service.model.ReactiveService.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
-import static io.art.service.ServerModule.*;
+import static io.art.server.module.ServerModule.*;
 import java.util.function.*;
 
 public class RsocketServiceFunction {
@@ -89,7 +89,7 @@ public class RsocketServiceFunction {
         if (isNull(specification)) {
             specification = new RsocketFunctionalServiceSpecification();
             specification.addFunction(functionId, rsocketMethod, reactiveMethod, function);
-            serviceRegistry.registerService(specification);
+            serviceRegistry.register(specification);
             return;
         }
         specification.addFunction(functionId, rsocketMethod, reactiveMethod, function);

@@ -19,15 +19,15 @@
 package io.art.rsocket.service;
 
 import io.art.entity.immutable.*;
+import io.art.server.constants.*;
 import lombok.*;
 import lombok.experimental.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
-import io.art.service.constants.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.module.RsocketModule.*;
-import static io.art.service.constants.RequestValidationPolicy.*;
+import static io.art.server.constants.RequestValidationPolicy.*;
 import java.util.*;
 
 @Getter

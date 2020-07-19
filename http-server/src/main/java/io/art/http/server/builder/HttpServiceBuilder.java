@@ -24,7 +24,7 @@ import io.art.entity.mapper.*;
 import io.art.http.constants.*;
 import io.art.http.server.interceptor.*;
 import io.art.http.server.model.*;
-import io.art.service.constants.*;
+import io.art.server.constants.*;
 
 public interface HttpServiceBuilder {
     HttpMethodWithBodyBuilder get(String methodId);

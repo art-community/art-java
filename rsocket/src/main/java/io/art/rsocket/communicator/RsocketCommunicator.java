@@ -32,7 +32,7 @@ import io.art.entity.mapper.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
-import io.art.service.model.*;
+import io.art.server.model.*;
 import static io.rsocket.RSocketFactory.*;
 import static java.text.MessageFormat.*;
 import static java.time.Duration.*;

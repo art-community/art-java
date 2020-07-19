@@ -36,7 +36,7 @@ import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.kafka.consumer.configuration.KafkaConsumerModuleConfiguration.*;
 import static io.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.service.ServerModule.*;
+import static io.art.server.module.ServerModule.*;
 import java.util.*;
 
 @Getter

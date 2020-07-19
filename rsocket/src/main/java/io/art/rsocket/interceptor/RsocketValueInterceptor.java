@@ -32,8 +32,7 @@ import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.reader.*;
 import io.art.rsocket.state.RsocketModuleState.*;
-import io.art.service.exception.*;
-import io.art.service.model.*;
+import io.art.server.model.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Mono.*;
 import static io.art.entity.immutable.Value.*;
@@ -41,7 +40,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketInterceptingDataType.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.rsocket.writer.RsocketPayloadWriter.*;
-import static io.art.service.constants.ServiceExceptionsMessages.*;
+import static io.art.server.constants.ServiceExceptionsMessages.*;
 import static io.art.service.mapping.ServiceRequestMapping.REQUEST_DATA;
 import static io.art.service.mapping.ServiceRequestMapping.*;
 import javax.annotation.*;

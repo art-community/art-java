@@ -29,7 +29,7 @@ import io.art.http.server.exception.*;
 import io.art.http.server.handler.*;
 import io.art.http.server.model.*;
 import io.art.logging.*;
-import io.art.service.model.*;
+import io.art.server.model.*;
 import static java.nio.charset.Charset.*;
 import static java.text.MessageFormat.*;
 import static java.util.Arrays.*;

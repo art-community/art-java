@@ -20,7 +20,6 @@ package io.art.rsocket.model;
 
 import lombok.*;
 import reactor.core.publisher.*;
-import io.art.service.model.*;
 import static io.art.service.factory.ServiceRequestFactory.*;
 
 @Getter

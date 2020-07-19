@@ -25,7 +25,6 @@ import io.art.rsocket.flux.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.service.*;
 import io.art.rsocket.state.*;
-import io.art.service.model.*;
 import static reactor.core.publisher.Mono.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;

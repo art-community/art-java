@@ -19,13 +19,13 @@
 package io.art.soap.server.model;
 
 import io.art.entity.immutable.*;
+import io.art.server.constants.*;
 import lombok.*;
 import lombok.experimental.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
 import io.art.http.server.interceptor.*;
-import io.art.service.constants.*;
 import io.art.soap.content.mapper.*;
 import static java.lang.Integer.*;
 import static java.util.Collections.*;

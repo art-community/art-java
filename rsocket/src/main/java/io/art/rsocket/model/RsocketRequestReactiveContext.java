@@ -24,7 +24,7 @@ import io.rsocket.*;
 import lombok.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
-import io.art.service.model.*;
+import io.art.server.model.*;
 import static java.text.MessageFormat.format;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;

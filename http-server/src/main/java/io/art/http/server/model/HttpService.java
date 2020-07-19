@@ -18,6 +18,7 @@
 
 package io.art.http.server.model;
 
+import io.art.server.constants.*;
 import lombok.*;
 import io.art.entity.immutable.Value;
 import io.art.entity.interceptor.*;
@@ -27,7 +28,6 @@ import io.art.http.server.builder.*;
 import io.art.http.server.constants.HttpServerModuleConstants.*;
 import io.art.http.server.interceptor.*;
 import io.art.http.server.path.*;
-import io.art.service.constants.*;
 import java.util.*;
 
 @Getter

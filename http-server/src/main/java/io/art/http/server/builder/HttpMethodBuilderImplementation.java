@@ -33,25 +33,23 @@ import io.art.http.server.exception.HttpServerException;
 import io.art.http.server.interceptor.HttpServerInterceptor;
 import io.art.http.server.model.HttpService;
 import io.art.http.server.path.HttpPath;
-import io.art.service.constants.RequestValidationPolicy;
+import io.art.server.constants.RequestValidationPolicy;
 
 import java.util.List;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
-import static java.util.Objects.isNull;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.StringConstants.SLASH;
 import static io.art.core.extensions.NullCheckingExtensions.getOrElse;
 import static io.art.core.factory.CollectionsFactory.linkedListOf;
 import static io.art.core.factory.CollectionsFactory.setOf;
-import static io.art.http.constants.HttpExceptionsMessages.*;
 import static io.art.http.constants.HttpRequestDataSource.*;
 import static io.art.http.server.constants.HttpServerExceptionMessages.HTTP_METHOD_LISTENING_PATH_IS_EMPTY;
 import static io.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode.CHECKED;
 import static io.art.http.server.constants.HttpServerModuleConstants.HttpResponseHandlingMode.UNCHECKED;
 import static io.art.http.server.module.HttpServerModule.httpServerModule;
-import static io.art.service.constants.RequestValidationPolicy.NON_VALIDATABLE;
+import static io.art.server.constants.RequestValidationPolicy.NON_VALIDATABLE;
 
 @RequiredArgsConstructor
 public class HttpMethodBuilderImplementation implements HttpMethodBuilder,

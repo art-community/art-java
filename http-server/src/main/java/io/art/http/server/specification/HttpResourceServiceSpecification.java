@@ -19,15 +19,14 @@
 package io.art.http.server.specification;
 
 import io.art.entity.immutable.*;
+import io.art.service.interceptor.*;
 import lombok.*;
 import io.art.core.caster.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
 import io.art.http.server.HttpServerModuleConfiguration.*;
 import io.art.http.server.model.*;
-import io.art.service.*;
-import io.art.service.exception.*;
+import io.art.server.service.exception.*;
 import io.art.service.interceptor.ServiceExecutionInterceptor.*;
-import io.art.service.model.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
@@ -42,7 +41,7 @@ import static io.art.http.server.model.HttpService.*;
 import static io.art.http.server.module.HttpServerModule.*;
 import static io.art.http.server.service.HttpResourceService.*;
 import static io.art.service.interceptor.ServiceExecutionInterceptor.*;
-import static io.art.service.model.ServiceInterceptionResult.*;
+import static io.art.server.model.ServiceInterceptionResult.*;
 import java.util.*;
 import java.util.function.*;
 

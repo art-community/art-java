@@ -45,7 +45,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.*;
 import static io.art.rsocket.module.RsocketModule.*;
-import static io.art.service.ServerModule.*;
+import static io.art.server.module.ServerModule.*;
 
 public class RsocketServer {
     @Getter

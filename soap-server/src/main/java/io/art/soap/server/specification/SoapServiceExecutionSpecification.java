@@ -18,12 +18,12 @@
 
 package io.art.soap.server.specification;
 
+import io.art.server.registry.*;
 import lombok.*;
 import io.art.http.server.builder.*;
 import io.art.http.server.model.*;
 import io.art.http.server.specification.*;
-import io.art.service.exception.*;
-import io.art.service.registry.*;
+import io.art.server.service.exception.*;
 import io.art.soap.server.model.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
@@ -31,7 +31,7 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.entity.mapping.PrimitiveMapping.*;
 import static io.art.http.server.builder.HttpServiceBuilder.*;
 import static io.art.http.server.model.HttpService.*;
-import static io.art.service.ServerModule.*;
+import static io.art.server.module.ServerModule.*;
 import static io.art.soap.server.constans.SoapServerModuleConstants.*;
 import static io.art.soap.server.mapper.SoapMapper.*;
 import static io.art.soap.server.model.SoapService.*;
@@ -58,8 +58,8 @@ public class SoapServiceExecutionSpecification implements HttpServiceSpecificati
     public SoapServiceExecutionSpecification(SoapServiceSpecification soapServiceSpecification) {
         this.soapServiceSpecification = soapServiceSpecification;
         ServiceRegistry serviceRegistry = serviceModuleState().getServiceRegistry();
-        if (isNull(serviceRegistry.getService(soapServiceSpecification.getServiceId()))) {
-            serviceRegistry.registerService(soapServiceSpecification);
+        if (isNull(serviceRegistry.get(soapServiceSpecification.getServiceId()))) {
+            serviceRegistry.register(soapServiceSpecification);
         }
     }
 

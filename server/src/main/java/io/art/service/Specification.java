@@ -18,11 +18,11 @@
 
 package io.art.service;
 
+import io.art.server.module.*;
 import io.art.service.interceptor.ServiceExecutionInterceptor.*;
-import io.art.service.model.*;
+import io.art.server.model.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.service.ServerModule.*;
-import static io.art.service.constants.ServiceModuleConstants.*;
+import static io.art.server.module.ServerModule.*;
 import java.util.*;
 
 public interface Specification {

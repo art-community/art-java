@@ -21,19 +21,18 @@ package io.art.reactive.service.interception;
 import reactor.core.publisher.*;
 import io.art.reactive.service.specification.*;
 import io.art.service.*;
-import io.art.service.exception.*;
+import io.art.server.service.exception.*;
 import io.art.service.interceptor.*;
-import io.art.service.model.*;
-import io.art.service.validation.*;
+import io.art.server.service.validation.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.reactive.service.constants.ReactiveServiceModuleConstants.*;
 import static io.art.reactive.service.model.ReactiveService.*;
-import static io.art.service.ServerModule.*;
-import static io.art.service.constants.RequestValidationPolicy.*;
-import static io.art.service.constants.ServiceExceptionsMessages.*;
-import static io.art.service.model.ServiceInterceptionResult.*;
+import static io.art.server.module.ServerModule.*;
+import static io.art.server.constants.RequestValidationPolicy.*;
+import static io.art.server.constants.ServiceExceptionsMessages.*;
+import static io.art.server.model.ServiceInterceptionResult.*;
 
 public class ReactiveServiceValidationInterception extends ServiceValidationInterception {
     @Override
@@ -41,7 +40,7 @@ public class ReactiveServiceValidationInterception extends ServiceValidationInte
     public ServiceInterceptionResult intercept(ServiceRequest<?> request) {
         String serviceId = request.getServiceMethodCommand().getServiceId();
         String methodId = request.getServiceMethodCommand().getMethodId();
-        Specification serviceSpecification = serviceModuleState().getServiceRegistry().getService(serviceId);
+        Specification serviceSpecification = serviceModuleState().getServiceRegistry().get(serviceId);
 
         if (!serviceSpecification.getServiceTypes().contains(REACTIVE_SERVICE_TYPE)) {
             return super.intercept(request);

@@ -26,7 +26,7 @@ import static io.github.resilience4j.metrics.RateLimiterMetrics.*;
 import static io.github.resilience4j.metrics.RetryMetrics.*;
 import static java.util.concurrent.TimeUnit.*;
 import static io.art.metrics.constants.MetricsModuleConstants.*;
-import static io.art.service.ServerModule.*;
+import static io.art.server.module.ServerModule.*;
 
 @UtilityClass
 public class DropwizardMetricRegistryFactory {
