@@ -21,7 +21,7 @@ package io.art.metrics.http.specification;
 import lombok.*;
 import io.art.http.server.model.*;
 import io.art.http.server.specification.*;
-import io.art.server.service.exception.*;
+import io.art.server.exception.*;
 import static java.util.Collections.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.entity.mapping.PrimitiveMapping.*;
@@ -29,7 +29,7 @@ import static io.art.http.server.model.HttpService.*;
 import static io.art.metrics.constants.MetricsModuleConstants.*;
 import static io.art.metrics.http.constants.MetricsModuleHttpConstants.*;
 import static io.art.metrics.module.MetricsModule.*;
-import static io.art.service.interceptor.ServiceExecutionInterceptor.*;
+import static io.art.server.interceptor.ServiceExecutionInterceptor.*;
 import java.util.*;
 
 @Getter

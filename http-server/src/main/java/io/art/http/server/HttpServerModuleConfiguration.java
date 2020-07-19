@@ -26,7 +26,7 @@ import io.art.http.logger.*;
 import io.art.http.server.filter.*;
 import io.art.http.server.handler.*;
 import io.art.http.server.interceptor.*;
-import io.art.server.service.exception.*;
+import io.art.server.exception.*;
 import static org.zalando.logbook.RawResponseFilters.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.NetworkConstants.*;

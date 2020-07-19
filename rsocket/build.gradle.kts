@@ -24,17 +24,10 @@ dependencies {
     implementation(project(":entity"))
     implementation(project(":logging"))
     implementation(project(":server"))
-    implementation(project(":reactive-service"))
     implementation(project(":protobuf"))
     implementation(project(":json"))
     implementation(project(":xml"))
     implementation(project(":message-pack"))
-
-
-    api("io.rsocket", "rsocket-core", rsocketVersion)
-            .exclude("io.netty")
-            .exclude("io.projectreactor", "reactor-core")
-            .exclude("org.slf4j")
 
     api("io.rsocket", "rsocket-transport-netty", rsocketVersion)
             .exclude("io.netty")

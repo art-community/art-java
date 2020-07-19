@@ -18,13 +18,13 @@
 
 package io.art.server.model;
 
-import io.art.server.constants.*;
+import io.art.server.constants.ServerModuleConstants.*;
 import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.*;
 import io.github.resilience4j.ratelimiter.*;
 import io.github.resilience4j.retry.*;
 import lombok.*;
-import static io.art.server.constants.ServiceExecutionFeatureTarget.*;
+import static io.art.server.constants.ServerModuleConstants.ServiceExecutionFeatureTarget.*;
 
 @Builder
 @Getter

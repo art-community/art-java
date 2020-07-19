@@ -18,7 +18,7 @@
 
 package io.art.soap.server.specification;
 
-import io.art.service.*;
+import io.art.server.*;
 import io.art.soap.server.model.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.soap.server.constans.SoapServerModuleConstants.*;

@@ -30,7 +30,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
 import static io.art.kafka.consumer.module.KafkaConsumerModule.*;
-import static io.art.service.ServiceController.*;
+import static io.art.server.ServiceController.*;
 import java.util.*;
 import java.util.concurrent.*;
 

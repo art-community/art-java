@@ -36,7 +36,7 @@ import static io.art.rsocket.selector.RsocketDataFormatMimeTypeConverter.*;
 import static io.art.rsocket.state.RsocketModuleState.*;
 import static io.art.rsocket.writer.RsocketPayloadWriter.*;
 import static io.art.rsocket.writer.ServiceResponsePayloadWriter.*;
-import static io.art.service.ServiceController.*;
+import static io.art.server.ServiceController.*;
 
 public class RsocketAcceptor extends AbstractRSocket {
     private final CurrentRsocketState state;

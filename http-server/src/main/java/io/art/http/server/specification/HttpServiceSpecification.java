@@ -19,7 +19,7 @@
 package io.art.http.server.specification;
 
 import io.art.http.server.model.*;
-import io.art.service.*;
+import io.art.server.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.*;
 import java.util.*;

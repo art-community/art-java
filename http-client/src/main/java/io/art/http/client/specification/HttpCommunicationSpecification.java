@@ -19,7 +19,7 @@
 package io.art.http.client.specification;
 
 import io.art.http.client.model.*;
-import io.art.service.*;
+import io.art.server.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.http.client.constants.HttpClientModuleConstants.*;
 import static io.art.http.client.module.HttpClientModule.*;

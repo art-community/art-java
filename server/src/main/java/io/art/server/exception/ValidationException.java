@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.server.service.exception;
+package io.art.server.exception;
 
 import lombok.Getter;
 import io.art.server.service.validation.Validatable;

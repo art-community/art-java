@@ -16,10 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.server.constants;
+package io.art.server.exception;
 
-public enum RequestValidationPolicy {
-    VALIDATABLE,
-    NOT_NULL,
-    NON_VALIDATABLE
+import static java.text.MessageFormat.*;
+
+public class UnknownServiceMethodException extends RuntimeException {
+    public UnknownServiceMethodException(String serviceId, String methodId) {
+        super(format(ServiceExceptionsMessages.UNKNOWN_SERVICE_METHOD_MESSAGE, serviceId, methodId));
+    }
 }

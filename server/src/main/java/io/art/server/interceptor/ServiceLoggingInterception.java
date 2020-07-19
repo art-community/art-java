@@ -16,12 +16,16 @@
  * limitations under the License.
  */
 
-package io.art.service.interceptor;
+package io.art.server.interceptor;
 
 import lombok.*;
 import org.apache.logging.log4j.*;
 import io.art.logging.*;
-import io.art.server.service.exception.*;
+import io.art.server.exception.*;
+import static io.art.server.constants.ServerModuleConstants.LoggingMessages.EXECUTION_SERVICE_MESSAGE;
+import static io.art.server.constants.ServerModuleConstants.LoggingMessages.SERVICE_FAILED_MESSAGE;
+import static io.art.server.constants.ServerModuleConstants.REQUEST_EVENT;
+import static io.art.server.constants.ServerModuleConstants.RESPONSE_EVENT;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;

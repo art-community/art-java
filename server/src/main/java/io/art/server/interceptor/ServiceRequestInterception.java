@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.service.interceptor;
+package io.art.server.interceptor;
 
 import static io.art.server.model.ServiceInterceptionResult.*;
 import java.util.function.*;

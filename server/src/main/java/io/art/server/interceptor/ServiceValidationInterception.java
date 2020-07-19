@@ -16,10 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.service.interceptor;
+package io.art.server.interceptor;
 
-import io.art.server.service.exception.*;
+import io.art.server.exception.*;
 import io.art.server.service.validation.*;
+import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.REQUEST_DATA_IS_NULL_CODE;
+import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.VALIDATION_EXCEPTION_CODE;
+import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.NON_VALIDATABLE;
+import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.NOT_NULL;
 import static java.util.Objects.*;
 import static io.art.server.constants.RequestValidationPolicy.*;
 import static io.art.server.constants.ServiceExceptionsMessages.*;

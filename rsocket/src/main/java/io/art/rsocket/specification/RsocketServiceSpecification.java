@@ -19,7 +19,7 @@
 package io.art.rsocket.specification;
 
 import io.art.rsocket.service.*;
-import io.art.service.*;
+import io.art.server.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import java.util.*;

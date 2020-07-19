@@ -19,7 +19,7 @@
 package io.art.grpc.client.specification;
 
 import io.art.grpc.client.model.*;
-import io.art.service.*;
+import io.art.server.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.grpc.client.constants.GrpcClientModuleConstants.*;
 import static io.art.grpc.client.module.GrpcClientModule.*;

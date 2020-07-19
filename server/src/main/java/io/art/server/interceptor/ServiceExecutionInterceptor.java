@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.service.interceptor;
+package io.art.server.interceptor;
 
 import lombok.*;
 

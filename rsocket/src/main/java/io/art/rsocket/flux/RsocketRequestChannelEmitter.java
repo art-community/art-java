@@ -11,7 +11,7 @@ import static io.art.reactive.service.constants.ReactiveServiceModuleConstants.R
 import static io.art.rsocket.model.RsocketRequestReactiveContext.*;
 import static io.art.rsocket.writer.RsocketPayloadWriter.*;
 import static io.art.rsocket.writer.ServiceResponsePayloadWriter.*;
-import static io.art.service.ServiceController.*;
+import static io.art.server.ServiceController.*;
 import static io.art.service.factory.ServiceRequestFactory.*;
 import java.util.concurrent.atomic.*;
 

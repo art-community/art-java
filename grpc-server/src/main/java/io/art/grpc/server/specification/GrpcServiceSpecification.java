@@ -20,7 +20,7 @@ package io.art.grpc.server.specification;
 
 import io.art.grpc.server.constants.*;
 import io.art.grpc.server.model.*;
-import io.art.service.*;
+import io.art.server.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import java.util.*;
 

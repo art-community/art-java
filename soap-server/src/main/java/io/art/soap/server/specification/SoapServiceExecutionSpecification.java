@@ -23,7 +23,7 @@ import lombok.*;
 import io.art.http.server.builder.*;
 import io.art.http.server.model.*;
 import io.art.http.server.specification.*;
-import io.art.server.service.exception.*;
+import io.art.server.exception.*;
 import io.art.soap.server.model.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;

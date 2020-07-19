@@ -18,18 +18,17 @@
 
 package io.art.server.configuration;
 
+import io.art.core.module.*;
+import io.art.server.interceptor.ServiceExecutionInterceptor.*;
+import io.art.server.interceptor.*;
+import io.art.server.model.*;
 import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.*;
 import io.github.resilience4j.ratelimiter.*;
 import io.github.resilience4j.retry.*;
 import lombok.*;
-import io.art.core.module.*;
-import io.art.service.interceptor.ServiceExecutionInterceptor.*;
-import io.art.service.interceptor.*;
-import io.art.server.model.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.service.ServiceExceptionWrapperBuilder.*;
-import static io.art.service.interceptor.ServiceExecutionInterceptor.*;
+import static io.art.server.interceptor.ServiceExecutionInterceptor.*;
 import java.util.*;
 
 
@@ -37,8 +36,6 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
     List<RequestInterceptor> getRequestInterceptors();
 
     List<ResponseInterceptor> getResponseInterceptors();
-
-    ServiceExecutionExceptionWrapper getExceptionWrapper();
 
     CircuitBreakerRegistry getCircuitBreakerRegistry();
 
@@ -50,7 +47,7 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
 
     Map<String, ServiceExecutionConfiguration> getExecutionConfigurations();
 
-    Map<String, DeactivationConfig> getDeactivationConfigurations();
+    Map<String, DeactivationConfiguration> getDeactivationConfigurations();
 
     ServiceModuleDefaultConfiguration DEFAULT_CONFIGURATION = new ServiceModuleDefaultConfiguration();
 
@@ -62,7 +59,7 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
         private final RetryRegistry retryRegistry = RetryRegistry.ofDefaults();
         private final BulkheadRegistry bulkheadRegistry = BulkheadRegistry.ofDefaults();
         private final Map<String, ServiceExecutionConfiguration> executionConfigurations = mapOf();
-        private final Map<String, DeactivationConfig> deactivationConfigurations = mapOf();
+        private final Map<String, DeactivationConfiguration> deactivationConfigurations = mapOf();
         @Getter
         private final List<RequestInterceptor> requestInterceptors = linkedListOf(
                 interceptRequest(new ServiceLoggingInterception()),
@@ -70,13 +67,5 @@ public interface ServiceModuleConfiguration extends ModuleConfiguration {
         );
         @Getter
         private final List<ResponseInterceptor> responseInterceptors = linkedListOf(interceptResponse(new ServiceLoggingInterception()));
-        @Getter(lazy = true)
-        private final ServiceExecutionExceptionWrapper exceptionWrapper = exceptionWrapperBuilder()
-                .addExceptionWrapper(new NpeWrapper())
-                .addExceptionWrapper(new InternalExceptionWrapper())
-                .addExceptionWrapper(new UnknownServiceMethodExceptionWrapper())
-                .addExceptionWrapper(new ChildServiceExceptionWrapper())
-                .setThrowableExceptionWrapper(new RuntimeExceptionWrapper())
-                .build();
     }
 }

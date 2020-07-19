@@ -16,5 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.server.constants;
+package io.art.server.exception;
 
+public class ServiceMethodExecutionException extends RuntimeException {
+    public ServiceMethodExecutionException(String message) {
+        super(message);
+    }
+}

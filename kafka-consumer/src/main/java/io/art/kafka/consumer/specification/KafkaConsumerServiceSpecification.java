@@ -18,7 +18,7 @@
 
 package io.art.kafka.consumer.specification;
 
-import io.art.service.*;
+import io.art.server.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.kafka.consumer.constants.KafkaConsumerModuleConstants.*;
 import java.util.*;

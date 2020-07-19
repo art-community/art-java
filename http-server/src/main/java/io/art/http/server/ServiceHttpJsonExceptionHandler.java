@@ -22,7 +22,7 @@ import io.art.http.constants.*;
 import io.art.http.mapper.*;
 import io.art.http.server.context.*;
 import io.art.http.server.handler.*;
-import io.art.server.service.exception.*;
+import io.art.server.exception.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static io.art.core.context.Context.*;

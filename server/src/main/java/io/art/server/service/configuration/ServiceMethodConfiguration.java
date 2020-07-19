@@ -16,14 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.reactive.service.constants;
+package io.art.server.service.configuration;
 
-public interface ReactiveServiceModuleConstants {
-    String REACTIVE_SERVICE_MODULE_ID = "REACTIVE_SERVICE_MODULE";
-    String REACTIVE_SERVICE_TYPE = "REACTIVE_SERVICE";
-
-    enum ReactiveMethodProcessingMode {
-        STRAIGHT,
-        REACTIVE
-    }
+public interface ServiceMethodConfiguration {
 }

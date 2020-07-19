@@ -18,7 +18,7 @@
 
 package io.art.server.service.validation;
 
-import io.art.server.service.exception.*;
+import io.art.server.exception.*;
 import lombok.*;
 
 @AllArgsConstructor

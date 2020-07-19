@@ -17,7 +17,6 @@
  */
 
 dependencies {
-
     implementation(project(":core"))
     implementation(project(":entity"))
     implementation(project(":logging"))

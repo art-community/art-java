@@ -18,15 +18,69 @@
 
 package io.art.server.service.specification;
 
+import io.art.entity.immutable.Value;
 import io.art.server.service.configuration.*;
 import lombok.*;
+import reactor.core.publisher.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 import java.util.*;
+import java.util.function.*;
 
 @Getter
 @Builder
 public class ServiceSpecification<C extends ServiceConfiguration> {
+    private final String type;
     private final String serviceId;
-    @Singular("method")
-    private final Map<String, ServiceMethodSpecification> methods;
     private final C configuration;
+    @Singular("method")
+    private final Map<String, ServiceMethodSpecification<?>> methods;
+    private final Supplier<Boolean> deactivated;
+
+    public void callBlocking(String methodId) {
+        apply(methods.get(methodId), ServiceMethodSpecification::callBlocking);
+    }
+
+    public void callBlocking(String methodId, Value requestValue) {
+        apply(methods.get(methodId), method -> method.callBlocking(requestValue));
+    }
+
+    public Mono<Void> callReactive(String methodId) {
+        return let(methods.get(methodId), ServiceMethodSpecification::callReactive);
+    }
+
+    public Mono<Void> callReactive(String methodId, Value requestValue) {
+        return let(methods.get(methodId), method -> method.callReactive(requestValue));
+    }
+
+    public Value executeBlocking(String methodId) {
+        return let(methods.get(methodId), ServiceMethodSpecification::executeBlocking);
+    }
+
+    public Value executeBlocking(String methodId, Value requestValue) {
+        return let(methods.get(methodId), method -> method.executeBlocking(requestValue));
+    }
+
+    public Mono<Value> executeReactive(String methodId) {
+        return let(methods.get(methodId), ServiceMethodSpecification::executeReactive);
+    }
+
+    public Mono<Value> executeReactive(String methodId, Value requestValue) {
+        return let(methods.get(methodId), method -> method.executeReactive(requestValue));
+    }
+
+    public Mono<Value> executeReactive(String methodId, Mono<Value> requestValue) {
+        return let(methods.get(methodId), method -> method.executeReactive(requestValue));
+    }
+
+    public Flux<Value> stream(String methodId) {
+        return let(methods.get(methodId), ServiceMethodSpecification::stream);
+    }
+
+    public Flux<Value> stream(String methodId, Value requestValue) {
+        return let(methods.get(methodId), method -> method.stream(requestValue));
+    }
+
+    public Flux<Value> channel(String methodId, Flux<Value> requestValue) {
+        return let(methods.get(methodId), method -> method.channel(requestValue));
+    }
 }

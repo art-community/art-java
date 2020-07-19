@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-package io.art.reactive.service.interception;
+package io.art.server.interceptor;
 
+import io.art.server.*;
 import reactor.core.publisher.*;
 import io.art.reactive.service.specification.*;
-import io.art.service.*;
-import io.art.server.service.exception.*;
-import io.art.service.interceptor.*;
+import io.art.server.exception.*;
+import io.art.server.interceptor.*;
 import io.art.server.service.validation.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;

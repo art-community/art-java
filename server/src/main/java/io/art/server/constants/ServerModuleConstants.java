@@ -25,10 +25,40 @@ public interface ServerModuleConstants {
     String RESPONSE_EVENT = "serviceResponse";
     String DEFAULT_REQUEST_ID = "default-service-request";
 
-    enum ServiceMethodMode {
+    enum RequestValidationPolicy {
+        VALIDATABLE,
+        NOT_NULL,
+        NON_VALIDATABLE
+    }
+
+    enum ServiceExecutionFeatureTarget {
+        SERVICE,
+        METHOD
+    }
+
+    enum ServiceMethodImplementationMode {
         CONSUMER,
         PRODUCER,
         HANDLER
+    }
+
+    enum ServiceMethodProcessingMode {
+        BLOCKING,
+        REACTIVE_MONO,
+        REACTIVE_FLUX
+    }
+
+    interface ValidationExpressionType {
+        String BETWEEN_DOUBLE = "BETWEEN_DOUBLE";
+        String BETWEEN_INT = "BETWEEN_INT";
+        String BETWEEN_LONG = "BETWEEN_LONG";
+        String CONTAINS = "CONTAINS";
+        String EQUALS = "EQUALS";
+        String NOT_EMPTY_COLLECTION = "NOT_EMPTY_COLLECTION";
+        String NOT_EMPTY_MAP = "NOT_EMPTY_MAP";
+        String NOT_EMPTY_STRING = "NOT_EMPTY_STRING";
+        String NOT_EQUALS = "NOT_EQUALS";
+        String NOT_NULL = "NOT_NULL";
     }
 
     interface LoggingMessages {
@@ -43,9 +73,8 @@ public interface ServerModuleConstants {
         String SERVICE_EXECUTION_EXCEPTION_MESSAGE = "Service ''{0}'' method ''{1}'' execution failed with errorCode ''{2}'' and error message: ''{3}''";
         String SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE = "Service ''{0}'' method ''{1}'' execution failed with errorCode ''{2}'', error message: ''{3}'' and stack trace\n{4}";
         String SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE_WITHOUT_COMMAND = "Service execution failed with errorCode ''{1}'', error message: ''{2}'' and stack trace\n{3}";
-        String UNKNOWN_SERVICE_METHOD_MESSAGE = "Service ''{0}'' has not method with id: ''{1}''";
-        String REQUEST_DATA_IS_NULL = "RequestData is null";
         String SERVICE_COMMAND_HAS_WRONG_FORMAT = "Service command has wrong format (SERVICE_ID.METHOD_ID()): ''{0}''";
+        String UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE = "Unknown service method implementation mode: ''{0}''";
         String NOT_BETWEEN_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' not between ''{2,number,#}'' and ''{3,number,#}''";
         String NOT_EQUALS_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' is not equals to ''{2}''";
         String NOT_CONTAINS_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' is not contains to ''{2}''";

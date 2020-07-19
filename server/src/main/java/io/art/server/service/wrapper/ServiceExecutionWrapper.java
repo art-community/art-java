@@ -18,10 +18,10 @@
 
 package io.art.server.service.wrapper;
 
-import lombok.experimental.*;
 import io.art.server.model.*;
+import lombok.experimental.*;
+import static io.art.server.constants.ServerModuleConstants.ServiceExecutionFeatureTarget.*;
 import static io.art.server.module.ServerModule.*;
-import static io.art.server.constants.ServiceExecutionFeatureTarget.*;
 import java.util.concurrent.*;
 
 @UtilityClass
