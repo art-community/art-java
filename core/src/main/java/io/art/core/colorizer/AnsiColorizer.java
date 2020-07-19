@@ -13,7 +13,7 @@ public class AnsiColorizer {
     }
 
     public static String success(String message) {
-        return message(message, GREEN_BOLD);
+        return message(message, GREEN);
     }
 
     public static String error(String message) {

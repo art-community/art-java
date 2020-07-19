@@ -26,6 +26,7 @@ import static io.art.logging.LoggingModuleConstants.*;
 import static java.lang.System.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static java.util.logging.LogManager.*;
@@ -54,6 +55,11 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
         boolean fromDefault = nonNull(defaultConfiguration = loader.getResource(LOG4J2_DEFAULT_YML_FILE));
         if (!fromClasspath && !fromFile && fromDefault) {
             setProperty(LOG42_CONFIGURATION_FILE_PROPERTY, defaultConfiguration.getFile());
+            logger(LoggingModule.class).info("Configure Log4j2 from classpath by file log4j2-default.yml");
+            return;
+        }
+        if (fromFile) {
+            logger(LoggingModule.class).info(format("Configure Log4j2 from classpath by file {0}", getProperty(LOG42_CONFIGURATION_FILE_PROPERTY)));
         }
     }
 
@@ -71,6 +77,5 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
 
     public static void main(String[] args) {
         context().loadModule(new LoggingModule());
-        logger().info("Test");
     }
 }

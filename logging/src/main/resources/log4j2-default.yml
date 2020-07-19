@@ -6,7 +6,7 @@ Configuration:
       name: ConsoleAppender
       PatternLayout:
         disableAnsi: false
-        Pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{${LOG_LEVEL_PATTERN:-%3p}}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=green, TRACE=green} [%t] %style{%c}{cyan}: %m%n%ex"
+        Pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{${LOG_LEVEL_PATTERN:-%3p}}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=green, TRACE=green} %style{[%t]}{blue} %style{%c}{magenta}: %m%n%ex"
         Charset: "UTF-8"
   Loggers:
     Root:
