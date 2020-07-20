@@ -18,11 +18,10 @@
 
 package io.art.logging;
 
+import io.art.core.context.*;
 import io.art.core.module.*;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
-import reactor.core.publisher.*;
-import reactor.util.*;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModuleConstants.*;
 import static io.art.logging.LoggingModuleConstants.LoggingMessages.*;
@@ -51,6 +50,8 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     @Override
     public void onLoad() {
         getLogManager().reset();
+
+        context().printMessages(logger(Context.class)::info);
 
         boolean fromFile = ofNullable(getProperty(LOG42_CONFIGURATION_FILE_PROPERTY))
                 .map(property -> get(property))

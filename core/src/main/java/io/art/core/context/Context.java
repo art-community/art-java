@@ -36,6 +36,7 @@ import static java.lang.System.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.util.*;
+import java.util.function.*;
 
 public class Context {
     private static Context INSTANCE;
@@ -43,9 +44,10 @@ public class Context {
     private ContextState state = READY;
     private Long lastActionTimestamp = currentTimeMillis();
     private final Map<String, Module> modules = concurrentHashMap();
+    private final static Set<String> messages = concurrentHashSet();
 
     static {
-        out.println(ART_BANNER);
+        messages.add(ART_BANNER);
     }
 
     private Context() {
@@ -97,7 +99,7 @@ public class Context {
         ContextState currentState = state;
         state = LOADING;
         modules.put(module.getId(), module);
-        out.println(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, module.getClass()));
+        messages.add(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, module.getClass()));
         state = currentState;
         module.onLoad();
         lastActionTimestamp = currentTimeMillis();
@@ -114,6 +116,10 @@ public class Context {
             return false;
         }
         return modules.containsKey(moduleId);
+    }
+
+    public void printMessages(Consumer<String> printer) {
+        messages.forEach(printer::accept);
     }
 
     private void unloadModules() {

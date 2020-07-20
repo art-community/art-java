@@ -30,6 +30,7 @@ import static java.util.stream.Collectors.*;
 import java.util.ArrayList;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap.*;
 import java.util.stream.*;
 
 @UtilityClass
@@ -51,12 +52,23 @@ public class CollectionsFactory {
         return new MapBuilder<>(size);
     }
 
-    public static <K, V> ConcurrentHashMap<K, V> concurrentHashMapOf(K k, V v) {
+    public static <K, V> ConcurrentHashMap<K, V> concurrentHashMap(K k, V v) {
         return concurrentHashMap(new MapBuilder<K, V>().add(k, v));
     }
 
     public static <K, V> ConcurrentHashMap<K, V> concurrentHashMap() {
         return new ConcurrentHashMap<>();
+    }
+
+
+    public static <T> Set<T> concurrentHashSet(T value) {
+        KeySetView<T, Boolean> set = ConcurrentHashMap.newKeySet();
+        set.add(value);
+        return set;
+    }
+
+    public static <T> Set<T> concurrentHashSet() {
+        return ConcurrentHashMap.newKeySet();
     }
 
     public static <K, V> ConcurrentHashMap<K, V> concurrentHashMap(Map<K, V> map) {
