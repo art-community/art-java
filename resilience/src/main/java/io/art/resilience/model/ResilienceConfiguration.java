@@ -59,7 +59,10 @@ public class ResilienceConfiguration {
             CircuitBreakerConfig defaults = CircuitBreakerConfig.ofDefaults();
             builder.circuitBreaker(CircuitBreakerConfig.custom()
                     .automaticTransitionFromOpenToHalfOpenEnabled(
-                            getOrElse(source.getBool(CIRCUIT_BREAKER_AUTOMATIC_TRANSITION_FROM_OPEN_TO_HALF_OPEN_ENABLED_KEY), defaults.isAutomaticTransitionFromOpenToHalfOpenEnabled())
+                            getOrElse(
+                                    source.getBool(CIRCUIT_BREAKER_AUTOMATIC_TRANSITION_FROM_OPEN_TO_HALF_OPEN_ENABLED_KEY),
+                                    defaults.isAutomaticTransitionFromOpenToHalfOpenEnabled()
+                            )
                     )
                     .failureRateThreshold(
                             getOrElse(source.getFloat(CIRCUIT_BREAKER_FAILURE_RATE_THRESHOLD_KEY), defaults.getFailureRateThreshold())
