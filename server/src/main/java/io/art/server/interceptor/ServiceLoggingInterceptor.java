@@ -54,6 +54,7 @@ public class ServiceLoggingInterceptor implements ServiceExecutionInterceptor<Ob
             logger.info(format(SERVICE_EXECUTED_MESSAGE, implementation.getServiceId(), implementation.getMethodId(), context.getResponse()));
         } catch (Throwable throwable) {
             logger.error(format(SERVICE_FAILED_MESSAGE, implementation.getServiceId(), implementation.getMethodId(), getStackTraceAsString(throwable)));
+            throw throwable;
         }
     }
 
