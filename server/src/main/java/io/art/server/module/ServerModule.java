@@ -63,12 +63,16 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                 .register(ServiceSpecification.builder()
                         .id("id-1")
                         .method("id", ServiceMethodSpecification.builder()
+                                .interceptor(new ServiceValidationInterceptor())
+                                .interceptor(new ServiceLoggingInterceptor())
                                 .requestProcessingMode(BLOCKING)
                                 .responseProcessingMode(BLOCKING)
                                 .requestMapper(value -> toString.map(asPrimitive(value)))
                                 .exceptionMapper(model -> fromString.map(getStackTraceAsString(model)))
                                 .responseMapper(model -> fromString.map((String) model))
-                                .implementation(handler(request -> request, "id-1", "id"))
+                                .implementation(handler(request -> {
+                                    throw new RuntimeException("Fuck");
+                                }, "id-1", "id"))
                                 .build())
                         .build())
                 .register(ServiceSpecification.builder()

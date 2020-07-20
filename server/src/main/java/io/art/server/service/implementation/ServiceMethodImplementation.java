@@ -66,6 +66,7 @@ public class ServiceMethodImplementation {
     public Object execute(Object request) {
         Optional<ServiceExecutionInterceptor<Object, Object>> interceptor = getMethodSpecification()
                 .getInterceptors()
+                .reverse()
                 .stream()
                 .reduce((current, next) -> context -> {
                     current.intercept(context);

@@ -32,21 +32,21 @@ public class ServiceValidationInterceptor implements ServiceExecutionInterceptor
     @Override
     public void intercept(ServiceInterceptionContext<Object, Object> context) {
         ServiceMethodSpecification specification = context.getImplementation().getMethodSpecification();
-        RequestValidationPolicy validationPolicy = specification.getValidationPolicy();
-        Object request = context.getRequest();
         switch (specification.getRequestProcessingMode()) {
             case BLOCKING:
-                validateBlocking(context, validationPolicy, request);
+                validateBlocking(context);
                 return;
             case REACTIVE_MONO:
-                validateBlocking(context, validationPolicy, Mono.from(cast(request)).block());
+                validateReactiveMono(context);
                 return;
             case REACTIVE_FLUX:
-                validateReactive(context, validationPolicy, Flux.from(cast(request)));
+                validateReactiveFlux(context);
         }
     }
 
-    private void validateBlocking(ServiceInterceptionContext<Object, Object> context, RequestValidationPolicy policy, Object request) {
+    private void validateBlocking(ServiceInterceptionContext<Object, Object> context) {
+        RequestValidationPolicy policy = context.getImplementation().getMethodSpecification().getValidationPolicy();
+        Object request = context.getRequest();
         if (policy == NOT_NULL) {
             if (isNull(request)) throw new ValidationException(REQUEST_IS_NULL);
         }
@@ -62,19 +62,27 @@ public class ServiceValidationInterceptor implements ServiceExecutionInterceptor
         context.process();
     }
 
-    private void validateReactive(ServiceInterceptionContext<Object, Object> context, RequestValidationPolicy policy, Flux<Object> request) {
-        context.process(request.doOnNext(data -> {
-            if (policy == NOT_NULL) {
-                if (isNull(data)) throw new ValidationException(REQUEST_IS_NULL);
-            }
-            if (policy == NON_VALIDATABLE) {
-                return;
-            }
-            if (isNull(data)) {
-                throw new ValidationException(REQUEST_IS_NULL);
-            }
-            Validatable requestData = (Validatable) data;
-            requestData.onValidating(new Validator(requestData));
-        }));
+    private void validateReactiveMono(ServiceInterceptionContext<Object, Object> context) {
+        RequestValidationPolicy policy = context.getImplementation().getMethodSpecification().getValidationPolicy();
+        context.process(Mono.from(cast(context.getRequest())).doOnNext(data -> validateReactivePayload(policy, data)));
+    }
+
+    private void validateReactiveFlux(ServiceInterceptionContext<Object, Object> context) {
+        RequestValidationPolicy policy = context.getImplementation().getMethodSpecification().getValidationPolicy();
+        context.process(Flux.from(cast(context.getRequest())).doOnNext(data -> validateReactivePayload(policy, data)));
+    }
+
+    private void validateReactivePayload(RequestValidationPolicy policy, Object data) {
+        if (policy == NOT_NULL) {
+            if (isNull(data)) throw new ValidationException(REQUEST_IS_NULL);
+        }
+        if (policy == NON_VALIDATABLE) {
+            return;
+        }
+        if (isNull(data)) {
+            throw new ValidationException(REQUEST_IS_NULL);
+        }
+        Validatable requestData = (Validatable) data;
+        requestData.onValidating(new Validator(requestData));
     }
 }

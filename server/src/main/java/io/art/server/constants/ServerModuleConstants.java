@@ -18,6 +18,8 @@
 
 package io.art.server.constants;
 
+import static io.art.core.colorizer.AnsiColorizer.*;
+
 public interface ServerModuleConstants {
     String REQUEST_EVENT = "serviceRequest";
     String RESPONSE_EVENT = "serviceResponse";
@@ -61,7 +63,10 @@ public interface ServerModuleConstants {
     }
 
     interface LoggingMessages {
-        String SERVICE_REGISTRATION_MESSAGE = "Registering service: ''{0}''";
+        String EXECUTION_SERVICE_MESSAGE = success("Executing service: ''{0}.{1}'' with request: ''{2}''");
+        String SERVICE_FAILED_MESSAGE = error("Service ''{0}.{1}'' execution failed with error: {2}");
+        String SERVICE_EXECUTED_MESSAGE = success("Successfully executed service: ''{0}.{1}'' with response: ''{2}''");
+        String SERVICE_REGISTRATION_MESSAGE = success("Registering service: ''{0}''");
     }
 
     interface ExceptionsMessages {
