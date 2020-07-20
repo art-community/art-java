@@ -29,8 +29,7 @@ import io.github.resilience4j.retry.*;
 import io.github.resilience4j.timelimiter.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
-import static java.util.Optional.ofNullable;
+import static java.util.Optional.*;
 
 @Getter
 public class ResilienceModule implements StatefulModule<ResilienceModuleConfiguration, ResilienceModuleConfiguration.Configurator, ResilienceModuleState> {
@@ -39,72 +38,42 @@ public class ResilienceModule implements StatefulModule<ResilienceModuleConfigur
     private final ResilienceModuleConfiguration.Configurator configurator = new ResilienceModuleConfiguration.Configurator(configuration);
     private final ResilienceModuleState state = new ResilienceModuleState();
     @Getter(lazy = true)
-    private final static StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule =
-            context().getStatefulModule(ResilienceModule.class.getSimpleName());
+    private final static StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule = context()
+            .getStatefulModule(ResilienceModule.class.getSimpleName());
 
     public static StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule() {
         return getResilienceModule();
     }
 
-    public static Retry retry(String id) {
-        RetryConfig config = ofNullable(resilienceModule()
-                .configuration()
-                .getConfigurations()
-                .get(id))
-                .map(ResilienceConfiguration::getRetry)
-                .orElse(RetryConfig.ofDefaults());
+    public static Retry retry(String id, RetryConfig config) {
         return resilienceModule()
                 .state()
                 .getRetriers()
                 .retry(id, config);
     }
 
-    public static CircuitBreaker circuitBreaker(String id) {
-        CircuitBreakerConfig config = ofNullable(resilienceModule()
-                .configuration()
-                .getConfigurations()
-                .get(id))
-                .map(ResilienceConfiguration::getCircuitBreaker)
-                .orElse(CircuitBreakerConfig.ofDefaults());
+    public static CircuitBreaker circuitBreaker(String id, CircuitBreakerConfig config) {
         return resilienceModule()
                 .state()
                 .getCircuitBreakers()
                 .circuitBreaker(id, config);
     }
 
-    public static RateLimiter rateLimiter(String id) {
-        RateLimiterConfig config = ofNullable(resilienceModule()
-                .configuration()
-                .getConfigurations()
-                .get(id))
-                .map(ResilienceConfiguration::getRateLimiter)
-                .orElse(RateLimiterConfig.ofDefaults());
+    public static RateLimiter rateLimiter(String id, RateLimiterConfig config) {
         return resilienceModule()
                 .state()
                 .getRateLimiters()
                 .rateLimiter(id, config);
     }
 
-    public static Bulkhead bulkhead(String id) {
-        BulkheadConfig config = ofNullable(resilienceModule()
-                .configuration()
-                .getConfigurations()
-                .get(id))
-                .map(ResilienceConfiguration::getBulkhead)
-                .orElse(BulkheadConfig.ofDefaults());
+    public static Bulkhead bulkhead(String id, BulkheadConfig config) {
         return resilienceModule()
                 .state()
                 .getBulkheads()
                 .bulkhead(id, config);
     }
 
-    public static TimeLimiter timeLimiter(String id) {
-        TimeLimiterConfig config = ofNullable(resilienceModule()
-                .configuration()
-                .getConfigurations()
-                .get(id))
-                .map(ResilienceConfiguration::getTimeLimiter)
-                .orElse(TimeLimiterConfig.ofDefaults());
+    public static TimeLimiter timeLimiter(String id, TimeLimiterConfig config) {
         return resilienceModule()
                 .state()
                 .getTimeLimiters()

@@ -18,15 +18,11 @@
 
 package io.art.resilience.configuration;
 
-import com.google.common.collect.*;
 import io.art.core.module.*;
-import io.art.resilience.model.*;
 import lombok.*;
 
 @Getter
 public class ResilienceModuleConfiguration implements ModuleConfiguration {
-    private final ImmutableMap<String, ResilienceConfiguration> configurations = ImmutableMap.of();
-
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<ResilienceModuleConfiguration, Configurator> {
         private final ResilienceModuleConfiguration configuration;
