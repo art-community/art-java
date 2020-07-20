@@ -37,6 +37,6 @@ public class HttpClientTracingIdentifiersRequestInterception implements HttpClie
         if (isNotEmpty(profile)) {
             request.addHeader(PROFILE_HEADER, profile);
         }
-        return NEXT_INTERCEPTOR;
+        return NEXT;
     }
 }

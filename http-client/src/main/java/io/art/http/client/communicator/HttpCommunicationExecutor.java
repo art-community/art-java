@@ -71,8 +71,8 @@ class HttpCommunicationExecutor {
         List<HttpClientInterceptor> requestInterceptors = configuration.getRequestInterceptors();
         for (HttpClientInterceptor requestInterceptor : requestInterceptors) {
             InterceptionStrategy strategy = requestInterceptor.interceptRequest(uriRequest);
-            if (strategy == PROCESS_HANDLING) break;
-            if (strategy == STOP_HANDLING) return null;
+            if (strategy == PROCESS) break;
+            if (strategy == TERMINATE) return null;
         }
         CloseableHttpClient client = getOrElse(configuration.getSynchronousClient(), httpClientModule().getClient());
         return executeHttpUriRequest(configuration, uriRequest, client);
@@ -85,8 +85,8 @@ class HttpCommunicationExecutor {
             List<HttpClientInterceptor> responseInterceptors = configuration.getResponseInterceptors();
             for (HttpClientInterceptor responseInterceptor : responseInterceptors) {
                 InterceptionStrategy strategy = responseInterceptor.interceptResponse(request, httpResponse);
-                if (strategy == PROCESS_HANDLING) break;
-                if (strategy == STOP_HANDLING) return null;
+                if (strategy == PROCESS) break;
+                if (strategy == TERMINATE) return null;
             }
             return parseResponse(configuration, httpResponse);
         } catch (Throwable throwable) {
@@ -124,8 +124,8 @@ class HttpCommunicationExecutor {
         List<HttpClientInterceptor> requestInterceptors = configuration.getRequestInterceptors();
         for (HttpClientInterceptor requestInterceptor : requestInterceptors) {
             InterceptionStrategy strategy = requestInterceptor.interceptRequest(httpUriRequest);
-            if (strategy == PROCESS_HANDLING) break;
-            if (strategy == STOP_HANDLING) return completedFuture(empty());
+            if (strategy == PROCESS) break;
+            if (strategy == TERMINATE) return completedFuture(empty());
         }
         CloseableHttpAsyncClient client = getOrElse(configuration.getAsynchronousClient(), httpClientModule().getAsynchronousClient());
         CompletableFuture<Optional<?>> completableFuture = new CompletableFuture<>();
@@ -180,10 +180,10 @@ class HttpCommunicationExecutor {
                 break;
             }
             requestValue = result.getOutValue();
-            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+            if (result.getNextInterceptionStrategy() == PROCESS) {
                 break;
             }
-            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+            if (result.getNextInterceptionStrategy() == TERMINATE) {
                 return null;
             }
         }
@@ -231,10 +231,10 @@ class HttpCommunicationExecutor {
                 break;
             }
             responseValue = result.getOutValue();
-            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+            if (result.getNextInterceptionStrategy() == PROCESS) {
                 break;
             }
-            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+            if (result.getNextInterceptionStrategy() == TERMINATE) {
                 return null;
             }
         }
@@ -256,8 +256,8 @@ class HttpCommunicationExecutor {
             List<HttpClientInterceptor> responseInterceptors = configuration.getResponseInterceptors();
             for (HttpClientInterceptor responseInterceptor : responseInterceptors) {
                 InterceptionStrategy strategy = responseInterceptor.interceptResponse(httpUriRequest, result);
-                if (strategy == PROCESS_HANDLING) break;
-                if (strategy == STOP_HANDLING) {
+                if (strategy == PROCESS) break;
+                if (strategy == TERMINATE) {
                     completableFuture.complete(empty());
                     return;
                 }

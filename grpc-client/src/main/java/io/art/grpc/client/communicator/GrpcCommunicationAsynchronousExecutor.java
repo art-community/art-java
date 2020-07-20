@@ -28,7 +28,6 @@ import io.art.entity.mapper.*;
 import io.art.grpc.client.exception.*;
 import io.art.grpc.servlet.*;
 import io.art.grpc.servlet.GrpcServlet.*;
-import io.art.server.model.*;
 import static com.google.common.util.concurrent.Futures.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
@@ -72,10 +71,10 @@ class GrpcCommunicationAsynchronousExecutor {
                 break;
             }
             requestValue = result.getOutValue();
-            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+            if (result.getNextInterceptionStrategy() == PROCESS) {
                 break;
             }
-            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+            if (result.getNextInterceptionStrategy() == TERMINATE) {
                 return completedFuture(okResponse(command));
             }
         }
@@ -123,10 +122,10 @@ class GrpcCommunicationAsynchronousExecutor {
                         break;
                     }
                     responseValue = result.getOutValue();
-                    if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                    if (result.getNextInterceptionStrategy() == PROCESS) {
                         break;
                     }
-                    if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                    if (result.getNextInterceptionStrategy() == TERMINATE) {
                         completableFuture.complete(okResponse(new ServiceMethodCommand(configuration.getServiceId(), configuration.getMethodId())));
                         return;
                     }

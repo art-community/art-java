@@ -28,21 +28,21 @@ public interface HttpClientRequestInterception {
     static HttpClientRequestInterception interceptAndContinue(Consumer<HttpUriRequest> runnable) {
         return request -> {
             runnable.accept(request);
-            return NEXT_INTERCEPTOR;
+            return NEXT;
         };
     }
 
     static HttpClientRequestInterception interceptAndCall(Consumer<HttpUriRequest> runnable) {
         return request -> {
             runnable.accept(request);
-            return PROCESS_HANDLING;
+            return PROCESS;
         };
     }
 
     static HttpClientRequestInterception interceptAndReturn(Consumer<HttpUriRequest> runnable) {
         return request -> {
             runnable.accept(request);
-            return STOP_HANDLING;
+            return TERMINATE;
         };
     }
 

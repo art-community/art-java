@@ -44,7 +44,7 @@ public class HttpServerTracingIdentifierInterception implements HttpServerInterc
                 .profile(extractProfile(profileHeader))
                 .environment(getProperty(ENVIRONMENT_PROPERTY))
                 .build());
-        return NEXT_INTERCEPTOR;
+        return NEXT;
     }
 
     private String extractProfile(Enumeration<String> profileHeaders) {

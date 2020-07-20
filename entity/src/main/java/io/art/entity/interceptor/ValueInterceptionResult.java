@@ -27,7 +27,7 @@ import static io.art.core.constants.InterceptionStrategy.*;
 @Builder(builderMethodName = "valueInterceptionResult")
 public class ValueInterceptionResult<InValue extends Value, OutValue extends Value> {
     @Builder.Default
-    private final InterceptionStrategy nextInterceptionStrategy = NEXT_INTERCEPTOR;
+    private final InterceptionStrategy nextInterceptionStrategy = NEXT;
     private final InValue inValue;
     private final OutValue outValue;
 
@@ -43,14 +43,14 @@ public class ValueInterceptionResult<InValue extends Value, OutValue extends Val
         return ValueInterceptionResult.<InValue, InValue>valueInterceptionResult()
                 .inValue(inValue)
                 .outValue(inValue)
-                .nextInterceptionStrategy(PROCESS_HANDLING)
+                .nextInterceptionStrategy(PROCESS)
                 .build();
     }
 
     public static <InValue extends Value, OutValue extends Value> ValueInterceptionResult<InValue, OutValue> processHandling(InValue inValue, OutValue outValue) {
         return ValueInterceptionResult.<InValue, OutValue>valueInterceptionResult()
                 .inValue(inValue)
-                .nextInterceptionStrategy(PROCESS_HANDLING)
+                .nextInterceptionStrategy(PROCESS)
                 .outValue(outValue)
                 .build();
     }
@@ -59,14 +59,14 @@ public class ValueInterceptionResult<InValue extends Value, OutValue extends Val
         return ValueInterceptionResult.<InValue, InValue>valueInterceptionResult()
                 .inValue(inValue)
                 .outValue(inValue)
-                .nextInterceptionStrategy(STOP_HANDLING)
+                .nextInterceptionStrategy(TERMINATE)
                 .build();
     }
 
     public static <InValue extends Value, OutValue extends Value> ValueInterceptionResult<InValue, OutValue> stopHandling(InValue inValue, OutValue outValue) {
         return ValueInterceptionResult.<InValue, OutValue>valueInterceptionResult()
                 .inValue(inValue)
-                .nextInterceptionStrategy(STOP_HANDLING)
+                .nextInterceptionStrategy(TERMINATE)
                 .outValue(outValue)
                 .build();
     }

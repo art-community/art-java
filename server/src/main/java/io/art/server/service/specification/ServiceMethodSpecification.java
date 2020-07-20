@@ -22,6 +22,7 @@ import io.art.entity.immutable.Value;
 import io.art.entity.mapper.*;
 import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
+import io.art.server.interceptor.*;
 import io.art.server.service.implementation.*;
 import io.art.server.service.model.*;
 import lombok.*;
@@ -48,6 +49,17 @@ public class ServiceMethodSpecification {
     private final ServiceMethodProcessingMode responseProcessingMode;
     private final Supplier<ServiceMethodConfiguration> configuration;
     private final ServiceSpecification serviceSpecification;
+    private final RequestValidationPolicy validationPolicy;
+    @Builder.Default
+    private ServiceExecutionInterceptor<Object, Object> interceptor = new ServiceValidationInterceptor();
+
+    public <Request, Response> ServiceMethodSpecification intercept(ServiceExecutionInterceptor<Request, Response> interceptor) {
+        this.interceptor = context -> {
+            context.process();
+            interceptor.intercept(cast(context));
+        };
+        return this;
+    }
 
     public void callBlocking() {
         if (configuration.get().isDeactivated()) {

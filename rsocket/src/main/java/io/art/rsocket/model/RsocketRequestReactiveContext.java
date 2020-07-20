@@ -24,7 +24,6 @@ import io.rsocket.*;
 import lombok.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
-import io.art.server.model.*;
 import static java.text.MessageFormat.format;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
@@ -73,10 +72,10 @@ public class RsocketRequestReactiveContext {
                 break;
             }
             requestValue = result.getOutValue();
-            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+            if (result.getNextInterceptionStrategy() == PROCESS) {
                 break;
             }
-            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+            if (result.getNextInterceptionStrategy() == TERMINATE) {
                 if (valueIsNull(result.getOutValue())) {
                     return RsocketRequestReactiveContext.builder().stopHandling(true).build();
                 }

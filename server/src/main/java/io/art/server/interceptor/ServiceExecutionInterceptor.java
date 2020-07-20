@@ -18,26 +18,7 @@
 
 package io.art.server.interceptor;
 
-import lombok.*;
-
-public interface ServiceExecutionInterceptor {
-    static RequestInterceptor interceptRequest(ServiceRequestInterception interception) {
-        return new RequestInterceptor(interception);
-    }
-
-    static ResponseInterceptor interceptResponse(ServiceResponseInterception interception) {
-        return new ResponseInterceptor(interception);
-    }
-
-    @Getter
-    @AllArgsConstructor
-    class RequestInterceptor {
-        private final ServiceRequestInterception interception;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    class ResponseInterceptor {
-        private final ServiceResponseInterception interception;
-    }
+@FunctionalInterface
+public interface ServiceExecutionInterceptor<Request, Response> {
+    void intercept(ServiceInterceptionContext<Request, Response> context);
 }

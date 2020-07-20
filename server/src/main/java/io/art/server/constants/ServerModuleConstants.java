@@ -76,6 +76,7 @@ public interface ServerModuleConstants {
         String EQUALS_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' is equals to ''{2}''";
         String EMPTY_VALIDATION_ERROR = "Validation error. ''{0}'' is empty";
         String NULL_VALIDATION_ERROR = "Validation error. ''{0}'' is null";
+        String REQUEST_IS_NULL = "Validation error. Request is null";
     }
 
 }

@@ -20,11 +20,8 @@ package io.art.http.server.interceptor;
 
 import lombok.*;
 import io.art.core.constants.*;
-import io.art.http.server.exception.*;
-import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static io.art.core.constants.InterceptionStrategy.*;
-import static io.art.http.server.constants.HttpServerExceptionMessages.*;
 import javax.servlet.http.*;
 
 
@@ -35,15 +32,15 @@ public class HttpServerInterceptor {
     private final InterceptionStrategy strategy;
 
     public static HttpServerInterceptor intercept(HttpServerInterception interception) {
-        return new HttpServerInterceptor(interception, NEXT_INTERCEPTOR);
+        return new HttpServerInterceptor(interception, NEXT);
     }
 
     public static HttpServerInterceptor interceptAndProcessHandling(HttpServerInterception interception) {
-        return new HttpServerInterceptor(interception, PROCESS_HANDLING);
+        return new HttpServerInterceptor(interception, PROCESS);
     }
 
     public static HttpServerInterceptor interceptAndStopHandling(HttpServerInterception interception) {
-        return new HttpServerInterceptor(interception, STOP_HANDLING);
+        return new HttpServerInterceptor(interception, TERMINATE);
     }
 
 

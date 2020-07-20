@@ -37,10 +37,10 @@ public interface ServiceRequestPayloadWriter {
                 break;
             }
             requestEntity = result.getOutValue();
-            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+            if (result.getNextInterceptionStrategy() == PROCESS) {
                 break;
             }
-            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+            if (result.getNextInterceptionStrategy() == TERMINATE) {
                 if (isNull(result.getOutValue())) {
                     return create(EMPTY_BUFFER);
                 }

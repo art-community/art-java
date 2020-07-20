@@ -28,21 +28,21 @@ public interface HttpServerInterception {
     static HttpServerInterception interceptAndContinue(BiConsumer<HttpServletRequest, HttpServletResponse> consumer) {
         return (request, response) -> {
             consumer.accept(request, response);
-            return NEXT_INTERCEPTOR;
+            return NEXT;
         };
     }
 
     static HttpServerInterception interceptAndCall(BiConsumer<HttpServletRequest, HttpServletResponse> consumer) {
         return (request, response) -> {
             consumer.accept(request, response);
-            return PROCESS_HANDLING;
+            return PROCESS;
         };
     }
 
     static HttpServerInterception interceptAndReturn(BiConsumer<HttpServletRequest, HttpServletResponse> consumer) {
         return (request, response) -> {
             consumer.accept(request, response);
-            return STOP_HANDLING;
+            return TERMINATE;
         };
     }
 

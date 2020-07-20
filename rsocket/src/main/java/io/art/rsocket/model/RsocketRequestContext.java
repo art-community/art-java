@@ -27,7 +27,6 @@ import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.reactive.service.model.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
-import io.art.server.model.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.PRIVATE;
@@ -80,10 +79,10 @@ public class RsocketRequestContext {
                 break;
             }
             requestValue = result.getOutValue();
-            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+            if (result.getNextInterceptionStrategy() == PROCESS) {
                 break;
             }
-            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+            if (result.getNextInterceptionStrategy() == TERMINATE) {
                 if (valueIsNull(result.getOutValue())) {
                     return RsocketRequestContext.builder().stopHandling(true).build();
                 }

@@ -28,7 +28,6 @@ import io.art.grpc.server.model.GrpcService.*;
 import io.art.grpc.server.specification.*;
 import io.art.grpc.servlet.*;
 import io.art.logging.*;
-import io.art.server.exception.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static org.apache.logging.log4j.ThreadContext.*;
@@ -129,10 +128,10 @@ public class GrpcServletContainer extends GrpcServlet {
                     break;
                 }
                 serviceRequestEntity = result.getOutValue();
-                if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                if (result.getNextInterceptionStrategy() == PROCESS) {
                     break;
                 }
-                if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                if (result.getNextInterceptionStrategy() == TERMINATE) {
                     if (valueIsNull(result.getOutValue())) {
                         responseObserver.onNext(writeProtobuf(fromServiceResponse().map(okResponse(command))));
                         responseObserver.onCompleted();
@@ -180,10 +179,10 @@ public class GrpcServletContainer extends GrpcServlet {
                     break;
                 }
                 serviceResponseEntity = result.getOutValue();
-                if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+                if (result.getNextInterceptionStrategy() == PROCESS) {
                     break;
                 }
-                if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+                if (result.getNextInterceptionStrategy() == TERMINATE) {
                     if (valueIsNull(result.getOutValue())) {
                         responseObserver.onNext(writeProtobuf(serviceResponseEntity));
                         responseObserver.onCompleted();

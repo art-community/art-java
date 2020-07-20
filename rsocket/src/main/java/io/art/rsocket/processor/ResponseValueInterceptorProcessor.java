@@ -36,10 +36,10 @@ public class ResponseValueInterceptorProcessor {
                 break;
             }
             responseEntity = result.getOutValue();
-            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+            if (result.getNextInterceptionStrategy() == PROCESS) {
                 break;
             }
-            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+            if (result.getNextInterceptionStrategy() == TERMINATE) {
                 return ofNullable(result.getOutValue());
             }
         }

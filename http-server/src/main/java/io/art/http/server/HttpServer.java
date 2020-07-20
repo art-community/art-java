@@ -285,8 +285,8 @@ public class HttpServer {
             HttpServerPathInterceptor interceptor = requestInterceptors.removeFirst();
             registerBeforeInterceptor(context, interceptor, interceptor + UNDERSCORE + BEFORE_REQUEST_HANDLING + UNDERSCORE + order);
             order++;
-            if (interceptor.getInterceptor().getStrategy() == PROCESS_HANDLING) break;
-            if (interceptor.getInterceptor().getStrategy() == STOP_HANDLING) {
+            if (interceptor.getInterceptor().getStrategy() == PROCESS) break;
+            if (interceptor.getInterceptor().getStrategy() == TERMINATE) {
                 cancelablePaths.add(interceptor.getPath());
                 addLoggingFilter(context);
                 return;
@@ -298,8 +298,8 @@ public class HttpServer {
             HttpServerPathInterceptor interceptor = responseInterceptors.removeLast();
             registerAfterInterceptor(context, interceptor, interceptor + UNDERSCORE + AFTER_REQUEST_HANDLING + UNDERSCORE + order);
             order++;
-            if (interceptor.getInterceptor().getStrategy() == PROCESS_HANDLING) break;
-            if (interceptor.getInterceptor().getStrategy() == STOP_HANDLING) return;
+            if (interceptor.getInterceptor().getStrategy() == PROCESS) break;
+            if (interceptor.getInterceptor().getStrategy() == TERMINATE) return;
         }
     }
 
@@ -357,13 +357,13 @@ public class HttpServer {
         def.setFilterName(filterName);
         Filter filter = (request, response, chain) -> {
             InterceptionStrategy strategy = requestInterceptionsResult.get(filterName);
-            if (isNull(strategy) || strategy == NEXT_INTERCEPTOR) {
+            if (isNull(strategy) || strategy == NEXT) {
                 InterceptionStrategy nextInterceptionStrategy = serverPathInterceptor.getInterceptor().intercept((HttpServletRequest) request, (HttpServletResponse) response);
                 requestInterceptionsResult.put(filterName, nextInterceptionStrategy);
                 chain.doFilter(request, response);
                 return;
             }
-            if (strategy == PROCESS_HANDLING) {
+            if (strategy == PROCESS) {
                 chain.doFilter(request, response);
             }
         };
@@ -382,13 +382,13 @@ public class HttpServer {
         def.setFilterName(filterName);
         def.setFilter((request, response, chain) -> {
             InterceptionStrategy strategy = responseInterceptionsResult.get(filterName);
-            if (isNull(strategy) || strategy == NEXT_INTERCEPTOR) {
+            if (isNull(strategy) || strategy == NEXT) {
                 chain.doFilter(request, response);
                 InterceptionStrategy nextInterceptionStrategy = serverInterceptor.getInterceptor().intercept((HttpServletRequest) request, (HttpServletResponse) response);
                 responseInterceptionsResult.put(filterName,  nextInterceptionStrategy);
                 return;
             }
-            if (strategy == PROCESS_HANDLING) {
+            if (strategy == PROCESS) {
                 chain.doFilter(request, response);
             }
         });

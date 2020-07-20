@@ -36,6 +36,6 @@ public class HttpWebInterception implements HttpServerInterception {
         resourceConfiguration
                 .getAccessControlParameters()
                 .forEach(response::setHeader);
-        return NEXT_INTERCEPTOR;
+        return NEXT;
     }
 }

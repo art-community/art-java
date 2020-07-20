@@ -28,7 +28,6 @@ import io.art.http.constants.*;
 import io.art.http.mapper.*;
 import io.art.http.server.exception.*;
 import io.art.http.server.model.HttpService.*;
-import io.art.server.exception.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -71,10 +70,10 @@ class HttpServerRequestHandler {
                 break;
             }
             requestValue = result.getOutValue();
-            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+            if (result.getNextInterceptionStrategy() == PROCESS) {
                 break;
             }
-            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+            if (result.getNextInterceptionStrategy() == TERMINATE) {
                 if (valueIsNull(result.getOutValue())) return EMPTY_BYTES;
                 return contentMapper.getToContent().mapToBytes(result.getOutValue(), responseContentType, acceptCharset);
             }
@@ -94,10 +93,10 @@ class HttpServerRequestHandler {
                 break;
             }
             responseValue = result.getOutValue();
-            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+            if (result.getNextInterceptionStrategy() == PROCESS) {
                 break;
             }
-            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+            if (result.getNextInterceptionStrategy() == TERMINATE) {
                 if (valueIsNull(result.getOutValue())) return EMPTY_BYTES;
                 return contentMapper.getToContent().mapToBytes(result.getOutValue(), responseContentType, acceptCharset);
             }

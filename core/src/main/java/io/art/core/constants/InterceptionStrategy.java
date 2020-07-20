@@ -19,7 +19,7 @@
 package io.art.core.constants;
 
 public enum InterceptionStrategy {
-    NEXT_INTERCEPTOR,
-    PROCESS_HANDLING,
-    STOP_HANDLING
+    NEXT,
+    PROCESS,
+    TERMINATE
 }

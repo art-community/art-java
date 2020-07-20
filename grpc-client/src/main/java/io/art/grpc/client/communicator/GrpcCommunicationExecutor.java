@@ -26,7 +26,6 @@ import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.grpc.servlet.*;
 import io.art.grpc.servlet.GrpcServlet.*;
-import io.art.server.model.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.TimeUnit.*;
 import static lombok.AccessLevel.*;
@@ -63,10 +62,10 @@ class GrpcCommunicationExecutor {
                 break;
             }
             requestValue = result.getOutValue();
-            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+            if (result.getNextInterceptionStrategy() == PROCESS) {
                 break;
             }
-            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+            if (result.getNextInterceptionStrategy() == TERMINATE) {
                 return okResponse(command);
             }
         }
@@ -78,10 +77,10 @@ class GrpcCommunicationExecutor {
                 break;
             }
             responseValue = result.getOutValue();
-            if (result.getNextInterceptionStrategy() == PROCESS_HANDLING) {
+            if (result.getNextInterceptionStrategy() == PROCESS) {
                 break;
             }
-            if (result.getNextInterceptionStrategy() == STOP_HANDLING) {
+            if (result.getNextInterceptionStrategy() == TERMINATE) {
                 return okResponse(command);
             }
         }

@@ -20,15 +20,19 @@ package io.art.server.service.implementation;
 
 import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
+import io.art.server.interceptor.*;
 import io.art.server.service.specification.*;
 import lombok.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodImplementationMode.*;
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 
+@Getter
 @RequiredArgsConstructor
 public class ServiceMethodImplementation {
     private Consumer<Object> consumer;
@@ -41,6 +45,7 @@ public class ServiceMethodImplementation {
     private final ServiceSpecification serviceSpecification = services().get(serviceId);
     @Getter(lazy = true)
     private final ServiceMethodSpecification methodSpecification = getServiceSpecification().getMethods().get(methodId);
+
 
     public static ServiceMethodImplementation consumer(Consumer<Object> consumer, String serviceId, String methodId) {
         ServiceMethodImplementation implementation = new ServiceMethodImplementation(CONSUMER, serviceId, methodId);
@@ -61,6 +66,29 @@ public class ServiceMethodImplementation {
     }
 
     public Object execute(Object request) {
+        AtomicReference<Object> response = new AtomicReference<>();
+        Consumer<ServiceInterceptionContext<Object, Object>> action = context -> {
+            if (!response.compareAndSet(context.getResponse().get(), context.getResponse().get())) {
+                return;
+            }
+            switch (mode) {
+                case CONSUMER:
+                    consumer.accept(context.getRequest());
+                    break;
+                case PRODUCER:
+                    response.set(producer.get());
+                    break;
+                case HANDLER:
+                    response.set(handler.apply(context.getRequest()));
+                    break;
+            }
+            throw new ServiceMethodExecutionException(format(UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE, mode));
+        };
+        ServiceExecutionInterceptor<Object, Object> interceptor;
+        if (nonNull(interceptor = methodSpecification.getInterceptor())) {
+            interceptor.intercept(new ServiceInterceptionContext<>(action, this));
+            return response.get();
+        }
         switch (mode) {
             case CONSUMER:
                 consumer.accept(request);

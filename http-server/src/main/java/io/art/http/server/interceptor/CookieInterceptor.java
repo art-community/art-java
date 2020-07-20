@@ -46,11 +46,11 @@ public class CookieInterceptor implements HttpServerInterception {
     @Override
     public InterceptionStrategy intercept(HttpServletRequest request, HttpServletResponse response) {
         if (pathFilter.test(request.getRequestURI()) || request.getMethod().equals(OPTIONS.name()) || hasTokenCookie(request)) {
-            return NEXT_INTERCEPTOR;
+            return NEXT;
         }
         try (ServletOutputStream outputStream = response.getOutputStream()) {
             if (isNull(errorProvider)) {
-                return STOP_HANDLING;
+                return TERMINATE;
             }
             Error error = errorProvider.apply(request.getRequestURI());
             String charset = error.overrideRequestCharset ? error.charset.name() : ifEmpty(request.getCharacterEncoding(), error.charset.name());
@@ -61,7 +61,7 @@ public class CookieInterceptor implements HttpServerInterception {
                 outputStream.write(error.content.getBytes(charset));
             }
             outputStream.close();
-            return STOP_HANDLING;
+            return TERMINATE;
         } catch (Throwable throwable) {
             throw new HttpServerException(throwable);
         }
