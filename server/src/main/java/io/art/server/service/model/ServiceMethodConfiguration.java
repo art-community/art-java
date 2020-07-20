@@ -22,6 +22,7 @@ import io.art.core.module.*;
 import io.art.resilience.model.*;
 import lombok.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 
 @Getter
 @AllArgsConstructor
@@ -30,8 +31,8 @@ public class ServiceMethodConfiguration {
     private final ResilienceConfiguration resilience;
 
     public static ServiceMethodConfiguration from(ModuleConfigurationSource source) {
-        boolean deactivated = getOrElse(source.getBool("deactivated"), false);
-        ResilienceConfiguration resilience = let(source.getInner("resilience"), ResilienceConfiguration::from);
+        boolean deactivated = getOrElse(source.getBool(DEACTIVATED_KEY), false);
+        ResilienceConfiguration resilience = let(source.getInner(RESILIENCE_KEY), ResilienceConfiguration::from);
         return new ServiceMethodConfiguration(deactivated, resilience);
     }
 }

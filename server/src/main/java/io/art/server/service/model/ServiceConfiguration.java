@@ -24,6 +24,7 @@ import io.art.resilience.model.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
 import java.util.*;
 
@@ -35,9 +36,9 @@ public class ServiceConfiguration {
     private final ImmutableMap<String, ServiceMethodConfiguration> methods;
 
     public static ServiceConfiguration from(ModuleConfigurationSource source) {
-        boolean deactivated = getOrElse(source.getBool("deactivated"), false);
-        ResilienceConfiguration resilience = let(source.getInner("resilience"), ResilienceConfiguration::from);
-        ImmutableMap<String, ServiceMethodConfiguration> methods = ofNullable(source.getInnerMap("methods"))
+        boolean deactivated = getOrElse(source.getBool(DEACTIVATED_KEY), false);
+        ResilienceConfiguration resilience = let(source.getInner(RESILIENCE_KEY), ResilienceConfiguration::from);
+        ImmutableMap<String, ServiceMethodConfiguration> methods = ofNullable(source.getInnerMap(METHODS_KEY))
                 .map(configurations -> configurations.entrySet()
                         .stream()
                         .collect(toImmutableMap(Map.Entry::getKey, entry -> ServiceMethodConfiguration.from(entry.getValue()))))

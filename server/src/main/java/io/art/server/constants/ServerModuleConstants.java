@@ -28,9 +28,11 @@ public interface ServerModuleConstants {
         NON_VALIDATABLE
     }
 
-    enum ServiceExecutionFeatureTarget {
-        SERVICE,
-        METHOD
+    interface ConfigurationKeys {
+        String SERVER_SERVICES_KEY = "server.services";
+        String DEACTIVATED_KEY = "deactivated";
+        String RESILIENCE_KEY = "resilience";
+        String METHODS_KEY = "methods";
     }
 
     enum ServiceMethodImplementationMode {

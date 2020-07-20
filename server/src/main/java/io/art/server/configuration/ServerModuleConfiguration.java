@@ -26,6 +26,7 @@ import io.vavr.collection.LinkedHashMap;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static io.art.resilience.module.ResilienceModule.*;
+import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.SERVER_SERVICES_KEY;
 import static java.util.Optional.*;
 import java.util.*;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator from(ModuleConfigurationSource source) {
             resilienceModule().state().reset();
-            configuration.services = ofNullable(source.getInnerMap("server.services"))
+            configuration.services = ofNullable(source.getInnerMap(SERVER_SERVICES_KEY))
                     .map(services -> services
                             .entrySet()
                             .stream()
