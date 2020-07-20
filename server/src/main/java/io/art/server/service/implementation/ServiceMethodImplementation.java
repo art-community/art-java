@@ -18,10 +18,15 @@
 
 package io.art.server.service.implementation;
 
+import com.google.common.util.concurrent.*;
+import io.art.resilience.module.*;
 import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
 import io.art.server.service.specification.*;
+import io.github.resilience4j.bulkhead.*;
 import lombok.*;
+import static io.art.core.constants.StringConstants.DOT;
+import static io.art.resilience.module.ResilienceModule.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodImplementationMode.*;
 import static io.art.server.module.ServerModule.*;
@@ -41,6 +46,7 @@ public class ServiceMethodImplementation {
     private final ServiceSpecification serviceSpecification = services().get(serviceId);
     @Getter(lazy = true)
     private final ServiceMethodSpecification methodSpecification = getServiceSpecification().getMethods().get(methodId);
+    private Supplier<Bulkhead> bulkhead = () -> bulkhead(serviceId + DOT + methodId, methodSpecification.getConfiguration().get().getResilience().getBulkhead());
 
     public static ServiceMethodImplementation consumer(Consumer<Object> consumer, String serviceId, String methodId) {
         ServiceMethodImplementation implementation = new ServiceMethodImplementation(CONSUMER, serviceId, methodId);
