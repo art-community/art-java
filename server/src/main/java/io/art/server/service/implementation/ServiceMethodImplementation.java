@@ -28,7 +28,6 @@ import static io.art.server.constants.ServerModuleConstants.ServiceMethodImpleme
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import java.util.*;
 import java.util.function.*;
 
 
@@ -45,6 +44,29 @@ public class ServiceMethodImplementation {
     private final ServiceSpecification serviceSpecification = services().get(serviceId);
     @Getter(lazy = true)
     private final ServiceMethodSpecification methodSpecification = getServiceSpecification().getMethods().get(methodId);
+    @Getter(lazy = true)
+    private final ServiceExecutionInterceptor<Object, Object> interceptor = getMethodSpecification()
+            .getInterceptors()
+            .stream()
+            .reduce((current, next) -> context -> {
+                Function<ServiceInterceptionContext<Object, Object>, Object> interception = nextContext -> {
+                    Object nextResponse = nextContext.getResponse();
+                    Object nextRequest = nextContext.getRequest();
+                    if (nonNull(nextResponse)) {
+                        context.process(nextRequest, nextResponse);
+                        return context.getResponse();
+                    }
+                    if (nonNull(nextRequest)) {
+                        context.process(nextRequest);
+                        return context.getResponse();
+                    }
+                    context.process();
+                    return context.getResponse();
+                };
+                next.intercept(new ServiceInterceptionContext<>(interception, this, context.getRequest()));
+            })
+            .orElse(ServiceInterceptionContext::process);
+
 
     public static ServiceMethodImplementation consumer(Consumer<Object> consumer, String serviceId, String methodId) {
         ServiceMethodImplementation implementation = new ServiceMethodImplementation(CONSUMER, serviceId, methodId);
@@ -65,33 +87,10 @@ public class ServiceMethodImplementation {
     }
 
     public Object execute(Object request) {
-        Optional<ServiceExecutionInterceptor<Object, Object>> interceptor = getMethodSpecification()
-                .getInterceptors()
-                .stream()
-                .reduce((current, next) -> context -> {
-                    Function<ServiceInterceptionContext<Object, Object>, Object> interception = nextContext -> {
-                        Object nextResponse = nextContext.getResponse();
-                        Object nextRequest = nextContext.getRequest();
-                        if (nonNull(nextResponse)) {
-                            context.process(nextRequest, nextResponse);
-                            return context.getResponse();
-                        }
-                        if (nonNull(nextRequest)) {
-                            context.process(nextRequest);
-                            return context.getResponse();
-                        }
-                        context.process();
-                        return context.getResponse();
-                    };
-                    next.intercept(new ServiceInterceptionContext<>(interception, this, context.getRequest()));
-                });
-        if (interceptor.isPresent()) {
-            Function<ServiceInterceptionContext<Object, Object>, Object> action = context -> process(context.getRequest());
-            ServiceInterceptionContext<Object, Object> context = new ServiceInterceptionContext<>(action, this, request);
-            interceptor.get().intercept(context);
-            return context.getResponse();
-        }
-        return process(request);
+        Function<ServiceInterceptionContext<Object, Object>, Object> action = context -> process(context.getRequest());
+        ServiceInterceptionContext<Object, Object> context = new ServiceInterceptionContext<>(action, this, request);
+        getInterceptor().intercept(context);
+        return context.getResponse();
     }
 
     private Object process(Object request) {
