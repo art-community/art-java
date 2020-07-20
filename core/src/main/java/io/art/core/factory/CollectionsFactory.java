@@ -77,6 +77,23 @@ public class CollectionsFactory {
     }
 
 
+    public static <T> CopyOnWriteArrayList<T> copyOnWriteList() {
+        return new CopyOnWriteArrayList<>();
+    }
+
+    public static <T> CopyOnWriteArrayList<T> toCopyOnWriteList(Collection<T> list) {
+        return new CopyOnWriteArrayList<>(list);
+    }
+
+
+    public static <T> CopyOnWriteArraySet<T> copyOnWriteSet() {
+        return new CopyOnWriteArraySet<>();
+    }
+
+    public static <T> CopyOnWriteArraySet<T> toCopyOnWriteSet(Collection<T> list) {
+        return new CopyOnWriteArraySet<>(list);
+    }
+
     public static <T> List<T> fixedArrayOf(Collection<T> elements) {
         return isEmpty(elements) ? emptyList() : new ArrayList<>(elements);
     }

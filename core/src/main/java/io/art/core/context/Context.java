@@ -44,7 +44,7 @@ public class Context {
     private ContextState state = READY;
     private Long lastActionTimestamp = currentTimeMillis();
     private final Map<String, Module> modules = concurrentHashMap();
-    private final static Set<String> messages = concurrentHashSet();
+    private final static List<String> messages = copyOnWriteList();
 
     static {
         messages.add(ART_BANNER);
@@ -119,7 +119,7 @@ public class Context {
     }
 
     public void printMessages(Consumer<String> printer) {
-        messages.forEach(printer::accept);
+        messages.forEach(printer);
     }
 
     private void unloadModules() {

@@ -57,6 +57,7 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
                 .map(property -> get(property))
                 .map(path -> path.toFile().exists())
                 .orElse(false);
+
         if (fromFile) {
             logger(LoggingModule.class).info(format(CONFIGURE_FROM_FILE, getProperty(LOG42_CONFIGURATION_FILE_PROPERTY)));
             return;
@@ -65,6 +66,7 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
         ClassLoader loader = LoggingModule.class.getClassLoader();
         URL source;
         boolean fromClasspath = nonNull(source = loader.getResource(LOG4J2_YML_FILE)) || nonNull(source = loader.getResource(LOG4J2_YAML_FILE));
+
         if (fromClasspath) {
             logger(LoggingModule.class).info(format(CONFIGURE_FROM_CLASSPATH, source.getFile()));
         }
