@@ -35,10 +35,12 @@ public interface ResilienceModuleConstants {
         String RATE_LIMITER_LIMIT_FOR_PERIOD_KEY = "rateLimiter.limitForPeriod";
         String RATE_LIMITER_LIMIT_REFRESH_PERIOD_KEY = "rateLimiter.limitRefreshPeriod";
         String RATE_LIMITER_TIMEOUT_DURATION_KEY = "rateLimiter.timeoutDuration";
+        String RATE_LIMITER_WRITABLE_STACK_TRACE_ENABLED_KEY = "rateLimiter.writableStackTraceEnabled";
 
         String BULKHEAD_KEY = "bulkhead";
         String BULKHEAD_MAX_CONCURRENT_CALLS_KEY = "bulkhead.maxConcurrentCalls";
         String BULKHEAD_MAX_WAIT_DURATION_KEY = "bulkhead.maxWaitDuration";
+        String BULKHEAD_WRITABLE_STACK_TRACE_ENABLED_KEY = "bulkhead.writableStackTraceEnabled";
 
         String RETRY_KEY = "retry";
         String RETRY_MAX_ATTEMPTS_KEY = "retry.maxAttempts";

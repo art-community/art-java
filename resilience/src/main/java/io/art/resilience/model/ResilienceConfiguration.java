@@ -87,6 +87,30 @@ public class ResilienceConfiguration {
                     )
                     .build());
         }
+        if (hasRateLimiter) {
+            RateLimiterConfig defaults = RateLimiterConfig.ofDefaults();
+            builder.rateLimiter(RateLimiterConfig.custom()
+                    .limitForPeriod(getOrElse(source.getInt(RATE_LIMITER_LIMIT_FOR_PERIOD_KEY), defaults.getLimitForPeriod()))
+                    .limitRefreshPeriod(getOrElse(source.getDuration(RATE_LIMITER_LIMIT_REFRESH_PERIOD_KEY), defaults.getLimitRefreshPeriod()))
+                    .timeoutDuration(getOrElse(source.getDuration(RATE_LIMITER_TIMEOUT_DURATION_KEY), defaults.getTimeoutDuration()))
+                    .writableStackTraceEnabled(getOrElse(source.getBool(RATE_LIMITER_WRITABLE_STACK_TRACE_ENABLED_KEY), defaults.isWritableStackTraceEnabled()))
+                    .build());
+        }
+        if (hasBulkhead) {
+            BulkheadConfig defaults = BulkheadConfig.ofDefaults();
+            builder.bulkhead(BulkheadConfig.custom()
+                    .maxConcurrentCalls(getOrElse(source.getInt(BULKHEAD_MAX_CONCURRENT_CALLS_KEY), defaults.getMaxConcurrentCalls()))
+                    .maxWaitDuration(getOrElse(source.getDuration(BULKHEAD_MAX_WAIT_DURATION_KEY), defaults.getMaxWaitDuration()))
+                    .writableStackTraceEnabled(getOrElse(source.getBool(BULKHEAD_WRITABLE_STACK_TRACE_ENABLED_KEY), defaults.isWritableStackTraceEnabled()))
+                    .build());
+        }
+        if (hasTimeLimiter) {
+            TimeLimiterConfig defaults = TimeLimiterConfig.ofDefaults();
+            builder.timeLimiter(TimeLimiterConfig.custom()
+                    .timeoutDuration(getOrElse(source.getDuration(TIME_LIMITER_TIMEOUT_DURATION_KEY), defaults.getTimeoutDuration()))
+                    .cancelRunningFuture(getOrElse(source.getBool(TIME_LIMITER_CANCEL_RUNNING_FUTURE_KEY), defaults.shouldCancelRunningFuture()))
+                    .build());
+        }
         return builder.build();
     }
 }
