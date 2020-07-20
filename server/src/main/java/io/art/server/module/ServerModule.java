@@ -18,31 +18,26 @@
 
 package io.art.server.module;
 
-import com.google.common.base.*;
-import io.art.core.caster.*;
 import io.art.core.module.*;
 import io.art.entity.factory.*;
-import io.art.entity.immutable.*;
 import io.art.entity.immutable.Value;
 import io.art.logging.*;
 import io.art.resilience.module.*;
 import io.art.server.configuration.*;
-import io.art.server.constants.*;
 import io.art.server.registry.*;
 import io.art.server.service.specification.*;
 import io.art.server.state.*;
 import lombok.*;
-import static com.google.common.base.Throwables.getStackTraceAsString;
+import static com.google.common.base.Throwables.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.ThreadExtensions.block;
-import static io.art.entity.factory.EntityFactory.*;
-import static io.art.entity.mapping.PrimitiveMapping.fromString;
-import static io.art.entity.mapping.PrimitiveMapping.toString;
-import static io.art.logging.LoggingModule.logger;
-import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.BLOCKING;
+import static io.art.core.extensions.ThreadExtensions.*;
+import static io.art.entity.mapping.PrimitiveMapping.*;
+import static io.art.logging.LoggingModule.*;
+import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
 import static io.art.server.service.implementation.ServiceMethodImplementation.*;
+import static java.util.Optional.*;
 import static lombok.AccessLevel.*;
-import static reactor.core.scheduler.Schedulers.parallel;
+import static reactor.core.scheduler.Schedulers.*;
 
 @Getter
 public class ServerModule implements StatefulModule<ServerModuleConfiguration, ServerModuleConfiguration.Configurator, ServerModuleState> {
@@ -76,7 +71,17 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                                 .exceptionMapper(model -> fromString.map(getStackTraceAsString(model)))
                                 .responseMapper(model -> fromString.map((String) model))
                                 .implementation(handler(request -> request, "id-1", "id"))
-                                .build())
+                                .build()
+                                .intercept(context -> {
+                                    logger().info("1");
+                                    context.process();
+                                    ofNullable(context.getResponse().get()).ifPresent(logger()::info);
+                                })
+                                .intercept(context -> {
+                                    logger().info("2");
+                                    context.process();
+                                    ofNullable(context.getResponse().get()).ifPresent(logger()::info);
+                                }))
                         .build())
                 .register(ServiceSpecification.builder()
                         .id("id-2")
@@ -92,7 +97,7 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                         .build())
                 .get("id-1")
                 .executeReactive("id", PrimitivesFactory.stringPrimitive("test"))
-                .repeat(Integer.MAX_VALUE)
+                .repeat(3)
                 .subscribeOn(parallel())
                 .subscribe(logger()::info);
         block();

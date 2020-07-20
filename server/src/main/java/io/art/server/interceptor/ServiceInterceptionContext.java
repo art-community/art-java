@@ -25,29 +25,29 @@ import java.util.function.*;
 
 @Getter
 public class ServiceInterceptionContext<Request, Response> {
-    private final Consumer<ServiceInterceptionContext<Request, Response>> delegate;
+    private final Function<ServiceInterceptionContext<Request, Response>, Response> delegate;
     private final ServiceMethodImplementation implementation;
     private final AtomicReference<Response> response = new AtomicReference<>();
     private final AtomicReference<Request> request = new AtomicReference<>();
 
-    public ServiceInterceptionContext(Consumer<ServiceInterceptionContext<Request, Response>> delegate, ServiceMethodImplementation implementation, Request request) {
+    public ServiceInterceptionContext(Function<ServiceInterceptionContext<Request, Response>, Response> delegate, ServiceMethodImplementation implementation, Request request) {
         this.delegate = delegate;
         this.implementation = implementation;
         this.request.set(request);
     }
 
     public void process() {
-        delegate.accept(this);
+        response.set(delegate.apply(this));
     }
 
     public void process(Request request) {
         this.request.set(request);
-        delegate.accept(this);
+        response.set(delegate.apply(this));
     }
 
     public void process(Request request, Response response) {
         this.request.set(request);
         this.response.set(response);
-        delegate.accept(this);
+        this.response.set(delegate.apply(this));
     }
 }

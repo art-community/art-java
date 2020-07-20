@@ -67,21 +67,21 @@ public class ServiceMethodImplementation {
 
     public Object execute(Object request) {
         AtomicReference<Object> response = new AtomicReference<>();
-        Consumer<ServiceInterceptionContext<Object, Object>> action = context -> {
+        Function<ServiceInterceptionContext<Object, Object>, Object> action = context -> {
             if (!response.compareAndSet(context.getResponse().get(), context.getResponse().get())) {
-                return;
+                return response.get();
             }
             Object interceptedRequest = context.getRequest().get();
             switch (mode) {
                 case CONSUMER:
                     consumer.accept(interceptedRequest);
-                    return;
+                    return null;
                 case PRODUCER:
                     response.set(producer.get());
-                    return;
+                    return response.get();
                 case HANDLER:
                     response.set(handler.apply(interceptedRequest));
-                    return;
+                    return response.get();
             }
             throw new ServiceMethodExecutionException(format(UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE, mode));
         };

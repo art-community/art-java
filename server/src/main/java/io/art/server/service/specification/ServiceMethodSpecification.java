@@ -56,8 +56,9 @@ public class ServiceMethodSpecification {
     private ServiceExecutionInterceptor<Object, Object> interceptor = new ServiceValidationInterceptor();
 
     public <Request, Response> ServiceMethodSpecification intercept(ServiceExecutionInterceptor<Request, Response> interceptor) {
+        ServiceExecutionInterceptor<Object, Object> current = this.interceptor;
         this.interceptor = context -> {
-            context.process();
+            current.intercept(context);
             interceptor.intercept(cast(context));
         };
         return this;
@@ -153,9 +154,11 @@ public class ServiceMethodSpecification {
             return Mono.empty();
         }
         try {
-            Object request = mapRequestBlocking(requestValue);
-            Object response = cast(implementation.execute(request));
-            return mapResponseReactiveMono(response);
+            return Mono.create(emitter -> {
+                Object request = mapRequestBlocking(requestValue);
+                Object response = cast(implementation.execute(request));
+                emitter.success(mapResponseBlocking(response));
+            });
         } catch (Throwable throwable) {
             return mapExceptionReactiveMono(throwable);
         }
