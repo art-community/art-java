@@ -97,7 +97,7 @@ public class ServiceSpecification {
         if (configuration.get().isDeactivated()) {
             return Mono.empty();
         }
-        return let(methods.get(methodId), method -> method.executeReactive(requestValue));
+        return let(methods.get(methodId), method -> method.executeReactive(requestValue.filter(value -> !configuration.get().isDeactivated())));
     }
 
     public Flux<Value> stream(String methodId) {
@@ -114,10 +114,17 @@ public class ServiceSpecification {
         return let(methods.get(methodId), method -> method.stream(requestValue));
     }
 
+    public Flux<Value> stream(String methodId, Mono<Value> requestValue) {
+        if (configuration.get().isDeactivated()) {
+            return Flux.empty();
+        }
+        return let(methods.get(methodId), method -> method.stream(requestValue.filter(value -> !configuration.get().isDeactivated())));
+    }
+
     public Flux<Value> channel(String methodId, Flux<Value> requestValue) {
         if (configuration.get().isDeactivated()) {
             return Flux.empty();
         }
-        return let(methods.get(methodId), method -> method.channel(requestValue));
+        return let(methods.get(methodId), method -> method.channel(requestValue.filter(value -> !configuration.get().isDeactivated())));
     }
 }

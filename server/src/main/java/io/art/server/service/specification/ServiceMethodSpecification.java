@@ -152,7 +152,7 @@ public class ServiceMethodSpecification {
             return Mono.empty();
         }
         try {
-            Object request = mapRequestReactive(requestValue);
+            Object request = mapRequestReactive(requestValue.filter(value -> !configuration.get().isDeactivated()));
             Object response = cast(implementation.execute(request));
             return mapResponseReactiveMono(response);
         } catch (Throwable throwable) {
@@ -191,7 +191,7 @@ public class ServiceMethodSpecification {
             return Flux.empty();
         }
         try {
-            Object request = mapRequestReactive(requestValue);
+            Object request = mapRequestReactive(requestValue.filter(value -> !configuration.get().isDeactivated()));
             Flux<Object> response = cast(implementation.execute(request));
             return mapResponseReactiveFlux(response);
         } catch (Throwable throwable) {
@@ -204,7 +204,7 @@ public class ServiceMethodSpecification {
             return Flux.empty();
         }
         try {
-            Flux<Object> request = mapChannelRequest(requestValue);
+            Flux<Object> request = mapChannelRequest(requestValue.filter(value -> !configuration.get().isDeactivated()));
             Flux<Object> response = cast(implementation.execute(request));
             return mapChannelResponse(response);
         } catch (Throwable throwable) {
