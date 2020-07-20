@@ -23,6 +23,7 @@ import io.art.server.service.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
+import static java.util.Optional.ofNullable;
 import java.util.*;
 import java.util.function.*;
 
@@ -38,93 +39,100 @@ public class ServiceSpecification {
     private final Map<String, ServiceMethodSpecification> methods;
 
     public void callBlocking(String methodId) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return;
         }
         apply(methods.get(methodId), ServiceMethodSpecification::callBlocking);
     }
 
     public void callBlocking(String methodId, Value requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return;
         }
         apply(methods.get(methodId), method -> method.callBlocking(requestValue));
     }
 
     public Mono<Void> callReactive(String methodId) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Mono.empty();
         }
         return let(methods.get(methodId), ServiceMethodSpecification::callReactive);
     }
 
     public Mono<Void> callReactive(String methodId, Value requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Mono.empty();
         }
         return let(methods.get(methodId), method -> method.callReactive(requestValue));
     }
 
     public Value executeBlocking(String methodId) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return null;
         }
         return let(methods.get(methodId), ServiceMethodSpecification::executeBlocking);
     }
 
     public Value executeBlocking(String methodId, Value requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return null;
         }
         return let(methods.get(methodId), method -> method.executeBlocking(requestValue));
     }
 
     public Mono<Value> executeReactive(String methodId) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Mono.empty();
         }
         return let(methods.get(methodId), ServiceMethodSpecification::executeReactive);
     }
 
     public Mono<Value> executeReactive(String methodId, Value requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Mono.empty();
         }
         return let(methods.get(methodId), method -> method.executeReactive(requestValue));
     }
 
     public Mono<Value> executeReactive(String methodId, Mono<Value> requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Mono.empty();
         }
         return let(methods.get(methodId), method -> method.executeReactive(requestValue.filter(value -> !configuration.get().isDeactivated())));
     }
 
     public Flux<Value> stream(String methodId) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Flux.empty();
         }
         return let(methods.get(methodId), ServiceMethodSpecification::stream);
     }
 
     public Flux<Value> stream(String methodId, Value requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Flux.empty();
         }
         return let(methods.get(methodId), method -> method.stream(requestValue));
     }
 
     public Flux<Value> stream(String methodId, Mono<Value> requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Flux.empty();
         }
         return let(methods.get(methodId), method -> method.stream(requestValue.filter(value -> !configuration.get().isDeactivated())));
     }
 
     public Flux<Value> channel(String methodId, Flux<Value> requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Flux.empty();
         }
         return let(methods.get(methodId), method -> method.channel(requestValue.filter(value -> !configuration.get().isDeactivated())));
+    }
+
+    private boolean isDeactivated() {
+        return ofNullable(configuration)
+                .map(Supplier::get)
+                .map(ServiceConfiguration::isDeactivated)
+                .orElse(false);
     }
 }

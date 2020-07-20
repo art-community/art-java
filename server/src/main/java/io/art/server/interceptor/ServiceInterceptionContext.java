@@ -24,12 +24,17 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 @Getter
-@RequiredArgsConstructor
 public class ServiceInterceptionContext<Request, Response> {
     private final Consumer<ServiceInterceptionContext<Request, Response>> delegate;
     private final ServiceMethodImplementation implementation;
     private final AtomicReference<Response> response = new AtomicReference<>();
     private final AtomicReference<Request> request = new AtomicReference<>();
+
+    public ServiceInterceptionContext(Consumer<ServiceInterceptionContext<Request, Response>> delegate, ServiceMethodImplementation implementation, Request request) {
+        this.delegate = delegate;
+        this.implementation = implementation;
+        this.request.set(request);
+    }
 
     public void process() {
         delegate.accept(this);

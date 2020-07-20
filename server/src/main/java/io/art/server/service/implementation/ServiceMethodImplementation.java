@@ -71,22 +71,23 @@ public class ServiceMethodImplementation {
             if (!response.compareAndSet(context.getResponse().get(), context.getResponse().get())) {
                 return;
             }
+            Object interceptedRequest = context.getRequest().get();
             switch (mode) {
                 case CONSUMER:
-                    consumer.accept(context.getRequest());
-                    break;
+                    consumer.accept(interceptedRequest);
+                    return;
                 case PRODUCER:
                     response.set(producer.get());
-                    break;
+                    return;
                 case HANDLER:
-                    response.set(handler.apply(context.getRequest()));
-                    break;
+                    response.set(handler.apply(interceptedRequest));
+                    return;
             }
             throw new ServiceMethodExecutionException(format(UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE, mode));
         };
         ServiceExecutionInterceptor<Object, Object> interceptor;
         if (nonNull(interceptor = getMethodSpecification().getInterceptor())) {
-            interceptor.intercept(new ServiceInterceptionContext<>(action, this));
+            interceptor.intercept(new ServiceInterceptionContext<>(action, this, request));
             return response.get();
         }
         switch (mode) {

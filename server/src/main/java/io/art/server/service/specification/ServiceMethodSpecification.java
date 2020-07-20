@@ -30,6 +30,7 @@ import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
+import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.NON_VALIDATABLE;
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
 import static java.text.MessageFormat.*;
 import static java.util.Optional.*;
@@ -49,7 +50,8 @@ public class ServiceMethodSpecification {
     private final ServiceMethodProcessingMode responseProcessingMode;
     private final Supplier<ServiceMethodConfiguration> configuration;
     private final ServiceSpecification serviceSpecification;
-    private final RequestValidationPolicy validationPolicy;
+    @Builder.Default
+    private final RequestValidationPolicy validationPolicy = NON_VALIDATABLE;
     @Builder.Default
     private ServiceExecutionInterceptor<Object, Object> interceptor = new ServiceValidationInterceptor();
 
@@ -62,14 +64,14 @@ public class ServiceMethodSpecification {
     }
 
     public void callBlocking() {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return;
         }
         implementation.execute(null);
     }
 
     public void callBlocking(Value requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return;
         }
         Object request = mapRequestBlocking(requestValue);
@@ -78,7 +80,7 @@ public class ServiceMethodSpecification {
 
 
     public Mono<Void> callReactive() {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Mono.empty();
         }
         try {
@@ -93,7 +95,7 @@ public class ServiceMethodSpecification {
     }
 
     public Mono<Void> callReactive(Value requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Mono.empty();
         }
         try {
@@ -110,7 +112,7 @@ public class ServiceMethodSpecification {
 
 
     public Value executeBlocking() {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return null;
         }
         try {
@@ -122,7 +124,7 @@ public class ServiceMethodSpecification {
     }
 
     public Value executeBlocking(Value requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return null;
         }
         try {
@@ -135,7 +137,7 @@ public class ServiceMethodSpecification {
     }
 
     public Mono<Value> executeReactive() {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Mono.empty();
         }
         try {
@@ -147,7 +149,7 @@ public class ServiceMethodSpecification {
     }
 
     public Mono<Value> executeReactive(Value requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Mono.empty();
         }
         try {
@@ -160,11 +162,11 @@ public class ServiceMethodSpecification {
     }
 
     public Mono<Value> executeReactive(Mono<Value> requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Mono.empty();
         }
         try {
-            Object request = mapRequestReactive(requestValue.filter(value -> !configuration.get().isDeactivated()));
+            Object request = mapRequestReactive(requestValue.filter(value -> !isDeactivated()));
             Object response = cast(implementation.execute(request));
             return mapResponseReactiveMono(response);
         } catch (Throwable throwable) {
@@ -174,7 +176,7 @@ public class ServiceMethodSpecification {
 
 
     public Flux<Value> stream() {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Flux.empty();
         }
         try {
@@ -186,7 +188,7 @@ public class ServiceMethodSpecification {
     }
 
     public Flux<Value> stream(Value requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Flux.empty();
         }
         try {
@@ -199,11 +201,11 @@ public class ServiceMethodSpecification {
     }
 
     public Flux<Value> stream(Mono<Value> requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Flux.empty();
         }
         try {
-            Object request = mapRequestReactive(requestValue.filter(value -> !configuration.get().isDeactivated()));
+            Object request = mapRequestReactive(requestValue.filter(value -> !isDeactivated()));
             Flux<Object> response = cast(implementation.execute(request));
             return mapResponseReactiveFlux(response);
         } catch (Throwable throwable) {
@@ -212,11 +214,11 @@ public class ServiceMethodSpecification {
     }
 
     public Flux<Value> channel(Flux<Value> requestValue) {
-        if (configuration.get().isDeactivated()) {
+        if (isDeactivated()) {
             return Flux.empty();
         }
         try {
-            Flux<Object> request = mapChannelRequest(requestValue.filter(value -> !configuration.get().isDeactivated()));
+            Flux<Object> request = mapChannelRequest(requestValue.filter(value -> !isDeactivated()));
             Flux<Object> response = cast(implementation.execute(request));
             return mapChannelResponse(response);
         } catch (Throwable throwable) {
@@ -334,5 +336,12 @@ public class ServiceMethodSpecification {
                     .map(responseMapper::map);
         }
         throw new ServiceMethodExecutionException(format(INVALID_CHANNEL_PROCESSING_MODE, responseProcessingMode));
+    }
+
+    private boolean isDeactivated() {
+        return ofNullable(configuration)
+                .map(Supplier::get)
+                .map(ServiceMethodConfiguration::isDeactivated)
+                .orElse(false);
     }
 }

@@ -18,7 +18,11 @@
 
 package io.art.core.extensions;
 
+import io.art.core.exception.*;
 import lombok.experimental.*;
+import static io.art.core.handler.ExceptionHandler.*;
+import static java.lang.Thread.*;
+import java.util.function.*;
 
 @UtilityClass
 public class ThreadExtensions {
@@ -28,5 +32,9 @@ public class ThreadExtensions {
 
     public static void thread(Runnable runnable) {
         new Thread(runnable).start();
+    }
+
+    public static void block() {
+        consumeException((Function<Throwable, RuntimeException>) InternalRuntimeException::new).run(() -> currentThread().join());
     }
 }

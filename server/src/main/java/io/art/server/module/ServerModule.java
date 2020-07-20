@@ -18,17 +18,31 @@
 
 package io.art.server.module;
 
+import com.google.common.base.*;
+import io.art.core.caster.*;
 import io.art.core.module.*;
+import io.art.entity.factory.*;
+import io.art.entity.immutable.*;
+import io.art.entity.immutable.Value;
 import io.art.logging.*;
 import io.art.resilience.module.*;
 import io.art.server.configuration.*;
+import io.art.server.constants.*;
 import io.art.server.registry.*;
 import io.art.server.service.specification.*;
 import io.art.server.state.*;
 import lombok.*;
+import static com.google.common.base.Throwables.getStackTraceAsString;
 import static io.art.core.context.Context.*;
+import static io.art.core.extensions.ThreadExtensions.block;
+import static io.art.entity.factory.EntityFactory.*;
+import static io.art.entity.mapping.PrimitiveMapping.fromString;
+import static io.art.entity.mapping.PrimitiveMapping.toString;
+import static io.art.logging.LoggingModule.logger;
+import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.BLOCKING;
 import static io.art.server.service.implementation.ServiceMethodImplementation.*;
 import static lombok.AccessLevel.*;
+import static reactor.core.scheduler.Schedulers.parallel;
 
 @Getter
 public class ServerModule implements StatefulModule<ServerModuleConfiguration, ServerModuleConfiguration.Configurator, ServerModuleState> {
@@ -54,22 +68,33 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                 .loadModule(new LoggingModule());
         services()
                 .register(ServiceSpecification.builder()
-                        .id("id")
+                        .id("id-1")
+                        .method("id", ServiceMethodSpecification.builder()
+                                .requestProcessingMode(BLOCKING)
+                                .responseProcessingMode(BLOCKING)
+                                .requestMapper(value -> toString.map(Value.asPrimitive(value)))
+                                .exceptionMapper(model -> fromString.map(getStackTraceAsString(model)))
+                                .responseMapper(model -> fromString.map((String) model))
+                                .implementation(handler(request -> request, "id-1", "id"))
+                                .build())
+                        .build())
+                .register(ServiceSpecification.builder()
+                        .id("id-2")
                         .method("id", ServiceMethodSpecification.builder()
                                 .implementation(handler(request -> request, "id", "id"))
                                 .build())
                         .build())
                 .register(ServiceSpecification.builder()
-                        .id("id")
+                        .id("id-3")
                         .method("id", ServiceMethodSpecification.builder()
                                 .implementation(handler(request -> request, "id", "id"))
                                 .build())
                         .build())
-                .register(ServiceSpecification.builder()
-                        .id("id")
-                        .method("id", ServiceMethodSpecification.builder()
-                                .implementation(handler(request -> request, "id", "id"))
-                                .build())
-                        .build());
+                .get("id-1")
+                .executeReactive("id", PrimitivesFactory.stringPrimitive("test"))
+                .repeat(Integer.MAX_VALUE)
+                .subscribeOn(parallel())
+                .subscribe(logger()::info);
+        block();
     }
 }
