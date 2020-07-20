@@ -33,7 +33,7 @@ import static io.github.resilience4j.retry.RetryConfig.*;
 import static java.time.Duration.*;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 public class ResilienceConfiguration {
     private final RetryConfig retry;
     private final CircuitBreakerConfig circuitBreaker;

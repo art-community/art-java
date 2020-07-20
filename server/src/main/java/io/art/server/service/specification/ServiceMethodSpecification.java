@@ -23,6 +23,7 @@ import io.art.entity.mapper.*;
 import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
 import io.art.server.service.implementation.*;
+import io.art.server.service.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
@@ -45,19 +46,28 @@ public class ServiceMethodSpecification {
     private final ServiceMethodImplementation implementation;
     private final ServiceMethodProcessingMode requestProcessingMode;
     private final ServiceMethodProcessingMode responseProcessingMode;
-    private final Supplier<Boolean> deactivated;
+    private final Supplier<ServiceMethodConfiguration> configuration;
 
     public void callBlocking() {
+        if (configuration.get().isDeactivated()) {
+            return;
+        }
         implementation.execute(null);
     }
 
     public void callBlocking(Value requestValue) {
+        if (configuration.get().isDeactivated()) {
+            return;
+        }
         Object request = mapRequestBlocking(requestValue);
         implementation.execute(request);
     }
 
 
     public Mono<Void> callReactive() {
+        if (configuration.get().isDeactivated()) {
+            return Mono.empty();
+        }
         try {
             implementation.execute(null);
         } catch (Throwable throwable) {
@@ -70,6 +80,9 @@ public class ServiceMethodSpecification {
     }
 
     public Mono<Void> callReactive(Value requestValue) {
+        if (configuration.get().isDeactivated()) {
+            return Mono.empty();
+        }
         try {
             Object request = mapRequestBlocking(requestValue);
             implementation.execute(request);
@@ -84,6 +97,9 @@ public class ServiceMethodSpecification {
 
 
     public Value executeBlocking() {
+        if (configuration.get().isDeactivated()) {
+            return null;
+        }
         try {
             Object response = implementation.execute(null);
             return mapResponseBlocking(response);
@@ -93,6 +109,9 @@ public class ServiceMethodSpecification {
     }
 
     public Value executeBlocking(Value requestValue) {
+        if (configuration.get().isDeactivated()) {
+            return null;
+        }
         try {
             Object request = mapRequestBlocking(requestValue);
             Object response = implementation.execute(request);
@@ -103,6 +122,9 @@ public class ServiceMethodSpecification {
     }
 
     public Mono<Value> executeReactive() {
+        if (configuration.get().isDeactivated()) {
+            return Mono.empty();
+        }
         try {
             Object response = implementation.execute(null);
             return mapResponseReactiveMono(response);
@@ -112,6 +134,9 @@ public class ServiceMethodSpecification {
     }
 
     public Mono<Value> executeReactive(Value requestValue) {
+        if (configuration.get().isDeactivated()) {
+            return Mono.empty();
+        }
         try {
             Object request = mapRequestBlocking(requestValue);
             Object response = cast(implementation.execute(request));
@@ -122,6 +147,9 @@ public class ServiceMethodSpecification {
     }
 
     public Mono<Value> executeReactive(Mono<Value> requestValue) {
+        if (configuration.get().isDeactivated()) {
+            return Mono.empty();
+        }
         try {
             Object request = mapRequestReactive(requestValue);
             Object response = cast(implementation.execute(request));
@@ -133,6 +161,9 @@ public class ServiceMethodSpecification {
 
 
     public Flux<Value> stream() {
+        if (configuration.get().isDeactivated()) {
+            return Flux.empty();
+        }
         try {
             Flux<Object> response = cast(implementation.execute(null));
             return mapResponseReactiveFlux(response);
@@ -142,6 +173,9 @@ public class ServiceMethodSpecification {
     }
 
     public Flux<Value> stream(Value requestValue) {
+        if (configuration.get().isDeactivated()) {
+            return Flux.empty();
+        }
         try {
             Object request = mapRequestBlocking(requestValue);
             Flux<Object> response = cast(implementation.execute(request));
@@ -152,6 +186,9 @@ public class ServiceMethodSpecification {
     }
 
     public Flux<Value> stream(Mono<Value> requestValue) {
+        if (configuration.get().isDeactivated()) {
+            return Flux.empty();
+        }
         try {
             Object request = mapRequestReactive(requestValue);
             Flux<Object> response = cast(implementation.execute(request));
@@ -162,6 +199,9 @@ public class ServiceMethodSpecification {
     }
 
     public Flux<Value> channel(Flux<Value> requestValue) {
+        if (configuration.get().isDeactivated()) {
+            return Flux.empty();
+        }
         try {
             Flux<Object> request = mapChannelRequest(requestValue);
             Flux<Object> response = cast(implementation.execute(request));

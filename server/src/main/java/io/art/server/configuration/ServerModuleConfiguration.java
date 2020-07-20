@@ -18,10 +18,12 @@
 
 package io.art.server.configuration;
 
+import com.google.common.collect.*;
 import io.art.core.module.*;
 import io.art.resilience.model.*;
 import io.art.server.interceptor.ServiceExecutionInterceptor.*;
 import io.art.server.interceptor.*;
+import io.art.server.service.model.*;
 import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.*;
 import io.github.resilience4j.ratelimiter.*;
@@ -34,18 +36,12 @@ import java.util.*;
 
 @Getter
 public class ServerModuleConfiguration implements ModuleConfiguration {
-    private final CircuitBreakerRegistry circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
-    private final RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.ofDefaults();
-    private final RetryRegistry retryRegistry = RetryRegistry.ofDefaults();
-    private final BulkheadRegistry bulkheadRegistry = BulkheadRegistry.ofDefaults();
-    private final Map<String, ResilienceConfiguration> executionConfigurations = mapOf();
-    @Getter
-    private final List<RequestInterceptor> requestInterceptors = linkedListOf(
+    private final ImmutableMap<String, ServiceConfiguration> services = ImmutableMap.of();
+    private final ImmutableList<RequestInterceptor> requestInterceptors = ImmutableList.of(
             interceptRequest(new ServiceLoggingInterception()),
             interceptRequest(new ServiceValidationInterception())
     );
-    @Getter
-    private final List<ResponseInterceptor> responseInterceptors = linkedListOf(interceptResponse(new ServiceLoggingInterception()));
+    private final ImmutableList<ResponseInterceptor> responseInterceptors = ImmutableList.of(interceptResponse(new ServiceLoggingInterception()));
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<ServerModuleConfiguration, Configurator> {
