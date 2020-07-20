@@ -19,9 +19,9 @@
 package io.art.server.configuration;
 
 import io.art.core.module.*;
+import io.art.resilience.model.*;
 import io.art.server.interceptor.ServiceExecutionInterceptor.*;
 import io.art.server.interceptor.*;
-import io.art.server.model.*;
 import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.*;
 import io.github.resilience4j.ratelimiter.*;
@@ -38,7 +38,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
     private final RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.ofDefaults();
     private final RetryRegistry retryRegistry = RetryRegistry.ofDefaults();
     private final BulkheadRegistry bulkheadRegistry = BulkheadRegistry.ofDefaults();
-    private final Map<String, ServiceMethodExecutionConfiguration> executionConfigurations = mapOf();
+    private final Map<String, ResilienceConfiguration> executionConfigurations = mapOf();
     @Getter
     private final List<RequestInterceptor> requestInterceptors = linkedListOf(
             interceptRequest(new ServiceLoggingInterception()),

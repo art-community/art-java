@@ -18,7 +18,7 @@
 
 package io.art.server.service.wrapper;
 
-import io.art.server.model.*;
+import io.art.resilience.model.*;
 import lombok.experimental.*;
 import static io.art.server.constants.ServerModuleConstants.ServiceExecutionFeatureTarget.*;
 import static io.art.server.module.ServerModule.*;
@@ -26,47 +26,47 @@ import java.util.concurrent.*;
 
 @UtilityClass
 public class ServiceExecutionWrapper {
-    public static <ResponseType> ResponseType executeServiceWithConfiguration(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceMethodExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithConfiguration(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ResilienceConfiguration executionConfiguration) throws Exception {
         return executeServiceWithBreaker(serviceExecution, command, executionConfiguration);
     }
 
-    public static <ResponseType> ResponseType executeServiceWithBreaker(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceMethodExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithBreaker(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ResilienceConfiguration executionConfiguration) throws Exception {
         if (!executionConfiguration.isBreakable()) {
             return executeServiceWithRateLimiter(serviceExecution, command, executionConfiguration);
         }
         return serverModule()
                 .getCircuitBreakerRegistry()
-                .circuitBreaker(executionConfiguration.getCircuitBreakTarget() == METHOD ? command.toString() : command.getServiceId(), executionConfiguration.getCircuitBreakerConfig())
+                .circuitBreaker(executionConfiguration.getCircuitBreakTarget() == METHOD ? command.toString() : command.getServiceId(), executionConfiguration.getCircuitBreaker())
                 .executeCallable(() -> executeServiceWithRateLimiter(serviceExecution, command, executionConfiguration));
     }
 
-    public static <ResponseType> ResponseType executeServiceWithRateLimiter(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceMethodExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithRateLimiter(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ResilienceConfiguration executionConfiguration) throws Exception {
         if (!executionConfiguration.isLimited()) {
             return executeServiceWithBulkHeaded(serviceExecution, command, executionConfiguration);
         }
         return serverModule()
                 .getRateLimiterRegistry()
-                .rateLimiter(executionConfiguration.getRateLimiterTarget() == METHOD ? command.toString() : command.getServiceId(), executionConfiguration.getRateLimiterConfig())
+                .rateLimiter(executionConfiguration.getRateLimiterTarget() == METHOD ? command.toString() : command.getServiceId(), executionConfiguration.getRateLimiter())
                 .executeCallable(() -> executeServiceWithBulkHeaded(serviceExecution, command, executionConfiguration));
     }
 
-    public static <ResponseType> ResponseType executeServiceWithBulkHeaded(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceMethodExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithBulkHeaded(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ResilienceConfiguration executionConfiguration) throws Exception {
         if (!executionConfiguration.isBulkHeaded()) {
             return executeServiceWithRetrying(serviceExecution, command, executionConfiguration);
         }
         return serverModule()
                 .getBulkheadRegistry()
-                .bulkhead(executionConfiguration.getBulkheadTarget() == METHOD ? command.toString() : command.getServiceId(), executionConfiguration.getBulkheadConfig())
+                .bulkhead(executionConfiguration.getBulkheadTarget() == METHOD ? command.toString() : command.getServiceId(), executionConfiguration.getBulkhead())
                 .executeCallable(() -> executeServiceWithRetrying(serviceExecution, command, executionConfiguration));
     }
 
-    public static <ResponseType> ResponseType executeServiceWithRetrying(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceMethodExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithRetrying(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ResilienceConfiguration executionConfiguration) throws Exception {
         if (!executionConfiguration.isRetryable()) {
             return serviceExecution.call();
         }
         return serverModule()
                 .getRetryRegistry()
-                .retry(executionConfiguration.getRetryTarget() == METHOD ? command.toString() : command.getServiceId(), executionConfiguration.getRetryConfig())
+                .retry(executionConfiguration.getRetryTarget() == METHOD ? command.toString() : command.getServiceId(), executionConfiguration.getRetry())
                 .executeCallable(serviceExecution);
     }
 }

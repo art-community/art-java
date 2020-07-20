@@ -16,31 +16,21 @@
  * limitations under the License.
  */
 
-package io.art.server.model;
+package io.art.resilience.model;
 
+import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.*;
+import io.github.resilience4j.ratelimiter.*;
+import io.github.resilience4j.retry.*;
+import io.github.resilience4j.timelimiter.*;
 import lombok.*;
-import lombok.experimental.*;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class CircuitBreakerConfiguration {
-    private boolean breakable;
-    private CircuitBreakerConfig configuration;
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    @Setter
-    @Accessors(chain = true, fluent = true)
-    public static class Builder {
-        private boolean breakable;
-        private CircuitBreakerConfig.Builder builder;
-
-        public CircuitBreakerConfiguration build() {
-            return new CircuitBreakerConfiguration(this.breakable, builder.build());
-        }
-    }
+@Builder
+public class ResilienceConfiguration {
+    private final RetryConfig retry;
+    private final CircuitBreakerConfig circuitBreaker;
+    private final RateLimiterConfig rateLimiter;
+    private final BulkheadConfig bulkhead;
+    private final TimeLimiterConfig timeLimiter;
 }

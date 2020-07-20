@@ -16,18 +16,21 @@
  * limitations under the License.
  */
 
-package io.art.server.state;
+package io.art.resilience.state;
 
-import io.art.server.registry.*;
+import io.art.core.module.*;
 import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.*;
 import io.github.resilience4j.ratelimiter.*;
+import io.github.resilience4j.retry.*;
 import io.github.resilience4j.timelimiter.*;
 import lombok.*;
-import io.art.core.module.*;
-import org.graalvm.graphio.*;
 
 @Getter
-public class ServerModuleState implements ModuleState {
-    private final ServiceRegistry services = new ServiceRegistry();
+public class ResilienceModuleState implements ModuleState {
+    private final RateLimiterRegistry rateLimiters = RateLimiterRegistry.ofDefaults();
+    private final CircuitBreakerRegistry circuitBreakers = CircuitBreakerRegistry.ofDefaults();
+    private final BulkheadRegistry bulkheads = BulkheadRegistry.ofDefaults();
+    private final TimeLimiterRegistry timeLimiters = TimeLimiterRegistry.ofDefaults();
+    private final RetryRegistry retriers = RetryRegistry.ofDefaults();
 }

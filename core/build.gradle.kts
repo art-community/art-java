@@ -21,7 +21,6 @@ dependencies {
     val vavrVersion: String by project
     val nettyVersion: String by project
     val reactorVersion: String by project
-    val resilience4jVersion: String by project
 
     api("com.google.guava", "guava", guavaVersion)
             .exclude("org.slf4j")
@@ -32,33 +31,5 @@ dependencies {
             .exclude("org.slf4j")
     api("io.projectreactor", "reactor-core", reactorVersion)
             .exclude("com.google.guava")
-            .exclude("org.slf4j")
-    api("io.github.resilience4j", "resilience4j-circuitbreaker", resilience4jVersion)
-            .exclude("com.google.guava")
-            .exclude("io.vavr")
-            .exclude("org.slf4j")
-    api("io.github.resilience4j", "resilience4j-ratelimiter", resilience4jVersion)
-            .exclude("com.google.guava")
-            .exclude("io.vavr")
-            .exclude("org.slf4j")
-    api("io.github.resilience4j", "resilience4j-retry", resilience4jVersion)
-            .exclude("com.google.guava")
-            .exclude("io.vavr")
-            .exclude("org.slf4j")
-    api("io.github.resilience4j", "resilience4j-metrics", resilience4jVersion)
-            .exclude("com.google.guava")
-            .exclude("io.vavr")
-            .exclude("org.slf4j")
-    api("io.github.resilience4j", "resilience4j-bulkhead", resilience4jVersion)
-            .exclude("com.google.guava")
-            .exclude("io.vavr")
-            .exclude("org.slf4j")
-    api("io.github.resilience4j", "resilience4j-timelimiter", resilience4jVersion)
-            .exclude("com.google.guava")
-            .exclude("io.vavr")
-            .exclude("org.slf4j")
-    api("io.github.resilience4j", "resilience4j-reactor", resilience4jVersion)
-            .exclude("com.google.guava")
-            .exclude("io.vavr")
             .exclude("org.slf4j")
 }

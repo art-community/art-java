@@ -19,18 +19,12 @@
 package io.art.server.module;
 
 import io.art.core.module.*;
-import io.art.entity.factory.*;
-import io.art.entity.immutable.Value;
-import io.art.entity.mapping.*;
 import io.art.server.configuration.*;
 import io.art.server.registry.*;
 import io.art.server.service.specification.*;
 import io.art.server.state.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
-import static io.art.entity.factory.PrimitivesFactory.stringPrimitive;
-import static io.art.entity.immutable.Value.*;
-import static io.art.entity.mapping.PrimitiveMapping.toString;
 import static io.art.server.service.implementation.ServiceMethodImplementation.*;
 import static lombok.AccessLevel.*;
 
@@ -48,7 +42,7 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
     }
 
     public static ServiceRegistry services() {
-        return serverModule().state().getServiceRegistry();
+        return serverModule().state().getServices();
     }
 
     public static void main(String[] args) {
