@@ -21,10 +21,14 @@ package io.art.server.configuration;
 import com.google.common.collect.*;
 import io.art.core.module.*;
 import io.art.server.service.model.*;
+import io.vavr.collection.*;
+import io.vavr.collection.LinkedHashMap;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
+import static io.art.resilience.module.ResilienceModule.*;
 import static java.util.Optional.*;
 import java.util.*;
+import java.util.Map;
 
 
 @Getter
@@ -37,6 +41,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ModuleConfigurationSource source) {
+            resilienceModule().state().reset();
             configuration.services = ofNullable(source.getInnerMap("server.services"))
                     .map(services -> services
                             .entrySet()

@@ -33,4 +33,12 @@ public class ResilienceModuleState implements ModuleState {
     private final BulkheadRegistry bulkheads = BulkheadRegistry.ofDefaults();
     private final TimeLimiterRegistry timeLimiters = TimeLimiterRegistry.ofDefaults();
     private final RetryRegistry retriers = RetryRegistry.ofDefaults();
+
+    public void reset() {
+        rateLimiters.getAllRateLimiters().forEach(rateLimiter -> rateLimiters.remove(rateLimiter.getName()));
+        circuitBreakers.getAllCircuitBreakers().forEach(circuitBreaker -> circuitBreakers.remove(circuitBreaker.getName()));
+        bulkheads.getAllBulkheads().forEach(bulkhead -> bulkheads.remove(bulkhead.getName()));
+        timeLimiters.getAllTimeLimiters().forEach(timeLimiter -> timeLimiters.remove(timeLimiter.getName()));
+        retriers.getAllRetries().forEach(retry -> retriers.remove(retry.getName()));
+    }
 }

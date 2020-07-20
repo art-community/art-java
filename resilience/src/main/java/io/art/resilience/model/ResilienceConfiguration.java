@@ -19,6 +19,7 @@
 package io.art.resilience.model;
 
 import io.art.core.module.*;
+import io.art.resilience.module.*;
 import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.*;
 import io.github.resilience4j.ratelimiter.*;
