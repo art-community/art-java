@@ -88,6 +88,6 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                                 .build())
                         .build())
                 .get("id-1");
-        logger().info(specification.executeBlocking("id", stringPrimitive("test")));
+        System.out.println(specification.executeBlocking("id", stringPrimitive("test")));
     }
 }

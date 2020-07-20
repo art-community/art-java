@@ -1,15 +1,14 @@
 package io.art.core.colorizer;
 
-import lombok.experimental.*;
 import io.art.core.constants.*;
+import lombok.experimental.*;
 import static io.art.core.constants.AnsiColor.*;
-import static io.art.core.constants.AnsiColor.PURPLE_BOLD;
-import static io.art.core.constants.StringConstants.ANSI_RESET;
+import static io.art.core.constants.StringConstants.*;
 
 @UtilityClass
 public class AnsiColorizer {
     public static String message(String message, AnsiColor color) {
-        return color.getCode() + message + ANSI_RESET;
+        return  color.getCode() + message + ANSI_RESET;
     }
 
     public static String success(String message) {

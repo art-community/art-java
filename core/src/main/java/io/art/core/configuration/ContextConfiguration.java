@@ -20,7 +20,6 @@ package io.art.core.configuration;
 
 import io.art.core.context.*;
 import io.art.core.network.provider.*;
-import io.art.core.provider.*;
 import lombok.*;
 import static io.art.core.constants.ContextConstants.*;
 import static java.nio.charset.StandardCharsets.*;
@@ -50,8 +49,6 @@ public interface ContextConfiguration {
 
     ZoneId getZoneId();
 
-    Optional<PreconfiguredModuleProvider> getPreconfiguredModulesProvider();
-
     class DefaultContextConfiguration implements ContextConfiguration {
         @Getter
         private final String mainModuleId;
@@ -73,24 +70,9 @@ public interface ContextConfiguration {
                 .map(File::new)
                 .map(File::getPath)
                 .orElse(DEFAULT_MODULE_JAR);
-        private PreconfiguredModuleProvider preconfiguredModulesProvider;
 
         public DefaultContextConfiguration() {
             this.mainModuleId = DEFAULT_MAIN_MODULE_ID;
-        }
-
-        public DefaultContextConfiguration(PreconfiguredModuleProvider preconfiguredModulesProvider) {
-            this.mainModuleId = DEFAULT_MAIN_MODULE_ID;
-        }
-
-        public DefaultContextConfiguration(String applicationModuleId, PreconfiguredModuleProvider preconfiguredModulesProvider) {
-            this.mainModuleId = applicationModuleId;
-            this.preconfiguredModulesProvider = preconfiguredModulesProvider;
-        }
-
-        @Override
-        public Optional<PreconfiguredModuleProvider> getPreconfiguredModulesProvider() {
-            return ofNullable(preconfiguredModulesProvider);
         }
     }
 }
