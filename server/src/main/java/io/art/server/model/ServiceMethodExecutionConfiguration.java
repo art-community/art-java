@@ -28,11 +28,11 @@ import static io.art.server.constants.ServerModuleConstants.ServiceExecutionFeat
 
 @Builder
 @Getter
-public class ServiceExecutionConfiguration {
+public class ServiceMethodExecutionConfiguration {
     @Builder.Default
     private final RetryServiceConfig retryConfig = new RetryServiceConfig();
     @Builder.Default
-    private final CircuitBreakerServiceConfig circuitBreakerConfig = new CircuitBreakerServiceConfig();
+    private final CircuitBreakerConfiguration circuitBreakerConfig = new CircuitBreakerConfiguration();
     @Builder.Default
     private final RateLimiterServiceConfig rateLimiterConfig = new RateLimiterServiceConfig();
     @Builder.Default
@@ -63,7 +63,7 @@ public class ServiceExecutionConfiguration {
     }
 
     public CircuitBreakerConfig getCircuitBreakerConfig() {
-        return circuitBreakerConfig.getCircuitBreakerConfig();
+        return circuitBreakerConfig.getConfiguration();
     }
 
     public RateLimiterConfig getRateLimiterConfig() {

@@ -29,7 +29,6 @@ import io.art.grpc.server.specification.*;
 import io.art.grpc.servlet.*;
 import io.art.logging.*;
 import io.art.server.exception.*;
-import io.art.server.model.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static org.apache.logging.log4j.ThreadContext.*;
@@ -174,7 +173,7 @@ public class GrpcServletContainer extends GrpcServlet {
         private void handleResponse(StreamObserver<com.google.protobuf.Value> responseObserver, GrpcMethod grpcMethod, ServiceResponse<?> serviceResponse) {
             EntityFromModelMapper<ServiceResponse<?>> fromServiceResponse = cast(fromServiceResponse(cast(grpcMethod.responseMapper())));
             Entity serviceResponseEntity = fromServiceResponse.map(serviceResponse);
-            ServiceExecutionException serviceException = serviceResponse.getServiceException();
+            DefaultServiceExecutionException serviceException = serviceResponse.getServiceException();
             for (ValueInterceptor<Entity, Entity> responseValueInterceptor : grpcMethod.responseValueInterceptors()) {
                 ValueInterceptionResult<Entity, Entity> result = responseValueInterceptor.intercept(serviceResponseEntity);
                 if (isNull(result)) {

@@ -36,9 +36,9 @@ import static io.art.service.mapping.ServiceEntitiesMapping.ServiceExecutionExce
 import javax.servlet.http.*;
 import java.nio.charset.*;
 
-class ServiceHttpJsonExceptionHandler implements HttpExceptionHandler<ServiceExecutionException> {
+class ServiceHttpJsonExceptionHandler implements HttpExceptionHandler<DefaultServiceExecutionException> {
     @Override
-    public void handle(ServiceExecutionException exception, HttpServletRequest request, HttpServletResponse response) {
+    public void handle(DefaultServiceExecutionException exception, HttpServletRequest request, HttpServletResponse response) {
         response.setHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_UTF8.toString());
         HttpRequestContext requestContext = httpServerModuleState().getRequestContext();
         Charset charset = isNull(requestContext)
@@ -52,7 +52,7 @@ class ServiceHttpJsonExceptionHandler implements HttpExceptionHandler<ServiceExe
                     .mapToBytes(serviceExecutionExceptionMapper.map(exception), APPLICATION_JSON_UTF8, charset);
             writeResponseBody(response, bodyBytes);
         } catch (Throwable throwable) {
-            String error = format(SERVICE_EXCEPTION_HANDLING_ERROR_RESPONSE, exception.getErrorCode(), exception.getErrorMessage(), exception.getStackTraceText());
+            String error = format(SERVICE_EXCEPTION_HANDLING_ERROR_RESPONSE, exception.getErrorCode(), exception.getMessage(), exception.getStackTraceText());
             writeResponseBody(response, error.getBytes(charset));
         }
     }

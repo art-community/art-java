@@ -18,11 +18,9 @@
 
 package io.art.soap.server.service;
 
-import io.art.server.constants.*;
 import lombok.experimental.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.server.exception.*;
-import io.art.server.model.*;
 import io.art.soap.server.exception.*;
 import io.art.soap.server.model.*;
 import io.art.soap.server.model.SoapService.*;
@@ -55,7 +53,7 @@ public class SoapExecutionService {
             ServiceMethodCommand command = new ServiceMethodCommand(serviceId, methodId);
             ServiceRequest<?> serviceRequest = new ServiceRequest<>(command, validationPolicy, requestObject);
             ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);
-            ServiceExecutionException exception;
+            DefaultServiceExecutionException exception;
             if (nonNull(exception = serviceResponse.getServiceException())) {
                 XmlFromModelMapper<?> faultMapper;
                 if (isNotEmpty(faultMapper = faultMapping.get(((Throwable) exception).getClass()))) {

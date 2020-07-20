@@ -62,6 +62,6 @@ public class ServiceMethodImplementation {
             case HANDLER:
                 return handler.apply(request);
         }
-        throw new ServiceExecutionException(format(UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE, mode));
+        throw new ServiceMethodExecutionException(format(UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE, mode));
     }
 }

@@ -25,22 +25,22 @@ import lombok.experimental.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CircuitBreakerServiceConfig {
+public class CircuitBreakerConfiguration {
     private boolean breakable;
-    private CircuitBreakerConfig circuitBreakerConfig;
+    private CircuitBreakerConfig configuration;
 
-    public static CircuitBreakerServiceConfigBuilder builder() {
-        return new CircuitBreakerServiceConfigBuilder();
+    public static Builder builder() {
+        return new Builder();
     }
 
     @Setter
     @Accessors(chain = true, fluent = true)
-    public static class CircuitBreakerServiceConfigBuilder {
+    public static class Builder {
         private boolean breakable;
-        private CircuitBreakerConfig.Builder circuitBreakerConfigBuilder;
+        private CircuitBreakerConfig.Builder builder;
 
-        public CircuitBreakerServiceConfig build() {
-            return new CircuitBreakerServiceConfig(this.breakable, circuitBreakerConfigBuilder.build());
+        public CircuitBreakerConfiguration build() {
+            return new CircuitBreakerConfiguration(this.breakable, builder.build());
         }
     }
 }

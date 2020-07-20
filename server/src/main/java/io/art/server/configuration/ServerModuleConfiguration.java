@@ -38,7 +38,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
     private final RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.ofDefaults();
     private final RetryRegistry retryRegistry = RetryRegistry.ofDefaults();
     private final BulkheadRegistry bulkheadRegistry = BulkheadRegistry.ofDefaults();
-    private final Map<String, ServiceExecutionConfiguration> executionConfigurations = mapOf();
+    private final Map<String, ServiceMethodExecutionConfiguration> executionConfigurations = mapOf();
     @Getter
     private final List<RequestInterceptor> requestInterceptors = linkedListOf(
             interceptRequest(new ServiceLoggingInterception()),

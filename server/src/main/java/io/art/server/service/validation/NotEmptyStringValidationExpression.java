@@ -23,7 +23,6 @@ import static io.art.server.constants.ServerModuleConstants.ValidationExpression
 import static java.text.MessageFormat.*;
 
 class NotEmptyStringValidationExpression extends ValidationExpression<String> {
-
     NotEmptyStringValidationExpression() {
         super(NOT_EMPTY_STRING);
     }

@@ -29,7 +29,6 @@ import io.art.http.mapper.*;
 import io.art.http.server.exception.*;
 import io.art.http.server.model.HttpService.*;
 import io.art.server.exception.*;
-import io.art.server.model.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -167,7 +166,7 @@ class HttpServerRequestHandler {
     }
 
     private static Value mapResponseValue(HttpMethod httpMethod, ServiceResponse<?> serviceResponse) {
-        ServiceExecutionException serviceException = serviceResponse.getServiceException();
+        DefaultServiceExecutionException serviceException = serviceResponse.getServiceException();
         switch (httpMethod.getResponseHandlingMode()) {
             case UNCHECKED:
                 return mapResponseObject(serviceResponse, fromServiceResponse(cast(httpMethod.getResponseMapper())));

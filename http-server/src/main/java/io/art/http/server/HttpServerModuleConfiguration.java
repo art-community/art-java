@@ -178,7 +178,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
                 mapOf(
                         Throwable.class, (HttpExceptionHandler<Throwable>) new ExceptionHttpJsonHandler()
                 ).add(
-                        cast(ServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler())
+                        cast(DefaultServiceExecutionException.class), cast(new ServiceHttpJsonExceptionHandler())
                 );
 
         private static List<HttpServerInterceptor> initializeInterceptors() {

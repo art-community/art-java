@@ -61,30 +61,19 @@ public interface ServerModuleConstants {
     interface LoggingMessages {
         String EXECUTION_SERVICE_MESSAGE = "Executing service: ''{0}.{1}'' with request: ''{2}''";
         String SERVICE_FAILED_MESSAGE = "Service ''{0}.{1}'' execution failed with error: ''{2}: {3}\n{4}''";
-        String SERVICE_EXECUTED_MESSAGE = "Successfully executed service: ''{0}.{1}'' with response: ''{2}''";
         String SERVICE_REGISTRATION_MESSAGE = "Registering service: ''{0}'' with specification class: ''{1}''";
     }
 
     interface ExceptionsMessages {
-        String SERVICE_EXECUTION_EXCEPTION_WITH_STACK_TRACE = "Service execution failed with errorCode ''{0}'', error message ''{1}'' and stack trace \n{2}";
-        String SERVICE_EXECUTION_EXCEPTION_MESSAGE = "Service ''{0}'' method ''{1}'' execution failed with errorCode ''{2}'' and error message: ''{3}''";
-        String SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE = "Service ''{0}'' method ''{1}'' execution failed with errorCode ''{2}'', error message: ''{3}'' and stack trace\n{4}";
-        String SERVICE_EXECUTION_EXCEPTION_MESSAGE_AND_STACKTRACE_WITHOUT_COMMAND = "Service execution failed with errorCode ''{1}'', error message: ''{2}'' and stack trace\n{3}";
-        String SERVICE_COMMAND_HAS_WRONG_FORMAT = "Service command has wrong format (SERVICE_ID.METHOD_ID()): ''{0}''";
         String UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE = "Unknown service method implementation mode: ''{0}''";
+        String UNKNOWN_PROCESSING_MODE = "Unknown processing mode: ''{0}''";
+        String INVALID_CHANNEL_PROCESSING_MODE = "Invalid processing mode: ''{0}'' for channel processing";
         String NOT_BETWEEN_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' not between ''{2,number,#}'' and ''{3,number,#}''";
         String NOT_EQUALS_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' is not equals to ''{2}''";
         String NOT_CONTAINS_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' is not contains to ''{2}''";
         String EQUALS_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' is equals to ''{2}''";
         String EMPTY_VALIDATION_ERROR = "Validation error. ''{0}'' is empty";
         String NULL_VALIDATION_ERROR = "Validation error. ''{0}'' is null";
-        String SERVICE_WITH_ID_NOT_EXISTS = "Service with id ''{0}'' not exists";
-        String SERVICE_COMMAND_IS_NULL = "Service command is null";
-        String SERVICE_ID_IS_NULL = "Service id is null";
-        String METHOD_ID_IS_NULL = "Method id is null";
-        String ERROR_CODE_IS_EMPTY = "Error code is empty";
-        String REQUEST_DATA_IS_NULL_CODE = "REQUEST_DATA_IS_NULL";
-        String VALIDATION_EXCEPTION_CODE = "VALIDATION_EXCEPTION";
     }
 
 }

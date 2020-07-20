@@ -40,7 +40,7 @@ public class ServiceValidationInterception implements ServiceRequestInterception
         if (isNull(request.getRequestData())) {
             return stopHandling(request, ServiceResponse.builder()
                     .command(request.getServiceMethodCommand())
-                    .serviceException(new ServiceExecutionException(request.getServiceMethodCommand(), REQUEST_DATA_IS_NULL_CODE, new ValidationException(REQUEST_DATA_IS_NULL)))
+                    .serviceException(new DefaultServiceExecutionException(request.getServiceMethodCommand(), REQUEST_DATA_IS_NULL_CODE, new ValidationException(REQUEST_DATA_IS_NULL)))
                     .build());
         }
         try {
@@ -49,7 +49,7 @@ public class ServiceValidationInterception implements ServiceRequestInterception
         } catch (Throwable throwable) {
             return stopHandling(request, ServiceResponse.builder()
                     .command(request.getServiceMethodCommand())
-                    .serviceException(new ServiceExecutionException(request.getServiceMethodCommand(), VALIDATION_EXCEPTION_CODE, throwable))
+                    .serviceException(new DefaultServiceExecutionException(request.getServiceMethodCommand(), VALIDATION_EXCEPTION_CODE, throwable))
                     .build());
         }
         return nextInterceptor(request);

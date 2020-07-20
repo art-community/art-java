@@ -39,7 +39,6 @@ import static io.art.logging.LoggingModuleConstants.DEFAULT_REQUEST_ID;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static io.art.logging.LoggingContext.*;
 import static io.art.logging.ThreadContextExtensions.*;
-import static io.art.server.module.ServerModule.*;
 import static io.art.service.constants.ServiceLoggingMessages.*;
 import static io.art.server.model.ServiceInterceptionResult.*;
 import java.util.*;
@@ -73,7 +72,7 @@ public class ServiceLoggingInterception implements ServiceRequestInterception, S
         if (!isEmpty(serviceLoggingParameters.get())) {
             putRequestResponseParameters(request, serviceLoggingParameters.get().pop());
         }
-        ServiceExecutionException serviceException = response.getServiceException();
+        DefaultServiceExecutionException serviceException = response.getServiceException();
         if (nonNull(serviceException)) {
             putIfNotNull(RESPONSE_KEY, response);
             putIfNotNull(SERVICE_EXCEPTION_KEY, serviceException);
@@ -82,7 +81,7 @@ public class ServiceLoggingInterception implements ServiceRequestInterception, S
                     request.getServiceMethodCommand(),
                     getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID),
                     serviceException.getErrorCode(),
-                    serviceException.getErrorMessage(),
+                    serviceException.getMessage(),
                     serviceException.getStackTraceText()),
                     serviceException);
             return nextInterceptor(request, response);

@@ -21,12 +21,15 @@ package io.art.server.service.specification;
 import io.art.entity.immutable.Value;
 import io.art.entity.mapper.*;
 import io.art.server.constants.ServerModuleConstants.*;
+import io.art.server.exception.*;
 import io.art.server.service.implementation.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
+import static java.text.MessageFormat.*;
 import static java.util.Optional.*;
 import java.util.function.*;
 
@@ -120,8 +123,8 @@ public class ServiceMethodSpecification {
 
     public Mono<Value> executeReactive(Mono<Value> requestValue) {
         try {
-            Object request = mapRequestReactive(requestValue);
-            Object response = cast(implementation.execute(request));
+            Mono<Object> request = mapRequestReactive(requestValue);
+            Mono<Object> response = cast(implementation.execute(request));
             return mapResponseReactiveMono(response);
         } catch (Throwable throwable) {
             return mapExceptionReactiveMono(throwable);
@@ -148,6 +151,16 @@ public class ServiceMethodSpecification {
         }
     }
 
+    public Flux<Value> stream(Mono<Value> requestValue) {
+        try {
+            Mono<Object> request = mapRequestReactive(requestValue);
+            Flux<Object> response = cast(implementation.execute(request));
+            return mapResponseReactiveFlux(response);
+        } catch (Throwable throwable) {
+            return mapExceptionReactiveFLux(throwable);
+        }
+    }
+
     public Flux<Value> channel(Flux<Value> requestValue) {
         try {
             Flux<Object> request = mapChannelRequest(requestValue);
@@ -162,27 +175,25 @@ public class ServiceMethodSpecification {
     private Object mapRequestBlocking(Value requestValue) {
         switch (requestProcessingMode) {
             case BLOCKING:
-                return let(requestValue, requestMapper::map);
+                return requestMapper.map(requestValue);
             case REACTIVE_MONO:
-                return Mono.justOrEmpty(ofNullable(requestValue))
-                        .map(requestMapper::map);
+                return Mono.just(requestMapper.map(requestValue));
             case REACTIVE_FLUX:
-                return ofNullable(requestValue)
-                        .map(requestMapper::map)
-                        .map(Flux::just)
-                        .orElse(Flux.empty());
+                return Flux.just(requestMapper.map(requestValue));
         }
+        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode));
     }
 
-    private Object mapRequestReactive(Mono<Value> requestValue) {
+    private Mono<Object> mapRequestReactive(Mono<Value> requestValue) {
         switch (requestProcessingMode) {
             case BLOCKING:
-                return let(requestValue.block(), requestMapper::map);
+                return requestValue.map(requestMapper::map);
             case REACTIVE_MONO:
                 return requestValue.map(requestMapper::map);
             case REACTIVE_FLUX:
-                return Flux.from(requestValue);
+                return Flux.from(requestValue).map(requestMapper::map).next();
         }
+        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode));
     }
 
 
@@ -191,29 +202,38 @@ public class ServiceMethodSpecification {
             case BLOCKING:
                 return let(response, responseMapper::map);
             case REACTIVE_MONO:
-                return Mono.justOrEmpty(ofNullable(response)).map(responseMapper::map).block();
+                return Mono.justOrEmpty(ofNullable(response))
+                        .map(responseMapper::map)
+                        .onErrorResume(Throwable.class, throwable -> Mono.just(exceptionMapper.map(throwable)))
+                        .block();
             case REACTIVE_FLUX:
                 return ofNullable(response)
                         .map(responseMapper::map)
                         .map(Flux::just)
                         .orElse(Flux.empty())
+                        .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
                         .blockFirst();
         }
+        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode));
     }
 
     private Mono<Value> mapResponseReactiveMono(Object response) {
         switch (responseProcessingMode) {
             case BLOCKING:
-                return Mono.justOrEmpty(ofNullable(response)).map(responseMapper::map);
+                return Mono.justOrEmpty(ofNullable(response))
+                        .map(responseMapper::map)
+                        .onErrorResume(Throwable.class, throwable -> Mono.just(exceptionMapper.map(throwable)));
             case REACTIVE_MONO:
                 return Mono.from(cast(response))
                         .map(responseMapper::map)
                         .onErrorResume(Throwable.class, throwable -> Mono.just(exceptionMapper.map(throwable)));
             case REACTIVE_FLUX:
-                return Flux.from(cast(response)).map(responseMapper::map)
+                return Flux.from(cast(response))
+                        .map(responseMapper::map)
                         .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
                         .next();
         }
+        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode));
     }
 
     private Flux<Value> mapResponseReactiveFlux(Object response) {
@@ -222,66 +242,44 @@ public class ServiceMethodSpecification {
                 return ofNullable(response)
                         .map(responseMapper::map)
                         .map(Flux::just)
-                        .orElse(Flux.empty());
+                        .orElse(Flux.empty())
+                        .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
             case REACTIVE_MONO:
             case REACTIVE_FLUX:
                 return Flux.from(cast(response))
-                        .map(responseMapper::map);
+                        .map(responseMapper::map)
+                        .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
+        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode));
     }
 
 
     private Value mapExceptionBlocking(Throwable throwable) {
-        switch (responseProcessingMode) {
-            case BLOCKING:
-                return let(throwable, exceptionMapper::map);
-            case REACTIVE_MONO:
-                return Mono.justOrEmpty(ofNullable(throwable))
-                        .map(exceptionMapper::map)
-                        .block();
-            case REACTIVE_FLUX:
-                return ofNullable(throwable)
-                        .map(exceptionMapper::map)
-                        .map(Flux::just)
-                        .orElse(Flux.empty())
-                        .blockFirst();
-        }
+        return exceptionMapper.map(throwable);
     }
 
     private Mono<Value> mapExceptionReactiveMono(Throwable throwable) {
-        switch (responseProcessingMode) {
-            case BLOCKING:
-                return Mono.justOrEmpty(ofNullable(throwable))
-                        .map(exceptionMapper::map);
-            case REACTIVE_MONO:
-            case REACTIVE_FLUX:
-                return Mono.just(exceptionMapper.map(throwable));
-        }
+        return Mono.just(exceptionMapper.map(throwable));
     }
 
     private Flux<Value> mapExceptionReactiveFLux(Throwable throwable) {
-        switch (responseProcessingMode) {
-            case BLOCKING:
-                return ofNullable(throwable)
-                        .map(exceptionMapper::map)
-                        .map(Flux::just)
-                        .orElse(Flux.empty());
-            case REACTIVE_MONO:
-            case REACTIVE_FLUX:
-                return Flux.just(exceptionMapper.map(throwable));
-        }
+        return Flux.just(exceptionMapper.map(throwable));
     }
 
-
-    private Flux<Value> mapChannelResponse(Flux<Object> responseChannel) {
-        if (responseProcessingMode == REACTIVE_FLUX) {
-            return responseChannel.map(responseMapper::map);
-        }
-    }
 
     private Flux<Object> mapChannelRequest(Flux<Value> requestChannel) {
         if (requestProcessingMode == REACTIVE_FLUX) {
             return requestChannel.map(requestMapper::map);
         }
+        throw new ServiceMethodExecutionException(format(INVALID_CHANNEL_PROCESSING_MODE, requestProcessingMode));
+    }
+
+    private Flux<Value> mapChannelResponse(Flux<Object> responseChannel) {
+        if (responseProcessingMode == REACTIVE_FLUX) {
+            return responseChannel
+                    .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
+                    .map(responseMapper::map);
+        }
+        throw new ServiceMethodExecutionException(format(INVALID_CHANNEL_PROCESSING_MODE, responseProcessingMode));
     }
 }

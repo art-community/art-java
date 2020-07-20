@@ -26,11 +26,11 @@ import java.util.concurrent.*;
 
 @UtilityClass
 public class ServiceExecutionWrapper {
-    public static <ResponseType> ResponseType executeServiceWithConfiguration(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithConfiguration(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceMethodExecutionConfiguration executionConfiguration) throws Exception {
         return executeServiceWithBreaker(serviceExecution, command, executionConfiguration);
     }
 
-    public static <ResponseType> ResponseType executeServiceWithBreaker(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithBreaker(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceMethodExecutionConfiguration executionConfiguration) throws Exception {
         if (!executionConfiguration.isBreakable()) {
             return executeServiceWithRateLimiter(serviceExecution, command, executionConfiguration);
         }
@@ -40,7 +40,7 @@ public class ServiceExecutionWrapper {
                 .executeCallable(() -> executeServiceWithRateLimiter(serviceExecution, command, executionConfiguration));
     }
 
-    public static <ResponseType> ResponseType executeServiceWithRateLimiter(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithRateLimiter(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceMethodExecutionConfiguration executionConfiguration) throws Exception {
         if (!executionConfiguration.isLimited()) {
             return executeServiceWithBulkHeaded(serviceExecution, command, executionConfiguration);
         }
@@ -50,7 +50,7 @@ public class ServiceExecutionWrapper {
                 .executeCallable(() -> executeServiceWithBulkHeaded(serviceExecution, command, executionConfiguration));
     }
 
-    public static <ResponseType> ResponseType executeServiceWithBulkHeaded(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithBulkHeaded(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceMethodExecutionConfiguration executionConfiguration) throws Exception {
         if (!executionConfiguration.isBulkHeaded()) {
             return executeServiceWithRetrying(serviceExecution, command, executionConfiguration);
         }
@@ -60,7 +60,7 @@ public class ServiceExecutionWrapper {
                 .executeCallable(() -> executeServiceWithRetrying(serviceExecution, command, executionConfiguration));
     }
 
-    public static <ResponseType> ResponseType executeServiceWithRetrying(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceExecutionConfiguration executionConfiguration) throws Exception {
+    public static <ResponseType> ResponseType executeServiceWithRetrying(Callable<ResponseType> serviceExecution, ServiceMethodCommand command, ServiceMethodExecutionConfiguration executionConfiguration) throws Exception {
         if (!executionConfiguration.isRetryable()) {
             return serviceExecution.call();
         }
