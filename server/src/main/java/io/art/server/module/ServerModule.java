@@ -19,8 +19,6 @@
 package io.art.server.module;
 
 import io.art.core.module.*;
-import io.art.entity.factory.*;
-import io.art.entity.immutable.Value;
 import io.art.logging.*;
 import io.art.resilience.module.*;
 import io.art.server.configuration.*;
@@ -30,14 +28,13 @@ import io.art.server.state.*;
 import lombok.*;
 import static com.google.common.base.Throwables.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.ThreadExtensions.*;
+import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.Value.*;
 import static io.art.entity.mapping.PrimitiveMapping.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
 import static io.art.server.service.implementation.ServiceMethodImplementation.*;
-import static java.util.Optional.*;
 import static lombok.AccessLevel.*;
-import static reactor.core.scheduler.Schedulers.*;
 
 @Getter
 public class ServerModule implements StatefulModule<ServerModuleConfiguration, ServerModuleConfiguration.Configurator, ServerModuleState> {
@@ -61,27 +58,17 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                 .loadModule(new ResilienceModule())
                 .loadModule(new ServerModule())
                 .loadModule(new LoggingModule());
-        services()
+        ServiceSpecification specification = services()
                 .register(ServiceSpecification.builder()
                         .id("id-1")
                         .method("id", ServiceMethodSpecification.builder()
                                 .requestProcessingMode(BLOCKING)
                                 .responseProcessingMode(BLOCKING)
-                                .requestMapper(value -> toString.map(Value.asPrimitive(value)))
+                                .requestMapper(value -> toString.map(asPrimitive(value)))
                                 .exceptionMapper(model -> fromString.map(getStackTraceAsString(model)))
                                 .responseMapper(model -> fromString.map((String) model))
                                 .implementation(handler(request -> request, "id-1", "id"))
-                                .build()
-                                .intercept(context -> {
-                                    logger().info("1");
-                                    context.process();
-                                    ofNullable(context.getResponse().get()).ifPresent(logger()::info);
-                                })
-                                .intercept(context -> {
-                                    logger().info("2");
-                                    context.process();
-                                    ofNullable(context.getResponse().get()).ifPresent(logger()::info);
-                                }))
+                                .build())
                         .build())
                 .register(ServiceSpecification.builder()
                         .id("id-2")
@@ -95,11 +82,7 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                                 .implementation(handler(request -> request, "id", "id"))
                                 .build())
                         .build())
-                .get("id-1")
-                .executeReactive("id", PrimitivesFactory.stringPrimitive("test"))
-                .repeat(3)
-                .subscribeOn(parallel())
-                .subscribe(logger()::info);
-        block();
+                .get("id-1");
+        logger().info(specification.executeBlocking("id", stringPrimitive("test")));
     }
 }

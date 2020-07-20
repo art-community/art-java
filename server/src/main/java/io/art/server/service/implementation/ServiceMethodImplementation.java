@@ -28,7 +28,6 @@ import static io.art.server.constants.ServerModuleConstants.ServiceMethodImpleme
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 
@@ -66,30 +65,17 @@ public class ServiceMethodImplementation {
     }
 
     public Object execute(Object request) {
-        AtomicReference<Object> response = new AtomicReference<>();
-        Function<ServiceInterceptionContext<Object, Object>, Object> action = context -> {
-            if (!response.compareAndSet(context.getResponse().get(), context.getResponse().get())) {
-                return response.get();
-            }
-            Object interceptedRequest = context.getRequest().get();
-            switch (mode) {
-                case CONSUMER:
-                    consumer.accept(interceptedRequest);
-                    return null;
-                case PRODUCER:
-                    response.set(producer.get());
-                    return response.get();
-                case HANDLER:
-                    response.set(handler.apply(interceptedRequest));
-                    return response.get();
-            }
-            throw new ServiceMethodExecutionException(format(UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE, mode));
-        };
         ServiceExecutionInterceptor<Object, Object> interceptor;
         if (nonNull(interceptor = getMethodSpecification().getInterceptor())) {
-            interceptor.intercept(new ServiceInterceptionContext<>(action, this, request));
-            return response.get();
+            Function<ServiceInterceptionContext<Object, Object>, Object> action = context -> process(context.getRequest().get());
+            ServiceInterceptionContext<Object, Object> context = new ServiceInterceptionContext<>(action, this, request);
+            interceptor.intercept(context);
+            return context.getResponse().get();
         }
+        return process(request);
+    }
+
+    private Object process(Object request) {
         switch (mode) {
             case CONSUMER:
                 consumer.accept(request);
