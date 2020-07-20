@@ -87,22 +87,20 @@ public class ServiceMethodImplementation {
     }
 
     public Object execute(Object request) {
-        Function<ServiceInterceptionContext<Object, Object>, Object> action = context -> process(context.getRequest());
+        Function<ServiceInterceptionContext<Object, Object>, Object> action = context -> {
+            switch (mode) {
+                case CONSUMER:
+                    consumer.accept(context.getRequest());
+                    return null;
+                case PRODUCER:
+                    return producer.get();
+                case HANDLER:
+                    return handler.apply(context.getRequest());
+            }
+            throw new ServiceMethodExecutionException(format(UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE, mode));
+        };
         ServiceInterceptionContext<Object, Object> context = new ServiceInterceptionContext<>(action, this, request);
         getInterceptor().intercept(context);
         return context.getResponse();
-    }
-
-    private Object process(Object request) {
-        switch (mode) {
-            case CONSUMER:
-                consumer.accept(request);
-                return null;
-            case PRODUCER:
-                return producer.get();
-            case HANDLER:
-                return handler.apply(request);
-        }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE, mode));
     }
 }
