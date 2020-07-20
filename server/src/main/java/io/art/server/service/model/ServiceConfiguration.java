@@ -18,10 +18,12 @@
 
 package io.art.server.service.model;
 
+import com.google.common.collect.*;
 import io.art.core.module.*;
 import io.art.resilience.model.*;
 import lombok.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.*;
 import java.util.*;
 
@@ -35,10 +37,11 @@ public class ServiceConfiguration {
     public static ServiceConfiguration from(ModuleConfigurationSource source) {
         boolean deactivated = getOrElse(source.getBool("deactivated"), false);
         ResilienceConfiguration resilience = let(source.getInner("resilience"), ResilienceConfiguration::from);
-        Map<String, ServiceMethodConfiguration> methods = source.getInnerMap("methods")
-                .entrySet()
-                .stream()
-                .collect(toMap(Map.Entry::getKey, entry -> ServiceMethodConfiguration.from(entry.getValue())));
+        Map<String, ServiceMethodConfiguration> methods = ofNullable(source.getInnerMap("methods"))
+                .map(configurations -> configurations.entrySet()
+                        .stream()
+                        .collect(toMap(Map.Entry::getKey, entry -> ServiceMethodConfiguration.from(entry.getValue()))))
+                .orElse(ImmutableMap.of());
         return new ServiceConfiguration(deactivated, resilience, methods);
     }
 }

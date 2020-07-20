@@ -23,6 +23,7 @@ import io.art.core.module.*;
 import io.art.server.service.model.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
+import static java.util.Optional.*;
 import java.util.*;
 
 
@@ -36,10 +37,12 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ModuleConfigurationSource source) {
-            configuration.services = source.getInnerMap("services")
-                    .entrySet()
-                    .stream()
-                    .collect(toImmutableMap(Map.Entry::getKey, entry -> ServiceConfiguration.from(entry.getValue())));
+            configuration.services = ofNullable(source.getInnerMap("server.services"))
+                    .map(services -> services
+                            .entrySet()
+                            .stream()
+                            .collect(toImmutableMap(Map.Entry::getKey, entry -> ServiceConfiguration.from(entry.getValue()))))
+                    .orElse(ImmutableMap.of());
             return this;
         }
     }
