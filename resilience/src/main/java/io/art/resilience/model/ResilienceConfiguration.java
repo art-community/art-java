@@ -28,6 +28,7 @@ import lombok.Builder;
 import lombok.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.resilience.constants.ResilienceModuleConstants.ConfigurationKeys.*;
+import static io.github.resilience4j.circuitbreaker.CircuitBreakerConfig.*;
 import static io.github.resilience4j.retry.RetryConfig.*;
 import static java.time.Duration.*;
 
@@ -52,6 +53,38 @@ public class ResilienceConfiguration {
             builder.retry(RetryConfig.custom()
                     .maxAttempts(getOrElse(source.getInt(RETRY_MAX_ATTEMPTS_KEY), defaults.getMaxAttempts()))
                     .waitDuration(getOrElse(source.getDuration(RETRY_WAIT_DURATION_KEY), ofMillis(DEFAULT_WAIT_DURATION)))
+                    .build());
+        }
+        if (hasCircuitBreaker) {
+            CircuitBreakerConfig defaults = CircuitBreakerConfig.ofDefaults();
+            builder.circuitBreaker(CircuitBreakerConfig.custom()
+                    .automaticTransitionFromOpenToHalfOpenEnabled(
+                            getOrElse(source.getBool(CIRCUIT_BREAKER_AUTOMATIC_TRANSITION_FROM_OPEN_TO_HALF_OPEN_ENABLED_KEY), defaults.isAutomaticTransitionFromOpenToHalfOpenEnabled())
+                    )
+                    .failureRateThreshold(
+                            getOrElse(source.getFloat(CIRCUIT_BREAKER_FAILURE_RATE_THRESHOLD_KEY), defaults.getFailureRateThreshold())
+                    )
+                    .permittedNumberOfCallsInHalfOpenState(
+                            getOrElse(source.getInt(CIRCUIT_BREAKER_PERMITTED_NUMBER_OF_CALLS_IN_HALF_OPEN_STATE_KEY), defaults.getPermittedNumberOfCallsInHalfOpenState())
+                    )
+                    .minimumNumberOfCalls(
+                            getOrElse(source.getInt(CIRCUIT_BREAKER_SLIDING_WINDOW_MINIMUM_NUMBER_OF_CALLS_KEY), defaults.getMinimumNumberOfCalls())
+                    )
+                    .slidingWindowSize(
+                            getOrElse(source.getInt(CIRCUIT_BREAKER_SLIDING_WINDOW_SIZE_KEY), defaults.getSlidingWindowSize())
+                    )
+                    .slidingWindowType(
+                            SlidingWindowType.valueOf(getOrElse(source.getString(CIRCUIT_BREAKER_SLIDING_WINDOW_TYPE_KEY), defaults.getSlidingWindowType().name()).toUpperCase())
+                    )
+                    .slowCallDurationThreshold(
+                            getOrElse(source.getDuration(CIRCUIT_BREAKER_SLOW_CALL_DURATION_THRESHOLD_KEY), defaults.getSlowCallDurationThreshold())
+                    )
+                    .slowCallRateThreshold(
+                            getOrElse(source.getFloat(CIRCUIT_BREAKER_SLOW_CALL_RATE_THRESHOLD_KEY), defaults.getSlowCallRateThreshold())
+                    )
+                    .waitDurationInOpenState(
+                            getOrElse(source.getDuration(CIRCUIT_BREAKER_WAIT_DURATION_IN_OPEN_STATE_KEY), defaults.getWaitDurationInOpenState())
+                    )
                     .build());
         }
         return builder.build();

@@ -79,6 +79,11 @@ public class YamlConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
+    public Float getFloat(String path) {
+        return let(getDouble(path), Number::floatValue);
+    }
+
+    @Override
     public String getString(String path) {
         return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), JsonNode::asText);
     }

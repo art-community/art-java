@@ -52,6 +52,11 @@ public class PropertiesConfigurationSource implements ModuleConfigurationSource 
     }
 
     @Override
+    public Float getFloat(String path) {
+        return typesafeConfigurationSource.getFloat(path);
+    }
+
+    @Override
     public String getString(String path) {
         return typesafeConfigurationSource.getString(path);
     }

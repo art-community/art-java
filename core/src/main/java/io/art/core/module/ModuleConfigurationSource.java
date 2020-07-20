@@ -30,6 +30,8 @@ public interface ModuleConfigurationSource {
 
     Double getDouble(String path);
 
+    Float getFloat(String path);
+
     String getString(String path);
 
     Duration getDuration(String path);

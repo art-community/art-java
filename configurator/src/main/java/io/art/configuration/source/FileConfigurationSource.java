@@ -61,6 +61,11 @@ public class FileConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
+    public Float getFloat(String path) {
+        return source.getFloat(path);
+    }
+
+    @Override
     public String getString(String path) {
         return source.getString(path);
     }
