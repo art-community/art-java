@@ -18,12 +18,20 @@
 
 package io.art.server.service.model;
 
+import io.art.core.module.*;
 import io.art.resilience.model.*;
 import lombok.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
 
 @Getter
 @AllArgsConstructor
 public class ServiceMethodConfiguration {
     private final boolean deactivated;
-    private final ResilienceConfiguration resilienceConfiguration;
+    private final ResilienceConfiguration resilience;
+
+    public static ServiceMethodConfiguration from(ModuleConfigurationSource source) {
+        boolean deactivated = getOrElse(source.getBool("deactivated"), false);
+        ResilienceConfiguration resilience = let(source.getInner("resilience"), ResilienceConfiguration::from);
+        return new ServiceMethodConfiguration(deactivated, resilience);
+    }
 }

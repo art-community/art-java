@@ -18,8 +18,11 @@
 
 package io.art.server.service.model;
 
+import io.art.core.module.*;
 import io.art.resilience.model.*;
 import lombok.*;
+import static io.art.core.extensions.NullCheckingExtensions.*;
+import static java.util.stream.Collectors.*;
 import java.util.*;
 
 @Getter
@@ -28,4 +31,14 @@ public class ServiceConfiguration {
     private final boolean deactivated;
     private final ResilienceConfiguration resilienceConfiguration;
     private final Map<String, ServiceMethodConfiguration> methods;
+
+    public static ServiceConfiguration from(ModuleConfigurationSource source) {
+        boolean deactivated = getOrElse(source.getBool("deactivated"), false);
+        ResilienceConfiguration resilience = let(source.getInner("resilience"), ResilienceConfiguration::from);
+        Map<String, ServiceMethodConfiguration> methods = source.getInnerMap("methods")
+                .entrySet()
+                .stream()
+                .collect(toMap(Map.Entry::getKey, entry -> ServiceMethodConfiguration.from(entry.getValue())));
+        return new ServiceConfiguration(deactivated, resilience, methods);
+    }
 }

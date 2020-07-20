@@ -20,31 +20,27 @@ package io.art.server.configuration;
 
 import com.google.common.collect.*;
 import io.art.core.module.*;
-import io.art.resilience.model.*;
-import io.art.server.interceptor.ServiceExecutionInterceptor.*;
-import io.art.server.interceptor.*;
 import io.art.server.service.model.*;
-import io.github.resilience4j.bulkhead.*;
-import io.github.resilience4j.circuitbreaker.*;
-import io.github.resilience4j.ratelimiter.*;
-import io.github.resilience4j.retry.*;
 import lombok.*;
-import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.server.interceptor.ServiceExecutionInterceptor.*;
+import static com.google.common.collect.ImmutableMap.*;
 import java.util.*;
 
 
 @Getter
 public class ServerModuleConfiguration implements ModuleConfiguration {
-    private final ImmutableMap<String, ServiceConfiguration> services = ImmutableMap.of();
-    private final ImmutableList<RequestInterceptor> requestInterceptors = ImmutableList.of(
-            interceptRequest(new ServiceLoggingInterception()),
-            interceptRequest(new ServiceValidationInterception())
-    );
-    private final ImmutableList<ResponseInterceptor> responseInterceptors = ImmutableList.of(interceptResponse(new ServiceLoggingInterception()));
+    private ImmutableMap<String, ServiceConfiguration> services = ImmutableMap.of();
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<ServerModuleConfiguration, Configurator> {
         private final ServerModuleConfiguration configuration;
+
+        @Override
+        public Configurator from(ModuleConfigurationSource source) {
+            configuration.services = source.getInnerMap("services")
+                    .entrySet()
+                    .stream()
+                    .collect(toImmutableMap(Map.Entry::getKey, entry -> ServiceConfiguration.from(entry.getValue())));
+            return this;
+        }
     }
 }
