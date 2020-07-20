@@ -60,17 +60,22 @@ public class ResilienceModule implements StatefulModule<ResilienceModuleConfigur
     }
 
     public static RateLimiter rateLimiter(String id, RateLimiterConfig config) {
-        return resilienceModule()
+        RateLimiter rateLimiter = resilienceModule()
                 .state()
                 .getRateLimiters()
                 .rateLimiter(id, config);
+        rateLimiter.changeLimitForPeriod(config.getLimitForPeriod());
+        rateLimiter.changeTimeoutDuration(config.getTimeoutDuration());
+        return rateLimiter;
     }
 
     public static Bulkhead bulkhead(String id, BulkheadConfig config) {
-        return resilienceModule()
+        Bulkhead bulkhead = resilienceModule()
                 .state()
                 .getBulkheads()
                 .bulkhead(id, config);
+        bulkhead.changeConfig(config);
+        return bulkhead;
     }
 
     public static TimeLimiter timeLimiter(String id, TimeLimiterConfig config) {

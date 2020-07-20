@@ -20,9 +20,11 @@ package io.art.server.service.implementation;
 
 import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
+import io.art.server.service.specification.*;
 import lombok.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodImplementationMode.*;
+import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
 import java.util.function.*;
 
@@ -33,21 +35,27 @@ public class ServiceMethodImplementation {
     private Supplier<Object> producer;
     private Function<Object, Object> handler;
     private final ServiceMethodImplementationMode mode;
+    private final String serviceId;
+    private final String methodId;
+    @Getter(lazy = true)
+    private final ServiceSpecification serviceSpecification = services().get(serviceId);
+    @Getter(lazy = true)
+    private final ServiceMethodSpecification methodSpecification = getServiceSpecification().getMethods().get(methodId);
 
-    public static ServiceMethodImplementation consumer(Consumer<Object> consumer) {
-        ServiceMethodImplementation implementation = new ServiceMethodImplementation(CONSUMER);
+    public static ServiceMethodImplementation consumer(Consumer<Object> consumer, String serviceId, String methodId) {
+        ServiceMethodImplementation implementation = new ServiceMethodImplementation(CONSUMER, serviceId, methodId);
         implementation.consumer = consumer;
         return implementation;
     }
 
-    public static ServiceMethodImplementation producer(Supplier<Object> producer) {
-        ServiceMethodImplementation implementation = new ServiceMethodImplementation(PRODUCER);
+    public static ServiceMethodImplementation producer(Supplier<Object> producer, String serviceId, String methodId) {
+        ServiceMethodImplementation implementation = new ServiceMethodImplementation(PRODUCER, serviceId, methodId);
         implementation.producer = producer;
         return implementation;
     }
 
-    public static ServiceMethodImplementation handler(Function<Object, Object> handler) {
-        ServiceMethodImplementation implementation = new ServiceMethodImplementation(HANDLER);
+    public static ServiceMethodImplementation handler(Function<Object, Object> handler, String serviceId, String methodId) {
+        ServiceMethodImplementation implementation = new ServiceMethodImplementation(HANDLER, serviceId, methodId);
         implementation.handler = handler;
         return implementation;
     }

@@ -47,6 +47,7 @@ public class ServiceMethodSpecification {
     private final ServiceMethodProcessingMode requestProcessingMode;
     private final ServiceMethodProcessingMode responseProcessingMode;
     private final Supplier<ServiceMethodConfiguration> configuration;
+    private final ServiceSpecification serviceSpecification;
 
     public void callBlocking() {
         if (configuration.get().isDeactivated()) {
