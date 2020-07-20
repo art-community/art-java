@@ -123,8 +123,8 @@ public class ServiceMethodSpecification {
 
     public Mono<Value> executeReactive(Mono<Value> requestValue) {
         try {
-            Mono<Object> request = mapRequestReactive(requestValue);
-            Mono<Object> response = cast(implementation.execute(request));
+            Object request = mapRequestReactive(requestValue);
+            Object response = cast(implementation.execute(request));
             return mapResponseReactiveMono(response);
         } catch (Throwable throwable) {
             return mapExceptionReactiveMono(throwable);
@@ -153,7 +153,7 @@ public class ServiceMethodSpecification {
 
     public Flux<Value> stream(Mono<Value> requestValue) {
         try {
-            Mono<Object> request = mapRequestReactive(requestValue);
+            Object request = mapRequestReactive(requestValue);
             Flux<Object> response = cast(implementation.execute(request));
             return mapResponseReactiveFlux(response);
         } catch (Throwable throwable) {
@@ -184,10 +184,10 @@ public class ServiceMethodSpecification {
         throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode));
     }
 
-    private Mono<Object> mapRequestReactive(Mono<Value> requestValue) {
+    private Object mapRequestReactive(Mono<Value> requestValue) {
         switch (requestProcessingMode) {
             case BLOCKING:
-                return requestValue.map(requestMapper::map);
+                return requestValue.map(requestMapper::map).block();
             case REACTIVE_MONO:
                 return requestValue.map(requestMapper::map);
             case REACTIVE_FLUX:
