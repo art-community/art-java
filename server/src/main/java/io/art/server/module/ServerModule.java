@@ -69,26 +69,6 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                                 .exceptionMapper(model -> fromString.map(getStackTraceAsString(model)))
                                 .responseMapper(model -> fromString.map((String) model))
                                 .implementation(handler(request -> request, "id-1", "id"))
-                                .interceptor(context -> {
-                                    logger().info("1");
-                                    context.process();
-                                })
-                                .interceptor(context -> {
-                                    logger().info(context.getRequest());
-                                    context.process();
-                                })
-                                .interceptor(context -> {
-                                    logger().info("3");
-                                    context.process();
-                                })
-                                .interceptor(context -> {
-                                    logger().info(context.getRequest());
-                                    context.process();
-                                })
-                                .interceptor(context -> {
-                                    logger().info(context.getRequest());
-                                    context.process();
-                                })
                                 .build())
                         .build())
                 .register(ServiceSpecification.builder()

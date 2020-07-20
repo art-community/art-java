@@ -42,7 +42,6 @@ public class Context {
     private static Context INSTANCE;
     private ContextConfiguration configuration = new DefaultContextConfiguration();
     private ContextState state = READY;
-    private Long lastActionTimestamp = currentTimeMillis();
     private final Map<String, Module> modules = concurrentHashMap();
     private final static List<String> messages = copyOnWriteList();
 
@@ -96,13 +95,14 @@ public class Context {
     }
 
     public Context loadModule(Module module) {
+        long timestamp = currentTimeMillis();
         ContextState currentState = state;
         state = LOADING;
         modules.put(module.getId(), module);
-        messages.add(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - lastActionTimestamp, module.getClass()));
         state = currentState;
         module.onLoad();
-        lastActionTimestamp = currentTimeMillis();
+        messages.add(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - timestamp, module.getClass()));
+        module.afterLoad();
         return this;
     }
 
@@ -111,7 +111,6 @@ public class Context {
     }
 
     public boolean hasModule(String moduleId) {
-        lastActionTimestamp = currentTimeMillis();
         if (isEmpty(modules)) {
             return false;
         }

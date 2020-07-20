@@ -24,6 +24,9 @@ public interface Module extends UniqueIdentified {
     default void onLoad() {
     }
 
+    default void afterLoad() {
+    }
+
     default void onUnload() {
     }
 }

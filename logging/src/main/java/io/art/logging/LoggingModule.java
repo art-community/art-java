@@ -51,8 +51,6 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     public void onLoad() {
         getLogManager().reset();
 
-        context().printMessages(logger(Context.class)::info);
-
         boolean fromFile = ofNullable(getProperty(LOG42_CONFIGURATION_FILE_PROPERTY))
                 .map(property -> get(property))
                 .map(path -> path.toFile().exists())
@@ -72,6 +70,11 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
         }
 
         useCustomLoggers(name -> new ReactorLogger(logger(name)));
+    }
+
+    @Override
+    public void afterLoad() {
+        context().printMessages(logger(Context.class)::info);
     }
 
     public static Logger logger() {
