@@ -19,6 +19,8 @@
 package io.art.server.module;
 
 import io.art.core.module.*;
+import io.art.logging.*;
+import io.art.resilience.module.*;
 import io.art.server.configuration.*;
 import io.art.server.registry.*;
 import io.art.server.service.specification.*;
@@ -46,6 +48,10 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
     }
 
     public static void main(String[] args) {
+        context()
+                .loadModule(new ResilienceModule())
+                .loadModule(new ServerModule())
+                .loadModule(new LoggingModule());
         services()
                 .register(ServiceSpecification.builder()
                         .id("id")

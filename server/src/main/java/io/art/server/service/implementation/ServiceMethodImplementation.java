@@ -85,7 +85,7 @@ public class ServiceMethodImplementation {
             throw new ServiceMethodExecutionException(format(UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE, mode));
         };
         ServiceExecutionInterceptor<Object, Object> interceptor;
-        if (nonNull(interceptor = methodSpecification.getInterceptor())) {
+        if (nonNull(interceptor = getMethodSpecification().getInterceptor())) {
             interceptor.intercept(new ServiceInterceptionContext<>(action, this));
             return response.get();
         }
