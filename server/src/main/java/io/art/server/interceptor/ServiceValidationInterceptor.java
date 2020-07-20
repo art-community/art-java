@@ -20,6 +20,7 @@ package io.art.server.interceptor;
 
 import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
+import io.art.server.service.specification.*;
 import io.art.server.service.validation.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
@@ -30,9 +31,10 @@ import static java.util.Objects.*;
 public class ServiceValidationInterceptor implements ServiceExecutionInterceptor<Object, Object> {
     @Override
     public void intercept(ServiceInterceptionContext<Object, Object> context) {
-        RequestValidationPolicy validationPolicy = context.getImplementation().getMethodSpecification().getValidationPolicy();
+        ServiceMethodSpecification specification = context.getImplementation().getMethodSpecification();
+        RequestValidationPolicy validationPolicy = specification.getValidationPolicy();
         Object request = context.getRequest();
-        switch (context.getImplementation().getMethodSpecification().getRequestProcessingMode()) {
+        switch (specification.getRequestProcessingMode()) {
             case BLOCKING:
                 validateBlocking(context, validationPolicy, request);
                 return;
