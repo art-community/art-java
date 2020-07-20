@@ -27,7 +27,7 @@ import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodImplementationMode.*;
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
+import java.util.*;
 import java.util.function.*;
 
 
@@ -64,12 +64,18 @@ public class ServiceMethodImplementation {
     }
 
     public Object execute(Object request) {
-        ServiceExecutionInterceptor<Object, Object> interceptor;
-        if (nonNull(interceptor = getMethodSpecification().getInterceptor())) {
-            Function<ServiceInterceptionContext<Object, Object>, Object> action = context -> process(context.getRequest().get());
+        Optional<ServiceExecutionInterceptor<Object, Object>> interceptor = getMethodSpecification()
+                .getInterceptors()
+                .stream()
+                .reduce((current, next) -> context -> {
+                    current.intercept(context);
+                    next.intercept(context);
+                });
+        if (interceptor.isPresent()) {
+            Function<ServiceInterceptionContext<Object, Object>, Object> action = context -> process(context.getRequest());
             ServiceInterceptionContext<Object, Object> context = new ServiceInterceptionContext<>(action, this, request);
-            interceptor.intercept(context);
-            return context.getResponse().get();
+            interceptor.get().intercept(context);
+            return context.getResponse();
         }
         return process(request);
     }

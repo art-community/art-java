@@ -22,6 +22,7 @@ import io.art.core.module.*;
 import io.art.logging.*;
 import io.art.resilience.module.*;
 import io.art.server.configuration.*;
+import io.art.server.interceptor.*;
 import io.art.server.registry.*;
 import io.art.server.service.specification.*;
 import io.art.server.state.*;
@@ -68,6 +69,26 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                                 .exceptionMapper(model -> fromString.map(getStackTraceAsString(model)))
                                 .responseMapper(model -> fromString.map((String) model))
                                 .implementation(handler(request -> request, "id-1", "id"))
+                                .interceptor(context -> {
+                                    logger().info("1");
+                                    context.process();
+                                })
+                                .interceptor(context -> {
+                                    logger().info(context.getRequest());
+                                    context.process();
+                                })
+                                .interceptor(context -> {
+                                    logger().info("3");
+                                    context.process();
+                                })
+                                .interceptor(context -> {
+                                    logger().info(context.getRequest());
+                                    context.process();
+                                })
+                                .interceptor(context -> {
+                                    logger().info(context.getRequest());
+                                    context.process();
+                                })
                                 .build())
                         .build())
                 .register(ServiceSpecification.builder()

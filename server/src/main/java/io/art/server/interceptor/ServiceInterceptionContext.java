@@ -23,9 +23,9 @@ import lombok.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
-@Getter
 public class ServiceInterceptionContext<Request, Response> {
     private final Function<ServiceInterceptionContext<Request, Response>, Response> delegate;
+    @Getter
     private final ServiceMethodImplementation implementation;
     private final AtomicReference<Response> response = new AtomicReference<>();
     private final AtomicReference<Request> request = new AtomicReference<>();
@@ -34,6 +34,14 @@ public class ServiceInterceptionContext<Request, Response> {
         this.delegate = delegate;
         this.implementation = implementation;
         this.request.set(request);
+    }
+
+    public Response getResponse() {
+        return response.get();
+    }
+
+    public Request getRequest() {
+        return request.get();
     }
 
     public void process() {

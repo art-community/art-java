@@ -18,6 +18,7 @@
 
 package io.art.server.service.specification;
 
+import com.google.common.collect.*;
 import io.art.entity.immutable.Value;
 import io.art.entity.mapper.*;
 import io.art.server.constants.ServerModuleConstants.*;
@@ -30,7 +31,7 @@ import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.NullCheckingExtensions.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
-import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.NON_VALIDATABLE;
+import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.*;
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
 import static java.text.MessageFormat.*;
 import static java.util.Optional.*;
@@ -52,17 +53,8 @@ public class ServiceMethodSpecification {
     private final ServiceSpecification serviceSpecification;
     @Builder.Default
     private final RequestValidationPolicy validationPolicy = NON_VALIDATABLE;
-    @Builder.Default
-    private ServiceExecutionInterceptor<Object, Object> interceptor = new ServiceValidationInterceptor();
-
-    public <Request, Response> ServiceMethodSpecification intercept(ServiceExecutionInterceptor<Request, Response> interceptor) {
-        ServiceExecutionInterceptor<Object, Object> current = this.interceptor;
-        this.interceptor = context -> {
-            current.intercept(context);
-            interceptor.intercept(cast(context));
-        };
-        return this;
-    }
+    @Singular("interceptor")
+    private final ImmutableList<ServiceExecutionInterceptor<Object, Object>> interceptors;
 
     public void callBlocking() {
         if (isDeactivated()) {

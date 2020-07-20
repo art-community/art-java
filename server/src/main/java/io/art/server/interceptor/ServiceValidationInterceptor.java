@@ -31,7 +31,7 @@ public class ServiceValidationInterceptor implements ServiceExecutionInterceptor
     @Override
     public void intercept(ServiceInterceptionContext<Object, Object> context) {
         RequestValidationPolicy validationPolicy = context.getImplementation().getMethodSpecification().getValidationPolicy();
-        Object request = context.getRequest().get();
+        Object request = context.getRequest();
         switch (context.getImplementation().getMethodSpecification().getRequestProcessingMode()) {
             case BLOCKING:
                 validateBlocking(context, validationPolicy, request);
