@@ -18,6 +18,7 @@
 
 package io.art.server.service.implementation;
 
+import com.google.common.collect.*;
 import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
 import io.art.server.interceptor.*;
@@ -27,7 +28,6 @@ import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodImplementationMode.*;
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
 import java.util.function.*;
 
 
@@ -45,27 +45,13 @@ public class ServiceMethodImplementation {
     @Getter(lazy = true)
     private final ServiceMethodSpecification methodSpecification = getServiceSpecification().getMethods().get(methodId);
     @Getter(lazy = true)
-    private final ServiceExecutionInterceptor<Object, Object> interceptor = getMethodSpecification()
-            .getInterceptors()
-            .stream()
-            .reduce((current, next) -> context -> {
-                Function<ServiceInterceptionContext<Object, Object>, Object> interception = nextContext -> {
-                    Object nextResponse = nextContext.getResponse();
-                    Object nextRequest = nextContext.getRequest();
-                    if (nonNull(nextResponse)) {
-                        context.process(nextRequest, nextResponse);
-                        return context.getResponse();
-                    }
-                    if (nonNull(nextRequest)) {
-                        context.process(nextRequest);
-                        return context.getResponse();
-                    }
-                    context.process();
-                    return context.getResponse();
-                };
-                next.intercept(new ServiceInterceptionContext<>(interception, this, context.getRequest()));
-            })
-            .orElse(ServiceInterceptionContext::process);
+    private final Function<Object, ServiceExecutionInterceptor<Object, Object>> interceptor = prepareInterceptor();
+
+    private Function<Object, ServiceExecutionInterceptor<Object, Object>> prepareInterceptor() {
+        return request -> {
+            return ServiceInterceptionContext::process;
+        };
+    }
 
 
     public static ServiceMethodImplementation consumer(Consumer<Object> consumer, String serviceId, String methodId) {
@@ -100,7 +86,7 @@ public class ServiceMethodImplementation {
             throw new ServiceMethodExecutionException(format(UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE, mode));
         };
         ServiceInterceptionContext<Object, Object> context = new ServiceInterceptionContext<>(action, this, request);
-        getInterceptor().intercept(context);
+        getInterceptor().apply(request).intercept(context);
         return context.getResponse();
     }
 }
