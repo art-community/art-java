@@ -61,6 +61,8 @@ public class GrpcCommunicationConfiguration {
     @ToString.Include
     private boolean keepAliveWithoutCalls = grpcClientModule().isKeepAliveWithoutCalls();
     @ToString.Include
+    private long idleTimeOutNanos = grpcClientModule().getIdleTimeOutNanos();
+    @ToString.Include
     private boolean waitForReady = grpcClientModule().isWaitForReady();
     @ToString.Include
     private boolean useSecuredTransport;

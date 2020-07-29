@@ -50,6 +50,7 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
     private long keepAliveTimeNanos;
     private long keepAliveTimeOutNanos;
     private boolean keepAliveWithoutCalls;
+    private long idleTimeOutNanos;
     private boolean waitForReady;
 
     public GrpcClientAgileConfiguration() {
@@ -64,6 +65,7 @@ public class GrpcClientAgileConfiguration extends GrpcClientModuleDefaultConfigu
         keepAliveTimeNanos = ifException(() -> MILLISECONDS.toNanos(configLong(GRPC_COMMUNICATION_SECTION_ID, KEEP_ALIVE_TIME_MILLIS)), super.getKeepAliveTimeNanos());
         keepAliveTimeOutNanos = ifException(() -> MILLISECONDS.toNanos(configLong(GRPC_COMMUNICATION_SECTION_ID, KEEP_ALIVE_TIME_OUT_MILLIS)), super.getKeepAliveTimeOutNanos());
         keepAliveWithoutCalls = configBoolean(GRPC_COMMUNICATION_SECTION_ID, KEEP_ALIVE_WITHOUT_CALLS, super.isKeepAliveWithoutCalls());
+        idleTimeOutNanos = ifException(() -> MILLISECONDS.toNanos(configLong(GRPC_COMMUNICATION_SECTION_ID, IDLE_TIME_OUT_MILLIS)), super.getKeepAliveTimeOutNanos());
         waitForReady = configBoolean(GRPC_COMMUNICATION_SECTION_ID, WAIT_FOR_READY, super.isWaitForReady());
         overridingExecutor = new ForkJoinPool(configInt(GRPC_COMMUNICATION_SECTION_ID, THREAD_POOL_SIZE, DEFAULT_THREAD_POOL_SIZE));
         balancerHost = configString(GRPC_BALANCER_SECTION_ID, HOST, super.getBalancerHost());
