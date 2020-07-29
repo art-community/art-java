@@ -20,6 +20,7 @@ public class GrpcCommunicatorChannelFactory {
                 .keepAliveTime(configuration.getKeepAliveTimeNanos(), NANOSECONDS)
                 .keepAliveTimeout(configuration.getKeepAliveTimeOutNanos(), NANOSECONDS)
                 .keepAliveWithoutCalls(configuration.isKeepAliveWithoutCalls())
+                .idleTimeout(configuration.getIdleTimeOutNanos(), NANOSECONDS)
                 .build();
         return grpcClientModuleState().registerChannel(channel);
     }
