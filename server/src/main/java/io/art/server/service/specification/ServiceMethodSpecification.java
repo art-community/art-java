@@ -60,7 +60,7 @@ public class ServiceMethodSpecification {
         if (isDeactivated()) {
             return;
         }
-        implementation.execute(null);
+        implementation.execute();
     }
 
     public void callBlocking(Value requestValue) {
@@ -77,7 +77,7 @@ public class ServiceMethodSpecification {
             return Mono.empty();
         }
         try {
-            implementation.execute(null);
+            implementation.execute();
         } catch (Throwable throwable) {
             if (responseProcessingMode == BLOCKING) {
                 throw throwable;
@@ -109,7 +109,7 @@ public class ServiceMethodSpecification {
             return null;
         }
         try {
-            Object response = implementation.execute(null);
+            Object response = implementation.execute();
             return mapResponseBlocking(response);
         } catch (Throwable throwable) {
             return mapExceptionBlocking(throwable);
@@ -134,7 +134,7 @@ public class ServiceMethodSpecification {
             return Mono.empty();
         }
         try {
-            Object response = implementation.execute(null);
+            Object response = implementation.execute();
             return mapResponseReactiveMono(response);
         } catch (Throwable throwable) {
             return mapExceptionReactiveMono(throwable);
@@ -175,7 +175,7 @@ public class ServiceMethodSpecification {
             return Flux.empty();
         }
         try {
-            Flux<Object> response = cast(implementation.execute(null));
+            Flux<Object> response = cast(implementation.execute());
             return mapResponseReactiveFlux(response);
         } catch (Throwable throwable) {
             return mapExceptionReactiveFLux(throwable);

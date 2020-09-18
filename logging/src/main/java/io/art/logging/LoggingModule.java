@@ -34,6 +34,7 @@ import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
 import static reactor.util.Loggers.*;
 import java.net.*;
+import java.nio.file.*;
 
 @Getter
 public class LoggingModule implements StatelessModule<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator> {
@@ -52,7 +53,7 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
         getLogManager().reset();
 
         boolean fromFile = ofNullable(getProperty(LOG42_CONFIGURATION_FILE_PROPERTY))
-                .map(property -> get(property))
+                .map(Paths::get)
                 .map(path -> path.toFile().exists())
                 .orElse(false);
 

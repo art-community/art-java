@@ -30,6 +30,11 @@ public class ServiceInterceptionContext<Request, Response> {
     private final AtomicReference<Response> response = new AtomicReference<>();
     private final AtomicReference<Request> request = new AtomicReference<>();
 
+    public ServiceInterceptionContext(Function<ServiceInterceptionContext<Request, Response>, Response> delegate, ServiceMethodImplementation implementation) {
+        this.delegate = delegate;
+        this.implementation = implementation;
+    }
+
     public ServiceInterceptionContext(Function<ServiceInterceptionContext<Request, Response>, Response> delegate, ServiceMethodImplementation implementation, Request request) {
         this.delegate = delegate;
         this.implementation = implementation;
