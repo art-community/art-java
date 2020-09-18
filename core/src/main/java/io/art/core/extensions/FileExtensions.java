@@ -19,6 +19,7 @@
 package io.art.core.extensions;
 
 import io.art.core.exception.*;
+import io.art.core.handler.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
@@ -35,6 +36,7 @@ import static java.nio.file.StandardOpenOption.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.io.*;
+import java.net.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.nio.charset.*;
@@ -248,5 +250,9 @@ public class FileExtensions {
             deleteFileRecursive(child);
         }
         return file.delete();
+    }
+
+    public static File fileOf(URL url) {
+        return new File(ExceptionHandler.<URI>wrapException(InternalRuntimeException::new).call(url::toURI));
     }
 }

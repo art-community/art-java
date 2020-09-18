@@ -18,7 +18,9 @@
 
 package io.art.core.extensions;
 
+import io.art.core.factory.*;
 import lombok.experimental.*;
+import static io.art.core.factory.CollectionsFactory.dynamicArrayOf;
 import static java.util.Collections.emptyList;
 import java.util.*;
 import java.util.function.*;
@@ -31,5 +33,19 @@ public final class CollectionExtensions {
 
     public static boolean areAllUnique(Collection<?> collection) {
         return collection.stream().allMatch(new HashSet<>()::add);
+    }
+
+    public static <T> List<T> addFirstToList(T element, Collection<T> source) {
+        List<T> list = dynamicArrayOf(element);
+        list.add(element);
+        list.addAll(source);
+        return list;
+    }
+
+    public static <T> List<T> addLastToList(Collection<T> source, T element) {
+        List<T> list = dynamicArrayOf(element);
+        list.addAll(source);
+        list.add(element);
+        return list;
     }
 }

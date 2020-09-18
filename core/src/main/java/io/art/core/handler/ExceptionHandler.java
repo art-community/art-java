@@ -3,6 +3,7 @@ package io.art.core.handler;
 import io.art.core.callable.*;
 import io.art.core.runnable.*;
 import lombok.*;
+import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
@@ -12,6 +13,7 @@ import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
+@UtilityClass
 public class ExceptionHandler<T> {
     public static <T> String emptyIfException(ExceptionCallable<T> operation) {
         if (isNull(operation)) return EMPTY_STRING;
