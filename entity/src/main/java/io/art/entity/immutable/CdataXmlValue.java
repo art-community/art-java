@@ -18,9 +18,9 @@
 
 package io.art.entity.immutable;
 
+import io.art.entity.constants.EntityConstants.ValueType.*;
 import lombok.*;
-import static io.art.entity.constants.ValueType.*;
-import static io.art.entity.constants.ValueType.XmlValueType.*;
+import static io.art.entity.constants.EntityConstants.ValueType.XmlValueType.*;
 
 @Getter
 @AllArgsConstructor

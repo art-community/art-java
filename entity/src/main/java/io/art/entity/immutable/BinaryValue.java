@@ -18,10 +18,10 @@
 
 package io.art.entity.immutable;
 
-import io.art.entity.constants.*;
+import io.art.entity.constants.EntityConstants.*;
 import lombok.*;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.entity.constants.ValueType.*;
+import static io.art.entity.constants.EntityConstants.ValueType.*;
 
 @Getter
 @RequiredArgsConstructor

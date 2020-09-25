@@ -25,11 +25,10 @@ import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.constants.ValueType.*;
-import static io.art.entity.immutable.Value.valueIsNull;
+import static io.art.entity.constants.EntityConstants.ValueType.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.tuple.schema.ValueSchema.*;
-import static java.util.Objects.isNull;
+import static java.util.Objects.*;
 import java.util.*;
 
 @UtilityClass

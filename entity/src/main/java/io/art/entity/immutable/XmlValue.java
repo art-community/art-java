@@ -18,7 +18,7 @@
 
 package io.art.entity.immutable;
 
-import static io.art.entity.constants.ValueType.*;
+import io.art.entity.constants.EntityConstants.ValueType.*;
 
 public interface XmlValue<T> {
     T getValue();

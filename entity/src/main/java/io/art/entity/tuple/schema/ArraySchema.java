@@ -24,7 +24,7 @@ import lombok.*;
 import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.constants.ValueType.*;
+import static io.art.entity.constants.EntityConstants.ValueType.*;
 import java.util.*;
 
 @Getter

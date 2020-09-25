@@ -18,13 +18,11 @@
 
 package io.art.entity.immutable;
 
-import io.art.core.checker.*;
-import io.art.entity.constants.*;
 import io.art.entity.constants.EntityConstants.*;
 import io.art.entity.exception.*;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.entity.constants.EntityConstants.ExceptionMessages.UNKNOWN_VALUE_TYPE;
+import static io.art.entity.constants.EntityConstants.ExceptionMessages.*;
 import static io.art.entity.constants.EntityConstants.ValueType.*;
 import static java.text.MessageFormat.*;
 import java.util.*;
