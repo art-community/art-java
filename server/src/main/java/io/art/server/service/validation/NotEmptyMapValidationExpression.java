@@ -24,7 +24,6 @@ import static java.text.MessageFormat.*;
 import java.util.*;
 
 class NotEmptyMapValidationExpression extends ValidationExpression<Map<?, ?>> {
-
     NotEmptyMapValidationExpression() {
         super(NOT_EMPTY_MAP);
     }
