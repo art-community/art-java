@@ -18,9 +18,9 @@
 
 package io.art.core.module;
 
-import io.art.core.identified.*;
+public interface Module {
+    String getId();
 
-public interface Module extends UniqueIdentified {
     default void onLoad() {
     }
 

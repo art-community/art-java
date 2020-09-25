@@ -31,7 +31,7 @@ import io.art.sql.state.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.metrics.module.MetricsModule.*;

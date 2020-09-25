@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.core.extensions;
+package io.art.core.checker;
 
 import lombok.experimental.*;
 import static java.util.Objects.*;
 import java.util.function.*;
 
 @UtilityClass
-public class NullCheckingExtensions {
+public class NullityChecker {
     public static <T> T getOrElse(T value, T orElse) {
         return isNull(value) ? orElse : value;
     }

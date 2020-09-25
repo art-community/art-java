@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.core.extensions;
+package io.art.core.checker;
 
 import lombok.experimental.*;
 import java.util.*;
 import java.util.function.*;
 
 @UtilityClass
-public class EqualsCheckingExtensions {
+public class EqualityChecker {
     public static <T> T ifEquals(T val, T pattern, T ifEquals) {
         return Objects.equals(val, pattern) ? ifEquals : val;
     }

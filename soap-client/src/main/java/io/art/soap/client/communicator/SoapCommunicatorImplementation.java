@@ -35,7 +35,7 @@ import io.art.soap.content.mapper.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.http.client.model.HttpCommunicationTargetConfiguration.*;
 import static io.art.http.client.module.HttpClientModule.*;

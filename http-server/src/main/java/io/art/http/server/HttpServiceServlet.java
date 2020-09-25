@@ -40,7 +40,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.mime.MimeType.valueOf;

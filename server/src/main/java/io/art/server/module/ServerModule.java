@@ -35,7 +35,9 @@ import static io.art.entity.mapping.PrimitiveMapping.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
 import static io.art.server.service.implementation.ServiceMethodImplementation.*;
+import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
+import java.util.function.*;
 
 @Getter
 public class ServerModule implements StatefulModule<ServerModuleConfiguration, ServerModuleConfiguration.Configurator, ServerModuleState> {
@@ -78,13 +80,13 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                 .register(ServiceSpecification.builder()
                         .id("id-2")
                         .method("id", ServiceMethodSpecification.builder()
-                                .implementation(handler(request -> request, "id", "id"))
+                                .implementation(handler(identity(), "id", "id"))
                                 .build())
                         .build())
                 .register(ServiceSpecification.builder()
                         .id("id-3")
                         .method("id", ServiceMethodSpecification.builder()
-                                .implementation(handler(request -> request, "id", "id"))
+                                .implementation(handler(identity(), "id", "id"))
                                 .build())
                         .build())
                 .get("id-1");

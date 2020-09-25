@@ -23,7 +23,7 @@ import lombok.experimental.*;
 @UtilityClass
 public class Caster {
     @SuppressWarnings("unchecked")
-    public static <T> T cast(Object obj) {
-        return (T) obj;
+    public static <T> T cast(Object object) {
+        return (T) object;
     }
 }

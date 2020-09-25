@@ -22,7 +22,7 @@ import io.art.entity.immutable.Value;
 import io.art.server.service.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static java.util.Optional.ofNullable;
 import java.util.*;
 import java.util.function.*;

@@ -23,7 +23,7 @@ import io.art.core.module.*;
 import io.art.resilience.model.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
 import java.util.*;

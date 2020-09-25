@@ -19,8 +19,8 @@
 package io.art.core.constants;
 
 import lombok.*;
-import static lombok.AccessLevel.*;
 import static io.art.core.constants.CharConstants.*;
+import static lombok.AccessLevel.*;
 import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
@@ -30,6 +30,7 @@ public class MimeTypeConstants {
     public static final String WILDCARD_FULL_TYPE = "*/*";
     public static final String WILDCARD_WITH_ANY_STRING = "*+";
     public static final BitSet TOKEN;
+    public static final String INVALID_MIME_TYPE_MESSAGE = "{0}. Value: ''{1}''";
     private static final int TOKEN_SIZE = 128;
 
     static {

@@ -59,11 +59,11 @@ public class ServiceLoggingInterceptor implements ServiceExecutionInterceptor<Ob
     }
 
     private void logReactiveMono(ServiceInterceptionContext<Object, Object> context) {
-        context.process(Mono.from(cast(context.getRequest())).doOnNext(data -> logReactivePayload(context, data)));
+        context.processRequest(Mono.from(cast(context.getRequest())).doOnNext(data -> logReactivePayload(context, data)));
     }
 
     private void logReactiveFlux(ServiceInterceptionContext<Object, Object> context) {
-        context.process(Flux.from(cast(context.getRequest())).doOnNext(data -> logReactivePayload(context, data)));
+        context.processRequest(Flux.from(cast(context.getRequest())).doOnNext(data -> logReactivePayload(context, data)));
     }
 
     private void logReactivePayload(ServiceInterceptionContext<Object, Object> context, Object data) {

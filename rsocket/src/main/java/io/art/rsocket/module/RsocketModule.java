@@ -30,7 +30,7 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.netty.http.client.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;

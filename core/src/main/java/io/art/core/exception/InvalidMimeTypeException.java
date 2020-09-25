@@ -18,7 +18,7 @@
 
 package io.art.core.exception;
 
-import static io.art.core.constants.MimeTypeExceptionFormat.*;
+import static io.art.core.constants.MimeTypeConstants.*;
 import static java.text.MessageFormat.*;
 
 public class InvalidMimeTypeException extends RuntimeException {

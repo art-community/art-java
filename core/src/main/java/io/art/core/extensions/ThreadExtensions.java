@@ -35,6 +35,7 @@ public class ThreadExtensions {
     }
 
     public static void block() {
-        consumeException((Function<Throwable, RuntimeException>) InternalRuntimeException::new).run(() -> currentThread().join());
+        consumeException((Function<Throwable, RuntimeException>) InternalRuntimeException::new)
+                .run(() -> currentThread().join());
     }
 }

@@ -21,10 +21,7 @@ package io.art.core.module;
 import static io.art.core.caster.Caster.*;
 import java.util.function.*;
 
-public interface StatelessModule<
-        Configuration extends ModuleConfiguration,
-        Configurator extends ModuleConfigurator<Configuration, Configurator>
-        >
+public interface StatelessModule<Configuration extends ModuleConfiguration, Configurator extends ModuleConfigurator<Configuration, Configurator>>
         extends ModuleConfigurationProvider<Configuration> {
     Configurator getConfigurator();
 

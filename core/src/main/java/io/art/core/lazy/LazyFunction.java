@@ -20,6 +20,7 @@ public class LazyFunction<X, Y> {
         }
         return this.value.get();
     }
+
     public static <X, Y> LazyFunction<X, Y> lazy(Function<X, Y> functor) {
         return new LazyFunction<>(functor);
     }

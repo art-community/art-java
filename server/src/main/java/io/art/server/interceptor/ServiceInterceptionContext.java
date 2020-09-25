@@ -53,12 +53,12 @@ public class ServiceInterceptionContext<Request, Response> {
         response.set(delegate.apply(this));
     }
 
-    public void process(Request request) {
+    public void processRequest(Request request) {
         this.request.set(request);
         response.set(delegate.apply(this));
     }
 
-    public void process(Request request, Response response) {
+    public void processResponse(Request request, Response response) {
         this.request.set(request);
         this.response.set(response);
         this.response.set(delegate.apply(this));

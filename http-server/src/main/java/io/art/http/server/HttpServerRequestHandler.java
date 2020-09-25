@@ -35,7 +35,7 @@ import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.entity.immutable.BinaryValue.*;
 import static io.art.entity.immutable.Entity.valueIsEmpty;
 import static io.art.entity.immutable.Entity.valueIsNull;

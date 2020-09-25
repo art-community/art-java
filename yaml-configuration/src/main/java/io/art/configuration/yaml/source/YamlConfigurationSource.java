@@ -26,7 +26,7 @@ import io.art.core.module.*;
 import lombok.*;
 import static com.fasterxml.jackson.databind.node.JsonNodeType.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.parser.DurationParser.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;

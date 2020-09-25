@@ -19,7 +19,6 @@
 package io.art.http.server.specification;
 
 import io.art.entity.immutable.*;
-import io.art.server.interceptor.*;
 import lombok.*;
 import io.art.core.caster.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
@@ -27,7 +26,7 @@ import io.art.http.server.HttpServerModuleConfiguration.*;
 import io.art.http.server.model.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpParameters.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.Methods.*;

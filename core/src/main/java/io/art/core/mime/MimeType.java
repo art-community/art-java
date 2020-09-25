@@ -38,7 +38,7 @@ import static io.art.core.constants.StringConstants.PLUS;
 import static io.art.core.constants.StringConstants.SLASH;
 import static io.art.core.constants.StringConstants.WILDCARD;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import java.nio.charset.*;

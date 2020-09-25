@@ -41,7 +41,7 @@ import java.util.Set;
 import static java.util.Collections.emptySet;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.StringConstants.SLASH;
-import static io.art.core.extensions.NullCheckingExtensions.getOrElse;
+import static io.art.core.checker.NullityChecker.getOrElse;
 import static io.art.core.factory.CollectionsFactory.linkedListOf;
 import static io.art.core.factory.CollectionsFactory.setOf;
 import static io.art.http.constants.HttpRequestDataSource.*;

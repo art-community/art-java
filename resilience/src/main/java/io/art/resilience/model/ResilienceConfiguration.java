@@ -19,7 +19,6 @@
 package io.art.resilience.model;
 
 import io.art.core.module.*;
-import io.art.resilience.module.*;
 import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.*;
 import io.github.resilience4j.ratelimiter.*;
@@ -27,7 +26,7 @@ import io.github.resilience4j.retry.*;
 import io.github.resilience4j.timelimiter.*;
 import lombok.Builder;
 import lombok.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.resilience.constants.ResilienceModuleConstants.ConfigurationKeys.*;
 import static io.github.resilience4j.circuitbreaker.CircuitBreakerConfig.*;
 import static io.github.resilience4j.retry.RetryConfig.*;

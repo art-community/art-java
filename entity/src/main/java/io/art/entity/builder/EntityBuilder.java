@@ -21,7 +21,7 @@ package io.art.entity.builder;
 import com.google.common.collect.*;
 import io.art.entity.immutable.*;
 import io.art.entity.mapper.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static java.util.Objects.*;
 import java.util.function.*;

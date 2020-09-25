@@ -20,61 +20,20 @@ package io.art.entity.xml;
 
 import com.google.common.collect.*;
 import io.art.entity.builder.*;
-import io.art.entity.immutable.Value;
 import io.art.entity.immutable.*;
-import lombok.*;
-import static io.art.core.caster.Caster.*;
+import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.EntityFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Entity.*;
-import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
-import static lombok.AccessLevel.*;
 import java.util.*;
 
-@NoArgsConstructor(access = PRIVATE)
+@UtilityClass
 public final class XmlEntityToEntityConverter {
-
-
-    /*
-
-<entity>
-    <int>123</int>
-    <bool>false</bool>
-    <float>123.0</float>
-    <double>123.0</double>
-    <long>123</long>
-    <string>test</string>
-    <object>
-        <string>test</string>
-        <string-2>test</string-2>
-    </object>
-    <array>
-        <test></test>
-        <test></test>
-    </array>
-    <objects>
-        <string>test</string>
-        <string>test</string>
-    </objects>
-    <innerArray>
-        <string>test</string>
-        <innerArray>
-            <string>test</string>
-        </innerArray>
-        <string>test</string>
-        <innerArray>
-            <string>test</string>
-        </innerArray>
-    </innerArray>
-</entity>
-
-     */
     public static Entity toEntityFromTags(XmlEntity xmlEntity) {
         if (Value.valueIsNull(xmlEntity)) return null;
         EntityBuilder entityBuilder = entityBuilder();

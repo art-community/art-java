@@ -64,12 +64,12 @@ public class ServiceValidationInterceptor implements ServiceExecutionInterceptor
 
     private void validateReactiveMono(ServiceInterceptionContext<Object, Object> context) {
         RequestValidationPolicy policy = context.getImplementation().getMethodSpecification().getValidationPolicy();
-        context.process(Mono.from(cast(context.getRequest())).doOnNext(data -> validateReactivePayload(policy, data)));
+        context.processRequest(Mono.from(cast(context.getRequest())).doOnNext(data -> validateReactivePayload(policy, data)));
     }
 
     private void validateReactiveFlux(ServiceInterceptionContext<Object, Object> context) {
         RequestValidationPolicy policy = context.getImplementation().getMethodSpecification().getValidationPolicy();
-        context.process(Flux.from(cast(context.getRequest())).doOnNext(data -> validateReactivePayload(policy, data)));
+        context.processRequest(Flux.from(cast(context.getRequest())).doOnNext(data -> validateReactivePayload(policy, data)));
     }
 
     private void validateReactivePayload(RequestValidationPolicy policy, Object data) {

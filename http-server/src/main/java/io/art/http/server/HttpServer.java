@@ -46,7 +46,7 @@ import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.EqualsCheckingExtensions.*;
+import static io.art.core.checker.EqualityChecker.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.http.constants.HttpCommonConstants.*;
 import static io.art.http.constants.HttpInterceptorType.*;

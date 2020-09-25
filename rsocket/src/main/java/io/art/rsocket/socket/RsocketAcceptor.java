@@ -27,7 +27,7 @@ import io.art.rsocket.service.*;
 import io.art.rsocket.state.*;
 import static reactor.core.publisher.Mono.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.model.RsocketRequestContext.*;

@@ -23,7 +23,7 @@ import io.art.entity.mapper.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.entity.factory.ArrayFactory.*;
 import java.util.*;
 

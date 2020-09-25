@@ -44,6 +44,7 @@ public class ServiceMethodImplementation {
     private final ServiceSpecification serviceSpecification = services().get(serviceId);
     @Getter(lazy = true)
     private final ServiceMethodSpecification methodSpecification = getServiceSpecification().getMethods().get(methodId);
+    private ServiceExecutionInterceptor<Object, Object> interceptor;
 
     public static ServiceMethodImplementation consumer(Consumer<Object> consumer, String serviceId, String methodId) {
         ServiceMethodImplementation implementation = new ServiceMethodImplementation(CONSUMER, serviceId, methodId);
@@ -64,9 +65,11 @@ public class ServiceMethodImplementation {
     }
 
     public Object execute() {
-        if (mode == PRODUCER) {
-            return producer.get();
-        }
+//        if (mode == PRODUCER) {
+//            ServiceInterceptionContext<?, ?> context = new ServiceInterceptionContext<>(, this);
+//            interceptor.intercept(context);
+//            return producer.get();
+//        }
         throw new ServiceMethodExecutionException(format(UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE, mode));
     }
 

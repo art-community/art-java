@@ -23,27 +23,29 @@ import io.art.entity.immutable.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
+import lombok.experimental.*;
 import static io.art.entity.mapper.ValueMapper.*;
 
-public interface PrimitiveMapping {
-    PrimitiveFromModelMapper<String> fromString = PrimitivesFactory::stringPrimitive;
-    PrimitiveToModelMapper<String> toString = Primitive::getString;
+@UtilityClass
+public class PrimitiveMapping {
+    public static PrimitiveFromModelMapper<String> fromString = PrimitivesFactory::stringPrimitive;
+    public static PrimitiveToModelMapper<String> toString = Primitive::getString;
 
-    PrimitiveFromModelMapper<Integer> fromInt = PrimitivesFactory::intPrimitive;
-    PrimitiveToModelMapper<Integer> toInt = Primitive::getInt;
+    public static PrimitiveFromModelMapper<Integer> fromInt = PrimitivesFactory::intPrimitive;
+    public static PrimitiveToModelMapper<Integer> toInt = Primitive::getInt;
 
-    PrimitiveFromModelMapper<Long> fromLong = PrimitivesFactory::longPrimitive;
-    PrimitiveToModelMapper<Long> toLong = Primitive::getLong;
+    public static PrimitiveFromModelMapper<Long> fromLong = PrimitivesFactory::longPrimitive;
+    public static PrimitiveToModelMapper<Long> toLong = Primitive::getLong;
 
-    PrimitiveFromModelMapper<Double> fromDouble = PrimitivesFactory::doublePrimitive;
-    PrimitiveToModelMapper<Double> toDouble = Primitive::getDouble;
+    public static PrimitiveFromModelMapper<Double> fromDouble = PrimitivesFactory::doublePrimitive;
+    public static PrimitiveToModelMapper<Double> toDouble = Primitive::getDouble;
 
-    PrimitiveFromModelMapper<Boolean> fromBool = PrimitivesFactory::boolPrimitive;
-    PrimitiveToModelMapper<Boolean> toBool = Primitive::getBool;
+    public static PrimitiveFromModelMapper<Boolean> fromBool = PrimitivesFactory::boolPrimitive;
+    public static PrimitiveToModelMapper<Boolean> toBool = Primitive::getBool;
 
-    PrimitiveFromModelMapper<Byte> fromByte = PrimitivesFactory::bytePrimitive;
-    PrimitiveToModelMapper<Byte> toByte = Primitive::getByte;
+    public static PrimitiveFromModelMapper<Byte> fromByte = PrimitivesFactory::bytePrimitive;
+    public static PrimitiveToModelMapper<Byte> toByte = Primitive::getByte;
 
-    PrimitiveFromModelMapper<Float> fromFloat = PrimitivesFactory::floatPrimitive;
-    PrimitiveToModelMapper<Float> toFloat = Primitive::getFloat;
+    public static PrimitiveFromModelMapper<Float> fromFloat = PrimitivesFactory::floatPrimitive;
+    public static PrimitiveToModelMapper<Float> toFloat = Primitive::getFloat;
 }

@@ -35,7 +35,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.mapper.ValueFromModelMapper.*;
 import static io.art.grpc.server.constants.GrpcServerExceptionMessages.*;

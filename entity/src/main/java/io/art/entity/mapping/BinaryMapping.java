@@ -21,8 +21,10 @@ package io.art.entity.mapping;
 import io.art.entity.immutable.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
+import lombok.experimental.*;
 
-public interface BinaryMapping {
-    BinaryFromModelMapper<byte[]> fromBinary = BinaryValue::new;
-    BinaryToModelMapper<byte[]> toBinary = BinaryValue::getContent;
+@UtilityClass
+public class BinaryMapping {
+    public static BinaryFromModelMapper<byte[]> fromBinary = BinaryValue::new;
+    public static BinaryToModelMapper<byte[]> toBinary = BinaryValue::getContent;
 }

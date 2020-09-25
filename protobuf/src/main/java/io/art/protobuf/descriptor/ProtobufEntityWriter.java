@@ -27,7 +27,7 @@ import static com.google.protobuf.UnknownFieldSet.*;
 import static com.google.protobuf.UnsafeByteOperations.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.handler.ExceptionHandler.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.protobuf.constants.ProtobufConstants.*;

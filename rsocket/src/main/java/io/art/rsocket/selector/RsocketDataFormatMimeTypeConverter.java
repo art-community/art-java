@@ -23,7 +23,7 @@ import io.art.core.mime.*;
 import static io.rsocket.metadata.WellKnownMimeType.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.NullCheckingExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.message.pack.constants.MessagePackConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*;
