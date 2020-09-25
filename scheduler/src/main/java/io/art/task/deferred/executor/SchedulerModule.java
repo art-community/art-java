@@ -18,35 +18,41 @@
 
 package io.art.task.deferred.executor;
 
-import lombok.*;
-import io.art.core.module.Module;
 import io.art.core.module.*;
-import static lombok.AccessLevel.*;
+import lombok.*;
 import static io.art.core.context.Context.*;
 import static io.art.task.deferred.executor.SchedulerModuleConfiguration.*;
-import static io.art.task.deferred.executor.SchedulerModuleConstants.*;
+import static lombok.AccessLevel.*;
 
 @Getter
-public class SchedulerModule implements Module<SchedulerModuleConfiguration, ModuleState> {
+public class SchedulerModule implements StatelessModule<SchedulerModuleConfiguration, Configurator> {
+    private final String id = SchedulerModule.class.getSimpleName();
+    private final SchedulerModuleConfiguration configuration = new SchedulerModuleConfiguration();
+    private final Configurator configurator = new Configurator(configuration);
     @Getter(lazy = true, value = PRIVATE)
-    private final static SchedulerModuleConfiguration schedulerModule = context().getModule(SCHEDULER_MODULE_ID, SchedulerModule::new);
-    private final String id = SCHEDULER_MODULE_ID;
-    private final SchedulerModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
+    private final static StatelessModuleProxy<SchedulerModuleConfiguration> schedulerModule = context().getStatelessModule(StatelessModule.class.getSimpleName());
 
-    public static SchedulerModuleConfiguration schedulerModule() {
-        if (contextIsNotReady()) {
-            return DEFAULT_CONFIGURATION;
-        }
+    public static StatelessModuleProxy<SchedulerModuleConfiguration> schedulerModule() {
         return getSchedulerModule();
+    }
+
+    public static DeferredExecutor deferredExecutor() {
+        return schedulerModule().configuration().getDeferredExecutor();
+    }
+
+
+    public static PeriodicExecutor periodicExecutor() {
+        return schedulerModule().configuration().getPeriodicExecutor();
     }
 
     @Override
     public void onUnload() {
-        DeferredExecutor deferredExecutor = schedulerModule().getDeferredExecutor();
-        PeriodicExecutor periodicExecutor = schedulerModule().getPeriodicExecutor();
+        DeferredExecutor deferredExecutor = deferredExecutor();
+        PeriodicExecutor periodicExecutor = periodicExecutor();
         deferredExecutor.clear();
         deferredExecutor.shutdown();
         periodicExecutor.clear();
         periodicExecutor.shutdown();
     }
+
 }

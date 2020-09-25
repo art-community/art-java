@@ -32,10 +32,6 @@ public class NullityChecker {
         return isNull(value) ? orElse.get() : value;
     }
 
-    public static <T> T replaceNull(Object value, T orElse) {
-        return isNull(value) ? null : orElse;
-    }
-
     public static <T> void apply(T value, Consumer<T> consumer) {
         if (nonNull(value)) {
             consumer.accept(value);

@@ -21,21 +21,17 @@ package io.art.task.deferred.executor;
 import io.art.core.module.*;
 import lombok.*;
 
-public interface SchedulerModuleConfiguration extends ModuleConfiguration {
-    DeferredExecutor getDeferredExecutor();
+@Getter
+public class SchedulerModuleConfiguration implements ModuleConfiguration {
+    private final DeferredExecutor deferredExecutor = DeferredExecutorImplementation.builder()
+            .withExceptionHandler(new DeferredExecutorExceptionHandler())
+            .build();
+    private final PeriodicExecutor periodicExecutor = new PeriodicExecutor(DeferredExecutorImplementation.builder()
+            .withExceptionHandler(new DeferredExecutorExceptionHandler())
+            .build());
 
-    PeriodicExecutor getPeriodicExecutor();
-
-    SchedulerModuleDefaultConfiguration DEFAULT_CONFIGURATION = new SchedulerModuleDefaultConfiguration();
-
-    @Getter
-    class SchedulerModuleDefaultConfiguration implements SchedulerModuleConfiguration {
-        private final DeferredExecutor deferredExecutor = DeferredExecutorImplementation.builder()
-                .withExceptionHandler(new DeferredExecutorExceptionHandler())
-                .build();
-        private final PeriodicExecutor periodicExecutor = new PeriodicExecutor(DeferredExecutorImplementation.builder()
-                .withExceptionHandler(new DeferredExecutorExceptionHandler())
-                .build());
+    @RequiredArgsConstructor
+    public static class Configurator implements ModuleConfigurator<SchedulerModuleConfiguration, Configurator> {
+        private final SchedulerModuleConfiguration configuration;
     }
-
 }
