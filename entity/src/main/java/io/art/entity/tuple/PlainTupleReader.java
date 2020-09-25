@@ -19,13 +19,13 @@
 package io.art.entity.tuple;
 
 import io.art.entity.builder.*;
-import io.art.entity.constants.*;
+import io.art.entity.constants.EntityConstants.*;
 import io.art.entity.exception.*;
 import io.art.entity.immutable.*;
 import io.art.entity.tuple.schema.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.entity.constants.ExceptionMessages.*;
+import static io.art.entity.constants.EntityConstants.ExceptionMessages.*;
 import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.BinaryValue.*;

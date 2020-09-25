@@ -19,58 +19,60 @@
 package io.art.entity.factory;
 
 import io.art.entity.immutable.*;
-import static io.art.entity.constants.ValueType.PrimitiveType.*;
+import lombok.experimental.*;
+import static io.art.entity.constants.EntityConstants.ValueType.PrimitiveType.*;
 
-public interface PrimitivesFactory {
-    static Primitive stringPrimitive(String value) {
+@UtilityClass
+public class PrimitivesFactory {
+    public static Primitive stringPrimitive(String value) {
         return new Primitive(value, STRING);
     }
 
-    static Primitive longPrimitive(Long value) {
+    public static Primitive longPrimitive(Long value) {
         return new Primitive(value, LONG);
     }
 
-    static Primitive intPrimitive(Integer value) {
+    public static Primitive intPrimitive(Integer value) {
         return new Primitive(value, INT);
     }
 
-    static Primitive boolPrimitive(Boolean value) {
+    public static Primitive boolPrimitive(Boolean value) {
         return new Primitive(value, BOOL);
     }
 
-    static Primitive doublePrimitive(Double value) {
+    public static Primitive doublePrimitive(Double value) {
         return new Primitive(value, DOUBLE);
     }
 
-    static Primitive bytePrimitive(Byte value) {
+    public static Primitive bytePrimitive(Byte value) {
         return new Primitive(value, BYTE);
     }
 
-    static Primitive floatPrimitive(Float value) {
+    public static Primitive floatPrimitive(Float value) {
         return new Primitive(value, FLOAT);
     }
 
-    static Primitive longPrimitive(long value) {
+    public static Primitive longPrimitive(long value) {
         return new Primitive(value, LONG);
     }
 
-    static Primitive intPrimitive(int value) {
+    public static Primitive intPrimitive(int value) {
         return new Primitive(value, INT);
     }
 
-    static Primitive boolPrimitive(boolean value) {
+    public static Primitive boolPrimitive(boolean value) {
         return new Primitive(value, BOOL);
     }
 
-    static Primitive doublePrimitive(double value) {
+    public static Primitive doublePrimitive(double value) {
         return new Primitive(value, DOUBLE);
     }
 
-    static Primitive bytePrimitive(byte value) {
+    public static Primitive bytePrimitive(byte value) {
         return new Primitive(value, BYTE);
     }
 
-    static Primitive floatPrimitive(float value) {
+    public static Primitive floatPrimitive(float value) {
         return new Primitive(value, FLOAT);
     }
 }

@@ -18,7 +18,7 @@
 
 package io.art.core.constants;
 
-public interface CharConstants {
+public interface CharacterConstants {
     char SLASH = '/';
     char SHARP = '#';
     char WILDCARD = '*';
@@ -48,4 +48,5 @@ public interface CharConstants {
     char BOM_UTF = '\uFEFF';
     char PIPE = '|';
     char EXCLAMATION_MARK = '1';
+    char NEW_LINE = '\n';
 }

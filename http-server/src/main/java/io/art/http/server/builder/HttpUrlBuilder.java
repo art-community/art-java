@@ -19,7 +19,7 @@
 package io.art.http.server.builder;
 
 import lombok.*;
-import static io.art.core.constants.CharConstants.COLON;
+import static io.art.core.constants.CharacterConstants.COLON;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.http.constants.HttpCommonConstants.*;
 

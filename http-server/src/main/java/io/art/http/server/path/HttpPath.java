@@ -21,7 +21,7 @@ package io.art.http.server.path;
 import lombok.*;
 import io.art.core.constants.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.constants.CharConstants.SLASH;
+import static io.art.core.constants.CharacterConstants.SLASH;
 import static io.art.core.constants.StringConstants.COLON;
 import static io.art.core.constants.StringConstants.*;
 import java.util.*;

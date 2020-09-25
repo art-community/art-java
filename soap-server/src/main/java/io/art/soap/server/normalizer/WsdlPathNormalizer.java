@@ -18,7 +18,7 @@
 
 package io.art.soap.server.normalizer;
 
-import static io.art.core.constants.CharConstants.*;
+import static io.art.core.constants.CharacterConstants.*;
 
 public interface WsdlPathNormalizer {
     static String normalizeUrlPath(String path) {

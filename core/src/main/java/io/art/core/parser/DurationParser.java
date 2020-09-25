@@ -20,7 +20,12 @@ package io.art.core.parser;
 
 import io.art.core.exception.*;
 import lombok.experimental.*;
+import static io.art.core.constants.CharacterConstants.NEW_LINE;
+import static io.art.core.constants.CharacterConstants.SPACE;
+import static io.art.core.constants.DurationConstants.*;
 import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.RegExps.*;
+import static io.art.core.constants.StringConstants.*;
 import static java.lang.Character.*;
 import static java.lang.Double.*;
 import static java.lang.Long.*;
@@ -37,53 +42,53 @@ public class DurationParser {
         String unitString = getUnits(value);
         String numberString = unicodeTrim(value.substring(0, value.length() - unitString.length()));
 
-        TimeUnit units = null;
+        TimeUnit units;
 
         if (numberString.length() == 0) {
             return null;
         }
 
-        if (unitString.length() > 2 && !unitString.endsWith("s"))
-            unitString = unitString + "s";
+        if (unitString.length() > 2 && !unitString.endsWith(SECONDS_LETTER))
+            unitString = unitString + SECONDS_LETTER;
 
         switch (unitString) {
-            case "":
-            case "ms":
-            case "millis":
-            case "milliseconds":
+            case EMPTY_STRING:
+            case MILLIS_LETTERS:
+            case MILLIS_SHORT:
+            case MILLIS_FULL:
                 units = MILLISECONDS;
                 break;
-            case "us":
-            case "micros":
-            case "microseconds":
+            case MICROS_LETTERS:
+            case MICROS_SHORT:
+            case MICROS_FULL:
                 units = MICROSECONDS;
                 break;
-            case "ns":
-            case "nanos":
-            case "nanoseconds":
+            case NANO_LETTERS:
+            case NANO_SHORT:
+            case NANO_FULL:
                 units = NANOSECONDS;
                 break;
-            case "d":
-            case "days":
+            case DAYS_LETTER:
+            case DAYS_FULL:
                 units = DAYS;
                 break;
-            case "h":
-            case "hours":
+            case HOURS_LETTER:
+            case HOURS_FULL:
                 units = HOURS;
                 break;
-            case "s":
-            case "seconds":
+            case SECONDS_LETTER:
+            case SECONDS_FULL:
                 units = SECONDS;
                 break;
-            case "m":
-            case "minutes":
+            case MINUTES_LETTER:
+            case MINUTES_FULL:
                 units = MINUTES;
                 break;
             default:
                 throw new ParseException(format(UNKNOWN_DURATION_TIME_UNITS, unitString));
         }
 
-        if (numberString.matches("[+-]?[0-9]+")) {
+        if (numberString.matches(NUMBER_REGEXP)) {
             return ofNanos(units.toNanos(parseLong(numberString)));
         }
 
@@ -99,7 +104,7 @@ public class DurationParser {
         int start = 0;
         while (start < length) {
             char c = value.charAt(start);
-            if (c == ' ' || c == '\n') {
+            if (c == SPACE || c == NEW_LINE) {
                 start += 1;
             } else {
                 int cp = value.codePointAt(start);
@@ -113,7 +118,7 @@ public class DurationParser {
         int end = length;
         while (end > start) {
             char character = value.charAt(end - 1);
-            if (character == ' ' || character == '\n') {
+            if (character == SPACE || character == NEW_LINE) {
                 --end;
             } else {
                 int codePoint;
@@ -138,8 +143,8 @@ public class DurationParser {
     private static String getUnits(String value) {
         int count = value.length() - 1;
         while (count >= 0) {
-            char c = value.charAt(count);
-            if (!isLetter(c))
+            char character = value.charAt(count);
+            if (!isLetter(character))
                 break;
             count -= 1;
         }

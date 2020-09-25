@@ -20,14 +20,14 @@ package io.art.entity.immutable;
 
 import io.art.core.exception.*;
 import io.art.core.lazy.*;
-import io.art.entity.constants.*;
+import io.art.entity.constants.EntityConstants.*;
 import io.art.entity.mapper.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.lazy.LazyValue.*;
-import static io.art.entity.constants.ValueType.*;
+import static io.art.entity.constants.EntityConstants.ValueType.*;
 import static io.art.entity.mapper.ValueToModelMapper.*;
 import javax.annotation.*;
 import java.util.*;

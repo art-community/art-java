@@ -20,7 +20,7 @@ package io.art.http.client.builder;
 
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
-import static io.art.core.constants.CharConstants.*;
+import static io.art.core.constants.CharacterConstants.*;
 import static io.art.core.constants.StringConstants.EQUAL;
 import static io.art.core.constants.StringConstants.SLASH;
 import static io.art.core.constants.StringConstants.*;

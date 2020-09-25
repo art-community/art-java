@@ -19,7 +19,7 @@
 package io.art.entity.tuple.schema;
 
 import com.google.common.collect.*;
-import io.art.entity.constants.*;
+import io.art.entity.constants.EntityConstants.*;
 import io.art.entity.exception.*;
 import io.art.entity.immutable.Value;
 import io.art.entity.immutable.*;
@@ -28,10 +28,10 @@ import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.constants.ExceptionMessages.*;
-import static io.art.entity.constants.ValueType.*;
+import static io.art.entity.constants.EntityConstants.ExceptionMessages.*;
+import static io.art.entity.constants.EntityConstants.ValueType.*;
 import static io.art.entity.immutable.Value.*;
-import static java.text.MessageFormat.format;
+import static java.text.MessageFormat.*;
 import java.util.*;
 
 @Getter

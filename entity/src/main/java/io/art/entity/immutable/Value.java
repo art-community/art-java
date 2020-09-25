@@ -20,10 +20,12 @@ package io.art.entity.immutable;
 
 import io.art.core.checker.*;
 import io.art.entity.constants.*;
+import io.art.entity.constants.EntityConstants.*;
 import io.art.entity.exception.*;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.entity.constants.ExceptionMessages.*;
-import static io.art.entity.constants.ValueType.*;
+import static io.art.entity.constants.EntityConstants.ExceptionMessages.UNKNOWN_VALUE_TYPE;
+import static io.art.entity.constants.EntityConstants.ValueType.*;
 import static java.text.MessageFormat.*;
 import java.util.*;
 
@@ -114,7 +116,7 @@ public interface Value {
             return true;
         }
         if (Value.isPrimitive(value)) {
-            return EmptinessChecker.isEmpty(Value.asPrimitive(value).getString());
+            return isEmpty(Value.asPrimitive(value).getString());
         }
         if (Value.isEntity(value)) {
             return Value.asEntity(value).size() == 0;
@@ -126,7 +128,7 @@ public interface Value {
             return Value.asBinary(value).getContent() == EMPTY_BYTES;
         }
         if (Value.isXml(value)) {
-            return EmptinessChecker.isEmpty(Value.asXml(value).getTag()) && EmptinessChecker.isEmpty(Value.asXml(value).getChildren());
+            return isEmpty(Value.asXml(value).getTag()) && isEmpty(Value.asXml(value).getChildren());
         }
         throw new ValueMappingException(format(value.getType().name(), UNKNOWN_VALUE_TYPE));
     }

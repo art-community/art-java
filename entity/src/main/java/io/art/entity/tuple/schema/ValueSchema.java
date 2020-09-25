@@ -18,10 +18,10 @@
 
 package io.art.entity.tuple.schema;
 
-import io.art.entity.constants.*;
+import io.art.entity.constants.EntityConstants.*;
 import io.art.entity.immutable.Value;
 import lombok.*;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.entity.immutable.Value.*;
 import java.util.*;

@@ -29,7 +29,6 @@ import java.util.function.*;
 public class EntityBuilder {
     private final ImmutableMap.Builder<Primitive, Supplier<? extends Value>> fields = ImmutableMap.builder();
 
-
     public EntityBuilder put(String key, Value value) {
         return lazyPut(key, () -> value);
     }
@@ -167,6 +166,7 @@ public class EntityBuilder {
         }
         return this;
     }
+
 
     public Entity build() {
         ImmutableMap<Primitive, Supplier<? extends Value>> map = fields.build();

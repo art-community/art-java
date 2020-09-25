@@ -19,7 +19,7 @@
 package io.art.core.constants;
 
 import lombok.*;
-import static io.art.core.constants.CharConstants.*;
+import static io.art.core.constants.CharacterConstants.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
 

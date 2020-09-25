@@ -19,12 +19,11 @@
 package io.art.entity.immutable;
 
 import io.art.entity.constants.*;
-import io.art.entity.constants.ValueType.*;
+import io.art.entity.constants.EntityConstants.ValueType.*;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.entity.constants.ValueType.PrimitiveType.STRING;
-import static java.util.Objects.*;
+import static io.art.entity.constants.EntityConstants.ValueType.PrimitiveType.STRING;
 import java.util.*;
 
 @Getter
@@ -100,7 +99,7 @@ public class Primitive implements Value {
     }
 
     @Override
-    public ValueType getType() {
+    public EntityConstants.ValueType getType() {
         return PrimitiveType.asValueType(primitiveType);
     }
 
