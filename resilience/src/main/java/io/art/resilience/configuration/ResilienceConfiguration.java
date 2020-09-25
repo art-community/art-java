@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.resilience.model;
+package io.art.resilience.configuration;
 
 import io.art.core.module.*;
 import io.github.resilience4j.bulkhead.*;
@@ -27,6 +27,7 @@ import io.github.resilience4j.timelimiter.*;
 import lombok.Builder;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.parser.EnumParser.*;
 import static io.art.resilience.constants.ResilienceModuleConstants.ConfigurationKeys.*;
 import static io.github.resilience4j.circuitbreaker.CircuitBreakerConfig.*;
 import static io.github.resilience4j.retry.RetryConfig.*;
@@ -77,7 +78,7 @@ public class ResilienceConfiguration {
                             getOrElse(source.getInt(CIRCUIT_BREAKER_SLIDING_WINDOW_SIZE_KEY), defaults.getSlidingWindowSize())
                     )
                     .slidingWindowType(
-                            SlidingWindowType.valueOf(getOrElse(source.getString(CIRCUIT_BREAKER_SLIDING_WINDOW_TYPE_KEY), defaults.getSlidingWindowType().name()).toUpperCase())
+                            enumOf(SlidingWindowType::valueOf, source.getString(CIRCUIT_BREAKER_SLIDING_WINDOW_TYPE_KEY), defaults.getSlidingWindowType())
                     )
                     .slowCallDurationThreshold(
                             getOrElse(source.getDuration(CIRCUIT_BREAKER_SLOW_CALL_DURATION_THRESHOLD_KEY), defaults.getSlowCallDurationThreshold())

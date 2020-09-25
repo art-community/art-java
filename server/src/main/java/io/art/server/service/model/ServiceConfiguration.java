@@ -20,7 +20,7 @@ package io.art.server.service.model;
 
 import com.google.common.collect.*;
 import io.art.core.module.*;
-import io.art.resilience.model.*;
+import io.art.resilience.configuration.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.checker.NullityChecker.*;

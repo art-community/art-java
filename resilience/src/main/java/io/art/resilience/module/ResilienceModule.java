@@ -20,7 +20,6 @@ package io.art.resilience.module;
 
 import io.art.core.module.*;
 import io.art.resilience.configuration.*;
-import io.art.resilience.model.*;
 import io.art.resilience.state.*;
 import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.*;
@@ -29,7 +28,6 @@ import io.github.resilience4j.retry.*;
 import io.github.resilience4j.timelimiter.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
-import static java.util.Optional.*;
 
 @Getter
 public class ResilienceModule implements StatefulModule<ResilienceModuleConfiguration, ResilienceModuleConfiguration.Configurator, ResilienceModuleState> {
@@ -38,8 +36,8 @@ public class ResilienceModule implements StatefulModule<ResilienceModuleConfigur
     private final ResilienceModuleConfiguration.Configurator configurator = new ResilienceModuleConfiguration.Configurator(configuration);
     private final ResilienceModuleState state = new ResilienceModuleState();
     @Getter(lazy = true)
-    private final static StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule = context()
-            .getStatefulModule(ResilienceModule.class.getSimpleName());
+    private final static
+    StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule = context().getStatefulModule(ResilienceModule.class.getSimpleName());
 
     public static StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule() {
         return getResilienceModule();

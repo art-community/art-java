@@ -19,7 +19,7 @@
 package io.art.server.service.model;
 
 import io.art.core.module.*;
-import io.art.resilience.model.*;
+import io.art.resilience.configuration.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
