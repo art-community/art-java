@@ -26,13 +26,6 @@ import java.time.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-/**
- * Модель отложенного события
- * Используется вместе с {@link DelayQueue<EventResultType>}
- * Хранит в себе ссылку на {@link Future<EventResultType>} таску, время и порядок выполнения таски
- *
- * @param <EventResultType> Тип возвращаемого значения задачи отложенного события
- */
 class DeferredEvent<EventResultType> implements Delayed {
     @Getter
     private final Future<EventResultType> task;
@@ -51,10 +44,10 @@ class DeferredEvent<EventResultType> implements Delayed {
     }
 
     @Override
-    public int compareTo(@SuppressWarnings("NullableProblems") Delayed o) {
-        return comparingLong((ToLongFunction<DeferredEvent>) DeferredEvent::getTriggerDateTime)
+    public int compareTo(@SuppressWarnings("NullableProblems") Delayed other) {
+        return comparingLong((ToLongFunction<DeferredEvent<?>>) DeferredEvent::getTriggerDateTime)
                 .thenComparingInt(DeferredEvent::getOrder)
-                .compare(this, (DeferredEvent) o);
+                .compare(this, (DeferredEvent<?>) other);
     }
 
     long getTriggerDateTime() {
@@ -64,5 +57,4 @@ class DeferredEvent<EventResultType> implements Delayed {
     private int getOrder() {
         return order;
     }
-
 }

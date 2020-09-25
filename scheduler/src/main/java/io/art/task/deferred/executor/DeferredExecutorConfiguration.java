@@ -21,9 +21,6 @@ package io.art.task.deferred.executor;
 import lombok.*;
 import java.lang.Thread.*;
 
-/**
- * Конфигурация для {@link DeferredExecutorImplementation} и {@link DeferredEventObserver}
- */
 @Getter
 @Setter
 class DeferredExecutorConfiguration {

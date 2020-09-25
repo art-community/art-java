@@ -18,58 +18,60 @@
 
 package io.art.task.deferred.executor;
 
-import static java.util.UUID.*;
+import lombok.experimental.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.task.deferred.executor.SchedulerModuleConstants.*;
+import static java.util.UUID.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-public interface TaskFactory {
-    static RunnableTask uniqueRunnableTask(Runnable runnable) {
+@UtilityClass
+public class TaskFactory {
+    public static RunnableTask uniqueRunnableTask(Runnable runnable) {
         return new RunnableTask(randomUUID().toString(), taskId -> runnable.run());
     }
 
-    static RunnableTask commonRunnableTask(Runnable runnable) {
+    public static RunnableTask commonRunnableTask(Runnable runnable) {
         return new RunnableTask(COMMON_TASK, taskId -> runnable.run());
     }
 
-    static RunnableTask runnableTask(String id, Runnable runnable) {
+    public static RunnableTask runnableTask(String id, Runnable runnable) {
         return new RunnableTask(id, taskId -> runnable.run());
     }
 
-    static <T> CallableTask<T> uniqueCallableTask(Callable<T> callable) {
+    public static <T> CallableTask<T> uniqueCallableTask(Callable<T> callable) {
         return new CallableTask<>(randomUUID().toString(), taskId -> wrapException(callable));
     }
 
-    static <T> RunnableTask commonCallableTask(Callable<T> callable) {
+    public static <T> RunnableTask commonCallableTask(Callable<T> callable) {
         return new RunnableTask(COMMON_TASK, taskId -> wrapException(callable));
     }
 
-    static <T> RunnableTask callableTask(String id, Callable<T> callable) {
+    public static <T> RunnableTask callableTask(String id, Callable<T> callable) {
         return new RunnableTask(id, taskId -> wrapException(callable));
     }
 
-    static RunnableTask uniqueRunnableTask(Consumer<String> consumer) {
+    public static RunnableTask uniqueRunnableTask(Consumer<String> consumer) {
         return new RunnableTask(randomUUID().toString(), consumer);
     }
 
-    static RunnableTask commonRunnableTask(Consumer<String> consumer) {
+    public static RunnableTask commonRunnableTask(Consumer<String> consumer) {
         return new RunnableTask(COMMON_TASK, consumer);
     }
 
-    static RunnableTask runnableTask(String id, Consumer<String> consumer) {
+    public static RunnableTask runnableTask(String id, Consumer<String> consumer) {
         return new RunnableTask(id, consumer);
     }
 
-    static <T> CallableTask<T> uniqueCallableTask(Function<String, T> function) {
+    public static <T> CallableTask<T> uniqueCallableTask(Function<String, T> function) {
         return new CallableTask<>(randomUUID().toString(), function);
     }
 
-    static <T> CallableTask commonCallableTask(Function<String, T> function) {
+    public static <T> CallableTask<T> commonCallableTask(Function<String, T> function) {
         return new CallableTask<>(COMMON_TASK, function);
     }
 
-    static <T> CallableTask callableTask(String id, Function<String, T> function) {
+    public static <T> CallableTask<T> callableTask(String id, Function<String, T> function) {
         return new CallableTask<>(id, function);
     }
 }

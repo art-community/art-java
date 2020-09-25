@@ -18,21 +18,14 @@
 
 package io.art.task.deferred.executor;
 
+import static io.art.task.deferred.executor.SchedulerModuleExceptions.ExceptionEvent.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.ForkJoinPool.*;
 import static java.util.concurrent.ForkJoinTask.*;
 import static java.util.concurrent.TimeUnit.*;
-import static io.art.task.deferred.executor.SchedulerModuleExceptions.ExceptionEvent.*;
 import java.time.*;
 import java.util.concurrent.*;
 
-/**
- * Обозреватель очереди отложенных событий
- * Реализует логику проверки готовности выполнения события
- * Делегирует логику обработки события пулу потокв {@link ForkJoinPool}
- * Прерываемый. Во время прерывания в зависимости от конфигурации ожидает отмены всех отложенных событий
- * Осуществляет контроль пула потоков
- */
 class DeferredEventObserver {
     private final DeferredExecutorConfiguration configuration;
     private final ForkJoinPool threadPool;

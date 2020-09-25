@@ -20,9 +20,6 @@ package io.art.task.deferred.executor;
 
 import io.art.task.deferred.executor.SchedulerModuleExceptions.*;
 
-/**
- * Функциональный интерфейс {@link FunctionalInterface} для обработки ошибок
- */
 @FunctionalInterface
 interface ExceptionHandler {
     void onException(ExceptionEvent event, Throwable throwable);

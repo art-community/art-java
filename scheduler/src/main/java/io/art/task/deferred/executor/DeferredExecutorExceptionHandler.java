@@ -18,19 +18,19 @@
 
 package io.art.task.deferred.executor;
 
-import static java.text.MessageFormat.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.task.deferred.executor.SchedulerModuleExceptions.*;
+import static java.text.MessageFormat.*;
 
-/**
- * Дефолтный обработчик ошибок выполнения отложенных событей
- */
 public class DeferredExecutorExceptionHandler implements ExceptionHandler {
     @Override
     public void onException(ExceptionEvent event, Throwable throwable) {
-        loggingModule()
-                .getLogger(DeferredExecutorExceptionHandler.class)
-                .error(format(EXCEPTION_OCCURRED_DURING, event.getMessage(), ifEmpty(throwable.getMessage(), throwable.getClass()), throwable));
+        logger(DeferredExecutorExceptionHandler.class).error(format(
+                EXCEPTION_OCCURRED_DURING,
+                event.getMessage(),
+                ifEmpty(throwable.getMessage(), throwable.getClass()),
+                throwable)
+        );
     }
 }

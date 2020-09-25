@@ -20,9 +20,6 @@ package io.art.task.deferred.executor;
 
 import lombok.*;
 
-/**
- * Исключение, выбрасываемое дефолтным обработчиком ошибок пула потоков отложенных событий
- */
 @Getter
 class DeferredExecutionThreadPoolException extends RuntimeException {
     private final Thread thread;

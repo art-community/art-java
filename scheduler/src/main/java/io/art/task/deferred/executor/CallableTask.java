@@ -19,12 +19,11 @@
 package io.art.task.deferred.executor;
 
 import lombok.*;
-import io.art.core.identified.*;
 import java.util.function.*;
 
 @Getter
 @AllArgsConstructor
-public class CallableTask<T> implements UniqueIdentified {
+public class CallableTask<T> {
     private final String id;
     private final Function<String, T> callable;
 }

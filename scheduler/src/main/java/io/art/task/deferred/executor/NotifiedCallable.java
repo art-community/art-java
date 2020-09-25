@@ -24,8 +24,8 @@ import java.util.function.*;
 
 @AllArgsConstructor
 class NotifiedCallable<T> implements Callable<T> {
-    private Callable<T> executionCallable;
-    private Consumer<T> notification;
+    private final Callable<T> executionCallable;
+    private final Consumer<T> notification;
 
     @Override
     public T call() throws Exception {

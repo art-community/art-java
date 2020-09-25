@@ -18,60 +18,61 @@
 
 package io.art.task.deferred.executor;
 
+import lombok.experimental.*;
 import static io.art.task.deferred.executor.SchedulerModule.*;
 import java.time.*;
 import java.util.Optional;
 import java.util.concurrent.*;
 
-public interface SchedulerModuleActions {
-
-    static <EventResultType> Future<? extends EventResultType> asynchronous(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
+@UtilityClass
+public class SchedulersManager {
+    public static <EventResultType> Future<? extends EventResultType> asynchronous(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
         return schedulerModule().getDeferredExecutor().submit(eventTask, triggerTime);
     }
 
-    static <EventResultType> Future<? extends EventResultType> asynchronous(Callable<? extends EventResultType> eventTask) {
+    public static <EventResultType> Future<? extends EventResultType> asynchronous(Callable<? extends EventResultType> eventTask) {
         return schedulerModule().getDeferredExecutor().submit(eventTask);
     }
 
-    static Future<?> asynchronous(Runnable task, LocalDateTime triggerTime) {
+    public static Future<?> asynchronous(Runnable task, LocalDateTime triggerTime) {
         return schedulerModule().getDeferredExecutor().execute(task, triggerTime);
     }
 
-    static Future<?> asynchronous(Runnable task) {
+    public static Future<?> asynchronous(Runnable task) {
         return schedulerModule().getDeferredExecutor().execute(task);
     }
 
-    static <EventResultType> Future<? extends EventResultType> asynchronousPeriod(CallableTask<? extends EventResultType> eventTask,
+    public static <EventResultType> Future<? extends EventResultType> asynchronousPeriod(CallableTask<? extends EventResultType> eventTask,
                                                                                   LocalDateTime startTime, Duration duration) {
         return schedulerModule().getPeriodicExecutor().submitPeriodic(eventTask, startTime, duration);
     }
 
-    static <EventResultType> Future<? extends EventResultType> asynchronousPeriod(CallableTask<? extends EventResultType> eventTask,
+    public static <EventResultType> Future<? extends EventResultType> asynchronousPeriod(CallableTask<? extends EventResultType> eventTask,
                                                                                   Duration duration) {
         return schedulerModule().getPeriodicExecutor().submitPeriodic(eventTask, duration);
     }
 
-    static Future<?> asynchronousPeriod(RunnableTask task, LocalDateTime triggerTime, Duration duration) {
+    public static Future<?> asynchronousPeriod(RunnableTask task, LocalDateTime triggerTime, Duration duration) {
         return schedulerModule().getPeriodicExecutor().executePeriodic(task, triggerTime, duration);
     }
 
-    static Future<?> asynchronousPeriod(RunnableTask task, Duration duration) {
+    public static Future<?> asynchronousPeriod(RunnableTask task, Duration duration) {
         return schedulerModule().getPeriodicExecutor().executePeriodic(task, duration);
     }
 
-    static boolean cancelPeriodicTask(String taskId) {
+    public static boolean cancelPeriodicTask(String taskId) {
         return schedulerModule().getPeriodicExecutor().cancelPeriodicTask(taskId);
     }
 
-    static Optional<Future<?>> removePeriodicTask(String taskId) {
+    public static Optional<Future<?>> removePeriodicTask(String taskId) {
         return schedulerModule().getPeriodicExecutor().removePeriodicTask(taskId);
     }
 
-    static void clearDeferred() {
+    public static void clearDeferred() {
         schedulerModule().getDeferredExecutor().clear();
     }
 
-    static void clearPeriodic() {
+    public static void clearPeriodic() {
         schedulerModule().getPeriodicExecutor().clear();
     }
 }

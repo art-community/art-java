@@ -19,12 +19,11 @@
 package io.art.task.deferred.executor;
 
 import lombok.*;
-import io.art.core.identified.*;
 import java.util.function.*;
 
 @Getter
 @AllArgsConstructor
-public class RunnableTask implements UniqueIdentified {
+public class RunnableTask {
     private final String id;
     private final Consumer<String> runnable;
 }

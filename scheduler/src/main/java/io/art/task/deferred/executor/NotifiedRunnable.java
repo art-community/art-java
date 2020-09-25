@@ -22,8 +22,8 @@ import lombok.*;
 
 @AllArgsConstructor
 class NotifiedRunnable implements Runnable {
-    private Runnable executionCallable;
-    private Runnable notification;
+    private final Runnable executionCallable;
+    private final Runnable notification;
 
     @Override
     public void run() {
