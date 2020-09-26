@@ -32,8 +32,8 @@ import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
 import static io.art.server.interceptor.ServiceMethodInterceptor.ExceptionInterceptionResult.*;
 import static java.text.MessageFormat.*;
 
-public class ServiceLoggingRequestInterceptor implements ServiceMethodInterceptor<Object, Object> {
-    private final static Logger logger = logger(ServiceLoggingRequestInterceptor.class);
+public class ServiceLoggingInterceptor implements ServiceMethodInterceptor<Object, Object> {
+    private final static Logger logger = logger(ServiceLoggingInterceptor.class);
 
     @Override
     public InterceptionResult interceptRequest(Object request, ServiceMethodSpecification specification) {
@@ -100,6 +100,6 @@ public class ServiceLoggingRequestInterceptor implements ServiceMethodIntercepto
 
     private static void logException(Throwable exception, ServiceMethodSpecification specification) {
         ServiceMethodImplementation implementation = specification.getImplementation();
-        logger.error(format(SERVICE_FAILED_MESSAGE, implementation.getServiceId(), implementation.getMethodId(), getStackTraceAsString(exception)));
+        logger.error(format(SERVICE_FAILED_MESSAGE, implementation.getServiceId(), implementation.getMethodId()), exception);
     }
 }

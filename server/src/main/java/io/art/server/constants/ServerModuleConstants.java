@@ -58,7 +58,7 @@ public interface ServerModuleConstants {
 
     interface LoggingMessages {
         String SERVICE_REGISTRATION_MESSAGE = success("Registered service: ''{0}''");
-        String SERVICE_FAILED_MESSAGE = error("Service ''{0}.{1}'' execution failed\n{2}");
+        String SERVICE_FAILED_MESSAGE = error("Service ''{0}.{1}'' execution failed");
 
         String EXECUTING_BLOCKING_SERVICE_MESSAGE = success("Executing service: ''{0}.{1}'' with request: ''{2}''");
         String BLOCKING_SERVICE_EXECUTED_MESSAGE = success("Successfully executed service: ''{0}.{1}'' with response: ''{2}''");

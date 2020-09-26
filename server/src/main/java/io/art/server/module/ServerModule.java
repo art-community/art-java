@@ -24,6 +24,7 @@ import io.art.resilience.module.*;
 import io.art.server.configuration.*;
 import io.art.server.interceptor.*;
 import io.art.server.registry.*;
+import io.art.server.service.model.*;
 import io.art.server.service.specification.*;
 import io.art.server.state.*;
 import lombok.*;
@@ -62,9 +63,11 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
         ServiceSpecification specification = services()
                 .register(ServiceSpecification.builder()
                         .id("id-1")
+                        .configuration(ServiceConfiguration::defaultServiceConfiguration)
                         .method("id", ServiceMethodSpecification.builder()
+                                .serviceId("id-1")
                                 .interceptor(new ServiceValidationInterceptor())
-                                .interceptor(new ServiceLoggingRequestInterceptor())
+                                .interceptor(new ServiceLoggingInterceptor())
                                 .requestProcessingMode(REACTIVE_MONO)
                                 .responseProcessingMode(BLOCKING)
                                 .requestMapper(value -> toString.map(asPrimitive(value)))
@@ -88,6 +91,6 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                                 .build())
                         .build())
                 .get("id-1");
-        System.out.println(specification.executeBlocking("id", stringPrimitive("test")));
+        System.out.println(specification.getMethods().get("id").executeBlocking(stringPrimitive("test")));
     }
 }

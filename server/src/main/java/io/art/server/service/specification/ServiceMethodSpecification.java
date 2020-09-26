@@ -24,6 +24,7 @@ import io.art.entity.mapper.*;
 import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
 import io.art.server.interceptor.*;
+import io.art.server.module.*;
 import io.art.server.service.implementation.*;
 import io.art.server.service.model.*;
 import lombok.*;
@@ -33,6 +34,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.*;
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
+import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
 import static java.util.Optional.*;
 import java.util.*;
@@ -44,17 +46,22 @@ import java.util.function.*;
 public class ServiceMethodSpecification {
     @EqualsAndHashCode.Include
     private final String id;
-    private final ValueToModelMapper<Object, Value> requestMapper;
-    private final ValueFromModelMapper<Object, Value> responseMapper;
-    private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
-    private final ServiceMethodImplementation implementation;
-    private final ServiceMethodProcessingMode requestProcessingMode;
-    private final ServiceMethodProcessingMode responseProcessingMode;
-    private final Supplier<ServiceMethodConfiguration> configuration;
-    private final ServiceSpecification serviceSpecification;
+    @EqualsAndHashCode.Include
+    private final String serviceId;
 
     @Builder.Default
     private final RequestValidationPolicy validationPolicy = NON_VALIDATABLE;
+
+    private final ValueToModelMapper<Object, Value> requestMapper;
+    private final ValueFromModelMapper<Object, Value> responseMapper;
+    private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
+
+    private final ServiceMethodImplementation implementation;
+
+    private final ServiceMethodProcessingMode requestProcessingMode;
+    private final ServiceMethodProcessingMode responseProcessingMode;
+
+    private final Supplier<ServiceMethodConfiguration> configuration;
 
     @Singular("requestValueInterceptor")
     private final List<ValueInterceptor> requestValueInterceptor;
@@ -62,6 +69,9 @@ public class ServiceMethodSpecification {
     private final List<ValueInterceptor> responseValueInterceptor;
     @Singular("interceptor")
     private final List<ServiceMethodInterceptor<Object, Object>> interceptors;
+
+    @Getter(lazy = true)
+    private final ServiceSpecification serviceSpecification = services().get(serviceId);
 
     public void callBlocking() {
         if (deactivated()) {
@@ -341,7 +351,7 @@ public class ServiceMethodSpecification {
     }
 
     private boolean deactivated() {
-        return ofNullable(configuration)
+        return getServiceSpecification().getConfiguration().get().isDeactivated() || ofNullable(configuration)
                 .map(Supplier::get)
                 .map(ServiceMethodConfiguration::isDeactivated)
                 .orElse(false);
