@@ -25,7 +25,7 @@ import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
 import static java.text.MessageFormat.*;
 import java.util.*;
 
-public class ServiceRegistry {
+public class ServiceSpecificationRegistry {
     private final Map<String, ServiceSpecification> services = concurrentHashMap();
 
     public ServiceSpecification get(String serviceId) {
@@ -36,9 +36,9 @@ public class ServiceRegistry {
         return services.keySet();
     }
 
-    public ServiceRegistry register(ServiceSpecification specification) {
+    public ServiceSpecificationRegistry register(ServiceSpecification specification) {
         services.put(specification.getServiceId(), specification);
-        logger(ServiceRegistry.class).info(format(SERVICE_REGISTRATION_MESSAGE, specification.getServiceId()));
+        logger(ServiceSpecificationRegistry.class).info(format(SERVICE_REGISTRATION_MESSAGE, specification.getServiceId()));
         return this;
     }
 }

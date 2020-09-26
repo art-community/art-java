@@ -35,7 +35,7 @@ public class ServiceMethodImplementation {
     private final String methodId;
     private final Function<Object, Object> functor;
     @Getter(lazy = true)
-    private final ServiceSpecification serviceSpecification = services().get(serviceId);
+    private final ServiceSpecification serviceSpecification = specifications().get(serviceId);
     @Getter(lazy = true)
     private final ServiceMethodSpecification methodSpecification = getServiceSpecification().getMethods().get(methodId);
 

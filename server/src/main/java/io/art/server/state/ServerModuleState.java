@@ -24,5 +24,6 @@ import lombok.*;
 
 @Getter
 public class ServerModuleState implements ModuleState {
-    private final ServiceRegistry services = new ServiceRegistry();
+    private final ServiceSpecificationRegistry specifications = new ServiceSpecificationRegistry();
+    private final ServiceContextRegistry contexts = new ServiceContextRegistry();
 }

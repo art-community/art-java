@@ -22,12 +22,10 @@ import io.art.entity.immutable.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.grpc.server.model.GrpcService.*;
-import io.art.server.constants.*;
 import io.art.server.registry.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.grpc.server.constants.GrpcServerModuleConstants.*;
-import static io.art.server.module.ServerModule.*;
 import java.util.function.*;
 
 public class GrpcServiceFunction {
@@ -64,12 +62,12 @@ public class GrpcServiceFunction {
     }
 
     public <RequestType, ResponseType> void handle(Function<RequestType, ResponseType> function) {
-        ServiceRegistry serviceRegistry = serviceModuleState().getServiceRegistry();
-        GrpcFunctionalServiceSpecification specification = cast(serviceRegistry.getServices().get(GRPC_FUNCTION_SERVICE));
+        ServiceSpecificationRegistry serviceSpecificationRegistry = serviceModuleState().getServiceRegistry();
+        GrpcFunctionalServiceSpecification specification = cast(serviceSpecificationRegistry.getServices().get(GRPC_FUNCTION_SERVICE));
         if (isNull(specification)) {
             specification = new GrpcFunctionalServiceSpecification();
             specification.addFunction(functionId, grpcMethod, function);
-            serviceRegistry.register(specification);
+            serviceSpecificationRegistry.register(specification);
             return;
         }
         specification.addFunction(functionId, grpcMethod, function);

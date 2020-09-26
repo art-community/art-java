@@ -24,6 +24,7 @@ import io.art.entity.mapper.*;
 import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
 import io.art.server.interceptor.*;
+import io.art.server.module.*;
 import io.art.server.service.implementation.*;
 import io.art.server.service.model.*;
 import lombok.*;
@@ -36,7 +37,7 @@ import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcess
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
 import static java.util.Optional.*;
-import java.util.*;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 @Getter
@@ -49,7 +50,7 @@ public class ServiceMethodSpecification {
     private final String serviceId;
 
     @Getter(lazy = true)
-    private final ServiceSpecification serviceSpecification = services().get(serviceId);
+    private final ServiceSpecification serviceSpecification = specifications().get(serviceId);
 
     @Builder.Default
     private final RequestValidationPolicy validationPolicy = NON_VALIDATABLE;

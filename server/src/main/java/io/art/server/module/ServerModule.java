@@ -50,8 +50,8 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
         return getServerModule();
     }
 
-    public static ServiceRegistry services() {
-        return serverModule().state().getServices();
+    public static ServiceSpecificationRegistry specifications() {
+        return serverModule().state().getSpecifications();
     }
 
     public static void main(String[] args) {
@@ -59,7 +59,7 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                 .loadModule(new ResilienceModule())
                 .loadModule(new ServerModule())
                 .loadModule(new LoggingModule());
-        ServiceSpecification specification = services()
+        ServiceSpecification specification = specifications()
                 .register(ServiceSpecification.builder()
                         .serviceId("id-1")
                         .method("id", ServiceMethodSpecification.builder()
