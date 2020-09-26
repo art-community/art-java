@@ -84,7 +84,7 @@ public class ServiceMethodSpecification {
             return Mono.empty();
         }
         try {
-            implementation.execute(Mono.empty());
+            implementation.execute();
         } catch (Throwable throwable) {
             if (responseProcessingMode == BLOCKING) {
                 throw throwable;
@@ -141,7 +141,7 @@ public class ServiceMethodSpecification {
             return Mono.empty();
         }
         try {
-            Object response = implementation.execute(Mono.empty());
+            Object response = implementation.execute();
             return mapResponseReactiveMono(response);
         } catch (Throwable throwable) {
             return mapExceptionReactiveMono(throwable);

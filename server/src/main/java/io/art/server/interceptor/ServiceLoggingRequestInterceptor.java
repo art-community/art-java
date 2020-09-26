@@ -25,6 +25,7 @@ import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
 import static com.google.common.base.Throwables.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.orElse;
 import static io.art.core.model.InterceptionResult.next;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
@@ -42,9 +43,11 @@ public class ServiceLoggingRequestInterceptor implements ServiceMethodIntercepto
                 logBlockingRequest(request, specification);
                 break;
             case REACTIVE_MONO:
+                request = orElse(request, Mono.empty());
                 logger.info(format(STARTING_REACTIVE_SERVICE_MESSAGE, implementation.getServiceId(), implementation.getMethodId()));
                 return next(Mono.from(cast(request)).doOnNext(data -> logReactiveInput(data, specification)));
             case REACTIVE_FLUX:
+                request = orElse(request, Flux.empty());
                 logger.info(format(STARTING_REACTIVE_SERVICE_MESSAGE, implementation.getServiceId(), implementation.getMethodId()));
                 return next(Flux.from(cast(request)).doOnNext(data -> logReactiveInput(data, specification)));
         }
