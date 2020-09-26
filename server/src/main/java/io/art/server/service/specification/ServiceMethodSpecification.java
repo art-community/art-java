@@ -18,6 +18,7 @@
 
 package io.art.server.service.specification;
 
+import com.google.common.collect.*;
 import io.art.entity.immutable.Value;
 import io.art.entity.mapper.*;
 import io.art.server.constants.ServerModuleConstants.*;
@@ -54,7 +55,7 @@ public class ServiceMethodSpecification {
     private final RequestValidationPolicy validationPolicy = NON_VALIDATABLE;
 
     @Singular("interceptor")
-    private final List<ServiceMethodInterceptor<Object, Object>> interceptors;
+    private final ImmutableList<ServiceMethodInterceptor<Object, Object>> interceptors;
 
     private final ValueToModelMapper<Object, Value> requestMapper;
     private final ValueFromModelMapper<Object, Value> responseMapper;

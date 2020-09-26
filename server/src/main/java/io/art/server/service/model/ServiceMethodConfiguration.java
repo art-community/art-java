@@ -28,11 +28,9 @@ import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 @AllArgsConstructor
 public class ServiceMethodConfiguration {
     private final boolean deactivated;
-    private final ResilienceConfiguration resilience;
 
     public static ServiceMethodConfiguration from(ModuleConfigurationSource source) {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
-        ResilienceConfiguration resilience = let(source.getInner(RESILIENCE_KEY), ResilienceConfiguration::from);
-        return new ServiceMethodConfiguration(deactivated, resilience);
+        return new ServiceMethodConfiguration(deactivated);
     }
 }

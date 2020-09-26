@@ -20,7 +20,6 @@ package io.art.server.service.model;
 
 import com.google.common.collect.*;
 import io.art.core.module.*;
-import io.art.resilience.configuration.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -32,17 +31,15 @@ import java.util.*;
 @AllArgsConstructor
 public class ServiceConfiguration {
     private final boolean deactivated;
-    private final ResilienceConfiguration resilienceConfiguration;
     private final ImmutableMap<String, ServiceMethodConfiguration> methods;
 
     public static ServiceConfiguration from(ModuleConfigurationSource source) {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
-        ResilienceConfiguration resilience = let(source.getInner(RESILIENCE_KEY), ResilienceConfiguration::from);
         ImmutableMap<String, ServiceMethodConfiguration> methods = ofNullable(source.getInnerMap(METHODS_KEY))
                 .map(configurations -> configurations.entrySet()
                         .stream()
                         .collect(toImmutableMap(Map.Entry::getKey, entry -> ServiceMethodConfiguration.from(entry.getValue()))))
                 .orElse(ImmutableMap.of());
-        return new ServiceConfiguration(deactivated, resilience, methods);
+        return new ServiceConfiguration(deactivated, methods);
     }
 }
