@@ -65,7 +65,7 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                         .method("id", ServiceMethodSpecification.builder()
                                 .interceptor(new ServiceValidationInterceptor())
                                 .interceptor(new ServiceLoggingRequestInterceptor())
-                                .requestProcessingMode(BLOCKING)
+                                .requestProcessingMode(REACTIVE_MONO)
                                 .responseProcessingMode(BLOCKING)
                                 .requestMapper(value -> toString.map(asPrimitive(value)))
                                 .exceptionMapper(model -> fromString.map(getStackTraceAsString(model)))

@@ -36,14 +36,17 @@ public class ServiceLoggingRequestInterceptor implements ServiceMethodIntercepto
 
     @Override
     public InterceptionResult interceptRequest(Object request, ServiceMethodSpecification specification) {
+        ServiceMethodImplementation implementation = specification.getImplementation();
         switch (specification.getRequestProcessingMode()) {
             case BLOCKING:
-                logRequest(request, specification);
+                logBlockingRequest(request, specification);
                 break;
             case REACTIVE_MONO:
-                return next(Mono.from(cast(request)).doOnNext(data -> logRequest(data, specification)));
+                logger.info(format(STARTING_REACTIVE_SERVICE_MESSAGE, implementation.getServiceId(), implementation.getMethodId()));
+                return next(Mono.from(cast(request)).doOnNext(data -> logReactiveInput(data, specification)));
             case REACTIVE_FLUX:
-                return next(Flux.from(cast(request)).doOnNext(data -> logRequest(data, specification)));
+                logger.info(format(STARTING_REACTIVE_SERVICE_MESSAGE, implementation.getServiceId(), implementation.getMethodId()));
+                return next(Flux.from(cast(request)).doOnNext(data -> logReactiveInput(data, specification)));
         }
         return next(request);
     }
@@ -52,15 +55,15 @@ public class ServiceLoggingRequestInterceptor implements ServiceMethodIntercepto
     public InterceptionResult interceptResponse(Object response, ServiceMethodSpecification specification) {
         switch (specification.getResponseProcessingMode()) {
             case BLOCKING:
-                logResponse(response, specification);
+                logBlockingResponse(response, specification);
                 break;
             case REACTIVE_MONO:
                 return next(Mono.from(cast(response))
-                        .doOnNext(data -> logResponse(data, specification))
+                        .doOnNext(data -> logReactiveOutput(data, specification))
                         .doOnError(exception -> logException(exception, specification)));
             case REACTIVE_FLUX:
                 return next(Flux.from(cast(response))
-                        .doOnNext(data -> logResponse(data, specification))
+                        .doOnNext(data -> logReactiveOutput(data, specification))
                         .doOnError(exception -> logException(exception, specification)));
         }
         return next(response);
@@ -72,14 +75,24 @@ public class ServiceLoggingRequestInterceptor implements ServiceMethodIntercepto
         return exceptionInterceptionResult().inException(throwable).outException(throwable).build();
     }
 
-    private static void logRequest(Object data, ServiceMethodSpecification specification) {
+    private static void logBlockingRequest(Object data, ServiceMethodSpecification specification) {
         ServiceMethodImplementation implementation = specification.getImplementation();
-        logger.info(format(EXECUTING_SERVICE_MESSAGE, implementation.getServiceId(), implementation.getMethodId(), data));
+        logger.info(format(EXECUTING_BLOCKING_SERVICE_MESSAGE, implementation.getServiceId(), implementation.getMethodId(), data));
     }
 
-    private static void logResponse(Object data, ServiceMethodSpecification specification) {
+    private static void logBlockingResponse(Object data, ServiceMethodSpecification specification) {
         ServiceMethodImplementation implementation = specification.getImplementation();
-        logger.info(format(SERVICE_EXECUTED_MESSAGE, implementation.getServiceId(), implementation.getMethodId(), data));
+        logger.info(format(BLOCKING_SERVICE_EXECUTED_MESSAGE, implementation.getServiceId(), implementation.getMethodId(), data));
+    }
+
+    private static void logReactiveInput(Object data, ServiceMethodSpecification specification) {
+        ServiceMethodImplementation implementation = specification.getImplementation();
+        logger.info(format(REACTIVE_SERVICE_INPUT_MESSAGE, implementation.getServiceId(), implementation.getMethodId(), data));
+    }
+
+    private static void logReactiveOutput(Object data, ServiceMethodSpecification specification) {
+        ServiceMethodImplementation implementation = specification.getImplementation();
+        logger.info(format(REACTIVE_SERVICE_OUTPUT_MESSAGE, implementation.getServiceId(), implementation.getMethodId(), data));
     }
 
     private static void logException(Throwable exception, ServiceMethodSpecification specification) {
