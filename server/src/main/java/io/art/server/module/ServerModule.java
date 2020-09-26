@@ -35,6 +35,7 @@ import static io.art.entity.immutable.Value.*;
 import static io.art.entity.mapping.PrimitiveMapping.*;
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
 import static io.art.server.service.implementation.ServiceMethodImplementation.*;
+import static io.art.server.service.model.ServiceConfiguration.*;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 
@@ -63,7 +64,7 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
         ServiceSpecification specification = services()
                 .register(ServiceSpecification.builder()
                         .id("id-1")
-                        .configuration(ServiceConfiguration::defaultServiceConfiguration)
+                        .configuration(() -> serverModule().configuration().getServices().getOrDefault("id-1", defaultServiceConfiguration()))
                         .method("id", ServiceMethodSpecification.builder()
                                 .serviceId("id-1")
                                 .interceptor(new ServiceValidationInterceptor())
@@ -71,8 +72,8 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                                 .requestProcessingMode(REACTIVE_MONO)
                                 .responseProcessingMode(BLOCKING)
                                 .requestMapper(value -> toString.map(asPrimitive(value)))
-                                .exceptionMapper(model -> fromString.map(getStackTraceAsString(model)))
                                 .responseMapper(model -> fromString.map((String) model))
+                                .exceptionMapper(model -> fromString.map(getStackTraceAsString(model)))
                                 .implementation(handler(request -> {
                                     throw new RuntimeException("Fuck");
                                 }, "id-1", "id"))
@@ -91,6 +92,7 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                                 .build())
                         .build())
                 .get("id-1");
+
         System.out.println(specification.getMethods().get("id").executeBlocking(stringPrimitive("test")));
     }
 }

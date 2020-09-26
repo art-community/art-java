@@ -18,6 +18,7 @@
 
 package io.art.server.service.model;
 
+import com.google.common.collect.*;
 import io.art.core.module.*;
 import io.art.resilience.configuration.*;
 import lombok.*;
@@ -34,5 +35,9 @@ public class ServiceMethodConfiguration {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
         ResilienceConfiguration resilience = let(source.getInner(RESILIENCE_KEY), ResilienceConfiguration::from);
         return new ServiceMethodConfiguration(deactivated, resilience);
+    }
+
+    public static ServiceMethodConfiguration defaultServiceMethodConfiguration() {
+        return new ServiceMethodConfiguration(false, ResilienceConfiguration.builder().build());
     }
 }
