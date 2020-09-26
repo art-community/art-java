@@ -16,33 +16,30 @@
  * limitations under the License.
  */
 
-package io.art.server.service.validation;
+package io.art.server.validation;
 
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
 import static java.text.MessageFormat.*;
+import java.util.*;
 
-class NotEqualsValidationExpression extends ValidationExpression<Object> {
-    private final Object other;
-
-    NotEqualsValidationExpression(Object other) {
-        super(NOT_EQUALS);
-        this.other = other;
+class NotEmptyCollectionValidationExpression extends ValidationExpression<Collection<?>> {
+    NotEmptyCollectionValidationExpression() {
+        super(NOT_EMPTY_COLLECTION);
     }
 
-    NotEqualsValidationExpression(Object other, String pattern) {
-        super(NOT_EQUALS);
-        this.other = other;
+    NotEmptyCollectionValidationExpression(String pattern) {
+        super(NOT_EMPTY_COLLECTION);
         this.pattern = pattern;
     }
 
     @Override
-    public boolean evaluate(String fieldName, Object value) {
-        return super.evaluate(fieldName, value) && !value.equals(other);
+    public boolean evaluate(String fieldName, Collection<?> value) {
+        return super.evaluate(fieldName, value) && !value.isEmpty();
     }
 
     @Override
     public String getValidationErrorMessage() {
-        return format(EQUALS_VALIDATION_ERROR, fieldName, value, other);
+        return format(EMPTY_VALIDATION_ERROR, fieldName);
     }
 }

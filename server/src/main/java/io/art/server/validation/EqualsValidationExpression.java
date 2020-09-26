@@ -16,34 +16,33 @@
  * limitations under the License.
  */
 
-package io.art.server.service.validation;
+package io.art.server.validation;
 
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
 import static java.text.MessageFormat.*;
-import java.util.*;
 
-class ContainsValidationExpression extends ValidationExpression<Object> {
-    private final List<?> list;
+class EqualsValidationExpression extends ValidationExpression<Object> {
+    private final Object other;
 
-    ContainsValidationExpression(List<?> objectList) {
-        super(CONTAINS);
-        this.list = objectList;
+    EqualsValidationExpression(Object other) {
+        super(EQUALS);
+        this.other = other;
     }
 
-    ContainsValidationExpression(List<?> objectList, String pattern) {
-        super(CONTAINS);
-        this.list = objectList;
+    EqualsValidationExpression(Object other, String pattern) {
+        super(EQUALS);
+        this.other = other;
         this.pattern = pattern;
     }
 
     @Override
     public boolean evaluate(String fieldName, Object value) {
-        return super.evaluate(fieldName, value) && list.contains(value);
+        return super.evaluate(fieldName, value) && value.equals(other);
     }
 
     @Override
     public String getValidationErrorMessage() {
-        return format(NOT_CONTAINS_VALIDATION_ERROR, fieldName, value, list.toString());
+        return format(NOT_EQUALS_VALIDATION_ERROR, fieldName, value, other);
     }
 }

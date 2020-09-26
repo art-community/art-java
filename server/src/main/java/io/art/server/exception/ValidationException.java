@@ -19,8 +19,8 @@
 package io.art.server.exception;
 
 import lombok.Getter;
-import io.art.server.service.validation.Validatable;
-import io.art.server.service.validation.ValidationExpression;
+import io.art.server.validation.Validatable;
+import io.art.server.validation.ValidationExpression;
 
 import static io.art.core.caster.Caster.cast;
 import java.util.*;

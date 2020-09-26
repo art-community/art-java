@@ -16,33 +16,29 @@
  * limitations under the License.
  */
 
-package io.art.server.service.validation;
+package io.art.server.validation;
 
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
 import static java.text.MessageFormat.*;
 
-class EqualsValidationExpression extends ValidationExpression<Object> {
-    private final Object other;
-
-    EqualsValidationExpression(Object other) {
-        super(EQUALS);
-        this.other = other;
+class NotNullValidationExpression extends ValidationExpression<Object> {
+    NotNullValidationExpression() {
+        super(NOT_NULL);
     }
 
-    EqualsValidationExpression(Object other, String pattern) {
-        super(EQUALS);
-        this.other = other;
+    NotNullValidationExpression(String pattern) {
+        super(NOT_NULL);
         this.pattern = pattern;
     }
 
     @Override
     public boolean evaluate(String fieldName, Object value) {
-        return super.evaluate(fieldName, value) && value.equals(other);
+        return super.evaluate(fieldName, value);
     }
 
     @Override
     public String getValidationErrorMessage() {
-        return format(NOT_EQUALS_VALIDATION_ERROR, fieldName, value, other);
+        return format(NULL_VALIDATION_ERROR, fieldName);
     }
 }

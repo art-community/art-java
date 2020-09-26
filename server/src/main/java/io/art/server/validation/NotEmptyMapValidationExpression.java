@@ -16,24 +16,25 @@
  * limitations under the License.
  */
 
-package io.art.server.service.validation;
+package io.art.server.validation;
 
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
 import static java.text.MessageFormat.*;
+import java.util.*;
 
-class NotEmptyStringValidationExpression extends ValidationExpression<String> {
-    NotEmptyStringValidationExpression() {
-        super(NOT_EMPTY_STRING);
+class NotEmptyMapValidationExpression extends ValidationExpression<Map<?, ?>> {
+    NotEmptyMapValidationExpression() {
+        super(NOT_EMPTY_MAP);
     }
 
-    NotEmptyStringValidationExpression(String pattern) {
-        super(NOT_EMPTY_STRING);
+    NotEmptyMapValidationExpression(String pattern) {
+        super(NOT_EMPTY_MAP);
         this.pattern = pattern;
     }
 
     @Override
-    public boolean evaluate(String fieldName, String value) {
+    public boolean evaluate(String fieldName, Map<?, ?> value) {
         return super.evaluate(fieldName, value) && !value.isEmpty();
     }
 

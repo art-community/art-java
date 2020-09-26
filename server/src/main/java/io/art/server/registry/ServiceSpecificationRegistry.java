@@ -18,7 +18,7 @@
 
 package io.art.server.registry;
 
-import io.art.server.service.specification.*;
+import io.art.server.specification.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;

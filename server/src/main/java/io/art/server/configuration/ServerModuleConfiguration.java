@@ -20,7 +20,7 @@ package io.art.server.configuration;
 
 import com.google.common.collect.*;
 import io.art.core.module.*;
-import io.art.server.service.model.*;
+import io.art.server.model.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;

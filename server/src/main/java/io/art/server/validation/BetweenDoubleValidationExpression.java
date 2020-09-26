@@ -16,32 +16,32 @@
  * limitations under the License.
  */
 
-package io.art.server.service.validation;
+package io.art.server.validation;
 
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.NOT_BETWEEN_VALIDATION_ERROR;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.BETWEEN_DOUBLE;
 import static java.text.MessageFormat.*;
 
-class BetweenLongValidationExpression extends ValidationExpression<Long> {
-    private final long lowerValue;
-    private final long greaterValue;
+class BetweenDoubleValidationExpression extends ValidationExpression<Double> {
+    private final double lowerValue;
+    private final double greaterValue;
 
-    BetweenLongValidationExpression(long lowerValue, long greaterValue) {
-        super(BETWEEN_LONG);
+    BetweenDoubleValidationExpression(Double lowerValue, Double greaterValue) {
+        super(BETWEEN_DOUBLE);
         this.lowerValue = lowerValue;
         this.greaterValue = greaterValue;
     }
 
-    BetweenLongValidationExpression(long lowerValue, long greaterValue, String pattern) {
-        super(BETWEEN_LONG);
+    BetweenDoubleValidationExpression(Double lowerValue, Double greaterValue, String pattern) {
+        super(BETWEEN_DOUBLE);
         this.lowerValue = lowerValue;
         this.greaterValue = greaterValue;
         this.pattern = pattern;
     }
 
     @Override
-    public boolean evaluate(String fieldName, Long value) {
-        return super.evaluate(fieldName, value) && value > lowerValue && value < greaterValue;
+    public boolean evaluate(String fieldName, Double value) {
+        return super.evaluate(fieldName, value) && value < lowerValue && value > greaterValue;
     }
 
     @Override
@@ -49,3 +49,4 @@ class BetweenLongValidationExpression extends ValidationExpression<Long> {
         return format(NOT_BETWEEN_VALIDATION_ERROR, fieldName, value, lowerValue, greaterValue);
     }
 }
+

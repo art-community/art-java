@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-package io.art.server.service.implementation;
+package io.art.server.implementation;
 
 import io.art.core.model.*;
 import io.art.server.exception.*;
 import io.art.server.interceptor.*;
 import io.art.server.interceptor.ServiceMethodInterceptor.*;
-import io.art.server.service.specification.*;
+import io.art.server.specification.*;
 import lombok.*;
 import static io.art.server.module.ServerModule.*;
 import java.util.*;

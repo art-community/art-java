@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.server.service.validation;
+package io.art.server.validation;
 
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.NOT_BETWEEN_VALIDATION_ERROR;
 import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.BETWEEN_INT;

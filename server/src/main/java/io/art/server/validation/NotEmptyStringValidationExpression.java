@@ -16,29 +16,29 @@
  * limitations under the License.
  */
 
-package io.art.server.service.validation;
+package io.art.server.validation;
 
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
 import static java.text.MessageFormat.*;
 
-class NotNullValidationExpression extends ValidationExpression<Object> {
-    NotNullValidationExpression() {
-        super(NOT_NULL);
+class NotEmptyStringValidationExpression extends ValidationExpression<String> {
+    NotEmptyStringValidationExpression() {
+        super(NOT_EMPTY_STRING);
     }
 
-    NotNullValidationExpression(String pattern) {
-        super(NOT_NULL);
+    NotEmptyStringValidationExpression(String pattern) {
+        super(NOT_EMPTY_STRING);
         this.pattern = pattern;
     }
 
     @Override
-    public boolean evaluate(String fieldName, Object value) {
-        return super.evaluate(fieldName, value);
+    public boolean evaluate(String fieldName, String value) {
+        return super.evaluate(fieldName, value) && !value.isEmpty();
     }
 
     @Override
     public String getValidationErrorMessage() {
-        return format(NULL_VALIDATION_ERROR, fieldName);
+        return format(EMPTY_VALIDATION_ERROR, fieldName);
     }
 }

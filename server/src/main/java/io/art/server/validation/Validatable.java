@@ -16,21 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.server.service.model;
+package io.art.server.validation;
 
-import io.art.core.module.*;
-import io.art.resilience.configuration.*;
-import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
+public interface Validatable {
+    default void onValidating(Validator validator) {
 
-@Getter
-@AllArgsConstructor
-public class ServiceMethodConfiguration {
-    private final boolean deactivated;
-
-    public static ServiceMethodConfiguration from(ModuleConfigurationSource source) {
-        boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
-        return new ServiceMethodConfiguration(deactivated);
     }
 }

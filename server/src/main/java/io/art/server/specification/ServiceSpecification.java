@@ -16,10 +16,20 @@
  * limitations under the License.
  */
 
-package io.art.server.service.validation;
+package io.art.server.specification;
 
-public interface Validatable {
-    default void onValidating(Validator validator) {
+import io.art.server.model.*;
+import lombok.*;
+import java.util.*;
 
-    }
+@Getter
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class ServiceSpecification {
+    @EqualsAndHashCode.Include
+    private final String serviceId;
+    private final ServiceConfiguration configuration;
+
+    @Singular("method")
+    private final Map<String, ServiceMethodSpecification> methods;
 }

@@ -16,20 +16,20 @@
  * limitations under the License.
  */
 
-package io.art.server.service.specification;
+package io.art.server.model;
 
-import io.art.server.service.model.*;
+import io.art.core.module.*;
 import lombok.*;
-import java.util.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 
 @Getter
-@Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ServiceSpecification {
-    @EqualsAndHashCode.Include
-    private final String serviceId;
-    private final ServiceConfiguration configuration;
+@AllArgsConstructor
+public class ServiceMethodConfiguration {
+    private final boolean deactivated;
 
-    @Singular("method")
-    private final Map<String, ServiceMethodSpecification> methods;
+    public static ServiceMethodConfiguration from(ModuleConfigurationSource source) {
+        boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
+        return new ServiceMethodConfiguration(deactivated);
+    }
 }

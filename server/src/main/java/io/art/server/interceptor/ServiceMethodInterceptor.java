@@ -19,7 +19,7 @@
 package io.art.server.interceptor;
 
 import io.art.core.model.*;
-import io.art.server.service.specification.*;
+import io.art.server.specification.*;
 import lombok.*;
 import static io.art.server.interceptor.ServiceMethodInterceptor.ExceptionInterceptionResult.ExceptionInterceptionStrategy.*;
 

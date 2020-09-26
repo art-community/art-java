@@ -16,30 +16,34 @@
  * limitations under the License.
  */
 
-package io.art.server.service.validation;
+package io.art.server.validation;
 
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
 import static java.text.MessageFormat.*;
 import java.util.*;
 
-class NotEmptyCollectionValidationExpression extends ValidationExpression<Collection<?>> {
-    NotEmptyCollectionValidationExpression() {
-        super(NOT_EMPTY_COLLECTION);
+class ContainsValidationExpression extends ValidationExpression<Object> {
+    private final List<?> list;
+
+    ContainsValidationExpression(List<?> objectList) {
+        super(CONTAINS);
+        this.list = objectList;
     }
 
-    NotEmptyCollectionValidationExpression(String pattern) {
-        super(NOT_EMPTY_COLLECTION);
+    ContainsValidationExpression(List<?> objectList, String pattern) {
+        super(CONTAINS);
+        this.list = objectList;
         this.pattern = pattern;
     }
 
     @Override
-    public boolean evaluate(String fieldName, Collection<?> value) {
-        return super.evaluate(fieldName, value) && !value.isEmpty();
+    public boolean evaluate(String fieldName, Object value) {
+        return super.evaluate(fieldName, value) && list.contains(value);
     }
 
     @Override
     public String getValidationErrorMessage() {
-        return format(EMPTY_VALIDATION_ERROR, fieldName);
+        return format(NOT_CONTAINS_VALIDATION_ERROR, fieldName, value, list.toString());
     }
 }

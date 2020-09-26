@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.server.service.model;
+package io.art.server.model;
 
 import com.google.common.collect.*;
 import io.art.core.module.*;
