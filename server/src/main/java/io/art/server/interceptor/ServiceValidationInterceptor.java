@@ -25,6 +25,7 @@ import io.art.server.service.specification.*;
 import io.art.server.service.validation.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.orElse;
 import static io.art.core.model.InterceptionResult.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.*;
@@ -35,11 +36,13 @@ public class ServiceValidationInterceptor implements ServiceMethodInterceptor<Ob
     public InterceptionResult interceptRequest(Object request, ServiceMethodSpecification specification) {
         switch (specification.getRequestProcessingMode()) {
             case BLOCKING:
-                validateBlocking(request, specification);
+                validateBlockingRequest(request, specification);
                 break;
             case REACTIVE_MONO:
+                request = orElse(request, Mono.empty());
                 return next(validateReactiveMono(Mono.from(cast(request)), specification));
             case REACTIVE_FLUX:
+                request = orElse(request, Flux.empty());
                 return next(validateReactiveFlux(Flux.from(cast(request)), specification));
         }
         return next(request);
@@ -55,7 +58,7 @@ public class ServiceValidationInterceptor implements ServiceMethodInterceptor<Ob
         return ExceptionInterceptionResult.next(throwable);
     }
 
-    private static void validateBlocking(Object request, ServiceMethodSpecification specification) {
+    private static void validateBlockingRequest(Object request, ServiceMethodSpecification specification) {
         RequestValidationPolicy policy = specification.getValidationPolicy();
         if (policy == NOT_NULL) {
             if (isNull(request)) throw new ValidationException(REQUEST_IS_NULL);
@@ -72,15 +75,15 @@ public class ServiceValidationInterceptor implements ServiceMethodInterceptor<Ob
 
     private static Mono<Object> validateReactiveMono(Mono<Object> request, ServiceMethodSpecification specification) {
         RequestValidationPolicy policy = specification.getValidationPolicy();
-        return request.doOnNext(data -> validateReactivePayload(policy, data));
+        return request.doOnNext(data -> validateReactiveData(policy, data));
     }
 
     private static Flux<Object> validateReactiveFlux(Flux<Object> request, ServiceMethodSpecification specification) {
         RequestValidationPolicy policy = specification.getValidationPolicy();
-        return request.doOnNext(data -> validateReactivePayload(policy, data));
+        return request.doOnNext(data -> validateReactiveData(policy, data));
     }
 
-    private static void validateReactivePayload(RequestValidationPolicy policy, Object data) {
+    private static void validateReactiveData(RequestValidationPolicy policy, Object data) {
         if (policy == NOT_NULL) {
             if (isNull(data)) throw new ValidationException(REQUEST_IS_NULL);
         }
