@@ -18,6 +18,9 @@
 
 package io.art.server.exception;
 
+import lombok.*;
+
+@Getter
 public class ServiceMethodExecutionException extends RuntimeException {
     private final String serviceId;
     private final String methodId;
