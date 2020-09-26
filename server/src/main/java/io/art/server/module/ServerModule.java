@@ -32,12 +32,10 @@ import static io.art.core.context.Context.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.mapping.PrimitiveMapping.*;
-import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
 import static io.art.server.service.implementation.ServiceMethodImplementation.*;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
-import java.util.function.*;
 
 @Getter
 public class ServerModule implements StatefulModule<ServerModuleConfiguration, ServerModuleConfiguration.Configurator, ServerModuleState> {
@@ -66,7 +64,7 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                         .id("id-1")
                         .method("id", ServiceMethodSpecification.builder()
                                 .interceptor(new ServiceValidationInterceptor())
-                                .interceptor(new ServiceLoggingInterceptor())
+                                .interceptor(new ServiceLoggingRequestInterceptor())
                                 .requestProcessingMode(BLOCKING)
                                 .responseProcessingMode(BLOCKING)
                                 .requestMapper(value -> toString.map(asPrimitive(value)))

@@ -94,7 +94,7 @@ class HttpServiceServlet extends HttpServlet {
         putLoggingParameters(ServiceLoggingContext.builder()
                 .serviceId(command.getServiceId())
                 .serviceMethodId(serviceCommand.toString())
-                .serviceMethodCommand(serviceCommand.toString() + DOT + getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID))
+                .serviceMethodCommand(serviceCommand.toString() + DOT + orElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID))
                 .logEventType(HTTP_SERVLET_EVENT)
                 .build());
         try {

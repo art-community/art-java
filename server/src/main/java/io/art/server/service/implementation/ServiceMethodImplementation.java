@@ -18,70 +18,89 @@
 
 package io.art.server.service.implementation;
 
-import com.google.common.collect.*;
-import io.art.server.constants.ServerModuleConstants.*;
+import io.art.core.model.*;
 import io.art.server.exception.*;
 import io.art.server.interceptor.*;
+import io.art.server.interceptor.ServiceMethodInterceptor.*;
 import io.art.server.service.specification.*;
 import lombok.*;
-import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
-import static io.art.server.constants.ServerModuleConstants.ServiceMethodImplementationMode.*;
 import static io.art.server.module.ServerModule.*;
-import static java.text.MessageFormat.*;
+import java.util.*;
 import java.util.function.*;
-
 
 @Getter
 @RequiredArgsConstructor
 public class ServiceMethodImplementation {
-    private Consumer<Object> consumer;
-    private Supplier<Object> producer;
-    private Function<Object, Object> handler;
-    private final ServiceMethodImplementationMode mode;
     private final String serviceId;
     private final String methodId;
+    private final Function<Object, Object> functor;
     @Getter(lazy = true)
     private final ServiceSpecification serviceSpecification = services().get(serviceId);
     @Getter(lazy = true)
     private final ServiceMethodSpecification methodSpecification = getServiceSpecification().getMethods().get(methodId);
-    private ServiceExecutionInterceptor<Object, Object> interceptor;
 
     public static ServiceMethodImplementation consumer(Consumer<Object> consumer, String serviceId, String methodId) {
-        ServiceMethodImplementation implementation = new ServiceMethodImplementation(CONSUMER, serviceId, methodId);
-        implementation.consumer = consumer;
-        return implementation;
+        return new ServiceMethodImplementation(serviceId, methodId, request -> {
+            consumer.accept(request);
+            return null;
+        });
     }
 
     public static ServiceMethodImplementation producer(Supplier<Object> producer, String serviceId, String methodId) {
-        ServiceMethodImplementation implementation = new ServiceMethodImplementation(PRODUCER, serviceId, methodId);
-        implementation.producer = producer;
-        return implementation;
+        return new ServiceMethodImplementation(serviceId, methodId, request -> producer.get());
     }
 
-    public static ServiceMethodImplementation handler(Function<Object, Object> handler, String serviceId, String methodId) {
-        ServiceMethodImplementation implementation = new ServiceMethodImplementation(HANDLER, serviceId, methodId);
-        implementation.handler = handler;
-        return implementation;
+    public static ServiceMethodImplementation handler(Function<Object, Object> function, String serviceId, String methodId) {
+        return new ServiceMethodImplementation(serviceId, methodId, function);
     }
 
     public Object execute() {
-//        if (mode == PRODUCER) {
-//            ServiceInterceptionContext<?, ?> context = new ServiceInterceptionContext<>(, this);
-//            interceptor.intercept(context);
-//            return producer.get();
-//        }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE, mode));
+        return execute(null);
     }
 
     public Object execute(Object request) {
-        switch (mode) {
-            case CONSUMER:
-                consumer.accept(request);
-                return null;
-            case PRODUCER:
-                return producer.get();
-            case HANDLER:
-                return handler.apply(request);
+        ServiceMethodSpecification methodSpecification = getMethodSpecification();
+        List<ServiceMethodInterceptor<Object, Object>> interceptors = methodSpecification.getInterceptors();
+        for (ServiceMethodInterceptor<Object, Object> interceptor : interceptors) {
+            InterceptionResult interceptionResult = interceptor.interceptRequest(request, methodSpecification);
+            request = interceptionResult.getOut();
+            switch (interceptionResult.getStrategy()) {
+                case PROCESS:
+                    return processExecution(request);
+                case TERMINATE:
+                    return request;
+            }
         }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE, mode));    }
+        return processExecution(request);
+    }
+
+    private Object processExecution(Object request) {
+        ServiceMethodSpecification methodSpecification = getMethodSpecification();
+        List<ServiceMethodInterceptor<Object, Object>> interceptors = methodSpecification.getInterceptors();
+        try {
+            Object response = functor.apply(request);
+            for (ServiceMethodInterceptor<Object, Object> interceptor : interceptors) {
+                InterceptionResult interceptionResult = interceptor.interceptResponse(request, methodSpecification);
+                response = interceptionResult.getOut();
+                switch (interceptionResult.getStrategy()) {
+                    case PROCESS:
+                    case TERMINATE:
+                        return response;
+                }
+            }
+            return response;
+        } catch (Throwable throwable) {
+            for (ServiceMethodInterceptor<Object, Object> interceptor : interceptors) {
+                ExceptionInterceptionResult interceptionResult = interceptor.interceptException(throwable, methodSpecification);
+                throwable = interceptionResult.getOutException();
+                switch (interceptionResult.getStrategy()) {
+                    case THROW_EXCEPTION:
+                        throw new ServiceMethodExecutionException(interceptionResult.getOutException());
+                    case RETURN_FALLBACK:
+                        return interceptionResult.getFallback();
+                }
+            }
+            throw new ServiceMethodExecutionException(throwable);
+        }
+    }
 }

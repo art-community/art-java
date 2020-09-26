@@ -18,31 +18,33 @@
 
 package io.art.entity.interceptor;
 
+import io.art.core.model.*;
 import io.art.entity.immutable.*;
-import static io.art.entity.interceptor.ValueInterceptionResult.*;
+import static io.art.core.model.InterceptionResult.*;
 import java.util.function.*;
 
-public interface ValueInterceptor<InValue extends Value, OutValue extends Value> {
-    ValueInterceptionResult<InValue, OutValue> intercept(InValue value);
+@FunctionalInterface
+public interface ValueInterceptor {
+    InterceptionResult intercept(Value value);
 
-    static <InValue extends Value> ValueInterceptor<InValue, InValue> intercept(Consumer<InValue> consumer) {
+    static ValueInterceptor intercept(Consumer<Value> consumer) {
         return value -> {
             consumer.accept(value);
-            return nextInterceptor(value);
+            return next(value);
         };
     }
 
-    static <InValue extends Value> ValueInterceptor<InValue, InValue> interceptAndProcess(Consumer<InValue> consumer) {
+    static ValueInterceptor interceptAndProcess(Consumer<Value> consumer) {
         return value -> {
             consumer.accept(value);
-            return processHandling(value);
+            return process(value);
         };
     }
 
-    static <InValue extends Value> ValueInterceptor<InValue, InValue> interceptAndStop(Consumer<InValue> consumer) {
+    static ValueInterceptor interceptAndTerminate(Consumer<Value> consumer) {
         return value -> {
             consumer.accept(value);
-            return stopHandling(value);
+            return terminate(value);
         };
     }
 }

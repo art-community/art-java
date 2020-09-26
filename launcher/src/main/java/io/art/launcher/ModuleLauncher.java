@@ -44,7 +44,6 @@ public class ModuleLauncher {
             context().loadModule(new ConfiguratorModule());
             List<ModuleConfigurationSource> sources = configuratorModule().configuration().orderedSources();
             ConfiguratorModel configuratorModel = model.getConfiguratorModel();
-
             logging(sources, configuratorModel);
             json(sources);
             xml(sources);
@@ -61,7 +60,6 @@ public class ModuleLauncher {
     private void json(List<ModuleConfigurationSource> sources) {
         context().loadModule(new JsonModule().configure(configurator -> configurator.from(sources)));
     }
-
 
     private void xml(List<ModuleConfigurationSource> sources) {
         context().loadModule(new XmlModule().configure(configurator -> configurator.from(sources)));

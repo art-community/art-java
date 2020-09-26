@@ -41,6 +41,6 @@ class ExceptionHttpJsonHandler implements HttpExceptionHandler<Throwable> {
         HttpRequestContext requestContext = httpServerModuleState().getRequestContext();
         writeResponseBody(response, error.getBytes(isNull(requestContext) ?
                 contextConfiguration().getCharset() :
-                getOrElse(requestContext.getAcceptCharset(), contextConfiguration().getCharset())));
+                orElse(requestContext.getAcceptCharset(), contextConfiguration().getCharset())));
     }
 }

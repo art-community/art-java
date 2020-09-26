@@ -18,8 +18,8 @@
 
 package io.art.server.service.specification;
 
-import com.google.common.collect.*;
 import io.art.entity.immutable.Value;
+import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
@@ -35,6 +35,7 @@ import static io.art.server.constants.ServerModuleConstants.RequestValidationPol
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
 import static java.text.MessageFormat.*;
 import static java.util.Optional.*;
+import java.util.*;
 import java.util.function.*;
 
 @Getter
@@ -51,10 +52,16 @@ public class ServiceMethodSpecification {
     private final ServiceMethodProcessingMode responseProcessingMode;
     private final Supplier<ServiceMethodConfiguration> configuration;
     private final ServiceSpecification serviceSpecification;
+
     @Builder.Default
     private final RequestValidationPolicy validationPolicy = NON_VALIDATABLE;
+
+    @Singular("requestValueInterceptor")
+    private final List<ValueInterceptor> requestValueInterceptor;
+    @Singular("responseValueInterceptor")
+    private final List<ValueInterceptor> responseValueInterceptor;
     @Singular("interceptor")
-    private final ImmutableList<ServiceExecutionInterceptor<Object, Object>> interceptors;
+    private final List<ServiceMethodInterceptor<Object, Object>> interceptors;
 
     public void callBlocking() {
         if (deactivated()) {

@@ -69,7 +69,7 @@ public class KafkaStreamsRegistry {
         if (isEmpty(streamId)) throw new KafkaConsumerModuleException(STREAM_ID_IS_EMPTY);
         StreamsBuilder builder = new StreamsBuilder();
         KafkaStreamContainer streamContainer = streamCreator.apply(builder);
-        KafkaStreamConfiguration configuration = getOrElse(streamContainer.getConfiguration(), kafkaConsumerModule()
+        KafkaStreamConfiguration configuration = orElse(streamContainer.getConfiguration(), kafkaConsumerModule()
                 .getKafkaStreamConfigurations()
                 .get(streamId));
         if (isEmpty(configuration.getBrokers())) throw new KafkaConsumerModuleException(BROKERS_ARE_EMPTY);

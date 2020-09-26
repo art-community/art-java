@@ -74,7 +74,7 @@ class HttpCommunicationExecutor {
             if (strategy == PROCESS) break;
             if (strategy == TERMINATE) return null;
         }
-        CloseableHttpClient client = getOrElse(configuration.getSynchronousClient(), httpClientModule().getClient());
+        CloseableHttpClient client = orElse(configuration.getSynchronousClient(), httpClientModule().getClient());
         return executeHttpUriRequest(configuration, uriRequest, client);
     }
 
@@ -127,7 +127,7 @@ class HttpCommunicationExecutor {
             if (strategy == PROCESS) break;
             if (strategy == TERMINATE) return completedFuture(empty());
         }
-        CloseableHttpAsyncClient client = getOrElse(configuration.getAsynchronousClient(), httpClientModule().getAsynchronousClient());
+        CloseableHttpAsyncClient client = orElse(configuration.getAsynchronousClient(), httpClientModule().getAsynchronousClient());
         CompletableFuture<Optional<?>> completableFuture = new CompletableFuture<>();
         HttpAsynchronousClientCallback callback = HttpAsynchronousClientCallback.builder()
                 .httpUriRequest(httpUriRequest)

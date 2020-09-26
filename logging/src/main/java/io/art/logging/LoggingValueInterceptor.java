@@ -18,10 +18,11 @@
 
 package io.art.logging;
 
+import io.art.core.model.*;
 import io.art.entity.immutable.*;
 import io.art.entity.interceptor.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.entity.interceptor.ValueInterceptionResult.*;
+import static io.art.core.model.InterceptionResult.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static io.art.logging.LoggingModuleConstants.*;
@@ -29,12 +30,12 @@ import static io.art.logging.ThreadContextExtensions.*;
 import static java.text.MessageFormat.*;
 import static org.apache.logging.log4j.ThreadContext.*;
 
-public class LoggingValueInterceptor<InValue extends Value, OutValue extends Value> implements ValueInterceptor<InValue, OutValue> {
+public class LoggingValueInterceptor implements ValueInterceptor {
     @Override
-    public ValueInterceptionResult<InValue, OutValue> intercept(Value value) {
+    public InterceptionResult intercept(Value value) {
         putIfNotNull(REQUEST_VALUE_KEY, value);
-        loggingModule().configuration().getLogger(LoggingValueInterceptor.class).info(format(VALUE_LOG_MESSAGE, value));
+        logger(LoggingValueInterceptor.class).info(format(VALUE_LOG_MESSAGE, value));
         remove(REQUEST_VALUE_KEY);
-        return cast(nextInterceptor(value));
+        return cast(next(value));
     }
 }

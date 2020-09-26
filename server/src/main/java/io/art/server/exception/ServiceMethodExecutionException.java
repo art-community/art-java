@@ -22,4 +22,8 @@ public class ServiceMethodExecutionException extends RuntimeException {
     public ServiceMethodExecutionException(String message) {
         super(message);
     }
+
+    public ServiceMethodExecutionException(Throwable cause) {
+        super(cause);
+    }
 }

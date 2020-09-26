@@ -135,7 +135,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public HttpCommunicator client(CloseableHttpClient client) {
-        configuration.setSynchronousClient(validator.notNullField(getOrElse(client, httpClientModule().getClient()), "synchronousClient"));
+        configuration.setSynchronousClient(validator.notNullField(orElse(client, httpClientModule().getClient()), "synchronousClient"));
         return this;
     }
 
@@ -160,20 +160,20 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public HttpCommunicator config(RequestConfig requestConfig) {
-        configuration.setRequestConfig(validator.notNullField(getOrElse(requestConfig, httpClientModule().getRequestConfig()), "requestConfig"));
+        configuration.setRequestConfig(validator.notNullField(orElse(requestConfig, httpClientModule().getRequestConfig()), "requestConfig"));
         return this;
     }
 
     @Override
     public HttpCommunicator version(HttpVersion httpVersion) {
-        HttpVersion version = getOrElse(httpVersion, httpClientModule().getHttpVersion());
+        HttpVersion version = orElse(httpVersion, httpClientModule().getHttpVersion());
         configuration.setHttpProtocolVersion(validator.notNullField(version, "httpVersion"));
         return this;
     }
 
     @Override
     public HttpCommunicator requestCharset(Charset requestContentCharset) {
-        Charset charset = getOrElse(requestContentCharset, contextConfiguration().getCharset());
+        Charset charset = orElse(requestContentCharset, contextConfiguration().getCharset());
         configuration.setRequestContentCharset(validator.notNullField(charset, "requestContentCharset"));
         return this;
     }

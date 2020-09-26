@@ -21,10 +21,8 @@ package io.art.entity.mapping;
 import io.art.entity.factory.*;
 import io.art.entity.immutable.*;
 import io.art.entity.mapper.ValueFromModelMapper.*;
-import io.art.entity.mapper.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
-import static io.art.entity.mapper.ValueMapper.*;
 
 @UtilityClass
 public class PrimitiveMapping {

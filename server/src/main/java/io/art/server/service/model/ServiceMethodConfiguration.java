@@ -31,7 +31,7 @@ public class ServiceMethodConfiguration {
     private final ResilienceConfiguration resilience;
 
     public static ServiceMethodConfiguration from(ModuleConfigurationSource source) {
-        boolean deactivated = getOrElse(source.getBool(DEACTIVATED_KEY), false);
+        boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
         ResilienceConfiguration resilience = let(source.getInner(RESILIENCE_KEY), ResilienceConfiguration::from);
         return new ServiceMethodConfiguration(deactivated, resilience);
     }

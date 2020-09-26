@@ -61,7 +61,7 @@ public class HttpResourceService {
         HttpResource resource;
         if (nonNull(resource = resourcePathMappings.get(resourcePath))) {
             return cast(resource.getType() == STRING
-                    ? stringPrimitive(getStringResource(resource.getPath(), getOrElse(resource.getCharset(), charset), resourceConfiguration))
+                    ? stringPrimitive(getStringResource(resource.getPath(), orElse(resource.getCharset(), charset), resourceConfiguration))
                     : binary(getBinaryResource(resource.getPath(), resourceConfiguration)));
         }
 
@@ -72,16 +72,16 @@ public class HttpResourceService {
             HttpResource customResource;
             if (nonNull(customResource = resourceExtensionMapping.getCustomHttpResource())) {
                 return cast(customResource.getType() == STRING
-                        ? stringPrimitive(getStringResource(customResource.getPath(), getOrElse(customResource.getCharset(), charset), resourceConfiguration))
+                        ? stringPrimitive(getStringResource(customResource.getPath(), orElse(customResource.getCharset(), charset), resourceConfiguration))
                         : binary(getBinaryResource(customResource.getPath(), resourceConfiguration)));
             }
             return cast(resourceExtensionMapping.getResourceType() == STRING
-                    ? stringPrimitive(getStringResource(resourcePath, getOrElse(resourceExtensionMapping.getMimeType().getCharset(), charset), resourceConfiguration))
+                    ? stringPrimitive(getStringResource(resourcePath, orElse(resourceExtensionMapping.getMimeType().getCharset(), charset), resourceConfiguration))
                     : binary(getBinaryResource(resourcePath, resourceConfiguration)));
         }
         HttpResource defaultResource = resourceConfiguration.getDefaultResource();
         return cast(defaultResource.getType() == STRING
-                ? stringPrimitive(getStringResource(defaultResource.getPath(), getOrElse(defaultResource.getCharset(), charset), resourceConfiguration))
+                ? stringPrimitive(getStringResource(defaultResource.getPath(), orElse(defaultResource.getCharset(), charset), resourceConfiguration))
                 : binary(getBinaryResource(defaultResource.getPath(), resourceConfiguration)));
 
     }

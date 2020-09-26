@@ -24,11 +24,11 @@ import java.util.function.*;
 
 @UtilityClass
 public class NullityChecker {
-    public static <T> T getOrElse(T value, T orElse) {
+    public static <T> T orElse(T value, T orElse) {
         return isNull(value) ? orElse : value;
     }
 
-    public static <T> T getOrElse(T value, Supplier<T> orElse) {
+    public static <T> T orElse(T value, Supplier<T> orElse) {
         return isNull(value) ? orElse.get() : value;
     }
 

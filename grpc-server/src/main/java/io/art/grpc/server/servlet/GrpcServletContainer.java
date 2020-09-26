@@ -83,7 +83,7 @@ public class GrpcServletContainer extends GrpcServlet {
             putLoggingParameters(ServiceLoggingContext.builder()
                     .serviceId(serviceId)
                     .serviceMethodId(serviceMethodId)
-                    .serviceMethodCommand(serviceMethodId + DOT + getOrElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID))
+                    .serviceMethodCommand(serviceMethodId + DOT + orElse(get(REQUEST_ID_KEY), DEFAULT_REQUEST_ID))
                     .logEventType(GRPC_LOGGING_EVENT)
                     .loadedServices(serviceModuleState().getServiceRegistry().getServices().keySet())
                     .build());
@@ -145,8 +145,8 @@ public class GrpcServletContainer extends GrpcServlet {
             EntityToModelMapper<ServiceRequest<?>> toServiceRequest = cast(toServiceRequest(cast(grpcMethod.requestMapper())));
             ServiceRequest<?> mappedServiceRequest = toServiceRequest.map(asEntity(serviceRequestEntity));
             ServiceRequest<?> serviceRequest = isEmpty(serviceRequestEntity.get(REQUEST_DATA)) || isNull(grpcMethod.requestMapper())
-                    ? newServiceRequest(command, getOrElse(grpcMethod.validationPolicy(), NON_VALIDATABLE))
-                    : newServiceRequest(command, mappedServiceRequest.getRequestData(), getOrElse(grpcMethod.validationPolicy(), NON_VALIDATABLE));
+                    ? newServiceRequest(command, orElse(grpcMethod.validationPolicy(), NON_VALIDATABLE))
+                    : newServiceRequest(command, mappedServiceRequest.getRequestData(), orElse(grpcMethod.validationPolicy(), NON_VALIDATABLE));
             ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(serviceRequest);
             handleResponse(responseObserver, grpcMethod, serviceResponse);
         }

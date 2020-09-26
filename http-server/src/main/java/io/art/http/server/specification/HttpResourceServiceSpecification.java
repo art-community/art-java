@@ -81,7 +81,7 @@ public class HttpResourceServiceSpecification implements HttpServiceSpecificatio
     @SuppressWarnings("All")
     public <P, R> R executeMethod(String methodId, P request) {
         if (GET_RESOURCE.equals(methodId)) {
-            return cast(getHttpResource(cast(request), getOrElse(resourceConfiguration, resourceConfiguration = httpServerModule().getResourceConfiguration())));
+            return cast(getHttpResource(cast(request), orElse(resourceConfiguration, resourceConfiguration = httpServerModule().getResourceConfiguration())));
         }
         throw new UnknownServiceMethodException(getServiceId(), methodId);
     }

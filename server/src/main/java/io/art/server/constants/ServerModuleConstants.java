@@ -37,12 +37,6 @@ public interface ServerModuleConstants {
         String METHODS_KEY = "methods";
     }
 
-    enum ServiceMethodImplementationMode {
-        CONSUMER,
-        PRODUCER,
-        HANDLER
-    }
-
     enum ServiceMethodProcessingMode {
         BLOCKING,
         REACTIVE_MONO,
@@ -63,14 +57,13 @@ public interface ServerModuleConstants {
     }
 
     interface LoggingMessages {
-        String EXECUTION_SERVICE_MESSAGE = success("Executing service: ''{0}.{1}'' with request: ''{2}''");
+        String EXECUTING_SERVICE_MESSAGE = success("Executing service: ''{0}.{1}'' with request: ''{2}''");
         String SERVICE_FAILED_MESSAGE = error("Service ''{0}.{1}'' execution failed\n{2}");
         String SERVICE_EXECUTED_MESSAGE = success("Successfully executed service: ''{0}.{1}'' with response: ''{2}''");
         String SERVICE_REGISTRATION_MESSAGE = success("Registering service: ''{0}''");
     }
 
     interface ExceptionsMessages {
-        String UNKNOWN_SERVICE_METHOD_IMPLEMENTATION_MODE = "Unknown service method implementation mode: ''{0}''";
         String UNKNOWN_PROCESSING_MODE = "Unknown processing mode: ''{0}''";
         String INVALID_CHANNEL_PROCESSING_MODE = "Invalid processing mode: ''{0}'' for channel processing";
         String NOT_BETWEEN_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' not between ''{2,number,#}'' and ''{3,number,#}''";

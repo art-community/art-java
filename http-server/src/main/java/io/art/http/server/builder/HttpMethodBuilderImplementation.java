@@ -18,6 +18,7 @@
 
 package io.art.http.server.builder;
 
+import io.art.core.checker.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import io.art.entity.immutable.Value;
@@ -41,7 +42,7 @@ import java.util.Set;
 import static java.util.Collections.emptySet;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.StringConstants.SLASH;
-import static io.art.core.checker.NullityChecker.getOrElse;
+import static io.art.core.checker.NullityChecker.orElse;
 import static io.art.core.factory.CollectionsFactory.linkedListOf;
 import static io.art.core.factory.CollectionsFactory.setOf;
 import static io.art.http.constants.HttpRequestDataSource.*;
@@ -87,7 +88,7 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
         return serviceConfigBuilder.add(HttpService.HttpMethod.builder()
                 .methodId(methodId)
                 .path(HttpPath.builder().contextPath(path)
-                        .parameters(getOrElse(pathParams, emptySet()))
+                        .parameters(NullityChecker.orElse(pathParams, emptySet()))
                         .build())
                 .methodType(type)
                 .requestDataSource(requestDataResource)
@@ -96,9 +97,9 @@ public class HttpMethodBuilderImplementation implements HttpMethodBuilder,
                 .exceptionMapper(exceptionMapper)
                 .requestInterceptors(requestInterceptors)
                 .responseInterceptors(responseInterceptors)
-                .requestValidationPolicy(getOrElse(requestValidationPolicy, NON_VALIDATABLE))
-                .consumesMimeType(getOrElse(consumesMimeType, httpServerModule().getConsumesMimeTypeMapper()))
-                .producesMimeType(getOrElse(producesMimeType, httpServerModule().getProducesMimeTypeMapper()))
+                .requestValidationPolicy(orElse(requestValidationPolicy, NON_VALIDATABLE))
+                .consumesMimeType(NullityChecker.orElse(consumesMimeType, httpServerModule().getConsumesMimeTypeMapper()))
+                .producesMimeType(NullityChecker.orElse(producesMimeType, httpServerModule().getProducesMimeTypeMapper()))
                 .ignoreRequestAcceptType(ignoreRequestAcceptType)
                 .ignoreRequestContentType(ignoreRequestContentType)
                 .overrideResponseContentType(overrideResponseContentType)

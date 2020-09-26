@@ -73,7 +73,7 @@ public class RsocketAcceptor extends AbstractRSocket {
         ServiceResponse<?> serviceResponse = executeServiceMethodUnchecked(context.getRequest());
         RsocketService.RsocketMethod rsocketMethod = context.getRsocketReactiveMethods().getRsocketMethod();
         return context.getRsocketReactiveMethods().getReactiveMethod().responseProcessingMode() == STRAIGHT
-                ? just(writeServiceResponse(rsocketMethod, serviceResponse, getOrElse(rsocketMethod.overrideResponseDataFormat(), dataFormat)))
+                ? just(writeServiceResponse(rsocketMethod, serviceResponse, orElse(rsocketMethod.overrideResponseDataFormat(), dataFormat)))
                 : writeResponseReactive(context.getRsocketReactiveMethods(), cast(serviceResponse), dataFormat).next();
     }
 

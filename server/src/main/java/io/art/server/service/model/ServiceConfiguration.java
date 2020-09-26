@@ -36,7 +36,7 @@ public class ServiceConfiguration {
     private final ImmutableMap<String, ServiceMethodConfiguration> methods;
 
     public static ServiceConfiguration from(ModuleConfigurationSource source) {
-        boolean deactivated = getOrElse(source.getBool(DEACTIVATED_KEY), false);
+        boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
         ResilienceConfiguration resilience = let(source.getInner(RESILIENCE_KEY), ResilienceConfiguration::from);
         ImmutableMap<String, ServiceMethodConfiguration> methods = ofNullable(source.getInnerMap(METHODS_KEY))
                 .map(configurations -> configurations.entrySet()

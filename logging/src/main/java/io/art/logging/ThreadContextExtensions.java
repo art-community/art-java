@@ -19,16 +19,18 @@
 package io.art.logging;
 
 import io.art.core.checker.*;
+import lombok.experimental.*;
 import static java.util.Objects.*;
 import static org.apache.logging.log4j.ThreadContext.*;
 
-public interface ThreadContextExtensions {
-    static void putIfNotNull(String key, Object value) {
+@UtilityClass
+public class ThreadContextExtensions {
+    public static void putIfNotNull(String key, Object value) {
         if (isNull(value)) return;
         put(key, value.toString());
     }
 
-    static void putIfNotEmpty(String key, Object value) {
+    public static void putIfNotEmpty(String key, Object value) {
         if (EmptinessChecker.isEmpty(value)) return;
         put(key, value.toString());
     }

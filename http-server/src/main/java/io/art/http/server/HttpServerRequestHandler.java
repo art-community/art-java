@@ -117,7 +117,7 @@ class HttpServerRequestHandler {
                 HttpContentMapper contentMapper = httpServerModule().getContentMappers().get(requestContentType);
                 Value value = contentMapper
                         .getFromContent()
-                        .mapFromBytes(readRequestBody(request), requestContentType, getOrElse(requestContentType.getCharset(), contextConfiguration().getCharset()));
+                        .mapFromBytes(readRequestBody(request), requestContentType, orElse(requestContentType.getCharset(), contextConfiguration().getCharset()));
                 if (valueIsNull(value)) return null;
                 return value;
             case PATH_PARAMETERS:

@@ -47,7 +47,7 @@ public class RsocketDataFormatMimeTypeConverter {
     }
 
     public static String toMimeType(RsocketDataFormat dataFormat) {
-        switch (getOrElse(dataFormat, rsocketModule().getDataFormat())) {
+        switch (orElse(dataFormat, rsocketModule().getDataFormat())) {
             case PROTOBUF:
                 return APPLICATION_PROTOBUF.getString();
             case JSON:

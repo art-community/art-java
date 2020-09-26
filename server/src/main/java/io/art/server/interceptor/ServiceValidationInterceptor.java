@@ -18,40 +18,49 @@
 
 package io.art.server.interceptor;
 
+import io.art.core.model.*;
 import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
 import io.art.server.service.specification.*;
 import io.art.server.service.validation.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.model.InterceptionResult.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.*;
 import static java.util.Objects.*;
 
-public class ServiceValidationInterceptor implements ServiceExecutionInterceptor<Object, Object> {
+public class ServiceValidationInterceptor implements ServiceMethodInterceptor<Object, Object> {
     @Override
-    public void intercept(ServiceInterceptionContext<Object, Object> context) {
-        ServiceMethodSpecification specification = context.getImplementation().getMethodSpecification();
+    public InterceptionResult interceptRequest(Object request, ServiceMethodSpecification specification) {
         switch (specification.getRequestProcessingMode()) {
             case BLOCKING:
-                validateBlocking(context);
-                return;
+                validateBlocking(request, specification);
+                break;
             case REACTIVE_MONO:
-                validateReactiveMono(context);
-                return;
+                return next(validateReactiveMono(Mono.from(cast(request)), specification));
             case REACTIVE_FLUX:
-                validateReactiveFlux(context);
+                return next(validateReactiveFlux(Flux.from(cast(request)), specification));
         }
+        return next(request);
     }
 
-    private void validateBlocking(ServiceInterceptionContext<Object, Object> context) {
-        RequestValidationPolicy policy = context.getImplementation().getMethodSpecification().getValidationPolicy();
-        Object request = context.getRequest();
+    @Override
+    public InterceptionResult interceptResponse(Object response, ServiceMethodSpecification specification) {
+        return next(response);
+    }
+
+    @Override
+    public ExceptionInterceptionResult interceptException(Throwable throwable, ServiceMethodSpecification specification) {
+        return ExceptionInterceptionResult.next(throwable);
+    }
+
+    private static void validateBlocking(Object request, ServiceMethodSpecification specification) {
+        RequestValidationPolicy policy = specification.getValidationPolicy();
         if (policy == NOT_NULL) {
             if (isNull(request)) throw new ValidationException(REQUEST_IS_NULL);
         }
         if (policy == NON_VALIDATABLE) {
-            context.process();
             return;
         }
         if (isNull(request)) {
@@ -59,20 +68,19 @@ public class ServiceValidationInterceptor implements ServiceExecutionInterceptor
         }
         Validatable requestData = (Validatable) request;
         requestData.onValidating(new Validator(requestData));
-        context.process();
     }
 
-    private void validateReactiveMono(ServiceInterceptionContext<Object, Object> context) {
-        RequestValidationPolicy policy = context.getImplementation().getMethodSpecification().getValidationPolicy();
-        context.processRequest(Mono.from(cast(context.getRequest())).doOnNext(data -> validateReactivePayload(policy, data)));
+    private static Mono<Object> validateReactiveMono(Mono<Object> request, ServiceMethodSpecification specification) {
+        RequestValidationPolicy policy = specification.getValidationPolicy();
+        return request.doOnNext(data -> validateReactivePayload(policy, data));
     }
 
-    private void validateReactiveFlux(ServiceInterceptionContext<Object, Object> context) {
-        RequestValidationPolicy policy = context.getImplementation().getMethodSpecification().getValidationPolicy();
-        context.processRequest(Flux.from(cast(context.getRequest())).doOnNext(data -> validateReactivePayload(policy, data)));
+    private static Flux<Object> validateReactiveFlux(Flux<Object> request, ServiceMethodSpecification specification) {
+        RequestValidationPolicy policy = specification.getValidationPolicy();
+        return request.doOnNext(data -> validateReactivePayload(policy, data));
     }
 
-    private void validateReactivePayload(RequestValidationPolicy policy, Object data) {
+    private static void validateReactivePayload(RequestValidationPolicy policy, Object data) {
         if (policy == NOT_NULL) {
             if (isNull(data)) throw new ValidationException(REQUEST_IS_NULL);
         }

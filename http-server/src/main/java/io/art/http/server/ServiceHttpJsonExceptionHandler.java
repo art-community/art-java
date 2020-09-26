@@ -42,7 +42,7 @@ class ServiceHttpJsonExceptionHandler implements HttpExceptionHandler<DefaultSer
         HttpRequestContext requestContext = httpServerModuleState().getRequestContext();
         Charset charset = isNull(requestContext)
                 ? contextConfiguration().getCharset()
-                : getOrElse(requestContext.getAcceptCharset(), contextConfiguration().getCharset());
+                : orElse(requestContext.getAcceptCharset(), contextConfiguration().getCharset());
         try {
             response.setStatus(INTERNAL_SERVER_ERROR.getCode());
             HttpContentMapper contentMapper = httpServerModule().getContentMappers().get(APPLICATION_JSON_UTF8);

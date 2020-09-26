@@ -79,7 +79,7 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
 
     @Override
     public SoapCommunicator requestConfig(RequestConfig requestConfig) {
-        RequestConfig config = getOrElse(requestConfig, httpClientModule().getRequestConfig());
+        RequestConfig config = orElse(requestConfig, httpClientModule().getRequestConfig());
         configuration.setRequestConfig(validator.notNullField(config, "requestConfig"));
         return this;
     }
@@ -98,8 +98,8 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
 
     @Override
     public SoapCommunicator envelopeNamespace(String prefix, String namespace) {
-        String envelopePrefix = getOrElse(prefix, soapClientModule().getEnvelopePrefix());
-        String envelopeNamespace = getOrElse(namespace, soapClientModule().getEnvelopeNamespace());
+        String envelopePrefix = orElse(prefix, soapClientModule().getEnvelopePrefix());
+        String envelopeNamespace = orElse(namespace, soapClientModule().getEnvelopeNamespace());
         configuration.setEnvelopePrefix(validator.notEmptyField(envelopePrefix, "envelopePrefix"));
         configuration.setEnvelopeNamespace(validator.notEmptyField(envelopeNamespace, "envelopeNamespace"));
         return this;
@@ -107,8 +107,8 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
 
     @Override
     public SoapCommunicator bodyNamespace(String prefix, String namespace) {
-        String bodyPrefix = getOrElse(prefix, soapClientModule().getBodyPrefix());
-        String bodyNamespace = getOrElse(namespace, soapClientModule().getBodyNamespace());
+        String bodyPrefix = orElse(prefix, soapClientModule().getBodyPrefix());
+        String bodyNamespace = orElse(namespace, soapClientModule().getBodyNamespace());
         configuration.setBodyPrefix(validator.notEmptyField(bodyPrefix, "bodyPrefix"));
         configuration.setBodyNamespace(validator.notEmptyField(bodyNamespace, "bodyNamespace"));
         return this;
@@ -135,7 +135,7 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
 
     @Override
     public SoapCommunicator requestCharset(Charset charset) {
-        Charset requestCharset = getOrElse(charset, contextConfiguration().getCharset());
+        Charset requestCharset = orElse(charset, contextConfiguration().getCharset());
         configuration.setRequestCharset(validator.notNullField(requestCharset, "requestCharset"));
         return this;
     }
@@ -190,7 +190,7 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
 
     @Override
     public SoapCommunicator version(HttpVersion httpVersion) {
-        HttpVersion httpProtocolVersion = getOrElse(httpVersion, httpClientModule().getHttpVersion());
+        HttpVersion httpProtocolVersion = orElse(httpVersion, httpClientModule().getHttpVersion());
         configuration.setHttpVersion(validator.notEmptyField(httpProtocolVersion, "httpVersion"));
         return this;
     }

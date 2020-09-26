@@ -39,7 +39,7 @@ public class XmlEntityRulesProcessor {
     private static void mapAttributes(XmlEntity entity, XmlEntityBuilder builder, Set<XmlEntityRule> rules) {
         Set<Entry<String, String>> attributes = entity.getAttributes().entrySet();
         for (Entry<String, String> attribute : attributes) {
-            String mappedAttribute = getOrElse(getAttributeFromRules(attribute.getValue(), rules), attribute.getValue());
+            String mappedAttribute = orElse(getAttributeFromRules(attribute.getValue(), rules), attribute.getValue());
             builder.attribute(attribute.getKey(), mappedAttribute);
         }
     }
@@ -62,7 +62,7 @@ public class XmlEntityRulesProcessor {
         }
 
         for (Entry<String, String> namespace : namespaces) {
-            String namespaceValue = getOrElse(getNamespaceFromRules(namespace.getValue(), rules), namespace.getValue());
+            String namespaceValue = orElse(getNamespaceFromRules(namespace.getValue(), rules), namespace.getValue());
             builder.namespaceField(namespace.getKey(), namespaceValue);
             builder.namespace(namespaceValue);
         }
