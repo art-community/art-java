@@ -19,22 +19,11 @@
 package io.art.server.module;
 
 import io.art.core.module.*;
-import io.art.logging.*;
-import io.art.resilience.module.*;
 import io.art.server.configuration.*;
-import io.art.server.interceptor.*;
 import io.art.server.registry.*;
-import io.art.server.service.specification.*;
 import io.art.server.state.*;
 import lombok.*;
-import static com.google.common.base.Throwables.*;
 import static io.art.core.context.Context.*;
-import static io.art.entity.factory.PrimitivesFactory.*;
-import static io.art.entity.immutable.Value.*;
-import static io.art.entity.mapping.PrimitiveMapping.*;
-import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
-import static io.art.server.service.implementation.ServiceMethodImplementation.*;
-import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 
 @Getter
@@ -52,44 +41,5 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
 
     public static ServiceSpecificationRegistry specifications() {
         return serverModule().state().getSpecifications();
-    }
-
-    public static void main(String[] args) {
-        context()
-                .loadModule(new ResilienceModule())
-                .loadModule(new ServerModule())
-                .loadModule(new LoggingModule());
-        ServiceSpecification specification = specifications()
-                .register(ServiceSpecification.builder()
-                        .serviceId("id-1")
-                        .method("id", ServiceMethodSpecification.builder()
-                                .serviceId("id-1")
-                                .interceptor(new ServiceValidationInterceptor())
-                                .interceptor(new ServiceLoggingInterceptor())
-                                .requestProcessingMode(REACTIVE_MONO)
-                                .responseProcessingMode(BLOCKING)
-                                .requestMapper(value -> toString.map(asPrimitive(value)))
-                                .responseMapper(model -> fromString.map((String) model))
-                                .exceptionMapper(model -> fromString.map(getStackTraceAsString(model)))
-                                .implementation(handler(request -> {
-                                    throw new RuntimeException("Fuck");
-                                }, "id-1", "id"))
-                                .build())
-                        .build())
-                .register(ServiceSpecification.builder()
-                        .serviceId("id-2")
-                        .method("id", ServiceMethodSpecification.builder()
-                                .implementation(handler(identity(), "id", "id"))
-                                .build())
-                        .build())
-                .register(ServiceSpecification.builder()
-                        .serviceId("id-3")
-                        .method("id", ServiceMethodSpecification.builder()
-                                .implementation(handler(identity(), "id", "id"))
-                                .build())
-                        .build())
-                .get("id-1");
-
-        System.out.println(specification.getMethods().get("id").executeBlocking(stringPrimitive("test")));
     }
 }
