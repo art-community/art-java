@@ -36,16 +36,11 @@ import static java.time.Duration.*;
 @Getter
 @Builder(toBuilder = true)
 public class ResilienceConfiguration {
-    @Builder.Default
-    private final RetryConfig retry = RetryConfig.ofDefaults();
-    @Builder.Default
-    private final CircuitBreakerConfig circuitBreaker = CircuitBreakerConfig.ofDefaults();
-    @Builder.Default
-    private final RateLimiterConfig rateLimiter = RateLimiterConfig.ofDefaults();
-    @Builder.Default
-    private final BulkheadConfig bulkhead = BulkheadConfig.ofDefaults();
-    @Builder.Default
-    private final TimeLimiterConfig timeLimiter = TimeLimiterConfig.ofDefaults();
+    private final RetryConfig retry;
+    private final CircuitBreakerConfig circuitBreaker;
+    private final RateLimiterConfig rateLimiter;
+    private final BulkheadConfig bulkhead;
+    private final TimeLimiterConfig timeLimiter;
 
     public static ResilienceConfiguration from(ModuleConfigurationSource source) {
         ResilienceConfigurationBuilder builder = ResilienceConfiguration.builder();

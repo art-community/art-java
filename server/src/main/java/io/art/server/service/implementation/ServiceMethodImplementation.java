@@ -95,12 +95,12 @@ public class ServiceMethodImplementation {
                 throwable = interceptionResult.getOutException();
                 switch (interceptionResult.getStrategy()) {
                     case THROW_EXCEPTION:
-                        throw new ServiceMethodExecutionException(interceptionResult.getOutException());
+                        throw new ServiceMethodExecutionException(interceptionResult.getOutException(), serviceId, methodId);
                     case RETURN_FALLBACK:
                         return interceptionResult.getFallback();
                 }
             }
-            throw new ServiceMethodExecutionException(throwable);
+            throw new ServiceMethodExecutionException(throwable, serviceId, methodId);
         }
     }
 }

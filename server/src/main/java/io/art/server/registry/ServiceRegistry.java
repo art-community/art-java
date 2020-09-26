@@ -37,8 +37,8 @@ public class ServiceRegistry {
     }
 
     public ServiceRegistry register(ServiceSpecification specification) {
-        services.put(specification.getId(), specification);
-        logger(ServiceRegistry.class).info(format(SERVICE_REGISTRATION_MESSAGE, specification.getId()));
+        services.put(specification.getServiceId(), specification);
+        logger(ServiceRegistry.class).info(format(SERVICE_REGISTRATION_MESSAGE, specification.getServiceId()));
         return this;
     }
 }

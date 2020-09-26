@@ -24,7 +24,6 @@ import io.art.resilience.module.*;
 import io.art.server.configuration.*;
 import io.art.server.interceptor.*;
 import io.art.server.registry.*;
-import io.art.server.service.model.*;
 import io.art.server.service.specification.*;
 import io.art.server.state.*;
 import lombok.*;
@@ -35,7 +34,6 @@ import static io.art.entity.immutable.Value.*;
 import static io.art.entity.mapping.PrimitiveMapping.*;
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
 import static io.art.server.service.implementation.ServiceMethodImplementation.*;
-import static io.art.server.service.model.ServiceConfiguration.*;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 
@@ -63,8 +61,7 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                 .loadModule(new LoggingModule());
         ServiceSpecification specification = services()
                 .register(ServiceSpecification.builder()
-                        .id("id-1")
-                        .configuration(() -> serverModule().configuration().getServices().getOrDefault("id-1", defaultServiceConfiguration()))
+                        .serviceId("id-1")
                         .method("id", ServiceMethodSpecification.builder()
                                 .serviceId("id-1")
                                 .interceptor(new ServiceValidationInterceptor())
@@ -80,13 +77,13 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, S
                                 .build())
                         .build())
                 .register(ServiceSpecification.builder()
-                        .id("id-2")
+                        .serviceId("id-2")
                         .method("id", ServiceMethodSpecification.builder()
                                 .implementation(handler(identity(), "id", "id"))
                                 .build())
                         .build())
                 .register(ServiceSpecification.builder()
-                        .id("id-3")
+                        .serviceId("id-3")
                         .method("id", ServiceMethodSpecification.builder()
                                 .implementation(handler(identity(), "id", "id"))
                                 .build())

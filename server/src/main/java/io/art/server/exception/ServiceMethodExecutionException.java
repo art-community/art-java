@@ -19,11 +19,18 @@
 package io.art.server.exception;
 
 public class ServiceMethodExecutionException extends RuntimeException {
-    public ServiceMethodExecutionException(String message) {
+    private final String serviceId;
+    private final String methodId;
+
+    public ServiceMethodExecutionException(String message, String serviceId, String methodId) {
         super(message);
+        this.serviceId = serviceId;
+        this.methodId = methodId;
     }
 
-    public ServiceMethodExecutionException(Throwable cause) {
+    public ServiceMethodExecutionException(Throwable cause, String serviceId, String methodId) {
         super(cause);
+        this.serviceId = serviceId;
+        this.methodId = methodId;
     }
 }

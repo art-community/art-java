@@ -21,15 +21,14 @@ package io.art.server.service.specification;
 import io.art.server.service.model.*;
 import lombok.*;
 import java.util.*;
-import java.util.function.*;
 
 @Getter
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceSpecification {
     @EqualsAndHashCode.Include
-    private final String id;
-    private final Supplier<ServiceConfiguration> configuration;
+    private final String serviceId;
+    private final ServiceConfiguration configuration;
 
     @Singular("method")
     private final Map<String, ServiceMethodSpecification> methods;

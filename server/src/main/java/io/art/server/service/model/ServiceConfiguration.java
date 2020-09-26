@@ -45,8 +45,4 @@ public class ServiceConfiguration {
                 .orElse(ImmutableMap.of());
         return new ServiceConfiguration(deactivated, resilience, methods);
     }
-
-    public static ServiceConfiguration defaultServiceConfiguration() {
-        return new ServiceConfiguration(false, ResilienceConfiguration.builder().build(), ImmutableMap.of());
-    }
 }

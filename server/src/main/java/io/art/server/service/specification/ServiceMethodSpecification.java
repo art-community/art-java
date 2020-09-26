@@ -19,7 +19,6 @@
 package io.art.server.service.specification;
 
 import io.art.entity.immutable.Value;
-import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
@@ -44,33 +43,26 @@ import java.util.function.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceMethodSpecification {
     @EqualsAndHashCode.Include
-    private final String id;
+    private final String methodId;
     @EqualsAndHashCode.Include
     private final String serviceId;
+
+    @Getter(lazy = true)
+    private final ServiceSpecification serviceSpecification = services().get(serviceId);
 
     @Builder.Default
     private final RequestValidationPolicy validationPolicy = NON_VALIDATABLE;
 
-    private final ValueToModelMapper<Object, Value> requestMapper;
-    private final ValueFromModelMapper<Object, Value> responseMapper;
-    private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
-
-    private final ServiceMethodImplementation implementation;
-
-    private final ServiceMethodProcessingMode requestProcessingMode;
-    private final ServiceMethodProcessingMode responseProcessingMode;
-
-    private final Supplier<ServiceMethodConfiguration> configuration;
-
-    @Singular("requestValueInterceptor")
-    private final List<ValueInterceptor> requestValueInterceptor;
-    @Singular("responseValueInterceptor")
-    private final List<ValueInterceptor> responseValueInterceptor;
     @Singular("interceptor")
     private final List<ServiceMethodInterceptor<Object, Object>> interceptors;
 
-    @Getter(lazy = true)
-    private final ServiceSpecification serviceSpecification = services().get(serviceId);
+    private final ValueToModelMapper<Object, Value> requestMapper;
+    private final ValueFromModelMapper<Object, Value> responseMapper;
+    private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
+    private final ServiceMethodImplementation implementation;
+    private final ServiceMethodProcessingMode requestProcessingMode;
+    private final ServiceMethodProcessingMode responseProcessingMode;
+    private final ServiceMethodConfiguration configuration;
 
     public void callBlocking() {
         if (deactivated()) {
@@ -247,7 +239,7 @@ public class ServiceMethodSpecification {
             case REACTIVE_FLUX:
                 return Flux.just(requestMapper.map(requestValue));
         }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode));
+        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode), serviceId, methodId);
     }
 
     private Object mapRequestReactive(Mono<Value> requestValue) {
@@ -259,7 +251,7 @@ public class ServiceMethodSpecification {
             case REACTIVE_FLUX:
                 return Flux.from(requestValue).map(requestMapper::map).next();
         }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode));
+        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode), serviceId, methodId);
     }
 
 
@@ -280,7 +272,7 @@ public class ServiceMethodSpecification {
                         .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
                         .blockFirst();
         }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode));
+        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode), serviceId, methodId);
     }
 
     private Mono<Value> mapResponseReactiveMono(Object response) {
@@ -299,7 +291,7 @@ public class ServiceMethodSpecification {
                         .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
                         .next();
         }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode));
+        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode), serviceId, methodId);
     }
 
     private Flux<Value> mapResponseReactiveFlux(Object response) {
@@ -316,7 +308,7 @@ public class ServiceMethodSpecification {
                         .map(responseMapper::map)
                         .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode));
+        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseProcessingMode), serviceId, methodId);
     }
 
 
@@ -337,7 +329,7 @@ public class ServiceMethodSpecification {
         if (requestProcessingMode == REACTIVE_FLUX) {
             return requestChannel.map(requestMapper::map);
         }
-        throw new ServiceMethodExecutionException(format(INVALID_CHANNEL_PROCESSING_MODE, requestProcessingMode));
+        throw new ServiceMethodExecutionException(format(INVALID_CHANNEL_PROCESSING_MODE, requestProcessingMode), serviceId, methodId);
     }
 
     private Flux<Value> mapChannelResponse(Flux<Object> responseChannel) {
@@ -346,13 +338,16 @@ public class ServiceMethodSpecification {
                     .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
                     .map(responseMapper::map);
         }
-        throw new ServiceMethodExecutionException(format(INVALID_CHANNEL_PROCESSING_MODE, responseProcessingMode));
+        throw new ServiceMethodExecutionException(format(INVALID_CHANNEL_PROCESSING_MODE, responseProcessingMode), serviceId, methodId);
     }
 
     private boolean deactivated() {
-        return getServiceSpecification().getConfiguration().get().isDeactivated() || ofNullable(configuration)
-                .map(Supplier::get)
+        boolean serviceDeactivated = ofNullable(getServiceSpecification().getConfiguration())
+                .map(ServiceConfiguration::isDeactivated)
+                .orElse(false);
+        Boolean methodDeactivated = ofNullable(configuration)
                 .map(ServiceMethodConfiguration::isDeactivated)
                 .orElse(false);
+        return serviceDeactivated || methodDeactivated;
     }
 }
