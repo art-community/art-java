@@ -21,7 +21,7 @@ package io.art.communicator.implementation;
 import io.art.entity.immutable.Value;
 import reactor.core.publisher.*;
 
-public interface CommunicatorImplementation {
+public interface CommunicatorClient {
     void callBlocking();
 
     void callBlocking(Value requestValue);
