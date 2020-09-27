@@ -33,7 +33,6 @@ public interface ServerModuleConstants {
     interface ConfigurationKeys {
         String SERVER_SERVICES_KEY = "server.services";
         String DEACTIVATED_KEY = "deactivated";
-        String RESILIENCE_KEY = "resilience";
         String METHODS_KEY = "methods";
     }
 

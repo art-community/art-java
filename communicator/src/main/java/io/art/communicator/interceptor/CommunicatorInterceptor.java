@@ -16,20 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.communicator.configuration;
+package io.art.communicator.interceptor;
 
-import io.art.core.module.*;
-import lombok.*;
-
-@Getter
-public class CommunicatorModuleConfiguration implements ModuleConfiguration {
-    @RequiredArgsConstructor
-    public static class Configurator implements ModuleConfigurator<CommunicatorModuleConfiguration, Configurator> {
-        private final CommunicatorModuleConfiguration configuration;
-
-        @Override
-        public Configurator from(ModuleConfigurationSource source) {
-            return this;
-        }
-    }
+public interface CommunicatorInterceptor<Request, Response> {
 }
