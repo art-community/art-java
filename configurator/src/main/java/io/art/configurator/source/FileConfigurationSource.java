@@ -16,138 +16,162 @@
  * limitations under the License.
  */
 
-package io.art.configuration.source;
+package io.art.configurator.source;
 
+import io.art.configurator.constants.ConfiguratorModuleConstants.*;
+import io.art.configurator.exception.*;
+import io.art.configuration.yaml.source.*;
 import io.art.core.module.*;
 import lombok.*;
 import static com.typesafe.config.ConfigFactory.*;
-import static io.art.configuration.constants.ConfiguratorConstants.*;
-import static io.art.configuration.constants.ConfiguratorConstants.ConfigurationSourceType.*;
+import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
+import static io.art.core.extensions.FileExtensions.*;
+import java.io.*;
 import java.time.*;
 import java.util.*;
 
 @Getter
-public class PropertiesConfigurationSource implements ModuleConfigurationSource {
-    private final ConfigurationSourceType type = PROPERTIES;
-    private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(PROPERTIES, systemProperties());
+public class FileConfigurationSource implements ModuleConfigurationSource {
+    private final ConfigurationSourceType type;
+    private final ModuleConfigurationSource source;
+
+    public FileConfigurationSource(ConfigurationSourceType type, File file) {
+        this.type = type;
+        source = selectSource(type, file);
+    }
 
     @Override
     public Integer getInt(String path) {
-        return typesafeConfigurationSource.getInt(path);
+        return source.getInt(path);
     }
 
     @Override
     public Long getLong(String path) {
-        return typesafeConfigurationSource.getLong(path);
+        return source.getLong(path);
     }
 
     @Override
     public Boolean getBool(String path) {
-        return typesafeConfigurationSource.getBool(path);
+        return source.getBool(path);
     }
 
     @Override
     public Double getDouble(String path) {
-        return typesafeConfigurationSource.getDouble(path);
+        return source.getDouble(path);
     }
 
     @Override
     public Float getFloat(String path) {
-        return typesafeConfigurationSource.getFloat(path);
+        return source.getFloat(path);
     }
 
     @Override
     public String getString(String path) {
-        return typesafeConfigurationSource.getString(path);
+        return source.getString(path);
     }
 
     @Override
     public Duration getDuration(String path) {
-        return typesafeConfigurationSource.getDuration(path);
+        return source.getDuration(path);
     }
 
     @Override
     public ModuleConfigurationSource getInner(String path) {
-        return typesafeConfigurationSource.getInner(path);
+        return source.getInner(path);
     }
 
     @Override
     public List<Integer> getIntList(String path) {
-        return typesafeConfigurationSource.getIntList(path);
+        return source.getIntList(path);
     }
 
     @Override
     public List<Long> getLongList(String path) {
-        return typesafeConfigurationSource.getLongList(path);
+        return source.getLongList(path);
     }
 
     @Override
     public List<Boolean> getBoolList(String path) {
-        return typesafeConfigurationSource.getBoolList(path);
+        return source.getBoolList(path);
     }
 
     @Override
     public List<Double> getDoubleList(String path) {
-        return typesafeConfigurationSource.getDoubleList(path);
+        return source.getDoubleList(path);
     }
 
     @Override
     public List<String> getStringList(String path) {
-        return typesafeConfigurationSource.getStringList(path);
+        return source.getStringList(path);
     }
 
     @Override
     public List<Duration> getDurationList(String path) {
-        return typesafeConfigurationSource.getDurationList(path);
+        return source.getDurationList(path);
     }
 
     @Override
     public List<ModuleConfigurationSource> getInnerList(String path) {
-        return typesafeConfigurationSource.getInnerList(path);
+        return source.getInnerList(path);
     }
 
     @Override
     public Map<String, Integer> getIntMap(String path) {
-        return typesafeConfigurationSource.getIntMap(path);
+        return source.getIntMap(path);
     }
 
     @Override
     public Map<String, Long> getLongMap(String path) {
-        return typesafeConfigurationSource.getLongMap(path);
+        return source.getLongMap(path);
     }
 
     @Override
     public Map<String, Boolean> getBoolMap(String path) {
-        return typesafeConfigurationSource.getBoolMap(path);
+        return source.getBoolMap(path);
     }
 
     @Override
     public Map<String, Double> getDoubleMap(String path) {
-        return typesafeConfigurationSource.getDoubleMap(path);
+        return source.getDoubleMap(path);
     }
 
     @Override
     public Map<String, String> getStringMap(String path) {
-        return typesafeConfigurationSource.getStringMap(path);
+        return source.getStringMap(path);
     }
 
     @Override
     public Map<String, Duration> getDurationMap(String path) {
-        return typesafeConfigurationSource.getDurationMap(path);
+        return source.getDurationMap(path);
     }
 
     @Override
     public Map<String, ModuleConfigurationSource> getInnerMap(String path) {
-        return typesafeConfigurationSource.getInnerMap(path);
+        return source.getInnerMap(path);
     }
 
     @Override
     public Set<String> getKeys() {
-        return typesafeConfigurationSource.getKeys();
+        return source.getKeys();
     }
 
     @Override
     public boolean has(String path) {
-        return typesafeConfigurationSource.has(path);
+        return source.has(path);
+    }
+
+    private static ModuleConfigurationSource selectSource(ConfigurationSourceType type, File file) {
+        String extension = parseExtension(file.getAbsolutePath());
+        switch (extension) {
+            case HOCON_EXTENSION:
+            case JSON_EXTENSION:
+            case CONF_EXTENSION:
+            case PROPERTIES_EXTENSION:
+                return new TypesafeConfigurationSource(type, parseFile(file));
+            case YAML_EXTENSION:
+            case YML_EXTENSION:
+                return new YamlConfigurationSource(type, file);
+        }
+        throw new UnknownConfigurationFileExtensionException(extension);
     }
 }

@@ -16,16 +16,17 @@
  * limitations under the License.
  */
 
-package io.art.configuration.module;
+package io.art.configurator.module;
 
-import io.art.configuration.module.ConfiguratorModuleConfiguration.*;
-import io.art.configuration.source.*;
+import io.art.configurator.configuration.*;
+import io.art.configurator.configuration.ConfiguratorModuleConfiguration.*;
+import io.art.configurator.source.*;
 import io.art.core.module.*;
 import lombok.*;
-import static io.art.configuration.constants.ConfiguratorConstants.ConfigurationSourceType.*;
-import static io.art.configuration.constants.ConfiguratorConstants.ConfiguratorKeys.*;
-import static io.art.configuration.constants.ConfiguratorConstants.*;
-import static io.art.configuration.constants.ConfiguratorConstants.FileConfigurationExtensions.*;
+import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
+import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorKeys.*;
+import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
+import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.CollectionExtensions.*;

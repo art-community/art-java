@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.configuration.source;
+package io.art.configurator.source;
 
 import com.typesafe.config.*;
 import io.art.core.module.*;

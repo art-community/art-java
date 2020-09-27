@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package io.art.configuration.exception;
+package io.art.configurator.exception;
 
-import static io.art.configuration.constants.ConfiguratorConstants.ExceptionMessages.*;
+import static io.art.configurator.constants.ConfiguratorModuleConstants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
 
 public class UnknownConfigurationFileExtensionException extends RuntimeException {

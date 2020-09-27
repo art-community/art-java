@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-package io.art.configuration.constants;
+package io.art.configurator.constants;
 
 import com.google.common.collect.*;
 import io.art.core.module.ModuleConfigurationSource.*;
 import lombok.*;
 
-public interface ConfiguratorConstants {
+public interface ConfiguratorModuleConstants {
     String DEFAULT_MODULE_CONFIGURATION_FILE = "module-config";
 
     @Getter

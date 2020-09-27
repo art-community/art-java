@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.configuration.source;
+package io.art.configurator.source;
 
 import io.art.core.module.*;
 import io.art.core.parser.*;
 import io.art.entity.immutable.*;
 import io.art.entity.mapping.*;
 import lombok.*;
-import static io.art.configuration.constants.ConfiguratorConstants.ConfigurationSourceType.*;
+import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.mapping.EntityMapping.toMap;

@@ -16,19 +16,20 @@
  * limitations under the License.
  */
 
-package io.art.configuration.source;
+package io.art.configurator.source;
 
 import io.art.core.module.*;
 import lombok.*;
 import static com.typesafe.config.ConfigFactory.*;
-import static io.art.configuration.constants.ConfiguratorConstants.ConfigurationSourceType.*;
+import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
+import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import java.time.*;
 import java.util.*;
 
 @Getter
-public class EnvironmentConfigurationSource implements ModuleConfigurationSource {
-    private final ModuleConfigurationSourceType type = ENVIRONMENT;
-    private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(ENVIRONMENT, systemEnvironment());
+public class PropertiesConfigurationSource implements ModuleConfigurationSource {
+    private final ConfigurationSourceType type = PROPERTIES;
+    private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(PROPERTIES, systemProperties());
 
     @Override
     public Integer getInt(String path) {

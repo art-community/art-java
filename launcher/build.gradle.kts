@@ -26,4 +26,6 @@ dependencies {
     implementation(project(":protobuf"))
     implementation(project(":message-pack"))
     implementation(project(":xml"))
+    implementation(project(":server"))
+    implementation(project(":communicator"))
 }

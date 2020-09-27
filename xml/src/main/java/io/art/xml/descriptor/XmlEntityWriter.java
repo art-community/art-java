@@ -26,7 +26,7 @@ import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.entity.constants.ValueType.XmlValueType.*;
+import static io.art.entity.constants.EntityConstants.ValueType.XmlValueType.CDATA;
 import static io.art.logging.LoggingModule.*;
 import static io.art.xml.constants.XmlDocumentConstants.*;
 import static io.art.xml.module.XmlModule.*;

@@ -16,18 +16,18 @@
  * limitations under the License.
  */
 
-package io.art.configuration.module;
+package io.art.configurator.configuration;
 
 import com.google.common.collect.*;
-import io.art.configuration.source.*;
+import io.art.configurator.source.*;
 import io.art.core.module.*;
 import io.art.core.module.ModuleConfigurationSource.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static com.google.common.collect.Ordering.*;
-import static io.art.configuration.constants.ConfiguratorConstants.ConfigurationSourceType.*;
+import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.caster.Caster.*;
-import java.util.*;
+import static java.util.Comparator.comparingInt;
 
 @Getter
 public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
@@ -41,8 +41,8 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
         return cast(sources.get(ENVIRONMENT));
     }
 
-    public List<ModuleConfigurationSource> orderedSources() {
-        return from(Comparator.comparingInt((ModuleConfigurationSource source) -> source.getType().getOrder())).sortedCopy(getSources().values());
+    public ImmutableList<ModuleConfigurationSource> orderedSources() {
+        return from(comparingInt((ModuleConfigurationSource source) -> source.getType().getOrder())).immutableSortedCopy(getSources().values());
     }
 
     @RequiredArgsConstructor
@@ -57,5 +57,6 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
                     .build();
             return this;
         }
+
     }
 }

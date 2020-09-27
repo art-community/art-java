@@ -18,16 +18,17 @@
 
 package io.art.launcher;
 
-import io.art.configuration.module.*;
+import io.art.configurator.module.*;
 import io.art.core.module.*;
 import io.art.json.module.*;
 import io.art.logging.*;
 import io.art.model.communicator.*;
 import io.art.model.configurator.*;
 import io.art.model.module.*;
+import io.art.server.module.*;
 import io.art.xml.module.*;
 import lombok.experimental.*;
-import static io.art.configuration.module.ConfiguratorModule.*;
+import static io.art.configurator.module.ConfiguratorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.context.Context.*;
 import static io.art.model.module.ModuleModel.*;
@@ -47,6 +48,7 @@ public class ModuleLauncher {
             logging(sources, configuratorModel);
             json(sources);
             xml(sources);
+            server(sources);
         }
     }
 
@@ -63,6 +65,10 @@ public class ModuleLauncher {
 
     private void xml(List<ModuleConfigurationSource> sources) {
         context().loadModule(new XmlModule().configure(configurator -> configurator.from(sources)));
+    }
+
+    private void server(List<ModuleConfigurationSource> sources) {
+        context().loadModule(new ServerModule().configure(configurator -> configurator.from(sources)));
     }
 
     public static void main(String[] args) {
