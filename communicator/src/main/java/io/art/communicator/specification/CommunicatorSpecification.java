@@ -27,7 +27,6 @@ import io.art.entity.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.*;
 import static java.util.Optional.*;
 
 @Getter
@@ -152,8 +151,7 @@ public class CommunicatorSpecification {
     }
 
     private <T> T mapResponseBlocking(Value responseValue) {
-        return let(responseValue, response -> cast(responseMapper.map(responseValue)));
-
+        return cast(responseMapper.map(responseValue));
     }
 
     private <T> Mono<T> mapResponseReactiveMono(Mono<Value> response) {
