@@ -46,7 +46,8 @@ public class ProtobufEntityWriter {
     }
 
     public static void writeProtobuf(io.art.entity.immutable.Value value, OutputStream outputStream) {
-        apply(writeProtobuf(value), result -> consumeException((Function<Throwable, RuntimeException>) ProtobufException::new).run(() -> result.writeTo(outputStream)));
+        apply(writeProtobuf(value), result -> consumeException((Function<Throwable, RuntimeException>) ProtobufException::new)
+                .run(() -> result.writeTo(outputStream)));
     }
 
     public static void writeProtobuf(io.art.entity.immutable.Value value, Path path) {
