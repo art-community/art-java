@@ -49,7 +49,7 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
     private final TarantoolModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private final TarantoolModuleState state = new TarantoolModuleState();
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = loggingModule().getLogger(TarantoolModule.class);
+    private final static Logger logger = logger(TarantoolModule.class);
 
     @Override
     public void onLoad() {
@@ -78,8 +78,15 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
 
     @Override
     public void onUnload() {
-        tarantoolModuleState().getClients().entrySet().stream().filter(client -> !client.getValue().isClosed()).forEach(this::closeTarantoolClient);
-        tarantoolModuleState().getClusterClients().entrySet().stream().filter(client -> !client.getValue().isClosed()).forEach(this::closeTarantoolClient);
+        tarantoolModuleState().getClients()
+                .entrySet()
+                .stream()
+                .filter(client -> !client.getValue().isClosed()).forEach(this::closeTarantoolClient);
+        tarantoolModuleState()
+                .getClusterClients()
+                .entrySet()
+                .stream()
+                .filter(client -> !client.getValue().isClosed()).forEach(this::closeTarantoolClient);
     }
 
     private void closeTarantoolClient(Map.Entry<String, TarantoolClient> entry) {

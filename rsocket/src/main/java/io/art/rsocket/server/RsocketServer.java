@@ -54,7 +54,7 @@ public class RsocketServer {
     private final Mono<CloseableChannel> serverChannel;
     private Disposable serverDisposable;
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = loggingModule().getLogger(RsocketServer.class);
+    private final static Logger logger = logger(RsocketServer.class);
 
     private RsocketServer(RsocketTransport transport) {
         this.transport = transport;
@@ -102,10 +102,8 @@ public class RsocketServer {
                 throw new RsocketServerException(format(UNSUPPORTED_TRANSPORT, transport));
         }
         return channel
-                .doOnSubscribe(subscription -> serviceModuleState()
-                        .getServiceRegistry()
-                        .getServices()
-                        .entrySet()
+                .doOnSubscribe(subscription -> specifications()
+                        .identifiers()
                         .stream()
                         .filter(entry -> entry.getValue().getServiceTypes().contains(RSOCKET_SERVICE_TYPE))
                         .forEach(entry -> getLogger().info(format(RSOCKET_LOADED_SERVICE_MESSAGE,

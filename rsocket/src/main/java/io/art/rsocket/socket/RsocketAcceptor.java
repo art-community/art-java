@@ -59,7 +59,6 @@ public class RsocketAcceptor extends AbstractRSocket {
         if (context.isStopHandling()) {
             return never();
         }
-        executeServiceMethodUnchecked(context.getRequest());
         return never();
     }
 

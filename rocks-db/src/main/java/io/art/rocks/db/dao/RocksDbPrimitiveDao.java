@@ -48,9 +48,7 @@ public interface RocksDbPrimitiveDao {
         if (isEmpty(value)) return;
         try {
             if (rocksDbModule().isEnableTracing()) {
-                loggingModule()
-                        .getLogger(RocksDbPrimitiveDao.class)
-                        .trace(format(PUT_OPERATION, new String(key, contextConfiguration().getCharset()), new String(value, contextConfiguration().getCharset())));
+                logger(RocksDbPrimitiveDao.class).trace(format(PUT_OPERATION, new String(key, contextConfiguration().getCharset()), new String(value, contextConfiguration().getCharset())));
             }
             rocksDbModuleState().getDb().put(key, value);
         } catch (RocksDBException throwable) {
@@ -165,8 +163,7 @@ public interface RocksDbPrimitiveDao {
         try {
             if (rocksDbModule().isEnableTracing()) {
                 String loggingValue = isEmpty(value) ? EMPTY_STRING : new String(value, contextConfiguration().getCharset());
-                loggingModule()
-                        .getLogger(RocksDbPrimitiveDao.class)
+                logger(RocksDbPrimitiveDao.class)
                         .trace(format(MERGE_OPERATION, new String(key, contextConfiguration().getCharset()), loggingValue));
             }
             rocksDbModuleState().getDb().merge(key, value);
@@ -343,8 +340,7 @@ public interface RocksDbPrimitiveDao {
         if (isEmpty(key)) return;
         try {
             if (rocksDbModule().isEnableTracing()) {
-                loggingModule()
-                        .getLogger(RocksDbPrimitiveDao.class)
+                logger(RocksDbPrimitiveDao.class)
                         .trace(format(DELETE_OPERATION, new String(key, contextConfiguration().getCharset())));
             }
             rocksDbModuleState().getDb().delete(key);

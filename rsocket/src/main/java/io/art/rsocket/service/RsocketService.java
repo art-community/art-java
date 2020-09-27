@@ -20,6 +20,7 @@ package io.art.rsocket.service;
 
 import io.art.entity.immutable.*;
 import io.art.server.constants.*;
+import io.art.server.constants.ServerModuleConstants.*;
 import lombok.*;
 import lombok.experimental.*;
 import io.art.entity.interceptor.*;
@@ -28,6 +29,7 @@ import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.server.constants.RequestValidationPolicy.*;
+import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.NON_VALIDATABLE;
 import java.util.*;
 
 @Getter
@@ -45,15 +47,15 @@ public class RsocketService {
         private ValueFromModelMapper<?, ?> responseMapper;
         private RequestValidationPolicy validationPolicy = NON_VALIDATABLE;
         private RsocketDataFormat overrideResponseDataFormat;
-        private List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = linkedListOf(rsocketModule().getRequestValueInterceptors());
-        private List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = linkedListOf(rsocketModule().getResponseValueInterceptors());
+        private List<ValueInterceptor> requestValueInterceptors = linkedListOf(rsocketModule().getRequestValueInterceptors());
+        private List<ValueInterceptor> responseValueInterceptors = linkedListOf(rsocketModule().getResponseValueInterceptors());
 
-        public RsocketMethod addRequestValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
+        public RsocketMethod addRequestValueInterceptor(ValueInterceptor interceptor) {
             requestValueInterceptors.add(interceptor);
             return this;
         }
 
-        public RsocketMethod addResponseValueInterceptor(ValueInterceptor<Entity, Entity> interceptor) {
+        public RsocketMethod addResponseValueInterceptor(ValueInterceptor interceptor) {
             responseValueInterceptors.add(interceptor);
             return this;
         }
