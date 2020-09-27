@@ -32,11 +32,9 @@ import static java.util.Optional.*;
 @Getter
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class CommunicatorSpecification {
+public class CommunicatorMethodSpecification {
     @EqualsAndHashCode.Include
-    private final String methodId;
-    @EqualsAndHashCode.Include
-    private final String serviceId;
+    private final String operationId;
 
     @Singular("interceptor")
     private final ImmutableList<CommunicatorInterceptor<Object, Object>> interceptors;
@@ -68,11 +66,11 @@ public class CommunicatorSpecification {
         return implementation.callReactive();
     }
 
-    public Mono<Void> callReactive(Object reqeust) {
+    public Mono<Void> callReactive(Object request) {
         if (deactivated()) {
             return Mono.empty();
         }
-        return implementation.callReactive(mapRequestBlocking(reqeust));
+        return implementation.callReactive(mapRequestBlocking(request));
     }
 
 
