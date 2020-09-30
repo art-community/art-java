@@ -50,7 +50,7 @@ public class GrpcCommunicationConfiguration {
     private ValueToModelMapper<?, ? extends Value> responseMapper;
     private GrpcCommunicationCompletionHandler<?, ?> completionHandler;
     private GrpcCommunicationExceptionHandler<?> exceptionHandler;
-    private List<ClientInterceptor> interceptors = grpcClientModule().getInterceptors();
+    private List<ClientInterceptor> interceptors = linkedListOf(grpcClientModule().getInterceptors());
     private Executor overrideExecutor;
     @ToString.Include
     private long deadlineTimeout;
