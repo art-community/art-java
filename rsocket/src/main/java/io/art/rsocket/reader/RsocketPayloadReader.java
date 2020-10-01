@@ -57,7 +57,7 @@ public class RsocketPayloadReader {
                 byteBuf.readBytes(bytes);
                 return readMessagePack(bytes);
         }
-        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDataFormat()));
+        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDataFormat()));
     }
 
     public static Value readPayloadMetaData(Payload payload, RsocketDataFormat dataFormat) {
@@ -81,6 +81,6 @@ public class RsocketPayloadReader {
                 byteBuf.readBytes(bytes);
                 return readMessagePack(bytes);
         }
-        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().getDataFormat()));
+        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDataFormat()));
     }
 }

@@ -21,17 +21,20 @@ package io.art.logging;
 import io.art.core.context.*;
 import io.art.core.module.*;
 import lombok.*;
+import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.async.*;
+import static io.art.core.caster.Caster.cast;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModuleConstants.*;
 import static io.art.logging.LoggingModuleConstants.LoggingMessages.*;
 import static java.lang.System.*;
-import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
+import static org.apache.logging.log4j.core.util.Constants.*;
 import static reactor.util.Loggers.*;
 import java.net.*;
 import java.nio.file.*;
@@ -71,6 +74,11 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
         }
 
         useCustomLoggers(name -> new ReactorLogger(logger(name)));
+
+        if (configuration.isAsynchronous()) {
+            logger(LoggingModule.class).info(USE_ASYNCHRONOUS_LOGGING);
+            setProperty(LOG4J_CONTEXT_SELECTOR, AsyncLoggerContextSelector.class.getName());
+        }
     }
 
     @Override
@@ -79,14 +87,14 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     }
 
     public static Logger logger() {
-        return loggingModule().configuration().getLogger();
+        return loggingModule().configuration().isColored() ? new ColoredLogger(cast(LogManager.getLogger())) : LogManager.getLogger();
     }
 
     public static Logger logger(String topic) {
-        return loggingModule().configuration().getLogger(topic);
+        return loggingModule().configuration().isColored() ? new ColoredLogger(cast(LogManager.getLogger(topic))) : LogManager.getLogger(topic);
     }
 
     public static Logger logger(Class<?> topicClass) {
-        return loggingModule().configuration().getLogger(topicClass);
+        return loggingModule().configuration().isColored() ? new ColoredLogger(cast(LogManager.getLogger(topicClass))) : LogManager.getLogger(topicClass);
     }
 }

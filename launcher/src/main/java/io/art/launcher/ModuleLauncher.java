@@ -18,6 +18,7 @@
 
 package io.art.launcher;
 
+import com.google.common.collect.*;
 import io.art.configurator.module.*;
 import io.art.core.module.*;
 import io.art.json.module.*;
@@ -43,7 +44,7 @@ public class ModuleLauncher {
     public static void launch(ModuleModel model) {
         if (launched.compareAndSet(false, true)) {
             context().loadModule(new ConfiguratorModule());
-            List<ModuleConfigurationSource> sources = configuratorModule().configuration().orderedSources();
+            ImmutableList<ModuleConfigurationSource> sources = configuratorModule().configuration().orderedSources();
             ConfiguratorModel configuratorModel = model.getConfiguratorModel();
             logging(sources, configuratorModel);
             json(sources);
@@ -52,22 +53,22 @@ public class ModuleLauncher {
         }
     }
 
-    private void logging(List<ModuleConfigurationSource> sources, ConfiguratorModel configuratorModel) {
+    private void logging(ImmutableList<ModuleConfigurationSource> sources, ConfiguratorModel configuratorModel) {
         LoggingModule logging = cast(new LoggingModule().configure(configurator -> configurator.from(sources)));
         ofNullable(configuratorModel.getLoggingConfigurator())
                 .ifPresent(model -> logging.configure(configurator -> configurator.from(model.getConfiguration())));
         context().loadModule(logging);
     }
 
-    private void json(List<ModuleConfigurationSource> sources) {
+    private void json(ImmutableList<ModuleConfigurationSource> sources) {
         context().loadModule(new JsonModule().configure(configurator -> configurator.from(sources)));
     }
 
-    private void xml(List<ModuleConfigurationSource> sources) {
+    private void xml(ImmutableList<ModuleConfigurationSource> sources) {
         context().loadModule(new XmlModule().configure(configurator -> configurator.from(sources)));
     }
 
-    private void server(List<ModuleConfigurationSource> sources) {
+    private void server(ImmutableList<ModuleConfigurationSource> sources) {
         context().loadModule(new ServerModule().configure(configurator -> configurator.from(sources)));
     }
 

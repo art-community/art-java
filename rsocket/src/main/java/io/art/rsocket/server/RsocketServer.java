@@ -18,77 +18,51 @@
 
 package io.art.rsocket.server;
 
+import io.art.rsocket.configuration.*;
 import io.art.rsocket.exception.*;
+import io.art.rsocket.socket.*;
 import io.art.server.*;
 import io.rsocket.core.*;
 import io.rsocket.transport.netty.server.*;
 import lombok.*;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
-import static io.art.core.checker.NullityChecker.apply;
-import static io.art.core.checker.NullityChecker.let;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.*;
-import static java.lang.System.*;
+import static io.art.rsocket.module.RsocketModule.*;
 import static java.lang.Thread.*;
-import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 
+@RequiredArgsConstructor
 public class RsocketServer implements Server {
     @Getter
     private final RsocketTransport transport;
-    @Getter
-    private final Mono<CloseableChannel> serverChannel;
-    private Disposable serverDisposable;
+
     @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = logger(RsocketServer.class);
 
-    private RsocketServer(RsocketTransport transport) {
-        this.transport = transport;
-        serverChannel = createServer();
-    }
-
-    private Mono<CloseableChannel> createServer() {
-        RSocketServer.create()
-    }
-
-    public static RsocketServer rsocketTcpServer() {
-        return new RsocketServer(TCP);
-    }
-
-    public static RsocketServer rsocketWebSocketServer() {
-        return new RsocketServer(WEB_SOCKET);
-    }
-
-    public static RsocketServer startRsocketTcpServer() {
-        RsocketServer rsocketServer = new RsocketServer(TCP);
-        rsocketServer.start();
-        return rsocketServer;
-    }
-
-    public static RsocketServer startRsocketWebSocketServer() {
-        RsocketServer rsocketServer = new RsocketServer(WEB_SOCKET);
-        rsocketServer.start();
-        return rsocketServer;
-    }
+    private Disposable disposable;
 
     @Override
     public void start() {
-        final long timestamp = currentTimeMillis();
-        serverDisposable = serverChannel.subscribe(serverChannel -> getLogger().info(format(transport == TCP
-                        ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE
-                        : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE,
-                currentTimeMillis() - timestamp)));
+        String message = transport == TCP ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE;
+        RsocketModuleConfiguration configuration = rsocketModule().configuration();
+        disposable = RSocketServer
+                .create((payload, socket) -> Mono.just(new ServerRsocket(payload, socket)))
+                .fragment(configuration.getFragmentationMtu())
+                .bind(TcpServerTransport.create(configuration.getServerTcpPort()))
+                .subscribe(serverChannel -> getLogger().info(message));
     }
 
     @Override
     public void stop() {
-        apply(serverDisposable, Disposable::dispose);
+        apply(disposable, Disposable::dispose);
     }
 
     @Override
@@ -102,19 +76,16 @@ public class RsocketServer implements Server {
 
     @Override
     public void restart() {
-        long millis = currentTimeMillis();
         try {
-            if (nonNull(serverDisposable)) {
-                serverDisposable.dispose();
-            }
+            stop();
             new RsocketServer(transport).start();
-            getLogger().info(format(RSOCKET_RESTARTED_MESSAGE, currentTimeMillis() - millis));
+            getLogger().info(RSOCKET_RESTARTED_MESSAGE);
         } catch (Throwable throwable) {
             getLogger().error(RSOCKET_RESTART_FAILED);
         }
     }
 
     public boolean available() {
-        return nonNull(serverDisposable);
+        return nonNull(disposable);
     }
 }

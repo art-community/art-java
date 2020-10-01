@@ -38,13 +38,13 @@ import static reactor.core.publisher.Mono.*;
 public class ServerRsocket implements RSocket {
     private final CurrentRsocketState state;
 
-    public ServerRsocket(RSocket socket, ConnectionSetupPayload setupPayload) {
+    public ServerRsocket(ConnectionSetupPayload payload, RSocket socket) {
         state = CurrentRsocketState
                 .builder()
-                .dataMimeType(setupPayload.dataMimeType())
-                .metadataMimeType(setupPayload.metadataMimeType())
+                .dataMimeType(payload.dataMimeType())
+                .metadataMimeType(payload.metadataMimeType())
                 .rsocket(socket)
-                .dataFormat(fromMimeType(setupPayload.dataMimeType()))
+                .dataFormat(fromMimeType(payload.dataMimeType()))
                 .build();
         updateState();
     }

@@ -68,13 +68,13 @@ public interface RsocketModuleConstants {
     }
 
     interface LoggingMessages {
-        String RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE = "RSocket TCP acceptor started in {0}[ms]";
-        String RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE = "RSocket WS acceptor started in {0}[ms]";
+        String RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE = "RSocket TCP acceptor started";
+        String RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE = "RSocket WS acceptor started";
         String RSOCKET_TCP_COMMUNICATOR_STARTED_MESSAGE = "RSocket TCP communicator to {0}:{1,number,#} started";
         String RSOCKET_WS_COMMUNICATOR_STARTED_MESSAGE = "RSocket WebSocket communicator to {0}:{1,number,#} started";
         String RSOCKET_WS_COMMUNICATOR_CREATED_MESSAGE = "RSocket WebSocket communicator to {0}:{1,number,#} created";
         String RSOCKET_TCP_COMMUNICATOR_CREATED_MESSAGE = "RSocket TCP communicator to {0}:{1,number,#} created";
-        String RSOCKET_RESTARTED_MESSAGE = "RSocket Server restarted in {0}[ms]";
+        String RSOCKET_RESTARTED_MESSAGE = "RSocket Server restarted";
         String RSOCKET_STOPPED = "RSocket Server stopped in {0}[ms]";
         String RSOCKET_LOADED_SERVICE_MESSAGE = "RSocket service loaded: {0}:{1,number,#} - {2}.{3}";
         String RSOCKET_FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget() with request data: {0} and metadata: {1}";

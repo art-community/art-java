@@ -22,34 +22,13 @@ import io.art.core.module.*;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.*;
-import org.apache.logging.log4j.core.async.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.logging.LoggingModuleConstants.ConfigurationKeys.*;
-import static java.lang.System.*;
-import static org.apache.logging.log4j.core.util.Constants.*;
 
 @Getter
 public class LoggingModuleConfiguration implements ModuleConfiguration {
     private boolean colored = false;
     private boolean asynchronous = false;
-
-    public LoggingModuleConfiguration() {
-        if (isAsynchronous()) {
-            setProperty(LOG4J_CONTEXT_SELECTOR, AsyncLoggerContextSelector.class.getName());
-        }
-    }
-
-    public Logger getLogger() {
-        return isColored() ? new ColoredLogger(cast(LogManager.getLogger())) : LogManager.getLogger();
-    }
-
-    public Logger getLogger(String topic) {
-        return isColored() ? new ColoredLogger(cast(LogManager.getLogger(topic))) : LogManager.getLogger(topic);
-    }
-
-    public Logger getLogger(Class<?> topicClass) {
-        return isColored() ? new ColoredLogger(cast(LogManager.getLogger(topicClass))) : LogManager.getLogger(topicClass);
-    }
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<LoggingModuleConfiguration, Configurator> {
@@ -67,6 +46,11 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
             this.configuration.colored = configuration.colored;
             this.configuration.asynchronous = configuration.asynchronous;
             return null;
+        }
+
+        public Configurator asynchronouse() {
+            configuration.asynchronous = true;
+            return this;
         }
     }
 }

@@ -44,4 +44,9 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, C
     public static ServiceSpecificationRegistry specifications() {
         return serverModule().state().getSpecifications();
     }
+
+    public static void main(String[] args) {
+        context().loadModule(new LoggingModule().configure(LoggingModuleConfiguration.Configurator::asynchronouse)).loadModule(new ServerModule());
+        System.out.println(serverModule().configuration());
+    }
 }
