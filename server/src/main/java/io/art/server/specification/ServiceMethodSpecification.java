@@ -27,17 +27,15 @@ import io.art.server.implementation.*;
 import io.art.server.interceptor.*;
 import io.art.server.model.*;
 import lombok.*;
-import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
 import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.*;
-import static io.art.server.constants.ServerModuleConstants.ServiceMethodPayloadType.*;
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
-import static java.util.Objects.isNull;
+import static java.util.Objects.*;
 import static java.util.Optional.*;
+import java.util.*;
 
 @Getter
 @Builder
@@ -65,12 +63,12 @@ public class ServiceMethodSpecification {
     private final ServiceMethodPayloadType responseType;
     private final ServiceMethodConfiguration configuration;
 
-    public Flux<Value> stream(Value requestValue) {
+    public Flux<Value> serve(Flux<Value> input) {
         if (deactivated()) {
             return Flux.empty();
         }
         try {
-            Object request = let(requestValue, this::mapStreamRequest);
+            Object request = mapRequest(filter(input));
             Object response = cast(implementation.execute(request));
             if (isNull(response)) {
                 return Flux.empty();
@@ -81,48 +79,21 @@ public class ServiceMethodSpecification {
         }
     }
 
-    public Flux<Value> channel(Publisher<Value> input) {
-        if (deactivated()) {
-            return Flux.empty();
-        }
-        try {
-            Flux<Object> request = let(input, requestValue -> mapChannelRequest(Flux.from(requestValue).filter(value -> !deactivated())), Flux.empty());
-            Object response = cast(implementation.execute(request));
-            if (isNull(response)) {
-                return Flux.empty();
-            }
-            return mapResponse(response);
-        } catch (Throwable throwable) {
-            return Flux.just(exceptionMapper.map(throwable));
-        }
-    }
-
-
-    private Object mapStreamRequest(Value requestValue) {
+    private Object mapRequest(Flux<Value> requestChannel) {
         switch (requestType) {
             case VALUE:
-                return requestMapper.map(requestValue);
+                return requestChannel.blockFirst();
             case MONO:
-                return ofNullable(requestValue)
-                        .map(value -> Mono
-                                .just(requestMapper.map(requestValue))
-                                .onErrorResume(Throwable.class, throwable -> Mono.just(exceptionMapper.map(throwable))))
-                        .orElseGet(Mono::empty);
+                return requestChannel
+                        .map(responseMapper::map)
+                        .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
+                        .last();
             case FLUX:
-                return ofNullable(requestValue)
-                        .map(value -> Flux
-                                .just(requestMapper.map(requestValue))
-                                .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable))))
-                        .orElseGet(Flux::empty);
+                return requestChannel
+                        .map(responseMapper::map)
+                        .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
         throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseType), serviceId, methodId);
-    }
-
-    private Flux<Object> mapChannelRequest(Flux<Value> requestChannel) {
-        if (requestType == FLUX) {
-            return requestChannel.map(requestMapper::map);
-        }
-        throw new ServiceMethodExecutionException(format(INVALID_CHANNEL_PROCESSING_MODE, requestType), serviceId, methodId);
     }
 
     private Flux<Value> mapResponse(Object response) {
@@ -133,14 +104,17 @@ public class ServiceMethodSpecification {
                         .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
             case MONO:
             case FLUX:
-                return Flux
-                        .from(cast(response))
+                return filter(Flux.from(cast(response)))
                         .map(responseMapper::map)
                         .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
         throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseType), serviceId, methodId);
     }
 
+
+    private Flux<Value> filter(Flux<Value> input) {
+        return input.filter(Objects::nonNull).filter(value -> !deactivated());
+    }
 
     private boolean deactivated() {
         boolean serviceDeactivated = ofNullable(getServiceSpecification().getConfiguration())
