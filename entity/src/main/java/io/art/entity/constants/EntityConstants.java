@@ -122,4 +122,10 @@ public interface EntityConstants {
         }
     }
 
+    enum DataFormat {
+        PROTOBUF,
+        JSON,
+        XML,
+        MESSAGE_PACK
+    }
 }

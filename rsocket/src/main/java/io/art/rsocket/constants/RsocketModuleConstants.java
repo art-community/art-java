@@ -32,13 +32,6 @@ public interface RsocketModuleConstants {
     long DEFAULT_RSOCKET_RESUME_SESSION_DURATION = 24 * 60 * 60 * 1000;
     long DEFAULT_RSOCKET_RESUME_STREAM_TIMEOUT = 24 * 60 * 60 * 1000;
 
-    enum RsocketDataFormat {
-        PROTOBUF,
-        JSON,
-        XML,
-        MESSAGE_PACK
-    }
-
     enum RsocketInterceptingDataType {
         DATA,
         META_DATA
@@ -75,7 +68,7 @@ public interface RsocketModuleConstants {
         String RSOCKET_WS_COMMUNICATOR_CREATED_MESSAGE = "RSocket WebSocket communicator to {0}:{1,number,#} created";
         String RSOCKET_TCP_COMMUNICATOR_CREATED_MESSAGE = "RSocket TCP communicator to {0}:{1,number,#} created";
         String RSOCKET_RESTARTED_MESSAGE = "RSocket Server restarted";
-        String RSOCKET_STOPPED = "RSocket Server stopped in {0}[ms]";
+        String RSOCKET_STOPPED = "RSocket Server stopped";
         String RSOCKET_LOADED_SERVICE_MESSAGE = "RSocket service loaded: {0}:{1,number,#} - {2}.{3}";
         String RSOCKET_FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget() with request data: {0} and metadata: {1}";
         String RSOCKET_FIRE_AND_FORGET_RESPONSE_LOG = "RSocket fireAndForget() completed";

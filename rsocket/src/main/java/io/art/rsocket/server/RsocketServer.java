@@ -63,6 +63,7 @@ public class RsocketServer implements Server {
     @Override
     public void stop() {
         apply(disposable, Disposable::dispose);
+        getLogger().info(RSOCKET_STOPPED);
     }
 
     @Override
