@@ -16,10 +16,16 @@
  * limitations under the License.
  */
 
-package io.art.core.constants;
+package io.art.server;
 
-import static io.art.core.colorizer.AnsiColorizer.*;
+public interface Server {
+    void start();
 
-public interface LoggingMessages {
-    String MODULE_LOADED_MESSAGE = success("Module: ''{0}'' was loaded in {1,number,#}[ms] with ''{2}''");
+    void stop();
+
+    void await();
+
+    boolean available();
+
+    void restart();
 }

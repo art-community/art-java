@@ -18,133 +18,76 @@
 
 package io.art.rsocket.configuration;
 
-import io.art.entity.immutable.*;
+import com.google.common.collect.*;
+import io.art.core.module.*;
+import io.art.entity.interceptor.*;
+import io.art.logging.*;
+import io.art.rsocket.constants.RsocketModuleConstants.*;
+import io.art.rsocket.interceptor.*;
+import io.art.rsocket.model.*;
 import io.rsocket.RSocketFactory.*;
 import io.rsocket.plugins.*;
 import io.rsocket.transport.netty.server.*;
 import lombok.*;
 import reactor.netty.http.server.*;
 import reactor.netty.tcp.*;
-import io.art.core.module.*;
-import io.art.entity.interceptor.*;
-import io.art.logging.*;
-import io.art.rsocket.constants.RsocketModuleConstants.*;
-import io.art.rsocket.exception.*;
-import io.art.rsocket.interceptor.*;
-import io.art.rsocket.model.*;
-import static java.text.MessageFormat.*;
-import static java.util.function.Function.*;
 import static io.art.core.constants.NetworkConstants.*;
-import static io.art.core.extensions.ExceptionExtensions.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.network.selector.PortSelector.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*;
-import java.util.*;
+import static java.util.function.Function.*;
 import java.util.function.*;
 
-public interface RsocketModuleConfiguration extends ModuleConfiguration {
-    String getServerHost();
+@Getter
+public class RsocketModuleConfiguration implements ModuleConfiguration {
+    private final RsocketDataFormat dataFormat = MESSAGE_PACK;
+    private final String serverHost = BROADCAST_IP_ADDRESS;
+    private final int serverTcpPort = findAvailableTcpPort();
+    private final int serverWebSocketPort = findAvailableTcpPort();
+    private final String balancerHost = LOCALHOST;
+    private final int balancerTcpPort = DEFAULT_RSOCKET_TCP_PORT;
+    private final int balancerWebSocketPort = DEFAULT_RSOCKET_WEB_SOCKET_PORT;
+    private final boolean resumableServer = true;
+    private final long serverResumeSessionDuration = DEFAULT_RSOCKET_RESUME_SESSION_DURATION;
+    private final long serverResumeStreamTimeout = DEFAULT_RSOCKET_RESUME_STREAM_TIMEOUT;
+    private final boolean resumableClient = true;
+    private final long clientResumeSessionDuration = DEFAULT_RSOCKET_RESUME_SESSION_DURATION;
+    private final long clientResumeStreamTimeout = DEFAULT_RSOCKET_RESUME_STREAM_TIMEOUT;
+    private final boolean enableRawDataTracing = false;
+    private final boolean enableValueTracing = false;
+    private final int fragmentationMtu = 0;
+    private final Function<? extends HttpServer, ? extends HttpServer> webSocketServerConfigurator = identity();
+    private final Function<? extends TcpServer, ? extends TcpServer> tcpServerConfigurator = identity();
+    private final Function<? extends WebsocketServerTransport, ? extends WebsocketServerTransport> webSocketServerTransportConfigurator = identity();
+    private final Function<? extends TcpServerTransport, ? extends TcpServerTransport> tcpServerTransportConfigurator = identity();
+    private final Function<? extends ServerRSocketFactory, ? extends ServerRSocketFactory> serverFactoryConfigurator = identity();
+    @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+    private final ImmutableList<RSocketInterceptor> serverInterceptors = initializeInterceptors();
+    @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+    private final ImmutableList<RSocketInterceptor> clientInterceptors = initializeInterceptors();
+    @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+    private final ImmutableList<ValueInterceptor> requestValueInterceptors = initializeValueInterceptors();
+    @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
+    private final ImmutableList<ValueInterceptor> responseValueInterceptors = initializeValueInterceptors();
 
-    int getServerTcpPort();
-
-    int getServerWebSocketPort();
-
-    String getBalancerHost();
-
-    int getBalancerTcpPort();
-
-    int getBalancerWebSocketPort();
-
-    boolean isResumableServer();
-
-    long getServerResumeSessionDuration();
-
-    long getServerResumeStreamTimeout();
-
-    boolean isResumableClient();
-
-    long getClientResumeSessionDuration();
-
-    long getClientResumeStreamTimeout();
-
-    RsocketDataFormat getDataFormat();
-
-    Map<String, RsocketCommunicationTargetConfiguration> getCommunicationTargets();
-
-    boolean isEnableRawDataTracing();
-
-    boolean isEnableValueTracing();
-
-    List<RSocketInterceptor> getClientInterceptors();
-
-    List<RSocketInterceptor> getServerInterceptors();
-
-    default RsocketCommunicationTargetConfiguration getCommunicationTargetConfiguration(String serviceId) {
-        return exceptionIfNull(getCommunicationTargets().get(serviceId),
-                new RsocketClientException(format(RSOCKET_COMMUNICATION_TARGET_CONFIGURATION_NOT_FOUND, serviceId)))
-                .toBuilder()
-                .build();
+    private ImmutableList<RSocketInterceptor> initializeInterceptors() {
+        return ImmutableList.of(new RsocketLoggingInterceptor());
     }
 
-    RsocketModuleDefaultConfiguration DEFAULT_CONFIGURATION = new RsocketModuleDefaultConfiguration();
-
-    List<ValueInterceptor<Entity, Entity>> getRequestValueInterceptors();
-
-    List<ValueInterceptor<Entity, Entity>> getResponseValueInterceptors();
-
-    Function<? extends HttpServer, ? extends HttpServer> getWebSocketServerConfigurator();
-
-    Function<? extends TcpServer, ? extends TcpServer> getTcpServerConfigurator();
-
-    Function<? extends WebsocketServerTransport, ? extends WebsocketServerTransport> getWebSocketServerTransportConfigurator();
-
-    Function<? extends TcpServerTransport, ? extends TcpServerTransport> getTcpServerTransportConfigurator();
-
-    Function<? extends ServerRSocketFactory, ? extends ServerRSocketFactory> getServerFactoryConfigurator();
-
-    int getFragmentationMtu();
-
-    @Getter
-    class RsocketModuleDefaultConfiguration implements RsocketModuleConfiguration {
-        private final RsocketDataFormat dataFormat = MESSAGE_PACK;
-        private final String serverHost = BROADCAST_IP_ADDRESS;
-        private final int serverTcpPort = findAvailableTcpPort();
-        private final int serverWebSocketPort = findAvailableTcpPort();
-        private final String balancerHost = LOCALHOST;
-        private final int balancerTcpPort = DEFAULT_RSOCKET_TCP_PORT;
-        private final int balancerWebSocketPort = DEFAULT_RSOCKET_WEB_SOCKET_PORT;
-        private final boolean resumableServer = true;
-        private final long serverResumeSessionDuration = DEFAULT_RSOCKET_RESUME_SESSION_DURATION;
-        private final long serverResumeStreamTimeout = DEFAULT_RSOCKET_RESUME_STREAM_TIMEOUT;
-        private final boolean resumableClient = true;
-        private final long clientResumeSessionDuration = DEFAULT_RSOCKET_RESUME_SESSION_DURATION;
-        private final long clientResumeStreamTimeout = DEFAULT_RSOCKET_RESUME_STREAM_TIMEOUT;
-        private final boolean enableRawDataTracing = false;
-        private final boolean enableValueTracing = false;
-        private final int fragmentationMtu = 0;
-        private final Function<? extends HttpServer, ? extends HttpServer> webSocketServerConfigurator = identity();
-        private final Function<? extends TcpServer, ? extends TcpServer> tcpServerConfigurator = identity();
-        private final Function<? extends WebsocketServerTransport, ? extends WebsocketServerTransport> webSocketServerTransportConfigurator = identity();
-        private final Function<? extends TcpServerTransport, ? extends TcpServerTransport> tcpServerTransportConfigurator = identity();
-        private final Function<? extends ServerRSocketFactory, ? extends ServerRSocketFactory> serverFactoryConfigurator = identity();
-        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
-        private final List<RSocketInterceptor> serverInterceptors = initializeInterceptors();
-        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
-        private final List<RSocketInterceptor> clientInterceptors = initializeInterceptors();
-        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
-        private final List<ValueInterceptor<Entity, Entity>> requestValueInterceptors = initializeValueInterceptors();
-        @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}))
-        private final List<ValueInterceptor<Entity, Entity>> responseValueInterceptors = initializeValueInterceptors();
-
-        private List<RSocketInterceptor> initializeInterceptors() {
-            return linkedListOf(new RsocketLoggingInterceptor());
-        }
-
-        private List<ValueInterceptor<Entity, Entity>> initializeValueInterceptors() {
-            return linkedListOf(new LoggingValueInterceptor<>(this::isEnableValueTracing));
-        }
-
-        private final Map<String, RsocketCommunicationTargetConfiguration> communicationTargets = mapOf();
+    private ImmutableList<ValueInterceptor> initializeValueInterceptors() {
+        return ImmutableList.of(new LoggingValueInterceptor());
     }
+
+    private final ImmutableMap<String, RsocketCommunicationTargetConfiguration> communicationTargets = ImmutableMap.of();
+
+    @RequiredArgsConstructor
+    public static class Configurator implements ModuleConfigurator<RsocketModuleConfiguration, Configurator> {
+        private final RsocketModuleConfiguration configuration;
+
+        @Override
+        public Configurator from(ModuleConfigurationSource source) {
+            return this;
+        }
+    }
+
 }

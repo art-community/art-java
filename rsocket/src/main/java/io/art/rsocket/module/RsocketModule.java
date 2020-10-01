@@ -18,7 +18,7 @@
 
 package io.art.rsocket.module;
 
-import io.art.core.module.Module;
+import io.art.core.module.*;
 import io.art.json.descriptor.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.server.*;
@@ -43,33 +43,25 @@ import static reactor.netty.http.server.HttpServer.create;
 import java.util.*;
 
 @Getter
-public class RsocketModule implements Module<RsocketModuleConfiguration, RsocketModuleState> {
+public class RsocketModule implements StatefulModule<RsocketModuleConfiguration, Configurator, RsocketModuleState> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final RsocketModuleConfiguration rsocketModule = context().getModule(RSOCKET_MODULE_ID, RsocketModule::new);
-    @Getter(lazy = true, value = PRIVATE)
-    private static final RsocketModuleState rsocketModuleState = context().getModuleState(RSOCKET_MODULE_ID, RsocketModule::new);
-    private final String id = RSOCKET_MODULE_ID;
-    private final RsocketModuleConfiguration defaultConfiguration = RsocketModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
+    private static final StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule = context().getStatefulModule(RSOCKET_MODULE_ID);
+    private final String id = RsocketModule.class.getSimpleName();
+    private final RsocketModuleConfiguration configuration = new RsocketModuleConfiguration();
+    private final Configurator configurator = new Configurator(configuration);
     private final RsocketModuleState state = new RsocketModuleState();
-    @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = loggingModule().getLogger(RsocketModule.class);
 
-    public static RsocketModuleConfiguration rsocketModule() {
-        if (contextIsNotReady()) {
-            return DEFAULT_CONFIGURATION;
-        }
+    @Getter(lazy = true, value = PRIVATE)
+    private static final Logger logger = logger(RsocketModule.class);
+
+    public static StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule() {
         return getRsocketModule();
     }
-
-    public static RsocketModuleState rsocketModuleState() {
-        return getRsocketModuleState();
-    }
-
     @Override
     public void onUnload() {
-        let(rsocketModuleState().getTcpServer(), RsocketServer::stop);
-        let(rsocketModuleState().getWebSocketServer(), RsocketServer::stop);
-        rsocketModuleState().getRsocketClients().stream().filter(rsocket -> !rsocket.isDisposed()).forEach(this::disposeRsocket);
+        apply(rsocketModule().state().getTcpServer(), RsocketServer::stop);
+        apply(rsocketModule().state().getWebSocketServer(), RsocketServer::stop);
+        rsocketModule().state().getRsocketClients().stream().filter(rsocket -> !rsocket.isDisposed()).forEach(this::disposeRsocket);
     }
 
     private void disposeRsocket(RSocket rsocket) {
@@ -78,32 +70,5 @@ public class RsocketModule implements Module<RsocketModuleConfiguration, Rsocket
         }
         getLogger().info(RSOCKET_CLIENT_DISPOSING);
         ignoreException(rsocket::dispose, getLogger()::error);
-    }
-
-    public static void main(String[] args) {
-        HttpClient client = HttpClient.create();
-        client
-                .post()
-                .send(fromString(just("Test")))
-                .responseSingle((response, byteBufFlux) -> {
-                    HttpHeaders httpHeaders = response.responseHeaders();
-                    return byteBufFlux.asString().map();
-                })
-                .block();
-        create()
-                .compress(true)
-                .route(routes -> routes
-                        .get("/test", (request, response) -> {
-                            HttpHeaders headers = request.requestHeaders();
-                            Map<CharSequence, Set<Cookie>> cookies = request.cookies();
-                            Map<String, String> params = request.params();
-                            String path = request.path();
-                            headers.get(CONTENT_TYPE);
-                            return response.sendString(request.receive()
-                                    .asByteArray()
-                                    .map(JsonEntityReader::readJson)
-                                    .map(JsonEntityWriter::writeJson));
-                        }))
-                .bindNow();
     }
 }

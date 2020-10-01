@@ -18,30 +18,27 @@
 
 package io.art.rsocket.socket;
 
-import io.rsocket.*;
-import org.reactivestreams.*;
-import reactor.core.publisher.*;
 import io.art.rsocket.flux.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.service.*;
 import io.art.rsocket.state.*;
-import static reactor.core.publisher.Mono.*;
+import io.rsocket.*;
+import org.reactivestreams.*;
+import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.model.RsocketRequestContext.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.rsocket.selector.RsocketDataFormatMimeTypeConverter.*;
 import static io.art.rsocket.state.RsocketModuleState.*;
 import static io.art.rsocket.writer.RsocketPayloadWriter.*;
 import static io.art.rsocket.writer.ServiceResponsePayloadWriter.*;
-import static io.art.server.ServiceController.*;
+import static reactor.core.publisher.Mono.*;
 
-public class RsocketAcceptor extends AbstractRSocket {
+public class ServerRsocket implements RSocket {
     private final CurrentRsocketState state;
 
-    public RsocketAcceptor(RSocket socket, ConnectionSetupPayload setupPayload) {
+    public ServerRsocket(RSocket socket, ConnectionSetupPayload setupPayload) {
         state = CurrentRsocketState
                 .builder()
                 .dataMimeType(setupPayload.dataMimeType())
