@@ -93,7 +93,7 @@ public class ServiceMethodSpecification {
                         .map(responseMapper::map)
                         .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseType), serviceId, methodId);
+        throw new ServiceMethodExecutionException(format(UNKNOWN_REQUEST_TYPE, responseType), serviceId, methodId);
     }
 
     private Flux<Value> mapResponse(Object response) {
@@ -108,7 +108,7 @@ public class ServiceMethodSpecification {
                         .map(responseMapper::map)
                         .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_PROCESSING_MODE, responseType), serviceId, methodId);
+        throw new ServiceMethodExecutionException(format(UNKNOWN_RESPONSE_TYPE, responseType), serviceId, methodId);
     }
 
 
