@@ -111,7 +111,6 @@ public class ServiceMethodSpecification {
         throw new ServiceMethodExecutionException(format(UNKNOWN_RESPONSE_TYPE, responseType), serviceId, methodId);
     }
 
-
     private Flux<Value> filter(Flux<Value> input) {
         return input.filter(Objects::nonNull).filter(value -> !deactivated());
     }
