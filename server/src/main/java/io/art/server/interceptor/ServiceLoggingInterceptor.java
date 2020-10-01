@@ -24,11 +24,11 @@ import io.art.server.specification.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.orElse;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.model.ExceptionInterceptionResult.*;
 import static io.art.core.model.InterceptionResult.next;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
-import static io.art.server.interceptor.ServiceMethodInterceptor.ExceptionInterceptionResult.*;
 import static java.text.MessageFormat.*;
 
 public class ServiceLoggingInterceptor implements ServiceMethodInterceptor<Object, Object> {
