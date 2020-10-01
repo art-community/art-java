@@ -1,3 +1,4 @@
+
 /*
  * ART
  *
@@ -16,10 +17,10 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.communicator;
+package io.art.core.constants;
 
-import lombok.*;
-
-@RequiredArgsConstructor
-public class RsocketCommunicatorClient {
+public enum ExceptionInterceptionStrategy {
+    NEXT,
+    THROW_EXCEPTION,
+    RETURN_FALLBACK
 }

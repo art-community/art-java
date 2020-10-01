@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.core.model.cached;
+package io.art.core.model;
 
 import lombok.*;
 
