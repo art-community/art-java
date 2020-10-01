@@ -34,14 +34,14 @@ import static java.util.Objects.*;
 public class ServiceValidationInterceptor implements ServiceMethodInterceptor<Object, Object> {
     @Override
     public InterceptionResult interceptRequest(Object request, ServiceMethodSpecification specification) {
-        switch (specification.getRequestProcessingMode()) {
-            case BLOCKING:
+        switch (specification.getRequestType()) {
+            case VALUE:
                 validateBlockingRequest(request, specification);
                 break;
-            case REACTIVE_MONO:
+            case MONO:
                 request = orElse(request, Mono.empty());
                 return next(validateReactiveMono(Mono.from(cast(request)), specification));
-            case REACTIVE_FLUX:
+            case FLUX:
                 request = orElse(request, Flux.empty());
                 return next(validateReactiveFlux(Flux.from(cast(request)), specification));
         }

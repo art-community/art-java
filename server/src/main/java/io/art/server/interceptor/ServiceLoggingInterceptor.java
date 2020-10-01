@@ -37,15 +37,15 @@ public class ServiceLoggingInterceptor implements ServiceMethodInterceptor<Objec
     @Override
     public InterceptionResult interceptRequest(Object request, ServiceMethodSpecification specification) {
         ServiceMethodImplementation implementation = specification.getImplementation();
-        switch (specification.getRequestProcessingMode()) {
-            case BLOCKING:
+        switch (specification.getRequestType()) {
+            case VALUE:
                 logBlockingRequest(request, specification);
                 break;
-            case REACTIVE_MONO:
+            case MONO:
                 request = orElse(request, Mono.empty());
                 logger.info(format(STARTING_REACTIVE_SERVICE_MESSAGE, implementation.getServiceId(), implementation.getMethodId()));
                 return next(Mono.from(cast(request)).doOnNext(data -> logReactiveInput(data, specification)));
-            case REACTIVE_FLUX:
+            case FLUX:
                 request = orElse(request, Flux.empty());
                 logger.info(format(STARTING_REACTIVE_SERVICE_MESSAGE, implementation.getServiceId(), implementation.getMethodId()));
                 return next(Flux.from(cast(request)).doOnNext(data -> logReactiveInput(data, specification)));
@@ -55,15 +55,15 @@ public class ServiceLoggingInterceptor implements ServiceMethodInterceptor<Objec
 
     @Override
     public InterceptionResult interceptResponse(Object response, ServiceMethodSpecification specification) {
-        switch (specification.getResponseProcessingMode()) {
-            case BLOCKING:
+        switch (specification.getResponseType()) {
+            case VALUE:
                 logBlockingResponse(response, specification);
                 break;
-            case REACTIVE_MONO:
+            case MONO:
                 return next(Mono.from(cast(response))
                         .doOnNext(data -> logReactiveOutput(data, specification))
                         .doOnError(exception -> logException(exception, specification)));
-            case REACTIVE_FLUX:
+            case FLUX:
                 return next(Flux.from(cast(response))
                         .doOnNext(data -> logReactiveOutput(data, specification))
                         .doOnError(exception -> logException(exception, specification)));

@@ -36,10 +36,10 @@ public interface ServerModuleConstants {
         String METHODS_KEY = "methods";
     }
 
-    enum ServiceMethodProcessingMode {
-        BLOCKING,
-        REACTIVE_MONO,
-        REACTIVE_FLUX
+    enum ServiceMethodPayloadType {
+        VALUE,
+        MONO,
+        FLUX
     }
 
     interface ValidationExpressionType {

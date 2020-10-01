@@ -19,32 +19,11 @@
 package io.art.communicator.implementation;
 
 import io.art.entity.immutable.Value;
+import org.reactivestreams.*;
 import reactor.core.publisher.*;
 
 public interface CommunicatorClient {
-    void callBlocking();
-
-    void callBlocking(Value requestValue);
-
-    Mono<Void> callReactive();
-
-    Mono<Void> callReactive(Value requestValue);
-
-    Value executeBlocking();
-
-    Value executeBlocking(Value requestValue);
-
-    Mono<Value> executeReactive();
-
-    Mono<Value> executeReactive(Value requestValue);
-
-    Mono<Value> executeReactive(Mono<Value> requestValue);
-
-    Flux<Value> stream();
-
     Flux<Value> stream(Value requestValue);
 
-    Flux<Value> stream(Mono<Value> requestValue);
-
-    Flux<Value> channel(Flux<Value> requestValue);
+    Flux<Value> channel(Publisher<Value> requestValue);
 }

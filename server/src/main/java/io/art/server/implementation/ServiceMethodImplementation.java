@@ -54,10 +54,6 @@ public class ServiceMethodImplementation {
         return new ServiceMethodImplementation(serviceId, methodId, function);
     }
 
-    public Object execute() {
-        return execute(null);
-    }
-
     public Object execute(Object request) {
         ServiceMethodSpecification methodSpecification = getMethodSpecification();
         List<ServiceMethodInterceptor<Object, Object>> interceptors = methodSpecification.getInterceptors();
