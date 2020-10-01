@@ -51,7 +51,7 @@ public interface ContextConfiguration {
 
     class DefaultContextConfiguration implements ContextConfiguration {
         @Getter
-        private final String mainModuleId;
+        private final String mainModuleId = DEFAULT_MAIN_MODULE_ID;
         @Getter
         private final Charset charset = UTF_8;
         @Getter
@@ -70,9 +70,5 @@ public interface ContextConfiguration {
                 .map(File::new)
                 .map(File::getPath)
                 .orElse(DEFAULT_MODULE_JAR);
-
-        public DefaultContextConfiguration() {
-            this.mainModuleId = DEFAULT_MAIN_MODULE_ID;
-        }
     }
 }

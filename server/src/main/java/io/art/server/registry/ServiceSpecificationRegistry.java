@@ -26,7 +26,7 @@ import static java.text.MessageFormat.*;
 import java.util.*;
 
 public class ServiceSpecificationRegistry {
-    private final Map<String, ServiceSpecification> services = concurrentHashMap();
+    private final Map<String, ServiceSpecification> services = mapOf();
 
     public ServiceSpecification get(String serviceId) {
         return services.get(serviceId);

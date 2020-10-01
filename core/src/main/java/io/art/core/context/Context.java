@@ -42,8 +42,8 @@ public class Context {
     private static Context INSTANCE;
     private ContextConfiguration configuration = new DefaultContextConfiguration();
     private ContextState state = READY;
-    private final Map<String, Module> modules = concurrentHashMap();
-    private final static List<String> messages = copyOnWriteList();
+    private final Map<String, Module> modules = mapOf();
+    private final static List<String> messages = dynamicArrayOf();
 
     static {
         messages.add(ART_BANNER);
