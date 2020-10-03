@@ -20,6 +20,7 @@ package io.art.server.configuration;
 
 import com.google.common.collect.*;
 import io.art.core.module.*;
+import io.art.core.source.*;
 import io.art.server.model.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
@@ -37,7 +38,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
         private final ServerModuleConfiguration configuration;
 
         @Override
-        public Configurator from(ModuleConfigurationSource source) {
+        public Configurator from(ConfigurationSource source) {
             configuration.services = ofNullable(source.getNestedMap(SERVER_SERVICES_KEY))
                     .map(services -> services
                             .entrySet()

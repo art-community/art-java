@@ -19,6 +19,7 @@
 package io.art.communicator.configuration;
 
 import io.art.core.module.*;
+import io.art.core.source.*;
 import lombok.*;
 
 @Getter
@@ -28,7 +29,7 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         private final CommunicatorModuleConfiguration configuration;
 
         @Override
-        public Configurator from(ModuleConfigurationSource source) {
+        public Configurator from(ConfigurationSource source) {
             return this;
         }
     }

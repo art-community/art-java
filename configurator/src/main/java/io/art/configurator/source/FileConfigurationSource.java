@@ -21,7 +21,7 @@ package io.art.configurator.source;
 import io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import io.art.configurator.exception.*;
 import io.art.configuration.yaml.source.*;
-import io.art.core.module.*;
+import io.art.core.source.*;
 import lombok.*;
 import static com.typesafe.config.ConfigFactory.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
@@ -31,9 +31,9 @@ import java.time.*;
 import java.util.*;
 
 @Getter
-public class FileConfigurationSource implements ModuleConfigurationSource {
+public class FileConfigurationSource implements ConfigurationSource {
     private final ConfigurationSourceType type;
-    private final ModuleConfigurationSource source;
+    private final ConfigurationSource source;
 
     public FileConfigurationSource(ConfigurationSourceType type, File file) {
         this.type = type;
@@ -76,7 +76,7 @@ public class FileConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public ModuleConfigurationSource getNested(String path) {
+    public ConfigurationSource getNested(String path) {
         return source.getNested(path);
     }
 
@@ -111,7 +111,7 @@ public class FileConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public List<ModuleConfigurationSource> getNestedList(String path) {
+    public List<ConfigurationSource> getNestedList(String path) {
         return source.getNestedList(path);
     }
 
@@ -125,7 +125,7 @@ public class FileConfigurationSource implements ModuleConfigurationSource {
         return source.has(path);
     }
 
-    private static ModuleConfigurationSource selectSource(ConfigurationSourceType type, File file) {
+    private static ConfigurationSource selectSource(ConfigurationSourceType type, File file) {
         String extension = parseExtension(file.getAbsolutePath());
         switch (extension) {
             case HOCON_EXTENSION:

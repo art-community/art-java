@@ -21,7 +21,8 @@ package io.art.configurator.configuration;
 import com.google.common.collect.*;
 import io.art.configurator.source.*;
 import io.art.core.module.*;
-import io.art.core.module.ModuleConfigurationSource.*;
+import io.art.core.source.*;
+import io.art.core.source.ConfigurationSource.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static com.google.common.collect.Ordering.*;
@@ -31,7 +32,7 @@ import static java.util.Comparator.comparingInt;
 
 @Getter
 public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
-    private ImmutableMap<ModuleConfigurationSourceType, ModuleConfigurationSource> sources = of();
+    private ImmutableMap<ModuleConfigurationSourceType, ConfigurationSource> sources = of();
 
     public PropertiesConfigurationSource getProperties() {
         return cast(sources.get(PROPERTIES));
@@ -41,8 +42,8 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
         return cast(sources.get(ENVIRONMENT));
     }
 
-    public ImmutableList<ModuleConfigurationSource> orderedSources() {
-        return from(comparingInt((ModuleConfigurationSource source) -> source.getType().getOrder())).immutableSortedCopy(getSources().values());
+    public ImmutableList<ConfigurationSource> orderedSources() {
+        return from(comparingInt((ConfigurationSource source) -> source.getType().getOrder())).immutableSortedCopy(getSources().values());
     }
 
     @RequiredArgsConstructor
@@ -50,8 +51,8 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
         private final ConfiguratorModuleConfiguration configuration;
 
         @Override
-        public Configurator from(ModuleConfigurationSource source) {
-            configuration.sources = ImmutableMap.<ModuleConfigurationSourceType, ModuleConfigurationSource>builder()
+        public Configurator from(ConfigurationSource source) {
+            configuration.sources = ImmutableMap.<ModuleConfigurationSourceType, ConfigurationSource>builder()
                     .putAll(configuration.sources)
                     .put(source.getType(), source)
                     .build();

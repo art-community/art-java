@@ -19,7 +19,7 @@
 package io.art.server.model;
 
 import com.google.common.collect.*;
-import io.art.core.module.*;
+import io.art.core.source.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -33,7 +33,7 @@ public class ServiceConfiguration {
     private final boolean deactivated;
     private final ImmutableMap<String, ServiceMethodConfiguration> methods;
 
-    public static ServiceConfiguration from(ModuleConfigurationSource source) {
+    public static ServiceConfiguration from(ConfigurationSource source) {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
         ImmutableMap<String, ServiceMethodConfiguration> methods = ofNullable(source.getNestedMap(METHODS_KEY))
                 .map(configurations -> configurations.entrySet()

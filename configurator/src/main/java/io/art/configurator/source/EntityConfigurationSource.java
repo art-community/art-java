@@ -18,15 +18,14 @@
 
 package io.art.configurator.source;
 
-import io.art.core.module.*;
 import io.art.core.parser.*;
+import io.art.core.source.*;
 import io.art.entity.immutable.*;
 import io.art.entity.mapping.*;
 import lombok.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.entity.immutable.Value.*;
-import static io.art.entity.mapping.EntityMapping.toMap;
 import static io.art.entity.mapping.PrimitiveMapping.toString;
 import static io.art.entity.mapping.PrimitiveMapping.*;
 import static java.util.Objects.*;
@@ -36,7 +35,7 @@ import java.util.*;
 
 @Getter
 @RequiredArgsConstructor
-public class EntityConfigurationSource implements ModuleConfigurationSource {
+public class EntityConfigurationSource implements ConfigurationSource {
     private final ModuleConfigurationSourceType type = ENTITY;
     private final Entity entity;
 
@@ -76,7 +75,7 @@ public class EntityConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public ModuleConfigurationSource getNested(String path) {
+    public ConfigurationSource getNested(String path) {
         return new EntityConfigurationSource(asEntity(entity.find(path)));
     }
 
@@ -111,7 +110,7 @@ public class EntityConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public List<ModuleConfigurationSource> getNestedList(String path) {
+    public List<ConfigurationSource> getNestedList(String path) {
         return asArray(entity.get(path)).asStream().map(value -> new EntityConfigurationSource(asEntity(value))).collect(toList());
     }
 

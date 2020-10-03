@@ -19,10 +19,8 @@
 package io.art.logging;
 
 import io.art.core.module.*;
+import io.art.core.source.*;
 import lombok.*;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.orElse;
 import static io.art.logging.LoggingModuleConstants.ConfigurationKeys.*;
 
@@ -36,7 +34,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
         private final LoggingModuleConfiguration configuration;
 
         @Override
-        public Configurator from(ModuleConfigurationSource source) {
+        public Configurator from(ConfigurationSource source) {
             configuration.colored = orElse(source.getBool(COLORED_KEY), false);
             configuration.asynchronous = orElse(source.getBool(ASYNCHRONOUS_KEY), false);
             return this;

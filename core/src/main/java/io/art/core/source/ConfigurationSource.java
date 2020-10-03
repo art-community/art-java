@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.core.module;
+package io.art.core.source;
 
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import java.time.*;
 import java.util.*;
 
-public interface ModuleConfigurationSource {
+public interface ConfigurationSource {
     Integer getInt(String path);
 
     Long getLong(String path);
@@ -38,7 +38,7 @@ public interface ModuleConfigurationSource {
 
     Duration getDuration(String path);
 
-    ModuleConfigurationSource getNested(String path);
+    ConfigurationSource getNested(String path);
 
     List<Integer> getIntList(String path);
 
@@ -52,40 +52,40 @@ public interface ModuleConfigurationSource {
 
     List<Duration> getDurationList(String path);
 
-    List<ModuleConfigurationSource> getNestedList(String path);
+    List<ConfigurationSource> getNestedList(String path);
 
     default Map<String, Integer> getIntMap(String path) {
-        ModuleConfigurationSource nested = getNested(path);
+        ConfigurationSource nested = getNested(path);
         return nested.getKeys().stream().collect(toMap(identity(), nested::getInt));
     }
 
     default Map<String, Long> getLongMap(String path) {
-        ModuleConfigurationSource nested = getNested(path);
+        ConfigurationSource nested = getNested(path);
         return nested.getKeys().stream().collect(toMap(identity(), nested::getLong));
     }
 
     default Map<String, Boolean> getBoolMap(String path) {
-        ModuleConfigurationSource nested = getNested(path);
+        ConfigurationSource nested = getNested(path);
         return nested.getKeys().stream().collect(toMap(identity(), nested::getBool));
     }
 
     default Map<String, Double> getDoubleMap(String path) {
-        ModuleConfigurationSource nested = getNested(path);
+        ConfigurationSource nested = getNested(path);
         return nested.getKeys().stream().collect(toMap(identity(), nested::getDouble));
     }
 
     default Map<String, String> getStringMap(String path) {
-        ModuleConfigurationSource nested = getNested(path);
+        ConfigurationSource nested = getNested(path);
         return nested.getKeys().stream().collect(toMap(identity(), nested::getString));
     }
 
     default Map<String, Duration> getDurationMap(String path) {
-        ModuleConfigurationSource nested = getNested(path);
+        ConfigurationSource nested = getNested(path);
         return nested.getKeys().stream().collect(toMap(identity(), nested::getDuration));
     }
 
-    default Map<String, ModuleConfigurationSource> getNestedMap(String path) {
-        ModuleConfigurationSource nested = getNested(path);
+    default Map<String, ConfigurationSource> getNestedMap(String path) {
+        ConfigurationSource nested = getNested(path);
         return nested.getKeys().stream().collect(toMap(identity(), nested::getNested));
     }
 

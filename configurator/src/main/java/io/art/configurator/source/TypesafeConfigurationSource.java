@@ -19,7 +19,7 @@
 package io.art.configurator.source;
 
 import com.typesafe.config.*;
-import io.art.core.module.*;
+import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
@@ -29,7 +29,7 @@ import java.util.*;
 
 @Getter
 @RequiredArgsConstructor
-public class TypesafeConfigurationSource implements ModuleConfigurationSource {
+public class TypesafeConfigurationSource implements ConfigurationSource {
     private final ModuleConfigurationSourceType type;
     private final Config typesafeConfiguration;
 
@@ -69,7 +69,7 @@ public class TypesafeConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public ModuleConfigurationSource getNested(String path) {
+    public ConfigurationSource getNested(String path) {
         return new TypesafeConfigurationSource(type, typesafeConfiguration.atPath(path));
     }
 
@@ -104,7 +104,7 @@ public class TypesafeConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public List<ModuleConfigurationSource> getNestedList(String path) {
+    public List<ConfigurationSource> getNestedList(String path) {
         return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getConfigList)
                 .stream()
                 .map(config -> new TypesafeConfigurationSource(type, config))

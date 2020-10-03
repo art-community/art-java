@@ -22,13 +22,12 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.*;
 import com.fasterxml.jackson.dataformat.yaml.*;
 import io.art.configuration.yaml.exception.*;
-import io.art.core.module.*;
+import io.art.core.source.*;
 import lombok.*;
 import static com.fasterxml.jackson.databind.node.JsonNodeType.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.parser.DurationParser.*;
-import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import static java.util.stream.StreamSupport.*;
 import java.io.*;
@@ -36,7 +35,7 @@ import java.time.*;
 import java.util.*;
 
 @Getter
-public class YamlConfigurationSource implements ModuleConfigurationSource {
+public class YamlConfigurationSource implements ConfigurationSource {
     private final ModuleConfigurationSourceType type;
     private final File file;
     private final JsonNode configuration;
@@ -94,7 +93,7 @@ public class YamlConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public ModuleConfigurationSource getNested(String path) {
+    public ConfigurationSource getNested(String path) {
         return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), node -> new YamlConfigurationSource(type, file, node));
     }
 
@@ -143,7 +142,7 @@ public class YamlConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public List<ModuleConfigurationSource> getNestedList(String path) {
+    public List<ConfigurationSource> getNestedList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
                 .map(node -> new YamlConfigurationSource(type, file, node))
                 .collect(toList());

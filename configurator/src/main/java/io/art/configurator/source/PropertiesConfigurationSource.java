@@ -18,7 +18,7 @@
 
 package io.art.configurator.source;
 
-import io.art.core.module.*;
+import io.art.core.source.*;
 import lombok.*;
 import static com.typesafe.config.ConfigFactory.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
@@ -27,7 +27,7 @@ import java.time.*;
 import java.util.*;
 
 @Getter
-public class PropertiesConfigurationSource implements ModuleConfigurationSource {
+public class PropertiesConfigurationSource implements ConfigurationSource {
     private final ConfigurationSourceType type = PROPERTIES;
     private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(PROPERTIES, systemProperties());
 
@@ -67,7 +67,7 @@ public class PropertiesConfigurationSource implements ModuleConfigurationSource 
     }
 
     @Override
-    public ModuleConfigurationSource getNested(String path) {
+    public ConfigurationSource getNested(String path) {
         return typesafeConfigurationSource.getNested(path);
     }
 
@@ -102,7 +102,7 @@ public class PropertiesConfigurationSource implements ModuleConfigurationSource 
     }
 
     @Override
-    public List<ModuleConfigurationSource> getNestedList(String path) {
+    public List<ConfigurationSource> getNestedList(String path) {
         return typesafeConfigurationSource.getNestedList(path);
     }
 

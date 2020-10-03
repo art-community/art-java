@@ -18,11 +18,12 @@
 
 package io.art.core.module;
 
+import io.art.core.source.*;
 import static io.art.core.caster.Caster.*;
 import java.util.*;
 
 public interface ModuleConfigurator<Configuration extends ModuleConfiguration, Configurator extends ModuleConfigurator<Configuration, Configurator>> {
-    default Configurator from(ModuleConfigurationSource source) {
+    default Configurator from(ConfigurationSource source) {
         return cast(this);
     }
 
@@ -30,7 +31,7 @@ public interface ModuleConfigurator<Configuration extends ModuleConfiguration, C
         return cast(this);
     }
 
-    default Configurator from(Collection<ModuleConfigurationSource> sources) {
+    default Configurator from(Collection<ConfigurationSource> sources) {
         sources.forEach(this::from);
         return cast(this);
     }

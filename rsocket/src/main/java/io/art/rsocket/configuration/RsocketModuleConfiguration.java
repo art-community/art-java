@@ -20,9 +20,9 @@ package io.art.rsocket.configuration;
 
 import com.google.common.collect.*;
 import io.art.core.module.*;
+import io.art.core.source.*;
 import io.art.entity.interceptor.*;
 import io.art.logging.*;
-import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.rsocket.RSocketFactory.*;
@@ -85,7 +85,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         private final RsocketModuleConfiguration configuration;
 
         @Override
-        public Configurator from(ModuleConfigurationSource source) {
+        public Configurator from(ConfigurationSource source) {
             return this;
         }
     }

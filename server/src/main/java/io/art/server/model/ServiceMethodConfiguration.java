@@ -18,7 +18,7 @@
 
 package io.art.server.model;
 
-import io.art.core.module.*;
+import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
@@ -28,7 +28,7 @@ import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 public class ServiceMethodConfiguration {
     private final boolean deactivated;
 
-    public static ServiceMethodConfiguration from(ModuleConfigurationSource source) {
+    public static ServiceMethodConfiguration from(ConfigurationSource source) {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
         return new ServiceMethodConfiguration(deactivated);
     }

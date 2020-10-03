@@ -19,12 +19,9 @@
 package io.art.configurator.constants;
 
 import com.google.common.collect.*;
-import io.art.core.factory.*;
-import io.art.core.module.ModuleConfigurationSource.*;
+import io.art.core.source.ConfigurationSource.*;
 import lombok.*;
-import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.factory.CollectionsFactory.queueOf;
-import java.util.*;
 
 public interface ConfiguratorModuleConstants {
     String DEFAULT_MODULE_CONFIGURATION_FILE = "module-config";

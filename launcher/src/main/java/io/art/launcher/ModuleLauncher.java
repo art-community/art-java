@@ -24,7 +24,7 @@ import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.context.*;
 import io.art.core.lazy.*;
 import io.art.core.module.Module;
-import io.art.core.module.*;
+import io.art.core.source.*;
 import io.art.json.module.*;
 import io.art.logging.*;
 import io.art.server.module.*;
@@ -43,7 +43,7 @@ public class ModuleLauncher {
     public static void launch(/*ModuleModel model*/) {
         if (launched.compareAndSet(false, true)) {
             ConfiguratorModule configurator = new ConfiguratorModule();
-            ImmutableList<ModuleConfigurationSource> sources = configurator
+            ImmutableList<ConfigurationSource> sources = configurator
                     .loadConfigurations()
                     .configuration()
                     .orderedSources();
@@ -61,7 +61,7 @@ public class ModuleLauncher {
         }
     }
 
-    private LoggingModule logging(ImmutableList<ModuleConfigurationSource> sources/*, ConfiguratorModel configuratorModel*/) {
+    private LoggingModule logging(ImmutableList<ConfigurationSource> sources/*, ConfiguratorModel configuratorModel*/) {
         LoggingModule logging = new LoggingModule();
         logging.configure(configurator -> configurator.from(sources));
 //        ofNullable(configuratorModel.getLoggingConfigurator())
@@ -69,19 +69,19 @@ public class ModuleLauncher {
         return logging;
     }
 
-    private JsonModule json(ImmutableList<ModuleConfigurationSource> sources) {
+    private JsonModule json(ImmutableList<ConfigurationSource> sources) {
         JsonModule json = new JsonModule();
         json.configure(configurator -> configurator.from(sources));
         return json;
     }
 
-    private XmlModule xml(ImmutableList<ModuleConfigurationSource> sources) {
+    private XmlModule xml(ImmutableList<ConfigurationSource> sources) {
         XmlModule xml = new XmlModule();
         xml.configure(configurator -> configurator.from(sources));
         return xml;
     }
 
-    private ServerModule server(ImmutableList<ModuleConfigurationSource> sources) {
+    private ServerModule server(ImmutableList<ConfigurationSource> sources) {
         ServerModule server = new ServerModule();
         server.configure(configurator -> configurator.from(sources));
         return server;
