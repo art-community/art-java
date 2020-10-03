@@ -60,7 +60,7 @@ public class GrpcClientModule implements Module<GrpcClientModuleConfiguration, G
     }
 
     @Override
-    public void onUnload() {
+    public void beforeUnload() {
         grpcClientModuleState().getChannels().forEach(this::shutdownChannel);
     }
 

@@ -21,8 +21,8 @@ package io.art.configurator.source;
 import com.typesafe.config.*;
 import io.art.core.module.*;
 import lombok.*;
-import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import java.time.*;
@@ -71,7 +71,7 @@ public class TypesafeConfigurationSource implements ModuleConfigurationSource {
 
     @Override
     public ModuleConfigurationSource getInner(String path) {
-        return new TypesafeConfigurationSource(type, typesafeConfiguration.getConfig(path));
+        return new TypesafeConfigurationSource(type, typesafeConfiguration.atPath(path));
     }
 
     @Override

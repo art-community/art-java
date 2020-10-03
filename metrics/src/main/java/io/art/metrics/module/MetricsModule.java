@@ -42,7 +42,7 @@ public class MetricsModule implements Module<MetricModuleConfiguration, ModuleSt
     }
 
     @Override
-    public void onLoad() {
+    public void beforeLoad() {
         metricsModule().getMeterBinders().forEach(meter -> meter.bindTo(metricsModule().getPrometheusMeterRegistry()));
     }
 }

@@ -18,15 +18,13 @@
 
 package io.art.core.context;
 
+import com.google.common.collect.*;
 import io.art.core.configuration.*;
-import io.art.core.configuration.ContextConfiguration.*;
-import io.art.core.constants.*;
 import io.art.core.exception.*;
 import io.art.core.module.Module;
 import io.art.core.module.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.constants.ContextState.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.StringConstants.*;
@@ -34,42 +32,42 @@ import static io.art.core.factory.CollectionsFactory.*;
 import static java.lang.Runtime.*;
 import static java.lang.System.*;
 import static java.text.MessageFormat.*;
+import static java.util.Collections.*;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
 
 public class Context {
     private static Context INSTANCE;
-    private ContextConfiguration configuration = new DefaultContextConfiguration();
-    private ContextState state = READY;
-    private final Map<String, Module> modules = mapOf();
-    private final static List<String> messages = dynamicArrayOf();
+    private final ContextConfiguration configuration;
+    private final Map<String, Module> modules;
+    private final Consumer<String> printer;
 
-    static {
-        messages.add(ART_BANNER);
-    }
-
-    private Context() {
-        if (nonNull(INSTANCE)) {
-            return;
+    private Context(ContextConfiguration configuration, ImmutableList<Module> modules, Consumer<String> printer) {
+        INSTANCE = this;
+        Map<String, Module> modulesMap = mapOf();
+        for (Module module : modules) {
+            modulesMap.put(module.getId(), module);
         }
-        getRuntime().addShutdownHook(new Thread(this::unloadModules));
-    }
-
-    private Context(ContextConfiguration configuration) {
-        if (nonNull(INSTANCE)) {
-            return;
-        }
+        this.printer = printer;
+        this.modules = modulesMap;
         this.configuration = configuration;
-        getRuntime().addShutdownHook(new Thread(this::unloadModules));
+        loadModules();
+        getRuntime().addShutdownHook(new Thread(this::destruct));
     }
 
-    public static Context initContext(ContextConfiguration contextConfiguration) {
-        return INSTANCE = new Context(contextConfiguration);
+    public static Context initializeContext(ContextConfiguration configuration, ImmutableList<Module> modules, Consumer<String> printer) {
+        if (nonNull(INSTANCE)) {
+            throw new InternalRuntimeException(CONTEXT_ALREADY_INITIALIZED);
+        }
+        return new Context(configuration, modules, printer);
     }
 
     public static Context context() {
-        return isNull(INSTANCE) ? INSTANCE = new Context() : INSTANCE;
+        if (isNull(INSTANCE)) {
+            throw new InternalRuntimeException(CONTEXT_NOT_INITIALIZED);
+        }
+        return INSTANCE;
     }
 
     public static ContextConfiguration contextConfiguration() {
@@ -77,33 +75,15 @@ public class Context {
     }
 
     public <C extends ModuleConfiguration> StatelessModuleProxy<C> getStatelessModule(String moduleId) {
-        if (isNull(INSTANCE) || state != READY) {
-            throw new ContextInitializationException(CONTEXT_NOT_READY);
-        }
         Module module = modules.get(moduleId);
         if (isNull(module)) throw new InternalRuntimeException(format(MODULE_WAS_NOT_FOUND, moduleId));
         return new StatelessModuleProxy<>(cast(module));
     }
 
     public <C extends ModuleConfiguration, S extends ModuleState> StatefulModuleProxy<C, S> getStatefulModule(String moduleId) {
-        if (isNull(INSTANCE) || state != READY) {
-            throw new ContextInitializationException(CONTEXT_NOT_READY);
-        }
         Module module = modules.get(moduleId);
         if (isNull(module)) throw new InternalRuntimeException(format(MODULE_WAS_NOT_FOUND, moduleId));
         return new StatefulModuleProxy<>(cast(module));
-    }
-
-    public Context loadModule(Module module) {
-        long timestamp = currentTimeMillis();
-        ContextState currentState = state;
-        state = LOADING;
-        modules.put(module.getId(), module);
-        state = currentState;
-        module.onLoad();
-        messages.add(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - timestamp, module.getClass()));
-        module.afterLoad();
-        return this;
     }
 
     public Set<String> getModuleNames() {
@@ -117,14 +97,32 @@ public class Context {
         return modules.containsKey(moduleId);
     }
 
-    public void printMessages(Consumer<String> printer) {
+    private void loadModules() {
+        Set<String> messages = setOf(ART_BANNER);
+        for (Module module : modules.values()) {
+            long timestamp = currentTimeMillis();
+            module.beforeLoad();
+            messages.add(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - timestamp, module.getClass()));
+            module.afterLoad();
+        }
         messages.forEach(printer);
     }
 
     private void unloadModules() {
-        state = UNLOADING;
-        modules.values().forEach(Module::onUnload);
-        modules.clear();
-        state = EMPTY;
+        List<Module> modules = linkedListOf(this.modules.values());
+        reverse(modules);
+        Set<String> messages = setOf();
+        for (Module module : modules) {
+            long timestamp = currentTimeMillis();
+            module.beforeUnload();
+            messages.add(format(MODULE_UNLOADED_MESSAGE, module.getId(), currentTimeMillis() - timestamp, module.getClass()));
+            module.afterUnload();
+        }
+        messages.forEach(printer);
+    }
+
+    private void destruct() {
+        unloadModules();
+        INSTANCE = null;
     }
 }

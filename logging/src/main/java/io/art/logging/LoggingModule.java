@@ -18,13 +18,12 @@
 
 package io.art.logging;
 
-import io.art.core.context.*;
 import io.art.core.module.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.core.async.*;
-import static io.art.core.caster.Caster.cast;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModuleConstants.*;
 import static io.art.logging.LoggingModuleConstants.LoggingMessages.*;
@@ -52,7 +51,7 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     }
 
     @Override
-    public void onLoad() {
+    public void beforeLoad() {
         getLogManager().reset();
 
         boolean fromFile = ofNullable(getProperty(LOG42_CONFIGURATION_FILE_PROPERTY))
@@ -61,7 +60,7 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
                 .orElse(false);
 
         if (fromFile) {
-            logger(LoggingModule.class).info(format(CONFIGURE_FROM_FILE, getProperty(LOG42_CONFIGURATION_FILE_PROPERTY)));
+            currentLogger().info(format(CONFIGURE_FROM_FILE, getProperty(LOG42_CONFIGURATION_FILE_PROPERTY)));
             return;
         }
 
@@ -70,20 +69,23 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
         boolean fromClasspath = nonNull(source = loader.getResource(LOG4J2_YML_FILE)) || nonNull(source = loader.getResource(LOG4J2_YAML_FILE));
 
         if (fromClasspath) {
-            logger(LoggingModule.class).info(format(CONFIGURE_FROM_CLASSPATH, source.getFile()));
+            currentLogger().info(format(CONFIGURE_FROM_CLASSPATH, source.getFile()));
         }
 
-        useCustomLoggers(name -> new ReactorLogger(logger(name)));
+        useCustomLoggers(name -> new ReactorLogger(currentLogger(name)));
 
         if (configuration.isAsynchronous()) {
-            logger(LoggingModule.class).info(USE_ASYNCHRONOUS_LOGGING);
+            currentLogger().info(USE_ASYNCHRONOUS_LOGGING);
             setProperty(LOG4J_CONTEXT_SELECTOR, AsyncLoggerContextSelector.class.getName());
         }
     }
 
-    @Override
-    public void afterLoad() {
-        context().printMessages(logger(Context.class)::info);
+    private Logger currentLogger() {
+        return configuration.isColored() ? new ColoredLogger(cast(LogManager.getLogger(LoggingModule.class))) : LogManager.getLogger(LoggingModule.class);
+    }
+
+    private Logger currentLogger(String topic) {
+        return configuration.isColored() ? new ColoredLogger(cast(LogManager.getLogger(topic))) : LogManager.getLogger(topic);
     }
 
     public static Logger logger() {

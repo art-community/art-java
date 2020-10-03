@@ -19,7 +19,8 @@
 package io.art.core.constants;
 
 public interface ExceptionMessages {
-    String CONTEXT_NOT_READY = "Context not ready";
+    String CONTEXT_ALREADY_INITIALIZED = "Context already initialized";
+    String CONTEXT_NOT_INITIALIZED = "Context not initialized";
     String MODULE_WAS_NOT_FOUND = "Module ''{0}'' was not found in context\nPlease Call `Context.context().loadModule(new ''module class''())`;";
     String MODULE_HAS_NOT_STATE = "Module ''{0}'' has not state";
     String BUILDER_VALIDATOR_HAS_NEXT_ERRORS = "Builder validator for ''{0}'' has next error fields:";

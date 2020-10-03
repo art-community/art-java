@@ -80,7 +80,7 @@ public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfigurat
     }
 
     @Override
-    public void onUnload() {
+    public void beforeUnload() {
         kafkaConsumerModuleState()
                 .getKafkaConsumers()
                 .entrySet()

@@ -46,7 +46,7 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
     }
 
     @Override
-    public void onUnload() {
+    public void beforeUnload() {
         DeferredExecutor deferredExecutor = deferredExecutor();
         PeriodicExecutor periodicExecutor = periodicExecutor();
         deferredExecutor.clear();

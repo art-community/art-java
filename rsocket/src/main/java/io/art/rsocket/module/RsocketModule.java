@@ -58,7 +58,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
         return getRsocketModule();
     }
     @Override
-    public void onUnload() {
+    public void beforeUnload() {
         apply(rsocketModule().state().getTcpServer(), RsocketServer::stop);
         apply(rsocketModule().state().getWebSocketServer(), RsocketServer::stop);
         rsocketModule().state().getRsocketClients().stream().filter(rsocket -> !rsocket.isDisposed()).forEach(this::disposeRsocket);

@@ -52,7 +52,7 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
     private final static Logger logger = logger(TarantoolModule.class);
 
     @Override
-    public void onLoad() {
+    public void beforeLoad() {
         if (tarantoolModule().getInitializationMode() != BOOTSTRAP) {
             return;
         }
@@ -77,7 +77,7 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
     }
 
     @Override
-    public void onUnload() {
+    public void beforeUnload() {
         tarantoolModuleState().getClients()
                 .entrySet()
                 .stream()

@@ -21,12 +21,15 @@ package io.art.core.module;
 public interface Module {
     String getId();
 
-    default void onLoad() {
+    default void beforeLoad() {
     }
 
     default void afterLoad() {
     }
 
-    default void onUnload() {
+    default void beforeUnload() {
+    }
+
+    default void afterUnload() {
     }
 }

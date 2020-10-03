@@ -55,7 +55,7 @@ public class RocksDbModule implements Module<RocksDbModuleConfiguration, RocksDb
     }
 
     @Override
-    public void onLoad() {
+    public void beforeLoad() {
         loadLibrary();
         try {
             state = new RocksDbModuleState(open(rocksDbModule().getOptions(), rocksDbModule().getPath()));
@@ -65,7 +65,7 @@ public class RocksDbModule implements Module<RocksDbModuleConfiguration, RocksDb
     }
 
     @Override
-    public void onUnload() {
+    public void beforeUnload() {
         RocksDbModuleState state = rocksDbModuleState();
         if (isNull(state)) return;
         RocksDB db = state.getDb();

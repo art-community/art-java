@@ -64,7 +64,7 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
     }
 
     @Override
-    public void onUnload() {
+    public void beforeUnload() {
         let(httpServerModuleState().getServer(), HttpServer::stop);
     }
 }

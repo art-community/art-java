@@ -23,6 +23,7 @@ import lombok.*;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.orElse;
 import static io.art.logging.LoggingModuleConstants.ConfigurationKeys.*;
 
 @Getter
@@ -36,8 +37,8 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ModuleConfigurationSource source) {
-            configuration.colored = source.getBool(COLORED_KEY);
-            configuration.asynchronous = source.getBool(ASYNCHRONOUS_KEY);
+            configuration.colored = orElse(source.getBool(COLORED_KEY), false);
+            configuration.asynchronous = orElse(source.getBool(ASYNCHRONOUS_KEY), false);
             return this;
         }
 

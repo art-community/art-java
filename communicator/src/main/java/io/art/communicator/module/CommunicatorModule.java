@@ -38,9 +38,4 @@ public class CommunicatorModule implements StatefulModule<CommunicatorModuleConf
     public static StatefulModuleProxy<CommunicatorModuleConfiguration, CommunicatorModuleState> communicatorModule() {
         return getCommunicatorModule();
     }
-
-    public static void main(String[] args) {
-        context().loadModule(new CommunicatorModule());
-        System.out.println(communicatorModule().configuration());
-    }
 }

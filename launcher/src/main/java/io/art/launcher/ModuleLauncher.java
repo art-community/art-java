@@ -20,61 +20,72 @@ package io.art.launcher;
 
 import com.google.common.collect.*;
 import io.art.configurator.module.*;
+import io.art.core.configuration.ContextConfiguration.*;
+import io.art.core.context.*;
+import io.art.core.lazy.*;
+import io.art.core.module.Module;
 import io.art.core.module.*;
 import io.art.json.module.*;
 import io.art.logging.*;
-import io.art.model.communicator.*;
-import io.art.model.configurator.*;
-import io.art.model.module.*;
 import io.art.server.module.*;
 import io.art.xml.module.*;
 import lombok.experimental.*;
-import static io.art.configurator.module.ConfiguratorModule.*;
-import static io.art.core.caster.Caster.*;
+import org.apache.logging.log4j.*;
 import static io.art.core.context.Context.*;
-import static io.art.model.module.ModuleModel.*;
-import static java.util.Optional.*;
-import java.util.*;
+import static io.art.core.lazy.LazyValue.*;
+import static io.art.logging.LoggingModule.*;
 import java.util.concurrent.atomic.*;
 
 @UtilityClass
 public class ModuleLauncher {
     private final static AtomicBoolean launched = new AtomicBoolean(false);
 
-    public static void launch(ModuleModel model) {
+    public static void launch(/*ModuleModel model*/) {
         if (launched.compareAndSet(false, true)) {
-            context().loadModule(new ConfiguratorModule());
-            ImmutableList<ModuleConfigurationSource> sources = configuratorModule().configuration().orderedSources();
-            ConfiguratorModel configuratorModel = model.getConfiguratorModel();
-            logging(sources, configuratorModel);
-            json(sources);
-            xml(sources);
-            server(sources);
+            ImmutableList<ModuleConfigurationSource> sources = new ConfiguratorModule()
+                    .loadConfigurations()
+                    .configuration()
+                    .orderedSources();
+            //ConfiguratorModel configuratorModel = model.getConfiguratorModel();
+            ImmutableList.Builder<Module> modules = ImmutableList.builder();
+            modules.add(
+                    logging(sources/*, configuratorModel*/),
+                    json(sources),
+                    xml(sources),
+                    server(sources)
+            );
+            LazyValue<Logger> logger = lazy(() -> logger(Context.class));
+            initializeContext(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
         }
     }
 
-    private void logging(ImmutableList<ModuleConfigurationSource> sources, ConfiguratorModel configuratorModel) {
-        LoggingModule logging = cast(new LoggingModule().configure(configurator -> configurator.from(sources)));
-        ofNullable(configuratorModel.getLoggingConfigurator())
-                .ifPresent(model -> logging.configure(configurator -> configurator.from(model.getConfiguration())));
-        context().loadModule(logging);
+    private LoggingModule logging(ImmutableList<ModuleConfigurationSource> sources/*, ConfiguratorModel configuratorModel*/) {
+        LoggingModule logging = new LoggingModule();
+        logging.configure(configurator -> configurator.from(sources));
+//        ofNullable(configuratorModel.getLoggingConfigurator())
+//                .ifPresent(model -> logging.configure(configurator -> configurator.from(model.getConfiguration())));
+        return logging;
     }
 
-    private void json(ImmutableList<ModuleConfigurationSource> sources) {
-        context().loadModule(new JsonModule().configure(configurator -> configurator.from(sources)));
+    private JsonModule json(ImmutableList<ModuleConfigurationSource> sources) {
+        JsonModule json = new JsonModule();
+        json.configure(configurator -> configurator.from(sources));
+        return json;
     }
 
-    private void xml(ImmutableList<ModuleConfigurationSource> sources) {
-        context().loadModule(new XmlModule().configure(configurator -> configurator.from(sources)));
+    private XmlModule xml(ImmutableList<ModuleConfigurationSource> sources) {
+        XmlModule xml = new XmlModule();
+        xml.configure(configurator -> configurator.from(sources));
+        return xml;
     }
 
-    private void server(ImmutableList<ModuleConfigurationSource> sources) {
-        context().loadModule(new ServerModule().configure(configurator -> configurator.from(sources)));
+    private ServerModule server(ImmutableList<ModuleConfigurationSource> sources) {
+        ServerModule server = new ServerModule();
+        server.configure(configurator -> configurator.from(sources));
+        return server;
     }
 
     public static void main(String[] args) {
-        launch(module()
-                .communicate(communicator -> communicator.grpc("test", GrpcCommunicatorModel.class))
-                .configure(configurator -> configurator.logging(logging -> logging.colored().asynchronous())));
+        launch();
     }
 }

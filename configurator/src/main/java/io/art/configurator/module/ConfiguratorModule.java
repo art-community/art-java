@@ -21,12 +21,14 @@ package io.art.configurator.module;
 import io.art.configurator.configuration.*;
 import io.art.configurator.configuration.ConfiguratorModuleConfiguration.*;
 import io.art.configurator.source.*;
+import io.art.core.checker.*;
 import io.art.core.module.*;
 import lombok.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorKeys.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
+import static io.art.core.caster.Caster.cast;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.CollectionExtensions.*;
@@ -43,8 +45,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     @Getter(lazy = true)
     private static final StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule = context().getStatelessModule(ConfiguratorModule.class.getSimpleName());
 
-    @Override
-    public void onLoad() {
+    public StatelessModuleProxy<ConfiguratorModuleConfiguration> loadConfigurations() {
         configure(configurator -> configurator
                 .from(new EnvironmentConfigurationSource())
                 .from(new PropertiesConfigurationSource())
@@ -60,11 +61,13 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
         PropertiesConfigurationSource properties = getConfiguration().getProperties();
         configureByFile(addFirstToList(environment.getString(MODULE_CONFIG_FILE_ENVIRONMENT), environment.getStringList(MODULE_CONFIG_FILES_ENVIRONMENT)));
         configureByFile(addFirstToList(properties.getString(MODULE_CONFIG_FILE_PROPERTY), properties.getStringList(MODULE_CONFIG_FILES_PROPERTY)));
+        return new StatelessModuleProxy<>(this);
     }
 
     private void configureByFile(List<String> paths) {
         paths
                 .stream()
+                .filter(EmptinessChecker::isNotEmpty)
                 .map(path -> get(path).toFile())
                 .filter(File::exists)
                 .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(CUSTOM_FILE, file))));

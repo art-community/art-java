@@ -18,7 +18,7 @@
 
 dependencies {
     implementation(project(":configurator"))
-    implementation(project(":model"))
+    //implementation(project(":model"))
     implementation(project(":core"))
     implementation(project(":logging"))
     implementation(project(":entity"))

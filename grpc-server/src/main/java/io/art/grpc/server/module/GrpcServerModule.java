@@ -51,7 +51,7 @@ public class GrpcServerModule implements Module<GrpcServerModuleConfiguration, G
     }
 
     @Override
-    public void onUnload() {
+    public void beforeUnload() {
         let(grpcServerModuleState().getServer(), GrpcServer::stop);
     }
 }

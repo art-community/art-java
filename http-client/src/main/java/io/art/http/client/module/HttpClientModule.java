@@ -56,7 +56,7 @@ public class HttpClientModule implements Module<HttpClientModuleConfiguration, H
     }
 
     @Override
-    public void onUnload() {
+    public void beforeUnload() {
         httpClientModuleState().getClients().forEach(this::closeClient);
         httpClientModuleState().getAsynchronousClients().forEach(this::closeClient);
     }
