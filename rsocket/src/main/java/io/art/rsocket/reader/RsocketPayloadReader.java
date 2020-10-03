@@ -18,6 +18,8 @@
 
 package io.art.rsocket.reader;
 
+import io.art.entity.constants.*;
+import io.art.entity.constants.EntityConstants.*;
 import io.art.entity.immutable.*;
 import io.netty.buffer.*;
 import io.rsocket.*;
@@ -36,7 +38,7 @@ import java.nio.*;
 
 @UtilityClass
 public class RsocketPayloadReader {
-    public static Value readPayloadData(Payload payload, RsocketDataFormat dataFormat) {
+    public static Value readPayloadData(Payload payload, DataFormat dataFormat) {
         switch (dataFormat) {
             case PROTOBUF:
                 ByteBuffer data = payload.getData();
@@ -60,7 +62,7 @@ public class RsocketPayloadReader {
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDataFormat()));
     }
 
-    public static Value readPayloadMetaData(Payload payload, RsocketDataFormat dataFormat) {
+    public static Value readPayloadMetaData(Payload payload, DataFormat dataFormat) {
         switch (dataFormat) {
             case PROTOBUF:
                 ByteBuffer metadata = payload.getMetadata();

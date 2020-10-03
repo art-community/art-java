@@ -18,6 +18,8 @@
 
 package io.art.rsocket.state;
 
+import io.art.entity.constants.*;
+import io.art.entity.constants.EntityConstants.*;
 import io.rsocket.*;
 import lombok.*;
 import io.art.core.module.*;
@@ -58,7 +60,7 @@ public class RsocketModuleState implements ModuleState {
     public static class CurrentRsocketState {
         private final String dataMimeType;
         private final String metadataMimeType;
-        private final RsocketDataFormat dataFormat;
+        private final DataFormat dataFormat;
         private final RSocket rsocket;
     }
 }
