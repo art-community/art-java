@@ -21,7 +21,7 @@ package io.art.logging;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.orElse;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.logging.LoggingModuleConstants.ConfigurationKeys.*;
 
 @Getter
@@ -40,8 +40,10 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
             return this;
         }
 
-        public Configurator asynchronous() {
-            configuration.asynchronous = true;
+        @Override
+        public Configurator override(LoggingModuleConfiguration configuration) {
+            this.configuration.asynchronous = configuration.asynchronous;
+            this.configuration.colored = configuration.colored;
             return this;
         }
     }
