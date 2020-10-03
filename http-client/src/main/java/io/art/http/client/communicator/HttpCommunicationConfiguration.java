@@ -60,8 +60,8 @@ class HttpCommunicationConfiguration {
     private HttpVersion httpProtocolVersion = httpClientModule().getHttpVersion();
     private MimeToContentTypeMapper producesMimeType = httpClientModule().getProducesMimeTypeMapper();
     private MimeToContentTypeMapper consumesMimeType = httpClientModule().getConsumesMimeTypeMapper();
-    private Charset requestContentCharset = contextConfiguration().getCharset();
-    private String requestContentEncoding = contextConfiguration().getCharset().name();
+    private Charset requestContentCharset = context().configuration().getCharset();
+    private String requestContentEncoding = context().configuration().getCharset().name();
     private boolean ignoreResponseContentType;
     private CloseableHttpClient synchronousClient;
     private CloseableHttpAsyncClient asynchronousClient;

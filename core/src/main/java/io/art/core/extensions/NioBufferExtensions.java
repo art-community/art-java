@@ -78,7 +78,7 @@ public class NioBufferExtensions {
     }
 
     public static String toString(ByteBuffer buffer) {
-        return new String(toByteArray(buffer), contextConfiguration().getCharset());
+        return new String(toByteArray(buffer), context().configuration().getCharset());
     }
 
     public static String toString(ByteBuffer buffer, Charset charset) {

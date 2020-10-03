@@ -33,7 +33,7 @@ public class SqlDbDefaultsFactory {
 
     public static HikariConfig createDefaultHikariPoolConfig(DbConnectionProperties properties) {
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setPoolName(HIKARI_POOL_PREFIX + contextConfiguration().getMainModuleId());
+        hikariConfig.setPoolName(HIKARI_POOL_PREFIX + context().configuration().getMainModuleId());
         hikariConfig.setJdbcUrl(properties.getUrl());
         hikariConfig.setUsername(properties.getUserName());
         hikariConfig.setPassword(properties.getPassword());
@@ -56,7 +56,7 @@ public class SqlDbDefaultsFactory {
 
     public static PoolProperties createDefaultTomcatPoolConfig(DbConnectionProperties properties) {
         PoolProperties poolProperties = new PoolProperties();
-        poolProperties.setName(TOMCAT_POOL_PREFIX + contextConfiguration().getMainModuleId());
+        poolProperties.setName(TOMCAT_POOL_PREFIX + context().configuration().getMainModuleId());
         poolProperties.setUrl(properties.getUrl());
         poolProperties.setDriverClassName(properties.getDriver().getDriverClassName());
         poolProperties.setUsername(properties.getUserName());

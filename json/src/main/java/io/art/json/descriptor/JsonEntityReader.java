@@ -45,7 +45,7 @@ import java.util.*;
 @UtilityClass
 public class JsonEntityReader {
     public static Value readJson(byte[] jsonBytes) {
-        return readJson(jsonModule().configuration().getObjectMapper().getFactory(), new String(jsonBytes, contextConfiguration().getCharset()));
+        return readJson(jsonModule().configuration().getObjectMapper().getFactory(), new String(jsonBytes, context().configuration().getCharset()));
     }
 
     public static Value readJson(ByteBuffer byteBuf) {

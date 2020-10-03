@@ -30,9 +30,9 @@ import java.time.*;
 public class LoggingContext {
     public static void putModuleLoggingContext() {
         putIfNotNull(LOG_TIMESTAMP, LocalDateTime.now().format(YYYY_MM_DD_T_HH_MM_SS_24H_SSS_DASH_FORMAT));
-        putIfNotNull(MAIN_MODULE_ID_KEY, contextConfiguration().getMainModuleId());
+        putIfNotNull(MAIN_MODULE_ID_KEY, context().configuration().getMainModuleId());
         putIfNotNull(MODULES_KEY, context().getModuleNames());
-        putIfNotNull(MODULE_JAR_KEY, contextConfiguration().getModuleJarName());
+        putIfNotNull(MODULE_JAR_KEY, context().configuration().getModuleJarName());
     }
 
     public static void putLoggingParameters(ServiceLoggingContext context) {

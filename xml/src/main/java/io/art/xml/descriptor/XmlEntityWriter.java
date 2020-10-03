@@ -42,7 +42,7 @@ public class XmlEntityWriter {
     public static byte[] writeXmlToBytes(XmlEntity entity) throws XmlMappingException {
         String xml = writeXml(xmlModule().configuration().getXmlOutputFactory(), entity);
         if (isNull(xml) || isEmpty(xml)) return EMPTY_BYTES;
-        return xml.getBytes(contextConfiguration().getCharset());
+        return xml.getBytes(context().configuration().getCharset());
     }
 
     public static void writeXml(XmlEntity entity, OutputStream outputStream) throws XmlMappingException {
@@ -69,7 +69,7 @@ public class XmlEntityWriter {
         if (isNull(entity)) return null;
         XMLStreamWriter writer = null;
         try (OutputStream outputStream = new ByteArrayOutputStream()) {
-            writer = outputFactory.createXMLStreamWriter(outputStream, contextConfiguration().getCharset().name());
+            writer = outputFactory.createXMLStreamWriter(outputStream, context().configuration().getCharset().name());
             writeAllElements(writer, entity);
             return outputStream.toString();
         } catch (Throwable throwable) {

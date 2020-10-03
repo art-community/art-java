@@ -55,7 +55,7 @@ public class ModuleLauncher {
                     server(sources)
             );
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
-            initializeContext(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
+            initialize(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
         }
     }
 

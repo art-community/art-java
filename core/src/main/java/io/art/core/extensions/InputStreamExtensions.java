@@ -26,7 +26,6 @@ import static java.nio.channels.Channels.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.constants.StreamConstants.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import java.io.*;
 import java.nio.*;
@@ -81,7 +80,7 @@ public class InputStreamExtensions {
     }
 
     public static String toString(InputStream inputStream, int bufferSize) {
-        return toString(inputStream, bufferSize, contextConfiguration().getCharset());
+        return toString(inputStream, bufferSize, context().configuration().getCharset());
     }
 
     public static String toString(InputStream inputStream, Charset charset) {

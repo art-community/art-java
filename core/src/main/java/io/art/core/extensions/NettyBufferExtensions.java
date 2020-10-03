@@ -72,7 +72,7 @@ public class NettyBufferExtensions {
     }
 
     public static String toString(ByteBuf buffer) {
-        return new String(toByteArray(buffer), contextConfiguration().getCharset());
+        return new String(toByteArray(buffer), context().configuration().getCharset());
     }
 
     public static String toString(ByteBuf buffer, Charset charset) {

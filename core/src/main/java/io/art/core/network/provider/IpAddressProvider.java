@@ -18,6 +18,7 @@
 
 package io.art.core.network.provider;
 
+import com.google.common.collect.*;
 import lombok.experimental.*;
 import static io.art.core.factory.CollectionsFactory.mapOf;
 import static java.net.NetworkInterface.*;
@@ -50,14 +51,14 @@ public class IpAddressProvider {
         return LOCALHOST_IP_ADDRESS;
     }
 
-    public static Map<String, String> getIpAddresses() {
+    public static ImmutableMap<String, String> getIpAddresses() {
         Enumeration<NetworkInterface> networkInterfaces;
         try {
             networkInterfaces = getNetworkInterfaces();
         } catch (SocketException throwable) {
-            return emptyMap();
+            return ImmutableMap.of();
         }
-        Map<String, String> addresses = mapOf();
+        ImmutableMap.Builder<String, String> addresses = ImmutableMap.builder();
         while (networkInterfaces.hasMoreElements()) {
             NetworkInterface networkInterface = networkInterfaces.nextElement();
             Enumeration<InetAddress> addressEnumeration = networkInterface.getInetAddresses();
@@ -70,7 +71,7 @@ public class IpAddressProvider {
 
             }
         }
-        return addresses;
+        return addresses.build();
     }
 
     public static String translateLocalHostToIp(String host) {

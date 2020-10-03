@@ -135,7 +135,7 @@ public class SoapCommunicatorImplementation implements SoapCommunicator, SoapAsy
 
     @Override
     public SoapCommunicator requestCharset(Charset charset) {
-        Charset requestCharset = orElse(charset, contextConfiguration().getCharset());
+        Charset requestCharset = orElse(charset, context().configuration().getCharset());
         configuration.setRequestCharset(validator.notNullField(requestCharset, "requestCharset"));
         return this;
     }

@@ -21,7 +21,7 @@ package io.art.core.constants;
 public interface ExceptionMessages {
     String CONTEXT_ALREADY_INITIALIZED = "Context already initialized";
     String CONTEXT_NOT_INITIALIZED = "Context not initialized";
-    String MODULE_WAS_NOT_FOUND = "Module ''{0}'' was not found in context\nPlease Call `Context.context().loadModule(new ''module class''())`;";
+    String MODULE_WAS_NOT_FOUND = "Module ''{0}'' was not found in context";
     String MODULE_HAS_NOT_STATE = "Module ''{0}'' has not state";
     String BUILDER_VALIDATOR_HAS_NEXT_ERRORS = "Builder validator for ''{0}'' has next error fields:";
     String COULD_NOT_FIND_AVAILABLE_PORT_AFTER_ATTEMPTS = "Could not find an available ''{0}'' port in the range [{1,number,#}, {2,number,#}] after {3,number,#} attempts";

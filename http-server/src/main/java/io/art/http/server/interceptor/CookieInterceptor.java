@@ -91,7 +91,7 @@ public class CookieInterceptor implements HttpServerInterception {
         private int status;
         private String content;
         private MimeType contentType = TEXT_HTML_UTF_8;
-        private Charset charset = contextConfiguration().getCharset();
+        private Charset charset = context().configuration().getCharset();
         private boolean overrideRequestCharset = false;
     }
 }

@@ -42,7 +42,7 @@ import java.util.*;
 @UtilityClass
 public class XmlEntityReader {
     public static XmlEntity readXml(byte[] bytes) {
-        return readXml(new String(bytes, contextConfiguration().getCharset()));
+        return readXml(new String(bytes, context().configuration().getCharset()));
     }
 
     public static XmlEntity readXml(InputStream inputStream) {
@@ -60,7 +60,7 @@ public class XmlEntityReader {
     public static XmlEntity readXml(XMLInputFactory xmlInputFactory, String xml) {
         if (isEmpty(xml)) return null;
         XMLStreamReader reader = null;
-        try (InputStream inputStream = new ByteArrayInputStream(xml.getBytes(contextConfiguration().getCharset()))) {
+        try (InputStream inputStream = new ByteArrayInputStream(xml.getBytes(context().configuration().getCharset()))) {
             reader = xmlInputFactory.createXMLStreamReader(inputStream);
             XmlEntityBuilder root = getRootElement(reader);
             return root.create();

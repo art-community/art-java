@@ -40,7 +40,6 @@ import static io.art.grpc.server.constants.GrpcServerLoggingMessages.*;
 import static io.art.grpc.server.constants.GrpcServerModuleConstants.*;
 import static io.art.grpc.server.module.GrpcServerModule.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.server.module.ServerModule.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -96,7 +95,7 @@ public class GrpcServer {
     }
 
     private static String buildServiceLoadedMessage(GrpcServiceSpecification service) {
-        return format(GRPC_LOADED_SERVICE_MESSAGE, contextConfiguration().getPrimaryIpAddress(),
+        return format(GRPC_LOADED_SERVICE_MESSAGE, context().configuration().getPrimaryIpAddress(),
                 grpcServerModule().getPort(),
                 grpcServerModule().getPath(),
                 service.getServiceId(),

@@ -39,28 +39,22 @@ import java.util.function.*;
 
 public class Context {
     private static Context INSTANCE;
+    private final Map<String, Module> modules = mapOf();
     private final ContextConfiguration configuration;
-    private final Map<String, Module> modules;
     private final Consumer<String> printer;
 
     private Context(ContextConfiguration configuration, ImmutableList<Module> modules, Consumer<String> printer) {
-        INSTANCE = this;
-        Map<String, Module> modulesMap = mapOf();
-        for (Module module : modules) {
-            modulesMap.put(module.getId(), module);
-        }
         this.printer = printer;
-        this.modules = modulesMap;
         this.configuration = configuration;
-        loadModules();
-        getRuntime().addShutdownHook(new Thread(this::destruct));
+        load(modules);
+        getRuntime().addShutdownHook(new Thread(this::unload));
     }
 
-    public static Context initializeContext(ContextConfiguration configuration, ImmutableList<Module> modules, Consumer<String> printer) {
+    public static void initialize(ContextConfiguration configuration, ImmutableList<Module> modules, Consumer<String> printer) {
         if (nonNull(INSTANCE)) {
             throw new InternalRuntimeException(CONTEXT_ALREADY_INITIALIZED);
         }
-        return new Context(configuration, modules, printer);
+        new Context(configuration, modules, printer);
     }
 
     public static Context context() {
@@ -70,9 +64,6 @@ public class Context {
         return INSTANCE;
     }
 
-    public static ContextConfiguration contextConfiguration() {
-        return context().configuration;
-    }
 
     public <C extends ModuleConfiguration> StatelessModuleProxy<C> getStatelessModule(String moduleId) {
         Module module = modules.get(moduleId);
@@ -97,32 +88,34 @@ public class Context {
         return modules.containsKey(moduleId);
     }
 
-    private void loadModules() {
+    public ContextConfiguration configuration() {
+        return configuration;
+    }
+
+
+    private void load(ImmutableList<Module> modules) {
         Set<String> messages = setOf(ART_BANNER);
-        for (Module module : modules.values()) {
+        for (Module module : modules) {
             long timestamp = currentTimeMillis();
             module.beforeLoad();
             messages.add(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - timestamp, module.getClass()));
             module.afterLoad();
+            this.modules.put(module.getId(), module);
         }
+        INSTANCE = this;
         messages.forEach(printer);
     }
 
-    private void unloadModules() {
+    private void unload() {
         List<Module> modules = linkedListOf(this.modules.values());
         reverse(modules);
-        Set<String> messages = setOf();
         for (Module module : modules) {
             long timestamp = currentTimeMillis();
             module.beforeUnload();
-            messages.add(format(MODULE_UNLOADED_MESSAGE, module.getId(), currentTimeMillis() - timestamp, module.getClass()));
+            printer.accept(format(MODULE_UNLOADED_MESSAGE, module.getId(), currentTimeMillis() - timestamp, module.getClass()));
             module.afterUnload();
+            this.modules.remove(module.getId());
         }
-        messages.forEach(printer);
-    }
-
-    private void destruct() {
-        unloadModules();
         INSTANCE = null;
     }
 }

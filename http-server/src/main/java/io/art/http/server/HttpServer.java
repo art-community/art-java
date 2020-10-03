@@ -208,7 +208,7 @@ public class HttpServer {
             UrlInfo urlInfo = UrlInfo.builder()
                     .port(httpServerModule().getPort())
                     .serverName(BROADCAST_IP_ADDRESS.equals(httpServerModule().getHost())
-                            ? contextConfiguration().getPrimaryIpAddress()
+                            ? context().configuration().getPrimaryIpAddress()
                             : httpServerModule().getHost())
                     .scheme(HTTP_SCHEME)
                     .uri(path.toString())

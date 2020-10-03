@@ -32,7 +32,7 @@ public class KafkaJsonDeserializer implements Deserializer<Value> {
 
     @Override
     public Value deserialize(String topic, byte[] data) {
-        return readJson(new String(data, contextConfiguration().getCharset()));
+        return readJson(new String(data, context().configuration().getCharset()));
     }
 
     @Override

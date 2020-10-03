@@ -26,7 +26,6 @@ import io.art.http.logger.*;
 import io.art.http.server.filter.*;
 import io.art.http.server.handler.*;
 import io.art.http.server.interceptor.*;
-import io.art.server.exception.*;
 import static org.zalando.logbook.RawResponseFilters.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.NetworkConstants.*;
@@ -106,7 +105,7 @@ public interface HttpServerModuleConfiguration extends HttpModuleConfiguration {
         @Builder.Default
         private final boolean allowOriginParameterFromRequest = true;
         @Builder.Default
-        private final HttpResource defaultResource = new HttpResource(INDEX_HTML, STRING, contextConfiguration().getCharset());
+        private final HttpResource defaultResource = new HttpResource(INDEX_HTML, STRING, context().configuration().getCharset());
         @Builder.Default
         private final int resourceBufferSize = DEFAULT_BUFFER_SIZE;
         @Builder.Default

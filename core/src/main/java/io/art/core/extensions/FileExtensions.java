@@ -77,7 +77,7 @@ public class FileExtensions {
         }
         ByteBuffer buffer = allocateDirect(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
-        CharsetDecoder decoder = contextConfiguration().getCharset().newDecoder();
+        CharsetDecoder decoder = context().configuration().getCharset().newDecoder();
         try {
             FileChannel fileChannel = open(path);
             do {
@@ -100,7 +100,7 @@ public class FileExtensions {
         }
         ByteBuffer buffer = allocateDirect(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
-        CharsetDecoder decoder = contextConfiguration().getCharset().newDecoder();
+        CharsetDecoder decoder = context().configuration().getCharset().newDecoder();
         try {
             FileChannel fileChannel = open(path);
             do {

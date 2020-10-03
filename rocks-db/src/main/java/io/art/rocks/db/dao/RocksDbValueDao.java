@@ -55,7 +55,7 @@ public interface RocksDbValueDao {
     static void putBinary(String entityKey, Value value) {
         if (isEmpty(entityKey)) return;
         if (isEmpty(value)) return;
-        byte[] keyBytes = entityKey.getBytes(contextConfiguration().getCharset());
+        byte[] keyBytes = entityKey.getBytes(context().configuration().getCharset());
         byte[] valueBytes = writeMessagePackToBytes(value);
         RocksDbPrimitiveDao.put(keyBytes, valueBytes);
     }

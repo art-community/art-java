@@ -40,7 +40,7 @@ public class JsonEntityWriter {
         if (EmptinessChecker.isEmpty(json)) {
             return EMPTY_BYTES;
         }
-        return json.getBytes(contextConfiguration().getCharset());
+        return json.getBytes(context().configuration().getCharset());
     }
 
     public static void writeJson(Value value, OutputStream outputStream) {

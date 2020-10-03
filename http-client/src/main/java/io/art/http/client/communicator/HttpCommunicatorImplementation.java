@@ -173,7 +173,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
 
     @Override
     public HttpCommunicator requestCharset(Charset requestContentCharset) {
-        Charset charset = orElse(requestContentCharset, contextConfiguration().getCharset());
+        Charset charset = orElse(requestContentCharset, context().configuration().getCharset());
         configuration.setRequestContentCharset(validator.notNullField(charset, "requestContentCharset"));
         return this;
     }

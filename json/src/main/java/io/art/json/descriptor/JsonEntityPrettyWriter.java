@@ -10,12 +10,12 @@ import java.nio.file.*;
 
 public class JsonEntityPrettyWriter {
     public static byte[] prettyWriteJsonToBytes(Value value) {
-        return prettyWriteJson(value).getBytes(contextConfiguration().getCharset());
+        return prettyWriteJson(value).getBytes(context().configuration().getCharset());
     }
 
     public static void prettyWriteJson(Value value, OutputStream outputStream) {
         try {
-            outputStream.write(prettyWriteJson(value).getBytes(contextConfiguration().getCharset()));
+            outputStream.write(prettyWriteJson(value).getBytes(context().configuration().getCharset()));
         } catch (IOException ioException) {
             throw new JsonMappingException(ioException);
         }

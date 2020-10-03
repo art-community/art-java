@@ -46,11 +46,11 @@ import java.util.*;
 @UtilityClass
 public class HttpResourceService {
     public static Value getHttpResource(String resource) {
-        return getHttpResource(resource, contextConfiguration().getCharset(), httpServerModule().getResourceConfiguration());
+        return getHttpResource(resource, context().configuration().getCharset(), httpServerModule().getResourceConfiguration());
     }
 
     public static Value getHttpResource(String resource, HttpResourceConfiguration resourceConfiguration) {
-        return getHttpResource(resource, contextConfiguration().getCharset(), resourceConfiguration);
+        return getHttpResource(resource, context().configuration().getCharset(), resourceConfiguration);
     }
 
     public static Value getHttpResource(String request, Charset charset, HttpResourceConfiguration resourceConfiguration) {
@@ -88,11 +88,11 @@ public class HttpResourceService {
 
 
     public static String getStringResource(String resource) {
-        return getStringResource(resource, contextConfiguration().getCharset(), httpServerModule().getResourceConfiguration());
+        return getStringResource(resource, context().configuration().getCharset(), httpServerModule().getResourceConfiguration());
     }
 
     public static String getStringResource(String resource, HttpResourceConfiguration resourceConfiguration) {
-        return getStringResource(resource, contextConfiguration().getCharset(), resourceConfiguration);
+        return getStringResource(resource, context().configuration().getCharset(), resourceConfiguration);
     }
 
     public static String getStringResource(String resource, Charset charset, HttpResourceConfiguration resourceConfiguration) {

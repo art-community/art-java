@@ -18,6 +18,7 @@
 
 package io.art.core.configuration;
 
+import com.google.common.collect.*;
 import io.art.core.context.*;
 import io.art.core.network.provider.*;
 import lombok.*;
@@ -43,7 +44,7 @@ public interface ContextConfiguration {
 
     String getPrimaryIpAddress();
 
-    Map<String, String> getIpAddresses();
+    ImmutableMap<String, String> getIpAddresses();
 
     Locale getLocale();
 
@@ -57,7 +58,7 @@ public interface ContextConfiguration {
         @Getter
         private final String primaryIpAddress = IpAddressProvider.getIpAddress();
         @Getter
-        private final Map<String, String> ipAddresses = IpAddressProvider.getIpAddresses();
+        private final ImmutableMap<String, String> ipAddresses = IpAddressProvider.getIpAddresses();
         @Getter
         private final Locale locale = getDefault(FORMAT);
         @Getter

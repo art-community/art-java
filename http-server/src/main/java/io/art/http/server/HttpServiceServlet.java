@@ -29,7 +29,6 @@ import io.art.http.server.exception.*;
 import io.art.http.server.handler.*;
 import io.art.http.server.model.*;
 import io.art.logging.*;
-import io.art.server.model.*;
 import static java.nio.charset.Charset.*;
 import static java.text.MessageFormat.*;
 import static java.util.Arrays.*;
@@ -137,7 +136,7 @@ class HttpServiceServlet extends HttpServlet {
                 .response(response)
                 .headers(headers)
                 .cookies(cookies)
-                .acceptCharset(isEmpty(charsetHeader) ? contextConfiguration().getCharset() : forName(charsetHeader))
+                .acceptCharset(isEmpty(charsetHeader) ? context().configuration().getCharset() : forName(charsetHeader))
                 .acceptEncodings(emptyIfNull(request.getHeader(ACCEPT_ENCODING)))
                 .acceptLanguages(emptyIfNull(request.getHeader(ACCEPT_LANGUAGE)))
                 .contentLength(request.getContentLength())
