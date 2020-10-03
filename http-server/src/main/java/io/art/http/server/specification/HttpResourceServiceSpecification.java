@@ -19,6 +19,9 @@
 package io.art.http.server.specification;
 
 import io.art.entity.immutable.*;
+import io.art.http.server.service.*;
+import io.art.server.implementation.*;
+import io.art.server.specification.*;
 import lombok.*;
 import io.art.core.caster.*;
 import io.art.entity.mapper.ValueToModelMapper.*;
@@ -43,46 +46,15 @@ import java.util.function.*;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class HttpResourceServiceSpecification implements HttpServiceSpecification {
+public class HttpResourceServiceSpecification {
     private final String resourcePath;
     private HttpResourceConfiguration resourceConfiguration;
 
-    @Getter(lazy = true)
-    private final String serviceId = resourcePath;
-
-    @Getter(lazy = true)
-    private final HttpService httpService = httpService()
-            .get(GET_RESOURCE)
-            .fromPathParameters(RESOURCE)
-            .requestMapper((EntityToModelMapper<String>) resourceValue -> let(resourceValue, (Function<Entity, String>) resource -> resource.getString(RESOURCE)))
-            .overrideResponseContentType()
-            .responseMapper(Caster::cast)
-            .addRequestInterceptor(intercept(interceptAndContinue(((request, response) -> response.setContentType(extractTypeByFile(request.getRequestURI()))))))
-            .listen(resourcePath)
-
-            .serve(EMPTY_STRING);
-
-    @Override
-    public List<ResponseInterceptor> getResponseInterceptors() {
-        return linkedListOf(interceptResponse(new ServiceLoggingInterception() {
-            @Override
-            public ServiceInterceptionResult intercept(ServiceRequest<?> request, ServiceResponse<?> response) {
-                super.intercept(request, ServiceResponse.builder()
-                        .command(response.getCommand())
-                        .serviceException(response.getServiceException())
-                        .responseData(HTTP_RESOURCE_BODY_REPLACEMENT)
-                        .build());
-                return nextInterceptor(request, response);
-            }
-        }));
-    }
-
-    @Override
-    @SuppressWarnings("All")
-    public <P, R> R executeMethod(String methodId, P request) {
-        if (GET_RESOURCE.equals(methodId)) {
-            return cast(getHttpResource(cast(request), orElse(resourceConfiguration, resourceConfiguration = httpServerModule().getResourceConfiguration())));
-        }
-        throw new UnknownServiceMethodException(getServiceId(), methodId);
+    public ServiceSpecification provide() {
+        return ServiceSpecification.builder()
+                .method(GET_RESOURCE, ServiceMethodSpecification.builder()
+                        .implementation(ServiceMethodImplementation.handler(path -> HttpResourceService.getHttpResource(cast(path)), "", ""))
+                        .build())
+                .build();
     }
 }

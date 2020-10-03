@@ -21,6 +21,7 @@ package io.art.rsocket.communicator;
 import io.art.entity.immutable.*;
 import io.art.entity.immutable.Value;
 import io.rsocket.*;
+import io.rsocket.core.*;
 import io.rsocket.transport.netty.client.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
@@ -261,7 +262,7 @@ public class RsocketCommunicator {
                 .map(responseValue -> cast(toServiceResponse(cast(responseModelMapper)).map(cast(responseValue)))));
     }
 
-    public <RequestType, ResponseType> Flux<ServiceResponse<ResponseType>> channel(Publisher<RequestType> request) {
+    public <RequestType, ResponseType> ResponseType channel(Publisher<RequestType> request) {
         validator.validate();
         validateRequiredFields();
         ValueFromModelMapper<?, ? extends Value> requestModelMapper = cast(requestMapper);

@@ -17,9 +17,8 @@
  */
 
 dependencies {
-    val tomcatVersion: String by project
-    val logbookVersion: String by project
-    val log4jVersion: String by project
+    val reactorNettyVersion: String by project
+    val nettyVersion: String by project
 
     implementation(project(":core"))
     implementation(project(":entity"))
@@ -29,19 +28,11 @@ dependencies {
     implementation(project(":metrics"))
     implementation(project(":template-engine"))
 
-    api("org.apache.tomcat.embed", "tomcat-embed-core", tomcatVersion)
-            .exclude("org.apache.httpcomponents", "httpcore")
-
-    api("org.apache.tomcat", "tomcat-servlet-api", tomcatVersion)
-
-    api("org.zalando", "logbook-servlet", logbookVersion)
-            .exclude("org.zalando", "logbook-core")
-            .exclude("org.zalando", "logbook-api")
-            .exclude("org.zalando", "faux-pas")
-            .exclude("org.apiguardian")
+    api("io.projectreactor.netty", "reactor-netty", reactorNettyVersion)
+            .exclude("io.netty")
+            .exclude("io.projectreactor", "reactor-core")
             .exclude("org.slf4j")
-            .exclude("commons-logging")
 
-    api("org.apache.logging.log4j", "log4j-web", log4jVersion)
-            .exclude("org.apache.logging.log4j")
+    api("io.netty", "netty-all", nettyVersion)
+            .exclude("org.slf4j")
 }

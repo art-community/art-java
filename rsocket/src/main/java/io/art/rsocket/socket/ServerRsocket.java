@@ -19,11 +19,8 @@
 package io.art.rsocket.socket;
 
 import io.art.core.checker.*;
-import io.art.entity.constants.*;
-import io.art.entity.immutable.*;
 import io.art.rsocket.flux.*;
 import io.art.rsocket.model.*;
-import io.art.rsocket.reader.*;
 import io.art.rsocket.service.*;
 import io.art.rsocket.state.*;
 import io.art.server.specification.*;
@@ -33,22 +30,17 @@ import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.entity.constants.EntityConstants.*;
-import static io.art.entity.immutable.Value.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.model.RsocketRequestContext.*;
-import static io.art.rsocket.reader.RsocketPayloadReader.readPayloadData;
+import static io.art.rsocket.reader.RsocketPayloadReader.*;
 import static io.art.rsocket.selector.RsocketDataFormatMimeTypeConverter.*;
 import static io.art.rsocket.state.RsocketModuleState.*;
 import static io.art.rsocket.writer.RsocketPayloadWriter.*;
 import static io.art.rsocket.writer.ServiceResponsePayloadWriter.*;
 import static reactor.core.publisher.Mono.*;
-import java.time.*;
-import java.util.concurrent.locks.*;
 
 public class ServerRsocket implements RSocket {
     private final CurrentRsocketState state;
     private ServiceMethodSpecification specification;
-
 
     public ServerRsocket(ConnectionSetupPayload payload, RSocket socket) {
         state = CurrentRsocketState
@@ -64,7 +56,7 @@ public class ServerRsocket implements RSocket {
     @Override
     public Mono<Void> fireAndForget(Payload payload) {
         DataFormat dataFormat = updateState().getDataFormat();
-        specification.serve(NullityChecker.let(readPayloadData(payload, dataFormat), Flux::just, Flux.empty())).subscribe();
+        specification.serve(let(readPayloadData(payload, dataFormat), Flux::just, Flux.empty())).blockFirst();
         return never();
     }
 

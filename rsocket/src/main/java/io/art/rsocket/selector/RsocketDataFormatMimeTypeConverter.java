@@ -18,8 +18,11 @@
 
 package io.art.rsocket.selector;
 
+import io.art.entity.constants.*;
+import io.art.entity.constants.EntityConstants.*;
 import lombok.experimental.*;
 import io.art.core.mime.*;
+import static io.art.entity.constants.EntityConstants.DataFormat.*;
 import static io.rsocket.metadata.WellKnownMimeType.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
@@ -31,7 +34,7 @@ import static io.art.rsocket.module.RsocketModule.*;
 
 @UtilityClass
 public class RsocketDataFormatMimeTypeConverter {
-    public static RsocketDataFormat fromMimeType(String mimeType) {
+    public static DataFormat fromMimeType(String mimeType) {
         if (isEmpty(mimeType)) {
             return rsocketModule().getDataFormat();
         }
@@ -43,11 +46,11 @@ public class RsocketDataFormatMimeTypeConverter {
         if (mimeType.equalsIgnoreCase(APPLICATION_MESSAGE_PACK.getType() + SLASH + APPLICATION_MESSAGE_PACK.getSubtype())) {
             return MESSAGE_PACK;
         }
-        return rsocketModule().getDataFormat();
+        return rsocketModule().configuration().getDataFormat();
     }
 
-    public static String toMimeType(RsocketDataFormat dataFormat) {
-        switch (orElse(dataFormat, rsocketModule().getDataFormat())) {
+    public static String toMimeType(DataFormat dataFormat) {
+        switch (orElse(dataFormat, rsocketModule().configuration().getDataFormat())) {
             case PROTOBUF:
                 return APPLICATION_PROTOBUF.getString();
             case JSON:

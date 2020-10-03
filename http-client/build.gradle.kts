@@ -17,9 +17,8 @@
  */
 
 dependencies {
-    val apacheHttpClientVersion: String by project
-    val apacheHttpAsyncClientVersion: String by project
-    val logbookVersion: String by project
+    val reactorNettyVersion: String by project
+    val nettyVersion: String by project
 
     implementation(project(":core"))
     implementation(project(":entity"))
@@ -27,20 +26,11 @@ dependencies {
     implementation(project(":server"))
     implementation(project(":http"))
 
-    api("org.apache.httpcomponents", "httpclient", apacheHttpClientVersion)
-            .exclude("org.apache.httpcomponents", "httpcore")
-            .exclude("commons-logging")
-
-    api("org.apache.httpcomponents", "httpasyncclient", apacheHttpAsyncClientVersion)
-            .exclude("org.apache.httpcomponents", "httpcore")
-            .exclude("commons-logging")
-
-    api("org.zalando", "logbook-httpclient", logbookVersion)
-            .exclude("org.zalando", "logbook-core")
-            .exclude("org.zalando", "logbook-api")
-            .exclude("org.zalando", "faux-pas")
-            .exclude("org.apiguardian")
-            .exclude("org.apache.httpcomponents", "httpcore")
+    api("io.projectreactor.netty", "reactor-netty", reactorNettyVersion)
+            .exclude("io.netty")
+            .exclude("io.projectreactor", "reactor-core")
             .exclude("org.slf4j")
-            .exclude("commons-logging")
+
+    api("io.netty", "netty-all", nettyVersion)
+            .exclude("org.slf4j")
 }
