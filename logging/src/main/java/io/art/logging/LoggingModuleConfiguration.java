@@ -40,14 +40,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
             return this;
         }
 
-        @Override
-        public Configurator from(LoggingModuleConfiguration configuration) {
-            this.configuration.colored = configuration.colored;
-            this.configuration.asynchronous = configuration.asynchronous;
-            return null;
-        }
-
-        public Configurator asynchronouse() {
+        public Configurator asynchronous() {
             configuration.asynchronous = true;
             return this;
         }

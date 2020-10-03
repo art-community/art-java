@@ -21,6 +21,7 @@ package io.art.rsocket.configuration;
 import com.google.common.collect.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
+import io.art.entity.constants.EntityConstants.*;
 import io.art.entity.interceptor.*;
 import io.art.logging.*;
 import io.art.rsocket.interceptor.*;
@@ -33,14 +34,14 @@ import reactor.netty.http.server.*;
 import reactor.netty.tcp.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.network.selector.PortSelector.*;
+import static io.art.entity.constants.EntityConstants.DataFormat.MESSAGE_PACK;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*;
 import static java.util.function.Function.*;
 import java.util.function.*;
 
 @Getter
 public class RsocketModuleConfiguration implements ModuleConfiguration {
-    private final RsocketDataFormat dataFormat = MESSAGE_PACK;
+    private final DataFormat dataFormat = MESSAGE_PACK;
     private final String serverHost = BROADCAST_IP_ADDRESS;
     private final int serverTcpPort = findAvailableTcpPort();
     private final int serverWebSocketPort = findAvailableTcpPort();

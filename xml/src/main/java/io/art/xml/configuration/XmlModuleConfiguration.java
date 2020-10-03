@@ -18,6 +18,7 @@
 
 package io.art.xml.configuration;
 
+import io.art.core.source.*;
 import lombok.*;
 import io.art.core.module.*;
 import javax.xml.stream.*;
@@ -30,5 +31,10 @@ public class XmlModuleConfiguration implements ModuleConfiguration {
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<XmlModuleConfiguration, Configurator> {
         private final XmlModuleConfiguration configuration;
+
+        @Override
+        public Configurator from(ConfigurationSource source) {
+            return null;
+        }
     }
 }

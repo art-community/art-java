@@ -27,10 +27,6 @@ public interface ModuleConfigurator<Configuration extends ModuleConfiguration, C
         return cast(this);
     }
 
-    default Configurator from(Configuration configuration) {
-        return cast(this);
-    }
-
     default Configurator from(Collection<ConfigurationSource> sources) {
         sources.forEach(this::from);
         return cast(this);
