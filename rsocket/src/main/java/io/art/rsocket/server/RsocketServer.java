@@ -19,7 +19,6 @@
 package io.art.rsocket.server;
 
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.exception.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
 import io.rsocket.core.*;
@@ -29,13 +28,12 @@ import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.*;
 import static io.art.rsocket.module.RsocketModule.*;
-import static java.lang.Thread.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 
@@ -68,25 +66,18 @@ public class RsocketServer implements Server {
 
     @Override
     public void await() {
-        try {
-            currentThread().join();
-        } catch (InterruptedException throwable) {
-            throw new RsocketServerException(throwable);
-        }
+        block();
     }
 
     @Override
     public void restart() {
-        try {
-            stop();
-            new RsocketServer(transport).start();
-            getLogger().info(RSOCKET_RESTARTED_MESSAGE);
-        } catch (Throwable throwable) {
-            getLogger().error(RSOCKET_RESTART_FAILED);
-        }
+        stop();
+        new RsocketServer(transport).start();
+        getLogger().info(RSOCKET_RESTARTED_MESSAGE);
     }
 
+    @Override
     public boolean available() {
-        return nonNull(disposable);
+        return nonNull(disposable) && !disposable.isDisposed();
     }
 }

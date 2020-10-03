@@ -19,6 +19,8 @@
 package io.art.entity.constants;
 
 import io.art.entity.exception.*;
+import lombok.*;
+import org.checkerframework.common.value.qual.*;
 import static io.art.entity.constants.EntityConstants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
 
@@ -64,6 +66,8 @@ public interface EntityConstants {
             }
         }
 
+        @Getter
+        @AllArgsConstructor
         public enum PrimitiveType {
             STRING(String.class.getName()),
             LONG(Long.class.getName()),
@@ -74,10 +78,6 @@ public interface EntityConstants {
             BYTE(Byte.class.getName());
 
             private final String className;
-
-            PrimitiveType(String className) {
-                this.className = className;
-            }
 
             public static PrimitiveType parseClassName(String className) {
                 if (STRING.getClassName().equalsIgnoreCase(className)) return STRING;
