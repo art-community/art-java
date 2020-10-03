@@ -42,13 +42,15 @@ public class ModuleLauncher {
 
     public static void launch(/*ModuleModel model*/) {
         if (launched.compareAndSet(false, true)) {
-            ImmutableList<ModuleConfigurationSource> sources = new ConfiguratorModule()
+            ConfiguratorModule configurator = new ConfiguratorModule();
+            ImmutableList<ModuleConfigurationSource> sources = configurator
                     .loadConfigurations()
                     .configuration()
                     .orderedSources();
             //ConfiguratorModel configuratorModel = model.getConfiguratorModel();
             ImmutableList.Builder<Module> modules = ImmutableList.builder();
             modules.add(
+                    configurator,
                     logging(sources/*, configuratorModel*/),
                     json(sources),
                     xml(sources),
