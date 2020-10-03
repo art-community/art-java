@@ -18,8 +18,35 @@
 
 package io.art.rsocket.communicator;
 
+import io.art.server.constants.*;
+import io.rsocket.*;
+import io.rsocket.core.*;
+import io.rsocket.transport.netty.client.*;
 import lombok.*;
 
 @RequiredArgsConstructor
 public class RsocketCommunicatorClient {
+    ServerModuleConstants.ServiceMethodPayloadType requestPayloadType;
+    ServerModuleConstants.ServiceMethodPayloadType responsePayloadType;
+    RSocketClient client = RSocketConnector.createRSocketClient(TcpClientTransport.create(123));
+
+    public Object execute(Object request) {
+        switch (requestPayloadType) {
+            case VALUE:
+                break;
+            case MONO:
+                break;
+            case FLUX:
+                break;
+        }
+        switch (responsePayloadType) {
+            case VALUE:
+                break;
+            case MONO:
+                break;
+            case FLUX:
+                break;
+        }
+        return null;
+    }
 }

@@ -39,6 +39,7 @@ import static io.art.http.server.interceptor.HttpServerInterceptor.*;
 import static io.art.http.server.model.HttpService.*;
 import static io.art.http.server.module.HttpServerModule.*;
 import static io.art.http.server.service.HttpResourceService.*;
+import static io.art.server.implementation.ServiceMethodImplementation.*;
 import static io.art.server.model.ServiceInterceptionResult.*;
 import java.util.*;
 import java.util.function.*;
@@ -53,7 +54,7 @@ public class HttpResourceServiceSpecification {
     public ServiceSpecification provide() {
         return ServiceSpecification.builder()
                 .method(GET_RESOURCE, ServiceMethodSpecification.builder()
-                        .implementation(ServiceMethodImplementation.handler(path -> HttpResourceService.getHttpResource(cast(path)), "", ""))
+                        .implementation(handler(path -> getHttpResource(cast(path)), "", ""))
                         .build())
                 .build();
     }
