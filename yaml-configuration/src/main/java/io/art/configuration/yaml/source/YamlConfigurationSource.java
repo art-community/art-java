@@ -94,7 +94,7 @@ public class YamlConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public ModuleConfigurationSource getInner(String path) {
+    public ModuleConfigurationSource getNested(String path) {
         return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), node -> new YamlConfigurationSource(type, file, node));
     }
 
@@ -143,45 +143,10 @@ public class YamlConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public List<ModuleConfigurationSource> getInnerList(String path) {
+    public List<ModuleConfigurationSource> getNestedList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
                 .map(node -> new YamlConfigurationSource(type, file, node))
                 .collect(toList());
-    }
-
-    @Override
-    public Map<String, Integer> getIntMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getInt));
-    }
-
-    @Override
-    public Map<String, Long> getLongMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getLong));
-    }
-
-    @Override
-    public Map<String, Boolean> getBoolMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getBool));
-    }
-
-    @Override
-    public Map<String, Double> getDoubleMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getDouble));
-    }
-
-    @Override
-    public Map<String, String> getStringMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getString));
-    }
-
-    @Override
-    public Map<String, Duration> getDurationMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getDuration));
-    }
-
-    @Override
-    public Map<String, ModuleConfigurationSource> getInnerMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getInner));
     }
 
     @Override

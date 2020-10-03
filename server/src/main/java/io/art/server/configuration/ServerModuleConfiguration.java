@@ -38,7 +38,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ModuleConfigurationSource source) {
-            configuration.services = ofNullable(source.getInnerMap(SERVER_SERVICES_KEY))
+            configuration.services = ofNullable(source.getNestedMap(SERVER_SERVICES_KEY))
                     .map(services -> services
                             .entrySet()
                             .stream()

@@ -76,8 +76,8 @@ public class FileConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public ModuleConfigurationSource getInner(String path) {
-        return source.getInner(path);
+    public ModuleConfigurationSource getNested(String path) {
+        return source.getNested(path);
     }
 
     @Override
@@ -111,43 +111,8 @@ public class FileConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public List<ModuleConfigurationSource> getInnerList(String path) {
-        return source.getInnerList(path);
-    }
-
-    @Override
-    public Map<String, Integer> getIntMap(String path) {
-        return source.getIntMap(path);
-    }
-
-    @Override
-    public Map<String, Long> getLongMap(String path) {
-        return source.getLongMap(path);
-    }
-
-    @Override
-    public Map<String, Boolean> getBoolMap(String path) {
-        return source.getBoolMap(path);
-    }
-
-    @Override
-    public Map<String, Double> getDoubleMap(String path) {
-        return source.getDoubleMap(path);
-    }
-
-    @Override
-    public Map<String, String> getStringMap(String path) {
-        return source.getStringMap(path);
-    }
-
-    @Override
-    public Map<String, Duration> getDurationMap(String path) {
-        return source.getDurationMap(path);
-    }
-
-    @Override
-    public Map<String, ModuleConfigurationSource> getInnerMap(String path) {
-        return source.getInnerMap(path);
+    public List<ModuleConfigurationSource> getNestedList(String path) {
+        return source.getNestedList(path);
     }
 
     @Override

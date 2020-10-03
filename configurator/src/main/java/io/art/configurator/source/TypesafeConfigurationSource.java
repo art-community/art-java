@@ -23,7 +23,6 @@ import io.art.core.module.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
-import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import java.time.*;
 import java.util.*;
@@ -70,7 +69,7 @@ public class TypesafeConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public ModuleConfigurationSource getInner(String path) {
+    public ModuleConfigurationSource getNested(String path) {
         return new TypesafeConfigurationSource(type, typesafeConfiguration.atPath(path));
     }
 
@@ -105,46 +104,11 @@ public class TypesafeConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public List<ModuleConfigurationSource> getInnerList(String path) {
+    public List<ModuleConfigurationSource> getNestedList(String path) {
         return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getConfigList)
                 .stream()
                 .map(config -> new TypesafeConfigurationSource(type, config))
                 .collect(toList());
-    }
-
-    @Override
-    public Map<String, Integer> getIntMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getInt));
-    }
-
-    @Override
-    public Map<String, Long> getLongMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getLong));
-    }
-
-    @Override
-    public Map<String, Boolean> getBoolMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getBool));
-    }
-
-    @Override
-    public Map<String, Double> getDoubleMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getDouble));
-    }
-
-    @Override
-    public Map<String, String> getStringMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getString));
-    }
-
-    @Override
-    public Map<String, Duration> getDurationMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getDuration));
-    }
-
-    @Override
-    public Map<String, ModuleConfigurationSource> getInnerMap(String path) {
-        return getKeys().stream().collect(toMap(identity(), this::getInner));
     }
 
     @Override

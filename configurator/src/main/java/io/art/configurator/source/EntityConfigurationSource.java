@@ -76,7 +76,7 @@ public class EntityConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public ModuleConfigurationSource getInner(String path) {
+    public ModuleConfigurationSource getNested(String path) {
         return new EntityConfigurationSource(asEntity(entity.find(path)));
     }
 
@@ -111,43 +111,8 @@ public class EntityConfigurationSource implements ModuleConfigurationSource {
     }
 
     @Override
-    public List<ModuleConfigurationSource> getInnerList(String path) {
+    public List<ModuleConfigurationSource> getNestedList(String path) {
         return asArray(entity.get(path)).asStream().map(value -> new EntityConfigurationSource(asEntity(value))).collect(toList());
-    }
-
-    @Override
-    public Map<String, Integer> getIntMap(String path) {
-        return entity.mapNested(path, toMap(toString, fromString, toInt));
-    }
-
-    @Override
-    public Map<String, Long> getLongMap(String path) {
-        return entity.mapNested(path, toMap(toString, fromString, toLong));
-    }
-
-    @Override
-    public Map<String, Boolean> getBoolMap(String path) {
-        return entity.mapNested(path, toMap(toString, fromString, toBool));
-    }
-
-    @Override
-    public Map<String, Double> getDoubleMap(String path) {
-        return entity.mapNested(path, toMap(toString, fromString, toDouble));
-    }
-
-    @Override
-    public Map<String, String> getStringMap(String path) {
-        return entity.mapNested(path, toMap(toString, fromString, toString));
-    }
-
-    @Override
-    public Map<String, Duration> getDurationMap(String path) {
-        return entity.mapNested(path, toMap(toString, fromString, value -> let(toString.map(asPrimitive(value)), DurationParser::parseDuration)));
-    }
-
-    @Override
-    public Map<String, ModuleConfigurationSource> getInnerMap(String path) {
-        return entity.mapNested(path, toMap(toString, fromString, value -> new EntityConfigurationSource(asEntity(value))));
     }
 
     @Override

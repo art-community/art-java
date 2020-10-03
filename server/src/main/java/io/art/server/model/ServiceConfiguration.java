@@ -35,7 +35,7 @@ public class ServiceConfiguration {
 
     public static ServiceConfiguration from(ModuleConfigurationSource source) {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
-        ImmutableMap<String, ServiceMethodConfiguration> methods = ofNullable(source.getInnerMap(METHODS_KEY))
+        ImmutableMap<String, ServiceMethodConfiguration> methods = ofNullable(source.getNestedMap(METHODS_KEY))
                 .map(configurations -> configurations.entrySet()
                         .stream()
                         .collect(toImmutableMap(Map.Entry::getKey, entry -> ServiceMethodConfiguration.from(entry.getValue()))))

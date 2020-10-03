@@ -67,8 +67,8 @@ public class PropertiesConfigurationSource implements ModuleConfigurationSource 
     }
 
     @Override
-    public ModuleConfigurationSource getInner(String path) {
-        return typesafeConfigurationSource.getInner(path);
+    public ModuleConfigurationSource getNested(String path) {
+        return typesafeConfigurationSource.getNested(path);
     }
 
     @Override
@@ -102,43 +102,8 @@ public class PropertiesConfigurationSource implements ModuleConfigurationSource 
     }
 
     @Override
-    public List<ModuleConfigurationSource> getInnerList(String path) {
-        return typesafeConfigurationSource.getInnerList(path);
-    }
-
-    @Override
-    public Map<String, Integer> getIntMap(String path) {
-        return typesafeConfigurationSource.getIntMap(path);
-    }
-
-    @Override
-    public Map<String, Long> getLongMap(String path) {
-        return typesafeConfigurationSource.getLongMap(path);
-    }
-
-    @Override
-    public Map<String, Boolean> getBoolMap(String path) {
-        return typesafeConfigurationSource.getBoolMap(path);
-    }
-
-    @Override
-    public Map<String, Double> getDoubleMap(String path) {
-        return typesafeConfigurationSource.getDoubleMap(path);
-    }
-
-    @Override
-    public Map<String, String> getStringMap(String path) {
-        return typesafeConfigurationSource.getStringMap(path);
-    }
-
-    @Override
-    public Map<String, Duration> getDurationMap(String path) {
-        return typesafeConfigurationSource.getDurationMap(path);
-    }
-
-    @Override
-    public Map<String, ModuleConfigurationSource> getInnerMap(String path) {
-        return typesafeConfigurationSource.getInnerMap(path);
+    public List<ModuleConfigurationSource> getNestedList(String path) {
+        return typesafeConfigurationSource.getNestedList(path);
     }
 
     @Override

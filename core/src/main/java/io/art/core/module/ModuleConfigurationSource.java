@@ -18,6 +18,8 @@
 
 package io.art.core.module;
 
+import static java.util.function.Function.*;
+import static java.util.stream.Collectors.*;
 import java.time.*;
 import java.util.*;
 
@@ -36,7 +38,7 @@ public interface ModuleConfigurationSource {
 
     Duration getDuration(String path);
 
-    ModuleConfigurationSource getInner(String path);
+    ModuleConfigurationSource getNested(String path);
 
     List<Integer> getIntList(String path);
 
@@ -50,21 +52,42 @@ public interface ModuleConfigurationSource {
 
     List<Duration> getDurationList(String path);
 
-    List<ModuleConfigurationSource> getInnerList(String path);
+    List<ModuleConfigurationSource> getNestedList(String path);
 
-    Map<String, Integer> getIntMap(String path);
+    default Map<String, Integer> getIntMap(String path) {
+        ModuleConfigurationSource inner = getNested(path);
+        return inner.getKeys().stream().collect(toMap(identity(), inner::getInt));
+    }
 
-    Map<String, Long> getLongMap(String path);
+    default Map<String, Long> getLongMap(String path) {
+        ModuleConfigurationSource inner = getNested(path);
+        return inner.getKeys().stream().collect(toMap(identity(), inner::getLong));
+    }
 
-    Map<String, Boolean> getBoolMap(String path);
+    default Map<String, Boolean> getBoolMap(String path) {
+        ModuleConfigurationSource inner = getNested(path);
+        return inner.getKeys().stream().collect(toMap(identity(), inner::getBool));
+    }
 
-    Map<String, Double> getDoubleMap(String path);
+    default Map<String, Double> getDoubleMap(String path) {
+        ModuleConfigurationSource inner = getNested(path);
+        return inner.getKeys().stream().collect(toMap(identity(), inner::getDouble));
+    }
 
-    Map<String, String> getStringMap(String path);
+    default Map<String, String> getStringMap(String path) {
+        ModuleConfigurationSource inner = getNested(path);
+        return inner.getKeys().stream().collect(toMap(identity(), inner::getString));
+    }
 
-    Map<String, Duration> getDurationMap(String path);
+    default Map<String, Duration> getDurationMap(String path) {
+        ModuleConfigurationSource inner = getNested(path);
+        return inner.getKeys().stream().collect(toMap(identity(), inner::getDuration));
+    }
 
-    Map<String, ModuleConfigurationSource> getInnerMap(String path);
+    default Map<String, ModuleConfigurationSource> getNestedMap(String path) {
+        ModuleConfigurationSource inner = getNested(path);
+        return inner.getKeys().stream().collect(toMap(identity(), inner::getNested));
+    }
 
     ModuleConfigurationSourceType getType();
 
