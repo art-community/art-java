@@ -47,54 +47,64 @@ public final class TarantoolConnector {
     private static final Logger logger = loggingModule().getLogger(TarantoolConnector.class);
 
     public static TarantoolClient connectToTarantoolInstance(String instanceId) {
-        int retries = 0;
-        TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations());
-        TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
-        TarantoolClientConfig config = new TarantoolClientConfig();
-        config.initTimeoutMillis = tarantoolModule().getConnectionTimeoutMillis();
-        config.username = connectionConfiguration.getUsername();
-        config.password = connectionConfiguration.getPassword();
-        config.operationExpiryTimeMillis = connectionConfiguration.getOperationTimeoutMillis();
-        String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
-        SocketChannelProvider socketChannelProvider = new RoundRobinSocketProviderImpl(address);
-        while (retries < connectionConfiguration.getMaxRetryCount()) {
-            try {
-                getLogger().info(format(WAITING_FOR_CONNECT,
-                        instanceId,
-                        address,
-                        config.initTimeoutMillis));
-                TarantoolClientImpl client = new TarantoolClientImpl(socketChannelProvider, config);
-                getLogger().info(format(TARANTOOL_SUCCESSFULLY_CONNECTED, instanceId, address));
-                return client;
-            } catch (CommunicationException exception) {
-                getLogger().warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY, instanceId, address), exception);
-            } catch (Throwable throwable) {
-                throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address), throwable);
-            }
-            retries++;
-        }
-        throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address));
+        String[] address = getInstanceAddress(instanceId);
+        return connect(instanceId, address);
     }
 
     public static TarantoolClient connectToTarantoolCluster(String instanceId) {
-        int retries = 0;
+        String[] addresses = getClusterAddresses(instanceId);
+        return connect(instanceId, addresses);
+    }
+
+    public static TarantoolClient tryConnectToTarantool(String instanceId) {
+        TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations());
+        TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
+        TarantoolClientConfig config = getClientConfig(connectionConfiguration);
+        String[] address = getInstanceAddress(instanceId);
+
+        SocketChannelProvider socketChannelProvider = new RoundRobinSocketProviderImpl(address);
+        TarantoolClientImpl tarantoolClient;
+
+        try {
+            getLogger().info(format(TRYING_TO_CONNECT,
+                    instanceId,
+                    address,
+                    config.initTimeoutMillis));
+            tarantoolClient = new TarantoolClientImpl(socketChannelProvider, config);
+        } catch (Throwable throwable) {
+            throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address), throwable);
+        }
+        return tarantoolClient;
+    }
+
+    private static String[] getInstanceAddress(String instanceId) {
+        TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations());
+        TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
+        String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
+        return new String[]{address};
+    }
+
+    private static String[] getClusterAddresses(String instanceId) {
         Map<String, TarantoolConfiguration> configurations = tarantoolModule().getTarantoolConfigurations();
         TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, configurations);
-        TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
-        TarantoolClientConfig config = new TarantoolClientConfig();
-        config.initTimeoutMillis = tarantoolModule().getConnectionTimeoutMillis();
-        config.username = connectionConfiguration.getUsername();
-        config.password = connectionConfiguration.getPassword();
-        config.operationExpiryTimeMillis = connectionConfiguration.getOperationTimeoutMillis();
+
         Set<String> replicas;
-        String[] addresses = isEmpty(replicas = tarantoolConfiguration.getReplicas())
-                ? new String[]{connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort()}
+        return isEmpty(replicas = tarantoolConfiguration.getReplicas())
+                ? getInstanceAddress(instanceId)
                 : replicas.stream().map(configurations::get)
                 .filter(Objects::nonNull)
                 .map(TarantoolConfiguration::getConnectionConfiguration)
                 .map(configuration -> configuration.getHost() + COLON + configuration.getPort())
                 .toArray(String[]::new);
+    }
+
+    private static TarantoolClientImpl connect(String instanceId, String[] addresses) {
+        int retries = 0;
+        TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations());
+        TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
+        TarantoolClientConfig config = getClientConfig(connectionConfiguration);
         SocketChannelProvider socketChannelProvider = new RoundRobinSocketProviderImpl(addresses);
+
         while (retries < connectionConfiguration.getMaxRetryCount()) {
             try {
                 getLogger().info(format(WAITING_FOR_CONNECT,
@@ -114,27 +124,13 @@ public final class TarantoolConnector {
         throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, Arrays.toString(addresses)));
     }
 
-
-    public static TarantoolClient tryConnectToTarantool(String instanceId) {
-        TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations());
-        TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
+    private static TarantoolClientConfig getClientConfig(TarantoolConnectionConfiguration connectionConfiguration) {
         TarantoolClientConfig config = new TarantoolClientConfig();
-        config.initTimeoutMillis = tarantoolModule().getProbeConnectionTimeoutMillis();
+        config.initTimeoutMillis = tarantoolModule().getConnectionTimeoutMillis();
         config.username = connectionConfiguration.getUsername();
         config.password = connectionConfiguration.getPassword();
         config.operationExpiryTimeMillis = connectionConfiguration.getOperationTimeoutMillis();
-        String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
-        SocketChannelProvider socketChannelProvider = new RoundRobinSocketProviderImpl(address);
-        TarantoolClientImpl tarantoolClient;
-        try {
-            getLogger().info(format(TRYING_TO_CONNECT,
-                    instanceId,
-                    address,
-                    config.initTimeoutMillis));
-            tarantoolClient = new TarantoolClientImpl(socketChannelProvider, config);
-        } catch (Throwable throwable) {
-            throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address), throwable);
-        }
-        return tarantoolClient;
+        return config;
     }
+
 }
