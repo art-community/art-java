@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package ru.art.tarantool.connector;
+package ru.art.tarantool.module.connector;
 
 import lombok.*;
 import lombok.experimental.*;
@@ -24,14 +24,12 @@ import org.apache.logging.log4j.*;
 import org.tarantool.*;
 import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.exception.*;
-import ru.art.tarantool.initializer.*;
+
 import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.constants.StringConstants.*;
 import static ru.art.logging.LoggingModule.*;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.DEFAULT_TARANTOOL_RETRIES;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_CONNECT_TO_TARANTOOL;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
@@ -56,7 +54,7 @@ public final class TarantoolConnector {
         return connect(instanceId, addresses);
     }
 
-    public static TarantoolClient tryConnectToTarantool(String instanceId) {
+    public static TarantoolClient tryConnectToInstance(String instanceId) {
         TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations());
         TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
         TarantoolClientConfig config = getClientConfig(connectionConfiguration);

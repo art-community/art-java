@@ -22,7 +22,6 @@ import lombok.*;
 import static java.io.File.*;
 import static java.nio.file.Paths.*;
 import static ru.art.core.constants.StringConstants.*;
-import static ru.art.core.determinant.SystemDeterminant.isMac;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 
 @Getter

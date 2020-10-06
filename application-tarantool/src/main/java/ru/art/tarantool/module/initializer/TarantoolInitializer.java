@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package ru.art.tarantool.initializer;
+package ru.art.tarantool.module.initializer;
 
 import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
@@ -51,7 +51,7 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.core.jar.JarExtensions.*;
 import static ru.art.core.wrapper.ExceptionWrapper.*;
 import static ru.art.logging.LoggingModule.*;
-import static ru.art.tarantool.connector.TarantoolConnector.*;
+import static ru.art.tarantool.module.connector.TarantoolConnector.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Directories.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
@@ -122,7 +122,7 @@ public class TarantoolInitializer {
         TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
         String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
         try {
-            TarantoolClient tarantoolClient = tryConnectToTarantool(instanceId);
+            TarantoolClient tarantoolClient = tryConnectToInstance(instanceId);
             if (tarantoolClient.isAlive()) {
                 return;
             }

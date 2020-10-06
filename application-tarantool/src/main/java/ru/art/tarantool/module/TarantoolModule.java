@@ -24,7 +24,7 @@ import org.tarantool.*;
 import ru.art.core.module.Module;
 import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.exception.*;
-import ru.art.tarantool.state.*;
+import ru.art.tarantool.module.state.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
@@ -36,7 +36,7 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessa
 import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.*;
-import static ru.art.tarantool.initializer.TarantoolInitializer.*;
+import static ru.art.tarantool.module.initializer.TarantoolInitializer.*;
 import java.util.*;
 
 @Getter
