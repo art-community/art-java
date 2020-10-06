@@ -147,7 +147,7 @@ public class TarantoolInitializer {
             TarantoolConfiguration configuration = getTarantoolConfiguration(instanceId, configurations);
 
             TarantoolConnectionConfiguration connectionConfiguration = configuration.getConnectionConfiguration();
-            TarantoolLocalConfiguration localConfiguration = tarantoolModule().getLocalConfiguration();
+            TarantoolLocalInstanceConfiguration localConfiguration = tarantoolModule().getLocalConfiguration();
             String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
 
             String workingDirectory = localConfiguration.getWorkingDirectory() + separator + instanceId;
@@ -206,7 +206,7 @@ public class TarantoolInitializer {
         }
     }
 
-    private static void startTarantoolFromJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException {
+    private static void startTarantoolFromJar(String instanceId, TarantoolLocalInstanceConfiguration localConfiguration, String address) throws IOException {
         String workingDirectory = localConfiguration.getWorkingDirectory() + separator + instanceId;
         String executableDirectory = workingDirectory + separator + BIN;
         String luaDirectory = workingDirectory + separator + LUA;
@@ -236,7 +236,7 @@ public class TarantoolInitializer {
         waitForTarantoolProcess(instanceId, localConfiguration, address, process);
     }
 
-    private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalConfiguration localConfiguration, String address) throws IOException {
+    private static void startTarantoolOutOfJar(String instanceId, TarantoolLocalInstanceConfiguration localConfiguration, String address) throws IOException {
         String workingDirectory = localConfiguration.getWorkingDirectory() + separator + instanceId;
         URL executableUrl = ofNullable(localConfiguration.getExecutableFilePath())
                 .filter(file -> isMac())
@@ -269,13 +269,13 @@ public class TarantoolInitializer {
         waitForTarantoolProcess(instanceId, localConfiguration, address, process);
     }
 
-    private static String getLuaScriptPath(String instanceId, TarantoolLocalConfiguration localConfiguration, String scriptName) {
+    private static String getLuaScriptPath(String instanceId, TarantoolLocalInstanceConfiguration localConfiguration, String scriptName) {
         String workingDirectory = localConfiguration.getWorkingDirectory() + separator + instanceId;
         String luaDirectory = workingDirectory + separator + LUA;
         return luaDirectory + separator + scriptName;
     }
 
-    private static void waitForTarantoolProcess(String instanceId, TarantoolLocalConfiguration localConfiguration, String address, StartedProcess process) {
+    private static void waitForTarantoolProcess(String instanceId, TarantoolLocalInstanceConfiguration localConfiguration, String address, StartedProcess process) {
         long current = currentTimeMillis();
         int checkIntervalMillis = localConfiguration.getProcessStartupCheckIntervalMillis();
         int startupTimeoutMillis = localConfiguration.getProcessStartupTimeoutMillis();

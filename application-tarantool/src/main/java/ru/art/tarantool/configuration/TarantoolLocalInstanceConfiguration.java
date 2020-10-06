@@ -26,7 +26,7 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 
 @Getter
 @Builder
-public class TarantoolLocalConfiguration {
+public class TarantoolLocalInstanceConfiguration {
     @Builder.Default
     private final String executable = DEFAULT_TARANTOOL_EXECUTABLE;
     @Builder.Default
