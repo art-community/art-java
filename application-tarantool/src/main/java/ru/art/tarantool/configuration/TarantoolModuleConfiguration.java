@@ -35,7 +35,7 @@ import java.util.*;
 public interface TarantoolModuleConfiguration extends ModuleConfiguration {
     Map<String, TarantoolConfiguration> getTarantoolConfigurations();
 
-    TarantoolLocalConfiguration getLocalConfiguration();
+    TarantoolLocalInstanceConfiguration getLocalConfiguration();
 
     long getProbeConnectionTimeoutMillis();
 
@@ -53,7 +53,7 @@ public interface TarantoolModuleConfiguration extends ModuleConfiguration {
         private final long connectionTimeoutMillis = DEFAULT_TARANTOOL_CONNECTION_TIMEOUT;
         private final long probeConnectionTimeoutMillis = DEFAULT_TARANTOOL_PROBE_CONNECTION_TIMEOUT;
         private final boolean enableTracing = false;
-        private final TarantoolLocalConfiguration localConfiguration = TarantoolLocalConfiguration.builder().build();
+        private final TarantoolLocalInstanceConfiguration localConfiguration = TarantoolLocalInstanceConfiguration.builder().build();
         private final TarantoolInitializationMode initializationMode = BOOTSTRAP;
     }
 

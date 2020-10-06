@@ -76,10 +76,7 @@ public final class TarantoolConnector {
     }
 
     private static String[] getInstanceAddress(String instanceId) {
-        TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations());
-        TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
-        String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
-        return new String[]{address};
+        return new String[] {getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations()).getAddress()};
     }
 
     private static String[] getClusterAddresses(String instanceId) {
@@ -91,8 +88,7 @@ public final class TarantoolConnector {
                 ? getInstanceAddress(instanceId)
                 : replicas.stream().map(configurations::get)
                 .filter(Objects::nonNull)
-                .map(TarantoolConfiguration::getConnectionConfiguration)
-                .map(configuration -> configuration.getHost() + COLON + configuration.getPort())
+                .map(TarantoolConfiguration::getAddress)
                 .toArray(String[]::new);
     }
 

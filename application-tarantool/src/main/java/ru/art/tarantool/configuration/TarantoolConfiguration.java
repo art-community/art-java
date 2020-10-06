@@ -21,6 +21,7 @@ package ru.art.tarantool.configuration;
 import lombok.*;
 import ru.art.tarantool.configuration.lua.*;
 import ru.art.tarantool.model.*;
+import static ru.art.core.constants.StringConstants.COLON;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.*;
 import java.util.*;
@@ -38,4 +39,8 @@ public class TarantoolConfiguration {
     private final Map<String, TarantoolEntityFieldsMapping> entityFieldsMappings;
     @Singular("replica")
     private final Set<String> replicas;
+
+    public String getAddress() {
+        return connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
+    }
 }

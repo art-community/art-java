@@ -46,7 +46,7 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
     private long probeConnectionTimeout;
     private long connectionTimeout;
     private TarantoolInitializationMode initializationMode = super.getInitializationMode();
-    private TarantoolLocalConfiguration localConfiguration;
+    private TarantoolLocalInstanceConfiguration localConfiguration;
     private Map<String, TarantoolConfiguration> tarantoolConfigurations;
 
     public TarantoolAgileConfiguration() {
@@ -59,7 +59,7 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
         probeConnectionTimeout = configLong(TARANTOOL_SECTION_ID, PROBE_CONNECTION_TIMEOUT_MILLIS, super.getProbeConnectionTimeoutMillis());
         connectionTimeout = configLong(TARANTOOL_SECTION_ID, CONNECTION_TIMEOUT_MILLIS, super.getConnectionTimeoutMillis());
         initializationMode = ifException(() -> TarantoolInitializationMode.valueOf(configString(TARANTOOL_SECTION_ID, INITIALIZATION_MODE).toUpperCase()), initializationMode);
-        TarantoolLocalConfiguration defaultLocalConfiguration = super.getLocalConfiguration();
+        TarantoolLocalInstanceConfiguration defaultLocalConfiguration = super.getLocalConfiguration();
         String executable = defaultLocalConfiguration.getExecutable();
         executable = configString(TARANTOOL_LOCAL_SECTION_ID, EXECUTABLE, executable);
         String executableFilePath = defaultLocalConfiguration.getExecutableFilePath();
@@ -70,7 +70,7 @@ public class TarantoolAgileConfiguration extends TarantoolModuleDefaultConfigura
         processStartupCheckIntervalMillis = configInt(TARANTOOL_LOCAL_SECTION_ID, PROCESS_STARTUP_CHECK_INTERVAL_MILLIS, processStartupCheckIntervalMillis);
         int processStartupTimeoutMillis = defaultLocalConfiguration.getProcessStartupTimeoutMillis();
         processStartupTimeoutMillis = configInt(TARANTOOL_LOCAL_SECTION_ID, PROCESS_STARTUP_TIMEOUT_MILLIS, processStartupTimeoutMillis);
-        localConfiguration = TarantoolLocalConfiguration.builder()
+        localConfiguration = TarantoolLocalInstanceConfiguration.builder()
                 .executable(executable)
                 .executableFilePath(executableFilePath)
                 .processStartupCheckIntervalMillis(processStartupCheckIntervalMillis)
