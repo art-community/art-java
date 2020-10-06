@@ -38,7 +38,7 @@ public final class TarantoolSpaceService {
 
     public static void dropSpace(String instanceId, String spaceName) {
         evaluateLuaScript(instanceId, tarantoolSpace(spaceName).toManageSpaceLua());
-        TarantoolClient client = tarantoolModuleState().getClient(instanceId);
+        TarantoolClient client = getClient(instanceId);
         callTarantoolFunction(client, DROP + spaceName);
     }
 
@@ -48,7 +48,7 @@ public final class TarantoolSpaceService {
 
     public static void renameSpace(String instanceId, String currentSpaceName, String newSpaceName) {
         evaluateLuaScript(instanceId, tarantoolSpace(currentSpaceName).toManageSpaceLua());
-        TarantoolClient client = tarantoolModuleState().getClient(instanceId);
+        TarantoolClient client = getClient(instanceId);
         callTarantoolFunction(client, RENAME + currentSpaceName, fixedArrayOf(newSpaceName));
     }
 }

@@ -39,13 +39,13 @@ public final class TarantoolSequenceService {
 
     public static void dropSequence(String instanceId, String sequenceName) {
         evaluateLuaScript(instanceId, tarantoolSequence(sequenceName).toManageSequenceLua());
-        TarantoolClient client = tarantoolModuleState().getClient(instanceId);
+        TarantoolClient client = getClient(instanceId);
         callTarantoolFunction(client, DROP + sequenceName);
     }
 
     public static Integer sequenceNext(String instanceId, String sequenceName) {
         evaluateLuaScript(instanceId, tarantoolSequence(sequenceName).toManageSequenceLua());
-        TarantoolClient client = tarantoolModuleState().getClient(instanceId);
+        TarantoolClient client = getClient(instanceId);
         Integer result = cast(callTarantoolFunction(client, NEXT + sequenceName).get(0));
         if (isEmpty(result)) return null;
         return result;
@@ -53,13 +53,13 @@ public final class TarantoolSequenceService {
 
     public static void resetSequence(String instanceId, String sequenceName) {
         evaluateLuaScript(instanceId, tarantoolSequence(sequenceName).toManageSequenceLua());
-        TarantoolClient client = tarantoolModuleState().getClient(instanceId);
+        TarantoolClient client = getClient(instanceId);
         callTarantoolFunction(client, RESET + sequenceName);
     }
 
     public static void setSequence(String instanceId, String sequenceName, int value) {
         evaluateLuaScript(instanceId, tarantoolSequence(sequenceName).toManageSequenceLua());
-        TarantoolClient client = tarantoolModuleState().getClient(instanceId);
+        TarantoolClient client = getClient(instanceId);
         callTarantoolFunction(client, SET + sequenceName, fixedArrayOf(value));
     }
 }
