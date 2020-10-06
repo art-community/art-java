@@ -16,9 +16,8 @@
  * limitations under the License.
  */
 
-package ru.art.tarantool.dao;
+package ru.art.tarantool.storage.dao;
 
-import org.tarantool.*;
 import ru.art.entity.*;
 import ru.art.tarantool.exception.*;
 import ru.art.tarantool.model.*;
@@ -36,13 +35,12 @@ import static ru.art.entity.Entity.*;
 import static ru.art.entity.tuple.PlainTupleReader.*;
 import static ru.art.entity.tuple.PlainTupleWriter.*;
 import static ru.art.entity.tuple.schema.ValueSchema.*;
-import static ru.art.tarantool.caller.TarantoolFunctionCaller.*;
+import static ru.art.tarantool.storage.caller.TarantoolFunctionCaller.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.*;
-import static ru.art.tarantool.module.TarantoolModule.*;
-import static ru.art.tarantool.service.TarantoolScriptService.*;
+import static ru.art.tarantool.storage.service.TarantoolScriptService.*;
 import java.util.*;
 
 @SuppressWarnings("Duplicates")

@@ -16,18 +16,18 @@
  * limitations under the License.
  */
 
-package ru.art.tarantool.dao;
+package ru.art.tarantool.storage.dao;
 
 import org.tarantool.TarantoolClient;
 import static java.util.Collections.emptySet;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.setOf;
-import static ru.art.tarantool.caller.TarantoolFunctionCaller.callTarantoolFunction;
+import static ru.art.tarantool.storage.caller.TarantoolFunctionCaller.callTarantoolFunction;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.SEQUENCE;
 import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState;
-import static ru.art.tarantool.service.TarantoolScriptService.evaluateCommonScript;
+import static ru.art.tarantool.storage.service.TarantoolScriptService.evaluateCommonScript;
 import java.util.List;
 import java.util.Set;
 

@@ -477,14 +477,13 @@ Code:
 ```java
 import ru.art.config.extensions.tarantool.*;
 import ru.art.tarantool.configuration.*;
-import ru.art.tarantool.dao.*;
+import ru.art.tarantool.storage.dao.*;
 import ru.art.tarantool.module.*;
 import static ru.art.config.extensions.activator.AgileConfigurationsActivator.*;
 import static ru.art.core.context.Context.context;
 import static ru.art.core.factory.CollectionsFactory.mapOf;
 import static ru.art.entity.Entity.*;
-import static ru.art.tarantool.dao.TarantoolDao.*;
-import java.util.*;
+import static ru.art.tarantool.storage.dao.TarantoolDao.*;
 
 public class MainModule {
     public static void main(String[] args) {

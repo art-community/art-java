@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-package ru.art.tarantool.service;
+package ru.art.tarantool.storage.service;
 
 import lombok.experimental.*;
 import org.tarantool.*;
 import ru.art.tarantool.configuration.lua.*;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.tarantool.caller.TarantoolFunctionCaller.*;
+import static ru.art.tarantool.storage.caller.TarantoolFunctionCaller.*;
 import static ru.art.tarantool.configuration.lua.TarantoolIndexConfiguration.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static ru.art.tarantool.executor.TarantoolLuaExecutor.*;
+import static ru.art.tarantool.storage.service.executor.TarantoolLuaExecutor.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
 
 @UtilityClass
