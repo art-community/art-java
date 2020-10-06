@@ -32,6 +32,7 @@ import static java.lang.System.*;
 import static java.lang.Thread.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
+import static java.nio.file.StandardCopyOption.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
@@ -212,6 +213,13 @@ public class TarantoolInitializer {
         String luaDirectory = workingDirectory + separator + LUA;
         String executableFilePath = localConfiguration.getExecutableFilePath();
         extractCurrentJarEntry(TarantoolModule.class, LUA_REGEX, getLuaScriptPath(instanceId, localConfiguration, EMPTY_STRING));
+        extractCurrentJarEntry(TarantoolModule.class, VSHARD_REGEX, getLuaScriptPath(instanceId, localConfiguration, VSHARD));
+        extractCurrentJarEntry(TarantoolModule.class, ROUTER_REGEX, getLuaScriptPath(instanceId, localConfiguration, ROUTER));
+        extractCurrentJarEntry(TarantoolModule.class, STORAGE_REGEX, getLuaScriptPath(instanceId, localConfiguration, STORAGE));
+        logger.info(format(EXTRACT_TARANTOOL_VSHARD_SCRIPTS,
+                instanceId,
+                address,
+                getLuaScriptPath(instanceId, localConfiguration, VSHARD)));
         if (isEmpty(executableFilePath) || !isMac()) {
             createDirectories(get(executableDirectory));
             extractCurrentJarEntry(TarantoolModule.class, localConfiguration.getExecutable(), executableDirectory);
@@ -245,6 +253,15 @@ public class TarantoolInitializer {
                 .map(File::toURI)
                 .map(uri -> wrapException(uri::toURL, TarantoolExecutionException::new))
                 .orElse(TarantoolInitializer.class.getClassLoader().getResource(localConfiguration.getExecutable()));
+        URL vshardUrl = TarantoolInitializer.class.getClassLoader().getResource(VSHARD);
+        if (isNull(vshardUrl)) {
+            throw new TarantoolInitializationException(format(TARANTOOL_VSHARD_NOT_EXISTS, address));
+        }
+        copyRecursive(get(vshardUrl.getFile()), get(getLuaScriptPath(instanceId, localConfiguration, VSHARD)));
+        logger.info(format(EXTRACT_TARANTOOL_VSHARD_SCRIPTS,
+                instanceId,
+                address,
+                getLuaScriptPath(instanceId, localConfiguration, VSHARD)));
         if (isNull(executableUrl)) {
             throw new TarantoolInitializationException(format(TARANTOOL_EXECUTABLE_NOT_EXISTS, address, localConfiguration.getExecutable()));
         }
