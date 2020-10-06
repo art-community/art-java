@@ -53,6 +53,6 @@ public final class TarantoolLuaExecutor {
         if (tarantoolModule().isEnableTracing()) {
             getLogger().trace(format(EVALUATING_LUA_SCRIPT, script));
         }
-        tarantoolModuleState().getClient(instanceId).syncOps().eval(script);
+        getClient(instanceId).syncOps().eval(script);
     }
 }

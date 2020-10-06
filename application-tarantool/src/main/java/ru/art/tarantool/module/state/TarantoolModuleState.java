@@ -40,36 +40,4 @@ public class TarantoolModuleState implements ModuleState {
     private final Map<String, TarantoolClient> clusterClients = concurrentHashMap();
     private final Map<String, Set<TarantoolValueScriptConfiguration>> loadedValueScripts = concurrentHashMap();
     private final Map<String, Set<TarantoolCommonScriptConfiguration>> loadedCommonScripts = concurrentHashMap();
-
-    @SuppressWarnings("Duplicates")
-    public TarantoolClient getClient(String instanceId) {
-        TarantoolClient client = clients.get(instanceId);
-        if (isNull(client)) {
-            client = connectToTarantoolInstance(instanceId);
-            if (!client.isAlive()) {
-                TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations());
-                TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
-                String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
-                throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address));
-            }
-        }
-        clients.put(instanceId, client);
-        return client;
-    }
-
-    @SuppressWarnings("Duplicates")
-    public TarantoolClient getClusterClient(String instanceId) {
-        TarantoolClient client = clusterClients.get(instanceId);
-        if (isNull(client)) {
-            client = connectToTarantoolCluster(instanceId);
-            if (!client.isAlive()) {
-                TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations());
-                TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
-                String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
-                throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address));
-            }
-        }
-        clients.put(instanceId, client);
-        return client;
-    }
 }

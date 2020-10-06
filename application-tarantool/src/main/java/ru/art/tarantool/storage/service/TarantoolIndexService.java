@@ -37,7 +37,7 @@ public final class TarantoolIndexService {
 
     public static void dropIndex(String instanceId, String spaceName, String indexName) {
         evaluateLuaScript(instanceId, tarantoolIndex(indexName, spaceName).toManageIndexLua());
-        TarantoolClient client = tarantoolModuleState().getClient(instanceId);
+        TarantoolClient client = getClient(instanceId);
         callTarantoolFunction(client, DROP + spaceName + indexName);
     }
 
@@ -48,7 +48,7 @@ public final class TarantoolIndexService {
 
     public static void renameIndex(String instanceId, String spaceName, String currentIndexName, String newIndexName) {
         evaluateLuaScript(instanceId, tarantoolIndex(currentIndexName, spaceName).toManageIndexLua());
-        TarantoolClient client = tarantoolModuleState().getClient(instanceId);
+        TarantoolClient client = getClient(instanceId);
         callTarantoolFunction(client, RENAME + spaceName + currentIndexName, fixedArrayOf(newIndexName));
     }
 }

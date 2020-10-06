@@ -36,6 +36,8 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessa
 import static ru.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.*;
+import static ru.art.tarantool.module.connector.TarantoolConnector.connectToTarantoolCluster;
+import static ru.art.tarantool.module.connector.TarantoolConnector.connectToTarantoolInstance;
 import static ru.art.tarantool.module.initializer.TarantoolInitializer.*;
 import java.util.*;
 
@@ -70,13 +72,30 @@ public class TarantoolModule implements Module<TarantoolModuleConfiguration, Tar
         return getTarantoolModuleState();
     }
 
-
     public static TarantoolConfiguration getTarantoolConfiguration(String instanceId, Map<String, TarantoolConfiguration> configurations) {
         TarantoolConfiguration configuration = configurations.get(instanceId);
         if (isNull(configuration)) {
             throw new TarantoolConnectionException(format(CONFIGURATION_IS_NULL, instanceId));
         }
         return configuration;
+    }
+
+    public static TarantoolClient getClient(String instanceId) {
+        TarantoolClient client = tarantoolModuleState().getClients().get(instanceId);
+        if (isNull(client)) {
+            client = connectToTarantoolInstance(instanceId);
+            tarantoolModuleState().getClients().put(instanceId, client);
+        }
+        return client;
+    }
+
+    public static TarantoolClient getClusterClient(String instanceId) {
+        TarantoolClient client = tarantoolModuleState().getClusterClients().get(instanceId);
+        if (isNull(client)) {
+            client = connectToTarantoolCluster(instanceId);
+            tarantoolModuleState().getClusterClients().put(instanceId, client);
+        }
+        return client;
     }
 
     @Override
