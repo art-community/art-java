@@ -40,7 +40,7 @@ public class TarantoolConfiguration {
     @Singular("replica")
     private final Set<String> replicas;
 
-    public String getAddress() {
+    public String getConnectionAddress() {
         return connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
     }
 }
