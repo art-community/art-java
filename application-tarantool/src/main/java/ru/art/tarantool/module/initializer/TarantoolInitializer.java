@@ -119,8 +119,7 @@ public class TarantoolInitializer {
 
     private static void initialTarantoolSynchronously(String instanceId, TarantoolConfiguration tarantoolConfiguration) {
         TarantoolInstanceMode instanceMode = tarantoolConfiguration.getInstanceMode();
-        TarantoolConnectionConfiguration connectionConfiguration = tarantoolConfiguration.getConnectionConfiguration();
-        String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
+        String address = tarantoolConfiguration.getConnectionAddress();
         try {
             TarantoolClient tarantoolClient = tryConnectToInstance(instanceId);
             if (tarantoolClient.isAlive()) {
@@ -129,26 +128,26 @@ public class TarantoolInitializer {
         } catch (Throwable throwable) {
             if (instanceMode == LOCAL) {
                 getLogger().warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
-                startTarantool(instanceId);
+                startTarantoolInstance(instanceId);
                 return;
             }
             throw throwable;
         }
         if (instanceMode == LOCAL) {
             getLogger().warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP, instanceId, address));
-            startTarantool(instanceId);
+            startTarantoolInstance(instanceId);
         }
     }
 
     @SuppressWarnings("Duplicates")
-    private static void startTarantool(String instanceId) {
+    private static void startTarantoolInstance(String instanceId) {
         try {
             Map<String, TarantoolConfiguration> configurations = tarantoolModule().getTarantoolConfigurations();
             TarantoolConfiguration configuration = getTarantoolConfiguration(instanceId, configurations);
 
             TarantoolConnectionConfiguration connectionConfiguration = configuration.getConnectionConfiguration();
             TarantoolLocalInstanceConfiguration localConfiguration = tarantoolModule().getLocalConfiguration();
-            String address = connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
+            String address = configuration.getConnectionAddress();
 
             String workingDirectory = localConfiguration.getWorkingDirectory() + separator + instanceId;
             String luaDirectory = workingDirectory + separator + LUA;
