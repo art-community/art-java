@@ -21,16 +21,10 @@ package ru.art.tarantool.module.state;
 import lombok.*;
 import org.tarantool.*;
 import ru.art.core.module.*;
-import ru.art.tarantool.configuration.*;
 import ru.art.tarantool.configuration.lua.*;
-import ru.art.tarantool.exception.*;
-import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
-import static ru.art.core.constants.StringConstants.*;
+
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.tarantool.module.connector.TarantoolConnector.*;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
-import static ru.art.tarantool.module.TarantoolModule.*;
+
 import java.util.*;
 
 @Getter
