@@ -28,7 +28,6 @@ import ru.art.tarantool.exception.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
-import static ru.art.core.constants.StringConstants.*;
 import static ru.art.logging.LoggingModule.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_CONNECT_TO_TARANTOOL;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
@@ -76,7 +75,7 @@ public final class TarantoolConnector {
     }
 
     private static String[] getInstanceAddress(String instanceId) {
-        return new String[] {getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations()).getAddress()};
+        return new String[] {getTarantoolConfiguration(instanceId, tarantoolModule().getTarantoolConfigurations()).getConnectionAddress()};
     }
 
     private static String[] getClusterAddresses(String instanceId) {
@@ -88,7 +87,7 @@ public final class TarantoolConnector {
                 ? getInstanceAddress(instanceId)
                 : replicas.stream().map(configurations::get)
                 .filter(Objects::nonNull)
-                .map(TarantoolConfiguration::getAddress)
+                .map(TarantoolConfiguration::getConnectionAddress)
                 .toArray(String[]::new);
     }
 
