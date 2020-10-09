@@ -215,7 +215,7 @@ public class TarantoolInitializer {
         extractCurrentJarEntry(TarantoolModule.class, VSHARD_REGEX, getLuaScriptPath(instanceId, localConfiguration, VSHARD));
         extractCurrentJarEntry(TarantoolModule.class, ROUTER_REGEX, getLuaScriptPath(instanceId, localConfiguration, ROUTER));
         extractCurrentJarEntry(TarantoolModule.class, STORAGE_REGEX, getLuaScriptPath(instanceId, localConfiguration, STORAGE));
-        logger.info(format(EXTRACT_TARANTOOL_VSHARD_SCRIPTS,
+        getLogger().info(format(EXTRACT_TARANTOOL_VSHARD_SCRIPTS,
                 instanceId,
                 address,
                 getLuaScriptPath(instanceId, localConfiguration, VSHARD)));
@@ -257,7 +257,7 @@ public class TarantoolInitializer {
             throw new TarantoolInitializationException(format(TARANTOOL_VSHARD_NOT_EXISTS, address));
         }
         copyRecursive(get(vshardUrl.getFile()), get(getLuaScriptPath(instanceId, localConfiguration, VSHARD)));
-        logger.info(format(EXTRACT_TARANTOOL_VSHARD_SCRIPTS,
+        getLogger().info(format(EXTRACT_TARANTOOL_VSHARD_SCRIPTS,
                 instanceId,
                 address,
                 getLuaScriptPath(instanceId, localConfiguration, VSHARD)));
