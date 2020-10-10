@@ -73,7 +73,8 @@ public class ServiceMethodSpecification {
             if (isNull(response)) {
                 return Flux.empty();
             }
-            return mapOutput(response);
+            Flux<Value> output = mapOutput(response);
+            return output.log();
         } catch (Throwable throwable) {
             return Flux.just(exceptionMapper.map(throwable));
         }

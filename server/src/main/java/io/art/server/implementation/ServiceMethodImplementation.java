@@ -18,13 +18,9 @@
 
 package io.art.server.implementation;
 
-import io.art.core.model.*;
-import io.art.server.exception.*;
-import io.art.server.interceptor.*;
 import io.art.server.specification.*;
 import lombok.*;
 import static io.art.server.module.ServerModule.*;
-import java.util.*;
 import java.util.function.*;
 
 @Getter
@@ -56,48 +52,6 @@ public class ServiceMethodImplementation {
     }
 
     public Object execute(Object request) {
-        ServiceMethodSpecification methodSpecification = getMethodSpecification();
-        List<ServiceMethodInterceptor<Object, Object>> interceptors = methodSpecification.getInterceptors();
-        for (ServiceMethodInterceptor<Object, Object> interceptor : interceptors) {
-            InterceptionResult interceptionResult = interceptor.interceptRequest(request, methodSpecification);
-            request = interceptionResult.getOut();
-            switch (interceptionResult.getStrategy()) {
-                case PROCESS:
-                    return processExecution(request);
-                case TERMINATE:
-                    return request;
-            }
-        }
-        return processExecution(request);
-    }
-
-    private Object processExecution(Object request) {
-        ServiceMethodSpecification methodSpecification = getMethodSpecification();
-        List<ServiceMethodInterceptor<Object, Object>> interceptors = methodSpecification.getInterceptors();
-        try {
-            Object response = functor.apply(request);
-            for (ServiceMethodInterceptor<Object, Object> interceptor : interceptors) {
-                InterceptionResult interceptionResult = interceptor.interceptResponse(request, methodSpecification);
-                response = interceptionResult.getOut();
-                switch (interceptionResult.getStrategy()) {
-                    case PROCESS:
-                    case TERMINATE:
-                        return response;
-                }
-            }
-            return response;
-        } catch (Throwable throwable) {
-            for (ServiceMethodInterceptor<Object, Object> interceptor : interceptors) {
-                ExceptionInterceptionResult interceptionResult = interceptor.interceptException(throwable, methodSpecification);
-                throwable = interceptionResult.getOutException();
-                switch (interceptionResult.getStrategy()) {
-                    case THROW_EXCEPTION:
-                        throw new ServiceMethodExecutionException(interceptionResult.getOutException(), serviceId, methodId);
-                    case RETURN_FALLBACK:
-                        return interceptionResult.getFallback();
-                }
-            }
-            throw new ServiceMethodExecutionException(throwable, serviceId, methodId);
-        }
+        return functor.apply(request);
     }
 }
