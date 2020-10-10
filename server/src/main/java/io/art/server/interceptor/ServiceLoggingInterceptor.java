@@ -22,7 +22,6 @@ import io.art.core.model.*;
 import io.art.server.implementation.*;
 import io.art.server.specification.*;
 import lombok.*;
-import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
@@ -41,8 +40,8 @@ public class ServiceLoggingInterceptor implements ServiceMethodInterceptor<Objec
     @Override
     public InterceptionResult interceptRequest(Object request, ServiceMethodSpecification specification) {
         ServiceMethodImplementation implementation = specification.getImplementation();
-        switch (specification.getRequestType()) {
-            case VALUE:
+        switch (specification.getRequestMode()) {
+            case BLOCKING:
                 logBlockingRequest(request, specification);
                 break;
             case MONO:
@@ -59,8 +58,8 @@ public class ServiceLoggingInterceptor implements ServiceMethodInterceptor<Objec
 
     @Override
     public InterceptionResult interceptResponse(Object response, ServiceMethodSpecification specification) {
-        switch (specification.getResponseType()) {
-            case VALUE:
+        switch (specification.getResponseMode()) {
+            case BLOCKING:
                 logBlockingResponse(response, specification);
                 break;
             case MONO:

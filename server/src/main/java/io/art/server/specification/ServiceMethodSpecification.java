@@ -59,8 +59,8 @@ public class ServiceMethodSpecification {
     private final ValueFromModelMapper<Object, Value> responseMapper;
     private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
     private final ServiceMethodImplementation implementation;
-    private final ServiceMethodPayloadType requestType;
-    private final ServiceMethodPayloadType responseType;
+    private final ServiceMethodProcessingMode requestMode;
+    private final ServiceMethodProcessingMode responseMode;
     private final ServiceMethodConfiguration configuration;
 
     public Flux<Value> serve(Flux<Value> input) {
@@ -68,37 +68,37 @@ public class ServiceMethodSpecification {
             return Flux.empty();
         }
         try {
-            Object request = mapRequest(filter(input));
+            Object request = mapInput(filter(input));
             Object response = cast(implementation.execute(request));
             if (isNull(response)) {
                 return Flux.empty();
             }
-            return mapResponse(response);
+            return mapOutput(response);
         } catch (Throwable throwable) {
             return Flux.just(exceptionMapper.map(throwable));
         }
     }
 
-    private Object mapRequest(Flux<Value> requestChannel) {
-        switch (requestType) {
-            case VALUE:
-                return requestChannel.blockFirst();
+    private Object mapInput(Flux<Value> input) {
+        switch (requestMode) {
+            case BLOCKING:
+                return input.blockFirst();
             case MONO:
-                return requestChannel
+                return input
                         .map(responseMapper::map)
                         .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
                         .last();
             case FLUX:
-                return requestChannel
+                return input
                         .map(responseMapper::map)
                         .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_REQUEST_TYPE, responseType), serviceId, methodId);
+        throw new ServiceMethodExecutionException(format(UNKNOWN_REQUEST_TYPE, responseMode), serviceId, methodId);
     }
 
-    private Flux<Value> mapResponse(Object response) {
-        switch (responseType) {
-            case VALUE:
+    private Flux<Value> mapOutput(Object response) {
+        switch (responseMode) {
+            case BLOCKING:
                 return Flux
                         .just(responseMapper.map(response))
                         .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
@@ -108,7 +108,7 @@ public class ServiceMethodSpecification {
                         .map(responseMapper::map)
                         .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_RESPONSE_TYPE, responseType), serviceId, methodId);
+        throw new ServiceMethodExecutionException(format(UNKNOWN_RESPONSE_TYPE, responseMode), serviceId, methodId);
     }
 
     private Flux<Value> filter(Flux<Value> input) {

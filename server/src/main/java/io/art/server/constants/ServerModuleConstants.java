@@ -36,8 +36,8 @@ public interface ServerModuleConstants {
         String METHODS_KEY = "methods";
     }
 
-    enum ServiceMethodPayloadType {
-        VALUE,
+    enum ServiceMethodProcessingMode {
+        BLOCKING,
         MONO,
         FLUX
     }

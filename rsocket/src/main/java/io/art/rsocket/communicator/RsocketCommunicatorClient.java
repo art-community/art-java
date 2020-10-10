@@ -26,13 +26,13 @@ import lombok.*;
 
 @RequiredArgsConstructor
 public class RsocketCommunicatorClient {
-    ServerModuleConstants.ServiceMethodPayloadType requestPayloadType;
-    ServerModuleConstants.ServiceMethodPayloadType responsePayloadType;
+    ServerModuleConstants.ServiceMethodProcessingMode requestPayloadType;
+    ServerModuleConstants.ServiceMethodProcessingMode responsePayloadType;
     RSocketClient client = RSocketConnector.createRSocketClient(TcpClientTransport.create(123));
 
     public Object execute(Object request) {
         switch (requestPayloadType) {
-            case VALUE:
+            case BLOCKING:
                 break;
             case MONO:
                 break;
@@ -40,7 +40,7 @@ public class RsocketCommunicatorClient {
                 break;
         }
         switch (responsePayloadType) {
-            case VALUE:
+            case BLOCKING:
                 break;
             case MONO:
                 break;

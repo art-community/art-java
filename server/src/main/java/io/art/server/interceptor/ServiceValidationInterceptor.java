@@ -34,8 +34,8 @@ import static java.util.Objects.*;
 public class ServiceValidationInterceptor implements ServiceMethodInterceptor<Object, Object> {
     @Override
     public InterceptionResult interceptRequest(Object request, ServiceMethodSpecification specification) {
-        switch (specification.getRequestType()) {
-            case VALUE:
+        switch (specification.getRequestMode()) {
+            case BLOCKING:
                 validateBlockingRequest(request, specification);
                 break;
             case MONO:
