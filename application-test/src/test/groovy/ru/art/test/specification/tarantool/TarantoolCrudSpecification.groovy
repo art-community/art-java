@@ -33,10 +33,10 @@ import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolField
 import static ru.art.tarantool.storage.dao.TarantoolDao.tarantool
 import static ru.art.tarantool.model.TarantoolUpdateFieldOperation.*
 import static ru.art.tarantool.module.TarantoolModule.tarantoolModuleState
-import static ru.art.tarantool.storage.service.TarantoolIndexService.createIndex
-import static ru.art.tarantool.storage.service.TarantoolIndexService.dropIndex
-import static ru.art.tarantool.storage.service.TarantoolSequenceService.dropSequence
-import static ru.art.tarantool.storage.service.TarantoolSpaceService.dropSpace
+import static ru.art.tarantool.storage.dao.service.TarantoolIndexService.createIndex
+import static ru.art.tarantool.storage.dao.service.TarantoolIndexService.dropIndex
+import static ru.art.tarantool.storage.dao.service.TarantoolSequenceService.dropSequence
+import static ru.art.tarantool.storage.dao.service.TarantoolSpaceService.dropSpace
 
 class TarantoolCrudSpecification extends Specification {
     def spaceName = "DataEntity"

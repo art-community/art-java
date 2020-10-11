@@ -30,9 +30,9 @@ import static ru.art.core.factory.CollectionsFactory.*;
 import static ru.art.entity.Value.*;
 import static ru.art.entity.tuple.PlainTupleReader.*;
 import static ru.art.entity.tuple.schema.ValueSchema.*;
-import static ru.art.tarantool.storage.caller.TarantoolFunctionCaller.*;
+import static ru.art.tarantool.storage.dao.caller.TarantoolFunctionCaller.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static ru.art.tarantool.storage.service.TarantoolScriptService.*;
+import static ru.art.tarantool.storage.dao.service.TarantoolScriptService.*;
 import java.util.*;
 
 @SuppressWarnings("Duplicates")
