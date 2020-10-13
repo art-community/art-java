@@ -51,7 +51,7 @@ public class ServiceMethodSpecification {
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
 
-    @Singular("inputDecorator")
+    @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
     @Getter(lazy = true)
