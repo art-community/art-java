@@ -73,9 +73,12 @@ public interface ServerModuleConstants {
         String REACTIVE_SERVICE_OUTPUT_MESSAGE = success("Reactive service: ''{0}.{1}'' output: {2}");
     }
 
-    interface ExceptionsMessages {
+    interface ExceptionMessages {
         String UNKNOWN_REQUEST_TYPE = "Unknown request type: ''{0}''";
         String UNKNOWN_RESPONSE_TYPE = "Unknown response type: ''{0}''";
+    }
+
+    interface ValidationErrorPatterns {
         String NOT_BETWEEN_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' not between ''{2,number,#}'' and ''{3,number,#}''";
         String NOT_EQUALS_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' is not equals to ''{2}''";
         String NOT_CONTAINS_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' is not contains to ''{2}''";

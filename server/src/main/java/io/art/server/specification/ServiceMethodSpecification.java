@@ -27,7 +27,7 @@ import io.art.server.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
+import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
 import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.*;
 import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
 import static io.art.server.module.ServerModule.*;

@@ -18,9 +18,10 @@
 
 package io.art.server.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.NOT_BETWEEN_VALIDATION_ERROR;
+import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
 import static java.text.MessageFormat.*;
+import java.util.function.*;
 
 class BetweenLongValidationExpression extends ValidationExpression<Long> {
     private final long lowerValue;
@@ -32,20 +33,20 @@ class BetweenLongValidationExpression extends ValidationExpression<Long> {
         this.greaterValue = greaterValue;
     }
 
-    BetweenLongValidationExpression(long lowerValue, long greaterValue, String pattern) {
+    BetweenLongValidationExpression(long lowerValue, long greaterValue, Function<? extends ValidationExpression<?>, String> factory) {
         super(BETWEEN_LONG);
         this.lowerValue = lowerValue;
         this.greaterValue = greaterValue;
-        this.pattern = pattern;
+        this.messageFactory = factory;
     }
 
     @Override
-    public boolean evaluate(String fieldName, Long value) {
-        return super.evaluate(fieldName, value) && value > lowerValue && value < greaterValue;
+    public boolean evaluate(String field, Long value) {
+        return super.evaluate(field, value) && value > lowerValue && value < greaterValue;
     }
 
     @Override
-    public String getValidationErrorMessage() {
-        return format(NOT_BETWEEN_VALIDATION_ERROR, fieldName, value, lowerValue, greaterValue);
+    public String formatErrorMessage() {
+        return format(NOT_BETWEEN_VALIDATION_ERROR, field, value, lowerValue, greaterValue);
     }
 }

@@ -25,7 +25,7 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
+import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
 import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;

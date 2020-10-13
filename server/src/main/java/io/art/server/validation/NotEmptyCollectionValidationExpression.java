@@ -18,28 +18,29 @@
 
 package io.art.server.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
 import static java.text.MessageFormat.*;
 import java.util.*;
+import java.util.function.*;
 
 class NotEmptyCollectionValidationExpression extends ValidationExpression<Collection<?>> {
     NotEmptyCollectionValidationExpression() {
         super(NOT_EMPTY_COLLECTION);
     }
 
-    NotEmptyCollectionValidationExpression(String pattern) {
+    NotEmptyCollectionValidationExpression(Function<NotEmptyCollectionValidationExpression, String> factory) {
         super(NOT_EMPTY_COLLECTION);
-        this.pattern = pattern;
+        this.messageFactory = factory;
     }
 
     @Override
-    public boolean evaluate(String fieldName, Collection<?> value) {
-        return super.evaluate(fieldName, value) && !value.isEmpty();
+    public boolean evaluate(String field, Collection<?> value) {
+        return super.evaluate(field, value) && !value.isEmpty();
     }
 
     @Override
-    public String getValidationErrorMessage() {
-        return format(EMPTY_VALIDATION_ERROR, fieldName);
+    public String formatErrorMessage() {
+        return format(EMPTY_VALIDATION_ERROR, field);
     }
 }
