@@ -27,9 +27,11 @@ import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 @AllArgsConstructor
 public class ServiceMethodConfiguration {
     private final boolean deactivated;
+    private final boolean enableLogging;
 
     public static ServiceMethodConfiguration from(ConfigurationSource source) {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
-        return new ServiceMethodConfiguration(deactivated);
+        boolean enableLogging = orElse(source.getBool(LOGGING_KEY), false);
+        return new ServiceMethodConfiguration(deactivated, enableLogging);
     }
 }

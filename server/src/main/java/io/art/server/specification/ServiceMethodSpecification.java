@@ -33,7 +33,6 @@ import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcess
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static java.util.Optional.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -57,6 +56,9 @@ public class ServiceMethodSpecification {
 
     @Getter(lazy = true)
     private final ServiceSpecification serviceSpecification = specifications().get(serviceId);
+
+    @Getter(lazy = true)
+    private final ServiceConfiguration serviceConfiguration = getServiceSpecification().getConfiguration();
 
     private final ValueToModelMapper<Object, Value> inputMapper;
     private final ValueFromModelMapper<Object, Value> outputMapper;
@@ -139,12 +141,16 @@ public class ServiceMethodSpecification {
     }
 
     private boolean deactivated() {
-        boolean serviceDeactivated = ofNullable(getServiceSpecification().getConfiguration())
-                .map(ServiceConfiguration::isDeactivated)
-                .orElse(false);
-        Boolean methodDeactivated = ofNullable(configuration)
-                .map(ServiceMethodConfiguration::isDeactivated)
-                .orElse(false);
-        return serviceDeactivated || methodDeactivated;
+        ServiceConfiguration serviceConfiguration = getServiceConfiguration();
+        if (isNull(serviceConfiguration)) {
+            return false;
+        }
+        if (serviceConfiguration.isDeactivated()) {
+            return true;
+        }
+        if (isNull(configuration)) {
+            return false;
+        }
+        return configuration.isDeactivated();
     }
 }
