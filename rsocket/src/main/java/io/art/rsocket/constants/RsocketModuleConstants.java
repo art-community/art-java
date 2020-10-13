@@ -86,17 +86,15 @@ public interface RsocketModuleConstants {
         String RSOCKET_RESUME_CLEANUP_STORE_ON_KEEP_ALIVE = "rsocket.server.resume.cleanupStoreOnKeepAlive";
         String RSOCKET_RESUME_SESSION_DURATION = "rsocket.server.resume.sessionDuration";
         String RSOCKET_RESUME_STREAM_TIMEOUT = "rsocket.server.resume.streamTimeout";
+        String RSOCKET_RESUME_RETRY_POLICY = "rsocket.server.resume.retryPolicy";
     }
 
     @Getter
-    @AllArgsConstructor
     enum RetryPolicy {
-        BACKOFF("backoff"),
-        FIXED_DELAY("fixedDelay"),
-        MAX("max"),
-        MAX_IN_A_ROW("maxInARow"),
-        INDEFINITELY("indefinitely");
-
-        private final String policy;
+        BACKOFF,
+        FIXED_DELAY,
+        MAX,
+        MAX_IN_A_ROW,
+        INDEFINITELY
     }
 }

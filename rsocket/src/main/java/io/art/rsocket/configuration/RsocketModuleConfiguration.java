@@ -28,6 +28,8 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.parser.EnumParser.*;
 import static io.art.entity.constants.EntityConstants.DataFormat.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.RetryPolicy.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
 import java.time.*;
 
@@ -53,14 +55,17 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             configuration.defaultDataFormat = enumOf(DataFormat::valueOf, source.getString(RSOCKET_DEFAULT_SERVER_DATA_FORMAT_KEY), JSON);
             configuration.tracing = orElse(source.getBool(RSOCKET_SERVER_TRACING_KEY), false);
             configuration.fragmentationMtu = orElse(source.getInt(RSOCKET_SERVER_FRAGMENTATION_MTU_KEY), 0);
+
             if (source.has(RSOCKET_RESUME_SECTION)) {
                 boolean cleanupStoreOnKeepAlive = orElse(source.getBool(RSOCKET_RESUME_CLEANUP_STORE_ON_KEEP_ALIVE), false);
                 Duration sessionDuration = source.getDuration(RSOCKET_RESUME_SESSION_DURATION);
                 Duration streamTimeout = source.getDuration(RSOCKET_RESUME_STREAM_TIMEOUT);
+                RetryPolicy retryPolicy = enumOf(RetryPolicy::valueOf, source.getString(RSOCKET_RESUME_RETRY_POLICY), BACKOFF);
                 configuration.resume = RsocketResumeConfiguration.builder()
                         .sessionDuration(sessionDuration)
                         .streamTimeout(streamTimeout)
                         .cleanupStoreOnKeepAlive(cleanupStoreOnKeepAlive)
+                        .retryPolicy(retryPolicy)
                         .build();
             }
 
