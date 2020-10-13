@@ -147,9 +147,4 @@ public class ServiceMethodSpecification {
                 .orElse(false);
         return serviceDeactivated || methodDeactivated;
     }
-
-    public static void main(String[] args) {
-
-
-    }
 }
