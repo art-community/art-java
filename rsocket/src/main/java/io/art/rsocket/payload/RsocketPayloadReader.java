@@ -24,7 +24,6 @@ import io.art.rsocket.model.*;
 import io.netty.buffer.*;
 import io.rsocket.*;
 import lombok.*;
-import lombok.experimental.*;
 import static io.art.json.descriptor.JsonEntityReader.*;
 import static io.art.message.pack.descriptor.MessagePackEntityReader.*;
 import static io.art.protobuf.descriptor.ProtobufEntityReader.*;
@@ -52,7 +51,7 @@ public class RsocketPayloadReader {
             case MESSAGE_PACK:
                 return new RsocketPayloadValue(payload, readMessagePack(data));
         }
-        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDataFormat()));
+        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDefaultDataFormat()));
     }
 
     public RsocketPayloadValue readPayloadMetaData(Payload payload) {
@@ -70,7 +69,7 @@ public class RsocketPayloadReader {
             case MESSAGE_PACK:
                 return new RsocketPayloadValue(payload, readMessagePack(data));
         }
-        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDataFormat()));
+        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDefaultDataFormat()));
     }
 
     public static RsocketPayloadValue readPayloadData(Payload payload,  DataFormat dataFormat) {

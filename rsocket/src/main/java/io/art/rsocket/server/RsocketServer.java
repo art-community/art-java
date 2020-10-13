@@ -22,6 +22,7 @@ import io.art.rsocket.configuration.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
 import io.rsocket.core.*;
+import io.rsocket.lease.*;
 import io.rsocket.transport.netty.server.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
@@ -49,11 +50,16 @@ public class RsocketServer implements Server {
     public void start() {
         String message = transport == TCP ? RSOCKET_TCP_SERVER_STARTED_MESSAGE : RSOCKET_WS_SERVER_STARTED_MESSAGE;
         RsocketModuleConfiguration configuration = rsocketModule().configuration();
-        RSocketServer
-                .create((payload, socket) -> Mono.just(new ServerRsocket(payload, socket)))
-                .fragment(configuration.getFragmentationMtu())
-                .payloadDecoder(byteBuf -> null)
-                .bind(TcpServerTransport.create(configuration.getServerTcpPort()))
+        RSocketServer server = RSocketServer.create((payload, socket) -> Mono.just(new ServerRsocket(payload, socket)));
+        if (configuration.getFragmentationMtu() > 0) {
+            server.fragment(configuration.getFragmentationMtu());
+        }
+        if (nonNull(configuration.getLease())) {
+            server.resume()
+        }
+        server
+                .lease(Lease.create())
+                .bind(TcpServerTransport.create(configuration.getTcpPort()))
                 .doOnSubscribe(channel -> getLogger().info(message))
                 .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
                 .subscribe(disposable::set);

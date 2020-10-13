@@ -20,6 +20,7 @@ package io.art.server.registry;
 
 import io.art.entity.immutable.*;
 import io.art.entity.mapping.*;
+import io.art.server.model.*;
 import io.art.server.specification.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.logging.LoggingModule.*;
@@ -45,6 +46,10 @@ public class ServiceSpecificationRegistry {
     public Optional<ServiceMethodSpecification> findMethodByValue(Value value) {
         String methodId = Value.asEntity(value).map(METHOD_ID, PrimitiveMapping.toString);
         return findServiceByValue(value).flatMap(service -> ofNullable(service.getMethods().get(methodId)));
+    }
+
+    public Optional<ServiceMethodSpecification> findMethodById(ServiceMethodIdentifier id) {
+        return get(id.getServiceId()).map(service -> service.getMethods().get(id.getMethodId()));
     }
 
     public Set<String> identifiers() {

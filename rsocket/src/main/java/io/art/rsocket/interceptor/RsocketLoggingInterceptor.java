@@ -43,22 +43,22 @@ public class RsocketLoggingInterceptor implements RSocketInterceptor {
         return new RSocketProxy(rsocket) {
             @Override
             public Mono<Void> fireAndForget(@NonNull Payload payload) {
-                if (rsocketModule().configuration().isEnableRawDataTracing()) {
+                if (rsocketModule().configuration().isTracing()) {
                     getLogger().info(format(RSOCKET_FIRE_AND_FORGET_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
                 }
                 Mono<Void> result = super.fireAndForget(payload).doOnError(error -> getLogger().error(format(RSOCKET_FIRE_AND_FORGET_EXCEPTION_LOG, error)));
-                return rsocketModule().configuration().isEnableRawDataTracing()
+                return rsocketModule().configuration().isTracing()
                         ? result.doOnSubscribe(nothing -> getLogger().info(RSOCKET_FIRE_AND_FORGET_RESPONSE_LOG))
                         : result;
             }
 
             @Override
             public Mono<Payload> requestResponse(@NonNull Payload payload) {
-                if (rsocketModule().configuration().isEnableRawDataTracing()) {
+                if (rsocketModule().configuration().isTracing()) {
                     getLogger().info(format(RSOCKET_REQUEST_RESPONSE_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
                 }
                 Mono<Payload> result = super.requestResponse(payload).doOnError(error -> getLogger().error(format(RSOCKET_REQUEST_RESPONSE_EXCEPTION_LOG, error)));
-                return rsocketModule().configuration().isEnableRawDataTracing()
+                return rsocketModule().configuration().isTracing()
                         ? result.doOnNext(response -> getLogger().info(format(RSOCKET_REQUEST_RESPONSE_RESPONSE_LOG, response.getDataUtf8(), response.getMetadataUtf8())))
                         : result;
 
@@ -66,35 +66,35 @@ public class RsocketLoggingInterceptor implements RSocketInterceptor {
 
             @Override
             public Flux<Payload> requestStream(@NonNull Payload payload) {
-                if (rsocketModule().configuration().isEnableRawDataTracing()) {
+                if (rsocketModule().configuration().isTracing()) {
                     getLogger().info(format(RSOCKET_REQUEST_STREAM_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
                 }
                 Flux<Payload> result = super.requestStream(payload).doOnError(error -> getLogger().error(format(RSOCKET_REQUEST_STREAM_EXCEPTION_LOG, error)));
-                return rsocketModule().configuration().isEnableRawDataTracing()
+                return rsocketModule().configuration().isTracing()
                         ? result.doOnNext(response -> getLogger().info(format(RSOCKET_REQUEST_STREAM_RESPONSE_LOG, response.getDataUtf8(), response.getMetadataUtf8())))
                         : result;
             }
 
             @Override
             public Flux<Payload> requestChannel(@NonNull Publisher<Payload> payloads) {
-                if (rsocketModule().configuration().isEnableRawDataTracing()) {
+                if (rsocketModule().configuration().isTracing()) {
                     payloads = from(payloads).
                             doOnNext(payload -> getLogger().info(format(RSOCKET_REQUEST_CHANNEL_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8())));
                 }
                 Flux<Payload> result = super.requestChannel(from(payloads)
                         .doOnError(error -> getLogger().error(format(RSOCKET_REQUEST_CHANNEL_EXCEPTION_LOG, error))));
-                return rsocketModule().configuration().isEnableRawDataTracing()
+                return rsocketModule().configuration().isTracing()
                         ? result.doOnNext(payload -> getLogger().info(format(RSOCKET_REQUEST_CHANNEL_RESPONSE_LOG, payload.getDataUtf8(), payload.getMetadataUtf8())))
                         : result;
             }
 
             @Override
             public Mono<Void> metadataPush(@NonNull Payload payload) {
-                if (rsocketModule().configuration().isEnableRawDataTracing()) {
+                if (rsocketModule().configuration().isTracing()) {
                     getLogger().info(format(RSOCKET_METADATA_PUSH_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
                 }
                 Mono<Void> result = super.metadataPush(payload).doOnError(error -> getLogger().error(format(RSOCKET_METADATA_PUSH_EXCEPTION_LOG, error)));
-                return rsocketModule().configuration().isEnableRawDataTracing()
+                return rsocketModule().configuration().isTracing()
                         ? result.doOnSubscribe(nothing -> getLogger().info(RSOCKET_METADATA_PUSH_RESPONSE_LOG))
                         : result;
             }

@@ -18,6 +18,8 @@
 
 package io.art.rsocket.constants;
 
+import lombok.*;
+
 public interface RsocketModuleConstants {
     String RSOCKET_MODULE_ID = "RSOCKET_MODULE";
     String RSOCKET_FUNCTION_SERVICE = "RSOCKET_FUNCTION_SERVICE";
@@ -31,22 +33,13 @@ public interface RsocketModuleConstants {
     long DEFAULT_RSOCKET_RESUME_SESSION_DURATION = 24 * 60 * 60 * 1000;
     long DEFAULT_RSOCKET_RESUME_STREAM_TIMEOUT = 24 * 60 * 60 * 1000;
 
-    enum RsocketInterceptingDataType {
-        DATA,
-        META_DATA
-    }
-
-    enum RsocketInterceptedResultAction {
-        RETURN,
-        PROCESS
-    }
-
     enum RsocketTransport {
         TCP,
         WEB_SOCKET
     }
 
     interface ExceptionMessages {
+        String SPECIFICATION_NOT_FOUND = "Setup payload was null or not contained serviceId, methodId. Default service method id was not specified in configuration";
         String SERVICE_NOT_EXISTS = "Service with id ''{0}'' does not exists in service registry";
         String METHOD_NOT_EXISTS = "Rsocket method with id ''{0}'' for service {1} does not exists in rsocketService";
         String SERVICE_NOT_SUPPORTED_RSOCKET = "Service with id ''{0}'' has not 'RSOCKET' service type";
@@ -81,5 +74,29 @@ public interface RsocketModuleConstants {
         String RSOCKET_REQUEST_CHANNEL_REQUEST_LOG = "RSocket requestChannel() processed with request data: {0} and metadata: {1}";
         String RSOCKET_REQUEST_CHANNEL_RESPONSE_LOG = "RSocket requestChannel() processed with response data: {0} and metadata: {1}";
         String RSOCKET_REQUEST_CHANNEL_EXCEPTION_LOG = "RSocket requestChannel() failed with exception: {0}";
+    }
+
+    interface ConfigurationKeys {
+        String RSOCKET_SERVER_DEFAULT_SERVICE_ID_KEY = "rsocket.server.services.default.serviceId";
+        String RSOCKET_SERVER_DEFAULT_METHOD_ID_KEY = "rsocket.server.services.default.methodId";
+        String RSOCKET_DEFAULT_SERVER_DATA_FORMAT_KEY = "rsocket.server.defaults.dataFormat";
+        String RSOCKET_SERVER_TRACING_KEY = "rsocket.server.tracing";
+        String RSOCKET_SERVER_FRAGMENTATION_MTU_KEY = "rsocket.server.fragmentationMtu";
+        String RSOCKET_RESUME_SECTION = "rsocket.server.resume";
+        String RSOCKET_RESUME_CLEANUP_STORE_ON_KEEP_ALIVE = "rsocket.server.resume.cleanupStoreOnKeepAlive";
+        String RSOCKET_RESUME_SESSION_DURATION = "rsocket.server.resume.sessionDuration";
+        String RSOCKET_RESUME_STREAM_TIMEOUT = "rsocket.server.resume.streamTimeout";
+    }
+
+    @Getter
+    @AllArgsConstructor
+    enum RetryPolicy {
+        BACKOFF("backoff"),
+        FIXED_DELAY("fixedDelay"),
+        MAX("max"),
+        MAX_IN_A_ROW("maxInARow"),
+        INDEFINITELY("indefinitely");
+
+        private final String policy;
     }
 }

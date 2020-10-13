@@ -40,7 +40,7 @@ public class RsocketCommunicationTargetConfiguration {
     @Builder.Default
     private final RsocketTransport transport = TCP;
     @Builder.Default
-    private final EntityConstants.DataFormat dataFormat = rsocketModule().configuration().getDataFormat();
+    private final EntityConstants.DataFormat dataFormat = rsocketModule().configuration().getDefaultDataFormat();
     @Builder.Default
     private final boolean resumable = rsocketModule().configuration().isResumableClient();
     @Builder.Default

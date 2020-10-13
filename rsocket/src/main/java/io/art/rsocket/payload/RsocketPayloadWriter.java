@@ -49,7 +49,7 @@ public class RsocketPayloadWriter {
                 return create(writeMessagePackToBytes(value));
 
         }
-        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDataFormat()));
+        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDefaultDataFormat()));
     }
 
     public Payload writePayloadMetaData(Value dataValue, Value metadataValue) {
@@ -64,7 +64,7 @@ public class RsocketPayloadWriter {
                 return create(writeMessagePackToBytes(dataValue), writeMessagePackToBytes(metadataValue));
 
         }
-        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDataFormat()));
+        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDefaultDataFormat()));
     }
 
     public static Payload writePayloadData(Value value, DataFormat dataFormat) {
