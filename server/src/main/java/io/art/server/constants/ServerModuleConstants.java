@@ -21,6 +21,9 @@ package io.art.server.constants;
 import static io.art.core.colorizer.AnsiColorizer.*;
 
 public interface ServerModuleConstants {
+    String SERVICE_ID = "serviceId";
+    String METHOD_ID = "methodId";
+
     enum RequestValidationPolicy {
         VALIDATABLE,
         NOT_NULL,

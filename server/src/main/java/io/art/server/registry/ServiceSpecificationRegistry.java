@@ -18,18 +18,33 @@
 
 package io.art.server.registry;
 
+import io.art.entity.immutable.*;
+import io.art.entity.mapping.*;
 import io.art.server.specification.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
+import static io.art.server.constants.ServerModuleConstants.*;
 import static java.text.MessageFormat.*;
+import static java.util.Optional.*;
 import java.util.*;
 
 public class ServiceSpecificationRegistry {
     private final Map<String, ServiceSpecification> services = mapOf();
 
-    public ServiceSpecification get(String serviceId) {
-        return services.get(serviceId);
+    public Optional<ServiceSpecification> get(String serviceId) {
+        return ofNullable(services.get(serviceId));
+    }
+
+    public Optional<ServiceSpecification> findServiceByValue(Value value) {
+        Entity setupEntity = Value.asEntity(value);
+        String serviceId = setupEntity.map(SERVICE_ID, PrimitiveMapping.toString);
+        return get(serviceId);
+    }
+
+    public Optional<ServiceMethodSpecification> findMethodByValue(Value value) {
+        String methodId = Value.asEntity(value).map(METHOD_ID, PrimitiveMapping.toString);
+        return findServiceByValue(value).flatMap(service -> ofNullable(service.getMethods().get(methodId)));
     }
 
     public Set<String> identifiers() {

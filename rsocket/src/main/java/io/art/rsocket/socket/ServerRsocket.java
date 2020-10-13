@@ -19,17 +19,14 @@
 package io.art.rsocket.socket;
 
 import io.art.core.mime.*;
-import io.art.entity.immutable.Value;
-import io.art.entity.immutable.*;
-import io.art.entity.mapping.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
-import io.art.server.module.*;
 import io.art.server.specification.*;
 import io.rsocket.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.entity.mime.MimeTypeDataFormatMapper.*;
+import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Mono.*;
 
@@ -42,10 +39,7 @@ public class ServerRsocket implements RSocket {
     public ServerRsocket(ConnectionSetupPayload payload, RSocket socket) {
         reader = new RsocketPayloadReader(fromMimeType(MimeType.valueOf(payload.dataMimeType())));
         writer = new RsocketPayloadWriter(fromMimeType(MimeType.valueOf(payload.dataMimeType())));
-        Entity setupEntity = Value.asEntity(reader.readPayloadData(payload).getValue());
-        String serviceId = setupEntity.map("serviceId", PrimitiveMapping.toString);
-        String methodId = setupEntity.map("methodId", PrimitiveMapping.toString);
-        this.specification = ServerModule.specifications().get(serviceId).getMethods().get(methodId);
+        this.specification = specifications().findMethodByValue(reader.readPayloadData(payload).getValue()).orElseGet(() -> null);
         this.connectedSocket = socket;
     }
 
