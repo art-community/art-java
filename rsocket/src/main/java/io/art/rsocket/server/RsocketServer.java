@@ -22,7 +22,6 @@ import io.art.rsocket.configuration.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
 import io.rsocket.core.*;
-import io.rsocket.lease.*;
 import io.rsocket.transport.netty.server.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
@@ -36,6 +35,8 @@ import static io.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.*
 import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
+import static reactor.util.retry.Retry.*;
+import java.time.*;
 import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
@@ -54,11 +55,30 @@ public class RsocketServer implements Server {
         if (configuration.getFragmentationMtu() > 0) {
             server.fragment(configuration.getFragmentationMtu());
         }
-        if (nonNull(configuration.getLease())) {
-            server.resume()
+        if (nonNull(configuration.getResume())) {
+            Resume resume = new Resume()
+                    .streamTimeout(configuration.getResume().getStreamTimeout())
+                    .sessionDuration(configuration.getResume().getSessionDuration());
+            switch (configuration.getResume().getRetryPolicy()) {
+                case BACKOFF:
+                    resume = resume.retry(backoff(12, Duration.ZERO));
+                    break;
+                case FIXED_DELAY:
+                    resume = resume.retry(fixedDelay(12, Duration.ZERO));
+                    break;
+                case MAX:
+                    resume = resume.retry(max(12));
+                    break;
+                case MAX_IN_A_ROW:
+                    resume = resume.retry(maxInARow(12));
+                    break;
+                case INDEFINITELY:
+                    resume = resume.retry(indefinitely());
+                    break;
+            }
+            server.resume(resume);
         }
         server
-                .lease(Lease.create())
                 .bind(TcpServerTransport.create(configuration.getTcpPort()))
                 .doOnSubscribe(channel -> getLogger().info(message))
                 .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))

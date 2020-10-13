@@ -40,6 +40,9 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private boolean tracing;
     private int fragmentationMtu;
     private RsocketResumeConfiguration resume;
+    private String host;
+    private int tcpPort;
+    private int webSocketPort;
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<RsocketModuleConfiguration, Configurator> {
@@ -52,6 +55,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
                 configuration.defaultServiceMethod = serviceMethod(serviceId, methodId);
             }
+
             configuration.defaultDataFormat = enumOf(DataFormat::valueOf, source.getString(RSOCKET_DEFAULT_SERVER_DATA_FORMAT_KEY), JSON);
             configuration.tracing = orElse(source.getBool(RSOCKET_SERVER_TRACING_KEY), false);
             configuration.fragmentationMtu = orElse(source.getInt(RSOCKET_SERVER_FRAGMENTATION_MTU_KEY), 0);
