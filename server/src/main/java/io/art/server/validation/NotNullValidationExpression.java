@@ -21,13 +21,14 @@ package io.art.server.validation;
 import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
+import java.util.function.*;
 
 class NotNullValidationExpression extends ValidationExpression<Object> {
     NotNullValidationExpression() {
         super(NOT_NULL);
     }
 
-    NotNullValidationExpression(String pattern) {
+    NotNullValidationExpression(Function<NotNullValidationExpression, String> factory) {
         super(NOT_NULL);
         this.messageFactory = factory;
     }

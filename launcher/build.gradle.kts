@@ -28,4 +28,5 @@ dependencies {
     implementation(project(":xml"))
     implementation(project(":server"))
     implementation(project(":communicator"))
+    implementation(project(":rsocket"))
 }

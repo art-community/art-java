@@ -27,6 +27,7 @@ import io.art.core.module.Module;
 import io.art.core.source.*;
 import io.art.json.module.*;
 import io.art.logging.*;
+import io.art.rsocket.module.*;
 import io.art.server.module.*;
 import io.art.xml.module.*;
 import lombok.experimental.*;
@@ -56,7 +57,8 @@ public class ModuleLauncher {
                     logging(sources/*, configuratorModel*/),
                     json(sources),
                     xml(sources),
-                    server(sources)
+                    server(sources),
+                    rsocket(sources)
             );
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
             initialize(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
@@ -87,6 +89,12 @@ public class ModuleLauncher {
         ServerModule server = new ServerModule();
         server.configure(configurator -> configurator.from(sources));
         return server;
+    }
+
+    private RsocketModule rsocket(ImmutableList<ConfigurationSource> sources) {
+        RsocketModule rsocket = new RsocketModule();
+        rsocket.configure(configurator -> configurator.from(sources));
+        return rsocket;
     }
 
     public static void main(String[] args) {

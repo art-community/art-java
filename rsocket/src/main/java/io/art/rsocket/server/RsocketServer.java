@@ -18,6 +18,8 @@
 
 package io.art.rsocket.server;
 
+import io.art.core.configuration.*;
+import io.art.core.context.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
@@ -109,5 +111,9 @@ public class RsocketServer implements Server {
     public boolean available() {
         Disposable value;
         return nonNull(value = disposable.get()) && !value.isDisposed();
+    }
+
+
+    public static void main(String[] args) {
     }
 }

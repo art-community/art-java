@@ -29,8 +29,8 @@ public class ValidationExpressions {
         return cast(new NotNullValidationExpression());
     }
 
-    public static <T> ValidationExpression<T> notNull(String pattern) {
-        return cast(new NotNullValidationExpression(pattern));
+    public static <T> ValidationExpression<T> notNull(Function<NotNullValidationExpression, String> factory) {
+        return cast(new NotNullValidationExpression(factory));
     }
 
     public static <T> ValidationExpression<T> notEmptyString() {
