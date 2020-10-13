@@ -39,7 +39,15 @@ public class ServerRsocket implements RSocket {
     public ServerRsocket(ConnectionSetupPayload payload, RSocket socket) {
         reader = new RsocketPayloadReader(fromMimeType(MimeType.valueOf(payload.dataMimeType())));
         writer = new RsocketPayloadWriter(fromMimeType(MimeType.valueOf(payload.dataMimeType())));
-        this.specification = specifications().findMethodByValue(reader.readPayloadData(payload).getValue()).orElseGet(() -> null);
+        RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
+        if (isNull(payloadValue)) {
+            //TODO: Select default service method spec
+            return;
+        }
+        this.specification = specifications().findMethodByValue(payloadValue.getValue()).orElseGet(() -> {
+            //TODO: Select default service method spec
+            return null;
+        });
         this.connectedSocket = socket;
     }
 

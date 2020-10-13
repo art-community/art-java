@@ -55,7 +55,7 @@ public class ServiceMethodSpecification {
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
     @Getter(lazy = true)
-    private final ServiceSpecification serviceSpecification = specifications().get(serviceId);
+    private final ServiceSpecification serviceSpecification = specifications().get(serviceId).orElseThrow(IllegalStateException::new);
 
     @Getter(lazy = true)
     private final ServiceConfiguration serviceConfiguration = getServiceSpecification().getConfiguration();
