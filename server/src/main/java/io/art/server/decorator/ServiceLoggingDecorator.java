@@ -35,7 +35,7 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     private final UnaryOperator<Flux<Object>> decorator;
     private final Supplier<Boolean> enabled;
 
-    public ServiceLoggingDecorator(ServiceMethodSpecification specification, ServiceMethodDecoratorScope scope, Supplier<Boolean> enabled) {
+    public ServiceLoggingDecorator(ServiceMethodSpecification specification, MethodDecoratorScope scope, Supplier<Boolean> enabled) {
         this.enabled = enabled;
         switch (scope) {
             case INPUT:

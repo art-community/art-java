@@ -33,10 +33,9 @@ import static io.art.entity.immutable.Value.*;
 import static io.art.logging.LoggingModule.loggingModule;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.FAILED_TO_READ_PAYLOAD;
 import static io.art.rsocket.constants.RsocketModuleConstants.REQUEST_DATA;
-import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.model.RsocketReactiveMethods.*;
 import static io.art.rsocket.module.RsocketModule.rsocketModule;
-import static io.art.rsocket.reader.RsocketPayloadReader.*;
+import static io.art.rsocket.payload.RsocketPayloadReader.*;
 import static io.art.service.mapping.ServiceRequestMapping.*;
 import java.util.*;
 

@@ -26,8 +26,8 @@ import lombok.*;
 
 @RequiredArgsConstructor
 public class RsocketCommunicatorClient {
-    ServerModuleConstants.ServiceMethodProcessingMode requestPayloadType;
-    ServerModuleConstants.ServiceMethodProcessingMode responsePayloadType;
+    ServerModuleConstants.MethodProcessingMode requestPayloadType;
+    ServerModuleConstants.MethodProcessingMode responsePayloadType;
     RSocketClient client = RSocketConnector.createRSocketClient(TcpClientTransport.create(123));
 
     public Object execute(Object request) {

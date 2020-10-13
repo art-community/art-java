@@ -19,7 +19,7 @@
 package io.art.server.validation;
 
 import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
 
 class NotNullValidationExpression extends ValidationExpression<Object> {

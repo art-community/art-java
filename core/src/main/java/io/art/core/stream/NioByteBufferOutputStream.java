@@ -16,14 +16,23 @@
  * limitations under the License.
  */
 
-package io.art.message.pack.constants;
+package io.art.core.stream;
 
-import io.art.core.mime.*;
-import static java.nio.charset.StandardCharsets.*;
-import static io.art.core.mime.MimeType.*;
+import lombok.*;
+import java.io.*;
+import java.nio.*;
 
-public interface MessagePackConstants {
-    interface ExceptionMessages {
-        String VALUE_TYPE_NOT_SUPPORTED = "MessagePack value type ''{0}'' not supported";
+@AllArgsConstructor
+public class NioByteBufferOutputStream extends OutputStream {
+    protected final ByteBuffer buffer;
+
+    @Override
+    public void write(int oneByte) {
+        buffer.put((byte) oneByte);
+    }
+
+    @Override
+    public void write(byte[] bytes, int offset, int lenght) {
+        buffer.put(bytes, offset, lenght);
     }
 }

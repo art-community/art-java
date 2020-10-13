@@ -29,7 +29,7 @@ import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
 import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.*;
-import static io.art.server.constants.ServerModuleConstants.ServiceMethodProcessingMode.*;
+import static io.art.server.constants.ServerModuleConstants.MethodProcessingMode.*;
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -64,8 +64,8 @@ public class ServiceMethodSpecification {
     private final ValueFromModelMapper<Object, Value> outputMapper;
     private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
     private final ServiceMethodImplementation implementation;
-    private final ServiceMethodProcessingMode inputMode;
-    private final ServiceMethodProcessingMode outputMode;
+    private final MethodProcessingMode inputMode;
+    private final MethodProcessingMode outputMode;
     private final ServiceMethodConfiguration configuration;
 
     public Flux<Value> serve(Flux<Value> input) {

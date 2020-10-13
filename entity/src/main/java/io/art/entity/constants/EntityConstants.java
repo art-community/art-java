@@ -126,5 +126,6 @@ public interface EntityConstants {
         JSON,
         XML,
         MESSAGE_PACK
+
     }
 }

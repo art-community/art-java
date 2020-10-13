@@ -18,48 +18,19 @@
 
 package io.art.rsocket.selector;
 
-import io.art.entity.constants.*;
+import io.art.core.mime.*;
 import io.art.entity.constants.EntityConstants.*;
 import lombok.experimental.*;
-import io.art.core.mime.*;
-import static io.art.entity.constants.EntityConstants.DataFormat.*;
-import static io.rsocket.metadata.WellKnownMimeType.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.StringConstants.*;
+import static io.art.entity.constants.EntityConstants.DataFormat.*;
 import static io.art.message.pack.constants.MessagePackConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.RsocketDataFormat.*;
 import static io.art.rsocket.module.RsocketModule.*;
+import static io.rsocket.metadata.WellKnownMimeType.*;
 
 @UtilityClass
 public class RsocketDataFormatMimeTypeConverter {
-    public static DataFormat fromMimeType(String mimeType) {
-        if (isEmpty(mimeType)) {
-            return rsocketModule().getDataFormat();
-        }
-        MimeType type = MimeType.valueOf(mimeType);
-        if (APPLICATION_JSON.getString().equals(type.getType() + SLASH + type.getSubtype())) return JSON;
-        if (APPLICATION_PROTOBUF.getString().equals(type.getType() + SLASH + type.getSubtype())) return PROTOBUF;
-        if (APPLICATION_XML.getString().equals(type.getType() + SLASH + type.getSubtype())) return XML;
-        if (TEXT_XML.getString().equals(type.getType() + SLASH + type.getSubtype())) return XML;
-        if (mimeType.equalsIgnoreCase(APPLICATION_MESSAGE_PACK.getType() + SLASH + APPLICATION_MESSAGE_PACK.getSubtype())) {
-            return MESSAGE_PACK;
-        }
-        return rsocketModule().configuration().getDataFormat();
-    }
 
-    public static String toMimeType(DataFormat dataFormat) {
-        switch (orElse(dataFormat, rsocketModule().configuration().getDataFormat())) {
-            case PROTOBUF:
-                return APPLICATION_PROTOBUF.getString();
-            case JSON:
-                return APPLICATION_JSON.getString();
-            case XML:
-                return APPLICATION_XML.getString();
-            case MESSAGE_PACK:
-                return APPLICATION_MESSAGE_PACK.getType() + SLASH + APPLICATION_MESSAGE_PACK.getSubtype();
-        }
-        return BINARY_MIME_TYPE;
-    }
 }

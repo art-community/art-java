@@ -26,7 +26,6 @@ import org.apache.logging.log4j.*;
 import io.art.entity.interceptor.*;
 import io.art.entity.mapper.*;
 import io.art.reactive.service.model.*;
-import io.art.rsocket.constants.RsocketModuleConstants.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.PRIVATE;
@@ -41,7 +40,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.
 import static io.art.rsocket.constants.RsocketModuleConstants.REQUEST_DATA;
 import static io.art.rsocket.model.RsocketReactiveMethods.*;
 import static io.art.rsocket.module.RsocketModule.*;
-import static io.art.rsocket.reader.RsocketPayloadReader.*;
+import static io.art.rsocket.payload.RsocketPayloadReader.*;
 import static io.art.service.factory.ServiceRequestFactory.*;
 import static io.art.service.mapping.ServiceRequestMapping.*;
 import java.util.*;

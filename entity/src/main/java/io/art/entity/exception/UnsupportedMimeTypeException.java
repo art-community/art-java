@@ -16,14 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.message.pack.constants;
+package io.art.entity.exception;
 
 import io.art.core.mime.*;
-import static java.nio.charset.StandardCharsets.*;
-import static io.art.core.mime.MimeType.*;
 
-public interface MessagePackConstants {
-    interface ExceptionMessages {
-        String VALUE_TYPE_NOT_SUPPORTED = "MessagePack value type ''{0}'' not supported";
+public class UnsupportedMimeTypeException extends RuntimeException {
+    public UnsupportedMimeTypeException(MimeType type) {
+        super(type.toString());
     }
 }

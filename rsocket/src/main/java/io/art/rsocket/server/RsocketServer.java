@@ -27,7 +27,6 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
@@ -36,32 +35,37 @@ import static io.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.*
 import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
+import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
 public class RsocketServer implements Server {
-    @Getter
     private final RsocketTransport transport;
+    private final AtomicReference<Disposable> disposable = new AtomicReference<>();
 
     @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = logger(RsocketServer.class);
 
-    private Disposable disposable;
-
     @Override
     public void start() {
-        String message = transport == TCP ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE;
+        String message = transport == TCP ? RSOCKET_TCP_SERVER_STARTED_MESSAGE : RSOCKET_WS_SERVER_STARTED_MESSAGE;
         RsocketModuleConfiguration configuration = rsocketModule().configuration();
-        disposable = RSocketServer
+        RSocketServer
                 .create((payload, socket) -> Mono.just(new ServerRsocket(payload, socket)))
                 .fragment(configuration.getFragmentationMtu())
+                .payloadDecoder(byteBuf -> null)
                 .bind(TcpServerTransport.create(configuration.getServerTcpPort()))
-                .subscribe(serverChannel -> getLogger().info(message));
+                .doOnSubscribe(channel -> getLogger().info(message))
+                .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
+                .subscribe(disposable::set);
     }
 
     @Override
     public void stop() {
-        apply(disposable, Disposable::dispose);
-        getLogger().info(RSOCKET_STOPPED);
+        Disposable value;
+        if (nonNull(value = disposable.getAndSet(null))) {
+            value.dispose();
+            getLogger().info(RSOCKET_STOPPED);
+        }
     }
 
     @Override
@@ -73,11 +77,11 @@ public class RsocketServer implements Server {
     public void restart() {
         stop();
         new RsocketServer(transport).start();
-        getLogger().info(RSOCKET_RESTARTED_MESSAGE);
     }
 
     @Override
     public boolean available() {
-        return nonNull(disposable) && !disposable.isDisposed();
+        Disposable value;
+        return nonNull(value = disposable.get()) && !value.isDisposed();
     }
 }

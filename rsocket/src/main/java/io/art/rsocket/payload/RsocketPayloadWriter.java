@@ -16,15 +16,13 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.writer;
+package io.art.rsocket.payload;
 
 import io.art.entity.immutable.*;
+import io.art.rsocket.exception.*;
 import io.rsocket.*;
 import lombok.experimental.*;
-import io.art.rsocket.constants.RsocketModuleConstants.*;
-import io.art.rsocket.exception.*;
-import static io.rsocket.util.DefaultPayload.*;
-import static java.text.MessageFormat.*;
+import static io.art.entity.constants.EntityConstants.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.json.descriptor.JsonEntityWriter.*;
 import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
@@ -32,10 +30,12 @@ import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.xml.descriptor.XmlEntityWriter.*;
+import static io.rsocket.util.DefaultPayload.*;
+import static java.text.MessageFormat.*;
 
 @UtilityClass
 public class RsocketPayloadWriter {
-    public static Payload writePayloadData(Value value, RsocketDataFormat dataFormat) {
+    public static Payload writePayloadData(Value value, DataFormat dataFormat) {
         switch (dataFormat) {
             case PROTOBUF:
                 return create(writeProtobufToBytes(value));
@@ -50,7 +50,7 @@ public class RsocketPayloadWriter {
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDataFormat()));
     }
 
-    public static Payload writePayloadMetaData(Value dataValue, Value metadataValue, RsocketDataFormat dataFormat) {
+    public static Payload writePayloadMetaData(Value dataValue, Value metadataValue, DataFormat dataFormat) {
         switch (dataFormat) {
             case PROTOBUF:
                 return create(writeProtobufToBytes(dataValue), writeProtobufToBytes(metadataValue));

@@ -19,9 +19,11 @@
 package io.art.protobuf.descriptor;
 
 import com.google.protobuf.*;
+import io.art.core.stream.*;
 import io.art.entity.builder.*;
 import io.art.entity.immutable.Value;
 import io.art.protobuf.exception.*;
+import io.netty.buffer.*;
 import lombok.experimental.*;
 import static com.google.protobuf.Value.KindCase.*;
 import static io.art.core.extensions.FileExtensions.*;
@@ -35,31 +37,32 @@ import static io.art.protobuf.constants.ProtobufConstants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.io.*;
+import java.nio.*;
 import java.nio.file.*;
 import java.util.*;
 
 @UtilityClass
 public class ProtobufEntityReader {
     public static Value readProtobuf(byte[] bytes) {
-        try {
-            return readProtobuf(com.google.protobuf.Value.parseFrom(bytes));
-        } catch (Throwable throwable) {
-            throw new ProtobufException(throwable);
-        }
+        return readProtobuf(new ByteArrayInputStream(bytes));
+    }
+
+    public static Value readProtobuf(ByteBuffer nioBuffer) {
+        return readProtobuf(new NioByteBufferInputStream(nioBuffer));
+    }
+
+    private static Value readProtobuf(ByteBuf nettyBuffer) {
+        return readProtobuf(new ByteBufInputStream(nettyBuffer));
+    }
+
+    public static Value readProtobuf(Path path) {
+        return readProtobuf(fileInputStream(path));
     }
 
     public static Value readProtobuf(InputStream inputStream) {
         try {
             return readProtobuf(com.google.protobuf.Value.parseFrom(inputStream));
         } catch (Throwable throwable) {
-            throw new ProtobufException(throwable);
-        }
-    }
-
-    public static Value readProtobuf(Path path) {
-        try {
-            return readProtobuf(com.google.protobuf.Value.parseFrom(readFileBytes(path)));
-        } catch (InvalidProtocolBufferException throwable) {
             throw new ProtobufException(throwable);
         }
     }

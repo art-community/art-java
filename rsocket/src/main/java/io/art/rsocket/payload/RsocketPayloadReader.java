@@ -16,38 +16,37 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.reader;
+package io.art.rsocket.payload;
 
-import io.art.entity.constants.*;
 import io.art.entity.constants.EntityConstants.*;
 import io.art.entity.immutable.*;
+import io.art.rsocket.exception.*;
+import io.art.rsocket.model.*;
 import io.netty.buffer.*;
 import io.rsocket.*;
 import lombok.experimental.*;
-import io.art.rsocket.exception.*;
-import static java.text.MessageFormat.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.json.descriptor.JsonEntityReader.*;
 import static io.art.message.pack.descriptor.MessagePackEntityReader.*;
 import static io.art.protobuf.descriptor.ProtobufEntityReader.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.xml.descriptor.XmlEntityReader.*;
+import static java.text.MessageFormat.*;
 import java.nio.*;
 
 @UtilityClass
 public class RsocketPayloadReader {
-    public static Value readPayloadData(Payload payload, DataFormat dataFormat) {
+    public static RsocketPayloadValue readPayloadData(Payload payload, DataFormat dataFormat) {
+        ByteBuffer data = payload.getData();
+        if (data.capacity() == 0) {
+            return null;
+        }
         switch (dataFormat) {
             case PROTOBUF:
-                ByteBuffer data = payload.getData();
-                if (data.capacity() == 0) {
-                    return null;
-                }
-                return readProtobuf(wrapException(() -> com.google.protobuf.Value.parseFrom(data), RsocketServerException::new));
+                return new RsocketPayloadValue(payload, readProtobuf(data));
             case JSON:
-                return readJson(wrapException(payload::getDataUtf8, RsocketServerException::new));
+                return new RsocketPayloadValue(payload, readJson(data));
             case XML:
                 return readXml(wrapException(payload::getDataUtf8, RsocketServerException::new));
             case MESSAGE_PACK:
@@ -62,7 +61,7 @@ public class RsocketPayloadReader {
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDataFormat()));
     }
 
-    public static Value readPayloadMetaData(Payload payload, DataFormat dataFormat) {
+    public static RsocketPayloadValue readPayloadMetaData(Payload payload, DataFormat dataFormat) {
         switch (dataFormat) {
             case PROTOBUF:
                 ByteBuffer metadata = payload.getMetadata();

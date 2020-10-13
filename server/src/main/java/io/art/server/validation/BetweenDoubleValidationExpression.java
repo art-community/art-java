@@ -20,7 +20,7 @@ package io.art.server.validation;
 
 import lombok.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
 import java.util.function.*;
 

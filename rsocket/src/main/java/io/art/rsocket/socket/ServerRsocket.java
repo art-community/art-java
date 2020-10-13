@@ -18,7 +18,9 @@
 
 package io.art.rsocket.socket;
 
-import io.art.core.checker.*;
+import io.art.core.mime.*;
+import io.art.entity.immutable.Value;
+import io.art.rsocket.configuration.*;
 import io.art.rsocket.flux.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.service.*;
@@ -30,27 +32,19 @@ import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.entity.constants.EntityConstants.*;
+import static io.art.entity.mime.MimeTypeDataFormatMapper.*;
 import static io.art.rsocket.model.RsocketRequestContext.*;
-import static io.art.rsocket.reader.RsocketPayloadReader.*;
-import static io.art.rsocket.selector.RsocketDataFormatMimeTypeConverter.*;
+import static io.art.rsocket.payload.RsocketPayloadReader.*;
+import static io.art.rsocket.payload.RsocketPayloadWriter.*;
 import static io.art.rsocket.state.RsocketModuleState.*;
-import static io.art.rsocket.writer.RsocketPayloadWriter.*;
-import static io.art.rsocket.writer.ServiceResponsePayloadWriter.*;
 import static reactor.core.publisher.Mono.*;
 
 public class ServerRsocket implements RSocket {
-    private final CurrentRsocketState state;
     private ServiceMethodSpecification specification;
+    private RsocketModuleConfiguration configuration;
 
     public ServerRsocket(ConnectionSetupPayload payload, RSocket socket) {
-        state = CurrentRsocketState
-                .builder()
-                .dataMimeType(payload.dataMimeType())
-                .metadataMimeType(payload.metadataMimeType())
-                .rsocket(socket)
-                .dataFormat(fromMimeType(payload.dataMimeType()))
-                .build();
-        updateState();
+        Value value = readPayloadData(payload, fromMimeType(MimeType.valueOf(payload.dataMimeType())));
     }
 
     @Override

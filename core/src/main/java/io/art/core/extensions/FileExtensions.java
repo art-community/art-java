@@ -170,6 +170,23 @@ public class FileExtensions {
     }
 
 
+    public static InputStream fileInputStream(String path) {
+        return fileInputStream(Paths.get(path));
+    }
+
+    public static InputStream fileInputStream(Path path) {
+        return fileInputStream(path.toFile());
+    }
+
+    public static InputStream fileInputStream(File file) {
+        try {
+            return new FileInputStream(file);
+        } catch (IOException ioException) {
+            throw new InternalRuntimeException(ioException);
+        }
+    }
+
+
     public static void writeFile(String path, String content) {
         writeFile(get(path), content);
     }

@@ -19,28 +19,19 @@
 package io.art.rsocket.module;
 
 import io.art.core.module.*;
-import io.art.json.descriptor.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.server.*;
 import io.art.rsocket.state.*;
-import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.cookie.Cookie;
 import io.rsocket.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
-import reactor.netty.http.client.*;
-import static io.art.core.context.Context.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.context.Context.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
-import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static lombok.AccessLevel.*;
-import static reactor.core.publisher.Flux.*;
-import static reactor.netty.ByteBufFlux.*;
-import static reactor.netty.http.server.HttpServer.create;
-import java.util.*;
 
 @Getter
 public class RsocketModule implements StatefulModule<RsocketModuleConfiguration, Configurator, RsocketModuleState> {
@@ -57,6 +48,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     public static StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule() {
         return getRsocketModule();
     }
+
     @Override
     public void beforeUnload() {
         apply(rsocketModule().state().getTcpServer(), RsocketServer::stop);

@@ -19,7 +19,7 @@
 package io.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
-import io.art.core.extensions.*;
+import io.art.core.stream.*;
 import io.art.entity.builder.*;
 import io.art.entity.immutable.*;
 import io.art.json.exception.*;
@@ -45,30 +45,30 @@ import java.util.*;
 @UtilityClass
 public class JsonEntityReader {
     public static Value readJson(byte[] jsonBytes) {
-        return readJson(jsonModule().configuration().getObjectMapper().getFactory(), new String(jsonBytes, context().configuration().getCharset()));
+        return readJson(new ByteArrayInputStream(jsonBytes));
     }
 
-    public static Value readJson(ByteBuffer byteBuf) {
-        return readJson(NioBufferExtensions.toByteArray(byteBuf));
+    public static Value readJson(ByteBuffer nioBuffer) {
+        return readJson(new NioByteBufferInputStream(nioBuffer));
     }
 
-    public static Value readJson(ByteBuf byteBuf) {
-        return readJson(NettyBufferExtensions.toByteArray(byteBuf));
-    }
-
-    public static Value readJson(InputStream inputStream) {
-        return readJson(InputStreamExtensions.toByteArray(inputStream));
+    public static Value readJson(ByteBuf nettyBuffer) {
+        return readJson(new ByteBufInputStream(nettyBuffer));
     }
 
     public static Value readJson(Path path) {
-        return readJson(readFile(path));
+        return readJson(fileInputStream(path));
     }
 
     public static Value readJson(String json) {
-        return readJson(jsonModule().configuration().getObjectMapper().getFactory(), json);
+        return readJson(json.getBytes(context().configuration().getCharset()));
     }
 
-    public static Value readJson(JsonFactory jsonFactory, String json) {
+    public static Value readJson(InputStream inputStream) {
+        return readJson(jsonModule().configuration().getObjectMapper().getFactory(), inputStream);
+    }
+
+    public static Value readJson(JsonFactory jsonFactory, InputStream json) {
         if (isEmpty(json)) return null;
         try (JsonParser parser = jsonFactory.createParser(json)) {
             JsonToken nextToken = parser.nextToken();

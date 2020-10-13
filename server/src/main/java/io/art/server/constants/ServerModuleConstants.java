@@ -21,9 +21,6 @@ package io.art.server.constants;
 import static io.art.core.colorizer.AnsiColorizer.*;
 
 public interface ServerModuleConstants {
-    String REQUEST_EVENT = "serviceRequest";
-    String RESPONSE_EVENT = "serviceResponse";
-
     enum RequestValidationPolicy {
         VALIDATABLE,
         NOT_NULL,
@@ -37,18 +34,18 @@ public interface ServerModuleConstants {
         String METHODS_KEY = "methods";
     }
 
-    enum ServiceMethodProcessingMode {
+    enum MethodProcessingMode {
         BLOCKING,
         MONO,
         FLUX
     }
 
-    enum ServiceMethodDecoratorScope {
+    enum MethodDecoratorScope {
         INPUT,
         OUTPUT
     }
 
-    interface ValidationExpressionType {
+    interface ValidationExpressionTypes {
         String BETWEEN_DOUBLE = "BETWEEN_DOUBLE";
         String BETWEEN_INT = "BETWEEN_INT";
         String BETWEEN_LONG = "BETWEEN_LONG";
@@ -87,5 +84,4 @@ public interface ServerModuleConstants {
         String NULL_VALIDATION_ERROR = "Validation error. ''{0}'' is null";
         String REQUEST_IS_NULL = "Validation error. Request is null";
     }
-
 }
