@@ -18,9 +18,7 @@
 
 package io.art.server.implementation;
 
-import io.art.server.specification.*;
 import lombok.*;
-import static io.art.server.module.ServerModule.*;
 import java.util.function.*;
 
 @Getter
@@ -29,12 +27,6 @@ public class ServiceMethodImplementation {
     private final String serviceId;
     private final String methodId;
     private final Function<Object, Object> functor;
-
-    @Getter(lazy = true)
-    private final ServiceSpecification serviceSpecification = specifications().get(serviceId);
-
-    @Getter(lazy = true)
-    private final ServiceMethodSpecification methodSpecification = getServiceSpecification().getMethods().get(methodId);
 
     public static ServiceMethodImplementation consumer(Consumer<Object> consumer, String serviceId, String methodId) {
         return new ServiceMethodImplementation(serviceId, methodId, request -> {

@@ -42,6 +42,11 @@ public interface ServerModuleConstants {
         FLUX
     }
 
+    enum ServiceMethodDecoratorScope {
+        INPUT,
+        OUTPUT
+    }
+
     interface ValidationExpressionType {
         String BETWEEN_DOUBLE = "BETWEEN_DOUBLE";
         String BETWEEN_INT = "BETWEEN_INT";
@@ -62,7 +67,7 @@ public interface ServerModuleConstants {
         String EXECUTING_BLOCKING_SERVICE_MESSAGE = success("Executing service: ''{0}.{1}'' with request: {2}");
         String BLOCKING_SERVICE_EXECUTED_MESSAGE = success("Successfully executed service: ''{0}.{1}'' with response: {2}");
 
-        String STARTING_REACTIVE_SERVICE_MESSAGE = success("Starting reactive service: ''{0}.{1}''");
+        String REACTIVE_SERVICE_SUBSCRIBED_MESSAGE = success("Reactive service subscribed: ''{0}.{1}''");
         String REACTIVE_SERVICE_INPUT_MESSAGE = success("Reactive service: ''{0}.{1}'' input: {2}");
         String REACTIVE_SERVICE_OUTPUT_MESSAGE = success("Reactive service: ''{0}.{1}'' output: {2}");
     }

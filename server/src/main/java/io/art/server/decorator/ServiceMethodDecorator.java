@@ -16,15 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.server.interceptor;
+package io.art.server.decorator;
 
-import io.art.core.model.*;
 import io.art.server.specification.*;
+import reactor.core.publisher.*;
 
-public interface ServiceMethodInterceptor<Request, Response> {
-    InterceptionResult interceptRequest(Request request, ServiceMethodSpecification specification);
-
-    InterceptionResult interceptResponse(Response response, ServiceMethodSpecification specification);
-
-    ExceptionInterceptionResult interceptException(Throwable throwable, ServiceMethodSpecification specification);
+@FunctionalInterface
+public interface ServiceMethodDecorator {
+    Flux<Object> decorate(ServiceMethodSpecification specification, Flux<Object> input);
 }
