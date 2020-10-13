@@ -50,7 +50,7 @@ public class RsocketServer implements Server {
         String message = transport == TCP ? RSOCKET_TCP_SERVER_STARTED_MESSAGE : RSOCKET_WS_SERVER_STARTED_MESSAGE;
         RsocketModuleConfiguration configuration = rsocketModule().configuration();
         RSocketServer
-                .create((payload, socket) -> Mono.just(new ServerRsocket(payload, socket)))
+                .create((payload, socket) -> Mono.just(new ServerRsocket(payload, socket, specification)))
                 .fragment(configuration.getFragmentationMtu())
                 .payloadDecoder(byteBuf -> null)
                 .bind(TcpServerTransport.create(configuration.getServerTcpPort()))

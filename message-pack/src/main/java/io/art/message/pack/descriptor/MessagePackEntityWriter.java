@@ -37,18 +37,6 @@ import java.util.*;
 
 @UtilityClass
 public class MessagePackEntityWriter {
-    public static void writeMessagePack(Value value, OutputStream outputStream) {
-        if (Value.valueIsNull(value)) {
-            return;
-        }
-        try (OutputStreamBufferOutput output = new OutputStreamBufferOutput(outputStream);
-             MessagePacker packer = newDefaultPacker(output)) {
-            packer.packValue(writeMessagePack(value));
-        } catch (Throwable throwable) {
-            throw new MessagePackMappingException(throwable);
-        }
-    }
-
     public static void writeMessagePack(Value value, Path path) {
         writeMessagePack(value, fileOutputStream(path));
     }
@@ -65,6 +53,19 @@ public class MessagePackEntityWriter {
             throw new MessagePackMappingException(throwable);
         }
     }
+
+    public static void writeMessagePack(Value value, OutputStream outputStream) {
+        if (Value.valueIsNull(value)) {
+            return;
+        }
+        try (OutputStreamBufferOutput output = new OutputStreamBufferOutput(outputStream);
+             MessagePacker packer = newDefaultPacker(output)) {
+            packer.packValue(writeMessagePack(value));
+        } catch (Throwable throwable) {
+            throw new MessagePackMappingException(throwable);
+        }
+    }
+
 
     public static org.msgpack.value.Value writeMessagePack(Value value) {
         if (valueIsNull(value)) return null;

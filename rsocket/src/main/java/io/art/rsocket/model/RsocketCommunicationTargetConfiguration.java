@@ -18,6 +18,7 @@
 
 package io.art.rsocket.model;
 
+import io.art.entity.constants.*;
 import io.rsocket.plugins.*;
 import lombok.*;
 import lombok.experimental.*;
@@ -39,13 +40,13 @@ public class RsocketCommunicationTargetConfiguration {
     @Builder.Default
     private final RsocketTransport transport = TCP;
     @Builder.Default
-    private final RsocketDataFormat dataFormat = rsocketModule().getDataFormat();
+    private final EntityConstants.DataFormat dataFormat = rsocketModule().configuration().getDataFormat();
     @Builder.Default
-    private final boolean resumable = rsocketModule().isResumableClient();
+    private final boolean resumable = rsocketModule().configuration().isResumableClient();
     @Builder.Default
-    private final long resumeSessionDuration = rsocketModule().getClientResumeSessionDuration();
+    private final long resumeSessionDuration = rsocketModule().configuration().getClientResumeSessionDuration();
     @Builder.Default
-    private final long resumeStreamTimeout = rsocketModule().getClientResumeStreamTimeout();
+    private final long resumeStreamTimeout = rsocketModule().configuration().getClientResumeStreamTimeout();
     @Singular
     private final List<RSocketInterceptor> interceptors;
 }

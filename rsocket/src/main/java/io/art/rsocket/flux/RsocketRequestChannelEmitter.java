@@ -1,84 +1,43 @@
 package io.art.rsocket.flux;
 
+import io.art.entity.constants.EntityConstants.*;
+import io.art.entity.immutable.Value;
+import io.art.rsocket.model.*;
 import io.rsocket.*;
 import org.reactivestreams.*;
-import reactor.core.*;
 import reactor.core.publisher.*;
-import io.art.rsocket.model.*;
+import static io.art.rsocket.payload.RsocketPayloadReader.*;
 import static java.util.Objects.*;
-import static io.art.reactive.service.constants.ReactiveServiceModuleConstants.ReactiveMethodProcessingMode.*;
-import static io.art.rsocket.model.RsocketRequestReactiveContext.*;
-import static io.art.rsocket.payload.RsocketPayloadWriter.*;
-import static io.art.rsocket.writer.ServiceResponsePayloadWriter.*;
-import static io.art.server.ServiceController.*;
-import static io.art.service.factory.ServiceRequestFactory.*;
 import java.util.concurrent.atomic.*;
 
 public class RsocketRequestChannelEmitter {
-    public RsocketRequestChannelEmitter(FluxSink<Payload> emitter, Publisher<Payload> inputPayloads, RsocketDataFormat dataFormat) {
+    public RsocketRequestChannelEmitter(FluxSink<Payload> emitter, Publisher<Payload> inputPayloads, DataFormat dataFormat) {
         initializeEmitting(emitter, inputPayloads, dataFormat);
     }
 
-    private static void initializeEmitting(FluxSink<Payload> emitter, Publisher<Payload> inputPayloads, RsocketDataFormat dataFormat) {
-        EmitterProcessor<Object> serviceRequestProcessor = EmitterProcessor.create();
-        FluxSink<Object> serviceRequestEmitter = serviceRequestProcessor.sink();
+    private static void initializeEmitting(FluxSink<Payload> emitter, Publisher<Payload> inputPayloads, DataFormat dataFormat) {
+        EmitterProcessor<Value> serviceRequestProcessor = EmitterProcessor.create();
+        FluxSink<Value> valueEmitter = serviceRequestProcessor.sink();
         AtomicBoolean subscribed = new AtomicBoolean(false);
         AtomicReference<Subscription> sourceSubscription = new AtomicReference<>();
-        AtomicReference<RsocketReactiveMethods> rsocketReactiveMethods = new AtomicReference<>();
         Flux.from(inputPayloads)
-                .map(payload -> fromPayload(payload, dataFormat))
-                .subscribe(context -> {
-                    if (context.isStopHandling()) {
-                        if (nonNull(context.getAlternativeResponse())) {
-                            emitter.next(writePayloadData(context.getAlternativeResponse(), dataFormat));
-                            return;
-                        }
-                        emitter.complete();
-                        return;
+                .subscribe(payload -> {
+                    RsocketPayloadValue payloadValue = readPayloadData(payload, dataFormat);
+                    if (nonNull(payloadValue)) {
+                        valueEmitter.next(payloadValue.getValue());
                     }
-
-                    if (isNull(rsocketReactiveMethods.get())) {
-                        RsocketReactiveMethods methods = context.getRsocketReactiveMethods();
-                        if (isNull(methods) || isNull(methods.getRsocketMethod()) || isNull(methods.getReactiveMethod())) {
-                            emitter.complete();
-                            return;
-                        }
-
-                        if (methods.getReactiveMethod().requestProcessingMode() == STRAIGHT || methods.getReactiveMethod().responseProcessingMode() == STRAIGHT) {
-                            emitter.complete();
-                            return;
-                        }
-
-                        rsocketReactiveMethods.set(methods);
-                    }
-
-                    if (!subscribed.get()) {
-                        ServiceRequest<?> serviceRequest = newServiceRequest(context.getRsocketReactiveGroupKey().getServiceMethodCommand(), serviceRequestProcessor
-                                .doOnSubscribe(subscription -> subscribed.set(true))
-                                .doOnCancel(sourceSubscription.get()::cancel)
-                                .doOnRequest(sourceSubscription.get()::request), rsocketReactiveMethods.get().getRsocketMethod().validationPolicy());
-                        Disposable serviceResponseDisposable = writeResponseReactive(rsocketReactiveMethods.get(), executeServiceMethodUnchecked(serviceRequest), dataFormat)
-                                .subscribe(emitter::next, emitter::error, emitter::complete, subscription -> {
-                                    emitter.onRequest(subscription::request);
-                                    emitter.onCancel(subscription::cancel);
-                                });
-                        emitter.onDispose(serviceResponseDisposable);
-                        serviceRequestEmitter.next(context.getRequestData());
-                        return;
-                    }
-                    serviceRequestEmitter.next(context.getRequestData());
                 }, error -> {
                     if (!subscribed.get()) {
                         emitter.error(error);
                         return;
                     }
-                    serviceRequestEmitter.error(error);
+                    valueEmitter.error(error);
                 }, () -> {
                     if (!subscribed.get()) {
                         emitter.complete();
                         return;
                     }
-                    serviceRequestEmitter.complete();
+                    valueEmitter.complete();
                 }, subscription -> {
                     sourceSubscription.set(subscription);
                     subscription.request(1);

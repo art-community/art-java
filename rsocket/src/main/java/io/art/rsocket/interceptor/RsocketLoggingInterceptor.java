@@ -36,25 +36,25 @@ import static io.art.rsocket.module.RsocketModule.*;
 @RequiredArgsConstructor
 public class RsocketLoggingInterceptor implements RSocketInterceptor {
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = loggingModule().getLogger(RSocketInterceptor.class);
+    private final static Logger logger = logger(RSocketInterceptor.class);
 
     @Override
     public RSocket apply(RSocket rsocket) {
         return new RSocketProxy(rsocket) {
             @Override
             public Mono<Void> fireAndForget(@NonNull Payload payload) {
-                if (rsocketModule().isEnableRawDataTracing()) {
+                if (rsocketModule().configuration().isEnableRawDataTracing()) {
                     getLogger().info(format(RSOCKET_FIRE_AND_FORGET_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
                 }
                 Mono<Void> result = super.fireAndForget(payload).doOnError(error -> getLogger().error(format(RSOCKET_FIRE_AND_FORGET_EXCEPTION_LOG, error)));
-                return rsocketModule().isEnableRawDataTracing()
+                return rsocketModule().configuration().isEnableRawDataTracing()
                         ? result.doOnSubscribe(nothing -> getLogger().info(RSOCKET_FIRE_AND_FORGET_RESPONSE_LOG))
                         : result;
             }
 
             @Override
             public Mono<Payload> requestResponse(@NonNull Payload payload) {
-                if (rsocketModule().isEnableRawDataTracing()) {
+                if (rsocketModule().configuration().isEnableRawDataTracing()) {
                     getLogger().info(format(RSOCKET_REQUEST_RESPONSE_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
                 }
                 Mono<Payload> result = super.requestResponse(payload).doOnError(error -> getLogger().error(format(RSOCKET_REQUEST_RESPONSE_EXCEPTION_LOG, error)));
@@ -66,11 +66,11 @@ public class RsocketLoggingInterceptor implements RSocketInterceptor {
 
             @Override
             public Flux<Payload> requestStream(@NonNull Payload payload) {
-                if (rsocketModule().isEnableRawDataTracing()) {
+                if (rsocketModule().configuration().isEnableRawDataTracing()) {
                     getLogger().info(format(RSOCKET_REQUEST_STREAM_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
                 }
                 Flux<Payload> result = super.requestStream(payload).doOnError(error -> getLogger().error(format(RSOCKET_REQUEST_STREAM_EXCEPTION_LOG, error)));
-                return rsocketModule().isEnableRawDataTracing()
+                return rsocketModule().configuration().isEnableRawDataTracing()
                         ? result.doOnNext(response -> getLogger().info(format(RSOCKET_REQUEST_STREAM_RESPONSE_LOG, response.getDataUtf8(), response.getMetadataUtf8())))
                         : result;
             }

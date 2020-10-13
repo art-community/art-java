@@ -23,6 +23,7 @@ import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
 import io.netty.buffer.*;
 import io.rsocket.*;
+import lombok.*;
 import lombok.experimental.*;
 import static io.art.json.descriptor.JsonEntityReader.*;
 import static io.art.message.pack.descriptor.MessagePackEntityReader.*;
@@ -32,9 +33,11 @@ import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.xml.descriptor.XmlEntityReader.*;
 import static java.text.MessageFormat.*;
 
-@UtilityClass
+@RequiredArgsConstructor
 public class RsocketPayloadReader {
-    public static RsocketPayloadValue readPayloadData(Payload payload, DataFormat dataFormat) {
+    private final DataFormat dataFormat;
+
+    public RsocketPayloadValue readPayloadData(Payload payload) {
         ByteBuf data = payload.sliceData();
         if (data.capacity() == 0) {
             return null;
@@ -52,7 +55,7 @@ public class RsocketPayloadReader {
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDataFormat()));
     }
 
-    public static RsocketPayloadValue readPayloadMetaData(Payload payload, DataFormat dataFormat) {
+    public RsocketPayloadValue readPayloadMetaData(Payload payload) {
         ByteBuf data = payload.sliceMetadata();
         if (data.capacity() == 0) {
             return null;
@@ -68,5 +71,13 @@ public class RsocketPayloadReader {
                 return new RsocketPayloadValue(payload, readMessagePack(data));
         }
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDataFormat()));
+    }
+
+    public static RsocketPayloadValue readPayloadData(Payload payload,  DataFormat dataFormat) {
+        return new RsocketPayloadReader(dataFormat).readPayloadData(payload);
+    }
+
+    public RsocketPayloadValue readPayloadMetaData(Payload payload,  DataFormat dataFormat) {
+        return new RsocketPayloadReader(dataFormat).readPayloadMetaData(payload);
     }
 }

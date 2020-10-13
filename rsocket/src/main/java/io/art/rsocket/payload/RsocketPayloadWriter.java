@@ -18,10 +18,10 @@
 
 package io.art.rsocket.payload;
 
-import io.art.entity.immutable.*;
+import io.art.entity.immutable.Value;
 import io.art.rsocket.exception.*;
 import io.rsocket.*;
-import lombok.experimental.*;
+import lombok.*;
 import static io.art.entity.constants.EntityConstants.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.json.descriptor.JsonEntityWriter.*;
@@ -33,9 +33,11 @@ import static io.art.xml.descriptor.XmlEntityWriter.*;
 import static io.rsocket.util.DefaultPayload.*;
 import static java.text.MessageFormat.*;
 
-@UtilityClass
+@RequiredArgsConstructor
 public class RsocketPayloadWriter {
-    public static Payload writePayloadData(Value value, DataFormat dataFormat) {
+    private final DataFormat dataFormat;
+
+    public Payload writePayloadData(Value value) {
         switch (dataFormat) {
             case PROTOBUF:
                 return create(writeProtobufToBytes(value));
@@ -50,7 +52,7 @@ public class RsocketPayloadWriter {
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDataFormat()));
     }
 
-    public static Payload writePayloadMetaData(Value dataValue, Value metadataValue, DataFormat dataFormat) {
+    public Payload writePayloadMetaData(Value dataValue, Value metadataValue) {
         switch (dataFormat) {
             case PROTOBUF:
                 return create(writeProtobufToBytes(dataValue), writeProtobufToBytes(metadataValue));
@@ -63,5 +65,13 @@ public class RsocketPayloadWriter {
 
         }
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDataFormat()));
+    }
+
+    public static Payload writePayloadData(Value value, DataFormat dataFormat) {
+        return new RsocketPayloadWriter(dataFormat).writePayloadData(value);
+    }
+
+    public static Payload writePayloadMetaData(Value dataValue, Value metadataValue, DataFormat dataFormat) {
+        return new RsocketPayloadWriter(dataFormat).writePayloadMetaData(dataValue, metadataValue);
     }
 }
