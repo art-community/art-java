@@ -26,12 +26,12 @@ import org.apache.logging.log4j.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.util.annotation.NonNull;
-import static java.text.MessageFormat.*;
-import static lombok.AccessLevel.*;
-import static reactor.core.publisher.Flux.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.module.RsocketModule.*;
+import static java.text.MessageFormat.*;
+import static lombok.AccessLevel.*;
+import static reactor.core.publisher.Flux.*;
 
 @RequiredArgsConstructor
 public class RsocketLoggingInterceptor implements RSocketInterceptor {
@@ -58,7 +58,7 @@ public class RsocketLoggingInterceptor implements RSocketInterceptor {
                     getLogger().info(format(RSOCKET_REQUEST_RESPONSE_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
                 }
                 Mono<Payload> result = super.requestResponse(payload).doOnError(error -> getLogger().error(format(RSOCKET_REQUEST_RESPONSE_EXCEPTION_LOG, error)));
-                return rsocketModule().isEnableRawDataTracing()
+                return rsocketModule().configuration().isEnableRawDataTracing()
                         ? result.doOnNext(response -> getLogger().info(format(RSOCKET_REQUEST_RESPONSE_RESPONSE_LOG, response.getDataUtf8(), response.getMetadataUtf8())))
                         : result;
 
@@ -77,24 +77,24 @@ public class RsocketLoggingInterceptor implements RSocketInterceptor {
 
             @Override
             public Flux<Payload> requestChannel(@NonNull Publisher<Payload> payloads) {
-                if (rsocketModule().isEnableRawDataTracing()) {
+                if (rsocketModule().configuration().isEnableRawDataTracing()) {
                     payloads = from(payloads).
                             doOnNext(payload -> getLogger().info(format(RSOCKET_REQUEST_CHANNEL_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8())));
                 }
                 Flux<Payload> result = super.requestChannel(from(payloads)
                         .doOnError(error -> getLogger().error(format(RSOCKET_REQUEST_CHANNEL_EXCEPTION_LOG, error))));
-                return rsocketModule().isEnableRawDataTracing()
+                return rsocketModule().configuration().isEnableRawDataTracing()
                         ? result.doOnNext(payload -> getLogger().info(format(RSOCKET_REQUEST_CHANNEL_RESPONSE_LOG, payload.getDataUtf8(), payload.getMetadataUtf8())))
                         : result;
             }
 
             @Override
             public Mono<Void> metadataPush(@NonNull Payload payload) {
-                if (rsocketModule().isEnableRawDataTracing()) {
+                if (rsocketModule().configuration().isEnableRawDataTracing()) {
                     getLogger().info(format(RSOCKET_METADATA_PUSH_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
                 }
                 Mono<Void> result = super.metadataPush(payload).doOnError(error -> getLogger().error(format(RSOCKET_METADATA_PUSH_EXCEPTION_LOG, error)));
-                return rsocketModule().isEnableRawDataTracing()
+                return rsocketModule().configuration().isEnableRawDataTracing()
                         ? result.doOnSubscribe(nothing -> getLogger().info(RSOCKET_METADATA_PUSH_RESPONSE_LOG))
                         : result;
             }

@@ -29,8 +29,8 @@ import io.art.server.specification.*;
 import io.rsocket.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.entity.mime.MimeTypeDataFormatMapper.*;
+import static java.util.Objects.*;
 import static reactor.core.publisher.Mono.*;
 
 public class ServerRsocket implements RSocket {
@@ -51,20 +51,29 @@ public class ServerRsocket implements RSocket {
 
     @Override
     public Mono<Void> fireAndForget(Payload payload) {
-        Flux<Value> input = let(reader.readPayloadData(payload), value -> Flux.just(value).map(RsocketPayloadValue::getValue), Flux.empty());
-        return specification.serve(input).then();
+        RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
+        if (isNull(payloadValue)) {
+            return Mono.never();
+        }
+        return specification.serve(Flux.just(payloadValue.getValue())).then();
     }
 
     @Override
     public Mono<Payload> requestResponse(Payload payload) {
-        Flux<Value> input = let(reader.readPayloadData(payload), value -> Flux.just(value).map(RsocketPayloadValue::getValue), Flux.empty());
-        return specification.serve(input).map(writer::writePayloadData).last();
+        RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
+        if (isNull(payloadValue)) {
+            return Mono.empty();
+        }
+        return specification.serve(Flux.just(payloadValue.getValue())).map(writer::writePayloadData).last();
     }
 
     @Override
     public Flux<Payload> requestStream(Payload payload) {
-        Flux<Value> input = let(reader.readPayloadData(payload), value -> Flux.just(value).map(RsocketPayloadValue::getValue), Flux.empty());
-        return specification.serve(input).map(writer::writePayloadData);
+        RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
+        if (isNull(payloadValue)) {
+            return Flux.empty();
+        }
+        return specification.serve(Flux.just(payloadValue.getValue())).map(writer::writePayloadData);
     }
 
     @Override
