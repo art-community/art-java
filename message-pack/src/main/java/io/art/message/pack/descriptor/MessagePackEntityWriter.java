@@ -38,23 +38,19 @@ import java.util.*;
 @UtilityClass
 public class MessagePackEntityWriter {
     public static void writeMessagePack(Value value, OutputStream outputStream) {
-        try {
-            byte[] bytes = writeMessagePackToBytes(value);
-            if (bytes == EMPTY_BYTES) {
-                return;
-            }
-            outputStream.write(bytes);
+        if (Value.valueIsNull(value)) {
+            return;
+        }
+        try (OutputStreamBufferOutput output = new OutputStreamBufferOutput(outputStream);
+             MessagePacker packer = newDefaultPacker(output)) {
+            packer.packValue(writeMessagePack(value));
         } catch (Throwable throwable) {
             throw new MessagePackMappingException(throwable);
         }
     }
 
     public static void writeMessagePack(Value value, Path path) {
-        byte[] bytes = writeMessagePackToBytes(value);
-        if (bytes == EMPTY_BYTES) {
-            return;
-        }
-        writeFileQuietly(path, bytes);
+        writeMessagePack(value, fileOutputStream(path));
     }
 
     public static byte[] writeMessagePackToBytes(Value value) {
@@ -64,7 +60,7 @@ public class MessagePackEntityWriter {
         try (ArrayBufferOutput output = new ArrayBufferOutput();
              MessagePacker packer = newDefaultPacker(output)) {
             packer.packValue(writeMessagePack(value));
-            return output.toByteArray();
+            return output.toMessageBuffer().toByteArray();
         } catch (Throwable throwable) {
             throw new MessagePackMappingException(throwable);
         }

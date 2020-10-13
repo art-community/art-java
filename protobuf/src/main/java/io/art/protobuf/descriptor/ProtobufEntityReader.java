@@ -51,7 +51,7 @@ public class ProtobufEntityReader {
         return readProtobuf(new NioByteBufferInputStream(nioBuffer));
     }
 
-    private static Value readProtobuf(ByteBuf nettyBuffer) {
+    public static Value readProtobuf(ByteBuf nettyBuffer) {
         return readProtobuf(new ByteBufInputStream(nettyBuffer));
     }
 

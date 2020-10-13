@@ -19,9 +19,11 @@
 package io.art.xml.descriptor;
 
 import com.google.common.collect.*;
+import io.art.core.stream.*;
 import io.art.entity.immutable.*;
 import io.art.entity.immutable.XmlEntity.*;
 import io.art.xml.exception.*;
+import io.netty.buffer.*;
 import lombok.experimental.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -31,36 +33,44 @@ import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.entity.immutable.XmlEntity.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.xml.constants.XmlMappingExceptionMessages.*;
-import static io.art.xml.module.XmlModule.*;
 import static java.util.Objects.*;
 import static javax.xml.stream.XMLStreamConstants.*;
 import javax.xml.stream.*;
 import java.io.*;
+import java.nio.*;
 import java.nio.file.*;
 import java.util.*;
 
 @UtilityClass
 public class XmlEntityReader {
     public static XmlEntity readXml(byte[] bytes) {
-        return readXml(new String(bytes, context().configuration().getCharset()));
+        return readXml(new ByteArrayInputStream(bytes));
+    }
+
+    public static XmlEntity readXml(Path path) {
+        return readXml(fileInputStream(path));
+    }
+
+    public static XmlEntity readXml(ByteBuf nettyBuffer) {
+        return readXml(new ByteBufInputStream(nettyBuffer));
+    }
+
+    public static XmlEntity readXml(ByteBuffer nioBuffer) {
+        return readXml(new NioByteBufferInputStream(nioBuffer));
+    }
+
+    public static XmlEntity readXml(String xml) {
+        return readXml(xml.getBytes(context().configuration().getCharset()));
     }
 
     public static XmlEntity readXml(InputStream inputStream) {
         return readXml(toByteArray(inputStream));
     }
 
-    public static XmlEntity readXml(Path path) {
-        return readXml(readFile(path));
-    }
-
-    public static XmlEntity readXml(String xml) {
-        return readXml(xmlModule().configuration().getXmlInputFactory(), xml);
-    }
-
-    public static XmlEntity readXml(XMLInputFactory xmlInputFactory, String xml) {
-        if (isEmpty(xml)) return null;
+    public static XmlEntity readXml(XMLInputFactory xmlInputFactory, InputStream inputStream) {
+        if (isEmpty(inputStream)) return null;
         XMLStreamReader reader = null;
-        try (InputStream inputStream = new ByteArrayInputStream(xml.getBytes(context().configuration().getCharset()))) {
+        try {
             reader = xmlInputFactory.createXMLStreamReader(inputStream);
             XmlEntityBuilder root = getRootElement(reader);
             return root.create();
@@ -76,7 +86,6 @@ public class XmlEntityReader {
             }
         }
     }
-
 
     private static XmlEntityBuilder getRootElement(XMLStreamReader parser) throws XMLStreamException {
         if (parser.next() == START_ELEMENT) {

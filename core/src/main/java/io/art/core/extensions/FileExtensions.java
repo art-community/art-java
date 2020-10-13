@@ -187,6 +187,23 @@ public class FileExtensions {
     }
 
 
+    public static OutputStream fileOutputStream(String path) {
+        return fileOutputStream(Paths.get(path));
+    }
+
+    public static OutputStream fileOutputStream(Path path) {
+        return fileOutputStream(path.toFile());
+    }
+
+    public static OutputStream fileOutputStream(File file) {
+        try {
+            return new FileOutputStream(file);
+        } catch (IOException ioException) {
+            throw new InternalRuntimeException(ioException);
+        }
+    }
+
+
     public static void writeFile(String path, String content) {
         writeFile(get(path), content);
     }

@@ -18,15 +18,16 @@
 
 package io.art.message.pack.descriptor;
 
+import io.art.core.stream.*;
 import io.art.entity.builder.*;
 import io.art.entity.immutable.ArrayValue;
 import io.art.entity.immutable.Value;
 import io.art.message.pack.exception.*;
+import io.netty.buffer.*;
 import lombok.experimental.*;
 import org.msgpack.core.*;
 import org.msgpack.value.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.BinaryValue.*;
@@ -36,22 +37,31 @@ import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static org.msgpack.core.MessagePack.*;
 import java.io.*;
+import java.nio.*;
 import java.nio.file.*;
 import java.util.*;
 
 
 @UtilityClass
 public class MessagePackEntityReader {
-    public static Value readMessagePack(InputStream inputStream) {
-        return readMessagePack(toByteArray(inputStream));
-    }
-
     public static Value readMessagePack(Path path) {
-        return readMessagePack(readFileBytes(path));
+        return readMessagePack(fileInputStream(path));
     }
 
     public static Value readMessagePack(byte[] bytes) {
-        try (MessageUnpacker unpacker = newDefaultUnpacker(bytes)) {
+        return readMessagePack(new ByteArrayInputStream(bytes));
+    }
+
+    public static Value readMessagePack(ByteBuf nettyBuffer) {
+        return readMessagePack(new ByteBufInputStream(nettyBuffer));
+    }
+
+    public static Value readMessagePack(ByteBuffer nioBuffer) {
+        return readMessagePack(new NioByteBufferInputStream(nioBuffer));
+    }
+
+    public static Value readMessagePack(InputStream inputStream) {
+        try (MessageUnpacker unpacker = newDefaultUnpacker(inputStream)) {
             return readMessagePack(unpacker.unpackValue());
         } catch (Throwable throwable) {
             throw new MessagePackMappingException(throwable);
