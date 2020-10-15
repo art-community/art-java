@@ -24,9 +24,11 @@ import io.art.core.source.*;
 import io.art.entity.constants.EntityConstants.*;
 import io.art.rsocket.constants.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
+import io.art.rsocket.interceptor.*;
 import io.art.server.model.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
+import io.rsocket.plugins.*;
 import lombok.*;
 import reactor.netty.http.server.*;
 import reactor.netty.tcp.*;
@@ -45,6 +47,7 @@ import static java.util.Optional.*;
 import static reactor.util.retry.Retry.*;
 import java.time.*;
 import java.util.*;
+import java.util.function.*;
 
 @Getter
 public class RsocketModuleConfiguration implements ModuleConfiguration {
@@ -59,6 +62,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private HttpServer httpWebSocketServer;
     private TransportMode transport;
     private ImmutableMap<String, RsocketServiceConfiguration> services;
+    private Consumer<InterceptorRegistry> interceptorConfigurer;
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<RsocketModuleConfiguration, Configurator> {
@@ -139,6 +143,8 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                             .stream()
                             .collect(toImmutableMap(Map.Entry::getKey, entry -> RsocketServiceConfiguration.from(configuration, entry.getValue()))))
                     .orElse(ImmutableMap.of());
+
+            configuration.interceptorConfigurer = registry -> registry.forRequester(new RsocketLoggingInterceptor(configuration::isTracing));
 
             return this;
         }

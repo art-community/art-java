@@ -19,6 +19,7 @@
 package io.art.rsocket.server;
 
 import io.art.rsocket.configuration.*;
+import io.art.rsocket.interceptor.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
 import io.rsocket.core.*;
@@ -65,6 +66,7 @@ public class RsocketServer implements Server {
                 ? TcpServerTransport.create(configuration.getTcpServer())
                 : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
         server
+                .interceptors(interceptorRegistry -> configuration.getInterceptorConfigurer().accept(interceptorRegistry))
                 .payloadDecoder(configuration.getPayloadDecoder())
                 .bind(transport)
                 .doOnSubscribe(channel -> getLogger().info(message))
