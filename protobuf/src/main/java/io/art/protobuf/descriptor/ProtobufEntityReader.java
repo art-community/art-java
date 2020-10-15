@@ -94,6 +94,7 @@ public class ProtobufEntityReader {
         throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, value.getKindCase()));
     }
 
+
     private static Value readArray(ListValue protobufCollection) {
         List<com.google.protobuf.Value> values = protobufCollection.getValuesList();
         return array(index -> readProtobuf(values.get(index)), values::size);

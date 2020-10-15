@@ -46,6 +46,7 @@ public class PlainTupleWriter {
         return new PlainTupleWriterResult(writeComplexValue(value), schema);
     }
 
+
     private static List<?> writeComplexValue(Value value) {
         if (valueIsNull(value)) return null;
 

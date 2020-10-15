@@ -101,6 +101,7 @@ public class MessagePackEntityReader {
         return null;
     }
 
+
     private static Value readMap(org.msgpack.value.MapValue map) {
         if (isNull(map) || map.isNilValue()) return null;
         EntityBuilder entityBuilder = entityBuilder();

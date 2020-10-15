@@ -87,6 +87,7 @@ public class XmlEntityReader {
         }
     }
 
+
     private static XmlEntityBuilder getRootElement(XMLStreamReader parser) throws XMLStreamException {
         if (parser.next() == START_ELEMENT) {
             String prefix = parser.getPrefix();
