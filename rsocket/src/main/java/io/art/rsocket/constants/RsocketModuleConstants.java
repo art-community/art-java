@@ -25,8 +25,6 @@ import static java.text.MessageFormat.*;
 import java.time.*;
 
 public interface RsocketModuleConstants {
-    String RSOCKET_COMMUNICATION_SERVICE_TYPE = "RSOCKET_COMMUNICATION";
-    String RSOCKET_COMMUNICATION_TARGET_CONFIGURATION_NOT_FOUND = "RSocket communication target configuration was not found for serviceId: ''{0}''";
     String RSOCKET_CLIENT_DISPOSING = "Disposing RSocket client";
 
     interface ExceptionMessages {
@@ -98,6 +96,8 @@ public interface RsocketModuleConstants {
         int DEFAULT_RETRY_MAX = 1;
         int DEFAULT_RETRY_MAX_IN_ROW = 1;
         int DEFAULT_PORT = 9000;
+        Duration DEFAULT_RESUME_SESSION_DURATION = Duration.ofHours(1);
+        Duration DEFAULT_RESUME_STREAM_TIMEOUT = Duration.ofHours(1);
     }
 
 

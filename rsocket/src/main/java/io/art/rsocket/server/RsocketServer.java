@@ -68,7 +68,6 @@ public class RsocketServer implements Server {
                 .subscribe(disposable::set);
     }
 
-
     @Override
     public void stop() {
         Disposable value;

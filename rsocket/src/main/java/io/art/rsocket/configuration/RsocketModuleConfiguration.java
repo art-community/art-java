@@ -21,7 +21,6 @@ package io.art.rsocket.configuration;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.entity.constants.EntityConstants.*;
-import io.art.rsocket.configuration.RsocketResumeConfiguration.*;
 import io.art.rsocket.constants.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.server.model.*;
@@ -34,13 +33,13 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.entity.constants.EntityConstants.DataFormat.*;
-import static io.art.rsocket.configurator.RsocketServerConfigurator.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RetryPolicy.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
+import static reactor.util.retry.Retry.*;
 import java.time.*;
 
 @Getter
@@ -75,39 +74,39 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
 
             if (source.has(RSOCKET_SERVER_RESUME_SECTION)) {
                 boolean cleanupStoreOnKeepAlive = orElse(source.getBool(RSOCKET_SERVER_RESUME_CLEANUP_STORE_ON_KEEP_ALIVE_KEY), false);
-                Duration sessionDuration = source.getDuration(RSOCKET_SERVER_RESUME_SESSION_DURATION_KEY);
-                Duration streamTimeout = source.getDuration(RSOCKET_SERVER_RESUME_STREAM_TIMEOUT_KEY);
-                RsocketResumeConfigurationBuilder resumeConfigurationBuilder = RsocketResumeConfiguration.builder()
-                        .sessionDuration(sessionDuration)
+                Duration sessionDuration = orElse(source.getDuration(RSOCKET_SERVER_RESUME_SESSION_DURATION_KEY), DEFAULT_RESUME_SESSION_DURATION);
+                Duration streamTimeout = orElse(source.getDuration(RSOCKET_SERVER_RESUME_STREAM_TIMEOUT_KEY), DEFAULT_RESUME_STREAM_TIMEOUT);
+                configuration.resume = new Resume()
                         .streamTimeout(streamTimeout)
-                        .cleanupStoreOnKeepAlive(cleanupStoreOnKeepAlive);
+                        .sessionDuration(sessionDuration);
+                if (cleanupStoreOnKeepAlive) {
+                    configuration.resume.cleanupStoreOnKeepAlive();
+                }
                 if (source.has(RSOCKET_SERVER_RESUME_RETRY_POLICY_KEY)) {
                     RsocketModuleConstants.RetryPolicy retryPolicy = rsocketRetryPolicy(source.getString(RSOCKET_SERVER_RESUME_RETRY_POLICY_KEY));
-                    resumeConfigurationBuilder.retryPolicy(retryPolicy);
                     switch (retryPolicy) {
                         case BACKOFF:
                             long maxAttempts = orElse(source.getLong(RSOCKET_SERVER_RESUME_RETRY_BACKOFF_MAX_ATTEMPTS_KEY), DEFAULT_RETRY_MAX_ATTEMPTS);
                             Duration minBackoff = orElse(source.getDuration(RSOCKET_SERVER_RESUME_RETRY_BACKOFF_MIN_BACKOFF_KEY), DEFAULT_RETRY_MIN_BACKOFF);
-                            resumeConfigurationBuilder.retryBackoffConfiguration(new RetryBackoffConfiguration(maxAttempts, minBackoff));
+                            configuration.resume.retry(backoff(maxAttempts, minBackoff));
                             break;
                         case FIXED_DELAY:
                             maxAttempts = orElse(source.getLong(RSOCKET_SERVER_RESUME_RETRY_FIXED_DELAY_MAX_ATTEMPTS_KEY), DEFAULT_RETRY_MAX_ATTEMPTS);
                             Duration fixedDelay = orElse(source.getDuration(RSOCKET_SERVER_RESUME_RETRY_FIXED_DELAY_KEY), DEFAULT_RETRY_FIXED_DELAY);
-                            resumeConfigurationBuilder.retryFixedDelayConfiguration(new RetryFixedDelayConfiguration(maxAttempts, fixedDelay));
+                            configuration.resume.retry(fixedDelay(maxAttempts, fixedDelay));
                             break;
                         case MAX:
                             int max = orElse(source.getInt(RSOCKET_SERVER_RESUME_RETRY_MAX_KEY), DEFAULT_RETRY_MAX);
-                            resumeConfigurationBuilder.retryMaxConfiguration(new RetryMaxConfiguration(max));
+                            configuration.resume.retry(max(max));
                             break;
                         case MAX_IN_A_ROW:
                             int maxInRow = orElse(source.getInt(RSOCKET_SERVER_RESUME_RETRY_MAX_IN_ROW_KEY), DEFAULT_RETRY_MAX_IN_ROW);
-                            resumeConfigurationBuilder.retryMaxInRowConfiguration(new RetryMaxInRowConfiguration(maxInRow));
+                            configuration.resume.retry(maxInARow(maxInRow));
                             break;
                         case INDEFINITELY:
                             break;
                     }
                 }
-                configuration.resume = configureResume(resumeConfigurationBuilder.build());
             }
 
             configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(RSOCKET_SERVER_PAYLOAD_DECODER_KEY)) == DEFAULT
@@ -130,13 +129,6 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                     break;
             }
 
-            return this;
-        }
-
-        @Override
-        public Configurator override(RsocketModuleConfiguration configuration) {
-            this.configuration.tcpServer = configuration.tcpServer;
-            this.configuration.httpWebSocketServer = configuration.httpWebSocketServer;
             return this;
         }
     }

@@ -41,12 +41,6 @@ public class RsocketCommunicationTargetConfiguration {
     private final TransportMode transport = TCP;
     @Builder.Default
     private final EntityConstants.DataFormat dataFormat = rsocketModule().configuration().getDefaultDataFormat();
-    @Builder.Default
-    private final boolean resumable = rsocketModule().configuration().isResumableClient();
-    @Builder.Default
-    private final long resumeSessionDuration = rsocketModule().configuration().getClientResumeSessionDuration();
-    @Builder.Default
-    private final long resumeStreamTimeout = rsocketModule().configuration().getClientResumeStreamTimeout();
     @Singular
     private final List<RSocketInterceptor> interceptors;
 }
