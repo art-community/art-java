@@ -41,6 +41,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     private final RsocketModuleConfiguration configuration = new RsocketModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
     private final RsocketModuleState state = new RsocketModuleState();
+    private static volatile RsocketServer server;
 
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketModule.class);
@@ -49,10 +50,14 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
         return getRsocketModule();
     }
 
+    public static void startRsocketServer() {
+        server = new RsocketServer(rsocketModule().configuration().getTransport());
+        server.start();
+    }
+
     @Override
     public void beforeUnload() {
-        apply(rsocketModule().state().getTcpServer(), RsocketServer::stop);
-        apply(rsocketModule().state().getWebSocketServer(), RsocketServer::stop);
+        apply(server, RsocketServer::stop);
         rsocketModule().state().getRsocketClients().stream().filter(rsocket -> !rsocket.isDisposed()).forEach(this::disposeRsocket);
     }
 

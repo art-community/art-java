@@ -22,6 +22,7 @@ import io.art.rsocket.configuration.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
 import io.rsocket.core.*;
+import io.rsocket.transport.*;
 import io.rsocket.transport.netty.server.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
@@ -60,9 +61,12 @@ public class RsocketServer implements Server {
         if (nonNull(resume = configuration.getResume())) {
             server.resume(resume);
         }
+        ServerTransport<CloseableChannel> transport = transportMode == TCP
+                ? TcpServerTransport.create(configuration.getTcpServer())
+                : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
         server
                 .payloadDecoder(configuration.getPayloadDecoder())
-                .bind(transportMode == TCP ? TcpServerTransport.create(configuration.getTcpServer()) : WebsocketServerTransport.create(configuration.getHttpWebSocketServer()))
+                .bind(transport)
                 .doOnSubscribe(channel -> getLogger().info(message))
                 .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
                 .subscribe(disposable::set);
