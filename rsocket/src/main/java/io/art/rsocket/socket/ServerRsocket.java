@@ -42,6 +42,7 @@ public class ServerRsocket implements RSocket {
     private final ServiceMethodSpecification specification;
     private final RsocketPayloadReader reader;
     private final RsocketPayloadWriter writer;
+    private final RSocket requesterSocket;
 
     public ServerRsocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
         DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()), rsocketModule().configuration().getDefaultDataFormat());
@@ -62,6 +63,7 @@ public class ServerRsocket implements RSocket {
             throw new RsocketServerException(SPECIFICATION_NOT_FOUND);
         }
         this.specification = possibleSpecification.orElseGet(defaultSpecification::get);
+        this.requesterSocket = requesterSocket;
     }
 
     @Override

@@ -80,8 +80,10 @@ public interface RsocketModuleConstants {
         String SERVER_TRANSPORT_PORT_KEY = "rsocket.server.transport.host";
         String SERVER_TRANSPORT_HOST_KEY = "rsocket.server.transport.port";
         String SERVER_SERVICES_KEY = "rsocket.server.services";
-        String DATA_FORMAT_KEY = "dataFormat";
-        String TRACING_KEY = "tracing";
+    }
+
+    interface ContextKeys {
+        String REQUESTER_RSOCKET_KEY = "requesterRsocket";
     }
 
     interface Defaults {
