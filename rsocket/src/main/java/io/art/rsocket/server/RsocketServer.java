@@ -18,8 +18,6 @@
 
 package io.art.rsocket.server;
 
-import io.art.core.configuration.*;
-import io.art.core.context.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
@@ -31,14 +29,13 @@ import reactor.core.*;
 import reactor.core.publisher.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.logging.LoggingModule.*;
+import static io.art.rsocket.configurator.RsocketServerConfigurator.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import static reactor.util.retry.Retry.*;
-import java.time.*;
 import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
@@ -57,35 +54,18 @@ public class RsocketServer implements Server {
         if (configuration.getFragmentationMtu() > 0) {
             server.fragment(configuration.getFragmentationMtu());
         }
-        if (nonNull(configuration.getResume())) {
-            Resume resume = new Resume()
-                    .streamTimeout(configuration.getResume().getStreamTimeout())
-                    .sessionDuration(configuration.getResume().getSessionDuration());
-            switch (configuration.getResume().getRetryPolicy()) {
-                case BACKOFF:
-                    resume = resume.retry(backoff(12, Duration.ZERO));
-                    break;
-                case FIXED_DELAY:
-                    resume = resume.retry(fixedDelay(12, Duration.ZERO));
-                    break;
-                case MAX:
-                    resume = resume.retry(max(12));
-                    break;
-                case MAX_IN_A_ROW:
-                    resume = resume.retry(maxInARow(12));
-                    break;
-                case INDEFINITELY:
-                    resume = resume.retry(indefinitely());
-                    break;
-            }
-            server.resume(resume);
+        RsocketResumeConfiguration resumeConfiguration;
+        if (nonNull(resumeConfiguration = configuration.getResume())) {
+            server.resume(configureResume(resumeConfiguration));
         }
         server
+                .payloadDecoder()
                 .bind(TcpServerTransport.create(configuration.getTcpPort()))
                 .doOnSubscribe(channel -> getLogger().info(message))
                 .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
                 .subscribe(disposable::set);
     }
+
 
     @Override
     public void stop() {
@@ -111,9 +91,5 @@ public class RsocketServer implements Server {
     public boolean available() {
         Disposable value;
         return nonNull(value = disposable.get()) && !value.isDisposed();
-    }
-
-
-    public static void main(String[] args) {
     }
 }

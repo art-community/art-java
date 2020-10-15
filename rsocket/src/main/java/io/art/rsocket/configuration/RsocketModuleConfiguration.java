@@ -21,6 +21,8 @@ package io.art.rsocket.configuration;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.entity.constants.EntityConstants.*;
+import io.art.rsocket.configuration.RsocketResumeConfiguration.*;
+import io.art.rsocket.constants.*;
 import io.art.server.model.*;
 import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -28,7 +30,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.parser.EnumParser.*;
 import static io.art.entity.constants.EntityConstants.DataFormat.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RetryPolicy.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
 import java.time.*;
@@ -64,13 +66,37 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                 boolean cleanupStoreOnKeepAlive = orElse(source.getBool(RSOCKET_RESUME_CLEANUP_STORE_ON_KEEP_ALIVE), false);
                 Duration sessionDuration = source.getDuration(RSOCKET_RESUME_SESSION_DURATION);
                 Duration streamTimeout = source.getDuration(RSOCKET_RESUME_STREAM_TIMEOUT);
-                RetryPolicy retryPolicy = enumOf(RetryPolicy::valueOf, source.getString(RSOCKET_RESUME_RETRY_POLICY), BACKOFF);
-                configuration.resume = RsocketResumeConfiguration.builder()
+                RsocketResumeConfigurationBuilder resumeConfigurationBuilder = RsocketResumeConfiguration.builder()
                         .sessionDuration(sessionDuration)
                         .streamTimeout(streamTimeout)
-                        .cleanupStoreOnKeepAlive(cleanupStoreOnKeepAlive)
-                        .retryPolicy(retryPolicy)
-                        .build();
+                        .cleanupStoreOnKeepAlive(cleanupStoreOnKeepAlive);
+                if (source.has(RSOCKET_RESUME_RETRY_POLICY)) {
+                    RsocketModuleConstants.RetryPolicy retryPolicy = rsocketRetryPolicy(source.getString(RSOCKET_RESUME_RETRY_POLICY));
+                    resumeConfigurationBuilder.retryPolicy(retryPolicy);
+                    switch (retryPolicy) {
+                        case BACKOFF:
+                            long maxAttempts = orElse(source.getLong(RSOCKET_RESUME_RETRY_BACKOFF_MAX_ATTEMPTS), DEFAULT_RETRY_MAX_ATTEMPTS);
+                            Duration minBackoff = orElse(source.getDuration(RSOCKET_RESUME_RETRY_BACKOFF_MIN_BACKOFF), DEFAULT_RETRY_MIN_BACKOFF);
+                            resumeConfigurationBuilder.retryBackoffConfiguration(new RetryBackoffConfiguration(maxAttempts, minBackoff));
+                            break;
+                        case FIXED_DELAY:
+                            maxAttempts = orElse(source.getLong(RSOCKET_RESUME_RETRY_FIXED_DELAY_MAX_ATTEMPTS), DEFAULT_RETRY_MAX_ATTEMPTS);
+                            Duration fixedDelay = orElse(source.getDuration(RSOCKET_RESUME_RETRY_FIXED_DELAY), DEFAULT_RETRY_FIXED_DELAY);
+                            resumeConfigurationBuilder.retryFixedDelayConfiguration(new RetryFixedDelayConfiguration(maxAttempts, fixedDelay));
+                            break;
+                        case MAX:
+                            int max = orElse(source.getInt(RSOCKET_RESUME_RETRY_MAX), DEFAULT_RETRY_MAX);
+                            resumeConfigurationBuilder.retryMaxConfiguration(new RetryMaxConfiguration(max));
+                            break;
+                        case MAX_IN_A_ROW:
+                            int maxInRow = orElse(source.getInt(RSOCKET_RESUME_RETRY_MAX_IN_ROW), DEFAULT_RETRY_MAX_IN_ROW);
+                            resumeConfigurationBuilder.retryMaxInRowConfiguration(new RetryMaxInRowConfiguration(maxInRow));
+                            break;
+                        case INDEFINITELY:
+                            break;
+                    }
+                }
+                configuration.resume = resumeConfigurationBuilder.build();
             }
 
             return this;

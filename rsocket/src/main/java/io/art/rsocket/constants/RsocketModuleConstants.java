@@ -18,7 +18,11 @@
 
 package io.art.rsocket.constants;
 
+import io.art.rsocket.exception.*;
 import lombok.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
+import static java.text.MessageFormat.*;
+import java.time.*;
 
 public interface RsocketModuleConstants {
     String RSOCKET_MODULE_ID = "RSOCKET_MODULE";
@@ -40,6 +44,7 @@ public interface RsocketModuleConstants {
 
     interface ExceptionMessages {
         String SPECIFICATION_NOT_FOUND = "Setup payload was null or not contained serviceId, methodId. Default service method id was not specified in configuration";
+        String UNSUPPORTED_RETRY_POLICY = "Retry policy not support: ''{0}''";
         String SERVICE_NOT_EXISTS = "Service with id ''{0}'' does not exists in service registry";
         String METHOD_NOT_EXISTS = "Rsocket method with id ''{0}'' for service {1} does not exists in rsocketService";
         String SERVICE_NOT_SUPPORTED_RSOCKET = "Service with id ''{0}'' has not 'RSOCKET' service type";
@@ -58,7 +63,6 @@ public interface RsocketModuleConstants {
         String RSOCKET_WS_COMMUNICATOR_CREATED_MESSAGE = "RSocket WebSocket communicator to {0}:{1,number,#} created";
         String RSOCKET_TCP_COMMUNICATOR_CREATED_MESSAGE = "RSocket TCP communicator to {0}:{1,number,#} created";
         String RSOCKET_STOPPED = "RSocket Server stopped";
-        String RSOCKET_LOADED_SERVICE_MESSAGE = "RSocket service loaded: {0}:{1,number,#} - {2}.{3}";
         String RSOCKET_FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget() with request data: {0} and metadata: {1}";
         String RSOCKET_FIRE_AND_FORGET_RESPONSE_LOG = "RSocket fireAndForget() completed";
         String RSOCKET_FIRE_AND_FORGET_EXCEPTION_LOG = "RSocket fireAndForget() failed with exception: {0}";
@@ -86,15 +90,41 @@ public interface RsocketModuleConstants {
         String RSOCKET_RESUME_CLEANUP_STORE_ON_KEEP_ALIVE = "rsocket.server.resume.cleanupStoreOnKeepAlive";
         String RSOCKET_RESUME_SESSION_DURATION = "rsocket.server.resume.sessionDuration";
         String RSOCKET_RESUME_STREAM_TIMEOUT = "rsocket.server.resume.streamTimeout";
-        String RSOCKET_RESUME_RETRY_POLICY = "rsocket.server.resume.retryPolicy";
+        String RSOCKET_RESUME_RETRY_POLICY = "rsocket.server.resume.retry.policy";
+        String RSOCKET_RESUME_RETRY_BACKOFF_MAX_ATTEMPTS = "rsocket.server.resume.retry.backoff.maxAttempts";
+        String RSOCKET_RESUME_RETRY_BACKOFF_MIN_BACKOFF = "rsocket.server.resume.retry.backoff.minBackoff";
+        String RSOCKET_RESUME_RETRY_FIXED_DELAY_MAX_ATTEMPTS = "rsocket.server.resume.retry.fixedDelay.maxAttempts";
+        String RSOCKET_RESUME_RETRY_FIXED_DELAY = "rsocket.server.resume.retry.fixedDelay.delay";
+        String RSOCKET_RESUME_RETRY_MAX = "rsocket.server.resume.retry.max";
+        String RSOCKET_RESUME_RETRY_MAX_IN_ROW = "rsocket.server.resume.retry.maxInRow";
+    }
+
+    interface Defaults {
+        long DEFAULT_RETRY_MAX_ATTEMPTS = 3;
+        Duration DEFAULT_RETRY_MIN_BACKOFF = Duration.ofSeconds(1);
+        Duration DEFAULT_RETRY_FIXED_DELAY = Duration.ofSeconds(1);
+        int DEFAULT_RETRY_MAX = 1;
+        int DEFAULT_RETRY_MAX_IN_ROW = 1;
     }
 
     @Getter
+    @AllArgsConstructor
     enum RetryPolicy {
-        BACKOFF,
-        FIXED_DELAY,
-        MAX,
-        MAX_IN_A_ROW,
-        INDEFINITELY
+        BACKOFF("backoff"),
+        FIXED_DELAY("fixedDelay"),
+        MAX("max"),
+        MAX_IN_A_ROW("maxInARow"),
+        INDEFINITELY("indefinitely");
+
+        private final String policy;
+
+        public static RetryPolicy rsocketRetryPolicy(String policy) {
+            if (BACKOFF.policy.equalsIgnoreCase(policy)) return BACKOFF;
+            if (FIXED_DELAY.policy.equalsIgnoreCase(policy)) return FIXED_DELAY;
+            if (MAX.policy.equalsIgnoreCase(policy)) return MAX;
+            if (MAX_IN_A_ROW.policy.equalsIgnoreCase(policy)) return MAX_IN_A_ROW;
+            if (INDEFINITELY.policy.equalsIgnoreCase(policy)) return INDEFINITELY;
+            throw new RsocketException(format(UNSUPPORTED_RETRY_POLICY, policy));
+        }
     }
 }

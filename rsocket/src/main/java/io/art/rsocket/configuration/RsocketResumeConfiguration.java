@@ -29,4 +29,34 @@ public class RsocketResumeConfiguration {
     private final Duration streamTimeout;
     private final RetryPolicy retryPolicy;
     private final boolean cleanupStoreOnKeepAlive;
+    private final RetryBackoffConfiguration retryBackoffConfiguration;
+    private final RetryFixedDelayConfiguration retryFixedDelayConfiguration;
+    private final RetryMaxConfiguration retryMaxConfiguration;
+    private final RetryMaxInRowConfiguration retryMaxInRowConfiguration;
+
+    @Getter
+    @AllArgsConstructor
+    public static class RetryBackoffConfiguration {
+        private final long maxAttempts;
+        private final Duration minBackoff;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class RetryFixedDelayConfiguration {
+        private final long maxAttempts;
+        private final Duration fixedDelay;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class RetryMaxConfiguration {
+        private final int max;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class RetryMaxInRowConfiguration {
+        private final int maxInRow;
+    }
 }
