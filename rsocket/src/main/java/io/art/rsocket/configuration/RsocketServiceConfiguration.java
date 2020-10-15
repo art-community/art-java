@@ -20,24 +20,32 @@ package io.art.rsocket.configuration;
 
 import com.google.common.collect.*;
 import io.art.core.source.*;
-import io.art.server.model.*;
+import io.art.entity.constants.EntityConstants.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.entity.constants.EntityConstants.DataFormat.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
-import java.util.*;
 
 @Getter
 @RequiredArgsConstructor
 public class RsocketServiceConfiguration {
-    private final ImmutableMap<String, ServiceMethodConfiguration> methods;
+    private DataFormat defaultDataFormat;
+    private boolean tracing;
+    private ImmutableMap<String, RsocketMethodConfiguration> methods;
+    private final RsocketModuleConfiguration moduleConfiguration;
 
-    public static RsocketServiceConfiguration from(ConfigurationSource source) {
-        ImmutableMap<String, RsocketMethodConfiguration> methods = ofNullable(source.getNestedMap(METHODS_KEY))
+    public static RsocketServiceConfiguration from(RsocketModuleConfiguration moduleConfiguration, ConfigurationSource source) {
+        RsocketServiceConfiguration configuration = new RsocketServiceConfiguration(moduleConfiguration);
+        configuration.tracing = orElse(source.getBool(TRACING_KEY), false);
+        configuration.defaultDataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), moduleConfiguration.getDefaultDataFormat());
+        configuration.methods = ofNullable(source.getNestedMap(METHODS_KEY))
                 .map(configurations -> configurations.entrySet()
                         .stream()
-                        .collect(toImmutableMap(Map.Entry::getKey, entry -> RsocketMethodConfiguration.from(entry.getValue()))))
+                        .collect(toImmutableMap(Entry::getKey, entry -> RsocketMethodConfiguration.from(configuration, entry.getValue()))))
                 .orElse(ImmutableMap.of());
-        return new RsocketServiceConfiguration(methods);
+        return configuration;
     }
 }

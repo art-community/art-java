@@ -18,6 +18,7 @@
 
 package io.art.rsocket.configuration;
 
+import com.google.common.collect.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.entity.constants.EntityConstants.*;
@@ -29,6 +30,7 @@ import io.rsocket.frame.decoder.*;
 import lombok.*;
 import reactor.netty.http.server.*;
 import reactor.netty.tcp.*;
+import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.NetworkConstants.*;
@@ -39,8 +41,10 @@ import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode
 import static io.art.rsocket.constants.RsocketModuleConstants.RetryPolicy.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
+import static java.util.Optional.*;
 import static reactor.util.retry.Retry.*;
 import java.time.*;
+import java.util.*;
 
 @Getter
 public class RsocketModuleConfiguration implements ModuleConfiguration {
@@ -54,6 +58,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private TcpServer tcpServer;
     private HttpServer httpWebSocketServer;
     private TransportMode transport;
+    private ImmutableMap<String, RsocketServiceConfiguration> services;
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<RsocketModuleConfiguration, Configurator> {
@@ -128,6 +133,12 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                     configuration.httpWebSocketServer = HttpServer.create().port(port).host(host);
                     break;
             }
+
+            configuration.services = ofNullable(source.getNestedMap(SERVER_SERVICES_KEY))
+                    .map(configurations -> configurations.entrySet()
+                            .stream()
+                            .collect(toImmutableMap(Map.Entry::getKey, entry -> RsocketServiceConfiguration.from(configuration, entry.getValue()))))
+                    .orElse(ImmutableMap.of());
 
             return this;
         }

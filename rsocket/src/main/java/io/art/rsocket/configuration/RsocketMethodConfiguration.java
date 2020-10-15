@@ -19,20 +19,21 @@
 package io.art.rsocket.configuration;
 
 import io.art.core.source.*;
-import io.art.server.model.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.orElse;
-import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.LOGGING_KEY;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.entity.constants.EntityConstants.*;
+import static io.art.entity.constants.EntityConstants.DataFormat.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 
 @Getter
 @RequiredArgsConstructor
 public class RsocketMethodConfiguration {
-    private final boolean defaultDataFormat;
+    private final DataFormat defaultDataFormat;
     private final boolean tracing;
 
-    public static ServiceMethodConfiguration from(ConfigurationSource source) {
-        boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
-        boolean enableLogging = orElse(source.getBool(LOGGING_KEY), false);
-        return new ServiceMethodConfiguration(deactivated, enableLogging);
+    public static RsocketMethodConfiguration from(RsocketServiceConfiguration serviceConfiguration, ConfigurationSource source) {
+        boolean tracing = orElse(source.getBool(TRACING_KEY), serviceConfiguration.isTracing());
+        DataFormat dataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), serviceConfiguration.getDefaultDataFormat());
+        return new RsocketMethodConfiguration(dataFormat, tracing);
     }
 }
