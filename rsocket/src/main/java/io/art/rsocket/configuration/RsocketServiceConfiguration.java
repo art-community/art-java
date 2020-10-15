@@ -22,21 +22,17 @@ import com.google.common.collect.*;
 import io.art.core.source.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
 
 @Getter
 @RequiredArgsConstructor
 public class RsocketServiceConfiguration {
-    private boolean tracing;
     private ImmutableMap<String, RsocketMethodConfiguration> methods;
     private final RsocketModuleConfiguration moduleConfiguration;
 
     public static RsocketServiceConfiguration from(RsocketModuleConfiguration moduleConfiguration, ConfigurationSource source) {
         RsocketServiceConfiguration configuration = new RsocketServiceConfiguration(moduleConfiguration);
-        configuration.tracing = orElse(source.getBool(TRACING_KEY), false);
         configuration.methods = ofNullable(source.getNestedMap(METHODS_KEY))
                 .map(configurations -> configurations.entrySet()
                         .stream()

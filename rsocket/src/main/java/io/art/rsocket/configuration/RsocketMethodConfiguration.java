@@ -20,16 +20,12 @@ package io.art.rsocket.configuration;
 
 import io.art.core.source.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 
 @Getter
 @RequiredArgsConstructor
 public class RsocketMethodConfiguration {
-    private final boolean tracing;
 
     public static RsocketMethodConfiguration from(RsocketServiceConfiguration serviceConfiguration, ConfigurationSource source) {
-        boolean tracing = orElse(source.getBool(TRACING_KEY), serviceConfiguration.isTracing());
-        return new RsocketMethodConfiguration(tracing);
+        return new RsocketMethodConfiguration();
     }
 }
