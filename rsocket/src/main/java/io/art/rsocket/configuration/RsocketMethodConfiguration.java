@@ -16,22 +16,23 @@
  * limitations under the License.
  */
 
-package io.art.server.model;
+package io.art.rsocket.configuration;
 
 import io.art.core.source.*;
+import io.art.server.model.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
+import static io.art.core.checker.NullityChecker.orElse;
+import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.LOGGING_KEY;
 
 @Getter
-@AllArgsConstructor
-public class ServiceMethodConfiguration {
-    private final boolean deactivated;
-    private final boolean logging;
+@RequiredArgsConstructor
+public class RsocketMethodConfiguration {
+    private final boolean defaultDataFormat;
+    private final boolean tracing;
 
     public static ServiceMethodConfiguration from(ConfigurationSource source) {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
-        boolean logging = orElse(source.getBool(LOGGING_KEY), false);
-        return new ServiceMethodConfiguration(deactivated, logging);
+        boolean enableLogging = orElse(source.getBool(LOGGING_KEY), false);
+        return new ServiceMethodConfiguration(deactivated, enableLogging);
     }
 }

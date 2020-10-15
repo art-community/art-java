@@ -28,75 +28,71 @@ import reactor.core.publisher.*;
 import reactor.util.annotation.NonNull;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Flux.*;
+import java.util.function.*;
 
 @RequiredArgsConstructor
 public class RsocketLoggingInterceptor implements RSocketInterceptor {
     @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = logger(RSocketInterceptor.class);
+    private final Supplier<Boolean> enabled;
 
     @Override
     public RSocket apply(RSocket rsocket) {
         return new RSocketProxy(rsocket) {
             @Override
             public Mono<Void> fireAndForget(@NonNull Payload payload) {
-                if (rsocketModule().configuration().isTracing()) {
-                    getLogger().info(format(RSOCKET_FIRE_AND_FORGET_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
+                if (!enabled.get()) {
+                    return super.fireAndForget(payload);
                 }
-                Mono<Void> result = super.fireAndForget(payload).doOnError(error -> getLogger().error(format(RSOCKET_FIRE_AND_FORGET_EXCEPTION_LOG, error)));
-                return rsocketModule().configuration().isTracing()
-                        ? result.doOnSubscribe(nothing -> getLogger().info(RSOCKET_FIRE_AND_FORGET_RESPONSE_LOG))
-                        : result;
+                getLogger().info(format(FIRE_AND_FORGET_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
+                Mono<Void> output = super.fireAndForget(payload).doOnError(error -> getLogger().error(format(FIRE_AND_FORGET_EXCEPTION_LOG, error)));
+                return output.doOnSubscribe(nothing -> getLogger().info(FIRE_AND_FORGET_RESPONSE_LOG));
             }
 
             @Override
             public Mono<Payload> requestResponse(@NonNull Payload payload) {
-                if (rsocketModule().configuration().isTracing()) {
-                    getLogger().info(format(RSOCKET_REQUEST_RESPONSE_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
+                if (!enabled.get()) {
+                    return super.requestResponse(payload);
                 }
-                Mono<Payload> result = super.requestResponse(payload).doOnError(error -> getLogger().error(format(RSOCKET_REQUEST_RESPONSE_EXCEPTION_LOG, error)));
-                return rsocketModule().configuration().isTracing()
-                        ? result.doOnNext(response -> getLogger().info(format(RSOCKET_REQUEST_RESPONSE_RESPONSE_LOG, response.getDataUtf8(), response.getMetadataUtf8())))
-                        : result;
+                getLogger().info(format(REQUEST_RESPONSE_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
+                Mono<Payload> output = super.requestResponse(payload).doOnError(error -> getLogger().error(format(REQUEST_RESPONSE_EXCEPTION_LOG, error)));
+                return output.doOnNext(response -> getLogger().info(format(RESPONSE_RESPONSE_LOG, response.getDataUtf8(), response.getMetadataUtf8())));
 
             }
 
             @Override
             public Flux<Payload> requestStream(@NonNull Payload payload) {
-                if (rsocketModule().configuration().isTracing()) {
-                    getLogger().info(format(RSOCKET_REQUEST_STREAM_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
+                if (!enabled.get()) {
+                    return super.requestStream(payload);
                 }
-                Flux<Payload> result = super.requestStream(payload).doOnError(error -> getLogger().error(format(RSOCKET_REQUEST_STREAM_EXCEPTION_LOG, error)));
-                return rsocketModule().configuration().isTracing()
-                        ? result.doOnNext(response -> getLogger().info(format(RSOCKET_REQUEST_STREAM_RESPONSE_LOG, response.getDataUtf8(), response.getMetadataUtf8())))
-                        : result;
+                getLogger().info(format(REQUEST_STREAM_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
+                Flux<Payload> output = super.requestStream(payload).doOnError(error -> getLogger().error(format(REQUEST_STREAM_EXCEPTION_LOG, error)));
+                return output.doOnNext(response -> getLogger().info(format(REQUEST_STREAM_RESPONSE_LOG, response.getDataUtf8(), response.getMetadataUtf8())));
             }
 
             @Override
             public Flux<Payload> requestChannel(@NonNull Publisher<Payload> payloads) {
-                if (rsocketModule().configuration().isTracing()) {
-                    payloads = from(payloads).
-                            doOnNext(payload -> getLogger().info(format(RSOCKET_REQUEST_CHANNEL_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8())));
+                if (!enabled.get()) {
+                    return super.requestChannel(payloads);
                 }
-                Flux<Payload> result = super.requestChannel(from(payloads)
-                        .doOnError(error -> getLogger().error(format(RSOCKET_REQUEST_CHANNEL_EXCEPTION_LOG, error))));
-                return rsocketModule().configuration().isTracing()
-                        ? result.doOnNext(payload -> getLogger().info(format(RSOCKET_REQUEST_CHANNEL_RESPONSE_LOG, payload.getDataUtf8(), payload.getMetadataUtf8())))
-                        : result;
+                Flux<Payload> input = from(payloads)
+                        .doOnNext(payload -> getLogger().info(format(REQUEST_CHANNEL_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8())))
+                        .doOnError(error -> getLogger().error(format(REQUEST_CHANNEL_EXCEPTION_LOG, error)));
+                Flux<Payload> output = super.requestChannel(input);
+                return output.doOnNext(payload -> getLogger().info(format(REQUEST_CHANNEL_RESPONSE_LOG, payload.getDataUtf8(), payload.getMetadataUtf8())));
             }
 
             @Override
             public Mono<Void> metadataPush(@NonNull Payload payload) {
-                if (rsocketModule().configuration().isTracing()) {
-                    getLogger().info(format(RSOCKET_METADATA_PUSH_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
+                if (!enabled.get()) {
+                    return super.metadataPush(payload);
                 }
-                Mono<Void> result = super.metadataPush(payload).doOnError(error -> getLogger().error(format(RSOCKET_METADATA_PUSH_EXCEPTION_LOG, error)));
-                return rsocketModule().configuration().isTracing()
-                        ? result.doOnSubscribe(nothing -> getLogger().info(RSOCKET_METADATA_PUSH_RESPONSE_LOG))
-                        : result;
+                getLogger().info(format(METADATA_PUSH_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
+                Mono<Void> output = super.metadataPush(payload).doOnError(error -> getLogger().error(format(METADATA_PUSH_EXCEPTION_LOG, error)));
+                return output.doOnSubscribe(nothing -> getLogger().info(METADATA_PUSH_RESPONSE_LOG));
             }
         };
     }

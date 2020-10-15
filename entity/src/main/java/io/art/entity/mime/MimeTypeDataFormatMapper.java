@@ -38,6 +38,15 @@ public class MimeTypeDataFormatMapper {
         throw new UnsupportedMimeTypeException(type);
     }
 
+    public static DataFormat fromMimeType(MimeType type, DataFormat fallback) {
+        if (APPLICATION_JSON.equals(type)) return JSON;
+        if (APPLICATION_PROTOBUF.equals(type)) return PROTOBUF;
+        if (APPLICATION_XML.equals(type)) return XML;
+        if (TEXT_XML.equals(type)) return XML;
+        if (APPLICATION_MESSAGE_PACK.equals(type)) return MESSAGE_PACK;
+        return fallback;
+    }
+
     public static MimeType toMimeType(DataFormat dataFormat) {
         switch (dataFormat) {
             case PROTOBUF:

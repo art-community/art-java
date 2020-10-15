@@ -61,46 +61,46 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            String serviceId = source.getString(RSOCKET_SERVER_DEFAULT_SERVICE_ID_KEY);
-            String methodId = source.getString(RSOCKET_SERVER_DEFAULT_METHOD_ID_KEY);
+            String serviceId = source.getString(SERVER_DEFAULT_SERVICE_ID_KEY);
+            String methodId = source.getString(SERVER_DEFAULT_METHOD_ID_KEY);
 
             if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
                 configuration.defaultServiceMethod = serviceMethod(serviceId, methodId);
             }
 
-            configuration.defaultDataFormat = dataFormat(source.getString(RSOCKET_DEFAULT_SERVER_DATA_FORMAT_KEY), JSON);
-            configuration.tracing = orElse(source.getBool(RSOCKET_SERVER_TRACING_KEY), false);
-            configuration.fragmentationMtu = orElse(source.getInt(RSOCKET_SERVER_FRAGMENTATION_MTU_KEY), 0);
+            configuration.defaultDataFormat = dataFormat(source.getString(SERVER_DEFAULT_DATA_FORMAT_KEY), JSON);
+            configuration.tracing = orElse(source.getBool(SERVER_TRACING_KEY), false);
+            configuration.fragmentationMtu = orElse(source.getInt(SERVER_FRAGMENTATION_MTU_KEY), 0);
 
-            if (source.has(RSOCKET_SERVER_RESUME_SECTION)) {
-                boolean cleanupStoreOnKeepAlive = orElse(source.getBool(RSOCKET_SERVER_RESUME_CLEANUP_STORE_ON_KEEP_ALIVE_KEY), false);
-                Duration sessionDuration = orElse(source.getDuration(RSOCKET_SERVER_RESUME_SESSION_DURATION_KEY), DEFAULT_RESUME_SESSION_DURATION);
-                Duration streamTimeout = orElse(source.getDuration(RSOCKET_SERVER_RESUME_STREAM_TIMEOUT_KEY), DEFAULT_RESUME_STREAM_TIMEOUT);
+            if (source.has(SERVER_RESUME_SECTION)) {
+                boolean cleanupStoreOnKeepAlive = orElse(source.getBool(SERVER_RESUME_CLEANUP_STORE_ON_KEEP_ALIVE_KEY), false);
+                Duration sessionDuration = orElse(source.getDuration(SERVER_RESUME_SESSION_DURATION_KEY), DEFAULT_RESUME_SESSION_DURATION);
+                Duration streamTimeout = orElse(source.getDuration(SERVER_RESUME_STREAM_TIMEOUT_KEY), DEFAULT_RESUME_STREAM_TIMEOUT);
                 configuration.resume = new Resume()
                         .streamTimeout(streamTimeout)
                         .sessionDuration(sessionDuration);
                 if (cleanupStoreOnKeepAlive) {
                     configuration.resume.cleanupStoreOnKeepAlive();
                 }
-                if (source.has(RSOCKET_SERVER_RESUME_RETRY_POLICY_KEY)) {
-                    RsocketModuleConstants.RetryPolicy retryPolicy = rsocketRetryPolicy(source.getString(RSOCKET_SERVER_RESUME_RETRY_POLICY_KEY));
+                if (source.has(SERVER_RESUME_RETRY_POLICY_KEY)) {
+                    RsocketModuleConstants.RetryPolicy retryPolicy = rsocketRetryPolicy(source.getString(SERVER_RESUME_RETRY_POLICY_KEY));
                     switch (retryPolicy) {
                         case BACKOFF:
-                            long maxAttempts = orElse(source.getLong(RSOCKET_SERVER_RESUME_RETRY_BACKOFF_MAX_ATTEMPTS_KEY), DEFAULT_RETRY_MAX_ATTEMPTS);
-                            Duration minBackoff = orElse(source.getDuration(RSOCKET_SERVER_RESUME_RETRY_BACKOFF_MIN_BACKOFF_KEY), DEFAULT_RETRY_MIN_BACKOFF);
+                            long maxAttempts = orElse(source.getLong(SERVER_RESUME_RETRY_BACKOFF_MAX_ATTEMPTS_KEY), DEFAULT_RETRY_MAX_ATTEMPTS);
+                            Duration minBackoff = orElse(source.getDuration(SERVER_RESUME_RETRY_BACKOFF_MIN_BACKOFF_KEY), DEFAULT_RETRY_MIN_BACKOFF);
                             configuration.resume.retry(backoff(maxAttempts, minBackoff));
                             break;
                         case FIXED_DELAY:
-                            maxAttempts = orElse(source.getLong(RSOCKET_SERVER_RESUME_RETRY_FIXED_DELAY_MAX_ATTEMPTS_KEY), DEFAULT_RETRY_MAX_ATTEMPTS);
-                            Duration fixedDelay = orElse(source.getDuration(RSOCKET_SERVER_RESUME_RETRY_FIXED_DELAY_KEY), DEFAULT_RETRY_FIXED_DELAY);
+                            maxAttempts = orElse(source.getLong(SERVER_RESUME_RETRY_FIXED_DELAY_MAX_ATTEMPTS_KEY), DEFAULT_RETRY_MAX_ATTEMPTS);
+                            Duration fixedDelay = orElse(source.getDuration(SERVER_RESUME_RETRY_FIXED_DELAY_KEY), DEFAULT_RETRY_FIXED_DELAY);
                             configuration.resume.retry(fixedDelay(maxAttempts, fixedDelay));
                             break;
                         case MAX:
-                            int max = orElse(source.getInt(RSOCKET_SERVER_RESUME_RETRY_MAX_KEY), DEFAULT_RETRY_MAX);
+                            int max = orElse(source.getInt(SERVER_RESUME_RETRY_MAX_KEY), DEFAULT_RETRY_MAX);
                             configuration.resume.retry(max(max));
                             break;
                         case MAX_IN_A_ROW:
-                            int maxInRow = orElse(source.getInt(RSOCKET_SERVER_RESUME_RETRY_MAX_IN_ROW_KEY), DEFAULT_RETRY_MAX_IN_ROW);
+                            int maxInRow = orElse(source.getInt(SERVER_RESUME_RETRY_MAX_IN_ROW_KEY), DEFAULT_RETRY_MAX_IN_ROW);
                             configuration.resume.retry(maxInARow(maxInRow));
                             break;
                         case INDEFINITELY:
@@ -109,16 +109,16 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                 }
             }
 
-            configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(RSOCKET_SERVER_PAYLOAD_DECODER_KEY)) == DEFAULT
+            configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(SERVER_PAYLOAD_DECODER_KEY)) == DEFAULT
                     ? PayloadDecoder.DEFAULT
                     : PayloadDecoder.ZERO_COPY;
 
-            configuration.maxInboundPayloadSize = orElse(source.getInt(RSOCKET_SERVER_MAX_INBOUND_PAYLOAD_SIZE_KEY), 0);
+            configuration.maxInboundPayloadSize = orElse(source.getInt(SERVER_MAX_INBOUND_PAYLOAD_SIZE_KEY), 0);
 
-            configuration.transport = rsocketTransport(source.getString(RSOCKET_SERVER_TRANSPORT_MODE_KEY));
+            configuration.transport = rsocketTransport(source.getString(SERVER_TRANSPORT_MODE_KEY));
 
-            int port = orElse(source.getInt(RSOCKET_SERVER_TRANSPORT_PORT_KEY), DEFAULT_PORT);
-            String host = orElse(source.getString(RSOCKET_SERVER_TRANSPORT_HOST_KEY), BROADCAST_IP_ADDRESS);
+            int port = orElse(source.getInt(SERVER_TRANSPORT_PORT_KEY), DEFAULT_PORT);
+            String host = orElse(source.getString(SERVER_TRANSPORT_HOST_KEY), BROADCAST_IP_ADDRESS);
 
             switch (configuration.transport) {
                 case TCP:

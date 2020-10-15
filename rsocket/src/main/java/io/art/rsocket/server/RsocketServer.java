@@ -47,7 +47,7 @@ public class RsocketServer implements Server {
 
     @Override
     public void start() {
-        String message = transportMode == TCP ? RSOCKET_TCP_SERVER_STARTED_MESSAGE : RSOCKET_WS_SERVER_STARTED_MESSAGE;
+        String message = transportMode == TCP ? TCP_SERVER_STARTED_MESSAGE : WS_SERVER_STARTED_MESSAGE;
         RsocketModuleConfiguration configuration = rsocketModule().configuration();
         RSocketServer server = RSocketServer.create((payload, socket) -> Mono.just(new ServerRsocket(payload, socket)));
         if (configuration.getFragmentationMtu() > 0) {
@@ -73,7 +73,7 @@ public class RsocketServer implements Server {
         Disposable value;
         if (nonNull(value = disposable.getAndSet(null))) {
             value.dispose();
-            getLogger().info(RSOCKET_STOPPED);
+            getLogger().info(SERVER_STOPPED);
         }
     }
 
