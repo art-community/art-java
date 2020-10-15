@@ -41,8 +41,10 @@ public class RsocketCommunicator {
     private String methodId;
     private DataFormat dataFormat;
 
-    public RsocketCommunicator(DataFormat dataFormat) {
-        this(dataFormat, RSocketClient.from(RSocketConnector.create().connect(TcpClientTransport.create(123))));
+    public RsocketCommunicator(DataFormat dataFormat, Value value) {
+        reader = new RsocketPayloadReader(dataFormat, dataFormat);
+        writer = new RsocketPayloadWriter(dataFormat, dataFormat);
+        client = from(RSocketConnector.create().setupPayload(writer.writePayloadData(value)).connect(TcpClientTransport.create(123)));
     }
 
     public RsocketCommunicator(DataFormat dataFormat, RSocketClient client) {
