@@ -19,18 +19,38 @@
 package io.art.rsocket.state;
 
 import io.art.core.module.*;
-import io.art.rsocket.server.*;
 import io.rsocket.*;
 import lombok.*;
+import reactor.util.context.*;
 import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import java.util.*;
 
 public class RsocketModuleState implements ModuleState {
     @Getter
-    private final List<RSocket> rsocketClients = linkedListOf();
+    private final List<RSocket> connectedClients = linkedListOf();
 
-    public RSocket registerRsocket(RSocket rsocket) {
-        rsocketClients.add(rsocket);
+    private final ThreadLocal<RsocketThreadLocalState> threadLocalState = new ThreadLocal<>();
+
+    public RSocket registerClient(RSocket rsocket) {
+        connectedClients.add(rsocket);
         return rsocket;
+    }
+
+    public RsocketModuleState setThreadLocalState(RsocketThreadLocalState state) {
+        threadLocalState.set(state);
+        return this;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class RsocketThreadLocalState {
+        private RSocket requesterRsocket;
+
+        public static RsocketThreadLocalState fromContext(Context context) {
+            RsocketThreadLocalState localState = new RsocketThreadLocalState();
+            localState.requesterRsocket = context.get(REQUESTER_RSOCKET_KEY);
+            return localState;
+        }
     }
 }

@@ -31,10 +31,13 @@ import reactor.core.publisher.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.entity.constants.EntityConstants.*;
 import static io.art.entity.mime.MimeTypeDataFormatMapper.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.module.RsocketModule.*;
+import static io.art.rsocket.state.RsocketModuleState.RsocketThreadLocalState.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
+import static reactor.core.publisher.Mono.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -70,18 +73,20 @@ public class ServerRsocket implements RSocket {
     public Mono<Void> fireAndForget(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
         if (isNull(payloadValue)) {
-            return Mono.never();
+            return never();
         }
-        return specification.serve(Flux.just(payloadValue.getValue())).then();
+        Flux<Value> input = addContext(Flux.just(payloadValue.getValue()));
+        return specification.serve(input).then();
     }
 
     @Override
     public Mono<Payload> requestResponse(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
         if (isNull(payloadValue)) {
-            return Mono.empty();
+            return empty();
         }
-        return specification.serve(Flux.just(payloadValue.getValue())).map(writer::writePayloadData).last();
+        Flux<Value> input = addContext(Flux.just(payloadValue.getValue()));
+        return specification.serve(input).map(writer::writePayloadData).last();
     }
 
     @Override
@@ -90,7 +95,8 @@ public class ServerRsocket implements RSocket {
         if (isNull(payloadValue)) {
             return Flux.empty();
         }
-        return specification.serve(Flux.just(payloadValue.getValue())).map(writer::writePayloadData);
+        Flux<Value> input = addContext(Flux.just(payloadValue.getValue()));
+        return specification.serve(input).map(writer::writePayloadData);
     }
 
     @Override
@@ -98,11 +104,12 @@ public class ServerRsocket implements RSocket {
         EmitterProcessor<Value> inputProcessor = EmitterProcessor.create();
         FluxSink<Value> inputEmitter = inputProcessor.sink();
         Consumer<Payload> sendPayload = payload -> apply(reader.readPayloadData(payload), value -> inputEmitter.next(value.getValue()));
-        Flux<Value> inputFlux = inputProcessor.doOnSubscribe(subscription -> {
-            inputEmitter.onRequest(subscription::request);
-            inputEmitter.onCancel(subscription::cancel);
-            inputEmitter.onDispose(Flux.from(payloads).subscribe(sendPayload, inputEmitter::error, inputEmitter::complete));
-        });
+        Flux<Value> inputFlux = addContext(inputProcessor)
+                .doOnSubscribe(subscription -> {
+                    inputEmitter.onRequest(subscription::request);
+                    inputEmitter.onCancel(subscription::cancel);
+                    inputEmitter.onDispose(Flux.from(payloads).subscribe(sendPayload, inputEmitter::error, inputEmitter::complete));
+                });
         return specification.serve(inputFlux).map(writer::writePayloadData);
     }
 
@@ -110,8 +117,16 @@ public class ServerRsocket implements RSocket {
     public Mono<Void> metadataPush(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadMetaData(payload);
         if (isNull(payloadValue)) {
-            return Mono.never();
+            return never();
         }
-        return specification.serve(Flux.just(payloadValue.getValue())).then();
+        Flux<Value> input = addContext(Flux.just(payloadValue.getValue()));
+        return specification.serve(input).then();
+    }
+
+    private <T> Flux<T> addContext(Flux<T> flux) {
+        return flux.subscriberContext(context -> context.putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket))
+                .flatMap(value -> subscriberContext()
+                        .doOnNext(context -> rsocketModule().state().setThreadLocalState(fromContext(context)))
+                        .map(context -> value).flux());
     }
 }
