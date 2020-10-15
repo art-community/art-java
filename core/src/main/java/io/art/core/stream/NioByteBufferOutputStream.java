@@ -18,21 +18,67 @@
 
 package io.art.core.stream;
 
-import lombok.*;
+import io.art.core.extensions.*;
 import java.io.*;
 import java.nio.*;
 
-@AllArgsConstructor
 public class NioByteBufferOutputStream extends OutputStream {
-    protected final ByteBuffer buffer;
+    private final int initialCapacity;
+    private final int initialPosition;
+    private ByteBuffer buffer;
 
-    @Override
+    public NioByteBufferOutputStream(ByteBuffer buffer) {
+        this.buffer = buffer;
+        this.initialPosition = buffer.position();
+        this.initialCapacity = buffer.capacity();
+    }
+
     public void write(int oneByte) {
+        ensureRemaining(1);
         buffer.put((byte) oneByte);
     }
 
-    @Override
-    public void write(byte[] bytes, int offset, int lenght) {
-        buffer.put(bytes, offset, lenght);
+    public void write(byte[] bytes, int offset, int length) {
+        ensureRemaining(length);
+        buffer.put(bytes, offset, length);
+    }
+
+    public void write(ByteBuffer sourceBuffer) {
+        ensureRemaining(sourceBuffer.remaining());
+        buffer.put(sourceBuffer);
+    }
+
+    public ByteBuffer buffer() {
+        return buffer;
+    }
+
+    public int position() {
+        return buffer.position();
+    }
+
+    public int remaining() {
+        return buffer.remaining();
+    }
+
+    public int limit() {
+        return buffer.limit();
+    }
+
+    public void position(int position) {
+        ensureRemaining(position - buffer.position());
+        buffer.position(position);
+    }
+
+    public int initialCapacity() {
+        return initialCapacity;
+    }
+
+    public void ensureRemaining(int remainingBytesRequired) {
+        if (remainingBytesRequired > buffer.remaining())
+            expandBuffer(remainingBytesRequired);
+    }
+
+    private void expandBuffer(int remainingRequired) {
+        buffer = NioBufferExtensions.expand(buffer, initialPosition, remainingRequired);
     }
 }

@@ -25,10 +25,9 @@ import io.art.protobuf.exception.*;
 import lombok.experimental.*;
 import static com.google.protobuf.UnknownFieldSet.*;
 import static com.google.protobuf.UnsafeByteOperations.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.handler.ExceptionHandler.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.protobuf.constants.ProtobufConstants.*;
 import static io.art.protobuf.constants.ProtobufConstants.ExceptionMessages.*;
@@ -37,17 +36,25 @@ import static java.util.Objects.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.function.*;
 
 @UtilityClass
 public class ProtobufEntityWriter {
-    public static byte[] writeProtobufToBytes(io.art.entity.immutable.Value value) {
-        return let(writeProtobuf(value), MessageLite::toByteArray, EMPTY_BYTES);
+    public static void writeProtobuf(io.art.entity.immutable.Value value, OutputStream outputStream) {
+        if (io.art.entity.immutable.Value.valueIsNull(value)) {
+            return;
+        }
+        try {
+            Value protobuf = writeProtobuf(value);
+            if (nonNull(protobuf)) {
+                protobuf.writeTo(outputStream);
+            }
+        } catch (IOException ioException) {
+            throw new ProtobufException(ioException);
+        }
     }
 
-    public static void writeProtobuf(io.art.entity.immutable.Value value, OutputStream outputStream) {
-        apply(writeProtobuf(value), result -> consumeException((Function<Throwable, RuntimeException>) ProtobufException::new)
-                .run(() -> result.writeTo(outputStream)));
+    public static byte[] writeProtobufToBytes(io.art.entity.immutable.Value value) {
+        return let(writeProtobuf(value), MessageLite::toByteArray, EMPTY_BYTES);
     }
 
     public static void writeProtobuf(io.art.entity.immutable.Value value, Path path) {
@@ -88,6 +95,7 @@ public class ProtobufEntityWriter {
         }
         throw new ProtobufException(format(VALUE_TYPE_NOT_SUPPORTED, value.getType()));
     }
+
 
     private static com.google.protobuf.Value writeArray(ArrayValue array) {
         ListValue.Builder listBuilder = ListValue.newBuilder();

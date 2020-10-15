@@ -18,20 +18,23 @@
 
 package io.art.message.pack.descriptor;
 
+import io.art.core.extensions.*;
+import io.art.core.stream.*;
 import io.art.entity.immutable.*;
-import io.art.message.pack.exception.*;
+import io.art.message.pack.exception.MessagePackException;
 import lombok.experimental.*;
 import org.msgpack.core.*;
-import org.msgpack.core.buffer.*;
-import static io.art.core.constants.ArrayConstants.*;
+import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.message.pack.constants.MessagePackConstants.ExceptionMessages.*;
+import static java.nio.ByteBuffer.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static org.msgpack.core.MessagePack.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.io.*;
+import java.nio.*;
 import java.nio.file.*;
 import java.util.*;
 
@@ -42,30 +45,27 @@ public class MessagePackEntityWriter {
     }
 
     public static byte[] writeMessagePackToBytes(Value value) {
-        if (Value.valueIsNull(value)) {
-            return EMPTY_BYTES;
+        ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
+        try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
+            writeMessagePack(value, outputStream);
+        } catch (IOException ioException) {
+            throw new MessagePackException(ioException);
         }
-        try (ArrayBufferOutput output = new ArrayBufferOutput();
-             MessagePacker packer = newDefaultPacker(output)) {
-            packer.packValue(writeMessagePack(value));
-            return output.toMessageBuffer().toByteArray();
-        } catch (Throwable throwable) {
-            throw new MessagePackMappingException(throwable);
-        }
+        byte[] byteArray = NioBufferExtensions.toByteArray(byteBuffer);
+        byteBuffer.clear();
+        return byteArray;
     }
 
     public static void writeMessagePack(Value value, OutputStream outputStream) {
         if (Value.valueIsNull(value)) {
             return;
         }
-        try (OutputStreamBufferOutput output = new OutputStreamBufferOutput(outputStream);
-             MessagePacker packer = newDefaultPacker(output)) {
+        try (MessagePacker packer = newDefaultPacker(outputStream)) {
             packer.packValue(writeMessagePack(value));
         } catch (Throwable throwable) {
-            throw new MessagePackMappingException(throwable);
+            throw new MessagePackException(throwable);
         }
     }
-
 
     public static org.msgpack.value.Value writeMessagePack(Value value) {
         if (valueIsNull(value)) return null;
@@ -80,6 +80,7 @@ public class MessagePackEntityWriter {
         }
         return null;
     }
+
 
     private static org.msgpack.value.Value writePrimitive(Primitive primitive) {
         if (valueIsNull(primitive)) return null;
@@ -99,7 +100,7 @@ public class MessagePackEntityWriter {
             case BOOL:
                 return newBoolean(primitive.getBool());
         }
-        throw new MessagePackMappingException(format(VALUE_TYPE_NOT_SUPPORTED, primitive.getType()));
+        throw new MessagePackException(format(VALUE_TYPE_NOT_SUPPORTED, primitive.getType()));
     }
 
     private static org.msgpack.value.Value writeArray(ArrayValue array) {

@@ -17,7 +17,7 @@ public class JsonEntityPrettyWriter {
         try {
             outputStream.write(prettyWriteJson(value).getBytes(context().configuration().getCharset()));
         } catch (IOException ioException) {
-            throw new JsonMappingException(ioException);
+            throw new JsonException(ioException);
         }
     }
 

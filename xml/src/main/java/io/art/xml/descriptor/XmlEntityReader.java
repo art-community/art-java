@@ -75,7 +75,7 @@ public class XmlEntityReader {
             XmlEntityBuilder root = getRootElement(reader);
             return root.create();
         } catch (Throwable throwable) {
-            throw new XmlMappingException(throwable);
+            throw new XmlException(throwable);
         } finally {
             if (nonNull(reader)) {
                 try {
@@ -98,7 +98,7 @@ public class XmlEntityReader {
             rootElement.prefix(prefix);
             return rootElement;
         }
-        throw new XmlMappingException(INCORRECT_XML_STRUCTURE);
+        throw new XmlException(INCORRECT_XML_STRUCTURE);
     }
 
     private static XmlEntityBuilder parseXml(XMLStreamReader parser) throws XMLStreamException {
@@ -141,7 +141,7 @@ public class XmlEntityReader {
             }
         }
 
-        throw new XmlMappingException(XML_FILE_HAS_NOT_END_DOCUMENT_TAG);
+        throw new XmlException(XML_FILE_HAS_NOT_END_DOCUMENT_TAG);
     }
 
     private static ImmutableMap<String, String> getAttributes(XMLStreamReader parser) {

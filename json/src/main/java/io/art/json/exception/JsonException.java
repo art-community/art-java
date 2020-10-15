@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.xml.exception;
+package io.art.json.exception;
 
-public class XmlMappingException extends RuntimeException {
-    public XmlMappingException(String message) {
+public class JsonException extends RuntimeException {
+    public JsonException(String message) {
         super(message);
     }
 
-    public XmlMappingException(Throwable throwable) {
+    public JsonException(Throwable throwable) {
         super(throwable);
     }
 }

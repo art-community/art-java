@@ -19,63 +19,58 @@
 package io.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
-import io.art.core.checker.*;
+import io.art.core.extensions.*;
+import io.art.core.stream.*;
 import io.art.entity.immutable.*;
 import io.art.json.exception.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.constants.ArrayConstants.*;
+import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.json.module.JsonModule.*;
+import static java.nio.ByteBuffer.*;
 import java.io.*;
+import java.nio.*;
 import java.nio.file.*;
 import java.util.*;
 
 @UtilityClass
 public class JsonEntityWriter {
-    public static byte[] writeJsonToBytes(Value value) {
-        String json = writeJson(value);
-        if (EmptinessChecker.isEmpty(json)) {
-            return EMPTY_BYTES;
-        }
-        return json.getBytes(context().configuration().getCharset());
+    public static void writeJson(Value value, OutputStream outputStream) {
+        writeJson(jsonModule().configuration().getObjectMapper().getFactory(), value, outputStream);
     }
 
-    public static void writeJson(Value value, OutputStream outputStream) {
-        try {
-            String json = writeJson(value);
-            if (EmptinessChecker.isEmpty(json)) {
-                return;
-            }
-            outputStream.write(json.getBytes());
+    public static byte[] writeJsonToBytes(Value value) {
+        ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
+        try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
+            writeJson(value, outputStream);
         } catch (IOException ioException) {
-            throw new JsonMappingException(ioException);
+            throw new JsonException(ioException);
         }
+        byte[] byteArray = NioBufferExtensions.toByteArray(byteBuffer);
+        byteBuffer.clear();
+        return byteArray;
     }
 
     public static void writeJson(Value value, Path path) {
-        String json = writeJson(value);
-        if (EmptinessChecker.isEmpty(json)) {
-            return;
+        try (OutputStream outputStream = fileOutputStream(path)) {
+            writeJson(value, outputStream);
+        } catch (IOException ioException) {
+            throw new JsonException(ioException);
         }
-        writeFileQuietly(path, json);
     }
 
     public static String writeJson(Value value) {
-        return writeJson(jsonModule().configuration().getObjectMapper().getFactory(), value, false);
+        return new String(writeJsonToBytes(value), context().configuration().getCharset());
     }
 
-    public static String writeJson(JsonFactory jsonFactory, Value value, boolean prettyOutput) {
+    public static void writeJson(JsonFactory jsonFactory, Value value, OutputStream outputStream) {
         if (valueIsNull(value)) {
-            return null;
+            return;
         }
-        StringWriter stringWriter = new StringWriter();
-        try (JsonGenerator generator = jsonFactory.createGenerator(stringWriter)) {
-            if (prettyOutput) {
-                generator.useDefaultPrettyPrinter();
-            }
+        try (JsonGenerator generator = jsonFactory.createGenerator(outputStream)) {
             switch (value.getType()) {
                 case ENTITY:
                     writeJsonEntity(generator, asEntity(value));
@@ -84,26 +79,25 @@ public class JsonEntityWriter {
                     writeArray(generator, asArray(value));
                     break;
                 case BINARY:
-                    return Arrays.toString(asBinary(value).getContent());
+                    outputStream.write(Arrays.toString(asBinary(value).getContent()).getBytes());
                 case STRING:
-                    return asPrimitive(value).getString();
+                    outputStream.write(asPrimitive(value).getString().getBytes());
                 case LONG:
-                    return asPrimitive(value).getLong().toString();
+                    outputStream.write(asPrimitive(value).getLong().toString().getBytes());
                 case DOUBLE:
-                    return asPrimitive(value).getDouble().toString();
+                    outputStream.write(asPrimitive(value).getDouble().toString().getBytes());
                 case FLOAT:
-                    return asPrimitive(value).getFloat().toString();
+                    outputStream.write(asPrimitive(value).getFloat().toString().getBytes());
                 case INT:
-                    return asPrimitive(value).getInt().toString();
+                    outputStream.write(asPrimitive(value).getInt().toString().getBytes());
                 case BOOL:
-                    return asPrimitive(value).getBool().toString();
+                    outputStream.write(asPrimitive(value).getBool().toString().getBytes());
                 case BYTE:
-                    return asPrimitive(value).getByte().toString();
+                    outputStream.write(asPrimitive(value).getByte().toString().getBytes());
             }
         } catch (IOException ioException) {
-            throw new JsonMappingException(ioException);
+            throw new JsonException(ioException);
         }
-        return stringWriter.toString();
     }
 
 

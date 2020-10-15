@@ -18,62 +18,71 @@
 
 package io.art.xml.descriptor;
 
+import io.art.core.extensions.*;
+import io.art.core.stream.*;
 import io.art.entity.immutable.*;
 import io.art.xml.exception.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.constants.ArrayConstants.*;
+import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.entity.constants.EntityConstants.ValueType.XmlValueType.CDATA;
+import static io.art.entity.constants.EntityConstants.ValueType.XmlValueType.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.xml.constants.XmlDocumentConstants.*;
 import static io.art.xml.module.XmlModule.*;
+import static java.nio.ByteBuffer.*;
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.Objects.*;
 import javax.xml.stream.*;
 import java.io.*;
+import java.nio.*;
 import java.nio.file.*;
 import java.util.*;
 
 @UtilityClass
 public class XmlEntityWriter {
-    public static byte[] writeXmlToBytes(XmlEntity entity) throws XmlMappingException {
-        String xml = writeXml(xmlModule().configuration().getXmlOutputFactory(), entity);
-        if (isNull(xml) || isEmpty(xml)) return EMPTY_BYTES;
-        return xml.getBytes(context().configuration().getCharset());
-    }
-
-    public static void writeXml(XmlEntity entity, OutputStream outputStream) throws XmlMappingException {
+    public static void writeXml(XmlEntity entity, OutputStream outputStream) throws XmlException {
         try {
-            String xml = writeXml(xmlModule().configuration().getXmlOutputFactory(), entity);
-            if (isNull(xml) || isEmpty(xml)) return;
-            outputStream.write(xml.getBytes());
+            writeXml(xmlModule().configuration().getXmlOutputFactory(), entity, outputStream);
         } catch (Throwable throwable) {
-            throw new XmlMappingException(throwable);
+            throw new XmlException(throwable);
         }
     }
 
-    public static void writeXml(XmlEntity entity, Path path) throws XmlMappingException {
-        String xml = writeXml(xmlModule().configuration().getXmlOutputFactory(), entity);
-        if (isNull(xml) || isEmpty(xml)) return;
-        writeFileQuietly(path, xml);
+    public static byte[] writeXmlToBytes(XmlEntity entity) throws XmlException {
+        ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
+        try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
+            writeXml(entity, outputStream);
+        } catch (IOException ioException) {
+            throw new XmlException(ioException);
+        }
+        byte[] byteArray = NioBufferExtensions.toByteArray(byteBuffer);
+        byteBuffer.clear();
+        return byteArray;
     }
 
-    public static String writeXml(XmlEntity entity) throws XmlMappingException {
-        return writeXml(xmlModule().configuration().getXmlOutputFactory(), entity);
+    public static void writeXml(XmlEntity entity, Path path) throws XmlException {
+        try (OutputStream outputStream = fileOutputStream(path)) {
+            writeXml(entity, outputStream);
+        } catch (IOException ioException) {
+            throw new XmlException(ioException);
+        }
     }
 
-    public static String writeXml(XMLOutputFactory outputFactory, XmlEntity entity) throws XmlMappingException {
-        if (isNull(entity)) return null;
+    public static String writeXml(XmlEntity entity) throws XmlException {
+        return new String(writeXmlToBytes(entity), context().configuration().getCharset());
+    }
+
+    public static void writeXml(XMLOutputFactory outputFactory, XmlEntity entity, OutputStream outputStream) throws XmlException {
+        if (isNull(entity)) return;
         XMLStreamWriter writer = null;
-        try (OutputStream outputStream = new ByteArrayOutputStream()) {
+        try {
             writer = outputFactory.createXMLStreamWriter(outputStream, context().configuration().getCharset().name());
             writeAllElements(writer, entity);
-            return outputStream.toString();
         } catch (Throwable throwable) {
-            throw new XmlMappingException(throwable);
+            throw new XmlException(throwable);
         } finally {
             if (nonNull(writer)) {
                 try {
@@ -160,10 +169,7 @@ public class XmlEntityWriter {
     private static void writeCData(XMLStreamWriter xmlStreamWriter, XmlEntity entity) throws XMLStreamException {
         XmlValue<?> xmlValue = entity.getXmlValue();
         if (CDATA.equals(xmlValue.getType())) {
-            String cDataValue = writeXml(xmlModule().configuration().getXmlOutputFactory(), (XmlEntity) xmlValue.getValue());
-            if (nonNull(cDataValue)) {
-                xmlStreamWriter.writeCData(cDataValue);
-            }
+            xmlStreamWriter.writeCData(writeXml((XmlEntity) xmlValue.getValue()));
         }
     }
 

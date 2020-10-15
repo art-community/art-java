@@ -98,7 +98,7 @@ public class JsonEntityReader {
             }
             return null;
         } catch (IOException ioException) {
-            throw new JsonMappingException(ioException);
+            throw new JsonException(ioException);
         }
     }
 

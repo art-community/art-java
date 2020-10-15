@@ -18,12 +18,12 @@
 
 package io.art.message.pack.exception;
 
-public class MessagePackMappingException extends RuntimeException {
-    public MessagePackMappingException(Throwable throwable) {
+public class MessagePackException extends RuntimeException {
+    public MessagePackException(Throwable throwable) {
         super(throwable);
     }
 
-    public MessagePackMappingException(String message) {
+    public MessagePackException(String message) {
         super(message);
     }
 }

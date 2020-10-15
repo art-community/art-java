@@ -22,7 +22,7 @@ import io.art.core.stream.*;
 import io.art.entity.builder.*;
 import io.art.entity.immutable.ArrayValue;
 import io.art.entity.immutable.Value;
-import io.art.message.pack.exception.*;
+import io.art.message.pack.exception.MessagePackException;
 import io.netty.buffer.*;
 import lombok.experimental.*;
 import org.msgpack.core.*;
@@ -64,7 +64,7 @@ public class MessagePackEntityReader {
         try (MessageUnpacker unpacker = newDefaultUnpacker(inputStream)) {
             return readMessagePack(unpacker.unpackValue());
         } catch (Throwable throwable) {
-            throw new MessagePackMappingException(throwable);
+            throw new MessagePackException(throwable);
         }
     }
 
@@ -173,7 +173,7 @@ public class MessagePackEntityReader {
             case NIL:
                 return null;
         }
-        throw new MessagePackMappingException(format(VALUE_TYPE_NOT_SUPPORTED, value.getValueType()));
+        throw new MessagePackException(format(VALUE_TYPE_NOT_SUPPORTED, value.getValueType()));
     }
 
     private static ArrayValue readArray(org.msgpack.value.ArrayValue array) {
