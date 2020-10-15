@@ -43,6 +43,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode
 import static io.art.rsocket.constants.RsocketModuleConstants.RetryPolicy.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
+import static io.rsocket.frame.FrameLengthCodec.FRAME_LENGTH_MASK;
 import static java.util.Optional.*;
 import static reactor.util.retry.Retry.*;
 import java.time.*;
@@ -58,6 +59,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private Resume resume;
     private PayloadDecoder payloadDecoder;
     private int maxInboundPayloadSize;
+    private int tcpMaxFrameLength;
     private TcpServer tcpServer;
     private HttpServer httpWebSocketServer;
     private TransportMode transport;
@@ -132,6 +134,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             switch (configuration.transport) {
                 case TCP:
                     configuration.tcpServer = TcpServer.create().port(port).host(host);
+                    configuration.tcpMaxFrameLength = orElse(source.getInt(SERVER_TRANSPORT_TCP_MAX_FRAME_LENHGT), FRAME_LENGTH_MASK);
                     break;
                 case WEB_SOCKET:
                     configuration.httpWebSocketServer = HttpServer.create().port(port).host(host);

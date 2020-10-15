@@ -19,7 +19,6 @@
 package io.art.rsocket.server;
 
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.interceptor.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
 import io.rsocket.core.*;
@@ -63,7 +62,7 @@ public class RsocketServer implements Server {
             server.resume(resume);
         }
         ServerTransport<CloseableChannel> transport = transportMode == TCP
-                ? TcpServerTransport.create(configuration.getTcpServer())
+                ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
                 : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
         server
                 .interceptors(interceptorRegistry -> configuration.getInterceptorConfigurer().accept(interceptorRegistry))

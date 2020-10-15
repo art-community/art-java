@@ -79,6 +79,7 @@ public interface RsocketModuleConstants {
         String SERVER_TRANSPORT_MODE_KEY = "rsocket.server.transport.mode";
         String SERVER_TRANSPORT_PORT_KEY = "rsocket.server.transport.host";
         String SERVER_TRANSPORT_HOST_KEY = "rsocket.server.transport.port";
+        String SERVER_TRANSPORT_TCP_MAX_FRAME_LENHGT = "rsocket.server.transport.tcp.maxFrameLength";
         String SERVER_SERVICES_KEY = "rsocket.server.services";
     }
 
@@ -146,5 +147,13 @@ public interface RsocketModuleConstants {
             if (ZERO_COPY.decoder.equalsIgnoreCase(decoder)) return ZERO_COPY;
             return DEFAULT;
         }
+    }
+
+    enum CommunicationMode {
+        FIRE_AND_FORGET,
+        REQUEST_RESPONSE,
+        REQUEST_STREAM,
+        REQUEST_CHANNEL,
+        METADATA_PUSH;
     }
 }
