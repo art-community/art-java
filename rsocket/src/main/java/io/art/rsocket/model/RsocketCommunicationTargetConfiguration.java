@@ -23,7 +23,7 @@ import io.rsocket.plugins.*;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import java.util.*;
 
@@ -38,7 +38,7 @@ public class RsocketCommunicationTargetConfiguration {
     @Setter
     private Integer webSocketPort;
     @Builder.Default
-    private final RsocketTransport transport = TCP;
+    private final TransportMode transport = TCP;
     @Builder.Default
     private final EntityConstants.DataFormat dataFormat = rsocketModule().configuration().getDefaultDataFormat();
     @Builder.Default

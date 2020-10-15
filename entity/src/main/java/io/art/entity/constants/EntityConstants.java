@@ -29,6 +29,7 @@ public interface EntityConstants {
         String TUPLE_NOT_SUPPORTED_VALUE_TYPE = "Value type: ''{0}'' not support for tuples";
         String NOT_PRIMITIVE_TYPE = "Not primitive type: ''{0}''";
         String XML_TAG_IS_EMPTY = "Xml tag is empty";
+        String UNSUPPORTED_DATA_FORMAT = "Data format not supported: ''{0}''";
     }
 
     enum ValueType {
@@ -44,50 +45,14 @@ public interface EntityConstants {
         BYTE,
         BINARY;
 
-        public static PrimitiveType asPrimitiveType(ValueType valueType) {
-            switch (valueType) {
-                case STRING:
-                    return PrimitiveType.STRING;
-                case LONG:
-                    return PrimitiveType.LONG;
-                case DOUBLE:
-                    return PrimitiveType.DOUBLE;
-                case INT:
-                    return PrimitiveType.INT;
-                case BOOL:
-                    return PrimitiveType.BOOL;
-                case BYTE:
-                    return PrimitiveType.BYTE;
-                case FLOAT:
-                    return PrimitiveType.FLOAT;
-                default:
-                    throw new ValueMappingException(format(NOT_PRIMITIVE_TYPE, valueType));
-            }
-        }
-
-        @Getter
-        @AllArgsConstructor
         public enum PrimitiveType {
-            STRING(String.class.getName()),
-            LONG(Long.class.getName()),
-            DOUBLE(Double.class.getName()),
-            FLOAT(Float.class.getName()),
-            INT(Integer.class.getName()),
-            BOOL(Boolean.class.getName()),
-            BYTE(Byte.class.getName());
-
-            private final String className;
-
-            public static PrimitiveType parseClassName(String className) {
-                if (STRING.getClassName().equalsIgnoreCase(className)) return STRING;
-                if (LONG.getClassName().equalsIgnoreCase(className)) return LONG;
-                if (DOUBLE.getClassName().equalsIgnoreCase(className)) return DOUBLE;
-                if (INT.getClassName().equalsIgnoreCase(className)) return INT;
-                if (BOOL.getClassName().equalsIgnoreCase(className)) return BOOL;
-                if (BYTE.getClassName().equalsIgnoreCase(className)) return BYTE;
-                if (FLOAT.getClassName().equalsIgnoreCase(className)) return FLOAT;
-                throw new ValueMappingException(format(NOT_PRIMITIVE_TYPE, className));
-            }
+            STRING,
+            LONG,
+            DOUBLE,
+            FLOAT,
+            INT,
+            BOOL,
+            BYTE;
 
             public static ValueType asValueType(PrimitiveType primitiveType) {
                 switch (primitiveType) {
@@ -109,10 +74,6 @@ public interface EntityConstants {
                         throw new ValueMappingException(format(NOT_PRIMITIVE_TYPE, primitiveType));
                 }
             }
-
-            public String getClassName() {
-                return className;
-            }
         }
 
         public enum XmlValueType {
@@ -121,11 +82,22 @@ public interface EntityConstants {
         }
     }
 
+    @Getter
+    @AllArgsConstructor
     enum DataFormat {
-        PROTOBUF,
-        JSON,
-        XML,
-        MESSAGE_PACK
+        PROTOBUF("protobuf"),
+        JSON("json"),
+        XML("xml"),
+        MESSAGE_PACK("messagePack");
 
+        private final String format;
+
+        public static DataFormat dataFormat(String format, DataFormat fallback) {
+            if (PROTOBUF.format.equalsIgnoreCase(format)) return PROTOBUF;
+            if (JSON.format.equalsIgnoreCase(format)) return JSON;
+            if (XML.format.equalsIgnoreCase(format)) return XML;
+            if (MESSAGE_PACK.format.equalsIgnoreCase(format)) return MESSAGE_PACK;
+            return fallback;
+        }
     }
 }

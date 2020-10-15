@@ -25,22 +25,9 @@ import static java.text.MessageFormat.*;
 import java.time.*;
 
 public interface RsocketModuleConstants {
-    String RSOCKET_MODULE_ID = "RSOCKET_MODULE";
-    String RSOCKET_FUNCTION_SERVICE = "RSOCKET_FUNCTION_SERVICE";
-    String REQUEST_DATA = "requestData";
-    String RSOCKET_SERVICE_TYPE = "RSOCKET_SERVICE";
     String RSOCKET_COMMUNICATION_SERVICE_TYPE = "RSOCKET_COMMUNICATION";
     String RSOCKET_COMMUNICATION_TARGET_CONFIGURATION_NOT_FOUND = "RSocket communication target configuration was not found for serviceId: ''{0}''";
     String RSOCKET_CLIENT_DISPOSING = "Disposing RSocket client";
-    int DEFAULT_RSOCKET_TCP_PORT = 9000;
-    int DEFAULT_RSOCKET_WEB_SOCKET_PORT = 10000;
-    long DEFAULT_RSOCKET_RESUME_SESSION_DURATION = 24 * 60 * 60 * 1000;
-    long DEFAULT_RSOCKET_RESUME_STREAM_TIMEOUT = 24 * 60 * 60 * 1000;
-
-    enum RsocketTransport {
-        TCP,
-        WEB_SOCKET
-    }
 
     interface ExceptionMessages {
         String SPECIFICATION_NOT_FOUND = "Setup payload was null or not contained serviceId, methodId. Default service method id was not specified in configuration";
@@ -86,17 +73,22 @@ public interface RsocketModuleConstants {
         String RSOCKET_DEFAULT_SERVER_DATA_FORMAT_KEY = "rsocket.server.defaults.dataFormat";
         String RSOCKET_SERVER_TRACING_KEY = "rsocket.server.tracing";
         String RSOCKET_SERVER_FRAGMENTATION_MTU_KEY = "rsocket.server.fragmentationMtu";
-        String RSOCKET_RESUME_SECTION = "rsocket.server.resume";
-        String RSOCKET_RESUME_CLEANUP_STORE_ON_KEEP_ALIVE = "rsocket.server.resume.cleanupStoreOnKeepAlive";
-        String RSOCKET_RESUME_SESSION_DURATION = "rsocket.server.resume.sessionDuration";
-        String RSOCKET_RESUME_STREAM_TIMEOUT = "rsocket.server.resume.streamTimeout";
-        String RSOCKET_RESUME_RETRY_POLICY = "rsocket.server.resume.retry.policy";
-        String RSOCKET_RESUME_RETRY_BACKOFF_MAX_ATTEMPTS = "rsocket.server.resume.retry.backoff.maxAttempts";
-        String RSOCKET_RESUME_RETRY_BACKOFF_MIN_BACKOFF = "rsocket.server.resume.retry.backoff.minBackoff";
-        String RSOCKET_RESUME_RETRY_FIXED_DELAY_MAX_ATTEMPTS = "rsocket.server.resume.retry.fixedDelay.maxAttempts";
-        String RSOCKET_RESUME_RETRY_FIXED_DELAY = "rsocket.server.resume.retry.fixedDelay.delay";
-        String RSOCKET_RESUME_RETRY_MAX = "rsocket.server.resume.retry.max";
-        String RSOCKET_RESUME_RETRY_MAX_IN_ROW = "rsocket.server.resume.retry.maxInRow";
+        String RSOCKET_SERVER_RESUME_SECTION = "rsocket.server.resume";
+        String RSOCKET_SERVER_RESUME_CLEANUP_STORE_ON_KEEP_ALIVE_KEY = "rsocket.server.resume.cleanupStoreOnKeepAlive";
+        String RSOCKET_SERVER_RESUME_SESSION_DURATION_KEY = "rsocket.server.resume.sessionDuration";
+        String RSOCKET_SERVER_RESUME_STREAM_TIMEOUT_KEY = "rsocket.server.resume.streamTimeout";
+        String RSOCKET_SERVER_RESUME_RETRY_POLICY_KEY = "rsocket.server.resume.retry.policy";
+        String RSOCKET_SERVER_RESUME_RETRY_BACKOFF_MAX_ATTEMPTS_KEY = "rsocket.server.resume.retry.backoff.maxAttempts";
+        String RSOCKET_SERVER_RESUME_RETRY_BACKOFF_MIN_BACKOFF_KEY = "rsocket.server.resume.retry.backoff.minBackoff";
+        String RSOCKET_SERVER_RESUME_RETRY_FIXED_DELAY_MAX_ATTEMPTS_KEY = "rsocket.server.resume.retry.fixedDelay.maxAttempts";
+        String RSOCKET_SERVER_RESUME_RETRY_FIXED_DELAY_KEY = "rsocket.server.resume.retry.fixedDelay.delay";
+        String RSOCKET_SERVER_RESUME_RETRY_MAX_KEY = "rsocket.server.resume.retry.max";
+        String RSOCKET_SERVER_RESUME_RETRY_MAX_IN_ROW_KEY = "rsocket.server.resume.retry.maxInRow";
+        String RSOCKET_SERVER_PAYLOAD_DECODER_KEY = "rsocket.server.payloadDecoder";
+        String RSOCKET_SERVER_MAX_INBOUND_PAYLOAD_SIZE_KEY = "rsocket.server.maxInboundPayloadSize";
+        String RSOCKET_SERVER_TRANSPORT_MODE_KEY = "rsocket.server.transport.mode";
+        String RSOCKET_SERVER_TRANSPORT_PORT_KEY = "rsocket.server.transport.host";
+        String RSOCKET_SERVER_TRANSPORT_HOST_KEY = "rsocket.server.transport.port";
     }
 
     interface Defaults {
@@ -105,6 +97,23 @@ public interface RsocketModuleConstants {
         Duration DEFAULT_RETRY_FIXED_DELAY = Duration.ofSeconds(1);
         int DEFAULT_RETRY_MAX = 1;
         int DEFAULT_RETRY_MAX_IN_ROW = 1;
+        int DEFAULT_PORT = 9000;
+    }
+
+
+    @Getter
+    @AllArgsConstructor
+    enum TransportMode {
+        TCP("tcp"),
+        WEB_SOCKET("webSocket");
+
+        private final String transport;
+
+        public static TransportMode rsocketTransport(String transport) {
+            if (TCP.transport.equalsIgnoreCase(transport)) return TCP;
+            if (WEB_SOCKET.transport.equalsIgnoreCase(transport)) return WEB_SOCKET;
+            return TCP;
+        }
     }
 
     @Getter
@@ -125,6 +134,21 @@ public interface RsocketModuleConstants {
             if (MAX_IN_A_ROW.policy.equalsIgnoreCase(policy)) return MAX_IN_A_ROW;
             if (INDEFINITELY.policy.equalsIgnoreCase(policy)) return INDEFINITELY;
             throw new RsocketException(format(UNSUPPORTED_RETRY_POLICY, policy));
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    enum PayloadDecoderMode {
+        ZERO_COPY("zeroCopy"),
+        DEFAULT("default");
+
+        private final String decoder;
+
+        public static PayloadDecoderMode rsocketPayloadDecoder(String decoder) {
+            if (ZERO_COPY.decoder.equalsIgnoreCase(decoder)) return ZERO_COPY;
+            if (DEFAULT.decoder.equalsIgnoreCase(decoder)) return DEFAULT;
+            return DEFAULT;
         }
     }
 }

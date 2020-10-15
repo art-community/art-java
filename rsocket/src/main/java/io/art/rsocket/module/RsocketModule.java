@@ -36,7 +36,7 @@ import static lombok.AccessLevel.*;
 @Getter
 public class RsocketModule implements StatefulModule<RsocketModuleConfiguration, Configurator, RsocketModuleState> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule = context().getStatefulModule(RSOCKET_MODULE_ID);
+    private static final StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule = context().getStatefulModule(RsocketModule.class.getSimpleName());
     private final String id = RsocketModule.class.getSimpleName();
     private final RsocketModuleConfiguration configuration = new RsocketModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);

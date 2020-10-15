@@ -23,15 +23,23 @@ import io.art.core.source.*;
 import io.art.entity.constants.EntityConstants.*;
 import io.art.rsocket.configuration.RsocketResumeConfiguration.*;
 import io.art.rsocket.constants.*;
+import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.server.model.*;
+import io.rsocket.core.*;
+import io.rsocket.frame.decoder.*;
 import lombok.*;
+import reactor.netty.http.server.*;
+import reactor.netty.tcp.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.parser.EnumParser.*;
+import static io.art.core.constants.NetworkConstants.*;
 import static io.art.entity.constants.EntityConstants.DataFormat.*;
+import static io.art.rsocket.configurator.RsocketServerConfigurator.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RetryPolicy.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
 import java.time.*;
 
@@ -41,10 +49,12 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private ServiceMethodIdentifier defaultServiceMethod;
     private boolean tracing;
     private int fragmentationMtu;
-    private RsocketResumeConfiguration resume;
-    private String host;
-    private int tcpPort;
-    private int webSocketPort;
+    private Resume resume;
+    private PayloadDecoder payloadDecoder;
+    private int maxInboundPayloadSize;
+    private TcpServer tcpServer;
+    private HttpServer httpWebSocketServer;
+    private TransportMode transport;
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<RsocketModuleConfiguration, Configurator> {
@@ -54,51 +64,79 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         public Configurator from(ConfigurationSource source) {
             String serviceId = source.getString(RSOCKET_SERVER_DEFAULT_SERVICE_ID_KEY);
             String methodId = source.getString(RSOCKET_SERVER_DEFAULT_METHOD_ID_KEY);
+
             if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
                 configuration.defaultServiceMethod = serviceMethod(serviceId, methodId);
             }
 
-            configuration.defaultDataFormat = enumOf(DataFormat::valueOf, source.getString(RSOCKET_DEFAULT_SERVER_DATA_FORMAT_KEY), JSON);
+            configuration.defaultDataFormat = dataFormat(source.getString(RSOCKET_DEFAULT_SERVER_DATA_FORMAT_KEY), JSON);
             configuration.tracing = orElse(source.getBool(RSOCKET_SERVER_TRACING_KEY), false);
             configuration.fragmentationMtu = orElse(source.getInt(RSOCKET_SERVER_FRAGMENTATION_MTU_KEY), 0);
 
-            if (source.has(RSOCKET_RESUME_SECTION)) {
-                boolean cleanupStoreOnKeepAlive = orElse(source.getBool(RSOCKET_RESUME_CLEANUP_STORE_ON_KEEP_ALIVE), false);
-                Duration sessionDuration = source.getDuration(RSOCKET_RESUME_SESSION_DURATION);
-                Duration streamTimeout = source.getDuration(RSOCKET_RESUME_STREAM_TIMEOUT);
+            if (source.has(RSOCKET_SERVER_RESUME_SECTION)) {
+                boolean cleanupStoreOnKeepAlive = orElse(source.getBool(RSOCKET_SERVER_RESUME_CLEANUP_STORE_ON_KEEP_ALIVE_KEY), false);
+                Duration sessionDuration = source.getDuration(RSOCKET_SERVER_RESUME_SESSION_DURATION_KEY);
+                Duration streamTimeout = source.getDuration(RSOCKET_SERVER_RESUME_STREAM_TIMEOUT_KEY);
                 RsocketResumeConfigurationBuilder resumeConfigurationBuilder = RsocketResumeConfiguration.builder()
                         .sessionDuration(sessionDuration)
                         .streamTimeout(streamTimeout)
                         .cleanupStoreOnKeepAlive(cleanupStoreOnKeepAlive);
-                if (source.has(RSOCKET_RESUME_RETRY_POLICY)) {
-                    RsocketModuleConstants.RetryPolicy retryPolicy = rsocketRetryPolicy(source.getString(RSOCKET_RESUME_RETRY_POLICY));
+                if (source.has(RSOCKET_SERVER_RESUME_RETRY_POLICY_KEY)) {
+                    RsocketModuleConstants.RetryPolicy retryPolicy = rsocketRetryPolicy(source.getString(RSOCKET_SERVER_RESUME_RETRY_POLICY_KEY));
                     resumeConfigurationBuilder.retryPolicy(retryPolicy);
                     switch (retryPolicy) {
                         case BACKOFF:
-                            long maxAttempts = orElse(source.getLong(RSOCKET_RESUME_RETRY_BACKOFF_MAX_ATTEMPTS), DEFAULT_RETRY_MAX_ATTEMPTS);
-                            Duration minBackoff = orElse(source.getDuration(RSOCKET_RESUME_RETRY_BACKOFF_MIN_BACKOFF), DEFAULT_RETRY_MIN_BACKOFF);
+                            long maxAttempts = orElse(source.getLong(RSOCKET_SERVER_RESUME_RETRY_BACKOFF_MAX_ATTEMPTS_KEY), DEFAULT_RETRY_MAX_ATTEMPTS);
+                            Duration minBackoff = orElse(source.getDuration(RSOCKET_SERVER_RESUME_RETRY_BACKOFF_MIN_BACKOFF_KEY), DEFAULT_RETRY_MIN_BACKOFF);
                             resumeConfigurationBuilder.retryBackoffConfiguration(new RetryBackoffConfiguration(maxAttempts, minBackoff));
                             break;
                         case FIXED_DELAY:
-                            maxAttempts = orElse(source.getLong(RSOCKET_RESUME_RETRY_FIXED_DELAY_MAX_ATTEMPTS), DEFAULT_RETRY_MAX_ATTEMPTS);
-                            Duration fixedDelay = orElse(source.getDuration(RSOCKET_RESUME_RETRY_FIXED_DELAY), DEFAULT_RETRY_FIXED_DELAY);
+                            maxAttempts = orElse(source.getLong(RSOCKET_SERVER_RESUME_RETRY_FIXED_DELAY_MAX_ATTEMPTS_KEY), DEFAULT_RETRY_MAX_ATTEMPTS);
+                            Duration fixedDelay = orElse(source.getDuration(RSOCKET_SERVER_RESUME_RETRY_FIXED_DELAY_KEY), DEFAULT_RETRY_FIXED_DELAY);
                             resumeConfigurationBuilder.retryFixedDelayConfiguration(new RetryFixedDelayConfiguration(maxAttempts, fixedDelay));
                             break;
                         case MAX:
-                            int max = orElse(source.getInt(RSOCKET_RESUME_RETRY_MAX), DEFAULT_RETRY_MAX);
+                            int max = orElse(source.getInt(RSOCKET_SERVER_RESUME_RETRY_MAX_KEY), DEFAULT_RETRY_MAX);
                             resumeConfigurationBuilder.retryMaxConfiguration(new RetryMaxConfiguration(max));
                             break;
                         case MAX_IN_A_ROW:
-                            int maxInRow = orElse(source.getInt(RSOCKET_RESUME_RETRY_MAX_IN_ROW), DEFAULT_RETRY_MAX_IN_ROW);
+                            int maxInRow = orElse(source.getInt(RSOCKET_SERVER_RESUME_RETRY_MAX_IN_ROW_KEY), DEFAULT_RETRY_MAX_IN_ROW);
                             resumeConfigurationBuilder.retryMaxInRowConfiguration(new RetryMaxInRowConfiguration(maxInRow));
                             break;
                         case INDEFINITELY:
                             break;
                     }
                 }
-                configuration.resume = resumeConfigurationBuilder.build();
+                configuration.resume = configureResume(resumeConfigurationBuilder.build());
             }
 
+            configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(RSOCKET_SERVER_PAYLOAD_DECODER_KEY)) == DEFAULT
+                    ? PayloadDecoder.DEFAULT
+                    : PayloadDecoder.ZERO_COPY;
+
+            configuration.maxInboundPayloadSize = orElse(source.getInt(RSOCKET_SERVER_MAX_INBOUND_PAYLOAD_SIZE_KEY), 0);
+
+            configuration.transport = rsocketTransport(source.getString(RSOCKET_SERVER_TRANSPORT_MODE_KEY));
+
+            int port = orElse(source.getInt(RSOCKET_SERVER_TRANSPORT_PORT_KEY), DEFAULT_PORT);
+            String host = orElse(source.getString(RSOCKET_SERVER_TRANSPORT_HOST_KEY), BROADCAST_IP_ADDRESS);
+
+            switch (configuration.transport) {
+                case TCP:
+                    configuration.tcpServer = TcpServer.create().port(port).host(host);
+                    break;
+                case WEB_SOCKET:
+                    configuration.httpWebSocketServer = HttpServer.create().port(port).host(host);
+                    break;
+            }
+
+            return this;
+        }
+
+        @Override
+        public Configurator override(RsocketModuleConfiguration configuration) {
+            this.configuration.tcpServer = configuration.tcpServer;
+            this.configuration.httpWebSocketServer = configuration.httpWebSocketServer;
             return this;
         }
     }

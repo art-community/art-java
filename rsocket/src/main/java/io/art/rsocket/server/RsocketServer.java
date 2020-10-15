@@ -29,10 +29,9 @@ import reactor.core.*;
 import reactor.core.publisher.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.rsocket.configurator.RsocketServerConfigurator.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
@@ -40,7 +39,7 @@ import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
 public class RsocketServer implements Server {
-    private final RsocketTransport transport;
+    private final TransportMode transportMode;
     private final AtomicReference<Disposable> disposable = new AtomicReference<>();
 
     @Getter(lazy = true, value = PRIVATE)
@@ -48,19 +47,22 @@ public class RsocketServer implements Server {
 
     @Override
     public void start() {
-        String message = transport == TCP ? RSOCKET_TCP_SERVER_STARTED_MESSAGE : RSOCKET_WS_SERVER_STARTED_MESSAGE;
+        String message = transportMode == TCP ? RSOCKET_TCP_SERVER_STARTED_MESSAGE : RSOCKET_WS_SERVER_STARTED_MESSAGE;
         RsocketModuleConfiguration configuration = rsocketModule().configuration();
         RSocketServer server = RSocketServer.create((payload, socket) -> Mono.just(new ServerRsocket(payload, socket)));
         if (configuration.getFragmentationMtu() > 0) {
             server.fragment(configuration.getFragmentationMtu());
         }
-        RsocketResumeConfiguration resumeConfiguration;
-        if (nonNull(resumeConfiguration = configuration.getResume())) {
-            server.resume(configureResume(resumeConfiguration));
+        if (configuration.getMaxInboundPayloadSize() > 0) {
+            server.fragment(configuration.getMaxInboundPayloadSize());
+        }
+        Resume resume;
+        if (nonNull(resume = configuration.getResume())) {
+            server.resume(resume);
         }
         server
-                .payloadDecoder()
-                .bind(TcpServerTransport.create(configuration.getTcpPort()))
+                .payloadDecoder(configuration.getPayloadDecoder())
+                .bind(transportMode == TCP ? TcpServerTransport.create(configuration.getTcpServer()) : WebsocketServerTransport.create(configuration.getHttpWebSocketServer()))
                 .doOnSubscribe(channel -> getLogger().info(message))
                 .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
                 .subscribe(disposable::set);
@@ -84,7 +86,7 @@ public class RsocketServer implements Server {
     @Override
     public void restart() {
         stop();
-        new RsocketServer(transport).start();
+        new RsocketServer(transportMode).start();
     }
 
     @Override
