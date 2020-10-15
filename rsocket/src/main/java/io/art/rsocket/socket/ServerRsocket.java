@@ -19,7 +19,6 @@
 package io.art.rsocket.socket;
 
 import io.art.core.mime.*;
-import io.art.entity.constants.*;
 import io.art.entity.immutable.Value;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.exception.*;
@@ -30,12 +29,12 @@ import io.rsocket.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.entity.constants.EntityConstants.*;
 import static io.art.entity.mime.MimeTypeDataFormatMapper.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
-import static reactor.core.publisher.Mono.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -43,13 +42,12 @@ public class ServerRsocket implements RSocket {
     private final ServiceMethodSpecification specification;
     private final RsocketPayloadReader reader;
     private final RsocketPayloadWriter writer;
-    private final RSocket connectedSocket;
 
     public ServerRsocket(ConnectionSetupPayload payload, RSocket socket) {
-        EntityConstants.DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()));
-        EntityConstants.DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()));
-        reader = new RsocketPayloadReader(dataFormat);
-        writer = new RsocketPayloadWriter(dataFormat);
+        DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()));
+        DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()));
+        reader = new RsocketPayloadReader(dataFormat, metaDataFormat);
+        writer = new RsocketPayloadWriter(dataFormat, metaDataFormat);
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
         RsocketModuleConfiguration configuration = rsocketModule().configuration();
         if (isNull(payloadValue) && isNull(configuration.getDefaultServiceMethod())) {
@@ -64,7 +62,6 @@ public class ServerRsocket implements RSocket {
             throw new RsocketServerException(SPECIFICATION_NOT_FOUND);
         }
         this.specification = possibleSpecification.orElseGet(defaultSpecification::get);
-        this.connectedSocket = socket;
     }
 
     @Override
@@ -109,6 +106,10 @@ public class ServerRsocket implements RSocket {
 
     @Override
     public Mono<Void> metadataPush(Payload payload) {
-        return never();
+        RsocketPayloadValue payloadValue = reader.readPayloadMetaData(payload);
+        if (isNull(payloadValue)) {
+            return Mono.never();
+        }
+        return specification.serve(Flux.just(payloadValue.getValue())).then();
     }
 }

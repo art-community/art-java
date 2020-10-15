@@ -35,6 +35,7 @@ import static java.text.MessageFormat.*;
 @RequiredArgsConstructor
 public class RsocketPayloadReader {
     private final DataFormat dataFormat;
+    private final DataFormat metaDataFormat;
 
     public RsocketPayloadValue readPayloadData(Payload payload) {
         ByteBuf data = payload.sliceData();
@@ -59,7 +60,7 @@ public class RsocketPayloadReader {
         if (data.capacity() == 0) {
             return null;
         }
-        switch (dataFormat) {
+        switch (metaDataFormat) {
             case PROTOBUF:
                 return new RsocketPayloadValue(payload, readProtobuf(data));
             case JSON:
@@ -70,13 +71,5 @@ public class RsocketPayloadReader {
                 return new RsocketPayloadValue(payload, readMessagePack(data));
         }
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDefaultDataFormat()));
-    }
-
-    public static RsocketPayloadValue readPayloadData(Payload payload,  DataFormat dataFormat) {
-        return new RsocketPayloadReader(dataFormat).readPayloadData(payload);
-    }
-
-    public RsocketPayloadValue readPayloadMetaData(Payload payload,  DataFormat dataFormat) {
-        return new RsocketPayloadReader(dataFormat).readPayloadMetaData(payload);
     }
 }

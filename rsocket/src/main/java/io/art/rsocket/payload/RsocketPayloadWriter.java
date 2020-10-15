@@ -36,6 +36,7 @@ import static java.text.MessageFormat.*;
 @RequiredArgsConstructor
 public class RsocketPayloadWriter {
     private final DataFormat dataFormat;
+    private final DataFormat metaDataFormat;
 
     public Payload writePayloadData(Value value) {
         switch (dataFormat) {
@@ -53,7 +54,7 @@ public class RsocketPayloadWriter {
     }
 
     public Payload writePayloadMetaData(Value dataValue, Value metadataValue) {
-        switch (dataFormat) {
+        switch (metaDataFormat) {
             case PROTOBUF:
                 return create(writeProtobufToBytes(dataValue), writeProtobufToBytes(metadataValue));
             case JSON:
@@ -65,13 +66,5 @@ public class RsocketPayloadWriter {
 
         }
         throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDefaultDataFormat()));
-    }
-
-    public static Payload writePayloadData(Value value, DataFormat dataFormat) {
-        return new RsocketPayloadWriter(dataFormat).writePayloadData(value);
-    }
-
-    public static Payload writePayloadMetaData(Value dataValue, Value metadataValue, DataFormat dataFormat) {
-        return new RsocketPayloadWriter(dataFormat).writePayloadMetaData(dataValue, metadataValue);
     }
 }
