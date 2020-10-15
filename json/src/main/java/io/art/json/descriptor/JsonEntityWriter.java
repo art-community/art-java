@@ -38,10 +38,6 @@ import java.util.*;
 
 @UtilityClass
 public class JsonEntityWriter {
-    public static void writeJson(Value value, OutputStream outputStream) {
-        writeJson(jsonModule().configuration().getObjectMapper().getFactory(), value, outputStream);
-    }
-
     public static byte[] writeJsonToBytes(Value value) {
         ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
         try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
@@ -64,6 +60,10 @@ public class JsonEntityWriter {
 
     public static String writeJson(Value value) {
         return new String(writeJsonToBytes(value), context().configuration().getCharset());
+    }
+
+    public static void writeJson(Value value, OutputStream outputStream) {
+        writeJson(jsonModule().configuration().getObjectMapper().getFactory(), value, outputStream);
     }
 
     public static void writeJson(JsonFactory jsonFactory, Value value, OutputStream outputStream) {

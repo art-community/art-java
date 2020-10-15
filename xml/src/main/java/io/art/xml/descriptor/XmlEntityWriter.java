@@ -43,14 +43,6 @@ import java.util.*;
 
 @UtilityClass
 public class XmlEntityWriter {
-    public static void writeXml(XmlEntity entity, OutputStream outputStream) throws XmlException {
-        try {
-            writeXml(xmlModule().configuration().getXmlOutputFactory(), entity, outputStream);
-        } catch (Throwable throwable) {
-            throw new XmlException(throwable);
-        }
-    }
-
     public static byte[] writeXmlToBytes(XmlEntity entity) throws XmlException {
         ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
         try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
@@ -73,6 +65,14 @@ public class XmlEntityWriter {
 
     public static String writeXml(XmlEntity entity) throws XmlException {
         return new String(writeXmlToBytes(entity), context().configuration().getCharset());
+    }
+
+    public static void writeXml(XmlEntity entity, OutputStream outputStream) throws XmlException {
+        try {
+            writeXml(xmlModule().configuration().getXmlOutputFactory(), entity, outputStream);
+        } catch (Throwable throwable) {
+            throw new XmlException(throwable);
+        }
     }
 
     public static void writeXml(XMLOutputFactory outputFactory, XmlEntity entity, OutputStream outputStream) throws XmlException {

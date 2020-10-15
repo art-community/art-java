@@ -23,6 +23,7 @@ import io.art.core.stream.*;
 import io.art.entity.immutable.*;
 import io.art.entity.immutable.XmlEntity.*;
 import io.art.xml.exception.*;
+import io.art.xml.module.*;
 import io.netty.buffer.*;
 import lombok.experimental.*;
 import static com.google.common.collect.ImmutableMap.*;
@@ -33,6 +34,7 @@ import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.entity.immutable.XmlEntity.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.xml.constants.XmlMappingExceptionMessages.*;
+import static io.art.xml.module.XmlModule.*;
 import static java.util.Objects.*;
 import static javax.xml.stream.XMLStreamConstants.*;
 import javax.xml.stream.*;
@@ -64,7 +66,7 @@ public class XmlEntityReader {
     }
 
     public static XmlEntity readXml(InputStream inputStream) {
-        return readXml(toByteArray(inputStream));
+        return readXml(xmlModule().configuration().getXmlInputFactory(), inputStream);
     }
 
     public static XmlEntity readXml(XMLInputFactory xmlInputFactory, InputStream inputStream) {

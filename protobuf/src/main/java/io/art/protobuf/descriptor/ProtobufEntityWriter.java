@@ -39,6 +39,15 @@ import java.util.*;
 
 @UtilityClass
 public class ProtobufEntityWriter {
+    public static byte[] writeProtobufToBytes(io.art.entity.immutable.Value value) {
+        return let(writeProtobuf(value), MessageLite::toByteArray, EMPTY_BYTES);
+    }
+
+    public static void writeProtobuf(io.art.entity.immutable.Value value, Path path) {
+        Value protobuf = writeProtobuf(value);
+        apply(protobuf, result -> writeFileQuietly(path, result.toByteArray()));
+    }
+
     public static void writeProtobuf(io.art.entity.immutable.Value value, OutputStream outputStream) {
         if (io.art.entity.immutable.Value.valueIsNull(value)) {
             return;
@@ -51,15 +60,6 @@ public class ProtobufEntityWriter {
         } catch (IOException ioException) {
             throw new ProtobufException(ioException);
         }
-    }
-
-    public static byte[] writeProtobufToBytes(io.art.entity.immutable.Value value) {
-        return let(writeProtobuf(value), MessageLite::toByteArray, EMPTY_BYTES);
-    }
-
-    public static void writeProtobuf(io.art.entity.immutable.Value value, Path path) {
-        Value protobuf = writeProtobuf(value);
-        apply(protobuf, result -> writeFileQuietly(path, result.toByteArray()));
     }
 
     public static com.google.protobuf.Value writeProtobuf(io.art.entity.immutable.Value value) {
