@@ -37,9 +37,12 @@ public class RsocketModuleState implements ModuleState {
         return rsocket;
     }
 
-    public RsocketModuleState setThreadLocalState(RsocketThreadLocalState state) {
+    public void localState(RsocketThreadLocalState state) {
         threadLocalState.set(state);
-        return this;
+    }
+
+    public RsocketThreadLocalState localState() {
+        return threadLocalState.get();
     }
 
     @Getter

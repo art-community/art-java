@@ -24,8 +24,10 @@ import io.art.rsocket.configuration.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
+import io.art.rsocket.state.*;
 import io.art.server.specification.*;
 import io.rsocket.*;
+import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -46,6 +48,8 @@ public class ServerRsocket implements RSocket {
     private final RsocketPayloadReader reader;
     private final RsocketPayloadWriter writer;
     private final RSocket requesterSocket;
+    @Getter(lazy = true)
+    private final RsocketModuleState state = rsocketModule().state();
 
     public ServerRsocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
         DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()), rsocketModule().configuration().getDefaultDataFormat());
@@ -126,7 +130,7 @@ public class ServerRsocket implements RSocket {
     private <T> Flux<T> addContext(Flux<T> flux) {
         return flux.subscriberContext(context -> context.putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket))
                 .flatMap(value -> subscriberContext()
-                        .doOnNext(context -> rsocketModule().state().setThreadLocalState(fromContext(context)))
+                        .doOnNext(context -> getState().localState(fromContext(context)))
                         .map(context -> value).flux());
     }
 }
