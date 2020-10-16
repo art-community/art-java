@@ -40,43 +40,45 @@ import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
 public class RsocketServer implements Server {
-    private final TransportMode transportMode;
-    private final AtomicReference<Disposable> disposable = new AtomicReference<>();
+    private final AtomicReference<Disposable> server = new AtomicReference<>();
 
     @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = logger(RsocketServer.class);
 
     @Override
     public void start() {
-        String message = transportMode == TCP ? TCP_SERVER_STARTED_MESSAGE : WS_SERVER_STARTED_MESSAGE;
-        RsocketModuleConfiguration configuration = rsocketModule().configuration();
-        RSocketServer server = RSocketServer.create((payload, socket) -> Mono.just(new ServerRsocket(payload, socket)));
-        if (configuration.getFragmentationMtu() > 0) {
-            server.fragment(configuration.getFragmentationMtu());
+        if (server.compareAndSet(null, null)) {
+            TransportMode transportMode = rsocketModule().configuration().getTransport();
+            String message = transportMode == TCP ? TCP_SERVER_STARTED_MESSAGE : WS_SERVER_STARTED_MESSAGE;
+            RsocketModuleConfiguration configuration = rsocketModule().configuration();
+            RSocketServer server = RSocketServer.create((payload, socket) -> Mono.just(new ServerRsocket(payload, socket)));
+            if (configuration.getFragmentationMtu() > 0) {
+                server.fragment(configuration.getFragmentationMtu());
+            }
+            if (configuration.getMaxInboundPayloadSize() > 0) {
+                server.fragment(configuration.getMaxInboundPayloadSize());
+            }
+            Resume resume;
+            if (nonNull(resume = configuration.getResume())) {
+                server.resume(resume);
+            }
+            ServerTransport<CloseableChannel> transport = transportMode == TCP
+                    ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
+                    : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
+            server
+                    .interceptors(interceptorRegistry -> configuration.getInterceptorConfigurer().accept(interceptorRegistry))
+                    .payloadDecoder(configuration.getPayloadDecoder())
+                    .bind(transport)
+                    .doOnSubscribe(channel -> getLogger().info(message))
+                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
+                    .subscribe(this.server::set);
         }
-        if (configuration.getMaxInboundPayloadSize() > 0) {
-            server.fragment(configuration.getMaxInboundPayloadSize());
-        }
-        Resume resume;
-        if (nonNull(resume = configuration.getResume())) {
-            server.resume(resume);
-        }
-        ServerTransport<CloseableChannel> transport = transportMode == TCP
-                ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
-                : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
-        server
-                .interceptors(interceptorRegistry -> configuration.getInterceptorConfigurer().accept(interceptorRegistry))
-                .payloadDecoder(configuration.getPayloadDecoder())
-                .bind(transport)
-                .doOnSubscribe(channel -> getLogger().info(message))
-                .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
-                .subscribe(disposable::set);
     }
 
     @Override
     public void stop() {
         Disposable value;
-        if (nonNull(value = disposable.getAndSet(null))) {
+        if (nonNull(value = server.getAndSet(null))) {
             value.dispose();
             getLogger().info(SERVER_STOPPED);
         }
@@ -90,12 +92,12 @@ public class RsocketServer implements Server {
     @Override
     public void restart() {
         stop();
-        new RsocketServer(transportMode).start();
+        start();
     }
 
     @Override
     public boolean available() {
         Disposable value;
-        return nonNull(value = disposable.get()) && !value.isDisposed();
+        return nonNull(value = server.get()) && !value.isDisposed();
     }
 }

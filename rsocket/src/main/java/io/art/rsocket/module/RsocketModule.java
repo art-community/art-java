@@ -25,7 +25,6 @@ import io.art.rsocket.state.*;
 import io.rsocket.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
@@ -40,8 +39,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     private final String id = RsocketModule.class.getSimpleName();
     private final RsocketModuleConfiguration configuration = new RsocketModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
-    private final RsocketModuleState state = new RsocketModuleState();
-    private static volatile RsocketServer server;
+    private final RsocketModuleState state = new RsocketModuleState(new RsocketServer());
 
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketModule.class);
@@ -50,15 +48,15 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
         return getRsocketModule();
     }
 
-    public static void startRsocketServer() {
-        server = new RsocketServer(rsocketModule().configuration().getTransport());
-        server.start();
+    @Override
+    public void afterLoad() {
+        state.getServer().start();
     }
 
     @Override
     public void beforeUnload() {
-        apply(server, RsocketServer::stop);
-        rsocketModule().state().getConnectedClients().stream().filter(rsocket -> !rsocket.isDisposed()).forEach(this::disposeRsocket);
+        state.getServer().stop();
+        rsocketModule().state().getRequesters().forEach(this::disposeRsocket);
     }
 
     private void disposeRsocket(RSocket rsocket) {

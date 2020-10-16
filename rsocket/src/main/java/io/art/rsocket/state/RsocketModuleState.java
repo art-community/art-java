@@ -19,6 +19,7 @@
 package io.art.rsocket.state;
 
 import io.art.core.module.*;
+import io.art.rsocket.server.*;
 import io.rsocket.*;
 import lombok.*;
 import reactor.util.context.*;
@@ -26,15 +27,17 @@ import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import java.util.*;
 
+@RequiredArgsConstructor
 public class RsocketModuleState implements ModuleState {
     @Getter
-    private final List<RSocket> connectedClients = linkedListOf();
-
+    private final List<RSocket> requesters = linkedListOf();
+    @Getter
+    private final RsocketServer server;
     private final ThreadLocal<RsocketThreadLocalState> threadLocalState = new ThreadLocal<>();
 
-    public RSocket registerClient(RSocket rsocket) {
-        connectedClients.add(rsocket);
-        return rsocket;
+    public RSocket registerClient(RSocket socket) {
+        requesters.add(socket);
+        return socket;
     }
 
     public void localState(RsocketThreadLocalState state) {
