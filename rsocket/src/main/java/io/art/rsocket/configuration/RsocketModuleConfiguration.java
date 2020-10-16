@@ -65,6 +65,8 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private TransportMode transport;
     private ImmutableMap<String, RsocketServiceConfiguration> services;
     private Consumer<InterceptorRegistry> interceptorConfigurer;
+    private boolean server = false;
+    private boolean communicator = false;
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<RsocketModuleConfiguration, Configurator> {

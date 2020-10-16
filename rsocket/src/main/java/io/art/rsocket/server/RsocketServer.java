@@ -38,7 +38,6 @@ import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import java.util.concurrent.atomic.*;
 
-@RequiredArgsConstructor
 public class RsocketServer implements Server {
     private final AtomicReference<Disposable> server = new AtomicReference<>();
 
