@@ -63,7 +63,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
         if (rsocket.isDisposed()) {
             return;
         }
-        getLogger().info(RSOCKET_CLIENT_DISPOSING);
+        getLogger().info(RSOCKET_REQUESTER_DISPOSE);
         ignoreException(rsocket::dispose, getLogger()::error);
     }
 }
