@@ -19,17 +19,15 @@
 package io.art.rsocket.communicator;
 
 import io.art.communicator.implementation.*;
-import io.art.entity.constants.EntityConstants.*;
 import io.art.entity.immutable.Value;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
+import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
 import io.rsocket.core.*;
-import io.rsocket.transport.netty.client.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
 import static io.art.logging.LoggingModule.*;
-import static io.rsocket.core.RSocketClient.*;
 import static lombok.AccessLevel.*;
 
 public class RsocketCommunicator implements CommunicatorImplementation {
@@ -38,24 +36,13 @@ public class RsocketCommunicator implements CommunicatorImplementation {
     private final RSocketClient client;
     private final RsocketPayloadWriter writer;
     private final RsocketPayloadReader reader;
-    private String communicatorId;
-    private String serviceId;
-    private String methodId;
-    private DataFormat dataFormat;
     private final CommunicationMode communicationMode;
 
-    public RsocketCommunicator(DataFormat dataFormat, Value value, CommunicationMode communicationMode) {
-        reader = new RsocketPayloadReader(dataFormat, dataFormat);
-        writer = new RsocketPayloadWriter(dataFormat, dataFormat);
-        client = from(RSocketConnector.create().setupPayload(writer.writePayloadData(value)).connect(TcpClientTransport.create(123)));
+    public RsocketCommunicator(RSocketClient client, CommunicationMode communicationMode, RsocketSetupPayload setupPayload) {
         this.communicationMode = communicationMode;
-    }
-
-    public RsocketCommunicator(DataFormat dataFormat, RSocketClient client, CommunicationMode communicationMode) {
         this.client = client;
-        reader = new RsocketPayloadReader(dataFormat, dataFormat);
-        writer = new RsocketPayloadWriter(dataFormat, dataFormat);
-        this.communicationMode = communicationMode;
+        reader = new RsocketPayloadReader(setupPayload.getDataFormat(), setupPayload.getMetadataFormat());
+        writer = new RsocketPayloadWriter(setupPayload.getDataFormat(), setupPayload.getMetadataFormat());
     }
 
     @Override
