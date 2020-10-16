@@ -52,6 +52,7 @@ public class ServerRsocket implements RSocket {
     private final RsocketModuleState state = rsocketModule().state();
 
     public ServerRsocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
+        rsocketModule().state().registerRequester(requesterSocket);
         DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()), rsocketModule().configuration().getDefaultDataFormat());
         DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()), rsocketModule().configuration().getDefaultDataFormat());
         reader = new RsocketPayloadReader(dataFormat, metaDataFormat);

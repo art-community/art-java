@@ -18,26 +18,32 @@
 
 package io.art.rsocket.state;
 
+import com.google.common.collect.*;
 import io.art.core.module.*;
-import io.art.rsocket.server.*;
 import io.rsocket.*;
+import lombok.Builder;
 import lombok.*;
 import reactor.util.context.*;
+import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import java.util.*;
+import java.util.function.*;
 
-@RequiredArgsConstructor
 public class RsocketModuleState implements ModuleState {
-    @Getter
     private final List<RSocket> requesters = linkedListOf();
-    @Getter
-    private final RsocketServer server;
     private final ThreadLocal<RsocketThreadLocalState> threadLocalState = new ThreadLocal<>();
 
-    public RSocket registerClient(RSocket socket) {
+    public void registerRequester(RSocket socket) {
         requesters.add(socket);
-        return socket;
+    }
+
+    public ImmutableList<RSocket> getRequesters() {
+        return copyOf(requesters);
+    }
+
+    public void localState(Function<RsocketThreadLocalState, RsocketThreadLocalState> functor) {
+        threadLocalState.set(functor.apply(threadLocalState.get()));
     }
 
     public void localState(RsocketThreadLocalState state) {
@@ -49,14 +55,13 @@ public class RsocketModuleState implements ModuleState {
     }
 
     @Getter
-    @RequiredArgsConstructor
+    @Builder(toBuilder = true)
     public static class RsocketThreadLocalState {
-        private RSocket requesterRsocket;
+        private final RSocket requesterRsocket;
 
         public static RsocketThreadLocalState fromContext(Context context) {
-            RsocketThreadLocalState localState = new RsocketThreadLocalState();
-            localState.requesterRsocket = context.get(REQUESTER_RSOCKET_KEY);
-            return localState;
+            RSocket requesterRsocket = context.get(REQUESTER_RSOCKET_KEY);
+            return new RsocketThreadLocalState(requesterRsocket);
         }
     }
 }

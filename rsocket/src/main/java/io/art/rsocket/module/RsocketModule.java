@@ -39,7 +39,8 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     private final String id = RsocketModule.class.getSimpleName();
     private final RsocketModuleConfiguration configuration = new RsocketModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
-    private final RsocketModuleState state = new RsocketModuleState(new RsocketServer());
+    private final RsocketServer server = new RsocketServer();
+    private final RsocketModuleState state = new RsocketModuleState();
 
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketModule.class);
@@ -50,12 +51,12 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
 
     @Override
     public void afterLoad() {
-        state.getServer().start();
+        server.start();
     }
 
     @Override
     public void beforeUnload() {
-        state.getServer().stop();
+        server.stop();
         rsocketModule().state().getRequesters().forEach(this::disposeRsocket);
     }
 
