@@ -18,6 +18,7 @@
 
 package io.art.rsocket.communicator;
 
+import io.art.communicator.implementation.*;
 import io.art.entity.constants.EntityConstants.*;
 import io.art.entity.immutable.Value;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -31,29 +32,34 @@ import static io.art.logging.LoggingModule.*;
 import static io.rsocket.core.RSocketClient.*;
 import static lombok.AccessLevel.*;
 
-public class RsocketCommunicator {
+public class RsocketCommunicator implements CommunicatorImplementation {
     @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = logger(RsocketCommunicator.class);
     private final RSocketClient client;
     private final RsocketPayloadWriter writer;
     private final RsocketPayloadReader reader;
+    private String communicatorId;
     private String serviceId;
     private String methodId;
     private DataFormat dataFormat;
+    private final CommunicationMode communicationMode;
 
-    public RsocketCommunicator(DataFormat dataFormat, Value value) {
+    public RsocketCommunicator(DataFormat dataFormat, Value value, CommunicationMode communicationMode) {
         reader = new RsocketPayloadReader(dataFormat, dataFormat);
         writer = new RsocketPayloadWriter(dataFormat, dataFormat);
         client = from(RSocketConnector.create().setupPayload(writer.writePayloadData(value)).connect(TcpClientTransport.create(123)));
+        this.communicationMode = communicationMode;
     }
 
-    public RsocketCommunicator(DataFormat dataFormat, RSocketClient client) {
+    public RsocketCommunicator(DataFormat dataFormat, RSocketClient client, CommunicationMode communicationMode) {
         this.client = client;
         reader = new RsocketPayloadReader(dataFormat, dataFormat);
         writer = new RsocketPayloadWriter(dataFormat, dataFormat);
+        this.communicationMode = communicationMode;
     }
 
-    public Flux<Value> communicate(CommunicationMode communicationMode, Flux<Value> input) {
+    @Override
+    public Flux<Value> communicate(Flux<Value> input) {
         switch (communicationMode) {
             case FIRE_AND_FORGET:
                 return client.fireAndForget(input.map(writer::writePayloadData).last())

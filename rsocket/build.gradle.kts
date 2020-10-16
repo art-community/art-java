@@ -25,6 +25,7 @@ dependencies {
     implementation(project(":entity"))
     implementation(project(":logging"))
     implementation(project(":server"))
+    implementation(project(":communicator"))
     implementation(project(":protobuf"))
     implementation(project(":json"))
     implementation(project(":xml"))

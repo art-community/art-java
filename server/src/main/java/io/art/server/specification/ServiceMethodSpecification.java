@@ -18,6 +18,7 @@
 
 package io.art.server.specification;
 
+import io.art.core.constants.*;
 import io.art.entity.immutable.Value;
 import io.art.entity.mapper.*;
 import io.art.server.constants.ServerModuleConstants.*;
@@ -27,9 +28,9 @@ import io.art.server.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.constants.MethodProcessingMode.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
 import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.*;
-import static io.art.server.constants.ServerModuleConstants.MethodProcessingMode.*;
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;

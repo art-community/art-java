@@ -37,17 +37,6 @@ public interface ServerModuleConstants {
         String METHODS_KEY = "methods";
     }
 
-    enum MethodProcessingMode {
-        BLOCKING,
-        MONO,
-        FLUX
-    }
-
-    enum MethodDecoratorScope {
-        INPUT,
-        OUTPUT
-    }
-
     interface ValidationExpressionTypes {
         String BETWEEN_DOUBLE = "BETWEEN_DOUBLE";
         String BETWEEN_INT = "BETWEEN_INT";
