@@ -30,6 +30,8 @@ import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
+import static io.art.rsocket.launcher.RsocketLauncher.*;
+import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 
 @Getter
@@ -51,7 +53,13 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
 
     @Override
     public void afterLoad() {
-        server.start();
+        RsocketCommunicatorConfiguration communicatorConfiguration;
+        if (nonNull(communicatorConfiguration = configuration.getCommunicatorConfiguration())) {
+            launchRsocketConnectors(communicatorConfiguration);
+        }
+        if (nonNull(configuration.getServerConfiguration())) {
+            server.start();
+        }
     }
 
     @Override

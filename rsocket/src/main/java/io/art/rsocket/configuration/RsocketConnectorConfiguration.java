@@ -31,6 +31,7 @@ import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.entity.constants.EntityConstants.DataFormat.*;
 import static io.art.entity.mime.MimeTypeDataFormatMapper.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
@@ -49,7 +50,8 @@ public class RsocketConnectorConfiguration {
     private TcpClient tcpClient;
     private int tcpMaxFrameLength;
     private HttpClient httpWebSocketClient;
-
+    private String httpWebSocketPath;
+    private boolean lazy;
 
     public static RsocketConnectorConfiguration from(RsocketCommunicatorConfiguration communicatorConfiguration, ConfigurationSource source) {
         RSocketConnector connector = RSocketConnector.create();
@@ -96,10 +98,13 @@ public class RsocketConnectorConfiguration {
                 configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
                 break;
             case WEB_SOCKET:
-                String url = source.getString(TRANSPORT_URL_KEY);
+                String url = source.getString(TRANSPORT_HTTP_BASE_URL_KEY);
                 configuration.httpWebSocketClient = create().port(port).baseUrl(url);
+                configuration.httpWebSocketPath = orElse(source.getString(TRANSPORT_HTTP_PATH_KEY), SLASH);
                 break;
         }
+
+        configuration.lazy = orElse(source.getBool(LAZY_KEY), false);
 
         return configuration;
     }

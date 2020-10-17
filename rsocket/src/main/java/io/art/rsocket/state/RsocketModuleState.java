@@ -19,8 +19,10 @@
 package io.art.rsocket.state;
 
 import com.google.common.collect.*;
+import io.art.core.lazy.*;
 import io.art.core.module.*;
 import io.rsocket.*;
+import io.rsocket.core.*;
 import lombok.Builder;
 import lombok.*;
 import reactor.util.context.*;
@@ -32,7 +34,9 @@ import java.util.function.*;
 
 public class RsocketModuleState implements ModuleState {
     private final List<RSocket> requesters = linkedListOf();
+    private final Map<String, LazyValue<RSocketClient>> clients = mapOf();
     private final ThreadLocal<RsocketThreadLocalState> threadLocalState = new ThreadLocal<>();
+
 
     public void registerRequester(RSocket socket) {
         requesters.add(socket);
@@ -41,6 +45,7 @@ public class RsocketModuleState implements ModuleState {
     public ImmutableList<RSocket> getRequesters() {
         return copyOf(requesters);
     }
+
 
     public void localState(Function<RsocketThreadLocalState, RsocketThreadLocalState> functor) {
         threadLocalState.set(functor.apply(threadLocalState.get()));
@@ -52,6 +57,15 @@ public class RsocketModuleState implements ModuleState {
 
     public RsocketThreadLocalState localState() {
         return threadLocalState.get();
+    }
+
+
+    public LazyValue<RSocketClient> getClient(String id) {
+        return clients.get(id);
+    }
+
+    public void registerClient(String id, LazyValue<RSocketClient> client) {
+        clients.put(id, client);
     }
 
     @Getter

@@ -72,7 +72,9 @@ public interface RsocketModuleConstants {
         String TRANSPORT_MODE_KEY = "transport.mode";
         String TRANSPORT_PORT_KEY = "transport.host";
         String TRANSPORT_HOST_KEY = "transport.port";
-        String TRANSPORT_URL_KEY = "transport.url";
+        String TRANSPORT_HTTP_BASE_URL_KEY = "transport.http.baseUrl";
+        String TRANSPORT_HTTP_PATH_KEY = "transport.http.path";
+        String TRANSPORT_TCP_MAX_FRAME_LENGTH = "transport.tcp.maxFrameLength";
         String PAYLOAD_DECODER_KEY = "payloadDecoder";
         String TRACING_KEY = "tracing";
         String FRAGMENTATION_MTU_KEY = "fragmentationMtu";
@@ -90,12 +92,13 @@ public interface RsocketModuleConstants {
         String MAX_INBOUND_PAYLOAD_SIZE_KEY = "maxInboundPayloadSize";
 
         String SERVICES_KEY = "services";
-        String TRANSPORT_TCP_MAX_FRAME_LENGTH = "transport.tcp.maxFrameLength";
 
         String INTERVAL_KEY = "interval";
         String MAX_LIFE_TIME_KEY = "maxLifeTime";
 
         String CONNECTORS_KEY = "connectors";
+
+        String LAZY_KEY = "lazy";
     }
 
     interface ContextKeys {

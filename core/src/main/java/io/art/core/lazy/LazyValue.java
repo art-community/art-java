@@ -25,6 +25,11 @@ public class LazyValue<T> {
         return new LazyValue<>(() -> mapper.apply(get()));
     }
 
+    public LazyValue<T> initialize() {
+        get();
+        return this;
+    }
+
     public static <T> LazyValue<T> lazy(Supplier<T> factory) {
         return new LazyValue<T>(factory);
     }
