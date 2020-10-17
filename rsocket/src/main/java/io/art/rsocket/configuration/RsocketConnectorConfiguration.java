@@ -39,14 +39,13 @@ import static io.art.entity.constants.EntityConstants.DataFormat.*;
 import static io.art.entity.mime.MimeTypeDataFormatMapper.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.CONFIGURATION_PARAMETER_NOT_EXISTS;
+import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.text.MessageFormat.*;
 import static reactor.netty.http.client.HttpClient.*;
-import java.text.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -59,7 +58,7 @@ public class RsocketConnectorConfiguration {
     private String httpWebSocketPath;
     private boolean lazy;
 
-    public static RsocketConnectorConfiguration from(RsocketCommunicatorConfiguration communicatorConfiguration, ConfigurationSource source) {
+    public static RsocketConnectorConfiguration from(RsocketCommunicatorConfiguration communicatorConfiguration, String id, ConfigurationSource source) {
         RSocketConnector connector = RSocketConnector.create();
         DataFormat dataFormat = dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), communicatorConfiguration.getDefaultDataFormat());
         DataFormat metaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), communicatorConfiguration.getDefaultMetaDataFormat());
@@ -100,12 +99,18 @@ public class RsocketConnectorConfiguration {
         configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
         switch (configuration.transport) {
             case TCP:
-                String host = orElseThrow(source.getString(TRANSPORT_HOST_KEY), () -> new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, TRANSPORT_HOST_KEY)));
+                String host = source.getString(TRANSPORT_HOST_KEY);
+                if (isEmpty(host)) {
+                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, COMMUNICATOR_SECTION + DOT + CONNECTORS_KEY + DOT + id + DOT + TRANSPORT_HOST_KEY));
+                }
                 configuration.tcpClient = TcpClient.create().port(port).host(host);
                 configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
                 break;
             case WEB_SOCKET:
                 String url = source.getString(TRANSPORT_HTTP_BASE_URL_KEY);
+                if (isEmpty(url)) {
+                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, COMMUNICATOR_SECTION + DOT + CONNECTORS_KEY + DOT + id + DOT + TRANSPORT_HTTP_BASE_URL_KEY));
+                }
                 configuration.httpWebSocketClient = create().port(port).baseUrl(url);
                 configuration.httpWebSocketPath = orElse(source.getString(TRANSPORT_HTTP_PATH_KEY), SLASH);
                 break;

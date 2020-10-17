@@ -19,6 +19,7 @@
 package io.art.rsocket.constants;
 
 import lombok.*;
+import static java.text.MessageFormat.format;
 import java.time.*;
 
 public interface RsocketModuleConstants {

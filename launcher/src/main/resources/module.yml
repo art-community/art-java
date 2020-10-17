@@ -2,3 +2,9 @@ rsocket:
   server:
     transport:
       port: 1234
+  communicator:
+    connectors:
+      myConnector:
+        transport:
+          host: 127.0.0.1
+          port: 1456

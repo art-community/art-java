@@ -22,7 +22,6 @@ import com.google.common.collect.*;
 import io.art.core.source.*;
 import io.art.server.model.*;
 import io.rsocket.core.*;
-import io.rsocket.frame.*;
 import io.rsocket.frame.decoder.*;
 import lombok.*;
 import reactor.util.retry.*;
@@ -34,7 +33,7 @@ import static io.art.entity.constants.EntityConstants.DataFormat.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
-import static io.rsocket.frame.FrameLengthCodec.FRAME_LENGTH_MASK;
+import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.util.Optional.*;
 
 @Getter
@@ -76,7 +75,7 @@ public class RsocketCommunicatorConfiguration {
         configuration.connectors = ofNullable(source.getNestedMap(CONNECTORS_KEY))
                 .map(configurations -> configurations.entrySet()
                         .stream()
-                        .collect(toImmutableMap(Entry::getKey, entry -> RsocketConnectorConfiguration.from(configuration, entry.getValue()))))
+                        .collect(toImmutableMap(Entry::getKey, entry -> RsocketConnectorConfiguration.from(configuration, entry.getKey(), entry.getValue()))))
                 .orElse(ImmutableMap.of());
 
         return configuration;
