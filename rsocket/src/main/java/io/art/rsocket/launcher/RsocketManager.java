@@ -48,8 +48,8 @@ public class RsocketManager {
     private final RsocketModuleState state;
     private RsocketServer server;
 
-    public void startConnectors(RsocketCommunicatorConfiguration configuration, RsocketModuleState state) {
-        for (Map.Entry<String, RsocketConnectorConfiguration> entry : configuration.getConnectors().entrySet()) {
+    public void startConnectors() {
+        for (Map.Entry<String, RsocketConnectorConfiguration> entry : configuration.getCommunicatorConfiguration().getConnectors().entrySet()) {
             RsocketConnectorConfiguration connectorConfiguration = entry.getValue();
             RSocketConnector connector = connectorConfiguration.getConnector();
             switch (connectorConfiguration.getTransport()) {
