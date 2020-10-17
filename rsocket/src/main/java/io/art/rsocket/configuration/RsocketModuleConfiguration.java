@@ -25,6 +25,7 @@ import lombok.*;
 @Getter
 public class RsocketModuleConfiguration implements ModuleConfiguration {
     private RsocketServerConfiguration serverConfiguration;
+    private RsocketCommunicatorConfiguration communicatorConfiguration;
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<RsocketModuleConfiguration, Configurator> {
@@ -33,6 +34,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator from(ConfigurationSource source) {
             configuration.serverConfiguration = RsocketServerConfiguration.from(source);
+            configuration.communicatorConfiguration = RsocketCommunicatorConfiguration.from(source);
             return this;
         }
     }
