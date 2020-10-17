@@ -67,6 +67,6 @@ public class RsocketCommunicator implements CommunicatorImplementation {
                         .flux()
                         .cast(Value.class);
         }
-        return Flux.never();
+        throw new IllegalStateException();
     }
 }

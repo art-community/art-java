@@ -29,10 +29,10 @@ import static java.util.Optional.*;
 @RequiredArgsConstructor
 public class RsocketServiceConfiguration {
     private ImmutableMap<String, RsocketMethodConfiguration> methods;
-    private final RsocketModuleConfiguration moduleConfiguration;
+    private final RsocketServerConfiguration serverConfiguration;
 
-    public static RsocketServiceConfiguration from(RsocketModuleConfiguration moduleConfiguration, ConfigurationSource source) {
-        RsocketServiceConfiguration configuration = new RsocketServiceConfiguration(moduleConfiguration);
+    public static RsocketServiceConfiguration from(RsocketServerConfiguration serverConfiguration, ConfigurationSource source) {
+        RsocketServiceConfiguration configuration = new RsocketServiceConfiguration(serverConfiguration);
         configuration.methods = ofNullable(source.getNestedMap(METHODS_KEY))
                 .map(configurations -> configurations.entrySet()
                         .stream()

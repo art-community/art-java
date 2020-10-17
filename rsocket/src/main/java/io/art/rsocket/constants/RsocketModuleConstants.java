@@ -31,7 +31,6 @@ public interface RsocketModuleConstants {
         String SPECIFICATION_NOT_FOUND = "Setup payload was null or not contained serviceId, methodId. Default service method id was not specified in configuration";
         String UNSUPPORTED_RETRY_POLICY = "Retry policy not support: ''{0}''";
         String UNSUPPORTED_DATA_FORMAT = "Unsupported payload data format: ''{0}''";
-
     }
 
     interface LoggingMessages {
@@ -79,7 +78,7 @@ public interface RsocketModuleConstants {
         String SERVER_TRANSPORT_MODE_KEY = "rsocket.server.transport.mode";
         String SERVER_TRANSPORT_PORT_KEY = "rsocket.server.transport.host";
         String SERVER_TRANSPORT_HOST_KEY = "rsocket.server.transport.port";
-        String SERVER_TRANSPORT_TCP_MAX_FRAME_LENHGT = "rsocket.server.transport.tcp.maxFrameLength";
+        String SERVER_TRANSPORT_TCP_MAX_FRAME_LENGHT = "rsocket.server.transport.tcp.maxFrameLength";
         String SERVER_SERVICES_KEY = "rsocket.server.services";
     }
 
@@ -96,6 +95,13 @@ public interface RsocketModuleConstants {
         int DEFAULT_PORT = 9000;
         Duration DEFAULT_RESUME_SESSION_DURATION = Duration.ofHours(1);
         Duration DEFAULT_RESUME_STREAM_TIMEOUT = Duration.ofHours(1);
+    }
+
+    interface Fields {
+        String SETUP_PAYLOAD_DATA_FORMAT_FIELD = "dataFormat";
+        String SETUP_PAYLOAD_META_DATA_FORMAT_FIELD = "metaDataFormat";
+        String SETUP_PAYLOAD_SERVICE_ID_FIELD = "serviceId";
+        String SETUP_PAYLOAD_METHOD_ID_FIELD = "methodId";
     }
 
 

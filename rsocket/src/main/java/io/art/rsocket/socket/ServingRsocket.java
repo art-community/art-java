@@ -25,9 +25,9 @@ import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
 import io.art.rsocket.state.*;
+import io.art.server.model.*;
 import io.art.server.specification.*;
 import io.rsocket.*;
-import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -43,35 +43,40 @@ import static reactor.core.publisher.Mono.*;
 import java.util.*;
 import java.util.function.*;
 
-public class ServerRsocket implements RSocket {
+public class ServingRsocket implements RSocket {
     private final ServiceMethodSpecification specification;
     private final RsocketPayloadReader reader;
     private final RsocketPayloadWriter writer;
     private final RSocket requesterSocket;
-    @Getter(lazy = true)
-    private final RsocketModuleState state = rsocketModule().state();
+    private final RsocketModuleState moduleState = rsocketModule().state();
 
-    public ServerRsocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
-        rsocketModule().state().registerRequester(requesterSocket);
-        DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()), rsocketModule().configuration().getDefaultDataFormat());
-        DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()), rsocketModule().configuration().getDefaultDataFormat());
+    public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
+        moduleState.registerRequester(this.requesterSocket = requesterSocket);
+        RsocketModuleConfiguration moduleConfiguration = rsocketModule().configuration();
+
+        DataFormat defaultDataFormat = moduleConfiguration.getDefaultDataFormat();
+        DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()), defaultDataFormat);
+        DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()), defaultDataFormat);
         reader = new RsocketPayloadReader(dataFormat, metaDataFormat);
         writer = new RsocketPayloadWriter(dataFormat, metaDataFormat);
+
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
-        RsocketModuleConfiguration configuration = rsocketModule().configuration();
-        if (isNull(payloadValue) && isNull(configuration.getDefaultServiceMethod())) {
+        ServiceMethodIdentifier defaultServiceMethod = moduleConfiguration.getDefaultServiceMethod();
+        if (isNull(payloadValue) && isNull(defaultServiceMethod)) {
             throw new RsocketServerException(SPECIFICATION_NOT_FOUND);
         }
+
         Optional<ServiceMethodSpecification> possibleSpecification = specifications().findMethodByValue(payloadValue.getValue());
-        if (!possibleSpecification.isPresent() && isNull(configuration.getDefaultServiceMethod())) {
+        if (!possibleSpecification.isPresent() && isNull(defaultServiceMethod)) {
             throw new RsocketServerException(SPECIFICATION_NOT_FOUND);
         }
-        Optional<ServiceMethodSpecification> defaultSpecification = specifications().findMethodById(configuration.getDefaultServiceMethod());
+
+        Optional<ServiceMethodSpecification> defaultSpecification = specifications().findMethodById(defaultServiceMethod);
         if (!possibleSpecification.isPresent() && !defaultSpecification.isPresent()) {
             throw new RsocketServerException(SPECIFICATION_NOT_FOUND);
         }
+
         this.specification = possibleSpecification.orElseGet(defaultSpecification::get);
-        this.requesterSocket = requesterSocket;
     }
 
     @Override
@@ -109,12 +114,11 @@ public class ServerRsocket implements RSocket {
         EmitterProcessor<Value> inputProcessor = EmitterProcessor.create();
         FluxSink<Value> inputEmitter = inputProcessor.sink();
         Consumer<Payload> sendPayload = payload -> apply(reader.readPayloadData(payload), value -> inputEmitter.next(value.getValue()));
-        Flux<Value> inputFlux = addContext(inputProcessor)
-                .doOnSubscribe(subscription -> {
-                    inputEmitter.onRequest(subscription::request);
-                    inputEmitter.onCancel(subscription::cancel);
-                    inputEmitter.onDispose(Flux.from(payloads).subscribe(sendPayload, inputEmitter::error, inputEmitter::complete));
-                });
+        Flux<Value> inputFlux = addContext(inputProcessor).doOnSubscribe(subscription -> {
+            inputEmitter.onRequest(subscription::request);
+            inputEmitter.onCancel(subscription::cancel);
+            inputEmitter.onDispose(Flux.from(payloads).subscribe(sendPayload, inputEmitter::error, inputEmitter::complete));
+        });
         return specification.serve(inputFlux).map(writer::writePayloadData);
     }
 
@@ -131,7 +135,7 @@ public class ServerRsocket implements RSocket {
     private <T> Flux<T> addContext(Flux<T> flux) {
         return flux.subscriberContext(context -> context.putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket))
                 .flatMap(value -> subscriberContext()
-                        .doOnNext(context -> getState().localState(fromContext(context)))
+                        .doOnNext(context -> moduleState.localState(fromContext(context)))
                         .map(context -> value).flux());
     }
 }

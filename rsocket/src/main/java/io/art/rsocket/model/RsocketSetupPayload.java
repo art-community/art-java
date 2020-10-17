@@ -19,7 +19,13 @@
 package io.art.rsocket.model;
 
 import io.art.entity.constants.EntityConstants.*;
+import io.art.entity.immutable.*;
 import lombok.*;
+import static io.art.entity.constants.EntityConstants.DataFormat.*;
+import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.Entity.*;
+import static io.art.entity.mapping.PrimitiveMapping.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Fields.*;
 
 @Getter
 @Builder
@@ -28,4 +34,23 @@ public class RsocketSetupPayload {
     private final DataFormat metadataFormat;
     private final String serviceId;
     private final String methodId;
+
+    public Entity toEntity() {
+        return entityBuilder()
+                .put(SETUP_PAYLOAD_DATA_FORMAT_FIELD, stringPrimitive(dataFormat.getFormat()))
+                .put(SETUP_PAYLOAD_META_DATA_FORMAT_FIELD, stringPrimitive(metadataFormat.getFormat()))
+                .put(SETUP_PAYLOAD_SERVICE_ID_FIELD, stringPrimitive(serviceId))
+                .put(SETUP_PAYLOAD_METHOD_ID_FIELD, stringPrimitive(methodId))
+                .build();
+    }
+
+    public static RsocketSetupPayload fromEntity(Entity entity, DataFormat dataFormatFallback, DataFormat metaDataFormatFallback) {
+        return RsocketSetupPayload
+                .builder()
+                .dataFormat(dataFormat(entity.map(SETUP_PAYLOAD_DATA_FORMAT_FIELD, toString), dataFormatFallback))
+                .metadataFormat(dataFormat(entity.map(SETUP_PAYLOAD_META_DATA_FORMAT_FIELD, toString), metaDataFormatFallback))
+                .serviceId(entity.map(SETUP_PAYLOAD_SERVICE_ID_FIELD, toString))
+                .serviceId(entity.map(SETUP_PAYLOAD_METHOD_ID_FIELD, toString))
+                .build();
+    }
 }
