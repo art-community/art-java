@@ -18,12 +18,11 @@
 
 package io.art.core.source;
 
-import static io.art.core.constants.StringConstants.DOT;
+import static io.art.core.checker.NullityChecker.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import java.time.*;
 import java.util.*;
-import java.util.function.*;
 
 public interface ConfigurationSource {
     Integer getInt(String path);
@@ -87,8 +86,7 @@ public interface ConfigurationSource {
     }
 
     default Map<String, ConfigurationSource> getNestedMap(String path) {
-        ConfigurationSource nested = getNested(path);
-        return nested.getKeys().stream().collect(toMap(identity(), nested::getNested));
+        return let(getNested(path), nested -> nested.getKeys().stream().collect(toMap(identity(), nested::getNested)));
     }
 
     ModuleConfigurationSourceType getType();

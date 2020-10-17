@@ -1,0 +1,4 @@
+rsocket:
+  server:
+    transport:
+      port: 1234
