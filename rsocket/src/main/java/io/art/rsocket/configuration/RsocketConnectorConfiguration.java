@@ -97,7 +97,7 @@ public class RsocketConnectorConfiguration {
         switch (configuration.transport) {
             case TCP:
                 String host = source.getString(TRANSPORT_HOST_KEY);
-                configuration.tcpClient = TcpClient.create().port(port).host("127.0.0.1");
+                configuration.tcpClient = TcpClient.create().port(port).host(host);
                 configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
                 break;
             case WEB_SOCKET:
