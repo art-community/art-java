@@ -52,7 +52,7 @@ public class RsocketPayloadReader {
             case MESSAGE_PACK:
                 return new RsocketPayloadValue(payload, readMessagePack(data));
         }
-        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDefaultDataFormat()));
+        throw new IllegalStateException();
     }
 
     public RsocketPayloadValue readPayloadMetaData(Payload payload) {
@@ -70,6 +70,6 @@ public class RsocketPayloadReader {
             case MESSAGE_PACK:
                 return new RsocketPayloadValue(payload, readMessagePack(data));
         }
-        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDefaultDataFormat()));
+        throw new IllegalStateException();
     }
 }

@@ -52,16 +52,17 @@ public class ServingRsocket implements RSocket {
 
     public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
         moduleState.registerRequester(this.requesterSocket = requesterSocket);
-        RsocketModuleConfiguration moduleConfiguration = rsocketModule().configuration();
+        RsocketServerConfiguration serverConfiguration = rsocketModule().configuration().getServerConfiguration();
 
-        DataFormat defaultDataFormat = moduleConfiguration.getDefaultDataFormat();
+        DataFormat defaultDataFormat = serverConfiguration.getDefaultDataFormat();
+        DataFormat defaultMetaDataFormat = serverConfiguration.getDefaultMetaDataFormat();
         DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()), defaultDataFormat);
-        DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()), defaultDataFormat);
+        DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()), defaultMetaDataFormat);
         reader = new RsocketPayloadReader(dataFormat, metaDataFormat);
         writer = new RsocketPayloadWriter(dataFormat, metaDataFormat);
 
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
-        ServiceMethodIdentifier defaultServiceMethod = moduleConfiguration.getDefaultServiceMethod();
+        ServiceMethodIdentifier defaultServiceMethod = serverConfiguration.getDefaultServiceMethod();
         if (isNull(payloadValue) && isNull(defaultServiceMethod)) {
             throw new RsocketServerException(SPECIFICATION_NOT_FOUND);
         }

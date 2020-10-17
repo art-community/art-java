@@ -47,9 +47,9 @@ public class RsocketServer implements Server {
     @Override
     public void start() {
         if (server.compareAndSet(null, null)) {
-            TransportMode transportMode = rsocketModule().configuration().getTransport();
+            RsocketServerConfiguration configuration = rsocketModule().configuration().getServerConfiguration();
+            TransportMode transportMode = configuration.getTransport();
             String message = transportMode == TCP ? TCP_SERVER_STARTED_MESSAGE : WS_SERVER_STARTED_MESSAGE;
-            RsocketModuleConfiguration configuration = rsocketModule().configuration();
             RSocketServer server = RSocketServer.create((payload, socket) -> Mono.just(new ServingRsocket(payload, socket)));
             if (configuration.getFragmentationMtu() > 0) {
                 server.fragment(configuration.getFragmentationMtu());

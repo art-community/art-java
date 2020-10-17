@@ -57,29 +57,43 @@ public interface RsocketModuleConstants {
     }
 
     interface ConfigurationKeys {
-        String SERVER_DEFAULT_SERVICE_ID_KEY = "rsocket.server.services.default.serviceId";
-        String SERVER_DEFAULT_METHOD_ID_KEY = "rsocket.server.services.default.methodId";
-        String SERVER_DEFAULT_DATA_FORMAT_KEY = "rsocket.server.defaults.dataFormat";
-        String SERVER_TRACING_KEY = "rsocket.server.tracing";
-        String SERVER_FRAGMENTATION_MTU_KEY = "rsocket.server.fragmentationMtu";
-        String SERVER_RESUME_SECTION = "rsocket.server.resume";
-        String SERVER_RESUME_CLEANUP_STORE_ON_KEEP_ALIVE_KEY = "rsocket.server.resume.cleanupStoreOnKeepAlive";
-        String SERVER_RESUME_SESSION_DURATION_KEY = "rsocket.server.resume.sessionDuration";
-        String SERVER_RESUME_STREAM_TIMEOUT_KEY = "rsocket.server.resume.streamTimeout";
-        String SERVER_RESUME_RETRY_POLICY_KEY = "rsocket.server.resume.retry.policy";
-        String SERVER_RESUME_RETRY_BACKOFF_MAX_ATTEMPTS_KEY = "rsocket.server.resume.retry.backoff.maxAttempts";
-        String SERVER_RESUME_RETRY_BACKOFF_MIN_BACKOFF_KEY = "rsocket.server.resume.retry.backoff.minBackoff";
-        String SERVER_RESUME_RETRY_FIXED_DELAY_MAX_ATTEMPTS_KEY = "rsocket.server.resume.retry.fixedDelay.maxAttempts";
-        String SERVER_RESUME_RETRY_FIXED_DELAY_KEY = "rsocket.server.resume.retry.fixedDelay.delay";
-        String SERVER_RESUME_RETRY_MAX_KEY = "rsocket.server.resume.retry.max";
-        String SERVER_RESUME_RETRY_MAX_IN_ROW_KEY = "rsocket.server.resume.retry.maxInRow";
-        String SERVER_PAYLOAD_DECODER_KEY = "rsocket.server.payloadDecoder";
-        String SERVER_MAX_INBOUND_PAYLOAD_SIZE_KEY = "rsocket.server.maxInboundPayloadSize";
-        String SERVER_TRANSPORT_MODE_KEY = "rsocket.server.transport.mode";
-        String SERVER_TRANSPORT_PORT_KEY = "rsocket.server.transport.host";
-        String SERVER_TRANSPORT_HOST_KEY = "rsocket.server.transport.port";
-        String SERVER_TRANSPORT_TCP_MAX_FRAME_LENGHT = "rsocket.server.transport.tcp.maxFrameLength";
-        String SERVER_SERVICES_KEY = "rsocket.server.services";
+        String SERVER_SECTION = "rsocket.server";
+        String COMMUNICATOR_SECTION = "rsocket.communicator";
+        String RESUME_SECTION = "resume";
+        String RETRY_SECTION = "retry";
+        String RECONNECT_SECTION = "reconnect";
+        String KEEP_ALIVE_SECTION = "keepAlive";
+
+        String TRANSPORT_MODE_KEY = "transport.mode";
+        String TRANSPORT_PORT_KEY = "transport.host";
+        String TRANSPORT_HOST_KEY = "transport.port";
+        String PAYLOAD_DECODER_KEY = "payloadDecoder";
+        String TRACING_KEY = "tracing";
+        String DEFAULT_DATA_FORMAT_KEY = "defaultDataFormat";
+        String DEFAULT_META_DATA_FORMAT_KEY = "defaultMetaDataFormat";
+        String FRAGMENTATION_MTU_KEY = "fragmentationMtu";
+
+        String CLEANUP_STORE_ON_KEEP_ALIVE_KEY = "cleanupStoreOnKeepAlive";
+        String SESSION_DURATION_KEY = "sessionDuration";
+        String STREAM_TIMEOUT_KEY = "streamTimeout";
+        String POLICY_KEY = "policy";
+        String BACKOFF_MAX_ATTEMPTS_KEY = "backoff.maxAttempts";
+        String BACKOFF_MIN_BACKOFF_KEY = "backoff.minBackoff";
+        String FIXED_DELAY_MAX_ATTEMPTS_KEY = "fixedDelay.maxAttempts";
+        String FIXED_DELAY_KEY = "fixedDelay.delay";
+        String MAX_KEY = "max";
+        String MAX_IN_ROW_KEY = "maxInRow";
+        String MAX_INBOUND_PAYLOAD_SIZE_KEY = "maxInboundPayloadSize";
+
+        String SERVICES_KEY = "services";
+        String DEFAULT_SERVICE_ID_KEY = "services.default.serviceId";
+        String DEFAULT_METHOD_ID_KEY = "services.default.methodId";
+        String TRANSPORT_TCP_MAX_FRAME_LENGTH = "transport.tcp.maxFrameLength";
+
+        String INTERVAL_KEY = "interval";
+        String MAX_LIFE_TIME_KEY = "maxLifeTime";
+
+        String CONNECTORS_KEY = "connectors";
     }
 
     interface ContextKeys {
@@ -95,6 +109,8 @@ public interface RsocketModuleConstants {
         int DEFAULT_PORT = 9000;
         Duration DEFAULT_RESUME_SESSION_DURATION = Duration.ofHours(1);
         Duration DEFAULT_RESUME_STREAM_TIMEOUT = Duration.ofHours(1);
+        Duration DEFAULT_KEEP_ALIVE_INTERVAL = Duration.ofSeconds(20);
+        Duration DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME = Duration.ofSeconds(90);
     }
 
     interface Fields {
@@ -131,13 +147,13 @@ public interface RsocketModuleConstants {
 
         private final String policy;
 
-        public static RetryPolicy rsocketRetryPolicy(String policy) {
+        public static RetryPolicy rsocketRetryPolicy(String policy, RetryPolicy fallback) {
             if (BACKOFF.policy.equalsIgnoreCase(policy)) return BACKOFF;
             if (FIXED_DELAY.policy.equalsIgnoreCase(policy)) return FIXED_DELAY;
             if (MAX.policy.equalsIgnoreCase(policy)) return MAX;
             if (MAX_IN_A_ROW.policy.equalsIgnoreCase(policy)) return MAX_IN_A_ROW;
             if (INDEFINITELY.policy.equalsIgnoreCase(policy)) return INDEFINITELY;
-            throw new RsocketException(format(UNSUPPORTED_RETRY_POLICY, policy));
+            return fallback;
         }
     }
 

@@ -16,17 +16,9 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.configuration;
+package io.art.rsocket.launcher;
 
-import io.art.core.source.*;
-import io.rsocket.core.*;
 
-public class RsocketConnectorConfiguration {
-    private RSocketConnector connector;
-
-    public static RsocketConnectorConfiguration from(RsocketCommunicatorConfiguration communicatorConfiguration, ConfigurationSource source) {
-        RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration();
-        configuration.connector = RSocketConnector.create();
-        return configuration;
-    }
+public class RsocketLauncher {
 }
+

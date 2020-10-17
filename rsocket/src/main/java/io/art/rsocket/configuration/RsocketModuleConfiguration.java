@@ -21,6 +21,8 @@ package io.art.rsocket.configuration;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 
 @Getter
 public class RsocketModuleConfiguration implements ModuleConfiguration {
@@ -33,8 +35,8 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.serverConfiguration = RsocketServerConfiguration.from(source);
-            configuration.communicatorConfiguration = RsocketCommunicatorConfiguration.from(source);
+            configuration.serverConfiguration = let(source.getNested(SERVER_SECTION), RsocketServerConfiguration::from);
+            configuration.communicatorConfiguration = let(source.getNested(COMMUNICATOR_SECTION), RsocketCommunicatorConfiguration::from);
             return this;
         }
     }

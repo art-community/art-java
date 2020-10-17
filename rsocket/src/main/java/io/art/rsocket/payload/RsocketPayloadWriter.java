@@ -19,7 +19,6 @@
 package io.art.rsocket.payload;
 
 import io.art.entity.immutable.Value;
-import io.art.rsocket.exception.*;
 import io.rsocket.*;
 import lombok.*;
 import static io.art.entity.constants.EntityConstants.*;
@@ -27,11 +26,8 @@ import static io.art.entity.immutable.Value.*;
 import static io.art.json.descriptor.JsonEntityWriter.*;
 import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
 import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.xml.descriptor.XmlEntityWriter.*;
 import static io.rsocket.util.DefaultPayload.*;
-import static java.text.MessageFormat.*;
 
 @RequiredArgsConstructor
 public class RsocketPayloadWriter {
@@ -50,7 +46,7 @@ public class RsocketPayloadWriter {
                 return create(writeMessagePackToBytes(value));
 
         }
-        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDefaultDataFormat()));
+        throw new IllegalStateException();
     }
 
     public Payload writePayloadMetaData(Value dataValue, Value metadataValue) {
@@ -65,6 +61,6 @@ public class RsocketPayloadWriter {
                 return create(writeMessagePackToBytes(dataValue), writeMessagePackToBytes(metadataValue));
 
         }
-        throw new RsocketException(format(UNSUPPORTED_DATA_FORMAT, rsocketModule().configuration().getDefaultDataFormat()));
+        throw new IllegalStateException();
     }
 }
