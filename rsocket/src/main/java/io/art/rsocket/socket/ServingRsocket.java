@@ -64,17 +64,17 @@ public class ServingRsocket implements RSocket {
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
         ServiceMethodIdentifier defaultServiceMethod = serverConfiguration.getDefaultServiceMethod();
         if (isNull(payloadValue) && isNull(defaultServiceMethod)) {
-            throw new RsocketServerException(SPECIFICATION_NOT_FOUND);
+            throw new RsocketException(SPECIFICATION_NOT_FOUND);
         }
 
         Optional<ServiceMethodSpecification> possibleSpecification = specifications().findMethodByValue(payloadValue.getValue());
         if (!possibleSpecification.isPresent() && isNull(defaultServiceMethod)) {
-            throw new RsocketServerException(SPECIFICATION_NOT_FOUND);
+            throw new RsocketException(SPECIFICATION_NOT_FOUND);
         }
 
         Optional<ServiceMethodSpecification> defaultSpecification = specifications().findMethodById(defaultServiceMethod);
         if (!possibleSpecification.isPresent() && !defaultSpecification.isPresent()) {
-            throw new RsocketServerException(SPECIFICATION_NOT_FOUND);
+            throw new RsocketException(SPECIFICATION_NOT_FOUND);
         }
 
         this.specification = possibleSpecification.orElseGet(defaultSpecification::get);

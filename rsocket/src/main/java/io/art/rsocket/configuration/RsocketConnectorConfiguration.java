@@ -21,6 +21,7 @@ package io.art.rsocket.configuration;
 import io.art.core.source.*;
 import io.art.entity.constants.EntityConstants.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
+import io.art.rsocket.exception.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
@@ -38,11 +39,14 @@ import static io.art.entity.constants.EntityConstants.DataFormat.*;
 import static io.art.entity.mime.MimeTypeDataFormatMapper.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.CONFIGURATION_PARAMETER_NOT_EXISTS;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
+import static java.text.MessageFormat.*;
 import static reactor.netty.http.client.HttpClient.*;
+import java.text.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -96,7 +100,7 @@ public class RsocketConnectorConfiguration {
         configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
         switch (configuration.transport) {
             case TCP:
-                String host = source.getString(TRANSPORT_HOST_KEY);
+                String host = orElseThrow(source.getString(TRANSPORT_HOST_KEY), () -> new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, TRANSPORT_HOST_KEY)));
                 configuration.tcpClient = TcpClient.create().port(port).host(host);
                 configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
                 break;

@@ -28,6 +28,13 @@ public class NullityChecker {
         return isNull(value) ? orElse : value;
     }
 
+    public static <T> T orElseThrow(T value, Supplier<? extends RuntimeException> exceptionFactory) {
+        if (isNull(value)) {
+            throw exceptionFactory.get();
+        }
+        return value;
+    }
+
     public static <T> T orElse(T value, Supplier<T> orElse) {
         return isNull(value) ? orElse.get() : value;
     }

@@ -19,6 +19,7 @@
 package io.art.core.source;
 
 import static io.art.core.checker.NullityChecker.*;
+import static java.util.Objects.isNull;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import java.time.*;
@@ -86,7 +87,11 @@ public interface ConfigurationSource {
     }
 
     default Map<String, ConfigurationSource> getNestedMap(String path) {
-        return let(getNested(path), nested -> nested.getKeys().stream().collect(toMap(identity(), nested::getNested)));
+        ConfigurationSource nested = getNested(path);
+        if (!has(path)) {
+            return null;
+        }
+        return nested.getKeys().stream().collect(toMap(identity(), nested::getNested));
     }
 
     ModuleConfigurationSourceType getType();
