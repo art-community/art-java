@@ -21,19 +21,34 @@ package io.art.rsocket.launcher;
 
 import io.art.core.lazy.*;
 import io.art.rsocket.configuration.*;
+import io.art.rsocket.server.*;
 import io.art.rsocket.state.*;
 import io.rsocket.core.*;
 import io.rsocket.transport.netty.client.*;
-import lombok.experimental.*;
+import lombok.*;
+import org.apache.logging.log4j.*;
+import reactor.core.*;
 import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
+import static io.art.logging.LoggingModule.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.rsocket.core.RSocketClient.*;
+import static lombok.AccessLevel.*;
 import java.util.*;
 
-@UtilityClass
-public class RsocketConnectorsLauncher {
-    public static void launchRsocketConnectors(RsocketCommunicatorConfiguration configuration, RsocketModuleState state) {
+@RequiredArgsConstructor
+public class RsocketManager {
+    @Getter(lazy = true, value = PRIVATE)
+    private static final Logger logger = logger(RsocketManager.class);
+
+    private final RsocketModuleConfiguration configuration;
+    private final RsocketModuleState state;
+    private RsocketServer server;
+
+    public void startConnectors(RsocketCommunicatorConfiguration configuration, RsocketModuleState state) {
         for (Map.Entry<String, RsocketConnectorConfiguration> entry : configuration.getConnectors().entrySet()) {
             RsocketConnectorConfiguration connectorConfiguration = entry.getValue();
             RSocketConnector connector = connectorConfiguration.getConnector();
@@ -58,6 +73,31 @@ public class RsocketConnectorsLauncher {
                     return;
             }
         }
+    }
+
+    public void startSever() {
+        (server = new RsocketServer(configuration.getServerConfiguration())).start();
+    }
+
+    public void stopSever() {
+        apply(server, RsocketServer::stop);
+        state.getRequesters().forEach(this::disposeRsocket);
+    }
+
+    public void stopConnectors() {
+        state.getClients()
+                .values()
+                .stream()
+                .filter(LazyValue::initialized)
+                .forEach(client -> disposeRsocket(client.get()));
+    }
+
+    private void disposeRsocket(Disposable rsocket) {
+        if (rsocket.isDisposed()) {
+            return;
+        }
+        getLogger().info(RSOCKET_DISPOSING);
+        ignoreException(rsocket::dispose, getLogger()::error);
     }
 }
 
