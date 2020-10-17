@@ -19,6 +19,7 @@
 package io.art.core.context;
 
 import com.google.common.collect.*;
+import io.art.core.checker.*;
 import io.art.core.configuration.*;
 import io.art.core.exception.*;
 import io.art.core.module.Module;
@@ -102,6 +103,7 @@ public class Context {
             module.afterLoad();
             this.modules.put(module.getId(), module);
         }
+        messages.add(this.modules.values().stream().map(Module::print).filter(EmptinessChecker::isNotEmpty).reduce(EMPTY_STRING, (current, next) -> NEW_LINE + next));
         messages.forEach(printer);
     }
 

@@ -106,7 +106,7 @@ public class RsocketConnectorConfiguration {
                 configuration.tcpClient = TcpClient.create().port(port).host(host);
                 configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
                 break;
-            case WEB_SOCKET:
+            case WS:
                 String url = source.getString(TRANSPORT_HTTP_BASE_URL_KEY);
                 if (isEmpty(url)) {
                     throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, COMMUNICATOR_SECTION + DOT + CONNECTORS_KEY + DOT + id + DOT + TRANSPORT_HTTP_BASE_URL_KEY));

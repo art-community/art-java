@@ -62,7 +62,7 @@ public class RsocketManager {
                     }
                     state.registerClient(entry.getKey(), client);
                     return;
-                case WEB_SOCKET:
+                case WS:
                     HttpClient httpWebSocketClient = connectorConfiguration.getHttpWebSocketClient();
                     String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
                     client = lazy(() -> from(connector.connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath))));

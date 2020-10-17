@@ -18,6 +18,8 @@
 
 package io.art.core.module;
 
+import static io.art.core.constants.StringConstants.EMPTY_STRING;
+
 public interface Module {
     String getId();
 
@@ -31,5 +33,10 @@ public interface Module {
     }
 
     default void afterUnload() {
+    }
+
+
+    default String print() {
+        return EMPTY_STRING;
     }
 }

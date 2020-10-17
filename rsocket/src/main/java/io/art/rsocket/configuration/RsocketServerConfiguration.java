@@ -91,7 +91,7 @@ public class RsocketServerConfiguration {
                 configuration.tcpServer = TcpServer.create().port(port).host(host);
                 configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
                 break;
-            case WEB_SOCKET:
+            case WS:
                 configuration.httpWebSocketServer = HttpServer.create().port(port).host(host);
                 break;
         }

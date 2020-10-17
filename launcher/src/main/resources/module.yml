@@ -1,6 +1,7 @@
 rsocket:
   server:
     transport:
+      mode: ws
       port: 1234
   communicator:
     connectors:

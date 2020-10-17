@@ -19,5 +19,4 @@
 package io.art.core.module;
 
 public interface ModuleConfiguration {
-
 }

@@ -19,7 +19,6 @@
 package io.art.rsocket.constants;
 
 import lombok.*;
-import static java.text.MessageFormat.format;
 import java.time.*;
 
 public interface RsocketModuleConstants {
@@ -123,7 +122,7 @@ public interface RsocketModuleConstants {
     @AllArgsConstructor
     enum TransportMode {
         TCP("tcp"),
-        WEB_SOCKET("webSocket");
+        WS("ws");
 
         private final String transport;
 
@@ -133,7 +132,7 @@ public interface RsocketModuleConstants {
 
         public static TransportMode rsocketTransport(String transport, TransportMode fallback) {
             if (TCP.transport.equalsIgnoreCase(transport)) return TCP;
-            if (WEB_SOCKET.transport.equalsIgnoreCase(transport)) return WEB_SOCKET;
+            if (WS.transport.equalsIgnoreCase(transport)) return WS;
             return fallback;
         }
     }
