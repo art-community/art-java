@@ -18,19 +18,20 @@
 
 package io.art.rsocket.module;
 
+import io.art.core.lazy.*;
 import io.art.core.module.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.server.*;
 import io.art.rsocket.state.*;
-import io.rsocket.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
+import reactor.core.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.*;
-import static io.art.rsocket.launcher.RsocketLauncher.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
+import static io.art.rsocket.launcher.RsocketConnectorsLauncher.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 
@@ -41,7 +42,8 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     private final String id = RsocketModule.class.getSimpleName();
     private final RsocketModuleConfiguration configuration = new RsocketModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
-    private final RsocketServer server = new RsocketServer();
+    @Getter(lazy = true)
+    private final RsocketServer server = new RsocketServer(configuration.getServerConfiguration());
     private final RsocketModuleState state = new RsocketModuleState();
 
     @Getter(lazy = true, value = PRIVATE)
@@ -55,24 +57,25 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     public void afterLoad() {
         RsocketCommunicatorConfiguration communicatorConfiguration;
         if (nonNull(communicatorConfiguration = configuration.getCommunicatorConfiguration())) {
-            launchRsocketConnectors(communicatorConfiguration);
+            launchRsocketConnectors(communicatorConfiguration, state);
         }
         if (nonNull(configuration.getServerConfiguration())) {
-            server.start();
+            getServer().start();
         }
     }
 
     @Override
     public void beforeUnload() {
-        server.stop();
+        getServer().stop();
         rsocketModule().state().getRequesters().forEach(this::disposeRsocket);
+        rsocketModule().state().getClients().values().stream().filter(LazyValue::initialized).forEach(client -> disposeRsocket(client.get()));
     }
 
-    private void disposeRsocket(RSocket rsocket) {
+    private void disposeRsocket(Disposable rsocket) {
         if (rsocket.isDisposed()) {
             return;
         }
-        getLogger().info(RSOCKET_REQUESTER_DISPOSE);
+        getLogger().info(RSOCKET_DISPOSING);
         ignoreException(rsocket::dispose, getLogger()::error);
     }
 }

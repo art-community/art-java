@@ -26,6 +26,6 @@ public class JsonEntityPrettyWriter {
     }
 
     public static String prettyWriteJson(Value value) {
-        return JsonEntityWriter.writeJson(jsonModule().configuration().getObjectMapper().getFactory(), value, true);
+        return "";
     }
 }

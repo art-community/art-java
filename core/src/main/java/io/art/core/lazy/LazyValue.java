@@ -30,6 +30,10 @@ public class LazyValue<T> {
         return this;
     }
 
+    public boolean initialized() {
+        return value.get() != null;
+    }
+
     public static <T> LazyValue<T> lazy(Supplier<T> factory) {
         return new LazyValue<T>(factory);
     }

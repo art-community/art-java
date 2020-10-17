@@ -94,6 +94,7 @@ public class Context {
 
 
     private void load(ImmutableList<Module> modules) {
+        INSTANCE = this;
         Set<String> messages = setOf(ART_BANNER);
         for (Module module : modules) {
             long timestamp = currentTimeMillis();
@@ -102,7 +103,6 @@ public class Context {
             module.afterLoad();
             this.modules.put(module.getId(), module);
         }
-        INSTANCE = this;
         messages.forEach(printer);
     }
 

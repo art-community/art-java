@@ -22,6 +22,7 @@ import com.google.common.collect.*;
 import io.art.core.source.*;
 import io.art.server.model.*;
 import io.rsocket.core.*;
+import io.rsocket.frame.*;
 import io.rsocket.frame.decoder.*;
 import lombok.*;
 import reactor.util.retry.*;
@@ -33,6 +34,7 @@ import static io.art.entity.constants.EntityConstants.DataFormat.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
+import static io.rsocket.frame.FrameLengthCodec.FRAME_LENGTH_MASK;
 import static java.util.Optional.*;
 
 @Getter
@@ -63,7 +65,7 @@ public class RsocketCommunicatorConfiguration {
         configuration.defaultMetaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), JSON);
         configuration.tracing = orElse(source.getBool(TRACING_KEY), false);
         configuration.fragmentationMtu = orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0);
-        configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), 0);
+        configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
         configuration.resume = let(source.getNested(RESUME_SECTION), RsocketResumeConfigurator::from);
         configuration.reconnect = let(source.getNested(RECONNECT_SECTION), RsocketRetryConfigurator::from);
         configuration.keepAliveConfiguration = let(source.getNested(KEEP_ALIVE_SECTION), RsocketKeepAliveConfiguration::from);

@@ -18,15 +18,10 @@
 
 package io.art.rsocket.constants;
 
-import io.art.rsocket.exception.*;
 import lombok.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
-import static java.text.MessageFormat.*;
 import java.time.*;
 
 public interface RsocketModuleConstants {
-    String RSOCKET_REQUESTER_DISPOSE = "Disposing RSocket request";
-
     interface ExceptionMessages {
         String SPECIFICATION_NOT_FOUND = "Setup payload was null or not contained serviceId, methodId. Default service method id was not specified in configuration";
         String UNSUPPORTED_RETRY_POLICY = "Retry policy not support: ''{0}''";
@@ -34,6 +29,7 @@ public interface RsocketModuleConstants {
     }
 
     interface LoggingMessages {
+        String RSOCKET_DISPOSING = "Disposing RSocket";
         String TCP_SERVER_STARTED_MESSAGE = "RSocket TCP server started";
         String WS_SERVER_STARTED_MESSAGE = "RSocket WS server started";
         String TCP_COMMUNICATOR_STARTED_MESSAGE = "RSocket TCP communicator to {0}:{1,number,#} started";

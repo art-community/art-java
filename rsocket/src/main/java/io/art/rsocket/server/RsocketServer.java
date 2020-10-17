@@ -33,12 +33,13 @@ import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import java.util.concurrent.atomic.*;
 
+@RequiredArgsConstructor
 public class RsocketServer implements Server {
+    private final RsocketServerConfiguration configuration;
     private final AtomicReference<Disposable> server = new AtomicReference<>();
 
     @Getter(lazy = true, value = PRIVATE)
@@ -47,7 +48,6 @@ public class RsocketServer implements Server {
     @Override
     public void start() {
         if (server.compareAndSet(null, null)) {
-            RsocketServerConfiguration configuration = rsocketModule().configuration().getServerConfiguration();
             TransportMode transportMode = configuration.getTransport();
             String message = transportMode == TCP ? TCP_SERVER_STARTED_MESSAGE : WS_SERVER_STARTED_MESSAGE;
             RSocketServer server = RSocketServer.create((payload, socket) -> Mono.just(new ServingRsocket(payload, socket)));

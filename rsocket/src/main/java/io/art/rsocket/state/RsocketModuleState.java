@@ -23,10 +23,8 @@ import io.art.core.lazy.*;
 import io.art.core.module.*;
 import io.rsocket.*;
 import io.rsocket.core.*;
-import lombok.Builder;
 import lombok.*;
 import reactor.util.context.*;
-import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import java.util.*;
@@ -43,7 +41,7 @@ public class RsocketModuleState implements ModuleState {
     }
 
     public ImmutableList<RSocket> getRequesters() {
-        return copyOf(requesters);
+        return ImmutableList.copyOf(requesters);
     }
 
 
@@ -62,6 +60,10 @@ public class RsocketModuleState implements ModuleState {
 
     public LazyValue<RSocketClient> getClient(String id) {
         return clients.get(id);
+    }
+
+    public ImmutableMap<String, LazyValue<RSocketClient>> getClients() {
+        return ImmutableMap.copyOf(clients);
     }
 
     public void registerClient(String id, LazyValue<RSocketClient> client) {

@@ -28,14 +28,12 @@ import lombok.experimental.*;
 import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
 import static io.art.core.lazy.LazyValue.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import static io.rsocket.core.RSocketClient.*;
 import java.util.*;
 
 @UtilityClass
-public class RsocketLauncher {
-    public static void launchRsocketConnectors(RsocketCommunicatorConfiguration configuration) {
-        RsocketModuleState state = rsocketModule().state();
+public class RsocketConnectorsLauncher {
+    public static void launchRsocketConnectors(RsocketCommunicatorConfiguration configuration, RsocketModuleState state) {
         for (Map.Entry<String, RsocketConnectorConfiguration> entry : configuration.getConnectors().entrySet()) {
             RsocketConnectorConfiguration connectorConfiguration = entry.getValue();
             RSocketConnector connector = connectorConfiguration.getConnector();

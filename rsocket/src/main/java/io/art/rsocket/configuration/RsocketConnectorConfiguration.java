@@ -24,9 +24,11 @@ import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
+import io.rsocket.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
 import lombok.*;
+import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -85,7 +87,8 @@ public class RsocketConnectorConfiguration {
         }
 
         RsocketPayloadWriter writer = new RsocketPayloadWriter(dataFormat, metaDataFormat);
-        connector.setupPayload(writer.writePayloadData(setupPayloadBuilder.build().toEntity()));
+        Mono<Payload> setupPayloadMono = Mono.create(emitter -> emitter.success(writer.writePayloadData(setupPayloadBuilder.build().toEntity())));
+        connector.setupPayload(setupPayloadMono);
         RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration(connector);
 
         int port = orElse(source.getInt(TRANSPORT_PORT_KEY), DEFAULT_PORT);
@@ -94,7 +97,7 @@ public class RsocketConnectorConfiguration {
         switch (configuration.transport) {
             case TCP:
                 String host = source.getString(TRANSPORT_HOST_KEY);
-                configuration.tcpClient = TcpClient.create().port(port).host(host);
+                configuration.tcpClient = TcpClient.create().port(port).host("127.0.0.1");
                 configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
                 break;
             case WEB_SOCKET:
