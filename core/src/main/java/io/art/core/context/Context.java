@@ -97,9 +97,8 @@ public class Context {
         INSTANCE = this;
         Set<String> messages = setOf(ART_BANNER);
         for (Module module : modules) {
-            long timestamp = currentTimeMillis();
             module.beforeLoad();
-            messages.add(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - timestamp, module.getClass()));
+            messages.add(format(MODULE_LOADED_MESSAGE, module.getId()));
             module.afterLoad();
             this.modules.put(module.getId(), module);
         }

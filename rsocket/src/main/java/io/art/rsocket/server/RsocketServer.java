@@ -49,7 +49,6 @@ public class RsocketServer implements Server {
     public void start() {
         if (server.compareAndSet(null, null)) {
             TransportMode transportMode = configuration.getTransport();
-            String message = transportMode == TCP ? TCP_SERVER_STARTED_MESSAGE : WS_SERVER_STARTED_MESSAGE;
             RSocketServer server = RSocketServer.create((payload, socket) -> Mono.just(new ServingRsocket(payload, socket)));
             if (configuration.getFragmentationMtu() > 0) {
                 server.fragment(configuration.getFragmentationMtu());
@@ -68,7 +67,6 @@ public class RsocketServer implements Server {
                     .interceptors(interceptorRegistry -> configuration.getInterceptorConfigurer().accept(interceptorRegistry))
                     .payloadDecoder(configuration.getPayloadDecoder())
                     .bind(transport)
-                    .doOnSubscribe(channel -> getLogger().info(message))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
                     .subscribe(this.server::set);
         }

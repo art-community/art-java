@@ -19,6 +19,7 @@
 package io.art.launcher;
 
 import com.google.common.collect.*;
+import io.art.communicator.module.*;
 import io.art.configurator.module.*;
 import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.context.*;
@@ -33,6 +34,7 @@ import io.art.xml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.extensions.ThreadExtensions.block;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.logging.LoggingModule.*;
 import java.time.*;
@@ -58,10 +60,12 @@ public class ModuleLauncher {
                     json(sources),
                     xml(sources),
                     server(sources),
+                    communicator(sources),
                     rsocket(sources)
             );
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
             initialize(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
+            block();
         }
     }
 
@@ -89,6 +93,12 @@ public class ModuleLauncher {
         ServerModule server = new ServerModule();
         server.configure(configurator -> configurator.from(sources));
         return server;
+    }
+
+    private CommunicatorModule communicator(ImmutableList<ConfigurationSource> sources) {
+        CommunicatorModule communicator = new CommunicatorModule();
+        communicator.configure(configurator -> configurator.from(sources));
+        return communicator;
     }
 
     private RsocketModule rsocket(ImmutableList<ConfigurationSource> sources) {

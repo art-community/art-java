@@ -24,16 +24,10 @@ import java.time.*;
 public interface RsocketModuleConstants {
     interface ExceptionMessages {
         String SPECIFICATION_NOT_FOUND = "Setup payload was null or not contained serviceId, methodId. Default service method id was not specified in configuration";
-        String UNSUPPORTED_RETRY_POLICY = "Retry policy not support: ''{0}''";
-        String UNSUPPORTED_DATA_FORMAT = "Unsupported payload data format: ''{0}''";
     }
 
     interface LoggingMessages {
         String RSOCKET_DISPOSING = "Disposing RSocket";
-        String TCP_SERVER_STARTED_MESSAGE = "RSocket TCP server started";
-        String WS_SERVER_STARTED_MESSAGE = "RSocket WS server started";
-        String TCP_COMMUNICATOR_STARTED_MESSAGE = "RSocket TCP communicator to {0}:{1,number,#} started";
-        String WS_COMMUNICATOR_STARTED_MESSAGE = "RSocket WebSocket communicator to {0}:{1,number,#} started";
         String SERVER_STOPPED = "RSocket Server stopped";
         String FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget() with request data: {0} and metadata: {1}";
         String FIRE_AND_FORGET_RESPONSE_LOG = "RSocket fireAndForget() completed";
