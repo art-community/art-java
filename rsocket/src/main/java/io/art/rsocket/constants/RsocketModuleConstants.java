@@ -64,13 +64,17 @@ public interface RsocketModuleConstants {
         String RECONNECT_SECTION = "reconnect";
         String KEEP_ALIVE_SECTION = "keepAlive";
 
+        String DEFAULT_DATA_FORMAT_KEY = "defaults.dataFormat";
+        String DEFAULT_META_DATA_FORMAT_KEY = "defaults.metaDataFormat";
+        String DEFAULT_SERVICE_ID_KEY = "defaults.serviceId";
+        String DEFAULT_METHOD_ID_KEY = "defaults.methodId";
+
         String TRANSPORT_MODE_KEY = "transport.mode";
         String TRANSPORT_PORT_KEY = "transport.host";
         String TRANSPORT_HOST_KEY = "transport.port";
+        String TRANSPORT_URL_KEY = "transport.url";
         String PAYLOAD_DECODER_KEY = "payloadDecoder";
         String TRACING_KEY = "tracing";
-        String DEFAULT_DATA_FORMAT_KEY = "defaultDataFormat";
-        String DEFAULT_META_DATA_FORMAT_KEY = "defaultMetaDataFormat";
         String FRAGMENTATION_MTU_KEY = "fragmentationMtu";
 
         String CLEANUP_STORE_ON_KEEP_ALIVE_KEY = "cleanupStoreOnKeepAlive";
@@ -86,8 +90,6 @@ public interface RsocketModuleConstants {
         String MAX_INBOUND_PAYLOAD_SIZE_KEY = "maxInboundPayloadSize";
 
         String SERVICES_KEY = "services";
-        String DEFAULT_SERVICE_ID_KEY = "services.default.serviceId";
-        String DEFAULT_METHOD_ID_KEY = "services.default.methodId";
         String TRANSPORT_TCP_MAX_FRAME_LENGTH = "transport.tcp.maxFrameLength";
 
         String INTERVAL_KEY = "interval";
@@ -130,9 +132,13 @@ public interface RsocketModuleConstants {
         private final String transport;
 
         public static TransportMode rsocketTransport(String transport) {
+            return rsocketTransport(transport, TCP);
+        }
+
+        public static TransportMode rsocketTransport(String transport, TransportMode fallback) {
             if (TCP.transport.equalsIgnoreCase(transport)) return TCP;
             if (WEB_SOCKET.transport.equalsIgnoreCase(transport)) return WEB_SOCKET;
-            return TCP;
+            return fallback;
         }
     }
 

@@ -20,23 +20,38 @@ package io.art.rsocket.configuration;
 
 import io.art.core.source.*;
 import io.art.entity.constants.EntityConstants.*;
+import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
-import lombok.experimental.*;
+import lombok.*;
+import reactor.netty.http.client.*;
+import reactor.netty.tcp.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.entity.constants.EntityConstants.DataFormat.*;
 import static io.art.entity.mime.MimeTypeDataFormatMapper.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
+import static io.rsocket.frame.FrameLengthCodec.*;
+import static reactor.netty.http.client.HttpClient.*;
 
-@UtilityClass
-public class RsocketConnectorConfigurator {
-    public static RSocketConnector from(RsocketCommunicatorConfiguration communicatorConfiguration, ConfigurationSource source) {
+@Getter
+@RequiredArgsConstructor
+public class RsocketConnectorConfiguration {
+    private final RSocketConnector connector;
+    private TransportMode transport;
+    private TcpClient tcpClient;
+    private int tcpMaxFrameLength;
+    private HttpClient httpWebSocketClient;
+
+
+    public static RsocketConnectorConfiguration from(RsocketCommunicatorConfiguration communicatorConfiguration, ConfigurationSource source) {
         RSocketConnector connector = RSocketConnector.create();
         DataFormat dataFormat = dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), communicatorConfiguration.getDefaultDataFormat());
         DataFormat metaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), communicatorConfiguration.getDefaultMetaDataFormat());
@@ -69,7 +84,23 @@ public class RsocketConnectorConfigurator {
 
         RsocketPayloadWriter writer = new RsocketPayloadWriter(dataFormat, metaDataFormat);
         connector.setupPayload(writer.writePayloadData(setupPayloadBuilder.build().toEntity()));
+        RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration(connector);
 
-        return connector;
+        int port = orElse(source.getInt(TRANSPORT_PORT_KEY), DEFAULT_PORT);
+
+        configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
+        switch (configuration.transport) {
+            case TCP:
+                String host = source.getString(TRANSPORT_HOST_KEY);
+                configuration.tcpClient = TcpClient.create().port(port).host(host);
+                configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
+                break;
+            case WEB_SOCKET:
+                String url = source.getString(TRANSPORT_URL_KEY);
+                configuration.httpWebSocketClient = create().port(port).baseUrl(url);
+                break;
+        }
+
+        return configuration;
     }
 }

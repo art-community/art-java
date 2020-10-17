@@ -20,10 +20,13 @@ package io.art.rsocket.configuration;
 
 import com.google.common.collect.*;
 import io.art.core.source.*;
+import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.server.model.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
 import lombok.*;
+import reactor.netty.http.client.*;
+import reactor.netty.tcp.*;
 import reactor.util.retry.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -32,12 +35,15 @@ import static io.art.entity.constants.EntityConstants.*;
 import static io.art.entity.constants.EntityConstants.DataFormat.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.rsocketTransport;
 import static io.art.server.model.ServiceMethodIdentifier.*;
+import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.util.Optional.*;
+import static reactor.netty.http.client.HttpClient.*;
 
 @Getter
 public class RsocketCommunicatorConfiguration {
-    private ImmutableMap<String, RSocketConnector> connectors;
+    private ImmutableMap<String, RsocketConnectorConfiguration> connectors;
     private boolean tracing;
     private int fragmentationMtu;
     private Resume resume;
@@ -71,10 +77,11 @@ public class RsocketCommunicatorConfiguration {
                 ? PayloadDecoder.DEFAULT
                 : PayloadDecoder.ZERO_COPY;
 
+
         configuration.connectors = ofNullable(source.getNestedMap(CONNECTORS_KEY))
                 .map(configurations -> configurations.entrySet()
                         .stream()
-                        .collect(toImmutableMap(Entry::getKey, entry -> RsocketConnectorConfigurator.from(configuration, entry.getValue()))))
+                        .collect(toImmutableMap(Entry::getKey, entry -> RsocketConnectorConfiguration.from(configuration, entry.getValue()))))
                 .orElse(ImmutableMap.of());
 
         return configuration;
