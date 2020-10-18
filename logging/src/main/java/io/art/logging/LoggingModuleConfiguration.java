@@ -35,8 +35,8 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.colored = orElse(source.getBool(COLORED_KEY), false);
-            configuration.asynchronous = orElse(source.getBool(ASYNCHRONOUS_KEY), false);
+            configuration.colored = orElse(let(source.getNested(LOGGING_SECTION), logging -> logging.getBool(COLORED_KEY)), false);
+            configuration.asynchronous = orElse(let(source.getNested(LOGGING_SECTION), logging -> logging.getBool(ASYNCHRONOUS_KEY)), false);
             return this;
         }
 

@@ -48,8 +48,9 @@ public interface RsocketModuleConstants {
     }
 
     interface ConfigurationKeys {
-        String SERVER_SECTION = "rsocket.server";
-        String COMMUNICATOR_SECTION = "rsocket.communicator";
+        String RSOCKET_SECTION = "rsocket";
+        String SERVER_SECTION = "server";
+        String COMMUNICATOR_SECTION = "communicator";
         String RESUME_SECTION = "resume";
         String RETRY_SECTION = "retry";
         String RECONNECT_SECTION = "reconnect";

@@ -39,7 +39,8 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.services = ofNullable(source.getNestedMap(SERVER_SERVICES_KEY))
+            configuration.services = ofNullable(source.getNested(SERVER_SECTION))
+                    .map(server -> server.getNestedMap(SERVER_SERVICES_KEY))
                     .map(services -> services
                             .entrySet()
                             .stream()

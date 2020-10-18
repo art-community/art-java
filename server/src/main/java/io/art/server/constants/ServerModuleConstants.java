@@ -31,7 +31,8 @@ public interface ServerModuleConstants {
     }
 
     interface ConfigurationKeys {
-        String SERVER_SERVICES_KEY = "server.services";
+        String SERVER_SECTION = "server";
+        String SERVER_SERVICES_KEY = "services";
         String DEACTIVATED_KEY = "deactivated";
         String LOGGING_KEY = "logging";
         String METHODS_KEY = "methods";
