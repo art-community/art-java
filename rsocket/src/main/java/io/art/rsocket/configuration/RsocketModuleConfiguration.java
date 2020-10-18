@@ -21,7 +21,6 @@ package io.art.rsocket.configuration;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
 
