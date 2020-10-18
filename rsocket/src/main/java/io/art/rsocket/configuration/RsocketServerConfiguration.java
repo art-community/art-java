@@ -80,7 +80,7 @@ public class RsocketServerConfiguration {
         configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT
                 ? PayloadDecoder.DEFAULT
                 : PayloadDecoder.ZERO_COPY;
-        configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), 0);
+        configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
         configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
 
         int port = orElse(source.getInt(TRANSPORT_PORT_KEY), DEFAULT_PORT);

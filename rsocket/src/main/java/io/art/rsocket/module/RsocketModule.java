@@ -96,7 +96,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
                     .tabulation(2)
                     .value(DEFAULT_DATA_FORMAT_KEY, communicatorConfiguration.getDefaultDataFormat())
                     .value(DEFAULT_META_DATA_FORMAT_KEY, communicatorConfiguration.getDefaultMetaDataFormat())
-                    .value(DEFAULT_SERVICE_ID_KEY + SPACE + AMPERSAND + SPACE + DEFAULT_METHOD_ID_KEY, serverConfiguration.getDefaultServiceMethod())
+                    .value(DEFAULT_SERVICE_ID_KEY + SPACE + AMPERSAND + SPACE + DEFAULT_METHOD_ID_KEY, communicatorConfiguration.getDefaultServiceMethod())
                     .value(FRAGMENTATION_MTU_KEY, communicatorConfiguration.getFragmentationMtu())
                     .value(MAX_INBOUND_PAYLOAD_SIZE_KEY, communicatorConfiguration.getMaxInboundPayloadSize());
         }

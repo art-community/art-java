@@ -49,12 +49,10 @@ public class RsocketServer implements Server {
     public void start() {
         if (server.compareAndSet(null, null)) {
             TransportMode transportMode = configuration.getTransport();
-            RSocketServer server = RSocketServer.create((payload, socket) -> Mono.just(new ServingRsocket(payload, socket)));
+            RSocketServer server = RSocketServer.create((payload, socket) -> Mono.just(new ServingRsocket(payload, socket)))
+                    .fragment(configuration.getMaxInboundPayloadSize());
             if (configuration.getFragmentationMtu() > 0) {
                 server.fragment(configuration.getFragmentationMtu());
-            }
-            if (configuration.getMaxInboundPayloadSize() > 0) {
-                server.fragment(configuration.getMaxInboundPayloadSize());
             }
             Resume resume;
             if (nonNull(resume = configuration.getResume())) {

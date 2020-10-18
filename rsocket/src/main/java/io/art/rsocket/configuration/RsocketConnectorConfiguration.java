@@ -70,9 +70,11 @@ public class RsocketConnectorConfiguration {
                 let(source.getNested(KEEP_ALIVE_SECTION), section -> RsocketKeepAliveConfiguration.from(section, communicatorConfiguration.getKeepAliveConfiguration())),
                 configuration -> connector.keepAlive(configuration.getInterval(), configuration.getMaxLifeTime())
         );
-
+        int mtu = orElse(source.getInt(FRAGMENTATION_MTU_KEY), communicatorConfiguration.getFragmentationMtu());
+        if (mtu > 0) {
+            connector.fragment(mtu);
+        }
         connector.payloadDecoder(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT ? PayloadDecoder.DEFAULT : PayloadDecoder.ZERO_COPY)
-                .fragment(orElse(source.getInt(FRAGMENTATION_MTU_KEY), communicatorConfiguration.getFragmentationMtu()))
                 .maxInboundPayloadSize(orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), communicatorConfiguration.getMaxInboundPayloadSize()))
                 .dataMimeType(toMimeType(dataFormat).toString())
                 .metadataMimeType(toMimeType(metaDataFormat).toString())
