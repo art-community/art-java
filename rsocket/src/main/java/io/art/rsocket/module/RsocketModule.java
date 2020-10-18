@@ -75,6 +75,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
             return EMPTY_STRING;
         }
         ColoredPrinter printer = printer()
+                .additional(NEW_LINE)
                 .additional("RSocket configuration:")
                 .tabulation(1)
                 .additional(SERVER_SECTION)
