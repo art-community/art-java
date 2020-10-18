@@ -92,6 +92,10 @@ public class RsocketManager {
                 .forEach(client -> disposeRsocket(client.get()));
     }
 
+    public boolean isServerAvailable() {
+        return let(server, RsocketServer::available, false);
+    }
+
     private void disposeRsocket(Disposable rsocket) {
         if (rsocket.isDisposed()) {
             return;

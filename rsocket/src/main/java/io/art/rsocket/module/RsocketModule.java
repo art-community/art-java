@@ -76,7 +76,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
             return EMPTY_STRING;
         }
         ColoredPrinter printer = printer()
-                .mainSection(RsocketModuleConfiguration.class.getSimpleName())
+                .mainSection(RsocketModule.class.getSimpleName())
                 .tabulation(1);
         if (nonNull(serverConfiguration)) {
             printer.subSection(SERVER_SECTION)
@@ -87,7 +87,8 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
                     .value(FRAGMENTATION_MTU_KEY, serverConfiguration.getFragmentationMtu())
                     .value(MAX_INBOUND_PAYLOAD_SIZE_KEY, serverConfiguration.getMaxInboundPayloadSize())
                     .value(TRANSPORT_MODE_KEY, serverConfiguration.getTransport())
-                    .value("tcpServer", let(serverConfiguration.getTcpServer(), TcpServer::configure));
+                    .value("tcpServer", let(serverConfiguration.getTcpServer(), TcpServer::configure))
+                    .value("server available", manager.isServerAvailable());
         }
         if (nonNull(communicatorConfiguration)) {
             printer

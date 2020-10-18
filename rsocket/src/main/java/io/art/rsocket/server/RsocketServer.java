@@ -61,12 +61,12 @@ public class RsocketServer implements Server {
             ServerTransport<CloseableChannel> transport = transportMode == TCP
                     ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
                     : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
-            server
+            this.server.set(server
                     .interceptors(interceptorRegistry -> configuration.getInterceptorConfigurer().accept(interceptorRegistry))
                     .payloadDecoder(configuration.getPayloadDecoder())
                     .bind(transport)
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
-                    .subscribe(this.server::set);
+                    .subscribe());
         }
     }
 
