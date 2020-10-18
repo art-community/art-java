@@ -71,21 +71,35 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     @Override
     public String print() {
         RsocketServerConfiguration serverConfiguration = configuration.getServerConfiguration();
-        if (isNull(serverConfiguration)) {
+        RsocketCommunicatorConfiguration communicatorConfiguration = configuration.getCommunicatorConfiguration();
+        if (isNull(serverConfiguration) && isNull(communicatorConfiguration)) {
             return EMPTY_STRING;
         }
         ColoredPrinter printer = printer()
                 .mainSection(RsocketModuleConfiguration.class.getSimpleName())
-                .tabulation(1)
-                .subSection(SERVER_SECTION)
-                .tabulation(2)
-                .value(DEFAULT_DATA_FORMAT_KEY, serverConfiguration.getDefaultDataFormat())
-                .value(DEFAULT_META_DATA_FORMAT_KEY, serverConfiguration.getDefaultMetaDataFormat())
-                .value(DEFAULT_SERVICE_ID_KEY + SPACE + AMPERSAND + SPACE + DEFAULT_METHOD_ID_KEY, serverConfiguration.getDefaultServiceMethod())
-                .value(FRAGMENTATION_MTU_KEY, serverConfiguration.getFragmentationMtu())
-                .value(MAX_INBOUND_PAYLOAD_SIZE_KEY, serverConfiguration.getMaxInboundPayloadSize())
-                .value(TRANSPORT_MODE_KEY, serverConfiguration.getTransport())
-                .value("tcpServer", let(serverConfiguration.getTcpServer(), TcpServer::configure));
+                .tabulation(1);
+        if (nonNull(serverConfiguration)) {
+            printer.subSection(SERVER_SECTION)
+                    .tabulation(2)
+                    .value(DEFAULT_DATA_FORMAT_KEY, serverConfiguration.getDefaultDataFormat())
+                    .value(DEFAULT_META_DATA_FORMAT_KEY, serverConfiguration.getDefaultMetaDataFormat())
+                    .value(DEFAULT_SERVICE_ID_KEY + SPACE + AMPERSAND + SPACE + DEFAULT_METHOD_ID_KEY, serverConfiguration.getDefaultServiceMethod())
+                    .value(FRAGMENTATION_MTU_KEY, serverConfiguration.getFragmentationMtu())
+                    .value(MAX_INBOUND_PAYLOAD_SIZE_KEY, serverConfiguration.getMaxInboundPayloadSize())
+                    .value(TRANSPORT_MODE_KEY, serverConfiguration.getTransport())
+                    .value("tcpServer", let(serverConfiguration.getTcpServer(), TcpServer::configure));
+        }
+        if (nonNull(communicatorConfiguration)) {
+            printer
+                    .tabulation(1)
+                    .subSection(COMMUNICATOR_SECTION)
+                    .tabulation(2)
+                    .value(DEFAULT_DATA_FORMAT_KEY, communicatorConfiguration.getDefaultDataFormat())
+                    .value(DEFAULT_META_DATA_FORMAT_KEY, communicatorConfiguration.getDefaultMetaDataFormat())
+                    .value(DEFAULT_SERVICE_ID_KEY + SPACE + AMPERSAND + SPACE + DEFAULT_METHOD_ID_KEY, serverConfiguration.getDefaultServiceMethod())
+                    .value(FRAGMENTATION_MTU_KEY, communicatorConfiguration.getFragmentationMtu())
+                    .value(MAX_INBOUND_PAYLOAD_SIZE_KEY, communicatorConfiguration.getMaxInboundPayloadSize());
+        }
         return printer.print();
     }
 }
