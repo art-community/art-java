@@ -24,7 +24,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.core.async.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.let;
 import static io.art.core.context.Context.*;
 import static io.art.core.printer.ColoredPrinter.printer;
 import static io.art.logging.LoggingModuleConstants.*;
