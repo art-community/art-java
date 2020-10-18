@@ -9,3 +9,17 @@ rsocket:
         transport:
           host: 127.0.0.1
           port: 1456
+server:
+  services:
+    myService1:
+      methods:
+        myMethod1:
+          deactivated: true
+        myMethod2:
+          deactivated: true
+    myService2:
+      methods:
+        myMethod1:
+          deactivated: true
+        myMethod2:
+          deactivated: true

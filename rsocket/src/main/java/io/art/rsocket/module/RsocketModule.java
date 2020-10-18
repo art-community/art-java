@@ -75,18 +75,17 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
             return EMPTY_STRING;
         }
         ColoredPrinter printer = printer()
-                .additional(NEW_LINE)
-                .additional("RSocket configuration:")
+                .mainSection(RsocketModuleConfiguration.class.getSimpleName())
                 .tabulation(1)
-                .additional(SERVER_SECTION)
+                .subSection(SERVER_SECTION)
                 .tabulation(2)
-                .additional(DEFAULT_DATA_FORMAT_KEY, serverConfiguration.getDefaultDataFormat())
-                .additional(DEFAULT_META_DATA_FORMAT_KEY, serverConfiguration.getDefaultMetaDataFormat())
-                .additional(DEFAULT_SERVICE_ID_KEY + SPACE + AMPERSAND + SPACE + DEFAULT_METHOD_ID_KEY, serverConfiguration.getDefaultServiceMethod())
-                .additional(FRAGMENTATION_MTU_KEY, serverConfiguration.getFragmentationMtu())
-                .additional(MAX_INBOUND_PAYLOAD_SIZE_KEY, serverConfiguration.getMaxInboundPayloadSize())
-                .additional(TRANSPORT_MODE_KEY, serverConfiguration.getTransport())
-                .additional("tcpServer", let(serverConfiguration.getTcpServer(), TcpServer::configure));
+                .value(DEFAULT_DATA_FORMAT_KEY, serverConfiguration.getDefaultDataFormat())
+                .value(DEFAULT_META_DATA_FORMAT_KEY, serverConfiguration.getDefaultMetaDataFormat())
+                .value(DEFAULT_SERVICE_ID_KEY + SPACE + AMPERSAND + SPACE + DEFAULT_METHOD_ID_KEY, serverConfiguration.getDefaultServiceMethod())
+                .value(FRAGMENTATION_MTU_KEY, serverConfiguration.getFragmentationMtu())
+                .value(MAX_INBOUND_PAYLOAD_SIZE_KEY, serverConfiguration.getMaxInboundPayloadSize())
+                .value(TRANSPORT_MODE_KEY, serverConfiguration.getTransport())
+                .value("tcpServer", let(serverConfiguration.getTcpServer(), TcpServer::configure));
         return printer.print();
     }
 }

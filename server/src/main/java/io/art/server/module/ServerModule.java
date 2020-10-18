@@ -19,13 +19,16 @@
 package io.art.server.module;
 
 import io.art.core.module.*;
-import io.art.logging.*;
+import io.art.core.printer.*;
 import io.art.server.configuration.*;
 import io.art.server.configuration.ServerModuleConfiguration.*;
 import io.art.server.registry.*;
 import io.art.server.state.*;
 import lombok.*;
+import static io.art.core.constants.StringConstants.EMPTY_STRING;
 import static io.art.core.context.Context.*;
+import static io.art.core.printer.ColoredPrinter.*;
+import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static lombok.AccessLevel.*;
 
 @Getter
@@ -43,5 +46,34 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, C
 
     public static ServiceSpecificationRegistry specifications() {
         return serverModule().state().getSpecifications();
+    }
+
+    @Override
+    public String print() {
+        if (configuration.getServices().isEmpty()) {
+            return EMPTY_STRING;
+        }
+        ColoredPrinter printer = printer()
+                .mainSection(ServerModuleConfiguration.class.getSimpleName())
+                .tabulation(1)
+                .subSection(SERVER_SERVICES_KEY)
+                .tabulation(2);
+        configuration.getServices().forEach((serviceId, service) -> {
+            printer
+                    .tabulation(2)
+                    .subSection(serviceId)
+                    .tabulation(3)
+                    .value(DEACTIVATED_KEY, service.isDeactivated())
+                    .subSection(METHODS_KEY)
+                    .tabulation(4);
+            service.getMethods().forEach((methodId, method) -> {
+                printer
+                        .tabulation(4)
+                        .subSection(methodId)
+                        .tabulation(5)
+                        .value(DEACTIVATED_KEY, method.isDeactivated());
+            });
+        });
+        return printer.print();
     }
 }

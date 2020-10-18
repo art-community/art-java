@@ -19,14 +19,28 @@
 package io.art.core.printer;
 
 import io.art.core.colorizer.*;
+import io.art.core.constants.*;
+import io.art.core.extensions.*;
 import lombok.*;
 import static com.google.common.base.Strings.*;
+import static io.art.core.checker.NullityChecker.let;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.StringExtensions.*;
 
 @NoArgsConstructor(staticName = "printer")
 public class ColoredPrinter {
     private final StringBuilder builder = new StringBuilder();
     private int tabulation = 0;
+
+    public ColoredPrinter mainSection(String message) {
+        builder.append(repeat(TABULATION, tabulation)).append(NEW_LINE).append(AnsiColorizer.message(message + COLON + SPACE, AnsiColor.CYAN)).append(NEW_LINE);
+        return this;
+    }
+
+    public ColoredPrinter subSection(String message) {
+        builder.append(repeat(TABULATION, tabulation)).append(AnsiColorizer.message(message + COLON + SPACE, AnsiColor.BLUE_BOLD)).append(NEW_LINE);
+        return this;
+    }
 
     public ColoredPrinter success(String message) {
         builder.append(repeat(TABULATION, tabulation)).append(AnsiColorizer.success(message)).append(NEW_LINE);
@@ -48,20 +62,8 @@ public class ColoredPrinter {
         return this;
     }
 
-    public ColoredPrinter success(String name, Object value) {
-        return success(name + COLON + SPACE + value);
-    }
-
-    public ColoredPrinter error(String name, Object value) {
-        return error(name + COLON + SPACE + value);
-    }
-
-    public ColoredPrinter warning(String name, Object value) {
-        return warning(name + COLON + SPACE + value);
-    }
-
-    public ColoredPrinter additional(String name, Object value) {
-        return additional(name + COLON + SPACE + value);
+    public ColoredPrinter value(String name, Object value) {
+        return success(AnsiColorizer.success(name + COLON + SPACE) + AnsiColorizer.additional(let(value, Object::toString, NULL_STRING)));
     }
 
     public ColoredPrinter tabulation(int count) {
@@ -70,6 +72,6 @@ public class ColoredPrinter {
     }
 
     public String print() {
-        return builder.toString();
+        return builder.substring(0, builder.length() - 1);
     }
 }
