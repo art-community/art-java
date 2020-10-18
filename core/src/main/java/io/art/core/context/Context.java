@@ -103,7 +103,13 @@ public class Context {
             module.afterLoad();
             this.modules.put(module.getId(), module);
         }
-        messages.add(this.modules.values().stream().map(Module::print).filter(EmptinessChecker::isNotEmpty).reduce(EMPTY_STRING, (current, next) -> NEW_LINE + next));
+        this.modules.values()
+                .stream()
+                .map(Module::print)
+                .filter(EmptinessChecker::isNotEmpty)
+                .reduce((current, next) -> current + NEW_LINE + next)
+                .filter(EmptinessChecker::isNotEmpty)
+                .ifPresent(messages::add);
         messages.forEach(printer);
     }
 
