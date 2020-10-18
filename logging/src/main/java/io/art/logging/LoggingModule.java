@@ -86,7 +86,7 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     @Override
     public String print() {
         return printer()
-                .mainSection(LoggingModuleConfiguration.class.getSimpleName())
+                .mainSection(LoggingModule.class.getSimpleName())
                 .tabulation(1)
                 .value(ASYNCHRONOUS_KEY, configuration.isAsynchronous())
                 .value(COLORED_KEY, configuration.isColored())

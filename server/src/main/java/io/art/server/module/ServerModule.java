@@ -54,7 +54,7 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, C
             return EMPTY_STRING;
         }
         ColoredPrinter printer = printer()
-                .mainSection(ServerModuleConfiguration.class.getSimpleName())
+                .mainSection(ServerModule.class.getSimpleName())
                 .tabulation(1)
                 .subSection(SERVER_SERVICES_KEY)
                 .tabulation(2);

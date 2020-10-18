@@ -20,12 +20,10 @@ package io.art.core.printer;
 
 import io.art.core.colorizer.*;
 import io.art.core.constants.*;
-import io.art.core.extensions.*;
 import lombok.*;
 import static com.google.common.base.Strings.*;
-import static io.art.core.checker.NullityChecker.let;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.StringExtensions.*;
 
 @NoArgsConstructor(staticName = "printer")
 public class ColoredPrinter {
@@ -42,28 +40,13 @@ public class ColoredPrinter {
         return this;
     }
 
-    public ColoredPrinter success(String message) {
-        builder.append(repeat(TABULATION, tabulation)).append(AnsiColorizer.success(message)).append(NEW_LINE);
-        return this;
-    }
-
-    public ColoredPrinter error(String message) {
-        builder.append(repeat(TABULATION, tabulation)).append(AnsiColorizer.error(message)).append(NEW_LINE);
-        return this;
-    }
-
-    public ColoredPrinter warning(String message) {
-        builder.append(repeat(TABULATION, tabulation)).append(AnsiColorizer.warning(message)).append(NEW_LINE);
-        return this;
-    }
-
-    public ColoredPrinter additional(String message) {
+    public ColoredPrinter message(String message) {
         builder.append(repeat(TABULATION, tabulation)).append(AnsiColorizer.additional(message)).append(NEW_LINE);
         return this;
     }
 
     public ColoredPrinter value(String name, Object value) {
-        return success(AnsiColorizer.success(name + COLON + SPACE) + AnsiColorizer.additional(let(value, Object::toString, NULL_STRING)));
+        return message(AnsiColorizer.success(name + COLON + SPACE) + AnsiColorizer.additional(let(value, Object::toString, NULL_STRING)));
     }
 
     public ColoredPrinter tabulation(int count) {
