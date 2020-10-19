@@ -54,7 +54,7 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     }
 
     @Override
-    public void beforeLoad() {
+    public void onLoad() {
         getLogManager().reset();
 
         boolean fromFile = ofNullable(getProperty(LOG42_CONFIGURATION_FILE_PROPERTY))

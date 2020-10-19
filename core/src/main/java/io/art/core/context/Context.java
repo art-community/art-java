@@ -31,7 +31,6 @@ import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static java.lang.Runtime.*;
-import static java.lang.System.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
@@ -98,9 +97,7 @@ public class Context {
         INSTANCE = this;
         Set<String> messages = setOf(ART_BANNER);
         for (Module module : modules) {
-            module.beforeLoad();
             messages.add(format(MODULE_LOADED_MESSAGE, module.getId()));
-            module.afterLoad();
             this.modules.put(module.getId(), module);
         }
         this.modules.values()
@@ -111,18 +108,20 @@ public class Context {
                 .filter(EmptinessChecker::isNotEmpty)
                 .ifPresent(messages::add);
         messages.forEach(printer);
+        for (Module module : modules) {
+            module.onLoad();
+        }
     }
 
     private void unload() {
         List<Module> modules = linkedListOf(this.modules.values());
         reverse(modules);
         for (Module module : modules) {
-            long timestamp = currentTimeMillis();
-            module.beforeUnload();
-            printer.accept(format(MODULE_UNLOADED_MESSAGE, module.getId(), currentTimeMillis() - timestamp, module.getClass()));
-            module.afterUnload();
             this.modules.remove(module.getId());
+            printer.accept(format(MODULE_UNLOADED_MESSAGE, module.getId(), module.getClass()));
+            module.onUnload();
         }
+
         INSTANCE = null;
     }
 }

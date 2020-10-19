@@ -53,7 +53,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     }
 
     @Override
-    public void afterLoad() {
+    public void onLoad() {
         if (nonNull(configuration.getCommunicatorConfiguration())) {
             manager.startConnectors();
         }
@@ -63,7 +63,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     }
 
     @Override
-    public void beforeUnload() {
+    public void onUnload() {
         manager.stopSever();
         manager.stopConnectors();
     }

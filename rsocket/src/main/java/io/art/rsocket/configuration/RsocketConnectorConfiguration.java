@@ -33,6 +33,7 @@ import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.entity.constants.EntityConstants.DataFormat.*;
 import static io.art.entity.mime.MimeTypeDataFormatMapper.*;
@@ -102,7 +103,7 @@ public class RsocketConnectorConfiguration {
             case TCP:
                 String host = source.getString(TRANSPORT_HOST_KEY);
                 if (isEmpty(host)) {
-                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, source.getSection() + DOT + TRANSPORT_HOST_KEY));
+                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_HOST_KEY)));
                 }
                 configuration.tcpClient = TcpClient.create().port(port).host(host);
                 configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
@@ -110,7 +111,7 @@ public class RsocketConnectorConfiguration {
             case WS:
                 String url = source.getString(TRANSPORT_HTTP_BASE_URL_KEY);
                 if (isEmpty(url)) {
-                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, source.getSection() + DOT + TRANSPORT_HTTP_BASE_URL_KEY));
+                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_HTTP_BASE_URL_KEY)));
                 }
                 configuration.httpWebSocketClient = create().port(port).baseUrl(url);
                 configuration.httpWebSocketPath = orElse(source.getString(TRANSPORT_HTTP_PATH_KEY), SLASH);
