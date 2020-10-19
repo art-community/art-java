@@ -3,6 +3,10 @@ rsocket:
     transport:
       mode: ws
       port: 1234
+    logging: true
+    defaults:
+      serviceId: test
+      methodId: test
   communicator:
     connectors:
       myConnector:

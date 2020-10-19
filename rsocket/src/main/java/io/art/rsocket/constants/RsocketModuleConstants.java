@@ -29,7 +29,9 @@ public interface RsocketModuleConstants {
 
     interface LoggingMessages {
         String RSOCKET_DISPOSING = "Disposing RSocket";
-        String SERVER_STOPPED = "RSocket Server stopped";
+        String SERVER_STOPPED = "RSocket server stopped";
+        String SERVER_CLIENT_CONNECTED = "RSocket server client connected";
+        String SERVER_CLIENT_DISCONNECTED = "RSocket server client disconnected";
         String FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget() with request data: {0} and metadata: {1}";
         String FIRE_AND_FORGET_RESPONSE_LOG = "RSocket fireAndForget() completed";
         String FIRE_AND_FORGET_EXCEPTION_LOG = "RSocket fireAndForget() failed with exception: {0}";
@@ -69,7 +71,7 @@ public interface RsocketModuleConstants {
         String TRANSPORT_TCP_MAX_FRAME_LENGTH = "transport.tcp.maxFrameLength";
 
         String PAYLOAD_DECODER_KEY = "payloadDecoder";
-        String TRACING_KEY = "tracing";
+        String LOGGING_KEY = "logging";
         String FRAGMENTATION_MTU_KEY = "fragmentationMtu";
 
         String CLEANUP_STORE_ON_KEEP_ALIVE_KEY = "cleanupStoreOnKeepAlive";

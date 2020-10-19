@@ -21,22 +21,38 @@ package io.art.launcher;
 import com.google.common.collect.*;
 import io.art.communicator.module.*;
 import io.art.configurator.module.*;
+import io.art.core.caster.*;
 import io.art.core.configuration.ContextConfiguration.*;
+import io.art.core.constants.*;
 import io.art.core.context.*;
 import io.art.core.lazy.*;
 import io.art.core.module.Module;
 import io.art.core.source.*;
+import io.art.entity.factory.*;
+import io.art.entity.immutable.*;
 import io.art.json.module.*;
 import io.art.logging.*;
 import io.art.rsocket.module.*;
+import io.art.server.decorator.*;
+import io.art.server.implementation.*;
+import io.art.server.model.*;
 import io.art.server.module.*;
+import io.art.server.specification.*;
 import io.art.xml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
+import static io.art.core.constants.MethodDecoratorScope.INPUT;
+import static io.art.core.constants.MethodDecoratorScope.OUTPUT;
+import static io.art.core.constants.MethodProcessingMode.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.block;
 import static io.art.core.lazy.LazyValue.*;
+import static io.art.entity.factory.PrimitivesFactory.stringPrimitive;
+import static io.art.entity.immutable.Entity.entityBuilder;
 import static io.art.logging.LoggingModule.*;
+import static io.art.server.implementation.ServiceMethodImplementation.producer;
+import static io.art.server.model.ServiceMethodIdentifier.*;
+import static io.art.server.module.ServerModule.specifications;
 import java.time.*;
 import java.time.format.*;
 import java.util.concurrent.atomic.*;
@@ -54,17 +70,34 @@ public class ModuleLauncher {
                     .orderedSources();
             //ConfiguratorModel configuratorModel = model.getConfiguratorModel();
             ImmutableList.Builder<Module> modules = ImmutableList.builder();
+            ServerModule server = server(sources);
             modules.add(
                     configurator,
                     logging(sources/*, configuratorModel*/),
                     json(sources),
                     xml(sources),
-                    server(sources),
+                    server,
                     communicator(sources),
                     rsocket(sources)
             );
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
             initialize(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
+            ServiceMethodSpecification specification = ServiceMethodSpecification.builder()
+                    .inputMapper(Caster::cast)
+                    .outputMapper(Caster::cast)
+                    .inputMode(BLOCKING)
+                    .outputMode(BLOCKING)
+                    .serviceId("test")
+                    .methodId("test")
+                    .implementation(producer(() -> entityBuilder().put("test", stringPrimitive("test")).build(), "test", "test"))
+                    .inputDecorator(new ServiceLoggingDecorator(serviceMethod("test", "test"), INPUT, () -> true))
+                    .outputDecorator(new ServiceLoggingDecorator(serviceMethod("test", "test"), OUTPUT, () -> true))
+                    .build();
+            server.getState().getSpecifications().register(ServiceSpecification.builder()
+                    .serviceId("test")
+                    .method("test", specification)
+                    .build()
+            );
             block();
         }
     }

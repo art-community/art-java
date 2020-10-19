@@ -27,6 +27,7 @@ import io.art.server.implementation.*;
 import io.art.server.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.MethodProcessingMode.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
@@ -73,6 +74,10 @@ public class ServiceMethodSpecification {
         if (deactivated()) {
             return Flux.empty();
         }
+        return Flux.defer(() -> processServing(input)).subscribeOn(Schedulers.elastic());
+    }
+
+    private Flux<Value> processServing(Flux<Value> input) {
         try {
             Object output = implementation.execute(mapInput(filter(input)));
             if (isNull(output)) {

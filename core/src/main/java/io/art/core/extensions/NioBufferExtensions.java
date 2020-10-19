@@ -60,6 +60,7 @@ public class NioBufferExtensions {
         if (isEmpty(buffer)) {
             return EMPTY_BYTES;
         }
+        buffer.flip();
         byte[] bytes = new byte[buffer.remaining()];
         buffer.get(bytes);
         return bytes;
@@ -69,6 +70,7 @@ public class NioBufferExtensions {
         if (isEmpty(nioBuffer)) {
             return EMPTY_BUFFER;
         }
+        nioBuffer.flip();
         if (nioBuffer.isDirect()) {
             ByteBuf buffer = DEFAULT.directBuffer(nioBuffer.capacity());
             buffer.writeBytes(nioBuffer);

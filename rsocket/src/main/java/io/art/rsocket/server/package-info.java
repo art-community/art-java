@@ -17,6 +17,6 @@
  */
 
 @NonNullApi
-package io.art.rsocket.socket;
+package io.art.rsocket.server;
 
 import reactor.util.annotation.*;

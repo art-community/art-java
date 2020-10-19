@@ -58,12 +58,12 @@ public class RsocketConnectorConfiguration {
     private HttpClient httpWebSocketClient;
     private String httpWebSocketPath;
     private boolean lazy;
-    private boolean tracing;
+    private boolean logging;
 
     public static RsocketConnectorConfiguration from(RsocketCommunicatorConfiguration communicatorConfiguration, ConfigurationSource source) {
         RSocketConnector connector = RSocketConnector.create();
         RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration(connector);
-        configuration.tracing = orElse(source.getBool(TRACING_KEY), communicatorConfiguration.isTracing());
+        configuration.logging = orElse(source.getBool(LOGGING_KEY), communicatorConfiguration.isLogging());
         DataFormat dataFormat = dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), communicatorConfiguration.getDefaultDataFormat());
         DataFormat metaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), communicatorConfiguration.getDefaultMetaDataFormat());
         connector.payloadDecoder(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT ? PayloadDecoder.DEFAULT : PayloadDecoder.ZERO_COPY)
@@ -71,7 +71,7 @@ public class RsocketConnectorConfiguration {
                 .dataMimeType(toMimeType(dataFormat).toString())
                 .metadataMimeType(toMimeType(metaDataFormat).toString())
                 .fragment(orElse(source.getInt(FRAGMENTATION_MTU_KEY), communicatorConfiguration.getFragmentationMtu()))
-                .interceptors(registry -> registry.forRequester(new RsocketLoggingInterceptor(configuration::isTracing)));
+                .interceptors(registry -> registry.forRequester(new RsocketLoggingInterceptor(configuration::isLogging)));
 
         apply(source.getNested(RESUME_SECTION), section -> connector.resume(RsocketResumeConfigurator.from(section, communicatorConfiguration.getResume())));
         apply(source.getNested(RECONNECT_SECTION), section -> connector.reconnect(RsocketRetryConfigurator.from(section, communicatorConfiguration.getReconnect())));

@@ -19,63 +19,39 @@
 package io.art.server.decorator;
 
 import io.art.core.constants.*;
-import io.art.server.constants.ServerModuleConstants.*;
-import io.art.server.constants.ServerModuleConstants.*;
+import io.art.core.lazy.*;
+import io.art.server.model.*;
 import io.art.server.specification.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
+import static io.art.core.lazy.LazyValue.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
+import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
+import java.util.*;
 import java.util.function.*;
 
 public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = logger(ServiceLoggingDecorator.class);
-    private final UnaryOperator<Flux<Object>> decorator;
+    private final LazyValue<UnaryOperator<Flux<Object>>> decorator = lazy(this::createDecorator);
+    private final MethodDecoratorScope scope;
     private final Supplier<Boolean> enabled;
+    private final ServiceMethodIdentifier serviceMethodId;
 
-    public ServiceLoggingDecorator(ServiceMethodSpecification specification, MethodDecoratorScope scope, Supplier<Boolean> enabled) {
+    public ServiceLoggingDecorator(ServiceMethodIdentifier serviceMethodId, MethodDecoratorScope scope, Supplier<Boolean> enabled) {
+        this.scope = scope;
         this.enabled = enabled;
-        switch (scope) {
-            case INPUT:
-                switch (specification.getInputMode()) {
-                    case BLOCKING:
-                        decorator = input -> input
-                                .doOnNext(data -> logBlockingInput(data, specification))
-                                .doOnError(exception -> logException(exception, specification));
-                        return;
-                    case MONO:
-                    case FLUX:
-                        decorator = input -> input
-                                .doOnSubscribe(subscription -> logReactiveSubscribe(specification))
-                                .doOnNext(data -> logReactiveInput(data, specification))
-                                .doOnError(exception -> logException(exception, specification));
-                        return;
-                }
-            case OUTPUT:
-                switch (specification.getInputMode()) {
-                    case BLOCKING:
-                        decorator = input -> input
-                                .doOnNext(data -> logBlockingOutput(data, specification))
-                                .doOnError(exception -> logException(exception, specification));
-                        return;
-                    case MONO:
-                    case FLUX:
-                        decorator = input -> input
-                                .doOnNext(data -> logReactiveOutput(data, specification))
-                                .doOnError(exception -> logException(exception, specification));
-                        return;
-                }
-        }
-        decorator = UnaryOperator.identity();
+        this.serviceMethodId = serviceMethodId;
+
     }
 
     @Override
     public Flux<Object> apply(Flux<Object> input) {
-        return decorator.apply(input);
+        return decorator.get().apply(input);
     }
 
     private void logBlockingInput(Object data, ServiceMethodSpecification specification) {
@@ -120,4 +96,40 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
         getLogger().error(format(SERVICE_FAILED_MESSAGE, specification.getServiceId(), specification.getMethodId()), exception);
     }
 
+    private UnaryOperator<Flux<Object>> createDecorator() {
+        Optional<ServiceMethodSpecification> possibleSpecification = specifications().findMethodById(serviceMethodId);
+        if (!possibleSpecification.isPresent()) {
+            return UnaryOperator.identity();
+        }
+        ServiceMethodSpecification specification = possibleSpecification.get();
+        switch (scope) {
+            case INPUT:
+                switch (specification.getInputMode()) {
+                    case BLOCKING:
+                        return input -> input
+                                .doOnSubscribe(subscription -> logReactiveSubscribe(specification))
+                                .doOnNext(data -> logBlockingInput(data, specification))
+                                .doOnError(exception -> logException(exception, specification));
+                    case MONO:
+                    case FLUX:
+                        return input -> input
+                                .doOnSubscribe(subscription -> logReactiveSubscribe(specification))
+                                .doOnNext(data -> logReactiveInput(data, specification))
+                                .doOnError(exception -> logException(exception, specification));
+                }
+            case OUTPUT:
+                switch (specification.getInputMode()) {
+                    case BLOCKING:
+                        return input -> input
+                                .doOnNext(data -> logBlockingOutput(data, specification))
+                                .doOnError(exception -> logException(exception, specification));
+                    case MONO:
+                    case FLUX:
+                        return input -> input
+                                .doOnNext(data -> logReactiveOutput(data, specification))
+                                .doOnError(exception -> logException(exception, specification));
+                }
+        }
+        return UnaryOperator.identity();
+    }
 }

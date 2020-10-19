@@ -67,9 +67,12 @@ public class ServingRsocket implements RSocket {
             throw new RsocketException(SPECIFICATION_NOT_FOUND);
         }
 
-        Optional<ServiceMethodSpecification> possibleSpecification = specifications().findMethodByValue(payloadValue.getValue());
-        if (!possibleSpecification.isPresent() && isNull(defaultServiceMethod)) {
-            throw new RsocketException(SPECIFICATION_NOT_FOUND);
+        Optional<ServiceMethodSpecification> possibleSpecification = Optional.empty();
+        if (nonNull(payloadValue)) {
+            possibleSpecification = specifications().findMethodByValue(payloadValue.getValue());
+            if (!possibleSpecification.isPresent() && isNull(defaultServiceMethod)) {
+                throw new RsocketException(SPECIFICATION_NOT_FOUND);
+            }
         }
 
         Optional<ServiceMethodSpecification> defaultSpecification = specifications().findMethodById(defaultServiceMethod);
@@ -93,10 +96,7 @@ public class ServingRsocket implements RSocket {
     @Override
     public Mono<Payload> requestResponse(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
-        if (isNull(payloadValue)) {
-            return empty();
-        }
-        Flux<Value> input = addContext(Flux.just(payloadValue.getValue()));
+        Flux<Value> input = isNull(payloadValue) ? Flux.empty() : addContext(Flux.just(payloadValue.getValue()));
         return specification.serve(input).map(writer::writePayloadData).last();
     }
 

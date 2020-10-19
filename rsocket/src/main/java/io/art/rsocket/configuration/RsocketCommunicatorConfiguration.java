@@ -39,7 +39,7 @@ import static java.util.Optional.*;
 @Getter
 public class RsocketCommunicatorConfiguration {
     private ImmutableMap<String, RsocketConnectorConfiguration> connectors;
-    private boolean tracing;
+    private boolean logging;
     private int fragmentationMtu;
     private Resume resume;
     private Retry reconnect;
@@ -62,7 +62,7 @@ public class RsocketCommunicatorConfiguration {
 
         configuration.defaultDataFormat = dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), JSON);
         configuration.defaultMetaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), JSON);
-        configuration.tracing = orElse(source.getBool(TRACING_KEY), false);
+        configuration.logging = orElse(source.getBool(LOGGING_KEY), false);
         configuration.fragmentationMtu = orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0);
         configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
         configuration.resume = let(source.getNested(RESUME_SECTION), RsocketResumeConfigurator::from);

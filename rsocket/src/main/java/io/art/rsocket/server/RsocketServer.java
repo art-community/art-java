@@ -18,9 +18,11 @@
 
 package io.art.rsocket.server;
 
+import io.art.core.caster.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
+import io.rsocket.*;
 import io.rsocket.core.*;
 import io.rsocket.transport.*;
 import io.rsocket.transport.netty.server.*;
@@ -49,7 +51,8 @@ public class RsocketServer implements Server {
     public void start() {
         if (server.compareAndSet(null, null)) {
             TransportMode transportMode = configuration.getTransport();
-            RSocketServer server = RSocketServer.create((payload, socket) -> Mono.just(new ServingRsocket(payload, socket)))
+            RSocketServer server = RSocketServer
+                    .create(this::createSocket)
                     .fragment(configuration.getMaxInboundPayloadSize());
             if (configuration.getFragmentationMtu() > 0) {
                 server.fragment(configuration.getFragmentationMtu());
@@ -94,5 +97,15 @@ public class RsocketServer implements Server {
     public boolean available() {
         Disposable value;
         return nonNull(value = server.get()) && !value.isDisposed();
+    }
+
+    private Mono<RSocket> createSocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
+        Mono<RSocket> socket = Mono.create(emitter -> emitter.success(new ServingRsocket(payload, requesterSocket)));
+        if (configuration.isLogging()) {
+            socket = socket
+                    .doOnSubscribe(subscription -> getLogger().info(SERVER_CLIENT_CONNECTED))
+                    .doAfterTerminate(() -> getLogger().info(SERVER_CLIENT_DISCONNECTED));
+        }
+        return socket.doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable)).map(Caster::cast);
     }
 }

@@ -52,7 +52,7 @@ public class RsocketServerConfiguration {
     private ImmutableMap<String, RsocketServiceConfiguration> services;
     private ServiceMethodIdentifier defaultServiceMethod;
     private int tcpMaxFrameLength;
-    private boolean tracing;
+    private boolean logging;
     private int fragmentationMtu;
     private Resume resume;
     private PayloadDecoder payloadDecoder;
@@ -66,7 +66,7 @@ public class RsocketServerConfiguration {
         RsocketServerConfiguration configuration = new RsocketServerConfiguration();
         configuration.defaultDataFormat = dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), JSON);
         configuration.defaultMetaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), JSON);
-        configuration.tracing = orElse(source.getBool(TRACING_KEY), false);
+        configuration.logging = orElse(source.getBool(LOGGING_KEY), false);
         configuration.fragmentationMtu = orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0);
         configuration.resume = let(source.getNested(RESUME_SECTION), RsocketResumeConfigurator::from);
         configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT
@@ -74,7 +74,9 @@ public class RsocketServerConfiguration {
                 : PayloadDecoder.ZERO_COPY;
         configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
         configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
-        configuration.interceptorConfigurer = registry -> registry.forRequester(new RsocketLoggingInterceptor(configuration::isTracing));
+        configuration.interceptorConfigurer = registry -> registry
+                .forResponder(new RsocketLoggingInterceptor(configuration::isLogging))
+                .forRequester(new RsocketLoggingInterceptor(configuration::isLogging));
 
         String serviceId = source.getString(DEFAULT_SERVICE_ID_KEY);
         String methodId = source.getString(DEFAULT_METHOD_ID_KEY);
