@@ -40,5 +40,7 @@ dependencies {
                 .exclude("org.slf4j")
         embedded("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
                 .exclude("org.apache.logging.log4j")
+        embedded("io.tarantool", "cartridge-driver", "0.2.0")
+//                .exclude("org.springframework")
     }
 }
