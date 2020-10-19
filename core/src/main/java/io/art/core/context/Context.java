@@ -117,9 +117,9 @@ public class Context {
         List<Module> modules = linkedListOf(this.modules.values());
         reverse(modules);
         for (Module module : modules) {
-            this.modules.remove(module.getId());
             printer.accept(format(MODULE_UNLOADED_MESSAGE, module.getId(), module.getClass()));
             module.onUnload();
+            this.modules.remove(module.getId());
         }
 
         INSTANCE = null;
