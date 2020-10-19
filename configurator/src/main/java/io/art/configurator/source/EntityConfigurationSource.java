@@ -23,6 +23,7 @@ import io.art.core.source.*;
 import io.art.entity.immutable.*;
 import io.art.entity.mapping.*;
 import lombok.*;
+import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.entity.immutable.Value.*;
@@ -36,6 +37,8 @@ import java.util.*;
 @Getter
 @RequiredArgsConstructor
 public class EntityConfigurationSource implements ConfigurationSource {
+    @Getter
+    private final String section;
     private final ModuleConfigurationSourceType type = ENTITY;
     private final Entity entity;
 
@@ -76,7 +79,7 @@ public class EntityConfigurationSource implements ConfigurationSource {
 
     @Override
     public ConfigurationSource getNested(String path) {
-        return new EntityConfigurationSource(asEntity(entity.find(path)));
+        return new EntityConfigurationSource(combine(section, path), asEntity(entity.find(path)));
     }
 
     @Override
@@ -111,7 +114,7 @@ public class EntityConfigurationSource implements ConfigurationSource {
 
     @Override
     public List<ConfigurationSource> getNestedList(String path) {
-        return asArray(entity.get(path)).asStream().map(value -> new EntityConfigurationSource(asEntity(value))).collect(toList());
+        return asArray(entity.get(path)).asStream().map(value -> new EntityConfigurationSource(combine(section, path), asEntity(value))).collect(toList());
     }
 
     @Override

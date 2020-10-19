@@ -18,17 +18,24 @@
 
 package io.art.configurator.source;
 
+import io.art.core.constants.*;
 import io.art.core.source.*;
 import lombok.*;
 import static com.typesafe.config.ConfigFactory.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
+import static io.art.core.constants.StringConstants.EMPTY_STRING;
 import java.time.*;
 import java.util.*;
 
 @Getter
 public class EnvironmentConfigurationSource implements ConfigurationSource {
     private final ModuleConfigurationSourceType type = ENVIRONMENT;
-    private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(ENVIRONMENT, systemEnvironment());
+    private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(EMPTY_STRING, ENVIRONMENT, systemEnvironment());
+
+    @Override
+    public String getSection() {
+        return typesafeConfigurationSource.getSection();
+    }
 
     @Override
     public Integer getInt(String path) {

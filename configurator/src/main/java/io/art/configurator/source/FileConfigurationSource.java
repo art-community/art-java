@@ -18,9 +18,9 @@
 
 package io.art.configurator.source;
 
+import io.art.configuration.yaml.source.*;
 import io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import io.art.configurator.exception.*;
-import io.art.configuration.yaml.source.*;
 import io.art.core.source.*;
 import lombok.*;
 import static com.typesafe.config.ConfigFactory.*;
@@ -32,12 +32,14 @@ import java.util.*;
 
 @Getter
 public class FileConfigurationSource implements ConfigurationSource {
+    private final String section;
     private final ConfigurationSourceType type;
     private final ConfigurationSource source;
 
-    public FileConfigurationSource(ConfigurationSourceType type, File file) {
+    public FileConfigurationSource(String section, ConfigurationSourceType type, File file) {
+        this.section = section;
         this.type = type;
-        source = selectSource(type, file);
+        source = selectSource(section, type, file);
     }
 
     @Override
@@ -125,17 +127,17 @@ public class FileConfigurationSource implements ConfigurationSource {
         return source.has(path);
     }
 
-    private static ConfigurationSource selectSource(ConfigurationSourceType type, File file) {
+    private static ConfigurationSource selectSource(String section, ConfigurationSourceType type, File file) {
         String extension = parseExtension(file.getAbsolutePath());
         switch (extension) {
             case HOCON_EXTENSION:
             case JSON_EXTENSION:
             case CONF_EXTENSION:
             case PROPERTIES_EXTENSION:
-                return new TypesafeConfigurationSource(type, parseFile(file));
+                return new TypesafeConfigurationSource(section, type, parseFile(file));
             case YAML_EXTENSION:
             case YML_EXTENSION:
-                return new YamlConfigurationSource(type, file);
+                return new YamlConfigurationSource(section, type, file);
         }
         throw new UnknownConfigurationFileExtensionException(extension);
     }

@@ -75,7 +75,7 @@ public class RsocketCommunicatorConfiguration {
         configuration.connectors = ofNullable(source.getNestedMap(CONNECTORS_KEY))
                 .map(configurations -> configurations.entrySet()
                         .stream()
-                        .collect(toImmutableMap(Entry::getKey, entry -> RsocketConnectorConfiguration.from(configuration, entry.getKey(), entry.getValue()))))
+                        .collect(toImmutableMap(Entry::getKey, entry -> RsocketConnectorConfiguration.from(configuration, entry.getValue()))))
                 .orElse(ImmutableMap.of());
 
         return configuration;

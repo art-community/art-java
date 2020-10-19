@@ -28,7 +28,6 @@ import static io.art.configurator.constants.ConfiguratorModuleConstants.Configur
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorKeys.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
-import static io.art.core.caster.Caster.cast;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.CollectionExtensions.*;
@@ -55,7 +54,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .map(extension -> loader.getResource(DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .map(resource -> new FileConfigurationSource(RESOURCES_FILE, fileOf(resource)))
+                .map(resource -> new FileConfigurationSource(EMPTY_STRING, RESOURCES_FILE, fileOf(resource)))
                 .ifPresent(source -> configure(configurator -> configurator.from(source)));
         EnvironmentConfigurationSource environment = getConfiguration().getEnvironment();
         PropertiesConfigurationSource properties = getConfiguration().getProperties();
@@ -70,7 +69,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .filter(EmptinessChecker::isNotEmpty)
                 .map(path -> get(path).toFile())
                 .filter(File::exists)
-                .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(CUSTOM_FILE, file))));
+                .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(EMPTY_STRING, CUSTOM_FILE, file))));
     }
 
     public static StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule() {

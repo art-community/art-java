@@ -25,7 +25,6 @@ import io.art.rsocket.exception.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
-import io.rsocket.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
 import lombok.*;
@@ -45,6 +44,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 import static reactor.netty.http.client.HttpClient.*;
 
 @Getter
@@ -57,28 +57,29 @@ public class RsocketConnectorConfiguration {
     private HttpClient httpWebSocketClient;
     private String httpWebSocketPath;
     private boolean lazy;
+    private boolean tracing;
 
-    public static RsocketConnectorConfiguration from(RsocketCommunicatorConfiguration communicatorConfiguration, String id, ConfigurationSource source) {
+    public static RsocketConnectorConfiguration from(RsocketCommunicatorConfiguration communicatorConfiguration, ConfigurationSource source) {
         RSocketConnector connector = RSocketConnector.create();
+        RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration(connector);
+        configuration.tracing = orElse(source.getBool(TRACING_KEY), communicatorConfiguration.isTracing());
         DataFormat dataFormat = dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), communicatorConfiguration.getDefaultDataFormat());
         DataFormat metaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), communicatorConfiguration.getDefaultMetaDataFormat());
-        boolean tracing = orElse(source.getBool(TRACING_KEY), communicatorConfiguration.isTracing());
-
-        apply(source.getNested(RESUME_SECTION), section -> connector.resume(RsocketResumeConfigurator.from(section, communicatorConfiguration.getResume())));
-        apply(source.getNested(RECONNECT_SECTION), section -> connector.reconnect(RsocketRetryConfigurator.from(section, communicatorConfiguration.getReconnect())));
-        apply(
-                let(source.getNested(KEEP_ALIVE_SECTION), section -> RsocketKeepAliveConfiguration.from(section, communicatorConfiguration.getKeepAliveConfiguration())),
-                configuration -> connector.keepAlive(configuration.getInterval(), configuration.getMaxLifeTime())
-        );
-        int mtu = orElse(source.getInt(FRAGMENTATION_MTU_KEY), communicatorConfiguration.getFragmentationMtu());
-        if (mtu > 0) {
-            connector.fragment(mtu);
-        }
         connector.payloadDecoder(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT ? PayloadDecoder.DEFAULT : PayloadDecoder.ZERO_COPY)
                 .maxInboundPayloadSize(orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), communicatorConfiguration.getMaxInboundPayloadSize()))
                 .dataMimeType(toMimeType(dataFormat).toString())
                 .metadataMimeType(toMimeType(metaDataFormat).toString())
-                .interceptors(registry -> registry.forRequester(new RsocketLoggingInterceptor(() -> tracing)));
+                .fragment(orElse(source.getInt(FRAGMENTATION_MTU_KEY), communicatorConfiguration.getFragmentationMtu()))
+                .interceptors(registry -> registry.forRequester(new RsocketLoggingInterceptor(configuration::isTracing)));
+
+        apply(source.getNested(RESUME_SECTION), section -> connector.resume(RsocketResumeConfigurator.from(section, communicatorConfiguration.getResume())));
+        apply(source.getNested(RECONNECT_SECTION), section -> connector.reconnect(RsocketRetryConfigurator.from(section, communicatorConfiguration.getReconnect())));
+
+        ConfigurationSource keepAlive;
+        if (nonNull(keepAlive = source.getNested(KEEP_ALIVE_SECTION))) {
+            RsocketKeepAliveConfiguration keepAliveConfiguration = RsocketKeepAliveConfiguration.from(keepAlive);
+            connector.keepAlive(keepAliveConfiguration.getInterval(), keepAliveConfiguration.getMaxLifeTime());
+        }
 
         RsocketSetupPayload.RsocketSetupPayloadBuilder setupPayloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(dataFormat)
@@ -92,9 +93,7 @@ public class RsocketConnectorConfiguration {
         }
 
         RsocketPayloadWriter writer = new RsocketPayloadWriter(dataFormat, metaDataFormat);
-        Mono<Payload> setupPayloadMono = Mono.create(emitter -> emitter.success(writer.writePayloadData(setupPayloadBuilder.build().toEntity())));
-        connector.setupPayload(setupPayloadMono);
-        RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration(connector);
+        connector.setupPayload(Mono.create(emitter -> emitter.success(writer.writePayloadData(setupPayloadBuilder.build().toEntity()))));
 
         int port = orElse(source.getInt(TRANSPORT_PORT_KEY), DEFAULT_PORT);
 
@@ -103,7 +102,7 @@ public class RsocketConnectorConfiguration {
             case TCP:
                 String host = source.getString(TRANSPORT_HOST_KEY);
                 if (isEmpty(host)) {
-                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, COMMUNICATOR_SECTION + DOT + CONNECTORS_KEY + DOT + id + DOT + TRANSPORT_HOST_KEY));
+                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, source.getSection() + DOT + TRANSPORT_HOST_KEY));
                 }
                 configuration.tcpClient = TcpClient.create().port(port).host(host);
                 configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
@@ -111,7 +110,7 @@ public class RsocketConnectorConfiguration {
             case WS:
                 String url = source.getString(TRANSPORT_HTTP_BASE_URL_KEY);
                 if (isEmpty(url)) {
-                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, COMMUNICATOR_SECTION + DOT + CONNECTORS_KEY + DOT + id + DOT + TRANSPORT_HTTP_BASE_URL_KEY));
+                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, source.getSection() + DOT + TRANSPORT_HTTP_BASE_URL_KEY));
                 }
                 configuration.httpWebSocketClient = create().port(port).baseUrl(url);
                 configuration.httpWebSocketPath = orElse(source.getString(TRANSPORT_HTTP_PATH_KEY), SLASH);

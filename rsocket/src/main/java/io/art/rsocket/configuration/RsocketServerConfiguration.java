@@ -68,6 +68,13 @@ public class RsocketServerConfiguration {
         configuration.defaultMetaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), JSON);
         configuration.tracing = orElse(source.getBool(TRACING_KEY), false);
         configuration.fragmentationMtu = orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0);
+        configuration.resume = let(source.getNested(RESUME_SECTION), RsocketResumeConfigurator::from);
+        configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT
+                ? PayloadDecoder.DEFAULT
+                : PayloadDecoder.ZERO_COPY;
+        configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
+        configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
+        configuration.interceptorConfigurer = registry -> registry.forRequester(new RsocketLoggingInterceptor(configuration::isTracing));
 
         String serviceId = source.getString(DEFAULT_SERVICE_ID_KEY);
         String methodId = source.getString(DEFAULT_METHOD_ID_KEY);
@@ -75,13 +82,6 @@ public class RsocketServerConfiguration {
         if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
             configuration.defaultServiceMethod = serviceMethod(serviceId, methodId);
         }
-
-        configuration.resume = let(source.getNested(RESUME_SECTION), RsocketResumeConfigurator::from);
-        configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT
-                ? PayloadDecoder.DEFAULT
-                : PayloadDecoder.ZERO_COPY;
-        configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
-        configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
 
         int port = orElse(source.getInt(TRANSPORT_PORT_KEY), DEFAULT_PORT);
         String host = orElse(source.getString(TRANSPORT_HOST_KEY), BROADCAST_IP_ADDRESS);
@@ -95,8 +95,6 @@ public class RsocketServerConfiguration {
                 configuration.httpWebSocketServer = HttpServer.create().port(port).host(host);
                 break;
         }
-
-        configuration.interceptorConfigurer = registry -> registry.forRequester(new RsocketLoggingInterceptor(configuration::isTracing));
 
         configuration.services = ofNullable(source.getNestedMap(SERVICES_KEY))
                 .map(configurations -> configurations.entrySet()

@@ -23,13 +23,19 @@ import lombok.*;
 import static com.typesafe.config.ConfigFactory.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
+import static io.art.core.constants.StringConstants.EMPTY_STRING;
 import java.time.*;
 import java.util.*;
 
 @Getter
 public class PropertiesConfigurationSource implements ConfigurationSource {
     private final ConfigurationSourceType type = PROPERTIES;
-    private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(PROPERTIES, systemProperties());
+    private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(EMPTY_STRING, PROPERTIES, systemProperties());
+
+    @Override
+    public String getSection() {
+        return typesafeConfigurationSource.getSection();
+    }
 
     @Override
     public Integer getInt(String path) {

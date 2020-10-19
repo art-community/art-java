@@ -22,6 +22,7 @@ import com.typesafe.config.*;
 import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.combiner.SectionCombiner.combine;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static java.util.stream.Collectors.*;
 import java.time.*;
@@ -30,6 +31,7 @@ import java.util.*;
 @Getter
 @RequiredArgsConstructor
 public class TypesafeConfigurationSource implements ConfigurationSource {
+    private final String section;
     private final ModuleConfigurationSourceType type;
     private final Config typesafeConfiguration;
 
@@ -70,7 +72,7 @@ public class TypesafeConfigurationSource implements ConfigurationSource {
 
     @Override
     public ConfigurationSource getNested(String path) {
-        return new TypesafeConfigurationSource(type, typesafeConfiguration.atPath(path));
+        return new TypesafeConfigurationSource(combine(section, path), type, typesafeConfiguration.atPath(path));
     }
 
     @Override
@@ -107,7 +109,7 @@ public class TypesafeConfigurationSource implements ConfigurationSource {
     public List<ConfigurationSource> getNestedList(String path) {
         return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getConfigList)
                 .stream()
-                .map(config -> new TypesafeConfigurationSource(type, config))
+                .map(config -> new TypesafeConfigurationSource(combine(section, path), type, config))
                 .collect(toList());
     }
 
