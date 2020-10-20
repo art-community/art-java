@@ -1,9 +1,9 @@
 rsocket:
   server:
+    logging: true
     transport:
       mode: ws
       port: 1234
-    logging: true
     defaults:
       dataFormat: xml
       serviceId: test

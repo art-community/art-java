@@ -72,7 +72,6 @@ public class RsocketManager {
                         client.initialize();
                     }
                     state.registerClient(entry.getKey(), client);
-                    client.get().requestResponse(Mono.just(DefaultPayload.create("test"))).subscribe();
                     return;
             }
         }
