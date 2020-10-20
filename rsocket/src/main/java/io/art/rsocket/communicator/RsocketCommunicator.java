@@ -27,6 +27,7 @@ import io.rsocket.core.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.logging.LoggingModule.*;
 import static lombok.AccessLevel.*;
 
@@ -49,9 +50,7 @@ public class RsocketCommunicator implements CommunicatorImplementation {
     public Flux<Value> communicate(Flux<Value> input) {
         switch (communicationMode) {
             case FIRE_AND_FORGET:
-                return client.fireAndForget(input.map(writer::writePayloadData).last())
-                        .flux()
-                        .cast(Value.class);
+                return cast(client.fireAndForget(input.map(writer::writePayloadData).last()).flux());
             case REQUEST_RESPONSE:
                 return client.requestResponse(input.map(writer::writePayloadData).last())
                         .flux()
@@ -63,9 +62,7 @@ public class RsocketCommunicator implements CommunicatorImplementation {
                 return client.requestChannel(input.map(writer::writePayloadData))
                         .map(payload -> reader.readPayloadData(payload).getValue());
             case METADATA_PUSH:
-                return client.metadataPush(input.map(writer::writePayloadData).last())
-                        .flux()
-                        .cast(Value.class);
+                return cast(client.metadataPush(input.map(writer::writePayloadData).last()).flux());
         }
         throw new IllegalStateException();
     }
