@@ -125,13 +125,6 @@ public class ServingRsocket implements RSocket {
         return specification.serve(input).then();
     }
 
-    private <T> Flux<T> addContext(Flux<T> flux) {
-        return flux.subscriberContext(context -> context.putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket))
-                .flatMap(value -> subscriberContext()
-                        .doOnNext(context -> moduleState.localState(fromContext(context)))
-                        .map(context -> value).flux());
-    }
-
     @Override
     public void dispose() {
         apply(onDispose, Runnable::run);
@@ -139,5 +132,12 @@ public class ServingRsocket implements RSocket {
 
     public void onDispose(Runnable action) {
         this.onDispose = action;
+    }
+
+    private <T> Flux<T> addContext(Flux<T> flux) {
+        return flux.subscriberContext(context -> context.putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket))
+                .flatMap(value -> subscriberContext()
+                        .doOnNext(context -> moduleState.localState(fromContext(context)))
+                        .map(context -> value).flux());
     }
 }

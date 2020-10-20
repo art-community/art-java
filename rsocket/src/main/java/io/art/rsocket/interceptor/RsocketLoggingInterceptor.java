@@ -42,14 +42,16 @@ public class RsocketLoggingInterceptor implements RSocketInterceptor {
     @Override
     public RSocket apply(RSocket rsocket) {
         return new RSocketProxy(rsocket) {
+            private final Logger logger = getLogger();
+
             @Override
             public Mono<Void> fireAndForget(@NonNull Payload payload) {
                 if (!enabled.get()) {
                     return super.fireAndForget(payload);
                 }
-                getLogger().info(format(FIRE_AND_FORGET_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
-                Mono<Void> output = super.fireAndForget(payload).doOnError(error -> getLogger().error(format(FIRE_AND_FORGET_EXCEPTION_LOG, error)));
-                return output.doOnNext(nothing -> getLogger().info(FIRE_AND_FORGET_RESPONSE_LOG));
+                logger.info(format(FIRE_AND_FORGET_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
+                Mono<Void> output = super.fireAndForget(payload).doOnError(error -> logger.error(format(FIRE_AND_FORGET_EXCEPTION_LOG, error)));
+                return output.doOnNext(nothing -> logger.info(FIRE_AND_FORGET_RESPONSE_LOG));
             }
 
             @Override
@@ -57,9 +59,9 @@ public class RsocketLoggingInterceptor implements RSocketInterceptor {
                 if (!enabled.get()) {
                     return super.requestResponse(payload);
                 }
-                getLogger().info(format(REQUEST_RESPONSE_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
-                Mono<Payload> output = super.requestResponse(payload).doOnError(error -> getLogger().error(format(REQUEST_RESPONSE_EXCEPTION_LOG, error)));
-                return output.doOnNext(response -> getLogger().info(format(RESPONSE_RESPONSE_LOG, response.getDataUtf8(), response.getMetadataUtf8())));
+                logger.info(format(REQUEST_RESPONSE_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
+                Mono<Payload> output = super.requestResponse(payload).doOnError(error -> logger.error(format(REQUEST_RESPONSE_EXCEPTION_LOG, error)));
+                return output.doOnNext(response -> logger.info(format(RESPONSE_RESPONSE_LOG, response.getDataUtf8(), response.getMetadataUtf8())));
 
             }
 
@@ -68,9 +70,9 @@ public class RsocketLoggingInterceptor implements RSocketInterceptor {
                 if (!enabled.get()) {
                     return super.requestStream(payload);
                 }
-                getLogger().info(format(REQUEST_STREAM_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
-                Flux<Payload> output = super.requestStream(payload).doOnError(error -> getLogger().error(format(REQUEST_STREAM_EXCEPTION_LOG, error)));
-                return output.doOnNext(response -> getLogger().info(format(REQUEST_STREAM_RESPONSE_LOG, response.getDataUtf8(), response.getMetadataUtf8())));
+                logger.info(format(REQUEST_STREAM_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
+                Flux<Payload> output = super.requestStream(payload).doOnError(error -> logger.error(format(REQUEST_STREAM_EXCEPTION_LOG, error)));
+                return output.doOnNext(response -> logger.info(format(REQUEST_STREAM_RESPONSE_LOG, response.getDataUtf8(), response.getMetadataUtf8())));
             }
 
             @Override
@@ -79,10 +81,10 @@ public class RsocketLoggingInterceptor implements RSocketInterceptor {
                     return super.requestChannel(payloads);
                 }
                 Flux<Payload> input = from(payloads)
-                        .doOnNext(payload -> getLogger().info(format(REQUEST_CHANNEL_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8())))
-                        .doOnError(error -> getLogger().error(format(REQUEST_CHANNEL_EXCEPTION_LOG, error)));
+                        .doOnNext(payload -> logger.info(format(REQUEST_CHANNEL_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8())))
+                        .doOnError(error -> logger.error(format(REQUEST_CHANNEL_EXCEPTION_LOG, error)));
                 Flux<Payload> output = super.requestChannel(input);
-                return output.doOnNext(payload -> getLogger().info(format(REQUEST_CHANNEL_RESPONSE_LOG, payload.getDataUtf8(), payload.getMetadataUtf8())));
+                return output.doOnNext(payload -> logger.info(format(REQUEST_CHANNEL_RESPONSE_LOG, payload.getDataUtf8(), payload.getMetadataUtf8())));
             }
 
             @Override
@@ -90,9 +92,9 @@ public class RsocketLoggingInterceptor implements RSocketInterceptor {
                 if (!enabled.get()) {
                     return super.metadataPush(payload);
                 }
-                getLogger().info(format(METADATA_PUSH_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
-                Mono<Void> output = super.metadataPush(payload).doOnError(error -> getLogger().error(format(METADATA_PUSH_EXCEPTION_LOG, error)));
-                return output.doOnNext(nothing -> getLogger().info(METADATA_PUSH_RESPONSE_LOG));
+                logger.info(format(METADATA_PUSH_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
+                Mono<Void> output = super.metadataPush(payload).doOnError(error -> logger.error(format(METADATA_PUSH_EXCEPTION_LOG, error)));
+                return output.doOnNext(nothing -> logger.info(METADATA_PUSH_RESPONSE_LOG));
             }
         };
     }
