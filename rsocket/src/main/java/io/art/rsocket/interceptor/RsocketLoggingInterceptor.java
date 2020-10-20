@@ -49,7 +49,7 @@ public class RsocketLoggingInterceptor implements RSocketInterceptor {
                 }
                 getLogger().info(format(FIRE_AND_FORGET_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
                 Mono<Void> output = super.fireAndForget(payload).doOnError(error -> getLogger().error(format(FIRE_AND_FORGET_EXCEPTION_LOG, error)));
-                return output.doOnSubscribe(nothing -> getLogger().info(FIRE_AND_FORGET_RESPONSE_LOG));
+                return output.doOnNext(nothing -> getLogger().info(FIRE_AND_FORGET_RESPONSE_LOG));
             }
 
             @Override
@@ -92,7 +92,7 @@ public class RsocketLoggingInterceptor implements RSocketInterceptor {
                 }
                 getLogger().info(format(METADATA_PUSH_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
                 Mono<Void> output = super.metadataPush(payload).doOnError(error -> getLogger().error(format(METADATA_PUSH_EXCEPTION_LOG, error)));
-                return output.doOnSubscribe(nothing -> getLogger().info(METADATA_PUSH_RESPONSE_LOG));
+                return output.doOnNext(nothing -> getLogger().info(METADATA_PUSH_RESPONSE_LOG));
             }
         };
     }

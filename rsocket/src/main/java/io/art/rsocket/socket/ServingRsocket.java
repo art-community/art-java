@@ -87,27 +87,21 @@ public class ServingRsocket implements RSocket {
     @Override
     public Mono<Void> fireAndForget(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
-        if (isNull(payloadValue)) {
-            return never();
-        }
-        Flux<Value> input = addContext(Flux.just(payloadValue.getValue()));
+        Flux<Value> input = addContext(isNull(payloadValue) ? Flux.empty() : Flux.just(payloadValue.getValue()));
         return specification.serve(input).then();
     }
 
     @Override
     public Mono<Payload> requestResponse(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
-        Flux<Value> input = isNull(payloadValue) ? Flux.empty() : addContext(Flux.just(payloadValue.getValue()));
+        Flux<Value> input = addContext(isNull(payloadValue) ? Flux.empty() : Flux.just(payloadValue.getValue()));
         return specification.serve(input).map(writer::writePayloadData).last();
     }
 
     @Override
     public Flux<Payload> requestStream(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
-        if (isNull(payloadValue)) {
-            return Flux.empty();
-        }
-        Flux<Value> input = addContext(Flux.just(payloadValue.getValue()));
+        Flux<Value> input = addContext(isNull(payloadValue) ? Flux.empty() : Flux.just(payloadValue.getValue()));
         return specification.serve(input).map(writer::writePayloadData);
     }
 
@@ -127,10 +121,7 @@ public class ServingRsocket implements RSocket {
     @Override
     public Mono<Void> metadataPush(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadMetaData(payload);
-        if (isNull(payloadValue)) {
-            return never();
-        }
-        Flux<Value> input = addContext(Flux.just(payloadValue.getValue()));
+        Flux<Value> input = addContext(isNull(payloadValue) ? Flux.empty() : Flux.just(payloadValue.getValue()));
         return specification.serve(input).then();
     }
 
