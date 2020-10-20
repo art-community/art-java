@@ -23,8 +23,10 @@ import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.server.model.*;
 import lombok.*;
+import reactor.core.scheduler.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
+import static io.art.server.constants.ServerModuleConstants.Defaults.*;
 import static java.util.Optional.*;
 import java.util.*;
 
@@ -32,6 +34,7 @@ import java.util.*;
 @Getter
 public class ServerModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, ServiceConfiguration> services = ImmutableMap.of();
+    private Scheduler scheduler;
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<ServerModuleConfiguration, Configurator> {
@@ -39,6 +42,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
+            configuration.scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
             configuration.services = ofNullable(source.getNested(SERVER_SECTION))
                     .map(server -> server.getNestedMap(SERVER_SERVICES_KEY))
                     .map(services -> services

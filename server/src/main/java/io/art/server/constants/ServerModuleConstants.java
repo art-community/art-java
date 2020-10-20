@@ -18,7 +18,11 @@
 
 package io.art.server.constants;
 
+import reactor.core.scheduler.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
+import static io.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
+import static java.lang.Short.MAX_VALUE;
+import static reactor.core.scheduler.Schedulers.newBoundedElastic;
 
 public interface ServerModuleConstants {
     String SERVICE_ID = "serviceId";
@@ -28,6 +32,10 @@ public interface ServerModuleConstants {
         VALIDATABLE,
         NOT_NULL,
         NON_VALIDATABLE
+    }
+
+    interface Defaults {
+        Scheduler DEFAULT_SERVICE_METHOD_SCHEDULER = newBoundedElastic(DEFAULT_THREAD_POOL_SIZE, MAX_VALUE, "service-method");
     }
 
     interface ConfigurationKeys {

@@ -18,20 +18,29 @@
 
 package io.art.server.model;
 
+import io.art.core.constants.*;
 import io.art.core.source.*;
 import lombok.*;
+import reactor.core.scheduler.*;
+import reactor.util.concurrent.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
+import static io.art.server.constants.ServerModuleConstants.Defaults.DEFAULT_SERVICE_METHOD_SCHEDULER;
+import static java.lang.Short.MAX_VALUE;
+import static reactor.core.scheduler.Schedulers.newBoundedElastic;
 
 @Getter
 @AllArgsConstructor
 public class ServiceMethodConfiguration {
     private final boolean deactivated;
     private final boolean logging;
+    private final Scheduler scheduler;
 
     public static ServiceMethodConfiguration from(ConfigurationSource source) {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
         boolean logging = orElse(source.getBool(LOGGING_KEY), false);
-        return new ServiceMethodConfiguration(deactivated, logging);
+        Scheduler scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
+        return new ServiceMethodConfiguration(deactivated, logging, scheduler);
     }
 }

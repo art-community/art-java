@@ -21,14 +21,15 @@ package io.art.server.specification;
 import io.art.core.constants.*;
 import io.art.entity.immutable.Value;
 import io.art.entity.mapper.*;
+import io.art.server.configuration.*;
 import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
 import io.art.server.implementation.*;
 import io.art.server.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodProcessingMode.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
 import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.*;
@@ -56,11 +57,16 @@ public class ServiceMethodSpecification {
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
+    private final ServerModuleConfiguration moduleConfiguration = serverModule().configuration();
+
     @Getter(lazy = true)
     private final ServiceSpecification serviceSpecification = specifications().get(serviceId).orElseThrow(IllegalStateException::new);
 
     @Getter(lazy = true)
     private final ServiceConfiguration serviceConfiguration = getServiceSpecification().getConfiguration();
+
+    @Getter(lazy = true)
+    private final ServiceMethodConfiguration methodConfiguration = let(getServiceConfiguration(), configuration -> configuration.getMethods().get(methodId));
 
     private final ValueToModelMapper<Object, Value> inputMapper;
     private final ValueFromModelMapper<Object, Value> outputMapper;
@@ -68,16 +74,15 @@ public class ServiceMethodSpecification {
     private final ServiceMethodImplementation implementation;
     private final MethodProcessingMode inputMode;
     private final MethodProcessingMode outputMode;
-    private final ServiceMethodConfiguration configuration;
 
     public Flux<Value> serve(Flux<Value> input) {
         if (deactivated()) {
             return Flux.empty();
         }
-        return Flux.defer(() -> processServing(input)).subscribeOn(Schedulers.elastic());
+        return Flux.defer(() -> deferredServe(input)).subscribeOn(let(getMethodConfiguration(), ServiceMethodConfiguration::getScheduler, moduleConfiguration.getScheduler()));
     }
 
-    private Flux<Value> processServing(Flux<Value> input) {
+    private Flux<Value> deferredServe(Flux<Value> input) {
         try {
             Object output = implementation.execute(mapInput(filter(input)));
             if (isNull(output)) {
@@ -154,9 +159,9 @@ public class ServiceMethodSpecification {
         if (serviceConfiguration.isDeactivated()) {
             return true;
         }
-        if (isNull(configuration)) {
+        if (isNull(getMethodConfiguration())) {
             return false;
         }
-        return configuration.isDeactivated();
+        return getMethodConfiguration().isDeactivated();
     }
 }
