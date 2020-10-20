@@ -64,8 +64,8 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
 
     @Override
     public void onUnload() {
-        manager.stopSever();
         manager.stopConnectors();
+        manager.stopSever();
     }
 
     @Override
