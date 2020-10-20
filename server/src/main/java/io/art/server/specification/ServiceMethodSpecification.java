@@ -28,6 +28,7 @@ import io.art.server.implementation.*;
 import io.art.server.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodProcessingMode.*;
@@ -68,6 +69,9 @@ public class ServiceMethodSpecification {
     @Getter(lazy = true)
     private final ServiceMethodConfiguration methodConfiguration = let(getServiceConfiguration(), configuration -> configuration.getMethods().get(methodId));
 
+    @Getter(lazy = true)
+    private final Scheduler scheduler = let(getMethodConfiguration(), ServiceMethodConfiguration::getScheduler, moduleConfiguration.getScheduler());
+
     private final ValueToModelMapper<Object, Value> inputMapper;
     private final ValueFromModelMapper<Object, Value> outputMapper;
     private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
@@ -79,7 +83,7 @@ public class ServiceMethodSpecification {
         if (deactivated()) {
             return Flux.empty();
         }
-        return Flux.defer(() -> deferredServe(input)).subscribeOn(let(getMethodConfiguration(), ServiceMethodConfiguration::getScheduler, moduleConfiguration.getScheduler()));
+        return Flux.defer(() -> deferredServe(input)).subscribeOn(getScheduler());
     }
 
     private Flux<Value> deferredServe(Flux<Value> input) {
