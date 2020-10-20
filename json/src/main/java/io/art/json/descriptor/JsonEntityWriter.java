@@ -40,14 +40,16 @@ import java.util.*;
 public class JsonEntityWriter {
     public static byte[] writeJsonToBytes(Value value) {
         ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
-        try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
-            writeJson(value, outputStream);
-        } catch (IOException ioException) {
-            throw new JsonException(ioException);
+        try {
+            try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
+                writeJson(value, outputStream);
+            } catch (IOException ioException) {
+                throw new JsonException(ioException);
+            }
+            return NioBufferExtensions.toByteArray(byteBuffer);
+        } finally {
+            byteBuffer.clear();
         }
-        byte[] byteArray = NioBufferExtensions.toByteArray(byteBuffer);
-        byteBuffer.clear();
-        return byteArray;
     }
 
     public static void writeJson(Value value, Path path) {

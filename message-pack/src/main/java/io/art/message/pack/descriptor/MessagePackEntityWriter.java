@@ -46,14 +46,16 @@ public class MessagePackEntityWriter {
 
     public static byte[] writeMessagePackToBytes(Value value) {
         ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
-        try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
-            writeMessagePack(value, outputStream);
-        } catch (IOException ioException) {
-            throw new MessagePackException(ioException);
+        try {
+            try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
+                writeMessagePack(value, outputStream);
+            } catch (IOException ioException) {
+                throw new MessagePackException(ioException);
+            }
+            return NioBufferExtensions.toByteArray(byteBuffer);
+        } finally {
+            byteBuffer.clear();
         }
-        byte[] byteArray = NioBufferExtensions.toByteArray(byteBuffer);
-        byteBuffer.clear();
-        return byteArray;
     }
 
     public static void writeMessagePack(Value value, OutputStream outputStream) {

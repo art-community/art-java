@@ -45,14 +45,16 @@ import java.util.*;
 public class XmlEntityWriter {
     public static byte[] writeXmlToBytes(XmlEntity entity) throws XmlException {
         ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
-        try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
-            writeXml(entity, outputStream);
-        } catch (IOException ioException) {
-            throw new XmlException(ioException);
+        try {
+            try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
+                writeXml(entity, outputStream);
+            } catch (IOException ioException) {
+                throw new XmlException(ioException);
+            }
+            return NioBufferExtensions.toByteArray(byteBuffer);
+        } finally {
+            byteBuffer.clear();
         }
-        byte[] byteArray = NioBufferExtensions.toByteArray(byteBuffer);
-        byteBuffer.clear();
-        return byteArray;
     }
 
     public static void writeXml(XmlEntity entity, Path path) throws XmlException {

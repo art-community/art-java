@@ -88,10 +88,12 @@ public class FileExtensions {
                 }
                 buffer.clear();
             } while (fileChannel.position() < fileChannel.size());
+            return result.toString();
         } catch (IOException ioException) {
             throw new InternalRuntimeException(ioException);
+        } finally {
+            buffer.clear();
         }
-        return result.toString();
     }
 
     public static String readFileQuietly(Path path, int bufferSize) {
@@ -109,8 +111,11 @@ public class FileExtensions {
                 result.append(decoder.decode(buffer).toString());
                 buffer.clear();
             } while (fileChannel.position() < fileChannel.size());
+            return result.toString();
         } catch (IOException ioException) {
             ioException.printStackTrace();
+        } finally {
+            buffer.clear();
         }
         return result.toString();
     }
@@ -155,10 +160,12 @@ public class FileExtensions {
                 result = newResult;
                 buffer.clear();
             } while (fileChannel.position() < fileChannel.size());
+            return result;
         } catch (IOException ioException) {
             throw new InternalRuntimeException(ioException);
+        } finally {
+            buffer.clear();
         }
-        return result;
     }
 
     public static byte[] readFileBytesQuietly(Path path, int bufferSize) {
