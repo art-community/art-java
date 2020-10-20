@@ -36,7 +36,7 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class RsocketLoggingInterceptor implements RSocketInterceptor {
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = logger(RSocketInterceptor.class);
+    private final static Logger logger = logger(RsocketLoggingInterceptor.class);
     private final Supplier<Boolean> enabled;
 
     @Override

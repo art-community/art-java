@@ -100,11 +100,9 @@ public class RsocketServer implements Server {
     }
 
     private Mono<RSocket> createSocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
-        Mono<RSocket> socket = Mono.create(emitter -> emitter.success(new ServingRsocket(payload, requesterSocket)));
+        Mono<RSocket> socket = Mono.create(emitter -> emitter.success(new ServingRsocket(payload, requesterSocket).onDispose(() -> getLogger().info(SERVER_CLIENT_DISCONNECTED))));
         if (configuration.isLogging()) {
-            socket = socket
-                    .doOnSubscribe(subscription -> getLogger().info(SERVER_CLIENT_CONNECTED))
-                    .doAfterTerminate(() -> getLogger().info(SERVER_CLIENT_DISCONNECTED));
+            socket = socket.doOnSubscribe(subscription -> getLogger().info(SERVER_CLIENT_CONNECTED));
         }
         return socket.doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable)).map(Caster::cast);
     }

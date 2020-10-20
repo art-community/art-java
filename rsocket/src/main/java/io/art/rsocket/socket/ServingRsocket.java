@@ -49,6 +49,7 @@ public class ServingRsocket implements RSocket {
     private final RsocketPayloadWriter writer;
     private final RSocket requesterSocket;
     private final RsocketModuleState moduleState = rsocketModule().state();
+    private Runnable onDispose;
 
     public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
         moduleState.registerRequester(this.requesterSocket = requesterSocket);
@@ -138,5 +139,15 @@ public class ServingRsocket implements RSocket {
                 .flatMap(value -> subscriberContext()
                         .doOnNext(context -> moduleState.localState(fromContext(context)))
                         .map(context -> value).flux());
+    }
+
+    @Override
+    public void dispose() {
+        onDispose.run();
+    }
+
+    public ServingRsocket onDispose(Runnable action) {
+        this.onDispose = action;
+        return this;
     }
 }
