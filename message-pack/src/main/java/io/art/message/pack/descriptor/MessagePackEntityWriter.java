@@ -41,7 +41,11 @@ import java.util.*;
 @UtilityClass
 public class MessagePackEntityWriter {
     public static void writeMessagePack(Value value, Path path) {
-        writeMessagePack(value, fileOutputStream(path));
+        try (OutputStream outputStream = fileOutputStream(path)) {
+            writeMessagePack(value, outputStream);
+        } catch (IOException ioException) {
+            throw new MessagePackException(ioException);
+        }
     }
 
     public static byte[] writeMessagePackToBytes(Value value) {

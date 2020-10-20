@@ -45,7 +45,11 @@ import java.util.*;
 @UtilityClass
 public class MessagePackEntityReader {
     public static Value readMessagePack(Path path) {
-        return readMessagePack(fileInputStream(path));
+        try (InputStream inputStream = fileInputStream(path)) {
+            return readMessagePack(inputStream);
+        } catch (IOException ioException) {
+            throw new MessagePackException(ioException);
+        }
     }
 
     public static Value readMessagePack(byte[] bytes) {
