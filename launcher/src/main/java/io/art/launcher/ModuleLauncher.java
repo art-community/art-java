@@ -46,7 +46,9 @@ import static io.art.core.constants.MethodDecoratorScope.OUTPUT;
 import static io.art.core.constants.MethodProcessingMode.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.block;
+import static io.art.core.factory.CollectionsFactory.dynamicArrayOf;
 import static io.art.core.lazy.LazyValue.*;
+import static io.art.entity.factory.ArrayFactory.*;
 import static io.art.entity.factory.PrimitivesFactory.stringPrimitive;
 import static io.art.entity.immutable.Entity.entityBuilder;
 import static io.art.logging.LoggingModule.*;
@@ -89,7 +91,7 @@ public class ModuleLauncher {
                     .outputMode(BLOCKING)
                     .serviceId("test")
                     .methodId("test")
-                    .implementation(producer(() -> entityBuilder().put("test", stringPrimitive("test")).build(), "test", "test"))
+                    .implementation(producer(() -> entityBuilder().lazyPut("test", () -> array(dynamicArrayOf(stringPrimitive("test")))).build(), "test", "test"))
                     .inputDecorator(new ServiceLoggingDecorator(serviceMethod("test", "test"), INPUT, () -> true))
                     .outputDecorator(new ServiceLoggingDecorator(serviceMethod("test", "test"), OUTPUT, () -> true))
                     .build();

@@ -139,7 +139,6 @@ public class XmlEntityWriter {
         String namespace = entity.getNamespace();
         String prefix = entity.getPrefix();
 
-        xmlStreamWriter.writeCharacters(NEW_LINE);
         if (isNotEmpty(prefix) && isNotEmpty(namespace)) {
             xmlStreamWriter.writeStartElement(prefix, entity.getTag(), namespace);
             return;
@@ -181,11 +180,9 @@ public class XmlEntityWriter {
 
     private static void writeStartDocument(XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
         xmlStreamWriter.writeStartDocument(UTF_8.name(), XML_VERSION);
-        xmlStreamWriter.writeCharacters(LINE_DELIMITER);
     }
 
     private static void writeEndDocument(XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
-        xmlStreamWriter.writeCharacters(LINE_DELIMITER);
         xmlStreamWriter.writeEndDocument();
     }
 }

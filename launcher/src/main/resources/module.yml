@@ -5,6 +5,7 @@ rsocket:
       port: 1234
     logging: true
     defaults:
+      dataFormat: xml
       serviceId: test
       methodId: test
   communicator:
