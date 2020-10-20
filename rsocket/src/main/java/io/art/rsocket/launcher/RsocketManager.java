@@ -25,9 +25,11 @@ import io.art.rsocket.server.*;
 import io.art.rsocket.state.*;
 import io.rsocket.core.*;
 import io.rsocket.transport.netty.client.*;
+import io.rsocket.util.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
+import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -70,6 +72,7 @@ public class RsocketManager {
                         client.initialize();
                     }
                     state.registerClient(entry.getKey(), client);
+                    client.get().requestResponse(Mono.just(DefaultPayload.create("test"))).subscribe();
                     return;
             }
         }

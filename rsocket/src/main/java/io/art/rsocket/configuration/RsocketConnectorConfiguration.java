@@ -71,7 +71,9 @@ public class RsocketConnectorConfiguration {
                 .dataMimeType(toMimeType(dataFormat).toString())
                 .metadataMimeType(toMimeType(metaDataFormat).toString())
                 .fragment(orElse(source.getInt(FRAGMENTATION_MTU_KEY), communicatorConfiguration.getFragmentationMtu()))
-                .interceptors(registry -> registry.forRequester(new RsocketLoggingInterceptor(configuration::isLogging)));
+                .interceptors(registry -> registry
+                        .forResponder(new RsocketLoggingInterceptor(configuration::isLogging))
+                        .forRequester(new RsocketLoggingInterceptor(configuration::isLogging)));
 
         apply(source.getNested(RESUME_SECTION), section -> connector.resume(RsocketResumeConfigurator.from(section, communicatorConfiguration.getResume())));
         apply(source.getNested(RECONNECT_SECTION), section -> connector.reconnect(RsocketRetryConfigurator.from(section, communicatorConfiguration.getReconnect())));
@@ -96,14 +98,14 @@ public class RsocketConnectorConfiguration {
         RsocketPayloadWriter writer = new RsocketPayloadWriter(dataFormat, metaDataFormat);
         connector.setupPayload(Mono.create(emitter -> emitter.success(writer.writePayloadData(setupPayloadBuilder.build().toEntity()))));
 
-        int port = orElse(source.getInt(TRANSPORT_PORT_KEY), DEFAULT_PORT);
 
         configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
         switch (configuration.transport) {
             case TCP:
-                String host = source.getString(TRANSPORT_HOST_KEY);
+                String host = source.getString(TRANSPORT_TCP_HOST_KEY);
+                int port = orElse(source.getInt(TRANSPORT_TCP_PORT_KEY), DEFAULT_PORT);
                 if (isEmpty(host)) {
-                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_HOST_KEY)));
+                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_TCP_HOST_KEY)));
                 }
                 configuration.tcpClient = TcpClient.create().port(port).host(host);
                 configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
@@ -113,7 +115,7 @@ public class RsocketConnectorConfiguration {
                 if (isEmpty(url)) {
                     throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_HTTP_BASE_URL_KEY)));
                 }
-                configuration.httpWebSocketClient = create().port(port).baseUrl(url);
+                configuration.httpWebSocketClient = create().baseUrl(url);
                 configuration.httpWebSocketPath = orElse(source.getString(TRANSPORT_HTTP_PATH_KEY), SLASH);
                 break;
         }

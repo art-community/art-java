@@ -66,6 +66,8 @@ public interface RsocketModuleConstants {
         String TRANSPORT_MODE_KEY = "transport.mode";
         String TRANSPORT_PORT_KEY = "transport.port";
         String TRANSPORT_HOST_KEY = "transport.host";
+        String TRANSPORT_TCP_HOST_KEY = "transport.tcp.host";
+        String TRANSPORT_TCP_PORT_KEY = "transport.tcp.port";
         String TRANSPORT_HTTP_BASE_URL_KEY = "transport.http.baseUrl";
         String TRANSPORT_HTTP_PATH_KEY = "transport.http.path";
         String TRANSPORT_TCP_MAX_FRAME_LENGTH = "transport.tcp.maxFrameLength";
