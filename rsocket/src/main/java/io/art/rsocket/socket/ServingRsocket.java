@@ -49,7 +49,7 @@ public class ServingRsocket implements RSocket {
     private final RsocketPayloadWriter writer;
     private final RSocket requesterSocket;
     private final RsocketModuleState moduleState = rsocketModule().state();
-    private Runnable onDispose;
+    private volatile Runnable onDispose;
 
     public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
         moduleState.registerRequester(this.requesterSocket = requesterSocket);
@@ -143,11 +143,10 @@ public class ServingRsocket implements RSocket {
 
     @Override
     public void dispose() {
-        onDispose.run();
+        apply(onDispose, Runnable::run);
     }
 
-    public ServingRsocket onDispose(Runnable action) {
+    public void onDispose(Runnable action) {
         this.onDispose = action;
-        return this;
     }
 }
