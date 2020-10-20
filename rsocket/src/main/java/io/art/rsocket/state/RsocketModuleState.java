@@ -21,6 +21,7 @@ package io.art.rsocket.state;
 import com.google.common.collect.*;
 import io.art.core.lazy.*;
 import io.art.core.module.*;
+import io.art.rsocket.model.*;
 import io.rsocket.*;
 import io.rsocket.core.*;
 import lombok.*;
@@ -74,10 +75,12 @@ public class RsocketModuleState implements ModuleState {
     @Builder(toBuilder = true)
     public static class RsocketThreadLocalState {
         private final RSocket requesterRsocket;
+        private final RsocketSetupPayload setupPayload;
 
         public static RsocketThreadLocalState fromContext(Context context) {
             RSocket requesterRsocket = context.get(REQUESTER_RSOCKET_KEY);
-            return new RsocketThreadLocalState(requesterRsocket);
+            RsocketSetupPayload setupPayload = context.get(SETUP_PAYLOAD);
+            return new RsocketThreadLocalState(requesterRsocket, setupPayload);
         }
     }
 }

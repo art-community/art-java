@@ -100,6 +100,7 @@ public interface RsocketModuleConstants {
 
     interface ContextKeys {
         String REQUESTER_RSOCKET_KEY = "requesterRsocket";
+        String SETUP_PAYLOAD = "setupPayload";
     }
 
     interface Defaults {

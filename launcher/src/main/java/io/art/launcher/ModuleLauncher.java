@@ -91,7 +91,10 @@ public class ModuleLauncher {
                     .outputMode(BLOCKING)
                     .serviceId("test")
                     .methodId("test")
-                    .implementation(producer(() -> entityBuilder().lazyPut("test", () -> array(dynamicArrayOf(stringPrimitive("test")))).build(), "test", "test"))
+                    .implementation(producer(() -> {
+                        System.out.println(RsocketModule.rsocketModule().state().localState());
+                        return entityBuilder().lazyPut("test", () -> array(dynamicArrayOf(stringPrimitive("test")))).build();
+                    }, "test", "test"))
                     .inputDecorator(new ServiceLoggingDecorator(serviceMethod("test", "test"), INPUT, () -> true))
                     .outputDecorator(new ServiceLoggingDecorator(serviceMethod("test", "test"), OUTPUT, () -> true))
                     .build();

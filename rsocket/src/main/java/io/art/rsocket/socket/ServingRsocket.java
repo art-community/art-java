@@ -30,6 +30,7 @@ import io.art.server.specification.*;
 import io.rsocket.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.entity.constants.EntityConstants.*;
 import static io.art.entity.mime.MimeTypeDataFormatMapper.*;
@@ -37,9 +38,9 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.rsocket.state.RsocketModuleState.RsocketThreadLocalState.*;
+import static io.art.server.model.ServiceMethodIdentifier.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
-import static reactor.core.publisher.Mono.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -49,6 +50,7 @@ public class ServingRsocket implements RSocket {
     private final RsocketPayloadWriter writer;
     private final RSocket requesterSocket;
     private final RsocketModuleState moduleState = rsocketModule().state();
+    private final RsocketSetupPayload setupPayload;
     private volatile Runnable onDispose;
 
     public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
@@ -82,6 +84,11 @@ public class ServingRsocket implements RSocket {
         }
 
         this.specification = possibleSpecification.orElseGet(defaultSpecification::get);
+        setupPayload = RsocketSetupPayload.builder()
+                .dataFormat(dataFormat)
+                .metadataFormat(metaDataFormat)
+                .serviceMethodId(serviceMethod(specification.getServiceId(), specification.getMethodId()))
+                .build();
     }
 
     @Override
@@ -135,9 +142,12 @@ public class ServingRsocket implements RSocket {
     }
 
     private <T> Flux<T> addContext(Flux<T> flux) {
-        return flux.subscriberContext(context -> context.putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket))
-                .flatMap(value -> subscriberContext()
-                        .doOnNext(context -> moduleState.localState(fromContext(context)))
-                        .map(context -> value).flux());
+        return cast(flux
+                .materialize()
+                .doOnNext(signal -> moduleState.localState(fromContext(signal.getContext())))
+                .dematerialize()
+                .subscriberContext(context -> context
+                        .putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket)
+                        .putNonNull(SETUP_PAYLOAD, setupPayload)));
     }
 }
