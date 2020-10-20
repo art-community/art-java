@@ -69,9 +69,6 @@ public class ServiceMethodSpecification {
     @Getter(lazy = true)
     private final ServiceMethodConfiguration methodConfiguration = let(getServiceConfiguration(), configuration -> configuration.getMethods().get(methodId));
 
-    @Getter(lazy = true)
-    private final Scheduler scheduler = let(getMethodConfiguration(), ServiceMethodConfiguration::getScheduler, moduleConfiguration.getScheduler());
-
     private final ValueToModelMapper<Object, Value> inputMapper;
     private final ValueFromModelMapper<Object, Value> outputMapper;
     private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
@@ -83,7 +80,8 @@ public class ServiceMethodSpecification {
         if (deactivated()) {
             return Flux.empty();
         }
-        return Flux.defer(() -> deferredServe(input)).subscribeOn(getScheduler());
+        Scheduler scheduler = let(getMethodConfiguration(), ServiceMethodConfiguration::getScheduler, moduleConfiguration.getScheduler());
+        return Flux.defer(() -> deferredServe(input)).subscribeOn(scheduler);
     }
 
     private Flux<Value> deferredServe(Flux<Value> input) {
