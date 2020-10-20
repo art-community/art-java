@@ -24,6 +24,9 @@ import io.art.entity.immutable.Value;
 import io.art.entity.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import reactor.core.scheduler.*;
+import static io.art.core.caster.Caster.*;
+import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -50,6 +53,64 @@ public class CommunicatorSpecification {
     private final MethodProcessingMode outputMode;
 
     public Object communicate(Object input) {
-        return null;
+        return mapOutput(Flux.defer(() -> deferredCommunicate(input)).subscribeOn(Schedulers.elastic()));
+    }
+
+    private Flux<Value> deferredCommunicate(Object input) {
+        try {
+            Flux<Value> output = implementation.communicate(filter(mapInput(input)));
+            if (isNull(output)) {
+                return Flux.empty();
+            }
+            return filter(output);
+        } catch (Throwable throwable) {
+            return filter(mapException(throwable));
+        }
+    }
+
+    private Flux<Value> mapInput(Object input) {
+        Flux<Object> inputFlux = Flux.empty();
+        switch (inputMode) {
+            case BLOCKING:
+                inputFlux = Flux.just(input);
+                break;
+            case MONO:
+            case FLUX:
+                inputFlux = Flux.from(cast(input));
+        }
+        for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
+            inputFlux = inputFlux.transformDeferred(decorator);
+        }
+
+        return inputFlux.map(inputMapper::map);
+    }
+
+    private Object mapOutput(Flux<Value> output) {
+        Flux<Object> mappedOutput = output.map(outputMapper::map);
+        for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
+            mappedOutput = mappedOutput.transformDeferred(decorator);
+        }
+
+        switch (outputMode) {
+            case BLOCKING:
+                return mappedOutput.blockFirst();
+            case MONO:
+                return mappedOutput.last();
+            default:
+                return mappedOutput;
+        }
+    }
+
+    private Flux<Value> mapException(Throwable exception) {
+        Flux<Object> errorOutput = Flux.error(exception);
+        for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
+            errorOutput = errorOutput.transformDeferred(decorator);
+        }
+        return Flux.empty();
+
+    }
+
+    private Flux<Value> filter(Flux<Value> input) {
+        return input.filter(Objects::nonNull);
     }
 }
