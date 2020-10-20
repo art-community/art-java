@@ -26,8 +26,7 @@ import lombok.*;
 import static io.art.entity.factory.PrimitivesFactory.*;
 import static io.art.entity.immutable.Entity.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Fields.*;
-import static java.util.Objects.nonNull;
-import java.util.*;
+import static java.util.Objects.*;
 
 @Getter
 @Builder
@@ -45,7 +44,6 @@ public class RsocketSetupPayload {
                     .put(SETUP_PAYLOAD_SERVICE_ID_FIELD, stringPrimitive(serviceMethodId.getServiceId()))
                     .put(SETUP_PAYLOAD_METHOD_ID_FIELD, stringPrimitive(serviceMethodId.getMethodId()));
         }
-        return entityBuilder
-                .build();
+        return entityBuilder.build();
     }
 }

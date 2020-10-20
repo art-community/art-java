@@ -21,7 +21,7 @@ package io.art.rsocket.module;
 import io.art.core.module.*;
 import io.art.core.printer.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.launcher.*;
+import io.art.rsocket.manager.*;
 import io.art.rsocket.state.*;
 import lombok.*;
 import org.apache.logging.log4j.*;

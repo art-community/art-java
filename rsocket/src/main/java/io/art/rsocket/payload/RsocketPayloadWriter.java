@@ -23,6 +23,7 @@ import io.art.entity.xml.*;
 import io.rsocket.*;
 import lombok.*;
 import static io.art.entity.constants.EntityConstants.*;
+import static io.art.entity.constants.EntityConstants.ValueType.*;
 import static io.art.entity.immutable.Value.*;
 import static io.art.entity.xml.XmlEntityFromEntityConverter.*;
 import static io.art.json.descriptor.JsonEntityWriter.*;
@@ -43,7 +44,7 @@ public class RsocketPayloadWriter {
             case JSON:
                 return create(writeJsonToBytes(value));
             case XML:
-                return create(writeXmlToBytes(value.getType() == ValueType.XML ? asXml(value) : fromEntityAsTags(asEntity(value))));
+                return create(writeXmlToBytes(value.getType() == XML ? asXml(value) : fromEntityAsTags(asEntity(value))));
             case MESSAGE_PACK:
                 return create(writeMessagePackToBytes(value));
 
