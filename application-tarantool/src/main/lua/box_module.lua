@@ -19,81 +19,90 @@ art = {
     end,
 
     get = function(space, id)
-        local response = {'',''}
         local data = box.space[space]:get(id)
-        if (data == nil) then return response end
+        if (data == nil) then return '', '' end
         local schema_hash = data[#data]
-        response[1] = data:transform(#data, 1)
-        response[2] = box.space[space .. art.schema_suffix]:get(schema_hash):transform(1, 2)
-        return response
+        local response = data:transform(#data, 1)
+        local response_schema = box.space[space .. art.schema_suffix]:get(schema_hash):transform(1, 2)
+        return response, response_schema
     end,
 
     delete = function(space, id)
-        local response = {'',''}
         local data = box.space[space]:get(id)
-        if (data == nil) then return {'',''} end
+        if (data == nil) then return '', '' end
 
         local schema_hash = data[#data]
-        response[1] = data:transform(#data, 1)
-        response[2] = box.space[space .. art.schema_suffix]:get(schema_hash)
-        if (response[2]['count'] == 1) then
+        local response = data:transform(#data, 1)
+        local response_schema = box.space[space .. art.schema_suffix]:get(schema_hash)
+        if (response_schema['count'] == 1) then
             box.space[space .. art.schema_suffix]:delete(schema_hash)
         else
             box.space[space .. art.schema_suffix]:update(schema_hash, {{'-', 'count', 1}})
         end
         box.space[space]:delete(id)
-        response[2] = response[2]:transform(1, 2)
-        return response
+        response_schema = response_schema:transform(1, 2)
+        return response, response_schema
     end,
 
     insert = function(space, data)
+        data[1] = box.tuple.new(data[1])
+        data[2] = box.tuple.new(data[2])
         local id = data[1][1]
-        if (box.space[space]:get(id)) then return {'',''} end
+        if (box.space[space]:get(id)) then return '','' end
         local schema_hash = art.hash(data[2])
         box.space[space]:insert(data[1]:transform(#data[1]+1, 1, schema_hash))
         local schema_tuple = data[2]:update({{'!', 1, schema_hash},{'!', 2, 1}})
         box.space[space .. art.schema_suffix]:upsert(schema_tuple, {{'+', 'count', 1}})
-        return data
+        return data[1], data[2]
     end,
 
     auto_increment = function(space, data)
-        local result = {'', data[2]}
-        local schema_hash = art.hash(data[2])
-        result[1] = box.space[space]:auto_increment(data[1]:update({{'!', #data[1] + 1, schema_hash}}):transform(1,1):totable())
-        local schema_tuple = data[2]:update({{'!', 1, schema_hash}, {'!', 2, 1}})
+        data[1] = box.tuple.new(data[1])
+        data[2] = box.tuple.new(data[2])
+        local response_schema = data[2]
+        local schema_hash = art.hash(response_schema)
+        local response = box.space[space]:auto_increment(data[1]:update({{'!', #data[1] + 1, schema_hash}}):transform(1,1):totable())
+        local schema_tuple = response_schema:update({{'!', 1, schema_hash}, {'!', 2, 1}})
         box.space[space .. art.schema_suffix]:upsert(schema_tuple, {{'+', 'count', 1}})
-        return result
+        return response, response_schema
     end,
 
     put = function(space, data)
+        data[1] = box.tuple.new(data[1])
+        data[2] = box.tuple.new(data[2])
         local id = data[1][1]
         box.begin()
         art.delete(space, id)
-        local result = art.insert(space, data)
+        local response, response_schema = art.insert(space, data)
         box.commit()
-        return result
+        return response, response_schema
     end,
 
     update = function(space, id, commands)
-        local data = art.get(space, id)
-        data[1] = data[1]:update(commands[1])
-        data[2] = data[2]:update(commands[2])
+        local data, data_schema = art.get(space, id)
+        data = data:update(commands[1])
+        data_schema = data_schema:update(commands[2])
         box.begin()
         art.delete(space, id)
-        art.insert(space, data) --проверить сначала, влезет ли оно вообще в базу. или бэкап чтобы если что восстановиться
+        art.insert(space, {data, data_schema}) --а оно так будет работать?
         box.commit()
-        return data
+        return data, data_schema
     end,
 
     replace = function(space, data)
+        data[1] = box.tuple.new(data[1])
+        data[2] = box.tuple.new(data[2])
         local id = data[1][1]
         box.begin()
         art.delete(space, id)
-        art.insert(space, data)
+        local response, response_schema = art.insert(space, data)
         box.commit()
+        return response, response_schema
     end,
 
     upsert = function(space, data, commands)
+        data[1] = box.tuple.new(data[1])
+        data[2] = box.tuple.new(data[2])
         local id = data[1][1]
         if box.space[space]:get(id) then
         return art.update(space, id, commands)
@@ -103,17 +112,30 @@ art = {
     end,
 
     select = function(space, request)
-        local results = {}
+        local response = {}
+        local response_schema = {}
         local list = box.space[space]:select(request)
         for index = 1, #list do
-            results[index] = art.get(space, list[index][1])
+            response[index], response_schema[index] = art.get(space, list[index][1])
         end
-        return results
+        return response, response_schema
     end,
 
     space = {
         count = function(space)
-            return {box.space[space]:count(), box.space[space .. art.schema_suffix]:count()}
+            return box.space[space]:count()
+        end,
+
+        schema_count = function(space)
+            return box.space[space .. art.schema_suffix]:count()
+        end,
+
+        len = function(space)
+            return box.space[space]:len()
+        end,
+
+        schema_len = function(space)
+            return box.space[space .. art.schema_suffix]:len()
         end,
 
         create_index = function(space, index_name, index)
@@ -121,11 +143,11 @@ art = {
         end,
 
         truncate = function(space)
-            return {box.space[space]:truncate(), box.space[space .. art.schema_suffix]:truncate()}
+            return box.space[space]:truncate(), box.space[space .. art.schema_suffix]:truncate()
         end,
 
         rename = function(space, name)
-            return {box.space[space]:rename(name), box.space[space .. art.schema_suffix]:rename(name .. art.schema_suffix)}
+            return box.space[space]:rename(name), box.space[space .. art.schema_suffix]:rename(name .. art.schema_suffix)
         end,
 
         format = function(space, format)
@@ -133,7 +155,7 @@ art = {
         end,
 
         drop = function(space)
-            return {box.space[space]:drop(), box.space[space .. art.schema_suffix]:drop()}
+            return box.space[space]:drop(), box.space[space .. art.schema_suffix]:drop()
         end,
 
         create = function(space)
@@ -148,7 +170,7 @@ art = {
                 type = 'tree',
                 parts = {'hash'}
                 })
-            return result
+            return result[1], result[2]
         end
 
 }}
