@@ -51,6 +51,19 @@ public class TarantoolDao {
         return execFunction("art.auto_increment", buildArgs(space, addSchema(data)));
     }
 
+    public Value put(String space, Value data){
+        return execFunction("art.put", buildArgs(space, addSchema(data)));
+    }
+
+    public Value replace(String space, Value data){
+        return execFunction("art.replace", buildArgs(space, addSchema(data)));
+    }
+
+    public Value update(String space, int id, Value command){
+        return command;
+        //notSoEasy?)
+    }
+
 
 
     private List<?> unpackValue(Value request){
