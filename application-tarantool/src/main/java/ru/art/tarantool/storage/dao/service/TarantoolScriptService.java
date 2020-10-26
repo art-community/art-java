@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package ru.art.tarantool.service;
+package ru.art.tarantool.storage.dao.service;
 
 import lombok.experimental.*;
 import ru.art.tarantool.configuration.lua.*;
@@ -26,7 +26,7 @@ import static java.util.Objects.nonNull;
 import static ru.art.core.factory.CollectionsFactory.setOf;
 import static ru.art.tarantool.configuration.lua.TarantoolCommonScriptConfiguration.*;
 import static ru.art.tarantool.configuration.lua.TarantoolValueScriptConfiguration.*;
-import static ru.art.tarantool.executor.TarantoolLuaExecutor.*;
+import static ru.art.tarantool.storage.dao.service.executor.TarantoolLuaExecutor.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
 import java.util.Set;
 import java.util.concurrent.locks.*;

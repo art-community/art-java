@@ -24,8 +24,8 @@ import static org.apache.logging.log4j.io.IoBuilder.forLogger;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
 import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.tarantool.caller.TarantoolFunctionCaller.callTarantoolFunction;
-import static ru.art.tarantool.service.TarantoolScriptService.evaluateValueScript;
+import static ru.art.tarantool.storage.dao.caller.TarantoolFunctionCaller.callTarantoolFunction;
+import static ru.art.tarantool.storage.dao.service.TarantoolScriptService.evaluateValueScript;
 
 public class TarantoolDao {
     private final static OutputStream loggerOutputStream = forLogger(loggingModule().getLogger(TarantoolDao.class))

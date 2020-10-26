@@ -35,12 +35,12 @@ import static ru.art.entity.Entity.*;
 import static ru.art.entity.tuple.PlainTupleReader.*;
 import static ru.art.entity.tuple.PlainTupleWriter.*;
 import static ru.art.entity.tuple.schema.ValueSchema.*;
-import static ru.art.tarantool.caller.TarantoolFunctionCaller.*;
+import static ru.art.tarantool.storage.dao.caller.TarantoolFunctionCaller.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.*;
-import static ru.art.tarantool.service.TarantoolScriptService.*;
+import static ru.art.tarantool.storage.dao.service.TarantoolScriptService.*;
 import java.util.*;
 
 @SuppressWarnings("Duplicates")

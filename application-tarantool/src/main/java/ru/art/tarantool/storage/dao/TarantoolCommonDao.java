@@ -23,12 +23,12 @@ import org.tarantool.TarantoolClient;
 import static java.util.Collections.emptySet;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.core.factory.CollectionsFactory.setOf;
-import static ru.art.tarantool.caller.TarantoolFunctionCaller.callTarantoolFunction;
+import static ru.art.tarantool.storage.dao.caller.TarantoolFunctionCaller.callTarantoolFunction;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode.SEQUENCE;
 import static ru.art.tarantool.module.TarantoolModule.getClient;
-import static ru.art.tarantool.service.TarantoolScriptService.evaluateCommonScript;
+import static ru.art.tarantool.storage.dao.service.TarantoolScriptService.evaluateCommonScript;
 import java.util.List;
 import java.util.Set;
 
