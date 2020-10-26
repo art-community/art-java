@@ -1,4 +1,4 @@
-package ru.art.tarantool.storage.vshard.connector;
+package refactored.module.connector;
 
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
@@ -14,11 +14,11 @@ import static org.apache.logging.log4j.io.IoBuilder.forLogger;
 import static ru.art.logging.LoggingModule.loggingModule;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_CONNECT_TO_TARANTOOL;
 
-public class VshardStandardConnector {
-    private final static OutputStream loggerOutputStream = forLogger(loggingModule().getLogger(VshardStandardConnector.class))
+public class TarantoolConnector {
+    private final static OutputStream loggerOutputStream = forLogger(loggingModule().getLogger(TarantoolConnector.class))
             .buildOutputStream();
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = loggingModule().getLogger(VshardStandardConnector.class);
+    private static final Logger logger = loggingModule().getLogger(TarantoolConnector.class);
 
     public static TarantoolClient getClient(String address,TarantoolClusterClientConfig config) {
         try {
@@ -32,19 +32,6 @@ public class VshardStandardConnector {
                     + "\nMessage: " + exception.getMessage());
         }
         throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, "router", "localhost:3300"));
-    }
-
-    public static void testCall(TarantoolClient client){
-        try {
-            getLogger().info("Trying to call router function \"vshard.router.info()\"...");
-            String response;
-            response = client.syncOps().call("vshard.router.info").toString();
-            getLogger().info("Got response:\n" + response);
-        } catch (Exception e){
-            getLogger().error("Shit happened:\n"
-                    + "Class: " + e.getClass()
-                    + "\nMessage: " + e.getMessage());
-        }
     }
 
     public static TarantoolClusterClientConfig getDefaultConfig(){

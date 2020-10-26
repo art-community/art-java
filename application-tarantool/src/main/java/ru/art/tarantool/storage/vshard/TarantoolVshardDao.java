@@ -2,17 +2,12 @@ package ru.art.tarantool.storage.vshard;
 
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
-import org.msgpack.core.MessagePack;
-import org.msgpack.value.ValueFactory;
-import org.tarantool.MsgPackLite;
 import org.tarantool.TarantoolClient;
-import ru.art.entity.Entity;
-import ru.art.entity.PrimitiveMapping;
 import ru.art.entity.Value;
-import ru.art.entity.mapper.ValueMapper;
+
 import static ru.art.entity.tuple.PlainTupleReader.readTuple;
 import ru.art.entity.tuple.schema.ValueSchema;
-import ru.art.tarantool.storage.vshard.connector.VshardStandardConnector;
+import refactored.module.connector.TarantoolConnector;
 
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.logging.log4j.io.IoBuilder.forLogger;
@@ -32,7 +27,7 @@ public class TarantoolVshardDao {
     private TarantoolClient client;
 
     public TarantoolVshardDao(){
-        client = VshardStandardConnector.getClient("localhost:3300", VshardStandardConnector.getDefaultConfig());
+        client = TarantoolConnector.getClient("localhost:3300", TarantoolConnector.getDefaultConfig());
     }
 
     public Value call(Value params){

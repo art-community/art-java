@@ -93,22 +93,21 @@ art = {
         data[1] = box.tuple.new(data[1])
         data[2] = box.tuple.new(data[2])
         local id = data[1][1]
-        box.begin()
         art.delete(space, id)
-        local response, response_schema = art.insert(space, data)
-        box.commit()
-        return response, response_schema
+        return art.insert(space, data)
     end,
 
     upsert = function(space, data, commands)
         data[1] = box.tuple.new(data[1])
         data[2] = box.tuple.new(data[2])
-        local id = data[1][1]
-        if box.space[space]:get(id) then
-        return art.update(space, id, commands)
-        else
-        return art.insert(space, data)
-        end
+        return atomic(function()
+            local id = data[1][1]
+            if box.space[space]:get(id) then
+            return art.update(space, id, commands)
+            else
+            return art.insert(space, data)
+            end
+        end)
     end,
 
     select = function(space, request)

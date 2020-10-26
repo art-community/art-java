@@ -4,28 +4,22 @@ import io.tarantool.driver.auth.SimpleTarantoolCredentials;
 import io.tarantool.driver.auth.TarantoolCredentials;
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
-import ru.art.entity.Value;
-import ru.art.entity.tuple.PlainTupleReader;
-import ru.art.entity.tuple.schema.ValueSchema;
+import refactored.module.connector.TarantoolConnector;
 import ru.art.tarantool.exception.TarantoolConnectionException;
 import java.io.OutputStream;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static java.text.MessageFormat.format;
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.logging.log4j.io.IoBuilder.forLogger;
-import static ru.art.entity.tuple.PlainTupleReader.readTuple;
 import static ru.art.logging.LoggingModule.loggingModule;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_CONNECT_TO_TARANTOOL;
 import io.tarantool.driver.*;
-import static ru.art.core.caster.Caster.*;
 
 public class VshardCartridgeConnector {
-    private final static OutputStream loggerOutputStream = forLogger(loggingModule().getLogger(VshardStandardConnector.class))
+    private final static OutputStream loggerOutputStream = forLogger(loggingModule().getLogger(TarantoolConnector.class))
             .buildOutputStream();
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = loggingModule().getLogger(VshardStandardConnector.class);
+    private static final Logger logger = loggingModule().getLogger(TarantoolConnector.class);
 
     public TarantoolClient getClient() {
         TarantoolCredentials credentials = new SimpleTarantoolCredentials("username", "password");
@@ -50,40 +44,6 @@ public class VshardCartridgeConnector {
                     + "\nMessage: " + exception.getMessage());
         };
         throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, "router", "localhost:3300"));
-    }
-
-/*    public void testCall(TarantoolClient client){
-        try {
-            getLogger().info("Trying to call router function \"vshard.router.info()\"...");
-
-            List<?> response = cast(client.call("vshard.router.info").get());
-            getLogger().info("Got response:\n" + response.toString() + "\n");
-
-            ValueSchema schema = ValueSchema.fromTuple(response.get(0));
-            getLogger().info("Value schema:\n" + schema.toString() + "\n");
-
-            Value result = readTuple(response, schema);
-            getLogger().info("Got result:\n" + result.toString() + "\n");
-
-        } catch (Exception e){
-            getLogger().error("Shit happened:\n"
-                    + "Class: " + e.getClass()
-                    + "\nMessage: " + e.getMessage());
-        }
-    }
-*/
-    public void testEval(TarantoolClient client){
-        try {
-            getLogger().info("Trying to call router function \"crud.get('test', 2)\"...");
-            String response;
-
-            response = client.eval("return crud.get('test', 2)").get().toString();
-            getLogger().info("Got response:\n" + response);
-        } catch (Exception e){
-            getLogger().error("Shit happened:\n"
-                    + "Class: " + e.getClass()
-                    + "\nMessage: " + e.getMessage());
-        }
     }
 
     public void uploadFunction(TarantoolClient client, String function){

@@ -3,14 +3,10 @@ package refactored.storage.dao.caller;
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
 import org.tarantool.TarantoolClient;
-import refactored.storage.dao.TarantoolDao;
-import ru.art.entity.Entity;
-import ru.art.entity.Value;
-import ru.art.entity.tuple.PlainTupleWriter;
+
 
 import java.io.OutputStream;
 import java.util.List;
-
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.logging.log4j.io.IoBuilder.forLogger;
 import static ru.art.core.caster.Caster.cast;
@@ -29,5 +25,6 @@ public class TarantoolFunctionCaller {
         getLogger().info("Response:" + response);
         return response;
     }
+
 
 }
