@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package ru.art.tarantool.storage.dao.service;
+package ru.art.tarantool.service;
 
 import lombok.experimental.*;
 import org.tarantool.*;
@@ -24,10 +24,10 @@ import ru.art.tarantool.configuration.lua.*;
 import static ru.art.core.caster.Caster.*;
 import static ru.art.core.checker.CheckerForEmptiness.*;
 import static ru.art.core.factory.CollectionsFactory.*;
-import static ru.art.tarantool.storage.dao.caller.TarantoolFunctionCaller.*;
+import static ru.art.tarantool.caller.TarantoolFunctionCaller.*;
 import static ru.art.tarantool.configuration.lua.TarantoolSequenceConfiguration.*;
 import static ru.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static ru.art.tarantool.storage.dao.service.executor.TarantoolLuaExecutor.*;
+import static ru.art.tarantool.executor.TarantoolLuaExecutor.*;
 import static ru.art.tarantool.module.TarantoolModule.*;
 
 @UtilityClass

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package ru.art.tarantool.storage.dao.caller;
+package ru.art.tarantool.caller;
 
 import lombok.experimental.*;
 import org.tarantool.*;
