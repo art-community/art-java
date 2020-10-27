@@ -24,6 +24,7 @@ import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
+import io.art.rsocket.model.RsocketSetupPayload.*;
 import io.art.rsocket.payload.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
@@ -84,7 +85,7 @@ public class RsocketConnectorConfiguration {
             connector.keepAlive(keepAliveConfiguration.getInterval(), keepAliveConfiguration.getMaxLifeTime());
         }
 
-        RsocketSetupPayload.RsocketSetupPayloadBuilder setupPayloadBuilder = RsocketSetupPayload.builder()
+        RsocketSetupPayloadBuilder setupPayloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(dataFormat)
                 .metadataFormat(metaDataFormat);
 

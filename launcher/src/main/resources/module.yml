@@ -12,6 +12,9 @@ rsocket:
     logging: true
     connectors:
       test:
+        defaults:
+          serviceId: test
+          methodId: test
         transport:
           mode: ws
           http:
