@@ -68,6 +68,7 @@ public class RsocketServer implements Server {
                     .interceptors(interceptorRegistry -> configuration.getInterceptorConfigurer().accept(interceptorRegistry))
                     .payloadDecoder(configuration.getPayloadDecoder())
                     .bind(transport)
+                    .doOnSubscribe(subscription -> getLogger().info("RSocket server started"))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
                     .subscribe());
         }

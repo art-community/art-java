@@ -40,9 +40,8 @@ import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.launcher.ModelImplementor.*;
-import static io.art.launcher.ModuleLauncherConstants.LAUNCHED_MESSAGES;
+import static io.art.launcher.ModuleLauncherConstants.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.model.module.ModuleModel.*;
 import static java.util.Optional.*;
 import java.util.concurrent.atomic.*;
 
@@ -112,13 +111,5 @@ public class ModuleLauncher {
         RsocketModule rsocket = new RsocketModule();
         rsocket.configure(configurator -> configurator.from(sources));
         return rsocket;
-    }
-
-    public static void main(String[] args) {
-        launch(module()
-                .serve(server -> server
-                        .rsocket("example", "method")
-                )
-        );
     }
 }
