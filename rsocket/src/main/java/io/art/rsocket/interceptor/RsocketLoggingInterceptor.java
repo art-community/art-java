@@ -65,7 +65,6 @@ public class RsocketLoggingInterceptor implements RSocketInterceptor {
                 logger.info(format(REQUEST_RESPONSE_REQUEST_LOG, payload.getDataUtf8(), payload.getMetadataUtf8()));
                 Mono<Payload> output = super.requestResponse(payload).doOnError(error -> logger.error(format(REQUEST_RESPONSE_EXCEPTION_LOG, getStackTraceAsString(error))));
                 return output.doOnNext(response -> logger.info(format(RESPONSE_RESPONSE_LOG, response.getDataUtf8(), response.getMetadataUtf8())));
-
             }
 
             @Override

@@ -25,8 +25,10 @@ import io.art.entity.immutable.Value;
 import io.art.entity.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import reactor.core.scheduler.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.let;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
@@ -37,8 +39,6 @@ import java.util.function.*;
 public class CommunicatorSpecification {
     @EqualsAndHashCode.Include
     private final String communicatorId;
-    @EqualsAndHashCode.Include
-    private final String methodId;
 
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
@@ -58,7 +58,8 @@ public class CommunicatorSpecification {
     private final CommunicatorConfiguration communicatorConfiguration = moduleConfiguration.getCommunicators().get(communicatorId);
 
     public Object communicate(Object input) {
-        return mapOutput(Flux.defer(() -> deferredCommunicate(input)).subscribeOn(getCommunicatorConfiguration().getScheduler()));
+        Scheduler scheduler = let(getCommunicatorConfiguration(), CommunicatorConfiguration::getScheduler, moduleConfiguration.getScheduler());
+        return mapOutput(Flux.defer(() -> deferredCommunicate(input)).subscribeOn(scheduler));
     }
 
     private Flux<Value> deferredCommunicate(Object input) {

@@ -32,8 +32,6 @@ import static io.art.logging.LoggingModule.*;
 import static lombok.AccessLevel.*;
 
 public class RsocketCommunicator implements CommunicatorImplementation {
-    @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = logger(RsocketCommunicator.class);
     private final RSocketClient client;
     private final RsocketPayloadWriter writer;
     private final RsocketPayloadReader reader;

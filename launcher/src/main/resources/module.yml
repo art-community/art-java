@@ -11,7 +11,7 @@ rsocket:
   communicator:
     logging: true
     connectors:
-      myConnector:
+      test:
         transport:
           mode: ws
           http:

@@ -20,43 +20,42 @@ package io.art.launcher;
 
 import com.google.common.collect.*;
 import io.art.communicator.module.*;
+import io.art.communicator.specification.*;
 import io.art.configurator.module.*;
 import io.art.core.caster.*;
 import io.art.core.configuration.ContextConfiguration.*;
-import io.art.core.constants.*;
 import io.art.core.context.*;
 import io.art.core.lazy.*;
 import io.art.core.module.Module;
 import io.art.core.source.*;
-import io.art.entity.factory.*;
-import io.art.entity.immutable.*;
 import io.art.json.module.*;
 import io.art.logging.*;
+import io.art.rsocket.communicator.*;
+import io.art.rsocket.model.*;
 import io.art.rsocket.module.*;
 import io.art.server.decorator.*;
-import io.art.server.implementation.*;
-import io.art.server.model.*;
 import io.art.server.module.*;
 import io.art.server.specification.*;
 import io.art.xml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
-import static io.art.core.constants.MethodDecoratorScope.INPUT;
-import static io.art.core.constants.MethodDecoratorScope.OUTPUT;
+import reactor.core.publisher.*;
+import reactor.core.scheduler.*;
+import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.constants.MethodProcessingMode.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.ThreadExtensions.block;
-import static io.art.core.factory.CollectionsFactory.dynamicArrayOf;
+import static io.art.core.extensions.ThreadExtensions.*;
+import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.lazy.LazyValue.*;
+import static io.art.entity.constants.EntityConstants.DataFormat.*;
 import static io.art.entity.factory.ArrayFactory.*;
-import static io.art.entity.factory.PrimitivesFactory.stringPrimitive;
-import static io.art.entity.immutable.Entity.entityBuilder;
+import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.entity.immutable.Entity.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.server.implementation.ServiceMethodImplementation.producer;
+import static io.art.rsocket.constants.RsocketModuleConstants.CommunicationMode.*;
+import static io.art.server.implementation.ServiceMethodImplementation.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
-import static io.art.server.module.ServerModule.specifications;
 import java.time.*;
-import java.time.format.*;
 import java.util.concurrent.atomic.*;
 
 @UtilityClass
@@ -73,6 +72,7 @@ public class ModuleLauncher {
             //ConfiguratorModel configuratorModel = model.getConfiguratorModel();
             ImmutableList.Builder<Module> modules = ImmutableList.builder();
             ServerModule server = server(sources);
+            RsocketModule rsocket = rsocket(sources);
             modules.add(
                     configurator,
                     logging(sources/*, configuratorModel*/),
@@ -80,7 +80,7 @@ public class ModuleLauncher {
                     xml(sources),
                     server,
                     communicator(sources),
-                    rsocket(sources)
+                    rsocket
             );
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
             initialize(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
@@ -103,6 +103,20 @@ public class ModuleLauncher {
                     .method("test", specification)
                     .build()
             );
+            CommunicatorSpecification communicatorSpecification = CommunicatorSpecification.builder()
+                    .inputMapper(Caster::cast)
+                    .outputMapper(Caster::cast)
+                    .inputMode(BLOCKING)
+                    .outputMode(BLOCKING)
+                    .implementation(new RsocketCommunicator(rsocket.getState().getClient("test").get(), FIRE_AND_FORGET, RsocketSetupPayload.builder()
+                            .serviceMethodId(serviceMethod("test", "test"))
+                            .dataFormat(JSON)
+                            .metadataFormat(JSON)
+                            .build()))
+                    .build();
+            Flux.interval(Duration.ofSeconds(1), Schedulers.elastic())
+                    .doOnNext(value -> communicatorSpecification.communicate(entityBuilder().lazyPut("test", () -> array(dynamicArrayOf(stringPrimitive("test")))).build()))
+                    .subscribe();
             block();
         }
     }
