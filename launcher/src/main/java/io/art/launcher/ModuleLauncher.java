@@ -114,7 +114,7 @@ public class ModuleLauncher {
                             .metadataFormat(JSON)
                             .build()))
                     .build();
-            Flux.interval(Duration.ofSeconds(1), Schedulers.elastic())
+            Flux.interval(Duration.ofSeconds(1), Schedulers.newElastic("test"))
                     .doOnNext(value -> communicatorSpecification.communicate(entityBuilder().lazyPut("test", () -> array(dynamicArrayOf(stringPrimitive("test")))).build()))
                     .subscribe();
             block();
