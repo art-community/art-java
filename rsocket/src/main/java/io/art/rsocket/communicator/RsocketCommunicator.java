@@ -52,14 +52,17 @@ public class RsocketCommunicator implements CommunicatorImplementation {
             case FIRE_AND_FORGET:
                 return cast(client.fireAndForget(input.map(writer::writePayloadData).last()).flux());
             case REQUEST_RESPONSE:
-                return client.requestResponse(input.map(writer::writePayloadData).last())
+                return client
+                        .requestResponse(input.map(writer::writePayloadData).last())
                         .flux()
                         .map(payload -> reader.readPayloadData(payload).getValue());
             case REQUEST_STREAM:
-                return client.requestStream(input.map(writer::writePayloadData).last())
+                return client
+                        .requestStream(input.map(writer::writePayloadData).last())
                         .map(payload -> reader.readPayloadData(payload).getValue());
             case REQUEST_CHANNEL:
-                return client.requestChannel(input.map(writer::writePayloadData))
+                return client
+                        .requestChannel(input.map(writer::writePayloadData))
                         .map(payload -> reader.readPayloadData(payload).getValue());
             case METADATA_PUSH:
                 return cast(client.metadataPush(input.map(writer::writePayloadData).last()).flux());

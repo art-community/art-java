@@ -18,5 +18,19 @@
 
 package io.art.communicator.constants;
 
-public class CommunicatorModuleConstants {
+import reactor.core.scheduler.*;
+import static io.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
+import static java.lang.Short.MAX_VALUE;
+import static reactor.core.scheduler.Schedulers.newBoundedElastic;
+
+public interface CommunicatorModuleConstants {
+    interface Defaults {
+        Scheduler DEFAULT_COMMUNICATOR_SCHEDULER = newBoundedElastic(DEFAULT_THREAD_POOL_SIZE, MAX_VALUE, "communicator");
+    }
+
+    interface ConfigurationKeys {
+        String COMMUNICATOR_SECTION = "communicator";
+        String TARGETS_KEY = "targets";
+        String LOGGING_KEY = "logging";
+    }
 }

@@ -28,7 +28,6 @@ import io.art.server.implementation.*;
 import io.art.server.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodProcessingMode.*;
@@ -80,29 +79,27 @@ public class ServiceMethodSpecification {
         if (deactivated()) {
             return Flux.empty();
         }
-        Scheduler scheduler = let(getMethodConfiguration(), ServiceMethodConfiguration::getScheduler, moduleConfiguration.getScheduler());
-        return Flux.defer(() -> deferredServe(input)).subscribeOn(scheduler);
+        return Flux.defer(() -> deferredServe(input)).subscribeOn(getMethodConfiguration().getScheduler());
     }
 
     private Flux<Value> deferredServe(Flux<Value> input) {
         try {
-            Object output = implementation.execute(mapInput(filter(input)));
+            Object output = implementation.execute(mapInput(input));
             if (isNull(output)) {
                 return Flux.empty();
             }
-            return filter(mapOutput(output));
+            return mapOutput(output);
         } catch (Throwable throwable) {
-            return filter(mapException(throwable));
+            return mapException(throwable);
         }
     }
 
     private Object mapInput(Flux<Value> input) {
-        Flux<Object> mappedInput = input
-                .map(inputMapper::map)
-                .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
+        Flux<Object> mappedInput = input.filter(Objects::nonNull).filter(value -> !deactivated()).map(inputMapper::map);
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
             mappedInput = mappedInput.transformDeferred(decorator);
         }
+        mappedInput = mappedInput.onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         switch (inputMode) {
             case BLOCKING:
                 return mappedInput.blockFirst();
@@ -116,7 +113,7 @@ public class ServiceMethodSpecification {
 
     private Flux<Value> mapOutput(Object output) {
         if (outputMode == BLOCKING) {
-            Flux<Object> mappedOutput = Flux.just(output);
+            Flux<Object> mappedOutput = Flux.just(output).filter(value -> !deactivated());
             for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
                 mappedOutput = mappedOutput.transformDeferred(decorator);
             }
@@ -126,7 +123,7 @@ public class ServiceMethodSpecification {
         }
 
         if (outputMode == MONO || outputMode == FLUX) {
-            Flux<Object> mappedOutput = Flux.from(cast(output));
+            Flux<Object> mappedOutput = Flux.from(cast(output)).filter(Objects::nonNull).filter(value -> !deactivated());
             for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
                 mappedOutput = mappedOutput.transformDeferred(decorator);
             }
@@ -139,18 +136,14 @@ public class ServiceMethodSpecification {
     }
 
     private Flux<Value> mapException(Throwable exception) {
-        Flux<Object> errorOutput = Flux.error(exception);
+        Flux<Object> errorOutput = Flux.error(exception).filter(value -> !deactivated());
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
             errorOutput = errorOutput.transformDeferred(decorator);
         }
         return errorOutput
-                .map(outputMapper::map)
-                .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
+                .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
+                .cast(Value.class);
 
-    }
-
-    private Flux<Value> filter(Flux<Value> input) {
-        return input.filter(Objects::nonNull).filter(value -> !deactivated());
     }
 
     private boolean deactivated() {
