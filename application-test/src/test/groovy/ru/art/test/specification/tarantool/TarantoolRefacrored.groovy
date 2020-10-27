@@ -30,8 +30,7 @@ class TarantoolRefacrored extends Specification {
 
         TarantoolConnector std = new TarantoolConnector();
         TarantoolClient stdClient = std.getClient('localhost:3301', std.getDefaultConfig());
-        TarantoolDao dao = new TarantoolDao();
-        dao.client = stdClient;
+        TarantoolDao dao = new TarantoolDao(stdClient);
         Entity args = new Entity.EntityBuilder()
                 .intField("id", 5)
                 .build();

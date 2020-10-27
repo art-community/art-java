@@ -32,8 +32,11 @@ public class TarantoolDao {
             .buildOutputStream();
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = loggingModule().getLogger(TarantoolDao.class);
+    private TarantoolClient client;
 
-    public TarantoolClient client; //temporary
+    public TarantoolDao(TarantoolClient client){
+        this.client = client;
+    }
 
     public Optional<Value> get(String space, Value request){
         return execFunction("art.get", collectToArray(space, unpackValue(request)));
