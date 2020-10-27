@@ -18,8 +18,6 @@
 
 package io.art.model.communicator;
 
-import io.art.grpc.client.communicator.*;
-import io.art.model.exception.*;
 import lombok.*;
 
 @RequiredArgsConstructor
@@ -27,7 +25,5 @@ public class GrpcCommunicatorModel {
     private final String name;
     private final Class<?> specification;
 
-    public GrpcCommunicator communicator() {
-        throw new ModelWasNotImplementedException(GrpcCommunicatorModel.class);
-    }
+
 }

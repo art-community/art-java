@@ -24,6 +24,7 @@ import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.combiner.SectionCombiner.combine;
 import static io.art.core.extensions.CollectionExtensions.*;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.*;
 import java.time.*;
 import java.util.*;
@@ -72,7 +73,11 @@ public class TypesafeConfigurationSource implements ConfigurationSource {
 
     @Override
     public ConfigurationSource getNested(String path) {
-        return new TypesafeConfigurationSource(combine(section, path), type, typesafeConfiguration.atPath(path));
+        Config configuration = this.typesafeConfiguration.atPath(path);
+        if (isNull(configuration) || !this.typesafeConfiguration.hasPath(path) || configuration.isEmpty()) {
+            return null;
+        }
+        return new TypesafeConfigurationSource(combine(section, path), type, configuration);
     }
 
     @Override

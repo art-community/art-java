@@ -100,13 +100,6 @@ public class Context {
             messages.add(format(MODULE_LOADED_MESSAGE, module.getId()));
             this.modules.put(module.getId(), module);
         }
-        this.modules.values()
-                .stream()
-                .map(Module::print)
-                .filter(EmptinessChecker::isNotEmpty)
-                .reduce((current, next) -> current + NEW_LINE + next)
-                .filter(EmptinessChecker::isNotEmpty)
-                .ifPresent(messages::add);
         messages.forEach(printer);
         for (Module module : modules) {
             module.onLoad();

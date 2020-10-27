@@ -20,8 +20,11 @@ package io.art.model.server;
 
 import lombok.*;
 
+@Getter
 @RequiredArgsConstructor
-public class GrpcServiceModel {
-    private final String name;
-    private final Class<?> specification;
+public class RsocketServiceMethodModel {
+    private final String serviceId;
+    private final String methodId;
+
+
 }

@@ -16,14 +16,15 @@
  * limitations under the License.
  */
 
-package io.art.model.communicator;
+package io.art.launcher;
 
-import lombok.*;
+import com.google.common.collect.*;
 
-@RequiredArgsConstructor
-public class SoapCommunicatorModel {
-    private final String name;
-    private final Class<?> specification;
-
-
+public interface ModuleLauncherConstants {
+    ImmutableSet<String> LAUNCHED_MESSAGES = ImmutableSet.of(
+            "Modules are initialized",
+            "Models are implemented",
+            "Yours module is ready",
+            "Have a nice work with ART!"
+    );
 }

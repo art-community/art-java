@@ -22,7 +22,6 @@ import io.art.core.constants.*;
 import io.art.entity.immutable.Value;
 import io.art.entity.mapper.*;
 import io.art.server.configuration.*;
-import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.exception.*;
 import io.art.server.implementation.*;
 import io.art.server.model.*;
@@ -33,7 +32,6 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodProcessingMode.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
-import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.*;
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -44,19 +42,25 @@ import java.util.function.*;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceMethodSpecification {
+    private final ValueToModelMapper<Object, Value> inputMapper;
+    private final ValueFromModelMapper<Object, Value> outputMapper;
+    private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
+    private final ServiceMethodImplementation implementation;
+    private final MethodProcessingMode inputMode;
+    private final MethodProcessingMode outputMode;
+
     @EqualsAndHashCode.Include
     private final String methodId;
+
     @EqualsAndHashCode.Include
     private final String serviceId;
-
-    @Builder.Default
-    private final RequestValidationPolicy validationPolicy = NON_VALIDATABLE;
 
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
 
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
+
 
     private final ServerModuleConfiguration moduleConfiguration = serverModule().configuration();
 
@@ -68,13 +72,6 @@ public class ServiceMethodSpecification {
 
     @Getter(lazy = true)
     private final ServiceMethodConfiguration methodConfiguration = let(getServiceConfiguration(), configuration -> configuration.getMethods().get(methodId));
-
-    private final ValueToModelMapper<Object, Value> inputMapper;
-    private final ValueFromModelMapper<Object, Value> outputMapper;
-    private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
-    private final ServiceMethodImplementation implementation;
-    private final MethodProcessingMode inputMode;
-    private final MethodProcessingMode outputMode;
 
     public Flux<Value> serve(Flux<Value> input) {
         if (deactivated()) {

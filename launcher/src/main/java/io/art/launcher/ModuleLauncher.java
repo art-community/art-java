@@ -20,9 +20,7 @@ package io.art.launcher;
 
 import com.google.common.collect.*;
 import io.art.communicator.module.*;
-import io.art.communicator.specification.*;
 import io.art.configurator.module.*;
-import io.art.core.caster.*;
 import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.context.*;
 import io.art.core.lazy.*;
@@ -30,102 +28,59 @@ import io.art.core.module.Module;
 import io.art.core.source.*;
 import io.art.json.module.*;
 import io.art.logging.*;
-import io.art.rsocket.communicator.*;
+import io.art.model.configurator.*;
+import io.art.model.module.*;
 import io.art.rsocket.module.*;
-import io.art.server.decorator.*;
 import io.art.server.module.*;
-import io.art.server.specification.*;
 import io.art.xml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
-import reactor.core.publisher.*;
-import reactor.core.scheduler.*;
-import static io.art.core.constants.MethodDecoratorScope.*;
-import static io.art.core.constants.MethodProcessingMode.*;
+import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.lazy.LazyValue.*;
-import static io.art.entity.constants.EntityConstants.DataFormat.*;
-import static io.art.entity.factory.ArrayFactory.*;
-import static io.art.entity.factory.PrimitivesFactory.*;
-import static io.art.entity.immutable.Entity.*;
+import static io.art.launcher.ModelImplementor.*;
+import static io.art.launcher.ModuleLauncherConstants.LAUNCHED_MESSAGES;
 import static io.art.logging.LoggingModule.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.CommunicationMode.*;
-import static io.art.server.implementation.ServiceMethodImplementation.*;
-import static io.art.server.model.ServiceMethodIdentifier.*;
-import java.time.*;
+import static io.art.model.module.ModuleModel.*;
+import static java.util.Optional.*;
 import java.util.concurrent.atomic.*;
 
 @UtilityClass
 public class ModuleLauncher {
     private final static AtomicBoolean launched = new AtomicBoolean(false);
 
-    public static void launch(/*ModuleModel model*/) {
+    public static void launch(ModuleModel model) {
         if (launched.compareAndSet(false, true)) {
             ConfiguratorModule configurator = new ConfiguratorModule();
             ImmutableList<ConfigurationSource> sources = configurator
                     .loadConfigurations()
                     .configuration()
                     .orderedSources();
-            //ConfiguratorModel configuratorModel = model.getConfiguratorModel();
+            ConfiguratorModel configuratorModel = model.getConfiguratorModel();
             ImmutableList.Builder<Module> modules = ImmutableList.builder();
-            ServerModule server = server(sources);
-            RsocketModule rsocket = rsocket(sources);
             modules.add(
                     configurator,
-                    logging(sources/*, configuratorModel*/),
+                    logging(sources, configuratorModel),
                     json(sources),
                     xml(sources),
-                    server,
+                    server(sources),
                     communicator(sources),
-                    rsocket
+                    rsocket(sources)
             );
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
             initialize(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
-            ServiceMethodSpecification specification = ServiceMethodSpecification.builder()
-                    .inputMapper(Caster::cast)
-                    .outputMapper(Caster::cast)
-                    .inputMode(BLOCKING)
-                    .outputMode(BLOCKING)
-                    .serviceId("test")
-                    .methodId("test")
-                    .implementation(producer(() -> {
-                        System.out.println(RsocketModule.rsocketModule().state().localState());
-                        return entityBuilder().lazyPut("test", () -> array(dynamicArrayOf(stringPrimitive("test")))).build();
-                    }, "test", "test"))
-                    .inputDecorator(new ServiceLoggingDecorator(serviceMethod("test", "test"), INPUT, () -> true))
-                    .outputDecorator(new ServiceLoggingDecorator(serviceMethod("test", "test"), OUTPUT, () -> true))
-                    .build();
-            server.getState().getSpecifications().register(ServiceSpecification.builder()
-                    .serviceId("test")
-                    .method("test", specification)
-                    .build()
-            );
-            CommunicatorSpecification communicatorSpecification = CommunicatorSpecification.builder()
-                    .inputMapper(Caster::cast)
-                    .outputMapper(Caster::cast)
-                    .inputMode(BLOCKING)
-                    .outputMode(BLOCKING)
-                    .implementation(RsocketCommunicator.builder()
-                            .client(rsocket.getState().getClient("test").get())
-                            .communicationMode(FIRE_AND_FORGET)
-                            .dataFormat(JSON)
-                            .metadataFormat(JSON)
-                            .build())
-                    .build();
-            Flux.interval(Duration.ofSeconds(1), Schedulers.newElastic("test"))
-                    .doOnNext(value -> communicatorSpecification.communicate(entityBuilder().lazyPut("test", () -> array(dynamicArrayOf(stringPrimitive("test")))).build()))
-                    .subscribe();
+            implement(model);
+            LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
             block();
         }
     }
 
-    private LoggingModule logging(ImmutableList<ConfigurationSource> sources/*, ConfiguratorModel configuratorModel*/) {
+    private LoggingModule logging(ImmutableList<ConfigurationSource> sources, ConfiguratorModel configuratorModel) {
         LoggingModule logging = new LoggingModule();
         logging.configure(configurator -> configurator.from(sources));
-//        ofNullable(configuratorModel.getLoggingConfigurator())
-//                .ifPresent(model -> logging.configure(configurator -> configurator.from(model.getConfiguration())));
+        ofNullable(configuratorModel.getLoggingConfigurator())
+                .ifPresent(model -> logging.configure(configurator -> configurator.override(model.getConfiguration())));
         return logging;
     }
 
@@ -160,6 +115,10 @@ public class ModuleLauncher {
     }
 
     public static void main(String[] args) {
-        launch();
+        launch(module()
+                .serve(server -> server
+                        .rsocket("example", "method")
+                )
+        );
     }
 }
