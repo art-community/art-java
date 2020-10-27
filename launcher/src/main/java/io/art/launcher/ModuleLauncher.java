@@ -31,7 +31,6 @@ import io.art.core.source.*;
 import io.art.json.module.*;
 import io.art.logging.*;
 import io.art.rsocket.communicator.*;
-import io.art.rsocket.model.*;
 import io.art.rsocket.module.*;
 import io.art.server.decorator.*;
 import io.art.server.module.*;
@@ -108,11 +107,12 @@ public class ModuleLauncher {
                     .outputMapper(Caster::cast)
                     .inputMode(BLOCKING)
                     .outputMode(BLOCKING)
-                    .implementation(new RsocketCommunicator(rsocket.getState().getClient("test").get(), FIRE_AND_FORGET, RsocketSetupPayload.builder()
-                            .serviceMethodId(serviceMethod("test", "test"))
+                    .implementation(RsocketCommunicator.builder()
+                            .client(rsocket.getState().getClient("test").get())
+                            .communicationMode(FIRE_AND_FORGET)
                             .dataFormat(JSON)
                             .metadataFormat(JSON)
-                            .build()))
+                            .build())
                     .build();
             Flux.interval(Duration.ofSeconds(1), Schedulers.newElastic("test"))
                     .doOnNext(value -> communicatorSpecification.communicate(entityBuilder().lazyPut("test", () -> array(dynamicArrayOf(stringPrimitive("test")))).build()))

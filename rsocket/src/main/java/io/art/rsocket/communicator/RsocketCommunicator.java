@@ -19,33 +19,33 @@
 package io.art.rsocket.communicator;
 
 import io.art.communicator.implementation.*;
+import io.art.entity.constants.*;
 import io.art.entity.immutable.Value;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
-import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
 import io.rsocket.core.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.logging.LoggingModule.*;
 import static lombok.AccessLevel.*;
 
+@Builder
 public class RsocketCommunicator implements CommunicatorImplementation {
     private final RSocketClient client;
-    private final RsocketPayloadWriter writer;
-    private final RsocketPayloadReader reader;
     private final CommunicationMode communicationMode;
+    private final EntityConstants.DataFormat dataFormat;
+    private final EntityConstants.DataFormat metadataFormat;
 
-    public RsocketCommunicator(RSocketClient client, CommunicationMode communicationMode, RsocketSetupPayload setupPayload) {
-        this.communicationMode = communicationMode;
-        this.client = client;
-        reader = new RsocketPayloadReader(setupPayload.getDataFormat(), setupPayload.getMetadataFormat());
-        writer = new RsocketPayloadWriter(setupPayload.getDataFormat(), setupPayload.getMetadataFormat());
-    }
+    @Getter(lazy = true, value = PRIVATE)
+    private final RsocketPayloadWriter writer = new RsocketPayloadWriter(dataFormat, metadataFormat);
+
+    @Getter(lazy = true, value = PRIVATE)
+    private final RsocketPayloadReader reader = new RsocketPayloadReader(dataFormat, metadataFormat);
 
     @Override
     public Flux<Value> communicate(Flux<Value> input) {
+        RsocketPayloadWriter writer = getWriter();
+        RsocketPayloadReader reader = getReader();
         switch (communicationMode) {
             case FIRE_AND_FORGET:
                 return cast(client.fireAndForget(input.map(writer::writePayloadData).last()).flux());
