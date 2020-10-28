@@ -86,9 +86,6 @@ public class ResilienceConfiguration {
                     .slowCallRateThreshold(
                             orElse(source.getFloat(CIRCUIT_BREAKER_SLOW_CALL_RATE_THRESHOLD_KEY), defaults.getSlowCallRateThreshold())
                     )
-                    .waitDurationInOpenState(
-                            orElse(source.getDuration(CIRCUIT_BREAKER_WAIT_DURATION_IN_OPEN_STATE_KEY), defaults.getWaitDurationInOpenState())
-                    )
                     .build());
         }
         if (hasRateLimiter) {

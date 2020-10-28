@@ -18,19 +18,15 @@
 
 package io.art.example;
 
-import io.art.model.annotation.Module;
+import io.art.model.annotation.*;
 import io.art.model.module.*;
-import static io.art.launcher.ModuleLauncher.*;
 import static io.art.model.module.ModuleModel.*;
 
 @Module
 public class Example {
-    public static void main(String[] args) {
-        launch(configure());
-    }
-
+    @Configurator
     public static ModuleModel configure() {
         return module()
-                .serve(server -> server.rsocket(Example.class));
+                .serve(server -> server.rsocket(Service.class));
     }
 }
