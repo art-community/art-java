@@ -20,6 +20,7 @@ package io.art.protobuf.descriptor;
 
 import com.google.protobuf.*;
 import io.art.core.stream.*;
+import io.art.value.builder.*;
 import io.art.value.immutable.Value;
 import io.art.protobuf.exception.*;
 import io.netty.buffer.*;

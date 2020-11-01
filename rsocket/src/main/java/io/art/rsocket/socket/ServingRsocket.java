@@ -32,7 +32,7 @@ import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.value.constants.EntityConstants.*;
+import static io.art.value.constants.ValueConstants.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;

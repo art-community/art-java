@@ -18,6 +18,7 @@
 
 package io.art.xml.rules.processor;
 
+import io.art.value.immutable.*;
 import io.art.value.immutable.XmlEntity.*;
 import io.art.xml.constants.*;
 import io.art.xml.rules.builder.*;

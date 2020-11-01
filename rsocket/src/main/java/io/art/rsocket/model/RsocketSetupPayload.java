@@ -18,8 +18,10 @@
 
 package io.art.rsocket.model;
 
-import io.art.value.constants.EntityConstants.*;
+import io.art.value.builder.*;
+import io.art.value.constants.ValueConstants.*;
 import io.art.server.model.*;
+import io.art.value.immutable.*;
 import lombok.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Entity.*;

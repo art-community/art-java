@@ -22,6 +22,7 @@ import io.art.communicator.configuration.*;
 import io.art.communicator.implementation.*;
 import io.art.core.constants.*;
 import io.art.value.immutable.Value;
+import io.art.value.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import reactor.core.scheduler.*;

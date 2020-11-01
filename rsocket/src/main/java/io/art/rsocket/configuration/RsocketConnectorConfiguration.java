@@ -19,13 +19,13 @@
 package io.art.rsocket.configuration;
 
 import io.art.core.source.*;
-import io.art.value.constants.EntityConstants.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.model.RsocketSetupPayload.*;
 import io.art.rsocket.payload.*;
+import io.art.value.constants.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
 import lombok.*;
@@ -36,7 +36,8 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.value.constants.EntityConstants.DataFormat.*;
+import static io.art.value.constants.ValueConstants.*;
+import static io.art.value.constants.ValueConstants.DataFormat.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;

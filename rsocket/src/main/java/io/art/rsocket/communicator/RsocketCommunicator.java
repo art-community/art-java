@@ -19,6 +19,7 @@
 package io.art.rsocket.communicator;
 
 import io.art.communicator.implementation.*;
+import io.art.value.constants.*;
 import io.art.value.immutable.Value;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.payload.*;
@@ -26,14 +27,15 @@ import io.rsocket.core.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.value.constants.ValueConstants.*;
 import static lombok.AccessLevel.*;
 
 @Builder
 public class RsocketCommunicator implements CommunicatorImplementation {
     private final RSocketClient client;
     private final CommunicationMode communicationMode;
-    private final EntityConstants.DataFormat dataFormat;
-    private final EntityConstants.DataFormat metadataFormat;
+    private final DataFormat dataFormat;
+    private final DataFormat metadataFormat;
 
     @Getter(lazy = true, value = PRIVATE)
     private final RsocketPayloadWriter writer = new RsocketPayloadWriter(dataFormat, metadataFormat);

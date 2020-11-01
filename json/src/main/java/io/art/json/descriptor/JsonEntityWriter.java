@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.*;
 import io.art.core.extensions.*;
 import io.art.core.stream.*;
 import io.art.json.exception.*;
+import io.art.value.immutable.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.BufferConstants.*;

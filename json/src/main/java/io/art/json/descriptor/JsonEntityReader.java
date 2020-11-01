@@ -21,6 +21,8 @@ package io.art.json.descriptor;
 import com.fasterxml.jackson.core.*;
 import io.art.core.stream.*;
 import io.art.json.exception.*;
+import io.art.value.builder.*;
+import io.art.value.immutable.*;
 import io.netty.buffer.*;
 import lombok.experimental.*;
 import static com.fasterxml.jackson.core.JsonToken.*;

@@ -1,6 +1,7 @@
 package io.art.json.descriptor;
 
 import io.art.json.exception.*;
+import io.art.value.immutable.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import java.io.*;

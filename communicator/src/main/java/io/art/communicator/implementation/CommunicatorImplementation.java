@@ -18,6 +18,7 @@
 
 package io.art.communicator.implementation;
 
+import io.art.value.immutable.Value;
 import reactor.core.publisher.*;
 
 public interface CommunicatorImplementation {

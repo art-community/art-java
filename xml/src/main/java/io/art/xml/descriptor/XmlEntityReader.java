@@ -20,6 +20,7 @@ package io.art.xml.descriptor;
 
 import com.google.common.collect.*;
 import io.art.core.stream.*;
+import io.art.value.immutable.*;
 import io.art.value.immutable.XmlEntity.*;
 import io.art.xml.exception.*;
 import io.netty.buffer.*;

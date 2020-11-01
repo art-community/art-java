@@ -19,9 +19,11 @@
 package io.art.server.registry;
 
 import com.google.common.collect.*;
-import io.art.value.immutable.Value;
+import io.art.value.immutable.*;
 import io.art.server.model.*;
 import io.art.server.specification.*;
+import io.art.value.immutable.Value;
+import io.art.value.mapping.*;
 import lombok.*;
 import static io.art.server.constants.ServerModuleConstants.*;
 import static java.util.Optional.*;
