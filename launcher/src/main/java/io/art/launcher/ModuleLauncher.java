@@ -121,7 +121,7 @@ public class ModuleLauncher {
 
     private RsocketModule rsocket(ImmutableList<ConfigurationSource> sources, ServerModel serverModel, RsocketConfiguratorModel rsocketModel) {
         RsocketModule rsocket = new RsocketModule();
-        if (serverModel.getServices().stream().anyMatch(service -> service.getProtocols().contains(RSOCKET))) {
+        if (serverModel.getServices().stream().anyMatch(service -> service.getProtocol() == RSOCKET)) {
             rsocketModel.activateServer();
         }
         rsocket.configure(configurator -> configurator.from(sources).override(rsocketModel.getConfiguration()));

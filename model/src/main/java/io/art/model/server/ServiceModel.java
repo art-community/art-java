@@ -35,7 +35,7 @@ public class ServiceModel<T> {
     @Getter
     private boolean allMethods;
     @Getter
-    private final EnumSet<Protocols> protocols;
+    private final Protocols protocol;
     @Getter
     private UnaryOperator<ServiceModelCustomizer<T>> customizer;
     private final ImmutableSet.Builder<String> concreteMethods = ImmutableSet.builder();

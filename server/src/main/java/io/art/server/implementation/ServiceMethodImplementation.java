@@ -19,6 +19,7 @@
 package io.art.server.implementation;
 
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import java.util.function.*;
 
 @Getter
@@ -26,24 +27,24 @@ import java.util.function.*;
 public class ServiceMethodImplementation {
     private final String serviceId;
     private final String methodId;
-    private final Function<Object, Object> functor;
+    private final Function<?, ?> functor;
 
-    public static ServiceMethodImplementation consumer(Consumer<Object> consumer, String serviceId, String methodId) {
+    public static <T> ServiceMethodImplementation consumer(Consumer<T> consumer, String serviceId, String methodId) {
         return new ServiceMethodImplementation(serviceId, methodId, request -> {
-            consumer.accept(request);
+            consumer.accept(cast(request));
             return null;
         });
     }
 
-    public static ServiceMethodImplementation producer(Supplier<Object> producer, String serviceId, String methodId) {
+    public static <T> ServiceMethodImplementation producer(Supplier<T> producer, String serviceId, String methodId) {
         return new ServiceMethodImplementation(serviceId, methodId, request -> producer.get());
     }
 
-    public static ServiceMethodImplementation handler(Function<Object, Object> function, String serviceId, String methodId) {
+    public static <Input, Output> ServiceMethodImplementation handler(Function<Input, Output> function, String serviceId, String methodId) {
         return new ServiceMethodImplementation(serviceId, methodId, function);
     }
 
     public Object execute(Object request) {
-        return functor.apply(request);
+        return functor.apply(cast(request));
     }
 }
