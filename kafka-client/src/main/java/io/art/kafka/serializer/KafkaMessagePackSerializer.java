@@ -19,7 +19,7 @@
 package io.art.kafka.serializer;
 
 import org.apache.kafka.common.serialization.*;
-import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
+import static io.art.message.pack.descriptor.MessagePackWriter.*;
 import java.util.*;
 
 public class KafkaMessagePackSerializer implements Serializer<Value> {

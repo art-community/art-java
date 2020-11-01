@@ -39,7 +39,7 @@ import java.nio.file.*;
 import java.util.*;
 
 @UtilityClass
-public class MessagePackEntityWriter {
+public class MessagePackWriter {
     public static void writeMessagePack(Value value, Path path) {
         try (OutputStream outputStream = fileOutputStream(path)) {
             writeMessagePack(value, outputStream);

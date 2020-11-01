@@ -20,7 +20,7 @@ package io.art.kafka.deserializer;
 
 import org.apache.kafka.common.serialization.*;
 import io.art.kafka.exception.*;
-import static io.art.protobuf.descriptor.ProtobufEntityReader.*;
+import static io.art.protobuf.descriptor.ProtobufReader.*;
 import java.util.*;
 
 public class KafkaProtobufDeserializer implements Deserializer<Value> {

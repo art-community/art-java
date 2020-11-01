@@ -43,7 +43,7 @@ import java.util.*;
 
 
 @UtilityClass
-public class JsonEntityReader {
+public class JsonReader {
     public static Value readJson(byte[] jsonBytes) {
         return readJson(new ByteArrayInputStream(jsonBytes));
     }

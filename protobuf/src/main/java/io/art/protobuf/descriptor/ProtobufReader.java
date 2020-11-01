@@ -42,7 +42,7 @@ import java.nio.file.*;
 import java.util.*;
 
 @UtilityClass
-public class ProtobufEntityReader {
+public class ProtobufReader {
     public static Value readProtobuf(byte[] bytes) {
         return readProtobuf(new ByteArrayInputStream(bytes));
     }

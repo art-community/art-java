@@ -23,10 +23,10 @@ import io.art.rsocket.model.*;
 import io.netty.buffer.*;
 import io.rsocket.*;
 import lombok.*;
-import static io.art.json.descriptor.JsonEntityReader.*;
-import static io.art.message.pack.descriptor.MessagePackEntityReader.*;
-import static io.art.protobuf.descriptor.ProtobufEntityReader.*;
-import static io.art.xml.descriptor.XmlEntityReader.*;
+import static io.art.json.descriptor.JsonReader.*;
+import static io.art.message.pack.descriptor.MessagePackReader.*;
+import static io.art.protobuf.descriptor.ProtobufReader.*;
+import static io.art.xml.descriptor.XmlReader.*;
 
 @RequiredArgsConstructor
 public class RsocketPayloadReader {

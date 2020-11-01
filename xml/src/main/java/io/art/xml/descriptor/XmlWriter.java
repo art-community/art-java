@@ -41,7 +41,7 @@ import java.nio.file.*;
 import java.util.*;
 
 @UtilityClass
-public class XmlEntityWriter {
+public class XmlWriter {
     public static byte[] writeXmlToBytes(XmlEntity entity) throws XmlException {
         ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
         try {
@@ -89,7 +89,7 @@ public class XmlEntityWriter {
                 try {
                     writer.close();
                 } catch (Throwable throwable) {
-                    logger(XmlEntityWriter.class).error(throwable.getMessage(), throwable);
+                    logger(XmlWriter.class).error(throwable.getMessage(), throwable);
                 }
             }
         }

@@ -43,7 +43,7 @@ import java.util.*;
 
 
 @UtilityClass
-public class MessagePackEntityReader {
+public class MessagePackReader {
     public static Value readMessagePack(Path path) {
         try (InputStream inputStream = fileInputStream(path)) {
             return readMessagePack(inputStream);

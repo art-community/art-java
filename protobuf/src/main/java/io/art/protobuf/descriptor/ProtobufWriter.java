@@ -38,7 +38,7 @@ import java.nio.file.*;
 import java.util.*;
 
 @UtilityClass
-public class ProtobufEntityWriter {
+public class ProtobufWriter {
     public static byte[] writeProtobufToBytes(io.art.value.immutable.Value value) {
         return let(writeProtobuf(value), MessageLite::toByteArray, EMPTY_BYTES);
     }

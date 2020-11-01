@@ -19,7 +19,7 @@
 package io.art.kafka.deserializer;
 
 import org.apache.kafka.common.serialization.*;
-import static io.art.xml.descriptor.XmlEntityReader.*;
+import static io.art.xml.descriptor.XmlReader.*;
 import java.util.*;
 
 public class KafkaXmlDeserializer implements Deserializer<Value> {

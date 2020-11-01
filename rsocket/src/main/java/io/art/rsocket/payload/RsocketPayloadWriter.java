@@ -25,10 +25,10 @@ import static io.art.value.constants.ValueConstants.*;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.xml.XmlEntityFromEntityConverter.*;
-import static io.art.json.descriptor.JsonEntityWriter.*;
-import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
-import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;
-import static io.art.xml.descriptor.XmlEntityWriter.*;
+import static io.art.json.descriptor.JsonWriter.*;
+import static io.art.message.pack.descriptor.MessagePackWriter.*;
+import static io.art.protobuf.descriptor.ProtobufWriter.*;
+import static io.art.xml.descriptor.XmlWriter.*;
 import static io.rsocket.util.DefaultPayload.*;
 
 @RequiredArgsConstructor

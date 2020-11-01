@@ -25,7 +25,7 @@ import static io.art.value.immutable.Value.*;
 import static io.art.value.constants.ValueType.*;
 import static io.art.http.mapper.HttpContentMapper.*;
 import static io.art.http.xml.HttpXmlMapperConstants.*;
-import static io.art.xml.descriptor.XmlEntityReader.*;
+import static io.art.xml.descriptor.XmlReader.*;
 import static io.art.xml.module.XmlModule.*;
 import java.nio.charset.*;
 

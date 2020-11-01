@@ -23,8 +23,8 @@ import io.art.http.mapper.HttpContentMapper.*;
 import static java.util.Objects.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.json.descriptor.JsonEntityReader.*;
-import static io.art.json.descriptor.JsonEntityWriter.*;
+import static io.art.json.descriptor.JsonReader.*;
+import static io.art.json.descriptor.JsonWriter.*;
 import java.nio.charset.*;
 
 public class HttpJsonMapper implements HttpEntityToContentMapper, HttpContentToValueMapper {

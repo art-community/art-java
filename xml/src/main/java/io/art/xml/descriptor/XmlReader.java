@@ -42,7 +42,7 @@ import java.nio.file.*;
 import java.util.*;
 
 @UtilityClass
-public class XmlEntityReader {
+public class XmlReader {
     public static XmlEntity readXml(byte[] bytes) {
         return readXml(new ByteArrayInputStream(bytes));
     }
@@ -81,7 +81,7 @@ public class XmlEntityReader {
                 try {
                     reader.close();
                 } catch (Throwable throwable) {
-                    logger(XmlEntityWriter.class).error(throwable.getMessage(), throwable);
+                    logger(XmlWriter.class).error(throwable.getMessage(), throwable);
                 }
             }
         }

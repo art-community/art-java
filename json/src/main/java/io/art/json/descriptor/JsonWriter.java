@@ -37,7 +37,7 @@ import java.nio.file.*;
 import java.util.*;
 
 @UtilityClass
-public class JsonEntityWriter {
+public class JsonWriter {
     public static byte[] writeJsonToBytes(Value value) {
         ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
         try {
