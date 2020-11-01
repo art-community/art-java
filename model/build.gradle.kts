@@ -21,6 +21,6 @@ dependencies {
     implementation(project(":rsocket"))
     implementation(project(":logging"))
     implementation(project(":core"))
-    implementation(project(":entity"))
+    implementation(project(":value"))
     implementation(project(":server"))
 }

@@ -18,7 +18,6 @@
 
 package io.art.kafka.serializer;
 
-import io.art.entity.immutable.*;
 import org.apache.kafka.common.serialization.*;
 import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;
 import java.util.*;

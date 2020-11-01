@@ -19,8 +19,7 @@
 package io.art.rsocket.communicator;
 
 import io.art.communicator.implementation.*;
-import io.art.entity.constants.*;
-import io.art.entity.immutable.Value;
+import io.art.value.immutable.Value;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.payload.*;
 import io.rsocket.core.*;

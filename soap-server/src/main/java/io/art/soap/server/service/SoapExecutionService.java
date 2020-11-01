@@ -19,8 +19,7 @@
 package io.art.soap.server.service;
 
 import lombok.experimental.*;
-import io.art.entity.mapper.ValueFromModelMapper.*;
-import io.art.server.exception.*;
+import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.soap.server.exception.*;
 import io.art.soap.server.model.*;
 import io.art.soap.server.model.SoapService.*;

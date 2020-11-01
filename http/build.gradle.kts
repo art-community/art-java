@@ -21,7 +21,7 @@ dependencies {
     val apacheHttpCoreVersion: String by project
 
     implementation(project(":core"))
-    implementation(project(":entity"))
+    implementation(project(":value"))
     implementation(project(":logging"))
 
     api("org.zalando", "logbook-core", logbookVersion)

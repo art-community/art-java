@@ -24,6 +24,6 @@ dependencies {
     implementation(project(":json"))
     implementation(project(":message-pack"))
     implementation(project(":core"))
-    implementation(project(":entity"))
+    implementation(project(":value"))
     implementation(project(":logging"))
 }

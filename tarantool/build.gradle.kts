@@ -23,7 +23,7 @@ dependencies {
     val log4jVersion: String by project
 
     implementation(project(":core"))
-    implementation(project(":entity"))
+    implementation(project(":value"))
     implementation(project(":logging"))
     implementation(project(":server"))
     implementation(project(":template-engine"))

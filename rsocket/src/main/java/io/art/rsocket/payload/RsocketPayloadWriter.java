@@ -18,14 +18,13 @@
 
 package io.art.rsocket.payload;
 
-import io.art.entity.immutable.Value;
-import io.art.entity.xml.*;
+import io.art.value.immutable.Value;
 import io.rsocket.*;
 import lombok.*;
-import static io.art.entity.constants.EntityConstants.*;
-import static io.art.entity.constants.EntityConstants.ValueType.*;
-import static io.art.entity.immutable.Value.*;
-import static io.art.entity.xml.XmlEntityFromEntityConverter.*;
+import static io.art.value.constants.EntityConstants.*;
+import static io.art.value.constants.EntityConstants.ValueType.*;
+import static io.art.value.immutable.Value.*;
+import static io.art.value.xml.XmlEntityFromEntityConverter.*;
 import static io.art.json.descriptor.JsonEntityWriter.*;
 import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
 import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;

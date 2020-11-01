@@ -23,10 +23,16 @@ import java.util.function.*;
 
 @Getter
 public class ConfiguratorModel {
-    private LoggingConfiguratorModel loggingConfigurator;
+    private LoggingConfiguratorModel logging;
+    private ServerConfiguratorModel server;
 
     public ConfiguratorModel logging(UnaryOperator<LoggingConfiguratorModel> configurator) {
-        this.loggingConfigurator = configurator.apply(new LoggingConfiguratorModel());
+        this.logging = configurator.apply(new LoggingConfiguratorModel());
+        return this;
+    }
+
+    public ConfiguratorModel server(UnaryOperator<ServerConfiguratorModel> configurator) {
+        this.server = configurator.apply(new ServerConfiguratorModel());
         return this;
     }
 }

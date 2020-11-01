@@ -18,20 +18,18 @@
 
 package io.art.server.registry;
 
-import io.art.entity.immutable.*;
-import io.art.entity.mapping.*;
+import com.google.common.collect.*;
+import io.art.value.immutable.Value;
 import io.art.server.model.*;
 import io.art.server.specification.*;
-import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.logging.LoggingModule.*;
-import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
+import lombok.*;
 import static io.art.server.constants.ServerModuleConstants.*;
-import static java.text.MessageFormat.*;
 import static java.util.Optional.*;
 import java.util.*;
 
+@RequiredArgsConstructor
 public class ServiceSpecificationRegistry {
-    private final Map<String, ServiceSpecification> services = mapOf();
+    private final ImmutableMap<String, ServiceSpecification> services;
 
     public Optional<ServiceSpecification> get(String serviceId) {
         return ofNullable(services.get(serviceId));
@@ -54,11 +52,5 @@ public class ServiceSpecificationRegistry {
 
     public Set<String> identifiers() {
         return services.keySet();
-    }
-
-    public ServiceSpecificationRegistry register(ServiceSpecification specification) {
-        services.put(specification.getServiceId(), specification);
-        logger(ServiceSpecificationRegistry.class).info(format(SERVICE_REGISTRATION_MESSAGE, specification.getServiceId()));
-        return this;
     }
 }

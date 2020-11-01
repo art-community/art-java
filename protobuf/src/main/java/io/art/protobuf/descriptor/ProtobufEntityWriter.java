@@ -20,18 +20,15 @@ package io.art.protobuf.descriptor;
 
 import com.google.protobuf.Value;
 import com.google.protobuf.*;
-import io.art.entity.immutable.*;
 import io.art.protobuf.exception.*;
 import lombok.experimental.*;
 import static com.google.protobuf.UnknownFieldSet.*;
-import static com.google.protobuf.UnsafeByteOperations.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.entity.immutable.Value.*;
+import static io.art.value.immutable.Value.*;
 import static io.art.protobuf.constants.ProtobufConstants.*;
 import static io.art.protobuf.constants.ProtobufConstants.ExceptionMessages.*;
-import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.io.*;
 import java.nio.file.*;
@@ -39,17 +36,17 @@ import java.util.*;
 
 @UtilityClass
 public class ProtobufEntityWriter {
-    public static byte[] writeProtobufToBytes(io.art.entity.immutable.Value value) {
+    public static byte[] writeProtobufToBytes(io.art.value.immutable.Value value) {
         return let(writeProtobuf(value), MessageLite::toByteArray, EMPTY_BYTES);
     }
 
-    public static void writeProtobuf(io.art.entity.immutable.Value value, Path path) {
+    public static void writeProtobuf(io.art.value.immutable.Value value, Path path) {
         Value protobuf = writeProtobuf(value);
         apply(protobuf, result -> writeFileQuietly(path, result.toByteArray()));
     }
 
-    public static void writeProtobuf(io.art.entity.immutable.Value value, OutputStream outputStream) {
-        if (io.art.entity.immutable.Value.valueIsNull(value)) {
+    public static void writeProtobuf(io.art.value.immutable.Value value, OutputStream outputStream) {
+        if (io.art.value.immutable.Value.valueIsNull(value)) {
             return;
         }
         try {
@@ -62,7 +59,7 @@ public class ProtobufEntityWriter {
         }
     }
 
-    public static com.google.protobuf.Value writeProtobuf(io.art.entity.immutable.Value value) {
+    public static com.google.protobuf.Value writeProtobuf(io.art.value.immutable.Value value) {
         if (valueIsNull(value)) return null;
         switch (value.getType()) {
             case STRING:
@@ -99,7 +96,7 @@ public class ProtobufEntityWriter {
 
     private static com.google.protobuf.Value writeArray(ArrayValue array) {
         ListValue.Builder listBuilder = ListValue.newBuilder();
-        for (io.art.entity.immutable.Value element : array.asList()) {
+        for (io.art.value.immutable.Value element : array.asList()) {
             Value protobuf = writeProtobuf(element);
             if (isNull(protobuf)) continue;
             listBuilder.addValues(protobuf);
@@ -112,7 +109,7 @@ public class ProtobufEntityWriter {
         Set<Primitive> keys = entity.asMap().keySet();
         for (Primitive key : keys) {
             if (valueIsNull(key)) continue;
-            io.art.entity.immutable.Value value = entity.get(key);
+            io.art.value.immutable.Value value = entity.get(key);
             Value protobuf = writeProtobuf(value);
             if (isNull(protobuf)) continue;
             builder.putFields(key.getString(), protobuf);

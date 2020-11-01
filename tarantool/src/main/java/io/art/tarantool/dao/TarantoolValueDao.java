@@ -18,10 +18,9 @@
 
 package io.art.tarantool.dao;
 
-import io.art.entity.immutable.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.*;
-import static io.art.entity.builder.EntityBuilder.merge;
+import static io.art.value.builder.EntityBuilder.merge;
 import static java.text.MessageFormat.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
@@ -31,11 +30,11 @@ import static java.util.stream.Collectors.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.immutable.Entity.*;
-import static io.art.entity.factory.PrimitivesFactory.*;
-import static io.art.entity.tuple.PlainTupleReader.*;
-import static io.art.entity.tuple.PlainTupleWriter.*;
-import static io.art.entity.tuple.schema.ValueSchema.*;
+import static io.art.value.immutable.Entity.*;
+import static io.art.value.factory.PrimitivesFactory.*;
+import static io.art.value.tuple.PlainTupleReader.*;
+import static io.art.value.tuple.PlainTupleWriter.*;
+import static io.art.value.tuple.schema.ValueSchema.*;
 import static io.art.tarantool.caller.TarantoolFunctionCaller.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;

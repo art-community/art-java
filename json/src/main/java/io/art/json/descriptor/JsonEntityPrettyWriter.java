@@ -1,10 +1,8 @@
 package io.art.json.descriptor;
 
-import io.art.entity.immutable.*;
 import io.art.json.exception.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.json.module.JsonModule.*;
 import java.io.*;
 import java.nio.file.*;
 

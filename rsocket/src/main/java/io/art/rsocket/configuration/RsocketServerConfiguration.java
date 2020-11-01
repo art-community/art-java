@@ -20,7 +20,7 @@ package io.art.rsocket.configuration;
 
 import com.google.common.collect.*;
 import io.art.core.source.*;
-import io.art.entity.constants.EntityConstants.*;
+import io.art.value.constants.EntityConstants.*;
 import io.art.rsocket.constants.*;
 import io.art.rsocket.interceptor.*;
 import io.art.server.model.*;
@@ -34,7 +34,7 @@ import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.NetworkConstants.*;
-import static io.art.entity.constants.EntityConstants.DataFormat.*;
+import static io.art.value.constants.EntityConstants.DataFormat.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;

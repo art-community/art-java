@@ -21,7 +21,7 @@ dependencies {
     val grpcVersion: String by project
 
     implementation(project(":core"))
-    implementation(project(":entity"))
+    implementation(project(":value"))
 
     api("io.grpc", "grpc-protobuf", grpcVersion)
             .exclude("com.google.guava")

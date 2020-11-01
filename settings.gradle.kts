@@ -22,7 +22,7 @@ plugins {
 rootProject.name = "art-java"
 include("core")
 include("model")
-include("entity")
+include("value")
 include("logging")
 include("resilience")
 include("launcher")

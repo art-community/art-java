@@ -18,10 +18,9 @@
 
 package io.art.core.extensions;
 
-import io.art.core.factory.*;
 import lombok.experimental.*;
-import static io.art.core.factory.CollectionsFactory.dynamicArrayOf;
-import static java.util.Collections.emptyList;
+import static io.art.core.factory.CollectionsFactory.*;
+import static java.util.Collections.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -47,5 +46,19 @@ public final class CollectionExtensions {
         list.addAll(source);
         list.add(element);
         return list;
+    }
+
+    public static <T> List<T> combine(List<T> first, Collection<T> second) {
+        List<T> list = dynamicArrayOf();
+        list.addAll(first);
+        list.addAll(second);
+        return list;
+    }
+
+    public static <T> Set<T> combine(Set<T> first, Collection<T> second) {
+        Set<T> set = setOf();
+        set.addAll(first);
+        set.addAll(second);
+        return set;
     }
 }

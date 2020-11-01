@@ -18,11 +18,8 @@
 
 package io.art.http.server.model;
 
-import io.art.server.constants.*;
 import lombok.*;
-import io.art.entity.immutable.Value;
-import io.art.entity.interceptor.*;
-import io.art.entity.mapper.*;
+import io.art.value.immutable.Value;
 import io.art.http.constants.*;
 import io.art.http.server.builder.*;
 import io.art.http.server.constants.HttpServerModuleConstants.*;

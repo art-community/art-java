@@ -18,13 +18,9 @@
 
 package io.art.http.server.builder;
 
-import io.art.entity.immutable.*;
-import io.art.entity.interceptor.*;
-import io.art.entity.mapper.*;
 import io.art.http.constants.*;
 import io.art.http.server.interceptor.*;
 import io.art.http.server.model.*;
-import io.art.server.constants.*;
 
 public interface HttpServiceBuilder {
     HttpMethodWithBodyBuilder get(String methodId);

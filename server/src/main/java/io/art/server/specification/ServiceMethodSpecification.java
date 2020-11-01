@@ -19,8 +19,7 @@
 package io.art.server.specification;
 
 import io.art.core.constants.*;
-import io.art.entity.immutable.Value;
-import io.art.entity.mapper.*;
+import io.art.value.immutable.Value;
 import io.art.server.configuration.*;
 import io.art.server.exception.*;
 import io.art.server.implementation.*;
@@ -61,7 +60,7 @@ public class ServiceMethodSpecification {
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
-
+    @Getter(lazy = true)
     private final ServerModuleConfiguration moduleConfiguration = serverModule().configuration();
 
     @Getter(lazy = true)
@@ -77,7 +76,7 @@ public class ServiceMethodSpecification {
         if (deactivated()) {
             return Flux.empty();
         }
-        Scheduler scheduler = let(getMethodConfiguration(), ServiceMethodConfiguration::getScheduler, moduleConfiguration.getScheduler());
+        Scheduler scheduler = let(getMethodConfiguration(), ServiceMethodConfiguration::getScheduler, getModuleConfiguration().getScheduler());
         return Flux.defer(() -> deferredServe(input)).subscribeOn(scheduler);
     }
 

@@ -19,15 +19,12 @@
 package io.art.logging;
 
 import io.art.core.model.*;
-import io.art.entity.immutable.*;
-import io.art.entity.interceptor.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.model.InterceptionResult.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static io.art.logging.LoggingModuleConstants.*;
 import static io.art.logging.ThreadContextExtensions.*;
-import static java.text.MessageFormat.*;
 import static org.apache.logging.log4j.ThreadContext.*;
 
 public class LoggingValueInterceptor implements ValueInterceptor {

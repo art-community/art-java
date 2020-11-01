@@ -18,13 +18,11 @@
 
 package io.art.rsocket.model;
 
-import io.art.entity.builder.*;
-import io.art.entity.constants.EntityConstants.*;
-import io.art.entity.immutable.*;
+import io.art.value.constants.EntityConstants.*;
 import io.art.server.model.*;
 import lombok.*;
-import static io.art.entity.factory.PrimitivesFactory.*;
-import static io.art.entity.immutable.Entity.*;
+import static io.art.value.factory.PrimitivesFactory.*;
+import static io.art.value.immutable.Entity.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Fields.*;
 import static java.util.Objects.*;
 

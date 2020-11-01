@@ -18,16 +18,13 @@
 
 package io.art.grpc.client.communicator;
 
-import io.art.entity.immutable.*;
-import io.art.entity.immutable.Value;
+import io.art.value.immutable.Value;
 import io.grpc.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import io.art.core.lazy.*;
 import io.art.core.runnable.*;
 import io.art.core.validator.*;
-import io.art.entity.interceptor.*;
-import io.art.entity.mapper.*;
 import io.art.grpc.client.handler.*;
 import io.art.grpc.client.model.*;
 import static java.util.Objects.*;

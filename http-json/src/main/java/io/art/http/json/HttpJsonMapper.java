@@ -19,12 +19,10 @@
 package io.art.http.json;
 
 import io.art.core.mime.*;
-import io.art.entity.immutable.*;
 import io.art.http.mapper.HttpContentMapper.*;
 import static java.util.Objects.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.http.constants.HttpExceptionsMessages.*;
 import static io.art.json.descriptor.JsonEntityReader.*;
 import static io.art.json.descriptor.JsonEntityWriter.*;
 import java.nio.charset.*;

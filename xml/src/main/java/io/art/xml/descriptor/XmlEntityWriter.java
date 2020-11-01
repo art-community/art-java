@@ -20,15 +20,13 @@ package io.art.xml.descriptor;
 
 import io.art.core.extensions.*;
 import io.art.core.stream.*;
-import io.art.entity.immutable.*;
 import io.art.xml.exception.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.BufferConstants.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.entity.constants.EntityConstants.ValueType.XmlValueType.*;
+import static io.art.value.constants.EntityConstants.ValueType.XmlValueType.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.xml.constants.XmlDocumentConstants.*;
 import static io.art.xml.module.XmlModule.*;

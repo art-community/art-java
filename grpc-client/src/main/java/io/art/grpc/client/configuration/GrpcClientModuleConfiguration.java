@@ -18,11 +18,9 @@
 
 package io.art.grpc.client.configuration;
 
-import io.art.entity.immutable.*;
 import io.grpc.*;
 import lombok.*;
 import io.art.core.module.*;
-import io.art.entity.interceptor.*;
 import io.art.grpc.client.exception.*;
 import io.art.grpc.client.interceptor.*;
 import io.art.grpc.client.model.*;

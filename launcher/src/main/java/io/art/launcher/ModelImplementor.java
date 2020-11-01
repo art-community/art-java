@@ -20,19 +20,12 @@ package io.art.launcher;
 
 import io.art.model.module.*;
 import io.art.model.server.*;
-import io.art.server.model.*;
-import io.art.server.specification.*;
 import lombok.experimental.*;
-import static io.art.server.module.ServerModule.*;
-import java.util.*;
 
 @UtilityClass
 public class ModelImplementor {
     public static void implement(ModuleModel model) {
         ServerModel serverModel = model.getServerModel();
-        Map<ServiceMethodIdentifier, ServiceMethodSpecification> rsocketMethods = serverModel.getRsocketMethodsModel();
-        for (ServiceMethodSpecification specification : rsocketMethods.values()) {
-            serverModule().state().getSpecifications().register(specification.getServiceSpecification());
-        }
+
     }
 }

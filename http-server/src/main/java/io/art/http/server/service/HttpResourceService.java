@@ -20,7 +20,6 @@ package io.art.http.server.service;
 
 import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
-import io.art.entity.immutable.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -30,8 +29,8 @@ import static io.art.core.context.Context.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.factory.PrimitivesFactory.*;
-import static io.art.entity.immutable.BinaryValue.*;
+import static io.art.value.factory.PrimitivesFactory.*;
+import static io.art.value.immutable.BinaryValue.*;
 import static io.art.http.server.HttpServerModuleConfiguration.*;
 import static io.art.http.server.constants.HttpServerExceptionMessages.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpResourceType.*;

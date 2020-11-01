@@ -18,16 +18,12 @@
 
 package io.art.soap.server.function;
 
-import io.art.entity.immutable.*;
-import io.art.entity.interceptor.*;
-import io.art.entity.mapper.ValueFromModelMapper.*;
-import io.art.entity.mapper.ValueToModelMapper.*;
+import io.art.value.mapper.ValueFromModelMapper.*;
+import io.art.value.mapper.ValueToModelMapper.*;
 import io.art.http.server.interceptor.*;
-import io.art.server.constants.*;
 import io.art.soap.content.mapper.*;
 import io.art.soap.server.specification.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.server.module.ServerModule.*;
 import static io.art.soap.server.constans.SoapServerModuleConstants.*;
 import static io.art.soap.server.model.SoapService.*;
 import static io.art.soap.server.model.SoapService.SoapOperation.*;

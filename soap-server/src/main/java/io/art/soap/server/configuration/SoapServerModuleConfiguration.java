@@ -19,7 +19,7 @@
 package io.art.soap.server.configuration;
 
 import io.art.core.module.*;
-import io.art.entity.mapper.ValueFromModelMapper.*;
+import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.soap.server.model.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.soap.server.constans.SoapServerModuleConstants.ResponseFaultConstants.*;

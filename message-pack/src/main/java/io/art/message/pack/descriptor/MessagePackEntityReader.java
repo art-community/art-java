@@ -19,19 +19,18 @@
 package io.art.message.pack.descriptor;
 
 import io.art.core.stream.*;
-import io.art.entity.builder.*;
-import io.art.entity.immutable.ArrayValue;
-import io.art.entity.immutable.Value;
+import io.art.value.immutable.ArrayValue;
+import io.art.value.immutable.Value;
 import io.art.message.pack.exception.MessagePackException;
 import io.netty.buffer.*;
 import lombok.experimental.*;
 import org.msgpack.core.*;
 import org.msgpack.value.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.entity.factory.ArrayFactory.*;
-import static io.art.entity.factory.PrimitivesFactory.*;
-import static io.art.entity.immutable.BinaryValue.*;
-import static io.art.entity.immutable.Entity.*;
+import static io.art.value.factory.ArrayFactory.*;
+import static io.art.value.factory.PrimitivesFactory.*;
+import static io.art.value.immutable.BinaryValue.*;
+import static io.art.value.immutable.Entity.*;
 import static io.art.message.pack.constants.MessagePackConstants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;

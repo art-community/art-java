@@ -19,8 +19,8 @@
 package io.art.soap.client.communicator;
 
 import lombok.*;
-import io.art.entity.mapper.ValueFromModelMapper.*;
-import io.art.entity.mapper.ValueToModelMapper.*;
+import io.art.value.mapper.ValueFromModelMapper.*;
+import io.art.value.mapper.ValueToModelMapper.*;
 import io.art.http.client.communicator.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;

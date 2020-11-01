@@ -19,7 +19,7 @@
 package io.art.rsocket.socket;
 
 import io.art.core.mime.*;
-import io.art.entity.immutable.Value;
+import io.art.value.immutable.Value;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
@@ -32,8 +32,8 @@ import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.entity.constants.EntityConstants.*;
-import static io.art.entity.mime.MimeTypeDataFormatMapper.*;
+import static io.art.value.constants.EntityConstants.*;
+import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.module.RsocketModule.*;

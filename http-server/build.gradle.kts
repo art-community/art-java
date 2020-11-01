@@ -21,7 +21,7 @@ dependencies {
     val nettyVersion: String by project
 
     implementation(project(":core"))
-    implementation(project(":entity"))
+    implementation(project(":value"))
     implementation(project(":logging"))
     implementation(project(":server"))
     implementation(project(":http"))

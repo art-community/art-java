@@ -20,16 +20,14 @@ package io.art.message.pack.descriptor;
 
 import io.art.core.extensions.*;
 import io.art.core.stream.*;
-import io.art.entity.immutable.*;
 import io.art.message.pack.exception.MessagePackException;
 import lombok.experimental.*;
 import org.msgpack.core.*;
 import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.entity.immutable.Value.*;
+import static io.art.value.immutable.Value.*;
 import static io.art.message.pack.constants.MessagePackConstants.ExceptionMessages.*;
 import static java.nio.ByteBuffer.*;
-import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static org.msgpack.core.MessagePack.*;
 import static org.msgpack.value.ValueFactory.*;

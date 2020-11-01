@@ -24,7 +24,7 @@ import io.art.configurator.module.*;
 import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.context.*;
 import io.art.core.lazy.*;
-import io.art.core.module.Module;
+import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.json.module.*;
 import io.art.logging.*;
@@ -60,10 +60,10 @@ public class ModuleLauncher {
             ImmutableList.Builder<Module> modules = ImmutableList.builder();
             modules.add(
                     configurator,
-                    logging(sources, configuratorModel),
+                    logging(sources, configuratorModel.getLogging()),
                     json(sources),
                     xml(sources),
-                    server(sources),
+                    server(sources, configuratorModel.getServer()),
                     communicator(sources),
                     rsocket(sources)
             );
@@ -75,11 +75,10 @@ public class ModuleLauncher {
         }
     }
 
-    private LoggingModule logging(ImmutableList<ConfigurationSource> sources, ConfiguratorModel configuratorModel) {
+    private LoggingModule logging(ImmutableList<ConfigurationSource> sources, LoggingConfiguratorModel loggingModel) {
         LoggingModule logging = new LoggingModule();
         logging.configure(configurator -> configurator.from(sources));
-        ofNullable(configuratorModel.getLoggingConfigurator())
-                .ifPresent(model -> logging.configure(configurator -> configurator.override(model.getConfiguration())));
+        ofNullable(loggingModel).ifPresent(model -> logging.configure(configurator -> configurator.override(model.getConfiguration())));
         return logging;
     }
 
@@ -95,9 +94,9 @@ public class ModuleLauncher {
         return xml;
     }
 
-    private ServerModule server(ImmutableList<ConfigurationSource> sources) {
+    private ServerModule server(ImmutableList<ConfigurationSource> sources, ServerConfiguratorModel serverModel) {
         ServerModule server = new ServerModule();
-        server.configure(configurator -> configurator.from(sources));
+        ofNullable(serverModel).ifPresent(model -> server.configure(configurator -> configurator.override(model.getConfiguration())));
         return server;
     }
 
@@ -112,4 +111,5 @@ public class ModuleLauncher {
         rsocket.configure(configurator -> configurator.from(sources));
         return rsocket;
     }
+
 }

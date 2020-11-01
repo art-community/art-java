@@ -20,7 +20,7 @@
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":entity"))
+    implementation(project(":value"))
     implementation(project(":server"))
     implementation(project(":http"))
     implementation(project(":http-server"))

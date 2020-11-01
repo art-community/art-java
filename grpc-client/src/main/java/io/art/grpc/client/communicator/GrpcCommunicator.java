@@ -18,10 +18,7 @@
 
 package io.art.grpc.client.communicator;
 
-import io.art.entity.immutable.*;
 import io.grpc.*;
-import io.art.entity.interceptor.*;
-import io.art.entity.mapper.*;
 import io.art.grpc.client.handler.*;
 import io.art.grpc.client.model.*;
 import java.util.concurrent.*;

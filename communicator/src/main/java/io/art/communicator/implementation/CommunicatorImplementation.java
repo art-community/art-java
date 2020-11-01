@@ -18,7 +18,6 @@
 
 package io.art.communicator.implementation;
 
-import io.art.entity.immutable.*;
 import reactor.core.publisher.*;
 
 public interface CommunicatorImplementation {

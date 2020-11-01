@@ -19,11 +19,7 @@
 package io.art.http.server;
 
 import io.art.core.mime.*;
-import io.art.entity.builder.*;
-import io.art.entity.immutable.Value;
-import io.art.entity.immutable.*;
-import io.art.entity.interceptor.*;
-import io.art.entity.mapper.*;
+import io.art.value.immutable.Value;
 import io.art.http.constants.*;
 import io.art.http.mapper.*;
 import io.art.http.server.exception.*;
@@ -36,10 +32,10 @@ import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.entity.immutable.BinaryValue.*;
-import static io.art.entity.immutable.Entity.valueIsEmpty;
-import static io.art.entity.immutable.Entity.valueIsNull;
-import static io.art.entity.immutable.Entity.*;
+import static io.art.value.immutable.BinaryValue.*;
+import static io.art.value.immutable.Entity.valueIsEmpty;
+import static io.art.value.immutable.Entity.valueIsNull;
+import static io.art.value.immutable.Entity.*;
 import static io.art.http.server.body.descriptor.HttpBodyDescriptor.*;
 import static io.art.http.server.constants.HttpServerExceptionMessages.*;
 import static io.art.http.server.module.HttpServerModule.*;

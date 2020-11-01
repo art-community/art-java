@@ -18,47 +18,24 @@
 
 package io.art.model.server;
 
-import io.art.server.model.*;
-import io.art.server.specification.*;
+import com.google.common.collect.*;
+import io.art.rsocket.configuration.*;
+import io.art.server.configuration.*;
+import io.art.server.registry.*;
 import lombok.*;
-import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.server.model.ServiceMethodIdentifier.*;
-import java.util.*;
+import static io.art.model.constants.ModelConstants.Protocols.*;
 import java.util.function.*;
 
-@Getter
 public class ServerModel {
-    private final Map<ServiceMethodIdentifier, ServiceMethodSpecification> rsocketMethodsModel = mapOf();
+    private final ImmutableSet.Builder<ServiceModel<?>> services = ImmutableSet.builder();
 
-    public ServerModel rsocket(Class<?> serviceClass) {
-        return rsocket(serviceClass, UnaryOperator.identity());
-    }
-
-    public ServerModel rsocket(Class<?> serviceClass, UnaryOperator<ServiceMethodSpecification> configurator) {
-        //Stub for generator
+    public ServerModel rsocket(UnaryOperator<ServiceModel<RsocketServiceConfiguration>> model) {
+        services.add(model.apply(new ServiceModel<>(RSOCKET)));
         return this;
     }
 
-    public ServerModel rsocket(Class<?> serviceClass, String methodId) {
-        return rsocket(serviceClass, methodId, UnaryOperator.identity());
+    public ImmutableSet<ServiceModel<?>> getServices() {
+        return services.build();
     }
 
-    public ServerModel rsocket(Class<?> serviceClass, String methodId, UnaryOperator<ServiceMethodSpecification> configurator) {
-        //Stub for generator
-        return this;
-    }
-
-    public ServerModel rsocket(String serviceId, String methodId) {
-        return rsocket(serviceId, methodId, UnaryOperator.identity());
-    }
-
-    public ServerModel rsocket(String serviceId, String methodId, UnaryOperator<ServiceMethodSpecification> configurator) {
-        //Stub for generator
-        return this;
-    }
-
-    public ServerModel rsocket(ServiceMethodSpecification specification) {
-        rsocketMethodsModel.put(serviceMethod(specification.getServiceId(), specification.getMethodId()), specification);
-        return this;
-    }
 }
