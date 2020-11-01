@@ -20,11 +20,7 @@ package io.art.model.server;
 
 import com.google.common.collect.*;
 import io.art.rsocket.configuration.*;
-import io.art.server.configuration.*;
-import io.art.server.registry.*;
-import lombok.*;
-import static io.art.model.constants.ModelConstants.Protocols.*;
-import java.util.*;
+import static io.art.model.constants.ModelConstants.Protocol.*;
 import java.util.function.*;
 
 public class ServerModel {

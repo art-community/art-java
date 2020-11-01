@@ -31,11 +31,11 @@ public class ServiceModel<T> {
     @Getter
     private boolean allMethods;
     @Getter
-    private final Protocols protocol;
+    private final Protocol protocol;
     @Getter
     private UnaryOperator<ServiceModelCustomizer<T>> customizer;
 
-    private final ImmutableSet.Builder<String> concreteMethods = ImmutableSet.builder();
+    private final ImmutableSet.Builder<String> methods = ImmutableSet.builder();
 
     public ServiceModel<T> to(Class<?> service) {
         return to(service, identity());
@@ -55,13 +55,13 @@ public class ServiceModel<T> {
 
     public ServiceModel<T> to(Class<?> service, String method, UnaryOperator<ServiceModelCustomizer<T>> customizer) {
         this.serviceClass = service;
-        this.concreteMethods.add(method);
+        this.methods.add(method);
         this.customizer = customizer;
         return this;
     }
 
 
-    public ImmutableSet<String> getConcreteMethods() {
-        return concreteMethods.build();
+    public ImmutableSet<String> getMethods() {
+        return methods.build();
     }
 }

@@ -43,7 +43,7 @@ import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.launcher.ModuleLauncherConstants.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.model.constants.ModelConstants.Protocols.*;
+import static io.art.model.constants.ModelConstants.Protocol.*;
 import static java.util.Optional.*;
 import java.util.concurrent.atomic.*;
 

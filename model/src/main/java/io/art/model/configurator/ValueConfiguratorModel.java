@@ -21,20 +21,20 @@ package io.art.model.configurator;
 import io.art.value.configuration.*;
 import io.art.value.registry.*;
 import lombok.*;
-import lombok.experimental.*;
 
 public class ValueConfiguratorModel {
-    @Setter
-    @Accessors(fluent = true)
-    private MappersRegistry registry;
+    @Getter
+    private final CustomValueModuleConfiguration configuration = new CustomValueModuleConfiguration();
 
-    public CustomValueModuleConfiguration getConfiguration() {
-        return new CustomValueModuleConfiguration(registry);
+
+    public ValueConfiguratorModel registry(MappersRegistry registry) {
+        configuration.registry = registry;
+        return this;
     }
 
     @Getter
     @RequiredArgsConstructor
     public static class CustomValueModuleConfiguration extends ValueModuleConfiguration {
-        private final MappersRegistry registry;
+        private MappersRegistry registry;
     }
 }

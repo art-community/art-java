@@ -21,20 +21,18 @@ package io.art.model.configurator;
 import io.art.server.configuration.*;
 import io.art.server.registry.*;
 import lombok.*;
-import lombok.experimental.*;
 
 public class ServerConfiguratorModel {
-    @Setter
-    @Accessors(fluent = true)
-    private ServiceSpecificationRegistry registry;
+    @Getter
+    private final CustomServerModuleConfiguration configuration = new CustomServerModuleConfiguration();
 
-    public CustomServerModuleConfiguration getConfiguration() {
-        return new CustomServerModuleConfiguration(registry);
+    public ServerConfiguratorModel registry(ServiceSpecificationRegistry registry) {
+        configuration.registry = registry;
+        return this;
     }
 
     @Getter
-    @RequiredArgsConstructor
     public static class CustomServerModuleConfiguration extends ServerModuleConfiguration {
-        private final ServiceSpecificationRegistry registry;
+        private ServiceSpecificationRegistry registry;
     }
 }

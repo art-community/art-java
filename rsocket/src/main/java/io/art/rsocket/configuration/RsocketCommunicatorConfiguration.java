@@ -21,7 +21,6 @@ package io.art.rsocket.configuration;
 import com.google.common.collect.*;
 import io.art.core.source.*;
 import io.art.server.model.*;
-import io.art.value.constants.*;
 import io.art.value.constants.ValueConstants.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
@@ -33,8 +32,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
-import static io.art.value.constants.ValueConstants.DataFormat.JSON;
-import static io.art.value.constants.ValueConstants.DataFormat.dataFormat;
+import static io.art.value.constants.ValueConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.util.Optional.*;
 

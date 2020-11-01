@@ -25,7 +25,6 @@ public class RsocketConfiguratorModel {
     @Getter
     private final RsocketConfiguratorModel.CustomRsocketModuleConfiguration configuration = new CustomRsocketModuleConfiguration();
 
-
     public RsocketConfiguratorModel activateServer() {
         configuration.activateServer = true;
         return this;
