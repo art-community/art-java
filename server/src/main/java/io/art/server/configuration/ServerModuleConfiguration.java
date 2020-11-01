@@ -57,7 +57,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator override(ServerModuleConfiguration configuration) {
-            this.configuration.registry = configuration.registry;
+            this.configuration.registry = configuration.getRegistry();
             return this;
         }
     }

@@ -18,6 +18,7 @@
 
 package io.art.server.specification;
 
+import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.model.*;
 import lombok.*;
 import java.util.*;

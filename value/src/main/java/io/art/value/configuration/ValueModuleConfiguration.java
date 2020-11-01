@@ -32,7 +32,7 @@ public class ValueModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator override(ValueModuleConfiguration configuration) {
-            this.configuration.registry = configuration.registry;
+            this.configuration.registry = configuration.getRegistry();
             return this;
         }
     }

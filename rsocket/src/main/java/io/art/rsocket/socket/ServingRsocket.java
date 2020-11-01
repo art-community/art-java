@@ -19,7 +19,6 @@
 package io.art.rsocket.socket;
 
 import io.art.core.mime.*;
-import io.art.value.immutable.Value;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
@@ -27,19 +26,20 @@ import io.art.rsocket.payload.*;
 import io.art.rsocket.state.*;
 import io.art.server.model.*;
 import io.art.server.specification.*;
+import io.art.value.immutable.Value;
 import io.rsocket.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.value.constants.ValueConstants.*;
-import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.rsocket.state.RsocketModuleState.RsocketThreadLocalState.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
 import static io.art.server.module.ServerModule.*;
+import static io.art.value.constants.ValueConstants.*;
+import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
@@ -71,19 +71,21 @@ public class ServingRsocket implements RSocket {
         }
 
         Optional<ServiceMethodSpecification> possibleSpecification = Optional.empty();
-        if (nonNull(payloadValue)) {
+        if (nonNull(payloadValue) && nonNull(payloadValue.getValue())) {
             possibleSpecification = specifications().findMethodByValue(payloadValue.getValue());
             if (!possibleSpecification.isPresent() && isNull(defaultServiceMethod)) {
                 throw new RsocketException(SPECIFICATION_NOT_FOUND);
             }
         }
 
-        Optional<ServiceMethodSpecification> defaultSpecification = specifications().findMethodById(defaultServiceMethod);
-        if (!possibleSpecification.isPresent() && !defaultSpecification.isPresent()) {
-            throw new RsocketException(SPECIFICATION_NOT_FOUND);
+        if (!possibleSpecification.isPresent() && nonNull(defaultServiceMethod)) {
+            possibleSpecification = specifications().findMethodById(defaultServiceMethod);
+            if (!possibleSpecification.isPresent()) {
+                throw new RsocketException(SPECIFICATION_NOT_FOUND);
+            }
         }
 
-        this.specification = possibleSpecification.orElseGet(defaultSpecification::get);
+        this.specification = possibleSpecification.get();
         setupPayload = RsocketSetupPayload.builder()
                 .dataFormat(dataFormat)
                 .metadataFormat(metaDataFormat)

@@ -20,14 +20,15 @@ package io.art.model.configurator;
 
 import lombok.*;
 import lombok.experimental.*;
+import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
 @Getter
 @Setter
 @Accessors(fluent = true)
 public class ConfiguratorModel {
-    private UnaryOperator<LoggingConfiguratorModel> logging;
-    private UnaryOperator<ServerConfiguratorModel> server;
-    private UnaryOperator<ValueConfiguratorModel> value;
-    private UnaryOperator<RsocketConfiguratorModel> rsocket;
+    private UnaryOperator<LoggingConfiguratorModel> logging = identity();
+    private UnaryOperator<ServerConfiguratorModel> server = identity();
+    private UnaryOperator<ValueConfiguratorModel> value = identity();
+    private UnaryOperator<RsocketConfiguratorModel> rsocket = identity();
 }

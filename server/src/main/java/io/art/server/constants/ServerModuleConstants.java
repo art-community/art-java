@@ -85,4 +85,5 @@ public interface ServerModuleConstants {
         String NULL_VALIDATION_ERROR = "Validation error. ''{0}'' is null";
         String REQUEST_IS_NULL = "Validation error. Request is null";
     }
+
 }

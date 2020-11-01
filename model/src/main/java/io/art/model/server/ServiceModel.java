@@ -20,12 +20,8 @@ package io.art.model.server;
 
 import com.google.common.collect.*;
 import io.art.model.constants.ModelConstants.*;
-import io.art.server.model.*;
-import io.art.server.specification.ServiceMethodSpecification.*;
-import io.art.server.specification.ServiceSpecification.*;
 import lombok.*;
 import static java.util.function.UnaryOperator.*;
-import java.util.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
@@ -38,13 +34,14 @@ public class ServiceModel<T> {
     private final Protocols protocol;
     @Getter
     private UnaryOperator<ServiceModelCustomizer<T>> customizer;
+
     private final ImmutableSet.Builder<String> concreteMethods = ImmutableSet.builder();
 
-    public ServiceModel<T> toClass(Class<?> service) {
-        return toClass(service, identity());
+    public ServiceModel<T> to(Class<?> service) {
+        return to(service, identity());
     }
 
-    public ServiceModel<T> toClass(Class<?> service, UnaryOperator<ServiceModelCustomizer<T>> customizer) {
+    public ServiceModel<T> to(Class<?> service, UnaryOperator<ServiceModelCustomizer<T>> customizer) {
         this.serviceClass = service;
         this.allMethods = true;
         this.customizer = customizer;
@@ -52,11 +49,11 @@ public class ServiceModel<T> {
     }
 
 
-    public ServiceModel<T> toClassMethod(Class<?> service, String method) {
-        return toClassMethod(service, method, identity());
+    public ServiceModel<T> to(Class<?> service, String method) {
+        return to(service, method, identity());
     }
 
-    public ServiceModel<T> toClassMethod(Class<?> service, String method, UnaryOperator<ServiceModelCustomizer<T>> customizer) {
+    public ServiceModel<T> to(Class<?> service, String method, UnaryOperator<ServiceModelCustomizer<T>> customizer) {
         this.serviceClass = service;
         this.concreteMethods.add(method);
         this.customizer = customizer;

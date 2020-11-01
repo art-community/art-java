@@ -42,11 +42,16 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     private final Supplier<Boolean> enabled;
     private final ServiceMethodIdentifier serviceMethodId;
 
+    public ServiceLoggingDecorator(ServiceMethodIdentifier serviceMethodId, MethodDecoratorScope scope) {
+        this.scope = scope;
+        this.enabled = () -> true;
+        this.serviceMethodId = serviceMethodId;
+    }
+
     public ServiceLoggingDecorator(ServiceMethodIdentifier serviceMethodId, MethodDecoratorScope scope, Supplier<Boolean> enabled) {
         this.scope = scope;
         this.enabled = enabled;
         this.serviceMethodId = serviceMethodId;
-
     }
 
     @Override
