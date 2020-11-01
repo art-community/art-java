@@ -25,6 +25,7 @@ import java.util.function.*;
 public class ConfiguratorModel {
     private LoggingConfiguratorModel logging;
     private ServerConfiguratorModel server;
+    private ValueConfiguratorModel value;
 
     public ConfiguratorModel logging(UnaryOperator<LoggingConfiguratorModel> configurator) {
         this.logging = configurator.apply(new LoggingConfiguratorModel());
@@ -33,6 +34,11 @@ public class ConfiguratorModel {
 
     public ConfiguratorModel server(UnaryOperator<ServerConfiguratorModel> configurator) {
         this.server = configurator.apply(new ServerConfiguratorModel());
+        return this;
+    }
+
+    public ConfiguratorModel value(UnaryOperator<ValueConfiguratorModel> configurator) {
+        this.value = configurator.apply(new ValueConfiguratorModel());
         return this;
     }
 }
