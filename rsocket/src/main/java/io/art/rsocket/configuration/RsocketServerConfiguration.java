@@ -39,8 +39,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
-import static io.art.value.constants.ValueConstants.DataFormat.JSON;
-import static io.art.value.constants.ValueConstants.DataFormat.dataFormat;
+import static io.art.value.constants.ValueConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.util.Optional.*;
 import java.util.*;
@@ -62,6 +61,23 @@ public class RsocketServerConfiguration {
     private Consumer<InterceptorRegistry> interceptorConfigurer;
     private DataFormat defaultDataFormat;
     private DataFormat defaultMetaDataFormat;
+
+    public static RsocketServerConfiguration ofDefaults() {
+        RsocketServerConfiguration configuration = new RsocketServerConfiguration();
+        configuration.defaultDataFormat = JSON;
+        configuration.defaultMetaDataFormat = JSON;
+        configuration.logging = false;
+        configuration.fragmentationMtu = 0;
+        configuration.payloadDecoder = PayloadDecoder.DEFAULT;
+        configuration.maxInboundPayloadSize = FRAME_LENGTH_MASK;
+        configuration.transport = TCP;
+        configuration.interceptorConfigurer = registry -> registry
+                .forResponder(new RsocketLoggingInterceptor(configuration::isLogging))
+                .forRequester(new RsocketLoggingInterceptor(configuration::isLogging));
+        configuration.tcpServer = TcpServer.create().port(DEFAULT_PORT).host(BROADCAST_IP_ADDRESS);
+        configuration.tcpMaxFrameLength = FRAME_LENGTH_MASK;
+        return configuration;
+    }
 
     public static RsocketServerConfiguration from(ConfigurationSource source) {
         RsocketServerConfiguration configuration = new RsocketServerConfiguration();

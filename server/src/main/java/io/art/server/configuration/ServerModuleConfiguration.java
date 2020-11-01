@@ -36,7 +36,7 @@ import java.util.*;
 public class ServerModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, ServiceConfiguration> configurations = ImmutableMap.of();
     private Scheduler scheduler;
-    private ServiceSpecificationRegistry registry;
+    private ServiceSpecificationRegistry registry = new ServiceSpecificationRegistry(ImmutableMap.of());
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<ServerModuleConfiguration, Configurator> {

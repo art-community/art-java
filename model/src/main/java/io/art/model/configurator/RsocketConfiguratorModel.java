@@ -16,16 +16,23 @@
  * limitations under the License.
  */
 
-package io.art.launcher;
+package io.art.model.configurator;
 
-import io.art.model.module.*;
-import io.art.model.server.*;
-import lombok.experimental.*;
+import io.art.rsocket.configuration.*;
+import lombok.*;
 
-@UtilityClass
-public class ModelImplementor {
-    public static void implement(ModuleModel model) {
-        ServerModel serverModel = model.getServerModel();
+public class RsocketConfiguratorModel {
+    @Getter
+    private final RsocketConfiguratorModel.CustomRsocketModuleConfiguration configuration = new CustomRsocketModuleConfiguration();
 
+
+    public RsocketConfiguratorModel activateServer() {
+        configuration.activateServer = true;
+        return this;
+    }
+
+    @Getter
+    public static class CustomRsocketModuleConfiguration extends RsocketModuleConfiguration {
+        private boolean activateServer;
     }
 }

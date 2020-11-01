@@ -18,31 +18,31 @@
 
 package io.art.value.registry;
 
+import io.art.value.immutable.*;
 import io.art.value.mapper.*;
-import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import java.util.*;
 
-@ToString
 public class MappersRegistry {
-    private final Map<Class<?>, ValueToModelMapper<?, ?>> toModel = mapOf();
-    private final Map<Class<?>, ValueFromModelMapper<?, ?>> fromModel = mapOf();
+    private final Map<Class<?>, ValueToModelMapper<Object, Value>> toModel = mapOf();
+    private final Map<Class<?>, ValueFromModelMapper<Object, Value>> fromModel = mapOf();
 
-    public MappersRegistry putToModel(Class<?> model, ValueToModelMapper<?, ?> mapper) {
-        toModel.put(model, mapper);
+    public MappersRegistry register(Class<?> model, ValueToModelMapper<?, ?> mapper) {
+        toModel.put(model, cast(mapper));
         return this;
     }
 
-    public MappersRegistry putFromModel(Class<?> model, ValueFromModelMapper<?, ?> mapper) {
-        fromModel.put(model, mapper);
+    public MappersRegistry register(Class<?> model, ValueFromModelMapper<?, ?> mapper) {
+        fromModel.put(model, cast(mapper));
         return this;
     }
 
-    public ValueToModelMapper<?, ?> getToModel(Class<?> model) {
+    public ValueToModelMapper<Object, Value> getToModel(Class<?> model) {
         return toModel.get(model);
     }
 
-    public ValueFromModelMapper<?, ?> getFromModel(Class<?> model) {
+    public ValueFromModelMapper<Object, Value> getFromModel(Class<?> model) {
         return fromModel.get(model);
     }
 }

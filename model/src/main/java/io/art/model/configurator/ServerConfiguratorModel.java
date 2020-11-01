@@ -18,22 +18,18 @@
 
 package io.art.model.configurator;
 
-import com.google.common.collect.*;
 import io.art.server.configuration.*;
 import io.art.server.registry.*;
-import io.art.server.specification.*;
 import lombok.*;
+import lombok.experimental.*;
 
 public class ServerConfiguratorModel {
-    private final ImmutableMap.Builder<String, ServiceSpecification> services = ImmutableMap.builder();
+    @Setter
+    @Accessors(fluent = true)
+    private ServiceSpecificationRegistry registry;
 
     public CustomServerModuleConfiguration getConfiguration() {
-        return new CustomServerModuleConfiguration(new ServiceSpecificationRegistry(services.build()));
-    }
-
-    public ServerConfiguratorModel register(ServiceSpecification specification) {
-        services.put(specification.getServiceId(), specification);
-        return this;
+        return new CustomServerModuleConfiguration(registry);
     }
 
     @Getter

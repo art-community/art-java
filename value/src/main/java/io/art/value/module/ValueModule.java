@@ -21,6 +21,7 @@ package io.art.value.module;
 import io.art.core.module.*;
 import io.art.value.configuration.*;
 import io.art.value.configuration.ValueModuleConfiguration.*;
+import io.art.value.registry.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
 import static lombok.AccessLevel.*;
@@ -35,5 +36,9 @@ public class ValueModule implements StatelessModule<ValueModuleConfiguration, Co
 
     public static StatelessModuleProxy<ValueModuleConfiguration> valueModule() {
         return getValueModule();
+    }
+
+    public static MappersRegistry mappers() {
+        return valueModule().configuration().getRegistry();
     }
 }

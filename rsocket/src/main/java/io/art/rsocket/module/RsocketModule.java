@@ -54,10 +54,10 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
 
     @Override
     public void onLoad() {
-        if (nonNull(configuration.getCommunicatorConfiguration())) {
+        if (configuration.isActivateCommunicator()) {
             manager.startConnectors();
         }
-        if (nonNull(configuration.getServerConfiguration())) {
+        if (configuration.isActivateServer()) {
             manager.startSever();
         }
     }

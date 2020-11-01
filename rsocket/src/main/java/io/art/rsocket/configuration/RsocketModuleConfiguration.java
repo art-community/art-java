@@ -22,12 +22,15 @@ import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
+import static java.util.Objects.*;
 import static java.util.Optional.*;
 
 @Getter
 public class RsocketModuleConfiguration implements ModuleConfiguration {
     private RsocketServerConfiguration serverConfiguration;
     private RsocketCommunicatorConfiguration communicatorConfiguration;
+    private boolean activateServer;
+    private boolean activateCommunicator;
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<RsocketModuleConfiguration, Configurator> {
@@ -43,6 +46,16 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                     .map(rsocket -> rsocket.getNested(COMMUNICATOR_SECTION))
                     .map(RsocketCommunicatorConfiguration::from)
                     .ifPresent(communicatorConfiguration -> configuration.communicatorConfiguration = communicatorConfiguration);
+            if (isNull(configuration.serverConfiguration)) {
+                configuration.serverConfiguration = RsocketServerConfiguration.ofDefaults();
+            }
+            return this;
+        }
+
+        @Override
+        public Configurator override(RsocketModuleConfiguration configuration) {
+            this.configuration.activateCommunicator = configuration.activateCommunicator;
+            this.configuration.activateServer = configuration.activateServer;
             return this;
         }
     }

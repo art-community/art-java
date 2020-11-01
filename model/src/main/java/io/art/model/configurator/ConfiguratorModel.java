@@ -19,26 +19,15 @@
 package io.art.model.configurator;
 
 import lombok.*;
+import lombok.experimental.*;
 import java.util.function.*;
 
 @Getter
+@Setter
+@Accessors(fluent = true)
 public class ConfiguratorModel {
-    private LoggingConfiguratorModel logging;
-    private ServerConfiguratorModel server;
-    private ValueConfiguratorModel value;
-
-    public ConfiguratorModel logging(UnaryOperator<LoggingConfiguratorModel> configurator) {
-        this.logging = configurator.apply(new LoggingConfiguratorModel());
-        return this;
-    }
-
-    public ConfiguratorModel server(UnaryOperator<ServerConfiguratorModel> configurator) {
-        this.server = configurator.apply(new ServerConfiguratorModel());
-        return this;
-    }
-
-    public ConfiguratorModel value(UnaryOperator<ValueConfiguratorModel> configurator) {
-        this.value = configurator.apply(new ValueConfiguratorModel());
-        return this;
-    }
+    private UnaryOperator<LoggingConfiguratorModel> logging;
+    private UnaryOperator<ServerConfiguratorModel> server;
+    private UnaryOperator<ValueConfiguratorModel> value;
+    private UnaryOperator<RsocketConfiguratorModel> rsocket;
 }

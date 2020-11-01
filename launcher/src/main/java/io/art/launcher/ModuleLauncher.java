@@ -30,8 +30,10 @@ import io.art.json.module.*;
 import io.art.logging.*;
 import io.art.model.configurator.*;
 import io.art.model.module.*;
+import io.art.model.server.*;
 import io.art.rsocket.module.*;
 import io.art.server.module.*;
+import io.art.value.module.*;
 import io.art.xml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
@@ -39,9 +41,9 @@ import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.lazy.LazyValue.*;
-import static io.art.launcher.ModelImplementor.*;
 import static io.art.launcher.ModuleLauncherConstants.*;
 import static io.art.logging.LoggingModule.*;
+import static io.art.model.constants.ModelConstants.Protocols.*;
 import static java.util.Optional.*;
 import java.util.concurrent.atomic.*;
 
@@ -57,22 +59,33 @@ public class ModuleLauncher {
                     .configuration()
                     .orderedSources();
             ConfiguratorModel configuratorModel = model.getConfiguratorModel();
+            ValueConfiguratorModel valueModel = configuratorModel.value().apply(new ValueConfiguratorModel());
+            LoggingConfiguratorModel loggingModel = configuratorModel.logging().apply(new LoggingConfiguratorModel());
+            ServerConfiguratorModel serverModel = configuratorModel.server().apply(new ServerConfiguratorModel());
+            RsocketConfiguratorModel rsocketModel = configuratorModel.rsocket().apply(new RsocketConfiguratorModel());
             ImmutableList.Builder<Module> modules = ImmutableList.builder();
             modules.add(
                     configurator,
-                    logging(sources, configuratorModel.getLogging()),
+                    value(sources, valueModel),
+                    logging(sources, loggingModel),
                     json(sources),
                     xml(sources),
-                    server(sources, configuratorModel.getServer()),
+                    server(sources, serverModel),
                     communicator(sources),
-                    rsocket(sources)
+                    rsocket(sources, model.getServerModel(), rsocketModel)
             );
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
             initialize(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
-            implement(model);
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
             block();
         }
+    }
+
+    private ValueModule value(ImmutableList<ConfigurationSource> sources, ValueConfiguratorModel valueModel) {
+        ValueModule value = new ValueModule();
+        value.configure(configurator -> configurator.from(sources));
+        ofNullable(valueModel).ifPresent(model -> value.configure(configurator -> configurator.override(model.getConfiguration())));
+        return value;
     }
 
     private LoggingModule logging(ImmutableList<ConfigurationSource> sources, LoggingConfiguratorModel loggingModel) {
@@ -96,7 +109,7 @@ public class ModuleLauncher {
 
     private ServerModule server(ImmutableList<ConfigurationSource> sources, ServerConfiguratorModel serverModel) {
         ServerModule server = new ServerModule();
-        ofNullable(serverModel).ifPresent(model -> server.configure(configurator -> configurator.override(model.getConfiguration())));
+        ofNullable(serverModel).ifPresent(model -> server.configure(configurator -> configurator.from(sources).override(model.getConfiguration())));
         return server;
     }
 
@@ -106,9 +119,12 @@ public class ModuleLauncher {
         return communicator;
     }
 
-    private RsocketModule rsocket(ImmutableList<ConfigurationSource> sources) {
+    private RsocketModule rsocket(ImmutableList<ConfigurationSource> sources, ServerModel serverModel, RsocketConfiguratorModel rsocketModel) {
         RsocketModule rsocket = new RsocketModule();
-        rsocket.configure(configurator -> configurator.from(sources));
+        if (serverModel.getServices().stream().anyMatch(service -> service.getProtocols().contains(RSOCKET))) {
+            rsocketModel.activateServer();
+        }
+        rsocket.configure(configurator -> configurator.from(sources).override(rsocketModel.getConfiguration()));
         return rsocket;
     }
 

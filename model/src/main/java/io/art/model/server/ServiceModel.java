@@ -25,6 +25,7 @@ import io.art.server.specification.ServiceMethodSpecification.*;
 import io.art.server.specification.ServiceSpecification.*;
 import lombok.*;
 import static java.util.function.UnaryOperator.*;
+import java.util.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
@@ -34,7 +35,7 @@ public class ServiceModel<T> {
     @Getter
     private boolean allMethods;
     @Getter
-    private final Protocols protocol;
+    private final EnumSet<Protocols> protocols;
     @Getter
     private UnaryOperator<ServiceModelCustomizer<T>> customizer;
     private final ImmutableSet.Builder<String> concreteMethods = ImmutableSet.builder();

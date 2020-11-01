@@ -18,20 +18,17 @@
 
 package io.art.server.registry;
 
-import com.google.common.collect.*;
-import io.art.value.immutable.*;
 import io.art.server.model.*;
 import io.art.server.specification.*;
-import io.art.value.immutable.Value;
+import io.art.value.immutable.*;
 import io.art.value.mapping.*;
-import lombok.*;
+import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.server.constants.ServerModuleConstants.*;
 import static java.util.Optional.*;
 import java.util.*;
 
-@RequiredArgsConstructor
 public class ServiceSpecificationRegistry {
-    private final ImmutableMap<String, ServiceSpecification> services;
+    private final Map<String, ServiceSpecification> services = mapOf();
 
     public Optional<ServiceSpecification> get(String serviceId) {
         return ofNullable(services.get(serviceId));
@@ -54,5 +51,10 @@ public class ServiceSpecificationRegistry {
 
     public Set<String> identifiers() {
         return services.keySet();
+    }
+
+    public ServiceSpecificationRegistry register(String id, ServiceSpecification specification) {
+        services.put(id, specification);
+        return this;
     }
 }
