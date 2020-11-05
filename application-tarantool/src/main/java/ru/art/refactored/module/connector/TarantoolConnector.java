@@ -1,18 +1,18 @@
-package refactored.module.connector;
+package ru.art.refactored.module.connector;
 
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
 import org.tarantool.TarantoolClient;
 import org.tarantool.TarantoolClusterClient;
 import org.tarantool.TarantoolClusterClientConfig;
-import ru.art.tarantool.exception.TarantoolConnectionException;
+import ru.art.refactored.exception.TarantoolConnectionException;
 import java.io.OutputStream;
 
 import static java.text.MessageFormat.format;
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.logging.log4j.io.IoBuilder.forLogger;
 import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_CONNECT_TO_TARANTOOL;
+import static ru.art.refactored.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_CONNECT_TO_TARANTOOL;
 
 public class TarantoolConnector {
     private final static OutputStream loggerOutputStream = forLogger(loggingModule().getLogger(TarantoolConnector.class))

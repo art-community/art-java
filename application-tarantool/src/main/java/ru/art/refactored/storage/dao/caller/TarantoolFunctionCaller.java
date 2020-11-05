@@ -1,4 +1,4 @@
-package refactored.storage.dao.caller;
+package ru.art.refactored.storage.dao.caller;
 
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
@@ -19,8 +19,8 @@ public class TarantoolFunctionCaller {
     private static final Logger logger = loggingModule().getLogger(TarantoolFunctionCaller.class);
 
 
-    public static List<?> call(TarantoolClient client, String function, Object[] args){
-        getLogger().info("Calling " + function + "() with args: " + args.toString());
+    public static List<?> call(TarantoolClient client, String function, Object... args){
+        getLogger().info("Calling " + function + "()");
         List<?> response = cast(client.syncOps().call(function, args));
         getLogger().info("Response:" + response);
         return response;
