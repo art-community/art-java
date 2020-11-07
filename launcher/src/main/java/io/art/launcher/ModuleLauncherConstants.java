@@ -22,9 +22,7 @@ import com.google.common.collect.*;
 
 public interface ModuleLauncherConstants {
     ImmutableSet<String> LAUNCHED_MESSAGES = ImmutableSet.of(
-            "Modules are initialized",
-            "Models are implemented",
-            "Yours module is ready",
+            "Initialization completed",
             "Have a nice work with ART!"
     );
 }
