@@ -46,8 +46,8 @@ public class CommunicatorSpecification {
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    private final ValueFromModelMapper<Object, Value> inputMapper;
-    private final ValueToModelMapper<Object, Value> outputMapper;
+    private final ValueFromModelMapper<?, Value> inputMapper;
+    private final ValueToModelMapper<?, Value> outputMapper;
     private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
     private final CommunicatorImplementation implementation;
     private final MethodProcessingMode inputMode;
@@ -89,7 +89,7 @@ public class CommunicatorSpecification {
             inputFlux = inputFlux.transformDeferred(decorator);
         }
         return inputFlux
-                .map(inputMapper::map)
+                .map(value -> inputMapper.map(cast(value)))
                 .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
     }
 
