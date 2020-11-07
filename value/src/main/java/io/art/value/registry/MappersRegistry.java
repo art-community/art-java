@@ -38,11 +38,11 @@ public class MappersRegistry {
         return this;
     }
 
-    public ValueToModelMapper<Object, Value> getToModel(Class<?> model) {
-        return toModel.get(model);
+    public <T> ValueToModelMapper<T, Value> getToModel(Class<T> model) {
+        return cast(toModel.get(model));
     }
 
-    public ValueFromModelMapper<Object, Value> getFromModel(Class<?> model) {
-        return fromModel.get(model);
+    public <T> ValueFromModelMapper<T, Value> getFromModel(Class<T> model) {
+        return cast(fromModel.get(model));
     }
 }

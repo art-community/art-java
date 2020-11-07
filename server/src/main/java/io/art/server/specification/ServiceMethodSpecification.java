@@ -18,6 +18,7 @@
 
 package io.art.server.specification;
 
+import io.art.core.caster.*;
 import io.art.core.constants.*;
 import io.art.value.immutable.Value;
 import io.art.server.configuration.*;
@@ -42,8 +43,8 @@ import java.util.function.*;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceMethodSpecification {
-    private final ValueToModelMapper<Object, Value> inputMapper;
-    private final ValueFromModelMapper<Object, Value> outputMapper;
+    private final ValueToModelMapper<?, Value> inputMapper;
+    private final ValueFromModelMapper<?, Value> outputMapper;
     private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
     private final ServiceMethodImplementation implementation;
     private final MethodProcessingMode inputMode;
@@ -117,7 +118,7 @@ public class ServiceMethodSpecification {
                 mappedOutput = mappedOutput.transformDeferred(decorator);
             }
             return mappedOutput
-                    .map(outputMapper::map)
+                    .map(value -> outputMapper.map(cast(value)))
                     .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
 
@@ -127,7 +128,7 @@ public class ServiceMethodSpecification {
                 mappedOutput = mappedOutput.transformDeferred(decorator);
             }
             return mappedOutput
-                    .map(outputMapper::map)
+                    .map(value -> outputMapper.map(cast(value)))
                     .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
 
