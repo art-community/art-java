@@ -171,8 +171,6 @@ public class Entity implements Value {
     }
 
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
-        System.out.println(primitive);
-        System.out.println(mapper);
         return cast(let(mappedValueCache.computeIfAbsent(primitive, key -> lazy(() -> let(cast(valueProvider.apply(key)), mapper::map))), LazyValue::get));
     }
 
