@@ -48,6 +48,12 @@ public final class CollectionExtensions {
         return list;
     }
 
+    public static <T> Set<T> addToSet(T element, Set<T> source) {
+        Set<T> set = setOf(element);
+        set.add(element);
+        set.addAll(source);
+        return set;
+    }
     public static <T> List<T> combine(List<T> first, Collection<T> second) {
         List<T> list = dynamicArrayOf();
         list.addAll(first);

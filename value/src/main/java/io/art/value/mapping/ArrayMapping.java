@@ -29,6 +29,10 @@ import java.util.*;
 
 @UtilityClass
 public class ArrayMapping {
+    public static <T> ArrayToModelMapper<Collection<T>> toCollection(ValueToModelMapper<T, ? extends Value> elementMapper) {
+        return array -> let(array, notNull -> notNull.mapAsList(elementMapper));
+    }
+    
     public static <T> ArrayToModelMapper<List<T>> toList(ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.mapAsList(elementMapper));
     }
@@ -46,6 +50,10 @@ public class ArrayMapping {
     }
 
 
+    public static <T> ArrayToModelMapper<Collection<T>> toMutableCollection(ValueToModelMapper<T, ? extends Value> elementMapper) {
+        return array -> let(array, notNull -> notNull.mapToList(elementMapper));
+    }
+    
     public static <T> ArrayToModelMapper<List<T>> toMutableList(ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.mapToList(elementMapper));
     }
@@ -63,6 +71,10 @@ public class ArrayMapping {
     }
 
 
+    public static <T> ArrayFromModelMapper<Collection<T>> fromCollection(ValueFromModelMapper<T, ? extends Value> elementMapper) {
+        return list -> let(list, notNull -> array(list, elementMapper));
+    }
+    
     public static <T> ArrayFromModelMapper<List<T>> fromList(ValueFromModelMapper<T, ? extends Value> elementMapper) {
         return list -> let(list, notNull -> array(list, elementMapper));
     }

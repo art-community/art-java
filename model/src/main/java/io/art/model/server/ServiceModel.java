@@ -48,7 +48,6 @@ public class ServiceModel<T> {
         return this;
     }
 
-
     public ServiceModel<T> to(Class<?> service, String method) {
         return to(service, method, identity());
     }
@@ -59,8 +58,7 @@ public class ServiceModel<T> {
         this.customizer = customizer;
         return this;
     }
-
-
+    
     public ImmutableSet<String> getMethods() {
         return methods.build();
     }

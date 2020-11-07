@@ -23,6 +23,7 @@ import io.art.value.builder.*;
 import io.art.value.immutable.ArrayValue;
 import io.art.value.immutable.Value;
 import io.art.message.pack.exception.MessagePackException;
+import io.art.value.mapping.*;
 import io.netty.buffer.*;
 import lombok.experimental.*;
 import org.msgpack.core.*;
@@ -96,7 +97,7 @@ public class MessagePackReader {
             case STRING:
                 return stringPrimitive(value.asStringValue().toString());
             case BINARY:
-                return byteArray(value.asBinaryValue().asByteArray());
+                return binary(value.asBinaryValue().asByteArray());
             case ARRAY:
                 return readArray(value.asArrayValue());
             case MAP:
