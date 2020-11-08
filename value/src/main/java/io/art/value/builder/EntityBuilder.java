@@ -18,16 +18,17 @@
 
 package io.art.value.builder;
 
-import com.google.common.collect.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static java.util.Objects.*;
+import java.util.*;
 import java.util.function.*;
 
 public class EntityBuilder {
-    private final ImmutableMap.Builder<Primitive, Supplier<? extends Value>> fields = ImmutableMap.builder();
+    private final Map<Primitive, Supplier<? extends Value>> fields = mapOf();
 
     public EntityBuilder put(String key, Value value) {
         return lazyPut(key, () -> value);
@@ -169,7 +170,7 @@ public class EntityBuilder {
 
 
     public Entity build() {
-        ImmutableMap<Primitive, Supplier<? extends Value>> map = fields.build();
+        Map<Primitive, Supplier<? extends Value>> map = fields;
         return new Entity(map.keySet(), field -> let(map.get(field), Supplier::get));
     }
 }

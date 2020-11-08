@@ -18,16 +18,14 @@
 
 package io.art.value.immutable;
 
-import com.google.common.collect.*;
 import io.art.core.checker.*;
 import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.value.builder.*;
 import io.art.value.constants.ValueConstants.*;
-import io.art.value.mapper.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
+import io.art.value.mapper.*;
 import lombok.*;
-import static com.google.common.collect.ImmutableSet.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
@@ -40,6 +38,7 @@ import static io.art.value.mapper.ValueToModelMapper.*;
 import static io.art.value.mapping.PrimitiveMapping.toString;
 import static io.art.value.mapping.PrimitiveMapping.*;
 import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -49,7 +48,7 @@ public class Entity implements Value {
     @Getter
     private final ValueType type = ENTITY;
     private final Map<Primitive, LazyValue<?>> mappedValueCache = concurrentHashMap();
-    private final ImmutableSet<Primitive> keys;
+    private final Set<Primitive> keys;
     private final Function<Primitive, ? extends Value> valueProvider;
 
     public static EntityBuilder entityBuilder() {
@@ -209,7 +208,7 @@ public class Entity implements Value {
             this.valueMapper = valueMapper;
             this.fromKeyMapper = fromKeyMapper;
             this.evaluated = lazy(() -> Entity.this.mapToMap(toKeyMapper, valueMapper));
-            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toImmutableSet()));
+            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toSet()));
         }
 
         @Override
