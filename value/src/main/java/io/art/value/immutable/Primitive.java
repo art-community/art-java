@@ -20,11 +20,9 @@ package io.art.value.immutable;
 
 import io.art.value.constants.*;
 import io.art.value.constants.ValueConstants.ValueType.*;
-import io.art.value.constants.ValueConstants.ValueType.*;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.value.constants.ValueConstants.ValueType.PrimitiveType.STRING;
 import static io.art.value.constants.ValueConstants.ValueType.PrimitiveType.STRING;
 import java.util.*;
 

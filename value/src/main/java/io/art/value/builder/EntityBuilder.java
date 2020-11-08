@@ -91,7 +91,7 @@ public class EntityBuilder {
     }
 
     public <T> EntityBuilder put(Primitive primitive, T value, ValueFromModelMapper<T, ? extends Value> mapper) {
-        fields.put(primitive, () -> mapper.map(value));
+        fields.put(primitive, () -> let(value, mapper::map));
         return this;
     }
 

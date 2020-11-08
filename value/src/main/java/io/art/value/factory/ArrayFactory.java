@@ -23,6 +23,7 @@ import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.value.factory.PrimitivesFactory.*;
@@ -163,7 +164,7 @@ public class ArrayFactory {
     public static <T> ArrayValue array(List<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        return new ArrayValue(index -> mapper.map(value.get(index)), lazy(value::size));
+        return new ArrayValue(index -> let(value.get(index), mapper::map), lazy(value::size));
     }
 
     public static <T extends Value> ArrayValue array(Collection<T> value) {
