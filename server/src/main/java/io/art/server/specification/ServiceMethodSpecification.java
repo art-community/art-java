@@ -20,11 +20,11 @@ package io.art.server.specification;
 
 import io.art.core.caster.*;
 import io.art.core.constants.*;
-import io.art.value.immutable.Value;
 import io.art.server.configuration.*;
 import io.art.server.exception.*;
 import io.art.server.implementation.*;
 import io.art.server.model.*;
+import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
@@ -43,8 +43,10 @@ import java.util.function.*;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceMethodSpecification {
-    private final ValueToModelMapper<?, Value> inputMapper;
-    private final ValueFromModelMapper<?, Value> outputMapper;
+    @Builder.Default
+    private final ValueToModelMapper<?, Value> inputMapper = Caster::cast;
+    @Builder.Default
+    private final ValueFromModelMapper<?, Value> outputMapper = Caster::cast;
     private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
     private final ServiceMethodImplementation implementation;
     private final MethodProcessingMode inputMode;

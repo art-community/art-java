@@ -18,15 +18,21 @@
 
 package io.art.value.registry;
 
+import io.art.core.caster.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
+import io.art.value.mapping.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import java.util.*;
 
 public class MappersRegistry {
-    private final Map<Class<?>, ValueToModelMapper<Object, Value>> toModel = mapOf();
-    private final Map<Class<?>, ValueFromModelMapper<Object, Value>> fromModel = mapOf();
+    private final Map<Class<?>, ValueToModelMapper<Object, Value>> toModel = Caster.cast(mapOf(
+            String.class, PrimitiveMapping.toString
+    ));
+    private final Map<Class<?>, ValueFromModelMapper<Object, Value>> fromModel = Caster.cast(mapOf(
+            String.class, PrimitiveMapping.fromString
+    ));
 
     public MappersRegistry register(Class<?> model, ValueToModelMapper<?, ?> mapper) {
         toModel.put(model, cast(mapper));

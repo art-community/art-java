@@ -76,24 +76,31 @@ public class JsonWriter {
             switch (value.getType()) {
                 case ENTITY:
                     writeJsonEntity(generator, asEntity(value));
-                    break;
+                    return;
                 case ARRAY:
                     writeArray(generator, asArray(value));
-                    break;
+                    return;
                 case BINARY:
                     outputStream.write(Arrays.toString(asBinary(value).getContent()).getBytes());
+                    return;
                 case STRING:
                     outputStream.write(asPrimitive(value).getString().getBytes());
+                    return;
                 case LONG:
                     outputStream.write(asPrimitive(value).getLong().toString().getBytes());
+                    return;
                 case DOUBLE:
                     outputStream.write(asPrimitive(value).getDouble().toString().getBytes());
+                    return;
                 case FLOAT:
                     outputStream.write(asPrimitive(value).getFloat().toString().getBytes());
+                    return;
                 case INT:
                     outputStream.write(asPrimitive(value).getInt().toString().getBytes());
+                    return;
                 case BOOL:
                     outputStream.write(asPrimitive(value).getBool().toString().getBytes());
+                    return;
                 case BYTE:
                     outputStream.write(asPrimitive(value).getByte().toString().getBytes());
             }
