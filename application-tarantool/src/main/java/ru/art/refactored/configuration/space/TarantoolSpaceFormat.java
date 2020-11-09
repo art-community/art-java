@@ -1,6 +1,7 @@
 package ru.art.refactored.configuration.space;
 
 import lombok.NoArgsConstructor;
+import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType;
 
 import java.util.*;
 
@@ -15,18 +16,18 @@ public class TarantoolSpaceFormat {
         return this;
     }
 
-    public TarantoolSpaceFormat addField(String name, String type){
+    public TarantoolSpaceFormat addField(String name, TarantoolFieldType type){
         Map<String, String> field = new LinkedHashMap<>();
         field.put("name", name);
-        field.put("type", type);
+        field.put("type", type.toString());
         fields.add(field);
         return this;
     }
 
-    public TarantoolSpaceFormat addField(String name, String type, Boolean isNullable){
+    public TarantoolSpaceFormat addField(String name, TarantoolFieldType type, Boolean isNullable){
         Map<String, Object> field = new LinkedHashMap<>();
         field.put("name", name);
-        field.put("type", type);
+        field.put("type", type.toString());
         field.put("is_nullable", isNullable);
         fields.add(field);
         return this;

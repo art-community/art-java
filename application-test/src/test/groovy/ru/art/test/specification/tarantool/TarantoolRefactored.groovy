@@ -10,21 +10,22 @@ import ru.art.refactored.dao.TarantoolInstance
 import ru.art.entity.Entity
 import ru.art.refactored.model.TarantoolUpdateFieldOperation
 import ru.art.refactored.dao.TarantoolSpace
+import ru.art.refactored.storage.StorageSpace
+import ru.art.refactored.storage.TarantoolStorageSpace
 import spock.lang.Specification
 import static ru.art.refactored.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
 import static ru.art.refactored.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
 import static ru.art.refactored.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
 import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolIndexType
 import static ru.art.entity.PrimitivesFactory.*
+import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.*;
 
 class TarantoolRefactored extends Specification {
-    def spaceName = "storage_test"
-    def clientId = "storage_1"
-
 
     def "CRUD on storage"() {
         setup:
-
+        def spaceName = "storage_test"
+        def clientId = "storage_1"
         TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
         clientConfig.username = "username"
         clientConfig.password = "password"
@@ -54,7 +55,7 @@ class TarantoolRefactored extends Specification {
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
         db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", "number", false))
+                .addField("id", NUMBER, false))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
                 .id(0)
@@ -152,6 +153,8 @@ class TarantoolRefactored extends Specification {
 
     def "VSHARD cluster operations lock"(){
         setup:
+        def spaceName = "storage_test"
+        def clientId = "storage_1"
         TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
         clientConfig.username = "username"
         clientConfig.password = "password"
@@ -227,8 +230,8 @@ class TarantoolRefactored extends Specification {
 
     def "VSHARD router CRUD"() {
         setup:
-        clientId = "router_1"
-        spaceName = "vshard_test"
+        def clientId = "router_1"
+        def spaceName = "vshard_test"
 
         TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
         clientConfig.username = "username"
@@ -263,8 +266,8 @@ class TarantoolRefactored extends Specification {
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
         db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", "unsigned", false)
-                .addField("bucket_id", "unsigned"))
+                .addField("id", UNSIGNED, false)
+                .addField("bucket_id", UNSIGNED))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
                 .id(0)
@@ -370,6 +373,110 @@ class TarantoolRefactored extends Specification {
                 .intField("bucket_id", 99)
                 .build()
         space.get(request).isPresent() && space.get(request2).isPresent()
+
+        cleanup:
+        db.dropSpace(spaceName)
+    }
+
+    def "Storage interface ops"(){
+        setup:
+        def spaceName = "storage_test"
+        def clientId = "storage_1"
+
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        clientConfig.username = "username"
+        clientConfig.password = "password"
+        clientConfig.connectionTimeout = 5 * 1000
+
+        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
+                .address("localhost:3301")
+                .config(clientConfig)
+                .build()
+
+        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
+        moduleConfig.instances.put(clientId, instanceConfig)
+
+        TarantoolModule tnt = new TarantoolModule(moduleConfig)
+        TarantoolInstance db = tnt.getInstance(clientId)
+        StorageSpace space = new TarantoolStorageSpace(tnt.getSpace(clientId, spaceName))
+
+
+
+        Entity data = new Entity.EntityBuilder()
+                .intField("id", 3)
+                .stringField("data", "testData")
+                .stringField("anotherData", "another data")
+                .build()
+        Entity request = new Entity.EntityBuilder().intField("id", 3).build()
+
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .addField("id", UNSIGNED, false))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .id(0)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true))
+
+
+
+        when:
+        space.insert(data)
+        then:
+        space.get(request).get() == data
+
+
+        when:
+        space.autoIncrement(data)
+        space.autoIncrement(data)
+        space.autoIncrement(data)
+        db.renameSpace(spaceName, spaceName = "storage_test2")
+        space = new TarantoolStorageSpace(tnt.getSpace(clientId, spaceName))
+        data = new Entity.EntityBuilder()
+                .intField("id", 7)
+                .stringField("data", "testData")
+                .build()
+        space.autoIncrement(data)
+        then:
+        (space.count() == 5)
+
+
+        when:
+        request = new Entity.EntityBuilder().intField("id", 2).build()
+        then:
+        space.get(request).isEmpty() && space.find(request).isEmpty()
+
+
+        when:
+        request = new Entity.EntityBuilder().intField("id", 7).build()
+        Entity response = space.find(request).get().get(0) as Entity
+        then:
+        response == data
+
+
+        when:
+        space.truncate()
+        then:
+        (space.count() == 0)
+
+
+        when:
+        data = new Entity.EntityBuilder()
+                .intField("id", 7)
+                .stringField("data", "another data")
+                .build()
+        space.put(data)
+        then:
+        space.get(request).get() == data
+
+
+        when:
+        space.delete(intPrimitive(7))
+        then:
+        space.get(request).isEmpty()
+
 
         cleanup:
         db.dropSpace(spaceName)

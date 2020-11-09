@@ -173,26 +173,26 @@ public interface TarantoolModuleConstants {
     }
 
     interface Functions {
-        String PUT = "put";
-        String GET = "get";
-        String BY = "By";
-        String SELECT = "select";
-        String DELETE = "delete";
-        String DELETE_ALL = "deleteAll";
-        String TRUNCATE = "truncate";
-        String COUNT = "count";
-        String LEN = "len";
-        String DROP = "drop";
-        String RENAME = "rename";
-        String NEXT = "next";
-        String SET = "set";
-        String RESET = "reset";
-        String INSERT = "insert";
-        String UPDATE = "update";
-        String UPSERT = "upsert";
-        String VALUES_POSTFIX = "Values";
-        String VALUE_POSTFIX = "Value";
-        String WITH_SCHEMA_POSTFIX = "WithSchema";
+        String PUT = "art.put";
+        String GET = "art.get";
+        String REPLACE = "art.replace";
+        String SELECT = "art.select";
+        String DELETE = "art.delete";
+        String INSERT = "art.insert";
+        String UPDATE = "art.update";
+        String UPSERT = "art.upsert";
+        String AUTO_INCREMENT = "art.auto_increment";
+
+        String CREATE_SPACE = "art.space.create";
+        String FORMAT_SPACE = "art.space.format";
+        String CREATE_INDEX = "art.space.create_index";
+        String DROP_SPACE = "art.space.drop";
+        String RENAME_SPACE = "art.space.rename";
+        String TRUNCATE = "art.space.truncate";
+        String COUNT = "art.space.count";
+        String LEN = "art.space.len";
+        String SCHEMA_COUNT = "art.space.schema_count";
+        String SCHEMA_LEN = "art.space.schema_len";
     }
 
     enum TarantoolInstanceMode {
@@ -220,11 +220,6 @@ public interface TarantoolModuleConstants {
         TREE,
         BITSET,
         RTREE
-    }
-
-    enum TarantoolIdCalculationMode {
-        MANUAL,
-        SEQUENCE
     }
 
     @Getter
