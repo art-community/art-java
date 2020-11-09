@@ -1,4 +1,4 @@
-package ru.art.refactored.configuration;
+package ru.art.refactored.configuration.space;
 
 import lombok.NoArgsConstructor;
 
