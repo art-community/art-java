@@ -90,13 +90,13 @@ public interface TarantoolModuleConstants {
         String ENTITY_FIELDS_MAPPING_IS_NULL = "Tarantool ''{0}'' entity ''{1}'' fields mapping is null. Please specify it.";
         String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Connection waiting time has passed";
         String UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Connection waiting time has passed. Retrying...\n";
-        String TARANTOOL_INITIALIZATION_SCRIP_NOT_EXISTS = "Tarantool ''{0}'' initialization script not exists inside classpath";
+        String TARANTOOL_INITIALIZATION_SCRIPT_NOT_EXISTS = "Tarantool ''{0}'' initialization script not exists inside classpath";
         String TARANTOOL_EXECUTABLE_NOT_EXISTS = "Tarantool ''{0}'' executable ''{1}'' not exists inside classpath";
         String TARANTOOL_VSHARD_NOT_EXISTS = "Tarantool ''{0}'' vshard module not exists inside classpath";
         String TARANTOOL_PROCESS_FAILED = "Tarantool ''{0}'' process failed to start";
         String ENTITY_WITHOUT_ID_FILED = "Entity ''{0}'' does not has 'id' long field";
         String ENTITY_IS_NULL = "Entity ''{0}'' is null";
-        String RESULT_IS_INVALID = "Result for entity ''{0}'' returned from Tarantool is invalid";
+        String RESULT_IS_INVALID = "Response ''{0}'' returned from Tarantool can`t be converted to Entity";
         String STARTUP_ERROR = "Unable to startup tarantool ''{0}''";
         String TARANTOOL_ON_MAC_EXCEPTION = "For Mac OS X you need to manually install tarantool executable and specify it in the configuration.\nUse command like 'brew install tarantool'";
     }

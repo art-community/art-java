@@ -2,9 +2,10 @@ package ru.art.refactored.module.connector;
 
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
+import org.tarantool.CommunicationException;
 import org.tarantool.TarantoolClient;
 import org.tarantool.TarantoolClusterClient;
-import org.tarantool.TarantoolClusterClientConfig;
+import ru.art.refactored.configuration.TarantoolInstanceConfiguration;
 import ru.art.refactored.exception.TarantoolConnectionException;
 import java.io.OutputStream;
 
@@ -12,34 +13,28 @@ import static java.text.MessageFormat.format;
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.logging.log4j.io.IoBuilder.forLogger;
 import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.refactored.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_CONNECT_TO_TARANTOOL;
+import static ru.art.refactored.constants.TarantoolModuleConstants.ExceptionMessages.*;
 
 public class TarantoolConnector {
-    private final static OutputStream loggerOutputStream = forLogger(loggingModule().getLogger(TarantoolConnector.class))
-            .buildOutputStream();
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = loggingModule().getLogger(TarantoolConnector.class);
 
-    public static TarantoolClient getClient(String address,TarantoolClusterClientConfig config) {
-        try {
-            getLogger().info("Connecting to tarantool vshard router [" + address + "]...");
-            org.tarantool.TarantoolClient client = new TarantoolClusterClient(config, address);
-            getLogger().info("Router connected.");
-            return client;
-        } catch (Throwable exception){
-            getLogger().error("Some shit happened while connecting. Here`s exception info:\n"
-                    + "Class: " + exception.getClass().toString()
-                    + "\nMessage: " + exception.getMessage());
+    public static TarantoolClient connect(String instanceId, TarantoolInstanceConfiguration config) {
+        int retries = 0;
+        while (retries < config.getMaxConnectionRetries()){
+            try {
+                getLogger().info("Connecting to tarantool at [" + config.getAddress() + "]...");
+                org.tarantool.TarantoolClient client = new TarantoolClusterClient(config.getConfig(), config.getAddress());
+                getLogger().info("Client connected.");
+                return client;
+            } catch (CommunicationException exception) {
+                getLogger().warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY, instanceId, config.getAddress(), exception));
+            } catch (Throwable throwable) {
+                throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, config.getAddress(), throwable));
+            }
+            retries++;
         }
-        throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, "router", "localhost:3300"));
-    }
-
-    public static TarantoolClusterClientConfig getDefaultConfig(){
-        TarantoolClusterClientConfig config = new TarantoolClusterClientConfig();
-        config.username = "username";
-        config.password = "password";
-        config.initTimeoutMillis = 5 * 1000;
-        return config;
+        throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, config.getAddress()));
     }
 
 }
