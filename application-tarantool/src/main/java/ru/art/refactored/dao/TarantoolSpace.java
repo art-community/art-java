@@ -1,4 +1,4 @@
-package ru.art.refactored.storage.dao;
+package ru.art.refactored.dao;
 
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
@@ -7,40 +7,42 @@ import ru.art.entity.Value;
 import ru.art.entity.tuple.PlainTupleReader;
 import ru.art.entity.tuple.PlainTupleWriter;
 import ru.art.entity.tuple.schema.ValueSchema;
+import ru.art.refactored.exception.TarantoolDaoException;
 import ru.art.refactored.model.TarantoolUpdateFieldOperation;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static ru.art.refactored.storage.dao.caller.TarantoolFunctionCaller.call;
-import static ru.art.core.caster.Caster.*;
-import java.io.OutputStream;
-import java.util.*;
 import static lombok.AccessLevel.PRIVATE;
-import static org.apache.logging.log4j.io.IoBuilder.forLogger;
+import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.logging.LoggingModule.loggingModule;
+import static ru.art.refactored.constants.TarantoolModuleConstants.ExceptionMessages.RESULT_IS_INVALID;
+import static ru.art.refactored.dao.caller.TarantoolFunctionCaller.call;
 
-public class TarantoolDao {
-    private final static OutputStream loggerOutputStream = forLogger(loggingModule().getLogger(TarantoolDao.class))
-            .buildOutputStream();
+public class TarantoolSpace {
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = loggingModule().getLogger(TarantoolDao.class);
-    private TarantoolClient client;
+    private static final Logger logger = loggingModule().getLogger(TarantoolSpace.class);
+    private final TarantoolClient client;
+    private String space;
 
-    public TarantoolDao(TarantoolClient client){
+    public TarantoolSpace(TarantoolClient client, String space){
         this.client = client;
-        this.space = new TarantoolSpaceDao(client);
+        this.space = space;
     }
 
-    public TarantoolSpaceDao space;
-
-    public Optional<Value> get(String space, Value request){
+    public Optional<Value> get(Value request){
         List<?> response = call(client, "art.get", space, unpackValue(request));
         return convertResponse(response);
     }
 
-    public Optional<List<Value>> select(String space, Value request){
+    public Optional<List<Value>> select(Value request){
         List<?> response = call(client, "art.select", space, unpackValue(request));
         response = cast(response.get(0));
         if (response.isEmpty()) return empty();
@@ -52,34 +54,59 @@ public class TarantoolDao {
         return ofNullable(result);
     }
 
-    public Optional<Value> delete(String space, Value key){
+    public Optional<Value> delete(Value key){
         return convertResponse(call(client, "art.delete", space, unpackValue(key)));
     }
 
-    public Optional<Value> insert(String space, Value data){
+    public Optional<Value> insert(Value data){
         return convertResponse(call(client, "art.insert", space, addSchema(data)));
     }
 
-    public Optional<Value> autoIncrement(String space, Value data){
+    public Optional<Value> autoIncrement(Value data){
         return convertResponse(call(client, "art.auto_increment", space, addSchema(data)));
     }
 
-    public Optional<Value> put(String space, Value data){
+    public Optional<Value> put(Value data){
         return convertResponse(call(client, "art.put", space, addSchema(data)));
     }
 
-    public Optional<Value> replace(String space, Value data){
+    public Optional<Value> replace(Value data){
         return convertResponse(call(client, "art.replace", space, addSchema(data)));
     }
 
-    public Optional<Value> update(String space, Value key, TarantoolUpdateFieldOperation... operations){
+    public Optional<Value> update(Value key, TarantoolUpdateFieldOperation... operations){
         List<?> response = call(client, "art.update", space, unpackValue(key), unpackUpdateOperations(operations));
         return convertResponse(response);
     }
 
-    public Optional<Value> upsert(String space, Value defaultValue, TarantoolUpdateFieldOperation... operations){
+    public Optional<Value> upsert(Value defaultValue, TarantoolUpdateFieldOperation... operations){
         return convertResponse(call(client, "art.upsert", space, addSchema(defaultValue), unpackUpdateOperations(operations)));
     }
+
+    public Long count(){
+        List<?> response = call(client,"art.space.count", space);
+        return ((Number) response.get(0)).longValue();
+    }
+
+    public Long len(){
+        List<?> response = call(client, "art.space.len", space);
+        return ((Number) response.get(0)).longValue();
+    }
+
+    public Long schemaCount(){
+        List<?> response = call(client,"art.space.schema_count", space);
+        return ((Number) response.get(0)).longValue();
+    }
+
+    public Long schemaLen(){
+        List<?> response = call(client, "art.space.schema_len", space);
+        return ((Number) response.get(0)).longValue();
+    }
+
+    public void truncate(){
+        call(client, "art.space.truncate", space);
+    }
+
 
 
     private Optional<Value> convertResponse(List<?> response){
@@ -88,11 +115,15 @@ public class TarantoolDao {
             getLogger().info("Got empty response");
             return empty();
         }
-        List<?> data = cast(response.get(0));
-        ValueSchema schema = ValueSchema.fromTuple(cast(response.get(1)));
-        Value result = PlainTupleReader.readTuple(data, schema);
-        getLogger().info("Got Value: " + result.toString() + " Type:" + result.getType());
-        return ofNullable(result);
+        try {
+            List<?> data = cast(response.get(0));
+            ValueSchema schema = ValueSchema.fromTuple(cast(response.get(1)));
+            Value result = PlainTupleReader.readTuple(data, schema);
+            getLogger().info("Got Value: " + result.toString() + " Type:" + result.getType());
+            return ofNullable(result);
+        } catch(Exception e){
+            throw new TarantoolDaoException(format(RESULT_IS_INVALID, response));
+        }
     }
 
     private List<?> unpackValue(Value request){
