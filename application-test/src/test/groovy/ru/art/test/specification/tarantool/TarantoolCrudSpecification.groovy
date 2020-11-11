@@ -177,4 +177,27 @@ class TarantoolCrudSpecification extends Specification {
         dropIndex(masterId, spaceName, secondaryIndex)
         dropSequence(masterId, sequence)
     }
+
+    def "10000 get ops"() {
+        setup:
+        useAgileConfigurations()
+        dao = tarantool(masterId)
+        tarantoolModuleState().loadedCommonScripts.clear()
+        tarantoolModuleState().loadedValueScripts.clear()
+
+        when:
+        entity = dao.put(spaceName, entity)
+        for (int i = 0; i < 10000; i++) {
+            dao.get(spaceName, entity.getInt(idField))
+        }
+
+        then:
+        true
+
+        cleanup:
+        dropSpace(masterId, spaceName)
+        dropIndex(masterId, spaceName, primaryIndex)
+        dropIndex(masterId, spaceName, secondaryIndex)
+        dropSequence(masterId, sequence)
+    }
 }

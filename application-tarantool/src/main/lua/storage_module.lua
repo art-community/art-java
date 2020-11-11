@@ -41,6 +41,7 @@ art_svc = {
             box.space[space .. art.schema_suffix]:update(schema_hash, {{'-', 'count', 1}})
         end
         box.space[space]:delete(id)
+        art_svc.vshard.index.delete(space, id)
         response_schema = response_schema['schema']
         return {response, response_schema}
     end,
@@ -50,12 +51,15 @@ art_svc = {
         data[2] = box.tuple.new(data[2])
         local schema_hash = art_svc.hash({data[2], bucket_id})
         data[1] = data[1]:update({{'!', #data[1]+1, schema_hash}})
-        box.space[space]:insert(data[1])
+        data[1] = box.space[space]:insert(data[1])
 
         local schema_tuple = box.tuple.new({schema_hash, 1, data[2], bucket_id})
         box.space[space .. art.schema_suffix]:upsert(schema_tuple, {{'+', 'count', 1}})
 
-        return {data[1]:transform(#data[1], 1), data[2]}
+        data[1] = data[1]:transform(#data[1], 1)
+        art_svc.vshard.index.put(space, data[1])
+
+        return data
     end,
 
     auto_increment = function(space, data, bucket_id)
@@ -66,10 +70,12 @@ art_svc = {
         data[1] = data[1]:update({{'!', #data[1]+1, schema_hash}, {'#', 1, 1}})
         data[1] = box.space[space]:auto_increment(data[1]:totable())
 
-
         local schema_tuple = box.tuple.new({schema_hash, 1, data[2], bucket_id})
         box.space[space .. art.schema_suffix]:upsert(schema_tuple, {{'+', 'count', 1}})
-        return {data[1]:transform(-1, 1), data[2]}
+
+        data[1] = data[1]:transform(-1, 1)
+        art_svc.vshard.index.put(space, data[1])
+        return data
     end,
 
     put = function(space, data, bucket_id)
@@ -221,7 +227,29 @@ art_svc = {
                 art_svc.space.cluster_op_in_progress = false
                 return result
             end
-        }
+        },
+        index = {
+            index_credentials = {},
+            init_indexation = function()
+                local this_rs_uuid = vshard.storage.internal.this_replicaset.uuid
+                local netbox = require('net.box')
+                art_svc.vshard.index_nodes = {}
+                for k,v in pairs(art_svc.vshard.index_credentials) do
+                    table.insert(art_svc.vshard.index_nodes, netbox.connect(v))
+                end
+                art_svc.vshard.main_index_node = netbox.connect(art_svc.vshard.index_credentials[this_rs_uuid])
+            end,
+
+            put = function(space, data)
+                return
+            end,
+
+            delete = function(space, key)
+                return
+            end
+        },
+
+
     }
 }
 

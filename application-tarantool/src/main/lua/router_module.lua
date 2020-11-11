@@ -66,6 +66,37 @@
                 end
                 return is_ok
             end
+        },
+        index = {
+            create_space = function(name, config)
+                return
+            end,
+
+            update_format = function(space, format)
+                return
+            end,
+
+            create_index = function(space, index_name, index)
+                return
+            end,
+
+            rename_space = function(space, new_name)
+                return
+            end,
+
+            truncate = function(space)
+                return
+            end,
+
+            drop = function(space)
+                return
+            end,
+
+            init_indexation = function()
+                local formats = box.schema.space.create('indexed_spaces_format')
+
+                return
+            end,
         }
     }
 
@@ -106,27 +137,50 @@
 
         space = {
             create = function(name, config)
-                return art_svc.clusterwide.execute('create_vsharded', {name, config})
+                local result = art_svc.clusterwide.execute('create_vsharded', {name, config})
+                if (result[1]) then
+                    art_svc.index.create_space(name, config)
+                end
+                return result
             end,
 
             format = function(space, format)
-                return art_svc.clusterwide.execute('format', {space, format})
+                local result = art_svc.clusterwide.execute('format', {space, format})
+                if (result[1]) then
+                    art_svc.index.update_format(space, format)
+                end
             end,
 
             create_index = function(space, index_name, index)
-                return art_svc.clusterwide.execute('create_index', {space, index_name, index})
+                local result = art_svc.clusterwide.execute('create_index', {space, index_name, index})
+                if (result[1]) then
+                    art_svc.index.create_index(space, index_name, index)
+                end
+                return result
             end,
 
             rename = function(space, new_name)
-                return art_svc.clusterwide.execute('rename', {space, new_name})
+                local result = art_svc.clusterwide.execute('rename', {space, new_name})
+                if (result[1]) then
+                    art_svc.index.rename_space(space, new_name)
+                end
+                return result
             end,
 
             truncate = function(space)
-                return art_svc.clusterwide.execute('truncate', {space})
+                local result = art_svc.clusterwide.execute('truncate', {space})
+                if (result[1]) then
+                    art_svc.index.truncate(space)
+                end
+                return result
             end,
 
             drop = function(space)
-                return art_svc.clusterwide.execute('drop', {space})
+                local result = art_svc.clusterwide.execute('drop', {space})
+                if (result[1]) then
+                    art_svc.index.drop(space)
+                end
+                return result
             end,
 
             count = function(space)

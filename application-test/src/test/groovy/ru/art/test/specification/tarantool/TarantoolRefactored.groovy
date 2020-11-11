@@ -24,7 +24,7 @@ import static ru.art.entity.PrimitivesFactory.*
 import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.*;
 
 class TarantoolRefactored extends Specification {
-    def benchmarkOpsCount = 10000
+    def benchmarkOpsCount = 1000
 
     def "Storage CRUD"() {
         setup:
@@ -709,6 +709,61 @@ class TarantoolRefactored extends Specification {
         }
         then:
         true
+
+        cleanup:
+        db.dropSpace(spaceName)
+    }
+
+    def "Storage box.get benchmark"(){
+        setup:
+        def spaceName = "storage_test"
+        def clientId = "storage_1"
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        clientConfig.username = "username"
+        clientConfig.password = "password"
+        clientConfig.connectionTimeout = 5 * 1000
+
+        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
+                .address("localhost:3301")
+                .config(clientConfig)
+                .build()
+
+        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
+        moduleConfig.instances.put(clientId, instanceConfig)
+
+        TarantoolModule tnt = new TarantoolModule(moduleConfig)
+        TarantoolInstance db = tnt.getInstance(clientId)
+        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+        TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
+
+        Entity data = new Entity.EntityBuilder()
+                .intField("id", 3)
+                .stringField("data", "testData")
+                .stringField("anotherData", "another data")
+                .build()
+        Entity request = new Entity.EntityBuilder().intField("id", 3).build()
+        List<?> tuple = PlainTupleWriter.writeTuple(request).getTuple()
+
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .addField("id", NUMBER, false))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .id(0)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true))
+
+        when:
+        space.insert(data)
+        for (int i = 0; i<benchmarkOpsCount; i++){
+            client.syncOps().call("box.space.storage_test:get", tuple);
+        }
+
+        then:
+        true
+
 
         cleanup:
         db.dropSpace(spaceName)
