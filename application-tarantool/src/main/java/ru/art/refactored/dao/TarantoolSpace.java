@@ -148,7 +148,7 @@ public class TarantoolSpace {
             List<?> data = cast(response.get(0));
             ValueSchema schema = ValueSchema.fromTuple(cast(response.get(1)));
             Value result = PlainTupleReader.readTuple(data, schema);
-            getLogger().info("Got Value: " + result.toString() + " Type:" + result.getType());
+            //getLogger().info("Got Value: " + result.toString() + " Type:" + result.getType());
             return ofNullable(result);
         } catch(Exception e){
             throw new TarantoolDaoException(format(RESULT_IS_INVALID, response));

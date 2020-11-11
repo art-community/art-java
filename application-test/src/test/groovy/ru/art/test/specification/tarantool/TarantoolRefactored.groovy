@@ -1,8 +1,9 @@
 
 package ru.art.test.specification.tarantool
 
-
+import org.tarantool.TarantoolClient
 import org.tarantool.TarantoolClusterClientConfig
+import ru.art.entity.tuple.PlainTupleWriter
 import ru.art.refactored.configuration.TarantoolInstanceConfiguration
 import ru.art.refactored.configuration.TarantoolModuleConfiguration
 import ru.art.refactored.module.TarantoolModule
@@ -10,9 +11,11 @@ import ru.art.refactored.dao.TarantoolInstance
 import ru.art.entity.Entity
 import ru.art.refactored.model.TarantoolUpdateFieldOperation
 import ru.art.refactored.dao.TarantoolSpace
+import ru.art.refactored.module.connector.TarantoolConnector
 import ru.art.refactored.storage.StorageSpace
 import ru.art.refactored.storage.TarantoolStorageSpace
 import spock.lang.Specification
+import java.util.concurrent.Future
 import static ru.art.refactored.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
 import static ru.art.refactored.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
 import static ru.art.refactored.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
@@ -21,8 +24,9 @@ import static ru.art.entity.PrimitivesFactory.*
 import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.*;
 
 class TarantoolRefactored extends Specification {
+    def benchmarkOpsCount = 10000
 
-    def "CRUD on storage"() {
+    def "Storage CRUD"() {
         setup:
         def spaceName = "storage_test"
         def clientId = "storage_1"
@@ -151,7 +155,7 @@ class TarantoolRefactored extends Specification {
 
     }
 
-    def "VSHARD cluster operations lock"(){
+    def "Storage cluster operations lock"(){
         setup:
         def spaceName = "storage_test"
         def clientId = "storage_1"
@@ -228,7 +232,7 @@ class TarantoolRefactored extends Specification {
         tnt.getClient(clientId).syncOps().eval("art_svc.space.cluster_op_in_progress = false")
     }
 
-    def "VSHARD router CRUD"() {
+    def "Router CRUD"() {
         setup:
         def clientId = "router_1"
         def spaceName = "vshard_test"
@@ -239,7 +243,7 @@ class TarantoolRefactored extends Specification {
         clientConfig.connectionTimeout = 5 * 1000
 
         TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address("localhost:3300")
+                .address("localhost:3399")
                 .config(clientConfig)
                 .build()
 
@@ -378,7 +382,7 @@ class TarantoolRefactored extends Specification {
         db.dropSpace(spaceName)
     }
 
-    def "Storage interface ops"(){
+    def "TarantoolStorage interface ops"(){
         setup:
         def spaceName = "storage_test"
         def clientId = "storage_1"
@@ -476,6 +480,344 @@ class TarantoolRefactored extends Specification {
         space.delete(intPrimitive(7))
         then:
         space.get(request).isEmpty()
+
+
+        cleanup:
+        db.dropSpace(spaceName)
+    }
+
+    def "Router art.get benchmark"(){
+        setup:
+        def clientId = "router_1"
+        def spaceName = "vshard_test"
+
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        clientConfig.username = "username"
+        clientConfig.password = "password"
+        clientConfig.connectionTimeout = 5 * 1000
+
+        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
+                .address("localhost:3399")
+                .config(clientConfig)
+                .build()
+
+        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
+        moduleConfig.instances.put(clientId, instanceConfig)
+
+        TarantoolModule tnt = new TarantoolModule(moduleConfig)
+        TarantoolInstance db = tnt.getInstance(clientId)
+        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+
+
+
+        Entity data = new Entity.EntityBuilder()
+                .intField("id", 3)
+                .intField("bucket_id", 99)
+                .stringField("data", "testData")
+                .stringField("anotherData", "another data")
+                .build()
+        Entity request = new Entity.EntityBuilder()
+                .intField("id", 3)
+                .intField("bucket_id", 99)
+                .build()
+
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .addField("id", UNSIGNED, false)
+                .addField("bucket_id", UNSIGNED))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .id(0)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true))
+
+        when:
+        space.insert(data)
+
+        for (int i = 0; i<benchmarkOpsCount; i++){
+            space.get(request)
+        }
+        then:
+        true
+
+        cleanup:
+        db.dropSpace(spaceName)
+    }
+
+    def "Router art.auto_increment benchmark"(){
+        setup:
+        def clientId = "router_1"
+        def spaceName = "vshard_test"
+
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        clientConfig.username = "username"
+        clientConfig.password = "password"
+        clientConfig.connectionTimeout = 5 * 1000
+
+        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
+                .address("localhost:3399")
+                .config(clientConfig)
+                .build()
+
+        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
+        moduleConfig.instances.put(clientId, instanceConfig)
+
+        TarantoolModule tnt = new TarantoolModule(moduleConfig)
+        TarantoolInstance db = tnt.getInstance(clientId)
+        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+
+
+
+        Entity data = new Entity.EntityBuilder()
+                .intField("id", 3)
+                .intField("bucket_id", 99)
+                .stringField("data", "testData")
+                .stringField("anotherData", "another data")
+                .build()
+        Entity request = new Entity.EntityBuilder()
+                .intField("id", 3)
+                .intField("bucket_id", 99)
+                .build()
+
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .addField("id", UNSIGNED, false)
+                .addField("bucket_id", UNSIGNED))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .id(0)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true))
+
+        when:
+
+        for (int i = 0; i<benchmarkOpsCount; i++){
+            space.autoIncrement(data)
+        }
+        then:
+        true
+
+        cleanup:
+        db.dropSpace(spaceName)
+    }
+
+    def "Storage art.get benchmark"(){
+        setup:
+        def spaceName = "storage_test"
+        def clientId = "storage_1"
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        clientConfig.username = "username"
+        clientConfig.password = "password"
+        clientConfig.connectionTimeout = 5 * 1000
+
+        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
+                .address("localhost:3301")
+                .config(clientConfig)
+                .build()
+
+        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
+        moduleConfig.instances.put(clientId, instanceConfig)
+
+        TarantoolModule tnt = new TarantoolModule(moduleConfig)
+        TarantoolInstance db = tnt.getInstance(clientId)
+        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+
+
+
+        Entity data = new Entity.EntityBuilder()
+                .intField("id", 3)
+                .stringField("data", "testData")
+                .stringField("anotherData", "another data")
+                .build()
+        Entity request = new Entity.EntityBuilder().intField("id", 3).build()
+
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .addField("id", NUMBER, false))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .id(0)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true))
+
+        when:
+        space.insert(data)
+
+        for (int i = 0; i<benchmarkOpsCount; i++){
+            space.get(request)
+        }
+        then:
+        true
+
+        cleanup:
+        db.dropSpace(spaceName)
+    }
+
+    def "Storage art.auto_increment benchmark"(){
+        setup:
+        def spaceName = "storage_test"
+        def clientId = "storage_1"
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        clientConfig.username = "username"
+        clientConfig.password = "password"
+        clientConfig.connectionTimeout = 5 * 1000
+
+        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
+                .address("localhost:3301")
+                .config(clientConfig)
+                .build()
+
+        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
+        moduleConfig.instances.put(clientId, instanceConfig)
+
+        TarantoolModule tnt = new TarantoolModule(moduleConfig)
+        TarantoolInstance db = tnt.getInstance(clientId)
+        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+        TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
+
+
+
+        Entity data = new Entity.EntityBuilder()
+                .intField("id", 3)
+                .stringField("data", "testData")
+                .stringField("anotherData", "another data")
+                .build()
+        Entity request = new Entity.EntityBuilder().intField("id", 3).build()
+
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .addField("id", NUMBER, false))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .id(0)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true))
+
+        when:
+        space.insert(data)
+
+        for (int i = 0; i<benchmarkOpsCount; i++){
+            space.autoIncrement(data)
+        }
+        then:
+        true
+
+        cleanup:
+        db.dropSpace(spaceName)
+    }
+
+    def "Storage box.auto_increment benchmark"(){
+        setup:
+        def spaceName = "storage_test"
+        def clientId = "storage_1"
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        clientConfig.username = "username"
+        clientConfig.password = "password"
+        clientConfig.connectionTimeout = 5 * 1000
+
+        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
+                .address("localhost:3301")
+                .config(clientConfig)
+                .build()
+
+        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
+        moduleConfig.instances.put(clientId, instanceConfig)
+
+        TarantoolModule tnt = new TarantoolModule(moduleConfig)
+        TarantoolInstance db = tnt.getInstance(clientId)
+        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+        TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
+
+        Entity data = new Entity.EntityBuilder()
+                .intField("id", 3)
+                .stringField("data", "testData")
+                .stringField("anotherData", "another data")
+                .build()
+        List<?> tuple = PlainTupleWriter.writeTuple(data).getTuple()
+
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .addField("id", NUMBER, false))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .id(0)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true))
+
+        when:
+        for (int i = 0; i<benchmarkOpsCount; i++){
+            client.syncOps().call("box.space.storage_test:auto_increment", tuple);
+        }
+
+        then:
+        true
+
+
+        cleanup:
+        db.dropSpace(spaceName)
+    }
+
+    def "Storage box.auto_increment async benchmark"(){
+        setup:
+        def spaceName = "storage_test"
+        def clientId = "storage_1"
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        clientConfig.username = "username"
+        clientConfig.password = "password"
+        clientConfig.connectionTimeout = 5 * 1000
+
+        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
+                .address("localhost:3301")
+                .config(clientConfig)
+                .build()
+
+        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
+        moduleConfig.instances.put(clientId, instanceConfig)
+
+        TarantoolModule tnt = new TarantoolModule(moduleConfig)
+        TarantoolInstance db = tnt.getInstance(clientId)
+        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+        TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
+
+
+        Entity data = new Entity.EntityBuilder()
+                .intField("id", 3)
+                .stringField("data", "testData")
+                .stringField("anotherData", "another data")
+                .build()
+        List<?> tuple = PlainTupleWriter.writeTuple(data).getTuple()
+
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .addField("id", NUMBER, false))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .id(0)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true))
+        List<Future<?>> results = new LinkedList<Future<?>>()
+        when:
+        for (int i = 0; i<benchmarkOpsCount; i++){
+            results.push(client.asyncOps().call("box.space.storage_test:auto_increment", tuple));
+        }
+        for(int i = 0; i<benchmarkOpsCount; i++){
+            results.get(i).get()
+        }
+
+        then:
+        true
 
 
         cleanup:
