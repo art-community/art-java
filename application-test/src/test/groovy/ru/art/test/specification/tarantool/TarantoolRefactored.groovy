@@ -24,7 +24,7 @@ import static ru.art.entity.PrimitivesFactory.*
 import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.*;
 
 class TarantoolRefactored extends Specification {
-    def benchmarkOpsCount = 1000
+    def benchmarkOpsCount = 10000
 
     def "Storage CRUD"() {
         setup:

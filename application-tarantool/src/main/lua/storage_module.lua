@@ -41,7 +41,6 @@ art_svc = {
             box.space[space .. art.schema_suffix]:update(schema_hash, {{'-', 'count', 1}})
         end
         box.space[space]:delete(id)
-        art_svc.vshard.index.delete(space, id)
         response_schema = response_schema['schema']
         return {response, response_schema}
     end,
@@ -51,15 +50,12 @@ art_svc = {
         data[2] = box.tuple.new(data[2])
         local schema_hash = art_svc.hash({data[2], bucket_id})
         data[1] = data[1]:update({{'!', #data[1]+1, schema_hash}})
-        data[1] = box.space[space]:insert(data[1])
+        box.space[space]:insert(data[1])
 
         local schema_tuple = box.tuple.new({schema_hash, 1, data[2], bucket_id})
         box.space[space .. art.schema_suffix]:upsert(schema_tuple, {{'+', 'count', 1}})
 
-        data[1] = data[1]:transform(#data[1], 1)
-        art_svc.vshard.index.put(space, data[1])
-
-        return data
+        return {data[1]:transform(#data[1], 1), data[2]}
     end,
 
     auto_increment = function(space, data, bucket_id)
@@ -70,12 +66,10 @@ art_svc = {
         data[1] = data[1]:update({{'!', #data[1]+1, schema_hash}, {'#', 1, 1}})
         data[1] = box.space[space]:auto_increment(data[1]:totable())
 
+
         local schema_tuple = box.tuple.new({schema_hash, 1, data[2], bucket_id})
         box.space[space .. art.schema_suffix]:upsert(schema_tuple, {{'+', 'count', 1}})
-
-        data[1] = data[1]:transform(-1, 1)
-        art_svc.vshard.index.put(space, data[1])
-        return data
+        return {data[1]:transform(-1, 1), data[2]}
     end,
 
     put = function(space, data, bucket_id)
@@ -229,22 +223,24 @@ art_svc = {
             end
         },
         index = {
-            index_credentials = {},
-            init_indexation = function()
+            credentials = {},
+            init = function()
                 local this_rs_uuid = vshard.storage.internal.this_replicaset.uuid
                 local netbox = require('net.box')
-                art_svc.vshard.index_nodes = {}
-                for k,v in pairs(art_svc.vshard.index_credentials) do
-                    table.insert(art_svc.vshard.index_nodes, netbox.connect(v))
+                art_svc.vshard.index.nodes = {}
+                for k,v in pairs(art_svc.vshard.index.credentials) do
+                    table.insert(art_svc.vshard.index.nodes, netbox.connect(v))
                 end
-                art_svc.vshard.main_index_node = netbox.connect(art_svc.vshard.index_credentials[this_rs_uuid])
+                art_svc.vshard.index.primary_node = netbox.connect(art_svc.vshard.index.credentials[this_rs_uuid])
             end,
 
             put = function(space, data)
+                --if (art_svc.vshard.main_index_node == nil) then art_svc.vshard.index.init() end
                 return
             end,
 
             delete = function(space, key)
+                --if (art_svc.vshard.index.main_index_node == nil) then art_svc.vshard.index.init() end
                 return
             end
         },
@@ -261,31 +257,45 @@ art = {
     end,
 
     delete = function(space, id)
-        return box.atomic(art_svc.delete, space, id)
+        local result = box.atomic(art_svc.delete, space, id)
+        art_svc.vshard.index.delete(space, result[1])
+        return result
     end,
 
     insert = function(space, data, bucket_id)
-        return box.atomic(art_svc.insert, space, data, bucket_id)
+        local result = box.atomic(art_svc.insert, space, data, bucket_id)
+        art_svc.vshard.index.put(space, result[1])
+        return result
     end,
 
     auto_increment = function(space, data, bucket_id)
-        return box.atomic(art_svc.auto_increment, space, data, bucket_id)
+        local result = box.atomic(art_svc.auto_increment, space, data, bucket_id)
+        art_svc.vshard.index.put(space, result[1])
+        return result
     end,
 
     put = function(space, data, bucket_id)
-        return box.atomic(art_svc.put, space, data, bucket_id)
+        local result =  box.atomic(art_svc.put, space, data, bucket_id)
+        art_svc.vshard.index.put(space, result[1])
+        return result
     end,
 
     update = function(space, id, commands, bucket_id)
-        return box.atomic(art_svc.update, space, id, commands, bucket_id)
+        local result = box.atomic(art_svc.update, space, id, commands, bucket_id)
+        art_svc.vshard.index.put(space, result[1])
+        return result
     end,
 
     replace = function(space, data, bucket_id)
-        return box.atomic(art_svc.replace, space, data, bucket_id)
+        local result = box.atomic(art_svc.replace, space, data, bucket_id)
+        art_svc.vshard.index.put(space, result[1])
+        return result
     end,
 
     upsert = function(space, data, commands, bucket_id)
-        return box.atomic(art_svc.upsert, space, data, commands, bucket_id)
+        local result = box.atomic(art_svc.upsert, space, data, commands, bucket_id)
+        art_svc.vshard.index.put(space, result[1])
+        return result
     end,
 
     select = function(space, request)
