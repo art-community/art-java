@@ -16,17 +16,13 @@
  * limitations under the License.
  */
 
-package io.art.model.configurator;
+package io.art.value.model;
 
-import io.art.value.configuration.*;
 import lombok.*;
 
-public class ValueConfiguratorModel {
-    @Getter
-    private final CustomValueModuleConfiguration configuration = new CustomValueModuleConfiguration();
-
-    @Getter
-    @RequiredArgsConstructor
-    public static class CustomValueModuleConfiguration extends ValueModuleConfiguration {
-    }
+@AllArgsConstructor
+@EqualsAndHashCode
+public class MapperTarget {
+    private final Class<?> modelClass;
+    private final String method;
 }

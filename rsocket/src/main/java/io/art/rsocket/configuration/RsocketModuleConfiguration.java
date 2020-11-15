@@ -21,8 +21,8 @@ package io.art.rsocket.configuration;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.orElse;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
-import static java.util.Objects.*;
 import static java.util.Optional.*;
 
 @Getter
@@ -46,9 +46,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                     .map(rsocket -> rsocket.getNested(COMMUNICATOR_SECTION))
                     .map(RsocketCommunicatorConfiguration::from)
                     .ifPresent(communicatorConfiguration -> configuration.communicatorConfiguration = communicatorConfiguration);
-            if (isNull(configuration.serverConfiguration)) {
-                configuration.serverConfiguration = RsocketServerConfiguration.ofDefaults();
-            }
+            configuration.serverConfiguration = orElse(configuration.serverConfiguration, RsocketServerConfiguration::defaults);
             return this;
         }
 

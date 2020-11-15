@@ -19,12 +19,10 @@
 package io.art.value.configuration;
 
 import io.art.core.module.*;
-import io.art.value.registry.*;
 import lombok.*;
 
 @Getter
 public class ValueModuleConfiguration implements ModuleConfiguration {
-    private MappersRegistry registry = new MappersRegistry();
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<ValueModuleConfiguration, Configurator> {
@@ -32,7 +30,6 @@ public class ValueModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator override(ValueModuleConfiguration configuration) {
-            this.configuration.registry = configuration.getRegistry();
             return this;
         }
     }

@@ -44,9 +44,9 @@ import java.util.function.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceMethodSpecification {
     @Builder.Default
-    private final ValueToModelMapper<?, Value> inputMapper = Caster::cast;
+    private final ValueToModelMapper<?, ? extends Value> inputMapper = Caster::cast;
     @Builder.Default
-    private final ValueFromModelMapper<?, Value> outputMapper = Caster::cast;
+    private final ValueFromModelMapper<?, ? extends Value> outputMapper = Caster::cast;
     private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
     private final ServiceMethodImplementation implementation;
     private final MethodProcessingMode inputMode;
@@ -97,7 +97,7 @@ public class ServiceMethodSpecification {
     }
 
     private Object mapInput(Flux<Value> input) {
-        Flux<Object> mappedInput = input.filter(Objects::nonNull).filter(value -> !deactivated()).map(inputMapper::map);
+        Flux<Object> mappedInput = input.filter(Objects::nonNull).filter(value -> !deactivated()).map(value -> inputMapper.map(cast(value)));
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
             mappedInput = mappedInput.transformDeferred(decorator);
         }
@@ -120,7 +120,7 @@ public class ServiceMethodSpecification {
                 mappedOutput = mappedOutput.transformDeferred(decorator);
             }
             return mappedOutput
-                    .map(value -> outputMapper.map(cast(value)))
+                    .map(value -> (Value) outputMapper.map(cast(value)))
                     .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
 
@@ -130,7 +130,7 @@ public class ServiceMethodSpecification {
                 mappedOutput = mappedOutput.transformDeferred(decorator);
             }
             return mappedOutput
-                    .map(value -> outputMapper.map(cast(value)))
+                    .map(value -> (Value) outputMapper.map(cast(value)))
                     .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
 

@@ -62,7 +62,7 @@ public class RsocketServerConfiguration {
     private DataFormat defaultDataFormat;
     private DataFormat defaultMetaDataFormat;
 
-    public static RsocketServerConfiguration ofDefaults() {
+    public static RsocketServerConfiguration defaults() {
         RsocketServerConfiguration configuration = new RsocketServerConfiguration();
         configuration.defaultDataFormat = JSON;
         configuration.defaultMetaDataFormat = JSON;
