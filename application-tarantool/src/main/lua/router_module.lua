@@ -67,36 +67,49 @@
                 return is_ok
             end
         },
-        index = {
-            create_space = function(name, config)
-                return
+        mapping = {
+            create = function(space, config)
+                box.schema.space.create(space)
+                art_svc.mapping.format(space, config['format'])
+                box.space[space]:create_index('art_mapping_primary', {parts = {1}})
             end,
 
-            update_format = function(space, format)
-                return
+            format = function(space, format)
+                if(format) then
+                    for k,v in pairs(format) do
+                        v['is_nullable'] = true
+                    end
+                    box.space[space]:format(format)
+                end
             end,
 
             create_index = function(space, index_name, index)
+                ind = index
+                local parts = index.parts
+                for k,v in pairs(parts) do
+                    if not (type(v) == 'table') then v = {v} end
+                    v['is_nullable'] = true
+                end
+                index.parts = parts
+                box.space[space]:create_index(index_name, index)
                 return
             end,
 
-            rename_space = function(space, new_name)
-                return
+            rename = function(space, new_name)
+                box.space[space]:rename(new_name)
             end,
 
             truncate = function(space)
-                return
+                box.space[space]:truncate()
             end,
 
             drop = function(space)
-                return
+                box.space[space]:drop()
             end,
 
-            init_indexation = function()
-                local formats = box.schema.space.create('indexed_spaces_format')
+            put = function(space, data)
 
-                return
-            end,
+            end
         }
     }
 
@@ -139,7 +152,7 @@
             create = function(name, config)
                 local result = art_svc.clusterwide.execute('create_vsharded', {name, config})
                 if (result[1]) then
-                    art_svc.index.create_space(name, config)
+                    art_svc.mapping.create(name, config)
                 end
                 return result
             end,
@@ -147,14 +160,14 @@
             format = function(space, format)
                 local result = art_svc.clusterwide.execute('format', {space, format})
                 if (result[1]) then
-                    art_svc.index.update_format(space, format)
+                    art_svc.mapping.format(space, format)
                 end
             end,
 
             create_index = function(space, index_name, index)
                 local result = art_svc.clusterwide.execute('create_index', {space, index_name, index})
                 if (result[1]) then
-                    art_svc.index.create_index(space, index_name, index)
+                    art_svc.mapping.create_index(space, index_name, index)
                 end
                 return result
             end,
@@ -162,7 +175,7 @@
             rename = function(space, new_name)
                 local result = art_svc.clusterwide.execute('rename', {space, new_name})
                 if (result[1]) then
-                    art_svc.index.rename_space(space, new_name)
+                    art_svc.mapping.rename(space, new_name)
                 end
                 return result
             end,
@@ -170,7 +183,7 @@
             truncate = function(space)
                 local result = art_svc.clusterwide.execute('truncate', {space})
                 if (result[1]) then
-                    art_svc.index.truncate(space)
+                    art_svc.mapping.truncate(space)
                 end
                 return result
             end,
@@ -178,7 +191,7 @@
             drop = function(space)
                 local result = art_svc.clusterwide.execute('drop', {space})
                 if (result[1]) then
-                    art_svc.index.drop(space)
+                    art_svc.mapping.drop(space)
                 end
                 return result
             end,
@@ -223,6 +236,6 @@
                 return result
             end
         }
-    }
+    } -- public API
 
 return art

@@ -10,7 +10,7 @@ import java.util.*;
 @Accessors(chain = true, fluent = true)
 public class TarantoolSpaceIndex {
     private Map<String, Object> index = new LinkedHashMap<>();
-    private List<String> parts = new ArrayList<>();
+    private List<Object> parts = new ArrayList<>();
 
     public TarantoolSpaceIndex type(TarantoolIndexType type) {
         index.put("type", type.toString());
@@ -18,6 +18,11 @@ public class TarantoolSpaceIndex {
     }
 
     public TarantoolSpaceIndex part(String name){
+        parts.add(name);
+        return this;
+    }
+
+    public TarantoolSpaceIndex part(Integer name){
         parts.add(name);
         return this;
     }

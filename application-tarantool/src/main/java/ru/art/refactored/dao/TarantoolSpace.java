@@ -141,7 +141,7 @@ public class TarantoolSpace {
     private Optional<Value> convertResponse(List<?> response){
         response = cast(response.get(0));
         if ((isEmpty(response.get(0))) || response.size() < 2) {
-            getLogger().info("Got empty response");
+            //getLogger().info("Got empty response");
             return empty();
         }
         try {
