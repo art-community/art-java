@@ -1,9 +1,7 @@
 
 package ru.art.test.specification.tarantool
 
-import org.tarantool.TarantoolClient
 import org.tarantool.TarantoolClusterClientConfig
-import ru.art.entity.tuple.PlainTupleWriter
 import ru.art.refactored.configuration.TarantoolInstanceConfiguration
 import ru.art.refactored.configuration.TarantoolModuleConfiguration
 import ru.art.refactored.module.TarantoolModule
@@ -11,22 +9,19 @@ import ru.art.refactored.dao.TarantoolInstance
 import ru.art.entity.Entity
 import ru.art.refactored.model.TarantoolUpdateFieldOperation
 import ru.art.refactored.dao.TarantoolSpace
-import ru.art.refactored.module.connector.TarantoolConnector
 import ru.art.refactored.storage.StorageSpace
 import ru.art.refactored.storage.TarantoolStorageSpace
 import spock.lang.Specification
-import java.util.concurrent.Future
 import static ru.art.refactored.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
 import static ru.art.refactored.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
 import static ru.art.refactored.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
 import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolIndexType
 import static ru.art.entity.PrimitivesFactory.*
-import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.*;
+import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.*
 
 class TarantoolRefactored extends Specification {
 
     def router1Address = "localhost:3311"
-    def router2Address = "localhost:3312"
     def storage1Address = "localhost:3301"
     def storage2Address = "localhost:3302"
     def username = 'username'
@@ -36,7 +31,7 @@ class TarantoolRefactored extends Specification {
         setup:
         def spaceName = "s1_CRUD"
         def clientId = "storage_1"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
         clientConfig.username = username
         clientConfig.password = password
         clientConfig.connectionTimeout = 5 * 1000
@@ -164,7 +159,7 @@ class TarantoolRefactored extends Specification {
         setup:
         def spaceName = "s2_COL"
         def clientId = "storage_2"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
         clientConfig.username = username
         clientConfig.password = password
         clientConfig.connectionTimeout = 5 * 1000
@@ -242,7 +237,7 @@ class TarantoolRefactored extends Specification {
         def clientId = "router_1"
         def spaceName = "r1_crud"
 
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
         clientConfig.username = username
         clientConfig.password = password
         clientConfig.connectionTimeout = 5 * 1000
@@ -391,7 +386,7 @@ class TarantoolRefactored extends Specification {
         def spaceName = "s1_storage_ops"
         def clientId = "storage_1"
 
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
         clientConfig.username = username
         clientConfig.password = password
         clientConfig.connectionTimeout = 5 * 1000

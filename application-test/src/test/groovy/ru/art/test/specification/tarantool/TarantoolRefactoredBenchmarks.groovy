@@ -12,8 +12,6 @@ import ru.art.refactored.dao.TarantoolSpace
 import ru.art.refactored.model.TarantoolUpdateFieldOperation
 import ru.art.refactored.module.TarantoolModule
 import ru.art.refactored.module.connector.TarantoolConnector
-import ru.art.refactored.storage.StorageSpace
-import ru.art.refactored.storage.TarantoolStorageSpace
 import spock.lang.Specification
 
 import java.util.concurrent.Future
@@ -40,7 +38,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
         setup:
         def spaceName = "s1_CRUD"
         def clientId = "storage_1"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
         clientConfig.username = username
         clientConfig.password = password
         clientConfig.connectionTimeout = 5 * 1000
@@ -170,7 +168,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
         def clientId = "router_1"
         def spaceName = "r1_art_get_bench"
 
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
         clientConfig.username = username
         clientConfig.password = password
         clientConfig.connectionTimeout = 5 * 1000
@@ -230,7 +228,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
         def clientId = "router_2"
         def spaceName = "r2_art_inc_bench"
 
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
         clientConfig.username = username
         clientConfig.password = password
         clientConfig.connectionTimeout = 5 * 1000
@@ -254,10 +252,6 @@ class TarantoolRefactoredBenchmarks extends Specification {
                 .intField("bucket_id", 99)
                 .stringField("data", "testData")
                 .stringField("anotherData", "another data")
-                .build()
-        Entity request = new Entity.EntityBuilder()
-                .longField("id", 3)
-                .intField("bucket_id", 99)
                 .build()
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
@@ -288,7 +282,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
         setup:
         def spaceName = "s1_art_get_bench"
         def clientId = "storage_1"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
         clientConfig.username = username
         clientConfig.password = password
         clientConfig.connectionTimeout = 5 * 1000
@@ -342,7 +336,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
         setup:
         def spaceName = "s2_art_inc_bench"
         def clientId = "storage_1"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
         clientConfig.username = username
         clientConfig.password = password
         clientConfig.connectionTimeout = 5 * 1000
@@ -358,7 +352,6 @@ class TarantoolRefactoredBenchmarks extends Specification {
         TarantoolModule tnt = new TarantoolModule(moduleConfig)
         TarantoolInstance db = tnt.getInstance(clientId)
         TarantoolSpace space = tnt.getSpace(clientId, spaceName)
-        TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
 
 
 
@@ -367,7 +360,6 @@ class TarantoolRefactoredBenchmarks extends Specification {
                 .stringField("data", "testData")
                 .stringField("anotherData", "another data")
                 .build()
-        Entity request = new Entity.EntityBuilder().longField("id", 3).build()
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
@@ -397,7 +389,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
         setup:
         def spaceName = "s1_box_get_bench"
         def clientId = "storage_1"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
         clientConfig.username = username
         clientConfig.password = password
         clientConfig.connectionTimeout = 5 * 1000
@@ -437,7 +429,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
         when:
         space.insert(data)
         for (int i = 0; i<benchmarkOpsCount; i++){
-            client.syncOps().call("box.space."+ spaceName +":get", tuple);
+            client.syncOps().call("box.space."+ spaceName +":get", tuple)
         }
 
         then:
@@ -452,7 +444,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
         setup:
         def spaceName = "s2_box_inc_bench"
         def clientId = "storage_2"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
         clientConfig.username = username
         clientConfig.password = password
         clientConfig.connectionTimeout = 5 * 1000
@@ -467,7 +459,6 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
         TarantoolModule tnt = new TarantoolModule(moduleConfig)
         TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
         TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
 
         Entity data = new Entity.EntityBuilder()
@@ -490,7 +481,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
         when:
         for (int i = 0; i<benchmarkOpsCount; i++){
-            client.syncOps().call("box.space."+ spaceName +":auto_increment", tuple);
+            client.syncOps().call("box.space."+ spaceName +":auto_increment", tuple)
         }
 
         then:
@@ -505,7 +496,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
         setup:
         def spaceName = "s2_box_inc_async_bench"
         def clientId = "storage_2"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
         //clientConfig.username = username
         //clientConfig.password = password
         clientConfig.connectionTimeout = 5 * 1000
@@ -520,7 +511,6 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
         TarantoolModule tnt = new TarantoolModule(moduleConfig)
         TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
         TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
 
 
@@ -548,12 +538,12 @@ class TarantoolRefactoredBenchmarks extends Specification {
         when:
         for (int j = 0; j< benchmarkOpsCount/1000; j++) {
             for (int i = 0; i < 1000; i++) {
-                results.push(client.asyncOps().call("box.space." + spaceName + ":auto_increment", tuple));
+                results.push(client.asyncOps().call("box.space." + spaceName + ":auto_increment", tuple))
             }
             for (int i = 0; i < 1000; i++) {
                 results.get(i).get()
             }
-            results.clear();
+            results.clear()
         }
         then:
         true
@@ -567,7 +557,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
         setup:
         def spaceName = "s2_art_inc_async_bench"
         def clientId = "storage_2"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig();
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
         //clientConfig.username = username
         //clientConfig.password = password
         clientConfig.connectionTimeout = 5 * 1000
@@ -582,7 +572,6 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
         TarantoolModule tnt = new TarantoolModule(moduleConfig)
         TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
         TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
 
 
@@ -609,7 +598,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
         when:
         for (int j = 0; j< benchmarkOpsCount/1000; j++) {
             for (int i = 0; i < 1000; i++) {
-                results.push(client.asyncOps().call("art.auto_increment", spaceName, tuple));
+                results.push(client.asyncOps().call("art.auto_increment", spaceName, tuple))
             }
             for (int i = 0; i < 1000; i++) {
                 results.get(i).get()
