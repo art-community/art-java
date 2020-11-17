@@ -84,7 +84,6 @@
             end,
 
             create_index = function(space, index_name, index)
-                ind = index
                 local parts = index.parts
                 for k,v in pairs(parts) do
                     if not (type(v) == 'table') then v = {v} end
