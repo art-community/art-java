@@ -155,83 +155,6 @@ class TarantoolRefactored extends Specification {
 
     }
 
-    def "Storage2 cluster operations lock"(){
-        setup:
-        def spaceName = "s2_COL"
-        def clientId = "storage_2"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        clientConfig.username = username
-        clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
-
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address(storage2Address)
-                .config(clientConfig)
-                .build()
-
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-
-        tnt.getClient(clientId).syncOps().eval("art_svc.space.cluster_op_in_progress = true")
-        String exception = ''
-
-        when:
-        try{
-            db.createSpace(spaceName, tarantoolSpaceConfig())
-        } catch(Exception e){
-            exception = e.getMessage()
-        }
-        then:
-        exception.contentEquals("java.util.concurrent.TimeoutException")
-
-
-        when:
-        try{
-            db.formatSpace(spaceName, tarantoolSpaceFormat())
-        } catch(Exception e){
-            exception = e.getMessage()
-        }
-        then:
-        exception.contentEquals("java.util.concurrent.TimeoutException")
-
-
-        when:
-        try{
-            db.createIndex(spaceName, "primary", tarantoolSpaceIndex())
-        } catch(Exception e){
-            exception = e.getMessage()
-        }
-        then:
-        exception.contentEquals("java.util.concurrent.TimeoutException")
-
-
-        when:
-        try{
-            db.renameSpace(spaceName, spaceName = "s2_COL2")
-        } catch(Exception e){
-            exception = e.getMessage()
-        }
-        then:
-        exception.contentEquals("java.util.concurrent.TimeoutException")
-
-
-        when:
-        try{
-            db.dropSpace(spaceName)
-        } catch(Exception e){
-            exception = e.getMessage()
-        }
-        then:
-        exception.contentEquals("java.util.concurrent.TimeoutException")
-
-
-        cleanup:
-        tnt.getClient(clientId).syncOps().eval("art_svc.space.cluster_op_in_progress = false")
-    }
-
     def "Router1 CRUD"() {
         setup:
         def clientId = "router_1"
@@ -483,5 +406,83 @@ class TarantoolRefactored extends Specification {
         cleanup:
         db.dropSpace(spaceName)
     }
+
+    def "Storage2 cluster operations lock"(){
+        setup:
+        def spaceName = "s2_COL"
+        def clientId = "storage_2"
+        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
+        clientConfig.username = username
+        clientConfig.password = password
+        clientConfig.connectionTimeout = 5 * 1000
+
+        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
+                .address(storage2Address)
+                .config(clientConfig)
+                .build()
+
+        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
+        moduleConfig.instances.put(clientId, instanceConfig)
+
+        TarantoolModule tnt = new TarantoolModule(moduleConfig)
+        TarantoolInstance db = tnt.getInstance(clientId)
+
+        tnt.getClient(clientId).syncOps().eval("art.box.space.cluster_op_in_progress = true")
+        String exception = ''
+
+        when:
+        try{
+            db.createSpace(spaceName, tarantoolSpaceConfig())
+        } catch(Exception e){
+            exception = e.getMessage()
+        }
+        then:
+        exception.contentEquals("java.util.concurrent.TimeoutException")
+
+
+        when:
+        try{
+            db.formatSpace(spaceName, tarantoolSpaceFormat())
+        } catch(Exception e){
+            exception = e.getMessage()
+        }
+        then:
+        exception.contentEquals("java.util.concurrent.TimeoutException")
+
+
+        when:
+        try{
+            db.createIndex(spaceName, "primary", tarantoolSpaceIndex())
+        } catch(Exception e){
+            exception = e.getMessage()
+        }
+        then:
+        exception.contentEquals("java.util.concurrent.TimeoutException")
+
+
+        when:
+        try{
+            db.renameSpace(spaceName, spaceName = "s2_COL2")
+        } catch(Exception e){
+            exception = e.getMessage()
+        }
+        then:
+        exception.contentEquals("java.util.concurrent.TimeoutException")
+
+
+        when:
+        try{
+            db.dropSpace(spaceName)
+        } catch(Exception e){
+            exception = e.getMessage()
+        }
+        then:
+        exception.contentEquals("java.util.concurrent.TimeoutException")
+
+
+        cleanup:
+        tnt.getClient(clientId).syncOps().eval("art.box.space.cluster_op_in_progress = false")
+    }
+
 
 }
