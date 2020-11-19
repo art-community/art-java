@@ -25,8 +25,8 @@ art = {
     },
     
     box = {
-        get = function(space, id)
-            local data = box.space[space]:get(id)
+        get = function(space, key)
+            local data = box.space[space]:get(key)
             if (data == nil) then return {'', ''} end
             local schema_hash = data[#data]
             local response = data:transform(#data, 1)
@@ -34,8 +34,8 @@ art = {
             return {response, response_schema}
         end,
 
-        delete = function(space, id)
-            local data = box.space[space]:get(id)
+        delete = function(space, key)
+            local data = box.space[space]:get(key)
             if data == nil then return {'', ''} end
             local schema_hash = data[#data]
             local response = data:transform(#data, 1)
@@ -47,9 +47,9 @@ art = {
             else
                 box.space[space .. art.constants.schema_suffix]:update(schema_hash, { { '-', 'count', 1}})
             end
-            box.space[space]:delete(id)
+            box.space[space]:delete(key)
 
-            art.cluster.mapping.delete(space, id)
+            art.cluster.mapping.delete(space, key)
 
             response_schema = response_schema['schema']
             return {response, response_schema}
@@ -88,7 +88,11 @@ art = {
         end,
 
         put = function(space, data, bucket_id)
-            art.box.delete(space, data[1][1])
+            local id = {}
+            for k,v in pairs(box.space[space].index[0].parts) do
+                id[k] = data[1][v.fieldno]
+            end
+            art.box.delete(space, id)
             local response = art.box.insert(space, data, bucket_id)
             return response
         end,
@@ -106,7 +110,10 @@ art = {
         end,
         
         upsert = function(space, data, commands, bucket_id)
-            local id = data[1][1]
+            local id = {}
+            for k,v in pairs(box.space[space].index[0].parts) do
+                id[k] = data[1][v.fieldno]
+            end
             if box.space[space]:get(id) then
                 return art.box.update(space, id, commands, bucket_id)
             else
@@ -115,12 +122,12 @@ art = {
         end,
         
         select = function(space, request)
-            local response = {}
             local response_entry = {}
-            local list = box.space[space]:select(request)
-            for index = 1, #list do
-                response_entry[1], response_entry[2] = art.box.get(space, list[index][1])
-                response[index] = response_entry
+            local response = box.space[space]:select(request)
+            for i = 1, #response do
+                response_entry[1] = response[i]:transform(#response[i], 1)
+                response_entry[2] = box.space[space .. art.constants.schema_suffix]:get(response[i][ #response[i] ])['schema']
+                response[i] = {response_entry}
             end
             if response[1] == nil then return {} end
             return response
@@ -190,7 +197,7 @@ art = {
                     {name = 'schema', type = 'any'}
                 }
                 local schema = box.schema.space.create(name .. art.constants.schema_suffix, config)
-                schema:create_index('primary', {
+                schema:create_index('hash', {
                     type = 'tree',
                     if_not_exists = true,
                     parts = {'hash'}
@@ -199,6 +206,7 @@ art = {
 
             create_vsharded = function(name, config)
                 box.schema.space.create(name, config)
+                art.cluster.mapping.space.create(name)
                 config.field_count = nil
                 config.id = nil
                 config.format = {
@@ -208,13 +216,17 @@ art = {
                     {name = 'bucket_id', type = 'unsigned'}
                 }
                 local schema = box.schema.space.create(name .. art.constants.schema_suffix, config)
-                schema:create_index('primary', {
+                schema:create_index('hash', {
                     type = 'tree',
                     if_not_exists = true,
                     parts = {'hash'}
                 })
-                art.cluster.mapping.space.watch(name)
-            end
+                schema:create_index('bucket_id', {
+                    type = 'tree',
+                    parts = {'bucket_id'},
+                    unique = false
+                })
+                end
         },
     },
 
@@ -351,35 +363,49 @@ art = {
             },
 
             space = {
-                watch = function(space)
+                create = function(space)
                     box.schema.space.create(space .. art.constants.mapping_space_suffix)
-                    box.space[space .. art.constants.mapping_space_suffix]:format({
-                        {name = 'id', type = 'any'},
+                end,
+
+                init = function(space)
+                    local format = {
                         {name = 'timestamp', type = 'unsigned'},
                         {name = 'is_delete', type = 'boolean'},
                         {name = 'data', type = 'any', is_nullable = true}
-                    })
-                    box.space[space .. art.constants.mapping_space_suffix]:create_index('timestamp', { parts = {2} })
+                    }
+                    local primary_index_parts = {}
+                    for k, v in pairs(box.space[space].index[0].parts) do
+                        table.insert(format, {name = 'id_part_' .. k, type = v.type, is_nullable = v.is_nullable})
+                        table.insert(primary_index_parts, v.fieldno + 3)
+                    end
+                    box.space[space .. art.constants.mapping_space_suffix]:format(format)
+                    box.space[space .. art.constants.mapping_space_suffix]:create_index('primary', {parts = primary_index_parts})
+                    box.space[space .. art.constants.mapping_space_suffix]:create_index('timestamp', {unique = false, parts = {1}})
 
-                    local watched_fields_counter = {} --add id and bucket_id to watchlist
-                    watched_fields_counter[1] = 1
-                    watched_fields_counter[2] = 1
-
-                    box.space.mapping_watched_spaces:insert(box.tuple.new({space, watched_fields_counter, art.cluster.mapping.default_batch_size }))
+                    box.space.mapping_watched_spaces:insert(box.tuple.new({space, {}, art.cluster.mapping.default_batch_size }))
                 end,
 
                 watch_index = function(space, index_obj)
+                    if not (box.space[space .. art.constants.mapping_space_suffix]) then return end
+                    if (index_obj.id == 0) then art.cluster.mapping.space.init(space, index_obj) end
+
                     local watched_space = box.space.mapping_watched_spaces:get(space)
-                    if not (watched_space) then return end
+                    local watched_fields = watched_space[2]
+
                     for _, v in pairs(index_obj.parts) do
-                        if not (watched_space[2][v.fieldno]) then watched_space[2][v.fieldno] = 0 end
-                        watched_space[2][v.fieldno] = watched_space[2][v.fieldno] + 1
+                        if not (watched_fields[v.fieldno]) then watched_fields[v.fieldno] = 0 end
+                        watched_fields[v.fieldno] = watched_fields[v.fieldno] + 1
                     end
+
+                    watched_space = watched_space:update({{'=', 2, watched_fields}})
+                    box.space.mapping_watched_spaces:replace(watched_space)
                 end,
 
                 rename = function(space, name)
                     if(box.space[space .. art.constants.mapping_space_suffix]) then
                         box.space[space .. art.constants.mapping_space_suffix]:rename(name .. art.constants.mapping_space_suffix)
+                        local watched_space = box.space.mapping_watched_spaces:delete(space)
+                        box.space.mapping_watched_spaces:insert(watched_space:update({{'=', 1, name}}))
                     end
                 end,
 
@@ -494,5 +520,3 @@ art = {
 }
 
 return art
-
-
