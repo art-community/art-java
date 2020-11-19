@@ -173,26 +173,26 @@ public interface TarantoolModuleConstants {
     }
 
     interface Functions {
-        String PUT = "art.put";
-        String GET = "art.get";
-        String REPLACE = "art.replace";
-        String SELECT = "art.select";
-        String DELETE = "art.delete";
-        String INSERT = "art.insert";
-        String UPDATE = "art.update";
-        String UPSERT = "art.upsert";
-        String AUTO_INCREMENT = "art.auto_increment";
+        String PUT = "art.api.put";
+        String GET = "art.api.get";
+        String REPLACE = "art.api.replace";
+        String SELECT = "art.api.select";
+        String DELETE = "art.api.delete";
+        String INSERT = "art.api.insert";
+        String UPDATE = "art.api.update";
+        String UPSERT = "art.api.upsert";
+        String AUTO_INCREMENT = "art.api.auto_increment";
 
-        String CREATE_SPACE = "art.space.create";
-        String FORMAT_SPACE = "art.space.format";
-        String CREATE_INDEX = "art.space.create_index";
-        String DROP_SPACE = "art.space.drop";
-        String RENAME_SPACE = "art.space.rename";
-        String TRUNCATE = "art.space.truncate";
-        String COUNT = "art.space.count";
-        String LEN = "art.space.len";
-        String SCHEMA_COUNT = "art.space.schema_count";
-        String SCHEMA_LEN = "art.space.schema_len";
+        String CREATE_SPACE = "art.api.space.create";
+        String FORMAT_SPACE = "art.api.space.format";
+        String CREATE_INDEX = "art.api.space.create_index";
+        String DROP_SPACE = "art.api.space.drop";
+        String RENAME_SPACE = "art.api.space.rename";
+        String TRUNCATE = "art.api.space.truncate";
+        String COUNT = "art.api.space.count";
+        String LEN = "art.api.space.len";
+        String SCHEMA_COUNT = "art.api.space.schema_count";
+        String SCHEMA_LEN = "art.api.space.schema_len";
     }
 
     enum TarantoolInstanceMode {
