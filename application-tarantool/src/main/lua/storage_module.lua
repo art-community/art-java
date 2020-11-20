@@ -241,31 +241,35 @@ art = {
     },
 
     cluster = {
-        check_op_availability = function(operation, args)
-            art.box.space.wait_for_clustered_op()
-            art.box.space.cluster_op_in_progress = true
-            local result = {}
-            box.begin()
-            result[1], result[2] = pcall(art.box.space[operation], unpack(args))
-            box.rollback()
-            return result
-        end,
+        space_ops = {
+            check_op_availability = function(operation, args)
+                art.box.space.wait_for_clustered_op()
+                art.box.space.cluster_op_in_progress = true
+                local result = {}
+                box.begin()
+                result[1], result[2] = pcall(art.box.space[operation], unpack(args))
+                box.rollback()
+                return result
+            end,
 
-        cancel_op = function()
-            art.box.space.cluster_op_in_progress = false
-        end,
+            cancel_op = function()
+                art.box.space.cluster_op_in_progress = false
+            end,
 
-        execute_op = function(operation, args)
-            local result = {}
-            box.begin()
-            result[1], result[2] = pcall(art.box.space[operation], unpack(args))
-            if(result[1])
-            then box.commit()
-            else box.rollback()
-            end
-            art.box.space.cluster_op_in_progress = false
-            return result
-        end,
+            execute_op = function(operation, args)
+                local result = {}
+                box.begin()
+                result[1], result[2] = pcall(art.box.space[operation], unpack(args))
+                if (result[1])
+                then
+                    box.commit()
+                else
+                    box.rollback()
+                end
+                art.box.space.cluster_op_in_progress = false
+                return result
+            end,
+        },
 
         mapping = {
             default_batch_size = 1024,

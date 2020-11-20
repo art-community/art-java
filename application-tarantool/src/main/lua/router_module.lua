@@ -4,68 +4,71 @@
 
     art = {
         cluster = {
-            execute = function(operation, args)
-                local connections = art.cluster.get_all_masters()
-                local results = {}
+            space_ops = {
+                execute = function(operation, args)
+                    local connections = art.cluster.space_ops.get_all_masters()
+                    local results = {}
 
-                results = art.cluster.check_availability(connections, operation, args)
-                if (not art.cluster.check_results(results))
-                then
-                    art.cluster.cancel_all(connections, operation, args)
-                    return {false, results}
-                else
-                    results = art.cluster.commit_all(connections, operation, args)
-                    return { art.cluster.check_results(results), results}
-                end
-                return
-            end,
+                    results = art.cluster.space_ops.check_availability(connections, operation, args)
+                    if (not art.cluster.space_ops.check_results(results))
+                    then
+                        art.cluster.space_ops.cancel_all(connections, operation, args)
+                        return {false, results}
+                    else
+                        results = art.cluster.space_ops.commit_all(connections, operation, args)
+                        return { art.cluster.space_ops.check_results(results), results}
+                    end
+                    return
+                end,
 
-            check_availability = function(connections, operation, args)
-                local results = {}
-                for k,v in pairs(connections) do
-                    results[k] = art.cluster.remote_call(v,
-                        'art.cluster.check_op_availability', {operation, args})
-                end
-                return results
-            end,
+                check_availability = function(connections, operation, args)
+                    local results = {}
+                    for k,v in pairs(connections) do
+                        results[k] = art.cluster.space_ops.remote_call(v,
+                                'art.cluster.space_ops.check_op_availability', {operation, args})
+                    end
+                    return results
+                end,
 
-            cancel_all = function(connections)
-                local results = {}
-                for k,v in pairs(connections) do
-                    results[k] = art.cluster.remote_call(v, 'art.cluster.cancel_op')
-                end
-                return results
-            end,
+                cancel_all = function(connections)
+                    local results = {}
+                    for k,v in pairs(connections) do
+                        results[k] = art.cluster.space_ops.remote_call(v, 'art.cluster.space_ops.cancel_op')
+                    end
+                    return results
+                end,
 
-            commit_all = function(connections, operation, args)
-                local results = {}
-                for k,v in pairs(connections) do
-                    results[k] = art.cluster.remote_call(v,
-                        'art.cluster.execute_op', {operation, args})
-                end
-                return results
-            end,
+                commit_all = function(connections, operation, args)
+                    local results = {}
+                    for k,v in pairs(connections) do
+                        results[k] = art.cluster.space_ops.remote_call(v,
+                                'art.cluster.space_ops.execute_op', {operation, args})
+                    end
+                    return results
+                end,
 
-            get_all_masters = function()
-                local routes = vshard.router.routeall()
-                local results = {}
-                for k,v in pairs(routes) do
-                    results[k] = v.master.conn
-                end
-                return results
-            end,
+                get_all_masters = function()
+                    local routes = vshard.router.routeall()
+                    local results = {}
+                    for k,v in pairs(routes) do
+                        results[k] = v.master.conn
+                    end
+                    return results
+                end,
 
-            remote_call = function(peer, func_name, args)
-                return peer:call(func_name, args)
-            end,
+                remote_call = function(peer, func_name, args)
+                    return peer:call(func_name, args)
+                end,
 
-            check_results = function(results)
-                local is_ok = true
-                for k,v in pairs(results) do
-                    is_ok = (is_ok and v[1])
-                end
-                return is_ok
-            end,
+                check_results = function(results)
+                    local is_ok = true
+                    for k,v in pairs(results) do
+                        is_ok = (is_ok and v[1])
+                    end
+                    return is_ok
+                end,
+
+            },
 
             mapping = {
                 create = function(space, config)
@@ -107,9 +110,6 @@
                     box.space[space]:drop()
                 end,
 
-                put = function(space, data)
-
-                end
             }
         },
 
@@ -150,7 +150,7 @@
 
             space = {
                 create = function(name, config)
-                    local result = art.cluster.execute('create_vsharded', { name, config})
+                    local result = art.cluster.space_ops.execute('create_vsharded', { name, config})
                     if (result[1]) then
                         art.cluster.mapping.create(name, config)
                     end
@@ -158,14 +158,14 @@
                 end,
 
                 format = function(space, format)
-                    local result = art.cluster.execute('format', { space, format})
+                    local result = art.cluster.space_ops.execute('format', { space, format})
                     if (result[1]) then
                         art.cluster.mapping.format(space, format)
                     end
                 end,
 
                 create_index = function(space, index_name, index)
-                    local result = art.cluster.execute('create_index', { space, index_name, index})
+                    local result = art.cluster.space_ops.execute('create_index', { space, index_name, index})
                     if (result[1]) then
                         art.cluster.mapping.create_index(space, index_name, index)
                     end
@@ -173,7 +173,7 @@
                 end,
 
                 rename = function(space, new_name)
-                    local result = art.cluster.execute('rename', { space, new_name})
+                    local result = art.cluster.space_ops.execute('rename', { space, new_name})
                     if (result[1]) then
                         art.cluster.mapping.rename(space, new_name)
                     end
@@ -181,7 +181,7 @@
                 end,
 
                 truncate = function(space)
-                    local result = art.cluster.execute('truncate', { space})
+                    local result = art.cluster.space_ops.execute('truncate', { space})
                     if (result[1]) then
                         art.cluster.mapping.truncate(space)
                     end
@@ -189,7 +189,7 @@
                 end,
 
                 drop = function(space)
-                    local result = art.cluster.execute('drop', { space})
+                    local result = art.cluster.space_ops.execute('drop', { space})
                     if (result[1]) then
                         art.cluster.mapping.drop(space)
                     end
@@ -197,7 +197,7 @@
                 end,
 
                 count = function(space)
-                    local counts = art.cluster.execute('count', { space})
+                    local counts = art.cluster.space_ops.execute('count', { space})
                     local result = 0
                     if (not counts[1]) then return counts end
                     for k,v in pairs(counts[2]) do
@@ -207,7 +207,7 @@
                 end,
 
                 schema_count = function(space)
-                    local counts = art.cluster.execute('schema_count', { space})
+                    local counts = art.cluster.space_ops.execute('schema_count', { space})
                     local result = 0
                     if (not counts[1]) then return counts end
                     for k,v in pairs(counts[2]) do
@@ -217,7 +217,7 @@
                 end,
 
                 len = function(space)
-                    local counts = art.cluster.execute('len', { space})
+                    local counts = art.cluster.space_ops.execute('len', { space})
                     local result = 0
                     if (not counts[1]) then return counts end
                     for k,v in pairs(counts[2]) do
@@ -227,7 +227,7 @@
                 end,
 
                 schema_len = function(space)
-                    local counts = art.cluster.execute('schema_len', { space})
+                    local counts = art.cluster.space_ops.execute('schema_len', { space})
                     local result = 0
                     if (not counts[1]) then return counts end
                     for k,v in pairs(counts[2]) do
