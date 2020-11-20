@@ -26,7 +26,7 @@ import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolFiel
 import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolIndexType
 
 class TarantoolRefactoredBenchmarks extends Specification {
-    def benchmarkOpsCount = 50000
+    def benchmarkOpsCount = 10000
     def router1Address = "localhost:3311"
     def router2Address = "localhost:3312"
     def storage1Address = "localhost:3301"
@@ -205,10 +205,12 @@ class TarantoolRefactoredBenchmarks extends Specification {
                 .addField("bucket_id", UNSIGNED))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
-                .id(0)
                 .part("id")
                 .ifNotExists(true)
                 .unique(true))
+        db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
+                .part(2)
+                .unique(false))
 
         when:
         space.insert(data)
@@ -261,7 +263,6 @@ class TarantoolRefactoredBenchmarks extends Specification {
                 .addField("bucket_id", UNSIGNED))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
-                .id(0)
                 .part("id")
                 .ifNotExists(true)
                 .unique(true))

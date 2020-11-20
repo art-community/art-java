@@ -14,9 +14,9 @@ public class TarantoolFunctionCaller {
 
 
     public static List<?> call(TarantoolClient client, String function, Object... args){
-        getLogger().info("Calling " + function + "()");
+        //getLogger().info("Calling " + function + "()");
         List<?> result = client.syncOps().call(function, args);
-        getLogger().info("response:" + result.toString());
+        //getLogger().info("response:" + result.toString());
         return result;
     }
 

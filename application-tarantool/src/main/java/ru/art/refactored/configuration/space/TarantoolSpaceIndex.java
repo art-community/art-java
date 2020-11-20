@@ -22,8 +22,8 @@ public class TarantoolSpaceIndex {
         return this;
     }
 
-    public TarantoolSpaceIndex part(Integer name){
-        parts.add(name);
+    public TarantoolSpaceIndex part(Integer number){
+        parts.add(number);
         return this;
     }
 
