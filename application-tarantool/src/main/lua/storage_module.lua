@@ -17,20 +17,30 @@ art = {
             return crc32:result()
         end
     end,
-    
+
+    core = {
+        schema_of = function(space)
+            return box.space[space .. art.constants.schema_suffix]
+        end,
+
+        mapping_updates_of = function(space)
+            return box.space[space.. art.constants.mapping_space_suffix]
+        end
+    },
+
     constants = {
         schema_suffix = '_schema',
 
         mapping_space_suffix = '_mapping_updates',
     },
-    
+
     box = {
         get = function(space, key)
             local data = box.space[space]:get(key)
             if (data == nil) then return {'', ''} end
             local schema_hash = data[#data]
             local response = data:transform(#data, 1)
-            local response_schema = box.space[space .. art.constants.schema_suffix]:get(schema_hash)['schema']
+            local response_schema = art.core.schema_of(space):get(schema_hash)['schema']
             return {response, response_schema}
         end,
 
@@ -40,12 +50,12 @@ art = {
             local schema_hash = data[#data]
             local response = data:transform(#data, 1)
 
-            local response_schema = box.space[space .. art.constants.schema_suffix]:get(schema_hash)
+            local response_schema = art.core.schema_of(space):get(schema_hash)
 
             if (response_schema['count'] == 1) then
-                box.space[space .. art.constants.schema_suffix]:delete(schema_hash)
+                art.core.schema_of(space):delete(schema_hash)
             else
-                box.space[space .. art.constants.schema_suffix]:update(schema_hash, { { '-', 'count', 1}})
+                art.core.schema_of(space):update(schema_hash, { { '-', 'count', 1}})
             end
             box.space[space]:delete(key)
 
@@ -63,7 +73,7 @@ art = {
             box.space[space]:insert(data[1])
 
             local schema_tuple = box.tuple.new({schema_hash, 1, data[2], bucket_id})
-            box.space[space .. art.constants.schema_suffix]:upsert(schema_tuple, { { '+', 'count', 1}})
+            art.core.schema_of(space):upsert(schema_tuple, { { '+', 'count', 1}})
 
             art.cluster.mapping.put(space, data[1])
 
@@ -80,7 +90,7 @@ art = {
 
 
             local schema_tuple = box.tuple.new({schema_hash, 1, data[2], bucket_id})
-            box.space[space .. art.constants.schema_suffix]:upsert(schema_tuple, { { '+', 'count', 1}})
+            art.core.schema_of(space):upsert(schema_tuple, { { '+', 'count', 1}})
 
             art.cluster.mapping.put(space, data[1])
 
@@ -108,7 +118,7 @@ art = {
         replace = function(space, data, bucket_id)
             return art.box.put(space, data, bucket_id)
         end,
-        
+
         upsert = function(space, data, commands, bucket_id)
             local id = {}
             for k,v in pairs(box.space[space].index[0].parts) do
@@ -120,13 +130,13 @@ art = {
                 return art.box.insert(space, data, bucket_id)
             end
         end,
-        
+
         select = function(space, request)
             local response_entry = {}
             local response = box.space[space]:select(request)
             for i = 1, #response do
                 response_entry[1] = response[i]:transform(#response[i], 1)
-                response_entry[2] = box.space[space .. art.constants.schema_suffix]:get(response[i][ #response[i] ])['schema']
+                response_entry[2] = art.core.schema_of(space):get(response[i][ #response[i] ])['schema']
                 response[i] = {response_entry}
             end
             if response[1] == nil then return {} end
@@ -148,7 +158,7 @@ art = {
             end,
 
             schema_count = function(space)
-                return box.space[space .. art.constants.schema_suffix]:count()
+                return art.core.schema_of(space):count()
             end,
 
             len = function(space)
@@ -156,7 +166,7 @@ art = {
             end,
 
             schema_len = function(space)
-                return box.space[space .. art.constants.schema_suffix]:len()
+                return art.core.schema_of(space):len()
             end,
 
             create_index = function(space, name, index)
@@ -167,12 +177,12 @@ art = {
 
             truncate = function(space)
                 box.space[space]:truncate()
-                box.space[space .. art.constants.schema_suffix]:truncate()
+                art.core.schema_of(space):truncate()
                 art.cluster.mapping.space.truncate(space)
             end,
 
             rename = function(space, name)
-                box.space[space .. art.constants.schema_suffix]:rename(name .. art.constants.schema_suffix)
+                art.core.schema_of(space):rename(name .. art.constants.schema_suffix)
                 art.cluster.mapping.space.rename(space, name)
                 return box.space[space]:rename(name)
             end,
@@ -184,7 +194,7 @@ art = {
             drop = function(space)
                 box.space[space]:drop()
                 art.cluster.mapping.space.unwatch(space)
-                box.space[space .. art.constants.schema_suffix]:drop()
+                art.core.schema_of(space):drop()
             end,
 
             create = function(name, config)
@@ -263,11 +273,12 @@ art = {
             uri = {},
             nodes = {},
             primary_node = '',
-
             last_upload_min_timestamp = 0,
+
 
             init = function(uri_list)
                 art.cluster.mapping.uri = uri_list
+                art.cluster.nodes = {}
 
                 if not (box.space.mapping_watched_spaces) then
                     box.schema.space.create('mapping_watched_spaces')
@@ -287,12 +298,29 @@ art = {
                 art.cluster.mapping.primary_node = netbox.connect(art.cluster.mapping.uri[this_rs_uuid])
 
                 art.cluster.mapping.watcher.start()
+                art.cluster.mapping.garbage_collector.start()
             end,
 
             put = function(space, data)
+                if not (art.core.mapping_updates_of(space)) then return end
+                local update = {math.floor(art.fiber.clock()), false}
+                local update_data = {}
+                for k,_ in pairs(box.space.mapping_watched_spaces:get(space)[2]) do
+                    table.insert(update_data, data[k])
+                end
+                update[3] = update_data
+
+                for _,v in pairs(box.space[space].index[0].parts) do
+                    table.insert(update, data[v.fieldno])
+                end
+                art.core.mapping_updates_of(space):put(update)
             end,
 
             delete = function(space, key)
+                if not (art.core.mapping_updates_of(space)) then return end
+                if not (type(key) == 'table') then key = {key} end
+
+                art.core.mapping_updates_of(space):put({math.floor(art.fiber.clock()), true, {}, unpack(key)})
             end,
 
             builder = {
@@ -328,14 +356,17 @@ art = {
                     local batches = {}
                     local prev_iteration_batches_count = 0
                     local spaces
-                    local min_timestamps = {}
+                    local min_timestamp = 0xffffffff
 
                     while(true) do
                         spaces = box.space.mapping_watched_spaces:select()
 
                         for _, v in pairs(spaces) do
                             local batch = art.cluster.mapping.watcher.collect_updates(v)
-                            table.insert(batches, batch)
+                            if(batch) then
+                                min_timestamp = math.min(batch[1][1], min_timestamp)
+                                table.insert(batches, {v.space, batch})
+                            end
                         end
 
                         if (#batches >= art.cluster.mapping.max_batches_count) or (#batches == prev_iteration_batches_count) then
@@ -348,8 +379,20 @@ art = {
                     end
                 end,
 
-                collect_updates = function(batch, watched_space)
-                    return nil
+                collect_updates = function(watched_space)
+                    local iterator = art.cluster.mapping.watcher.iterators[watched_space.space]
+                    if not (iterator) then
+                        iterator = {}
+                        iterator['next'], iterator['table'], iterator['state'] =
+                            art.core.mapping_updates_of(watched_space.space).index.timestamp:pairs()
+                        art.cluster.mapping.watcher.iterators[watched_space.space] = iterator
+                    end
+
+                    local batch = {}
+                    for i=1, watched_space.batch_size do
+                        table.insert(batch, iterator.next(iterator.table, iterator.state))
+                    end
+                    if batch[1] then return batch end
                 end,
 
                 send = function(batches)
@@ -359,7 +402,41 @@ art = {
             },
 
             garbage_collector = {
+                timeout = 1,
+                service_fiber = nil,
+                watchdog_fiber = nil,
 
+                start = function()
+                    art.cluster.mapping.garbage_collector.service_fiber = art.fiber.create(art.cluster.mapping.garbage_collector.service)
+                    art.cluster.mapping.garbage_collector.watchdog_fiber = art.fiber.create(art.cluster.mapping.garbage_collector.watchdog)
+                end,
+
+                watchdog = function()
+                    while(true) do
+                        if (art.fiber.status(art.cluster.mapping.garbage_collector.service_fiber) == 'dead') then
+                            art.cluster.mapping.garbage_collector.service_fiber = art.fiber.create(art.cluster.mapping.garbage_collector.service)
+                        end
+                        art.fiber.sleep(5)
+
+                    end
+                end,
+
+                service = function()
+                    while true do
+                        local watched_spaces = box.space.mapping_watched_spaces:select()
+                        for _, v in pairs(watched_spaces) do
+                            art.cluster.mapping.garbage_collector.cleanup_space(v.space)
+                        end
+                        art.fiber.sleep(art.cluster.mapping.garbage_collector.timeout)
+
+                    end
+                end,
+
+                cleanup_space = function(space)
+                    for _, v in art.core.mapping_updates_of(space).index.timestamp:pairs(art.cluster.mapping.last_upload_min_timestamp, 'LT') do
+                        art.core.mapping_updates_of(space):delete(v:transform(1, 3))
+                    end
+                end
             },
 
             space = {
@@ -367,7 +444,7 @@ art = {
                     box.schema.space.create(space .. art.constants.mapping_space_suffix)
                 end,
 
-                init = function(space)
+                init_space = function(space)
                     local format = {
                         {name = 'timestamp', type = 'unsigned'},
                         {name = 'is_delete', type = 'boolean'},
@@ -376,18 +453,18 @@ art = {
                     local primary_index_parts = {}
                     for k, v in pairs(box.space[space].index[0].parts) do
                         table.insert(format, {name = 'id_part_' .. k, type = v.type, is_nullable = v.is_nullable})
-                        table.insert(primary_index_parts, v.fieldno + 3)
+                        table.insert(primary_index_parts, {v.fieldno + 3, type = v.type})
                     end
-                    box.space[space .. art.constants.mapping_space_suffix]:format(format)
-                    box.space[space .. art.constants.mapping_space_suffix]:create_index('primary', {parts = primary_index_parts})
-                    box.space[space .. art.constants.mapping_space_suffix]:create_index('timestamp', {unique = false, parts = {1}})
+                    art.core.mapping_updates_of(space):format(format)
+                    art.core.mapping_updates_of(space):create_index('primary', { parts = primary_index_parts})
+                    art.core.mapping_updates_of(space):create_index('timestamp', { unique = false, parts = { 1}})
 
                     box.space.mapping_watched_spaces:insert(box.tuple.new({space, {}, art.cluster.mapping.default_batch_size }))
                 end,
 
                 watch_index = function(space, index_obj)
-                    if not (box.space[space .. art.constants.mapping_space_suffix]) then return end
-                    if (index_obj.id == 0) then art.cluster.mapping.space.init(space, index_obj) end
+                    if not (art.core.mapping_updates_of(space)) then return end
+                    if (index_obj.id == 0) then art.cluster.mapping.space.init_space(space, index_obj) end
 
                     local watched_space = box.space.mapping_watched_spaces:get(space)
                     local watched_fields = watched_space[2]
@@ -402,22 +479,22 @@ art = {
                 end,
 
                 rename = function(space, name)
-                    if(box.space[space .. art.constants.mapping_space_suffix]) then
-                        box.space[space .. art.constants.mapping_space_suffix]:rename(name .. art.constants.mapping_space_suffix)
+                    if(art.core.mapping_updates_of(space)) then
+                        art.core.mapping_updates_of(space):rename(name .. art.constants.mapping_space_suffix)
                         local watched_space = box.space.mapping_watched_spaces:delete(space)
                         box.space.mapping_watched_spaces:insert(watched_space:update({{'=', 1, name}}))
                     end
                 end,
 
                 truncate = function(space)
-                    if(box.space[space .. art.constants.mapping_space_suffix]) then
-                        box.space[space .. art.constants.mapping_space_suffix]:truncate()
+                    if(art.core.mapping_updates_of(space)) then
+                        art.core.mapping_updates_of(space):truncate()
                     end
                 end,
 
                 unwatch = function(space)
-                    if(box.space[space .. art.constants.mapping_space_suffix]) then
-                        box.space[space .. art.constants.mapping_space_suffix]:drop()
+                    if(art.core.mapping_updates_of(space)) then
+                        art.core.mapping_updates_of(space):drop()
                         box.space.mapping_watched_spaces:delete(space)
                     end
                 end,
@@ -520,3 +597,5 @@ art = {
 }
 
 return art
+
+art.cluster.mapping.init(mapping_uri)
