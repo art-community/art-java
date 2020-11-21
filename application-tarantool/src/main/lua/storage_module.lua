@@ -1,37 +1,41 @@
 --
---ART module for tarantool boxes
+--ART module for tarantool storages
 --
 
 art = {
-    fiber = require('fiber'),
-
-    hash = function(key)
-        local ldigest = require('digest')
-        if type(key) ~= 'table' then
-            return ldigest.crc32(tostring(key))
-        else
-            local crc32 = ldigest.crc32.new()
-            for _, v in ipairs(key) do
-                crc32:update(tostring(v))
-            end
-            return crc32:result()
-        end
-    end,
+    
 
     core = {
         schema_of = function(space)
-            return box.space[space .. art.constants.schema_suffix]
+            return box.space[space .. art.constants.schema_postfix]
         end,
 
         mapping_updates_of = function(space)
-            return box.space[space.. art.constants.mapping_space_suffix]
-        end
+            return box.space[space.. art.constants.mapping_space_postfix]
+        end,
+
+        clock = require('clock'),
+        
+        hash = function(key)
+            local ldigest = require('digest')
+            if type(key) ~= 'table' then
+                return ldigest.crc32(tostring(key))
+            else
+                local crc32 = ldigest.crc32.new()
+                for _, v in ipairs(key) do
+                    crc32:update(tostring(v))
+                end
+                return crc32:result()
+            end
+        end,
+
+        fiber = require('fiber')
     },
 
     constants = {
-        schema_suffix = '_schema',
+        schema_postfix = '_schema',
 
-        mapping_space_suffix = '_mapping_updates',
+        mapping_space_postfix = '_mapping_updates',
     },
 
     box = {
@@ -68,7 +72,7 @@ art = {
         insert = function(space, data, bucket_id)
             data[1] = box.tuple.new(data[1])
             data[2] = box.tuple.new(data[2])
-            local schema_hash = art.hash({ data[2], bucket_id})
+            local schema_hash = art.core.hash({ data[2], bucket_id})
             data[1] = data[1]:update({{'!', #data[1]+1, schema_hash}})
             box.space[space]:insert(data[1])
 
@@ -83,7 +87,7 @@ art = {
         auto_increment = function(space, data, bucket_id)
             data[1] = box.tuple.new(data[1])
             data[2] = box.tuple.new(data[2])
-            local schema_hash = art.hash({ data[2], bucket_id})
+            local schema_hash = art.core.hash({ data[2], bucket_id})
 
             data[1] = data[1]:update({{'!', #data[1]+1, schema_hash}, {'#', 1, 1}})
             data[1] = box.space[space]:auto_increment(data[1]:totable())
@@ -149,7 +153,7 @@ art = {
 
             wait_for_clustered_op = function()
                 while art.box.space.cluster_op_in_progress do
-                    art.fiber.sleep(1)
+                    art.core.fiber.sleep(1)
                 end
             end,
 
@@ -182,7 +186,7 @@ art = {
             end,
 
             rename = function(space, name)
-                art.core.schema_of(space):rename(name .. art.constants.schema_suffix)
+                art.core.schema_of(space):rename(name .. art.constants.schema_postfix)
                 art.cluster.mapping.space.rename(space, name)
                 return box.space[space]:rename(name)
             end,
@@ -206,7 +210,7 @@ art = {
                     {name = 'count', type = 'unsigned'},
                     {name = 'schema', type = 'any'}
                 }
-                local schema = box.schema.space.create(name .. art.constants.schema_suffix, config)
+                local schema = box.schema.space.create(name .. art.constants.schema_postfix, config)
                 schema:create_index('hash', {
                     type = 'tree',
                     if_not_exists = true,
@@ -225,7 +229,7 @@ art = {
                     {name = 'schema', type = 'any'},
                     {name = 'bucket_id', type = 'unsigned'}
                 }
-                local schema = box.schema.space.create(name .. art.constants.schema_suffix, config)
+                local schema = box.schema.space.create(name .. art.constants.schema_postfix, config)
                 schema:create_index('hash', {
                     type = 'tree',
                     if_not_exists = true,
@@ -277,7 +281,8 @@ art = {
             uri = {},
             nodes = {},
             primary_node = '',
-            last_upload_min_timestamp = 0,
+            last_upload_min_timestamp = 0ULL,
+
 
 
             init = function(uri_list)
@@ -307,10 +312,10 @@ art = {
 
             put = function(space, data)
                 if not (art.core.mapping_updates_of(space)) then return end
-                local update = {math.floor(art.fiber.clock()), false}
+                local update = {art.core.clock.realtime64(), false}
                 local update_data = {}
                 for k,_ in pairs(box.space.mapping_watched_spaces:get(space)[2]) do
-                    table.insert(update_data, data[k])
+                    update_data[k]=data[k]
                 end
                 update[3] = update_data
 
@@ -324,7 +329,7 @@ art = {
                 if not (art.core.mapping_updates_of(space)) then return end
                 if not (type(key) == 'table') then key = {key} end
 
-                art.core.mapping_updates_of(space):put({math.floor(art.fiber.clock()), true, {}, unpack(key)})
+                art.core.mapping_updates_of(space):put({art.core.clock.realtime64(), true, {}, unpack(key)})
             end,
 
             builder = {
@@ -336,22 +341,22 @@ art = {
             watcher = {
                 timeout = 1, --watcher sleep time
 
-                iterators = {},
+                last_collected_timestamps = {},
 
                 service_fiber = nil,
                 watchdog_fiber = nil,
 
                 start = function()
-                    art.cluster.mapping.watcher.service_fiber = art.fiber.create(art.cluster.mapping.watcher.service)
-                    art.cluster.mapping.watcher.watchdog_fiber = art.fiber.create(art.cluster.mapping.watcher.watchdog)
+                    art.cluster.mapping.watcher.service_fiber = art.core.fiber.create(art.cluster.mapping.watcher.service)
+                    art.cluster.mapping.watcher.watchdog_fiber = art.core.fiber.create(art.cluster.mapping.watcher.watchdog)
                 end,
 
                 watchdog = function()
                     while(true) do
-                        if (art.fiber.status(art.cluster.mapping.watcher.service_fiber) == 'dead') then
-                            art.cluster.mapping.watcher.service_fiber = art.fiber.create(art.cluster.mapping.watcher.service)
+                        if (art.core.fiber.status(art.cluster.mapping.watcher.service_fiber) == 'dead') then
+                            art.cluster.mapping.watcher.service_fiber = art.core.fiber.create(art.cluster.mapping.watcher.service)
                         end
-                        art.fiber.sleep(5)
+                        art.core.fiber.sleep(5)
 
                     end
                 end,
@@ -360,15 +365,15 @@ art = {
                     local batches = {}
                     local prev_iteration_batches_count = 0
                     local spaces
-                    local min_timestamp = 0xffffffff
+                    local min_timestamp = 0xffffffffffffffffULL --max unsigned int64
 
                     while(true) do
                         spaces = box.space.mapping_watched_spaces:select()
 
                         for _, v in pairs(spaces) do
                             local batch = art.cluster.mapping.watcher.collect_updates(v)
-                            if(batch) then
-                                min_timestamp = math.min(batch[1][1], min_timestamp)
+                            if (batch) then
+                                if (batch[1][1] < min_timestamp) then min_timestamp = batch[1][1] end
                                 table.insert(batches, {v.space, batch})
                             end
                         end
@@ -376,7 +381,8 @@ art = {
                         if (#batches >= art.cluster.mapping.max_batches_count) or (#batches == prev_iteration_batches_count) then
                             art.cluster.mapping.watcher.send(batches)
                             batches = {}
-                            art.fiber.sleep(art.cluster.mapping.watcher.timeout)
+                            if (min_timestamp < 0xffffffffffffffffULL) then art.cluster.mapping.last_upload_min_timestamp = min_timestamp end
+                            art.core.fiber.sleep(art.cluster.mapping.watcher.timeout)
                         end
 
                         prev_iteration_batches_count = #batches
@@ -384,24 +390,27 @@ art = {
                 end,
 
                 collect_updates = function(watched_space)
-                    local iterator = art.cluster.mapping.watcher.iterators[watched_space.space]
-                    if not (iterator) then
-                        iterator = {}
-                        iterator['next'], iterator['table'], iterator['state'] =
-                            art.core.mapping_updates_of(watched_space.space).index.timestamp:pairs()
-                        art.cluster.mapping.watcher.iterators[watched_space.space] = iterator
+                    if not (art.cluster.mapping.watcher.last_collected_timestamps[watched_space.space]) then
+                        art.cluster.mapping.watcher.last_collected_timestamps[watched_space.space] = art.cluster.mapping.last_upload_min_timestamp
                     end
 
                     local batch = {}
-                    for i=1, watched_space.batch_size do
-                        table.insert(batch, iterator.next(iterator.table, iterator.state))
+                    for _,v in art.core.mapping_updates_of(watched_space.space).index.timestamp:pairs(
+                            art.cluster.mapping.watcher.last_collected_timestamps[watched_space.space], 'GT') do
+                        table.insert(batch, v)
+                        if #batch == watched_space.batch_size then break end
                     end
-                    if batch[1] then return batch end
+
+                    if batch[1] then
+                        art.cluster.mapping.watcher.last_collected_timestamps[watched_space.space] = batch[#batch][1]
+                        return batch
+                    end
                 end,
 
                 send = function(batches)
-                    if (#batches < 1) then return
-                    end
+                    if not(batches[1]) then return end
+
+                    art.cluster.mapping.primary_node:call('art.cluster.mapping.save_to_pending', {batches})
                 end
             },
 
@@ -411,16 +420,16 @@ art = {
                 watchdog_fiber = nil,
 
                 start = function()
-                    art.cluster.mapping.garbage_collector.service_fiber = art.fiber.create(art.cluster.mapping.garbage_collector.service)
-                    art.cluster.mapping.garbage_collector.watchdog_fiber = art.fiber.create(art.cluster.mapping.garbage_collector.watchdog)
+                    art.cluster.mapping.garbage_collector.service_fiber = art.core.fiber.create(art.cluster.mapping.garbage_collector.service)
+                    art.cluster.mapping.garbage_collector.watchdog_fiber = art.core.fiber.create(art.cluster.mapping.garbage_collector.watchdog)
                 end,
 
                 watchdog = function()
                     while(true) do
-                        if (art.fiber.status(art.cluster.mapping.garbage_collector.service_fiber) == 'dead') then
-                            art.cluster.mapping.garbage_collector.service_fiber = art.fiber.create(art.cluster.mapping.garbage_collector.service)
+                        if (art.core.fiber.status(art.cluster.mapping.garbage_collector.service_fiber) == 'dead') then
+                            art.cluster.mapping.garbage_collector.service_fiber = art.core.fiber.create(art.cluster.mapping.garbage_collector.service)
                         end
-                        art.fiber.sleep(5)
+                        art.core.fiber.sleep(5)
 
                     end
                 end,
@@ -431,7 +440,7 @@ art = {
                         for _, v in pairs(watched_spaces) do
                             art.cluster.mapping.garbage_collector.cleanup_space(v.space)
                         end
-                        art.fiber.sleep(art.cluster.mapping.garbage_collector.timeout)
+                        art.core.fiber.sleep(art.cluster.mapping.garbage_collector.timeout)
 
                     end
                 end,
@@ -445,7 +454,7 @@ art = {
 
             space = {
                 create = function(space)
-                    box.schema.space.create(space .. art.constants.mapping_space_suffix)
+                    box.schema.space.create(space .. art.constants.mapping_space_postfix)
                 end,
 
                 init_space = function(space)
@@ -484,7 +493,7 @@ art = {
 
                 rename = function(space, name)
                     if(art.core.mapping_updates_of(space)) then
-                        art.core.mapping_updates_of(space):rename(name .. art.constants.mapping_space_suffix)
+                        art.core.mapping_updates_of(space):rename(name .. art.constants.mapping_space_postfix)
                         local watched_space = box.space.mapping_watched_spaces:delete(space)
                         box.space.mapping_watched_spaces:insert(watched_space:update({{'=', 1, name}}))
                     end
@@ -602,4 +611,4 @@ art = {
 
 return art
 
-art.cluster.mapping.init(mapping_uri)
+--art.cluster.mapping.init(mapping_uri)
