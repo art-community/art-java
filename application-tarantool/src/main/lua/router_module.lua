@@ -128,15 +128,30 @@
 
                     rename = function(space, new_name)
                         box.space[space]:rename(new_name)
+                        art.cluster.mapping.space.rename_space_in_pending(space, new_name)
                     end,
 
                     truncate = function(space)
                         box.space[space]:truncate()
+                        art.cluster.mapping.space.delete_pending_space_updates(space)
                     end,
 
                     drop = function(space)
                         box.space[space]:drop()
+                        art.cluster.mapping.space.delete_pending_space_updates(space)
                     end,
+
+                    delete_pending_space_updates = function(space)
+                        for _,v in box.space.mapping_pending_updates.index.space:pairs(space) do
+                            box.space.mapping_pending_updates:delete(v[1])
+                        end
+                    end,
+
+                    rename_space_in_pending = function(space, new_name)
+                        for _,v in box.space.mapping_pending_updates.index.space:pairs(space) do
+                            box.space.mapping_pending_updates:update(v[1], {{'=', 2, new_name}})
+                        end
+                    end
                 },
 
                 save_to_pending = function(batches)
@@ -275,7 +290,7 @@
                 rename = function(space, new_name)
                     local result = art.cluster.space_ops.execute('rename', { space, new_name})
                     if (result[1]) then
-                        art.cluster.mapping.space.rename(space, new_name)
+                        box.atomic(art.cluster.mapping.space.rename, space, new_name)
                     end
                     return result
                 end,
@@ -283,7 +298,7 @@
                 truncate = function(space)
                     local result = art.cluster.space_ops.execute('truncate', { space})
                     if (result[1]) then
-                        art.cluster.mapping.space.truncate(space)
+                        box.atomic(art.cluster.mapping.space.truncate, space)
                     end
                     return result
                 end,
@@ -291,7 +306,7 @@
                 drop = function(space)
                     local result = art.cluster.space_ops.execute('drop', { space})
                     if (result[1]) then
-                        art.cluster.mapping.space.drop(space)
+                        box.atomic(art.cluster.mapping.space.drop, space)
                     end
                     return result
                 end,

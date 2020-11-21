@@ -214,7 +214,7 @@ class TarantoolRefactored extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         space.autoIncrement(data)
-        //db.renameSpace(spaceName, spaceName = "r1_crud2")
+        db.renameSpace(spaceName, spaceName = "r1_crud2")
         data = new Entity.EntityBuilder()
                 .intField("id", 7)
                 .intField("bucket_id", 99)
@@ -303,8 +303,8 @@ class TarantoolRefactored extends Specification {
                 .build()
         space.get(request).isPresent() && space.get(request2).isPresent()
 
-        cleanup:
-        db.dropSpace(spaceName)
+        //cleanup:
+        //db.dropSpace(spaceName)
     }
 
     def "TarantoolStorage1 interface ops"(){
