@@ -266,6 +266,9 @@ class TarantoolRefactoredBenchmarks extends Specification {
                 .part("id")
                 .ifNotExists(true)
                 .unique(true))
+        db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
+                .part(2)
+                .unique(false))
 
         when:
 

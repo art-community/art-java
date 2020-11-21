@@ -214,7 +214,7 @@ class TarantoolRefactored extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         space.autoIncrement(data)
-        db.renameSpace(spaceName, spaceName = "storage_test2")
+        //db.renameSpace(spaceName, spaceName = "r1_crud2")
         data = new Entity.EntityBuilder()
                 .intField("id", 7)
                 .intField("bucket_id", 99)

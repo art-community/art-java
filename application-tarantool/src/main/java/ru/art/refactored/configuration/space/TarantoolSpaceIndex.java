@@ -87,6 +87,11 @@ public class TarantoolSpaceIndex {
         return this;
     }
 
+    public TarantoolSpaceIndex sequence(){
+        index.put("sequence", true);
+        return this;
+    }
+
     public TarantoolSpaceIndex func(String func){
         index.put("func", func);
         return this;
