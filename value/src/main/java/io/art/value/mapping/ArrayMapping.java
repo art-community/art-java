@@ -18,19 +18,29 @@
 
 package io.art.value.mapping;
 
+import io.art.value.factory.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
-import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.value.factory.ArrayFactory.*;
+import static java.util.Arrays.*;
 import java.util.*;
 
 @UtilityClass
 public class ArrayMapping {
+    public ArrayToModelMapper<int[]> toIntArray = ArrayValue::intArray;
+    public ArrayToModelMapper<long[]> toLongArray = ArrayValue::longArray;
+    public ArrayToModelMapper<short[]> toShortArray = ArrayValue::shortArray;
+    public ArrayToModelMapper<double[]> toDoubleArray = ArrayValue::doubleArray;
+    public ArrayToModelMapper<float[]> toFloatArray = ArrayValue::floatArray;
+    public ArrayToModelMapper<byte[]> toByteArray = ArrayValue::byteArray;
+    public ArrayToModelMapper<char[]> toCharArray = ArrayValue::charArray;
+    public ArrayToModelMapper<boolean[]> toBoolArray = ArrayValue::boolArray;
+
     public static <T> ArrayToModelMapper<Collection<T>> toCollection(ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.mapAsList(elementMapper));
     }
@@ -76,13 +86,22 @@ public class ArrayMapping {
         return array -> let(array, notNull -> notNull.mapToDeque(elementMapper));
     }
 
+    
+    public ArrayFromModelMapper<int[]> fromIntArray = ArrayFactory::intArray;
+    public ArrayFromModelMapper<long[]> fromLongArray = ArrayFactory::longArray;
+    public ArrayFromModelMapper<short[]> fromShortArray = ArrayFactory::shortArray;
+    public ArrayFromModelMapper<double[]> fromDoubleArray = ArrayFactory::doubleArray;
+    public ArrayFromModelMapper<float[]> fromFloatArray = ArrayFactory::floatArray;
+    public ArrayFromModelMapper<byte[]> fromByteArray = ArrayFactory::byteArray;
+    public ArrayFromModelMapper<char[]> fromCharArray = ArrayFactory::charArray;
+    public ArrayFromModelMapper<boolean[]> fromBoolArray = ArrayFactory::boolArray;
 
     public static <T> ArrayFromModelMapper<Collection<T>> fromCollection(ValueFromModelMapper<T, ? extends Value> elementMapper) {
         return list -> let(list, notNull -> array(list, elementMapper));
     }
 
     public static <T> ArrayFromModelMapper<T[]> fromArray(ValueFromModelMapper<T, ? extends Value> elementMapper) {
-        return list -> let(list, notNull -> array(copyOf(list), elementMapper));
+        return array -> let(array, notNull -> array(asList(array), elementMapper));
     }
 
     public static <T> ArrayFromModelMapper<List<T>> fromList(ValueFromModelMapper<T, ? extends Value> elementMapper) {

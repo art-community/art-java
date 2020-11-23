@@ -18,11 +18,18 @@
 
 package io.art.value.mapping;
 
+import io.art.core.extensions.*;
 import io.art.value.factory.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
+import static io.art.core.checker.NullityChecker.let;
+import static io.art.core.extensions.DateTimeExtensions.*;
+import static io.art.value.factory.PrimitivesFactory.longPrimitive;
+import static io.art.value.factory.PrimitivesFactory.stringPrimitive;
+import java.time.*;
+import java.util.*;
 
 @UtilityClass
 public class PrimitiveMapping {
@@ -46,4 +53,22 @@ public class PrimitiveMapping {
 
     public static PrimitiveFromModelMapper<Float> fromFloat = PrimitivesFactory::floatPrimitive;
     public static PrimitiveToModelMapper<Float> toFloat = Primitive::getFloat;
+
+    public static PrimitiveFromModelMapper<Short> fromShort = PrimitivesFactory::shortPrimitive;
+    public static PrimitiveToModelMapper<Short> toShort = Primitive::getShort;
+
+    public static PrimitiveFromModelMapper<Character> fromChar = PrimitivesFactory::charPrimitive;
+    public static PrimitiveToModelMapper<Character> toChar = Primitive::getChar;
+
+    public static PrimitiveFromModelMapper<UUID> fromUuid = uuid -> stringPrimitive(uuid.toString());
+    public static PrimitiveToModelMapper<UUID> toUuid = uuid -> UUID.fromString(uuid.getString());
+
+    public static PrimitiveFromModelMapper<LocalDateTime> fromLocalDateTime = dateTime -> longPrimitive(toMillis(dateTime));
+    public static PrimitiveToModelMapper<LocalDateTime> toLocalDateTime = dateTime -> localFromMillis(dateTime.getLong());
+
+    public static PrimitiveFromModelMapper<ZonedDateTime> fromZonedDateTime = dateTime -> longPrimitive(toMillis(dateTime));
+    public static PrimitiveToModelMapper<ZonedDateTime> toZonedDateTime = dateTime -> zonedFromMillis(dateTime.getLong());
+
+    public static PrimitiveFromModelMapper<Date> fromDate = dateTime -> longPrimitive(dateTime.getTime());
+    public static PrimitiveToModelMapper<Date> toDate = dateTime -> new Date(dateTime.getLong());
 }

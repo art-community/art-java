@@ -35,6 +35,14 @@ public class PrimitivesFactory {
     public static Primitive intPrimitive(Integer value) {
         return new Primitive(value, INT);
     }
+    
+    public static Primitive shortPrimitive(Short value) {
+        return new Primitive(value, INT);
+    }
+    
+    public static Primitive charPrimitive(Character value) {
+        return new Primitive(value, BYTE);
+    }
 
     public static Primitive boolPrimitive(Boolean value) {
         return new Primitive(value, BOOL);
@@ -49,30 +57,6 @@ public class PrimitivesFactory {
     }
 
     public static Primitive floatPrimitive(Float value) {
-        return new Primitive(value, FLOAT);
-    }
-
-    public static Primitive longPrimitive(long value) {
-        return new Primitive(value, LONG);
-    }
-
-    public static Primitive intPrimitive(int value) {
-        return new Primitive(value, INT);
-    }
-
-    public static Primitive boolPrimitive(boolean value) {
-        return new Primitive(value, BOOL);
-    }
-
-    public static Primitive doublePrimitive(double value) {
-        return new Primitive(value, DOUBLE);
-    }
-
-    public static Primitive bytePrimitive(byte value) {
-        return new Primitive(value, BYTE);
-    }
-
-    public static Primitive floatPrimitive(float value) {
         return new Primitive(value, FLOAT);
     }
 }

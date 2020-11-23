@@ -25,10 +25,12 @@ import io.art.value.mapper.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.extensions.ArrayExtensions.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
+import static io.art.value.mapping.PrimitiveMapping.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -164,6 +166,39 @@ public class ArrayValue implements Value {
     }
 
 
+    public int[] intArray() {
+        return unbox(mapAsList(toInt).toArray(new Integer[0]));
+    }
+
+    public long[] longArray() {
+        return unbox(mapAsList(toLong).toArray(new Long[0]));
+    }
+
+    public short[] shortArray() {
+        return unbox(mapAsList(toShort).toArray(new Short[0]));
+    }
+    
+    public double[] doubleArray() {
+        return unbox(mapAsList(toDouble).toArray(new Double[0]));
+    }
+    
+    public float[] floatArray() {
+        return unbox(mapAsList(toFloat).toArray(new Float[0]));
+    }
+    
+    public byte[] byteArray() {
+        return unbox(mapAsList(toByte).toArray(new Byte[0]));
+    }
+    
+    public char[] charArray() {
+        return unbox(mapAsList(toChar).toArray(new Character[0]));
+    }
+    
+    public boolean[] boolArray() {
+        return unbox(mapAsList(toBool).toArray(new Boolean[0]));
+    }
+
+    
     private class ProxyList<T> implements List<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
         private final LazyValue<List<T>> evaluated;

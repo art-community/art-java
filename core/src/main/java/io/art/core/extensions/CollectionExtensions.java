@@ -54,6 +54,7 @@ public final class CollectionExtensions {
         set.addAll(source);
         return set;
     }
+    
     public static <T> List<T> combine(List<T> first, Collection<T> second) {
         List<T> list = dynamicArrayOf();
         list.addAll(first);

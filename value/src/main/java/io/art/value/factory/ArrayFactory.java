@@ -40,6 +40,12 @@ public class ArrayFactory {
         return new ArrayValue(index -> stringPrimitive(cast(value.get(index))), lazy(value::size));
     }
 
+    public static ArrayValue shortArray(List<Short> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return new ArrayValue(index -> intPrimitive(cast(value.get(index))), lazy(value::size));
+    }
+
     public static ArrayValue longArray(List<Long> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
@@ -87,6 +93,12 @@ public class ArrayFactory {
         return longArray(fixedArrayOf(value));
     }
 
+    public static ArrayValue shortArray(Collection<Short> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return shortArray(fixedArrayOf(value));
+    }
+
     public static ArrayValue intArray(Collection<Integer> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
@@ -124,6 +136,12 @@ public class ArrayFactory {
         return new ArrayValue(index -> longPrimitive(value[index]), lazy(() -> value.length));
     }
 
+    public static ArrayValue shortArray(short[] value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return new ArrayValue(index -> shortPrimitive(value[index]), lazy(() -> value.length));
+    }
+
     public static ArrayValue intArray(int[] value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
@@ -152,6 +170,13 @@ public class ArrayFactory {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(index -> bytePrimitive(value[index]), lazy(() -> value.length));
+    }
+
+
+    public static ArrayValue charArray(char[] value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return new ArrayValue(index -> charPrimitive(value[index]), lazy(() -> value.length));
     }
 
 

@@ -22,6 +22,7 @@ import io.art.value.constants.*;
 import io.art.value.constants.ValueConstants.ValueType.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.value.constants.ValueConstants.ValueType.PrimitiveType.STRING;
 import java.util.*;
@@ -50,6 +51,18 @@ public class Primitive implements Value {
             return Integer.parseInt((String) value);
         }
         return ((Number) value).intValue();
+    }
+
+    public Short getShort() {
+        if (Objects.isNull(value)) return null;
+        if (primitiveType == STRING) {
+            return Short.parseShort((String) value);
+        }
+        return ((Number) value).shortValue();
+    }
+
+    public Character getChar() {
+        return let(getByte(), value -> (char) (value & 0xFF));
     }
 
     public Double getDouble() {

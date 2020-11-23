@@ -149,7 +149,7 @@ public class TarantoolIndexConfiguration {
 
     @Getter
     @Builder
-    public static class Part {
+    public static class  Part {
         private final int fieldNumber;
         private String collation;
         @Builder.Default
