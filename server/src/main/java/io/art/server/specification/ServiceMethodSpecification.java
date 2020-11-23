@@ -97,7 +97,11 @@ public class ServiceMethodSpecification {
     }
 
     private Object mapInput(Flux<Value> input) {
-        Flux<Object> mappedInput = input.filter(Objects::nonNull).filter(value -> !deactivated()).map(value -> inputMapper.map(cast(value)));
+        Flux<Object> mappedInput = input
+                .filter(value -> !deactivated())
+                .map(value -> inputMapper.map(cast(value)))
+                .filter(Objects::nonNull)
+                .map(Caster::cast);
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
             mappedInput = mappedInput.transformDeferred(decorator);
         }
@@ -121,6 +125,7 @@ public class ServiceMethodSpecification {
             }
             return mappedOutput
                     .map(value -> (Value) outputMapper.map(cast(value)))
+                    .filter(Objects::nonNull)
                     .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
 
