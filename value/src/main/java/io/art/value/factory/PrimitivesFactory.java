@@ -20,6 +20,7 @@ package io.art.value.factory;
 
 import io.art.value.immutable.*;
 import lombok.experimental.*;
+import static io.art.core.checker.NullityChecker.let;
 import static io.art.value.constants.ValueConstants.ValueType.PrimitiveType.*;
 
 @UtilityClass
@@ -41,7 +42,7 @@ public class PrimitivesFactory {
     }
     
     public static Primitive charPrimitive(Character value) {
-        return new Primitive(value, BYTE);
+        return new Primitive(let(value, character -> (byte) character.charValue(), (Byte) null) , BYTE);
     }
 
     public static Primitive boolPrimitive(Boolean value) {
