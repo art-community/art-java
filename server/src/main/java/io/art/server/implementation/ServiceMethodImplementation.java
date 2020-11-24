@@ -29,6 +29,13 @@ public class ServiceMethodImplementation {
     private final String methodId;
     private final Function<?, ?> functor;
 
+    public static <T> ServiceMethodImplementation runner(Runnable runner, String serviceId, String methodId) {
+        return new ServiceMethodImplementation(serviceId, methodId, request -> {
+            runner.run();
+            return null;
+        });
+    }
+
     public static <T> ServiceMethodImplementation consumer(Consumer<T> consumer, String serviceId, String methodId) {
         return new ServiceMethodImplementation(serviceId, methodId, request -> {
             consumer.accept(cast(request));
