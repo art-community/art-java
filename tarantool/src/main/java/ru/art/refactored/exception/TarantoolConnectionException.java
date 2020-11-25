@@ -1,7 +1,7 @@
 /*
- * ART
+ * ART Java
  *
- * Copyright 2020 ART
+ * Copyright 2019 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.server.specification;
+package ru.art.refactored.exception;
 
-import io.art.server.model.*;
-import lombok.*;
-import java.util.*;
+public class TarantoolConnectionException extends RuntimeException {
+    public TarantoolConnectionException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-@Getter
-@Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ServiceSpecification {
-    @EqualsAndHashCode.Include
-    private final String serviceId;
-    private final ServiceConfiguration configuration;
-
-    @Singular("method")
-    private final Map<String, ServiceMethodSpecification> methods;
+    public TarantoolConnectionException(String message) {
+        super(message);
+    }
 }

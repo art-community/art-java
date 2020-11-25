@@ -64,13 +64,14 @@ public class RsocketServer implements Server {
             ServerTransport<CloseableChannel> transport = transportMode == TCP
                     ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
                     : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
-            this.server.set(server
+            Disposable disposable = server
                     .interceptors(interceptorRegistry -> configuration.getInterceptorConfigurer().accept(interceptorRegistry))
                     .payloadDecoder(configuration.getPayloadDecoder())
                     .bind(transport)
-                    .doOnSubscribe(subscription -> getLogger().info("RSocket server started"))
+                    .doOnSubscribe(subscription -> getLogger().info(SERVER_STARTED))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
-                    .subscribe());
+                    .subscribe();
+            this.server.set(disposable);
         }
     }
 
@@ -101,7 +102,7 @@ public class RsocketServer implements Server {
     }
 
     private Mono<RSocket> createSocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
-        Mono<ServingRsocket> socket = Mono.create(emitter -> emitter.success(new ServingRsocket(payload, requesterSocket)));
+        Mono<ServingRsocket> socket = Mono.create(emitter -> emitter.success(new ServingRsocket(payload, requesterSocket, configuration)));
         Logger logger = getLogger();
         if (configuration.isLogging()) {
             socket = socket

@@ -1,7 +1,7 @@
 /*
- * ART
+ * ART Java
  *
- * Copyright 2020 ART
+ * Copyright 2019 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,17 @@
  * limitations under the License.
  */
 
-package io.art.server.specification;
+package ru.art.tarantool.model;
 
-import io.art.server.model.*;
 import lombok.*;
 import java.util.*;
 
 @Getter
-@Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ServiceSpecification {
-    @EqualsAndHashCode.Include
-    private final String serviceId;
-    private final ServiceConfiguration configuration;
+@Builder(buildMethodName = "map", builderMethodName = "entityFieldsMapping")
+public class TarantoolEntityFieldsMapping {
+    private final Map<String, Integer> fieldsMapping;
 
-    @Singular("method")
-    private final Map<String, ServiceMethodSpecification> methods;
+    public int map(String fieldName) {
+        return fieldsMapping.get(fieldName);
+    }
 }

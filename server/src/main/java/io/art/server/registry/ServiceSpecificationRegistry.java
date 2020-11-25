@@ -18,10 +18,12 @@
 
 package io.art.server.registry;
 
+import com.google.common.collect.*;
 import io.art.server.model.*;
 import io.art.server.specification.*;
 import io.art.value.immutable.*;
 import io.art.value.mapping.*;
+import static com.google.common.collect.ImmutableMap.copyOf;
 import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.server.constants.ServerModuleConstants.*;
 import static java.util.Optional.*;
@@ -56,5 +58,9 @@ public class ServiceSpecificationRegistry {
     public ServiceSpecificationRegistry register(String id, ServiceSpecification specification) {
         services.put(id, specification);
         return this;
+    }
+
+    public ImmutableMap<String, ServiceSpecification> getServices() {
+        return copyOf(services);
     }
 }

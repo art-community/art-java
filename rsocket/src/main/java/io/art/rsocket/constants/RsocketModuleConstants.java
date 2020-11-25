@@ -29,6 +29,7 @@ public interface RsocketModuleConstants {
 
     interface LoggingMessages {
         String RSOCKET_DISPOSING = "Disposing RSocket";
+        String SERVER_STARTED = "RSocket server started";
         String SERVER_STOPPED = "RSocket server stopped";
         String SERVER_CLIENT_CONNECTED = "RSocket server client connected";
         String SERVER_CLIENT_DISCONNECTED = "RSocket server client disconnected";
