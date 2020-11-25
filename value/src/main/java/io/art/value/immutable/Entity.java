@@ -18,6 +18,7 @@
 
 package io.art.value.immutable;
 
+import com.google.common.collect.*;
 import io.art.core.checker.*;
 import io.art.core.exception.*;
 import io.art.core.lazy.*;
@@ -197,7 +198,11 @@ public class Entity implements Value {
         return let(find(key), value -> mapper.map(cast(value)));
     }
 
-
+    
+    public boolean has(Primitive key) {
+        return keys.contains(key);
+    }
+    
     public class ProxyMap<K, V> implements Map<K, V> {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
@@ -284,5 +289,12 @@ public class Entity implements Value {
         }
     }
 
+    
+    public EntityBuilder toBuilder() {
+        EntityBuilder entityBuilder = entityBuilder();
+        keys.forEach(key -> entityBuilder.lazyPut(key, () -> valueProvider.apply(key)));
+        return entityBuilder;
+    } 
+    
     public static Entity EMPTY = entityBuilder().build();
 }

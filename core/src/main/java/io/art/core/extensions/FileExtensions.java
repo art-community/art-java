@@ -32,6 +32,7 @@ import static java.nio.ByteBuffer.*;
 import static java.nio.channels.FileChannel.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -295,5 +296,31 @@ public class FileExtensions {
 
     public static File fileOf(URL url) {
         return new File(ExceptionHandler.<URI>wrapException(InternalRuntimeException::new).call(url::toURI));
+    }
+
+    public static void copyRecursive(Path from, Path to) {
+        File file = from.toFile();
+        if (!file.exists()) {
+            return;
+        }
+        try {
+            if (file.isFile()) {
+                if (!to.getParent().toFile().exists()) {
+                    createDirectories(to.getParent());
+                }
+                copy(from, to, REPLACE_EXISTING);
+                return;
+            }
+            File[] children = file.listFiles();
+            if (isNull(children) || isEmpty(children)) {
+                return;
+            }
+            for (File child : children) {
+                Path toPath = to.resolve(child.toPath().getFileName());
+                copyRecursive(child.toPath(), toPath);
+            }
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
     }
 }
