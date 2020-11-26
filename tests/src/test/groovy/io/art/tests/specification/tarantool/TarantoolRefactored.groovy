@@ -2,6 +2,7 @@
 package io.art.tests.specification.tarantool
 
 import io.art.value.immutable.Entity
+import io.art.value.immutable.Value
 import org.tarantool.TarantoolClusterClientConfig
 import io.art.refactored.configuration.TarantoolInstanceConfiguration
 import io.art.refactored.configuration.TarantoolModuleConfiguration
@@ -80,7 +81,7 @@ class TarantoolRefactored extends Specification {
         when:
         space.insert(data)
         then:
-        space.get(request).get() == data
+        ((Entity) space.get(request).get()).asMap() == data.asMap()
 
 
         when:
@@ -108,7 +109,7 @@ class TarantoolRefactored extends Specification {
         request = intPrimitive(7)
         Entity response = space.select(request).get().get(0) as Entity
         then:
-        response == data
+        response.asMap() == data.asMap()
 
 
         when:
@@ -124,7 +125,7 @@ class TarantoolRefactored extends Specification {
                 .build()
         space.put(data)
         then:
-        space.get(request).get() == data
+        ((Entity) space.get(request).get()).asMap() == data.asMap()
 
 
         when:
@@ -138,7 +139,7 @@ class TarantoolRefactored extends Specification {
         space.update(intPrimitive(7),
                 TarantoolUpdateFieldOperation.assigment(2, 'data', stringPrimitive("another")))
         then:
-        ((Entity)space.get(request).get()).getString("data") == "another"
+        ((Entity)space.get(request).get()).get("data") == stringPrimitive("another")
 
         when:
         space.put(data)
@@ -148,7 +149,7 @@ class TarantoolRefactored extends Specification {
                 .build()
         space.replace(data)
         then:
-        space.get(intPrimitive(7)).get() == data
+        ((Entity)space.get(intPrimitive(7)).get()).asMap() == data.asMap()
 
         when:
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
