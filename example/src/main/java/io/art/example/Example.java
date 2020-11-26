@@ -26,7 +26,6 @@ import static io.art.model.module.ModuleModel.*;
 public class Example {
     @Configurator
     public static ModuleModel configure() {
-        return module()
-                .serve(server -> server.rsocket(Service.class));
+        return module().serve(server -> server.rsocket(rsocket -> rsocket.to(Service.class)));
     }
 }
