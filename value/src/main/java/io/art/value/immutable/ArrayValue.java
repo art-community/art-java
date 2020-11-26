@@ -198,7 +198,30 @@ public class ArrayValue implements Value {
         return unbox(mapAsList(toBool).toArray(new Boolean[0]));
     }
 
-    
+
+    @Override
+    public boolean equals(Object object){
+        if (object == this) return true;
+        if ( !(object instanceof ArrayValue) ) return false;
+
+        ArrayValue another = (ArrayValue) object;
+
+        int this_size = this.size();
+        if (this_size != another.size()) return false;
+
+        Value thisEntry;
+        for (int index = 0; index < this_size; index++) {
+            thisEntry = this.get(index);
+            if (thisEntry == null) {
+                if (another.get(index) == null) continue;
+                return false;
+            }
+            if ( !(thisEntry.equals(another.get(index))) ) return false;
+        }
+        return true;
+    }
+
+
     private class ProxyList<T> implements List<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
         private final LazyValue<List<T>> evaluated;
