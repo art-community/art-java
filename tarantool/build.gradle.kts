@@ -21,6 +21,7 @@ dependencies {
     val zeroTurnaroundVersion: String by project
     val tarantoolConnectorVersion: String by project
     val log4jVersion: String by project
+    val tarantoolCartridgeConnectorVersion = "0.3.3"
 
     implementation(project(":core"))
     implementation(project(":value"))
@@ -34,6 +35,8 @@ dependencies {
             .exclude("org.slf4j")
     api("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
             .exclude("org.apache.logging.log4j")
+    api("io.tarantool", "cartridge-driver", tarantoolCartridgeConnectorVersion)
+
 }
 
 

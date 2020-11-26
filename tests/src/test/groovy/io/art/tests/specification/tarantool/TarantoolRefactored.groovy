@@ -12,12 +12,15 @@ import io.art.refactored.dao.TarantoolSpace
 import io.art.refactored.storage.StorageSpace
 import io.art.refactored.storage.TarantoolStorageSpace
 import spock.lang.Specification
+
+import static io.art.launcher.ModuleLauncher.launch
+import static io.art.model.module.ModuleModel.module
 import static io.art.refactored.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
 import static io.art.refactored.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
 import static io.art.refactored.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
 import static io.art.refactored.constants.TarantoolModuleConstants.TarantoolIndexType
 import static io.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.*
-import static io.art.value.factory.PrimitivesFactory.intPrimitive
+import static io.art.value.factory.PrimitivesFactory.*
 
 class TarantoolRefactored extends Specification {
 
@@ -26,6 +29,11 @@ class TarantoolRefactored extends Specification {
     def storage2Address = "localhost:3302"
     def username = 'username'
     def password = 'password'
+
+    def "start modules"() {
+        setup:
+        launch module()
+    }
 
     def "Storage1 CRUD"() {
         setup:
@@ -51,11 +59,11 @@ class TarantoolRefactored extends Specification {
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", 3)
-                .put("data", "testData")
-                .put("anotherData", "another data")
+                .put("id", intPrimitive(3))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
                 .build()
-        Entity request = Entity.entityBuilder().put("id", 3).build()
+        Value request = intPrimitive(3)
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
@@ -82,8 +90,8 @@ class TarantoolRefactored extends Specification {
         db.renameSpace(spaceName, spaceName = "s1_CRUD2")
         space = tnt.getSpace(clientId, spaceName)
         data = Entity.entityBuilder()
-                .put("id", 7)
-                .put("data", "testData")
+                .put("id", intPrimitive(7))
+                .put("data", stringPrimitive("testData"))
                 .build()
         space.autoIncrement(data)
         then:
@@ -91,13 +99,13 @@ class TarantoolRefactored extends Specification {
 
 
         when:
-        request = Entity.entityBuilder().put("id", 2).build()
+        request = intPrimitive(2)
         then:
         space.get(request).isEmpty() && space.select(request).isEmpty()
 
 
         when:
-        request = Entity.entityBuilder().put("id", 7).build()
+        request = intPrimitive(7)
         Entity response = space.select(request).get().get(0) as Entity
         then:
         response == data
@@ -111,8 +119,8 @@ class TarantoolRefactored extends Specification {
 
         when:
         data = Entity.entityBuilder()
-                .put("id", 7)
-                .put("data", "another data")
+                .put("id", intPrimitive(7))
+                .put("data", stringPrimitive("another data"))
                 .build()
         space.put(data)
         then:
@@ -135,8 +143,8 @@ class TarantoolRefactored extends Specification {
         when:
         space.put(data)
         data = Entity.entityBuilder()
-                .put("id", 7)
-                .put("data", "something")
+                .put("id", intPrimitive(7))
+                .put("data", stringPrimitive("something"))
                 .build()
         space.replace(data)
         then:
@@ -180,14 +188,14 @@ class TarantoolRefactored extends Specification {
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", 3)
-                .put("bucket_id", 99)
-                .put("data", "testData")
-                .put("anotherData", "another data")
+                .put("id", intPrimitive(3))
+                .put("bucket_id", intPrimitive(99))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
                 .build()
-        Entity request = Entity.entityBuilder()
-                .put("id", 3)
-                .put("bucket_id", 99)
+        Value request = Entity.entityBuilder()
+                .put("id", intPrimitive(3))
+                .put("bucket_id", intPrimitive(99))
                 .build()
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
@@ -216,9 +224,9 @@ class TarantoolRefactored extends Specification {
         space.autoIncrement(data)
         //db.renameSpace(spaceName, spaceName = "r1_crud2")
         data = Entity.entityBuilder()
-                .put("id", 7)
-                .put("bucket_id", 99)
-                .put("data", "testData")
+                .put("id", intPrimitive(7))
+                .put("bucket_id", intPrimitive(99))
+                .put("data", stringPrimitive("testData"))
                 .build()
         space = tnt.getSpace(clientId, spaceName)
         space.autoIncrement(data)
@@ -228,8 +236,8 @@ class TarantoolRefactored extends Specification {
 
         when:
         request = Entity.entityBuilder()
-                .put("id", 2)
-                .put("bucket_id", 99)
+                .put("id", intPrimitive(2))
+                .put("bucket_id", intPrimitive(99))
                 .build()
         then:
         true
@@ -239,8 +247,8 @@ class TarantoolRefactored extends Specification {
 
         when:
         request = Entity.entityBuilder()
-                .put("id", 7)
-                .put("bucket_id", 99)
+                .put("id", intPrimitive(7))
+                .put("bucket_id", intPrimitive(99))
                 .build()
 //        Entity response = dao.select(space, request).get().get(0)
         then:
@@ -256,9 +264,9 @@ class TarantoolRefactored extends Specification {
 
         when:
         data = Entity.entityBuilder()
-                .put("id", 7)
-                .put("bucket_id", 99)
-                .put("data", "another data")
+                .put("id", intPrimitive(7))
+                .put("bucket_id", intPrimitive(99))
+                .put("data", stringPrimitive("another data"))
                 .build()
         space.put(data)
         then:
@@ -267,8 +275,8 @@ class TarantoolRefactored extends Specification {
 
         when:
         Entity key = Entity.entityBuilder()
-                .put("id", 7)
-                .put("bucket_id", 99)
+                .put("id", intPrimitive(7))
+                .put("bucket_id", intPrimitive(99))
                 .build()
         space.delete(key)
         then:
@@ -285,9 +293,9 @@ class TarantoolRefactored extends Specification {
         when:
         space.put(data)
         data = Entity.entityBuilder()
-                .put("id", 7)
-                .put("bucket_id", 99)
-                .put("data", "something")
+                .put("id", intPrimitive(7))
+                .put("bucket_id", intPrimitive(99))
+                .put("data", stringPrimitive("something"))
                 .build()
         space.replace(data)
         then:
@@ -298,8 +306,8 @@ class TarantoolRefactored extends Specification {
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
         then:
         def request2 = Entity.entityBuilder()
-                .put("id", 8)
-                .put("bucket_id", 99)
+                .put("id", intPrimitive(8))
+                .put("bucket_id", intPrimitive(99))
                 .build()
         space.get(request).isPresent() && space.get(request2).isPresent()
 
@@ -332,11 +340,11 @@ class TarantoolRefactored extends Specification {
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", 3)
-                .put("data", "testData")
-                .put("anotherData", "another data")
+                .put("id", intPrimitive(3))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
                 .build()
-        Entity request = Entity.entityBuilder().put("id", 3).build()
+        Value request = intPrimitive(3)
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
@@ -363,8 +371,8 @@ class TarantoolRefactored extends Specification {
         db.renameSpace(spaceName, spaceName = "s1_storage_ops2")
         space = new TarantoolStorageSpace(tnt.getSpace(clientId, spaceName))
         data = Entity.entityBuilder()
-                .put("id", 7)
-                .put("data", "testData")
+                .put("id", intPrimitive(7))
+                .put("data", stringPrimitive("testData"))
                 .build()
         space.autoIncrement(data)
         then:
@@ -372,13 +380,13 @@ class TarantoolRefactored extends Specification {
 
 
         when:
-        request = Entity.entityBuilder().put("id", 2).build()
+        request = intPrimitive(2)
         then:
         space.get(request).isEmpty() && space.find(request).isEmpty()
 
 
         when:
-        request = Entity.entityBuilder().put("id", 7).build()
+        request = intPrimitive(7)
         Entity response = space.find(request).get().get(0) as Entity
         then:
         response == data
@@ -392,8 +400,8 @@ class TarantoolRefactored extends Specification {
 
         when:
         data = Entity.entityBuilder()
-                .put("id", 7)
-                .put("data", "another data")
+                .put("id", intPrimitive(7))
+                .put("data", stringPrimitive("another data"))
                 .build()
         space.put(data)
         then:
