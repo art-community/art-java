@@ -1,4 +1,4 @@
-package ru.art.refactored.dao;
+package ru.art.tarantoolRefactored.dao;
 
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
@@ -7,35 +7,36 @@ import ru.art.entity.*;
 import ru.art.entity.tuple.PlainTupleReader;
 import ru.art.entity.tuple.PlainTupleWriter;
 import ru.art.entity.tuple.schema.ValueSchema;
-import ru.art.refactored.exception.TarantoolDaoException;
-import ru.art.refactored.model.TarantoolUpdateFieldOperation;
+import ru.art.tarantoolRefactored.exception.TarantoolDaoException;
+import ru.art.tarantoolRefactored.model.TarantoolUpdateFieldOperation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.core.caster.Caster.cast;
 import static ru.art.core.checker.CheckerForEmptiness.isEmpty;
 import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.refactored.constants.TarantoolModuleConstants.ExceptionMessages.RESULT_IS_INVALID;
-import static ru.art.refactored.dao.caller.TarantoolFunctionCaller.call;
-import static ru.art.refactored.constants.TarantoolModuleConstants.Functions.*;
+import static ru.art.tarantoolRefactored.constants.TarantoolModuleConstants.ExceptionMessages.RESULT_IS_INVALID;
+import static ru.art.tarantoolRefactored.dao.caller.TarantoolFunctionCaller.call;
+import static ru.art.tarantoolRefactored.constants.TarantoolModuleConstants.Functions.*;
 
 public class TarantoolSpace {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = loggingModule().getLogger(TarantoolSpace.class);
     private final TarantoolClient client;
-    private String space;
+    private final String space;
+    public final Map<String, TarantoolSpaceIndex> index;
 
     public TarantoolSpace(TarantoolClient client, String space){
         this.client = client;
         this.space = space;
+        this.index = listIndices();
     }
 
     public Optional<Value> get(Value key){
@@ -50,7 +51,7 @@ public class TarantoolSpace {
 
         List<Value> result = response.stream()
                 .map(entry -> convertResponse(cast(entry)))
-                .map(entry -> entry.get())
+                .map(Optional::get)
                 .collect(toList());
         return ofNullable(result);
     }
@@ -153,6 +154,13 @@ public class TarantoolSpace {
         } catch(Exception e){
             throw new TarantoolDaoException(format(RESULT_IS_INVALID, response));
         }
+    }
+
+    private Map<String, TarantoolSpaceIndex> listIndices(){
+        List<String> response = cast(call(client, "art.api.space.list_indices", space).get(0));
+        return response.stream()
+                .distinct()
+                .collect(toMap((entry) -> entry, (entry) -> new TarantoolSpaceIndex(this, entry)));
     }
 
 

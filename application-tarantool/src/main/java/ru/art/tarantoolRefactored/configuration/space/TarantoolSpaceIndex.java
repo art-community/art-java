@@ -1,9 +1,9 @@
-package ru.art.refactored.configuration.space;
+package ru.art.tarantoolRefactored.configuration.space;
 
 
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolIndexType;
+import static ru.art.tarantoolRefactored.constants.TarantoolModuleConstants.TarantoolIndexType;
 import java.util.*;
 
 @NoArgsConstructor(staticName = "tarantoolSpaceIndex")

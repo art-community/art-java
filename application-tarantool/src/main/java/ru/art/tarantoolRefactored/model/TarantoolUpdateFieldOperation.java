@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 
-package ru.art.refactored.model;
+package ru.art.tarantoolRefactored.model;
 
 import lombok.Getter;
 import ru.art.entity.Value;
-import ru.art.refactored.constants.TarantoolModuleConstants.TarantoolOperator;
+import ru.art.tarantoolRefactored.constants.TarantoolModuleConstants.TarantoolOperator;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import static ru.art.core.factory.CollectionsFactory.fixedArrayOf;
 import static ru.art.entity.Entity.entityBuilder;
 import static ru.art.entity.tuple.PlainTupleWriter.PlainTupleWriterResult;
 import static ru.art.entity.tuple.PlainTupleWriter.writeTuple;
-import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolOperator.*;
+import static ru.art.tarantoolRefactored.constants.TarantoolModuleConstants.TarantoolOperator.*;
 
 @Getter
 public class TarantoolUpdateFieldOperation {

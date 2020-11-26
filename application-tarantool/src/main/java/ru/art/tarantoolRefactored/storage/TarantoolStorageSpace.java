@@ -1,7 +1,7 @@
-package ru.art.refactored.storage;
+package ru.art.tarantoolRefactored.storage;
 
 import ru.art.entity.Value;
-import ru.art.refactored.dao.TarantoolSpace;
+import ru.art.tarantoolRefactored.dao.TarantoolSpace;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,19 +1,18 @@
-package ru.art.refactored.module.connector;
+package ru.art.tarantoolRefactored.module.connector;
 
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
 import org.tarantool.CommunicationException;
 import org.tarantool.TarantoolClient;
 import org.tarantool.TarantoolClusterClient;
-import ru.art.refactored.configuration.TarantoolInstanceConfiguration;
-import ru.art.refactored.exception.TarantoolConnectionException;
-import java.io.OutputStream;
+import ru.art.tarantoolRefactored.configuration.TarantoolInstanceConfiguration;
+import ru.art.tarantoolRefactored.exception.TarantoolConnectionException;
 
 import static java.text.MessageFormat.format;
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.logging.log4j.io.IoBuilder.forLogger;
 import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.refactored.constants.TarantoolModuleConstants.ExceptionMessages.*;
+import static ru.art.tarantoolRefactored.constants.TarantoolModuleConstants.ExceptionMessages.*;
 
 public class TarantoolConnector {
     @Getter(lazy = true, value = PRIVATE)

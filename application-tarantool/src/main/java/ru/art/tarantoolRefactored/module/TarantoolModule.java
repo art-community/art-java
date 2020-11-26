@@ -1,15 +1,15 @@
-package ru.art.refactored.module;
+package ru.art.tarantoolRefactored.module;
 
 import org.tarantool.TarantoolClient;
-import ru.art.refactored.configuration.TarantoolInstanceConfiguration;
-import ru.art.refactored.configuration.TarantoolModuleConfiguration;
-import ru.art.refactored.exception.TarantoolModuleException;
-import ru.art.refactored.module.state.TarantoolModuleState;
-import ru.art.refactored.dao.TarantoolInstance;
-import ru.art.refactored.dao.TarantoolSpace;
+import ru.art.tarantoolRefactored.configuration.TarantoolInstanceConfiguration;
+import ru.art.tarantoolRefactored.configuration.TarantoolModuleConfiguration;
+import ru.art.tarantoolRefactored.exception.TarantoolModuleException;
+import ru.art.tarantoolRefactored.module.state.TarantoolModuleState;
+import ru.art.tarantoolRefactored.dao.TarantoolInstance;
+import ru.art.tarantoolRefactored.dao.TarantoolSpace;
 
-import static ru.art.refactored.constants.TarantoolModuleConstants.ExceptionMessages.CONFIGURATION_IS_NULL;
-import static ru.art.refactored.module.connector.TarantoolConnector.connect;
+import static ru.art.tarantoolRefactored.constants.TarantoolModuleConstants.ExceptionMessages.CONFIGURATION_IS_NULL;
+import static ru.art.tarantoolRefactored.module.connector.TarantoolConnector.connect;
 import static java.lang.String.format;
 
 import java.util.Optional;

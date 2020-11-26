@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package ru.art.refactored.constants;
+package ru.art.tarantoolRefactored.constants;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

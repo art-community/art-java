@@ -1,4 +1,4 @@
-package ru.art.refactored.storage;
+package ru.art.tarantoolRefactored.storage;
 
 import ru.art.entity.Value;
 

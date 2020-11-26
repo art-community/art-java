@@ -1,4 +1,4 @@
-package ru.art.refactored.exception;
+package ru.art.tarantoolRefactored.exception;
 
 public class TarantoolModuleException extends RuntimeException{
     public TarantoolModuleException(String message) {

@@ -1,11 +1,10 @@
-package ru.art.refactored.dao.caller;
+package ru.art.tarantoolRefactored.dao.caller;
 
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
 import org.tarantool.TarantoolClient;
 import java.util.List;
 import static lombok.AccessLevel.PRIVATE;
-import static ru.art.core.caster.Caster.cast;
 import static ru.art.logging.LoggingModule.loggingModule;
 
 public class TarantoolFunctionCaller {

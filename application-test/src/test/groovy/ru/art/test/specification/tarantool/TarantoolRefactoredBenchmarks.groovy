@@ -5,25 +5,25 @@ import org.tarantool.TarantoolClient
 import org.tarantool.TarantoolClusterClientConfig
 import ru.art.entity.Entity
 import ru.art.entity.tuple.PlainTupleWriter
-import ru.art.refactored.configuration.TarantoolInstanceConfiguration
-import ru.art.refactored.configuration.TarantoolModuleConfiguration
-import ru.art.refactored.dao.TarantoolInstance
-import ru.art.refactored.dao.TarantoolSpace
-import ru.art.refactored.model.TarantoolUpdateFieldOperation
-import ru.art.refactored.module.TarantoolModule
-import ru.art.refactored.module.connector.TarantoolConnector
+import ru.art.tarantoolRefactored.configuration.TarantoolInstanceConfiguration
+import ru.art.tarantoolRefactored.configuration.TarantoolModuleConfiguration
+import ru.art.tarantoolRefactored.dao.TarantoolInstance
+import ru.art.tarantoolRefactored.dao.TarantoolSpace
+import ru.art.tarantoolRefactored.model.TarantoolUpdateFieldOperation
+import ru.art.tarantoolRefactored.module.TarantoolModule
+import ru.art.tarantoolRefactored.module.connector.TarantoolConnector
 import spock.lang.Specification
 
 import java.util.concurrent.Future
 
 import static ru.art.entity.PrimitivesFactory.intPrimitive
 import static ru.art.entity.PrimitivesFactory.stringPrimitive
-import static ru.art.refactored.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
-import static ru.art.refactored.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
-import static ru.art.refactored.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
-import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.NUMBER
-import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.UNSIGNED
-import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolIndexType
+import static ru.art.tarantoolRefactored.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
+import static ru.art.tarantoolRefactored.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
+import static ru.art.tarantoolRefactored.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
+import static ru.art.tarantoolRefactored.constants.TarantoolModuleConstants.TarantoolFieldType.NUMBER
+import static ru.art.tarantoolRefactored.constants.TarantoolModuleConstants.TarantoolFieldType.UNSIGNED
+import static ru.art.tarantoolRefactored.constants.TarantoolModuleConstants.TarantoolIndexType
 
 class TarantoolRefactoredBenchmarks extends Specification {
     def benchmarkOpsCount = 10000

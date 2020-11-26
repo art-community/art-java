@@ -1,4 +1,4 @@
-package ru.art.refactored.module.state;
+package ru.art.tarantoolRefactored.module.state;
 
 import org.tarantool.TarantoolClient;
 import java.util.Map;

@@ -1,23 +1,24 @@
 
 package ru.art.test.specification.tarantool
 
+
 import org.tarantool.TarantoolClusterClientConfig
-import ru.art.refactored.configuration.TarantoolInstanceConfiguration
-import ru.art.refactored.configuration.TarantoolModuleConfiguration
-import ru.art.refactored.module.TarantoolModule
-import ru.art.refactored.dao.TarantoolInstance
+import ru.art.tarantoolRefactored.configuration.TarantoolInstanceConfiguration
+import ru.art.tarantoolRefactored.configuration.TarantoolModuleConfiguration
+import ru.art.tarantoolRefactored.module.TarantoolModule
+import ru.art.tarantoolRefactored.dao.TarantoolInstance
 import ru.art.entity.Entity
-import ru.art.refactored.model.TarantoolUpdateFieldOperation
-import ru.art.refactored.dao.TarantoolSpace
-import ru.art.refactored.storage.StorageSpace
-import ru.art.refactored.storage.TarantoolStorageSpace
+import ru.art.tarantoolRefactored.model.TarantoolUpdateFieldOperation
+import ru.art.tarantoolRefactored.dao.TarantoolSpace
+import ru.art.tarantoolRefactored.storage.StorageSpace
+import ru.art.tarantoolRefactored.storage.TarantoolStorageSpace
 import spock.lang.Specification
-import static ru.art.refactored.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
-import static ru.art.refactored.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
-import static ru.art.refactored.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
-import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolIndexType
+import static ru.art.tarantoolRefactored.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
+import static ru.art.tarantoolRefactored.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
+import static ru.art.tarantoolRefactored.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
+import static ru.art.tarantoolRefactored.constants.TarantoolModuleConstants.TarantoolIndexType
 import static ru.art.entity.PrimitivesFactory.*
-import static ru.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.*
+import static ru.art.tarantoolRefactored.constants.TarantoolModuleConstants.TarantoolFieldType.*
 
 class TarantoolRefactored extends Specification {
 
@@ -409,7 +410,7 @@ class TarantoolRefactored extends Specification {
         cleanup:
         db.dropSpace(spaceName)
     }
-
+    
     def "Storage2 cluster operations lock"(){
         setup:
         def spaceName = "s2_COL"

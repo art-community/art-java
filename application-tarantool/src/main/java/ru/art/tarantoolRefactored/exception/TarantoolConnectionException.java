@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package ru.art.refactored.exception;
+package ru.art.tarantoolRefactored.exception;
 
 public class TarantoolConnectionException extends RuntimeException {
     public TarantoolConnectionException(String message, Throwable cause) {

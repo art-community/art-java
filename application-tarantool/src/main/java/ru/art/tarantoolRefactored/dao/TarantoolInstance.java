@@ -1,16 +1,16 @@
-package ru.art.refactored.dao;
+package ru.art.tarantoolRefactored.dao;
 
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
 import org.tarantool.TarantoolClient;
-import ru.art.refactored.configuration.space.TarantoolSpaceConfig;
-import ru.art.refactored.configuration.space.TarantoolSpaceFormat;
-import ru.art.refactored.configuration.space.TarantoolSpaceIndex;
+import ru.art.tarantoolRefactored.configuration.space.TarantoolSpaceConfig;
+import ru.art.tarantoolRefactored.configuration.space.TarantoolSpaceFormat;
+import ru.art.tarantoolRefactored.configuration.space.TarantoolSpaceIndex;
 
-import static ru.art.refactored.dao.caller.TarantoolFunctionCaller.call;
+import static ru.art.tarantoolRefactored.dao.caller.TarantoolFunctionCaller.call;
 import static lombok.AccessLevel.PRIVATE;
 import static ru.art.logging.LoggingModule.loggingModule;
-import static ru.art.refactored.constants.TarantoolModuleConstants.Functions.*;
+import static ru.art.tarantoolRefactored.constants.TarantoolModuleConstants.Functions.*;
 
 public class TarantoolInstance {
     @Getter(lazy = true, value = PRIVATE)

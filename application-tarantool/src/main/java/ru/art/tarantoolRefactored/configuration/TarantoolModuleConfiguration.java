@@ -1,7 +1,6 @@
-package ru.art.refactored.configuration;
+package ru.art.tarantoolRefactored.configuration;
 
 import java.util.Map;
-import java.util.Optional;
 
 import static ru.art.core.factory.CollectionsFactory.*;
 
