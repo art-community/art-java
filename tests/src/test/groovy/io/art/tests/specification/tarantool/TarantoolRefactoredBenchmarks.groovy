@@ -1,8 +1,10 @@
 
 package io.art.tests.specification.tarantool
 
-
+import io.art.launcher.ModuleLauncher
+import io.art.model.module.ModuleModel
 import io.art.value.immutable.Entity
+import io.art.value.tuple.PlainTupleWriter
 import org.tarantool.TarantoolClient
 import org.tarantool.TarantoolClusterClientConfig
 import io.art.refactored.configuration.TarantoolInstanceConfiguration
@@ -66,11 +68,11 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", 3)
-                .put("data", "testData")
-                .put("anotherData", "another data")
+                .put("id", intPrimitive(3))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
                 .build()
-        Entity request = Entity.entityBuilder().put("id", longPrimitive(3)).build()
+        Value request = longPrimitive(3)
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
@@ -98,8 +100,8 @@ class TarantoolRefactoredBenchmarks extends Specification {
         db.renameSpace(spaceName, spaceName = "s1_CRUD2")
         space = tnt.getSpace(clientId, spaceName)
         data = Entity.entityBuilder()
-                .put("id", 7)
-                .put("data", "testData")
+                .put("id", intPrimitive(7))
+                .put("data", stringPrimitive("testData"))
                 .build()
         space.autoIncrement(data)
         then:
@@ -107,13 +109,13 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
 
         when:
-        request = Entity.entityBuilder().put("id", 2).build()
+        request = intPrimitive(2)
         then:
         space.get(request).isEmpty() && space.select(request).isEmpty()
 
 
         when:
-        request = Entity.entityBuilder().put("id", 7).build()
+        request = intPrimitive(7)
         Entity response = space.select(request).get().get(0) as Entity
         then:
         response == data
@@ -127,8 +129,8 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
         when:
         data = Entity.entityBuilder()
-                .put("id", 7)
-                .put("data", "another data")
+                .put("id", intPrimitive(7))
+                .put("data", stringPrimitive("another data"))
                 .build()
         space.put(data)
         then:
@@ -151,8 +153,8 @@ class TarantoolRefactoredBenchmarks extends Specification {
         when:
         space.put(data)
         data = Entity.entityBuilder()
-                .put("id", 7)
-                .put("data", "something")
+                .put("id", intPrimitive(7))
+                .put("data", stringPrimitive("something"))
                 .build()
         space.replace(data)
         then:
@@ -196,14 +198,14 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", 3)
-                .put("bucket_id", 99)
-                .put("data", "testData")
-                .put("anotherData", "another data")
+                .put("id", intPrimitive(3))
+                .put("bucket_id", intPrimitive(99))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
                 .build()
         Entity request = Entity.entityBuilder()
-                .put("id", 3)
-                .put("bucket_id", 99)
+                .put("id", intPrimitive(3))
+                .put("bucket_id", intPrimitive(99))
                 .build()
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
@@ -258,10 +260,10 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", 3)
-                .put("bucket_id", 99)
-                .put("data", "testData")
-                .put("anotherData", "another data")
+                .put("id", intPrimitive(3))
+                .put("bucket_id", intPrimitive(99))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
                 .build()
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
@@ -314,11 +316,11 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", 3)
-                .put("data", "testData")
-                .put("anotherData", "another data")
+                .put("id", intPrimitive(3))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
                 .build()
-        Entity request = Entity.entityBuilder().put("id", 3).build()
+        Value request = intPrimitive(3)
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
@@ -368,9 +370,9 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", 3)
-                .put("data", "testData")
-                .put("anotherData", "another data")
+                .put("id", intPrimitive(3))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
                 .build()
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
@@ -420,11 +422,11 @@ class TarantoolRefactoredBenchmarks extends Specification {
         TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
 
         Entity data = Entity.entityBuilder()
-                .put("id", 3)
-                .put("data", "testData")
-                .put("anotherData", "another data")
+                .put("id", intPrimitive(3))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
                 .build()
-        Entity request = Entity.entityBuilder().put("id", 3).build()
+        Value request = intPrimitive(3)
         List<?> tuple = writeTuple(request).getTuple()
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
@@ -474,9 +476,9 @@ class TarantoolRefactoredBenchmarks extends Specification {
         TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
 
         Entity data = Entity.entityBuilder()
-                .put("id", 3)
-                .put("data", "testData")
-                .put("anotherData", "another data")
+                .put("id", intPrimitive(3))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
                 .build()
         List<?> tuple = writeTuple(data).getTuple()
 
@@ -504,125 +506,4 @@ class TarantoolRefactoredBenchmarks extends Specification {
         db.dropSpace(spaceName)
     }
 
-    def "art-platform.io docker box.auto_increment async benchmark"(){
-        setup:
-        def spaceName = "s2_box_inc_async_bench"
-        def clientId = "storage_2"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        //clientConfig.username = username
-        //clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
-
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address("art-platform.io:3302")
-                .config(clientConfig)
-                .build()
-
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
-
-
-        Entity data = Entity.entityBuilder()
-                .put("id", 3)
-                .put("data", "testData")
-                .put("anotherData", "another data")
-                .build()
-        List<?> tuple = writeTuple(data).getTuple()
-
-        db.createSpace(spaceName, tarantoolSpaceConfig()
-                .ifNotExists(true))
-        db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", NUMBER, false))
-        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
-                .type(TarantoolIndexType.TREE)
-                .id(0)
-                .part("id")
-                .ifNotExists(true)
-                .unique(true))
-
-
-
-        List<Future<?>> results = new LinkedList<Future<?>>()
-        when:
-        for (int j = 0; j< benchmarkOpsCount/1000; j++) {
-            for (int i = 0; i < 1000; i++) {
-                results.push(client.asyncOps().call("box.space." + spaceName + ":auto_increment", tuple))
-            }
-            for (int i = 0; i < 1000; i++) {
-                results.get(i).get()
-            }
-            results.clear()
-        }
-        then:
-        true
-
-
-        cleanup:
-        db.dropSpace(spaceName)
-    }
-
-    def "art-platform.io docker art.auto_increment async benchmark"(){
-        setup:
-        def spaceName = "s2_art_inc_async_bench"
-        def clientId = "storage_2"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        //clientConfig.username = username
-        //clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
-
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address("art-platform.io:3302")
-                .config(clientConfig)
-                .build()
-
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
-
-
-        Entity data = Entity.entityBuilder()
-                .put("id", 3)
-                .put("data", "testData")
-                .put("anotherData", "another data")
-                .build()
-        List<?> tuple = writeTuple(data).getTuple()
-
-        db.createSpace(spaceName, tarantoolSpaceConfig()
-                .ifNotExists(true))
-        db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", NUMBER, false))
-        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
-                .type(TarantoolIndexType.TREE)
-                .id(0)
-                .part("id")
-                .ifNotExists(true)
-                .unique(true))
-        List<Future<?>> results = new LinkedList<Future<?>>()
-
-
-        when:
-        for (int j = 0; j< benchmarkOpsCount/1000; j++) {
-            for (int i = 0; i < 1000; i++) {
-                results.push(client.asyncOps().call("art.auto_increment", spaceName, tuple))
-            }
-            for (int i = 0; i < 1000; i++) {
-                results.get(i).get()
-            }
-            results.clear()
-        }
-
-        then:
-        true
-
-
-        cleanup:
-        db.dropSpace(spaceName)
-    }
 }
