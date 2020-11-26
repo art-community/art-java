@@ -1,10 +1,8 @@
 
 package io.art.tests.specification.tarantool
 
-import io.art.launcher.ModuleLauncher
-import io.art.model.module.ModuleModel
 import io.art.value.immutable.Entity
-import io.art.value.tuple.PlainTupleWriter
+import io.art.value.immutable.Value
 import org.tarantool.TarantoolClient
 import org.tarantool.TarantoolClusterClientConfig
 import io.art.refactored.configuration.TarantoolInstanceConfiguration
@@ -16,7 +14,6 @@ import io.art.refactored.module.TarantoolModule
 import io.art.refactored.module.connector.TarantoolConnector
 import spock.lang.Specification
 
-import java.util.concurrent.Future
 
 import static io.art.launcher.ModuleLauncher.launch
 import static io.art.model.implementation.ModuleModel.*
