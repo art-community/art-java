@@ -19,33 +19,31 @@
 package io.art.tarantool.module;
 
 import io.art.core.module.*;
+import io.art.tarantool.configuration.*;
 import io.art.tarantool.configuration.TarantoolModuleConfiguration.*;
+import io.art.tarantool.exception.*;
+import io.art.tarantool.module.state.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import org.tarantool.*;
-import io.art.tarantool.configuration.*;
-import io.art.tarantool.exception.*;
-import io.art.tarantool.module.state.*;
-import static io.art.core.context.Context.context;
-import static io.art.core.wrapper.ExceptionWrapper.ignoreException;
-import static io.art.logging.LoggingModule.logger;
+import static io.art.core.context.Context.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
+import static io.art.logging.LoggingModule.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.*;
+import static io.art.tarantool.module.connector.TarantoolConnector.*;
+import static io.art.tarantool.module.initializer.TarantoolInitializer.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.*;
-import static io.art.tarantool.module.connector.TarantoolConnector.connectToTarantoolCluster;
-import static io.art.tarantool.module.connector.TarantoolConnector.connectToTarantoolInstance;
-import static io.art.tarantool.module.initializer.TarantoolInitializer.*;
 import java.util.*;
 
 @Getter
 public class TarantoolModule implements StatefulModule<TarantoolModuleConfiguration, Configurator, TarantoolModuleState> {
     @Getter(lazy = true, value = PRIVATE)
     private final static StatefulModuleProxy<TarantoolModuleConfiguration, TarantoolModuleState> tarantoolModule = context().getStatefulModule(TarantoolModule.class.getSimpleName());
-    private final String id = TARANTOOL_MODULE_ID;
+    private final String id = TarantoolModule.class.getSimpleName();
     private final TarantoolModuleConfiguration configuration = new TarantoolModuleConfiguration();
     private final Configurator configurator = new Configurator();
     private final TarantoolModuleState state = new TarantoolModuleState();
