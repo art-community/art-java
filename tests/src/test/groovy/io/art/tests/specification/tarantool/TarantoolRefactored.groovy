@@ -289,7 +289,7 @@ class TarantoolRefactored extends Specification {
 
         space.update(key, TarantoolUpdateFieldOperation.assigment(3, 'data', stringPrimitive("another")))
         then:
-        ((Entity)space.get(request).get()).getString("data") == "another"
+        ((Entity)space.get(request).get()).get("data") == stringPrimitive("another")
 
         when:
         space.put(data)
