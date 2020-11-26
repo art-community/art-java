@@ -1,7 +1,7 @@
 /*
- * ART
+ * ART Java
  *
- * Copyright 2020 ART
+ * Copyright 2019 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +22,11 @@ import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
 import io.art.tarantool.exception.*;
-import static java.util.stream.Collectors.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.constants.CharacterConstants.EQUAL;
-import static io.art.core.constants.CharacterConstants.SINGLE_QUOTE;
-import static io.art.core.constants.StringConstants.CLOSING_BRACES;
-import static io.art.core.constants.StringConstants.COMMA;
-import static io.art.core.constants.StringConstants.OPENING_BRACES;
+import static io.art.core.constants.CharacterConstants.*;
 import static io.art.core.factory.CollectionsFactory.*;
+import static java.util.stream.Collectors.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.USER;

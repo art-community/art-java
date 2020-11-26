@@ -19,17 +19,24 @@
 dependencies {
     val rsocketVersion: String by project
     val nettyVersion: String by project
+    val reactorNettyVersion: String by project
 
     implementation(project(":core"))
-    implementation(project(":entity"))
+    implementation(project(":value"))
     implementation(project(":logging"))
     implementation(project(":server"))
+    implementation(project(":communicator"))
     implementation(project(":protobuf"))
     implementation(project(":json"))
     implementation(project(":xml"))
     implementation(project(":message-pack"))
 
     api("io.rsocket", "rsocket-transport-netty", rsocketVersion)
+            .exclude("io.netty")
+            .exclude("io.projectreactor", "reactor-core")
+            .exclude("org.slf4j")
+
+    api("io.projectreactor.netty", "reactor-netty", reactorNettyVersion)
             .exclude("io.netty")
             .exclude("io.projectreactor", "reactor-core")
             .exclude("org.slf4j")

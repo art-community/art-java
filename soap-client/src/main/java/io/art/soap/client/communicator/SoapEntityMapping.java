@@ -18,11 +18,9 @@
 
 package io.art.soap.client.communicator;
 
-import io.art.entity.immutable.*;
 import lombok.*;
-import io.art.entity.mapper.*;
-import io.art.entity.mapper.ValueFromModelMapper.*;
-import io.art.entity.mapper.ValueToModelMapper.*;
+import io.art.value.mapper.ValueFromModelMapper.*;
+import io.art.value.mapper.ValueToModelMapper.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static io.art.core.caster.Caster.*;

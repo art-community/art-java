@@ -18,27 +18,28 @@
 
 package io.art.server.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
+import java.util.function.*;
 
 class NotNullValidationExpression extends ValidationExpression<Object> {
     NotNullValidationExpression() {
         super(NOT_NULL);
     }
 
-    NotNullValidationExpression(String pattern) {
+    NotNullValidationExpression(Function<NotNullValidationExpression, String> factory) {
         super(NOT_NULL);
-        this.pattern = pattern;
+        this.messageFactory = factory;
     }
 
     @Override
-    public boolean evaluate(String fieldName, Object value) {
-        return super.evaluate(fieldName, value);
+    public boolean evaluate(String field, Object value) {
+        return super.evaluate(field, value);
     }
 
     @Override
-    public String getValidationErrorMessage() {
-        return format(NULL_VALIDATION_ERROR, fieldName);
+    public String formatErrorMessage() {
+        return format(NULL_VALIDATION_ERROR, field);
     }
 }

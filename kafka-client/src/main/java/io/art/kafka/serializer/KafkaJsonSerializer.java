@@ -18,9 +18,8 @@
 
 package io.art.kafka.serializer;
 
-import io.art.entity.immutable.*;
 import org.apache.kafka.common.serialization.*;
-import static io.art.json.descriptor.JsonEntityWriter.*;
+import static io.art.json.descriptor.JsonWriter.*;
 import java.util.*;
 
 public class KafkaJsonSerializer implements Serializer<Value> {

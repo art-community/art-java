@@ -18,18 +18,18 @@
 
 package io.art.core.module;
 
+import static io.art.core.constants.StringConstants.*;
+
 public interface Module {
     String getId();
 
-    default void beforeLoad() {
+    default void onLoad() {
     }
 
-    default void afterLoad() {
+    default void onUnload() {
     }
 
-    default void beforeUnload() {
-    }
-
-    default void afterUnload() {
+    default String print() {
+        return EMPTY_STRING;
     }
 }

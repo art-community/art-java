@@ -18,11 +18,15 @@
 
 package io.art.server.constants;
 
+import reactor.core.scheduler.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
+import static io.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
+import static java.lang.Short.MAX_VALUE;
+import static reactor.core.scheduler.Schedulers.newBoundedElastic;
 
 public interface ServerModuleConstants {
-    String REQUEST_EVENT = "serviceRequest";
-    String RESPONSE_EVENT = "serviceResponse";
+    String SERVICE_ID = "serviceId";
+    String METHOD_ID = "methodId";
 
     enum RequestValidationPolicy {
         VALIDATABLE,
@@ -30,19 +34,19 @@ public interface ServerModuleConstants {
         NON_VALIDATABLE
     }
 
+    interface Defaults {
+        Scheduler DEFAULT_SERVICE_METHOD_SCHEDULER = newBoundedElastic(DEFAULT_THREAD_POOL_SIZE, MAX_VALUE, "service-method");
+    }
+
     interface ConfigurationKeys {
-        String SERVER_SERVICES_KEY = "server.services";
+        String SERVER_SECTION = "server";
+        String SERVER_SERVICES_KEY = "services";
         String DEACTIVATED_KEY = "deactivated";
+        String LOGGING_KEY = "logging";
         String METHODS_KEY = "methods";
     }
 
-    enum ServiceMethodPayloadType {
-        VALUE,
-        MONO,
-        FLUX
-    }
-
-    interface ValidationExpressionType {
+    interface ValidationExpressionTypes {
         String BETWEEN_DOUBLE = "BETWEEN_DOUBLE";
         String BETWEEN_INT = "BETWEEN_INT";
         String BETWEEN_LONG = "BETWEEN_LONG";
@@ -62,14 +66,17 @@ public interface ServerModuleConstants {
         String EXECUTING_BLOCKING_SERVICE_MESSAGE = success("Executing service: ''{0}.{1}'' with request: {2}");
         String BLOCKING_SERVICE_EXECUTED_MESSAGE = success("Successfully executed service: ''{0}.{1}'' with response: {2}");
 
-        String STARTING_REACTIVE_SERVICE_MESSAGE = success("Starting reactive service: ''{0}.{1}''");
+        String REACTIVE_SERVICE_SUBSCRIBED_MESSAGE = success("Reactive service subscribed: ''{0}.{1}''");
         String REACTIVE_SERVICE_INPUT_MESSAGE = success("Reactive service: ''{0}.{1}'' input: {2}");
         String REACTIVE_SERVICE_OUTPUT_MESSAGE = success("Reactive service: ''{0}.{1}'' output: {2}");
     }
 
-    interface ExceptionsMessages {
+    interface ExceptionMessages {
         String UNKNOWN_REQUEST_TYPE = "Unknown request type: ''{0}''";
         String UNKNOWN_RESPONSE_TYPE = "Unknown response type: ''{0}''";
+    }
+
+    interface ValidationErrorPatterns {
         String NOT_BETWEEN_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' not between ''{2,number,#}'' and ''{3,number,#}''";
         String NOT_EQUALS_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' is not equals to ''{2}''";
         String NOT_CONTAINS_VALIDATION_ERROR = "Validation error. ''{0}'' = ''{1}'' is not contains to ''{2}''";

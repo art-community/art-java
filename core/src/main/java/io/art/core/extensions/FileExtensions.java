@@ -32,6 +32,7 @@ import static java.nio.ByteBuffer.*;
 import static java.nio.channels.FileChannel.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -88,10 +89,12 @@ public class FileExtensions {
                 }
                 buffer.clear();
             } while (fileChannel.position() < fileChannel.size());
+            return result.toString();
         } catch (IOException ioException) {
             throw new InternalRuntimeException(ioException);
+        } finally {
+            buffer.clear();
         }
-        return result.toString();
     }
 
     public static String readFileQuietly(Path path, int bufferSize) {
@@ -109,8 +112,11 @@ public class FileExtensions {
                 result.append(decoder.decode(buffer).toString());
                 buffer.clear();
             } while (fileChannel.position() < fileChannel.size());
+            return result.toString();
         } catch (IOException ioException) {
             ioException.printStackTrace();
+        } finally {
+            buffer.clear();
         }
         return result.toString();
     }
@@ -155,10 +161,12 @@ public class FileExtensions {
                 result = newResult;
                 buffer.clear();
             } while (fileChannel.position() < fileChannel.size());
+            return result;
         } catch (IOException ioException) {
             throw new InternalRuntimeException(ioException);
+        } finally {
+            buffer.clear();
         }
-        return result;
     }
 
     public static byte[] readFileBytesQuietly(Path path, int bufferSize) {
@@ -166,6 +174,40 @@ public class FileExtensions {
             return readFileBytes(path, bufferSize);
         } catch (Throwable throwable) {
             return EMPTY_BYTES;
+        }
+    }
+
+
+    public static InputStream fileInputStream(String path) {
+        return fileInputStream(Paths.get(path));
+    }
+
+    public static InputStream fileInputStream(Path path) {
+        return fileInputStream(path.toFile());
+    }
+
+    public static InputStream fileInputStream(File file) {
+        try {
+            return new FileInputStream(file);
+        } catch (IOException ioException) {
+            throw new InternalRuntimeException(ioException);
+        }
+    }
+
+
+    public static OutputStream fileOutputStream(String path) {
+        return fileOutputStream(Paths.get(path));
+    }
+
+    public static OutputStream fileOutputStream(Path path) {
+        return fileOutputStream(path.toFile());
+    }
+
+    public static OutputStream fileOutputStream(File file) {
+        try {
+            return new FileOutputStream(file);
+        } catch (IOException ioException) {
+            throw new InternalRuntimeException(ioException);
         }
     }
 
@@ -254,5 +296,31 @@ public class FileExtensions {
 
     public static File fileOf(URL url) {
         return new File(ExceptionHandler.<URI>wrapException(InternalRuntimeException::new).call(url::toURI));
+    }
+
+    public static void copyRecursive(Path from, Path to) {
+        File file = from.toFile();
+        if (!file.exists()) {
+            return;
+        }
+        try {
+            if (file.isFile()) {
+                if (!to.getParent().toFile().exists()) {
+                    createDirectories(to.getParent());
+                }
+                copy(from, to, REPLACE_EXISTING);
+                return;
+            }
+            File[] children = file.listFiles();
+            if (isNull(children) || isEmpty(children)) {
+                return;
+            }
+            for (File child : children) {
+                Path toPath = to.resolve(child.toPath().getFileName());
+                copyRecursive(child.toPath(), toPath);
+            }
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
     }
 }

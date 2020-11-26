@@ -24,7 +24,7 @@ import lombok.*;
 import static io.art.core.factory.CollectionsFactory.queueOf;
 
 public interface ConfiguratorModuleConstants {
-    String DEFAULT_MODULE_CONFIGURATION_FILE = "module-config";
+    String DEFAULT_MODULE_CONFIGURATION_FILE = "module";
 
     @Getter
     @AllArgsConstructor

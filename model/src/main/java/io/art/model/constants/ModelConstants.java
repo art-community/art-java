@@ -24,4 +24,11 @@ public interface ModelConstants {
     interface ExceptionMessages {
         String MODEL_WAS_NOT_IMPLEMENTED = "Model {0} was not implemented";
     }
+
+    enum Protocol {
+        RSOCKET,
+        GRPC,
+        HTTP,
+        SOAP
+    }
 }

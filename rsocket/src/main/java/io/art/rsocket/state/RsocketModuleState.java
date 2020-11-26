@@ -18,49 +18,70 @@
 
 package io.art.rsocket.state;
 
-import io.art.entity.constants.*;
-import io.art.entity.constants.EntityConstants.*;
-import io.rsocket.*;
-import lombok.*;
+import com.google.common.collect.*;
+import io.art.core.lazy.*;
 import io.art.core.module.*;
-import io.art.rsocket.constants.RsocketModuleConstants.*;
-import io.art.rsocket.server.*;
+import io.art.rsocket.model.*;
+import io.rsocket.*;
+import io.rsocket.core.*;
+import lombok.*;
+import reactor.util.context.*;
 import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import java.util.*;
+import java.util.function.*;
 
 public class RsocketModuleState implements ModuleState {
-    private final ThreadLocal<CurrentRsocketState> currentClientSocket = new ThreadLocal<>();
-    @Getter
-    private final List<RSocket> rsocketClients = linkedListOf();
+    private final List<RSocket> requesters = linkedListOf();
+    private final Map<String, LazyValue<RSocketClient>> clients = mapOf();
+    private final ThreadLocal<RsocketThreadLocalState> threadLocalState = new ThreadLocal<>();
 
-    @Getter
-    @Setter
-    private RsocketServer tcpServer;
 
-    @Getter
-    @Setter
-    private RsocketServer webSocketServer;
-
-    public RsocketModuleState currentRocketState(CurrentRsocketState state) {
-        currentClientSocket.set(state);
-        return this;
+    public void registerRequester(RSocket socket) {
+        requesters.add(socket);
     }
 
-    public CurrentRsocketState currentRocketState() {
-        return currentClientSocket.get();
+    public ImmutableList<RSocket> getRequesters() {
+        return ImmutableList.copyOf(requesters);
     }
 
-    public RSocket registerRsocket(RSocket rsocket) {
-        rsocketClients.add(rsocket);
-        return rsocket;
+
+    public void localState(Function<RsocketThreadLocalState, RsocketThreadLocalState> functor) {
+        threadLocalState.set(functor.apply(threadLocalState.get()));
     }
+
+    public void localState(RsocketThreadLocalState state) {
+        threadLocalState.set(state);
+    }
+
+    public RsocketThreadLocalState localState() {
+        return threadLocalState.get();
+    }
+
+
+    public LazyValue<RSocketClient> getClient(String id) {
+        return clients.get(id);
+    }
+
+    public ImmutableMap<String, LazyValue<RSocketClient>> getClients() {
+        return ImmutableMap.copyOf(clients);
+    }
+
+    public void registerClient(String id, LazyValue<RSocketClient> client) {
+        clients.put(id, client);
+    }
+
 
     @Getter
-    @Builder
-    public static class CurrentRsocketState {
-        private final String dataMimeType;
-        private final String metadataMimeType;
-        private final DataFormat dataFormat;
-        private final RSocket rsocket;
+    @Builder(toBuilder = true)
+    public static class RsocketThreadLocalState {
+        private final RSocket requesterRsocket;
+        private final RsocketSetupPayload setupPayload;
+
+        public static RsocketThreadLocalState fromContext(Context context) {
+            RSocket requesterRsocket = context.get(REQUESTER_RSOCKET_KEY);
+            RsocketSetupPayload setupPayload = context.get(SETUP_PAYLOAD);
+            return new RsocketThreadLocalState(requesterRsocket, setupPayload);
+        }
     }
 }

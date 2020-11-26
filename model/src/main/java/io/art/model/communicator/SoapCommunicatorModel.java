@@ -18,8 +18,6 @@
 
 package io.art.model.communicator;
 
-import io.art.model.exception.*;
-import io.art.soap.client.communicator.*;
 import lombok.*;
 
 @RequiredArgsConstructor
@@ -27,7 +25,5 @@ public class SoapCommunicatorModel {
     private final String name;
     private final Class<?> specification;
 
-    public SoapCommunicator communicator() {
-        throw new ModelWasNotImplementedException(SoapCommunicatorModel.class);
-    }
+
 }

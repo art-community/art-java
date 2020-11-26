@@ -52,7 +52,7 @@ subprojects {
         jcenter()
         mavenCentral()
         maven {
-            url = uri("https://oss.jfrog.org/oss-snapshot-local")
+            url = uri("https://repo.spring.io/milestone")
         }
     }
 

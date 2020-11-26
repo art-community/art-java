@@ -18,14 +18,18 @@
 
 package io.art.server.module;
 
+import io.art.core.constants.*;
 import io.art.core.module.*;
-import io.art.logging.*;
+import io.art.core.printer.*;
 import io.art.server.configuration.*;
 import io.art.server.configuration.ServerModuleConfiguration.*;
 import io.art.server.registry.*;
 import io.art.server.state.*;
 import lombok.*;
+import static io.art.core.constants.StringConstants.OPENING_BRACKET;
 import static io.art.core.context.Context.*;
+import static io.art.core.printer.ColoredPrinter.*;
+import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static lombok.AccessLevel.*;
 
 @Getter
@@ -42,6 +46,42 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, C
     }
 
     public static ServiceSpecificationRegistry specifications() {
-        return serverModule().state().getSpecifications();
+        return serverModule().configuration().getRegistry();
+    }
+
+    @Override
+    public String print() {
+        ColoredPrinter printer = printer()
+                .mainSection(ServerModule.class.getSimpleName())
+                .tabulation(1)
+                .subSection(SERVER_SERVICES_KEY)
+                .tabulation(2);
+        configuration.getConfigurations().forEach((serviceId, service) -> {
+            printer
+                    .tabulation(2)
+                    .subSection(serviceId)
+                    .tabulation(3)
+                    .value(DEACTIVATED_KEY, service.isDeactivated())
+                    .subSection(METHODS_KEY)
+                    .tabulation(4);
+            service.getMethods().forEach((methodId, method) -> printer
+                    .tabulation(4)
+                    .subSection(methodId)
+                    .tabulation(5)
+                    .value(DEACTIVATED_KEY, method.isDeactivated()));
+        });
+        configuration.getRegistry().getServices().forEach((serviceId, service) -> {
+            printer
+                    .tabulation(2)
+                    .subSection(serviceId)
+                    .tabulation(3);
+
+            service.getMethods()
+                    .forEach((methodId, method) -> printer
+                    .tabulation(4)
+                    .message(methodId)
+                    .tabulation(5));
+        });
+        return printer.print();
     }
 }

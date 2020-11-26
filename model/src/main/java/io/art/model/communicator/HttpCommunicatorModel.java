@@ -18,7 +18,6 @@
 
 package io.art.model.communicator;
 
-import io.art.grpc.client.communicator.*;
 import io.art.model.exception.*;
 import lombok.*;
 

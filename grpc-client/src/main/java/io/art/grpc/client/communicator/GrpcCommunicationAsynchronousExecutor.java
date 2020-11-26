@@ -19,12 +19,9 @@
 package io.art.grpc.client.communicator;
 
 import com.google.common.util.concurrent.*;
-import io.art.entity.immutable.*;
-import io.art.entity.immutable.Value;
+import io.art.value.immutable.Value;
 import io.grpc.*;
 import lombok.*;
-import io.art.entity.interceptor.*;
-import io.art.entity.mapper.*;
 import io.art.grpc.client.exception.*;
 import io.art.grpc.servlet.*;
 import io.art.grpc.servlet.GrpcServlet.*;
@@ -37,11 +34,11 @@ import static lombok.AccessLevel.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.extensions.StringExtensions.*;
-import static io.art.entity.immutable.Value.*;
+import static io.art.value.immutable.Value.*;
 import static io.art.grpc.client.constants.GrpcClientExceptionMessages.*;
 import static io.art.grpc.client.module.GrpcClientModule.*;
-import static io.art.protobuf.descriptor.ProtobufEntityReader.*;
-import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;
+import static io.art.protobuf.descriptor.ProtobufReader.*;
+import static io.art.protobuf.descriptor.ProtobufWriter.*;
 import static io.art.service.factory.ServiceRequestFactory.*;
 import static io.art.service.factory.ServiceResponseFactory.*;
 import static io.art.service.mapping.ServiceRequestMapping.*;

@@ -21,7 +21,7 @@ dependencies {
     val staxVersion: String by project
 
     implementation(project(":core"))
-    implementation(project(":entity"))
+    implementation(project(":value"))
     implementation(project(":logging"))
 
     api("org.jvnet.staxex", "stax-ex", staxVersion)

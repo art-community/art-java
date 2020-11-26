@@ -20,16 +20,22 @@ package io.art.server.model;
 
 import io.art.core.source.*;
 import lombok.*;
+import reactor.core.scheduler.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
+import static io.art.server.constants.ServerModuleConstants.Defaults.*;
 
 @Getter
 @AllArgsConstructor
 public class ServiceMethodConfiguration {
     private final boolean deactivated;
+    private final boolean logging;
+    private final Scheduler scheduler;
 
     public static ServiceMethodConfiguration from(ConfigurationSource source) {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
-        return new ServiceMethodConfiguration(deactivated);
+        boolean logging = orElse(source.getBool(LOGGING_KEY), false);
+        Scheduler scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
+        return new ServiceMethodConfiguration(deactivated, logging, scheduler);
     }
 }

@@ -18,11 +18,10 @@
 
 package io.art.soap.client.communicator;
 
-import io.art.entity.immutable.*;
 import io.art.soap.client.exception.*;
 import lombok.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
-import static io.art.entity.immutable.XmlEntity.*;
+import static io.art.value.immutable.XmlEntity.*;
 import static io.art.soap.client.constants.SoapClientModuleConstants.OperationIdSource.*;
 import static io.art.soap.client.constants.SoapClientModuleConstants.*;
 import static io.art.soap.client.constants.SoapClientModuleExceptionMessages.*;

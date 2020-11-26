@@ -18,27 +18,49 @@
 
 package io.art.server.registry;
 
+import com.google.common.collect.*;
+import io.art.server.model.*;
 import io.art.server.specification.*;
+import io.art.value.immutable.*;
+import io.art.value.mapping.*;
+import static com.google.common.collect.ImmutableMap.copyOf;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.logging.LoggingModule.*;
-import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
-import static java.text.MessageFormat.*;
+import static io.art.server.constants.ServerModuleConstants.*;
+import static java.util.Optional.*;
 import java.util.*;
 
 public class ServiceSpecificationRegistry {
     private final Map<String, ServiceSpecification> services = mapOf();
 
-    public ServiceSpecification get(String serviceId) {
-        return services.get(serviceId);
+    public Optional<ServiceSpecification> get(String serviceId) {
+        return ofNullable(services.get(serviceId));
+    }
+
+    public Optional<ServiceSpecification> findServiceByValue(Value value) {
+        Entity setupEntity = Value.asEntity(value);
+        String serviceId = setupEntity.map(SERVICE_ID, PrimitiveMapping.toString);
+        return get(serviceId);
+    }
+
+    public Optional<ServiceMethodSpecification> findMethodByValue(Value value) {
+        String methodId = Value.asEntity(value).map(METHOD_ID, PrimitiveMapping.toString);
+        return findServiceByValue(value).flatMap(service -> ofNullable(service.getMethods().get(methodId)));
+    }
+
+    public Optional<ServiceMethodSpecification> findMethodById(ServiceMethodIdentifier id) {
+        return get(id.getServiceId()).map(service -> service.getMethods().get(id.getMethodId()));
     }
 
     public Set<String> identifiers() {
         return services.keySet();
     }
 
-    public ServiceSpecificationRegistry register(ServiceSpecification specification) {
-        services.put(specification.getServiceId(), specification);
-        logger(ServiceSpecificationRegistry.class).info(format(SERVICE_REGISTRATION_MESSAGE, specification.getServiceId()));
+    public ServiceSpecificationRegistry register(String id, ServiceSpecification specification) {
+        services.put(id, specification);
         return this;
+    }
+
+    public ImmutableMap<String, ServiceSpecification> getServices() {
+        return copyOf(services);
     }
 }

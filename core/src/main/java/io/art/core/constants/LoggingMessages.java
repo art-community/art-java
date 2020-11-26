@@ -21,6 +21,6 @@ package io.art.core.constants;
 import static io.art.core.colorizer.AnsiColorizer.*;
 
 public interface LoggingMessages {
-    String MODULE_LOADED_MESSAGE = success("Module: ''{0}'' was loaded in {1,number,#}[ms] with ''{2}''");
-    String MODULE_UNLOADED_MESSAGE = success("Module: ''{0}'' was unloaded in {1,number,#}[ms] with ''{2}''");
+    String MODULE_LOADED_MESSAGE = success("Module: ''{0}'' was loaded");
+    String MODULE_UNLOADED_MESSAGE = success("Module: ''{0}'' was unloaded");
 }

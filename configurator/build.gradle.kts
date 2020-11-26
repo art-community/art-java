@@ -18,7 +18,7 @@
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":entity"))
+    implementation(project(":value"))
     implementation(project(":yaml-configuration"))
 
     val typesafeConfigVersion: String by project

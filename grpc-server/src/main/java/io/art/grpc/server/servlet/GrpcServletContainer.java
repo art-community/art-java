@@ -18,11 +18,9 @@
 
 package io.art.grpc.server.servlet;
 
-import io.art.entity.immutable.*;
 import io.grpc.stub.*;
 import lombok.*;
-import io.art.entity.interceptor.*;
-import io.art.entity.mapper.ValueToModelMapper.*;
+import io.art.value.mapper.ValueToModelMapper.*;
 import io.art.grpc.server.exception.*;
 import io.art.grpc.server.model.GrpcService.*;
 import io.art.grpc.server.specification.*;
@@ -36,8 +34,8 @@ import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.InterceptionStrategy.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.entity.immutable.Value.*;
-import static io.art.entity.mapper.ValueFromModelMapper.*;
+import static io.art.value.immutable.Value.*;
+import static io.art.value.mapper.ValueFromModelMapper.*;
 import static io.art.grpc.server.constants.GrpcServerExceptionMessages.*;
 import static io.art.grpc.server.constants.GrpcServerLoggingMessages.*;
 import static io.art.grpc.server.constants.GrpcServerModuleConstants.*;
@@ -45,8 +43,8 @@ import static io.art.logging.LoggingModule.*;
 import static io.art.logging.LoggingModuleConstants.*;
 import static io.art.logging.LoggingModuleConstants.LoggingParameters.*;
 import static io.art.logging.LoggingContext.*;
-import static io.art.protobuf.descriptor.ProtobufEntityReader.*;
-import static io.art.protobuf.descriptor.ProtobufEntityWriter.*;
+import static io.art.protobuf.descriptor.ProtobufReader.*;
+import static io.art.protobuf.descriptor.ProtobufWriter.*;
 import static io.art.server.ServiceController.*;
 import static io.art.server.module.ServerModule.serviceModuleState;
 import static io.art.server.constants.RequestValidationPolicy.*;

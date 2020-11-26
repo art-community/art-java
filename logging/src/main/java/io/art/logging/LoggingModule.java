@@ -25,7 +25,10 @@ import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.core.async.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.printer.ColoredPrinter.printer;
 import static io.art.logging.LoggingModuleConstants.*;
+import static io.art.logging.LoggingModuleConstants.ConfigurationKeys.ASYNCHRONOUS_KEY;
+import static io.art.logging.LoggingModuleConstants.ConfigurationKeys.COLORED_KEY;
 import static io.art.logging.LoggingModuleConstants.LoggingMessages.*;
 import static java.lang.System.*;
 import static java.text.MessageFormat.*;
@@ -51,7 +54,7 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     }
 
     @Override
-    public void beforeLoad() {
+    public void onLoad() {
         getLogManager().reset();
 
         boolean fromFile = ofNullable(getProperty(LOG42_CONFIGURATION_FILE_PROPERTY))
@@ -78,6 +81,16 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
             currentLogger().info(USE_ASYNCHRONOUS_LOGGING);
             setProperty(LOG4J_CONTEXT_SELECTOR, AsyncLoggerContextSelector.class.getName());
         }
+    }
+
+    @Override
+    public String print() {
+        return printer()
+                .mainSection(LoggingModule.class.getSimpleName())
+                .tabulation(1)
+                .value(ASYNCHRONOUS_KEY, configuration.isAsynchronous())
+                .value(COLORED_KEY, configuration.isColored())
+                .print();
     }
 
     private Logger currentLogger() {

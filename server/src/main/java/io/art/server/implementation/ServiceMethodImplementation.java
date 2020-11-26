@@ -18,13 +18,8 @@
 
 package io.art.server.implementation;
 
-import io.art.core.model.*;
-import io.art.server.exception.*;
-import io.art.server.interceptor.*;
-import io.art.server.specification.*;
 import lombok.*;
-import static io.art.server.module.ServerModule.*;
-import java.util.*;
+import static io.art.core.caster.Caster.*;
 import java.util.function.*;
 
 @Getter
@@ -32,72 +27,31 @@ import java.util.function.*;
 public class ServiceMethodImplementation {
     private final String serviceId;
     private final String methodId;
-    private final Function<Object, Object> functor;
+    private final Function<?, ?> functor;
 
-    @Getter(lazy = true)
-    private final ServiceSpecification serviceSpecification = specifications().get(serviceId);
-
-    @Getter(lazy = true)
-    private final ServiceMethodSpecification methodSpecification = getServiceSpecification().getMethods().get(methodId);
-
-    public static ServiceMethodImplementation consumer(Consumer<Object> consumer, String serviceId, String methodId) {
+    public static <T> ServiceMethodImplementation runner(Runnable runner, String serviceId, String methodId) {
         return new ServiceMethodImplementation(serviceId, methodId, request -> {
-            consumer.accept(request);
+            runner.run();
             return null;
         });
     }
 
-    public static ServiceMethodImplementation producer(Supplier<Object> producer, String serviceId, String methodId) {
+    public static <T> ServiceMethodImplementation consumer(Consumer<T> consumer, String serviceId, String methodId) {
+        return new ServiceMethodImplementation(serviceId, methodId, request -> {
+            consumer.accept(cast(request));
+            return null;
+        });
+    }
+
+    public static <T> ServiceMethodImplementation producer(Supplier<T> producer, String serviceId, String methodId) {
         return new ServiceMethodImplementation(serviceId, methodId, request -> producer.get());
     }
 
-    public static ServiceMethodImplementation handler(Function<Object, Object> function, String serviceId, String methodId) {
+    public static <Input, Output> ServiceMethodImplementation handler(Function<Input, Output> function, String serviceId, String methodId) {
         return new ServiceMethodImplementation(serviceId, methodId, function);
     }
 
     public Object execute(Object request) {
-        ServiceMethodSpecification methodSpecification = getMethodSpecification();
-        List<ServiceMethodInterceptor<Object, Object>> interceptors = methodSpecification.getInterceptors();
-        for (ServiceMethodInterceptor<Object, Object> interceptor : interceptors) {
-            InterceptionResult interceptionResult = interceptor.interceptRequest(request, methodSpecification);
-            request = interceptionResult.getOut();
-            switch (interceptionResult.getStrategy()) {
-                case PROCESS:
-                    return processExecution(request);
-                case TERMINATE:
-                    return request;
-            }
-        }
-        return processExecution(request);
-    }
-
-    private Object processExecution(Object request) {
-        ServiceMethodSpecification methodSpecification = getMethodSpecification();
-        List<ServiceMethodInterceptor<Object, Object>> interceptors = methodSpecification.getInterceptors();
-        try {
-            Object response = functor.apply(request);
-            for (ServiceMethodInterceptor<Object, Object> interceptor : interceptors) {
-                InterceptionResult interceptionResult = interceptor.interceptResponse(request, methodSpecification);
-                response = interceptionResult.getOut();
-                switch (interceptionResult.getStrategy()) {
-                    case PROCESS:
-                    case TERMINATE:
-                        return response;
-                }
-            }
-            return response;
-        } catch (Throwable throwable) {
-            for (ServiceMethodInterceptor<Object, Object> interceptor : interceptors) {
-                ExceptionInterceptionResult interceptionResult = interceptor.interceptException(throwable, methodSpecification);
-                throwable = interceptionResult.getOutException();
-                switch (interceptionResult.getStrategy()) {
-                    case THROW_EXCEPTION:
-                        throw new ServiceMethodExecutionException(interceptionResult.getOutException(), serviceId, methodId);
-                    case RETURN_FALLBACK:
-                        return interceptionResult.getFallback();
-                }
-            }
-            throw new ServiceMethodExecutionException(throwable, serviceId, methodId);
-        }
+        return functor.apply(cast(request));
     }
 }

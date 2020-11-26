@@ -1,7 +1,7 @@
 /*
- * ART
+ * ART Java
  *
- * Copyright 2020 ART
+ * Copyright 2019 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package io.art.tarantool.configuration;
 import lombok.*;
 import io.art.tarantool.configuration.lua.*;
 import io.art.tarantool.model.*;
+import static io.art.core.constants.StringConstants.COLON;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolInstanceMode.*;
 import java.util.*;
@@ -38,4 +39,8 @@ public class TarantoolConfiguration {
     private final Map<String, TarantoolEntityFieldsMapping> entityFieldsMappings;
     @Singular("replica")
     private final Set<String> replicas;
+
+    public String getConnectionAddress() {
+        return connectionConfiguration.getHost() + COLON + connectionConfiguration.getPort();
+    }
 }

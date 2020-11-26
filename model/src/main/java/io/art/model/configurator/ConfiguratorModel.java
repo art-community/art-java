@@ -19,14 +19,16 @@
 package io.art.model.configurator;
 
 import lombok.*;
+import lombok.experimental.*;
+import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
 @Getter
+@Setter
+@Accessors(fluent = true)
 public class ConfiguratorModel {
-    private LoggingConfiguratorModel loggingConfigurator;
-
-    public ConfiguratorModel logging(UnaryOperator<LoggingConfiguratorModel> configurator) {
-        this.loggingConfigurator = configurator.apply(new LoggingConfiguratorModel());
-        return this;
-    }
+    private UnaryOperator<LoggingConfiguratorModel> logging = identity();
+    private UnaryOperator<ServerConfiguratorModel> server = identity();
+    private UnaryOperator<ValueConfiguratorModel> value = identity();
+    private UnaryOperator<RsocketConfiguratorModel> rsocket = identity();
 }

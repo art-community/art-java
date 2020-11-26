@@ -18,13 +18,12 @@
 
 package io.art.kafka.serializer;
 
-import io.art.entity.immutable.*;
 import org.apache.kafka.common.serialization.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.entity.immutable.Value.*;
-import static io.art.entity.xml.XmlEntityFromEntityConverter.*;
-import static io.art.xml.descriptor.XmlEntityWriter.*;
+import static io.art.value.immutable.Value.*;
+import static io.art.value.xml.XmlEntityFromEntityConverter.*;
+import static io.art.xml.descriptor.XmlWriter.*;
 import java.util.*;
 
 public class KafkaXmlSerializer implements Serializer<Value> {

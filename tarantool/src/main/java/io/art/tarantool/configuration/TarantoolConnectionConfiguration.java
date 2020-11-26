@@ -1,7 +1,7 @@
 /*
- * ART
+ * ART Java
  *
- * Copyright 2020 ART
+ * Copyright 2019 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 package io.art.tarantool.configuration;
 
 import lombok.*;
-import static io.art.core.constants.NetworkConstants.*;
+import static io.art.core.constants.NetworkConstants.LOCALHOST_IP_ADDRESS;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 
 @Getter

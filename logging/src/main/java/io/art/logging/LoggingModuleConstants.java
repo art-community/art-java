@@ -22,13 +22,13 @@ public interface LoggingModuleConstants {
     String DEFAULT_REQUEST_ID = "default-request-id";
     String LOG4J2_YML_FILE = "log4j2.yml";
     String LOG4J2_YAML_FILE = "log4j2.yaml";
-    String LOG4J2_DEFAULT_YML_FILE = LOG4J2_YML_FILE;
     String LOG42_CONFIGURATION_FILE_PROPERTY = "log4j2.configurationFile";
     String VALUE_LOG_MESSAGE = "Value: ''{0}''";
 
     interface ConfigurationKeys {
-        String COLORED_KEY = "logging.colored";
-        String ASYNCHRONOUS_KEY = "logging.asynchronous";
+        String LOGGING_SECTION = "logging";
+        String COLORED_KEY = "colored";
+        String ASYNCHRONOUS_KEY = "asynchronous";
     }
 
     interface LoggingParameters {

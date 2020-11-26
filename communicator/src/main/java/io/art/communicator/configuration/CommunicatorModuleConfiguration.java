@@ -18,18 +18,38 @@
 
 package io.art.communicator.configuration;
 
+import com.google.common.collect.*;
+import io.art.communicator.constants.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
+import reactor.core.scheduler.*;
+import static com.google.common.collect.ImmutableMap.toImmutableMap;
+import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.COMMUNICATOR_SECTION;
+import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.TARGETS_KEY;
+import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.DEFAULT_COMMUNICATOR_SCHEDULER;
+import static java.util.Optional.ofNullable;
+import java.util.*;
 
 @Getter
 public class CommunicatorModuleConfiguration implements ModuleConfiguration {
+    private ImmutableMap<String, CommunicatorConfiguration> communicators = ImmutableMap.of();
+    private Scheduler scheduler;
+
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<CommunicatorModuleConfiguration, Configurator> {
         private final CommunicatorModuleConfiguration configuration;
 
         @Override
         public Configurator from(ConfigurationSource source) {
+            configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
+            configuration.communicators = ofNullable(source.getNested(COMMUNICATOR_SECTION))
+                    .map(server -> server.getNestedMap(TARGETS_KEY))
+                    .map(services -> services
+                            .entrySet()
+                            .stream()
+                            .collect(toImmutableMap(Map.Entry::getKey, entry -> CommunicatorConfiguration.from(entry.getValue()))))
+                    .orElse(ImmutableMap.of());
             return this;
         }
     }

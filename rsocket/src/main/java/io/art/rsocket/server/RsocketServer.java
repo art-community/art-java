@@ -18,50 +18,70 @@
 
 package io.art.rsocket.server;
 
+import io.art.core.caster.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
+import io.rsocket.*;
 import io.rsocket.core.*;
+import io.rsocket.transport.*;
 import io.rsocket.transport.netty.server.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.RsocketTransport.*;
-import static io.art.rsocket.module.RsocketModule.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
+import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
 public class RsocketServer implements Server {
-    @Getter
-    private final RsocketTransport transport;
+    private final RsocketServerConfiguration configuration;
+    private final AtomicReference<Disposable> server = new AtomicReference<>();
 
     @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = logger(RsocketServer.class);
 
-    private Disposable disposable;
-
     @Override
     public void start() {
-        String message = transport == TCP ? RSOCKET_TCP_ACCEPTOR_STARTED_MESSAGE : RSOCKET_WS_ACCEPTOR_STARTED_MESSAGE;
-        RsocketModuleConfiguration configuration = rsocketModule().configuration();
-        disposable = RSocketServer
-                .create((payload, socket) -> Mono.just(new ServerRsocket(payload, socket)))
-                .fragment(configuration.getFragmentationMtu())
-                .bind(TcpServerTransport.create(configuration.getServerTcpPort()))
-                .subscribe(serverChannel -> getLogger().info(message));
+        if (server.compareAndSet(null, null)) {
+            TransportMode transportMode = configuration.getTransport();
+            RSocketServer server = RSocketServer
+                    .create(this::createSocket)
+                    .fragment(configuration.getMaxInboundPayloadSize());
+            if (configuration.getFragmentationMtu() > 0) {
+                server.fragment(configuration.getFragmentationMtu());
+            }
+            Resume resume;
+            if (nonNull(resume = configuration.getResume())) {
+                server.resume(resume);
+            }
+            ServerTransport<CloseableChannel> transport = transportMode == TCP
+                    ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
+                    : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
+            Disposable disposable = server
+                    .interceptors(interceptorRegistry -> configuration.getInterceptorConfigurer().accept(interceptorRegistry))
+                    .payloadDecoder(configuration.getPayloadDecoder())
+                    .bind(transport)
+                    .doOnSubscribe(subscription -> getLogger().info(SERVER_STARTED))
+                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
+                    .subscribe();
+            this.server.set(disposable);
+        }
     }
 
     @Override
     public void stop() {
-        apply(disposable, Disposable::dispose);
-        getLogger().info(RSOCKET_STOPPED);
+        Disposable value;
+        if (nonNull(value = server.getAndSet(null))) {
+            value.dispose();
+            getLogger().info(SERVER_STOPPED);
+        }
     }
 
     @Override
@@ -72,12 +92,23 @@ public class RsocketServer implements Server {
     @Override
     public void restart() {
         stop();
-        new RsocketServer(transport).start();
-        getLogger().info(RSOCKET_RESTARTED_MESSAGE);
+        start();
     }
 
     @Override
     public boolean available() {
-        return nonNull(disposable) && !disposable.isDisposed();
+        Disposable value;
+        return nonNull(value = server.get()) && !value.isDisposed();
+    }
+
+    private Mono<RSocket> createSocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
+        Mono<ServingRsocket> socket = Mono.create(emitter -> emitter.success(new ServingRsocket(payload, requesterSocket, configuration)));
+        Logger logger = getLogger();
+        if (configuration.isLogging()) {
+            socket = socket
+                    .doOnSuccess(servingSocket -> servingSocket.onDispose(() -> logger.info(SERVER_CLIENT_DISCONNECTED)))
+                    .doOnSubscribe(subscription -> logger.info(SERVER_CLIENT_CONNECTED));
+        }
+        return socket.doOnError(throwable -> logger.error(throwable.getMessage(), throwable)).map(Caster::cast);
     }
 }

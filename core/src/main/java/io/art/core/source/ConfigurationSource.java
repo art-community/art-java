@@ -24,6 +24,8 @@ import java.time.*;
 import java.util.*;
 
 public interface ConfigurationSource {
+    String getSection();
+
     Integer getInt(String path);
 
     Long getLong(String path);
@@ -86,6 +88,9 @@ public interface ConfigurationSource {
 
     default Map<String, ConfigurationSource> getNestedMap(String path) {
         ConfigurationSource nested = getNested(path);
+        if (!has(path)) {
+            return null;
+        }
         return nested.getKeys().stream().collect(toMap(identity(), nested::getNested));
     }
 

@@ -18,28 +18,29 @@
 
 package io.art.server.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
 import java.util.*;
+import java.util.function.*;
 
 class NotEmptyMapValidationExpression extends ValidationExpression<Map<?, ?>> {
     NotEmptyMapValidationExpression() {
         super(NOT_EMPTY_MAP);
     }
 
-    NotEmptyMapValidationExpression(String pattern) {
+    NotEmptyMapValidationExpression(Function<NotEmptyMapValidationExpression, String> factory) {
         super(NOT_EMPTY_MAP);
-        this.pattern = pattern;
+        this.messageFactory = factory;
     }
 
     @Override
-    public boolean evaluate(String fieldName, Map<?, ?> value) {
-        return super.evaluate(fieldName, value) && !value.isEmpty();
+    public boolean evaluate(String field, Map<?, ?> value) {
+        return super.evaluate(field, value) && !value.isEmpty();
     }
 
     @Override
-    public String getValidationErrorMessage() {
-        return format(EMPTY_VALIDATION_ERROR, fieldName);
+    public String formatErrorMessage() {
+        return format(EMPTY_VALIDATION_ERROR, field);
     }
 }

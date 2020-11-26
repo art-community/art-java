@@ -19,56 +19,94 @@
 package io.art.rsocket.module;
 
 import io.art.core.module.*;
-import io.art.json.descriptor.*;
+import io.art.core.printer.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.server.*;
+import io.art.rsocket.manager.*;
 import io.art.rsocket.state.*;
+import io.art.server.specification.*;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.cookie.Cookie;
-import io.rsocket.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
-import reactor.netty.http.client.*;
-import static io.art.core.context.Context.*;
+import org.reactivestreams.*;
+import reactor.core.publisher.*;
+import reactor.netty.http.server.*;
+import reactor.netty.tcp.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.wrapper.ExceptionWrapper.*;
+import static io.art.core.constants.StringConstants.*;
+import static io.art.core.context.Context.*;
+import static io.art.core.printer.ColoredPrinter.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.*;
-import static io.netty.handler.codec.http.HttpHeaderNames.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
+import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import static reactor.core.publisher.Flux.*;
-import static reactor.netty.ByteBufFlux.*;
-import static reactor.netty.http.server.HttpServer.create;
 import java.util.*;
 
 @Getter
 public class RsocketModule implements StatefulModule<RsocketModuleConfiguration, Configurator, RsocketModuleState> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule = context().getStatefulModule(RSOCKET_MODULE_ID);
+    private static final StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule = context().getStatefulModule(RsocketModule.class.getSimpleName());
+    @Getter(lazy = true, value = PRIVATE)
+    private static final Logger logger = logger(RsocketModule.class);
     private final String id = RsocketModule.class.getSimpleName();
     private final RsocketModuleConfiguration configuration = new RsocketModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
     private final RsocketModuleState state = new RsocketModuleState();
-
-    @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(RsocketModule.class);
+    private final RsocketManager manager = new RsocketManager(configuration, state);
 
     public static StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule() {
         return getRsocketModule();
     }
+
     @Override
-    public void beforeUnload() {
-        apply(rsocketModule().state().getTcpServer(), RsocketServer::stop);
-        apply(rsocketModule().state().getWebSocketServer(), RsocketServer::stop);
-        rsocketModule().state().getRsocketClients().stream().filter(rsocket -> !rsocket.isDisposed()).forEach(this::disposeRsocket);
+    public void onLoad() {
+        if (configuration.isActivateCommunicator()) {
+            manager.startConnectors();
+        }
+        if (configuration.isActivateServer()) {
+            manager.startSever();
+        }
     }
 
-    private void disposeRsocket(RSocket rsocket) {
-        if (rsocket.isDisposed()) {
-            return;
+    @Override
+    public void onUnload() {
+        manager.stopConnectors();
+        manager.stopSever();
+    }
+
+    @Override
+    public String print() {
+        RsocketServerConfiguration serverConfiguration = configuration.getServerConfiguration();
+        RsocketCommunicatorConfiguration communicatorConfiguration = configuration.getCommunicatorConfiguration();
+        if (isNull(serverConfiguration) && isNull(communicatorConfiguration)) {
+            return EMPTY_STRING;
         }
-        getLogger().info(RSOCKET_CLIENT_DISPOSING);
-        ignoreException(rsocket::dispose, getLogger()::error);
+        ColoredPrinter printer = printer()
+                .mainSection(RsocketModule.class.getSimpleName())
+                .tabulation(1);
+        if (nonNull(serverConfiguration)) {
+            printer.subSection(SERVER_SECTION)
+                    .tabulation(2)
+                    .value(DEFAULT_DATA_FORMAT_KEY, serverConfiguration.getDefaultDataFormat())
+                    .value(DEFAULT_META_DATA_FORMAT_KEY, serverConfiguration.getDefaultMetaDataFormat())
+                    .value(DEFAULT_SERVICE_ID_KEY + SPACE + AMPERSAND + SPACE + DEFAULT_METHOD_ID_KEY, serverConfiguration.getDefaultServiceMethod())
+                    .value(FRAGMENTATION_MTU_KEY, serverConfiguration.getFragmentationMtu())
+                    .value(MAX_INBOUND_PAYLOAD_SIZE_KEY, serverConfiguration.getMaxInboundPayloadSize())
+                    .value(TRANSPORT_MODE_KEY, serverConfiguration.getTransport())
+                    .value("tcpServer", let(serverConfiguration.getTcpServer(), TcpServer::configure))
+                    .value("server available", manager.isServerAvailable());
+        }
+        if (nonNull(communicatorConfiguration)) {
+            printer
+                    .tabulation(1)
+                    .subSection(COMMUNICATOR_SECTION)
+                    .tabulation(2)
+                    .value(DEFAULT_DATA_FORMAT_KEY, communicatorConfiguration.getDefaultDataFormat())
+                    .value(DEFAULT_META_DATA_FORMAT_KEY, communicatorConfiguration.getDefaultMetaDataFormat())
+                    .value(DEFAULT_SERVICE_ID_KEY + SPACE + AMPERSAND + SPACE + DEFAULT_METHOD_ID_KEY, communicatorConfiguration.getDefaultServiceMethod())
+                    .value(FRAGMENTATION_MTU_KEY, communicatorConfiguration.getFragmentationMtu())
+                    .value(MAX_INBOUND_PAYLOAD_SIZE_KEY, communicatorConfiguration.getMaxInboundPayloadSize());
+        }
+        return printer.print();
     }
 }

@@ -19,15 +19,13 @@
 package io.art.http.server.parser;
 
 import io.art.core.factory.CollectionsFactory.*;
-import io.art.entity.factory.*;
-import io.art.entity.immutable.*;
 import io.art.http.server.model.*;
 import static java.util.stream.Collectors.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.immutable.Entity.entityBuilder;
-import static io.art.entity.factory.PrimitivesFactory.*;
+import static io.art.value.immutable.Entity.entityBuilder;
+import static io.art.value.factory.PrimitivesFactory.*;
 import javax.servlet.http.*;
 import java.util.*;
 

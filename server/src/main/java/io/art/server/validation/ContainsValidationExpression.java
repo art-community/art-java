@@ -18,10 +18,11 @@
 
 package io.art.server.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
 import java.util.*;
+import java.util.function.*;
 
 class ContainsValidationExpression extends ValidationExpression<Object> {
     private final List<?> list;
@@ -31,19 +32,19 @@ class ContainsValidationExpression extends ValidationExpression<Object> {
         this.list = objectList;
     }
 
-    ContainsValidationExpression(List<?> objectList, String pattern) {
+    ContainsValidationExpression(List<?> objectList, Function<ContainsValidationExpression, String> factory) {
         super(CONTAINS);
         this.list = objectList;
-        this.pattern = pattern;
+        this.messageFactory = factory;
     }
 
     @Override
-    public boolean evaluate(String fieldName, Object value) {
-        return super.evaluate(fieldName, value) && list.contains(value);
+    public boolean evaluate(String field, Object value) {
+        return super.evaluate(field, value) && list.contains(value);
     }
 
     @Override
-    public String getValidationErrorMessage() {
-        return format(NOT_CONTAINS_VALIDATION_ERROR, fieldName, value, list.toString());
+    public String formatErrorMessage() {
+        return format(NOT_CONTAINS_VALIDATION_ERROR, field, value, list.toString());
     }
 }

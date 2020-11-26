@@ -20,4 +20,5 @@ package io.art.core.constants;
 
 public interface BufferConstants {
     int DEFAULT_BUFFER_SIZE = 8192;
+    float BUFFER_REALLOCATION_FACTOR = 1.1f;
 }

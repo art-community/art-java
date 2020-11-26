@@ -29,18 +29,40 @@ import java.util.stream.*;
 
 @UtilityClass
 public class EmptinessChecker {
-    public static <T> boolean isNotEmpty(T value) {
+    public static boolean isNotEmpty(Object value) {
         return !isEmpty(value);
     }
 
-    public static <T> boolean isEmpty(T value) {
+    public static boolean isNotEmpty(Object[] value) {
+        return !isEmpty(value);
+    }
+
+    public static boolean isNotEmpty(Collection<?> collection) {
+        return !isEmpty(collection);
+    }
+
+    public static boolean isNotEmpty(Stream<?> stream) {
+        return !isEmpty(stream);
+    }
+
+
+    public static <T> void ifNotEmpty(T value, Consumer<T> action) {
+        if (isEmpty(value)) {
+            return;
+        }
+        action.accept(value);
+    }
+
+
+    public static boolean isEmpty(Object value) {
         String valAsString;
         return isNull(value) || (valAsString = value.toString().trim()).isEmpty() || (valAsString.equalsIgnoreCase(NULL_STRING));
     }
 
-    public static <T> boolean isEmpty(T[] content) {
+    public static boolean isEmpty(Object[] content) {
         return isNull(content) || content.length == 0;
     }
+
 
     public static boolean isEmpty(byte[] content) {
         return isNull(content) || content.length == 0;
@@ -78,10 +100,6 @@ public class EmptinessChecker {
         return isNull(map) || map.isEmpty();
     }
 
-    public static boolean isNotEmpty(Collection<?> collection) {
-        return !isEmpty(collection);
-    }
-
     public static boolean isEmpty(Collection<?> collection) {
         return isNull(collection) || collection.isEmpty();
     }
@@ -98,9 +116,6 @@ public class EmptinessChecker {
         return isNull(buffer) || buffer.readableBytes() == 0;
     }
 
-    public static boolean isNotEmpty(Stream<?> stream) {
-        return !isEmpty(stream);
-    }
 
     public static <T> T ifEmpty(T value, T ifEmpty) {
         return isEmpty(value) ? ifEmpty : value;
@@ -108,12 +123,5 @@ public class EmptinessChecker {
 
     public static <T> T ifEmpty(T value, Supplier<T> ifEmpty) {
         return isEmpty(value) ? ifEmpty.get() : value;
-    }
-
-    public static <T> void ifNotEmpty(T value, Consumer<T> action) {
-        if (isEmpty(value)) {
-            return;
-        }
-        action.accept(value);
     }
 }

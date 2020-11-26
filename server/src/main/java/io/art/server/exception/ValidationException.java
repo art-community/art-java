@@ -18,48 +18,32 @@
 
 package io.art.server.exception;
 
-import lombok.Getter;
-import io.art.server.validation.Validatable;
-import io.art.server.validation.ValidationExpression;
-
-import static io.art.core.caster.Caster.cast;
-import java.util.*;
+import io.art.server.validation.*;
+import lombok.*;
+import static io.art.core.caster.Caster.*;
 
 public class ValidationException extends RuntimeException {
     @Getter
-    private String fieldName;
+    private String field;
     @Getter
     private String type;
     @Getter
     private ValidationExpression<?> expression;
-    private Validatable validatableModel;
+    private Validatable model;
 
     public ValidationException(String message) {
         super(message);
     }
 
-    public ValidationException(String message, Validatable validatable) {
-        super(message);
-        this.validatableModel = validatable;
-    }
-
-    public ValidationException(Validatable validatableModel, ValidationExpression<?> expression) {
-        super(expression.getValidationErrorMessage());
-        this.fieldName = expression.getFieldName();
+    public ValidationException(Validatable model, ValidationExpression<?> expression) {
+        super(expression.getErrorMessage());
+        this.field = expression.getField();
         this.type = expression.getType();
         this.expression = expression;
-        this.validatableModel = validatableModel;
+        this.model = model;
     }
 
-    public ValidationException(Validatable validatableModel, ValidationExpression<?> expression, List<?> patternParameters) {
-        super(expression.formatValidationErrorMessage(patternParameters));
-        this.fieldName = expression.getFieldName();
-        this.type = expression.getType();
-        this.expression = expression;
-        this.validatableModel = validatableModel;
-    }
-
-    public <T extends Validatable> T getValidatableModel() {
-        return cast(validatableModel);
+    public <T extends Validatable> T model() {
+        return cast(model);
     }
 }

@@ -18,11 +18,9 @@
 
 package io.art.grpc.server.configuration;
 
-import io.art.entity.immutable.*;
 import io.grpc.*;
 import lombok.*;
 import io.art.core.module.*;
-import io.art.entity.interceptor.*;
 import io.art.grpc.server.interceptor.*;
 import io.art.logging.*;
 import static io.grpc.internal.GrpcUtil.*;

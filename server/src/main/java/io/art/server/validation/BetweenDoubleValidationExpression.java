@@ -18,10 +18,13 @@
 
 package io.art.server.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.NOT_BETWEEN_VALIDATION_ERROR;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.BETWEEN_DOUBLE;
+import lombok.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
+import java.util.function.*;
 
+@Getter
 class BetweenDoubleValidationExpression extends ValidationExpression<Double> {
     private final double lowerValue;
     private final double greaterValue;
@@ -32,21 +35,20 @@ class BetweenDoubleValidationExpression extends ValidationExpression<Double> {
         this.greaterValue = greaterValue;
     }
 
-    BetweenDoubleValidationExpression(Double lowerValue, Double greaterValue, String pattern) {
+    BetweenDoubleValidationExpression(Double lowerValue, Double greaterValue, Function<BetweenDoubleValidationExpression, String> factory) {
         super(BETWEEN_DOUBLE);
         this.lowerValue = lowerValue;
         this.greaterValue = greaterValue;
-        this.pattern = pattern;
+        this.messageFactory = factory;
     }
 
     @Override
-    public boolean evaluate(String fieldName, Double value) {
-        return super.evaluate(fieldName, value) && value < lowerValue && value > greaterValue;
+    public boolean evaluate(String field, Double value) {
+        return super.evaluate(field, value) && value < lowerValue && value > greaterValue;
     }
 
     @Override
-    public String getValidationErrorMessage() {
-        return format(NOT_BETWEEN_VALIDATION_ERROR, fieldName, value, lowerValue, greaterValue);
+    public String formatErrorMessage() {
+        return format(NOT_BETWEEN_VALIDATION_ERROR, field, value, lowerValue, greaterValue);
     }
 }
-

@@ -67,7 +67,7 @@ public class SqlModule implements Module<SqlModuleConfiguration, SqlModuleState>
     }
 
     @Override
-    public void beforeLoad() {
+    public void onLoad() {
         sqlModule().getDbConfigurations().values().forEach(this::initializeConnectionPool);
     }
 

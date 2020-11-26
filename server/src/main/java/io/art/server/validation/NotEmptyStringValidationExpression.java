@@ -18,27 +18,30 @@
 
 package io.art.server.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import lombok.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
+import java.util.function.*;
 
+@Getter
 class NotEmptyStringValidationExpression extends ValidationExpression<String> {
     NotEmptyStringValidationExpression() {
         super(NOT_EMPTY_STRING);
     }
 
-    NotEmptyStringValidationExpression(String pattern) {
+    NotEmptyStringValidationExpression(Function<NotEmptyStringValidationExpression, String> factory) {
         super(NOT_EMPTY_STRING);
-        this.pattern = pattern;
+        this.messageFactory = factory;
     }
 
     @Override
-    public boolean evaluate(String fieldName, String value) {
-        return super.evaluate(fieldName, value) && !value.isEmpty();
+    public boolean evaluate(String field, String value) {
+        return super.evaluate(field, value) && !value.isEmpty();
     }
 
     @Override
-    public String getValidationErrorMessage() {
-        return format(EMPTY_VALIDATION_ERROR, fieldName);
+    public String formatErrorMessage() {
+        return format(EMPTY_VALIDATION_ERROR, field);
     }
 }

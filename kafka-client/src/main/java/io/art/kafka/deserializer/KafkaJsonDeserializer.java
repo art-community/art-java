@@ -18,10 +18,9 @@
 
 package io.art.kafka.deserializer;
 
-import io.art.entity.immutable.*;
 import org.apache.kafka.common.serialization.*;
 import static io.art.core.context.Context.*;
-import static io.art.json.descriptor.JsonEntityReader.*;
+import static io.art.json.descriptor.JsonReader.*;
 import java.util.*;
 
 public class KafkaJsonDeserializer implements Deserializer<Value> {

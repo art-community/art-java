@@ -23,9 +23,6 @@ import static java.nio.charset.StandardCharsets.*;
 import static io.art.core.mime.MimeType.*;
 
 public interface MessagePackConstants {
-    MimeType APPLICATION_MESSAGE_PACK = mimeType("application", "message-pack");
-    MimeType APPLICATION_MESSAGE_PACK_UTF_8 = mimeType("application", "message-pack", UTF_8);
-
     interface ExceptionMessages {
         String VALUE_TYPE_NOT_SUPPORTED = "MessagePack value type ''{0}'' not supported";
     }

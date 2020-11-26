@@ -18,12 +18,9 @@
 
 package io.art.grpc.client.communicator;
 
-import io.art.entity.immutable.*;
-import io.art.entity.immutable.Value;
+import io.art.value.immutable.Value;
 import io.grpc.*;
 import lombok.*;
-import io.art.entity.interceptor.*;
-import io.art.entity.mapper.*;
 import io.art.grpc.client.exception.*;
 import io.art.grpc.client.handler.*;
 import static lombok.AccessLevel.*;

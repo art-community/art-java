@@ -19,10 +19,9 @@
 package io.art.http.mapper;
 
 import io.art.core.mime.*;
-import io.art.entity.immutable.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.entity.immutable.BinaryValue.*;
+import static io.art.value.immutable.BinaryValue.*;
 import static java.util.Objects.*;
 import java.nio.charset.*;
 

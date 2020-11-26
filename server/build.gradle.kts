@@ -18,7 +18,7 @@
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":entity"))
+    implementation(project(":value"))
     implementation(project(":resilience"))
     implementation(project(":logging"))
 }

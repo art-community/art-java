@@ -18,9 +18,8 @@
 
 package io.art.kafka.deserializer;
 
-import io.art.entity.immutable.*;
 import org.apache.kafka.common.serialization.*;
-import static io.art.message.pack.descriptor.MessagePackEntityReader.*;
+import static io.art.message.pack.descriptor.MessagePackReader.*;
 import java.util.*;
 
 public class KafkaMessagePackDeserializer implements Deserializer<Value> {

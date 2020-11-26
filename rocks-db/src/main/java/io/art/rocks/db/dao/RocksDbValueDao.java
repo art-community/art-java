@@ -18,7 +18,6 @@
 
 package io.art.rocks.db.dao;
 
-import io.art.entity.immutable.*;
 import io.art.rocks.db.bucket.*;
 import io.art.rocks.db.exception.*;
 import static java.util.Collections.*;
@@ -27,9 +26,9 @@ import static java.util.Optional.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.immutable.Value.*;
-import static io.art.message.pack.descriptor.MessagePackEntityReader.*;
-import static io.art.message.pack.descriptor.MessagePackEntityWriter.*;
+import static io.art.value.immutable.Value.*;
+import static io.art.message.pack.descriptor.MessagePackReader.*;
+import static io.art.message.pack.descriptor.MessagePackWriter.*;
 import static io.art.rocks.db.constants.RocksDbExceptionMessages.*;
 import static io.art.rocks.db.constants.RocksDbModuleConstants.*;
 import static io.art.rocks.db.dao.RocksDbCollectionDao.*;

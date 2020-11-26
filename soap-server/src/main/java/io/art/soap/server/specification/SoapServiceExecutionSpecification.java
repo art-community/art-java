@@ -27,7 +27,7 @@ import io.art.soap.server.model.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.entity.mapping.PrimitiveMapping.*;
+import static io.art.value.mapping.PrimitiveMapping.*;
 import static io.art.http.server.builder.HttpServiceBuilder.*;
 import static io.art.http.server.model.HttpService.*;
 import static io.art.soap.server.constans.SoapServerModuleConstants.*;

@@ -21,7 +21,7 @@ dependencies {
     val kafkaLog4jAppenderVersion: String by project
 
     implementation(project(":core"))
-    implementation(project(":entity"))
+    implementation(project(":value"))
     implementation(project(":logging"))
     implementation(project(":json"))
     implementation(project(":protobuf"))

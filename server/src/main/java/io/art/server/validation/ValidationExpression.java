@@ -19,31 +19,29 @@
 package io.art.server.validation;
 
 import lombok.*;
-import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.constants.StringConstants.*;
-import static java.text.MessageFormat.*;
-import java.util.*;
+import static io.art.core.caster.Caster.*;
+import java.util.function.*;
 
 @Getter
 public abstract class ValidationExpression<T> {
-    protected String fieldName;
+    protected String field;
     protected T value;
     protected final String type;
-    protected String pattern;
+    protected Function<? extends ValidationExpression<?>, String> messageFactory = ValidationExpression::formatErrorMessage;
 
     protected ValidationExpression(String type) {
         this.type = type;
     }
 
-    public boolean evaluate(String fieldName, T value) {
-        this.fieldName = fieldName;
+    public boolean evaluate(String field, T value) {
+        this.field = field;
         this.value = value;
         return value != null;
     }
 
-    public abstract String getValidationErrorMessage();
-
-    public String formatValidationErrorMessage(List<?> patternParameters) {
-        return isEmpty(pattern) ? EMPTY_STRING : format(pattern, patternParameters.toArray());
+    public String getErrorMessage() {
+        return messageFactory.apply(cast(this));
     }
+
+    public abstract String formatErrorMessage();
 }

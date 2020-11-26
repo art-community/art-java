@@ -20,14 +20,17 @@ package io.art.configurator.source;
 
 import io.art.core.parser.*;
 import io.art.core.source.*;
-import io.art.entity.immutable.*;
-import io.art.entity.mapping.*;
+import io.art.value.immutable.*;
+import io.art.value.immutable.Value;
+import io.art.value.mapping.*;
 import lombok.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.entity.immutable.Value.*;
-import static io.art.entity.mapping.PrimitiveMapping.toString;
-import static io.art.entity.mapping.PrimitiveMapping.*;
+import static io.art.core.combiner.SectionCombiner.*;
+import static io.art.value.immutable.Value.*;
+import static io.art.value.mapping.PrimitiveMapping.toString;
+import static io.art.value.mapping.PrimitiveMapping.*;
+import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import java.time.*;
@@ -36,6 +39,8 @@ import java.util.*;
 @Getter
 @RequiredArgsConstructor
 public class EntityConfigurationSource implements ConfigurationSource {
+    @Getter
+    private final String section;
     private final ModuleConfigurationSourceType type = ENTITY;
     private final Entity entity;
 
@@ -76,7 +81,11 @@ public class EntityConfigurationSource implements ConfigurationSource {
 
     @Override
     public ConfigurationSource getNested(String path) {
-        return new EntityConfigurationSource(asEntity(entity.find(path)));
+        Value nested = entity.find(path);
+        if (isNull(nested)) {
+            return null;
+        }
+        return new EntityConfigurationSource(combine(section, path), asEntity(nested));
     }
 
     @Override
@@ -111,7 +120,11 @@ public class EntityConfigurationSource implements ConfigurationSource {
 
     @Override
     public List<ConfigurationSource> getNestedList(String path) {
-        return asArray(entity.get(path)).asStream().map(value -> new EntityConfigurationSource(asEntity(value))).collect(toList());
+        Value nested = entity.get(path);
+        if (isNull(nested)) {
+            return emptyList();
+        }
+        return asArray(nested).asStream().map(value -> new EntityConfigurationSource(combine(section, path), asEntity(value))).collect(toList());
     }
 
     @Override

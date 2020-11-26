@@ -18,9 +18,10 @@
 
 package io.art.server.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ExceptionsMessages.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionType.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
+import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
+import java.util.function.*;
 
 class EqualsValidationExpression extends ValidationExpression<Object> {
     private final Object other;
@@ -30,19 +31,19 @@ class EqualsValidationExpression extends ValidationExpression<Object> {
         this.other = other;
     }
 
-    EqualsValidationExpression(Object other, String pattern) {
+    EqualsValidationExpression(Object other, Function<EqualsValidationExpression, String> factory) {
         super(EQUALS);
         this.other = other;
-        this.pattern = pattern;
+        this.messageFactory = factory;
     }
 
     @Override
-    public boolean evaluate(String fieldName, Object value) {
-        return super.evaluate(fieldName, value) && value.equals(other);
+    public boolean evaluate(String field, Object value) {
+        return super.evaluate(field, value) && value.equals(other);
     }
 
     @Override
-    public String getValidationErrorMessage() {
-        return format(NOT_EQUALS_VALIDATION_ERROR, fieldName, value, other);
+    public String formatErrorMessage() {
+        return format(NOT_EQUALS_VALIDATION_ERROR, field, value, other);
     }
 }

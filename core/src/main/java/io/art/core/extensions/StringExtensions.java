@@ -78,11 +78,11 @@ public class StringExtensions {
         return isQuotedString(string) ? string.substring(1, string.length() - 1) : string;
     }
 
-    public static String firstLetterToUpperCase(String string) {
+    public static String capitalize(String string) {
         return string.substring(0, 1).toUpperCase() + string.substring(1);
     }
 
-    public static String firstLetterToLowerCase(String string) {
+    public static String decapitalize(String string) {
         return string.substring(0, 1).toLowerCase() + string.substring(1);
     }
 }

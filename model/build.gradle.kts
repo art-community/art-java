@@ -17,23 +17,10 @@
  */
 
 dependencies {
-    implementation(project(":grpc"))
-    implementation(project(":grpc-client"))
-    implementation(project(":http"))
-    implementation(project(":http-client"))
-    implementation(project(":soap-client"))
-    implementation(project(":grpc-server"))
-    implementation(project(":http-server"))
-    implementation(project(":soap"))
-    implementation(project(":soap-server"))
-    implementation(project(":kafka-consumer"))
-    implementation(project(":kafka-producer"))
-    implementation(project(":sql"))
-    implementation(project(":tarantool"))
-    implementation(project(":rocks-db"))
     implementation(project(":configurator"))
     implementation(project(":rsocket"))
     implementation(project(":logging"))
     implementation(project(":core"))
-    implementation(project(":entity"))
+    implementation(project(":value"))
+    implementation(project(":server"))
 }

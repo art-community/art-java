@@ -19,6 +19,7 @@
 package io.art.core.context;
 
 import com.google.common.collect.*;
+import io.art.core.checker.*;
 import io.art.core.configuration.*;
 import io.art.core.exception.*;
 import io.art.core.module.Module;
@@ -30,7 +31,6 @@ import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.CollectionsFactory.*;
 import static java.lang.Runtime.*;
-import static java.lang.System.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
@@ -94,28 +94,28 @@ public class Context {
 
 
     private void load(ImmutableList<Module> modules) {
+        INSTANCE = this;
         Set<String> messages = setOf(ART_BANNER);
         for (Module module : modules) {
-            long timestamp = currentTimeMillis();
-            module.beforeLoad();
-            messages.add(format(MODULE_LOADED_MESSAGE, module.getId(), currentTimeMillis() - timestamp, module.getClass()));
-            module.afterLoad();
+            messages.add(format(MODULE_LOADED_MESSAGE, module.getId()));
             this.modules.put(module.getId(), module);
         }
-        INSTANCE = this;
         messages.forEach(printer);
+        for (Module module : modules) {
+            module.onLoad();
+            ifNotEmpty(module.print(), printer);
+        }
     }
 
     private void unload() {
         List<Module> modules = linkedListOf(this.modules.values());
         reverse(modules);
         for (Module module : modules) {
-            long timestamp = currentTimeMillis();
-            module.beforeUnload();
-            printer.accept(format(MODULE_UNLOADED_MESSAGE, module.getId(), currentTimeMillis() - timestamp, module.getClass()));
-            module.afterUnload();
+            printer.accept(format(MODULE_UNLOADED_MESSAGE, module.getId(), module.getClass()));
+            module.onUnload();
             this.modules.remove(module.getId());
         }
+
         INSTANCE = null;
     }
 }

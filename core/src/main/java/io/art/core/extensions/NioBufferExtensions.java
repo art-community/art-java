@@ -22,10 +22,12 @@ import io.netty.buffer.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
+import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.NettyBufferExtensions.*;
 import static io.netty.buffer.ByteBufAllocator.*;
 import static io.netty.buffer.Unpooled.*;
+import static java.lang.Math.*;
 import static java.nio.ByteBuffer.*;
 import java.io.*;
 import java.nio.*;
@@ -58,6 +60,7 @@ public class NioBufferExtensions {
         if (isEmpty(buffer)) {
             return EMPTY_BYTES;
         }
+        buffer.flip();
         byte[] bytes = new byte[buffer.remaining()];
         buffer.get(bytes);
         return bytes;
@@ -67,6 +70,7 @@ public class NioBufferExtensions {
         if (isEmpty(nioBuffer)) {
             return EMPTY_BUFFER;
         }
+        nioBuffer.flip();
         if (nioBuffer.isDirect()) {
             ByteBuf buffer = DEFAULT.directBuffer(nioBuffer.capacity());
             buffer.writeBytes(nioBuffer);
@@ -85,4 +89,18 @@ public class NioBufferExtensions {
         return new String(toByteArray(buffer), charset);
     }
 
+    public static ByteBuffer expand(ByteBuffer current, int delta) {
+        return expand(current, 0, delta);
+    }
+
+    public static ByteBuffer expand(ByteBuffer current, int initialPosition, int delta) {
+        int expandSize = max((int) (current.limit() * BUFFER_REALLOCATION_FACTOR), current.position() + delta);
+        ByteBuffer temp = current.isDirect() ? ByteBuffer.allocateDirect(expandSize) : ByteBuffer.allocate(expandSize);
+        int limit = current.limit();
+        current.flip();
+        temp.put(current);
+        current.limit(limit);
+        current.position(initialPosition);
+        return temp;
+    }
 }

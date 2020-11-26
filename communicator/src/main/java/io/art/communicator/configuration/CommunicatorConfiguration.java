@@ -18,10 +18,22 @@
 
 package io.art.communicator.configuration;
 
+import io.art.core.source.*;
 import lombok.*;
+import reactor.core.scheduler.*;
+import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
+import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.*;
+import static io.art.core.checker.NullityChecker.*;
 
 @Getter
-@Builder
+@AllArgsConstructor
 public class CommunicatorConfiguration {
-    private final boolean deactivated;
+    private final boolean logging;
+    private final Scheduler scheduler;
+
+    public static CommunicatorConfiguration from(ConfigurationSource source) {
+        boolean logging = orElse(source.getBool(LOGGING_KEY), false);
+        Scheduler scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
+        return new CommunicatorConfiguration(logging, scheduler);
+    }
 }

@@ -18,12 +18,8 @@
 
 package io.art.grpc.server.model;
 
-import io.art.entity.immutable.*;
-import io.art.server.constants.*;
 import lombok.*;
 import lombok.experimental.*;
-import io.art.entity.interceptor.*;
-import io.art.entity.mapper.*;
 import static io.art.grpc.server.module.GrpcServerModule.*;
 import java.util.*;
 

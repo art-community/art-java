@@ -43,12 +43,12 @@ public class XmlEntityMappingBuilderImplementation implements XmlEntityMappingBu
 
     void add(XmlEntityRule rule, Set<XmlEntityMappingTargets> changeableParts) {
         if (isIncorrectRule(rule)) {
-            throw new XmlMappingException(format(SAME_INPUT_OUTPUT, rule));
+            throw new XmlException(format(SAME_INPUT_OUTPUT, rule));
         }
 
         for (XmlEntityMappingTargets part : changeableParts) {
             if (part != ATTRIBUTE_VALUE && part != TAG_VALUE && part != NAMESPACE_VALUE) {
-                throw new XmlMappingException(format(UNEXPECTED_PARSED_PART_IN_RULE, part, rule));
+                throw new XmlException(format(UNEXPECTED_PARSED_PART_IN_RULE, part, rule));
             }
         }
 

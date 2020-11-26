@@ -22,9 +22,11 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.*;
 import com.fasterxml.jackson.dataformat.yaml.*;
 import io.art.configuration.yaml.exception.*;
+import io.art.core.combiner.*;
 import io.art.core.source.*;
 import lombok.*;
 import static com.fasterxml.jackson.databind.node.JsonNodeType.*;
+import static io.art.core.combiner.SectionCombiner.combine;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.parser.DurationParser.*;
@@ -36,12 +38,14 @@ import java.util.*;
 
 @Getter
 public class YamlConfigurationSource implements ConfigurationSource {
+    private final String section;
     private final ModuleConfigurationSourceType type;
     private final File file;
     private final JsonNode configuration;
     private final static YAMLMapper yamlMapper = new YAMLMapper();
 
-    public YamlConfigurationSource(ModuleConfigurationSourceType type, File file) {
+    public YamlConfigurationSource(String section, ModuleConfigurationSourceType type, File file) {
+        this.section = section;
         this.type = type;
         this.file = file;
         try {
@@ -51,7 +55,8 @@ public class YamlConfigurationSource implements ConfigurationSource {
         }
     }
 
-    public YamlConfigurationSource(ModuleConfigurationSourceType type, File file, JsonNode configuration) {
+    public YamlConfigurationSource(String section, ModuleConfigurationSourceType type, File file, JsonNode configuration) {
+        this.section = section;
         this.type = type;
         this.file = file;
         this.configuration = configuration;
@@ -94,7 +99,7 @@ public class YamlConfigurationSource implements ConfigurationSource {
 
     @Override
     public ConfigurationSource getNested(String path) {
-        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), node -> new YamlConfigurationSource(type, file, node));
+        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), node -> new YamlConfigurationSource(combine(section, path), type, file, node));
     }
 
     @Override
@@ -144,7 +149,7 @@ public class YamlConfigurationSource implements ConfigurationSource {
     @Override
     public List<ConfigurationSource> getNestedList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
-                .map(node -> new YamlConfigurationSource(type, file, node))
+                .map(node -> new YamlConfigurationSource(combine(section, path), type, file, node))
                 .collect(toList());
     }
 

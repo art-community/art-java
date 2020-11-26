@@ -18,12 +18,12 @@
 
 package io.art.xml.rules.processor;
 
-import io.art.entity.immutable.*;
-import io.art.entity.immutable.XmlEntity.*;
+import io.art.value.immutable.*;
+import io.art.value.immutable.XmlEntity.*;
 import io.art.xml.constants.*;
 import io.art.xml.rules.builder.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.entity.immutable.XmlEntity.*;
+import static io.art.value.immutable.XmlEntity.*;
 import java.util.*;
 import java.util.Map.*;
 

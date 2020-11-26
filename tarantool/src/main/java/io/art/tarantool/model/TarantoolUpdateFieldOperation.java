@@ -1,7 +1,7 @@
 /*
- * ART
+ * ART Java
  *
- * Copyright 2020 ART
+ * Copyright 2019 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,16 @@
 
 package io.art.tarantool.model;
 
+import io.art.value.immutable.Value;
+import io.art.value.tuple.PlainTupleWriter.*;
 import lombok.*;
-import io.art.entity.immutable.Value;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
+import static io.art.value.immutable.Entity.entityBuilder;
+import static io.art.value.tuple.PlainTupleWriter.writeTuple;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.entity.immutable.Entity.*;
-import static io.art.entity.tuple.PlainTupleWriter.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolOperator.*;
 import java.util.*;
 
@@ -50,7 +51,7 @@ public class TarantoolUpdateFieldOperation {
     }
 
     private TarantoolUpdateFieldOperation(TarantoolOperator operator, int fieldNumber, String fieldName, Value value) {
-        PlainTupleWriterResult result = writeTuple(entityBuilder().valueField(fieldName, value).build());
+        PlainTupleWriterResult result = writeTuple(entityBuilder().put(fieldName, value).build());
         if (isNull(result)) {
             valueOperation = emptyList();
             return;

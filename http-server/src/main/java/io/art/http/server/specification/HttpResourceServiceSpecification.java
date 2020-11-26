@@ -18,31 +18,15 @@
 
 package io.art.http.server.specification;
 
-import io.art.entity.immutable.*;
-import io.art.http.server.service.*;
-import io.art.server.implementation.*;
 import io.art.server.specification.*;
 import lombok.*;
-import io.art.core.caster.*;
-import io.art.entity.mapper.ValueToModelMapper.*;
+import io.art.value.mapper.ValueToModelMapper.*;
 import io.art.http.server.HttpServerModuleConfiguration.*;
-import io.art.http.server.model.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.constants.StringConstants.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.*;
-import static io.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.HttpParameters.*;
 import static io.art.http.server.constants.HttpServerModuleConstants.HttpResourceServiceConstants.Methods.*;
-import static io.art.http.server.extractor.HttpResponseContentTypeExtractor.*;
-import static io.art.http.server.interceptor.HttpServerInterception.*;
-import static io.art.http.server.interceptor.HttpServerInterceptor.*;
-import static io.art.http.server.model.HttpService.*;
-import static io.art.http.server.module.HttpServerModule.*;
 import static io.art.http.server.service.HttpResourceService.*;
 import static io.art.server.implementation.ServiceMethodImplementation.*;
 import static io.art.server.model.ServiceInterceptionResult.*;
-import java.util.*;
-import java.util.function.*;
 
 @Getter
 @AllArgsConstructor
