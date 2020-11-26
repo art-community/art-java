@@ -26,6 +26,7 @@ import io.art.server.registry.*;
 import lombok.*;
 import reactor.core.scheduler.*;
 import static com.google.common.collect.ImmutableMap.*;
+import static io.art.core.checker.NullityChecker.apply;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.Defaults.*;
 import static java.util.Optional.*;
@@ -57,7 +58,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator override(ServerModuleConfiguration configuration) {
-            this.configuration.registry = configuration.getRegistry();
+            apply(configuration.getRegistry(), registry -> this.configuration.registry = registry);
             return this;
         }
     }

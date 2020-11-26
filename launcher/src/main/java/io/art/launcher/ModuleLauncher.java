@@ -33,6 +33,7 @@ import io.art.model.module.*;
 import io.art.model.server.*;
 import io.art.rsocket.module.*;
 import io.art.server.module.*;
+import io.art.tarantool.module.*;
 import io.art.value.module.*;
 import io.art.xml.module.*;
 import lombok.experimental.*;
@@ -72,7 +73,8 @@ public class ModuleLauncher {
                     xml(sources),
                     server(sources, serverModel),
                     communicator(sources),
-                    rsocket(sources, model.getServerModel(), rsocketModel)
+                    rsocket(sources, model.getServerModel(), rsocketModel),
+                    tarantool(sources)
             );
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
             initialize(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
@@ -128,4 +130,9 @@ public class ModuleLauncher {
         return rsocket;
     }
 
+    private TarantoolModule tarantool(ImmutableList<ConfigurationSource> sources) {
+        TarantoolModule tarantool = new TarantoolModule();
+        tarantool.configure(configurator -> configurator.from(sources));
+        return tarantool;
+    }
 }

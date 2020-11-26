@@ -49,19 +49,19 @@ public class TarantoolInitializer {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(TarantoolInitializer.class);
 
-    public static void initializeTarantools() {
-        tarantoolModule().configuration().getTarantoolConfigurations()
+    public static void initializeTarantools(TarantoolModuleConfiguration configuration) {
+        configuration.getTarantoolConfigurations()
                 .entrySet()
                 .stream()
                 .filter(entry -> nonNull(entry) && nonNull(entry.getKey()) && nonNull(entry.getValue()))
                 .map(Map.Entry::getKey)
-                .map(TarantoolInitializer::initializeTarantool)
+                .map(instanceId -> initializeTarantool(instanceId, configuration))
                 .forEach(Runnable::run);
         ignoreException(loggerOutputStream::close, getLogger()::error);
     }
 
-    protected static Runnable initializeTarantool(String instanceId) {
-        TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, tarantoolModule().configuration().getTarantoolConfigurations());
+    protected static Runnable initializeTarantool(String instanceId, TarantoolModuleConfiguration configuration) {
+        TarantoolConfiguration tarantoolConfiguration = getTarantoolConfiguration(instanceId, configuration.getTarantoolConfigurations());
         ForkJoinTask<?> task = commonPool().submit(() -> {
             try {
                 initialTarantoolSynchronously(instanceId, tarantoolConfiguration);

@@ -29,4 +29,5 @@ dependencies {
     implementation(project(":server"))
     implementation(project(":communicator"))
     implementation(project(":rsocket"))
+    implementation(project(":tarantool"))
 }

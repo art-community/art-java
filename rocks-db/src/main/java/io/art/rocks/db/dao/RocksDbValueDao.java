@@ -211,11 +211,11 @@ public interface RocksDbValueDao {
     }
 
 
-    static Optional<String> getEntityput(String entityKey, String fieldName) {
+    static Optional<String> getEntityStringField(String entityKey, String fieldName) {
         return getString(entityKey + ROCKS_DB_KEY_DELIMITER + fieldName);
     }
 
-    static Optional<Integer> getEntityput(String entityKey, String fieldName) {
+    static Optional<Integer> getEntityIntField(String entityKey, String fieldName) {
         return getInt(entityKey + ROCKS_DB_KEY_DELIMITER + fieldName);
     }
 
@@ -296,11 +296,11 @@ public interface RocksDbValueDao {
     }
 
 
-    static Optional<String> getEntityput(Bucket bucket) {
+    static Optional<String> getEntityStringField(Bucket bucket) {
         return getString(bucket.dbKey());
     }
 
-    static Optional<Integer> getEntityput(Bucket bucket) {
+    static Optional<Integer> getEntityIntField(Bucket bucket) {
         return getInt(bucket.dbKey());
     }
 

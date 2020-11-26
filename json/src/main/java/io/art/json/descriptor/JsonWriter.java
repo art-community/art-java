@@ -184,7 +184,7 @@ public class JsonWriter {
         if (valueIsNull(value)) return;
         switch (value.getType()) {
             case STRING:
-                jsonGenerator.writeput(name, value.getString());
+                jsonGenerator.writeStringField(name, value.getString());
                 return;
             case INT:
                 jsonGenerator.writeNumberField(name, value.getInt());

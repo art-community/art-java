@@ -54,10 +54,10 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
 
     @Override
     public void onLoad() {
-        if (tarantoolModule().configuration().getInitializationMode() != BOOTSTRAP) {
+        if (configuration.getInitializationMode() != BOOTSTRAP) {
             return;
         }
-        initializeTarantools();
+        initializeTarantools(configuration);
     }
 
     public static StatefulModuleProxy<TarantoolModuleConfiguration, TarantoolModuleState> tarantoolModule() {

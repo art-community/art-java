@@ -21,19 +21,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":configurator"))
-    implementation(project(":model"))
-    implementation(project(":core"))
-    implementation(project(":logging"))
-    implementation(project(":value"))
-    implementation(project(":json"))
-    implementation(project(":protobuf"))
-    implementation(project(":message-pack"))
-    implementation(project(":xml"))
-    implementation(project(":server"))
-    implementation(project(":communicator"))
-    implementation(project(":rsocket"))
-    implementation(project(":tarantool"))
+    implementation(project(":launcher"))
 
     testImplementation("org.codehaus.groovy:groovy:2.5.13")
     testImplementation(platform("org.spockframework:spock-bom:2.0-M3-groovy-2.5"))
