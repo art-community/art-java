@@ -349,6 +349,24 @@
                         result = result + v[2]
                     end
                     return result
+                end,
+
+                list = function()
+                    local list = box.space._space:select()
+                    local result = {}
+                    for _, v in pairs(list) do
+                        if not (string.startswith(v.name, '_') or v.name == 'mapping_pending_updates') then table.insert(result, v.name) end
+                    end
+                    return result
+                end,
+
+                list_indices = function(space)
+                    local result = {}
+                    for k,v in pairs(box.space[space].index) do
+                        result[k] = v.name
+                    end
+                    result['primary'] = nil
+                    return result
                 end
             }
         } -- public API

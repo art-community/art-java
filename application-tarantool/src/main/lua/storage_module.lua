@@ -283,8 +283,6 @@ art = {
             primary_node = '',
             last_upload_min_timestamp = 0ULL,
 
-
-
             init = function(uri_list)
                 art.cluster.mapping.uri = uri_list
                 art.cluster.nodes = {}
@@ -604,6 +602,28 @@ art = {
 
             schema_len = function(space)
                 return art.box.space.schema_len(space)
+            end,
+
+            list = function()
+                local list = box.space._space:select()
+                local result = {}
+                for _, v in pairs(list) do
+                    if not (
+                            string.startswith(v.name, '_')
+                            or string.endswith(v.name, art.constants.mapping_space_postfix)
+                            or string.endswith(v.name, art.constants.schema_postfix)
+                            or v.name == 'mapping_watched_spaces'
+                    ) then table.insert(result, v.name) end
+                end
+                return result
+            end,
+
+            list_indices = function(space)
+                local result = {}
+                for k,v in pairs(box.space[space].index) do
+                    table.insert(result, v.name)
+                end
+                return result
             end
         }
     } --public API
