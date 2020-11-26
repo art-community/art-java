@@ -21,6 +21,7 @@ package io.art.value.immutable;
 import com.google.common.collect.*;
 import io.art.core.checker.*;
 import io.art.core.exception.*;
+import io.art.core.factory.CollectionsFactory;
 import io.art.core.lazy.*;
 import io.art.value.builder.*;
 import io.art.value.constants.ValueConstants.*;
@@ -43,6 +44,7 @@ import static java.util.stream.Collectors.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class Entity implements Value {
@@ -213,7 +215,7 @@ public class Entity implements Value {
             this.valueMapper = valueMapper;
             this.fromKeyMapper = fromKeyMapper;
             this.evaluated = lazy(() -> Entity.this.mapToMap(toKeyMapper, valueMapper));
-            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toSet()));
+            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(Collectors.toCollection(CollectionsFactory::setOf)));
         }
 
         @Override
