@@ -200,7 +200,23 @@ public class Entity implements Value {
         return let(find(key), value -> mapper.map(cast(value)));
     }
 
-    
+
+    @Override
+    public boolean equals(Object object){
+        if (object == this) return true;
+        if (!(object instanceof Entity)) return false;
+
+        Entity entity = (Entity) object;
+        Set<Primitive> keyset = this.asMap().keySet();
+
+        if (!(keyset == entity.asMap().keySet())) return false;
+        for (Primitive key: keyset) {
+            if (!(this.get(key) == entity.get(key))) return false;
+        }
+
+        return true;
+    }
+
     public boolean has(Primitive key) {
         return keys.contains(key);
     }
