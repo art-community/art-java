@@ -55,32 +55,10 @@ public interface TarantoolModuleConstants {
     String VALUE = "value";
     int DEFAULT_TARANTOOL_RETRIES = 3;
 
-    interface Templates {
-        String CONFIGURATION = "configuration.lua";
-        String CREATE_INDEX = "create_index.lua";
-        String ALTER_INDEX = "alter_index.lua";
-        String CREATE_SPACE = "create_space.lua";
-        String CREATE_SEQUENCE = "create_sequence.lua";
-        String FORMAT_SPACE = "format_space.lua";
-        String USER = "user.lua";
-        String VALUE = "value.lua";
-        String COMMON = "common.lua";
-        String SIMPLE_VALUE = "simple_value.lua";
-        String SPACE_MANAGEMENT = "manage_space.lua";
-        String INDEX_MANAGEMENT = "manage_index.lua";
-        String SEQUENCE_MANAGEMENT = "manage_sequence.lua";
-    }
-
-    interface Scripts {
-        String INITIALIZATION = "initialization.lua";
-        String VSHARD = "vshard";
-        String ROUTER = "vshard";
-        String STORAGE = "vshard";
-    }
-
-    interface Directories {
-        String LUA = "lua";
-        String BIN = "bin";
+    interface ConfigurationKeys{
+        String TARANTOOL_SECTION = "tarantool_refactored";
+        String TARANTOOL_INSTANCES_SECTION = "instances";
+        String TARANTOOL_INSTANCE_CONFIG = "Instance";
     }
 
     interface ExceptionMessages {
@@ -122,55 +100,6 @@ public interface TarantoolModuleConstants {
         String WAITING_FOR_CONNECT = "Waiting for tarantool ''{0}'' with address ''{1}'' to be connected during ''{2,number,#}[ms]''";
     }
 
-    interface TemplateParameterKeys {
-        String LISTEN = "listen";
-        String BACKGROUND = "background";
-        String CUSTOM_PROC_TITLE = "customProcTitle";
-        String MEMTX_DIR = "memtxDir";
-        String VINYL_DIR = "vinylDir";
-        String WORK_DIR = "workDir";
-        String USERNAME = "username";
-        String PID_FILE = "pidFile";
-        String READ_ONLY = "readOnly";
-        String VINYL_TIMEOUT = "vinylTimeout";
-        String WORKER_POOL_THREADS = "workerPoolThreads";
-        String REPLICAS = "replicas";
-        String STRING_OPTIONS = "stringOptions";
-        String NUMBER_OPTIONS = "numberOptions";
-        String PASSWORD = "password";
-        String INDEX_NAME = "indexName";
-        String SPACE_NAME = "spaceName";
-        String SEQUENCE_NAME = "sequenceName";
-        String PARTS = "parts";
-        String TYPE = "type";
-        String UNIQUE = "unique";
-        String DIMENSION = "dimension";
-        String DISTANCE = "distance";
-        String BLOOM_FPR = "bloomFpr";
-        String PAGE_SIZE = "pageSize";
-        String RANGE_SIZE = "rangeSize";
-        String RUN_COUNT_PER_LEVEL = "runCountPerLevel";
-        String RUN_SIZE_RATIO = "runSizeRatio";
-        String SEQUENCE = "sequence";
-        String TEMPORARY = "temporary";
-        String ENGINE = "engine";
-        String FIELD_COUNT = "fieldCount";
-        String FORMAT = "format";
-        String IS_LOCAL = "isLocal";
-        String USER = "user";
-        String START = "start";
-        String MIN = "min";
-        String MAX = "max";
-        String CYCLE = "cycle";
-        String CACHE = "cache";
-        String STEP = "step";
-        String MEMTX_MAX_TUPLE_SIZE = "memtxMaxTupleSize";
-        String MEMTX_MEMORY = "memtxMemory";
-        String SLAB_ALLOC_FACTOR = "slabAllocFactor";
-        String SLAB_ALLOC_MAXIMAL = "slabAllocMaximal";
-        String SLAB_ALLOC_ARENA = "slabAllocArena";
-    }
-
     interface Functions {
         String PUT = "art.api.put";
         String GET = "art.api.get";
@@ -192,16 +121,6 @@ public interface TarantoolModuleConstants {
         String LEN = "art.api.space.len";
         String SCHEMA_COUNT = "art.api.space.schema_count";
         String SCHEMA_LEN = "art.api.space.schema_len";
-    }
-
-    enum TarantoolInstanceMode {
-        LOCAL,
-        REMOTE
-    }
-
-    enum TarantoolInitializationMode {
-        BOOTSTRAP,
-        LAZY
     }
 
     enum TarantoolFieldType {
