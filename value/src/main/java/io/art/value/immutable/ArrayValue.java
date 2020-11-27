@@ -19,7 +19,6 @@
 package io.art.value.immutable;
 
 import io.art.core.exception.*;
-import io.art.core.factory.*;
 import io.art.core.lazy.*;
 import io.art.value.constants.ValueConstants.*;
 import io.art.value.mapper.*;
@@ -28,9 +27,8 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ArrayExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.factory.MapFactory.concurrentHashMapOf;
-import static io.art.core.factory.QueueFactory.dequeOf;
-import static io.art.core.factory.QueueFactory.queueOf;
+import static io.art.core.factory.MapFactory.concurrentHashMap;
+import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.value.constants.ValueConstants.ValueType.*;
@@ -45,7 +43,7 @@ import java.util.stream.*;
 public class ArrayValue implements Value {
     @Getter
     private final ValueType type = ARRAY;
-    private final Map<Integer, LazyValue<?>> mappedValueCache = MapFactory.concurrentHashMap();
+    private final Map<Integer, LazyValue<?>> mappedValueCache = concurrentHashMap();
     private final Function<Integer, ? extends Value> valueProvider;
     private final LazyValue<Integer> size;
 
@@ -203,15 +201,29 @@ public class ArrayValue implements Value {
         return unbox(mapAsList(toBool).toArray(new Boolean[0]));
     }
 
-    @Override
-    public int hashCode() {
-        return toList().hashCode();
-    }
 
     @Override
-    public boolean equals(Object object) {
-        return toList().equals(object);
+    public boolean equals(Object object){
+        if (object == this) return true;
+        if ( !(object instanceof ArrayValue) ) return false;
+
+        ArrayValue another = (ArrayValue) object;
+
+        int size = size();
+        if (size != another.size()) return false;
+
+        Value entry;
+        for (int index = 0; index < size; index++) {
+            entry = this.get(index);
+            if (entry == null) {
+                if (another.get(index) == null) continue;
+                return false;
+            }
+            if ( !(entry.equals(another.get(index))) ) return false;
+        }
+        return true;
     }
+
 
     private class ProxyList<T> implements List<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;

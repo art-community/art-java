@@ -200,10 +200,32 @@ public class Entity implements Value {
     }
 
 
+    @Override
+    public boolean equals(Object object){
+        if (object == this) return true;
+        if ( !(object instanceof Entity) ) return false;
+
+        Entity another = (Entity) object;
+        Set<Primitive> keySet = this.asMap().keySet();
+
+        if ( !(keySet.equals(another.asMap().keySet())) ) return false;
+
+        Value entry;
+        for (Primitive key: keySet) {
+            entry = this.get(key);
+            if (entry == null) {
+                if (another.get(key) == null) continue;
+                return false;
+            }
+            if ( !(entry.equals(another.get(key))) ) return false;
+        }
+        return true;
+    }
+
     public boolean has(Primitive key) {
         return keys.contains(key);
     }
-
+    
     public class ProxyMap<K, V> implements Map<K, V> {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
@@ -214,7 +236,7 @@ public class Entity implements Value {
             this.valueMapper = valueMapper;
             this.fromKeyMapper = fromKeyMapper;
             this.evaluated = lazy(() -> Entity.this.mapToMap(toKeyMapper, valueMapper));
-            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toSet()));
+            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toCollection(SetFactory::setOf)));
         }
 
         @Override
@@ -290,22 +312,12 @@ public class Entity implements Value {
         }
     }
 
-
+    
     public EntityBuilder toBuilder() {
         EntityBuilder entityBuilder = entityBuilder();
         keys.forEach(key -> entityBuilder.lazyPut(key, () -> valueProvider.apply(key)));
         return entityBuilder;
-    }
-
-    @Override
-    public int hashCode() {
-        return toMap().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        return toMap().equals(other);
-    }
-
+    } 
+    
     public static Entity EMPTY = entityBuilder().build();
 }

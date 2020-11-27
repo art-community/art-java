@@ -24,7 +24,7 @@ import io.art.configurator.module.*;
 import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.context.*;
 import io.art.core.lazy.*;
-import io.art.core.module.*;
+import io.art.core.module.Module;
 import io.art.core.source.*;
 import io.art.json.module.*;
 import io.art.logging.*;

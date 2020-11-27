@@ -3,7 +3,7 @@ package io.art.tarantool.module.initializer;
 import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.Logger;
 import org.zeroturnaround.exec.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.exception.*;
