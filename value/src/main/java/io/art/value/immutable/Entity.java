@@ -67,9 +67,7 @@ public class Entity implements Value {
 
     public <K, V> Map<K, V> mapToMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
         Map<K, V> newMap = MapFactory.map();
-        for (Primitive key : keys) {
-            let(map(key, valueMapper), value -> newMap.put(keyMapper.map(key), value));
-        }
+        for (Primitive key : keys) let(map(key, valueMapper), value -> newMap.put(keyMapper.map(key), value));
         return newMap;
     }
 
