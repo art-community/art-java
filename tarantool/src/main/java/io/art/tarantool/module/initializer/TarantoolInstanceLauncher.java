@@ -2,6 +2,7 @@ package io.art.tarantool.module.initializer;
 
 import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
+import io.art.core.factory.*;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
 import org.zeroturnaround.exec.*;
@@ -45,6 +46,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.*;
 
 public class TarantoolInstanceLauncher {
     private final static OutputStream loggerOutputStream = forLogger(logger(TarantoolInstanceLauncher.class))
@@ -75,7 +77,7 @@ public class TarantoolInstanceLauncher {
                     .map(replicaConfiguration ->
                             replicaConfiguration.getUsername() + COLON + replicaConfiguration.getPassword() + AT_SIGN +
                                     replicaConfiguration.getHost() + COLON + replicaConfiguration.getPort())
-                    .collect(toSet());
+                    .collect(toCollection(SetFactory::setOf));
             String luaConfiguration = configuration.getInitialConfiguration().toLua(connectionConfiguration.getPort(), replicas);
             Path luaConfigurationPath = get(getLuaScriptPath(instanceId, localConfiguration, CONFIGURATION));
             writeFile(luaConfigurationPath, luaConfiguration);

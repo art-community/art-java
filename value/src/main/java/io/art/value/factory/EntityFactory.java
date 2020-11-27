@@ -24,10 +24,8 @@ import lombok.experimental.*;
 import static io.art.core.factory.SetFactory.setOf;
 import static io.art.value.immutable.Entity.*;
 import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toSet;
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 @UtilityClass
 public class EntityFactory {
