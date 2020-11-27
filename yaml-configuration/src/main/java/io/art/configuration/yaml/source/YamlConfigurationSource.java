@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.node.*;
 import com.fasterxml.jackson.dataformat.yaml.*;
 import io.art.configuration.yaml.exception.*;
 import io.art.core.combiner.*;
+import io.art.core.factory.*;
 import io.art.core.source.*;
 import lombok.*;
 import static com.fasterxml.jackson.databind.node.JsonNodeType.*;
@@ -106,28 +107,28 @@ public class YamlConfigurationSource implements ConfigurationSource {
     public List<Integer> getIntList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
                 .map(JsonNode::asInt)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
     }
 
     @Override
     public List<Long> getLongList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
                 .map(JsonNode::asLong)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
     }
 
     @Override
     public List<Boolean> getBoolList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
                 .map(JsonNode::asBoolean)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
     }
 
     @Override
     public List<Double> getDoubleList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
                 .map(JsonNode::asDouble)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
 
     }
 
@@ -135,14 +136,14 @@ public class YamlConfigurationSource implements ConfigurationSource {
     public List<String> getStringList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
                 .map(JsonNode::asText)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
     }
 
     @Override
     public List<Duration> getDurationList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
                 .map(node -> parseDuration(node.asText()))
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
 
     }
 
@@ -150,12 +151,12 @@ public class YamlConfigurationSource implements ConfigurationSource {
     public List<ConfigurationSource> getNestedList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
                 .map(node -> new YamlConfigurationSource(combine(section, path), type, file, node))
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
     }
 
     @Override
     public Set<String> getKeys() {
-        return stream(((Iterable<String>) configuration::fieldNames).spliterator(), false).collect(toSet());
+        return stream(((Iterable<String>) configuration::fieldNames).spliterator(), false).collect(toCollection(SetFactory::set));
     }
 
     @Override

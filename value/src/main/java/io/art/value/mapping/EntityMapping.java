@@ -29,6 +29,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.value.factory.EntityFactory.*;
 import static java.util.stream.Collectors.*;
 import java.util.*;
+import java.util.function.*;
 
 @UtilityClass
 @UsedByGenerator
@@ -47,15 +48,12 @@ public class EntityMapping {
     public static <K, V> EntityFromModelMapper<Map<K, V>> fromMap(
             PrimitiveToModelMapper<K> toKeyMapper,
             PrimitiveFromModelMapper<K> fromKeyMapper,
-            ValueFromModelMapper<V, ? extends Value> valueMapper) {
-        return entity -> let(
-                entity,
-                notNull -> entity(entity.keySet()
-                                .stream()
-                                .map(fromKeyMapper::map)
-                                .collect(toCollection(SetFactory::set)),
-                        key -> valueMapper.map(entity.get(toKeyMapper.map(key)))
-                )
-        );
+            ValueFromModelMapper<V, ? extends Value> valueMapper
+    ) {
+        Function<Map<K, V>, Entity> mapper = notNull -> entity(notNull.keySet()
+                .stream()
+                .map(fromKeyMapper::map)
+                .collect(toCollection(SetFactory::set)), key -> valueMapper.map(notNull.get(toKeyMapper.map(key))));
+        return entity -> let(entity, mapper);
     }
 }

@@ -18,6 +18,7 @@
 
 package io.art.configurator.source;
 
+import io.art.core.factory.*;
 import io.art.core.parser.*;
 import io.art.core.source.*;
 import io.art.value.immutable.*;
@@ -124,12 +125,12 @@ public class EntityConfigurationSource implements ConfigurationSource {
         if (isNull(nested)) {
             return emptyList();
         }
-        return asArray(nested).asStream().map(value -> new EntityConfigurationSource(combine(section, path), asEntity(value))).collect(toList());
+        return asArray(nested).asStream().map(value -> new EntityConfigurationSource(combine(section, path), asEntity(value))).collect(toCollection(ArrayFactory::dynamicArray));
     }
 
     @Override
     public Set<String> getKeys() {
-        return entity.asMap().keySet().stream().map(toString::map).collect(toSet());
+        return entity.asMap().keySet().stream().map(toString::map).collect(toCollection(SetFactory::set));
     }
 
     @Override

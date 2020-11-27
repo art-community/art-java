@@ -39,25 +39,19 @@ public class Primitive implements Value {
 
     public String getString() {
         if (Objects.isNull(value)) return null;
-        if (primitiveType != STRING) {
-            return value.toString();
-        }
+        if (primitiveType != STRING) return value.toString();
         return (String) value;
     }
 
     public Integer getInt() {
         if (Objects.isNull(value)) return null;
-        if (primitiveType == STRING) {
-            return Integer.parseInt((String) value);
-        }
+        if (primitiveType == STRING) return Integer.parseInt((String) value);
         return ((Number) value).intValue();
     }
 
     public Short getShort() {
         if (Objects.isNull(value)) return null;
-        if (primitiveType == STRING) {
-            return Short.parseShort((String) value);
-        }
+        if (primitiveType == STRING) return Short.parseShort((String) value);
         return ((Number) value).shortValue();
     }
 
@@ -67,41 +61,31 @@ public class Primitive implements Value {
 
     public Double getDouble() {
         if (Objects.isNull(value)) return null;
-        if (primitiveType == STRING) {
-            return Double.parseDouble((String) value);
-        }
+        if (primitiveType == STRING) return Double.parseDouble((String) value);
         return ((Number) value).doubleValue();
     }
 
     public Float getFloat() {
         if (Objects.isNull(value)) return null;
-        if (primitiveType == STRING) {
-            return Float.parseFloat((String) value);
-        }
+        if (primitiveType == STRING) return Float.parseFloat((String) value);
         return ((Number) value).floatValue();
     }
 
     public Long getLong() {
         if (Objects.isNull(value)) return null;
-        if (primitiveType == STRING) {
-            return Long.parseLong((String) value);
-        }
+        if (primitiveType == STRING) return Long.parseLong((String) value);
         return ((Number) value).longValue();
     }
 
     public Boolean getBool() {
         if (Objects.isNull(value)) return null;
-        if (primitiveType == STRING) {
-            return Boolean.parseBoolean((String) value);
-        }
+        if (primitiveType == STRING) return Boolean.parseBoolean((String) value);
         return (Boolean) value;
     }
 
     public Byte getByte() {
         if (Objects.isNull(value)) return null;
-        if (primitiveType == STRING) {
-            return Byte.parseByte((String) value);
-        }
+        if (primitiveType == STRING) return Byte.parseByte((String) value);
         return ((Number) value).byteValue();
     }
 

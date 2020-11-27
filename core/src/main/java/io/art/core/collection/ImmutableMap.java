@@ -18,7 +18,6 @@
 
 package io.art.core.collection;
 
-import static com.google.common.base.Preconditions.*;
 import static io.art.core.caster.Caster.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
@@ -120,9 +119,6 @@ public class ImmutableMap<K, V> {
             Function<? super T, ? extends K> keyFunction,
             Function<? super T, ? extends V> valueFunction,
             BinaryOperator<V> mergeFunction) {
-        checkNotNull(keyFunction);
-        checkNotNull(valueFunction);
-        checkNotNull(mergeFunction);
         Collector<T, ?, LinkedHashMap<K, V>> mapCollector = toMap(keyFunction, valueFunction, mergeFunction, LinkedHashMap::new);
         Function<LinkedHashMap<K, V>, ImmutableMap<K, V>> mapFunction = ImmutableMap::new;
         return collectingAndThen(mapCollector, mapFunction);

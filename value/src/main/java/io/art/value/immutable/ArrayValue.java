@@ -27,7 +27,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ArrayExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.factory.MapFactory.concurrentHashMap;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.lazy.LazyValue.*;
@@ -63,66 +63,50 @@ public class ArrayValue implements Value {
 
     public List<Value> toList() {
         List<Value> list = dynamicArrayOf();
-        for (int index = 0; index < size(); index++) {
-            apply(get(index), list::add);
-        }
+        for (int index = 0; index < size(); index++) apply(get(index), list::add);
         return list;
     }
 
     public Set<Value> toSet() {
         Set<Value> set = setOf();
-        for (int index = 0; index < size(); index++) {
-            apply(get(index), set::add);
-        }
+        for (int index = 0; index < size(); index++) apply(get(index), set::add);
         return set;
     }
 
     public Queue<Value> toQueue() {
         Queue<Value> queue = queueOf();
-        for (int index = 0; index < size(); index++) {
-            apply(get(index), queue::add);
-        }
+        for (int index = 0; index < size(); index++) apply(get(index), queue::add);
         return queue;
     }
 
     public Deque<Value> toDeque() {
         Deque<Value> deque = dequeOf();
-        for (int index = 0; index < size(); index++) {
-            apply(get(index), deque::add);
-        }
+        for (int index = 0; index < size(); index++) apply(get(index), deque::add);
         return deque;
     }
 
 
     public <T> List<T> mapToList(ValueToModelMapper<T, ? extends Value> mapper) {
         List<T> list = dynamicArrayOf();
-        for (int index = 0; index < size(); index++) {
-            apply(map(index, mapper), list::add);
-        }
+        for (int index = 0; index < size(); index++) apply(map(index, mapper), list::add);
         return list;
     }
 
     public <T> Set<T> mapToSet(ValueToModelMapper<T, ? extends Value> mapper) {
         Set<T> set = setOf();
-        for (int index = 0; index < size(); index++) {
-            apply(map(index, mapper), set::add);
-        }
+        for (int index = 0; index < size(); index++) apply(map(index, mapper), set::add);
         return set;
     }
 
     public <T> Queue<T> mapToQueue(ValueToModelMapper<T, ? extends Value> mapper) {
         Queue<T> queue = queueOf();
-        for (int index = 0; index < size(); index++) {
-            apply(map(index, mapper), queue::add);
-        }
+        for (int index = 0; index < size(); index++) apply(map(index, mapper), queue::add);
         return queue;
     }
 
     public <T> Deque<T> mapToDeque(ValueToModelMapper<T, ? extends Value> mapper) {
         Deque<T> deque = dequeOf();
-        for (int index = 0; index < size(); index++) {
-            apply(map(index, mapper), deque::add);
-        }
+        for (int index = 0; index < size(); index++) apply(map(index, mapper), deque::add);
         return deque;
     }
 
@@ -180,32 +164,32 @@ public class ArrayValue implements Value {
     public short[] shortArray() {
         return unbox(mapAsList(toShort).toArray(new Short[0]));
     }
-    
+
     public double[] doubleArray() {
         return unbox(mapAsList(toDouble).toArray(new Double[0]));
     }
-    
+
     public float[] floatArray() {
         return unbox(mapAsList(toFloat).toArray(new Float[0]));
     }
-    
+
     public byte[] byteArray() {
         return unbox(mapAsList(toByte).toArray(new Byte[0]));
     }
-    
+
     public char[] charArray() {
         return unbox(mapAsList(toChar).toArray(new Character[0]));
     }
-    
+
     public boolean[] boolArray() {
         return unbox(mapAsList(toBool).toArray(new Boolean[0]));
     }
 
 
     @Override
-    public boolean equals(Object object){
+    public boolean equals(Object object) {
         if (object == this) return true;
-        if ( !(object instanceof ArrayValue) ) return false;
+        if (!(object instanceof ArrayValue)) return false;
 
         ArrayValue another = (ArrayValue) object;
 
@@ -219,7 +203,7 @@ public class ArrayValue implements Value {
                 if (another.get(index) == null) continue;
                 return false;
             }
-            if ( !(entry.equals(another.get(index))) ) return false;
+            if (!(entry.equals(another.get(index)))) return false;
         }
         return true;
     }

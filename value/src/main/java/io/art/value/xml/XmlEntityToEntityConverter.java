@@ -24,6 +24,7 @@ import io.art.value.builder.*;
 import io.art.value.immutable.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.collector.MapCollectors.mapCollector;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.immutableArrayOf;
 import static io.art.value.factory.ArrayValueFactory.*;
@@ -45,7 +46,7 @@ public final class XmlEntityToEntityConverter {
         }
         ImmutableArray<XmlEntity> children = xmlEntity.getChildren();
         if (isEmpty(children)) return entityBuilder.build();
-        if (areAllUnique(children.stream().map(XmlEntity::getTag).collect(toList()))) {
+        if (areAllUnique(children.stream().map(XmlEntity::getTag).collect(toCollection(ArrayFactory::dynamicArray)))) {
             EntityBuilder innerEntityBuilder = entityBuilder();
             for (XmlEntity child : children) {
                 if (isEmpty(child.getChildren())) {
@@ -83,7 +84,7 @@ public final class XmlEntityToEntityConverter {
         Map<Primitive, Primitive> attributes = xmlEntity.getAttributes()
                 .entrySet()
                 .stream()
-                .collect(toMap(entry -> stringPrimitive(entry.getKey()), entry -> stringPrimitive(entry.getValue())));
+                .collect(mapCollector(entry -> stringPrimitive(entry.getKey()), entry -> stringPrimitive(entry.getValue())));
         return entityBuilder().put(xmlEntity.getTag(), entity(attributes.keySet(), attributes::get)).build();
     }
 }

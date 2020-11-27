@@ -61,7 +61,7 @@ public class ArrayFactory {
     }
 
     public static <T> List<T> dynamicArrayOf(Stream<T> stream) {
-        return isEmpty(stream) ? emptyList() : stream.collect(toList());
+        return isEmpty(stream) ? emptyList() : stream.collect(toCollection(ArrayFactory::dynamicArray));
     }
 
     public static <T> List<T> dynamicArrayOf(Collection<T> elements) {

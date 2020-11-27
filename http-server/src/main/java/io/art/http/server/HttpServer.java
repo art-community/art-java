@@ -107,8 +107,8 @@ public class HttpServer {
                 .collect(groupingBy(method -> method.getPath().getContextPath()))
                 .entrySet()
                 .stream()
-                .collect(toMap(Map.Entry::getKey, entry -> HttpMethodGroup.builder()
-                        .methods(entry.getValue().stream().collect(toMap(HttpMethod::getMethodType, method -> method)))
+                .collect(mapCollector(Map.Entry::getKey, entry -> HttpMethodGroup.builder()
+                        .methods(entry.getValue().stream().collect(mapCollector(HttpMethod::getMethodType, method -> method)))
                         .build()));
     }
 
@@ -223,7 +223,7 @@ public class HttpServer {
     private HttpServiceServlet createHttpServlet(Map<HttpMethodType, HttpMethod> methods, HttpPath path, String serviceId) {
         return new HttpServiceServlet(methods.entrySet()
                 .stream()
-                .collect(toMap(Map.Entry::getKey, methodEntry -> HttpServletCommand.builder()
+                .collect(mapCollector(Map.Entry::getKey, methodEntry -> HttpServletCommand.builder()
                         .path(path.getContextPath())
                         .consumesMimeType(methodEntry.getValue().getConsumesMimeType())
                         .producesMimeType(methodEntry.getValue().getProducesMimeType())

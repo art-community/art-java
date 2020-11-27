@@ -24,6 +24,7 @@ import io.art.value.immutable.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.DateTimeExtensions.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import java.time.*;
@@ -59,15 +60,15 @@ public class PrimitiveMapping {
     public static PrimitiveFromModelMapper<Character> fromChar = PrimitivesFactory::charPrimitive;
     public static PrimitiveToModelMapper<Character> toChar = Primitive::getChar;
 
-    public static PrimitiveFromModelMapper<UUID> fromUuid = uuid -> stringPrimitive(uuid.toString());
-    public static PrimitiveToModelMapper<UUID> toUuid = uuid -> UUID.fromString(uuid.getString());
+    public static PrimitiveFromModelMapper<UUID> fromUuid = uuid -> let(uuid, notNull -> stringPrimitive(notNull.toString()));
+    public static PrimitiveToModelMapper<UUID> toUuid = uuid -> let(uuid, notNull -> UUID.fromString(notNull.getString()));
 
-    public static PrimitiveFromModelMapper<LocalDateTime> fromLocalDateTime = dateTime -> longPrimitive(toMillis(dateTime));
-    public static PrimitiveToModelMapper<LocalDateTime> toLocalDateTime = dateTime -> localFromMillis(dateTime.getLong());
+    public static PrimitiveFromModelMapper<LocalDateTime> fromLocalDateTime = dateTime -> let(dateTime, notNull -> longPrimitive(toMillis(notNull)));
+    public static PrimitiveToModelMapper<LocalDateTime> toLocalDateTime = dateTime -> let(dateTime, notNull -> localFromMillis(notNull.getLong()));
 
-    public static PrimitiveFromModelMapper<ZonedDateTime> fromZonedDateTime = dateTime -> longPrimitive(toMillis(dateTime));
-    public static PrimitiveToModelMapper<ZonedDateTime> toZonedDateTime = dateTime -> zonedFromMillis(dateTime.getLong());
+    public static PrimitiveFromModelMapper<ZonedDateTime> fromZonedDateTime = dateTime -> let(dateTime, notNull -> longPrimitive(toMillis(notNull)));
+    public static PrimitiveToModelMapper<ZonedDateTime> toZonedDateTime = dateTime -> let(dateTime, notNull -> zonedFromMillis(notNull.getLong()));
 
-    public static PrimitiveFromModelMapper<Date> fromDate = dateTime -> longPrimitive(dateTime.getTime());
-    public static PrimitiveToModelMapper<Date> toDate = dateTime -> new Date(dateTime.getLong());
+    public static PrimitiveFromModelMapper<Date> fromDate = dateTime -> let(dateTime, notNull -> longPrimitive(notNull.getTime()));
+    public static PrimitiveToModelMapper<Date> toDate = dateTime -> let(dateTime, notNull -> new Date(notNull.getLong()));
 }
