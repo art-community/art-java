@@ -2,8 +2,6 @@ package io.art.tarantool.module.initializer;
 
 import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
-import io.art.core.builder.*;
-import io.art.core.collection.*;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
 import org.zeroturnaround.exec.*;
@@ -16,7 +14,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.constants.SystemConstants.*;
 import static io.art.core.converter.WslPathConverter.*;
-import static io.art.core.determinant.SystemDeterminant.*;
+import static io.art.core.determiner.SystemDeterminer.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.JarExtensions.*;
 import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
