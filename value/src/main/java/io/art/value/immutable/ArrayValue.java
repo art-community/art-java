@@ -206,17 +206,17 @@ public class ArrayValue implements Value {
 
         ArrayValue another = (ArrayValue) object;
 
-        int this_size = this.size();
-        if (this_size != another.size()) return false;
+        int size = size();
+        if (size != another.size()) return false;
 
-        Value thisEntry;
-        for (int index = 0; index < this_size; index++) {
-            thisEntry = this.get(index);
-            if (thisEntry == null) {
+        Value entry;
+        for (int index = 0; index < size; index++) {
+            entry = this.get(index);
+            if (entry == null) {
                 if (another.get(index) == null) continue;
                 return false;
             }
-            if ( !(thisEntry.equals(another.get(index))) ) return false;
+            if ( !(entry.equals(another.get(index))) ) return false;
         }
         return true;
     }
@@ -695,7 +695,7 @@ public class ArrayValue implements Value {
             }
         }
 
-        ;
+
 
         @Override
         public void addFirst(T t) {

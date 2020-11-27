@@ -206,19 +206,19 @@ public class Entity implements Value {
         if (object == this) return true;
         if ( !(object instanceof Entity) ) return false;
 
-        Entity entity = (Entity) object;
-        Set<Primitive> keyset = this.asMap().keySet();
+        Entity another = (Entity) object;
+        Set<Primitive> keySet = this.asMap().keySet();
 
-        if ( !(keyset.equals(entity.asMap().keySet())) ) return false;
+        if ( !(keySet.equals(another.asMap().keySet())) ) return false;
 
-        Value thisValue;
-        for (Primitive key: keyset) {
-            thisValue = this.get(key);
-            if (thisValue == null) {
-                if (entity.get(key) == null) continue;
+        Value entry;
+        for (Primitive key: keySet) {
+            entry = this.get(key);
+            if (entry == null) {
+                if (another.get(key) == null) continue;
                 return false;
             }
-            if ( !(thisValue.equals(entity.get(key))) ) return false;
+            if ( !(entry.equals(another.get(key))) ) return false;
         }
         return true;
     }
@@ -237,7 +237,7 @@ public class Entity implements Value {
             this.valueMapper = valueMapper;
             this.fromKeyMapper = fromKeyMapper;
             this.evaluated = lazy(() -> Entity.this.mapToMap(toKeyMapper, valueMapper));
-            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(Collectors.toCollection(CollectionsFactory::setOf)));
+            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toCollection(CollectionsFactory::setOf)));
         }
 
         @Override
