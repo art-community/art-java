@@ -93,15 +93,15 @@ public class ImmutableMap<K, V> {
         return map.hashCode();
     }
 
-    public static <K, V> ImmutableMap<K, V> empty() {
+    public static <K, V> ImmutableMap<K, V> emptyImmutableMap() {
         return cast(EMPTY);
     }
 
-    public static <K, V> Builder<K, V> builder() {
+    public static <K, V> Builder<K, V> immutableMapBuilder() {
         return new Builder<>();
     }
 
-    public static <T, K, V> Collector<T, ?, ImmutableMap<K, V>> collector(
+    public static <T, K, V> Collector<T, ?, ImmutableMap<K, V>> immutableMapCollector(
             Function<? super T, ? extends K> keyFunction,
             Function<? super T, ? extends V> valueFunction) {
         return Collector.of(
@@ -112,7 +112,7 @@ public class ImmutableMap<K, V> {
         );
     }
 
-    public static <T, K, V> Collector<T, ?, ImmutableMap<K, V>> collector(
+    public static <T, K, V> Collector<T, ?, ImmutableMap<K, V>> immutableMapCollector(
             Function<? super T, ? extends K> keyFunction,
             Function<? super T, ? extends V> valueFunction,
             BinaryOperator<V> mergeFunction) {

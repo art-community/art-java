@@ -18,6 +18,7 @@
 
 package io.art.server.registry;
 
+import io.art.core.collection.*;
 import io.art.server.model.*;
 import io.art.server.specification.*;
 import io.art.value.immutable.*;
@@ -58,7 +59,7 @@ public class ServiceSpecificationRegistry {
         return this;
     }
 
-    public Map<String, ServiceSpecification> getServices() {
+    public ImmutableMap<String, ServiceSpecification> getServices() {
         return immutableMapOf(services);
     }
 }

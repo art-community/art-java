@@ -22,7 +22,8 @@ import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
 import io.art.tarantool.exception.*;
 import lombok.*;
-import static io.art.core.factory.MapFactory.*;
+import static io.art.core.builder.MapBuilder.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
@@ -38,7 +39,7 @@ public class TarantoolSimpleValueScriptConfiguration {
     public String toLua() {
         StringWriter templateWriter = new StringWriter();
         try {
-            Map<String, Object> map = mapBuilderOf(SPACE_NAME, (Object) spaceName).build();
+            Map<String, Object> map = cast(mapBuilder().with(SPACE_NAME, spaceName).build());
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
                     .autoEscaping(false)

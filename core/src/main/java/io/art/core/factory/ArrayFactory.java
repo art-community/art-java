@@ -29,16 +29,16 @@ public class ArrayFactory {
 
 
     public static <T> ImmutableArray<T> immutableArrayOf(Collection<T> elements) {
-        return isEmpty(elements) ? ImmutableArray.empty() : new ImmutableArray<>(elements);
+        return isEmpty(elements) ? ImmutableArray.emptyImmutableArray() : new ImmutableArray<>(elements);
     }
 
     @SafeVarargs
     public static <T> ImmutableArray<T> immutableArrayOf(T... elements) {
-        return isEmpty(elements) ? ImmutableArray.empty() : new ImmutableArray<>(Arrays.asList(elements));
+        return isEmpty(elements) ? ImmutableArray.emptyImmutableArray() : new ImmutableArray<>(Arrays.asList(elements));
     }
 
     public static <T> ImmutableArray<T> immutableArrayOf(Stream<T> stream) {
-        return isNull(stream) ? ImmutableArray.empty() : stream.collect(ImmutableArray.collector());
+        return isNull(stream) ? ImmutableArray.emptyImmutableArray() : stream.collect(ImmutableArray.immutableArrayCollector());
     }
 
 
@@ -113,7 +113,7 @@ public class ArrayFactory {
     }
 
     public static void main(String[] args) {
-        ImmutableArray<String> a = ImmutableArray.<String>builder()
+        ImmutableArray<String> a = ImmutableArray.<String>immutableArrayBuilder()
                 .add("test")
                 .build();
     }

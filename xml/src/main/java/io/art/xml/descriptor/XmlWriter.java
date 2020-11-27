@@ -18,6 +18,7 @@
 
 package io.art.xml.descriptor;
 
+import io.art.core.collection.*;
 import io.art.core.extensions.*;
 import io.art.core.stream.*;
 import io.art.value.immutable.*;
@@ -103,7 +104,7 @@ public class XmlWriter {
     }
 
     private static void writeXmlEntity(XMLStreamWriter xmlStreamWriter, XmlEntity entity) throws XMLStreamException {
-        List<XmlEntity> children = entity.getChildren();
+        ImmutableArray<XmlEntity> children = entity.getChildren();
 
         if (isEmpty(entity.getTag())) {
             for (XmlEntity xmlEntity : children) {
@@ -146,14 +147,14 @@ public class XmlWriter {
     }
 
     private static void writeNamespaces(XMLStreamWriter xmlStreamWriter, XmlEntity entity) throws XMLStreamException {
-        Map<String, String> namespaces = entity.getNamespaces();
+        ImmutableMap<String, String> namespaces = entity.getNamespaces();
         for (Map.Entry<String, String> entry : namespaces.entrySet()) {
             xmlStreamWriter.writeNamespace(entry.getKey(), entry.getValue());
         }
     }
 
     private static void writeAttributes(XMLStreamWriter xmlStreamWriter, XmlEntity entity) throws XMLStreamException {
-        Map<String, String> attributes = entity.getAttributes();
+        ImmutableMap<String, String> attributes = entity.getAttributes();
         for (Map.Entry<String, String> entry : attributes.entrySet()) {
             xmlStreamWriter.writeAttribute(entry.getKey(), entry.getValue());
         }

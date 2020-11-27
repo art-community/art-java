@@ -19,6 +19,7 @@
 package io.art.value.xml;
 
 import com.google.common.collect.*;
+import io.art.core.collection.*;
 import io.art.value.builder.*;
 import io.art.value.immutable.*;
 import lombok.experimental.*;
@@ -41,7 +42,7 @@ public final class XmlEntityToEntityConverter {
         if (isNotEmpty(value)) {
             entityBuilder.put(xmlEntity.getTag(), stringPrimitive(value));
         }
-        List<XmlEntity> children = xmlEntity.getChildren();
+        ImmutableArray<XmlEntity> children = xmlEntity.getChildren();
         if (isEmpty(children)) return entityBuilder.build();
         if (areAllUnique(children.stream().map(XmlEntity::getTag).collect(toList()))) {
             EntityBuilder innerEntityBuilder = entityBuilder();

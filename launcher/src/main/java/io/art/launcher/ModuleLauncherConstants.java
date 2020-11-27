@@ -18,11 +18,11 @@
 
 package io.art.launcher;
 
+import io.art.core.collection.*;
 import static io.art.core.factory.SetFactory.*;
-import java.util.*;
 
 public interface ModuleLauncherConstants {
-    Set<String> LAUNCHED_MESSAGES = immutableSetOf(
+    ImmutableSet<String> LAUNCHED_MESSAGES = immutableSetOf(
             "Initialization completed",
             "Have a nice work with ART!"
     );

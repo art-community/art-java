@@ -18,20 +18,19 @@
 
 package io.art.value.immutable;
 
-import io.art.core.builder.*;
 import io.art.core.checker.*;
+import io.art.core.collection.*;
 import io.art.core.extensions.*;
 import io.art.value.constants.ValueConstants.*;
 import io.art.value.exception.*;
 import lombok.*;
+import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.StringExtensions.*;
-import static io.art.core.factory.ListFactory.*;
-import static io.art.core.factory.MapFactory.*;
 import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.factory.XmlEntityFactory.*;
-import static java.util.Collections.*;
 import static java.util.Map.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
@@ -48,9 +47,9 @@ public class XmlEntity implements Value {
     private String prefix;
     private XmlValue<?> value;
     private String namespace;
-    private Map<String, String> attributes;
-    private Map<String, String> namespaces;
-    private List<XmlEntity> children;
+    private ImmutableMap<String, String> attributes;
+    private ImmutableMap<String, String> namespaces;
+    private ImmutableArray<XmlEntity> children;
     private boolean cData;
 
     public static XmlEntityBuilder xmlEntityBuilder() {
@@ -124,36 +123,36 @@ public class XmlEntity implements Value {
         return null;
     }
 
-    public List<XmlEntity> getChildren(String tagName) {
+    public ImmutableArray<XmlEntity> getChildren(String tagName) {
         XmlEntity xmlEntity = find(tagName);
         if (!Value.valueIsEmpty(xmlEntity)) {
             return xmlEntity.getChildren();
         }
-        return emptyList();
+        return emptyImmutableArray();
     }
 
-    public List<String> getChildTags(String tagName) {
-        return getChildren(tagName).stream().map(XmlEntity::getTag).collect(toList());
+    public ImmutableArray<String> getChildTags(String tagName) {
+        return getChildren(tagName).stream().map(XmlEntity::getTag).collect(immutableArrayCollector());
     }
 
-    public List<String> getChildValues(String tagName) {
-        return getChildren(tagName).stream().map(XmlEntity::getValue).collect(toList());
+    public ImmutableArray<String> getChildValues(String tagName) {
+        return getChildren(tagName).stream().map(XmlEntity::getValue).collect(immutableArrayCollector());
     }
 
-    public Map<String, String> getAttributes(String tagName) {
+    public ImmutableMap<String, String> getAttributes(String tagName) {
         XmlEntity xmlEntity = find(tagName);
         if (!Value.valueIsEmpty(xmlEntity)) {
             return xmlEntity.getAttributes();
         }
-        return emptyMap();
+        return emptyImmutableMap();
     }
 
-    public Map<String, String> getNamespaces(String tagName) {
+    public ImmutableMap<String, String> getNamespaces(String tagName) {
         XmlEntity xmlEntity = find(tagName);
         if (!Value.valueIsEmpty(xmlEntity)) {
             return xmlEntity.getNamespaces();
         }
-        return emptyMap();
+        return emptyImmutableMap();
     }
 
     public String getValueByTag(String tag) {
@@ -188,9 +187,9 @@ public class XmlEntity implements Value {
 
     @NoArgsConstructor(access = PRIVATE)
     public static class XmlEntityBuilder {
-        private final ImmutableMapBuilder<String, String> attributes = immutableMapBuilder();
-        private final ImmutableMapBuilder<String, String> namespaces = immutableMapBuilder();
-        private final ImmutableListBuilder<XmlEntity> children = immutableList();
+        private final ImmutableMap.Builder<String, String> attributes = immutableMapBuilder();
+        private final ImmutableMap.Builder<String, String> namespaces = immutableMapBuilder();
+        private final ImmutableArray.Builder<XmlEntity> children = immutableArrayBuilder();
         private XmlEntityBuilder parent;
         private String tag;
         private XmlValue<?> value;

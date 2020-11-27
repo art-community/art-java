@@ -31,7 +31,7 @@ public class ImmutableArray<T> implements Iterable<T> {
     private static final ImmutableArray<?> EMPTY = new ImmutableArray<>(emptyList());
 
     private static final Collector<Object, ?, ImmutableArray<Object>> COLLECTOR = Collector.of(
-            ImmutableArray::builder,
+            ImmutableArray::immutableArrayBuilder,
             Builder::add,
             Builder::combine,
             Builder::build
@@ -117,15 +117,15 @@ public class ImmutableArray<T> implements Iterable<T> {
         return array.lastIndexOf(object);
     }
 
-    public static <T> ImmutableArray<T> empty() {
+    public static <T> ImmutableArray<T> emptyImmutableArray() {
         return cast(EMPTY);
     }
 
-    public static <T> Collector<T, T, ImmutableArray<T>> collector() {
+    public static <T> Collector<T, T, ImmutableArray<T>> immutableArrayCollector() {
         return cast(COLLECTOR);
     }
 
-    public static <T> Builder<T> builder() {
+    public static <T> Builder<T> immutableArrayBuilder() {
         return new Builder<>();
     }
 

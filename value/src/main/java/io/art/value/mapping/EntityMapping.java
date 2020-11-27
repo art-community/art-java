@@ -51,7 +51,7 @@ public class EntityMapping {
                 notNull -> entity(entity.keySet()
                                 .stream()
                                 .map(fromKeyMapper::map)
-                                .collect(toCollection(SetFactory::immutableSetOf)),
+                                .collect(toCollection(SetFactory::set)),
                         key -> valueMapper.map(entity.get(toKeyMapper.map(key)))
                 )
         );

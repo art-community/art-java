@@ -22,6 +22,7 @@ import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
 import io.art.tarantool.exception.*;
+import static io.art.core.builder.MapBuilder.mapBuilder;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.CharacterConstants.SINGLE_QUOTE;

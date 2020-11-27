@@ -20,10 +20,10 @@ package io.art.tarantool.configuration.lua;
 
 import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
-import lombok.*;
 import io.art.tarantool.exception.*;
+import lombok.*;
+import static io.art.core.builder.MapBuilder.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.MapFactory.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
@@ -71,7 +71,7 @@ public class TarantoolSequenceConfiguration {
     public String toManageSequenceLua() {
         StringWriter templateWriter = new StringWriter();
         try {
-            Map<String, Object> builder = mapBuilderOf(SEQUENCE_NAME, (Object) sequenceName).build();
+            Map<String, Object> builder = cast(mapBuilder().with(SEQUENCE_NAME, sequenceName).build());
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
                     .autoEscaping(false)

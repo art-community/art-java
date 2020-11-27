@@ -22,6 +22,7 @@ import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
 import io.art.tarantool.exception.*;
+import static io.art.core.builder.MapBuilder.mapBuilder;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.CharacterConstants.*;
@@ -99,7 +100,7 @@ public class TarantoolSpaceConfiguration {
 
     public String toManageSpaceLua() {
         StringWriter templateWriter = new StringWriter();
-        Map<String, Object> templateContext = mapBuilderOf(SPACE_NAME, spaceName);
+        Map<String, Object> templateContext = cast(mapBuilder().with(SPACE_NAME, spaceName).build());
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())

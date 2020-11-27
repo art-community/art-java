@@ -30,7 +30,7 @@ public class ImmutableSet<T> implements Iterable<T> {
     private static final ImmutableSet<?> EMPTY = new ImmutableSet<>(emptySet());
 
     private static final Collector<Object, ?, ImmutableSet<Object>> COLLECTOR = Collector.of(
-            ImmutableSet::builder,
+            ImmutableSet::immutableSetBuilder,
             Builder::add,
             Builder::combine,
             Builder::build
@@ -104,15 +104,15 @@ public class ImmutableSet<T> implements Iterable<T> {
         return set.hashCode();
     }
 
-    public static <T> ImmutableSet<T> empty() {
+    public static <T> ImmutableSet<T> emptyImmutableSet() {
         return cast(EMPTY);
     }
 
-    public static <T> Collector<T, T, ImmutableSet<T>> collector() {
+    public static <T> Collector<T, T, ImmutableSet<T>> immutableSetCollector() {
         return cast(COLLECTOR);
     }
 
-    public static <T> Builder<T> builder() {
+    public static <T> Builder<T> immutableSetBuilder() {
         return new Builder<>();
     }
 
