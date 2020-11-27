@@ -24,7 +24,7 @@ import io.art.value.immutable.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
-import static io.art.value.factory.ArrayFactory.*;
+import static io.art.value.factory.ArrayValueFactory.*;
 import static io.art.value.factory.EntityFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Entity.*;
@@ -41,7 +41,7 @@ public final class XmlEntityToEntityConverter {
         if (isNotEmpty(value)) {
             entityBuilder.put(xmlEntity.getTag(), stringPrimitive(value));
         }
-        ImmutableList<XmlEntity> children = xmlEntity.getChildren();
+        List<XmlEntity> children = xmlEntity.getChildren();
         if (isEmpty(children)) return entityBuilder.build();
         if (areAllUnique(children.stream().map(XmlEntity::getTag).collect(toList()))) {
             EntityBuilder innerEntityBuilder = entityBuilder();

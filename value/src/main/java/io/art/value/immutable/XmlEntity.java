@@ -18,7 +18,7 @@
 
 package io.art.value.immutable;
 
-import com.google.common.collect.*;
+import io.art.core.builder.*;
 import io.art.core.checker.*;
 import io.art.core.extensions.*;
 import io.art.value.constants.ValueConstants.*;
@@ -26,6 +26,8 @@ import io.art.value.exception.*;
 import lombok.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.StringExtensions.*;
+import static io.art.core.factory.ListFactory.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.factory.XmlEntityFactory.*;
@@ -46,9 +48,9 @@ public class XmlEntity implements Value {
     private String prefix;
     private XmlValue<?> value;
     private String namespace;
-    private ImmutableMap<String, String> attributes;
-    private ImmutableMap<String, String> namespaces;
-    private ImmutableList<XmlEntity> children;
+    private Map<String, String> attributes;
+    private Map<String, String> namespaces;
+    private List<XmlEntity> children;
     private boolean cData;
 
     public static XmlEntityBuilder xmlEntityBuilder() {
@@ -186,9 +188,9 @@ public class XmlEntity implements Value {
 
     @NoArgsConstructor(access = PRIVATE)
     public static class XmlEntityBuilder {
-        private final ImmutableMap.Builder<String, String> attributes = ImmutableMap.builder();
-        private final ImmutableMap.Builder<String, String> namespaces = ImmutableMap.builder();
-        private final ImmutableList.Builder<XmlEntity> children = ImmutableList.builder();
+        private final ImmutableMapBuilder<String, String> attributes = immutableMapBuilder();
+        private final ImmutableMapBuilder<String, String> namespaces = immutableMapBuilder();
+        private final ImmutableListBuilder<XmlEntity> children = immutableList();
         private XmlEntityBuilder parent;
         private String tag;
         private XmlValue<?> value;

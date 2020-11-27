@@ -16,7 +16,10 @@ import static io.art.core.converter.WslPathConverter.*;
 import static io.art.core.determinant.SystemDeterminant.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.JarExtensions.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
+import static io.art.core.factory.MapFactory.map;
+import static io.art.core.factory.MapFactory.mapBuilder;
+import static io.art.core.factory.SetFactory.setOf;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static java.io.File.*;
@@ -81,9 +84,9 @@ public class TarantoolInstanceLauncher {
                     address,
                     luaConfigurationPath.toAbsolutePath()));
             StringWriter templateWriter = new StringWriter();
-            Map<String, Object> templateContext = cast(mapOf()
-                    .add(USERNAME, connectionConfiguration.getUsername())
-                    .add(PASSWORD, connectionConfiguration.getPassword()));
+            Map<String, Object> templateContext = cast(mapBuilder()
+                    .with(USERNAME, connectionConfiguration.getUsername())
+                    .with(PASSWORD, connectionConfiguration.getPassword()));
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
                     .autoEscaping(false)

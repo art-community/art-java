@@ -21,7 +21,6 @@ package io.art.configurator.constants;
 import com.google.common.collect.*;
 import io.art.core.source.ConfigurationSource.*;
 import lombok.*;
-import static io.art.core.factory.CollectionsFactory.queueOf;
 
 public interface ConfiguratorModuleConstants {
     String DEFAULT_MODULE_CONFIGURATION_FILE = "module";

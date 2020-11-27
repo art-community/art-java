@@ -19,11 +19,12 @@
 package io.art.value.tuple.schema;
 
 import com.google.common.collect.*;
+import io.art.core.factory.*;
 import io.art.value.immutable.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.CollectionsFactory.dynamicArrayOf;
+import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import java.util.*;
 
@@ -46,7 +47,7 @@ public class ArraySchema extends ValueSchema {
 
     @Override
     public List<?> toTuple() {
-        List<?> tuple = dynamicArrayOf(getType().ordinal());
+        List<?> tuple = ArrayFactory.dynamicArray(getType().ordinal());
         elements.stream().map(ValueSchema::toTuple).forEach(value -> tuple.add(cast(value)));
         return tuple;
     }

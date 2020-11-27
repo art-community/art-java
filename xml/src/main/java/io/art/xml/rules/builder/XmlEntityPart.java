@@ -19,11 +19,11 @@
 package io.art.xml.rules.builder;
 
 import lombok.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.SetFactory.set;
 import java.util.*;
 
 @Builder
 @Getter
 class XmlEntityPart {
-    private final Set<String> xmlParts = setOf();
+    private final Set<String> xmlParts = set();
 }

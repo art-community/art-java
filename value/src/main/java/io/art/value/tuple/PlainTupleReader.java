@@ -26,7 +26,7 @@ import io.art.value.tuple.schema.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
-import static io.art.value.factory.ArrayFactory.*;
+import static io.art.value.factory.ArrayValueFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.BinaryValue.*;
 import static io.art.value.immutable.Entity.*;

@@ -20,13 +20,14 @@ package io.art.tarantool.configuration.lua;
 
 import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
-import lombok.*;
 import io.art.tarantool.exception.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import lombok.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
 import java.io.*;
+import java.util.*;
 
 @Getter
 @EqualsAndHashCode
@@ -37,13 +38,14 @@ public class TarantoolSimpleValueScriptConfiguration {
     public String toLua() {
         StringWriter templateWriter = new StringWriter();
         try {
+            Map<String, Object> map = mapBuilderOf(SPACE_NAME, (Object) spaceName).build();
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
                     .autoEscaping(false)
                     .cacheActive(false)
                     .build()
                     .getTemplate(SIMPLE_VALUE + TWIG_TEMPLATE)
-                    .evaluate(templateWriter, mapOf(SPACE_NAME, spaceName));
+                    .evaluate(templateWriter, map);
             return templateWriter.toString();
         } catch (Throwable e) {
             throw new TarantoolExecutionException(e);

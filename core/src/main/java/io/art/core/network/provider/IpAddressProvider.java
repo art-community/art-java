@@ -20,11 +20,9 @@ package io.art.core.network.provider;
 
 import com.google.common.collect.*;
 import lombok.experimental.*;
-import static io.art.core.factory.CollectionsFactory.mapOf;
 import static java.net.NetworkInterface.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.StringConstants.*;
-import static java.util.Collections.emptyMap;
 import java.net.*;
 import java.util.*;
 

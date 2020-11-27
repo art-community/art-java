@@ -1,21 +1,19 @@
 package io.art.refactored.module.state;
 
-import org.tarantool.TarantoolClient;
-import java.util.Map;
-import java.util.Optional;
+import org.tarantool.*;
+import static io.art.core.factory.MapFactory.*;
+import static java.util.Optional.*;
+import java.util.*;
 
-import static io.art.core.factory.CollectionsFactory.mapOf;
 
 public class TarantoolModuleState {
-    private final Map<String, TarantoolClient> activeClients = mapOf();
+    private final Map<String, TarantoolClient> activeClients = map();
 
-    public Optional<TarantoolClient> getClient(String clientId){
-        TarantoolClient client = activeClients.get(clientId);
-        if (client == null) return Optional.empty();
-        return Optional.ofNullable(client);
+    public Optional<TarantoolClient> getClient(String clientId) {
+        return ofNullable(activeClients.get(clientId));
     }
 
-    public void registerClient(String clientId, TarantoolClient client){
+    public void registerClient(String clientId, TarantoolClient client) {
         activeClients.put(clientId, client);
     }
 }

@@ -26,7 +26,7 @@ import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.value.factory.ArrayFactory.*;
+import static io.art.value.factory.ArrayValueFactory.*;
 import static java.util.Arrays.*;
 import java.util.*;
 
@@ -87,14 +87,14 @@ public class ArrayMapping {
     }
 
     
-    public ArrayFromModelMapper<int[]> fromIntArray = ArrayFactory::intArray;
-    public ArrayFromModelMapper<long[]> fromLongArray = ArrayFactory::longArray;
-    public ArrayFromModelMapper<short[]> fromShortArray = ArrayFactory::shortArray;
-    public ArrayFromModelMapper<double[]> fromDoubleArray = ArrayFactory::doubleArray;
-    public ArrayFromModelMapper<float[]> fromFloatArray = ArrayFactory::floatArray;
-    public ArrayFromModelMapper<byte[]> fromByteArray = ArrayFactory::byteArray;
-    public ArrayFromModelMapper<char[]> fromCharArray = ArrayFactory::charArray;
-    public ArrayFromModelMapper<boolean[]> fromBoolArray = ArrayFactory::boolArray;
+    public ArrayFromModelMapper<int[]> fromIntArray = ArrayValueFactory::intArray;
+    public ArrayFromModelMapper<long[]> fromLongArray = ArrayValueFactory::longArray;
+    public ArrayFromModelMapper<short[]> fromShortArray = ArrayValueFactory::shortArray;
+    public ArrayFromModelMapper<double[]> fromDoubleArray = ArrayValueFactory::doubleArray;
+    public ArrayFromModelMapper<float[]> fromFloatArray = ArrayValueFactory::floatArray;
+    public ArrayFromModelMapper<byte[]> fromByteArray = ArrayValueFactory::byteArray;
+    public ArrayFromModelMapper<char[]> fromCharArray = ArrayValueFactory::charArray;
+    public ArrayFromModelMapper<boolean[]> fromBoolArray = ArrayValueFactory::boolArray;
 
     public static <T> ArrayFromModelMapper<Collection<T>> fromCollection(ValueFromModelMapper<T, ? extends Value> elementMapper) {
         return list -> let(list, notNull -> array(list, elementMapper));

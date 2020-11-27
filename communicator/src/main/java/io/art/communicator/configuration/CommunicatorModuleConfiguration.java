@@ -20,6 +20,7 @@ package io.art.communicator.configuration;
 
 import com.google.common.collect.*;
 import io.art.communicator.constants.*;
+import io.art.core.factory.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
@@ -28,12 +29,13 @@ import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.COMMUNICATOR_SECTION;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.TARGETS_KEY;
 import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.DEFAULT_COMMUNICATOR_SCHEDULER;
+import static java.util.Collections.emptyMap;
 import static java.util.Optional.ofNullable;
 import java.util.*;
 
 @Getter
 public class CommunicatorModuleConfiguration implements ModuleConfiguration {
-    private ImmutableMap<String, CommunicatorConfiguration> communicators = ImmutableMap.of();
+    private Map<String, CommunicatorConfiguration> communicators = emptyMap();
     private Scheduler scheduler;
 
     @RequiredArgsConstructor

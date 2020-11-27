@@ -18,9 +18,9 @@
 
 package io.art.value.immutable;
 
-import com.google.common.collect.*;
 import io.art.core.checker.*;
 import io.art.core.exception.*;
+import io.art.core.factory.*;
 import io.art.core.lazy.*;
 import io.art.value.builder.*;
 import io.art.value.constants.ValueConstants.*;
@@ -30,7 +30,8 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.MapFactory.*;
+import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.factory.PrimitivesFactory.*;
@@ -65,11 +66,11 @@ public class Entity implements Value {
     }
 
     public <K, V> Map<K, V> mapToMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
-        Map<K, V> map = mapOf();
+        Map<K, V> newMap = MapFactory.map();
         for (Primitive key : keys) {
-            let(map(key, valueMapper), value -> map.put(keyMapper.map(key), value));
+            let(map(key, valueMapper), value -> newMap.put(keyMapper.map(key), value));
         }
-        return map;
+        return newMap;
     }
 
     public <T> Map<String, T> mapToStringMap(ValueToModelMapper<T, ? extends Value> mapper) {
@@ -198,11 +199,11 @@ public class Entity implements Value {
         return let(find(key), value -> mapper.map(cast(value)));
     }
 
-    
+
     public boolean has(Primitive key) {
         return keys.contains(key);
     }
-    
+
     public class ProxyMap<K, V> implements Map<K, V> {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
@@ -289,12 +290,22 @@ public class Entity implements Value {
         }
     }
 
-    
+
     public EntityBuilder toBuilder() {
         EntityBuilder entityBuilder = entityBuilder();
         keys.forEach(key -> entityBuilder.lazyPut(key, () -> valueProvider.apply(key)));
         return entityBuilder;
-    } 
-    
+    }
+
+    @Override
+    public int hashCode() {
+        return toMap().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return toMap().equals(other);
+    }
+
     public static Entity EMPTY = entityBuilder().build();
 }

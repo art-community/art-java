@@ -21,8 +21,9 @@ package io.art.tarantool.storage.dao;
 import org.tarantool.TarantoolClient;
 
 import static io.art.core.checker.EmptinessChecker.isEmpty;
+import static io.art.core.factory.SetFactory.set;
+import static io.art.core.factory.SetFactory.setOf;
 import static java.util.Collections.emptySet;
-import static io.art.core.factory.CollectionsFactory.setOf;
 import static io.art.tarantool.storage.dao.caller.TarantoolFunctionCaller.callTarantoolFunction;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolIdCalculationMode;
@@ -33,7 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 class TarantoolCommonDao {
-    final Set<String> clusterIds = setOf();
+    final Set<String> clusterIds = set();
     final String instanceId;
     TarantoolClient client;
     TarantoolIdCalculationMode idCalculationMode = SEQUENCE;

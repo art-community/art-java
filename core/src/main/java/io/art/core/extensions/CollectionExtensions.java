@@ -19,7 +19,8 @@
 package io.art.core.extensions;
 
 import lombok.experimental.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
+import static io.art.core.factory.SetFactory.setOf;
 import static java.util.Collections.*;
 import java.util.*;
 import java.util.function.*;

@@ -23,7 +23,7 @@ import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
 import io.art.tarantool.exception.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TemplateParameterKeys.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Templates.*;
@@ -45,14 +45,14 @@ public class TarantoolSequenceConfiguration {
     private String step;
 
     public String toCreateSequenceLua() {
-        Map<String, Object> templateContext = cast(mapOf()
-                .add(SEQUENCE_NAME, sequenceName)
-                .add(START, start)
-                .add(MIN, min)
-                .add(MAX, max)
-                .add(CYCLE, cycle)
-                .add(CACHE, cache)
-                .add(STEP, step));
+        Map<String, Object> templateContext = cast(mapBuilder()
+                .with(SEQUENCE_NAME, sequenceName)
+                .with(START, start)
+                .with(MIN, min)
+                .with(MAX, max)
+                .with(CYCLE, cycle)
+                .with(CACHE, cache)
+                .with(STEP, step));
         StringWriter templateWriter = new StringWriter();
         try {
             new PebbleEngine.Builder()
@@ -71,13 +71,14 @@ public class TarantoolSequenceConfiguration {
     public String toManageSequenceLua() {
         StringWriter templateWriter = new StringWriter();
         try {
+            Map<String, Object> builder = mapBuilderOf(SEQUENCE_NAME, (Object) sequenceName).build();
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
                     .autoEscaping(false)
                     .cacheActive(false)
                     .build()
                     .getTemplate(SEQUENCE_MANAGEMENT + TWIG_TEMPLATE)
-                    .evaluate(templateWriter, mapOf(SEQUENCE_NAME, sequenceName));
+                    .evaluate(templateWriter, builder);
             return templateWriter.toString();
         } catch (Throwable e) {
             throw new TarantoolExecutionException(e);

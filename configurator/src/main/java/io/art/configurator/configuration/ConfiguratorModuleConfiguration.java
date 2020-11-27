@@ -29,6 +29,7 @@ import static com.google.common.collect.Ordering.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.caster.Caster.*;
 import static java.util.Comparator.comparingInt;
+import java.util.*;
 
 @Getter
 public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
@@ -42,7 +43,7 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
         return cast(sources.get(ENVIRONMENT));
     }
 
-    public ImmutableList<ConfigurationSource> orderedSources() {
+    public List<ConfigurationSource> orderedSources() {
         return from(comparingInt((ConfigurationSource source) -> source.getType().getOrder())).immutableSortedCopy(getSources().values());
     }
 

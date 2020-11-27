@@ -21,6 +21,7 @@ package io.art.tarantool.storage.dao;
 import io.art.value.immutable.*;
 import io.art.tarantool.model.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.value.immutable.Value.asEntity;
 import static io.art.value.tuple.PlainTupleReader.readTuple;
 import static io.art.value.tuple.schema.ValueSchema.fromTuple;
@@ -29,7 +30,6 @@ import static java.util.Collections.*;
 import static java.util.Optional.*;
 import static java.util.stream.Collectors.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.tarantool.storage.dao.caller.TarantoolFunctionCaller.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.storage.dao.service.TarantoolScriptService.*;
@@ -67,7 +67,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         }
         List<List<List<?>>> valueTuples = cast(result.get(0));
         List<List<List<?>>> schemeTuples = cast(result.get(1));
-        List<Entity> values = arrayOf(valueTuples.size());
+        List<Entity> values = dynamicArray(valueTuples.size());
         for (int i = 0; i < valueTuples.size(); i++) {
             values.add(asEntity(readTuple(valueTuples.get(i), fromTuple(schemeTuples.get(i)))));
         }

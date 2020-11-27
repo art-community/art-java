@@ -26,14 +26,15 @@ import io.rsocket.*;
 import io.rsocket.core.*;
 import lombok.*;
 import reactor.util.context.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.ListFactory.linkedListOf;
+import static io.art.core.factory.MapFactory.map;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import java.util.*;
 import java.util.function.*;
 
 public class RsocketModuleState implements ModuleState {
     private final List<RSocket> requesters = linkedListOf();
-    private final Map<String, LazyValue<RSocketClient>> clients = mapOf();
+    private final Map<String, LazyValue<RSocketClient>> clients = map();
     private final ThreadLocal<RsocketThreadLocalState> threadLocalState = new ThreadLocal<>();
 
 

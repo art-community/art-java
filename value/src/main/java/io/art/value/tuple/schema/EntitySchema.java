@@ -19,6 +19,8 @@
 package io.art.value.tuple.schema;
 
 import com.google.common.collect.*;
+import io.art.core.builder.*;
+import io.art.core.factory.*;
 import io.art.value.constants.ValueConstants.*;
 import io.art.value.exception.*;
 import io.art.value.immutable.*;
@@ -27,7 +29,8 @@ import lombok.*;
 import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
+import static io.art.core.factory.ArrayFactory.immutableArrayBuilder;
 import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.immutable.Value.*;
@@ -36,12 +39,12 @@ import java.util.*;
 
 @Getter
 public class EntitySchema extends ValueSchema {
-    private final ImmutableList<EntityFieldSchema> fieldsSchema;
+    private final List<EntityFieldSchema> fieldsSchema;
 
     EntitySchema(Entity entity) {
         super(ENTITY);
         Set<Primitive> keys = entity.asMap().keySet();
-        ImmutableList.Builder<EntityFieldSchema> schemaBuilder = ImmutableList.builder();
+        ImmutableListBuilder<EntityFieldSchema> schemaBuilder = immutableArrayBuilder();
         for (Primitive key : keys) {
             if (valueIsNull(key)) continue;
             Value value = entity.get(key);
@@ -58,7 +61,7 @@ public class EntitySchema extends ValueSchema {
 
     @Override
     public List<?> toTuple() {
-        List<?> tuple = dynamicArrayOf(getType().ordinal());
+        List<?> tuple = ArrayFactory.dynamicArray(getType().ordinal());
         fieldsSchema.stream().map(EntityFieldSchema::toTuple).forEach(value -> tuple.add(cast(value)));
         return tuple;
     }

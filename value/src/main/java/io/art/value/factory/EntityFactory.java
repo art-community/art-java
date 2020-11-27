@@ -20,8 +20,7 @@ package io.art.value.factory;
 
 import io.art.value.immutable.*;
 import lombok.experimental.*;
-import static com.google.common.collect.ImmutableSet.*;
-import static io.art.core.factory.CollectionsFactory.setOf;
+import static io.art.core.factory.SetFactory.setOf;
 import static io.art.value.immutable.Entity.*;
 import static java.util.stream.Collectors.toSet;
 import java.util.*;

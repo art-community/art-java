@@ -18,10 +18,12 @@
 
 package io.art.model.server;
 
-import com.google.common.collect.*;
+import io.art.core.builder.*;
 import io.art.model.constants.ModelConstants.*;
 import lombok.*;
+import static io.art.core.factory.SetFactory.*;
 import static java.util.function.UnaryOperator.*;
+import java.util.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class ServiceModel<T> {
     @Getter
     private UnaryOperator<ServiceModelCustomizer<T>> customizer;
 
-    private final ImmutableSet.Builder<String> methods = ImmutableSet.builder();
+    private final ImmutableSetBuilder<String> methods = immutableSet();
 
     public ServiceModel<T> to(Class<?> service) {
         return to(service, identity());
@@ -59,7 +61,7 @@ public class ServiceModel<T> {
         return this;
     }
     
-    public ImmutableSet<String> getMethods() {
+    public Set<String> getMethods() {
         return methods.build();
     }
 }

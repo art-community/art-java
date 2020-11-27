@@ -23,8 +23,8 @@ import lombok.*;
 import org.tarantool.*;
 import io.art.tarantool.configuration.lua.*;
 
-import static io.art.core.factory.CollectionsFactory.*;
 
+import static io.art.core.factory.MapFactory.concurrentHashMap;
 import java.util.*;
 
 @Getter

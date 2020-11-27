@@ -19,17 +19,17 @@
 package io.art.core.context;
 
 import com.google.common.collect.*;
-import io.art.core.checker.*;
 import io.art.core.configuration.*;
 import io.art.core.exception.*;
-import io.art.core.module.Module;
 import io.art.core.module.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.ListFactory.linkedListOf;
+import static io.art.core.factory.MapFactory.*;
+import static io.art.core.factory.SetFactory.setOf;
 import static java.lang.Runtime.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
@@ -39,7 +39,7 @@ import java.util.function.*;
 
 public class Context {
     private static Context INSTANCE;
-    private final Map<String, Module> modules = mapOf();
+    private final Map<String, Module> modules = map();
     private final ContextConfiguration configuration;
     private final Consumer<String> printer;
 

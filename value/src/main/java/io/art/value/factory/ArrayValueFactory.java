@@ -24,7 +24,7 @@ import io.art.value.mapper.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.ArrayValue.*;
@@ -33,7 +33,7 @@ import java.util.*;
 import java.util.function.*;
 
 @UtilityClass
-public class ArrayFactory {
+public class ArrayValueFactory {
     public static ArrayValue stringArray(List<String> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;

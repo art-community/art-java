@@ -19,6 +19,7 @@
 package io.art.value.immutable;
 
 import io.art.core.exception.*;
+import io.art.core.factory.*;
 import io.art.core.lazy.*;
 import io.art.value.constants.ValueConstants.*;
 import io.art.value.mapper.*;
@@ -26,7 +27,11 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ArrayExtensions.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.MapFactory.concurrentHashMapOf;
+import static io.art.core.factory.QueueFactory.dequeOf;
+import static io.art.core.factory.QueueFactory.queueOf;
+import static io.art.core.factory.SetFactory.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
@@ -40,7 +45,7 @@ import java.util.stream.*;
 public class ArrayValue implements Value {
     @Getter
     private final ValueType type = ARRAY;
-    private final Map<Integer, LazyValue<?>> mappedValueCache = concurrentHashMap();
+    private final Map<Integer, LazyValue<?>> mappedValueCache = MapFactory.concurrentHashMap();
     private final Function<Integer, ? extends Value> valueProvider;
     private final LazyValue<Integer> size;
 
@@ -198,7 +203,16 @@ public class ArrayValue implements Value {
         return unbox(mapAsList(toBool).toArray(new Boolean[0]));
     }
 
-    
+    @Override
+    public int hashCode() {
+        return toList().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return toList().equals(object);
+    }
+
     private class ProxyList<T> implements List<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
         private final LazyValue<List<T>> evaluated;
