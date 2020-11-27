@@ -18,22 +18,21 @@
 
 package io.art.configurator.configuration;
 
-import com.google.common.collect.*;
 import io.art.configurator.source.*;
+import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.core.source.ConfigurationSource.*;
 import lombok.*;
-import static com.google.common.collect.ImmutableMap.*;
-import static com.google.common.collect.Ordering.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.caster.Caster.*;
-import static java.util.Comparator.comparingInt;
-import java.util.*;
+import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.collection.ImmutableMap.*;
+import static java.util.Comparator.*;
 
 @Getter
 public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
-    private ImmutableMap<ModuleConfigurationSourceType, ConfigurationSource> sources = of();
+    private ImmutableMap<ModuleConfigurationSourceType, ConfigurationSource> sources = emptyImmutableMap();
 
     public PropertiesConfigurationSource getProperties() {
         return cast(sources.get(PROPERTIES));
@@ -43,8 +42,8 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
         return cast(sources.get(ENVIRONMENT));
     }
 
-    public List<ConfigurationSource> orderedSources() {
-        return from(comparingInt((ConfigurationSource source) -> source.getType().getOrder())).immutableSortedCopy(getSources().values());
+    public ImmutableArray<ConfigurationSource> orderedSources() {
+        return immutableSortedArray(getSources().values(), comparingInt((ConfigurationSource source) -> source.getType().getOrder()));
     }
 
     @RequiredArgsConstructor
@@ -53,7 +52,7 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.sources = ImmutableMap.<ModuleConfigurationSourceType, ConfigurationSource>builder()
+            configuration.sources = ImmutableMap.<ModuleConfigurationSourceType, ConfigurationSource>immutableMapBuilder()
                     .putAll(configuration.sources)
                     .put(source.getType(), source)
                     .build();

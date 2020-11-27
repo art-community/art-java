@@ -18,6 +18,7 @@
 
 package io.art.core.module;
 
+import io.art.core.collection.*;
 import io.art.core.source.*;
 import static io.art.core.caster.Caster.*;
 import java.util.*;
@@ -28,6 +29,11 @@ public interface ModuleConfigurator<Configuration extends ModuleConfiguration, C
     }
 
     default Configurator override(Configuration configuration) {
+        return cast(this);
+    }
+
+    default Configurator from(ImmutableArray<ConfigurationSource> sources) {
+        sources.forEach(this::from);
         return cast(this);
     }
 

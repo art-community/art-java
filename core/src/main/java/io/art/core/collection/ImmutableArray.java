@@ -41,7 +41,7 @@ public class ImmutableArray<T> implements Iterable<T> {
         this.array = new ArrayList<>(collection);
     }
 
-    private ImmutableArray(ImmutableList<T> list) {
+    public ImmutableArray(ImmutableList<T> list) {
         this.array = list;
     }
 
@@ -121,6 +121,10 @@ public class ImmutableArray<T> implements Iterable<T> {
         return cast(EMPTY);
     }
 
+    public static <T> ImmutableArray<T> immutableSortedArray(Collection<T> elements, Comparator<T> comparator) {
+        return new ImmutableArray<>(Ordering.from(comparator).immutableSortedCopy(elements));
+    }
+
     public static <T> Collector<T, T, ImmutableArray<T>> immutableArrayCollector() {
         return cast(COLLECTOR);
     }
@@ -129,8 +133,20 @@ public class ImmutableArray<T> implements Iterable<T> {
         return new Builder<>();
     }
 
+    public static <T> Builder<T> immutableArrayBuilder(int size) {
+        return new Builder<>(size);
+    }
+
     public static class Builder<T> {
-        private final ImmutableList.Builder<T> builder = ImmutableList.builder();
+        private final ImmutableList.Builder<T> builder;
+
+        public Builder() {
+            builder = ImmutableList.builder();
+        }
+
+        public Builder(int size) {
+            builder = ImmutableList.builderWithExpectedSize(size);
+        }
 
         public Builder<T> add(T element) {
             builder.add(element);

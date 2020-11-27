@@ -101,6 +101,10 @@ public class ImmutableMap<K, V> {
         return new Builder<>();
     }
 
+    public static Builder<String, String> immutableMapBuilder(int size) {
+        return new Builder<>(size);
+    }
+
     public static <T, K, V> Collector<T, ?, ImmutableMap<K, V>> immutableMapCollector(
             Function<? super T, ? extends K> keyFunction,
             Function<? super T, ? extends V> valueFunction) {
@@ -126,7 +130,15 @@ public class ImmutableMap<K, V> {
 
 
     public static class Builder<K, V> {
-        private final com.google.common.collect.ImmutableMap.Builder<K, V> builder = com.google.common.collect.ImmutableMap.builder();
+        private final com.google.common.collect.ImmutableMap.Builder<K, V> builder;
+
+        public Builder() {
+            builder = com.google.common.collect.ImmutableMap.builder();
+        }
+
+        public Builder(int size) {
+            builder = com.google.common.collect.ImmutableMap.builderWithExpectedSize(size);
+        }
 
         public Builder<K, V> put(K key, V value) {
             builder.put(key, value);
@@ -140,6 +152,11 @@ public class ImmutableMap<K, V> {
 
         public Builder<K, V> putAll(Map<? extends K, ? extends V> map) {
             builder.putAll(map);
+            return this;
+        }
+
+        public Builder<K, V> putAll(ImmutableMap<? extends K, ? extends V> map) {
+            map.forEach(builder::put);
             return this;
         }
 

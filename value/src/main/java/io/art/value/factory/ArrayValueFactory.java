@@ -19,6 +19,7 @@
 package io.art.value.factory;
 
 import io.art.core.checker.*;
+import io.art.core.collection.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import lombok.experimental.*;
@@ -181,6 +182,12 @@ public class ArrayValueFactory {
 
 
     public static <T extends Value> ArrayValue array(List<T> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return new ArrayValue(value::get, lazy(value::size));
+    }
+
+    public static <T extends Value> ArrayValue array(ImmutableArray<T> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(value::get, lazy(value::size));

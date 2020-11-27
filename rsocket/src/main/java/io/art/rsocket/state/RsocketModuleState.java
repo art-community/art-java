@@ -18,7 +18,8 @@
 
 package io.art.rsocket.state;
 
-import com.google.common.collect.*;
+import io.art.core.collection.*;
+import io.art.core.factory.*;
 import io.art.core.lazy.*;
 import io.art.core.module.*;
 import io.art.rsocket.model.*;
@@ -26,7 +27,9 @@ import io.rsocket.*;
 import io.rsocket.core.*;
 import lombok.*;
 import reactor.util.context.*;
+import static io.art.core.factory.ArrayFactory.immutableArrayOf;
 import static io.art.core.factory.ListFactory.linkedListOf;
+import static io.art.core.factory.MapFactory.immutableMapOf;
 import static io.art.core.factory.MapFactory.map;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import java.util.*;
@@ -42,8 +45,8 @@ public class RsocketModuleState implements ModuleState {
         requesters.add(socket);
     }
 
-    public ImmutableList<RSocket> getRequesters() {
-        return ImmutableList.copyOf(requesters);
+    public ImmutableArray<RSocket> getRequesters() {
+        return immutableArrayOf(requesters);
     }
 
 
@@ -65,7 +68,7 @@ public class RsocketModuleState implements ModuleState {
     }
 
     public ImmutableMap<String, LazyValue<RSocketClient>> getClients() {
-        return ImmutableMap.copyOf(clients);
+        return immutableMapOf(clients);
     }
 
     public void registerClient(String id, LazyValue<RSocketClient> client) {

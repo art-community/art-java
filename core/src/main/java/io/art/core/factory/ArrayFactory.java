@@ -4,6 +4,7 @@ import io.art.core.collection.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
@@ -30,6 +31,10 @@ public class ArrayFactory {
 
     public static <T> ImmutableArray<T> immutableArrayOf(Collection<T> elements) {
         return isEmpty(elements) ? ImmutableArray.emptyImmutableArray() : new ImmutableArray<>(elements);
+    }
+
+    public static <T> ImmutableArray<T> immutableSortedArrayOf(Comparator<T> comparator, Collection<T> elements) {
+        return isEmpty(elements) ? emptyImmutableArray() : immutableSortedArray(elements, comparator);
     }
 
     @SafeVarargs
@@ -110,11 +115,5 @@ public class ArrayFactory {
         List<Boolean> array = dynamicArray(elements.length);
         for (boolean element : elements) array.add(element);
         return array;
-    }
-
-    public static void main(String[] args) {
-        ImmutableArray<String> a = ImmutableArray.<String>immutableArrayBuilder()
-                .add("test")
-                .build();
     }
 }

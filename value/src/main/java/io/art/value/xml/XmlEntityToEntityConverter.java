@@ -18,13 +18,14 @@
 
 package io.art.value.xml;
 
-import com.google.common.collect.*;
 import io.art.core.collection.*;
+import io.art.core.factory.*;
 import io.art.value.builder.*;
 import io.art.value.immutable.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.factory.ArrayFactory.immutableArrayOf;
 import static io.art.value.factory.ArrayValueFactory.*;
 import static io.art.value.factory.EntityFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
@@ -57,7 +58,7 @@ public final class XmlEntityToEntityConverter {
             }
             return entityBuilder.put(xmlEntity.getTag(), innerEntityBuilder.build()).build();
         }
-        ImmutableList.Builder<Value> collection = ImmutableList.builderWithExpectedSize(children.size());
+        ImmutableArray.Builder<Value> collection = ImmutableArray.immutableArrayBuilder(children.size());
         for (XmlEntity child : children) {
             if (isEmpty(child.getChildren()) && isEmpty(child.getValue())) {
                 collection.add(stringPrimitive(child.getTag()));

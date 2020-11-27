@@ -18,18 +18,15 @@
 
 package io.art.server.model;
 
-import com.google.common.collect.*;
+import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
 import reactor.core.scheduler.*;
-import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
-import static io.art.server.constants.ServerModuleConstants.Defaults.DEFAULT_SERVICE_METHOD_SCHEDULER;
-import static java.lang.Short.MAX_VALUE;
+import static io.art.server.constants.ServerModuleConstants.Defaults.*;
 import static java.util.Optional.*;
-import static reactor.core.scheduler.Schedulers.newBoundedElastic;
 import java.util.*;
 
 @Getter
@@ -45,8 +42,8 @@ public class ServiceConfiguration {
         ImmutableMap<String, ServiceMethodConfiguration> methods = ofNullable(source.getNestedMap(METHODS_KEY))
                 .map(configurations -> configurations.entrySet()
                         .stream()
-                        .collect(toImmutableMap(Map.Entry::getKey, entry -> ServiceMethodConfiguration.from(entry.getValue()))))
-                .orElse(ImmutableMap.of());
+                        .collect(immutableMapCollector(Map.Entry::getKey, entry -> ServiceMethodConfiguration.from(entry.getValue()))))
+                .orElse(emptyImmutableMap());
         return new ServiceConfiguration(deactivated, methods, scheduler);
     }
 }

@@ -222,7 +222,7 @@ public class XmlEntity implements Value {
             return this;
         }
 
-        public XmlEntityBuilder stringAttributes(Map<String, String> attributes) {
+        public XmlEntityBuilder stringAttributes(ImmutableMap<String, String> attributes) {
             this.attributes.putAll(attributes);
             return this;
         }
@@ -290,7 +290,7 @@ public class XmlEntity implements Value {
             return this;
         }
 
-        public XmlEntityBuilder namespaceFields(Map<String, String> namespaces) {
+        public XmlEntityBuilder namespaceFields(ImmutableMap<String, String> namespaces) {
             this.namespaces.putAll(namespaces);
             return this;
         }
