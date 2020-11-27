@@ -18,6 +18,7 @@
 
 package io.art.value.mapping;
 
+import io.art.core.annotation.*;
 import io.art.value.factory.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
@@ -29,6 +30,7 @@ import java.time.*;
 import java.util.*;
 
 @UtilityClass
+@UsedByGenerator
 public class PrimitiveMapping {
     public static PrimitiveFromModelMapper<String> fromString = PrimitivesFactory::stringPrimitive;
     public static PrimitiveToModelMapper<String> toString = Primitive::getString;

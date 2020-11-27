@@ -173,7 +173,6 @@ public class ArrayValueFactory {
         return new ArrayValue(index -> bytePrimitive(value[index]), lazy(() -> value.length));
     }
 
-
     public static ArrayValue charArray(char[] value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
@@ -193,16 +192,17 @@ public class ArrayValueFactory {
         return new ArrayValue(value::get, lazy(value::size));
     }
 
-    public static <T> ArrayValue array(List<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
-        if (isNull(value)) return null;
-        if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        return new ArrayValue(index -> let(value.get(index), mapper::map), lazy(value::size));
-    }
-
     public static <T extends Value> ArrayValue array(Collection<T> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return array(fixedArrayOf(value));
+    }
+
+
+    public static <T> ArrayValue array(List<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return new ArrayValue(index -> let(value.get(index), mapper::map), lazy(value::size));
     }
 
     public static <T> ArrayValue array(Collection<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
@@ -211,18 +211,19 @@ public class ArrayValueFactory {
         return array(fixedArrayOf(value), mapper);
     }
 
+    public static <T> ArrayValue array(ImmutableArray<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return new ArrayValue(index -> let(value.get(index), mapper::map), lazy(value::size));
+    }
+
 
     public static <T extends Value> ArrayValue array(Function<Integer, T> valueProvider, Supplier<Integer> sizeProvider) {
         return new ArrayValue(valueProvider, lazy(sizeProvider));
     }
 
-    public static <T extends Entity> ArrayValue entityArray(List<T> value) {
-        if (isNull(value)) return null;
-        if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        return new ArrayValue(value::get, lazy(value::size));
-    }
 
-    public static <T extends ArrayValue> ArrayValue innerArray(List<T> value) {
+    public static <T extends Entity> ArrayValue entityArray(List<T> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(value::get, lazy(value::size));
@@ -234,11 +235,19 @@ public class ArrayValueFactory {
         return entityArray(fixedArrayOf(value));
     }
 
+
+    public static <T extends ArrayValue> ArrayValue innerArray(List<T> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return new ArrayValue(value::get, lazy(value::size));
+    }
+
     public static <T extends ArrayValue> ArrayValue innerArray(Collection<T> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return innerArray(fixedArrayOf(value));
     }
+
 
     public static ArrayValue emptyArray() {
         return EMPTY;

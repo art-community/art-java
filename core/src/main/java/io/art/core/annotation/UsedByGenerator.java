@@ -16,22 +16,13 @@
  * limitations under the License.
  */
 
-package io.art.server.specification;
+package io.art.core.annotation;
 
-import io.art.core.annotation.*;
-import io.art.server.model.*;
-import lombok.*;
-import java.util.*;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
+import java.lang.annotation.*;
 
-@Getter
-@Builder
-@UsedByGenerator
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ServiceSpecification {
-    @EqualsAndHashCode.Include
-    private final String serviceId;
-    private final ServiceConfiguration configuration;
-
-    @Singular("method")
-    private final Map<String, ServiceMethodSpecification> methods;
+@Target(TYPE)
+@Retention(SOURCE)
+public @interface UsedByGenerator {
 }

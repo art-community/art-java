@@ -18,6 +18,7 @@
 
 package io.art.server.specification;
 
+import io.art.core.annotation.*;
 import io.art.core.caster.*;
 import io.art.core.constants.*;
 import io.art.server.configuration.*;
@@ -41,6 +42,7 @@ import java.util.function.*;
 
 @Getter
 @Builder
+@UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceMethodSpecification {
     @Builder.Default

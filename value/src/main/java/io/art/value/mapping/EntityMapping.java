@@ -18,6 +18,7 @@
 
 package io.art.value.mapping;
 
+import io.art.core.annotation.*;
 import io.art.core.factory.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
@@ -30,6 +31,7 @@ import static java.util.stream.Collectors.*;
 import java.util.*;
 
 @UtilityClass
+@UsedByGenerator
 public class EntityMapping {
     public static <K, V> EntityToModelMapper<Map<K, V>> toMap(
             PrimitiveToModelMapper<K> toKeyMapper,

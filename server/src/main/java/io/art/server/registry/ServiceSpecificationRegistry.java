@@ -18,6 +18,7 @@
 
 package io.art.server.registry;
 
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.server.model.*;
 import io.art.server.specification.*;
@@ -28,6 +29,7 @@ import static io.art.server.constants.ServerModuleConstants.*;
 import static java.util.Optional.*;
 import java.util.*;
 
+@UsedByGenerator
 public class ServiceSpecificationRegistry {
     private final Map<String, ServiceSpecification> services = map();
 

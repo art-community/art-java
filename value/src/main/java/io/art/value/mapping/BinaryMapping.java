@@ -18,12 +18,14 @@
 
 package io.art.value.mapping;
 
+import io.art.core.annotation.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
 
 @UtilityClass
+@UsedByGenerator
 public class BinaryMapping {
     public static BinaryFromModelMapper<byte[]> fromBinary = BinaryValue::new;
     public static BinaryToModelMapper<byte[]> toBinary = BinaryValue::getContent;

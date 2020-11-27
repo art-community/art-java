@@ -18,6 +18,7 @@
 
 package io.art.value.mapping;
 
+import io.art.core.annotation.*;
 import io.art.value.factory.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
@@ -31,6 +32,7 @@ import static java.util.Arrays.*;
 import java.util.*;
 
 @UtilityClass
+@UsedByGenerator
 public class ArrayMapping {
     public ArrayToModelMapper<int[]> toIntArray = ArrayValue::intArray;
     public ArrayToModelMapper<long[]> toLongArray = ArrayValue::longArray;
@@ -86,7 +88,7 @@ public class ArrayMapping {
         return array -> let(array, notNull -> notNull.mapToDeque(elementMapper));
     }
 
-    
+
     public ArrayFromModelMapper<int[]> fromIntArray = ArrayValueFactory::intArray;
     public ArrayFromModelMapper<long[]> fromLongArray = ArrayValueFactory::longArray;
     public ArrayFromModelMapper<short[]> fromShortArray = ArrayValueFactory::shortArray;
