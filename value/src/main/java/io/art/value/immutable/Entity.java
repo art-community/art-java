@@ -21,6 +21,7 @@ package io.art.value.immutable;
 import com.google.common.collect.*;
 import io.art.core.checker.*;
 import io.art.core.exception.*;
+import io.art.core.factory.CollectionsFactory;
 import io.art.core.lazy.*;
 import io.art.value.builder.*;
 import io.art.value.constants.ValueConstants.*;
@@ -43,6 +44,7 @@ import static java.util.stream.Collectors.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class Entity implements Value {
@@ -198,7 +200,29 @@ public class Entity implements Value {
         return let(find(key), value -> mapper.map(cast(value)));
     }
 
-    
+
+    @Override
+    public boolean equals(Object object){
+        if (object == this) return true;
+        if ( !(object instanceof Entity) ) return false;
+
+        Entity another = (Entity) object;
+        Set<Primitive> keySet = this.asMap().keySet();
+
+        if ( !(keySet.equals(another.asMap().keySet())) ) return false;
+
+        Value entry;
+        for (Primitive key: keySet) {
+            entry = this.get(key);
+            if (entry == null) {
+                if (another.get(key) == null) continue;
+                return false;
+            }
+            if ( !(entry.equals(another.get(key))) ) return false;
+        }
+        return true;
+    }
+
     public boolean has(Primitive key) {
         return keys.contains(key);
     }
@@ -213,7 +237,7 @@ public class Entity implements Value {
             this.valueMapper = valueMapper;
             this.fromKeyMapper = fromKeyMapper;
             this.evaluated = lazy(() -> Entity.this.mapToMap(toKeyMapper, valueMapper));
-            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toSet()));
+            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toCollection(CollectionsFactory::setOf)));
         }
 
         @Override
