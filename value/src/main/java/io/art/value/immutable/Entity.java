@@ -24,6 +24,7 @@ import io.art.core.factory.*;
 import io.art.core.lazy.*;
 import io.art.value.builder.*;
 import io.art.value.constants.ValueConstants.*;
+import io.art.value.exception.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.*;
 import lombok.*;
@@ -33,12 +34,14 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.lazy.LazyValue.*;
+import static io.art.value.constants.ValueConstants.ExceptionMessages.FIELD_MAPPING_EXCEPTION;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static io.art.value.mapping.PrimitiveMapping.toString;
 import static io.art.value.mapping.PrimitiveMapping.*;
+import static java.text.MessageFormat.format;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import javax.annotation.*;
@@ -180,7 +183,11 @@ public class Entity implements Value {
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
         LazyValue<?> lazyValue = mappedValueCache.computeIfAbsent(primitive, key -> lazy(() -> cast(valueProvider.apply(key))));
         Object result = let(lazyValue, LazyValue::get);
-        return mapper.map(cast(result));
+        try {
+            return mapper.map(cast(result));
+        } catch (Throwable throwable) {
+            throw new ValueMappingException(format(FIELD_MAPPING_EXCEPTION, primitive));
+        }
     }
 
 

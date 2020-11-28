@@ -34,14 +34,14 @@ import java.util.*;
 @UtilityClass
 @UsedByGenerator
 public class ArrayMapping {
-    public ArrayToModelMapper<int[]> toIntArray = ArrayValue::intArray;
-    public ArrayToModelMapper<long[]> toLongArray = ArrayValue::longArray;
-    public ArrayToModelMapper<short[]> toShortArray = ArrayValue::shortArray;
-    public ArrayToModelMapper<double[]> toDoubleArray = ArrayValue::doubleArray;
-    public ArrayToModelMapper<float[]> toFloatArray = ArrayValue::floatArray;
-    public ArrayToModelMapper<byte[]> toByteArray = ArrayValue::byteArray;
-    public ArrayToModelMapper<char[]> toCharArray = ArrayValue::charArray;
-    public ArrayToModelMapper<boolean[]> toBoolArray = ArrayValue::boolArray;
+    public ArrayToModelMapper<int[]> toIntArray = array -> let(array, ArrayValue::intArray);
+    public ArrayToModelMapper<long[]> toLongArray = array -> let(array, ArrayValue::longArray);
+    public ArrayToModelMapper<short[]> toShortArray = array -> let(array, ArrayValue::shortArray);
+    public ArrayToModelMapper<double[]> toDoubleArray = array -> let(array, ArrayValue::doubleArray);
+    public ArrayToModelMapper<float[]> toFloatArray = array -> let(array, ArrayValue::floatArray);
+    public ArrayToModelMapper<byte[]> toByteArray = array -> let(array, ArrayValue::byteArray);
+    public ArrayToModelMapper<char[]> toCharArray = array -> let(array, ArrayValue::charArray);
+    public ArrayToModelMapper<boolean[]> toBoolArray = array -> let(array, ArrayValue::boolArray);
 
     public static <T> ArrayToModelMapper<Collection<T>> toCollection(ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.mapAsList(elementMapper));
@@ -89,14 +89,14 @@ public class ArrayMapping {
     }
 
 
-    public ArrayFromModelMapper<int[]> fromIntArray = ArrayValueFactory::intArray;
-    public ArrayFromModelMapper<long[]> fromLongArray = ArrayValueFactory::longArray;
-    public ArrayFromModelMapper<short[]> fromShortArray = ArrayValueFactory::shortArray;
-    public ArrayFromModelMapper<double[]> fromDoubleArray = ArrayValueFactory::doubleArray;
-    public ArrayFromModelMapper<float[]> fromFloatArray = ArrayValueFactory::floatArray;
-    public ArrayFromModelMapper<byte[]> fromByteArray = ArrayValueFactory::byteArray;
-    public ArrayFromModelMapper<char[]> fromCharArray = ArrayValueFactory::charArray;
-    public ArrayFromModelMapper<boolean[]> fromBoolArray = ArrayValueFactory::boolArray;
+    public ArrayFromModelMapper<int[]> fromIntArray = array -> let(array, ArrayValueFactory::intArray);
+    public ArrayFromModelMapper<long[]> fromLongArray = array -> let(array, ArrayValueFactory::longArray);
+    public ArrayFromModelMapper<short[]> fromShortArray = array -> let(array, ArrayValueFactory::shortArray);
+    public ArrayFromModelMapper<double[]> fromDoubleArray = array -> let(array, ArrayValueFactory::doubleArray);
+    public ArrayFromModelMapper<float[]> fromFloatArray = array -> let(array, ArrayValueFactory::floatArray);
+    public ArrayFromModelMapper<byte[]> fromByteArray = array -> let(array, ArrayValueFactory::byteArray);
+    public ArrayFromModelMapper<char[]> fromCharArray = array -> let(array, ArrayValueFactory::charArray);
+    public ArrayFromModelMapper<boolean[]> fromBoolArray = array -> let(array, ArrayValueFactory::boolArray);
 
     public static <T> ArrayFromModelMapper<Collection<T>> fromCollection(ValueFromModelMapper<T, ? extends Value> elementMapper) {
         return list -> let(list, notNull -> array(list, elementMapper));

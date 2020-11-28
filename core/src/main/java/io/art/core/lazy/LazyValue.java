@@ -35,6 +35,6 @@ public class LazyValue<T> {
     }
 
     public static <T> LazyValue<T> lazy(Supplier<T> factory) {
-        return new LazyValue<T>(factory);
+        return new LazyValue<>(factory);
     }
 }

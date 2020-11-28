@@ -21,6 +21,7 @@ package io.art.server.specification;
 import io.art.core.annotation.*;
 import io.art.core.caster.*;
 import io.art.core.constants.*;
+import io.art.logging.*;
 import io.art.server.configuration.*;
 import io.art.server.exception.*;
 import io.art.server.implementation.*;
@@ -28,11 +29,13 @@ import io.art.server.model.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.*;
+import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodProcessingMode.*;
+import static io.art.core.constants.StringConstants.DOT;
 import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
@@ -77,6 +80,9 @@ public class ServiceMethodSpecification {
 
     @Getter(lazy = true)
     private final ServiceMethodConfiguration methodConfiguration = let(getServiceConfiguration(), configuration -> configuration.getMethods().get(methodId));
+
+    @Getter(lazy = true)
+    private final Logger logger = LoggingModule.logger(getServiceId() + DOT + getMethodId());
 
     public Flux<Value> serve(Flux<Value> input) {
         if (deactivated()) {
@@ -148,6 +154,7 @@ public class ServiceMethodSpecification {
             errorOutput = errorOutput.transformDeferred(decorator);
         }
         return errorOutput
+                .doOnError(Throwable.class, throwable -> getLogger().error(throwable.getMessage(), throwable))
                 .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
                 .cast(Value.class);
 

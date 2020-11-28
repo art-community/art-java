@@ -21,6 +21,7 @@ package io.art.value.immutable;
 import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.value.constants.ValueConstants.*;
+import io.art.value.exception.*;
 import io.art.value.mapper.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
@@ -31,9 +32,12 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.lazy.LazyValue.*;
+import static io.art.value.constants.ValueConstants.ExceptionMessages.FIELD_MAPPING_EXCEPTION;
+import static io.art.value.constants.ValueConstants.ExceptionMessages.INDEX_MAPPING_EXCEPTION;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static io.art.value.mapping.PrimitiveMapping.*;
+import static java.text.MessageFormat.format;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -57,7 +61,13 @@ public class ArrayValue implements Value {
     }
 
     public <T> T map(int index, ValueToModelMapper<T, ? extends Value> mapper) {
-        return cast(let(mappedValueCache.computeIfAbsent(index, key -> lazy(() -> mapper.map(cast(get(key))))), LazyValue::get));
+        LazyValue<?> lazyValue = mappedValueCache.computeIfAbsent(index, key -> lazy(() -> cast(get(key))));
+        Object result = let(lazyValue, LazyValue::get);
+        try {
+            return mapper.map(cast(result));
+        } catch (Throwable throwable) {
+            throw new ValueMappingException(format(INDEX_MAPPING_EXCEPTION, index));
+        }
     }
 
 
