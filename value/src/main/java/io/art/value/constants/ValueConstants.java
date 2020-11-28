@@ -29,8 +29,10 @@ public interface ValueConstants {
         String TUPLE_NOT_SUPPORTED_VALUE_TYPE = "Value type: ''{0}'' not support for tuples";
         String NOT_PRIMITIVE_TYPE = "Not primitive type: ''{0}''";
         String XML_TAG_IS_EMPTY = "Xml tag is empty";
-        String UNSUPPORTED_DATA_FORMAT = "Data format not supported: ''{0}''";
+        String NULL_FIELD_MESSAGE = "Expected not null primitive field ''{0}'' but received null";
     }
+
+
 
     enum ValueType {
         ENTITY,

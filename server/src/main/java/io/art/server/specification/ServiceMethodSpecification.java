@@ -89,9 +89,7 @@ public class ServiceMethodSpecification {
     private Flux<Value> deferredServe(Flux<Value> input) {
         try {
             Object output = implementation.execute(mapInput(input));
-            if (isNull(output)) {
-                return Flux.empty();
-            }
+            if (isNull(output)) return Flux.empty();
             return mapOutput(output);
         } catch (Throwable throwable) {
             return mapException(throwable);
@@ -116,7 +114,7 @@ public class ServiceMethodSpecification {
             case FLUX:
                 return mappedInput;
         }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_REQUEST_TYPE, outputMode), serviceId, methodId);
+        throw new ServiceMethodExecutionException(format(UNKNOWN_REQUEST_TYPE, inputMode), serviceId, methodId);
     }
 
     private Flux<Value> mapOutput(Object output) {

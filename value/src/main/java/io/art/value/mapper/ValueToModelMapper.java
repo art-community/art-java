@@ -18,8 +18,14 @@
 
 package io.art.value.mapper;
 
+import io.art.value.exception.*;
 import io.art.value.immutable.*;
+import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static java.util.Objects.isNull;
 import java.io.*;
+import java.util.*;
 
 public interface ValueToModelMapper<T, V extends Value> extends Serializable {
     T map(V value);
@@ -42,5 +48,20 @@ public interface ValueToModelMapper<T, V extends Value> extends Serializable {
 
     static <V extends Value> ValueToModelMapper<V, V> identity() {
         return value -> value;
+    }
+
+    static <T> PrimitiveToModelMapper<T> validatePrimitiveMapping(String name, PrimitiveToModelMapper<T> delegate) {
+        return (PrimitiveToModelMapper<T>) value -> {
+            if (isNull(value)) {
+                System.err.println(format(NULL_FIELD_MESSAGE, name));
+                throw new ValueMappingException(format(NULL_FIELD_MESSAGE, name));
+            }
+            T result;
+            if (isNull(result = delegate.map(value))) {
+                System.err.println(format(NULL_FIELD_MESSAGE, name));
+                throw new ValueMappingException(format(NULL_FIELD_MESSAGE, name));
+            }
+            return result;
+        };
     }
 }

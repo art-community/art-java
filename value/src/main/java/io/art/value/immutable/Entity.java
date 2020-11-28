@@ -169,8 +169,18 @@ public class Entity implements Value {
         return map(floatPrimitive(key), mapper);
     }
 
+    public <T, V extends Value> T map(Character key, ValueToModelMapper<T, V> mapper) {
+        return map(charPrimitive(key), mapper);
+    }
+
+    public <T, V extends Value> T map(Short key, ValueToModelMapper<T, V> mapper) {
+        return map(shortPrimitive(key), mapper);
+    }
+
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
-        return cast(let(mappedValueCache.computeIfAbsent(primitive, key -> lazy(() -> let(cast(valueProvider.apply(key)), mapper::map))), LazyValue::get));
+        LazyValue<?> lazyValue = mappedValueCache.computeIfAbsent(primitive, key -> lazy(() -> cast(valueProvider.apply(key))));
+        Object result = let(lazyValue, LazyValue::get);
+        return mapper.map(cast(result));
     }
 
 
