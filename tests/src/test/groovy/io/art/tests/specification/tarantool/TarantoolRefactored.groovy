@@ -3,14 +3,9 @@ package io.art.tests.specification.tarantool
 
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
-import org.tarantool.TarantoolClusterClientConfig
-import io.art.refactored.configuration.TarantoolInstanceConfiguration
-import io.art.refactored.configuration.TarantoolModuleConfiguration
-import io.art.refactored.module.TarantoolModule
 import io.art.refactored.dao.TarantoolInstance
 import io.art.refactored.model.TarantoolUpdateFieldOperation
 import io.art.refactored.dao.TarantoolSpace
-import io.art.refactored.storage.StorageSpace
 import io.art.refactored.storage.TarantoolStorageSpace
 import spock.lang.Specification
 
@@ -22,14 +17,10 @@ import static io.art.refactored.configuration.space.TarantoolSpaceConfig.taranto
 import static io.art.refactored.constants.TarantoolModuleConstants.TarantoolIndexType
 import static io.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.*
 import static io.art.value.factory.PrimitivesFactory.*
+import static io.art.refactored.module.TarantoolModule.*
 
 class TarantoolRefactored extends Specification {
 
-    def router1Address = "localhost:3311"
-    def storage1Address = "localhost:3301"
-    def storage2Address = "localhost:3302"
-    def username = 'username'
-    def password = 'password'
 
     def "start modules"() {
         setup:
@@ -39,23 +30,11 @@ class TarantoolRefactored extends Specification {
     def "Storage1 CRUD"() {
         setup:
         def spaceName = "s1_CRUD"
-        def clientId = "storage_1"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        clientConfig.username = username
-        clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
+        def clientId = "storage_1_a"
 
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address(storage1Address)
-                .config(clientConfig)
-                .build()
 
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+        TarantoolInstance db = getInstance(clientId)
+        TarantoolSpace space = getSpace(clientId, spaceName)
 
 
 
@@ -169,22 +148,8 @@ class TarantoolRefactored extends Specification {
         def clientId = "router_1"
         def spaceName = "r1_crud"
 
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        clientConfig.username = username
-        clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
-
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address(router1Address)
-                .config(clientConfig)
-                .build()
-
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+        TarantoolInstance db = getInstance(clientId)
+        TarantoolSpace space = getSpace(clientId, spaceName)
 
 
 
@@ -319,24 +284,10 @@ class TarantoolRefactored extends Specification {
     def "TarantoolStorage1 interface ops"(){
         setup:
         def spaceName = "s1_storage_ops"
-        def clientId = "storage_1"
+        def clientId = "storage_1_a"
 
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        clientConfig.username = username
-        clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
-
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address(storage1Address)
-                .config(clientConfig)
-                .build()
-
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-        StorageSpace space = new TarantoolStorageSpace(tnt.getSpace(clientId, spaceName))
+        TarantoolInstance db = getInstance(clientId)
+        TarantoolSpace space = getSpace(clientId, spaceName)
 
 
 
@@ -422,24 +373,11 @@ class TarantoolRefactored extends Specification {
     def "Storage2 cluster operations lock"(){
         setup:
         def spaceName = "s2_COL"
-        def clientId = "storage_2"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        clientConfig.username = username
-        clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
+        def clientId = "storage_2_a"
+        TarantoolInstance db = getInstance(clientId)
 
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address(storage2Address)
-                .config(clientConfig)
-                .build()
 
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-
-        tnt.getClient(clientId).syncOps().eval("art.box.space.cluster_op_in_progress = true")
+        getClient(clientId).eval("art.box.space.cluster_op_in_progress = true")
         String exception = ''
 
         when:
@@ -493,7 +431,7 @@ class TarantoolRefactored extends Specification {
 
 
         cleanup:
-        tnt.getClient(clientId).syncOps().eval("art.box.space.cluster_op_in_progress = false")
+        getClient(clientId).eval("art.box.space.cluster_op_in_progress = false")
     }
 
 

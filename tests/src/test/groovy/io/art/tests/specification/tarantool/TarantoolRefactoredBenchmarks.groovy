@@ -3,15 +3,9 @@ package io.art.tests.specification.tarantool
 
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
-import org.tarantool.TarantoolClient
-import org.tarantool.TarantoolClusterClientConfig
-import io.art.refactored.configuration.TarantoolInstanceConfiguration
-import io.art.refactored.configuration.TarantoolModuleConfiguration
 import io.art.refactored.dao.TarantoolInstance
 import io.art.refactored.dao.TarantoolSpace
 import io.art.refactored.model.TarantoolUpdateFieldOperation
-import io.art.refactored.module.TarantoolModule
-import io.art.refactored.module.connector.TarantoolConnector
 import spock.lang.Specification
 
 
@@ -23,6 +17,9 @@ import static io.art.refactored.configuration.space.TarantoolSpaceIndex.tarantoo
 import static io.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.NUMBER
 import static io.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.UNSIGNED
 import static io.art.refactored.constants.TarantoolModuleConstants.TarantoolIndexType
+import static io.art.refactored.module.TarantoolModule.getClient
+import static io.art.refactored.module.TarantoolModule.getInstance
+import static io.art.refactored.module.TarantoolModule.getSpace
 import static io.art.value.factory.PrimitivesFactory.intPrimitive
 import static io.art.value.factory.PrimitivesFactory.longPrimitive
 import static io.art.value.factory.PrimitivesFactory.stringPrimitive
@@ -45,23 +42,10 @@ class TarantoolRefactoredBenchmarks extends Specification {
     def "Storage1 CRUD(warmup)"() {
         setup:
         def spaceName = "s1_CRUD"
-        def clientId = "storage_1"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        clientConfig.username = username
-        clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
+        def clientId = "storage_1_a"
 
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address(storage1Address)
-                .config(clientConfig)
-                .build()
-
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+        TarantoolInstance db = getInstance(clientId)
+        TarantoolSpace space = getSpace(clientId, spaceName)
 
 
         Entity data = Entity.entityBuilder()
@@ -175,22 +159,8 @@ class TarantoolRefactoredBenchmarks extends Specification {
         def clientId = "router_1"
         def spaceName = "r1_art_get_bench"
 
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        clientConfig.username = username
-        clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
-
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address(router1Address)
-                .config(clientConfig)
-                .build()
-
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+        TarantoolInstance db = getInstance(clientId)
+        TarantoolSpace space = getSpace(clientId, spaceName)
 
 
 
@@ -237,22 +207,8 @@ class TarantoolRefactoredBenchmarks extends Specification {
         def clientId = "router_2"
         def spaceName = "r2_art_inc_bench"
 
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        clientConfig.username = username
-        clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
-
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address(router2Address)
-                .config(clientConfig)
-                .build()
-
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+        TarantoolInstance db = getInstance(clientId)
+        TarantoolSpace space = getSpace(clientId, spaceName)
 
 
 
@@ -292,23 +248,10 @@ class TarantoolRefactoredBenchmarks extends Specification {
     def "Storage1 art.get benchmark"(){
         setup:
         def spaceName = "s1_art_get_bench"
-        def clientId = "storage_1"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        clientConfig.username = username
-        clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
+        def clientId = "storage_1_a"
 
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address(storage1Address)
-                .config(clientConfig)
-                .build()
-
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+        TarantoolInstance db = getInstance(clientId)
+        TarantoolSpace space = getSpace(clientId, spaceName)
 
 
 
@@ -346,23 +289,10 @@ class TarantoolRefactoredBenchmarks extends Specification {
     def "Storage2 art.auto_increment benchmark"(){
         setup:
         def spaceName = "s2_art_inc_bench"
-        def clientId = "storage_1"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        clientConfig.username = username
-        clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
+        def clientId = "storage_2_a"
 
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address(storage2Address)
-                .config(clientConfig)
-                .build()
-
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
+        TarantoolInstance db = getInstance(clientId)
+        TarantoolSpace space = getSpace(clientId, spaceName)
 
 
 
@@ -400,23 +330,10 @@ class TarantoolRefactoredBenchmarks extends Specification {
         setup:
         def spaceName = "s1_box_get_bench"
         def clientId = "storage_1"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        clientConfig.username = username
-        clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
 
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address(storage1Address)
-                .config(clientConfig)
-                .build()
-
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolSpace space = tnt.getSpace(clientId, spaceName)
-        TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
+        def db = getInstance(clientId)
+        def space = getSpace(clientId, spaceName)
+        def client = getClient(clientId)
 
         Entity data = Entity.entityBuilder()
                 .put("id", intPrimitive(3))
@@ -440,7 +357,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
         when:
         space.insert(data)
         for (int i = 0; i<benchmarkOpsCount; i++){
-            client.syncOps().call("box.space."+ spaceName +":get", tuple)
+            client.call("box.space."+ spaceName +":get", tuple).get()
         }
 
         then:
@@ -455,22 +372,10 @@ class TarantoolRefactoredBenchmarks extends Specification {
         setup:
         def spaceName = "s2_box_inc_bench"
         def clientId = "storage_2"
-        TarantoolClusterClientConfig clientConfig = new TarantoolClusterClientConfig()
-        clientConfig.username = username
-        clientConfig.password = password
-        clientConfig.connectionTimeout = 5 * 1000
 
-        TarantoolInstanceConfiguration instanceConfig = new TarantoolInstanceConfiguration.TarantoolInstanceConfigurationBuilder()
-                .address(storage2Address)
-                .config(clientConfig)
-                .build()
-
-        TarantoolModuleConfiguration moduleConfig = new TarantoolModuleConfiguration()
-        moduleConfig.instances.put(clientId, instanceConfig)
-
-        TarantoolModule tnt = new TarantoolModule(moduleConfig)
-        TarantoolInstance db = tnt.getInstance(clientId)
-        TarantoolClient client = TarantoolConnector.connect(clientId, instanceConfig)
+        def db = getInstance(clientId)
+        def space = getSpace(clientId, spaceName)
+        def client = getClient(clientId)
 
         Entity data = Entity.entityBuilder()
                 .put("id", intPrimitive(3))
@@ -492,7 +397,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
         when:
         for (int i = 0; i<benchmarkOpsCount; i++){
-            client.syncOps().call("box.space."+ spaceName +":auto_increment", tuple)
+            client.call("box.space."+ spaceName +":auto_increment", tuple).get()
         }
 
         then:
