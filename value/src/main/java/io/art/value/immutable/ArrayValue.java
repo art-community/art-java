@@ -47,7 +47,7 @@ import java.util.stream.*;
 public class ArrayValue implements Value {
     @Getter
     private final ValueType type = ARRAY;
-    private final Map<Integer, LazyValue<?>> mappedValueCache = concurrentHashMap();
+    private final Map<Integer, ?> mappedValueCache = concurrentHashMap();
     private final Function<Integer, ? extends Value> valueProvider;
     private final LazyValue<Integer> size;
 
@@ -61,10 +61,9 @@ public class ArrayValue implements Value {
     }
 
     public <T> T map(int index, ValueToModelMapper<T, ? extends Value> mapper) {
-        LazyValue<?> lazyValue = mappedValueCache.computeIfAbsent(index, key -> lazy(() -> cast(get(key))));
-        Object result = let(lazyValue, LazyValue::get);
+        Object result = mappedValueCache.computeIfAbsent(index, key -> cast(get(key)));
         try {
-            return mapper.map(cast(result));
+            return let(cast(result), mapper::map);
         } catch (Throwable throwable) {
             throw new ValueMappingException(format(INDEX_MAPPING_EXCEPTION, index));
         }

@@ -34,14 +34,14 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.lazy.LazyValue.*;
-import static io.art.value.constants.ValueConstants.ExceptionMessages.FIELD_MAPPING_EXCEPTION;
+import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static io.art.value.mapping.PrimitiveMapping.toString;
 import static io.art.value.mapping.PrimitiveMapping.*;
-import static java.text.MessageFormat.format;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import javax.annotation.*;
@@ -52,7 +52,7 @@ import java.util.function.*;
 public class Entity implements Value {
     @Getter
     private final ValueType type = ENTITY;
-    private final Map<Primitive, LazyValue<?>> mappedValueCache = concurrentHashMap();
+    private final Map<Primitive, ?> mappedValueCache = concurrentHashMap();
     private final Set<Primitive> keys;
     private final Function<Primitive, ? extends Value> valueProvider;
 
@@ -70,7 +70,7 @@ public class Entity implements Value {
 
     public <K, V> Map<K, V> mapToMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
         Map<K, V> newMap = MapFactory.map();
-        for (Primitive key : keys) let(map(key, valueMapper), value -> newMap.put(keyMapper.map(key), value));
+        for (Primitive key : keys) apply(map(key, valueMapper), value -> newMap.put(keyMapper.map(key), value));
         return newMap;
     }
 
@@ -181,10 +181,9 @@ public class Entity implements Value {
     }
 
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
-        LazyValue<?> lazyValue = mappedValueCache.computeIfAbsent(primitive, key -> lazy(() -> cast(valueProvider.apply(key))));
-        Object result = let(lazyValue, LazyValue::get);
+        Object result = mappedValueCache.computeIfAbsent(primitive, key -> cast(valueProvider.apply(key)));
         try {
-            return mapper.map(cast(result));
+            return let(cast(result), mapper::map);
         } catch (Throwable throwable) {
             throw new ValueMappingException(format(FIELD_MAPPING_EXCEPTION, primitive));
         }
@@ -216,23 +215,23 @@ public class Entity implements Value {
 
 
     @Override
-    public boolean equals(Object object){
+    public boolean equals(Object object) {
         if (object == this) return true;
-        if ( !(object instanceof Entity) ) return false;
+        if (!(object instanceof Entity)) return false;
 
         Entity another = (Entity) object;
         Set<Primitive> keySet = this.asMap().keySet();
 
-        if ( !(keySet.equals(another.asMap().keySet())) ) return false;
+        if (!(keySet.equals(another.asMap().keySet()))) return false;
 
         Value entry;
-        for (Primitive key: keySet) {
+        for (Primitive key : keySet) {
             entry = this.get(key);
             if (entry == null) {
                 if (another.get(key) == null) continue;
                 return false;
             }
-            if ( !(entry.equals(another.get(key))) ) return false;
+            if (!(entry.equals(another.get(key)))) return false;
         }
         return true;
     }
@@ -240,7 +239,7 @@ public class Entity implements Value {
     public boolean has(Primitive key) {
         return keys.contains(key);
     }
-    
+
     public class ProxyMap<K, V> implements Map<K, V> {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
@@ -327,12 +326,12 @@ public class Entity implements Value {
         }
     }
 
-    
+
     public EntityBuilder toBuilder() {
         EntityBuilder entityBuilder = entityBuilder();
         keys.forEach(key -> entityBuilder.lazyPut(key, () -> valueProvider.apply(key)));
         return entityBuilder;
-    } 
-    
+    }
+
     public static Entity EMPTY = entityBuilder().build();
 }
