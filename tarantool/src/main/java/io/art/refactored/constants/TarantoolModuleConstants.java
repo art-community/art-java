@@ -27,38 +27,34 @@ import static io.art.core.network.selector.PortSelector.findAvailableTcpPort;
 public interface TarantoolModuleConstants {
     String TARANTOOL = "tarantool";
     String TARANTOOL_MODULE_ID = "TARANTOOL_MODULE";
-    int DEFAULT_TARANTOOL_PROBE_CONNECTION_TIMEOUT = 3 * 1000;
-    int DEFAULT_TARANTOOL_INSTANCE_STARTUP_BETWEEN_TIME = 100;
-    int DEFAULT_TARANTOOL_CONNECTION_TIMEOUT = 10 * 1000;
-    int DEFAULT_TARANTOOL_OPERATION_TIMEOUT = 60 * 1000;
-    int DEFAULT_TARANTOOL_PORT = findAvailableTcpPort();
-    int DEFAULT_PROCESS_STARTUP_TIMEOUT = 5 * 60 * 1000;
-    int DEFAULT_PROCESS_CHECK_INTERVAL = 1000;
+    int DEFAULT_TARANTOOL_CONNECTION_TIMEOUT = 3 * 1000;
+    int DEFAULT_TARANTOOL_CONNECTIONS_NUMBER = 1;
+    int DEFAULT_TARANTOOL_READ_TIMEOUT = 1000;
+    int DEFAULT_TARANTOOL_REQUEST_TIMEOUT = 2 * 1000;
+    int DEFAULT_TARANTOOL_PORT = 3301;
+    String DEFAULT_TARANTOOL_HOST = "localhost";
     String DEFAULT_TARANTOOL_USERNAME = "guest";
+    String DEFAULT_TARANTOOL_PASSWORD = "";
     String LUA_REGEX = "lua/.+\\.lua";
     String VSHARD_REGEX = "vshard/.+\\.lua";
     String ROUTER_REGEX = "router/.+\\.lua";
     String STORAGE_REGEX = "storage/.+\\.lua";
-    String DEFAULT_TARANTOOL_EXECUTABLE = "tarantool";
-    String DEFAULT_TARANTOOL_EXECUTABLE_FILE_PATH = new File("/usr/local/bin/tarantool").exists()
-            ? "/usr/local/bin/tarantool"
-            : new File("tarantool").exists()
-            ? "tarantool"
-            : new File("/usr/bin/tarantool").exists()
-            ? "/usr/bin/tarantool"
-            : new File("/bin/tarantool").exists()
-            ? "/bin/tarantool" : null;
-    String TWIG_TEMPLATE = ".twig";
-    String IS_NULLABLE = "is_nullable";
-    String COLLATION = "collation";
-    String ID_FIELD = "id";
-    String VALUE = "value";
+
     int DEFAULT_TARANTOOL_RETRIES = 3;
 
     interface ConfigurationKeys{
         String TARANTOOL_SECTION = "tarantool_refactored";
         String TARANTOOL_INSTANCES_SECTION = "instances";
-        String TARANTOOL_INSTANCE_CONFIG = "Instance";
+        String TARANTOOL_TRACING_KEY = "enable_tracing";
+        String TARANTOOL_INSTANCE_HOST_KEY = "host";
+        String TARANTOOL_INSTANCE_PORT_KEY = "port";
+        String TARANTOOL_INSTANCE_USERNAME_KEY = "username";
+        String TARANTOOL_INSTANCE_PASSWORD_KEY = "password";
+        String TARANTOOL_INSTANCE_CONNECTIONS_KEY = "connections";
+        String TARANTOOL_INSTANCE_CONNECTION_TIMEOUT_KEY = "connection_timeout";
+        String TARANTOOL_INSTANCE_READ_TIMEOUT_KEY = "read_timeout";
+        String TARANTOOL_INSTANCE_REQUEST_TIMEOUT_KEY = "request_timeout";
+        String TARANTOOL_INSTANCE_MAX_CONNECTIONS_RETRY_KEY = "max_connections_retry";
     }
 
     interface ExceptionMessages {
@@ -89,7 +85,6 @@ public interface TarantoolModuleConstants {
         String USING_TARANTOOL_BINARY = "Using Tarantool ''{0}'' with address ''{1}'' binary executable: ''{2}''";
         String WRITING_TARANTOOL_USER_CONFIGURATION = "Writing Tarantool ''{0}'' with address = ''{1}'' user configuration to file ''{2}''";
         String EXTRACT_TARANTOOL_VSHARD_SCRIPTS = "Extract Tarantool ''{0}'' with address''{1}'' vshard scripts to ''{2}''";
-        String UNABLE_TO_CONNECT_TO_TARANTOOL_ON_STARTUP = "Unable to connect to tarantool ''{0}'' with address ''{1}'' on startup. Therefore, we will try to run the tarantool";
         String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}'' on startup";
         String CALLING_FUNCTION = "Calling tarantool function ''{0}'' with arguments: {1}";
         String CALLED_FUNCTION = "Called tarantool function ''{0}'' with result: {1}";

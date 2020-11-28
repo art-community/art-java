@@ -31,3 +31,25 @@ tarantool:
           fields:
             Data: 2
             Entity: 3
+tarantool_refactored:
+  instances:
+    storage_1_a:
+      username: username
+      password: password
+      host: localhost
+      port: 3301
+    storage_2_a:
+      username: username
+      password: password
+      host: localhost
+      port: 3302
+    router_1:
+      username: username
+      password: password
+      host: localhost
+      port: 3311
+    router_2:
+      username: username
+      password: password
+      host: localhost
+      port: 3312

@@ -1,12 +1,15 @@
 package io.art.refactored.module.state;
 
-import org.tarantool.TarantoolClient;
+
+import io.art.core.module.ModuleState;
+import io.tarantool.driver.api.TarantoolClient;
+
 import java.util.Map;
 import java.util.Optional;
 
 import static io.art.core.factory.CollectionsFactory.mapOf;
 
-public class TarantoolModuleState {
+public class TarantoolModuleState implements ModuleState {
     private final Map<String, TarantoolClient> activeClients = mapOf();
 
     public Optional<TarantoolClient> getClient(String clientId){

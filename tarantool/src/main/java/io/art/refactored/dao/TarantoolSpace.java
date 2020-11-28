@@ -3,9 +3,10 @@ package io.art.refactored.dao;
 import io.art.value.immutable.Value;
 import io.art.value.tuple.*;
 import io.art.value.tuple.schema.*;
+import io.tarantool.driver.api.TarantoolClient;
 import lombok.*;
 import org.apache.logging.log4j.*;
-import org.tarantool.*;
+
 import io.art.refactored.exception.*;
 import io.art.refactored.model.*;
 import static io.art.core.caster.Caster.*;

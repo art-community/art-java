@@ -1,8 +1,9 @@
 package io.art.refactored.dao;
 
+import io.tarantool.driver.api.TarantoolClient;
 import lombok.*;
 import org.apache.logging.log4j.*;
-import org.tarantool.*;
+
 import io.art.refactored.configuration.space.*;
 import static io.art.logging.LoggingModule.*;
 import static lombok.AccessLevel.*;
@@ -12,7 +13,7 @@ import static io.art.refactored.dao.caller.TarantoolFunctionCaller.*;
 public class TarantoolInstance {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(TarantoolInstance.class);
-    private TarantoolClient client;
+    private final TarantoolClient client;
 
     public TarantoolInstance(TarantoolClient client){
         this.client = client;
