@@ -181,12 +181,26 @@ public class Entity implements Value {
     }
 
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
-        Object result = mappedValueCache.computeIfAbsent(primitive, key -> cast(valueProvider.apply(key)));
         try {
-            return let(cast(result), mapper::map);
+            Object cached = mappedValueCache.get(primitive);
+            if (nonNull(cached)) return cast(cached);
+            cached = let(cast(get(primitive)), mapper::map);
+            if (nonNull(cached)) mappedValueCache.put(primitive, cast(cached));
+            return cast(cached);
         } catch (Throwable throwable) {
-            throw new ValueMappingException(format(FIELD_MAPPING_EXCEPTION, primitive));
+            throw new ValueMappingException(format(FIELD_MAPPING_EXCEPTION, primitive), throwable);
         }
+    }
+
+
+    public <T, V extends Value> T validatedMap(String key, ValueToModelMapper<T, V> mapper) {
+        Primitive primitive = stringPrimitive(key);
+        Object cached = mappedValueCache.get(primitive);
+        if (nonNull(cached)) return cast(cached);
+        cached = let(cast(get(primitive)), mapper::map);
+        if (isNull(cached)) throw new ValueMappingException(format(NULL_FIELD_MESSAGE, primitive));
+        mappedValueCache.put(primitive, cast(cached));
+        return cast(cached);
     }
 
 

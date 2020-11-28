@@ -22,4 +22,8 @@ public class ValueMappingException extends RuntimeException {
     public ValueMappingException(String message) {
         super(message);
     }
+
+    public ValueMappingException(String message, Throwable throwable) {
+        super(message, throwable);
+    }
 }

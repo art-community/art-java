@@ -32,12 +32,12 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.lazy.LazyValue.*;
-import static io.art.value.constants.ValueConstants.ExceptionMessages.FIELD_MAPPING_EXCEPTION;
 import static io.art.value.constants.ValueConstants.ExceptionMessages.INDEX_MAPPING_EXCEPTION;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static io.art.value.mapping.PrimitiveMapping.*;
 import static java.text.MessageFormat.format;
+import static java.util.Objects.nonNull;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -61,11 +61,14 @@ public class ArrayValue implements Value {
     }
 
     public <T> T map(int index, ValueToModelMapper<T, ? extends Value> mapper) {
-        Object result = mappedValueCache.computeIfAbsent(index, key -> cast(get(key)));
         try {
-            return let(cast(result), mapper::map);
+            Object cached = mappedValueCache.get(index);
+            if (nonNull(cached)) return cast(cached);
+            cached = let(cast(get(index)), mapper::map);
+            if (nonNull(cached)) mappedValueCache.put(index, cast(cached));
+            return cast(cached);
         } catch (Throwable throwable) {
-            throw new ValueMappingException(format(INDEX_MAPPING_EXCEPTION, index));
+            throw new ValueMappingException(format(INDEX_MAPPING_EXCEPTION, index), throwable);
         }
     }
 
