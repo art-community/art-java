@@ -35,7 +35,7 @@ import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodProcessingMode.*;
-import static io.art.core.constants.StringConstants.DOT;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
@@ -68,6 +68,9 @@ public class ServiceMethodSpecification {
 
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
+
+    @Singular("exceptionDecorator")
+    private final List<UnaryOperator<Flux<Object>>> exceptionDecorator;
 
     @Getter(lazy = true)
     private final ServerModuleConfiguration moduleConfiguration = serverModule().configuration();
@@ -103,11 +106,7 @@ public class ServiceMethodSpecification {
     }
 
     private Object mapInput(Flux<Value> input) {
-        Flux<Object> mappedInput = input
-                .filter(value -> !deactivated())
-                .map(value -> inputMapper.map(cast(value)))
-                .filter(Objects::nonNull)
-                .map(Caster::cast);
+        Flux<Object> mappedInput = input.filter(value -> !deactivated()).map(value -> inputMapper.map(cast(value)));
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
             mappedInput = mappedInput.transformDeferred(decorator);
         }
@@ -131,7 +130,6 @@ public class ServiceMethodSpecification {
             }
             return mappedOutput
                     .map(value -> (Value) outputMapper.map(cast(value)))
-                    .filter(Objects::nonNull)
                     .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
         }
 
@@ -150,11 +148,10 @@ public class ServiceMethodSpecification {
 
     private Flux<Value> mapException(Throwable exception) {
         Flux<Object> errorOutput = Flux.error(exception).filter(value -> !deactivated());
-        for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
+        for (UnaryOperator<Flux<Object>> decorator : exceptionDecorator) {
             errorOutput = errorOutput.transformDeferred(decorator);
         }
         return errorOutput
-                .doOnError(Throwable.class, throwable -> getLogger().error(throwable.getMessage(), throwable))
                 .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
                 .cast(Value.class);
 
