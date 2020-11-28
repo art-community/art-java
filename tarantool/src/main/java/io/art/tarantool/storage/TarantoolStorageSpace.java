@@ -1,7 +1,7 @@
-package io.art.refactored.storage;
+package io.art.tarantool.storage;
 
 import io.art.value.immutable.*;
-import io.art.refactored.dao.*;
+import io.art.tarantool.dao.*;
 import java.util.*;
 
 public class TarantoolStorageSpace implements StorageSpace{

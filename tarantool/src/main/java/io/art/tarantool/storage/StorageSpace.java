@@ -1,4 +1,4 @@
-package io.art.refactored.storage;
+package io.art.tarantool.storage;
 
 import io.art.value.immutable.*;
 import java.util.*;

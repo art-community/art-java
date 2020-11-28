@@ -1,14 +1,14 @@
-package io.art.refactored.dao;
+package io.art.tarantool.dao;
 
 import io.tarantool.driver.api.TarantoolClient;
 import lombok.*;
 import org.apache.logging.log4j.*;
 
-import io.art.refactored.configuration.space.*;
+import io.art.tarantool.configuration.space.*;
 import static io.art.logging.LoggingModule.*;
 import static lombok.AccessLevel.*;
-import static io.art.refactored.constants.TarantoolModuleConstants.Functions.*;
-import static io.art.refactored.dao.caller.TarantoolFunctionCaller.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
+import static io.art.tarantool.dao.caller.TarantoolFunctionCaller.*;
 
 public class TarantoolInstance {
     @Getter(lazy = true, value = PRIVATE)

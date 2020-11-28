@@ -3,21 +3,21 @@ package io.art.tests.specification.tarantool
 
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
-import io.art.refactored.dao.TarantoolInstance
-import io.art.refactored.model.TarantoolUpdateFieldOperation
-import io.art.refactored.dao.TarantoolSpace
-import io.art.refactored.storage.TarantoolStorageSpace
+import io.art.tarantool.dao.TarantoolInstance
+import io.art.tarantool.model.TarantoolUpdateFieldOperation
+import io.art.tarantool.dao.TarantoolSpace
+import io.art.tarantool.storage.TarantoolStorageSpace
 import spock.lang.Specification
 
 import static io.art.launcher.ModuleLauncher.launch
 import static io.art.model.module.ModuleModel.module
-import static io.art.refactored.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
-import static io.art.refactored.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
-import static io.art.refactored.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
-import static io.art.refactored.constants.TarantoolModuleConstants.TarantoolIndexType
-import static io.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.*
+import static io.art.tarantool.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
+import static io.art.tarantool.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
+import static io.art.tarantool.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
+import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolIndexType
+import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.*
 import static io.art.value.factory.PrimitivesFactory.*
-import static io.art.refactored.module.TarantoolModule.*
+import static io.art.tarantool.module.TarantoolModule.*
 
 class TarantoolRefactored extends Specification {
 
@@ -68,7 +68,7 @@ class TarantoolRefactored extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         db.renameSpace(spaceName, spaceName = "s1_CRUD2")
-        space = tnt.getSpace(clientId, spaceName)
+        space = getSpace(clientId, spaceName)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("data", stringPrimitive("testData"))
@@ -188,13 +188,13 @@ class TarantoolRefactored extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         space.autoIncrement(data)
-        //db.renameSpace(spaceName, spaceName = "r1_crud2")
+        db.renameSpace(spaceName, spaceName = "r1_crud2")
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("testData"))
                 .build()
-        space = tnt.getSpace(clientId, spaceName)
+        space = getSpace(clientId, spaceName)
         space.autoIncrement(data)
         then:
         ((space.len() == 5) && (space.schemaLen() == 2))
@@ -286,8 +286,8 @@ class TarantoolRefactored extends Specification {
         def spaceName = "s1_storage_ops"
         def clientId = "storage_1_a"
 
-        TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = getSpace(clientId, spaceName)
+        def db = getInstance(clientId)
+        def space = getSpace(clientId, spaceName)
 
 
 
@@ -321,7 +321,7 @@ class TarantoolRefactored extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         db.renameSpace(spaceName, spaceName = "s1_storage_ops2")
-        space = new TarantoolStorageSpace(tnt.getSpace(clientId, spaceName))
+        space = new TarantoolStorageSpace(getSpace(clientId, spaceName))
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("data", stringPrimitive("testData"))
@@ -381,53 +381,13 @@ class TarantoolRefactored extends Specification {
         String exception = ''
 
         when:
-        try{
-            db.createSpace(spaceName, tarantoolSpaceConfig())
-        } catch(Exception e){
-            exception = e.getMessage()
-        }
+        db.createSpace(spaceName, tarantoolSpaceConfig())
+        db.formatSpace(spaceName, tarantoolSpaceFormat())
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex())
+        db.renameSpace(spaceName, spaceName = "s2_COL2")
+        db.dropSpace(spaceName)
         then:
-        exception.contentEquals("java.util.concurrent.TimeoutException")
-
-
-        when:
-        try{
-            db.formatSpace(spaceName, tarantoolSpaceFormat())
-        } catch(Exception e){
-            exception = e.getMessage()
-        }
-        then:
-        exception.contentEquals("java.util.concurrent.TimeoutException")
-
-
-        when:
-        try{
-            db.createIndex(spaceName, "primary", tarantoolSpaceIndex())
-        } catch(Exception e){
-            exception = e.getMessage()
-        }
-        then:
-        exception.contentEquals("java.util.concurrent.TimeoutException")
-
-
-        when:
-        try{
-            db.renameSpace(spaceName, spaceName = "s2_COL2")
-        } catch(Exception e){
-            exception = e.getMessage()
-        }
-        then:
-        exception.contentEquals("java.util.concurrent.TimeoutException")
-
-
-        when:
-        try{
-            db.dropSpace(spaceName)
-        } catch(Exception e){
-            exception = e.getMessage()
-        }
-        then:
-        exception.contentEquals("java.util.concurrent.TimeoutException")
+        true
 
 
         cleanup:

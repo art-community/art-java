@@ -1,7 +1,7 @@
-package io.art.refactored.configuration.space;
+package io.art.tarantool.configuration.space;
 
 import lombok.NoArgsConstructor;
-import static io.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType;
+import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType;
 
 import java.util.*;
 

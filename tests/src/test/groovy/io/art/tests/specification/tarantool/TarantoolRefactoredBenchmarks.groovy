@@ -3,23 +3,23 @@ package io.art.tests.specification.tarantool
 
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
-import io.art.refactored.dao.TarantoolInstance
-import io.art.refactored.dao.TarantoolSpace
-import io.art.refactored.model.TarantoolUpdateFieldOperation
+import io.art.tarantool.dao.TarantoolInstance
+import io.art.tarantool.dao.TarantoolSpace
+import io.art.tarantool.model.TarantoolUpdateFieldOperation
 import spock.lang.Specification
 
 
 import static io.art.launcher.ModuleLauncher.launch
 import static io.art.model.module.ModuleModel.*
-import static io.art.refactored.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
-import static io.art.refactored.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
-import static io.art.refactored.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
-import static io.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.NUMBER
-import static io.art.refactored.constants.TarantoolModuleConstants.TarantoolFieldType.UNSIGNED
-import static io.art.refactored.constants.TarantoolModuleConstants.TarantoolIndexType
-import static io.art.refactored.module.TarantoolModule.getClient
-import static io.art.refactored.module.TarantoolModule.getInstance
-import static io.art.refactored.module.TarantoolModule.getSpace
+import static io.art.tarantool.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
+import static io.art.tarantool.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
+import static io.art.tarantool.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
+import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.NUMBER
+import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.UNSIGNED
+import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolIndexType
+import static io.art.tarantool.module.TarantoolModule.getClient
+import static io.art.tarantool.module.TarantoolModule.getInstance
+import static io.art.tarantool.module.TarantoolModule.getSpace
 import static io.art.value.factory.PrimitivesFactory.intPrimitive
 import static io.art.value.factory.PrimitivesFactory.longPrimitive
 import static io.art.value.factory.PrimitivesFactory.stringPrimitive
