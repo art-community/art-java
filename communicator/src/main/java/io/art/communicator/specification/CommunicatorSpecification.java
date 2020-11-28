@@ -58,13 +58,15 @@ public class CommunicatorSpecification {
     private final CommunicatorImplementation implementation;
     private final MethodProcessingMode inputMode;
     private final MethodProcessingMode outputMode;
+
+    @Getter(lazy = true)
     private final CommunicatorModuleConfiguration moduleConfiguration = communicatorModule().configuration();
 
     @Getter(lazy = true)
-    private final CommunicatorConfiguration communicatorConfiguration = moduleConfiguration.getCommunicators().get(communicatorId);
+    private final CommunicatorConfiguration communicatorConfiguration = getModuleConfiguration().getCommunicators().get(communicatorId);
 
     public Object communicate(Object input) {
-        Scheduler scheduler = let(getCommunicatorConfiguration(), CommunicatorConfiguration::getScheduler, moduleConfiguration.getScheduler());
+        Scheduler scheduler = let(getCommunicatorConfiguration(), CommunicatorConfiguration::getScheduler, getModuleConfiguration().getScheduler());
         return mapOutput(Flux.defer(() -> deferredCommunicate(input)).subscribeOn(scheduler));
     }
 
