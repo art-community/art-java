@@ -18,5 +18,19 @@
 
 package io.art.communicator.exception;
 
+import lombok.*;
+
+@Getter
 public class CommunicatorException extends RuntimeException {
+    private final String communicatorId;
+
+    public CommunicatorException(String message, String communicatorId) {
+        super(message);
+        this.communicatorId = communicatorId;
+    }
+
+    public CommunicatorException(Throwable cause, String communicatorId) {
+        super(cause);
+        this.communicatorId = communicatorId;
+    }
 }

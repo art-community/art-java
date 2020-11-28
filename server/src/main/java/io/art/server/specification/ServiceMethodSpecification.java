@@ -21,7 +21,6 @@ package io.art.server.specification;
 import io.art.core.annotation.*;
 import io.art.core.caster.*;
 import io.art.core.constants.*;
-import io.art.logging.*;
 import io.art.server.configuration.*;
 import io.art.server.exception.*;
 import io.art.server.implementation.*;
@@ -29,13 +28,10 @@ import io.art.server.model.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.MethodProcessingMode.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
@@ -84,9 +80,6 @@ public class ServiceMethodSpecification {
     @Getter(lazy = true)
     private final ServiceMethodConfiguration methodConfiguration = let(getServiceConfiguration(), configuration -> configuration.getMethods().get(methodId));
 
-    @Getter(lazy = true)
-    private final Logger logger = LoggingModule.logger(getServiceId() + DOT + getMethodId());
-
     public Flux<Value> serve(Flux<Value> input) {
         if (deactivated()) {
             return Flux.empty();
@@ -119,31 +112,29 @@ public class ServiceMethodSpecification {
             case FLUX:
                 return mappedInput;
         }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_REQUEST_TYPE, inputMode), serviceId, methodId);
+        throw new ServiceMethodExecutionException(format(UNKNOWN_INPUT_MODE, inputMode), serviceId, methodId);
     }
 
     private Flux<Value> mapOutput(Object output) {
-        if (outputMode == BLOCKING) {
-            Flux<Object> mappedOutput = Flux.just(output).filter(value -> !deactivated());
-            for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
-                mappedOutput = mappedOutput.transformDeferred(decorator);
-            }
-            return mappedOutput
-                    .map(value -> (Value) outputMapper.map(cast(value)))
-                    .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
+        Flux<Object> mappedOutput;
+        switch (outputMode) {
+            case BLOCKING:
+                mappedOutput = Flux.just(output);
+                break;
+            case MONO:
+            case FLUX:
+                mappedOutput = Flux.from(cast(output));
+                break;
+            default:
+                throw new ServiceMethodExecutionException(format(UNKNOWN_OUTPUT_MODE, outputMode), serviceId, methodId);
         }
-
-        if (outputMode == MONO || outputMode == FLUX) {
-            Flux<Object> mappedOutput = Flux.from(cast(output)).filter(Objects::nonNull).filter(value -> !deactivated());
-            for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
-                mappedOutput = mappedOutput.transformDeferred(decorator);
-            }
-            return mappedOutput
-                    .map(value -> (Value) outputMapper.map(cast(value)))
-                    .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
+        mappedOutput = mappedOutput.filter(Objects::nonNull).filter(value -> !deactivated());
+        for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
+            mappedOutput = mappedOutput.transformDeferred(decorator);
         }
-
-        throw new ServiceMethodExecutionException(format(UNKNOWN_RESPONSE_TYPE, outputMode), serviceId, methodId);
+        return mappedOutput
+                .map(value -> (Value) outputMapper.map(cast(value)))
+                .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
     }
 
     private Flux<Value> mapException(Throwable exception) {
