@@ -1,4 +1,4 @@
-package io.art.refactored.configuration.space;
+package io.art.tarantool.configuration.space;
 
 import lombok.NoArgsConstructor;
 

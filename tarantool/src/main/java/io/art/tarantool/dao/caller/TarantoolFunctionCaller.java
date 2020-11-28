@@ -1,4 +1,4 @@
-package io.art.refactored.dao.caller;
+package io.art.tarantool.dao.caller;
 
 import io.tarantool.driver.api.TarantoolClient;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.LinkedList;
 import java.util.List;
 import static io.art.logging.LoggingModule.logger;
-import static io.art.refactored.constants.TarantoolModuleConstants.LoggingMessages.FAILED_FUNCTION;
+import static io.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.FAILED_FUNCTION;
 
 import static java.text.MessageFormat.format;
 import static lombok.AccessLevel.PRIVATE;

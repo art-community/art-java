@@ -1,4 +1,4 @@
-package io.art.refactored.dao;
+package io.art.tarantool.dao;
 
 import io.art.core.factory.*;
 import io.art.value.immutable.Value;
@@ -8,8 +8,8 @@ import io.tarantool.driver.api.TarantoolClient;
 import lombok.*;
 import org.apache.logging.log4j.*;
 
-import io.art.refactored.exception.*;
-import io.art.refactored.model.*;
+import io.art.tarantool.exception.*;
+import io.art.tarantool.model.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.logging.LoggingModule.*;
@@ -19,9 +19,9 @@ import static java.util.Arrays.*;
 import static java.util.Optional.*;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
-import static io.art.refactored.constants.TarantoolModuleConstants.ExceptionMessages.*;
-import static io.art.refactored.constants.TarantoolModuleConstants.Functions.*;
-import static io.art.refactored.dao.caller.TarantoolFunctionCaller.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
+import static io.art.tarantool.dao.caller.TarantoolFunctionCaller.*;
 import java.util.ArrayList;
 import java.util.*;
 

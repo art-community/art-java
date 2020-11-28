@@ -22,13 +22,12 @@ import io.art.value.immutable.Value;
 import io.art.value.tuple.PlainTupleWriter.*;
 import lombok.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
-import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
-import static io.art.core.factory.ArrayFactory.fixedArrayOf;
-import static io.art.value.immutable.Entity.entityBuilder;
-import static io.art.value.tuple.PlainTupleWriter.writeTuple;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.value.immutable.Entity.*;
+import static io.art.value.tuple.PlainTupleWriter.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolOperator.*;
 import java.util.*;
 
@@ -39,7 +38,7 @@ public class TarantoolUpdateFieldOperation {
 
     private TarantoolUpdateFieldOperation(TarantoolOperator operator, int fieldNumber, int fieldCount) {
         valueOperation = fixedArrayOf(operator.getOperator(), fieldNumber, fieldCount);
-        schemaOperation = fixedArrayOf(operator.getOperator(), fieldNumber + 2, fieldCount);
+        schemaOperation = fixedArrayOf(operator.getOperator(), fieldNumber + 1, fieldCount);
     }
 
     private TarantoolUpdateFieldOperation(TarantoolOperator operator, int fieldNumber, Object value) {
@@ -60,7 +59,7 @@ public class TarantoolUpdateFieldOperation {
         switch (operator) {
             case INSERTION:
             case ASSIGMENT:
-                schemaOperation = fixedArrayOf(operator.getOperator(), fieldNumber + 2, result.getSchema().toTuple().get(1));
+                schemaOperation = fixedArrayOf(operator.getOperator(), fieldNumber + 1, result.getSchema().toTuple().get(1));
                 break;
         }
         valueOperation = fixedArrayOf(operator.getOperator(), fieldNumber, result.getTuple().get(0));
