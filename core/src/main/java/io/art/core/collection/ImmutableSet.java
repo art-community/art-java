@@ -96,7 +96,9 @@ public class ImmutableSet<T> implements Iterable<T> {
 
     @Override
     public boolean equals(Object object) {
-        return set.equals(object);
+        if (object == this) return true;
+        if (!(object instanceof ImmutableSet)) return false;
+        return set.equals(((ImmutableSet<?>) object).set);
     }
 
     @Override

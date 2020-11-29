@@ -84,7 +84,9 @@ public class ImmutableMap<K, V> {
 
     @Override
     public boolean equals(Object object) {
-        return map.equals(object);
+        if (object == this) return true;
+        if (!(object instanceof ImmutableMap)) return false;
+        return map.equals(((ImmutableMap<?, ?>) object).map);
     }
 
     @Override

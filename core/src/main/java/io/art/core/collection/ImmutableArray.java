@@ -101,7 +101,9 @@ public class ImmutableArray<T> implements Iterable<T> {
 
     @Override
     public boolean equals(Object object) {
-        return array.equals(object);
+        if (object == this) return true;
+        if (!(object instanceof ImmutableArray)) return false;
+        return array.equals(((ImmutableArray<?>) object).array);
     }
 
     @Override

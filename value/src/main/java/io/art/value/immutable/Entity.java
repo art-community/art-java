@@ -64,6 +64,66 @@ public class Entity implements Value {
         return keys.size();
     }
 
+
+    public Value get(String key) {
+        return get(stringPrimitive(key));
+    }
+
+    public Value get(Long key) {
+        return get(longPrimitive(key));
+    }
+
+    public Value get(Integer key) {
+        return get(intPrimitive(key));
+    }
+
+    public Value get(Boolean key) {
+        return get(boolPrimitive(key));
+    }
+
+    public Value get(Double key) {
+        return get(doublePrimitive(key));
+    }
+
+    public Value get(Float key) {
+        return get(floatPrimitive(key));
+    }
+
+    public Value get(Byte key) {
+        return get(bytePrimitive(key));
+    }
+
+    public Value get(Primitive primitive) {
+        if (valueIsNull(primitive)) {
+            return null;
+        }
+        return valueProvider.apply(primitive);
+    }
+
+    public Value find(String key) {
+        if (EmptinessChecker.isEmpty(key)) return null;
+        Value value;
+        if (nonNull(value = get(key))) return value;
+        Queue<String> sections = queueOf(key.split(ESCAPED_DOT));
+        Entity entity = this;
+        String section;
+        while ((section = sections.poll()) != null) {
+            value = entity.get(section);
+            if (valueIsNull(value)) return null;
+            if (!isEntity(value)) {
+                if (sections.size() > 1) return null;
+                return value;
+            }
+            entity = asEntity(value);
+        }
+        return value;
+    }
+
+    public boolean has(Primitive key) {
+        return keys.contains(key);
+    }
+
+
     public Map<Primitive, ? extends Value> toMap() {
         return mapToMap(key -> key, value -> value);
     }
@@ -105,42 +165,6 @@ public class Entity implements Value {
 
     public <K, V> Map<K, V> asMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
         return new ProxyMap<>(toKeyMapper, fromKeyMapper, valueMapper);
-    }
-
-
-    public Value get(String key) {
-        return get(stringPrimitive(key));
-    }
-
-    public Value get(Long key) {
-        return get(longPrimitive(key));
-    }
-
-    public Value get(Integer key) {
-        return get(intPrimitive(key));
-    }
-
-    public Value get(Boolean key) {
-        return get(boolPrimitive(key));
-    }
-
-    public Value get(Double key) {
-        return get(doublePrimitive(key));
-    }
-
-    public Value get(Float key) {
-        return get(floatPrimitive(key));
-    }
-
-    public Value get(Byte key) {
-        return get(bytePrimitive(key));
-    }
-
-    public Value get(Primitive primitive) {
-        if (valueIsNull(primitive)) {
-            return null;
-        }
-        return valueProvider.apply(primitive);
     }
 
 
@@ -192,8 +216,11 @@ public class Entity implements Value {
         }
     }
 
+    public <T, V extends Value> T mapNested(String key, ValueToModelMapper<T, V> mapper) {
+        return let(find(key), value -> mapper.map(cast(value)));
+    }
 
-    public <T, V extends Value> T validatedMap(String key, ValueToModelMapper<T, V> mapper) {
+    public <T, V extends Value> T mapChecked(String key, ValueToModelMapper<T, V> mapper) {
         Primitive primitive = stringPrimitive(key);
         Object cached = mappedValueCache.get(primitive);
         if (nonNull(cached)) return cast(cached);
@@ -204,29 +231,11 @@ public class Entity implements Value {
     }
 
 
-    public Value find(String key) {
-        if (EmptinessChecker.isEmpty(key)) return null;
-        Value value;
-        if (nonNull(value = get(key))) return value;
-        Queue<String> sections = queueOf(key.split(ESCAPED_DOT));
-        Entity entity = this;
-        String section;
-        while ((section = sections.poll()) != null) {
-            value = entity.get(section);
-            if (valueIsNull(value)) return null;
-            if (!isEntity(value)) {
-                if (sections.size() > 1) return null;
-                return value;
-            }
-            entity = asEntity(value);
-        }
-        return value;
+    public EntityBuilder toBuilder() {
+        EntityBuilder entityBuilder = entityBuilder();
+        keys.forEach(key -> entityBuilder.lazyPut(key, () -> valueProvider.apply(key)));
+        return entityBuilder;
     }
-
-    public <T, V extends Value> T mapNested(String key, ValueToModelMapper<T, V> mapper) {
-        return let(find(key), value -> mapper.map(cast(value)));
-    }
-
 
     @Override
     public boolean equals(Object object) {
@@ -248,10 +257,6 @@ public class Entity implements Value {
             if (!(entry.equals(another.get(key)))) return false;
         }
         return true;
-    }
-
-    public boolean has(Primitive key) {
-        return keys.contains(key);
     }
 
     public class ProxyMap<K, V> implements Map<K, V> {
@@ -338,13 +343,6 @@ public class Entity implements Value {
         public Set<Entry<K, V>> entrySet() {
             return evaluated.get().entrySet();
         }
-    }
-
-
-    public EntityBuilder toBuilder() {
-        EntityBuilder entityBuilder = entityBuilder();
-        keys.forEach(key -> entityBuilder.lazyPut(key, () -> valueProvider.apply(key)));
-        return entityBuilder;
     }
 
     public static Entity EMPTY = entityBuilder().build();
