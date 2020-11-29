@@ -18,19 +18,19 @@
 
 package io.art.xml.descriptor;
 
-import com.google.common.collect.*;
+import io.art.core.collection.*;
 import io.art.core.stream.*;
 import io.art.value.immutable.*;
 import io.art.value.immutable.XmlEntity.*;
 import io.art.xml.exception.*;
 import io.netty.buffer.*;
 import lombok.experimental.*;
-import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
-import static io.art.value.immutable.XmlEntity.*;
 import static io.art.logging.LoggingModule.*;
+import static io.art.value.immutable.XmlEntity.*;
 import static io.art.xml.constants.XmlMappingExceptionMessages.*;
 import static io.art.xml.module.XmlModule.*;
 import static java.util.Objects.*;
@@ -39,7 +39,6 @@ import javax.xml.stream.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.file.*;
-import java.util.*;
 
 @UtilityClass
 public class XmlReader {
@@ -91,8 +90,8 @@ public class XmlReader {
     private static XmlEntityBuilder getRootElement(XMLStreamReader parser) throws XMLStreamException {
         if (parser.next() == START_ELEMENT) {
             String prefix = parser.getPrefix();
-            Map<String, String> attributes = getAttributes(parser);
-            Map<String, String> namespaces = getNamespaces(parser);
+            ImmutableMap<String, String> attributes = getAttributes(parser);
+            ImmutableMap<String, String> namespaces = getNamespaces(parser);
             XmlEntityBuilder rootElement = parseXml(parser);
             rootElement.stringAttributes(attributes);
             rootElement.namespaceFields(namespaces);
@@ -117,8 +116,8 @@ public class XmlReader {
 
             switch (eventType) {
                 case START_ELEMENT:
-                    Map<String, String> attributes = getAttributes(parser);
-                    Map<String, String> namespaces = getNamespaces(parser);
+                    ImmutableMap<String, String> attributes = getAttributes(parser);
+                    ImmutableMap<String, String> namespaces = getNamespaces(parser);
                     XmlEntityBuilder child = parseXml(parser);
                     child.stringAttributes(attributes);
                     child.namespaceFields(namespaces);
@@ -148,10 +147,10 @@ public class XmlReader {
     private static ImmutableMap<String, String> getAttributes(XMLStreamReader parser) {
         int attributeCount = parser.getAttributeCount();
         if (attributeCount == 0) {
-            return ImmutableMap.of();
+            return emptyImmutableMap();
         }
 
-        ImmutableMap.Builder<String, String> attributes = builderWithExpectedSize(attributeCount);
+        ImmutableMap.Builder<String, String> attributes = immutableMapBuilder(attributeCount);
         for (int index = 0; index < attributeCount; index++) {
             attributes.put(parser.getAttributeLocalName(index), parser.getAttributeValue(index));
         }
@@ -161,10 +160,10 @@ public class XmlReader {
     private static ImmutableMap<String, String> getNamespaces(XMLStreamReader parser) {
         int namespaceCount = parser.getNamespaceCount();
         if (namespaceCount == 0) {
-            return ImmutableMap.of();
+            return emptyImmutableMap();
         }
 
-        ImmutableMap.Builder<String, String> namespaces = builderWithExpectedSize(namespaceCount);
+        ImmutableMap.Builder<String, String> namespaces = immutableMapBuilder(namespaceCount);
         for (int index = 0; index < namespaceCount; index++) {
             namespaces.put(parser.getNamespacePrefix(index), parser.getNamespaceURI(index));
         }

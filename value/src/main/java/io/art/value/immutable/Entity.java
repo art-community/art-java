@@ -18,39 +18,41 @@
 
 package io.art.value.immutable;
 
-import com.google.common.collect.*;
 import io.art.core.checker.*;
 import io.art.core.exception.*;
-import io.art.core.factory.CollectionsFactory;
+import io.art.core.factory.*;
 import io.art.core.lazy.*;
 import io.art.value.builder.*;
 import io.art.value.constants.ValueConstants.*;
+import io.art.value.exception.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.MapFactory.*;
+import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.lazy.LazyValue.*;
+import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static io.art.value.mapping.PrimitiveMapping.toString;
 import static io.art.value.mapping.PrimitiveMapping.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class Entity implements Value {
     @Getter
     private final ValueType type = ENTITY;
-    private final Map<Primitive, LazyValue<?>> mappedValueCache = concurrentHashMap();
+    private final Map<Primitive, ?> mappedValueCache = concurrentHashMap();
     private final Set<Primitive> keys;
     private final Function<Primitive, ? extends Value> valueProvider;
 
@@ -60,51 +62,6 @@ public class Entity implements Value {
 
     public int size() {
         return keys.size();
-    }
-
-    public Map<Primitive, ? extends Value> toMap() {
-        return mapToMap(key -> key, value -> value);
-    }
-
-    public <K, V> Map<K, V> mapToMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
-        Map<K, V> map = mapOf();
-        for (Primitive key : keys) {
-            let(map(key, valueMapper), value -> map.put(keyMapper.map(key), value));
-        }
-        return map;
-    }
-
-    public <T> Map<String, T> mapToStringMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapToMap(toString, mapper);
-    }
-
-    public <T> Map<Integer, T> mapToIntMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapToMap(toInt, mapper);
-    }
-
-    public <T> Map<Long, T> mapToLongMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapToMap(toLong, mapper);
-    }
-
-    public <T> Map<Double, T> mapToDoubleMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapToMap(toDouble, mapper);
-    }
-
-    public <T> Map<Float, T> mapToFloatMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapToMap(toFloat, mapper);
-    }
-
-    public <T> Map<Boolean, T> mapToBoolMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapToMap(toBool, mapper);
-    }
-
-
-    public Map<Primitive, ? extends Value> asMap() {
-        return asMap(key -> key, key -> key, value -> value);
-    }
-
-    public <K, V> Map<K, V> asMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
-        return new ProxyMap<>(toKeyMapper, fromKeyMapper, valueMapper);
     }
 
 
@@ -143,6 +100,73 @@ public class Entity implements Value {
         return valueProvider.apply(primitive);
     }
 
+    public Value find(String key) {
+        if (EmptinessChecker.isEmpty(key)) return null;
+        Value value;
+        if (nonNull(value = get(key))) return value;
+        Queue<String> sections = queueOf(key.split(ESCAPED_DOT));
+        Entity entity = this;
+        String section;
+        while ((section = sections.poll()) != null) {
+            value = entity.get(section);
+            if (valueIsNull(value)) return null;
+            if (!isEntity(value)) {
+                if (sections.size() > 1) return null;
+                return value;
+            }
+            entity = asEntity(value);
+        }
+        return value;
+    }
+
+    public boolean has(Primitive key) {
+        return keys.contains(key);
+    }
+
+
+    public Map<Primitive, ? extends Value> toMap() {
+        return mapToMap(key -> key, value -> value);
+    }
+
+    public <K, V> Map<K, V> mapToMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
+        Map<K, V> newMap = MapFactory.map();
+        for (Primitive key : keys) apply(map(key, valueMapper), value -> newMap.put(keyMapper.map(key), value));
+        return newMap;
+    }
+
+    public <T> Map<String, T> mapToStringMap(ValueToModelMapper<T, ? extends Value> mapper) {
+        return mapToMap(toString, mapper);
+    }
+
+    public <T> Map<Integer, T> mapToIntMap(ValueToModelMapper<T, ? extends Value> mapper) {
+        return mapToMap(toInt, mapper);
+    }
+
+    public <T> Map<Long, T> mapToLongMap(ValueToModelMapper<T, ? extends Value> mapper) {
+        return mapToMap(toLong, mapper);
+    }
+
+    public <T> Map<Double, T> mapToDoubleMap(ValueToModelMapper<T, ? extends Value> mapper) {
+        return mapToMap(toDouble, mapper);
+    }
+
+    public <T> Map<Float, T> mapToFloatMap(ValueToModelMapper<T, ? extends Value> mapper) {
+        return mapToMap(toFloat, mapper);
+    }
+
+    public <T> Map<Boolean, T> mapToBoolMap(ValueToModelMapper<T, ? extends Value> mapper) {
+        return mapToMap(toBool, mapper);
+    }
+
+
+    public Map<Primitive, ? extends Value> asMap() {
+        return asMap(key -> key, key -> key, value -> value);
+    }
+
+    public <K, V> Map<K, V> asMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
+        return new ProxyMap<>(toKeyMapper, fromKeyMapper, valueMapper);
+    }
+
 
     public <T, V extends Value> T map(String key, ValueToModelMapper<T, V> mapper) {
         return map(stringPrimitive(key), mapper);
@@ -172,61 +196,69 @@ public class Entity implements Value {
         return map(floatPrimitive(key), mapper);
     }
 
-    public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
-        return cast(let(mappedValueCache.computeIfAbsent(primitive, key -> lazy(() -> let(cast(valueProvider.apply(key)), mapper::map))), LazyValue::get));
+    public <T, V extends Value> T map(Character key, ValueToModelMapper<T, V> mapper) {
+        return map(charPrimitive(key), mapper);
     }
 
+    public <T, V extends Value> T map(Short key, ValueToModelMapper<T, V> mapper) {
+        return map(shortPrimitive(key), mapper);
+    }
 
-    public Value find(String key) {
-        if (EmptinessChecker.isEmpty(key)) return null;
-        Value value;
-        if (nonNull(value = get(key))) return value;
-        Queue<String> sections = queueOf(key.split(ESCAPED_DOT));
-        Entity entity = this;
-        String section;
-        while ((section = sections.poll()) != null) {
-            value = entity.get(section);
-            if (valueIsNull(value)) return null;
-            if (!isEntity(value)) {
-                if (sections.size() > 1) return null;
-                return value;
-            }
-            entity = asEntity(value);
+    public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
+        try {
+            Object cached = mappedValueCache.get(primitive);
+            if (nonNull(cached)) return cast(cached);
+            cached = let(cast(get(primitive)), mapper::map);
+            if (nonNull(cached)) mappedValueCache.put(primitive, cast(cached));
+            return cast(cached);
+        } catch (Throwable throwable) {
+            throw new ValueMappingException(format(FIELD_MAPPING_EXCEPTION, primitive), throwable);
         }
-        return value;
     }
 
     public <T, V extends Value> T mapNested(String key, ValueToModelMapper<T, V> mapper) {
         return let(find(key), value -> mapper.map(cast(value)));
     }
 
+    public <T, V extends Value> T mapChecked(String key, ValueToModelMapper<T, V> mapper) {
+        Primitive primitive = stringPrimitive(key);
+        Object cached = mappedValueCache.get(primitive);
+        if (nonNull(cached)) return cast(cached);
+        cached = let(cast(get(primitive)), mapper::map);
+        if (isNull(cached)) throw new ValueMappingException(format(NULL_FIELD_MESSAGE, primitive));
+        mappedValueCache.put(primitive, cast(cached));
+        return cast(cached);
+    }
+
+
+    public EntityBuilder toBuilder() {
+        EntityBuilder entityBuilder = entityBuilder();
+        keys.forEach(key -> entityBuilder.lazyPut(key, () -> valueProvider.apply(key)));
+        return entityBuilder;
+    }
 
     @Override
-    public boolean equals(Object object){
+    public boolean equals(Object object) {
         if (object == this) return true;
-        if ( !(object instanceof Entity) ) return false;
+        if (!(object instanceof Entity)) return false;
 
         Entity another = (Entity) object;
         Set<Primitive> keySet = this.asMap().keySet();
 
-        if ( !(keySet.equals(another.asMap().keySet())) ) return false;
+        if (!(keySet.equals(another.asMap().keySet()))) return false;
 
         Value entry;
-        for (Primitive key: keySet) {
+        for (Primitive key : keySet) {
             entry = this.get(key);
             if (entry == null) {
                 if (another.get(key) == null) continue;
                 return false;
             }
-            if ( !(entry.equals(another.get(key))) ) return false;
+            if (!(entry.equals(another.get(key)))) return false;
         }
         return true;
     }
 
-    public boolean has(Primitive key) {
-        return keys.contains(key);
-    }
-    
     public class ProxyMap<K, V> implements Map<K, V> {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
@@ -237,7 +269,7 @@ public class Entity implements Value {
             this.valueMapper = valueMapper;
             this.fromKeyMapper = fromKeyMapper;
             this.evaluated = lazy(() -> Entity.this.mapToMap(toKeyMapper, valueMapper));
-            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toCollection(CollectionsFactory::setOf)));
+            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toCollection(SetFactory::setOf)));
         }
 
         @Override
@@ -313,12 +345,5 @@ public class Entity implements Value {
         }
     }
 
-    
-    public EntityBuilder toBuilder() {
-        EntityBuilder entityBuilder = entityBuilder();
-        keys.forEach(key -> entityBuilder.lazyPut(key, () -> valueProvider.apply(key)));
-        return entityBuilder;
-    } 
-    
     public static Entity EMPTY = entityBuilder().build();
 }

@@ -20,7 +20,7 @@ package io.art.xml.rules.builder;
 
 import lombok.*;
 import io.art.xml.constants.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.SetFactory.setOf;
 import static io.art.xml.constants.XmlEntityMappingTargets.*;
 
 @RequiredArgsConstructor

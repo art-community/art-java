@@ -20,16 +20,16 @@ package io.art.xml.rules.builder;
 
 import io.art.xml.constants.*;
 import io.art.xml.exception.*;
+import static io.art.core.factory.SetFactory.set;
 import static java.text.MessageFormat.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.xml.constants.XmlEntityMappingTargets.*;
 import static io.art.xml.constants.XmlMappingExceptionMessages.*;
 import java.util.*;
 
 public class XmlEntityMappingBuilderImplementation implements XmlEntityMappingBuilder {
-    private final Set<XmlEntityRule> attributeValueRules = setOf();
-    private final Set<XmlEntityRule> namespaceValueRules = setOf();
-    private final Set<XmlEntityRule> tagValueRules = setOf();
+    private final Set<XmlEntityRule> attributeValueRules = set();
+    private final Set<XmlEntityRule> namespaceValueRules = set();
+    private final Set<XmlEntityRule> tagValueRules = set();
 
     @Override
     public XmlEntityPartBuilder addRule() {

@@ -21,16 +21,23 @@ package io.art.value.immutable;
 import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.value.constants.ValueConstants.*;
+import io.art.value.exception.*;
 import io.art.value.mapper.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ArrayExtensions.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.MapFactory.*;
+import static io.art.core.factory.QueueFactory.*;
+import static io.art.core.factory.SetFactory.*;
 import static io.art.core.lazy.LazyValue.*;
+import static io.art.value.constants.ValueConstants.ExceptionMessages.INDEX_MAPPING_EXCEPTION;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static io.art.value.mapping.PrimitiveMapping.*;
+import static java.text.MessageFormat.format;
+import static java.util.Objects.nonNull;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -40,7 +47,7 @@ import java.util.stream.*;
 public class ArrayValue implements Value {
     @Getter
     private final ValueType type = ARRAY;
-    private final Map<Integer, LazyValue<?>> mappedValueCache = concurrentHashMap();
+    private final Map<Integer, ?> mappedValueCache = concurrentHashMap();
     private final Function<Integer, ? extends Value> valueProvider;
     private final LazyValue<Integer> size;
 
@@ -54,72 +61,64 @@ public class ArrayValue implements Value {
     }
 
     public <T> T map(int index, ValueToModelMapper<T, ? extends Value> mapper) {
-        return cast(let(mappedValueCache.computeIfAbsent(index, key -> lazy(() -> mapper.map(cast(get(key))))), LazyValue::get));
+        try {
+            Object cached = mappedValueCache.get(index);
+            if (nonNull(cached)) return cast(cached);
+            cached = let(cast(get(index)), mapper::map);
+            if (nonNull(cached)) mappedValueCache.put(index, cast(cached));
+            return cast(cached);
+        } catch (Throwable throwable) {
+            throw new ValueMappingException(format(INDEX_MAPPING_EXCEPTION, index), throwable);
+        }
     }
 
 
     public List<Value> toList() {
         List<Value> list = dynamicArrayOf();
-        for (int index = 0; index < size(); index++) {
-            apply(get(index), list::add);
-        }
+        for (int index = 0; index < size(); index++) apply(get(index), list::add);
         return list;
     }
 
     public Set<Value> toSet() {
         Set<Value> set = setOf();
-        for (int index = 0; index < size(); index++) {
-            apply(get(index), set::add);
-        }
+        for (int index = 0; index < size(); index++) apply(get(index), set::add);
         return set;
     }
 
     public Queue<Value> toQueue() {
         Queue<Value> queue = queueOf();
-        for (int index = 0; index < size(); index++) {
-            apply(get(index), queue::add);
-        }
+        for (int index = 0; index < size(); index++) apply(get(index), queue::add);
         return queue;
     }
 
     public Deque<Value> toDeque() {
         Deque<Value> deque = dequeOf();
-        for (int index = 0; index < size(); index++) {
-            apply(get(index), deque::add);
-        }
+        for (int index = 0; index < size(); index++) apply(get(index), deque::add);
         return deque;
     }
 
 
     public <T> List<T> mapToList(ValueToModelMapper<T, ? extends Value> mapper) {
         List<T> list = dynamicArrayOf();
-        for (int index = 0; index < size(); index++) {
-            apply(map(index, mapper), list::add);
-        }
+        for (int index = 0; index < size(); index++) apply(map(index, mapper), list::add);
         return list;
     }
 
     public <T> Set<T> mapToSet(ValueToModelMapper<T, ? extends Value> mapper) {
         Set<T> set = setOf();
-        for (int index = 0; index < size(); index++) {
-            apply(map(index, mapper), set::add);
-        }
+        for (int index = 0; index < size(); index++) apply(map(index, mapper), set::add);
         return set;
     }
 
     public <T> Queue<T> mapToQueue(ValueToModelMapper<T, ? extends Value> mapper) {
         Queue<T> queue = queueOf();
-        for (int index = 0; index < size(); index++) {
-            apply(map(index, mapper), queue::add);
-        }
+        for (int index = 0; index < size(); index++) apply(map(index, mapper), queue::add);
         return queue;
     }
 
     public <T> Deque<T> mapToDeque(ValueToModelMapper<T, ? extends Value> mapper) {
         Deque<T> deque = dequeOf();
-        for (int index = 0; index < size(); index++) {
-            apply(map(index, mapper), deque::add);
-        }
+        for (int index = 0; index < size(); index++) apply(map(index, mapper), deque::add);
         return deque;
     }
 
@@ -177,32 +176,32 @@ public class ArrayValue implements Value {
     public short[] shortArray() {
         return unbox(mapAsList(toShort).toArray(new Short[0]));
     }
-    
+
     public double[] doubleArray() {
         return unbox(mapAsList(toDouble).toArray(new Double[0]));
     }
-    
+
     public float[] floatArray() {
         return unbox(mapAsList(toFloat).toArray(new Float[0]));
     }
-    
+
     public byte[] byteArray() {
         return unbox(mapAsList(toByte).toArray(new Byte[0]));
     }
-    
+
     public char[] charArray() {
         return unbox(mapAsList(toChar).toArray(new Character[0]));
     }
-    
+
     public boolean[] boolArray() {
         return unbox(mapAsList(toBool).toArray(new Boolean[0]));
     }
 
 
     @Override
-    public boolean equals(Object object){
+    public boolean equals(Object object) {
         if (object == this) return true;
-        if ( !(object instanceof ArrayValue) ) return false;
+        if (!(object instanceof ArrayValue)) return false;
 
         ArrayValue another = (ArrayValue) object;
 
@@ -216,7 +215,7 @@ public class ArrayValue implements Value {
                 if (another.get(index) == null) continue;
                 return false;
             }
-            if ( !(entry.equals(another.get(index))) ) return false;
+            if (!(entry.equals(another.get(index)))) return false;
         }
         return true;
     }
@@ -695,7 +694,7 @@ public class ArrayValue implements Value {
             }
         }
 
-
+        ;
 
         @Override
         public void addFirst(T t) {

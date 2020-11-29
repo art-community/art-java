@@ -23,7 +23,7 @@ import org.tarantool.*;
 import io.art.tarantool.configuration.lua.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.ArrayFactory.fixedArrayOf;
 import static io.art.tarantool.storage.dao.caller.TarantoolFunctionCaller.*;
 import static io.art.tarantool.configuration.lua.TarantoolSequenceConfiguration.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;

@@ -18,21 +18,22 @@
 
 package io.art.tarantool.storage.dao;
 
-import io.art.value.immutable.*;
+import io.art.core.factory.*;
 import io.art.tarantool.model.*;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
-import static io.art.value.immutable.Value.asEntity;
-import static io.art.value.tuple.PlainTupleReader.readTuple;
-import static io.art.value.tuple.schema.ValueSchema.fromTuple;
+import io.art.value.immutable.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.factory.ArrayFactory.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
+import static io.art.tarantool.storage.dao.caller.TarantoolFunctionCaller.*;
+import static io.art.tarantool.storage.dao.service.TarantoolScriptService.*;
+import static io.art.value.immutable.Value.*;
+import static io.art.value.tuple.PlainTupleReader.*;
+import static io.art.value.tuple.schema.ValueSchema.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.Optional.*;
 import static java.util.stream.Collectors.*;
-import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.CollectionsFactory.*;
-import static io.art.tarantool.storage.dao.caller.TarantoolFunctionCaller.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static io.art.tarantool.storage.dao.service.TarantoolScriptService.*;
 import java.util.*;
 
 @SuppressWarnings("Duplicates")
@@ -67,7 +68,7 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         }
         List<List<List<?>>> valueTuples = cast(result.get(0));
         List<List<List<?>>> schemeTuples = cast(result.get(1));
-        List<Entity> values = arrayOf(valueTuples.size());
+        List<Entity> values = dynamicArray(valueTuples.size());
         for (int i = 0; i < valueTuples.size(); i++) {
             values.add(asEntity(readTuple(valueTuples.get(i), fromTuple(schemeTuples.get(i)))));
         }
@@ -119,10 +120,10 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
     public Optional<Entity> updateByIndex(String spaceName, String indexName, Collection<?> keys, TarantoolUpdateFieldOperation... operations) {
         List<TarantoolUpdateFieldOperation> operationsWithSchema = stream(operations)
                 .filter(operation -> !isEmpty(operation.getSchemaOperation()))
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
         List<TarantoolUpdateFieldOperation> operationsWithoutSchema = stream(operations)
                 .filter(operation -> isEmpty(operation.getSchemaOperation()))
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
         Optional<Entity> entity = empty();
         if (!isEmpty(operationsWithSchema)) {
             entity = updateWithSchema(spaceName, indexName, keys, operationsWithSchema);
@@ -140,11 +141,11 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         List<?> valueOperations = operations
                 .stream()
                 .map(TarantoolUpdateFieldOperation::getValueOperation)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
         List<?> schemaOperations = operations
                 .stream()
                 .map(TarantoolUpdateFieldOperation::getSchemaOperation)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
         List<List<?>> arguments = fixedArrayOf(fixedArrayOf(keys), valueOperations, schemaOperations);
         List<List<?>> result = cast(callTarantoolFunction(client, functionName, arguments));
         if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
@@ -159,10 +160,11 @@ public final class TarantoolIndexDao extends TarantoolCommonDao {
         evaluateValueIndexScript(clusterIds, spaceName, indexName);
 
         String functionName = UPDATE + spaceName + VALUE_POSTFIX + BY + indexName;
-        List<List<?>> result = cast(callTarantoolFunction(client, functionName, fixedArrayOf(fixedArrayOf(keys), operations
+        List<List<?>> operationArgs = operations
                 .stream()
                 .map(TarantoolUpdateFieldOperation::getValueOperation)
-                .collect(toList()))));
+                .collect(toCollection(ArrayFactory::dynamicArray));
+        List<List<?>> result = cast(callTarantoolFunction(client, functionName, fixedArrayOf(fixedArrayOf(keys), operationArgs)));
         if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return empty();
         }

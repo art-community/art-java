@@ -19,6 +19,7 @@
 package io.art.core.extensions;
 
 import io.art.core.exception.*;
+import io.art.core.factory.*;
 import static io.art.core.constants.StringConstants.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.StandardCopyOption.*;
@@ -74,7 +75,7 @@ public class JarExtensions {
     public static void extractJar(String jarPath, String directory) {
         try (ZipFile jarArchive = new ZipFile(jarPath)) {
             createDirectories(Paths.get(directory));
-            for (ZipEntry entry : jarArchive.stream().collect(toList())) {
+            for (ZipEntry entry : jarArchive.stream().collect(toCollection(ArrayFactory::dynamicArray))) {
                 Path entryDestination = Paths.get(directory).resolve(entry.getName());
                 if (entry.isDirectory() && !exists(entryDestination)) {
                     createDirectory(entryDestination);
@@ -119,7 +120,7 @@ public class JarExtensions {
             List<? extends ZipEntry> entries = jarArchive
                     .stream()
                     .filter(entry -> compile(entryRegex).matcher(entry.getName()).matches())
-                    .collect(toList());
+                    .collect(toCollection(ArrayFactory::dynamicArray));
             for (ZipEntry entry : entries) {
                 Path entryDest = Paths.get(directory).resolve(entry.getName());
 

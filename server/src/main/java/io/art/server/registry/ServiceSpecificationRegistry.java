@@ -18,19 +18,20 @@
 
 package io.art.server.registry;
 
-import com.google.common.collect.*;
+import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import io.art.server.model.*;
 import io.art.server.specification.*;
 import io.art.value.immutable.*;
 import io.art.value.mapping.*;
-import static com.google.common.collect.ImmutableMap.copyOf;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.server.constants.ServerModuleConstants.*;
 import static java.util.Optional.*;
 import java.util.*;
 
+@UsedByGenerator
 public class ServiceSpecificationRegistry {
-    private final Map<String, ServiceSpecification> services = mapOf();
+    private final Map<String, ServiceSpecification> services = map();
 
     public Optional<ServiceSpecification> get(String serviceId) {
         return ofNullable(services.get(serviceId));
@@ -61,6 +62,6 @@ public class ServiceSpecificationRegistry {
     }
 
     public ImmutableMap<String, ServiceSpecification> getServices() {
-        return copyOf(services);
+        return immutableMapOf(services);
     }
 }

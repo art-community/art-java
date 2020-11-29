@@ -18,7 +18,7 @@
 
 package io.art.core.configuration;
 
-import com.google.common.collect.*;
+import io.art.core.collection.*;
 import io.art.core.context.*;
 import io.art.core.network.provider.*;
 import lombok.*;

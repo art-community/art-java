@@ -28,7 +28,7 @@ import lombok.experimental.*;
 import static com.google.protobuf.Value.KindCase.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.NioBufferExtensions.*;
-import static io.art.value.factory.ArrayFactory.*;
+import static io.art.value.factory.ArrayValueFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.BinaryValue.*;
 import static io.art.value.immutable.Entity.*;

@@ -19,6 +19,7 @@
 package io.art.communicator.specification;
 
 import io.art.communicator.configuration.*;
+import io.art.communicator.exception.*;
 import io.art.communicator.implementation.*;
 import io.art.core.constants.*;
 import io.art.value.immutable.Value;
@@ -26,9 +27,11 @@ import io.art.value.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
+import static io.art.communicator.constants.CommunicatorModuleConstants.ExceptionMessages.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.let;
+import static io.art.core.checker.NullityChecker.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
@@ -46,19 +49,24 @@ public class CommunicatorSpecification {
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
+    @Singular("exceptionDecorator")
+    private final List<UnaryOperator<Flux<Object>>> exceptionDecorators;
+
     private final ValueFromModelMapper<?, Value> inputMapper;
     private final ValueToModelMapper<?, Value> outputMapper;
     private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
     private final CommunicatorImplementation implementation;
     private final MethodProcessingMode inputMode;
     private final MethodProcessingMode outputMode;
+
+    @Getter(lazy = true)
     private final CommunicatorModuleConfiguration moduleConfiguration = communicatorModule().configuration();
 
     @Getter(lazy = true)
-    private final CommunicatorConfiguration communicatorConfiguration = moduleConfiguration.getCommunicators().get(communicatorId);
+    private final CommunicatorConfiguration communicatorConfiguration = getModuleConfiguration().getCommunicators().get(communicatorId);
 
     public Object communicate(Object input) {
-        Scheduler scheduler = let(getCommunicatorConfiguration(), CommunicatorConfiguration::getScheduler, moduleConfiguration.getScheduler());
+        Scheduler scheduler = let(getCommunicatorConfiguration(), CommunicatorConfiguration::getScheduler, getModuleConfiguration().getScheduler());
         return mapOutput(Flux.defer(() -> deferredCommunicate(input)).subscribeOn(scheduler));
     }
 
@@ -75,7 +83,7 @@ public class CommunicatorSpecification {
     }
 
     private Flux<Value> mapInput(Object input) {
-        Flux<Object> inputFlux = Flux.empty();
+        Flux<Object> inputFlux;
         switch (inputMode) {
             case BLOCKING:
                 inputFlux = Flux.just(input);
@@ -83,6 +91,9 @@ public class CommunicatorSpecification {
             case MONO:
             case FLUX:
                 inputFlux = Flux.from(cast(input));
+                break;
+            default:
+                throw new CommunicatorException(format(UNKNOWN_INPUT_MODE, inputMode), getCommunicatorId());
         }
         inputFlux = inputFlux.filter(Objects::nonNull);
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
@@ -104,14 +115,16 @@ public class CommunicatorSpecification {
                 return mappedOutput.blockFirst();
             case MONO:
                 return mappedOutput.last();
-            default:
+            case FLUX:
                 return mappedOutput;
+            default:
+                throw new CommunicatorException(format(UNKNOWN_OUTPUT_MODE, outputMode), getCommunicatorId());
         }
     }
 
     private Flux<Value> mapException(Throwable exception) {
         Flux<Object> errorOutput = Flux.error(exception);
-        for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
+        for (UnaryOperator<Flux<Object>> decorator : exceptionDecorators) {
             errorOutput = errorOutput.transformDeferred(decorator);
         }
         return errorOutput

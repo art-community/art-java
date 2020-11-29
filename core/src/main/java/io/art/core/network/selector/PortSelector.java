@@ -21,7 +21,8 @@ package io.art.core.network.selector;
 import lombok.experimental.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.NetworkConstants.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.TreeFactory.tree;
+import static io.art.core.factory.TreeFactory.treeOf;
 import static io.art.core.network.selector.PortSelector.SocketType.*;
 import static java.net.InetAddress.*;
 import static java.text.MessageFormat.*;
@@ -115,7 +116,7 @@ public class PortSelector {
         }
 
         Set<Integer> findAvailablePorts(int numRequested, int minPort, int maxPort) {
-            Set<Integer> availablePorts = treeOf();
+            Set<Integer> availablePorts = tree();
             int attemptCount = 0;
 
             while ((++attemptCount <= numRequested + PORT_OFFSET) && availablePorts.size() < numRequested) {

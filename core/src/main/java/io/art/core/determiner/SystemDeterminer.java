@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.core.determinant;
+package io.art.core.determiner;
 
 import lombok.experimental.*;
 import static java.lang.System.*;
@@ -24,7 +24,7 @@ import static io.art.core.constants.SystemNamePatterns.*;
 import static io.art.core.constants.SystemProperties.*;
 
 @UtilityClass
-public final class SystemDeterminant {
+public final class SystemDeterminer {
     private static final String OS = getProperty(OS_NAME_PROPERTY).toLowerCase();
 
     public static boolean isWindows() {

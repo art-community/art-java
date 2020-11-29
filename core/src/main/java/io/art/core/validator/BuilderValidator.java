@@ -21,11 +21,11 @@ package io.art.core.validator;
 import lombok.*;
 import io.art.core.checker.*;
 import io.art.core.exception.*;
+import static io.art.core.factory.SetFactory.setOf;
 import static java.text.MessageFormat.*;
 import static io.art.core.constants.BuilderValidatorErrors.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import java.util.*;
 import java.util.function.*;
 

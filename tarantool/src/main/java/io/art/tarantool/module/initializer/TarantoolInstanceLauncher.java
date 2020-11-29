@@ -2,21 +2,24 @@ package io.art.tarantool.module.initializer;
 
 import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
+import io.art.core.factory.*;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
 import org.zeroturnaround.exec.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.module.*;
+import static io.art.core.builder.MapBuilder.mapBuilder;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.constants.SystemConstants.*;
 import static io.art.core.converter.WslPathConverter.*;
-import static io.art.core.determinant.SystemDeterminant.*;
+import static io.art.core.determiner.SystemDeterminer.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.JarExtensions.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
+import static io.art.core.factory.SetFactory.setOf;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static java.io.File.*;
@@ -43,6 +46,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.*;
 
 public class TarantoolInstanceLauncher {
     private final static OutputStream loggerOutputStream = forLogger(logger(TarantoolInstanceLauncher.class))
@@ -73,7 +77,7 @@ public class TarantoolInstanceLauncher {
                     .map(replicaConfiguration ->
                             replicaConfiguration.getUsername() + COLON + replicaConfiguration.getPassword() + AT_SIGN +
                                     replicaConfiguration.getHost() + COLON + replicaConfiguration.getPort())
-                    .collect(toSet());
+                    .collect(toCollection(SetFactory::setOf));
             String luaConfiguration = configuration.getInitialConfiguration().toLua(connectionConfiguration.getPort(), replicas);
             Path luaConfigurationPath = get(getLuaScriptPath(instanceId, localConfiguration, CONFIGURATION));
             writeFile(luaConfigurationPath, luaConfiguration);
@@ -81,9 +85,9 @@ public class TarantoolInstanceLauncher {
                     address,
                     luaConfigurationPath.toAbsolutePath()));
             StringWriter templateWriter = new StringWriter();
-            Map<String, Object> templateContext = cast(mapOf()
-                    .add(USERNAME, connectionConfiguration.getUsername())
-                    .add(PASSWORD, connectionConfiguration.getPassword()));
+            Map<String, Object> templateContext = cast(mapBuilder()
+                    .with(USERNAME, connectionConfiguration.getUsername())
+                    .with(PASSWORD, connectionConfiguration.getPassword()));
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
                     .autoEscaping(false)

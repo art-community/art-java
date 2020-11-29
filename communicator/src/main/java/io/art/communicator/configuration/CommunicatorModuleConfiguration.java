@@ -18,22 +18,20 @@
 
 package io.art.communicator.configuration;
 
-import com.google.common.collect.*;
-import io.art.communicator.constants.*;
+import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
 import reactor.core.scheduler.*;
-import static com.google.common.collect.ImmutableMap.toImmutableMap;
-import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.COMMUNICATOR_SECTION;
-import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.TARGETS_KEY;
-import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.DEFAULT_COMMUNICATOR_SCHEDULER;
-import static java.util.Optional.ofNullable;
+import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
+import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.*;
+import static io.art.core.collection.ImmutableMap.*;
+import static java.util.Optional.*;
 import java.util.*;
 
 @Getter
 public class CommunicatorModuleConfiguration implements ModuleConfiguration {
-    private ImmutableMap<String, CommunicatorConfiguration> communicators = ImmutableMap.of();
+    private ImmutableMap<String, CommunicatorConfiguration> communicators = emptyImmutableMap();
     private Scheduler scheduler;
 
     @RequiredArgsConstructor
@@ -48,8 +46,8 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
                     .map(services -> services
                             .entrySet()
                             .stream()
-                            .collect(toImmutableMap(Map.Entry::getKey, entry -> CommunicatorConfiguration.from(entry.getValue()))))
-                    .orElse(ImmutableMap.of());
+                            .collect(immutableMapCollector(Map.Entry::getKey, entry -> CommunicatorConfiguration.from(entry.getValue()))))
+                    .orElse(emptyImmutableMap());
             return this;
         }
     }

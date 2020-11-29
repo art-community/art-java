@@ -18,13 +18,16 @@
 
 package io.art.value.xml;
 
-import com.google.common.collect.*;
+import io.art.core.collection.*;
+import io.art.core.factory.*;
 import io.art.value.builder.*;
 import io.art.value.immutable.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.collector.MapCollectors.mapCollector;
 import static io.art.core.extensions.CollectionExtensions.*;
-import static io.art.value.factory.ArrayFactory.*;
+import static io.art.core.factory.ArrayFactory.immutableArrayOf;
+import static io.art.value.factory.ArrayValueFactory.*;
 import static io.art.value.factory.EntityFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Entity.*;
@@ -41,9 +44,9 @@ public final class XmlEntityToEntityConverter {
         if (isNotEmpty(value)) {
             entityBuilder.put(xmlEntity.getTag(), stringPrimitive(value));
         }
-        ImmutableList<XmlEntity> children = xmlEntity.getChildren();
+        ImmutableArray<XmlEntity> children = xmlEntity.getChildren();
         if (isEmpty(children)) return entityBuilder.build();
-        if (areAllUnique(children.stream().map(XmlEntity::getTag).collect(toList()))) {
+        if (areAllUnique(children.stream().map(XmlEntity::getTag).collect(toCollection(ArrayFactory::dynamicArray)))) {
             EntityBuilder innerEntityBuilder = entityBuilder();
             for (XmlEntity child : children) {
                 if (isEmpty(child.getChildren())) {
@@ -56,7 +59,7 @@ public final class XmlEntityToEntityConverter {
             }
             return entityBuilder.put(xmlEntity.getTag(), innerEntityBuilder.build()).build();
         }
-        ImmutableList.Builder<Value> collection = ImmutableList.builderWithExpectedSize(children.size());
+        ImmutableArray.Builder<Value> collection = ImmutableArray.immutableArrayBuilder(children.size());
         for (XmlEntity child : children) {
             if (isEmpty(child.getChildren()) && isEmpty(child.getValue())) {
                 collection.add(stringPrimitive(child.getTag()));
@@ -81,7 +84,7 @@ public final class XmlEntityToEntityConverter {
         Map<Primitive, Primitive> attributes = xmlEntity.getAttributes()
                 .entrySet()
                 .stream()
-                .collect(toMap(entry -> stringPrimitive(entry.getKey()), entry -> stringPrimitive(entry.getValue())));
+                .collect(mapCollector(entry -> stringPrimitive(entry.getKey()), entry -> stringPrimitive(entry.getValue())));
         return entityBuilder().put(xmlEntity.getTag(), entity(attributes.keySet(), attributes::get)).build();
     }
 }

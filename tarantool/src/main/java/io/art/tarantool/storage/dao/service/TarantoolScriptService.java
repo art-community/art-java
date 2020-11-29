@@ -20,10 +20,10 @@ package io.art.tarantool.storage.dao.service;
 
 import lombok.experimental.*;
 import io.art.tarantool.configuration.lua.*;
+import static io.art.core.factory.SetFactory.setOf;
 import static java.util.Collections.*;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static io.art.core.factory.CollectionsFactory.setOf;
 import static io.art.tarantool.configuration.lua.TarantoolCommonScriptConfiguration.*;
 import static io.art.tarantool.configuration.lua.TarantoolValueScriptConfiguration.*;
 import static io.art.tarantool.storage.dao.service.executor.TarantoolLuaExecutor.*;

@@ -19,6 +19,7 @@
 package io.art.configurator.source;
 
 import com.typesafe.config.*;
+import io.art.core.factory.*;
 import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -115,7 +116,7 @@ public class TypesafeConfigurationSource implements ConfigurationSource {
         return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getConfigList)
                 .stream()
                 .map(config -> new TypesafeConfigurationSource(combine(section, path), type, config))
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
     }
 
     @Override

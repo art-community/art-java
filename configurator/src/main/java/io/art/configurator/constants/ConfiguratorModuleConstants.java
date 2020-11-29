@@ -18,10 +18,11 @@
 
 package io.art.configurator.constants;
 
-import com.google.common.collect.*;
+import io.art.core.collection.*;
+import io.art.core.factory.*;
 import io.art.core.source.ConfigurationSource.*;
 import lombok.*;
-import static io.art.core.factory.CollectionsFactory.queueOf;
+import static io.art.core.factory.ArrayFactory.immutableArrayOf;
 
 public interface ConfiguratorModuleConstants {
     String DEFAULT_MODULE_CONFIGURATION_FILE = "module";
@@ -52,7 +53,7 @@ public interface ConfiguratorModuleConstants {
         String JSON_EXTENSION = "json";
         String CONF_EXTENSION = "conf";
         String HOCON_EXTENSION = "hocon";
-        ImmutableList<String> FILE_CONFIGURATION_EXTENSIONS = ImmutableList.of(
+        ImmutableArray<String> FILE_CONFIGURATION_EXTENSIONS = immutableArrayOf(
                 YAML_EXTENSION,
                 YML_EXTENSION,
                 PROPERTIES_EXTENSION,

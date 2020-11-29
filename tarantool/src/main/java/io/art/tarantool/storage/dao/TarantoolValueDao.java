@@ -18,11 +18,14 @@
 
 package io.art.tarantool.storage.dao;
 
+import io.art.core.factory.*;
 import io.art.value.immutable.*;
 import io.art.value.tuple.PlainTupleWriter.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.*;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
+import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.SetFactory.setOf;
 import static io.art.value.factory.PrimitivesFactory.longPrimitive;
 import static io.art.value.immutable.Entity.entityBuilder;
 import static io.art.value.immutable.Value.*;
@@ -36,7 +39,6 @@ import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static java.util.stream.Collectors.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.tarantool.storage.dao.caller.TarantoolFunctionCaller.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
@@ -136,7 +138,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         }
         List<List<List<?>>> valueTuples = cast(result.get(0));
         List<List<List<?>>> schemeTuples = cast(result.get(1));
-        List<Entity> values = arrayOf(valueTuples.size());
+        List<Entity> values = ArrayFactory.dynamicArray(valueTuples.size());
         for (int i = 0; i < valueTuples.size(); i++) {
             values.add(asEntity(readTuple(valueTuples.get(i), fromTuple(schemeTuples.get(i)))));
         }
@@ -153,7 +155,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
 
 
     public List<Primitive> selectPrimitives(String spaceName, Collection<?> keys) {
-        return select(spaceName, keys).stream().map(entity -> asPrimitive(entity.get(VALUE))).collect(toList());
+        return select(spaceName, keys).stream().map(entity -> asPrimitive(entity.get(VALUE))).collect(toCollection(ArrayFactory::dynamicArray));
     }
 
     public List<Primitive> selectPrimitives(String spaceName, long id) {
@@ -166,7 +168,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
 
 
     public List<ArrayValue> selectCollections(String spaceName, Collection<?> keys) {
-        return select(spaceName, keys).stream().map(entity -> asArray(entity.get(VALUE))).collect(toList());
+        return select(spaceName, keys).stream().map(entity -> asArray(entity.get(VALUE))).collect(toCollection(ArrayFactory::dynamicArray));
     }
 
     public List<ArrayValue> selectCollections(String spaceName, long id) {
@@ -242,7 +244,7 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         }
         List<List<List<?>>> tuples = cast(result.get(0));
         List<List<List<?>>> schemes = cast(result.get(1));
-        List<Entity> values = arrayOf(tuples.size());
+        List<Entity> values = dynamicArray(tuples.size());
         for (int i = 0; i < tuples.size(); i++) {
             values.add(asEntity(readTuple(tuples.get(i), fromTuple(schemes.get(i)))));
         }
@@ -253,10 +255,10 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
     public Optional<Entity> update(String spaceName, Collection<?> keys, TarantoolUpdateFieldOperation... operations) {
         List<TarantoolUpdateFieldOperation> operationsWithSchema = stream(operations)
                 .filter(operation -> !isEmpty(operation.getSchemaOperation()))
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
         List<TarantoolUpdateFieldOperation> operationsWithoutSchema = stream(operations)
                 .filter(operation -> isEmpty(operation.getSchemaOperation()))
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
         Optional<Entity> entity = empty();
         if (!isEmpty(operationsWithSchema)) {
             entity = updateWithSchema(spaceName, keys, operationsWithSchema);
@@ -274,11 +276,11 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         List<?> valueOperations = operations
                 .stream()
                 .map(TarantoolUpdateFieldOperation::getValueOperation)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
         List<?> schemaOperations = operations
                 .stream()
                 .map(TarantoolUpdateFieldOperation::getSchemaOperation)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
         List<List<?>> result = cast(callTarantoolFunction(client, functionName, fixedArrayOf(fixedArrayOf(keys), valueOperations, schemaOperations)));
         if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return empty();
@@ -292,10 +294,12 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         evaluateValueScript(clusterIds, spaceName);
 
         String functionName = UPDATE + spaceName + VALUE_POSTFIX;
-        List<List<?>> result = cast(callTarantoolFunction(client, functionName, fixedArrayOf(fixedArrayOf(keys), operations
+        List<List<?>> operationArgs = operations
                 .stream()
                 .map(TarantoolUpdateFieldOperation::getValueOperation)
-                .collect(toList()))));
+                .collect(toCollection(ArrayFactory::dynamicArray));
+        List<List<?>> arguments = fixedArrayOf(fixedArrayOf(keys), operationArgs);
+        List<List<?>> result = cast(callTarantoolFunction(client, functionName, arguments));
         if (isEmpty(result) || (isEmpty(result = cast(result.get(0)))) || result.size() == 1) {
             return empty();
         }
@@ -323,10 +327,10 @@ public final class TarantoolValueDao extends TarantoolCommonDao {
         List<?> schemaOperations = stream(operations)
                 .filter(operation -> !isEmpty(operation.getSchemaOperation()))
                 .map(TarantoolUpdateFieldOperation::getSchemaOperation)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
         List<?> valueOperations = stream(operations)
                 .map(TarantoolUpdateFieldOperation::getValueOperation)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
         callTarantoolFunction(client, functionName, fixedArrayOf(valueTuple, schemaTuple, valueOperations, schemaOperations));
     }
 }

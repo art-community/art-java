@@ -19,7 +19,7 @@
 package io.art.rocks.db.bucket;
 
 import lombok.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
 import static io.art.rocks.db.constants.RocksDbModuleConstants.*;
 import java.util.*;
 

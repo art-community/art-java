@@ -18,17 +18,21 @@
 
 package io.art.value.mapping;
 
+import io.art.core.annotation.*;
+import io.art.core.factory.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
-import static com.google.common.collect.ImmutableSet.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.value.factory.EntityFactory.*;
+import static java.util.stream.Collectors.*;
 import java.util.*;
+import java.util.function.*;
 
 @UtilityClass
+@UsedByGenerator
 public class EntityMapping {
     public static <K, V> EntityToModelMapper<Map<K, V>> toMap(
             PrimitiveToModelMapper<K> toKeyMapper,
@@ -44,10 +48,12 @@ public class EntityMapping {
     public static <K, V> EntityFromModelMapper<Map<K, V>> fromMap(
             PrimitiveToModelMapper<K> toKeyMapper,
             PrimitiveFromModelMapper<K> fromKeyMapper,
-            ValueFromModelMapper<V, ? extends Value> valueMapper) {
-        return entity -> let(
-                entity,
-                notNull -> entity(entity.keySet().stream().map(fromKeyMapper::map).collect(toImmutableSet()), key -> valueMapper.map(entity.get(toKeyMapper.map(key))))
-        );
+            ValueFromModelMapper<V, ? extends Value> valueMapper
+    ) {
+        Function<Map<K, V>, Entity> mapper = notNull -> entity(notNull.keySet()
+                .stream()
+                .map(fromKeyMapper::map)
+                .collect(toCollection(SetFactory::set)), key -> valueMapper.map(notNull.get(toKeyMapper.map(key))));
+        return entity -> let(entity, mapper);
     }
 }

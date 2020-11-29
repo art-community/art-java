@@ -21,7 +21,7 @@ package io.art.value.constants;
 import io.art.value.exception.*;
 import lombok.*;
 import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
-import static java.text.MessageFormat.format;
+import static java.text.MessageFormat.*;
 
 public interface ValueConstants {
     interface ExceptionMessages {
@@ -29,8 +29,11 @@ public interface ValueConstants {
         String TUPLE_NOT_SUPPORTED_VALUE_TYPE = "Value type: ''{0}'' not support for tuples";
         String NOT_PRIMITIVE_TYPE = "Not primitive type: ''{0}''";
         String XML_TAG_IS_EMPTY = "Xml tag is empty";
-        String UNSUPPORTED_DATA_FORMAT = "Data format not supported: ''{0}''";
+        String NULL_FIELD_MESSAGE = "Received null for not nullable field ''{0}''";
+        String INDEX_MAPPING_EXCEPTION = "Exception occurred during mapping array element ''{0}'':";
+        String FIELD_MAPPING_EXCEPTION = "Exception occurred during mapping entity field ''{0}'':";
     }
+
 
     enum ValueType {
         ENTITY,

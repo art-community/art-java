@@ -18,13 +18,14 @@
 
 package io.art.tarantool.configuration;
 
+import io.art.core.factory.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.*;
 import lombok.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.MapFactory.map;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolInitializationMode.*;
@@ -35,7 +36,7 @@ import java.util.*;
 
 @Getter
 public class TarantoolModuleConfiguration implements ModuleConfiguration {
-    private final Map<String, TarantoolConfiguration> tarantoolConfigurations = mapOf();
+    private final Map<String, TarantoolConfiguration> tarantoolConfigurations = map();
     private final long connectionTimeoutMillis = DEFAULT_TARANTOOL_CONNECTION_TIMEOUT;
     private final long probeConnectionTimeoutMillis = DEFAULT_TARANTOOL_PROBE_CONNECTION_TIMEOUT;
     private final boolean enableTracing = false;

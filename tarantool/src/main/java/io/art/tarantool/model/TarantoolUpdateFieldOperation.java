@@ -22,12 +22,13 @@ import io.art.value.immutable.Value;
 import io.art.value.tuple.PlainTupleWriter.*;
 import lombok.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
+import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
+import static io.art.core.factory.ArrayFactory.fixedArrayOf;
 import static io.art.value.immutable.Entity.entityBuilder;
 import static io.art.value.tuple.PlainTupleWriter.writeTuple;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolOperator.*;
 import java.util.*;
 

@@ -20,13 +20,13 @@ package io.art.xml.rules.builder;
 
 import lombok.*;
 import io.art.xml.constants.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.MapFactory.map;
 import static io.art.xml.constants.XmlEntityMappingTargets.*;
 import java.util.*;
 
 @Getter
 public class XmlEntityMapping {
-    private final Map<XmlEntityMappingTargets, Set<XmlEntityRule>> mapping = mapOf();
+    private final Map<XmlEntityMappingTargets, Set<XmlEntityRule>> mapping = map();
 
     XmlEntityMapping(Set<XmlEntityRule> tagValueRules, Set<XmlEntityRule> attributeValueRules, Set<XmlEntityRule> namespaceValueRules) {
         mapping.put(TAG_VALUE, tagValueRules);

@@ -19,12 +19,13 @@
 package io.art.value.factory;
 
 import io.art.core.checker.*;
+import io.art.core.collection.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.ArrayValue.*;
@@ -33,7 +34,7 @@ import java.util.*;
 import java.util.function.*;
 
 @UtilityClass
-public class ArrayFactory {
+public class ArrayValueFactory {
     public static ArrayValue stringArray(List<String> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
@@ -172,7 +173,6 @@ public class ArrayFactory {
         return new ArrayValue(index -> bytePrimitive(value[index]), lazy(() -> value.length));
     }
 
-
     public static ArrayValue charArray(char[] value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
@@ -186,10 +186,10 @@ public class ArrayFactory {
         return new ArrayValue(value::get, lazy(value::size));
     }
 
-    public static <T> ArrayValue array(List<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
+    public static <T extends Value> ArrayValue array(ImmutableArray<T> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        return new ArrayValue(index -> let(value.get(index), mapper::map), lazy(value::size));
+        return new ArrayValue(value::get, lazy(value::size));
     }
 
     public static <T extends Value> ArrayValue array(Collection<T> value) {
@@ -198,10 +198,23 @@ public class ArrayFactory {
         return array(fixedArrayOf(value));
     }
 
+
+    public static <T> ArrayValue array(List<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return new ArrayValue(index -> let(value.get(index), mapper::map), lazy(value::size));
+    }
+
     public static <T> ArrayValue array(Collection<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return array(fixedArrayOf(value), mapper);
+    }
+
+    public static <T> ArrayValue array(ImmutableArray<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return new ArrayValue(index -> let(value.get(index), mapper::map), lazy(value::size));
     }
 
 
@@ -209,13 +222,8 @@ public class ArrayFactory {
         return new ArrayValue(valueProvider, lazy(sizeProvider));
     }
 
-    public static <T extends Entity> ArrayValue entityArray(List<T> value) {
-        if (isNull(value)) return null;
-        if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        return new ArrayValue(value::get, lazy(value::size));
-    }
 
-    public static <T extends ArrayValue> ArrayValue innerArray(List<T> value) {
+    public static <T extends Entity> ArrayValue entityArray(List<T> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(value::get, lazy(value::size));
@@ -227,11 +235,19 @@ public class ArrayFactory {
         return entityArray(fixedArrayOf(value));
     }
 
+
+    public static <T extends ArrayValue> ArrayValue innerArray(List<T> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return new ArrayValue(value::get, lazy(value::size));
+    }
+
     public static <T extends ArrayValue> ArrayValue innerArray(Collection<T> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return innerArray(fixedArrayOf(value));
     }
+
 
     public static ArrayValue emptyArray() {
         return EMPTY;

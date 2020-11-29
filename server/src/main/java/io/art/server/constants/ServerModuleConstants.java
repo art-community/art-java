@@ -72,8 +72,8 @@ public interface ServerModuleConstants {
     }
 
     interface ExceptionMessages {
-        String UNKNOWN_REQUEST_TYPE = "Unknown request type: ''{0}''";
-        String UNKNOWN_RESPONSE_TYPE = "Unknown response type: ''{0}''";
+        String UNKNOWN_INPUT_MODE = "Unknown input mode: ''{0}''";
+        String UNKNOWN_OUTPUT_MODE = "Unknown output mode: ''{0}''";
     }
 
     interface ValidationErrorPatterns {

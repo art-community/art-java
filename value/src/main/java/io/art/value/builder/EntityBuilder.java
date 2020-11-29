@@ -21,14 +21,14 @@ package io.art.value.builder;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.MapFactory.map;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
 
 public class EntityBuilder {
-    private final Map<Primitive, Supplier<? extends Value>> fields = mapOf();
+    private final Map<Primitive, Supplier<? extends Value>> fields = map();
 
     public EntityBuilder put(String key, Value value) {
         return lazyPut(key, () -> value);

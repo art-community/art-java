@@ -18,13 +18,14 @@
 
 package io.art.model.server;
 
-import com.google.common.collect.*;
+import io.art.core.collection.*;
 import io.art.rsocket.configuration.*;
+import static io.art.core.collection.ImmutableSet.*;
 import static io.art.model.constants.ModelConstants.Protocol.*;
 import java.util.function.*;
 
 public class ServerModel {
-    private final ImmutableSet.Builder<ServiceModel<?>> services = ImmutableSet.builder();
+    private final ImmutableSet.Builder<ServiceModel<?>> services = immutableSetBuilder();
 
     public ServerModel rsocket(UnaryOperator<ServiceModel<RsocketServiceConfiguration>> model) {
         services.add(model.apply(new ServiceModel<>(RSOCKET)));
