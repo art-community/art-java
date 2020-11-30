@@ -38,7 +38,7 @@ public class ServiceMethodModeler {
     public ServiceMethodModeler enableLogging() {
         decorator = decorator.andThen(builder -> builder
                 .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModeler.getServiceClass().getSimpleName(), id), INPUT))
-                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModeler.getServiceClass().getSimpleName(), id), OUTPUT)));
+                .outputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModeler.getServiceClass().getSimpleName(), id), OUTPUT)));
         return this;
     }
 

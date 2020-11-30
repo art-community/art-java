@@ -70,7 +70,7 @@ public class ServiceModeler<T> {
             builder = current.apply(method, builder);
             return builder
                     .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), INPUT))
-                    .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), OUTPUT));
+                    .outputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), OUTPUT));
         };
         return this;
     }

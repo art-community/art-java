@@ -122,15 +122,16 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
                                 .doOnNext(data -> logReactiveInput(data, specification))
                                 .doOnError(exception -> logException(exception, specification));
                 }
+                break;
             case OUTPUT:
-                switch (specification.getInputMode()) {
+                switch (specification.getOutputMode()) {
                     case BLOCKING:
-                        return input -> input
+                        return output -> output
                                 .doOnNext(data -> logBlockingOutput(data, specification))
                                 .doOnError(exception -> logException(exception, specification));
                     case MONO:
                     case FLUX:
-                        return input -> input
+                        return output -> output
                                 .doOnNext(data -> logReactiveOutput(data, specification))
                                 .doOnError(exception -> logException(exception, specification));
                 }
