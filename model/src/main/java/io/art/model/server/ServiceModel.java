@@ -20,47 +20,25 @@ package io.art.model.server;
 
 import io.art.core.collection.*;
 import io.art.model.constants.ModelConstants.*;
+import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
-import static io.art.core.collection.ImmutableSet.immutableSetBuilder;
-import static java.util.function.UnaryOperator.*;
+import static io.art.core.checker.NullityChecker.*;
 import java.util.function.*;
 
-@RequiredArgsConstructor
+@Getter
+@Builder
 public class ServiceModel<T> {
-    @Getter
-    private Class<?> serviceClass;
-    @Getter
-    private boolean allMethods;
-    @Getter
+    private final Class<?> serviceClass;
+    private final String id;
+    private final boolean includeAllMethods;
     private final Protocol protocol;
-    @Getter
-    private UnaryOperator<ServiceModelCustomizer<T>> customizer;
+    private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> anyMethodDecorator;
+    private final ImmutableMap<String, ServiceMethodModel> concreteMethods;
 
-    private final ImmutableSet.Builder<String> methods = immutableSetBuilder();
-
-    public ServiceModel<T> to(Class<?> service) {
-        return to(service, identity());
-    }
-
-    public ServiceModel<T> to(Class<?> service, UnaryOperator<ServiceModelCustomizer<T>> customizer) {
-        this.serviceClass = service;
-        this.allMethods = true;
-        this.customizer = customizer;
-        return this;
-    }
-
-    public ServiceModel<T> to(Class<?> service, String method) {
-        return to(service, method, identity());
-    }
-
-    public ServiceModel<T> to(Class<?> service, String method, UnaryOperator<ServiceModelCustomizer<T>> customizer) {
-        this.serviceClass = service;
-        this.methods.add(method);
-        this.customizer = customizer;
-        return this;
-    }
-    
-    public ImmutableSet<String> getMethods() {
-        return methods.build();
+    public ServiceMethodSpecificationBuilder implement(String id, ServiceMethodSpecificationBuilder current) {
+        if (includeAllMethods) {
+            return let(anyMethodDecorator, decorator -> decorator.apply(id, current));
+        }
+        return let(concreteMethods.get(id), methodModel -> methodModel.implement(current));
     }
 }

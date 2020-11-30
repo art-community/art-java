@@ -19,21 +19,16 @@
 package io.art.model.server;
 
 import io.art.core.collection.*;
-import io.art.rsocket.configuration.*;
-import static io.art.core.collection.ImmutableSet.*;
-import static io.art.model.constants.ModelConstants.Protocol.*;
-import java.util.function.*;
+import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.server.specification.ServiceMethodSpecification.*;
 
+@Getter
+@RequiredArgsConstructor
 public class ServerModel {
-    private final ImmutableSet.Builder<ServiceModel<?>> services = immutableSetBuilder();
+    private final ImmutableMap<String, ServiceModel<?>> services;
 
-    public ServerModel rsocket(UnaryOperator<ServiceModel<RsocketServiceConfiguration>> model) {
-        services.add(model.apply(new ServiceModel<>(RSOCKET)));
-        return this;
+    public ServiceMethodSpecificationBuilder implement(String serviceId, String methodId, ServiceMethodSpecificationBuilder current) {
+        return let(services.get(serviceId), service -> service.implement(methodId, current));
     }
-
-    public ImmutableSet<ServiceModel<?>> getServices() {
-        return services.build();
-    }
-
 }

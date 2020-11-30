@@ -16,15 +16,19 @@
  * limitations under the License.
  */
 
-package io.art.model.configurator;
+package io.art.model.server;
 
+import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
+import java.util.function.*;
 
 @Getter
-@Builder
-public class ConfiguratorModel {
-    private final LoggingConfiguratorModel logging;
-    private final ServerConfiguratorModel server;
-    private final ValueConfiguratorModel value;
-    private final RsocketConfiguratorModel rsocket;
+@RequiredArgsConstructor
+public class ServiceMethodModel {
+    private final String id;
+    private final Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
+
+    public ServiceMethodSpecificationBuilder implement(ServiceMethodSpecificationBuilder builder) {
+        return decorator.apply(builder);
+    }
 }

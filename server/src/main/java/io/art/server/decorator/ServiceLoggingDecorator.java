@@ -73,11 +73,11 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
         getLogger().info(format(BLOCKING_SERVICE_EXECUTED_MESSAGE, specification.getServiceId(), specification.getMethodId(), data));
     }
 
-    private void logReactiveSubscribe(ServiceMethodSpecification specification) {
+    private void logSubscribe(ServiceMethodSpecification specification) {
         if (!enabled.get()) {
             return;
         }
-        getLogger().info(format(REACTIVE_SERVICE_SUBSCRIBED_MESSAGE, specification.getServiceId(), specification.getMethodId()));
+        getLogger().info(format(SERVICE_SUBSCRIBED_MESSAGE, specification.getServiceId(), specification.getMethodId()));
     }
 
     private void logReactiveInput(Object data, ServiceMethodSpecification specification) {
@@ -112,13 +112,13 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
                 switch (specification.getInputMode()) {
                     case BLOCKING:
                         return input -> input
-                                .doOnSubscribe(subscription -> logReactiveSubscribe(specification))
+                                .doOnSubscribe(subscription -> logSubscribe(specification))
                                 .doOnNext(data -> logBlockingInput(data, specification))
                                 .doOnError(exception -> logException(exception, specification));
                     case MONO:
                     case FLUX:
                         return input -> input
-                                .doOnSubscribe(subscription -> logReactiveSubscribe(specification))
+                                .doOnSubscribe(subscription -> logSubscribe(specification))
                                 .doOnNext(data -> logReactiveInput(data, specification))
                                 .doOnError(exception -> logException(exception, specification));
                 }

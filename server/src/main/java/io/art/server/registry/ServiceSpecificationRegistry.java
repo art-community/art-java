@@ -22,12 +22,14 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.server.model.*;
 import io.art.server.specification.*;
+import io.art.server.specification.ServiceMethodSpecification.*;
 import io.art.value.immutable.*;
 import io.art.value.mapping.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.server.constants.ServerModuleConstants.*;
 import static java.util.Optional.*;
 import java.util.*;
+import java.util.function.*;
 
 @UsedByGenerator
 public class ServiceSpecificationRegistry {

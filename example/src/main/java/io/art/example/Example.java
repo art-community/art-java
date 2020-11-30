@@ -19,6 +19,7 @@
 package io.art.example;
 
 import io.art.model.annotation.*;
+import io.art.model.customizer.*;
 import io.art.model.module.*;
 import static io.art.model.module.ModuleModel.*;
 
@@ -26,6 +27,10 @@ import static io.art.model.module.ModuleModel.*;
 public class Example {
     @Configurator
     public static ModuleModel configure() {
-        return module().serve(server -> server.rsocket(rsocket -> rsocket.to(Service.class)));
+        return module()
+                .serve(server -> server
+                        .rsocket(rsocket -> rsocket.to(Service.class, ServiceCustomizer::enableLogging))
+                )
+                .apply();
     }
 }

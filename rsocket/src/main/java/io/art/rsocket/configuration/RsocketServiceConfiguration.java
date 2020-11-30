@@ -19,11 +19,9 @@
 package io.art.rsocket.configuration;
 
 import io.art.core.collection.*;
-import io.art.core.factory.*;
 import io.art.core.source.*;
 import lombok.*;
-import static io.art.core.collection.ImmutableMap.emptyImmutableMap;
-import static io.art.core.collection.ImmutableMap.immutableMapCollector;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
 import java.util.*;

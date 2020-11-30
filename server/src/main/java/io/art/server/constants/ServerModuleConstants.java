@@ -63,10 +63,11 @@ public interface ServerModuleConstants {
         String SERVICE_REGISTRATION_MESSAGE = success("Registered service: ''{0}''");
         String SERVICE_FAILED_MESSAGE = error("Service ''{0}.{1}'' execution failed");
 
+        String SERVICE_SUBSCRIBED_MESSAGE = success("Service subscribed: ''{0}.{1}''");
+
         String EXECUTING_BLOCKING_SERVICE_MESSAGE = success("Executing service: ''{0}.{1}'' with request: {2}");
         String BLOCKING_SERVICE_EXECUTED_MESSAGE = success("Successfully executed service: ''{0}.{1}'' with response: {2}");
 
-        String REACTIVE_SERVICE_SUBSCRIBED_MESSAGE = success("Reactive service subscribed: ''{0}.{1}''");
         String REACTIVE_SERVICE_INPUT_MESSAGE = success("Reactive service: ''{0}.{1}'' input: {2}");
         String REACTIVE_SERVICE_OUTPUT_MESSAGE = success("Reactive service: ''{0}.{1}'' output: {2}");
     }

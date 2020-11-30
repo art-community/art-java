@@ -24,7 +24,7 @@ import io.art.core.collection.*;
 import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.context.*;
 import io.art.core.lazy.*;
-import io.art.core.module.Module;
+import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.json.module.*;
 import io.art.logging.*;
@@ -38,7 +38,7 @@ import io.art.value.module.*;
 import io.art.xml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
-import static io.art.core.collection.ImmutableArray.immutableArrayBuilder;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
@@ -47,7 +47,6 @@ import static io.art.launcher.ModuleLauncherConstants.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.model.constants.ModelConstants.Protocol.*;
 import static java.util.Optional.*;
-import java.util.*;
 import java.util.concurrent.atomic.*;
 
 @UtilityClass
@@ -62,10 +61,10 @@ public class ModuleLauncher {
                     .configuration()
                     .orderedSources();
             ConfiguratorModel configuratorModel = model.getConfiguratorModel();
-            ValueConfiguratorModel valueModel = configuratorModel.value().apply(new ValueConfiguratorModel());
-            LoggingConfiguratorModel loggingModel = configuratorModel.logging().apply(new LoggingConfiguratorModel());
-            ServerConfiguratorModel serverModel = configuratorModel.server().apply(new ServerConfiguratorModel());
-            RsocketConfiguratorModel rsocketModel = configuratorModel.rsocket().apply(new RsocketConfiguratorModel());
+            ValueConfiguratorModel valueModel = configuratorModel.getValue();
+            LoggingConfiguratorModel loggingModel = configuratorModel.getLogging();
+            ServerConfiguratorModel serverModel = configuratorModel.getServer();
+            RsocketConfiguratorModel rsocketModel = configuratorModel.getRsocket();
             ImmutableArray.Builder<Module> modules = immutableArrayBuilder();
             modules.add(
                     configurator,
@@ -128,7 +127,7 @@ public class ModuleLauncher {
 
     private RsocketModule rsocket(ImmutableArray<ConfigurationSource> sources, ServerModel serverModel, RsocketConfiguratorModel rsocketModel) {
         RsocketModule rsocket = new RsocketModule();
-        if (serverModel.getServices().stream().anyMatch(service -> service.getProtocol() == RSOCKET)) {
+        if (serverModel.getServices().values().stream().anyMatch(service -> service.getProtocol() == RSOCKET)) {
             rsocketModel.activateServer();
         }
         rsocket.configure(configurator -> configurator.from(sources).override(rsocketModel.getConfiguration()));

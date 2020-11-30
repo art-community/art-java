@@ -40,7 +40,7 @@ import java.util.*;
 import java.util.function.*;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceMethodSpecification {

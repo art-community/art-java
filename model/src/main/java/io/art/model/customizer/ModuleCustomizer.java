@@ -16,15 +16,27 @@
  * limitations under the License.
  */
 
-package io.art.model.configurator;
+package io.art.model.customizer;
 
+import io.art.model.module.*;
 import lombok.*;
+import java.util.function.*;
 
 @Getter
-@Builder
-public class ConfiguratorModel {
-    private final LoggingConfiguratorModel logging;
-    private final ServerConfiguratorModel server;
-    private final ValueConfiguratorModel value;
-    private final RsocketConfiguratorModel rsocket;
+@RequiredArgsConstructor
+public class ModuleCustomizer {
+    private final String mainModuleId;
+    private final ServerCustomizer serverCustomizer = new ServerCustomizer();
+
+    public ModuleCustomizer serve(UnaryOperator<ServerCustomizer> server) {
+        server.apply(serverCustomizer);
+        return this;
+    }
+
+    public ModuleModel apply() {
+        return ModuleModel.builder()
+                .mainModuleId(mainModuleId)
+                .serverModel(serverCustomizer.apply())
+                .build();
+    }
 }
