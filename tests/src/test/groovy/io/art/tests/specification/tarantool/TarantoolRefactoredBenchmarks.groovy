@@ -40,7 +40,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
     def "start modules"() {
         setup:
-        launch module()
+        launch module().make()
     }
 
     def "Storage1 CRUD(warmup)"() {

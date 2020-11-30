@@ -29,7 +29,8 @@ import java.util.function.*;
 public class ModuleModel {
     private final String mainModuleId;
     private final ServerModel serverModel;
-    private ConfiguratorCustomizer configuratorCustomizer;
+    @Builder.Default
+    private ConfiguratorCustomizer configuratorCustomizer = new ConfiguratorCustomizer();
 
     public ModuleModel configure(UnaryOperator<ConfiguratorCustomizer> configurator) {
         configuratorCustomizer = configurator.apply(new ConfiguratorCustomizer());
