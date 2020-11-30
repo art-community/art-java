@@ -63,14 +63,14 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
         if (!enabled.get()) {
             return;
         }
-        getLogger().info(format(EXECUTING_BLOCKING_SERVICE_MESSAGE, specification.getServiceId(), specification.getMethodId(), data));
+        getLogger().info(format(BLOCKING_SERVICE_REQUEST_MESSAGE, specification.getServiceId(), specification.getMethodId(), data));
     }
 
     private void logBlockingOutput(Object data, ServiceMethodSpecification specification) {
         if (!enabled.get()) {
             return;
         }
-        getLogger().info(format(BLOCKING_SERVICE_EXECUTED_MESSAGE, specification.getServiceId(), specification.getMethodId(), data));
+        getLogger().info(format(SERVICE_EXECUTED_MESSAGE, specification.getServiceId(), specification.getMethodId(), data));
     }
 
     private void logSubscribe(ServiceMethodSpecification specification) {
