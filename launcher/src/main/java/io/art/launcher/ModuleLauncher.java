@@ -47,6 +47,7 @@ import static io.art.logging.LoggingModule.*;
 import static io.art.model.constants.ModelConstants.Protocol.*;
 import static java.util.Optional.*;
 import java.util.concurrent.atomic.*;
+import io.art.core.module.Module;
 
 @UtilityClass
 public class ModuleLauncher {
@@ -89,14 +90,14 @@ public class ModuleLauncher {
     private ValueModule value(ImmutableArray<ConfigurationSource> sources, ValueCustomizer valueCustomizer) {
         ValueModule value = new ValueModule();
         value.configure(configurator -> configurator.from(sources));
-        ofNullable(valueCustomizer).ifPresent(model -> value.configure(configurator -> configurator.override(model.getConfiguration())));
+        ofNullable(valueCustomizer).ifPresent(customizer -> value.configure(configurator -> configurator.override(customizer.getConfiguration())));
         return value;
     }
 
     private LoggingModule logging(ImmutableArray<ConfigurationSource> sources, LoggingCustomizer loggingCustomizer) {
         LoggingModule logging = new LoggingModule();
         logging.configure(configurator -> configurator.from(sources));
-        ofNullable(loggingCustomizer).ifPresent(model -> logging.configure(configurator -> configurator.override(model.getConfiguration())));
+        ofNullable(loggingCustomizer).ifPresent(customizer -> logging.configure(configurator -> configurator.override(customizer.getConfiguration())));
         return logging;
     }
 
@@ -114,7 +115,7 @@ public class ModuleLauncher {
 
     private ServerModule server(ImmutableArray<ConfigurationSource> sources, ServerCustomizer serverCustomizer) {
         ServerModule server = new ServerModule();
-        ofNullable(serverCustomizer).ifPresent(model -> server.configure(configurator -> configurator.from(sources).override(model.getConfiguration())));
+        ofNullable(serverCustomizer).ifPresent(customizer -> server.configure(configurator -> configurator.from(sources).override(customizer.getConfiguration())));
         return server;
     }
 

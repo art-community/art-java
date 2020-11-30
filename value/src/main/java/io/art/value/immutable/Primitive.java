@@ -18,13 +18,17 @@
 
 package io.art.value.immutable;
 
+import io.art.core.constants.*;
 import io.art.value.constants.*;
 import io.art.value.constants.ValueConstants.ValueType.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.core.checker.EmptinessChecker.ifNotEmpty;
+import static io.art.core.checker.EmptinessChecker.letIfNotEmpty;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.value.constants.ValueConstants.ValueType.PrimitiveType.STRING;
+import static java.util.Objects.isNull;
 import java.util.*;
 
 @Getter
@@ -38,60 +42,62 @@ public class Primitive implements Value {
     private final PrimitiveType primitiveType;
 
     public String getString() {
-        if (Objects.isNull(value)) return null;
+        if (isNull(value)) return null;
         if (primitiveType != STRING) return value.toString();
         return (String) value;
     }
 
     public Integer getInt() {
-        if (Objects.isNull(value)) return null;
+        if (isNull(value)) return null;
         if (primitiveType == STRING) return Integer.parseInt((String) value);
         return ((Number) value).intValue();
     }
 
     public Short getShort() {
-        if (Objects.isNull(value)) return null;
+        if (isNull(value)) return null;
         if (primitiveType == STRING) return Short.parseShort((String) value);
         return ((Number) value).shortValue();
     }
 
     public Character getChar() {
-        return let(getByte(), value -> (char) (value & 0xFF));
+        String stringValue = getString();
+        if (isNull(stringValue)) return null;
+        return letIfNotEmpty(stringValue, string -> string.charAt(0), Character.MIN_VALUE);
     }
 
     public Double getDouble() {
-        if (Objects.isNull(value)) return null;
+        if (isNull(value)) return null;
         if (primitiveType == STRING) return Double.parseDouble((String) value);
         return ((Number) value).doubleValue();
     }
 
     public Float getFloat() {
-        if (Objects.isNull(value)) return null;
+        if (isNull(value)) return null;
         if (primitiveType == STRING) return Float.parseFloat((String) value);
         return ((Number) value).floatValue();
     }
 
     public Long getLong() {
-        if (Objects.isNull(value)) return null;
+        if (isNull(value)) return null;
         if (primitiveType == STRING) return Long.parseLong((String) value);
         return ((Number) value).longValue();
     }
 
     public Boolean getBool() {
-        if (Objects.isNull(value)) return null;
+        if (isNull(value)) return null;
         if (primitiveType == STRING) return Boolean.parseBoolean((String) value);
         return (Boolean) value;
     }
 
     public Byte getByte() {
-        if (Objects.isNull(value)) return null;
+        if (isNull(value)) return null;
         if (primitiveType == STRING) return Byte.parseByte((String) value);
         return ((Number) value).byteValue();
     }
 
     @Override
     public String toString() {
-        if (Objects.isNull(value)) return EMPTY_STRING;
+        if (isNull(value)) return EMPTY_STRING;
         return value.toString();
     }
 
@@ -104,10 +110,10 @@ public class Primitive implements Value {
         if (other == this) return true;
         if (other instanceof Primitive) {
             Primitive otherPrimitive = (Primitive) other;
-            if (Objects.isNull(this.value) && Objects.isNull(otherPrimitive.value)) {
+            if (isNull(this.value) && isNull(otherPrimitive.value)) {
                 return true;
             }
-            if (Objects.isNull(this.value)) {
+            if (isNull(this.value)) {
                 return false;
             }
             if (this.value == otherPrimitive.value) {

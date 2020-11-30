@@ -124,4 +124,25 @@ public class EmptinessChecker {
     public static <T> T ifEmpty(T value, Supplier<T> ifEmpty) {
         return isEmpty(value) ? ifEmpty.get() : value;
     }
+
+    public static <T,R> R letIfNotEmpty(T value, Function<T, R> action) {
+        if (isEmpty(value)) {
+            return null;
+        }
+        return action.apply(value);
+    }
+
+    public static <T,R> R letIfNotEmpty(T value, Function<T, R> action, R orElse) {
+        if (isEmpty(value)) {
+            return orElse;
+        }
+        return action.apply(value);
+    }
+
+    public static <T,R> R letIfNotEmpty(T value, Function<T, R> action, Supplier<R> orElse) {
+        if (isEmpty(value)) {
+            return orElse.get();
+        }
+        return action.apply(value);
+    }
 }

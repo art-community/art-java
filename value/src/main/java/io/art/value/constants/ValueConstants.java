@@ -19,8 +19,12 @@
 package io.art.value.constants;
 
 import io.art.value.exception.*;
+import io.art.value.factory.*;
+import io.art.value.immutable.*;
 import lombok.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
+import static io.art.value.factory.PrimitivesFactory.*;
 import static java.text.MessageFormat.*;
 
 public interface ValueConstants {
@@ -48,14 +52,18 @@ public interface ValueConstants {
         BYTE,
         BINARY;
 
+        @Getter
+        @AllArgsConstructor
         public enum PrimitiveType {
-            STRING,
-            LONG,
-            DOUBLE,
-            FLOAT,
-            INT,
-            BOOL,
-            BYTE;
+            STRING(stringPrimitive(EMPTY_STRING)),
+            LONG(longPrimitive(0L)),
+            DOUBLE(doublePrimitive(0.)),
+            FLOAT(floatPrimitive(0.f)),
+            INT(intPrimitive(0)),
+            BOOL(boolPrimitive(false)),
+            BYTE(bytePrimitive((byte) 0));
+
+            private final Primitive defaultValue;
 
             public static ValueType asValueType(PrimitiveType primitiveType) {
                 switch (primitiveType) {
