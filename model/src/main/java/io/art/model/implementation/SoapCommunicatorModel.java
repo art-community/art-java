@@ -16,19 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.model.server;
+package io.art.model.implementation;
 
-import io.art.core.collection.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.server.specification.ServiceMethodSpecification.*;
 
-@Getter
 @RequiredArgsConstructor
-public class ServerModel {
-    private final ImmutableMap<String, ServiceModel<?>> services;
+public class SoapCommunicatorModel {
+    private final String name;
+    private final Class<?> specification;
 
-    public ServiceMethodSpecificationBuilder implement(String serviceId, String methodId, ServiceMethodSpecificationBuilder current) {
-        return let(services.get(serviceId), service -> service.implement(methodId, current));
-    }
+
 }

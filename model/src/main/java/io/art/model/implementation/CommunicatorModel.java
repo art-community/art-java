@@ -16,11 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.model.communicator;
+package io.art.model.implementation;
 
 import lombok.*;
 import static java.util.function.UnaryOperator.identity;
-import static lombok.AccessLevel.PRIVATE;
 import java.util.function.*;
 
 @Getter

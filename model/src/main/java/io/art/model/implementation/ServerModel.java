@@ -16,19 +16,19 @@
  * limitations under the License.
  */
 
-package io.art.model.server;
+package io.art.model.implementation;
 
-import io.art.server.specification.ServiceMethodSpecification.*;
+import io.art.core.collection.*;
 import lombok.*;
-import java.util.function.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.server.specification.ServiceMethodSpecification.*;
 
 @Getter
 @RequiredArgsConstructor
-public class ServiceMethodModel {
-    private final String id;
-    private final Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
+public class ServerModel {
+    private final ImmutableMap<String, ServiceModel<?>> services;
 
-    public ServiceMethodSpecificationBuilder implement(ServiceMethodSpecificationBuilder builder) {
-        return decorator.apply(builder);
+    public ServiceMethodSpecificationBuilder implement(String serviceId, String methodId, ServiceMethodSpecificationBuilder current) {
+        return let(services.get(serviceId), service -> service.implement(methodId, current));
     }
 }

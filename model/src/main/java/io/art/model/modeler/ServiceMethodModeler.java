@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package io.art.model.customizer;
+package io.art.model.modeler;
 
-import io.art.model.server.*;
+import io.art.model.implementation.*;
 import io.art.server.decorator.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
@@ -30,15 +30,15 @@ import java.util.function.*;
 
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
-public class ServiceMethodCustomizer {
-    private final ServiceCustomizer<?> serviceCustomizer;
+public class ServiceMethodModeler {
+    private final ServiceModeler<?> serviceModeler;
     private final String id;
     private Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = identity();
 
-    public ServiceMethodCustomizer enableLogging() {
+    public ServiceMethodModeler enableLogging() {
         decorator = decorator.andThen(builder -> builder
-                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceCustomizer.getServiceClass().getSimpleName(), id), INPUT))
-                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceCustomizer.getServiceClass().getSimpleName(), id), OUTPUT)));
+                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModeler.getServiceClass().getSimpleName(), id), INPUT))
+                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModeler.getServiceClass().getSimpleName(), id), OUTPUT)));
         return this;
     }
 

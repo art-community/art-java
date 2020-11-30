@@ -16,7 +16,19 @@
  * limitations under the License.
  */
 
-package io.art.model.producer;
+package io.art.model.implementation;
 
-public class ProducerModel {
+import io.art.server.specification.ServiceMethodSpecification.*;
+import lombok.*;
+import java.util.function.*;
+
+@Getter
+@RequiredArgsConstructor
+public class ServiceMethodModel {
+    private final String id;
+    private final Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
+
+    public ServiceMethodSpecificationBuilder implement(ServiceMethodSpecificationBuilder builder) {
+        return decorator.apply(builder);
+    }
 }

@@ -18,31 +18,21 @@
 
 package io.art.model.customizer;
 
-import io.art.core.collection.*;
-import io.art.model.server.*;
-import io.art.rsocket.configuration.*;
+import io.art.server.configuration.*;
+import io.art.server.registry.*;
 import lombok.*;
-import static io.art.core.collection.ImmutableMap.*;
-import static io.art.core.collection.ImmutableSet.*;
-import static io.art.model.constants.ModelConstants.Protocol.*;
-import static java.util.function.Function.*;
-import static lombok.AccessLevel.*;
-import java.util.function.*;
 
-@Getter(value = PACKAGE)
 public class ServerCustomizer {
-    private final ImmutableSet.Builder<ServiceCustomizer<?>> services = immutableSetBuilder();
+    @Getter
+    private final CustomServerModuleConfiguration configuration = new CustomServerModuleConfiguration();
 
-    public ServerCustomizer rsocket(UnaryOperator<ServiceCustomizer<RsocketServiceConfiguration>> model) {
-        services.add(model.apply(new ServiceCustomizer<>(RSOCKET)));
+    public ServerCustomizer registry(ServiceSpecificationRegistry registry) {
+        configuration.registry = registry;
         return this;
     }
 
-    ServerModel apply() {
-        ImmutableMap<String, ServiceModel<?>> services = this.services.build()
-                .stream()
-                .map(ServiceCustomizer::apply)
-                .collect(immutableMapCollector(ServiceModel::getId, identity()));
-        return new ServerModel(services);
+    @Getter
+    public static class CustomServerModuleConfiguration extends ServerModuleConfiguration {
+        private ServiceSpecificationRegistry registry;
     }
 }

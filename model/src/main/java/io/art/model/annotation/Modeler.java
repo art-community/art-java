@@ -6,5 +6,5 @@ import java.lang.annotation.*;
 
 @Target(METHOD)
 @Retention(RUNTIME)
-public @interface Configurator {
+public @interface Modeler {
 }

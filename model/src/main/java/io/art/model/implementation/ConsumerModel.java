@@ -16,15 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.model.configurator;
+package io.art.model.implementation;
 
-import lombok.*;
-
-@Getter
-@Builder
-public class ConfiguratorModel {
-    private final LoggingConfiguratorModel logging;
-    private final ServerConfiguratorModel server;
-    private final ValueConfiguratorModel value;
-    private final RsocketConfiguratorModel rsocket;
+public class ConsumerModel {
 }

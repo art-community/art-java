@@ -16,27 +16,31 @@
  * limitations under the License.
  */
 
-package io.art.model.customizer;
+package io.art.model.implementation;
 
-import io.art.model.module.*;
+import io.art.model.customizer.*;
+import io.art.model.modeler.*;
 import lombok.*;
+import static io.art.model.constants.ModelConstants.*;
 import java.util.function.*;
 
 @Getter
-@RequiredArgsConstructor
-public class ModuleCustomizer {
+@Builder
+public class ModuleModel {
     private final String mainModuleId;
-    private final ServerCustomizer serverCustomizer = new ServerCustomizer();
+    private final ServerModel serverModel;
+    private ConfiguratorCustomizer configuratorCustomizer;
 
-    public ModuleCustomizer serve(UnaryOperator<ServerCustomizer> server) {
-        server.apply(serverCustomizer);
+    public ModuleModel configure(UnaryOperator<ConfiguratorCustomizer> configurator) {
+        configuratorCustomizer = configurator.apply(new ConfiguratorCustomizer());
         return this;
     }
 
-    public ModuleModel apply() {
-        return ModuleModel.builder()
-                .mainModuleId(mainModuleId)
-                .serverModel(serverCustomizer.apply())
-                .build();
+    public static ModuleModeler module() {
+        return new ModuleModeler(DEFAULT_MODULE_ID);
+    }
+
+    public static ModuleModeler module(String id) {
+        return new ModuleModeler(id);
     }
 }

@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package io.art.model.customizer;
+package io.art.model.modeler;
 
-import io.art.model.server.*;
+import io.art.model.implementation.*;
 import io.art.server.decorator.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
@@ -34,39 +34,39 @@ import java.util.function.*;
 
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
-public class ServiceCustomizer<T> {
+public class ServiceModeler<T> {
     private Class<?> serviceClass;
     private String id;
     private boolean includeAllMethods;
     private final Protocol protocol;
-    private final Map<String, ServiceMethodCustomizer> concreteMethodCustomizers = map();
-    private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> anyMethodDecorator = (id, builder) -> builder;
+    private final Map<String, ServiceMethodModeler> concreteMethods = map();
+    private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> anyMethod = (id, builder) -> builder;
 
-    public ServiceCustomizer<T> to(Class<?> service) {
+    public ServiceModeler<T> to(Class<?> service) {
         return to(service, identity());
     }
 
-    public ServiceCustomizer<T> to(Class<?> service, UnaryOperator<ServiceCustomizer<T>> decorator) {
+    public ServiceModeler<T> to(Class<?> service, UnaryOperator<ServiceModeler<T>> operator) {
         this.id = service.getSimpleName();
         this.serviceClass = service;
         this.includeAllMethods = true;
-        return decorator.apply(this);
+        return operator.apply(this);
     }
 
-    public ServiceCustomizer<T> to(Class<?> service, String method) {
+    public ServiceModeler<T> to(Class<?> service, String method) {
         return to(service, method, identity());
     }
 
-    public ServiceCustomizer<T> to(Class<?> service, String method, UnaryOperator<ServiceMethodCustomizer> customizer) {
+    public ServiceModeler<T> to(Class<?> service, String method, UnaryOperator<ServiceMethodModeler> operator) {
         this.id = service.getSimpleName();
         this.serviceClass = service;
-        this.concreteMethodCustomizers.put(method, customizer.apply(new ServiceMethodCustomizer(this, method)));
+        this.concreteMethods.put(method, operator.apply(new ServiceMethodModeler(this, method)));
         return this;
     }
 
-    public ServiceCustomizer<T> enableLogging() {
-        BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> current = this.anyMethodDecorator;
-        anyMethodDecorator = (method, builder) -> {
+    public ServiceModeler<T> enableLogging() {
+        BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> current = this.anyMethod;
+        anyMethod = (method, builder) -> {
             builder = current.apply(method, builder);
             return builder
                     .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), INPUT))
@@ -77,8 +77,8 @@ public class ServiceCustomizer<T> {
 
     ServiceModel<T> apply() {
         return ServiceModel.<T>builder()
-                .anyMethodDecorator(anyMethodDecorator)
-                .concreteMethods(concreteMethodCustomizers.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().apply())))
+                .anyMethodDecorator(anyMethod)
+                .concreteMethods(concreteMethods.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().apply())))
                 .includeAllMethods(includeAllMethods)
                 .id(id)
                 .serviceClass(serviceClass)

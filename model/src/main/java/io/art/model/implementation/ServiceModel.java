@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.model.server;
+package io.art.model.implementation;
 
 import io.art.core.collection.*;
 import io.art.model.constants.ModelConstants.*;

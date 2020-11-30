@@ -16,17 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.model.communicator;
+package io.art.model.implementation;
 
-import io.art.model.exception.*;
-import lombok.*;
-
-@RequiredArgsConstructor
-public class HttpCommunicatorModel {
-    private final String name;
-    private final Class<?> specification;
-
-    public HttpCommunicatorModel communicator() {
-        throw new ModelWasNotImplementedException(HttpCommunicatorModel.class);
-    }
+public class StorageModel {
 }

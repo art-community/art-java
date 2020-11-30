@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.model.storage;
+package io.art.model.implementation;
 
-public class StorageModel {
+public class ProducerModel {
 }

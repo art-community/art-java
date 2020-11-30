@@ -16,7 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.model.consumer;
+package io.art.model.implementation;
 
-public class ConsumerModel {
+import lombok.*;
+
+@RequiredArgsConstructor
+public class RsocketCommunicatorModel {
+    private final String name;
+    private final Class<?> specification;
 }

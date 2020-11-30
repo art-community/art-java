@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.model.communicator;
+package io.art.model.implementation;
 
 import lombok.*;
 
 @RequiredArgsConstructor
-public class SoapCommunicatorModel {
+public class GrpcCommunicatorModel {
     private final String name;
     private final Class<?> specification;
 

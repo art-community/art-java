@@ -16,13 +16,27 @@
  * limitations under the License.
  */
 
-package io.art.model.exception;
+package io.art.model.modeler;
 
-import static io.art.model.constants.ModelConstants.ExceptionMessages.*;
-import static java.text.MessageFormat.*;
+import io.art.model.implementation.*;
+import lombok.*;
+import java.util.function.*;
 
-public class ModelWasNotImplementedException extends RuntimeException {
-    public ModelWasNotImplementedException(Class<?> model) {
-        super(format(MODEL_WAS_NOT_IMPLEMENTED, model.getName()));
+@Getter
+@RequiredArgsConstructor
+public class ModuleModeler {
+    private final String mainModuleId;
+    private final ServerModeler server = new ServerModeler();
+
+    public ModuleModeler serve(UnaryOperator<ServerModeler> server) {
+        server.apply(this.server);
+        return this;
+    }
+
+    public ModuleModel make() {
+        return ModuleModel.builder()
+                .mainModuleId(mainModuleId)
+                .serverModel(server.toModel())
+                .build();
     }
 }

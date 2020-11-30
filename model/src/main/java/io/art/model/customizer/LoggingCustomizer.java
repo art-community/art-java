@@ -16,29 +16,29 @@
  * limitations under the License.
  */
 
-package io.art.model.configurator;
+package io.art.model.customizer;
 
 import io.art.logging.*;
 import lombok.*;
 
-public class LoggingConfiguratorModel {
+public class LoggingCustomizer {
     @Getter
     private final CustomLoggingModuleConfiguration configuration = new CustomLoggingModuleConfiguration();
 
-    public LoggingConfiguratorModel colored() {
+    public LoggingCustomizer colored() {
         return colored(true);
     }
 
-    public LoggingConfiguratorModel colored(boolean colored) {
+    public LoggingCustomizer colored(boolean colored) {
         configuration.colored = colored;
         return this;
     }
 
-    public LoggingConfiguratorModel asynchronous() {
+    public LoggingCustomizer asynchronous() {
         return asynchronous(true);
     }
 
-    public LoggingConfiguratorModel asynchronous(boolean asynchronous) {
+    public LoggingCustomizer asynchronous(boolean asynchronous) {
         configuration.asynchronous = asynchronous;
         return this;
     }

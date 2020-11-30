@@ -16,23 +16,22 @@
  * limitations under the License.
  */
 
-package io.art.model.configurator;
+package io.art.model.customizer;
 
-import io.art.server.configuration.*;
-import io.art.server.registry.*;
+import io.art.rsocket.configuration.*;
 import lombok.*;
 
-public class ServerConfiguratorModel {
+public class RsocketCustomizer {
     @Getter
-    private final CustomServerModuleConfiguration configuration = new CustomServerModuleConfiguration();
+    private final CustomRsocketModuleConfiguration configuration = new CustomRsocketModuleConfiguration();
 
-    public ServerConfiguratorModel registry(ServiceSpecificationRegistry registry) {
-        configuration.registry = registry;
+    public RsocketCustomizer activateServer() {
+        configuration.activateServer = true;
         return this;
     }
 
     @Getter
-    public static class CustomServerModuleConfiguration extends ServerModuleConfiguration {
-        private ServiceSpecificationRegistry registry;
+    public static class CustomRsocketModuleConfiguration extends RsocketModuleConfiguration {
+        private boolean activateServer;
     }
 }

@@ -19,18 +19,17 @@
 package io.art.example;
 
 import io.art.model.annotation.*;
-import io.art.model.customizer.*;
-import io.art.model.module.*;
-import static io.art.model.module.ModuleModel.*;
+import io.art.model.implementation.*;
+import io.art.model.modeler.*;
+import static io.art.model.implementation.ModuleModel.*;
 
 @Module
 public class Example {
-    @Configurator
-    public static ModuleModel configure() {
+    @Modeler
+    public static ModuleModel model() {
         return module()
                 .serve(server -> server
-                        .rsocket(rsocket -> rsocket.to(Service.class, ServiceCustomizer::enableLogging))
-                )
-                .apply();
+                        .rsocket(rsocket -> rsocket.to(Service.class, ServiceModeler::enableLogging)))
+                .make();
     }
 }

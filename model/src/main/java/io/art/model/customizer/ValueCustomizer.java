@@ -16,14 +16,17 @@
  * limitations under the License.
  */
 
-package io.art.model.communicator;
+package io.art.model.customizer;
 
+import io.art.value.configuration.*;
 import lombok.*;
 
-@RequiredArgsConstructor
-public class GrpcCommunicatorModel {
-    private final String name;
-    private final Class<?> specification;
+public class ValueCustomizer {
+    @Getter
+    private final CustomValueModuleConfiguration configuration = new CustomValueModuleConfiguration();
 
-
+    @Getter
+    @RequiredArgsConstructor
+    public static class CustomValueModuleConfiguration extends ValueModuleConfiguration {
+    }
 }

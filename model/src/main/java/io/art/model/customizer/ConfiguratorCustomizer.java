@@ -18,7 +18,6 @@
 
 package io.art.model.customizer;
 
-import io.art.model.configurator.*;
 import lombok.*;
 import lombok.experimental.*;
 import static java.util.function.UnaryOperator.*;
@@ -28,17 +27,8 @@ import java.util.function.*;
 @Setter
 @Accessors(fluent = true)
 public class ConfiguratorCustomizer {
-    private UnaryOperator<LoggingConfiguratorModel> logging = identity();
-    private UnaryOperator<ServerConfiguratorModel> server = identity();
-    private UnaryOperator<ValueConfiguratorModel> value = identity();
-    private UnaryOperator<RsocketConfiguratorModel> rsocket = identity();
-
-    public ConfiguratorModel apply() {
-        return ConfiguratorModel.builder()
-                .logging(logging.apply(new LoggingConfiguratorModel()))
-                .server(server.apply(new ServerConfiguratorModel()))
-                .value(value.apply(new ValueConfiguratorModel()))
-                .rsocket(rsocket.apply(new RsocketConfiguratorModel()))
-                .build();
-    }
+    private UnaryOperator<LoggingCustomizer> logging = identity();
+    private UnaryOperator<ServerCustomizer> server = identity();
+    private UnaryOperator<ValueCustomizer> value = identity();
+    private UnaryOperator<RsocketCustomizer> rsocket = identity();
 }
