@@ -21,7 +21,7 @@ package io.art.tarantool.storage.dao.service;
 import lombok.experimental.*;
 import org.tarantool.*;
 import io.art.tarantool.configuration.lua.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.ArrayFactory.fixedArrayOf;
 import static io.art.tarantool.storage.dao.caller.TarantoolFunctionCaller.*;
 import static io.art.tarantool.configuration.lua.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;

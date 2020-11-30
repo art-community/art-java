@@ -22,6 +22,7 @@ import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
 import io.art.tarantool.exception.*;
+import static io.art.core.builder.MapBuilder.mapBuilder;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.CharacterConstants.SINGLE_QUOTE;
@@ -29,7 +30,7 @@ import static io.art.core.constants.StringConstants.CLOSING_BRACES;
 import static io.art.core.constants.StringConstants.COMMA;
 import static io.art.core.constants.StringConstants.EQUAL;
 import static io.art.core.constants.StringConstants.OPENING_BRACES;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.MapFactory.*;
 import static java.util.stream.Collectors.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.*;
@@ -62,20 +63,20 @@ public class TarantoolIndexConfiguration {
     private String sequence;
 
     public String toCreateIndexLua() {
-        Map<String, Object> templateContext = cast(mapOf()
-                .add(INDEX_NAME, indexName)
-                .add(SPACE_NAME, spaceName)
-                .add(TYPE, type)
-                .add(ID_FIELD, id)
-                .add(UNIQUE, unique)
-                .add(DISTANCE, distance)
-                .add(DIMENSION, dimension)
-                .add(BLOOM_FPR, bloomFpr)
-                .add(PAGE_SIZE, pageSize)
-                .add(RANGE_SIZE, rangeSize)
-                .add(RUN_COUNT_PER_LEVEL, runCountPerLevel)
-                .add(RUN_SIZE_RATIO, runSizeRatio)
-                .add(SEQUENCE, sequence));
+        Map<String, Object> templateContext = cast(mapBuilder()
+                .with(INDEX_NAME, indexName)
+                .with(SPACE_NAME, spaceName)
+                .with(TYPE, type)
+                .with(ID_FIELD, id)
+                .with(UNIQUE, unique)
+                .with(DISTANCE, distance)
+                .with(DIMENSION, dimension)
+                .with(BLOOM_FPR, bloomFpr)
+                .with(PAGE_SIZE, pageSize)
+                .with(RANGE_SIZE, rangeSize)
+                .with(RUN_COUNT_PER_LEVEL, runCountPerLevel)
+                .with(RUN_SIZE_RATIO, runSizeRatio)
+                .with(SEQUENCE, sequence));
         if (isNotEmpty(parts)) {
             templateContext.put(PARTS, OPENING_BRACES + parts.stream().map(Part::toString).collect(joining(COMMA)) + CLOSING_BRACES);
         }
@@ -95,20 +96,20 @@ public class TarantoolIndexConfiguration {
     }
 
     public String toAlterIndexLua() {
-        Map<String, Object> templateContext = cast(mapOf()
-                .add(INDEX_NAME, indexName)
-                .add(SPACE_NAME, spaceName)
-                .add(TYPE, type)
-                .add(ID_FIELD, id)
-                .add(UNIQUE, unique)
-                .add(DISTANCE, distance)
-                .add(DIMENSION, dimension)
-                .add(BLOOM_FPR, bloomFpr)
-                .add(PAGE_SIZE, pageSize)
-                .add(RANGE_SIZE, rangeSize)
-                .add(RUN_COUNT_PER_LEVEL, runCountPerLevel)
-                .add(RUN_SIZE_RATIO, runSizeRatio)
-                .add(SEQUENCE, sequence));
+        Map<String, Object> templateContext = cast(mapBuilder()
+                .with(INDEX_NAME, indexName)
+                .with(SPACE_NAME, spaceName)
+                .with(TYPE, type)
+                .with(ID_FIELD, id)
+                .with(UNIQUE, unique)
+                .with(DISTANCE, distance)
+                .with(DIMENSION, dimension)
+                .with(BLOOM_FPR, bloomFpr)
+                .with(PAGE_SIZE, pageSize)
+                .with(RANGE_SIZE, rangeSize)
+                .with(RUN_COUNT_PER_LEVEL, runCountPerLevel)
+                .with(RUN_SIZE_RATIO, runSizeRatio)
+                .with(SEQUENCE, sequence));
         if (isNotEmpty(parts)) {
             templateContext.put(PARTS, OPENING_BRACES + parts.stream().map(Part::toString).collect(joining(COMMA)) + CLOSING_BRACES);
         }
@@ -128,9 +129,9 @@ public class TarantoolIndexConfiguration {
     }
 
     public String toManageIndexLua() {
-        Map<String, Object> templateContext = cast(mapOf()
-                .add(INDEX_NAME, indexName)
-                .add(SPACE_NAME, spaceName));
+        Map<String, Object> templateContext = cast(mapBuilder()
+                .with(INDEX_NAME, indexName)
+                .with(SPACE_NAME, spaceName));
         StringWriter templateWriter = new StringWriter();
         try {
             new PebbleEngine.Builder()

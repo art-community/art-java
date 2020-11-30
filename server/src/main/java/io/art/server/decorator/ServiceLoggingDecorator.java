@@ -63,21 +63,21 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
         if (!enabled.get()) {
             return;
         }
-        getLogger().info(format(EXECUTING_BLOCKING_SERVICE_MESSAGE, specification.getServiceId(), specification.getMethodId(), data));
+        getLogger().info(format(BLOCKING_SERVICE_REQUEST_MESSAGE, specification.getServiceId(), specification.getMethodId(), data));
     }
 
     private void logBlockingOutput(Object data, ServiceMethodSpecification specification) {
         if (!enabled.get()) {
             return;
         }
-        getLogger().info(format(BLOCKING_SERVICE_EXECUTED_MESSAGE, specification.getServiceId(), specification.getMethodId(), data));
+        getLogger().info(format(SERVICE_EXECUTED_MESSAGE, specification.getServiceId(), specification.getMethodId(), data));
     }
 
-    private void logReactiveSubscribe(ServiceMethodSpecification specification) {
+    private void logSubscribe(ServiceMethodSpecification specification) {
         if (!enabled.get()) {
             return;
         }
-        getLogger().info(format(REACTIVE_SERVICE_SUBSCRIBED_MESSAGE, specification.getServiceId(), specification.getMethodId()));
+        getLogger().info(format(SERVICE_SUBSCRIBED_MESSAGE, specification.getServiceId(), specification.getMethodId()));
     }
 
     private void logReactiveInput(Object data, ServiceMethodSpecification specification) {
@@ -112,25 +112,26 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
                 switch (specification.getInputMode()) {
                     case BLOCKING:
                         return input -> input
-                                .doOnSubscribe(subscription -> logReactiveSubscribe(specification))
+                                .doOnSubscribe(subscription -> logSubscribe(specification))
                                 .doOnNext(data -> logBlockingInput(data, specification))
                                 .doOnError(exception -> logException(exception, specification));
                     case MONO:
                     case FLUX:
                         return input -> input
-                                .doOnSubscribe(subscription -> logReactiveSubscribe(specification))
+                                .doOnSubscribe(subscription -> logSubscribe(specification))
                                 .doOnNext(data -> logReactiveInput(data, specification))
                                 .doOnError(exception -> logException(exception, specification));
                 }
+                break;
             case OUTPUT:
-                switch (specification.getInputMode()) {
+                switch (specification.getOutputMode()) {
                     case BLOCKING:
-                        return input -> input
+                        return output -> output
                                 .doOnNext(data -> logBlockingOutput(data, specification))
                                 .doOnError(exception -> logException(exception, specification));
                     case MONO:
                     case FLUX:
-                        return input -> input
+                        return output -> output
                                 .doOnNext(data -> logReactiveOutput(data, specification))
                                 .doOnError(exception -> logException(exception, specification));
                 }

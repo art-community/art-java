@@ -18,6 +18,7 @@
 
 package io.art.value.tuple;
 
+import io.art.core.collection.*;
 import io.art.value.builder.*;
 import io.art.value.constants.ValueConstants.*;
 import io.art.value.exception.*;
@@ -26,7 +27,7 @@ import io.art.value.tuple.schema.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
-import static io.art.value.factory.ArrayFactory.*;
+import static io.art.value.factory.ArrayValueFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.BinaryValue.*;
 import static io.art.value.immutable.Entity.*;
@@ -80,7 +81,7 @@ public class PlainTupleReader {
         if (isNull(schema)) return null;
         if (isEmpty(entity)) return null;
         EntityBuilder entityBuilder = entityBuilder();
-        List<EntitySchema.EntityFieldSchema> fieldsSchema = schema.getFieldsSchema();
+        ImmutableArray<EntitySchema.EntityFieldSchema> fieldsSchema = schema.getFieldsSchema();
         for (int index = 0, fieldsSchemaSize = fieldsSchema.size(); index < fieldsSchemaSize; index++) {
             EntitySchema.EntityFieldSchema fieldSchema = fieldsSchema.get(index);
             Object value = entity.get(index);

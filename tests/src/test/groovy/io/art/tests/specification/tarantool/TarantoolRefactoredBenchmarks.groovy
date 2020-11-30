@@ -1,10 +1,8 @@
 
 package io.art.tests.specification.tarantool
 
-import io.art.launcher.ModuleLauncher
-import io.art.model.module.ModuleModel
+
 import io.art.value.immutable.Entity
-import io.art.value.tuple.PlainTupleWriter
 import org.tarantool.TarantoolClient
 import org.tarantool.TarantoolClusterClientConfig
 import io.art.refactored.configuration.TarantoolInstanceConfiguration
@@ -19,7 +17,7 @@ import spock.lang.Specification
 import java.util.concurrent.Future
 
 import static io.art.launcher.ModuleLauncher.launch
-import static io.art.model.module.ModuleModel.*
+import static io.art.model.implementation.ModuleModel.*
 import static io.art.refactored.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
 import static io.art.refactored.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
 import static io.art.refactored.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
@@ -42,7 +40,7 @@ class TarantoolRefactoredBenchmarks extends Specification {
 
     def "start modules"() {
         setup:
-        launch module()
+        launch module().make()
     }
 
     def "Storage1 CRUD(warmup)"() {

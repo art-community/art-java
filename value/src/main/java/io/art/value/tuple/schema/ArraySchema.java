@@ -18,35 +18,35 @@
 
 package io.art.value.tuple.schema;
 
-import com.google.common.collect.*;
+import io.art.core.collection.*;
+import io.art.core.factory.*;
 import io.art.value.immutable.*;
 import lombok.*;
-import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.CollectionsFactory.dynamicArrayOf;
+import static io.art.core.collection.ImmutableArray.immutableArrayCollector;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import java.util.*;
 
 @Getter
 public class ArraySchema extends ValueSchema {
-    private final ImmutableList<ValueSchema> elements;
+    private final ImmutableArray<ValueSchema> elements;
 
     ArraySchema(ArrayValue array) {
         super(ARRAY);
         elements = array.asStream()
                 .map(ValueSchema::fromValue)
                 .filter(Objects::nonNull)
-                .collect(toImmutableList());
+                .collect(immutableArrayCollector());
     }
 
-    ArraySchema(ImmutableList<ValueSchema> elements) {
+    ArraySchema(ImmutableArray<ValueSchema> elements) {
         super(ARRAY);
         this.elements = elements;
     }
 
     @Override
     public List<?> toTuple() {
-        List<?> tuple = dynamicArrayOf(getType().ordinal());
+        List<?> tuple = ArrayFactory.dynamicArray(getType().ordinal());
         elements.stream().map(ValueSchema::toTuple).forEach(value -> tuple.add(cast(value)));
         return tuple;
     }
@@ -57,6 +57,6 @@ public class ArraySchema extends ValueSchema {
                 .map(element -> (List<?>) element)
                 .map(ValueSchema::fromTuple)
                 .filter(Objects::nonNull)
-                .collect(toImmutableList()));
+                .collect(immutableArrayCollector()));
     }
 }

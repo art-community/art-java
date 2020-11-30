@@ -19,7 +19,7 @@ package io.art.core.converter;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.determinant.SystemDeterminant.*;
+import static io.art.core.determiner.SystemDeterminer.*;
 
 @UtilityClass
 public class WslPathConverter {

@@ -18,16 +18,16 @@
 
 package io.art.xml.rules.builder;
 
-import lombok.*;
 import io.art.xml.constants.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import lombok.*;
+import static io.art.core.factory.SetFactory.set;
 import java.util.*;
 
 @RequiredArgsConstructor
 class XmlEntityRuleBuilderImplementation implements XmlEntityRuleBuilder {
     private final XmlEntityMappingBuilderImplementation mappingBuilder;
     private final Set<XmlEntityMappingTargets> parsedParts;
-    private final Set<String> inputs = setOf();
+    private final Set<String> inputs = set();
 
     @Override
     public XmlEntityRuleBuilder input(String oldValue) {

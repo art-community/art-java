@@ -18,15 +18,16 @@
 
 package io.art.server.configuration;
 
-import com.google.common.collect.*;
+import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.server.model.*;
 import io.art.server.registry.*;
 import lombok.*;
 import reactor.core.scheduler.*;
-import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.checker.NullityChecker.apply;
+import static io.art.core.collection.ImmutableMap.emptyImmutableMap;
+import static io.art.core.collection.ImmutableMap.immutableMapCollector;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.Defaults.*;
 import static java.util.Optional.*;
@@ -35,7 +36,7 @@ import java.util.*;
 
 @Getter
 public class ServerModuleConfiguration implements ModuleConfiguration {
-    private ImmutableMap<String, ServiceConfiguration> configurations = ImmutableMap.of();
+    private ImmutableMap<String, ServiceConfiguration> configurations = emptyImmutableMap();
     private Scheduler scheduler;
     private ServiceSpecificationRegistry registry = new ServiceSpecificationRegistry();
 
@@ -51,8 +52,8 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
                     .map(services -> services
                             .entrySet()
                             .stream()
-                            .collect(toImmutableMap(Map.Entry::getKey, entry -> ServiceConfiguration.from(entry.getValue()))))
-                    .orElse(ImmutableMap.of());
+                            .collect(immutableMapCollector(Map.Entry::getKey, entry -> ServiceConfiguration.from(entry.getValue()))))
+                    .orElse(emptyImmutableMap());
             return this;
         }
 

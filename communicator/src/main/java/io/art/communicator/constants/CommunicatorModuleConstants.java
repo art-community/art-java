@@ -28,6 +28,11 @@ public interface CommunicatorModuleConstants {
         Scheduler DEFAULT_COMMUNICATOR_SCHEDULER = newBoundedElastic(DEFAULT_THREAD_POOL_SIZE, MAX_VALUE, "communicator");
     }
 
+    interface ExceptionMessages {
+        String UNKNOWN_INPUT_MODE = "Unknown input mode: ''{0}''";
+        String UNKNOWN_OUTPUT_MODE = "Unknown output mode: ''{0}''";
+    }
+
     interface ConfigurationKeys {
         String COMMUNICATOR_SECTION = "communicator";
         String TARGETS_KEY = "targets";

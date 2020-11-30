@@ -22,10 +22,11 @@ import com.mitchellbosecke.pebble.*;
 import com.mitchellbosecke.pebble.loader.*;
 import lombok.*;
 import io.art.tarantool.exception.*;
+import static io.art.core.builder.MapBuilder.mapBuilder;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.CharacterConstants.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.factory.MapFactory.*;
 import static java.util.stream.Collectors.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.*;
@@ -52,14 +53,14 @@ public class TarantoolSpaceConfiguration {
     private String user;
 
     public String toCreateSpaceLua() {
-        Map<String, Object> templateContext = cast(mapOf()
-                .add(SPACE_NAME, spaceName)
-                .add(ID_FIELD, id)
-                .add(TEMPORARY, temporary)
-                .add(ENGINE, engine)
-                .add(FIELD_COUNT, fieldCount)
-                .add(IS_LOCAL, isLocal)
-                .add(USER, user));
+        Map<String, Object> templateContext = cast(mapBuilder()
+                .with(SPACE_NAME, spaceName)
+                .with(ID_FIELD, id)
+                .with(TEMPORARY, temporary)
+                .with(ENGINE, engine)
+                .with(FIELD_COUNT, fieldCount)
+                .with(IS_LOCAL, isLocal)
+                .with(USER, user));
         if (!isEmpty(formats)) {
             templateContext.put(FORMAT, OPENING_BRACES + formats.stream().map(Format::toString).collect(joining()) + CLOSING_BRACES);
         }
@@ -80,9 +81,9 @@ public class TarantoolSpaceConfiguration {
 
     public String toFormatSpaceLua() {
         StringWriter templateWriter = new StringWriter();
-        Map<String, Object> templateContext = cast(mapOf()
-                .add(SPACE_NAME, spaceName)
-                .add(FORMAT, OPENING_BRACES + formats.stream().map(Format::toString).collect(joining()) + CLOSING_BRACES));
+        Map<String, Object> templateContext = cast(mapBuilder()
+                .with(SPACE_NAME, spaceName)
+                .with(FORMAT, OPENING_BRACES + formats.stream().map(Format::toString).collect(joining()) + CLOSING_BRACES));
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())
@@ -99,7 +100,7 @@ public class TarantoolSpaceConfiguration {
 
     public String toManageSpaceLua() {
         StringWriter templateWriter = new StringWriter();
-        Map<String, Object> templateContext = cast(mapOf().add(SPACE_NAME, spaceName));
+        Map<String, Object> templateContext = cast(mapBuilder().with(SPACE_NAME, spaceName).build());
         try {
             new PebbleEngine.Builder()
                     .loader(new ClasspathLoader())

@@ -18,7 +18,7 @@
 
 package io.art.rsocket.configuration;
 
-import com.google.common.collect.*;
+import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.rsocket.constants.*;
 import io.art.rsocket.interceptor.*;
@@ -30,9 +30,10 @@ import io.rsocket.plugins.*;
 import lombok.*;
 import reactor.netty.http.server.*;
 import reactor.netty.tcp.*;
-import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableMap.emptyImmutableMap;
+import static io.art.core.collection.ImmutableMap.immutableMapCollector;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
@@ -118,8 +119,8 @@ public class RsocketServerConfiguration {
         configuration.services = ofNullable(source.getNestedMap(SERVICES_KEY))
                 .map(configurations -> configurations.entrySet()
                         .stream()
-                        .collect(toImmutableMap(Map.Entry::getKey, entry -> RsocketServiceConfiguration.from(configuration, entry.getValue()))))
-                .orElse(ImmutableMap.of());
+                        .collect(immutableMapCollector(Map.Entry::getKey, entry -> RsocketServiceConfiguration.from(configuration, entry.getValue()))))
+                .orElse(emptyImmutableMap());
 
         return configuration;
     }

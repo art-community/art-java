@@ -18,19 +18,18 @@
 
 package io.art.launcher;
 
-import com.google.common.collect.*;
 import io.art.communicator.module.*;
 import io.art.configurator.module.*;
+import io.art.core.collection.*;
 import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.context.*;
 import io.art.core.lazy.*;
-import io.art.core.module.Module;
+import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.json.module.*;
 import io.art.logging.*;
-import io.art.model.configurator.*;
-import io.art.model.module.*;
-import io.art.model.server.*;
+import io.art.model.customizer.*;
+import io.art.model.implementation.*;
 import io.art.rsocket.module.*;
 import io.art.server.module.*;
 import io.art.tarantool.module.*;
@@ -38,6 +37,7 @@ import io.art.value.module.*;
 import io.art.xml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
@@ -55,81 +55,85 @@ public class ModuleLauncher {
     public static void launch(ModuleModel model) {
         if (launched.compareAndSet(false, true)) {
             ConfiguratorModule configurator = new ConfiguratorModule();
-            ImmutableList<ConfigurationSource> sources = configurator
+            ImmutableArray<ConfigurationSource> sources = configurator
                     .loadConfigurations()
                     .configuration()
                     .orderedSources();
-            ConfiguratorModel configuratorModel = model.getConfiguratorModel();
-            ValueConfiguratorModel valueModel = configuratorModel.value().apply(new ValueConfiguratorModel());
-            LoggingConfiguratorModel loggingModel = configuratorModel.logging().apply(new LoggingConfiguratorModel());
-            ServerConfiguratorModel serverModel = configuratorModel.server().apply(new ServerConfiguratorModel());
-            RsocketConfiguratorModel rsocketModel = configuratorModel.rsocket().apply(new RsocketConfiguratorModel());
-            ImmutableList.Builder<Module> modules = ImmutableList.builder();
+            ConfiguratorCustomizer configuratorCustomizer = model.getConfiguratorCustomizer();
+            ValueCustomizer valueCustomizer = configuratorCustomizer.value().apply(new ValueCustomizer());
+            LoggingCustomizer loggingCustomizer = configuratorCustomizer.logging().apply(new LoggingCustomizer());
+            ServerCustomizer serverCustomizer = configuratorCustomizer.server().apply(new ServerCustomizer());
+            RsocketCustomizer rsocketCustomizer = configuratorCustomizer.rsocket().apply(new RsocketCustomizer());
+            ImmutableArray.Builder<Module> modules = immutableArrayBuilder();
             modules.add(
                     configurator,
-                    value(sources, valueModel),
-                    logging(sources, loggingModel),
+                    value(sources, valueCustomizer),
+                    logging(sources, loggingCustomizer),
                     json(sources),
                     xml(sources),
-                    server(sources, serverModel),
+                    server(sources, serverCustomizer),
                     communicator(sources),
-                    rsocket(sources, model.getServerModel(), rsocketModel),
+                    rsocket(sources, model.getServerModel(), rsocketCustomizer),
                     tarantool(sources)
             );
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
             initialize(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
+            boolean needBlock = rsocketCustomizer.getConfiguration().isActivateServer();
+            if (needBlock) {
+                block();
+            }
         }
     }
 
-    private ValueModule value(ImmutableList<ConfigurationSource> sources, ValueConfiguratorModel valueModel) {
+    private ValueModule value(ImmutableArray<ConfigurationSource> sources, ValueCustomizer valueCustomizer) {
         ValueModule value = new ValueModule();
         value.configure(configurator -> configurator.from(sources));
-        ofNullable(valueModel).ifPresent(model -> value.configure(configurator -> configurator.override(model.getConfiguration())));
+        ofNullable(valueCustomizer).ifPresent(model -> value.configure(configurator -> configurator.override(model.getConfiguration())));
         return value;
     }
 
-    private LoggingModule logging(ImmutableList<ConfigurationSource> sources, LoggingConfiguratorModel loggingModel) {
+    private LoggingModule logging(ImmutableArray<ConfigurationSource> sources, LoggingCustomizer loggingCustomizer) {
         LoggingModule logging = new LoggingModule();
         logging.configure(configurator -> configurator.from(sources));
-        ofNullable(loggingModel).ifPresent(model -> logging.configure(configurator -> configurator.override(model.getConfiguration())));
+        ofNullable(loggingCustomizer).ifPresent(model -> logging.configure(configurator -> configurator.override(model.getConfiguration())));
         return logging;
     }
 
-    private JsonModule json(ImmutableList<ConfigurationSource> sources) {
+    private JsonModule json(ImmutableArray<ConfigurationSource> sources) {
         JsonModule json = new JsonModule();
         json.configure(configurator -> configurator.from(sources));
         return json;
     }
 
-    private XmlModule xml(ImmutableList<ConfigurationSource> sources) {
+    private XmlModule xml(ImmutableArray<ConfigurationSource> sources) {
         XmlModule xml = new XmlModule();
         xml.configure(configurator -> configurator.from(sources));
         return xml;
     }
 
-    private ServerModule server(ImmutableList<ConfigurationSource> sources, ServerConfiguratorModel serverModel) {
+    private ServerModule server(ImmutableArray<ConfigurationSource> sources, ServerCustomizer serverCustomizer) {
         ServerModule server = new ServerModule();
-        ofNullable(serverModel).ifPresent(model -> server.configure(configurator -> configurator.from(sources).override(model.getConfiguration())));
+        ofNullable(serverCustomizer).ifPresent(model -> server.configure(configurator -> configurator.from(sources).override(model.getConfiguration())));
         return server;
     }
 
-    private CommunicatorModule communicator(ImmutableList<ConfigurationSource> sources) {
+    private CommunicatorModule communicator(ImmutableArray<ConfigurationSource> sources) {
         CommunicatorModule communicator = new CommunicatorModule();
         communicator.configure(configurator -> configurator.from(sources));
         return communicator;
     }
 
-    private RsocketModule rsocket(ImmutableList<ConfigurationSource> sources, ServerModel serverModel, RsocketConfiguratorModel rsocketModel) {
+    private RsocketModule rsocket(ImmutableArray<ConfigurationSource> sources, ServerModel serverModel, RsocketCustomizer rsocketCustomizer) {
         RsocketModule rsocket = new RsocketModule();
-        if (serverModel.getServices().stream().anyMatch(service -> service.getProtocol() == RSOCKET)) {
-            rsocketModel.activateServer();
+        if (serverModel.getServices().values().stream().anyMatch(service -> service.getProtocol() == RSOCKET)) {
+            rsocketCustomizer.activateServer();
         }
-        rsocket.configure(configurator -> configurator.from(sources).override(rsocketModel.getConfiguration()));
+        rsocket.configure(configurator -> configurator.from(sources).override(rsocketCustomizer.getConfiguration()));
         return rsocket;
     }
 
-    private TarantoolModule tarantool(ImmutableList<ConfigurationSource> sources) {
+    private TarantoolModule tarantool(ImmutableArray<ConfigurationSource> sources) {
         TarantoolModule tarantool = new TarantoolModule();
         tarantool.configure(configurator -> configurator.from(sources));
         return tarantool;

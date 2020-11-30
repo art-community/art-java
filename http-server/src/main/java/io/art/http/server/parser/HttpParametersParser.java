@@ -35,7 +35,7 @@ public interface HttpParametersParser {
                 .getParameterMap()
                 .keySet()
                 .stream()
-                .collect(toMap(PrimitivesFactory::stringPrimitive, name -> stringPrimitive(request.getParameterValues(name)[0])));
+                .collect(mapCollector(PrimitivesFactory::stringPrimitive, name -> stringPrimitive(request.getParameterValues(name)[0])));
         return entityBuilder().putAll(parameters).build();
     }
 

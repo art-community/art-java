@@ -26,7 +26,6 @@ import static io.art.tarantool.storage.dao.TarantoolDao.tarantool
 import static io.art.value.immutable.Entity.entityBuilder
 import static java.util.Optional.empty
 import static io.art.core.constants.StringConstants.EMPTY_STRING
-import static io.art.core.factory.CollectionsFactory.setOf
 import static io.art.tarantool.configuration.TarantoolModuleConfiguration.fieldMapping
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.STRING
 import static io.art.tarantool.storage.dao.TarantoolDao.tarantool

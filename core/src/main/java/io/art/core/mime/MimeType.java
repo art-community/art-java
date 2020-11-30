@@ -18,8 +18,12 @@
 
 package io.art.core.mime;
 
+import io.art.core.builder.*;
+import io.art.core.factory.*;
 import lombok.*;
 import io.art.core.exception.*;
+import static io.art.core.factory.MapFactory.map;
+import static io.art.core.factory.MapFactory.mapOf;
 import static java.lang.Float.*;
 import static java.lang.String.*;
 import static java.nio.charset.Charset.*;
@@ -40,7 +44,6 @@ import static io.art.core.constants.StringConstants.WILDCARD;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.StringExtensions.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import java.nio.charset.*;
 import java.util.*;
 import java.util.function.*;
@@ -82,7 +85,7 @@ public class MimeType implements Comparable<MimeType> {
             }
             return new MimeType(type, subtype, map);
         }
-        return new MimeType(type, subtype, mapOf());
+        return new MimeType(type, subtype, map());
     }
 
     public static MimeType valueOf(String value) {

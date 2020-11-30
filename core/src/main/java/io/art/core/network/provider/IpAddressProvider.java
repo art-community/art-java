@@ -18,13 +18,12 @@
 
 package io.art.core.network.provider;
 
-import com.google.common.collect.*;
+import io.art.core.collection.ImmutableMap;
 import lombok.experimental.*;
-import static io.art.core.factory.CollectionsFactory.mapOf;
+import static io.art.core.collection.ImmutableMap.*;
 import static java.net.NetworkInterface.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.StringConstants.*;
-import static java.util.Collections.emptyMap;
 import java.net.*;
 import java.util.*;
 
@@ -56,9 +55,9 @@ public class IpAddressProvider {
         try {
             networkInterfaces = getNetworkInterfaces();
         } catch (SocketException throwable) {
-            return ImmutableMap.of();
+            return emptyImmutableMap();
         }
-        ImmutableMap.Builder<String, String> addresses = ImmutableMap.builder();
+        ImmutableMap.Builder<String, String> addresses = immutableMapBuilder();
         while (networkInterfaces.hasMoreElements()) {
             NetworkInterface networkInterface = networkInterfaces.nextElement();
             Enumeration<InetAddress> addressEnumeration = networkInterface.getInetAddresses();

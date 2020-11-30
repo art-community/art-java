@@ -18,12 +18,14 @@
 
 package io.art.server.specification;
 
+import io.art.core.annotation.*;
 import io.art.server.model.*;
 import lombok.*;
 import java.util.*;
 
 @Getter
 @Builder
+@UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceSpecification {
     @EqualsAndHashCode.Include

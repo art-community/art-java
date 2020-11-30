@@ -1,5 +1,6 @@
 package io.art.refactored.dao;
 
+import io.art.core.factory.*;
 import io.art.value.immutable.Value;
 import io.art.value.tuple.*;
 import io.art.value.tuple.schema.*;
@@ -47,7 +48,7 @@ public class TarantoolSpace {
         List<Value> result = response.stream()
                 .map(entry -> convertResponse(cast(entry)))
                 .map(Optional::get)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
         return ofNullable(result);
     }
 
@@ -123,11 +124,11 @@ public class TarantoolSpace {
     private List<?> unpackUpdateOperations(TarantoolUpdateFieldOperation... operations) {
         List<?> valueOperations = stream(operations)
                 .map(TarantoolUpdateFieldOperation::getValueOperation)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
         List<?> schemaOperations = stream(operations)
                 .filter(operation -> isNotEmpty(operation.getSchemaOperation()))
                 .map(TarantoolUpdateFieldOperation::getSchemaOperation)
-                .collect(toList());
+                .collect(toCollection(ArrayFactory::dynamicArray));
         List<?> results = new ArrayList<>();
         results.add(cast(valueOperations));
         results.add(cast(schemaOperations));

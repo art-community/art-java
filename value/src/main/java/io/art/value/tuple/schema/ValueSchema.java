@@ -18,11 +18,12 @@
 
 package io.art.value.tuple.schema;
 
+import io.art.core.factory.*;
 import io.art.value.constants.ValueConstants.*;
 import io.art.value.immutable.Value;
 import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.factory.CollectionsFactory.dynamicArrayOf;
+import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
 import static io.art.value.immutable.Value.*;
 import java.util.*;
 
@@ -53,7 +54,7 @@ public class ValueSchema {
     }
 
     public List<?> toTuple() {
-        return dynamicArrayOf(type.ordinal());
+        return ArrayFactory.dynamicArray(type.ordinal());
     }
 
     public static ValueSchema fromTuple(List<?> tuple) {

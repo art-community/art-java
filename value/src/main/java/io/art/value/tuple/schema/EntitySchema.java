@@ -18,30 +18,31 @@
 
 package io.art.value.tuple.schema;
 
-import com.google.common.collect.*;
+import io.art.core.collection.*;
+import io.art.core.factory.*;
 import io.art.value.constants.ValueConstants.*;
 import io.art.value.exception.*;
-import io.art.value.immutable.*;
 import io.art.value.immutable.Value;
+import io.art.value.immutable.*;
 import lombok.*;
-import static com.google.common.collect.ImmutableList.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.factory.CollectionsFactory.*;
+import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.immutable.Value.*;
-import static java.text.MessageFormat.format;
+import static java.text.MessageFormat.*;
 import java.util.*;
 
 @Getter
 public class EntitySchema extends ValueSchema {
-    private final ImmutableList<EntityFieldSchema> fieldsSchema;
+    private final ImmutableArray<EntityFieldSchema> fieldsSchema;
 
     EntitySchema(Entity entity) {
         super(ENTITY);
         Set<Primitive> keys = entity.asMap().keySet();
-        ImmutableList.Builder<EntityFieldSchema> schemaBuilder = ImmutableList.builder();
+        ImmutableArray.Builder<EntityFieldSchema> schemaBuilder = immutableArrayBuilder();
         for (Primitive key : keys) {
             if (valueIsNull(key)) continue;
             Value value = entity.get(key);
@@ -51,14 +52,14 @@ public class EntitySchema extends ValueSchema {
         fieldsSchema = schemaBuilder.build();
     }
 
-    private EntitySchema(ImmutableList<EntityFieldSchema> fieldsSchema) {
+    private EntitySchema(ImmutableArray<EntityFieldSchema> fieldsSchema) {
         super(ENTITY);
         this.fieldsSchema = fieldsSchema;
     }
 
     @Override
     public List<?> toTuple() {
-        List<?> tuple = dynamicArrayOf(getType().ordinal());
+        List<?> tuple = ArrayFactory.dynamicArray(getType().ordinal());
         fieldsSchema.stream().map(EntityFieldSchema::toTuple).forEach(value -> tuple.add(cast(value)));
         return tuple;
     }
@@ -68,7 +69,7 @@ public class EntitySchema extends ValueSchema {
                 .skip(1)
                 .map(element -> (List<?>) element)
                 .map(EntityFieldSchema::fromTuple)
-                .collect(toImmutableList()));
+                .collect(immutableArrayCollector()));
     }
 
     @Getter
