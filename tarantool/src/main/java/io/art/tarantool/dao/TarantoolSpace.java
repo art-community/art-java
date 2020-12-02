@@ -11,6 +11,7 @@ import io.art.tarantool.exception.*;
 import io.art.tarantool.model.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.factory.CollectionsFactory.setOf;
 import static io.art.logging.LoggingModule.*;
 import static io.art.value.tuple.PlainTupleWriter.*;
 import static java.lang.String.*;
@@ -105,6 +106,10 @@ public class TarantoolSpace {
         call(client, TRUNCATE, space);
     }
 
+    public Set<String> listIndices(){
+        List<String> response = cast(call(client, LIST_INDICES, space).get(0));
+        return setOf(response);
+    }
 
 
 
