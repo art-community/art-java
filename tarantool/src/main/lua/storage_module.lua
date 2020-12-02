@@ -3,8 +3,6 @@
 --
 
 art = {
-    
-
     core = {
         schema_of = function(space)
             return box.space[space .. art.constants.schema_postfix]
@@ -278,17 +276,11 @@ art = {
         mapping = {
             default_batch_size = 1024,
             max_batches_count = 100,
-            uri = {},
-            nodes = {},
-            primary_node = '',
             last_upload_min_timestamp = 0ULL,
-
-
+            nodes = {},
+            primary_node_uuid = '',
 
             init = function(uri_list)
-                art.cluster.mapping.uri = uri_list
-                art.cluster.nodes = {}
-
                 if not (box.space.mapping_watched_spaces) then
                     box.schema.space.create('mapping_watched_spaces')
                     box.space.mapping_watched_spaces:format({
@@ -299,15 +291,12 @@ art = {
                     box.space.mapping_watched_spaces:create_index('primary', {parts = {1}})
                 end
 
-                local this_rs_uuid = vshard.storage.internal.this_replicaset.uuid
-                local netbox = require('net.box')
-                for _,v in pairs(art.cluster.mapping.uri) do
-                    table.insert(art.cluster.mapping.nodes, netbox.connect(v))
-                end
-                art.cluster.mapping.primary_node = netbox.connect(art.cluster.mapping.uri[this_rs_uuid])
+                for _,v in pairs(uri_list) do art.cluster.mapping.nodes[v] = false end
+                art.cluster.mapping.primary_node_uuid = uri_list[vshard.storage.internal.this_replicaset.uuid]
 
                 art.cluster.mapping.watcher.start()
                 art.cluster.mapping.garbage_collector.start()
+                art.cluster.mapping.network_manager.start()
             end,
 
             put = function(space, data)
@@ -410,7 +399,14 @@ art = {
                 send = function(batches)
                     if not(batches[1]) then return end
 
-                    art.cluster.mapping.primary_node:call('art.cluster.mapping.save_to_pending', {batches})
+                    while true do
+                        if pcall(call(art.cluster.mapping.nodes[art.cluster.mapping.primary_node_uuid], 'art.cluster.mapping.save_to_pending', {batches})) then break end
+                        art.core.fiber.sleep(art.cluster.mapping.network_manager.checkup_timeout)
+                    end
+                end,
+
+                call = function(connection, func, args)
+                    connection:call(func, args)
                 end
             },
 
@@ -512,6 +508,30 @@ art = {
                     end
                 end,
 
+            },
+
+            network_manager = {
+                checkup_timeout = 1,
+
+                start = function()
+                    art.cluster.mapping.network_manager.watchdog_fiber = art.core.fiber.create(art.cluster.mapping.network_manager.watchdog)
+                end,
+
+                watchdog_fiber = nil,
+
+                watchdog = function()
+                    while(true) do
+                        for uri, connection in pairs(art.cluster.mapping.nodes) do
+                            if ( (not(connection)) or (not connection:is_connected()) ) then art.cluster.mapping.network_manager.connect(uri) end
+                        end
+                        art.core.fiber.sleep(art.cluster.mapping.network_manager.checkup_timeout)
+                    end
+                end,
+
+                connect = function(uri)
+                    art.cluster.mapping.nodes[uri] = require('net.box').connect(uri)
+                end,
+
             }
         },
     },
@@ -604,11 +624,30 @@ art = {
 
             schema_len = function(space)
                 return art.box.space.schema_len(space)
+            end,
+
+            list = function()
+                local result = {}
+                for _,v in pairs(box.space._space:select()) do
+                    if not (string.startswith(v[3], '_')) then table.insert(result, v[3]) end
+                end
+                return result
+            end,
+
+            list_indices = function(space)
+                local temp = {}
+                local result = {}
+                for _, v in pairs(box.space[space].index) do
+                    temp[v.name] = true
+                end
+                for k in pairs(temp) do
+                    table.insert(result, k)
+                end
+                return result
             end
         }
     } --public API
 }
 
+art.cluster.mapping.init(mapping_uri)
 return art
-
---art.cluster.mapping.init(mapping_uri)

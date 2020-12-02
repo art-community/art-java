@@ -76,16 +76,16 @@
 
             mapping = {
                 init = function()
-                    if not (box.space.mapping_pending_updates) then
-                        box.schema.space.create('mapping_pending_updates', {is_local = true})
-                        box.space.mapping_pending_updates:format({
+                    if not (box.space._mapping_pending_updates) then
+                        box.schema.space.create('_mapping_pending_updates', {is_local = true})
+                        box.space._mapping_pending_updates:format({
                             { name = 'id', type = 'unsigned' },
                             { name = 'space', type = 'string' },
                             { name = 'batch', type = 'any' }
                         })
-                        box.schema.sequence.create('mapping_pending_updates_id', {cycle = true})
-                        box.space.mapping_pending_updates:create_index('id', {parts = {1}, sequence = box.sequence.mapping_pending_updates_id})
-                        box.space.mapping_pending_updates:create_index('space', {parts = {2}, unique = false})
+                        box.schema.sequence.create('_mapping_pending_updates_id', {cycle = true})
+                        box.space._mapping_pending_updates:create_index('id', {parts = {1}, sequence = box.sequence._mapping_pending_updates_id})
+                        box.space._mapping_pending_updates:create_index('space', {parts = {2}, unique = false})
                     end
                     art.cluster.mapping.watcher.start()
                 end,
@@ -141,7 +141,7 @@
 
                 save_to_pending = function(batches)
                     for _, v in pairs(batches) do
-                        box.space.mapping_pending_updates:insert({nil, unpack(v)})
+                        box.space._mapping_pending_updates:insert({nil, unpack(v)})
                     end
                 end,
 
@@ -171,7 +171,7 @@
 
                         while true do
                             counter = 0
-                            for _,v in box.space.mapping_pending_updates:pairs(box.sequence.mapping_pending_updates_id:current(), 'GT') do
+                            for _,v in box.space._mapping_pending_updates:pairs(box.sequence._mapping_pending_updates_id:current(), 'GT') do
                                 art.cluster.mapping.watcher.update_batch(v)
                                 counter = counter+1
                                 if (counter == art.cluster.mapping.watcher.batches_per_time) then
@@ -181,7 +181,7 @@
                             end
 
                             counter = 0
-                            for _,v in box.space.mapping_pending_updates:pairs() do
+                            for _,v in box.space._mapping_pending_updates:pairs() do
                                 art.cluster.mapping.watcher.update_batch(v)
                                 counter = counter+1
                                 if (counter == art.cluster.mapping.watcher.batches_per_time) then
@@ -195,18 +195,18 @@
 
                     update_batch = function(batch)
                         local space = box.space[batch[2]]
-                        if not(space) then box.space.mapping_pending_updates:delete(batch[1]) end
+                        if not(space) then box.space._mapping_pending_updates:delete(batch[1]) end
                         for _, v in pairs(batch[3]) do
                             if v[2] then
                                 table.remove(v, 1)
                                 table.remove(v, 1)
-                                table.remove(v, 1)
+                                table.remove(v, 1) --to get primary key from update record
                                 space:delete(v)
                             else
                                 space:replace(v[3])
                             end
                         end
-                        box.space.mapping_pending_updates:delete(batch[1])
+                        box.space._mapping_pending_updates:delete(batch[1])
                     end
 
                 }
@@ -334,11 +334,30 @@
                         result = result + v[2]
                     end
                     return result
+                end,
+
+                list = function()
+                    local result = {}
+                    for _,v in pairs(box.space._space:select()) do
+                        if not (string.startswith(v[3], '_')) then table.insert(result, v[3]) end
+                    end
+                    return result
+                end,
+
+                list_indices = function(space)
+                    local temp = {}
+                    local result = {}
+                    for _, v in pairs(box.space[space].index) do
+                        temp[v.name] = true
+                    end
+                    for k in pairs(temp) do
+                        table.insert(result, k)
+                    end
+                    return result
                 end
             }
         } -- public API
     }
 
-
-
+art.cluster.mapping.init()
 return art

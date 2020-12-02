@@ -56,6 +56,11 @@ class TarantoolRefactored extends Specification {
                 .unique(true))
 
 
+        when:
+        def spaces = db.listSpaces()
+        def indices = space.listIndices()
+        then:
+        spaces.contains(spaceName) && indices.contains("primary")
 
         when:
         space.insert(data)
@@ -177,6 +182,14 @@ class TarantoolRefactored extends Specification {
         db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
                 .part(2)
                 .unique(false))
+
+
+        when:
+        def spaces = db.listSpaces()
+        def indices = space.listIndices()
+        then:
+        spaces.contains(spaceName) && indices.contains("primary")
+
 
         when:
         space.insert(data)

@@ -3,12 +3,15 @@ package io.art.tarantool.dao;
 import io.tarantool.driver.api.TarantoolClient;
 import lombok.*;
 import org.apache.logging.log4j.*;
-
 import io.art.tarantool.configuration.space.*;
+import java.util.List;
+import java.util.Set;
+import static io.art.core.caster.Caster.cast;
 import static io.art.logging.LoggingModule.*;
 import static lombok.AccessLevel.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.dao.caller.TarantoolFunctionCaller.*;
+import static io.art.core.factory.CollectionsFactory.setOf;
 
 public class TarantoolInstance {
     @Getter(lazy = true, value = PRIVATE)
@@ -17,6 +20,11 @@ public class TarantoolInstance {
 
     public TarantoolInstance(TarantoolClient client){
         this.client = client;
+    }
+
+    public Set<String> listSpaces(){
+        List<String> response = cast(call(client, LIST_SPACES).get(0));
+        return setOf(response);
     }
 
     public void createSpace(String space, TarantoolSpaceConfig config){
