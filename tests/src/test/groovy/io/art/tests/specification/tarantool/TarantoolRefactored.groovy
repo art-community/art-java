@@ -220,8 +220,7 @@ class TarantoolRefactored extends Specification {
                 .build()
         then:
         true
-        space.get(request).isEmpty()
-//                && dao.select(space, request).isEmpty()
+        space.get(request).isEmpty() && space.select(request).isEmpty()
 
 
         when:
@@ -229,10 +228,10 @@ class TarantoolRefactored extends Specification {
                 .put("id", intPrimitive(7))
                 .put("bucket_id", intPrimitive(99))
                 .build()
-//        Entity response = dao.select(space, request).get().get(0)
+        Value response = space.select(request).get().get(0)
         then:
         true
-//        response == data
+        response == data
 
 
         when:

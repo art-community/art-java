@@ -21,7 +21,7 @@ public class TarantoolFunctionCaller {
         try {
             getLogger().info("Calling " + function + "()");
             List<?> result = client.call(function, args).get();
-            //getLogger().info("response:" + result.toString());
+            getLogger().info("response:" + result.toString());
             return result;
         } catch (Exception e){
             getLogger().warn(format(FAILED_FUNCTION, function));
