@@ -294,9 +294,10 @@ art = {
                 for _,v in pairs(uri_list) do art.cluster.mapping.nodes[v] = false end
                 art.cluster.mapping.primary_node_uuid = uri_list[vshard.storage.internal.this_replicaset.uuid]
 
+                art.cluster.mapping.network_manager.start()
                 art.cluster.mapping.watcher.start()
                 art.cluster.mapping.garbage_collector.start()
-                art.cluster.mapping.network_manager.start()
+
             end,
 
             put = function(space, data)
@@ -328,7 +329,7 @@ art = {
             },
 
             watcher = {
-                timeout = 1, --watcher sleep time
+                timeout = 0.1, --watcher sleep time
 
                 last_collected_timestamps = {},
 
@@ -398,9 +399,10 @@ art = {
 
                 send = function(batches)
                     if not(batches[1]) then return end
-
+                    snd = batches
                     while true do
-                        if pcall(call(art.cluster.mapping.nodes[art.cluster.mapping.primary_node_uuid], 'art.cluster.mapping.save_to_pending', {batches})) then break end
+                        if pcall(art.cluster.mapping.watcher.call(art.cluster.mapping.nodes[art.cluster.mapping.primary_node_uuid],
+                                'art.cluster.mapping.save_to_pending', {batches})) then break end
                         art.core.fiber.sleep(art.cluster.mapping.network_manager.checkup_timeout)
                     end
                 end,
@@ -411,7 +413,7 @@ art = {
             },
 
             garbage_collector = {
-                timeout = 1,
+                timeout = 0.1,
                 service_fiber = nil,
                 watchdog_fiber = nil,
 
@@ -511,7 +513,7 @@ art = {
             },
 
             network_manager = {
-                checkup_timeout = 1,
+                checkup_timeout = 0.2,
 
                 start = function()
                     art.cluster.mapping.network_manager.watchdog_fiber = art.core.fiber.create(art.cluster.mapping.network_manager.watchdog)

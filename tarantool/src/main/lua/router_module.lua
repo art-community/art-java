@@ -140,6 +140,7 @@
                 },
 
                 save_to_pending = function(batches)
+                    rcv = batches
                     for _, v in pairs(batches) do
                         box.space._mapping_pending_updates:insert({nil, unpack(v)})
                     end
@@ -147,7 +148,7 @@
 
                 watcher = {
                     batches_per_time = 100,
-                    timeout = 1,
+                    timeout = 0.1,
                     service_fiber = nil,
                     watchdog_fiber = nil,
 
@@ -214,43 +215,74 @@
         },
 
         api = {
-            get = function(space, request)
-                return vshard.router.callro(request[2], 'art.box.get', {space, request[1]})
+            get = function(space, key)
+                local bucket_id = box.space[space]:get(key).bucket_id
+                return vshard.router.callro(bucket_id, 'art.box.get', {space, key})
             end,
 
             delete = function(space, key)
-                return vshard.router.callrw(key[2], 'art.box.delete', {space, key[1]})
+                local bucket_id = box.space[space]:get(key).bucket_id
+                return vshard.router.callrw(bucket_id, 'art.box.delete', {space, key})
             end,
 
             insert = function(space, data)
-                return vshard.router.callrw(data[1][2], 'art.box.insert', {space, data, data[1][2]})
+                local bucket_id = data[1][ box.space[space].index.bucket_id.parts[1].fieldno ]
+                return vshard.router.callrw(bucket_id, 'art.box.insert', {space, data, bucket_id})
             end,
 
             auto_increment = function(space, data)
-                return vshard.router.callrw(data[1][2], 'art.box.auto_increment', {space, data, data[1][2]})
+                local bucket_id = data[1][ box.space[space].index.bucket_id.parts[1].fieldno ]
+                return vshard.router.callrw(bucket_id, 'art.box.auto_increment', {space, data, bucket_id})
             end,
 
             put = function(space, data)
-                return vshard.router.callrw(data[1][2], 'art.box.put', {space, data, data[1][2]})
+                local bucket_id = data[1][ box.space[space].index.bucket_id.parts[1].fieldno ]
+                return vshard.router.callrw(bucket_id, 'art.box.put', {space, data, bucket_id})
             end,
 
             update = function(space, key, commands)
-                return vshard.router.callrw(key[2], 'art.box.update', {space, key[1], commands, key[2]})
+                local bucket_id = box.space[space]:get(key).bucket_id
+                return vshard.router.callrw(bucket_id, 'art.box.update', {space, key, commands, bucket_id})
             end,
 
             replace = function(space, data)
-                return vshard.router.callrw(data[1][2], 'art.box.replace', {space, data, data[1][2]})
+                local bucket_id = data[1][ box.space[space].index.bucket_id.parts[1].fieldno ]
+                return vshard.router.callrw(bucket_id, 'art.box.replace', {space, data, bucket_id})
             end,
 
             upsert = function(space, data, commands)
-                return vshard.router.callrw(data[1][2], 'art.box.upsert', {space, data, commands, data[1][2]})
+                local bucket_id = data[1][ box.space[space].index.bucket_id.parts[1].fieldno ]
+                return vshard.router.callrw(bucket_id, 'art.box.upsert', {space, data, commands, bucket_id})
             end,
 
-            select = '',
+            select = function(space, request)
+                local get_requests = {}
+                local key_fields_mapping = {}
+                local request_entry
+                local result = {}
+
+                for _,part in pairs(box.space[space].index[0].parts) do
+                    key_fields_mapping[part.fieldno] = true
+                end
+
+                for _,mapping_entry in pairs(box.space[space]:select(request)) do
+                    if not (get_requests[mapping_entry[bucket_id]]) then get_requests[mapping_entry[bucket_id]] = {} end
+                    request_entry = {}
+                    for k in pairs(key_fields_mapping) do
+                        request_entry[k] = mapping_entry[k]
+                    end
+                    table.insert(get_requests[mapping_entry[bucket_id]], request_entry)
+                end
+
+                for bucket_id, batch_req in pairs(get_requests) do
+                    for _,v in pairs(vshard.router.callro(bucket_id, 'art.api.get_batch', batch_req)) do table.insert(result, v) end
+                end
+                return result
+            end,
 
             space = {
                 create = function(name, config)
-                    local result = art.cluster.space_ops.execute('create_vsharded', { name, config})
+                    local result = art.cluster.space_ops.execute('create_vsharded', {name, config})
                     if (result[1]) then
                         art.cluster.mapping.space.create(name, config)
                     end
