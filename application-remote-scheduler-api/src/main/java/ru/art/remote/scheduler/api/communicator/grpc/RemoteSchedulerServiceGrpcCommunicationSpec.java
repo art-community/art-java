@@ -26,11 +26,12 @@ import static ru.art.service.ServiceResponseDataExtractor.extractResponseDataChe
 public class RemoteSchedulerServiceGrpcCommunicationSpec implements GrpcCommunicationSpecification {
     private final String serviceId = REMOTE_SCHEDULER_SERVICE_ID;
 
+
     @Getter(lazy = true)
     @Accessors(fluent = true)
     private final GrpcCommunicator addDeferredTask = grpcCommunicator(grpcClientModule()
             .getCommunicationTargetConfiguration(serviceId))
-           .serviceId(REMOTE_SCHEDULER_SERVICE_ID)
+            .serviceId(REMOTE_SCHEDULER_SERVICE_ID)
             .methodId(ADD_DEFERRED_TASK)
             .requestMapper(deferredTaskRequestFromModelMapper)
             .responseMapper(stringMapper.getToModel());
@@ -55,20 +56,12 @@ public class RemoteSchedulerServiceGrpcCommunicationSpec implements GrpcCommunic
 
     @Getter(lazy = true)
     @Accessors(fluent = true)
-    private final GrpcCommunicator getDeferredTaskById = grpcCommunicator(grpcClientModule()
-            .getCommunicationTargetConfiguration(serviceId))
-            .serviceId(REMOTE_SCHEDULER_SERVICE_ID)
-            .methodId(GET_DEFERRED_TASK_BY_ID)
-            .requestMapper(stringMapper.getFromModel())
+    private final GrpcCommunicator getDeferredTaskById = getGrpcCommunicator(GET_DEFERRED_TASK_BY_ID)
             .responseMapper(deferredTaskRequestToModelMapper);
 
     @Getter(lazy = true)
     @Accessors(fluent = true)
-    private final GrpcCommunicator getPeriodicTaskById = grpcCommunicator(grpcClientModule()
-            .getCommunicationTargetConfiguration(serviceId))
-            .serviceId(REMOTE_SCHEDULER_SERVICE_ID)
-            .methodId(GET_PERIODIC_TASK_BY_ID)
-            .requestMapper(stringMapper.getFromModel())
+    private final GrpcCommunicator getPeriodicTaskById = getGrpcCommunicator(GET_PERIODIC_TASK_BY_ID)
             .responseMapper(periodicTaskRequestToModelMapper);
 
     @Getter(lazy = true)
@@ -94,15 +87,6 @@ public class RemoteSchedulerServiceGrpcCommunicationSpec implements GrpcCommunic
             .serviceId(REMOTE_SCHEDULER_SERVICE_ID)
             .methodId(GET_ALL_INFINITY_PROCESSES)
             .responseMapper(processCollectionToModelMapper);
-
-    @Getter(lazy = true)
-    @Accessors(fluent = true)
-    private final GrpcCommunicator cancelPeriodicTask = grpcCommunicator(grpcClientModule()
-            .getCommunicationTargetConfiguration(serviceId))
-            .serviceId(REMOTE_SCHEDULER_SERVICE_ID)
-            .methodId(CANCEL_PERIODIC_TASK)
-            .requestMapper(stringMapper.getFromModel());
-
     @Override
     public <RequestType, ResponseType> ResponseType executeMethod(String methodId, RequestType request) {
         switch (methodId) {
@@ -128,5 +112,17 @@ public class RemoteSchedulerServiceGrpcCommunicationSpec implements GrpcCommunic
             default:
                 throw new UnknownServiceMethodException(getServiceId(), methodId);
         }
+    }
+
+    @Getter(lazy = true)
+    @Accessors(fluent = true)
+    private final GrpcCommunicator cancelPeriodicTask = getGrpcCommunicator(CANCEL_PERIODIC_TASK);
+
+    private GrpcCommunicator getGrpcCommunicator(String cancelPeriodicTask) {
+        return grpcCommunicator(grpcClientModule()
+                .getCommunicationTargetConfiguration(serviceId))
+                .serviceId(REMOTE_SCHEDULER_SERVICE_ID)
+                .methodId(cancelPeriodicTask)
+                .requestMapper(stringMapper.getFromModel());
     }
 }
