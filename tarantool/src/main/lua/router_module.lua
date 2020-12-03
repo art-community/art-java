@@ -142,20 +142,19 @@
                     end,
 
                     delete_pending_space_updates = function(space)
-                        for _,v in box.space.mapping_pending_updates.index.space:pairs(space) do
-                            box.space.mapping_pending_updates:delete(v[1])
+                        for _,v in box.space._mapping_pending_updates.index.space:pairs(space) do
+                            box.space._mapping_pending_updates:delete(v[1])
                         end
                     end,
 
                     rename_space_in_pending = function(space, new_name)
-                        for _,v in box.space.mapping_pending_updates.index.space:pairs(space) do
-                            box.space.mapping_pending_updates:update(v[1], {{'=', 2, new_name}})
+                        for _,v in box.space._mapping_pending_updates.index.space:pairs(space) do
+                            box.space._mapping_pending_updates:update(v[1], {{'=', 2, new_name}})
                         end
                     end
                 },
 
                 save_to_pending = function(batches)
-                    rcv = batches
                     for _, v in pairs(batches) do
                         box.space._mapping_pending_updates:insert({nil, unpack(v)})
                     end
@@ -231,13 +230,15 @@
 
         api = {
             get = function(space, key)
-                local bucket_id = box.space[space]:get(key).bucket_id
-                return vshard.router.callro(bucket_id, 'art.box.get', {space, key})
+                local mapping_entry = box.space[space]:get(key)
+                if not (mapping_entry) then return {{}} end
+                return vshard.router.callro(mapping_entry.bucket_id, 'art.box.get', {space, key})
             end,
 
             delete = function(space, key)
-                local bucket_id = box.space[space]:get(key).bucket_id
-                return vshard.router.callrw(bucket_id, 'art.box.delete', {space, key})
+                local mapping_entry = box.space[space]:get(key)
+                if not (mapping_entry) then return {{}} end
+                return vshard.router.callrw(mapping_entry.bucket_id, 'art.box.delete', {space, key})
             end,
 
             insert = function(space, data)
@@ -256,8 +257,9 @@
             end,
 
             update = function(space, key, commands)
-                local bucket_id = box.space[space]:get(key).bucket_id
-                return vshard.router.callrw(bucket_id, 'art.box.update', {space, key, commands, bucket_id})
+                local mapping_entry = box.space[space]:get(key)
+                if not (mapping_entry) then return {{}} end
+                return vshard.router.callrw(mapping_entry.bucket_id, 'art.box.update', {space, key, commands, mapping_entry.bucket_id})
             end,
 
             replace = function(space, data)
@@ -281,18 +283,20 @@
                 end
 
                 for _,mapping_entry in pairs(box.space[space]:select(request)) do
-                    if not (get_requests[mapping_entry[bucket_id]]) then get_requests[mapping_entry[bucket_id]] = {} end
+                    if not (get_requests[mapping_entry.bucket_id]) then get_requests[mapping_entry.bucket_id] = {} end
                     request_entry = {}
                     for k in pairs(key_fields_mapping) do
                         request_entry[k] = mapping_entry[k]
                     end
-                    table.insert(get_requests[mapping_entry[bucket_id]], request_entry)
+                    table.insert(get_requests[mapping_entry.bucket_id], request_entry)
                 end
 
                 for bucket_id, batch_req in pairs(get_requests) do
-                    for _,v in pairs(vshard.router.callro(bucket_id, 'art.api.get_batch', batch_req)) do table.insert(result, v) end
+                    local response = vshard.router.callro(bucket_id, 'art.api.get_batch', {space, batch_req})
+                    if (response) then for _,v in pairs(response) do table.insert(result, v) end end
                 end
-                return result
+                if not (result[1]) then return {} end
+                return {result}
             end,
 
             space = {

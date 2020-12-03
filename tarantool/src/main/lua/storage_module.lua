@@ -356,6 +356,7 @@ art = {
                     local prev_iteration_batches_count = 0
                     local spaces
                     local min_timestamp = 0xffffffffffffffffULL --max unsigned int64
+                    local is_sent
 
                     while(true) do
                         spaces = box.space.mapping_watched_spaces:select()
@@ -369,7 +370,11 @@ art = {
                         end
 
                         if (#batches >= art.cluster.mapping.max_batches_count) or (#batches == prev_iteration_batches_count) then
-                            art.cluster.mapping.watcher.send(batches)
+                            is_sent = false
+                            while (not is_sent) do
+                                is_sent = pcall(art.cluster.mapping.watcher.send, batches)
+                            end
+
                             batches = {}
                             if (min_timestamp < 0xffffffffffffffffULL) then art.cluster.mapping.last_upload_min_timestamp = min_timestamp end
                             art.core.fiber.sleep(art.cluster.mapping.watcher.timeout)
@@ -399,16 +404,8 @@ art = {
 
                 send = function(batches)
                     if not(batches[1]) then return end
-                    snd = batches
-                    while true do
-                        if pcall(art.cluster.mapping.watcher.call(art.cluster.mapping.nodes[art.cluster.mapping.primary_node_uuid],
-                                'art.cluster.mapping.save_to_pending', {batches})) then break end
-                        art.core.fiber.sleep(art.cluster.mapping.network_manager.checkup_timeout)
-                    end
-                end,
-
-                call = function(connection, func, args)
-                    connection:call(func, args)
+                        art.cluster.mapping.nodes[art.cluster.mapping.primary_node_uuid]:call(
+                                'art.cluster.mapping.save_to_pending', {batches})
                 end
             },
 
@@ -541,6 +538,14 @@ art = {
     api = {
         get = function(space, id)
             return box.atomic(art.box.get, space, id)
+        end,
+
+        get_batch = function(space, keys)
+            local result = {}
+            for _, key in pairs(keys) do
+                table.insert(result, art.api.get(space, key))
+            end
+            return result
         end,
 
         delete = function(space, id)

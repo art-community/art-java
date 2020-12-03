@@ -1,5 +1,6 @@
 package io.art.tarantool.dao.caller;
 
+import io.art.tarantool.exception.TarantoolDaoException;
 import io.tarantool.driver.api.TarantoolClient;
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
@@ -25,9 +26,8 @@ public class TarantoolFunctionCaller {
             return result;
         } catch (Exception e){
             getLogger().warn(format(FAILED_FUNCTION, function));
+            throw new TarantoolDaoException(e.getMessage());
         }
-
-        return new LinkedList<>();
     }
 
 

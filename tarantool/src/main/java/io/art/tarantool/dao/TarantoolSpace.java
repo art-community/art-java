@@ -38,8 +38,7 @@ public class TarantoolSpace {
     }
 
     public Optional<Value> get(Value key){
-        List<?> response = call(client, GET, space, unpackValue(key));
-        return convertResponse(response);
+        return convertResponse(call(client, GET, space, unpackValue(key)));
     }
 
     public Optional<List<Value>> select(Value request){
