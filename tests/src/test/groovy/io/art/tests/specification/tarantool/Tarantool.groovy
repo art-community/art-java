@@ -19,7 +19,7 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolField
 import static io.art.value.factory.PrimitivesFactory.*
 import static io.art.tarantool.module.TarantoolModule.*
 
-class TarantoolRefactored extends Specification {
+class Tarantool extends Specification {
 
 
     def "start modules"() {
@@ -152,6 +152,7 @@ class TarantoolRefactored extends Specification {
         setup:
         def clientId = "router_1"
         def spaceName = "r1_crud"
+        def mappingTimeout = 200
 
         TarantoolInstance db = getInstance(clientId)
         TarantoolSpace space = getSpace(clientId, spaceName)
@@ -164,10 +165,7 @@ class TarantoolRefactored extends Specification {
                 .put("data", stringPrimitive("testData"))
                 .put("anotherData", stringPrimitive("another data"))
                 .build()
-        Value request = Entity.entityBuilder()
-                .put("id", intPrimitive(3))
-                .put("bucket_id", intPrimitive(99))
-                .build()
+        Value request = intPrimitive(3)
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
@@ -194,6 +192,7 @@ class TarantoolRefactored extends Specification {
         when:
         space.insert(data)
         then:
+        sleep(mappingTimeout)
         space.get(request).get() == data
 
 
@@ -210,24 +209,20 @@ class TarantoolRefactored extends Specification {
         space = getSpace(clientId, spaceName)
         space.autoIncrement(data)
         then:
+        sleep(mappingTimeout)
         ((space.len() == 5) && (space.schemaLen() == 2))
 
 
         when:
-        request = Entity.entityBuilder()
-                .put("id", intPrimitive(2))
-                .put("bucket_id", intPrimitive(99))
-                .build()
+        request = intPrimitive(2)
         then:
         true
         space.get(request).isEmpty() && space.select(request).isEmpty()
 
 
         when:
-        request = Entity.entityBuilder()
-                .put("id", intPrimitive(7))
-                .put("bucket_id", intPrimitive(99))
-                .build()
+        request = intPrimitive(7)
+        sleep(mappingTimeout)
         Value response = space.select(request).get().get(0)
         then:
         true
@@ -248,14 +243,12 @@ class TarantoolRefactored extends Specification {
                 .build()
         space.put(data)
         then:
+        sleep(mappingTimeout)
         space.get(request).get() == data
 
 
         when:
-        Entity key = Entity.entityBuilder()
-                .put("id", intPrimitive(7))
-                .put("bucket_id", intPrimitive(99))
-                .build()
+        Value key = intPrimitive(7)
         space.delete(key)
         then:
         space.get(request).isEmpty()
@@ -263,13 +256,14 @@ class TarantoolRefactored extends Specification {
 
         when:
         space.put(data)
-
+        sleep(mappingTimeout)
         space.update(key, TarantoolUpdateFieldOperation.assigment(3, 'data', stringPrimitive("another")))
         then:
         ((Entity)space.get(request).get()).get("data") == stringPrimitive("another")
 
         when:
         space.put(data)
+        sleep(mappingTimeout)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("bucket_id", intPrimitive(99))
@@ -282,12 +276,9 @@ class TarantoolRefactored extends Specification {
         when:
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
+        sleep(mappingTimeout)
         then:
-        def request2 = Entity.entityBuilder()
-                .put("id", intPrimitive(8))
-                .put("bucket_id", intPrimitive(99))
-                .build()
-        space.get(request).isPresent() && space.get(request2).isPresent()
+        space.get(request).isPresent() && space.get(intPrimitive(8)).isPresent()
 
         cleanup:
         db.dropSpace(spaceName)

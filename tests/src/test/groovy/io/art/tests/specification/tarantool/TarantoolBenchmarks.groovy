@@ -25,7 +25,7 @@ import static io.art.value.factory.PrimitivesFactory.longPrimitive
 import static io.art.value.factory.PrimitivesFactory.stringPrimitive
 import static io.art.value.tuple.PlainTupleWriter.*
 
-class TarantoolRefactoredBenchmarks extends Specification {
+class TarantoolBenchmarks extends Specification {
     def benchmarkOpsCount = 10000
     def router1Address = "localhost:3311"
     def router2Address = "localhost:3312"
