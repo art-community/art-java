@@ -83,8 +83,8 @@
                             { name = 'space', type = 'string' },
                             { name = 'batch', type = 'any' }
                         })
-                        box.schema.sequence.create('_mapping_pending_updates_id', {cycle = true})
-                        box.space._mapping_pending_updates:create_index('id', {parts = {1}, sequence = box.sequence._mapping_pending_updates_id})
+                        box.schema.sequence.create('mapping_pending_updates_id', {cycle = true})
+                        box.space._mapping_pending_updates:create_index('id', {parts = {1}, sequence = box.sequence.mapping_pending_updates_id})
                         box.space._mapping_pending_updates:create_index('space', {parts = {2}, unique = false})
                     end
                     art.cluster.mapping.watcher.start()
@@ -128,15 +128,30 @@
 
                     rename = function(space, new_name)
                         box.space[space]:rename(new_name)
+                        art.cluster.mapping.space.rename_space_in_pending(space, new_name)
                     end,
 
                     truncate = function(space)
                         box.space[space]:truncate()
+                        art.cluster.mapping.space.delete_pending_space_updates(space)
                     end,
 
                     drop = function(space)
                         box.space[space]:drop()
+                        art.cluster.mapping.space.delete_pending_space_updates(space)
                     end,
+
+                    delete_pending_space_updates = function(space)
+                        for _,v in box.space.mapping_pending_updates.index.space:pairs(space) do
+                            box.space.mapping_pending_updates:delete(v[1])
+                        end
+                    end,
+
+                    rename_space_in_pending = function(space, new_name)
+                        for _,v in box.space.mapping_pending_updates.index.space:pairs(space) do
+                            box.space.mapping_pending_updates:update(v[1], {{'=', 2, new_name}})
+                        end
+                    end
                 },
 
                 save_to_pending = function(batches)
@@ -172,7 +187,7 @@
 
                         while true do
                             counter = 0
-                            for _,v in box.space._mapping_pending_updates:pairs(box.sequence._mapping_pending_updates_id:current(), 'GT') do
+                            for _,v in box.space._mapping_pending_updates:pairs(box.sequence.mapping_pending_updates_id:current(), 'GT') do
                                 art.cluster.mapping.watcher.update_batch(v)
                                 counter = counter+1
                                 if (counter == art.cluster.mapping.watcher.batches_per_time) then
