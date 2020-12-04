@@ -187,7 +187,7 @@
                         while true do
                             counter = 0
                             for _,v in box.space._mapping_pending_updates:pairs(box.sequence.mapping_pending_updates_id:current(), 'GT') do
-                                art.cluster.mapping.watcher.update_batch(v)
+                                box.atomic(art.cluster.mapping.watcher.update_batch(v))
                                 counter = counter+1
                                 if (counter == art.cluster.mapping.watcher.batches_per_time) then
                                     art.core.fiber.sleep(art.cluster.mapping.watcher.timeout)
@@ -197,7 +197,7 @@
 
                             counter = 0
                             for _,v in box.space._mapping_pending_updates:pairs() do
-                                art.cluster.mapping.watcher.update_batch(v)
+                                box.atomic(art.cluster.mapping.watcher.update_batch(v))
                                 counter = counter+1
                                 if (counter == art.cluster.mapping.watcher.batches_per_time) then
                                     art.core.fiber.sleep(art.cluster.mapping.watcher.timeout)
@@ -301,6 +301,7 @@
 
             space = {
                 create = function(name, config)
+                    if not config then config = {} end
                     local result = art.cluster.space_ops.execute('create_vsharded', {name, config})
                     if (result[1]) then
                         art.cluster.mapping.space.create(name, config)

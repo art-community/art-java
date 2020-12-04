@@ -200,6 +200,7 @@ art = {
             end,
 
             create = function(name, config)
+                if not(config) then config = {} end
                 box.schema.space.create(name, config)
                 config.field_count = nil
                 config.id = nil
@@ -323,8 +324,26 @@ art = {
             end,
 
             builder = {
-                build = function(space, field)
+                batch_size = 1024,
 
+                start = function(space)
+                    local fiber = art.core.fiber.create(art.cluster.mapping.builder.service(space))
+                    art.cluster.mapping.builder.service_fibers[space] = fiber
+                end,
+
+                service_fibers = {},
+
+                service = function(space)
+                    local counter = 0
+                    for _,v in (art.core.mapping_updates_of(space):pairs()) do
+                        art.cluster.mapping.put(space, v)
+                        counter = counter + 1
+                        if (counter == art.cluster.mapping.builder.batch_size) then
+                            art.core.fiber.yield()
+                            counter = 0
+                        end
+                    end
+                    art.cluster.mapping.builder.service_fibers[space] = nil
                 end
             },
 
@@ -600,7 +619,9 @@ art = {
 
             create_index = function(space, index_name, index)
                 art.box.space.wait_for_clustered_op()
-                return box.atomic(art.box.space.create_index, space, index_name, index)
+                local result = box.atomic(art.box.space.create_index, space, index_name, index)
+                art.cluster.mapping.builder.start(space)
+                return result
             end,
 
             rename = function(space, new_name)
