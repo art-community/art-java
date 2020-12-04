@@ -329,6 +329,7 @@ art = {
                 start = function(space)
                     local fiber = art.core.fiber.create(art.cluster.mapping.builder.service(space))
                     art.cluster.mapping.builder.service_fibers[space] = fiber
+                    art.cluster.mapping.builder.service_fibers[space]:name('builder.' .. space)
                 end,
 
                 service_fibers = {},
@@ -348,7 +349,7 @@ art = {
             },
 
             watcher = {
-                timeout = 0.1, --watcher sleep time
+                timeout = 0.07, --watcher sleep time
 
                 last_collected_timestamps = {},
 
@@ -357,15 +358,18 @@ art = {
 
                 start = function()
                     art.cluster.mapping.watcher.service_fiber = art.core.fiber.create(art.cluster.mapping.watcher.service)
+                    art.cluster.mapping.watcher.service_fiber:name('watcher.service')
                     art.cluster.mapping.watcher.watchdog_fiber = art.core.fiber.create(art.cluster.mapping.watcher.watchdog)
+                    art.cluster.mapping.watcher.watchdog_fiber:name('watcher.watchdog')
                 end,
 
                 watchdog = function()
                     while(true) do
                         if (art.core.fiber.status(art.cluster.mapping.watcher.service_fiber) == 'dead') then
                             art.cluster.mapping.watcher.service_fiber = art.core.fiber.create(art.cluster.mapping.watcher.service)
+                            art.cluster.mapping.watcher.watchdog_fiber:name('watcher.watchdog')
                         end
-                        art.core.fiber.sleep(5)
+                        art.core.fiber.sleep(1)
 
                     end
                 end,
@@ -429,19 +433,22 @@ art = {
             },
 
             garbage_collector = {
-                timeout = 0.1,
+                timeout = 0.07,
                 service_fiber = nil,
                 watchdog_fiber = nil,
 
                 start = function()
                     art.cluster.mapping.garbage_collector.service_fiber = art.core.fiber.create(art.cluster.mapping.garbage_collector.service)
+                    art.cluster.mapping.garbage_collector.service_fiber:name('garbage-collector.service')
                     art.cluster.mapping.garbage_collector.watchdog_fiber = art.core.fiber.create(art.cluster.mapping.garbage_collector.watchdog)
+                    art.cluster.mapping.garbage_collector.watchdog_fiber:name('garbage-collector.watchdog')
                 end,
 
                 watchdog = function()
                     while(true) do
                         if (art.core.fiber.status(art.cluster.mapping.garbage_collector.service_fiber) == 'dead') then
                             art.cluster.mapping.garbage_collector.service_fiber = art.core.fiber.create(art.cluster.mapping.garbage_collector.service)
+                            art.cluster.mapping.garbage_collector.service_fiber:name('garbage-collector.service')
                         end
                         art.core.fiber.sleep(5)
 
@@ -510,6 +517,8 @@ art = {
                         art.core.mapping_updates_of(space):rename(name .. art.constants.mapping_space_postfix)
                         local watched_space = box.space.mapping_watched_spaces:delete(space)
                         box.space.mapping_watched_spaces:insert(watched_space:update({{'=', 1, name}}))
+                        art.cluster.mapping.watcher.last_collected_timestamps[name] = art.cluster.mapping.watcher.last_collected_timestamps[space]
+                        art.cluster.mapping.watcher.last_collected_timestamps[space] = nil
                     end
                 end,
 
@@ -523,6 +532,7 @@ art = {
                     if(art.core.mapping_updates_of(space)) then
                         art.core.mapping_updates_of(space):drop()
                         box.space.mapping_watched_spaces:delete(space)
+                        art.cluster.mapping.watcher.last_collected_timestamps[space] = nil
                     end
                 end,
 
@@ -533,6 +543,7 @@ art = {
 
                 start = function()
                     art.cluster.mapping.network_manager.watchdog_fiber = art.core.fiber.create(art.cluster.mapping.network_manager.watchdog)
+                    art.cluster.mapping.network_manager.watchdog_fiber:name('network-manager.watchdog')
                 end,
 
                 watchdog_fiber = nil,

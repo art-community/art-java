@@ -33,7 +33,7 @@ class TarantoolVshardMapping extends Specification {
         setup:
         def clientId = "router_1"
         def spaceName = "r1_crud"
-        def mappingTimeout = 300
+        def mappingTimeout = 200
 
         TarantoolInstance db = getInstance(clientId)
         TarantoolSpace space = getSpace(clientId, spaceName)
@@ -81,7 +81,7 @@ class TarantoolVshardMapping extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         space.autoIncrement(data)
-        db.renameSpace(spaceName, spaceName = "r1_crud2")
+        //db.renameSpace(spaceName, spaceName = "r1_crud2")
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("bucket_id", intPrimitive(99))
@@ -104,10 +104,9 @@ class TarantoolVshardMapping extends Specification {
         when:
         request = intPrimitive(7)
         sleep(mappingTimeout)
-        Value response = space.select(request).get().get(0)
+        def response = space.select(request)
         then:
-        true
-        response == data
+        response.isPresent() && response.get().get(0) == data
 
 
         when:
