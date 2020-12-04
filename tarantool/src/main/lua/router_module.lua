@@ -127,8 +127,8 @@
                     end,
 
                     rename = function(space, new_name)
-                        box.space[space]:rename(new_name)
                         art.cluster.mapping.space.rename_space_in_pending(space, new_name)
+                        box.space[space]:rename(new_name)
                     end,
 
                     truncate = function(space)
@@ -162,7 +162,7 @@
 
                 watcher = {
                     batches_per_time = 100,
-                    timeout = 0.1,
+                    timeout = 0.05,
                     service_fiber = nil,
                     watchdog_fiber = nil,
 
@@ -176,7 +176,7 @@
                             if (art.core.fiber.status(art.cluster.mapping.watcher.service_fiber) == 'dead') then
                                 art.cluster.mapping.watcher.service_fiber = art.core.fiber.create(art.cluster.mapping.watcher.service)
                             end
-                            art.core.fiber.sleep(5)
+                            art.core.fiber.sleep(1)
 
                         end
                     end,
@@ -187,7 +187,7 @@
                         while true do
                             counter = 0
                             for _,v in box.space._mapping_pending_updates:pairs(box.sequence.mapping_pending_updates_id:current(), 'GT') do
-                                art.cluster.mapping.watcher.update_batch(v)
+                                box.atomic(art.cluster.mapping.watcher.update_batch(v))
                                 counter = counter+1
                                 if (counter == art.cluster.mapping.watcher.batches_per_time) then
                                     art.core.fiber.sleep(art.cluster.mapping.watcher.timeout)
@@ -197,7 +197,7 @@
 
                             counter = 0
                             for _,v in box.space._mapping_pending_updates:pairs() do
-                                art.cluster.mapping.watcher.update_batch(v)
+                                box.atomic(art.cluster.mapping.watcher.update_batch(v))
                                 counter = counter+1
                                 if (counter == art.cluster.mapping.watcher.batches_per_time) then
                                     art.core.fiber.sleep(art.cluster.mapping.watcher.timeout)
@@ -327,7 +327,7 @@
                 rename = function(space, new_name)
                     local result = art.cluster.space_ops.execute('rename', { space, new_name})
                     if (result[1]) then
-                        art.cluster.mapping.space.rename(space, new_name)
+                        box.atomic(art.cluster.mapping.space.rename, space, new_name)
                     end
                     return result
                 end,
