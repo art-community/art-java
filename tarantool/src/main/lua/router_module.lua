@@ -187,7 +187,7 @@
                         while true do
                             counter = 0
                             for _,v in box.space._mapping_pending_updates:pairs(box.sequence.mapping_pending_updates_id:current(), 'GT') do
-                                box.atomic(art.cluster.mapping.watcher.update_batch(v))
+                                art.cluster.mapping.watcher.update_batch(v)
                                 counter = counter+1
                                 if (counter == art.cluster.mapping.watcher.batches_per_time) then
                                     art.core.fiber.sleep(art.cluster.mapping.watcher.timeout)
@@ -197,7 +197,7 @@
 
                             counter = 0
                             for _,v in box.space._mapping_pending_updates:pairs() do
-                                box.atomic(art.cluster.mapping.watcher.update_batch(v))
+                                art.cluster.mapping.watcher.update_batch(v)
                                 counter = counter+1
                                 if (counter == art.cluster.mapping.watcher.batches_per_time) then
                                     art.core.fiber.sleep(art.cluster.mapping.watcher.timeout)
