@@ -27,12 +27,6 @@ import static io.art.value.tuple.PlainTupleWriter.*
 
 class TarantoolBenchmarks extends Specification {
     def benchmarkOpsCount = 10000
-    def router1Address = "localhost:3311"
-    def router2Address = "localhost:3312"
-    def storage1Address = "localhost:3301"
-    def storage2Address = "localhost:3302"
-    def username = 'username'
-    def password = 'password'
 
     def "start modules"() {
         setup:
@@ -79,7 +73,7 @@ class TarantoolBenchmarks extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         db.renameSpace(spaceName, spaceName = "s1_CRUD2")
-        space = tnt.getSpace(clientId, spaceName)
+        space = getSpace(clientId, spaceName)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("data", stringPrimitive("testData"))
@@ -129,7 +123,7 @@ class TarantoolBenchmarks extends Specification {
         space.update(intPrimitive(7),
                 TarantoolUpdateFieldOperation.assigment(2, 'data', stringPrimitive("another")))
         then:
-        ((Entity)space.get(request).get()).getString("data") == "another"
+        ((Entity)space.get(request).get()).get("data") == stringPrimitive("another")
 
         when:
         space.put(data)
@@ -170,10 +164,7 @@ class TarantoolBenchmarks extends Specification {
                 .put("data", stringPrimitive("testData"))
                 .put("anotherData", stringPrimitive("another data"))
                 .build()
-        Entity request = Entity.entityBuilder()
-                .put("id", intPrimitive(3))
-                .put("bucket_id", intPrimitive(99))
-                .build()
+        Value request = intPrimitive(3)
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
@@ -321,88 +312,6 @@ class TarantoolBenchmarks extends Specification {
         }
         then:
         true
-
-        cleanup:
-        db.dropSpace(spaceName)
-    }
-
-    def "Storage1 box.get benchmark"(){
-        setup:
-        def spaceName = "s1_box_get_bench"
-        def clientId = "storage_1"
-
-        def db = getInstance(clientId)
-        def space = getSpace(clientId, spaceName)
-        def client = getClient(clientId)
-
-        Entity data = Entity.entityBuilder()
-                .put("id", intPrimitive(3))
-                .put("data", stringPrimitive("testData"))
-                .put("anotherData", stringPrimitive("another data"))
-                .build()
-        Value request = intPrimitive(3)
-        List<?> tuple = writeTuple(request).getTuple()
-
-        db.createSpace(spaceName, tarantoolSpaceConfig()
-                .ifNotExists(true))
-        db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", NUMBER, false))
-        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
-                .type(TarantoolIndexType.TREE)
-                .id(0)
-                .part("id")
-                .ifNotExists(true)
-                .unique(true))
-
-        when:
-        space.insert(data)
-        for (int i = 0; i<benchmarkOpsCount; i++){
-            client.call("box.space."+ spaceName +":get", tuple).get()
-        }
-
-        then:
-        true
-
-
-        cleanup:
-        db.dropSpace(spaceName)
-    }
-
-    def "Storage2 box.auto_increment benchmark"(){
-        setup:
-        def spaceName = "s2_box_inc_bench"
-        def clientId = "storage_2"
-
-        def db = getInstance(clientId)
-        def space = getSpace(clientId, spaceName)
-        def client = getClient(clientId)
-
-        Entity data = Entity.entityBuilder()
-                .put("id", intPrimitive(3))
-                .put("data", stringPrimitive("testData"))
-                .put("anotherData", stringPrimitive("another data"))
-                .build()
-        List<?> tuple = writeTuple(data).getTuple()
-
-        db.createSpace(spaceName, tarantoolSpaceConfig()
-                .ifNotExists(true))
-        db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", NUMBER, false))
-        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
-                .type(TarantoolIndexType.TREE)
-                .id(0)
-                .part("id")
-                .ifNotExists(true)
-                .unique(true))
-
-        when:
-        for (int i = 0; i<benchmarkOpsCount; i++){
-            client.call("box.space."+ spaceName +":auto_increment", tuple).get()
-        }
-
-        then:
-        true
-
 
         cleanup:
         db.dropSpace(spaceName)
