@@ -127,8 +127,8 @@
                     end,
 
                     rename = function(space, new_name)
-                        art.cluster.mapping.space.rename_space_in_pending(space, new_name)
                         box.space[space]:rename(new_name)
+                        art.cluster.mapping.space.rename_space_in_pending(space, new_name)
                     end,
 
                     truncate = function(space)
@@ -162,7 +162,7 @@
 
                 watcher = {
                     batches_per_time = 100,
-                    timeout = 0.05,
+                    timeout = 0.1,
                     service_fiber = nil,
                     watchdog_fiber = nil,
 
@@ -187,7 +187,7 @@
                         while true do
                             counter = 0
                             for _,v in box.space._mapping_pending_updates:pairs(box.sequence.mapping_pending_updates_id:current(), 'GT') do
-                                box.atomic(art.cluster.mapping.watcher.update_batch(v))
+                                box.atomic(art.cluster.mapping.watcher.update_batch, v)
                                 counter = counter+1
                                 if (counter == art.cluster.mapping.watcher.batches_per_time) then
                                     art.core.fiber.sleep(art.cluster.mapping.watcher.timeout)
@@ -197,7 +197,7 @@
 
                             counter = 0
                             for _,v in box.space._mapping_pending_updates:pairs() do
-                                box.atomic(art.cluster.mapping.watcher.update_batch(v))
+                                box.atomic(art.cluster.mapping.watcher.update_batch, v)
                                 counter = counter+1
                                 if (counter == art.cluster.mapping.watcher.batches_per_time) then
                                     art.core.fiber.sleep(art.cluster.mapping.watcher.timeout)
@@ -210,7 +210,10 @@
 
                     update_batch = function(batch)
                         local space = box.space[batch[2]]
-                        if not(space) then box.space._mapping_pending_updates:delete(batch[1]) end
+                        if not(space) then
+                            box.space._mapping_pending_updates:delete(batch[1])
+                            return
+                        end
                         for _, v in pairs(batch[3]) do
                             if v[2] then
                                 table.remove(v, 1)

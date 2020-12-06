@@ -22,18 +22,15 @@ import static io.art.value.factory.PrimitivesFactory.intPrimitive
 import static io.art.value.factory.PrimitivesFactory.stringPrimitive
 
 class TarantoolVshardMapping extends Specification {
-
-
-    def "start modules"() {
-        setup:
-        launch module()
-    }
+    def tmp = launch module()
+    def benchmarkOpsCount = 3000
+    def mappingTimeout = 200
 
     def "Router1 CRUD"() {
         setup:
         def clientId = "router_1"
         def spaceName = "r1_crud"
-        def mappingTimeout = 200
+
 
         TarantoolInstance db = getInstance(clientId)
         TarantoolSpace space = getSpace(clientId, spaceName)
@@ -81,7 +78,7 @@ class TarantoolVshardMapping extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         space.autoIncrement(data)
-        //db.renameSpace(spaceName, spaceName = "r1_crud2")
+        db.renameSpace(spaceName, spaceName = "r1_crud2")
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("bucket_id", intPrimitive(99))
@@ -104,9 +101,10 @@ class TarantoolVshardMapping extends Specification {
         when:
         request = intPrimitive(7)
         sleep(mappingTimeout)
-        def response = space.select(request)
+        Value response = space.select(request).get().get(0)
         then:
-        response.isPresent() && response.get().get(0) == data
+        true
+        response == data
 
 
         when:
@@ -159,6 +157,53 @@ class TarantoolVshardMapping extends Specification {
         sleep(mappingTimeout)
         then:
         space.get(request).isPresent() && space.get(intPrimitive(8)).isPresent()
+
+        cleanup:
+        db.dropSpace(spaceName)
+    }
+
+    def "Router2 art.auto_increment benchmark"(){
+        setup:
+        def clientId = "router_2"
+        def spaceName = "r2_art_inc_bench"
+
+        TarantoolInstance db = getInstance(clientId)
+        TarantoolSpace space = getSpace(clientId, spaceName)
+
+
+
+        Entity data = Entity.entityBuilder()
+                .put("id", intPrimitive(1))
+                .put("bucket_id", intPrimitive(99))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
+                .build()
+
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .addField("id", UNSIGNED, false)
+                .addField("bucket_id", UNSIGNED))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true))
+        db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
+                .part(2)
+                .unique(false))
+
+        when:
+
+        int succeeded = 0
+        for (int i = 0; i<benchmarkOpsCount; i++){
+            space.autoIncrement(data)
+            sleep(mappingTimeout)
+            if (space.get(intPrimitive(i+1)).isPresent()) succeeded++
+        }
+        println(intPrimitive(succeeded))
+        then:
+        (succeeded == benchmarkOpsCount)
 
         cleanup:
         db.dropSpace(spaceName)
