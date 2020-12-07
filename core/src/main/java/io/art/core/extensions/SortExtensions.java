@@ -86,7 +86,7 @@ public class SortExtensions {
         }
     }
 
-    public void quickSortRecursive(int[] array, int left, int right) {
+    public void quickSort(int[] array, int left, int right) {
         if (array.length == 0) return;
 
         if (left >= right) return;
@@ -114,21 +114,21 @@ public class SortExtensions {
         }
 
         if (left < j) {
-            quickSortRecursive(array, left, j);
+            quickSort(array, left, j);
         }
 
         if (right > i) {
-            quickSortRecursive(array, i, right);
+            quickSort(array, i, right);
         }
     }
 
-    public void mergeSortRecursive(int[] array, int[] buffer, int left, int right) {
+    public void mergeSort(int[] array, int[] buffer, int left, int right) {
         if (left >= right) {
             return;
         }
         int med = (left + right) / 2;
-        mergeSortRecursive(array, buffer, left, med);
-        mergeSortRecursive(array, buffer, med + 1, right);
+        mergeSort(array, buffer, left, med);
+        mergeSort(array, buffer, med + 1, right);
         int bufferIndex = left;
         for (int i = left, j = med + 1; i <= med || j <= i; ) {
             if (j > right || (i <= med && array[i] < array[j])) {
