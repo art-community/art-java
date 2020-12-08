@@ -162,6 +162,56 @@ class TarantoolVshardMapping extends Specification {
         db.dropSpace(spaceName)
     }
 
+    def "Router2 mapping builder"(){
+        setup:
+        def clientId = "router_2"
+        def spaceName = "r2_map_build"
+
+        TarantoolInstance db = getInstance(clientId)
+        TarantoolSpace space = getSpace(clientId, spaceName)
+
+
+
+        Entity data = Entity.entityBuilder()
+                .put("id", intPrimitive(1))
+                .put("bucket_id", intPrimitive(99))
+                .put("data", stringPrimitive("data"))
+                .put("anotherData", stringPrimitive("another data"))
+                .build()
+
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .addField("id", UNSIGNED, false)
+                .addField("bucket_id", UNSIGNED))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true))
+        db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
+                .part(2)
+                .unique(false))
+
+        when:
+        for (int i = 0; i<benchmarkOpsCount; i++){
+            space.autoIncrement(data)
+        }
+
+        db.createIndex(spaceName, 'data', tarantoolSpaceIndex()
+                .part(3)
+                .unique(false))
+        sleep(mappingTimeout*10)
+
+        def response = space.select('data', stringPrimitive('data')).get()
+        int succeeded = response.size()
+        then:
+        (succeeded == benchmarkOpsCount)
+
+        cleanup:
+        db.dropSpace(spaceName)
+    }
+
     def "Router2 mapping loss rate"(){
         setup:
         def clientId = "router_2"
@@ -207,57 +257,6 @@ class TarantoolVshardMapping extends Specification {
 
         cleanup:
         db.dropSpace(spaceName)
-    }
-
-    def "Router2 mapping builder"(){
-        setup:
-        def clientId = "router_2"
-        def spaceName = "r2_map_build"
-
-        TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = getSpace(clientId, spaceName)
-
-
-
-        Entity data = Entity.entityBuilder()
-                .put("id", intPrimitive(1))
-                .put("bucket_id", intPrimitive(99))
-                .put("data", stringPrimitive("data"))
-                .put("anotherData", stringPrimitive("another data"))
-                .build()
-
-        db.createSpace(spaceName, tarantoolSpaceConfig()
-                .ifNotExists(true))
-        db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", UNSIGNED, false)
-                .addField("bucket_id", UNSIGNED))
-        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
-                .type(TarantoolIndexType.TREE)
-                .part("id")
-                .ifNotExists(true)
-                .unique(true))
-        db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
-                .part(2)
-                .unique(false))
-
-        when:
-
-        int succeeded = 0
-        for (int i = 0; i<benchmarkOpsCount; i++){
-            space.autoIncrement(data)
-            sleep(mappingTimeout)
-            if (space.get(intPrimitive(i+1)).isPresent()) succeeded++
-        }
-
-
-        db.createIndex(spaceName, 'data', tarantoolSpaceIndex()
-                .part(3)
-                .unique(false))
-        then:
-        (succeeded == benchmarkOpsCount)
-
-        //cleanup:
-        //db.dropSpace(spaceName)
     }
 
 }
