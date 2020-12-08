@@ -49,7 +49,7 @@ public class TarantoolSpace {
     }
 
     public Optional<List<Value>> select(String index, Value request){
-        return convertSelectResponse(call(client, SELECT, space, index, unpackValue(request)));
+        return convertSelectResponse(call(client, SELECT, space, unpackValue(request), index));
     }
 
     public Optional<Value> delete(Value key){
