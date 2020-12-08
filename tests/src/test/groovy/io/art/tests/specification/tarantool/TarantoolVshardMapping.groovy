@@ -23,7 +23,7 @@ import static io.art.value.factory.PrimitivesFactory.stringPrimitive
 
 class TarantoolVshardMapping extends Specification {
     def tmp = launch module()
-    def benchmarkOpsCount = 3000
+    def benchmarkOpsCount = 100
     def mappingTimeout = 200
 
     def "Router1 CRUD"() {
@@ -162,10 +162,10 @@ class TarantoolVshardMapping extends Specification {
         db.dropSpace(spaceName)
     }
 
-    def "Router2 art.auto_increment benchmark"(){
+    def "Router2 mapping loss rate"(){
         setup:
         def clientId = "router_2"
-        def spaceName = "r2_art_inc_bench"
+        def spaceName = "r2_map_loss"
 
         TarantoolInstance db = getInstance(clientId)
         TarantoolSpace space = getSpace(clientId, spaceName)
@@ -207,6 +207,53 @@ class TarantoolVshardMapping extends Specification {
 
         cleanup:
         db.dropSpace(spaceName)
+    }
+
+    def "Router2 mapping builder"(){
+        setup:
+        def clientId = "router_2"
+        def spaceName = "r2_map_build"
+
+        TarantoolInstance db = getInstance(clientId)
+        TarantoolSpace space = getSpace(clientId, spaceName)
+
+
+
+        Entity data = Entity.entityBuilder()
+                .put("id", intPrimitive(1))
+                .put("bucket_id", intPrimitive(99))
+                .put("data", stringPrimitive("data"))
+                .put("anotherData", stringPrimitive("another data"))
+                .build()
+
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .addField("id", UNSIGNED, false)
+                .addField("bucket_id", UNSIGNED))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true))
+        db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
+                .part(2)
+                .unique(false))
+
+        when:
+
+        int succeeded = 0
+        for (int i = 0; i<benchmarkOpsCount; i++){
+            space.autoIncrement(data)
+            sleep(mappingTimeout)
+            if (space.get(intPrimitive(i+1)).isPresent()) succeeded++
+        }
+        println(intPrimitive(succeeded))
+        then:
+        (succeeded == benchmarkOpsCount)
+
+        //cleanup:
+        //db.dropSpace(spaceName)
     }
 
 }

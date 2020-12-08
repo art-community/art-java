@@ -324,7 +324,8 @@ art = {
             end,
 
             builder = {
-                batch_size = 1024,
+                batch_size = 1024 * 10,
+                timeout = 0.1,
 
                 start = function(space)
                     if not (art.core.mapping_updates_of(space)) then return end
@@ -336,11 +337,11 @@ art = {
 
                 service = function(space)
                     local counter = 0
-                    for _,v in (art.core.mapping_updates_of(space):pairs()) do
+                    for _,v in box.space[space]:pairs() do
                         art.cluster.mapping.put(space, v)
                         counter = counter + 1
                         if (counter == art.cluster.mapping.builder.batch_size) then
-                            art.core.fiber.yield()
+                            art.core.fiber.sleep(art.cluster.mapping.builder.timeout)
                             counter = 0
                         end
                     end
