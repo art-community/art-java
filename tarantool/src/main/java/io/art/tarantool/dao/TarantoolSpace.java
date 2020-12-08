@@ -1,6 +1,5 @@
 package io.art.tarantool.dao;
 
-import io.art.core.factory.*;
 import io.art.value.immutable.Value;
 import io.art.value.tuple.*;
 import io.art.value.tuple.schema.*;
@@ -41,16 +40,16 @@ public class TarantoolSpace {
         return convertResponse(call(client, GET, space, unpackValue(key)));
     }
 
-    public Optional<List<Value>> select(Value request){
-        List<?> response = call(client, SELECT, space, unpackValue(request));
-        response = cast(response.get(0));
-        if (response.isEmpty()) return empty();
+    public Optional<Value> get(String index, Value key){
+        return convertResponse(call(client, GET, space, index, unpackValue(key)));
+    }
 
-        List<Value> result = response.stream()
-                .map(entry -> convertResponse(cast(entry)))
-                .map(Optional::get)
-                .collect(toCollection(ArrayFactory::dynamicArray));
-        return ofNullable(result);
+    public Optional<List<Value>> select(Value request){
+        return convertSelectResponse(call(client, SELECT, space, unpackValue(request)));
+    }
+
+    public Optional<List<Value>> select(String index, Value request){
+        return convertSelectResponse(call(client, SELECT, space, index, unpackValue(request)));
     }
 
     public Optional<Value> delete(Value key){
@@ -129,11 +128,11 @@ public class TarantoolSpace {
     private List<?> unpackUpdateOperations(TarantoolUpdateFieldOperation... operations) {
         List<?> valueOperations = stream(operations)
                 .map(TarantoolUpdateFieldOperation::getValueOperation)
-                .collect(toCollection(ArrayFactory::dynamicArray));
+                .collect(toList());
         List<?> schemaOperations = stream(operations)
                 .filter(operation -> isNotEmpty(operation.getSchemaOperation()))
                 .map(TarantoolUpdateFieldOperation::getSchemaOperation)
-                .collect(toCollection(ArrayFactory::dynamicArray));
+                .collect(toList());
         List<?> results = new ArrayList<>();
         results.add(cast(valueOperations));
         results.add(cast(schemaOperations));
@@ -157,6 +156,15 @@ public class TarantoolSpace {
         }
     }
 
+    private Optional<List<Value>> convertSelectResponse(List<?> response){
+        response = cast(response.get(0));
+        if (response.isEmpty()) return empty();
 
+        List<Value> result = response.stream()
+                .map(entry -> convertResponse(cast(entry)))
+                .map(Optional::get)
+                .collect(toList());
+        return ofNullable(result);
+    }
 
 }

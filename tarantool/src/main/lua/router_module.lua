@@ -131,6 +131,10 @@
                         local result = box.space[space]:create_index(index_name, map_index)
                     end,
 
+                    drop_index = function(space, index_name)
+                        box.space[space].index[index_name]:drop()
+                    end,
+
                     rename = function(space, new_name)
                         box.space[space]:rename(new_name)
                         art.cluster.mapping.space.rename_space_in_pending(space, new_name)
@@ -237,10 +241,11 @@
         },
 
         api = {
-            get = function(space, key)
-                local mapping_entry = box.space[space]:get(key)
+            get = function(space, key, index)
+                if not (index) then index = 0 end
+                local mapping_entry = box.space[space].index[index]:get(key)
                 if not (mapping_entry) then return {{}} end
-                return vshard.router.callro(mapping_entry.bucket_id, 'art.box.get', {space, key})
+                return vshard.router.callro(mapping_entry.bucket_id, 'art.box.get', {space, key, index})
             end,
 
             delete = function(space, key)
@@ -280,17 +285,18 @@
                 return vshard.router.callrw(bucket_id, 'art.box.upsert', {space, data, commands, bucket_id})
             end,
 
-            select = function(space, request)
+            select = function(space, request, index)
+                if not(index) then index = 0 end
                 local get_requests = {}
                 local key_fields_mapping = {}
                 local request_entry
                 local result = {}
 
-                for _,part in pairs(box.space[space].index[0].parts) do
+                for _,part in pairs(box.space[space].index[index].parts) do
                     key_fields_mapping[part.fieldno] = true
                 end
 
-                for _,mapping_entry in pairs(box.space[space]:select(request)) do
+                for _,mapping_entry in pairs(box.space[space].index[index]:select(request)) do
                     if not (get_requests[mapping_entry.bucket_id]) then get_requests[mapping_entry.bucket_id] = {} end
                     request_entry = {}
                     for k in pairs(key_fields_mapping) do
@@ -330,6 +336,13 @@
                         art.cluster.mapping.space.create_index(space, index_name, index)
                     end
                     return result
+                end,
+
+                drop_index = function(space, index_name)
+                    local result = art.cluster.space_ops.execute('drop_index', { space, index_name})
+                    if result[1] then
+                        art.cluster.mapping.space.drop_index(space, index_name)
+                    end
                 end,
 
                 rename = function(space, new_name)

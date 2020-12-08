@@ -35,8 +35,12 @@ public class TarantoolInstance {
         call(client, FORMAT_SPACE, space, format.getFormat());
     }
 
-    public void createIndex(String space, String name, TarantoolSpaceIndex index){
-        call(client, CREATE_INDEX, space, name, index.getIndex());
+    public void createIndex(String space, String indexName, TarantoolSpaceIndex indexConfig){
+        call(client, CREATE_INDEX, space, indexName, indexConfig.getIndex());
+    }
+
+    public void dropIndex(String space, String indexName){
+        call(client, DROP_INDEX, space, indexName);
     }
     
     public void renameSpace(String space, String newName){
