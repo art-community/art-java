@@ -83,6 +83,7 @@ public interface TarantoolModuleConstants {
         String CREATE_SPACE = "art.api.space.create";
         String FORMAT_SPACE = "art.api.space.format";
         String CREATE_INDEX = "art.api.space.create_index";
+        String DROP_INDEX = "art.api.space.drop_index";
         String DROP_SPACE = "art.api.space.drop";
         String RENAME_SPACE = "art.api.space.rename";
         String TRUNCATE = "art.api.space.truncate";

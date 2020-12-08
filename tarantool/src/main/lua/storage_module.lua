@@ -66,8 +66,9 @@ art = {
     },
 
     box = {
-        get = function(space, key)
-            local data = box.space[space]:get(key)
+        get = function(space, key, index)
+            if not(index) then index = 0 end
+            local data = box.space[space].index[index]:get(key)
             if (data == nil) then return {'', ''} end
             local schema_hash = data[#data]
             local response = data:transform(#data, 1)
@@ -162,9 +163,10 @@ art = {
             end
         end,
 
-        select = function(space, request)
+        select = function(space, request, index)
+            if not (index) then index = 0 end
             local response_entry = {}
-            local response = box.space[space]:select(request)
+            local response = box.space[space].index[index]:select(request)
             for i = 1, #response do
                 response_entry[1] = response[i]:transform(#response[i], 1)
                 response_entry[2] = art.core.schema_of(space):get(response[i][ #response[i] ])['schema']
@@ -204,6 +206,11 @@ art = {
                 local index_obj = box.space[space]:create_index(name, index)
                 art.cluster.mapping.space.watch_index(space, index_obj)
                 return index_obj
+            end,
+
+            drop_index = function(space, name)
+                art.cluster.mapping.space.unwatch_index(space, box.space[space].index[name])
+                box.space[space].index[name]:drop()
             end,
 
             truncate = function(space)
@@ -536,6 +543,7 @@ art = {
                         table.insert(format, {name = 'id_part_' .. k, type = v.type, is_nullable = v.is_nullable})
                         table.insert(primary_index_parts, {v.fieldno + 3, type = v.type})
                     end
+
                     art.core.mapping_updates_of(space):format(format)
                     art.core.mapping_updates_of(space):create_index('primary', { parts = primary_index_parts})
                     art.core.mapping_updates_of(space):create_index('timestamp', { unique = false, parts = { 1}})
@@ -584,6 +592,24 @@ art = {
                     end
                 end,
 
+                unwatch_index = function(space, index)
+                    if not (art.core.mapping_updates_of(space)) then return end
+                    if (index.id ==0) or (index.name == 'bucket_id') then
+                        art.luster.mapping.space.unwatch(space)
+                        return
+                    end
+
+                    local watched_space = box.space.mapping_watched_spaces:get(space)
+                    local watched_fields = watched_space[2]
+
+                    for _, v in pairs(index_obj.parts) do
+                        watched_fields[v.fieldno] = watched_fields[v.fieldno] - 1
+                        if (watched_fields[v.fieldno] < 1) then watched_fields[v.fieldno] = nil end
+                    end
+
+                    watched_space = watched_space:update({{'=', 2, watched_fields}})
+                    box.space.mapping_watched_spaces:replace(watched_space)
+                end
             },
 
             network_manager = {
@@ -611,8 +637,8 @@ art = {
     },
 
     api = {
-        get = function(space, id)
-            return box.atomic(art.box.get, space, id)
+        get = function(space, key, index)
+            return box.atomic(art.box.get, space, key, index)
         end,
 
         get_batch = function(space, keys)
@@ -658,8 +684,8 @@ art = {
             return result
         end,
 
-        select = function(space, request)
-            return box.atomic(art.box.select, space, request)
+        select = function(space, request, index)
+            return box.atomic(art.box.select, space, request, index)
         end,
 
         space = {
@@ -677,6 +703,11 @@ art = {
                 art.box.space.wait_for_clustered_op()
                 local result = box.atomic(art.box.space.create_index, space, index_name, index)
                 return result
+            end,
+
+            drop_index = function(space, index_name)
+                art.box.space.wait_for_clustered_op()
+                local result = box.atomic(art.box.space.drop_index, space, index_name)
             end,
 
             rename = function(space, new_name)
