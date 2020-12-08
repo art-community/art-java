@@ -248,7 +248,7 @@ class TarantoolVshardMapping extends Specification {
             sleep(mappingTimeout)
             if (space.get(intPrimitive(i+1)).isPresent()) succeeded++
         }
-        println(intPrimitive(succeeded))
+
 
         db.createIndex(spaceName, 'data', tarantoolSpaceIndex()
                 .part(3)

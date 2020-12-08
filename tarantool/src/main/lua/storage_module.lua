@@ -167,12 +167,13 @@ art = {
             if not (index) then index = 0 end
             local response_entry = {}
             local response = box.space[space].index[index]:select(request)
-            for i = 1, #response do
-                response_entry[1] = response[i]:transform(#response[i], 1)
-                response_entry[2] = art.core.schema_of(space):get(response[i][ #response[i] ])['schema']
-                response[i] = {response_entry}
-            end
             if response[1] == nil then return {} end
+            for _,entry in pairs(response) do
+                response_entry[1] = entry:transform(#entry, 1)
+                response_entry[2] = art.core.schema_of(space):get(entry[#entry]).schema
+                entry = {response_entry}
+            end
+
             return response
         end,
 
