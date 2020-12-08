@@ -98,7 +98,7 @@
 
                     format = function(space, format)
                         if not (format) then return end
-                        if not(box.space[space].index[0]) then
+                        if not(box.space[space].index[0] and box.space[space].index.bucket_id) then
                             box.space[space]:format(format)
                             return
                         end
@@ -114,16 +114,21 @@
                         end,
 
                     create_index = function(space, index_name, index)
-                        local parts = index.parts
-                        for _, v in pairs(parts) do
-                            if not (type(v) == 'table') then
-                                v = { v }
-                            end
-                            v['is_nullable'] = true
+                        if not (box.space[space].index[0] and box.space[space].index.bucket_id) then
+                            box.space[space]:create_index(index_name, index)
+                            art.cluster.mapping.space.format(space, box.space[space]:format())
+                            return
                         end
-                        index.parts = parts
-                        local result = box.space[space]:create_index(index_name, index)
-                        if (result.id == 0) then box.space[space]:format(box.space[space]:format()) end
+
+                        local map_index = index
+                        for k, v in pairs(index.parts) do
+                            map_index.parts[k] = v
+                            if not (type(v) == 'table') then
+                                map_index.parts[k] = {field = v}
+                            end
+                            map_index.parts[k]['is_nullable'] = true
+                        end
+                        local result = box.space[space]:create_index(index_name, map_index)
                     end,
 
                     rename = function(space, new_name)
