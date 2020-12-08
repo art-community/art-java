@@ -292,7 +292,7 @@
                 local request_entry
                 local result = {}
 
-                for _,part in pairs(box.space[space].index[index].parts) do
+                for _,part in pairs(box.space[space].index[0].parts) do
                     key_fields_mapping[part.fieldno] = true
                 end
 
