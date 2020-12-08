@@ -24,7 +24,7 @@ import static io.art.value.factory.PrimitivesFactory.stringPrimitive
 class TarantoolVshardMapping extends Specification {
     def tmp = launch module()
     def benchmarkOpsCount = 100
-    def mappingTimeout = 200
+    def mappingTimeout = 300
 
     def "Router1 CRUD"() {
         setup:
@@ -249,6 +249,10 @@ class TarantoolVshardMapping extends Specification {
             if (space.get(intPrimitive(i+1)).isPresent()) succeeded++
         }
         println(intPrimitive(succeeded))
+
+        db.createIndex(spaceName, 'data', tarantoolSpaceIndex()
+                .part(3)
+                .unique(false))
         then:
         (succeeded == benchmarkOpsCount)
 

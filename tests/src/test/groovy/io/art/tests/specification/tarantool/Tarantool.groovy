@@ -1,6 +1,7 @@
 
 package io.art.tests.specification.tarantool
 
+import io.art.tarantool.exception.TarantoolDaoException
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
 import io.art.tarantool.dao.TarantoolInstance
@@ -378,19 +379,63 @@ class Tarantool extends Specification {
         def spaceName = "s2_COL"
         def clientId = "storage_2_a"
         TarantoolInstance db = getInstance(clientId)
+        boolean result = false
 
 
         getClient(clientId).eval("art.box.space.cluster_op_in_progress = true")
-        String exception = ''
 
         when:
-        db.createSpace(spaceName, tarantoolSpaceConfig())
-        db.formatSpace(spaceName, tarantoolSpaceFormat())
-        db.createIndex(spaceName, "primary", tarantoolSpaceIndex())
-        db.renameSpace(spaceName, spaceName = "s2_COL2")
-        db.dropSpace(spaceName)
+        try{
+            db.createSpace(spaceName, tarantoolSpaceConfig())
+        } catch(TarantoolDaoException){
+            result = true
+        }
         then:
-        true
+        result
+
+
+        when:
+        result = false
+        try {
+            db.formatSpace(spaceName, tarantoolSpaceFormat())
+        } catch(TarantoolDaoException){
+            result = true
+        }
+        then:
+        result
+
+
+        when:
+        result = false
+        try {
+            db.createIndex(spaceName, "primary", tarantoolSpaceIndex())
+        } catch(TarantoolDaoException){
+            result = true
+        }
+        then:
+        result
+
+
+        when:
+        result = false
+        try {
+            db.renameSpace(spaceName, spaceName = "s2_COL2")
+        } catch(TarantoolDaoException){
+            result = true
+        }
+        then:
+        result
+
+
+        when:
+        result = false
+        try {
+            db.dropSpace(spaceName)
+        } catch(TarantoolDaoException){
+            result = true
+        }
+        then:
+        result
 
 
         cleanup:
