@@ -153,7 +153,7 @@ class Tarantool extends Specification {
         setup:
         def clientId = "router_1"
         def spaceName = "r1_crud"
-        def mappingTimeout = 200
+        def mappingTimeout = 300
 
         TarantoolInstance db = getInstance(clientId)
         TarantoolSpace space = getSpace(clientId, spaceName)
