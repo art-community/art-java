@@ -166,15 +166,16 @@ art = {
         select = function(space, request, index)
             if not (index) then index = 0 end
             local response_entry = {}
+            local result = {}
             local response = box.space[space].index[index]:select(request)
             if response[1] == nil then return {} end
             for _,entry in pairs(response) do
                 response_entry[1] = entry:transform(#entry, 1)
                 response_entry[2] = art.core.schema_of(space):get(entry[#entry]).schema
-                entry = {response_entry}
+                table.insert(result, {response_entry})
             end
 
-            return response
+            return result
         end,
 
         space = {
