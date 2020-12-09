@@ -62,7 +62,7 @@ public interface TarantoolModuleConstants {
         String TARANTOOL_CLIENT_CLOSED = "Tarantool client for instance ''{0}'' closed";
         String TARANTOOL_SUCCESSFULLY_CONNECTED = "Tarantool ''{0}'' with address ''{1}'' successfully connected";
         String EVALUATING_LUA_SCRIPT = "Evaluating lua script: ''{0}''";
-        String CALLING_FUNCTION = "Calling tarantool function ''{0}'' with arguments: {1}";
+        String CALLING_FUNCTION = "Calling tarantool function ''{0}''";
         String CALLED_FUNCTION = "Called tarantool function ''{0}'' with result: {1}";
         String FAILED_FUNCTION = "Failed to call tarantool function ''{0}''";
         String TRYING_TO_CONNECT = "Trying to connect to tarantool ''{0}'' with address ''{1}'' during the ''{2,number,#}[ms]''";

@@ -1,10 +1,10 @@
 
 package io.art.tests.specification.tarantool
 
+import io.art.tarantool.dao.TarantoolAsyncSpace
 import io.art.tarantool.dao.TarantoolInstance
 import io.art.tarantool.dao.TarantoolSpace
 import io.art.tarantool.model.TarantoolUpdateFieldOperation
-import io.art.tarantool.storage.TarantoolStorageSpace
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
 import spock.lang.Specification
@@ -14,7 +14,6 @@ import static io.art.model.module.ModuleModel.module
 import static io.art.tarantool.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
 import static io.art.tarantool.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
 import static io.art.tarantool.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
-import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.NUMBER
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.UNSIGNED
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolIndexType
 import static io.art.tarantool.module.TarantoolModule.*
@@ -33,7 +32,7 @@ class TarantoolVshardMapping extends Specification {
 
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = getSpace(clientId, spaceName)
+        TarantoolSpace space = db.getSpace(spaceName)
 
 
 
@@ -84,7 +83,7 @@ class TarantoolVshardMapping extends Specification {
                 .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("testData"))
                 .build()
-        space = getSpace(clientId, spaceName)
+        space = db.getSpace(spaceName)
         space.autoIncrement(data)
         then:
         sleep(mappingTimeout)
@@ -168,7 +167,7 @@ class TarantoolVshardMapping extends Specification {
         def spaceName = "r2_map_build"
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = getSpace(clientId, spaceName)
+        TarantoolAsyncSpace space = db.getAsyncSpace(spaceName)
 
 
 
@@ -203,7 +202,7 @@ class TarantoolVshardMapping extends Specification {
                 .unique(false))
         sleep(mappingTimeout*10)
 
-        def response = space.select('data', stringPrimitive('data')).get()
+        def response = space.select('data', stringPrimitive('data')).get().get()
         int succeeded = response.size()
         then:
         (succeeded == benchmarkOpsCount)
@@ -218,7 +217,7 @@ class TarantoolVshardMapping extends Specification {
         def spaceName = "r2_map_loss"
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = getSpace(clientId, spaceName)
+        TarantoolAsyncSpace space = db.getAsyncSpace(spaceName)
 
 
 
@@ -249,7 +248,7 @@ class TarantoolVshardMapping extends Specification {
         for (int i = 0; i<benchmarkOpsCount; i++){
             space.autoIncrement(data)
             sleep(mappingTimeout)
-            if (space.get(intPrimitive(i+1)).isPresent()) succeeded++
+            if (space.get(intPrimitive(i+1)).get().isPresent()) succeeded++
         }
         println(intPrimitive(succeeded))
         then:

@@ -172,7 +172,7 @@ art = {
             for _,entry in pairs(response) do
                 response_entry[1] = entry:transform(#entry, 1)
                 response_entry[2] = art.core.schema_of(space):get(entry[#entry]).schema
-                table.insert(result, {response_entry})
+                table.insert(result, response_entry)
             end
 
             return result

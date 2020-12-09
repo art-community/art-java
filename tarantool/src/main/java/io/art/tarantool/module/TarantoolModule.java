@@ -7,7 +7,6 @@ import io.art.tarantool.configuration.TarantoolModuleConfiguration;
 import io.art.tarantool.exception.TarantoolModuleException;
 import io.art.tarantool.module.state.TarantoolModuleState;
 import io.art.tarantool.dao.TarantoolInstance;
-import io.art.tarantool.dao.TarantoolSpace;
 import io.tarantool.driver.api.TarantoolClient;
 import lombok.Getter;
 
@@ -38,11 +37,7 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
         return new TarantoolInstance(getClient(clientId));
     }
 
-    public static TarantoolSpace getSpace(String clientId, String space){
-        return new TarantoolSpace(getClient(clientId), space);
-    }
-
-    public static TarantoolClient getClient(String clientId){
+    private static TarantoolClient getClient(String clientId){
         Optional<TarantoolClient> existingClient = tarantoolModule().state().getClient(clientId);
         if (existingClient.isPresent()) return existingClient.get();
         TarantoolInstanceConfiguration config = tarantoolModule().configuration().instances.get(clientId);

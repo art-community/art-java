@@ -1,7 +1,7 @@
 
 package io.art.tests.specification.tarantool
 
-import io.art.tarantool.exception.TarantoolDaoException
+import io.art.tarantool.dao.TarantoolAsyncSpace
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
 import io.art.tarantool.dao.TarantoolInstance
@@ -35,11 +35,11 @@ class Tarantool extends Specification {
 
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = getSpace(clientId, spaceName)
+        TarantoolSpace space = db.getSpace(spaceName)
 
 
 
-        Entity data = Entity.entityBuilder()
+        Value data = Entity.entityBuilder()
                 .put("id", intPrimitive(3))
                 .put("data", stringPrimitive("testData"))
                 .put("anotherData", stringPrimitive("another data"))
@@ -66,7 +66,7 @@ class Tarantool extends Specification {
         when:
         space.insert(data)
         then:
-        ((Entity) space.get(request).get()).asMap() == data.asMap()
+        space.get(request).get() == data
 
 
         when:
@@ -74,14 +74,14 @@ class Tarantool extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         db.renameSpace(spaceName, spaceName = "s1_CRUD2")
-        space = getSpace(clientId, spaceName)
+        space = db.getSpace(spaceName)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("data", stringPrimitive("testData"))
                 .build()
         space.autoIncrement(data)
         then:
-        ((space.len() == 5) && (space.schemaLen() == 2))
+        (space.len() == 5) && (space.schemaLen() == 2)
 
 
         when:
@@ -92,9 +92,9 @@ class Tarantool extends Specification {
 
         when:
         request = intPrimitive(7)
-        Entity response = space.select(request).get().get(0) as Entity
+        Value response = space.select(request).get().get(0) as Entity
         then:
-        response.asMap() == data.asMap()
+        response == data
 
 
         when:
@@ -110,7 +110,7 @@ class Tarantool extends Specification {
                 .build()
         space.put(data)
         then:
-        ((Entity) space.get(request).get()).asMap() == data.asMap()
+        space.get(request).get() == data
 
 
         when:
@@ -124,7 +124,7 @@ class Tarantool extends Specification {
         space.update(intPrimitive(7),
                 TarantoolUpdateFieldOperation.assigment(2, 'data', stringPrimitive("another")))
         then:
-        ((Entity)space.get(request).get()).get("data") == stringPrimitive("another")
+        (space.get(request).get() as Entity).get("data") == stringPrimitive("another")
 
         when:
         space.put(data)
@@ -134,7 +134,7 @@ class Tarantool extends Specification {
                 .build()
         space.replace(data)
         then:
-        ((Entity)space.get(intPrimitive(7)).get()).asMap() == data.asMap()
+        space.get(intPrimitive(7)).get() == data
 
         when:
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
@@ -156,7 +156,7 @@ class Tarantool extends Specification {
         def mappingTimeout = 300
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = getSpace(clientId, spaceName)
+        TarantoolSpace space = db.getSpace(spaceName)
 
 
 
@@ -207,11 +207,11 @@ class Tarantool extends Specification {
                 .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("testData"))
                 .build()
-        space = getSpace(clientId, spaceName)
+        space = db.getSpace(spaceName)
         space.autoIncrement(data)
         then:
         sleep(mappingTimeout)
-        ((space.len() == 5) && (space.schemaLen() == 2))
+        (space.len() == 5) && (space.schemaLen() == 2)
 
 
         when:
@@ -260,7 +260,7 @@ class Tarantool extends Specification {
         sleep(mappingTimeout)
         space.update(key, TarantoolUpdateFieldOperation.assigment(3, 'data', stringPrimitive("another")))
         then:
-        ((Entity)space.get(request).get()).get("data") == stringPrimitive("another")
+        (space.get(request).get() as Entity).get("data") == stringPrimitive("another")
 
         when:
         space.put(data)
@@ -291,7 +291,7 @@ class Tarantool extends Specification {
         def clientId = "storage_1_a"
 
         def db = getInstance(clientId)
-        def space = getSpace(clientId, spaceName)
+        def space = new TarantoolStorageSpace(db.getSpace(spaceName))
 
 
 
@@ -325,7 +325,7 @@ class Tarantool extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         db.renameSpace(spaceName, spaceName = "s1_storage_ops2")
-        space = new TarantoolStorageSpace(getSpace(clientId, spaceName))
+        space = new TarantoolStorageSpace(db.getSpace(spaceName))
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("data", stringPrimitive("testData"))
@@ -368,6 +368,125 @@ class Tarantool extends Specification {
         space.delete(intPrimitive(7))
         then:
         space.get(request).isEmpty()
+
+
+        cleanup:
+        db.dropSpace(spaceName)
+    }
+
+    def "Storage2 async CRUD"(){
+        setup:
+        def spaceName = "s2_CRUD"
+        def clientId = "storage_2_a"
+
+
+        TarantoolInstance db = getInstance(clientId)
+        TarantoolAsyncSpace space = db.getAsyncSpace(spaceName)
+
+
+
+        Entity data = Entity.entityBuilder()
+                .put("id", intPrimitive(3))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
+                .build()
+        Value request = intPrimitive(3)
+
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .addField("id", NUMBER, false))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true))
+
+
+        when:
+        def spaces = db.listSpaces()
+        def indices = space.listIndices().get()
+        then:
+        spaces.contains(spaceName) && indices.contains("primary")
+
+        when:
+        space.insert(data)
+        then:
+        ((Entity) space.get(request).get().get()) == data
+
+
+        when:
+        space.autoIncrement(data)
+        space.autoIncrement(data)
+        space.autoIncrement(data)
+        db.renameSpace(spaceName, spaceName = "s1_CRUD2")
+        space = db.getAsyncSpace(spaceName)
+        data = Entity.entityBuilder()
+                .put("id", intPrimitive(7))
+                .put("data", stringPrimitive("testData"))
+                .build()
+        space.autoIncrement(data)
+        then:
+        ((space.len().get() == 5) && (space.schemaLen().get() == 2))
+
+
+        when:
+        request = intPrimitive(2)
+        then:
+        space.get(request).get().isEmpty() && space.select(request).get().isEmpty()
+
+
+        when:
+        request = intPrimitive(7)
+        Entity response = space.select(request).get().get().get(0) as Entity
+        then:
+        response == data
+
+
+        when:
+        space.truncate()
+        then:
+        (space.count().get() == 0) && (space.schemaCount().get() == 0)
+
+
+        when:
+        data = Entity.entityBuilder()
+                .put("id", intPrimitive(7))
+                .put("data", stringPrimitive("another data"))
+                .build()
+        space.put(data)
+        then:
+        space.get(request).get().get() == data
+
+
+        when:
+        space.delete(intPrimitive(7))
+        then:
+        space.get(request).get().isEmpty()
+
+
+        when:
+        space.put(data)
+        space.update(intPrimitive(7),
+                TarantoolUpdateFieldOperation.assigment(2, 'data', stringPrimitive("another")))
+        then:
+        (space.get(request).get().get() as Entity).get("data") == stringPrimitive("another")
+
+        when:
+        space.put(data)
+        data = Entity.entityBuilder()
+                .put("id", intPrimitive(7))
+                .put("data", stringPrimitive("something"))
+                .build()
+        space.replace(data)
+        then:
+        space.get(intPrimitive(7)).get().get() == data
+
+        when:
+        space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
+        space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
+        then:
+        space.get(intPrimitive(7)).get().isPresent() && space.get(intPrimitive(8)).get().isPresent()
 
 
         cleanup:
