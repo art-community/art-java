@@ -142,14 +142,12 @@ public class TarantoolSpace {
     private Optional<Value> convertResponse(List<?> response){
         response = cast(response.get(0));
         if ((isEmpty(response.get(0))) || response.size() < 2) {
-            //getLogger().info("Got empty response");
             return empty();
         }
         try {
             List<?> data = cast(response.get(0));
             ValueSchema schema = ValueSchema.fromTuple(cast(response.get(1)));
             Value result = PlainTupleReader.readTuple(data, schema);
-            //getLogger().info("Got Value: " + result.toString() + " Type:" + result.getType());
             return ofNullable(result);
         } catch(Exception e){
             throw new TarantoolDaoException(format(RESULT_IS_INVALID, response));

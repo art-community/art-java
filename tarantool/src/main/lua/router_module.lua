@@ -307,10 +307,10 @@
 
                 for bucket_id, batch_req in pairs(get_requests) do
                     local response = vshard.router.callro(bucket_id, 'art.api.get_batch', {space, batch_req})
-                    if (response) then for _,v in pairs(response) do table.insert(result, v) end end
+                    if (response) then for _,v in pairs(response) do table.insert(result, {v}) end end
                 end
                 if not (result[1]) then return {} end
-                return {result}
+                return result
             end,
 
             space = {
