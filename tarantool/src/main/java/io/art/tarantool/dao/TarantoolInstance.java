@@ -27,6 +27,14 @@ public class TarantoolInstance {
         return setOf(response);
     }
 
+    public TarantoolSpace getSpace(String space){
+        return new TarantoolSpace(client, space);
+    }
+
+    public TarantoolAsyncSpace getAsyncSpace(String space){
+        return new TarantoolAsyncSpace(client, space);
+    }
+
     public void createSpace(String space, TarantoolSpaceConfig config){
         call(client, CREATE_SPACE, space, config.getConfig());
     }
