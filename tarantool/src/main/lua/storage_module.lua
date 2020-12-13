@@ -1,15 +1,11 @@
---
---ART module for tarantool storages
---
-
 art = {
     core = {
         schema_of = function(space)
-            return box.space[space .. art.config.schema_postfix]
+            return box.space['_' .. space .. art.config.schema_postfix]
         end,
 
         mapping_updates_of = function(space)
-            return box.space[space.. art.config.mapping_space_postfix]
+            return box.space['_' .. space .. art.config.mapping_space_postfix]
         end,
 
         clock = require('clock'),
@@ -222,7 +218,7 @@ art = {
             end,
 
             rename = function(space, name)
-                art.core.schema_of(space):rename(name .. art.config.schema_postfix)
+                art.core.schema_of(space):rename('_' .. name .. art.config.schema_postfix)
                 art.cluster.mapping.space.rename(space, name)
                 return box.space[space]:rename(name)
             end,
@@ -247,7 +243,7 @@ art = {
                     {name = 'count', type = 'unsigned'},
                     {name = 'schema', type = 'any'}
                 }
-                local schema = box.schema.space.create(name .. art.config.schema_postfix, config)
+                local schema = box.schema.space.create('_' .. name .. art.config.schema_postfix, config)
                 schema:create_index('hash', {
                     type = 'tree',
                     if_not_exists = true,
@@ -266,7 +262,7 @@ art = {
                     {name = 'schema', type = 'any'},
                     {name = 'bucket_id', type = 'unsigned'}
                 }
-                local schema = box.schema.space.create(name .. art.config.schema_postfix, config)
+                local schema = box.schema.space.create('_' .. name .. art.config.schema_postfix, config)
                 schema:create_index('hash', {
                     type = 'tree',
                     if_not_exists = true,
@@ -332,14 +328,14 @@ art = {
             last_collected_timestamps = {},
 
             init = function(uri_list)
-                if not (box.space.mapping_watched_spaces) then
-                    box.schema.space.create('mapping_watched_spaces')
-                    box.space.mapping_watched_spaces:format({
+                if not (box.space._mapping_watched_spaces) then
+                    box.schema.space.create('_mapping_watched_spaces')
+                    box.space._mapping_watched_spaces:format({
                         {name = 'space', type = 'string'},
                         {name = 'watched_fields_counter', type = 'array'},
                         {name = 'batch_size', type = 'unsigned'}
                     })
-                    box.space.mapping_watched_spaces:create_index('primary', {parts = {1}})
+                    box.space._mapping_watched_spaces:create_index('primary', {parts = {1}})
                 end
 
                 for _,v in pairs(uri_list) do art.cluster.mapping.nodes[v] = false end
@@ -355,7 +351,7 @@ art = {
                 if not (art.core.mapping_updates_of(space)) then return end
                 local update = {art.core.clock.realtime64(), false}
                 local update_data = {}
-                for k,_ in pairs(box.space.mapping_watched_spaces:get(space)[2]) do
+                for k,_ in pairs(box.space._mapping_watched_spaces:get(space)[2]) do
                     update_data[k]=data[k]
                 end
                 update[3] = update_data
@@ -438,7 +434,7 @@ art = {
                     local is_sent
 
                     while(true) do
-                        spaces = box.space.mapping_watched_spaces:select()
+                        spaces = box.space._mapping_watched_spaces:select()
 
                         for _, v in pairs(spaces) do
                             local batch = art.cluster.mapping.watcher.collect_updates(v)
@@ -513,7 +509,7 @@ art = {
 
                 service = function()
                     while true do
-                        local watched_spaces = box.space.mapping_watched_spaces:select()
+                        local watched_spaces = box.space._mapping_watched_spaces:select()
                         for _, v in pairs(watched_spaces) do
                             art.cluster.mapping.garbage_collector.cleanup_space(v.space)
                         end
@@ -531,7 +527,7 @@ art = {
 
             space = {
                 create = function(space)
-                    box.schema.space.create(space .. art.config.mapping_space_postfix)
+                    box.schema.space.create('_' .. space .. art.config.mapping_space_postfix)
                 end,
 
                 init_space = function(space)
@@ -550,14 +546,14 @@ art = {
                     art.core.mapping_updates_of(space):create_index('primary', { parts = primary_index_parts})
                     art.core.mapping_updates_of(space):create_index('timestamp', { unique = false, parts = { 1}})
 
-                    box.space.mapping_watched_spaces:insert(box.tuple.new({space, {}, art.config.mapping.default_batch_size }))
+                    box.space._mapping_watched_spaces:insert(box.tuple.new({space, {}, art.config.mapping.default_batch_size }))
                 end,
 
                 watch_index = function(space, index_obj)
                     if not (art.core.mapping_updates_of(space)) then return end
                     if (index_obj.id == 0) then art.cluster.mapping.space.init_space(space, index_obj) end
 
-                    local watched_space = box.space.mapping_watched_spaces:get(space)
+                    local watched_space = box.space._mapping_watched_spaces:get(space)
                     local watched_fields = watched_space[2]
 
                     for _, v in pairs(index_obj.parts) do
@@ -566,15 +562,15 @@ art = {
                     end
 
                     watched_space = watched_space:update({{'=', 2, watched_fields}})
-                    box.space.mapping_watched_spaces:replace(watched_space)
+                    box.space._mapping_watched_spaces:replace(watched_space)
                     art.cluster.mapping.builder.build(space)
                 end,
 
                 rename = function(space, name)
                     if(art.core.mapping_updates_of(space)) then
-                        art.core.mapping_updates_of(space):rename(name .. art.config.mapping_space_postfix)
-                        local watched_space = box.space.mapping_watched_spaces:delete(space)
-                        box.space.mapping_watched_spaces:insert(watched_space:update({{'=', 1, name}}))
+                        art.core.mapping_updates_of(space):rename('_' .. name .. art.config.mapping_space_postfix)
+                        local watched_space = box.space._mapping_watched_spaces:delete(space)
+                        box.space._mapping_watched_spaces:insert(watched_space:update({{'=', 1, name}}))
                         art.cluster.mapping.last_collected_timestamps[name] = art.cluster.mapping.last_collected_timestamps[space]
                         art.cluster.mapping.last_collected_timestamps[space] = nil
                     end
@@ -589,7 +585,7 @@ art = {
                 unwatch = function(space)
                     if(art.core.mapping_updates_of(space)) then
                         art.core.mapping_updates_of(space):drop()
-                        box.space.mapping_watched_spaces:delete(space)
+                        box.space._mapping_watched_spaces:delete(space)
                         art.cluster.mapping.last_collected_timestamps[space] = nil
                     end
                 end,
@@ -601,7 +597,7 @@ art = {
                         return
                     end
 
-                    local watched_space = box.space.mapping_watched_spaces:get(space)
+                    local watched_space = box.space._mapping_watched_spaces:get(space)
                     local watched_fields = watched_space[2]
 
                     for _, v in pairs(index_obj.parts) do
@@ -610,7 +606,7 @@ art = {
                     end
 
                     watched_space = watched_space:update({{'=', 2, watched_fields}})
-                    box.space.mapping_watched_spaces:replace(watched_space)
+                    box.space._mapping_watched_spaces:replace(watched_space)
                 end
             },
 

@@ -30,7 +30,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static lombok.AccessLevel.PRIVATE;
-import static io.art.tarantool.dao.caller.TarantoolFunctionCaller.callAsync;
+import static io.art.tarantool.caller.TarantoolFunctionCaller.callAsync;
 
 public class TarantoolAsyncSpace {
     @Getter(lazy = true, value = PRIVATE)

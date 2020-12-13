@@ -1,4 +1,5 @@
 tarantool:
+  enable_tracing: false
   instances:
     storage_1_a:
       username: username
