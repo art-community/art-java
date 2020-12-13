@@ -67,6 +67,30 @@ subprojects {
         annotationProcessor("org.projectlombok", "lombok", lombokVersion)
     }
 
+    tasks.findByPath("check")?.let { check ->
+        check.setDependsOn(check.dependsOn
+                .filter { task ->
+                    when (task) {
+                        is String -> task != "test"
+                        is TaskProvider<*> -> task.name != "test"
+                        else -> true
+                    }
+                }
+                .toSet())
+    }
+
+    tasks.findByPath("build")?.let { check ->
+        check.setDependsOn(check.dependsOn
+                .filter { task ->
+                    when (task) {
+                        is String -> task != "test"
+                        is TaskProvider<*> -> task.name != "test"
+                        else -> true
+                    }
+                }
+                .toSet())
+    }
+
     if (bintrayUser.isNullOrEmpty() || bintrayKey.isNullOrEmpty()) {
         return@subprojects
     }
@@ -130,7 +154,6 @@ subprojects {
             publish = true
             dependsOn(tasks["generatePomFileFor${this@subprojects.name.capitalize()}Publication"], jar, sourceJar)
         }
-
     }
 }
 
