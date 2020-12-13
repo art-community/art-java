@@ -10,7 +10,7 @@ import static io.art.core.caster.Caster.cast;
 import static io.art.logging.LoggingModule.*;
 import static lombok.AccessLevel.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static io.art.tarantool.dao.caller.TarantoolFunctionCaller.*;
+import static io.art.tarantool.caller.TarantoolFunctionCaller.*;
 import static io.art.core.factory.CollectionsFactory.setOf;
 
 public class TarantoolInstance {

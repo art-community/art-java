@@ -1,28 +1,17 @@
 package io.art.tarantool.dao;
 
 import io.art.value.immutable.Value;
-import io.art.value.tuple.*;
-import io.art.value.tuple.schema.*;
 import io.tarantool.driver.api.TarantoolClient;
 import lombok.*;
 import org.apache.logging.log4j.*;
 
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.*;
-import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.EmptinessChecker.*;
+
 import static io.art.core.factory.CollectionsFactory.setOf;
 import static io.art.logging.LoggingModule.*;
-import static io.art.value.tuple.PlainTupleWriter.*;
-import static java.lang.String.*;
-import static java.util.Arrays.*;
-import static java.util.Optional.*;
-import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static io.art.tarantool.dao.caller.TarantoolFunctionCaller.*;
-import java.util.ArrayList;
+
 import java.util.*;
 
 public class TarantoolSpace {

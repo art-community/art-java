@@ -1,7 +1,3 @@
---
---ART module for tarantool storages
---
-
     art = {
         core = {
             fiber = require('fiber'),
