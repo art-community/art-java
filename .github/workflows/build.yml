@@ -13,4 +13,4 @@ jobs:
           java-version: 11
       - uses: eskatos/gradle-command-action@v1
         with:
-          arguments: build --max-workers 16 --configure-on-demand --parallel
+          arguments: build --max-workers 8 --configure-on-demand --parallel
