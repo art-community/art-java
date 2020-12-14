@@ -8,7 +8,7 @@ import org.apache.logging.log4j.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.*;
 
-import static io.art.core.factory.CollectionsFactory.setOf;
+import static io.art.core.factory.SetFactory.setOf;
 import static io.art.logging.LoggingModule.*;
 import static lombok.AccessLevel.*;
 

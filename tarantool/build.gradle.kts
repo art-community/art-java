@@ -18,31 +18,22 @@
 
 
 dependencies {
-    val zeroTurnaroundVersion: String by project
-    val tarantoolConnectorVersion: String by project
     val log4jVersion: String by project
-    val tarantoolCartridgeConnectorVersion = "0.3.3"
+    val tarantoolCartridgeConnectorVersion: String by project
 
     implementation(project(":core"))
     implementation(project(":value"))
     implementation(project(":logging"))
-    implementation(project(":server"))
-    implementation(project(":template-engine"))
 
-    api("org.zeroturnaround", "zt-exec", zeroTurnaroundVersion)
-            .exclude("org.slf4j")
-    api("org.tarantool", "connector", tarantoolConnectorVersion)
-            .exclude("org.slf4j")
+
     api("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
             .exclude("org.apache.logging.log4j")
     api("io.tarantool", "cartridge-driver", tarantoolCartridgeConnectorVersion)
-
 }
 
 
 java {
     with(sourceSets.main.get().resources) {
-        srcDir("src/main/templates")
         srcDir("src/main/lua")
     }
 }

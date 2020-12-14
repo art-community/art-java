@@ -10,12 +10,12 @@ import java.util.Map;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
-import static io.art.core.factory.CollectionsFactory.mapOf;
+import static io.art.core.factory.MapFactory.map;
 import static io.art.core.checker.NullityChecker.*;
 
 
 public class TarantoolModuleConfiguration implements ModuleConfiguration {
-    public Map<String, TarantoolInstanceConfiguration> instances = mapOf();
+    public Map<String, TarantoolInstanceConfiguration> instances = map();
     public boolean enableTracing = false;
 
     @RequiredArgsConstructor

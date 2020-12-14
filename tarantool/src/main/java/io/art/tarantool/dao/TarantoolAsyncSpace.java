@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 import static io.art.core.caster.Caster.cast;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.checker.EmptinessChecker.isNotEmpty;
-import static io.art.core.factory.CollectionsFactory.setOf;
+import static io.art.core.factory.SetFactory.setOf;
 import static io.art.logging.LoggingModule.logger;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.RESULT_IS_INVALID;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;

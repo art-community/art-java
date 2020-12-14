@@ -7,10 +7,10 @@ import io.tarantool.driver.api.TarantoolClient;
 import java.util.Map;
 import java.util.Optional;
 
-import static io.art.core.factory.CollectionsFactory.mapOf;
+import static io.art.core.factory.MapFactory.map;
 
 public class TarantoolModuleState implements ModuleState {
-    private final Map<String, TarantoolClient> activeClients = mapOf();
+    private final Map<String, TarantoolClient> activeClients = map();
 
     public Optional<TarantoolClient> getClient(String clientId){
         TarantoolClient client = activeClients.get(clientId);
