@@ -220,12 +220,13 @@ public class Entity implements Value {
         return let(find(key), value -> mapper.map(cast(value)));
     }
 
-    public <T, V extends Value> T mapChecked(String key, ValueToModelMapper<T, V> mapper) {
+    public <T, V extends Value> T mapPrimitive(String key, PrimitiveType type, ValueToModelMapper<T, V> mapper) {
         Primitive primitive = stringPrimitive(key);
         Object cached = mappedValueCache.get(primitive);
         if (nonNull(cached)) return cast(cached);
-        cached = let(cast(get(primitive)), mapper::map);
-        if (isNull(cached)) throw new ValueMappingException(format(NULL_FIELD_MESSAGE, primitive));
+        Value value = get(primitive);
+        if (isNull(value)) value = type.getDefaultValue();
+        cached = let(cast(value), mapper::map);
         mappedValueCache.put(primitive, cast(cached));
         return cast(cached);
     }

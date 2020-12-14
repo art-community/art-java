@@ -19,6 +19,7 @@
 package io.art.value.mapping;
 
 import io.art.core.annotation.*;
+import io.art.core.caster.*;
 import io.art.value.factory.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
@@ -30,6 +31,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.value.factory.ArrayValueFactory.*;
 import static java.util.Arrays.*;
 import java.util.*;
+import java.util.function.*;
 
 @UtilityClass
 @UsedByGenerator
@@ -47,8 +49,12 @@ public class ArrayMapping {
         return array -> let(array, notNull -> notNull.mapAsList(elementMapper));
     }
 
+    public static <T> ArrayToModelMapper<T[]> toArray(Function<Integer, T[]> factory, ValueToModelMapper<T, ? extends Value> elementMapper) {
+        return array -> let(array, notNull -> notNull.mapAsList(elementMapper).toArray(factory.apply(array.size())));
+    }
+
     public static <T> ArrayToModelMapper<T[]> toArray(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> cast(notNull.mapAsList(elementMapper).toArray()));
+        return array -> Caster.cast(let(array, notNull -> notNull.mapAsList(elementMapper).toArray()));
     }
 
     public static <T> ArrayToModelMapper<List<T>> toList(ValueToModelMapper<T, ? extends Value> elementMapper) {
