@@ -10,7 +10,9 @@ import spock.lang.Specification
 
 
 import static io.art.launcher.ModuleLauncher.launch
-import static io.art.model.module.ModuleModel.*
+import static io.art.model.implementation.ModuleModel.module
+
+
 import static io.art.tarantool.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
 import static io.art.tarantool.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
 import static io.art.tarantool.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex

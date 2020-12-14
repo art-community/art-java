@@ -11,7 +11,7 @@ import io.art.tarantool.storage.TarantoolStorageSpace
 import spock.lang.Specification
 
 import static io.art.launcher.ModuleLauncher.launch
-import static io.art.model.module.ModuleModel.module
+import static io.art.model.implementation.ModuleModel.module
 import static io.art.tarantool.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
 import static io.art.tarantool.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
 import static io.art.tarantool.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
@@ -25,7 +25,7 @@ class Tarantool extends Specification {
 
     def "start modules"() {
         setup:
-        launch module()
+        launch module().make()
     }
 
     def "Storage1 CRUD"() {
