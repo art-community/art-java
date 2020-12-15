@@ -59,7 +59,7 @@ public class EntitySchema extends ValueSchema {
 
     @Override
     public List<?> toTuple() {
-        List<?> tuple = ArrayFactory.dynamicArray(getType().ordinal());
+        List<?> tuple = ArrayFactory.dynamicArrayOf(getType().ordinal());
         fieldsSchema.stream().map(EntityFieldSchema::toTuple).forEach(value -> tuple.add(cast(value)));
         return tuple;
     }
