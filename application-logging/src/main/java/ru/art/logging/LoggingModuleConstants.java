@@ -31,7 +31,8 @@ public interface LoggingModuleConstants {
     enum LoggingMode {
         CONSOLE,
         FILE,
-        SOCKET
+        SOCKET,
+        ROLLING_FILE
     }
 
     interface LoggingParameters {
