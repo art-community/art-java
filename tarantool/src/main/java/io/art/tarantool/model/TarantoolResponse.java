@@ -11,14 +11,13 @@ import java.util.Optional;
 import static io.art.core.caster.Caster.cast;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.RESULT_IS_INVALID;
-import static java.lang.String.format;
+
+import static java.text.MessageFormat.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 public class TarantoolResponse {
-
-
 
     public static Optional<Value> read(List<?> response){
         response = cast(response.get(0));
@@ -40,8 +39,7 @@ public class TarantoolResponse {
         try {
             List<?> data = cast(tuple.get(0));
             ValueSchema schema = ValueSchema.fromTuple(cast(tuple.get(1)));
-            io.art.value.immutable.Value result = PlainTupleReader.readTuple(data, schema);
-            return result;
+            return PlainTupleReader.readTuple(data, schema);
         } catch(Exception e){
             throw new TarantoolDaoException(format(RESULT_IS_INVALID, tuple.toString()));
         }
