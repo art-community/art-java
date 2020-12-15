@@ -1,17 +1,12 @@
 package io.art.tarantool.dao;
 
-import io.art.tarantool.exception.TarantoolDaoException;
 import io.art.tarantool.model.TarantoolUpdateFieldOperation;
 import io.art.value.immutable.Value;
-import io.art.value.tuple.PlainTupleReader;
-import io.art.value.tuple.PlainTupleWriter;
-import io.art.value.tuple.schema.ValueSchema;
 import io.tarantool.driver.api.TarantoolClient;
 import io.art.tarantool.model.TarantoolResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -21,15 +16,10 @@ import static io.art.core.caster.Caster.cast;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.checker.EmptinessChecker.isNotEmpty;
 import static io.art.core.factory.SetFactory.setOf;
-import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.RESULT_IS_INVALID;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static io.art.value.tuple.PlainTupleWriter.writeTuple;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
-import static java.util.Optional.empty;
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
-import static io.art.tarantool.caller.TarantoolFunctionCaller.asynchronousCall;
+import static io.art.tarantool.client.caller.TarantoolFunctionCaller.asynchronousCall;
 import static io.art.tarantool.model.TarantoolRequest.*;
 
 @RequiredArgsConstructor

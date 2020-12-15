@@ -1,6 +1,5 @@
 package io.art.tarantool.dao;
 
-import io.art.tarantool.exception.TarantoolDaoException;
 import io.tarantool.driver.api.TarantoolClient;
 import lombok.*;
 import org.apache.logging.log4j.*;
@@ -11,7 +10,7 @@ import static io.art.core.caster.Caster.cast;
 import static io.art.logging.LoggingModule.*;
 import static lombok.AccessLevel.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static io.art.tarantool.caller.TarantoolFunctionCaller.*;
+import static io.art.tarantool.client.caller.TarantoolFunctionCaller.*;
 import static io.art.core.factory.SetFactory.setOf;
 
 public class TarantoolInstance {
