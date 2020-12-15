@@ -252,6 +252,7 @@
                     if (result[1]) then
                         art.cluster.mapping.space.format(space, format)
                     end
+                    return result
                 end,
 
                 create_index = function(space, index_name, index)
@@ -267,6 +268,7 @@
                     if result[1] then
                         art.cluster.mapping.space.drop_index(space, index_name)
                     end
+                    return result
                 end,
 
                 rename = function(space, new_name)
