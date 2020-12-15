@@ -54,7 +54,7 @@ public class ValueSchema {
     }
 
     public List<?> toTuple() {
-        return ArrayFactory.dynamicArray(type.ordinal());
+        return ArrayFactory.dynamicArrayOf(type.ordinal());
     }
 
     public static ValueSchema fromTuple(List<?> tuple) {
