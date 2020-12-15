@@ -1,5 +1,5 @@
 name: ART CI
-on: [push, pull_request_target, pull_request]
+on: [push]
 jobs:
   gradle:
     strategy:
