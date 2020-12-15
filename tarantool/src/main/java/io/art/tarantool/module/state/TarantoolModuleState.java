@@ -8,14 +8,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import static io.art.core.factory.MapFactory.map;
+import static java.util.Optional.ofNullable;
 
 public class TarantoolModuleState implements ModuleState {
     private final Map<String, TarantoolClient> activeClients = map();
 
     public Optional<TarantoolClient> getClient(String clientId){
-        TarantoolClient client = activeClients.get(clientId);
-        if (client == null) return Optional.empty();
-        return Optional.ofNullable(client);
+        return ofNullable(activeClients.get(clientId));
     }
 
     public void registerClient(String clientId, TarantoolClient client){

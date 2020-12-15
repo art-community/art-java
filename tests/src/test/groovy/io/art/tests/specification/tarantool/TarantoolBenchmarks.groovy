@@ -19,7 +19,7 @@ import static io.art.tarantool.configuration.space.TarantoolSpaceIndex.tarantool
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.NUMBER
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.UNSIGNED
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolIndexType
-import static io.art.tarantool.module.TarantoolModule.getInstance
+import static io.art.tarantool.module.TarantoolModule.tarantoolInstance
 import static io.art.value.factory.PrimitivesFactory.intPrimitive
 import static io.art.value.factory.PrimitivesFactory.longPrimitive
 import static io.art.value.factory.PrimitivesFactory.stringPrimitive
@@ -37,7 +37,7 @@ class TarantoolBenchmarks extends Specification {
         def spaceName = "s1_CRUD"
         def clientId = "storage_1_a"
 
-        TarantoolInstance db = getInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clientId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -152,7 +152,7 @@ class TarantoolBenchmarks extends Specification {
         def clientId = "router_1"
         def spaceName = "r1_art_get_bench"
 
-        TarantoolInstance db = getInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clientId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -197,7 +197,7 @@ class TarantoolBenchmarks extends Specification {
         def clientId = "router_2"
         def spaceName = "r2_art_inc_bench"
 
-        TarantoolInstance db = getInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clientId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -239,7 +239,7 @@ class TarantoolBenchmarks extends Specification {
         def spaceName = "s1_art_get_bench"
         def clientId = "storage_1_a"
 
-        TarantoolInstance db = getInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clientId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -280,7 +280,7 @@ class TarantoolBenchmarks extends Specification {
         def spaceName = "s2_art_inc_bench"
         def clientId = "storage_2_a"
 
-        TarantoolInstance db = getInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clientId)
         TarantoolSpace space = db.space(spaceName)
 
 

@@ -34,7 +34,7 @@ class Tarantool extends Specification {
         def clientId = "storage_1_a"
 
 
-        TarantoolInstance db = getInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clientId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -155,7 +155,7 @@ class Tarantool extends Specification {
         def spaceName = "r1_crud"
         def mappingTimeout = 300
 
-        TarantoolInstance db = getInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clientId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -290,7 +290,7 @@ class Tarantool extends Specification {
         def spaceName = "s1_storage_ops"
         def clientId = "storage_1_a"
 
-        def db = getInstance(clientId)
+        def db = tarantoolInstance(clientId)
         def space = new TarantoolStorageSpace(db.space(spaceName))
 
 
@@ -380,7 +380,7 @@ class Tarantool extends Specification {
         def clientId = "storage_2_a"
 
 
-        TarantoolInstance db = getInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clientId)
         TarantoolAsynchronousSpace space = db.asynchronousSpace(spaceName)
 
 
@@ -497,7 +497,7 @@ class Tarantool extends Specification {
         setup:
         def spaceName = "s2_COL"
         def clientId = "storage_2_a"
-        TarantoolInstance db = getInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clientId)
         boolean result = false
 
 

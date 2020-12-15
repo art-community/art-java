@@ -31,7 +31,7 @@ class TarantoolVshardMapping extends Specification {
         def spaceName = "r1_crud"
 
 
-        TarantoolInstance db = getInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clientId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -166,7 +166,7 @@ class TarantoolVshardMapping extends Specification {
         def clientId = "router_2"
         def spaceName = "r2_map_build"
 
-        TarantoolInstance db = getInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clientId)
         TarantoolAsynchronousSpace space = db.asynchronousSpace(spaceName)
 
 
@@ -216,7 +216,7 @@ class TarantoolVshardMapping extends Specification {
         def clientId = "router_2"
         def spaceName = "r2_map_loss"
 
-        TarantoolInstance db = getInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clientId)
         TarantoolAsynchronousSpace space = db.asynchronousSpace(spaceName)
 
 

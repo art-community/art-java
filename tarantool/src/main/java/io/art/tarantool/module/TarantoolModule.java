@@ -15,6 +15,7 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessa
 import static io.art.tarantool.module.connector.TarantoolConnector.connect;
 import static java.text.MessageFormat.format;
 import static io.art.tarantool.configuration.TarantoolModuleConfiguration.Configurator;
+import static java.util.Objects.isNull;
 import static lombok.AccessLevel.PRIVATE;
 
 import java.util.Optional;
@@ -33,7 +34,7 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
         return getTarantoolModule();
     }
 
-    public static TarantoolInstance getInstance(String clientId){
+    public static TarantoolInstance tarantoolInstance(String clientId){
         return new TarantoolInstance(getClient(clientId));
     }
 
@@ -41,7 +42,7 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
         Optional<TarantoolClient> existingClient = tarantoolModule().state().getClient(clientId);
         if (existingClient.isPresent()) return existingClient.get();
         TarantoolInstanceConfiguration config = tarantoolModule().configuration().instances.get(clientId);
-        if (config == null) throw new TarantoolModuleException(format(CONFIGURATION_IS_NULL, clientId));
+        if (isNull(config)) throw new TarantoolModuleException(format(CONFIGURATION_IS_NULL, clientId));
         TarantoolClient newClient = connect(clientId, config);
         tarantoolModule().state().registerClient(clientId, newClient);
         return newClient;
