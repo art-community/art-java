@@ -97,6 +97,8 @@ public interface LoggerConfigurationService {
                         ? SOCKET
                         : ref.equalsIgnoreCase(FileAppender.class.getSimpleName())
                         ? FILE
+                        : ref.equalsIgnoreCase(RollingFileAppender.class.getSimpleName())
+                        ? ROLLING_FILE
                         : CONSOLE)
                 .collect(toSet());
     }
