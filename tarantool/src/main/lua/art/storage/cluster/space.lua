@@ -1,10 +1,10 @@
 local space = {
-    canceller_fiber = nil,
+    cancellerFiber = nil,
 
-    check_op_availability = function(operation, args)
-        art.box.space.wait_for_clustered_op()
-        art.box.space.cluster_op_in_progress = true
-        art.cluster.space.canceller_fiber = art.core.fiber.create(art.cluster.space.auto_canceller)
+    checkOperationAvailability = function(operation, args)
+        art.box.space.waitForClusterOperation()
+        art.box.space.activeClusterOperation = true
+        art.cluster.space.cancellerFiber = art.core.fiber.create(art.cluster.space.autoCanceller)
         local result = {}
         box.begin()
         result[1], result[2] = pcall(art.box.space[operation], unpack(args))
@@ -12,19 +12,19 @@ local space = {
         return result
     end,
 
-    auto_canceller = function()
-        art.core.fiber.sleep(art.config.space.auto_cancel_timeout)
-        art.box.space.cluster_op_in_progress = false
-        art.cluster.space.canceller_fiber = nil
+    autoCanceller = function()
+        art.core.fiber.sleep(art.config.space.autoCancelTimeout)
+        art.box.space.activeClusterOperation = false
+        art.cluster.space.cancellerFiber = nil
     end,
 
-    cancel_op = function()
-        art.box.space.cluster_op_in_progress = false
-        art.cluster.space.canceller_fiber:cancel()
-        art.cluster.space.canceller_fiber = nil
+    cancelOperation = function()
+        art.box.space.activeClusterOperation = false
+        art.cluster.space.cancellerFiber:cancel()
+        art.cluster.space.cancellerFiber = nil
     end,
 
-    execute_op = function(operation, args)
+    executeOperation = function(operation, args)
         local result = {}
         box.begin()
         result[1], result[2] = pcall(art.box.space[operation], unpack(args))
@@ -34,9 +34,9 @@ local space = {
         else
             box.rollback()
         end
-        art.box.space.cluster_op_in_progress = false
-        art.cluster.space.canceller_fiber:cancel()
-        art.cluster.space.canceller_fiber = nil
+        art.box.space.activeClusterOperation = false
+        art.cluster.space.cancellerFiber:cancel()
+        art.cluster.space.cancellerFiber = nil
         return result
     end,
 }

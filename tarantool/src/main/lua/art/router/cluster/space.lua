@@ -1,47 +1,47 @@
 local space = {
     execute = function(operation, args)
-        local connections = art.cluster.space.get_all_masters()
+        local connections = art.cluster.space.getAllMasters()
         local results = {}
 
-        results = art.cluster.space.check_availability(connections, operation, args)
-        if (not art.cluster.space.check_results(results))
+        results = art.cluster.space.checkAvailability(connections, operation, args)
+        if (not art.cluster.space.checkResults(results))
         then
-            art.cluster.space.cancel_all(connections, operation, args)
+            art.cluster.space.cancelAll(connections, operation, args)
             return {false, results}
         else
-            results = art.cluster.space.commit_all(connections, operation, args)
-            return { art.cluster.space.check_results(results), results}
+            results = art.cluster.space.commitAll(connections, operation, args)
+            return { art.cluster.space.checkResults(results), results}
         end
         return
     end,
 
-    check_availability = function(connections, operation, args)
+    checkAvailability = function(connections, operation, args)
         local results = {}
         for k,v in pairs(connections) do
-            results[k] = art.cluster.space.remote_call(v,
-                    'art.cluster.space.check_op_availability', {operation, args})
+            results[k] = art.cluster.space.remoteCall(v,
+                    'art.cluster.space.checkOperationAvailability', {operation, args})
         end
         return results
     end,
 
-    cancel_all = function(connections)
+    cancelAll = function(connections)
         local results = {}
         for k,v in pairs(connections) do
-            results[k] = art.cluster.space.remote_call(v, 'art.cluster.space.cancel_op')
+            results[k] = art.cluster.space.remoteCall(v, 'art.cluster.space.cancelOperation')
         end
         return results
     end,
 
-    commit_all = function(connections, operation, args)
+    commitAll = function(connections, operation, args)
         local results = {}
         for k,v in pairs(connections) do
-            results[k] = art.cluster.space.remote_call(v,
-                    'art.cluster.space.execute_op', {operation, args})
+            results[k] = art.cluster.space.remoteCall(v,
+                    'art.cluster.space.executeOperation', {operation, args})
         end
         return results
     end,
 
-    get_all_masters = function()
+    getAllMasters = function()
         local routes = vshard.router.routeall()
         local results = {}
         for k,v in pairs(routes) do
@@ -50,11 +50,11 @@ local space = {
         return results
     end,
 
-    remote_call = function(peer, func_name, args)
-        return peer:call(func_name, args)
+    remoteCall = function(peer, functionName, args)
+        return peer:call(functionName, args)
     end,
 
-    check_results = function(results)
+    checkResults = function(results)
         local is_ok = true
         for _,v in pairs(results) do
             is_ok = (is_ok and v[1])

@@ -5,7 +5,7 @@ local box = {
         if (data == nil) then return {'', ''} end
         local schema_hash = data[#data]
         local response = data:transform(#data, 1)
-        local response_schema = art.core.schema_of(space):get(schema_hash)['schema']
+        local response_schema = art.core.schemaOf(space):get(schema_hash)['schema']
         return {response, response_schema}
     end,
 
@@ -15,12 +15,12 @@ local box = {
         local schema_hash = data[#data]
         local response = data:transform(#data, 1)
 
-        local response_schema = art.core.schema_of(space):get(schema_hash)
+        local response_schema = art.core.schemaOf(space):get(schema_hash)
 
         if (response_schema['count'] == 1) then
-            art.core.schema_of(space):delete(schema_hash)
+            art.core.schemaOf(space):delete(schema_hash)
         else
-            art.core.schema_of(space):update(schema_hash, { { '-', 'count', 1}})
+            art.core.schemaOf(space):update(schema_hash, { { '-', 'count', 1}})
         end
         box.space[space]:delete(key)
 
@@ -38,14 +38,14 @@ local box = {
         box.space[space]:insert(data[1])
 
         local schema_tuple = box.tuple.new({schema_hash, 1, data[2], bucket_id})
-        art.core.schema_of(space):upsert(schema_tuple, { { '+', 'count', 1}})
+        art.core.schemaOf(space):upsert(schema_tuple, { { '+', 'count', 1}})
 
         art.cluster.mapping.put(space, data[1])
 
         return {data[1]:transform(#data[1], 1), data[2]}
     end,
 
-    auto_increment = function(space, data, bucket_id)
+    autoIncrement = function(space, data, bucket_id)
         data[1] = box.tuple.new(data[1])
         data[2] = box.tuple.new(data[2])
         local schema_hash = art.core.hash({ data[2], bucket_id})
@@ -55,7 +55,7 @@ local box = {
 
 
         local schema_tuple = box.tuple.new({schema_hash, 1, data[2], bucket_id})
-        art.core.schema_of(space):upsert(schema_tuple, { { '+', 'count', 1}})
+        art.core.schemaOf(space):upsert(schema_tuple, { { '+', 'count', 1}})
 
         art.cluster.mapping.put(space, data[1])
 
@@ -104,7 +104,7 @@ local box = {
         if response[1] == nil then return {} end
         for _,entry in pairs(response) do
             response_entry[1] = entry:transform(#entry, 1)
-            response_entry[2] = art.core.schema_of(space):get(entry[#entry]).schema
+            response_entry[2] = art.core.schemaOf(space):get(entry[#entry]).schema
             table.insert(result, response_entry)
         end
 
@@ -113,11 +113,11 @@ local box = {
 
     space = {
 
-        cluster_op_in_progress = false,
+        activeClusterOperation = false,
 
-        wait_for_clustered_op = function()
-            while art.box.space.cluster_op_in_progress do
-                art.core.fiber.sleep(1)
+        waitForClusterOperation = function()
+            while art.box.space.activeClusterOperation do
+                art.core.fiber.sleep(0.5)
             end
         end,
 
@@ -125,37 +125,37 @@ local box = {
             return box.space[space]:count()
         end,
 
-        schema_count = function(space)
-            return art.core.schema_of(space):count()
+        schemaCount = function(space)
+            return art.core.schemaOf(space):count()
         end,
 
         len = function(space)
             return box.space[space]:len()
         end,
 
-        schema_len = function(space)
-            return art.core.schema_of(space):len()
+        schemaLen = function(space)
+            return art.core.schemaOf(space):len()
         end,
 
-        create_index = function(space, name, index)
+        createIndex = function(space, name, index)
             local index_obj = box.space[space]:create_index(name, index)
-            art.cluster.mapping.space.watch_index(space, index_obj)
+            art.cluster.mapping.space.watchIndex(space, index_obj)
             return index_obj
         end,
 
-        drop_index = function(space, name)
-            art.cluster.mapping.space.unwatch_index(space, box.space[space].index[name])
+        dropIndex = function(space, name)
+            art.cluster.mapping.space.unwatchIndex(space, box.space[space].index[name])
             box.space[space].index[name]:drop()
         end,
 
         truncate = function(space)
             box.space[space]:truncate()
-            art.core.schema_of(space):truncate()
+            art.core.schemaOf(space):truncate()
             art.cluster.mapping.space.truncate(space)
         end,
 
         rename = function(space, name)
-            art.core.schema_of(space):rename('_' .. name .. art.config.schema_postfix)
+            art.core.schemaOf(space):rename('_' .. name .. art.config.schemaPostfix)
             art.cluster.mapping.space.rename(space, name)
             return box.space[space]:rename(name)
         end,
@@ -167,7 +167,7 @@ local box = {
         drop = function(space)
             box.space[space]:drop()
             art.cluster.mapping.space.unwatch(space)
-            art.core.schema_of(space):drop()
+            art.core.schemaOf(space):drop()
         end,
 
         create = function(name, config)
@@ -180,7 +180,7 @@ local box = {
                 {name = 'count', type = 'unsigned'},
                 {name = 'schema', type = 'any'}
             }
-            local schema = box.schema.space.create('_' .. name .. art.config.schema_postfix, config)
+            local schema = box.schema.space.create('_' .. name .. art.config.schemaPostfix, config)
             schema:create_index('hash', {
                 type = 'tree',
                 if_not_exists = true,
@@ -188,7 +188,7 @@ local box = {
             })
         end,
 
-        create_vsharded = function(name, config)
+        createVsharded = function(name, config)
             box.schema.space.create(name, config)
             art.cluster.mapping.space.create(name)
             config.field_count = nil
@@ -199,7 +199,7 @@ local box = {
                 {name = 'schema', type = 'any'},
                 {name = 'bucket_id', type = 'unsigned'}
             }
-            local schema = box.schema.space.create('_' .. name .. art.config.schema_postfix, config)
+            local schema = box.schema.space.create('_' .. name .. art.config.schemaPostfix, config)
             schema:create_index('hash', {
                 type = 'tree',
                 if_not_exists = true,

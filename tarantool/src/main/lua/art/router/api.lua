@@ -2,7 +2,7 @@ local api = {
     space = {
         create = function(name, config)
             if not config then config = {} end
-            local result = art.cluster.space.execute('create_vsharded', {name, config})
+            local result = art.cluster.space.execute('createVsharded', {name, config})
             if (result[1]) then
                 art.cluster.mapping.space.create(name, config)
             end
@@ -17,18 +17,18 @@ local api = {
             return result
         end,
 
-        create_index = function(space, index_name, index)
-            local result = art.cluster.space.execute('create_index', { space, index_name, index})
+        createIndex = function(space, index_name, index)
+            local result = art.cluster.space.execute('createIndex', { space, index_name, index})
             if (result[1]) then
-                art.cluster.mapping.space.create_index(space, index_name, index)
+                art.cluster.mapping.space.createIndex(space, index_name, index)
             end
             return result
         end,
 
-        drop_index = function(space, index_name)
-            local result = art.cluster.space.execute('drop_index', { space, index_name})
+        dropIndex = function(space, index_name)
+            local result = art.cluster.space.execute('dropIndex', { space, index_name})
             if result[1] then
-                art.cluster.mapping.space.drop_index(space, index_name)
+                art.cluster.mapping.space.dropIndex(space, index_name)
             end
             return result
         end,
@@ -67,8 +67,8 @@ local api = {
             return result
         end,
 
-        schema_count = function(space)
-            local counts = art.cluster.space.execute('schema_count', { space})
+        schemaCount = function(space)
+            local counts = art.cluster.space.execute('schemaCount', { space})
             local result = 0
             if (not counts[1]) then return counts end
             for _,v in pairs(counts[2]) do
@@ -87,8 +87,8 @@ local api = {
             return result
         end,
 
-        schema_len = function(space)
-            local counts = art.cluster.space.execute('schema_len', { space})
+        schemaLen = function(space)
+            local counts = art.cluster.space.execute('schemaLen', { space})
             local result = 0
             if (not counts[1]) then return counts end
             for _,v in pairs(counts[2]) do
@@ -105,7 +105,7 @@ local api = {
             return result
         end,
 
-        list_indices = function(space)
+        listIndices = function(space)
             local temp = {}
             local result = {}
             for _, v in pairs(box.space[space].index) do
@@ -136,9 +136,9 @@ local api = {
         return vshard.router.callrw(bucket_id, 'art.box.insert', {space, data, bucket_id})
     end,
 
-    auto_increment = function(space, data)
+    autoIncrement = function(space, data)
         local bucket_id = data[1][ box.space[space].index.bucket_id.parts[1].fieldno ]
-        return vshard.router.callrw(bucket_id, 'art.box.auto_increment', {space, data, bucket_id})
+        return vshard.router.callrw(bucket_id, 'art.box.autoIncrement', {space, data, bucket_id})
     end,
 
     put = function(space, data)
@@ -183,7 +183,7 @@ local api = {
         end
 
         for bucket_id, batch_req in pairs(get_requests) do
-            local response = vshard.router.callro(bucket_id, 'art.api.get_batch', {space, batch_req})
+            local response = vshard.router.callro(bucket_id, 'art.api.getBatch', {space, batch_req})
             if (response) then for _,v in pairs(response) do table.insert(result, v) end end
         end
         if not (result[1]) then return {} end

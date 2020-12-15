@@ -1,9 +1,9 @@
 local space = {
     create = function(space)
-        box.schema.space.create('_' .. space .. art.config.mapping_space_postfix)
+        box.schema.space.create('_' .. space .. art.config.mappingSpacePostfix)
     end,
 
-    init_space = function(space)
+    initSpace = function(space)
         local format = {
             {name = 'timestamp', type = 'unsigned'},
             {name = 'is_delete', type = 'boolean'},
@@ -15,16 +15,16 @@ local space = {
             table.insert(primary_index_parts, {v.fieldno + 3, type = v.type})
         end
 
-        art.core.mapping_updates_of(space):format(format)
-        art.core.mapping_updates_of(space):create_index('primary', { parts = primary_index_parts})
-        art.core.mapping_updates_of(space):create_index('timestamp', { unique = false, parts = { 1}})
+        art.core.mappingUpdatesOf(space):format(format)
+        art.core.mappingUpdatesOf(space):create_index('primary', { parts = primary_index_parts})
+        art.core.mappingUpdatesOf(space):create_index('timestamp', { unique = false, parts = { 1}})
 
-        box.space._mapping_watched_spaces:insert(box.tuple.new({space, {}, art.config.mapping.default_batch_size }))
+        box.space._mapping_watched_spaces:insert(box.tuple.new({space, {}, art.config.mapping.defaultBatchSize }))
     end,
 
-    watch_index = function(space, index_obj)
-        if not (art.core.mapping_updates_of(space)) then return end
-        if (index_obj.id == 0) then art.cluster.mapping.space.init_space(space, index_obj) end
+    watchIndex = function(space, index_obj)
+        if not (art.core.mappingUpdatesOf(space)) then return end
+        if (index_obj.id == 0) then art.cluster.mapping.space.initSpace(space, index_obj) end
 
         local watched_space = box.space._mapping_watched_spaces:get(space)
         local watched_fields = watched_space[2]
@@ -40,31 +40,31 @@ local space = {
     end,
 
     rename = function(space, name)
-        if(art.core.mapping_updates_of(space)) then
-            art.core.mapping_updates_of(space):rename('_' .. name .. art.config.mapping_space_postfix)
+        if(art.core.mappingUpdatesOf(space)) then
+            art.core.mappingUpdatesOf(space):rename('_' .. name .. art.config.mappingSpacePostfix)
             local watched_space = box.space._mapping_watched_spaces:delete(space)
             box.space._mapping_watched_spaces:insert(watched_space:update({{'=', 1, name}}))
-            art.cluster.mapping.last_collected_timestamps[name] = art.cluster.mapping.last_collected_timestamps[space]
-            art.cluster.mapping.last_collected_timestamps[space] = nil
+            art.cluster.mapping.lastCollectedTimestamps[name] = art.cluster.mapping.lastCollectedTimestamps[space]
+            art.cluster.mapping.lastCollectedTimestamps[space] = nil
         end
     end,
 
     truncate = function(space)
-        if(art.core.mapping_updates_of(space)) then
-            art.core.mapping_updates_of(space):truncate()
+        if(art.core.mappingUpdatesOf(space)) then
+            art.core.mappingUpdatesOf(space):truncate()
         end
     end,
 
     unwatch = function(space)
-        if(art.core.mapping_updates_of(space)) then
-            art.core.mapping_updates_of(space):drop()
+        if(art.core.mappingUpdatesOf(space)) then
+            art.core.mappingUpdatesOf(space):drop()
             box.space._mapping_watched_spaces:delete(space)
-            art.cluster.mapping.last_collected_timestamps[space] = nil
+            art.cluster.mapping.lastCollectedTimestamps[space] = nil
         end
     end,
 
-    unwatch_index = function(space, index)
-        if not (art.core.mapping_updates_of(space)) then return end
+    unwatchIndex = function(space, index)
+        if not (art.core.mappingUpdatesOf(space)) then return end
         if (index.id ==0) or (index.name == 'bucket_id') then
             art.luster.mapping.space.unwatch(space)
             return

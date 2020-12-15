@@ -1,10 +1,10 @@
 local core = {
-    schema_of = function(space)
-        return box.space['_' .. space .. art.config.schema_postfix]
+    schemaOf = function(space)
+        return box.space['_' .. space .. art.config.schemaPostfix]
     end,
 
-    mapping_updates_of = function(space)
-        return box.space['_' .. space .. art.config.mapping_space_postfix]
+    mappingUpdatesOf = function(space)
+        return box.space['_' .. space .. art.config.mappingSpacePostfix]
     end,
 
     clock = require('clock'),

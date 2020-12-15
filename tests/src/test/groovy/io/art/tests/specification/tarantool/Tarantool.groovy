@@ -501,7 +501,7 @@ class Tarantool extends Specification {
         boolean result = false
 
 
-        getClient(clientId).eval("art.box.space.cluster_op_in_progress = true")
+        getClient(clientId).eval("art.box.space.activeClusterOperation = true")
 
         when:
         try{
@@ -558,7 +558,7 @@ class Tarantool extends Specification {
 
 
         cleanup:
-        getClient(clientId).eval("art.box.space.cluster_op_in_progress = false")
+        getClient(clientId).eval("art.box.space.activeClusterOperation = false")
     }
 
 

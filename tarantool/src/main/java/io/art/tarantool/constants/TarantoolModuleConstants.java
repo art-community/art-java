@@ -72,21 +72,21 @@ public interface TarantoolModuleConstants {
         String INSERT = "art.api.insert";
         String UPDATE = "art.api.update";
         String UPSERT = "art.api.upsert";
-        String AUTO_INCREMENT = "art.api.auto_increment";
+        String AUTO_INCREMENT = "art.api.autoIncrement";
 
         String CREATE_SPACE = "art.api.space.create";
         String FORMAT_SPACE = "art.api.space.format";
-        String CREATE_INDEX = "art.api.space.create_index";
-        String DROP_INDEX = "art.api.space.drop_index";
+        String CREATE_INDEX = "art.api.space.createIndex";
+        String DROP_INDEX = "art.api.space.dropIndex";
         String DROP_SPACE = "art.api.space.drop";
         String RENAME_SPACE = "art.api.space.rename";
         String TRUNCATE = "art.api.space.truncate";
         String COUNT = "art.api.space.count";
         String LEN = "art.api.space.len";
-        String SCHEMA_COUNT = "art.api.space.schema_count";
-        String SCHEMA_LEN = "art.api.space.schema_len";
+        String SCHEMA_COUNT = "art.api.space.schemaCount";
+        String SCHEMA_LEN = "art.api.space.schemaLen";
         String LIST_SPACES = "art.api.space.list";
-        String LIST_INDICES = "art.api.space.list_indices";
+        String LIST_INDICES = "art.api.space.listIndices";
     }
 
     enum TarantoolFieldType {

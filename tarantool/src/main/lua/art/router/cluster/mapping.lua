@@ -14,7 +14,7 @@ local mapping = {
         art.cluster.mapping.watcher.start()
     end,
 
-    save_to_pending = function(batches)
+    saveToPending = function(batches)
         for _, v in pairs(batches) do
             box.space._mapping_pending_updates:insert({nil, unpack(v)})
         end
@@ -43,7 +43,7 @@ local mapping = {
             box.space[space]:format(format)
         end,
 
-        create_index = function(space, index_name, index)
+        createIndex = function(space, index_name, index)
             if not (box.space[space].index[0] and box.space[space].index.bucket_id) then
                 box.space[space]:create_index(index_name, index)
                 art.cluster.mapping.space.format(space, box.space[space]:format())
@@ -61,32 +61,32 @@ local mapping = {
             local result = box.space[space]:create_index(index_name, map_index)
         end,
 
-        drop_index = function(space, index_name)
+        dropIndex = function(space, index_name)
             box.space[space].index[index_name]:drop()
         end,
 
         rename = function(space, new_name)
             box.space[space]:rename(new_name)
-            art.cluster.mapping.space.rename_space_in_pending(space, new_name)
+            art.cluster.mapping.space.renameSpaceInPending(space, new_name)
         end,
 
         truncate = function(space)
             box.space[space]:truncate()
-            art.cluster.mapping.space.delete_pending_space_updates(space)
+            art.cluster.mapping.space.deletePendingSpaceUpdates(space)
         end,
 
         drop = function(space)
             box.space[space]:drop()
-            art.cluster.mapping.space.delete_pending_space_updates(space)
+            art.cluster.mapping.space.deletePendingSpaceUpdates(space)
         end,
 
-        delete_pending_space_updates = function(space)
+        deletePendingSpaceUpdates = function(space)
             for _,v in box.space._mapping_pending_updates.index.space:pairs(space) do
                 box.space._mapping_pending_updates:delete(v[1])
             end
         end,
 
-        rename_space_in_pending = function(space, new_name)
+        renameSpaceInPending = function(space, new_name)
             for _,v in box.space._mapping_pending_updates.index.space:pairs(space) do
                 box.space._mapping_pending_updates:update(v[1], {{'=', 2, new_name}})
             end
@@ -94,20 +94,18 @@ local mapping = {
     },
 
     watcher = {
-        batches_per_time = 100,
-        timeout = 0.1,
-        service_fiber = nil,
-        watchdog_fiber = nil,
+        serviceFiber = nil,
+        watchdogFiber = nil,
 
         start = function()
-            art.cluster.mapping.watcher.service_fiber = art.core.fiber.create(art.cluster.mapping.watcher.service)
-            art.cluster.mapping.watcher.watchdog_fiber = art.core.fiber.create(art.cluster.mapping.watcher.watchdog)
+            art.cluster.mapping.watcher.serviceFiber = art.core.fiber.create(art.cluster.mapping.watcher.service)
+            art.cluster.mapping.watcher.watchdogFiber = art.core.fiber.create(art.cluster.mapping.watcher.watchdog)
         end,
 
         watchdog = function()
             while(true) do
-                if (art.core.fiber.status(art.cluster.mapping.watcher.service_fiber) == 'dead') then
-                    art.cluster.mapping.watcher.service_fiber = art.core.fiber.create(art.cluster.mapping.watcher.service)
+                if (art.core.fiber.status(art.cluster.mapping.watcher.serviceFiber) == 'dead') then
+                    art.cluster.mapping.watcher.serviceFiber = art.core.fiber.create(art.cluster.mapping.watcher.service)
                 end
                 art.core.fiber.sleep(1)
 
@@ -120,28 +118,28 @@ local mapping = {
             while true do
                 counter = 0
                 for _,v in box.space._mapping_pending_updates:pairs(box.sequence.mapping_pending_updates_id:current(), 'GT') do
-                    box.atomic(art.cluster.mapping.watcher.update_batch, v)
+                    box.atomic(art.cluster.mapping.watcher.updateBatch, v)
                     counter = counter+1
-                    if (counter == art.cluster.mapping.watcher.batches_per_time) then
-                        art.core.fiber.sleep(art.cluster.mapping.watcher.timeout)
+                    if (counter == art.config.mapping.batchesPerTime) then
+                        art.core.fiber.sleep(art.config.mapping.timeout)
                         counter = 0
                     end
                 end
 
                 counter = 0
                 for _,v in box.space._mapping_pending_updates:pairs() do
-                    box.atomic(art.cluster.mapping.watcher.update_batch, v)
+                    box.atomic(art.cluster.mapping.watcher.updateBatch, v)
                     counter = counter+1
-                    if (counter == art.cluster.mapping.watcher.batches_per_time) then
-                        art.core.fiber.sleep(art.cluster.mapping.watcher.timeout)
+                    if (counter == art.config.mapping.batchesPerTime) then
+                        art.core.fiber.sleep(art.config.mapping.timeout)
                         counter = 0
                     end
                 end
-                art.core.fiber.sleep(art.cluster.mapping.watcher.timeout)
+                art.core.fiber.sleep(art.config.mapping.timeout)
             end
         end,
 
-        update_batch = function(batch)
+        updateBatch = function(batch)
             local space = box.space[batch[2]]
             if not(space) then
                 box.space._mapping_pending_updates:delete(batch[1])

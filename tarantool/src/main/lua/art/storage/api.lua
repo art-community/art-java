@@ -3,7 +3,7 @@ local api = {
         return box.atomic(art.box.get, space, key, index)
     end,
 
-    get_batch = function(space, keys)
+    getBatch = function(space, keys)
         local result = {}
         for _, key in pairs(keys) do
             table.insert(result, art.api.get(space, key))
@@ -21,8 +21,8 @@ local api = {
         return result
     end,
 
-    auto_increment = function(space, data, bucket_id)
-        local result = box.atomic(art.box.auto_increment, space, data, bucket_id)
+    autoIncrement = function(space, data, bucket_id)
+        local result = box.atomic(art.box.autoIncrement, space, data, bucket_id)
         return result
     end,
 
@@ -52,28 +52,28 @@ local api = {
 
     space = {
         create = function(name, config)
-            art.box.space.wait_for_clustered_op()
+            art.box.space.waitForClusterOperation()
             return box.atomic(art.box.space.create, name, config)
         end,
 
         format = function(space, format)
-            art.box.space.wait_for_clustered_op()
+            art.box.space.waitForClusterOperation()
             return box.atomic(art.box.space.format, space, format)
         end,
 
-        create_index = function(space, index_name, index)
-            art.box.space.wait_for_clustered_op()
-            local result = box.atomic(art.box.space.create_index, space, index_name, index)
+        createIndex = function(space, index_name, index)
+            art.box.space.waitForClusterOperation()
+            local result = box.atomic(art.box.space.createIndex, space, index_name, index)
             return result
         end,
 
-        drop_index = function(space, index_name)
-            art.box.space.wait_for_clustered_op()
-            local result = box.atomic(art.box.space.drop_index, space, index_name)
+        dropIndex = function(space, index_name)
+            art.box.space.waitForClusterOperation()
+            local result = box.atomic(art.box.space.dropIndex, space, index_name)
         end,
 
         rename = function(space, new_name)
-            art.box.space.wait_for_clustered_op()
+            art.box.space.waitForClusterOperation()
             return box.atomic(art.box.space.rename, space, new_name)
         end,
 
@@ -82,7 +82,7 @@ local api = {
         end,
 
         drop = function(space)
-            art.box.space.wait_for_clustered_op()
+            art.box.space.waitForClusterOperation()
             return box.atomic(art.box.space.drop, space)
         end,
 
@@ -90,16 +90,16 @@ local api = {
             return art.box.space.count(space)
         end,
 
-        schema_count = function(space)
-            return art.box.space.schema_count(space)
+        schemaCount = function(space)
+            return art.box.space.schemaCount(space)
         end,
 
         len = function(space)
             return art.box.space.len(space)
         end,
 
-        schema_len = function(space)
-            return art.box.space.schema_len(space)
+        schemaLen = function(space)
+            return art.box.space.schemaLen(space)
         end,
 
         list = function()
@@ -110,7 +110,7 @@ local api = {
             return result
         end,
 
-        list_indices = function(space)
+        listIndices = function(space)
             local temp = {}
             local result = {}
             for _, v in pairs(box.space[space].index) do
