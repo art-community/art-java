@@ -159,7 +159,7 @@ public class TarantoolAsyncSpace {
         return ofNullable(result);
     }
 
-    private static io.art.value.immutable.Value convertTuple(List<?> tuple){
+    private static Value convertTuple(List<?> tuple){
         try {
             List<?> data = cast(tuple.get(0));
             ValueSchema schema = ValueSchema.fromTuple(cast(tuple.get(1)));
