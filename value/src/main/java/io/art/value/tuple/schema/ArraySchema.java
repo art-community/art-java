@@ -46,7 +46,7 @@ public class ArraySchema extends ValueSchema {
 
     @Override
     public List<?> toTuple() {
-        List<?> tuple = ArrayFactory.dynamicArray(getType().ordinal());
+        List<?> tuple = ArrayFactory.dynamicArrayOf(getType().ordinal());
         elements.stream().map(ValueSchema::toTuple).forEach(value -> tuple.add(cast(value)));
         return tuple;
     }
