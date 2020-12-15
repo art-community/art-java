@@ -21,7 +21,7 @@ public class TarantoolFunctionCaller {
 
     public static List<?> call(TarantoolClient client, String function, Object... args){
         try{
-            List<?> result = callAsync(client, function, args).get();
+            List<?> result = asynchronousCall(client, function, args).get();
             logInfo(format(CALLED_FUNCTION, function, result.toString()));
             return result;
         } catch (Exception e){
@@ -30,7 +30,7 @@ public class TarantoolFunctionCaller {
         }
     }
 
-    public static CompletableFuture<List<?>> callAsync(TarantoolClient client, String function, Object... args){
+    public static CompletableFuture<List<?>> asynchronousCall(TarantoolClient client, String function, Object... args){
         try {
             logInfo(format(CALLING_FUNCTION, function));
             return client.call(function, args);

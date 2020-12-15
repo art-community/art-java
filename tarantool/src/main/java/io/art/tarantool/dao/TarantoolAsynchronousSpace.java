@@ -7,6 +7,7 @@ import io.art.value.tuple.PlainTupleReader;
 import io.art.value.tuple.PlainTupleWriter;
 import io.art.value.tuple.schema.ValueSchema;
 import io.tarantool.driver.api.TarantoolClient;
+import io.art.tarantool.model.TarantoolResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
@@ -28,7 +29,8 @@ import static java.util.Arrays.stream;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static io.art.tarantool.caller.TarantoolFunctionCaller.callAsync;
+import static io.art.tarantool.caller.TarantoolFunctionCaller.asynchronousCall;
+import static io.art.tarantool.model.TarantoolRequest.*;
 
 @RequiredArgsConstructor
 public class TarantoolAsynchronousSpace {
@@ -39,129 +41,74 @@ public class TarantoolAsynchronousSpace {
 
 
     public CompletableFuture<Optional<Value>> get(Value key){
-        return callAsync(client, GET, space, unpackValue(key)).thenApply(TarantoolAsynchronousSpace::convertResponse);
+        return asynchronousCall(client, GET, space, requestTuple(key)).thenApply(TarantoolResponse::read);
     }
 
     public CompletableFuture<Optional<Value>> get(String index, Value key){
-        return callAsync(client, GET, space, index, unpackValue(key)).thenApply(TarantoolAsynchronousSpace::convertResponse);
+        return asynchronousCall(client, GET, space, index, requestTuple(key)).thenApply(TarantoolResponse::read);
     }
 
     public CompletableFuture<Optional<List<Value>>> select(Value request){
-        return callAsync(client, SELECT, space, unpackValue(request)).thenApply(TarantoolAsynchronousSpace::convertSelectResponse);
+        return asynchronousCall(client, SELECT, space, requestTuple(request)).thenApply(TarantoolResponse::readBatch);
     }
 
     public CompletableFuture<Optional<List<Value>>> select(String index, Value request){
-        return callAsync(client, SELECT, space, unpackValue(request), index).thenApply(TarantoolAsynchronousSpace::convertSelectResponse);
+        return asynchronousCall(client, SELECT, space, requestTuple(request), index).thenApply(TarantoolResponse::readBatch);
     }
 
     public CompletableFuture<Optional<Value>> delete(Value key){
-        return callAsync(client, DELETE, space, unpackValue(key)).thenApply(TarantoolAsynchronousSpace::convertResponse);
+        return asynchronousCall(client, DELETE, space, requestTuple(key)).thenApply(TarantoolResponse::read);
     }
 
     public CompletableFuture<Optional<Value>> insert(Value data){
-        return callAsync(client, INSERT, space, addSchema(data)).thenApply(TarantoolAsynchronousSpace::convertResponse);
+        return asynchronousCall(client, INSERT, space, dataTuple(data)).thenApply(TarantoolResponse::read);
     }
 
     public CompletableFuture<Optional<Value>> autoIncrement(Value data){
-        return callAsync(client, AUTO_INCREMENT, space, addSchema(data)).thenApply(TarantoolAsynchronousSpace::convertResponse);
+        return asynchronousCall(client, AUTO_INCREMENT, space, dataTuple(data)).thenApply(TarantoolResponse::read);
     }
 
     public CompletableFuture<Optional<Value>> put(Value data){
-        return callAsync(client, PUT, space, addSchema(data)).thenApply(TarantoolAsynchronousSpace::convertResponse);
+        return asynchronousCall(client, PUT, space, dataTuple(data)).thenApply(TarantoolResponse::read);
     }
 
     public CompletableFuture<Optional<Value>> replace(Value data){
-        return callAsync(client, REPLACE, space, addSchema(data)).thenApply(TarantoolAsynchronousSpace::convertResponse);
+        return asynchronousCall(client, REPLACE, space, dataTuple(data)).thenApply(TarantoolResponse::read);
     }
 
     public CompletableFuture<Optional<Value>> update(Value key, TarantoolUpdateFieldOperation... operations){
-        return callAsync(client, UPDATE, space, unpackValue(key), unpackUpdateOperations(operations)).thenApply(TarantoolAsynchronousSpace::convertResponse);
+        return asynchronousCall(client, UPDATE, space, requestTuple(key), updateOperationsTuple(operations)).thenApply(TarantoolResponse::read);
     }
 
     public CompletableFuture<Optional<Value>> upsert(Value defaultValue, TarantoolUpdateFieldOperation... operations){
-        return callAsync(client, UPSERT, space, addSchema(defaultValue), unpackUpdateOperations(operations)).thenApply(TarantoolAsynchronousSpace::convertResponse);
+        return asynchronousCall(client, UPSERT, space, dataTuple(defaultValue), updateOperationsTuple(operations)).thenApply(TarantoolResponse::read);
     }
 
     public CompletableFuture<Long> count(){
-        return callAsync(client,COUNT, space).thenApply( response -> ((Number) response.get(0)).longValue() );
+        return asynchronousCall(client,COUNT, space).thenApply(response -> ((Number) response.get(0)).longValue() );
     }
 
     public CompletableFuture<Long> len(){
-        return callAsync(client, LEN, space).thenApply( response -> ((Number) response.get(0)).longValue() );
+        return asynchronousCall(client, LEN, space).thenApply(response -> ((Number) response.get(0)).longValue() );
     }
 
     public CompletableFuture<Long> schemaCount(){
-        return callAsync(client,SCHEMA_COUNT, space).thenApply( response -> ((Number) response.get(0)).longValue() );
+        return asynchronousCall(client,SCHEMA_COUNT, space).thenApply(response -> ((Number) response.get(0)).longValue() );
     }
 
     public CompletableFuture<Long> schemaLen(){
-        return callAsync(client, SCHEMA_LEN, space).thenApply( response -> ((Number) response.get(0)).longValue() );
+        return asynchronousCall(client, SCHEMA_LEN, space).thenApply(response -> ((Number) response.get(0)).longValue() );
     }
 
     public void truncate(){
-        callAsync(client, TRUNCATE, space);
+        asynchronousCall(client, TRUNCATE, space);
     }
 
     public CompletableFuture<Set<String>> listIndices(){
-        return callAsync(client, LIST_INDICES, space).thenApply(response -> {
+        return asynchronousCall(client, LIST_INDICES, space).thenApply(response -> {
             List<String> indices = cast(response.get(0));
             return setOf(indices);
         });
     }
-
-
-
-
-    private static List<?> unpackValue(Value request){
-        return writeTuple(request).getTuple();
-    }
-
-    private static List<?> addSchema(Value data){
-        PlainTupleWriter.PlainTupleWriterResult writerResult = writeTuple(data);
-        List<?> result = new ArrayList<>();
-        result.add(cast(writerResult.getTuple()));
-        result.add(cast(writerResult.getSchema().toTuple()));
-        return result;
-    }
-
-    private static List<?> unpackUpdateOperations(TarantoolUpdateFieldOperation... operations) {
-        List<?> valueOperations = stream(operations)
-                .map(TarantoolUpdateFieldOperation::getValueOperation)
-                .collect(toList());
-        List<?> schemaOperations = stream(operations)
-                .filter(operation -> isNotEmpty(operation.getSchemaOperation()))
-                .map(TarantoolUpdateFieldOperation::getSchemaOperation)
-                .collect(toList());
-        List<?> results = new ArrayList<>();
-        results.add(cast(valueOperations));
-        results.add(cast(schemaOperations));
-        return results;
-    }
-
-    private static Optional<io.art.value.immutable.Value> convertResponse(List<?> response){
-        response = cast(response.get(0));
-        if ((isEmpty(response.get(0))) || response.size() < 2) return empty();
-        return ofNullable(convertTuple(response));
-    }
-
-    private static Optional<List<io.art.value.immutable.Value>> convertSelectResponse(List<?> response){
-        response = cast(response.get(0));
-        if (response.isEmpty()) return empty();
-
-        List<io.art.value.immutable.Value> result = response.stream()
-                .map(entry -> convertTuple(cast(entry)))
-                .collect(toList());
-        return ofNullable(result);
-    }
-
-    private static Value convertTuple(List<?> tuple){
-        try {
-            List<?> data = cast(tuple.get(0));
-            ValueSchema schema = ValueSchema.fromTuple(cast(tuple.get(1)));
-            io.art.value.immutable.Value result = PlainTupleReader.readTuple(data, schema);
-            return result;
-        } catch(Exception e){
-            throw new TarantoolDaoException(format(RESULT_IS_INVALID, tuple.toString()));
-        }
-    }
+    
 }

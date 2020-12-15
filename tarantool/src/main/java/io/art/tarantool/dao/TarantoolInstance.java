@@ -28,11 +28,11 @@ public class TarantoolInstance {
         return setOf(response);
     }
 
-    public TarantoolSpace getSpace(String space){
+    public TarantoolSpace space(String space){
         return new TarantoolSpace(client, space);
     }
 
-    public TarantoolAsynchronousSpace getAsyncSpace(String space){
+    public TarantoolAsynchronousSpace asynchronousSpace(String space){
         return new TarantoolAsynchronousSpace(client, space);
     }
 

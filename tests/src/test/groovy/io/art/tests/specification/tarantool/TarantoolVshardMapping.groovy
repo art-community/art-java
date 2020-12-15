@@ -32,7 +32,7 @@ class TarantoolVshardMapping extends Specification {
 
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = db.getSpace(spaceName)
+        TarantoolSpace space = db.space(spaceName)
 
 
 
@@ -83,7 +83,7 @@ class TarantoolVshardMapping extends Specification {
                 .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("testData"))
                 .build()
-        space = db.getSpace(spaceName)
+        space = db.space(spaceName)
         space.autoIncrement(data)
         then:
         sleep(mappingTimeout)
@@ -167,7 +167,7 @@ class TarantoolVshardMapping extends Specification {
         def spaceName = "r2_map_build"
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolAsynchronousSpace space = db.getAsyncSpace(spaceName)
+        TarantoolAsynchronousSpace space = db.asynchronousSpace(spaceName)
 
 
 
@@ -217,7 +217,7 @@ class TarantoolVshardMapping extends Specification {
         def spaceName = "r2_map_loss"
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolAsynchronousSpace space = db.getAsyncSpace(spaceName)
+        TarantoolAsynchronousSpace space = db.asynchronousSpace(spaceName)
 
 
 

@@ -38,7 +38,7 @@ class TarantoolBenchmarks extends Specification {
         def clientId = "storage_1_a"
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = db.getSpace(spaceName)
+        TarantoolSpace space = db.space(spaceName)
 
 
         Entity data = Entity.entityBuilder()
@@ -72,7 +72,7 @@ class TarantoolBenchmarks extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         db.renameSpace(spaceName, spaceName = "s1_CRUD2")
-        space = db.getSpace(spaceName)
+        space = db.space(spaceName)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("data", stringPrimitive("testData"))
@@ -153,7 +153,7 @@ class TarantoolBenchmarks extends Specification {
         def spaceName = "r1_art_get_bench"
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = db.getSpace(spaceName)
+        TarantoolSpace space = db.space(spaceName)
 
 
 
@@ -198,7 +198,7 @@ class TarantoolBenchmarks extends Specification {
         def spaceName = "r2_art_inc_bench"
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = db.getSpace(spaceName)
+        TarantoolSpace space = db.space(spaceName)
 
 
 
@@ -240,7 +240,7 @@ class TarantoolBenchmarks extends Specification {
         def clientId = "storage_1_a"
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = db.getSpace(spaceName)
+        TarantoolSpace space = db.space(spaceName)
 
 
 
@@ -281,7 +281,7 @@ class TarantoolBenchmarks extends Specification {
         def clientId = "storage_2_a"
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = db.getSpace(spaceName)
+        TarantoolSpace space = db.space(spaceName)
 
 
 

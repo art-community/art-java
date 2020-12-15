@@ -35,7 +35,7 @@ class Tarantool extends Specification {
 
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = db.getSpace(spaceName)
+        TarantoolSpace space = db.space(spaceName)
 
 
 
@@ -74,7 +74,7 @@ class Tarantool extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         db.renameSpace(spaceName, spaceName = "s1_CRUD2")
-        space = db.getSpace(spaceName)
+        space = db.space(spaceName)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("data", stringPrimitive("testData"))
@@ -156,7 +156,7 @@ class Tarantool extends Specification {
         def mappingTimeout = 300
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolSpace space = db.getSpace(spaceName)
+        TarantoolSpace space = db.space(spaceName)
 
 
 
@@ -207,7 +207,7 @@ class Tarantool extends Specification {
                 .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("testData"))
                 .build()
-        space = db.getSpace(spaceName)
+        space = db.space(spaceName)
         space.autoIncrement(data)
         then:
         sleep(mappingTimeout)
@@ -291,7 +291,7 @@ class Tarantool extends Specification {
         def clientId = "storage_1_a"
 
         def db = getInstance(clientId)
-        def space = new TarantoolStorageSpace(db.getSpace(spaceName))
+        def space = new TarantoolStorageSpace(db.space(spaceName))
 
 
 
@@ -325,7 +325,7 @@ class Tarantool extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         db.renameSpace(spaceName, spaceName = "s1_storage_ops2")
-        space = new TarantoolStorageSpace(db.getSpace(spaceName))
+        space = new TarantoolStorageSpace(db.space(spaceName))
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("data", stringPrimitive("testData"))
@@ -381,7 +381,7 @@ class Tarantool extends Specification {
 
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolAsynchronousSpace space = db.getAsyncSpace(spaceName)
+        TarantoolAsynchronousSpace space = db.asynchronousSpace(spaceName)
 
 
 
@@ -420,7 +420,7 @@ class Tarantool extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         db.renameSpace(spaceName, spaceName = "s1_CRUD2")
-        space = db.getAsyncSpace(spaceName)
+        space = db.asynchronousSpace(spaceName)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("data", stringPrimitive("testData"))

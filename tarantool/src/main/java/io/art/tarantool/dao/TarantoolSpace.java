@@ -6,12 +6,14 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.*;
+import static io.art.core.caster.Caster.cast;
 
 
 import static io.art.logging.LoggingModule.*;
 import static lombok.AccessLevel.*;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class TarantoolSpace {
     @Getter(lazy = true, value = PRIVATE)
@@ -23,123 +25,63 @@ public class TarantoolSpace {
     }
 
     public Optional<Value> get(Value key){
-        try{
-            return asynchronousSpace.get(key).get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.get(key)));
     }
 
     public Optional<Value> get(String index, Value key){
-        try{
-            return asynchronousSpace.get(index, key).get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.get(index, key)));
     }
 
     public Optional<List<Value>> select(Value request){
-        try{
-            return asynchronousSpace.select(request).get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.select(request)));
     }
 
     public Optional<List<Value>> select(String index, Value request){
-        try{
-            return asynchronousSpace.select(index, request).get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.select(index, request)));
     }
 
     public Optional<Value> delete(Value key){
-        try{
-            return asynchronousSpace.delete(key).get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.delete(key)));
     }
 
     public Optional<Value> insert(Value data){
-        try{
-            return asynchronousSpace.insert(data).get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.insert(data)));
     }
 
     public Optional<Value> autoIncrement(Value data){
-        try{
-            return asynchronousSpace.autoIncrement(data).get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.autoIncrement(data)));
     }
 
     public Optional<Value> put(Value data){
-        try{
-            return asynchronousSpace.put(data).get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.put(data)));
     }
 
     public Optional<Value> replace(Value data){
-        try{
-            return asynchronousSpace.replace(data).get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.replace(data)));
     }
 
     public Optional<Value> update(Value key, TarantoolUpdateFieldOperation... operations){
-        try{
-            return asynchronousSpace.update(key, operations).get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.update(key, operations)));
     }
 
     public Optional<Value> upsert(Value defaultValue, TarantoolUpdateFieldOperation... operations){
-        try{
-            return asynchronousSpace.upsert(defaultValue, operations).get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.upsert(defaultValue, operations)));
     }
 
     public Long count(){
-        try{
-            return asynchronousSpace.count().get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.count()));
     }
 
     public Long len(){
-        try{
-            return asynchronousSpace.len().get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.len()));
     }
 
     public Long schemaCount(){
-        try{
-            return asynchronousSpace.schemaCount().get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.schemaCount()));
     }
 
     public Long schemaLen(){
-        try{
-            return asynchronousSpace.schemaLen().get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
-        }
+        return cast(synchronize(asynchronousSpace.schemaLen()));
     }
 
     public void truncate(){
@@ -147,10 +89,15 @@ public class TarantoolSpace {
     }
 
     public Set<String> listIndices(){
-        try{
-            return asynchronousSpace.listIndices().get();
-        } catch (Exception e) {
-            throw new TarantoolDaoException(e.getMessage());
+        return cast(synchronize(asynchronousSpace.listIndices()));
+    }
+
+
+    private Object synchronize(CompletableFuture future){
+        try {
+            return future.get();
+        }catch(Throwable throwable){
+            throw new TarantoolDaoException(throwable.getMessage());
         }
     }
 
