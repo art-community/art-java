@@ -1,5 +1,6 @@
 package io.art.tarantool.dao;
 
+import io.art.tarantool.exception.TarantoolDaoException;
 import io.tarantool.driver.api.TarantoolClient;
 import lombok.*;
 import org.apache.logging.log4j.*;
@@ -31,8 +32,8 @@ public class TarantoolInstance {
         return new TarantoolSpace(client, space);
     }
 
-    public TarantoolAsyncSpace getAsyncSpace(String space){
-        return new TarantoolAsyncSpace(client, space);
+    public TarantoolAsynchronousSpace getAsyncSpace(String space){
+        return new TarantoolAsynchronousSpace(client, space);
     }
 
     public void createSpace(String space, TarantoolSpaceConfig config){

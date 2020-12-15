@@ -16,15 +16,15 @@ import java.util.*;
 public class TarantoolSpace {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(TarantoolSpace.class);
-    private TarantoolAsyncSpace asyncSpace;
+    private TarantoolAsynchronousSpace asynchronousSpace;
 
     public TarantoolSpace(TarantoolClient client, String space){
-        this.asyncSpace = new TarantoolAsyncSpace(client, space);
+        this.asynchronousSpace = new TarantoolAsynchronousSpace(client, space);
     }
 
     public Optional<Value> get(Value key){
         try{
-            return asyncSpace.get(key).get();
+            return asynchronousSpace.get(key).get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -32,7 +32,7 @@ public class TarantoolSpace {
 
     public Optional<Value> get(String index, Value key){
         try{
-            return asyncSpace.get(index, key).get();
+            return asynchronousSpace.get(index, key).get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -40,7 +40,7 @@ public class TarantoolSpace {
 
     public Optional<List<Value>> select(Value request){
         try{
-            return asyncSpace.select(request).get();
+            return asynchronousSpace.select(request).get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -48,7 +48,7 @@ public class TarantoolSpace {
 
     public Optional<List<Value>> select(String index, Value request){
         try{
-            return asyncSpace.select(index, request).get();
+            return asynchronousSpace.select(index, request).get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -56,7 +56,7 @@ public class TarantoolSpace {
 
     public Optional<Value> delete(Value key){
         try{
-            return asyncSpace.delete(key).get();
+            return asynchronousSpace.delete(key).get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -64,7 +64,7 @@ public class TarantoolSpace {
 
     public Optional<Value> insert(Value data){
         try{
-            return asyncSpace.insert(data).get();
+            return asynchronousSpace.insert(data).get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -72,7 +72,7 @@ public class TarantoolSpace {
 
     public Optional<Value> autoIncrement(Value data){
         try{
-            return asyncSpace.autoIncrement(data).get();
+            return asynchronousSpace.autoIncrement(data).get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -80,7 +80,7 @@ public class TarantoolSpace {
 
     public Optional<Value> put(Value data){
         try{
-            return asyncSpace.put(data).get();
+            return asynchronousSpace.put(data).get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -88,7 +88,7 @@ public class TarantoolSpace {
 
     public Optional<Value> replace(Value data){
         try{
-            return asyncSpace.replace(data).get();
+            return asynchronousSpace.replace(data).get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -96,7 +96,7 @@ public class TarantoolSpace {
 
     public Optional<Value> update(Value key, TarantoolUpdateFieldOperation... operations){
         try{
-            return asyncSpace.update(key, operations).get();
+            return asynchronousSpace.update(key, operations).get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -104,7 +104,7 @@ public class TarantoolSpace {
 
     public Optional<Value> upsert(Value defaultValue, TarantoolUpdateFieldOperation... operations){
         try{
-            return asyncSpace.upsert(defaultValue, operations).get();
+            return asynchronousSpace.upsert(defaultValue, operations).get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -112,7 +112,7 @@ public class TarantoolSpace {
 
     public Long count(){
         try{
-            return asyncSpace.count().get();
+            return asynchronousSpace.count().get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -120,7 +120,7 @@ public class TarantoolSpace {
 
     public Long len(){
         try{
-            return asyncSpace.len().get();
+            return asynchronousSpace.len().get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -128,7 +128,7 @@ public class TarantoolSpace {
 
     public Long schemaCount(){
         try{
-            return asyncSpace.schemaCount().get();
+            return asynchronousSpace.schemaCount().get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
@@ -136,19 +136,19 @@ public class TarantoolSpace {
 
     public Long schemaLen(){
         try{
-            return asyncSpace.schemaLen().get();
+            return asynchronousSpace.schemaLen().get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }
     }
 
     public void truncate(){
-        asyncSpace.truncate();
+        asynchronousSpace.truncate();
     }
 
     public Set<String> listIndices(){
         try{
-            return asyncSpace.listIndices().get();
+            return asynchronousSpace.listIndices().get();
         } catch (Exception e) {
             throw new TarantoolDaoException(e.getMessage());
         }

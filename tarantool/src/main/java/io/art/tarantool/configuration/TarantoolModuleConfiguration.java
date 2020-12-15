@@ -24,17 +24,17 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            ConfigurationSource tntSection = source.getNested(TARANTOOL_SECTION);
-            if (tntSection == null) return this;
+            ConfigurationSource tarantoolSection = source.getNested(TARANTOOL_SECTION);
+            if (tarantoolSection == null) return this;
 
-            configuration.instances = ofNullable(tntSection)
+            configuration.instances = ofNullable(tarantoolSection)
                     .map(tarantool -> tarantool.getNestedMap(TARANTOOL_INSTANCES_SECTION))
                     .map(instances -> instances.entrySet()
                         .stream()
                         .collect(toImmutableMap(Map.Entry::getKey, entry -> TarantoolInstanceConfiguration.from(entry.getValue()))))
                     .orElse(ImmutableMap.of());
 
-            configuration.enableTracing = orElse(tntSection.getBool(TARANTOOL_TRACING_KEY), configuration.enableTracing);
+            configuration.enableTracing = orElse(tarantoolSection.getBool(TARANTOOL_TRACING_KEY), configuration.enableTracing);
             return this;
         }
     }

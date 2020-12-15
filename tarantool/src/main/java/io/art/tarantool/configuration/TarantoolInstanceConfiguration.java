@@ -18,19 +18,6 @@ public class TarantoolInstanceConfiguration {
     private int requestTimeout;
     private int maxConnectionRetries;
 
-    public static TarantoolInstanceConfiguration defaults() {
-        TarantoolInstanceConfiguration configuration = new TarantoolInstanceConfiguration();
-        configuration.host = DEFAULT_TARANTOOL_HOST;
-        configuration.port = DEFAULT_TARANTOOL_PORT;
-        configuration.username = DEFAULT_TARANTOOL_USERNAME;
-        configuration.password = DEFAULT_TARANTOOL_PASSWORD;
-        configuration.connections = DEFAULT_TARANTOOL_CONNECTIONS_NUMBER;
-        configuration.connectionTimeout = DEFAULT_TARANTOOL_CONNECTION_TIMEOUT;
-        configuration.readTimeout = DEFAULT_TARANTOOL_READ_TIMEOUT;
-        configuration.requestTimeout = DEFAULT_TARANTOOL_REQUEST_TIMEOUT;
-        configuration.maxConnectionRetries = DEFAULT_TARANTOOL_RETRIES;
-        return configuration;
-    }
 
     public static TarantoolInstanceConfiguration from(ConfigurationSource source){
         TarantoolInstanceConfiguration configuration = new TarantoolInstanceConfiguration();

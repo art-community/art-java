@@ -21,10 +21,8 @@ package io.art.tarantool.constants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import static io.art.core.network.selector.PortSelector.findAvailableTcpPort;
+
 public interface TarantoolModuleConstants {
-    String TARANTOOL = "tarantool";
-    String TARANTOOL_MODULE_ID = "TARANTOOL_MODULE";
     int DEFAULT_TARANTOOL_CONNECTION_TIMEOUT = 3 * 1000;
     int DEFAULT_TARANTOOL_CONNECTIONS_NUMBER = 1;
     int DEFAULT_TARANTOOL_READ_TIMEOUT = 1000;
@@ -59,14 +57,10 @@ public interface TarantoolModuleConstants {
     }
 
     interface LoggingMessages {
-        String TARANTOOL_CLIENT_CLOSED = "Tarantool client for instance ''{0}'' closed";
-        String TARANTOOL_SUCCESSFULLY_CONNECTED = "Tarantool ''{0}'' with address ''{1}'' successfully connected";
-        String EVALUATING_LUA_SCRIPT = "Evaluating lua script: ''{0}''";
+        String TARANTOOL_CLIENT_CREATED = "Created tarantool client ''{0}'' with address ''{1}''";
         String CALLING_FUNCTION = "Calling tarantool function ''{0}''";
         String CALLED_FUNCTION = "Called tarantool function ''{0}'' with result: {1}";
         String FAILED_FUNCTION = "Failed to call tarantool function ''{0}''";
-        String TRYING_TO_CONNECT = "Trying to connect to tarantool ''{0}'' with address ''{1}'' during the ''{2,number,#}[ms]''";
-        String WAITING_FOR_CONNECT = "Waiting for tarantool ''{0}'' with address ''{1}'' to be connected during ''{2,number,#}[ms]''";
     }
 
     interface Functions {

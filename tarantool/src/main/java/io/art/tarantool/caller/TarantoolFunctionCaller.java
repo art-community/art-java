@@ -25,7 +25,7 @@ public class TarantoolFunctionCaller {
             logInfo(format(CALLED_FUNCTION, function, result.toString()));
             return result;
         } catch (Exception e){
-            getLogger().warn(format(FAILED_FUNCTION, function));
+            getLogger().error(format(FAILED_FUNCTION, function));
             throw new TarantoolDaoException(e.getMessage());
         }
     }
@@ -33,10 +33,9 @@ public class TarantoolFunctionCaller {
     public static CompletableFuture<List<?>> callAsync(TarantoolClient client, String function, Object... args){
         try {
             logInfo(format(CALLING_FUNCTION, function));
-            CompletableFuture<List<?>> result = client.call(function, args);
-            return result;
+            return client.call(function, args);
         } catch (Exception e){
-            getLogger().warn(format(FAILED_FUNCTION, function));
+            getLogger().error(format(FAILED_FUNCTION, function));
             throw new TarantoolDaoException(e.getMessage());
         }
     }

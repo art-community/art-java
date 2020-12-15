@@ -1,7 +1,7 @@
 
 package io.art.tests.specification.tarantool
 
-import io.art.tarantool.dao.TarantoolAsyncSpace
+import io.art.tarantool.dao.TarantoolAsynchronousSpace
 import io.art.tarantool.dao.TarantoolInstance
 import io.art.tarantool.dao.TarantoolSpace
 import io.art.tarantool.model.TarantoolUpdateFieldOperation
@@ -47,8 +47,8 @@ class TarantoolVshardMapping extends Specification {
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
         db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", UNSIGNED, false)
-                .addField("bucket_id", UNSIGNED))
+                .field("id", UNSIGNED, false)
+                .field("bucket_id", UNSIGNED))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
                 .part("id")
@@ -167,7 +167,7 @@ class TarantoolVshardMapping extends Specification {
         def spaceName = "r2_map_build"
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolAsyncSpace space = db.getAsyncSpace(spaceName)
+        TarantoolAsynchronousSpace space = db.getAsyncSpace(spaceName)
 
 
 
@@ -181,8 +181,8 @@ class TarantoolVshardMapping extends Specification {
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
         db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", UNSIGNED, false)
-                .addField("bucket_id", UNSIGNED))
+                .field("id", UNSIGNED, false)
+                .field("bucket_id", UNSIGNED))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
                 .part("id")
@@ -217,7 +217,7 @@ class TarantoolVshardMapping extends Specification {
         def spaceName = "r2_map_loss"
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolAsyncSpace space = db.getAsyncSpace(spaceName)
+        TarantoolAsynchronousSpace space = db.getAsyncSpace(spaceName)
 
 
 
@@ -231,8 +231,8 @@ class TarantoolVshardMapping extends Specification {
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
         db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", UNSIGNED, false)
-                .addField("bucket_id", UNSIGNED))
+                .field("id", UNSIGNED, false)
+                .field("bucket_id", UNSIGNED))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
                 .part("id")

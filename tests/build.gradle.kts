@@ -21,12 +21,20 @@ plugins {
 }
 
 dependencies {
+    val groovyVersion: String by project
+    val spockBomVersion: String by project
+    val hamcrestCoreVersion: String by project
+    val byteBuddyVersion: String by project
+    val objenesisVersion: String by project
+
+
     implementation(project(":launcher"))
 
-    testImplementation("org.codehaus.groovy:groovy:2.5.13")
-    testImplementation(platform("org.spockframework:spock-bom:2.0-M3-groovy-2.5"))
+
+    testImplementation("org.codehaus.groovy:groovy:$groovyVersion")
+    testImplementation(platform("org.spockframework:spock-bom:$spockBomVersion"))
     testImplementation("org.spockframework:spock-core")
-    testImplementation("org.hamcrest:hamcrest-core:2.2")
-    testImplementation("net.bytebuddy:byte-buddy:1.10.10")
-    testImplementation("org.objenesis:objenesis:3.1")
+    testImplementation("org.hamcrest:hamcrest-core:$hamcrestCoreVersion")
+    testImplementation("net.bytebuddy:byte-buddy:$byteBuddyVersion")
+    testImplementation("org.objenesis:objenesis:$objenesisVersion")
 }

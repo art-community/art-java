@@ -1,7 +1,7 @@
 
 package io.art.tests.specification.tarantool
 
-import io.art.tarantool.dao.TarantoolAsyncSpace
+import io.art.tarantool.dao.TarantoolAsynchronousSpace
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
 import io.art.tarantool.dao.TarantoolInstance
@@ -49,7 +49,7 @@ class Tarantool extends Specification {
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
         db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", NUMBER, false))
+                .field("id", NUMBER, false))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
                 .part("id")
@@ -171,8 +171,8 @@ class Tarantool extends Specification {
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
         db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", UNSIGNED, false)
-                .addField("bucket_id", UNSIGNED))
+                .field("id", UNSIGNED, false)
+                .field("bucket_id", UNSIGNED))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
                 .part("id")
@@ -305,7 +305,7 @@ class Tarantool extends Specification {
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
         db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", UNSIGNED, false))
+                .field("id", UNSIGNED, false))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
                 .part("id")
@@ -381,7 +381,7 @@ class Tarantool extends Specification {
 
 
         TarantoolInstance db = getInstance(clientId)
-        TarantoolAsyncSpace space = db.getAsyncSpace(spaceName)
+        TarantoolAsynchronousSpace space = db.getAsyncSpace(spaceName)
 
 
 
@@ -395,7 +395,7 @@ class Tarantool extends Specification {
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
         db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .addField("id", NUMBER, false))
+                .field("id", NUMBER, false))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
                 .part("id")

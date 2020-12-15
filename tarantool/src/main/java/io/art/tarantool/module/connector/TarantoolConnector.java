@@ -11,7 +11,7 @@ import io.tarantool.driver.api.TarantoolClient;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.exception.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.TARANTOOL_SUCCESSFULLY_CONNECTED;
+import static io.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.TARANTOOL_CLIENT_CREATED;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
@@ -35,7 +35,7 @@ public class TarantoolConnector {
         while (retries < config.getMaxConnectionRetries()){
             try {
                 TarantoolClient client = new StandaloneTarantoolClient(clientConfig, address);
-                getLogger().info(format(TARANTOOL_SUCCESSFULLY_CONNECTED, instanceId, address.toString()));
+                getLogger().info(format(TARANTOOL_CLIENT_CREATED, instanceId, address.toString()));
                 return client;
             } catch (NoAvailableConnectionsException | TarantoolClientNotConnectedException | TarantoolSocketException exception) {
                 getLogger().warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY, instanceId, address.toString(), exception));

@@ -7,8 +7,8 @@ import io.art.value.tuple.PlainTupleReader;
 import io.art.value.tuple.PlainTupleWriter;
 import io.art.value.tuple.schema.ValueSchema;
 import io.tarantool.driver.api.TarantoolClient;
-import lombok.Getter;
-import org.apache.logging.log4j.Logger;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,6 @@ import static io.art.core.caster.Caster.cast;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.checker.EmptinessChecker.isNotEmpty;
 import static io.art.core.factory.SetFactory.setOf;
-import static io.art.logging.LoggingModule.logger;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.RESULT_IS_INVALID;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.value.tuple.PlainTupleWriter.writeTuple;
@@ -29,62 +28,58 @@ import static java.util.Arrays.stream;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static lombok.AccessLevel.PRIVATE;
 import static io.art.tarantool.caller.TarantoolFunctionCaller.callAsync;
 
-public class TarantoolAsyncSpace {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(TarantoolSpace.class);
+@RequiredArgsConstructor
+public class TarantoolAsynchronousSpace {
+    @NonNull
     private final TarantoolClient client;
-    private String space;
+    @NonNull
+    private final String space;
 
-    public TarantoolAsyncSpace(TarantoolClient client, String space) {
-        this.client = client;
-        this.space = space;
-    }
 
     public CompletableFuture<Optional<Value>> get(Value key){
-        return callAsync(client, GET, space, unpackValue(key)).thenApply(TarantoolAsyncSpace::convertResponse);
+        return callAsync(client, GET, space, unpackValue(key)).thenApply(TarantoolAsynchronousSpace::convertResponse);
     }
 
     public CompletableFuture<Optional<Value>> get(String index, Value key){
-        return callAsync(client, GET, space, index, unpackValue(key)).thenApply(TarantoolAsyncSpace::convertResponse);
+        return callAsync(client, GET, space, index, unpackValue(key)).thenApply(TarantoolAsynchronousSpace::convertResponse);
     }
 
     public CompletableFuture<Optional<List<Value>>> select(Value request){
-        return callAsync(client, SELECT, space, unpackValue(request)).thenApply(TarantoolAsyncSpace::convertSelectResponse);
+        return callAsync(client, SELECT, space, unpackValue(request)).thenApply(TarantoolAsynchronousSpace::convertSelectResponse);
     }
 
     public CompletableFuture<Optional<List<Value>>> select(String index, Value request){
-        return callAsync(client, SELECT, space, unpackValue(request), index).thenApply(TarantoolAsyncSpace::convertSelectResponse);
+        return callAsync(client, SELECT, space, unpackValue(request), index).thenApply(TarantoolAsynchronousSpace::convertSelectResponse);
     }
 
     public CompletableFuture<Optional<Value>> delete(Value key){
-        return callAsync(client, DELETE, space, unpackValue(key)).thenApply(TarantoolAsyncSpace::convertResponse);
+        return callAsync(client, DELETE, space, unpackValue(key)).thenApply(TarantoolAsynchronousSpace::convertResponse);
     }
 
     public CompletableFuture<Optional<Value>> insert(Value data){
-        return callAsync(client, INSERT, space, addSchema(data)).thenApply(TarantoolAsyncSpace::convertResponse);
+        return callAsync(client, INSERT, space, addSchema(data)).thenApply(TarantoolAsynchronousSpace::convertResponse);
     }
 
     public CompletableFuture<Optional<Value>> autoIncrement(Value data){
-        return callAsync(client, AUTO_INCREMENT, space, addSchema(data)).thenApply(TarantoolAsyncSpace::convertResponse);
+        return callAsync(client, AUTO_INCREMENT, space, addSchema(data)).thenApply(TarantoolAsynchronousSpace::convertResponse);
     }
 
     public CompletableFuture<Optional<Value>> put(Value data){
-        return callAsync(client, PUT, space, addSchema(data)).thenApply(TarantoolAsyncSpace::convertResponse);
+        return callAsync(client, PUT, space, addSchema(data)).thenApply(TarantoolAsynchronousSpace::convertResponse);
     }
 
     public CompletableFuture<Optional<Value>> replace(Value data){
-        return callAsync(client, REPLACE, space, addSchema(data)).thenApply(TarantoolAsyncSpace::convertResponse);
+        return callAsync(client, REPLACE, space, addSchema(data)).thenApply(TarantoolAsynchronousSpace::convertResponse);
     }
 
     public CompletableFuture<Optional<Value>> update(Value key, TarantoolUpdateFieldOperation... operations){
-        return callAsync(client, UPDATE, space, unpackValue(key), unpackUpdateOperations(operations)).thenApply(TarantoolAsyncSpace::convertResponse);
+        return callAsync(client, UPDATE, space, unpackValue(key), unpackUpdateOperations(operations)).thenApply(TarantoolAsynchronousSpace::convertResponse);
     }
 
     public CompletableFuture<Optional<Value>> upsert(Value defaultValue, TarantoolUpdateFieldOperation... operations){
-        return callAsync(client, UPSERT, space, addSchema(defaultValue), unpackUpdateOperations(operations)).thenApply(TarantoolAsyncSpace::convertResponse);
+        return callAsync(client, UPSERT, space, addSchema(defaultValue), unpackUpdateOperations(operations)).thenApply(TarantoolAsynchronousSpace::convertResponse);
     }
 
     public CompletableFuture<Long> count(){
@@ -117,11 +112,11 @@ public class TarantoolAsyncSpace {
 
 
 
-    private static List<?> unpackValue(io.art.value.immutable.Value request){
+    private static List<?> unpackValue(Value request){
         return writeTuple(request).getTuple();
     }
 
-    private static List<?> addSchema(io.art.value.immutable.Value data){
+    private static List<?> addSchema(Value data){
         PlainTupleWriter.PlainTupleWriterResult writerResult = writeTuple(data);
         List<?> result = new ArrayList<>();
         result.add(cast(writerResult.getTuple()));

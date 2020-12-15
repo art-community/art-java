@@ -9,14 +9,14 @@ import java.util.*;
 public class TarantoolSpaceFormat {
     private List<Object> fields = new ArrayList<>();
 
-    public TarantoolSpaceFormat addField(String name){
+    public TarantoolSpaceFormat field(String name){
         Map<String, String> field = new LinkedHashMap<>();
         field.put("name", name);
         fields.add(field);
         return this;
     }
 
-    public TarantoolSpaceFormat addField(String name, TarantoolFieldType type){
+    public TarantoolSpaceFormat field(String name, TarantoolFieldType type){
         Map<String, String> field = new LinkedHashMap<>();
         field.put("name", name);
         field.put("type", type.toString());
@@ -24,7 +24,7 @@ public class TarantoolSpaceFormat {
         return this;
     }
 
-    public TarantoolSpaceFormat addField(String name, TarantoolFieldType type, Boolean isNullable){
+    public TarantoolSpaceFormat field(String name, TarantoolFieldType type, Boolean isNullable){
         Map<String, Object> field = new LinkedHashMap<>();
         field.put("name", name);
         field.put("type", type.toString());
