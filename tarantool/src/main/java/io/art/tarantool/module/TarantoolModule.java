@@ -38,7 +38,7 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
         return new TarantoolInstance(getClient(clientId));
     }
 
-    private static TarantoolClient getClient(String clientId){
+    public static TarantoolClient getClient(String clientId){
         Optional<TarantoolClient> existingClient = tarantoolModule().state().getClient(clientId);
         if (existingClient.isPresent()) return existingClient.get();
         TarantoolInstanceConfiguration config = tarantoolModule().configuration().instances.get(clientId);
