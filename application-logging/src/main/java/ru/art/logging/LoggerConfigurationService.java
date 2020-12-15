@@ -146,6 +146,11 @@ public interface LoggerConfigurationService {
                     ConsoleAppender loadedConsoleAppender = createLoadedConsoleAppender();
                     loadedConsoleAppender.start();
                     rootLogger.getAppenders().values().forEach(rootLogger::removeAppender);
+                    rootLogger.getAppenders()
+                            .values()
+                            .stream()
+                            .filter(appender -> ConsoleAppender.class.getSimpleName().equals(appender.getName()))
+                            .forEach(rootLogger::removeAppender);
                     rootLogger.addAppender(loadedConsoleAppender);
                     context.updateLoggers();
                     break;
@@ -155,7 +160,7 @@ public interface LoggerConfigurationService {
                     rootLogger.getAppenders()
                             .values()
                             .stream()
-                            .filter(appender -> ConsoleAppender.class.getSimpleName().equals(appender.getName()))
+                            .filter(appender -> SocketAppender.class.getSimpleName().equals(appender.getName()))
                             .forEach(rootLogger::removeAppender);
                     rootLogger.addAppender(loadedSocketAppender);
                     context.updateLoggers();
