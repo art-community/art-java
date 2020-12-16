@@ -21,9 +21,12 @@ import static io.art.value.factory.PrimitivesFactory.intPrimitive
 import static io.art.value.factory.PrimitivesFactory.stringPrimitive
 
 class TarantoolVshardMapping extends Specification {
-    def tmp = launch module().make()
-    def benchmarkOpsCount = 100
+    def benchmarkOpsCount = 10000
     def mappingTimeout = 300
+
+    def setupSpec(){
+        launch module().make()
+    }
 
     def "Router1 CRUD"() {
         setup:

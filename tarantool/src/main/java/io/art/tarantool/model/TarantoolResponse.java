@@ -40,8 +40,8 @@ public class TarantoolResponse {
             List<?> data = cast(tuple.get(0));
             ValueSchema schema = ValueSchema.fromTuple(cast(tuple.get(1)));
             return PlainTupleReader.readTuple(data, schema);
-        } catch(Exception e){
-            throw new TarantoolDaoException(format(RESULT_IS_INVALID, tuple.toString()));
+        } catch(Throwable throwable){
+            throw new TarantoolDaoException(format(RESULT_IS_INVALID, tuple.toString()), throwable);
         }
     }
 }

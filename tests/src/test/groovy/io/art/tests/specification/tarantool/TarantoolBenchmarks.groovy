@@ -27,8 +27,7 @@ import static io.art.value.factory.PrimitivesFactory.stringPrimitive
 class TarantoolBenchmarks extends Specification {
     def benchmarkOpsCount = 10000
 
-    def "start modules"() {
-        setup:
+    def setupSpec(){
         launch module().make()
     }
 

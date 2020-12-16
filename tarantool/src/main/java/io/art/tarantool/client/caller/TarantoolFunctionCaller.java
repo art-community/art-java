@@ -24,9 +24,9 @@ public class TarantoolFunctionCaller {
             List<?> result = asynchronousCall(client, function, args).get();
             logInfo(format(CALLED_FUNCTION, function, result.toString()));
             return result;
-        } catch (Exception e){
+        } catch (Throwable throwable){
             getLogger().error(format(FAILED_FUNCTION, function));
-            throw new TarantoolDaoException(e.getMessage());
+            throw new TarantoolDaoException(format(FAILED_FUNCTION, function), throwable);
         }
     }
 
@@ -34,9 +34,9 @@ public class TarantoolFunctionCaller {
         try {
             logInfo(format(CALLING_FUNCTION, function));
             return client.call(function, args);
-        } catch (Exception e){
+        } catch (Throwable throwable){
             getLogger().error(format(FAILED_FUNCTION, function));
-            throw new TarantoolDaoException(e.getMessage());
+            throw new TarantoolDaoException(format(FAILED_FUNCTION, function), throwable);
         }
     }
 
