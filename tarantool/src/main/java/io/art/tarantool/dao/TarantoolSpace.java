@@ -10,6 +10,7 @@ import static io.art.core.caster.Caster.cast;
 
 
 import static io.art.logging.LoggingModule.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_GET_RESPONSE;
 import static lombok.AccessLevel.*;
 
 import java.util.*;
@@ -93,11 +94,11 @@ public class TarantoolSpace {
     }
 
 
-    private Object synchronize(CompletableFuture future){
+    private Object synchronize(CompletableFuture<?> future){
         try {
             return future.get();
         }catch(Throwable throwable){
-            throw new TarantoolDaoException(throwable.getMessage());
+            throw new TarantoolDaoException(UNABLE_TO_GET_RESPONSE, throwable);
         }
     }
 

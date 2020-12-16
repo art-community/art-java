@@ -38,12 +38,14 @@ public class TarantoolConnector {
                 getLogger().info(format(TARANTOOL_CLIENT_CREATED, instanceId, address.toString()));
                 return client;
             } catch (NoAvailableConnectionsException | TarantoolClientNotConnectedException | TarantoolSocketException exception) {
-                getLogger().warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY, instanceId, address.toString(), exception));
+                getLogger().warn(format(UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY, instanceId, address.toString()));
             } catch (Throwable throwable) {
-                throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address.toString(), throwable));
+                getLogger().error(format(UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY, instanceId, address.toString()));
+                throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY, instanceId, address.toString()), throwable);
             }
             retries++;
         }
+        getLogger().error(format(UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY, instanceId, address.toString()));
         throw new TarantoolConnectionException(format(UNABLE_TO_CONNECT_TO_TARANTOOL, instanceId, address.toString()));
     }
 

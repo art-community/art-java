@@ -51,9 +51,10 @@ public interface TarantoolModuleConstants {
 
     interface ExceptionMessages {
         String CONFIGURATION_IS_NULL = "Tarantool ''{0}'' configuration is null. Please specify it.";
-        String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Connection waiting time has passed";
-        String UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Connection waiting time has passed. Retrying...\n";
+        String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}''.";
+        String UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Retrying...\n";
         String RESULT_IS_INVALID = "Response ''{0}'' returned from Tarantool can`t be converted to Entity";
+        String UNABLE_TO_GET_RESPONSE = "Unable to get response from function call";
     }
 
     interface LoggingMessages {

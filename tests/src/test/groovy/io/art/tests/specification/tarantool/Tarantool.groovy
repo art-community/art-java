@@ -21,10 +21,9 @@ import static io.art.value.factory.PrimitivesFactory.*
 import static io.art.tarantool.module.TarantoolModule.*
 
 class Tarantool extends Specification {
+    def mappingTimeout = 300
 
-
-    def "start modules"() {
-        setup:
+    def setupSpec(){
         launch module().make()
     }
 
@@ -153,7 +152,7 @@ class Tarantool extends Specification {
         setup:
         def clientId = "router_1"
         def spaceName = "r1_crud"
-        def mappingTimeout = 300
+
 
         TarantoolInstance db = tarantoolInstance(clientId)
         TarantoolSpace space = db.space(spaceName)
