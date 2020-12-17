@@ -2,6 +2,7 @@ package io.art.tarantool.module;
 
 import io.art.core.module.StatefulModule;
 import io.art.core.module.StatefulModuleProxy;
+import io.art.core.module.Module;
 import io.art.tarantool.configuration.TarantoolInstanceConfiguration;
 import io.art.tarantool.configuration.TarantoolModuleConfiguration;
 import io.art.tarantool.exception.TarantoolModuleException;
@@ -46,5 +47,10 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
         TarantoolClient newClient = connect(clientId, config);
         tarantoolModule().state().registerClient(clientId, newClient);
         return newClient;
+    }
+
+    @Override
+    public void onUnload() {
+
     }
 }

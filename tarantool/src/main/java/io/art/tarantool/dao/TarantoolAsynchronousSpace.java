@@ -19,7 +19,7 @@ import static io.art.core.factory.SetFactory.setOf;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
-import static io.art.tarantool.client.caller.TarantoolFunctionCaller.asynchronousCall;
+import static io.art.tarantool.module.client.caller.TarantoolFunctionCaller.asynchronousCall;
 import static io.art.tarantool.model.TarantoolRequest.*;
 
 @RequiredArgsConstructor

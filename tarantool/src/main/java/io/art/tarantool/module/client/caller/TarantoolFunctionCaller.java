@@ -1,4 +1,4 @@
-package io.art.tarantool.client.caller;
+package io.art.tarantool.module.client.caller;
 
 import io.art.tarantool.exception.TarantoolDaoException;
 import io.tarantool.driver.api.TarantoolClient;
