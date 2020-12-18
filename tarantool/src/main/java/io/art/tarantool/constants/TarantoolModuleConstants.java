@@ -36,10 +36,14 @@ public interface TarantoolModuleConstants {
 
     interface ConfigurationKeys{
         String TARANTOOL_SECTION = "tarantool";
+        String TARANTOOL_LOGGING_KEY = "logging";
+        String TARANTOOL_CLUSTERS_SECTION = "clusters";
+        String TARANTOOL_CLUSTER_BALANCER_METHOD = "balancer";
         String TARANTOOL_INSTANCES_SECTION = "instances";
-        String TARANTOOL_TRACING_KEY = "enable_tracing";
         String TARANTOOL_INSTANCE_HOST_KEY = "host";
         String TARANTOOL_INSTANCE_PORT_KEY = "port";
+        String TARANTOOL_INSTANCE_READABLE_KEY = "readable";
+        String TARANTOOL_INSTANCE_WRITEABLE_KEY = "writeable";
         String TARANTOOL_INSTANCE_USERNAME_KEY = "username";
         String TARANTOOL_INSTANCE_PASSWORD_KEY = "password";
         String TARANTOOL_INSTANCE_CONNECTIONS_KEY = "connections";
@@ -51,10 +55,12 @@ public interface TarantoolModuleConstants {
 
     interface ExceptionMessages {
         String CONFIGURATION_IS_NULL = "Tarantool ''{0}'' configuration is null. Please specify it.";
+        String CLUSTER_CONFIGURATION_IS_NULL = "Tarantool cluster ''{0}'' configuration is null. Please specify it.";
         String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}''.";
         String UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Retrying...\n";
         String RESULT_IS_INVALID = "Response ''{0}'' returned from Tarantool can`t be converted to Entity";
         String UNABLE_TO_GET_RESPONSE = "Unable to get response from function call";
+        String UNKNOWN_BALANCER_METHOD = "Unknown balancer method: ''{0}''";
     }
 
     interface LoggingMessages {

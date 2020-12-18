@@ -26,6 +26,7 @@ import static io.art.value.factory.PrimitivesFactory.stringPrimitive
 
 class TarantoolBenchmarks extends Specification {
     def benchmarkOpsCount = 10000
+    def synchronizationTimeout = 300
 
     def setupSpec(){
         launch module().make()
@@ -34,9 +35,9 @@ class TarantoolBenchmarks extends Specification {
     def "Storage1 CRUD(warmup)"() {
         setup:
         def spaceName = "s1_CRUD"
-        def clientId = "storage_1_a"
+        def clusterId = "storage1"
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -96,6 +97,7 @@ class TarantoolBenchmarks extends Specification {
 
         when:
         space.truncate()
+        sleep(synchronizationTimeout)
         then:
         (space.count() == 0) && (space.schemaCount() == 0)
 
@@ -146,12 +148,12 @@ class TarantoolBenchmarks extends Specification {
 
     }
 
-    def "Router1 art.get benchmark"(){
+    def "Routers art.get benchmark"(){
         setup:
-        def clientId = "router_1"
+        def clusterId = "routers"
         def spaceName = "r1_art_get_bench"
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -191,12 +193,12 @@ class TarantoolBenchmarks extends Specification {
         db.dropSpace(spaceName)
     }
 
-    def "Router2 art.auto_increment benchmark"(){
+    def "Routers art.auto_increment benchmark"(){
         setup:
-        def clientId = "router_2"
+        def clusterId = "routers"
         def spaceName = "r2_art_inc_bench"
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -236,9 +238,9 @@ class TarantoolBenchmarks extends Specification {
     def "Storage1 art.get benchmark"(){
         setup:
         def spaceName = "s1_art_get_bench"
-        def clientId = "storage_1_a"
+        def clusterId = "storage1"
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -277,9 +279,9 @@ class TarantoolBenchmarks extends Specification {
     def "Storage2 art.auto_increment benchmark"(){
         setup:
         def spaceName = "s2_art_inc_bench"
-        def clientId = "storage_2_a"
+        def clusterId = "storage2"
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
 
 

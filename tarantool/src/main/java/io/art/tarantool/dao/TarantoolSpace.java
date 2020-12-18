@@ -1,5 +1,6 @@
 package io.art.tarantool.dao;
 
+import io.art.tarantool.module.client.TarantoolClusterClient;
 import io.art.value.immutable.Value;
 import io.tarantool.driver.api.TarantoolClient;
 import lombok.*;
@@ -19,9 +20,9 @@ import java.util.concurrent.CompletableFuture;
 public class TarantoolSpace {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(TarantoolSpace.class);
-    private TarantoolAsynchronousSpace asynchronousSpace;
+    private final TarantoolAsynchronousSpace asynchronousSpace;
 
-    public TarantoolSpace(TarantoolClient client, String space){
+    public TarantoolSpace(TarantoolClusterClient client, String space){
         this.asynchronousSpace = new TarantoolAsynchronousSpace(client, space);
     }
 

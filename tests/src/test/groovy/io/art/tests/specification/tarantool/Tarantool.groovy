@@ -21,7 +21,7 @@ import static io.art.value.factory.PrimitivesFactory.*
 import static io.art.tarantool.module.TarantoolModule.*
 
 class Tarantool extends Specification {
-    def mappingTimeout = 300
+    def synchronizationTimeout = 300
 
     def setupSpec(){
         launch module().make()
@@ -30,10 +30,10 @@ class Tarantool extends Specification {
     def "Storage1 CRUD"() {
         setup:
         def spaceName = "s1_CRUD"
-        def clientId = "storage_1_a"
+        def clusterId = "storage1"
 
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -98,6 +98,7 @@ class Tarantool extends Specification {
 
         when:
         space.truncate()
+        sleep(synchronizationTimeout)
         then:
         (space.count() == 0) && (space.schemaCount() == 0)
 
@@ -148,13 +149,13 @@ class Tarantool extends Specification {
 
     }
 
-    def "Router1 CRUD"() {
+    def "Routers CRUD"() {
         setup:
-        def clientId = "router_1"
-        def spaceName = "r1_crud"
+        def clusterId = "routers"
+        def spaceName = "r_crud"
 
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -192,7 +193,7 @@ class Tarantool extends Specification {
         when:
         space.insert(data)
         then:
-        sleep(mappingTimeout)
+        sleep(synchronizationTimeout)
         space.get(request).get() == data
 
 
@@ -200,7 +201,7 @@ class Tarantool extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         space.autoIncrement(data)
-        db.renameSpace(spaceName, spaceName = "r1_crud2")
+        db.renameSpace(spaceName, spaceName = "r_crud2")
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("bucket_id", intPrimitive(99))
@@ -209,7 +210,7 @@ class Tarantool extends Specification {
         space = db.space(spaceName)
         space.autoIncrement(data)
         then:
-        sleep(mappingTimeout)
+        sleep(synchronizationTimeout)
         (space.len() == 5) && (space.schemaLen() == 2)
 
 
@@ -222,7 +223,7 @@ class Tarantool extends Specification {
 
         when:
         request = intPrimitive(7)
-        sleep(mappingTimeout)
+        sleep(synchronizationTimeout)
         Value response = space.select(request).get().get(0)
         then:
         true
@@ -243,7 +244,7 @@ class Tarantool extends Specification {
                 .build()
         space.put(data)
         then:
-        sleep(mappingTimeout)
+        sleep(synchronizationTimeout)
         space.get(request).get() == data
 
 
@@ -256,14 +257,14 @@ class Tarantool extends Specification {
 
         when:
         space.put(data)
-        sleep(mappingTimeout)
+        sleep(synchronizationTimeout)
         space.update(key, TarantoolUpdateFieldOperation.assigment(3, 'data', stringPrimitive("another")))
         then:
         (space.get(request).get() as Entity).get("data") == stringPrimitive("another")
 
         when:
         space.put(data)
-        sleep(mappingTimeout)
+        sleep(synchronizationTimeout)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("bucket_id", intPrimitive(99))
@@ -276,7 +277,7 @@ class Tarantool extends Specification {
         when:
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
-        sleep(mappingTimeout)
+        sleep(synchronizationTimeout)
         then:
         space.get(request).isPresent() && space.get(intPrimitive(8)).isPresent()
 
@@ -287,9 +288,9 @@ class Tarantool extends Specification {
     def "TarantoolStorage1 interface ops"(){
         setup:
         def spaceName = "s1_storage_ops"
-        def clientId = "storage_1_a"
+        def clusterId = "storage1"
 
-        def db = tarantoolInstance(clientId)
+        def db = tarantoolInstance(clusterId)
         def space = new TarantoolStorageSpace(db.space(spaceName))
 
 
@@ -349,6 +350,7 @@ class Tarantool extends Specification {
 
         when:
         space.truncate()
+        sleep(synchronizationTimeout)
         then:
         (space.count() == 0)
 
@@ -376,10 +378,10 @@ class Tarantool extends Specification {
     def "Storage2 async CRUD"(){
         setup:
         def spaceName = "s2_CRUD"
-        def clientId = "storage_2_a"
+        def clusterId = "storage2"
 
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolAsynchronousSpace space = db.asynchronousSpace(spaceName)
 
 
@@ -410,6 +412,7 @@ class Tarantool extends Specification {
 
         when:
         space.insert(data)
+        sleep(synchronizationTimeout)
         then:
         ((Entity) space.get(request).get().get()) == data
 
@@ -418,13 +421,14 @@ class Tarantool extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         space.autoIncrement(data)
-        db.renameSpace(spaceName, spaceName = "s1_CRUD2")
+        db.renameSpace(spaceName, spaceName = "s2_CRUD2")
         space = db.asynchronousSpace(spaceName)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("data", stringPrimitive("testData"))
                 .build()
         space.autoIncrement(data)
+        sleep(synchronizationTimeout)
         then:
         ((space.len().get() == 5) && (space.schemaLen().get() == 2))
 
@@ -444,6 +448,7 @@ class Tarantool extends Specification {
 
         when:
         space.truncate()
+        sleep(synchronizationTimeout)
         then:
         (space.count().get() == 0) && (space.schemaCount().get() == 0)
 
@@ -454,12 +459,14 @@ class Tarantool extends Specification {
                 .put("data", stringPrimitive("another data"))
                 .build()
         space.put(data)
+        sleep(synchronizationTimeout)
         then:
         space.get(request).get().get() == data
 
 
         when:
         space.delete(intPrimitive(7))
+        sleep(synchronizationTimeout)
         then:
         space.get(request).get().isEmpty()
 
@@ -468,6 +475,7 @@ class Tarantool extends Specification {
         space.put(data)
         space.update(intPrimitive(7),
                 TarantoolUpdateFieldOperation.assigment(2, 'data', stringPrimitive("another")))
+        sleep(synchronizationTimeout)
         then:
         (space.get(request).get().get() as Entity).get("data") == stringPrimitive("another")
 
@@ -478,12 +486,14 @@ class Tarantool extends Specification {
                 .put("data", stringPrimitive("something"))
                 .build()
         space.replace(data)
+        sleep(synchronizationTimeout)
         then:
         space.get(intPrimitive(7)).get().get() == data
 
         when:
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
+        sleep(synchronizationTimeout)
         then:
         space.get(intPrimitive(7)).get().isPresent() && space.get(intPrimitive(8)).get().isPresent()
 
@@ -495,12 +505,12 @@ class Tarantool extends Specification {
     def "Storage2 cluster operations lock"(){
         setup:
         def spaceName = "s2_COL"
-        def clientId = "storage_2_a"
-        TarantoolInstance db = tarantoolInstance(clientId)
+        def clusterId = "storage2"
+        TarantoolInstance db = tarantoolInstance(clusterId)
         boolean result = false
 
 
-        getClient(clientId).eval("art.box.space.activeClusterOperation = true")
+        getCluster(clusterId).getClient('storage_2_a').eval("art.box.space.activeClusterOperation = true")
 
         when:
         try{
@@ -557,7 +567,7 @@ class Tarantool extends Specification {
 
 
         cleanup:
-        getClient(clientId).eval("art.box.space.activeClusterOperation = false")
+        getCluster(clusterId).getClient('storage_2_a').eval("art.box.space.activeClusterOperation = false")
     }
 
 

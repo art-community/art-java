@@ -15,7 +15,7 @@ import static io.art.core.checker.NullityChecker.*;
 
 
 public class TarantoolModuleConfiguration implements ModuleConfiguration {
-    public Map<String, TarantoolInstanceConfiguration> instances = map();
+    public Map<String, TarantoolClusterConfiguration> clusters = map();
     public boolean enableTracing = false;
 
     @RequiredArgsConstructor
@@ -27,14 +27,14 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
             ConfigurationSource tarantoolSection = source.getNested(TARANTOOL_SECTION);
             if (tarantoolSection == null) return this;
 
-            configuration.instances = ofNullable(tarantoolSection)
-                    .map(tarantool -> tarantool.getNestedMap(TARANTOOL_INSTANCES_SECTION))
-                    .map(instances -> instances.entrySet()
+            configuration.clusters = ofNullable(tarantoolSection)
+                    .map(section -> section.getNestedMap(TARANTOOL_CLUSTERS_SECTION))
+                    .map(clusters -> clusters.entrySet()
                         .stream()
-                        .collect(toImmutableMap(Map.Entry::getKey, entry -> TarantoolInstanceConfiguration.from(entry.getValue()))))
+                        .collect(toImmutableMap(Map.Entry::getKey, entry -> TarantoolClusterConfiguration.from(entry.getValue()))))
                     .orElse(ImmutableMap.of());
 
-            configuration.enableTracing = orElse(tarantoolSection.getBool(TARANTOOL_TRACING_KEY), configuration.enableTracing);
+            configuration.enableTracing = orElse(tarantoolSection.getBool(TARANTOOL_LOGGING_KEY), configuration.enableTracing);
             return this;
         }
     }
