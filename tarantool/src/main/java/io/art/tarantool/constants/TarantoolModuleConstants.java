@@ -38,7 +38,7 @@ public interface TarantoolModuleConstants {
         String TARANTOOL_SECTION = "tarantool";
         String TARANTOOL_LOGGING_KEY = "logging";
         String TARANTOOL_CLUSTERS_SECTION = "clusters";
-        String TARANTOOL_CLUSTER_BALANCER_METHOD = "balancer";
+        String TARANTOOL_CLUSTER_BALANCING_METHOD = "balancing";
         String TARANTOOL_INSTANCES_SECTION = "instances";
         String TARANTOOL_INSTANCE_HOST_KEY = "host";
         String TARANTOOL_INSTANCE_PORT_KEY = "port";
@@ -60,7 +60,7 @@ public interface TarantoolModuleConstants {
         String UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Retrying...\n";
         String RESULT_IS_INVALID = "Response ''{0}'' returned from Tarantool can`t be converted to Entity";
         String UNABLE_TO_GET_RESPONSE = "Unable to get response from function call";
-        String UNKNOWN_BALANCER_METHOD = "Unknown balancer method: ''{0}''";
+        String UNKNOWN_BALANCING_METHOD = "Unknown load balancing method: ''{0}''";
     }
 
     interface LoggingMessages {
