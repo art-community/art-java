@@ -94,6 +94,8 @@ public interface TarantoolModuleConstants {
         String SCHEMA_LEN = "art.api.space.schemaLen";
         String LIST_SPACES = "art.api.space.list";
         String LIST_INDICES = "art.api.space.listIndices";
+
+        String TRANSACTION = "art.api.transaction";
     }
 
     enum TarantoolFieldType {
