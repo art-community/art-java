@@ -4,11 +4,7 @@ local api = {
     end,
 
     getBatch = function(space, keys)
-        local result = {}
-        for _, key in pairs(keys) do
-            table.insert(result, art.api.get(space, key))
-        end
-        return result
+        return art.box.getBatch(space, keys)
     end,
 
     delete = function(space, id)

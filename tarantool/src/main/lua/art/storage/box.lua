@@ -9,6 +9,14 @@ local box = {
         return {response, response_schema}
     end,
 
+    getBatch = function(space, keys)
+        local result = {}
+        for _, key in pairs(keys) do
+            table.insert(result, art.api.get(space, key))
+        end
+        return result
+    end,
+
     delete = function(space, key)
         local data = box.space[space]:get(key)
         if data == nil then return {'', ''} end
