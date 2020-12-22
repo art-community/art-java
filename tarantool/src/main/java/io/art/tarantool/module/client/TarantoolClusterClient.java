@@ -42,21 +42,13 @@ public class TarantoolClusterClient {
         readOnlyBalancer.updateEndpoints(readOnlyClients.values());
     }
 
-    public CompletableFuture<List<?>> asynchronousCallRW(String function, Object... args){
+    public CompletableFuture<List<?>> callRW(String function, Object... args){
         TarantoolClient client = readWriteBalancer.select();
         return asynchronousCall(client, function, args);
     }
 
-    public CompletableFuture<List<?>> asynchronousCallRO(String function, Object... args){
+    public CompletableFuture<List<?>> callRO(String function, Object... args){
         return asynchronousCall(readOnlyBalancer.select(), function, args);
-    }
-
-    public List<?> callRW(String function, Object... args){
-        return call(readWriteBalancer.select(), function, args);
-    }
-
-    public List<?> callRO(String function, Object... args){
-        return call(readOnlyBalancer.select(), function, args);
     }
 
     private void getAllClients(TarantoolClusterConfiguration configuration){

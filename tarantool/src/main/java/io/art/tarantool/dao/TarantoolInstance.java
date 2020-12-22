@@ -1,16 +1,23 @@
 package io.art.tarantool.dao;
 
+import io.art.tarantool.configuration.space.TarantoolSpaceConfig;
+import io.art.tarantool.configuration.space.TarantoolSpaceFormat;
+import io.art.tarantool.configuration.space.TarantoolSpaceIndex;
+import io.art.tarantool.exception.TarantoolDaoException;
 import io.art.tarantool.module.client.TarantoolClusterClient;
-import lombok.*;
-import org.apache.logging.log4j.*;
-import io.art.tarantool.configuration.space.*;
+import lombok.Getter;
+import org.apache.logging.log4j.Logger;
+
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+
 import static io.art.core.caster.Caster.cast;
-import static io.art.logging.LoggingModule.*;
-import static lombok.AccessLevel.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.core.factory.SetFactory.setOf;
+import static io.art.logging.LoggingModule.logger;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_GET_RESPONSE;
+import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
+import static lombok.AccessLevel.PRIVATE;
 
 public class TarantoolInstance {
     @Getter(lazy = true, value = PRIVATE)
@@ -22,8 +29,9 @@ public class TarantoolInstance {
     }
 
     public Set<String> listSpaces(){
-        List<String> response = cast( client.callRO(LIST_SPACES).get(0) );
-        return setOf(response);
+        List<?> response = cast(synchronize(client.callRO(LIST_SPACES)));
+        response = cast(response.get(0));
+        return cast(setOf(response));
     }
 
     public TarantoolSpace space(String space){
@@ -35,27 +43,34 @@ public class TarantoolInstance {
     }
 
     public void createSpace(String space, TarantoolSpaceConfig config){
-        client.callRW(CREATE_SPACE, space, config.getConfig());
+        synchronize(client.callRW(CREATE_SPACE, space, config.getConfig()));
     }
 
     public void formatSpace(String space, TarantoolSpaceFormat format){
-        client.callRW(FORMAT_SPACE, space, format.getFormat());
+        synchronize(client.callRW(FORMAT_SPACE, space, format.getFormat()));
     }
 
     public void createIndex(String space, String indexName, TarantoolSpaceIndex indexConfig){
-        client.callRW(CREATE_INDEX, space, indexName, indexConfig.getIndex());
+        synchronize(client.callRW(CREATE_INDEX, space, indexName, indexConfig.getIndex()));
     }
 
     public void dropIndex(String space, String indexName){
-        client.callRW(DROP_INDEX, space, indexName);
+        synchronize(client.callRW(DROP_INDEX, space, indexName));
     }
-    
+
     public void renameSpace(String space, String newName){
-        client.callRW(RENAME_SPACE, space, newName);
+        synchronize(client.callRW(RENAME_SPACE, space, newName));
     }
 
     public void dropSpace(String space){
-        client.callRW(DROP_SPACE, space);
+        synchronize(client.callRW(DROP_SPACE, space));
     }
 
+    private Object synchronize(CompletableFuture<?> future){
+        try {
+            return future.get();
+        }catch(Throwable throwable){
+            throw new TarantoolDaoException(UNABLE_TO_GET_RESPONSE, throwable);
+        }
+    }
 }
