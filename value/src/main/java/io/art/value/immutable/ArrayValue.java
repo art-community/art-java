@@ -18,6 +18,7 @@
 
 package io.art.value.immutable;
 
+import io.art.core.annotation.*;
 import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.value.constants.ValueConstants.*;

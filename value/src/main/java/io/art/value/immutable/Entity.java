@@ -91,6 +91,14 @@ public class Entity implements Value {
         return get(bytePrimitive(key));
     }
 
+    public Value get(Short key) {
+        return get(shortPrimitive(key));
+    }
+
+    public Value get(Character key) {
+        return get(charPrimitive(key));
+    }
+
     public Value get(Primitive primitive) {
         if (valueIsNull(primitive)) {
             return null;
