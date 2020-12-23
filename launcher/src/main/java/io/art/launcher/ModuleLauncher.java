@@ -24,7 +24,7 @@ import io.art.core.collection.*;
 import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.context.*;
 import io.art.core.lazy.*;
-import io.art.core.module.*;
+import io.art.core.module.Module;
 import io.art.core.source.*;
 import io.art.json.module.*;
 import io.art.logging.*;
@@ -47,7 +47,6 @@ import static io.art.logging.LoggingModule.*;
 import static io.art.model.constants.ModelConstants.Protocol.*;
 import static java.util.Optional.*;
 import java.util.concurrent.atomic.*;
-import io.art.core.module.Module;
 
 @UtilityClass
 public class ModuleLauncher {
@@ -80,52 +79,49 @@ public class ModuleLauncher {
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
             initialize(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
-            boolean needBlock = rsocketCustomizer.getConfiguration().isActivateServer();
-            if (needBlock) {
-                block();
-            }
+            if (needBlock(rsocketCustomizer)) block();
         }
     }
 
-    private ValueModule value(ImmutableArray<ConfigurationSource> sources, ValueCustomizer valueCustomizer) {
+    private static ValueModule value(ImmutableArray<ConfigurationSource> sources, ValueCustomizer valueCustomizer) {
         ValueModule value = new ValueModule();
         value.configure(configurator -> configurator.from(sources));
         ofNullable(valueCustomizer).ifPresent(customizer -> value.configure(configurator -> configurator.override(customizer.getConfiguration())));
         return value;
     }
 
-    private LoggingModule logging(ImmutableArray<ConfigurationSource> sources, LoggingCustomizer loggingCustomizer) {
+    private static LoggingModule logging(ImmutableArray<ConfigurationSource> sources, LoggingCustomizer loggingCustomizer) {
         LoggingModule logging = new LoggingModule();
         logging.configure(configurator -> configurator.from(sources));
         ofNullable(loggingCustomizer).ifPresent(customizer -> logging.configure(configurator -> configurator.override(customizer.getConfiguration())));
         return logging;
     }
 
-    private JsonModule json(ImmutableArray<ConfigurationSource> sources) {
+    private static JsonModule json(ImmutableArray<ConfigurationSource> sources) {
         JsonModule json = new JsonModule();
         json.configure(configurator -> configurator.from(sources));
         return json;
     }
 
-    private XmlModule xml(ImmutableArray<ConfigurationSource> sources) {
+    private static XmlModule xml(ImmutableArray<ConfigurationSource> sources) {
         XmlModule xml = new XmlModule();
         xml.configure(configurator -> configurator.from(sources));
         return xml;
     }
 
-    private ServerModule server(ImmutableArray<ConfigurationSource> sources, ServerCustomizer serverCustomizer) {
+    private static ServerModule server(ImmutableArray<ConfigurationSource> sources, ServerCustomizer serverCustomizer) {
         ServerModule server = new ServerModule();
         ofNullable(serverCustomizer).ifPresent(customizer -> server.configure(configurator -> configurator.from(sources).override(customizer.getConfiguration())));
         return server;
     }
 
-    private CommunicatorModule communicator(ImmutableArray<ConfigurationSource> sources) {
+    private static CommunicatorModule communicator(ImmutableArray<ConfigurationSource> sources) {
         CommunicatorModule communicator = new CommunicatorModule();
         communicator.configure(configurator -> configurator.from(sources));
         return communicator;
     }
 
-    private RsocketModule rsocket(ImmutableArray<ConfigurationSource> sources, ServerModel serverModel, RsocketCustomizer rsocketCustomizer) {
+    private static RsocketModule rsocket(ImmutableArray<ConfigurationSource> sources, ServerModel serverModel, RsocketCustomizer rsocketCustomizer) {
         RsocketModule rsocket = new RsocketModule();
         if (serverModel.getServices().values().stream().anyMatch(service -> service.getProtocol() == RSOCKET)) {
             rsocketCustomizer.activateServer();
@@ -134,9 +130,13 @@ public class ModuleLauncher {
         return rsocket;
     }
 
-    private TarantoolModule tarantool(ImmutableArray<ConfigurationSource> sources) {
+    private static TarantoolModule tarantool(ImmutableArray<ConfigurationSource> sources) {
         TarantoolModule tarantool = new TarantoolModule();
         tarantool.configure(configurator -> configurator.from(sources));
         return tarantool;
+    }
+
+    private static boolean needBlock(RsocketCustomizer rsocketCustomizer) {
+        return rsocketCustomizer.getConfiguration().isActivateServer();
     }
 }
