@@ -180,21 +180,4 @@ public class ImmutableArray<T> implements Iterable<T> {
             return new ImmutableArray<>(builder.build());
         }
     }
-
-    interface Variable<T> {
-
-    }
-
-    @FunctionalInterface
-    public interface Test1 {
-        Variable<?> any(Variable<?> var1);
-    }
-
-    @FunctionalInterface
-    public interface Test2<V1, V2, R>   {
-        R any(V1 var1, V2 var2);
-    }
-
-    public static void main(String[] args) {
-    }
 }
