@@ -39,8 +39,6 @@ import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
-import static io.art.value.mapping.PrimitiveMapping.toString;
-import static io.art.value.mapping.PrimitiveMapping.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
@@ -125,37 +123,13 @@ public class Entity implements Value {
 
 
     public Map<Primitive, ? extends Value> toMap() {
-        return mapToMap(key -> key, value -> value);
+        return toMap(key -> key, value -> value);
     }
 
-    public <K, V> Map<K, V> mapToMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
+    public <K, V> Map<K, V> toMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
         Map<K, V> newMap = MapFactory.map();
         for (Primitive key : keys) apply(map(key, valueMapper), value -> newMap.put(keyMapper.map(key), value));
         return newMap;
-    }
-
-    public <T> Map<String, T> mapToStringMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapToMap(toString, mapper);
-    }
-
-    public <T> Map<Integer, T> mapToIntMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapToMap(toInt, mapper);
-    }
-
-    public <T> Map<Long, T> mapToLongMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapToMap(toLong, mapper);
-    }
-
-    public <T> Map<Double, T> mapToDoubleMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapToMap(toDouble, mapper);
-    }
-
-    public <T> Map<Float, T> mapToFloatMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapToMap(toFloat, mapper);
-    }
-
-    public <T> Map<Boolean, T> mapToBoolMap(ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapToMap(toBool, mapper);
     }
 
 
@@ -216,9 +190,11 @@ public class Entity implements Value {
         }
     }
 
+
     public <T, V extends Value> T mapNested(String key, ValueToModelMapper<T, V> mapper) {
         return let(find(key), value -> mapper.map(cast(value)));
     }
+
 
     public <T, V extends Value> T mapPrimitive(String key, PrimitiveType type, ValueToModelMapper<T, V> mapper) {
         Primitive primitive = stringPrimitive(key);
@@ -269,7 +245,7 @@ public class Entity implements Value {
         public ProxyMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
             this.valueMapper = valueMapper;
             this.fromKeyMapper = fromKeyMapper;
-            this.evaluated = lazy(() -> Entity.this.mapToMap(toKeyMapper, valueMapper));
+            this.evaluated = lazy(() -> Entity.this.toMap(toKeyMapper, valueMapper));
             this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toCollection(SetFactory::setOf)));
         }
 

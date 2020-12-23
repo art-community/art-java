@@ -98,25 +98,25 @@ public class ArrayValue implements Value {
     }
 
 
-    public <T> List<T> mapToList(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> List<T> toList(ValueToModelMapper<T, ? extends Value> mapper) {
         List<T> list = dynamicArrayOf();
         for (int index = 0; index < size(); index++) apply(map(index, mapper), list::add);
         return list;
     }
 
-    public <T> Set<T> mapToSet(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> Set<T> toSet(ValueToModelMapper<T, ? extends Value> mapper) {
         Set<T> set = setOf();
         for (int index = 0; index < size(); index++) apply(map(index, mapper), set::add);
         return set;
     }
 
-    public <T> Queue<T> mapToQueue(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> Queue<T> toQueue(ValueToModelMapper<T, ? extends Value> mapper) {
         Queue<T> queue = queueOf();
         for (int index = 0; index < size(); index++) apply(map(index, mapper), queue::add);
         return queue;
     }
 
-    public <T> Deque<T> mapToDeque(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> Deque<T> toDeque(ValueToModelMapper<T, ? extends Value> mapper) {
         Deque<T> deque = dequeOf();
         for (int index = 0; index < size(); index++) apply(map(index, mapper), deque::add);
         return deque;
@@ -124,77 +124,77 @@ public class ArrayValue implements Value {
 
 
     public List<Value> asList() {
-        return mapAsList(identity());
+        return asList(identity());
     }
 
     public Stream<Value> asStream() {
-        return mapAsStream(identity());
+        return asStream(identity());
     }
 
     public Set<Value> asSet() {
-        return mapAsSet(identity());
+        return asSet(identity());
     }
 
     public Queue<Value> asQueue() {
-        return mapAsQueue(identity());
+        return asQueue(identity());
     }
 
     public Deque<Value> asDeque() {
-        return mapAsDeque(identity());
+        return asDeque(identity());
     }
 
 
-    public <T> List<T> mapAsList(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> List<T> asList(ValueToModelMapper<T, ? extends Value> mapper) {
         return new ProxyList<>(mapper);
     }
 
-    public <T> Stream<T> mapAsStream(ValueToModelMapper<T, ? extends Value> mapper) {
-        return mapAsList(mapper).stream();
+    public <T> Stream<T> asStream(ValueToModelMapper<T, ? extends Value> mapper) {
+        return asList(mapper).stream();
     }
 
-    public <T> Set<T> mapAsSet(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> Set<T> asSet(ValueToModelMapper<T, ? extends Value> mapper) {
         return new ProxySet<>(mapper);
     }
 
-    public <T> Queue<T> mapAsQueue(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> Queue<T> asQueue(ValueToModelMapper<T, ? extends Value> mapper) {
         return new ProxyQueue<>(mapper);
     }
 
-    public <T> Deque<T> mapAsDeque(ValueToModelMapper<T, ? extends Value> mapper) {
+    public <T> Deque<T> asDeque(ValueToModelMapper<T, ? extends Value> mapper) {
         return new ProxyDeque<>(mapper);
     }
 
 
     public int[] intArray() {
-        return unbox(mapAsList(toInt).toArray(new Integer[0]));
+        return unbox(asList(toInt).toArray(new Integer[0]));
     }
 
     public long[] longArray() {
-        return unbox(mapAsList(toLong).toArray(new Long[0]));
+        return unbox(asList(toLong).toArray(new Long[0]));
     }
 
     public short[] shortArray() {
-        return unbox(mapAsList(toShort).toArray(new Short[0]));
+        return unbox(asList(toShort).toArray(new Short[0]));
     }
 
     public double[] doubleArray() {
-        return unbox(mapAsList(toDouble).toArray(new Double[0]));
+        return unbox(asList(toDouble).toArray(new Double[0]));
     }
 
     public float[] floatArray() {
-        return unbox(mapAsList(toFloat).toArray(new Float[0]));
+        return unbox(asList(toFloat).toArray(new Float[0]));
     }
 
     public byte[] byteArray() {
-        return unbox(mapAsList(toByte).toArray(new Byte[0]));
+        return unbox(asList(toByte).toArray(new Byte[0]));
     }
 
     public char[] charArray() {
-        return unbox(mapAsList(toChar).toArray(new Character[0]));
+        return unbox(asList(toChar).toArray(new Character[0]));
     }
 
     public boolean[] boolArray() {
-        return unbox(mapAsList(toBool).toArray(new Boolean[0]));
+        return unbox(asList(toBool).toArray(new Boolean[0]));
     }
 
 
@@ -227,7 +227,7 @@ public class ArrayValue implements Value {
 
         public ProxyList(ValueToModelMapper<T, ? extends Value> mapper) {
             this.mapper = mapper;
-            this.evaluated = lazy(() -> ArrayValue.this.mapToList(mapper));
+            this.evaluated = lazy(() -> ArrayValue.this.toList(mapper));
         }
 
         private class ProxyIterator implements Iterator<T> {
@@ -426,7 +426,7 @@ public class ArrayValue implements Value {
 
         public ProxySet(ValueToModelMapper<T, ? extends Value> mapper) {
             this.mapper = mapper;
-            this.evaluated = lazy(() -> ArrayValue.this.mapToSet(mapper));
+            this.evaluated = lazy(() -> ArrayValue.this.toSet(mapper));
         }
 
         private class ProxyIterator implements Iterator<T> {
@@ -521,7 +521,7 @@ public class ArrayValue implements Value {
 
         public ProxyQueue(ValueToModelMapper<T, ? extends Value> mapper) {
             this.mapper = mapper;
-            this.evaluated = lazy(() -> ArrayValue.this.mapToQueue(mapper));
+            this.evaluated = lazy(() -> ArrayValue.this.toQueue(mapper));
         }
 
         private class ProxyIterator implements Iterator<T> {

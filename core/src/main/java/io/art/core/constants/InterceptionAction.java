@@ -18,7 +18,7 @@
 
 package io.art.core.constants;
 
-public enum InterceptionStrategy {
+public enum InterceptionAction {
     NEXT,
     PROCESS,
     TERMINATE

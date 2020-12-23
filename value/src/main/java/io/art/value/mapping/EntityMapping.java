@@ -42,7 +42,7 @@ public class EntityMapping {
     }
 
     public static <K, V> EntityToModelMapper<Map<K, V>> toMutableMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
-        return entity -> let(entity, notNull -> notNull.mapToMap(keyMapper, valueMapper));
+        return entity -> let(entity, notNull -> notNull.toMap(keyMapper, valueMapper));
     }
 
     public static <K, V> EntityFromModelMapper<Map<K, V>> fromMap(
