@@ -22,6 +22,7 @@ import lombok.experimental.*;
 import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
 import static io.art.core.factory.SetFactory.setOf;
 import static java.util.Collections.*;
+import static java.util.Objects.isNull;
 import java.util.*;
 import java.util.function.*;
 
@@ -68,5 +69,15 @@ public final class CollectionExtensions {
         set.addAll(first);
         set.addAll(second);
         return set;
+    }
+
+    public static <K, V> V putIfAbsent(Map<K, V> map, K key, Supplier<V> value) {
+        V current = map.get(key);
+        if (isNull(current)) {
+            current = value.get();
+            map.put(key, current);
+            return current;
+        }
+        return current;
     }
 }

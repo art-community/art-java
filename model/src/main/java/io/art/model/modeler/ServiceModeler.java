@@ -24,10 +24,10 @@ import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.model.constants.ModelConstants.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
-import static java.util.Objects.isNull;
 import static java.util.function.UnaryOperator.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -61,7 +61,7 @@ public class ServiceModeler<T> {
     public ServiceModeler<T> to(Class<?> service, String method, UnaryOperator<ServiceMethodModeler> operator) {
         this.id = service.getSimpleName();
         this.serviceClass = service;
-        this.concreteMethods.put(method, operator.apply(new ServiceMethodModeler(this, method)));
+        operator.apply(putIfAbsent(this.concreteMethods, method, () -> new ServiceMethodModeler(this, method)));
         return this;
     }
 
@@ -85,11 +85,7 @@ public class ServiceModeler<T> {
     }
 
     private ServiceModeler<T> decorateConcrete(String method, BiConsumer<String, ServiceMethodModeler> decorator) {
-        ServiceMethodModeler modeler = this.concreteMethods.get(method);
-        if (isNull(modeler)) {
-            return this;
-        }
-        decorator.accept(method, modeler);
+        decorator.accept(method, putIfAbsent(this.concreteMethods, method, () -> new ServiceMethodModeler(this, method)));
         return this;
     }
 
