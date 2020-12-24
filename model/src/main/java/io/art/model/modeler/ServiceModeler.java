@@ -27,6 +27,7 @@ import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.model.constants.ModelConstants.*;
 import static io.art.server.model.ServiceMethodIdentifier.*;
+import static java.util.Objects.isNull;
 import static java.util.function.UnaryOperator.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -65,13 +66,30 @@ public class ServiceModeler<T> {
     }
 
     public ServiceModeler<T> enableLogging() {
+        return decorateAny((method, builder) -> builder
+                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), INPUT))
+                .outputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), OUTPUT)));
+    }
+
+    public ServiceModeler<T> enableLogging(String id) {
+        return decorateConcrete(id, (method, builder) -> builder.enableLogging());
+    }
+
+    private ServiceModeler<T> decorateAny(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
         BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> current = this.anyMethod;
         anyMethod = (method, builder) -> {
             builder = current.apply(method, builder);
-            return builder
-                    .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), INPUT))
-                    .outputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), OUTPUT));
+            return decorator.apply(method, builder);
         };
+        return this;
+    }
+
+    private ServiceModeler<T> decorateConcrete(String method, BiConsumer<String, ServiceMethodModeler> decorator) {
+        ServiceMethodModeler modeler = this.concreteMethods.get(method);
+        if (isNull(modeler)) {
+            return this;
+        }
+        decorator.accept(method, modeler);
         return this;
     }
 
