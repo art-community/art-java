@@ -1,99 +1,125 @@
 package io.art.tarantool.dao;
 
+import io.art.tarantool.dao.transaction.result.TarantoolOperationResult;
 import io.art.tarantool.model.TarantoolUpdateFieldOperation;
-import io.art.tarantool.module.client.TarantoolClusterClient;
 import io.art.value.immutable.Value;
-import io.art.tarantool.model.TarantoolResponse;
+import io.art.tarantool.model.TarantoolResponseMapping;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 import static io.art.core.caster.Caster.cast;
 import static io.art.core.factory.SetFactory.setOf;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.model.TarantoolRequest.*;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TarantoolAsynchronousSpace {
     @NonNull
-    private final TarantoolClusterClient client;
+    private final TarantoolInstance tarantoolInstance;
     @NonNull
     private final String space;
 
 
-    public CompletableFuture<Optional<Value>> get(Value key){
-        return client.callRO(GET, space, requestTuple(key)).thenApply(TarantoolResponse::read);
+    public TarantoolOperationResult<Optional<Value>> get(Value key){
+        return cast(callRO(GET, TarantoolResponseMapping::toValue, space, requestTuple(key)));
     }
 
-    public CompletableFuture<Optional<Value>> get(String index, Value key){
-        return client.callRO(GET, space, index, requestTuple(key)).thenApply(TarantoolResponse::read);
+    public TarantoolOperationResult<Optional<Value>> get(String index, Value key){
+        return cast(callRO(GET, TarantoolResponseMapping::toValue, space, index, requestTuple(key)));
     }
 
-    public CompletableFuture<Optional<List<Value>>> select(Value request){
-        return client.callRO(SELECT, space, requestTuple(request)).thenApply(TarantoolResponse::readBatch);
+    public TarantoolOperationResult<Optional<List<Value>>> select(Value request){
+        return cast(callRO(SELECT, TarantoolResponseMapping::toValuesList, space, requestTuple(request)));
     }
 
-    public CompletableFuture<Optional<List<Value>>> select(String index, Value request){
-        return client.callRO(SELECT, space, requestTuple(request), index).thenApply(TarantoolResponse::readBatch);
+    public TarantoolOperationResult<Optional<List<Value>>> select(String index, Value request){
+        return cast(callRO(SELECT, TarantoolResponseMapping::toValuesList, space, requestTuple(request), index));
     }
 
-    public CompletableFuture<Optional<Value>> delete(Value key){
-        return client.callRW(DELETE, space, requestTuple(key)).thenApply(TarantoolResponse::read);
+    public TarantoolOperationResult<Optional<Value>> delete(Value key){
+        return cast(callRW(DELETE, TarantoolResponseMapping::toValue, space, requestTuple(key)));
     }
 
-    public CompletableFuture<Optional<Value>> insert(Value data){
-        return client.callRW(INSERT, space, dataTuple(data)).thenApply(TarantoolResponse::read);
+    public TarantoolOperationResult<Optional<Value>> insert(Value data){
+        return cast(callRW(INSERT, TarantoolResponseMapping::toValue, space, dataTuple(data)));
     }
 
-    public CompletableFuture<Optional<Value>> autoIncrement(Value data){
-        return client.callRW(AUTO_INCREMENT, space, dataTuple(data)).thenApply(TarantoolResponse::read);
+    public TarantoolOperationResult<Optional<Value>> autoIncrement(Value data){
+        return cast(callRW(AUTO_INCREMENT, TarantoolResponseMapping::toValue, space, dataTuple(data)));
     }
 
-    public CompletableFuture<Optional<Value>> put(Value data){
-        return client.callRW(PUT, space, dataTuple(data)).thenApply(TarantoolResponse::read);
+    public TarantoolOperationResult<Optional<Value>> autoIncrement(TarantoolOperationResult<?> data){
+        return cast(callRW(AUTO_INCREMENT, TarantoolResponseMapping::toValue, space, data.useResult()));
     }
 
-    public CompletableFuture<Optional<Value>> replace(Value data){
-        return client.callRW(REPLACE, space, dataTuple(data)).thenApply(TarantoolResponse::read);
+    public TarantoolOperationResult<Optional<Value>> put(Value data){
+        return cast(callRW(PUT, TarantoolResponseMapping::toValue, space, dataTuple(data)));
     }
 
-    public CompletableFuture<Optional<Value>> update(Value key, TarantoolUpdateFieldOperation... operations){
-        return client.callRW(UPDATE, space, requestTuple(key), updateOperationsTuple(operations)).thenApply(TarantoolResponse::read);
+    public TarantoolOperationResult<Optional<Value>> replace(Value data){
+        return cast(callRW(REPLACE, TarantoolResponseMapping::toValue, space, dataTuple(data)));
     }
 
-    public CompletableFuture<Optional<Value>> upsert(Value defaultValue, TarantoolUpdateFieldOperation... operations){
-        return client.callRW(UPSERT, space, dataTuple(defaultValue), updateOperationsTuple(operations)).thenApply(TarantoolResponse::read);
+    public TarantoolOperationResult<Optional<Value>> update(Value key, TarantoolUpdateFieldOperation... operations){
+        return cast(callRW(UPDATE, TarantoolResponseMapping::toValue, space, requestTuple(key), updateOperationsTuple(operations)));
     }
 
-    public CompletableFuture<Long> count(){
-        return client.callRO(COUNT, space).thenApply(response -> ((Number) response.get(0)).longValue() );
+    public TarantoolOperationResult<Optional<Value>> upsert(Value defaultValue, TarantoolUpdateFieldOperation... operations){
+        return cast(callRW(UPSERT, TarantoolResponseMapping::toValue, space, dataTuple(defaultValue), updateOperationsTuple(operations)));
     }
 
-    public CompletableFuture<Long> len(){
-        return client.callRO(LEN, space).thenApply(response -> ((Number) response.get(0)).longValue() );
+    public TarantoolOperationResult<Long> count(){
+        return cast(callRO(COUNT, TarantoolResponseMapping::toLong, space));
     }
 
-    public CompletableFuture<Long> schemaCount(){
-        return client.callRO(SCHEMA_COUNT, space).thenApply(response -> ((Number) response.get(0)).longValue() );
+    public TarantoolOperationResult<Long> len(){
+        return cast(callRO(LEN, TarantoolResponseMapping::toLong, space));
     }
 
-    public CompletableFuture<Long> schemaLen(){
-        return client.callRO(SCHEMA_LEN, space).thenApply(response -> ((Number) response.get(0)).longValue() );
+    public TarantoolOperationResult<Long> schemaCount(){
+        return cast(callRO(SCHEMA_COUNT, TarantoolResponseMapping::toLong, space));
+    }
+
+    public TarantoolOperationResult<Long> schemaLen(){
+        return cast(callRO(SCHEMA_LEN, TarantoolResponseMapping::toLong, space));
     }
 
     public void truncate(){
-        client.callRW(TRUNCATE, space);
+        callRW(TRUNCATE, TarantoolResponseMapping::noMapping, space);
     }
 
-    public CompletableFuture<Set<String>> listIndices(){
-        return client.callRO(LIST_INDICES, space).thenApply(response -> {
+    public TarantoolOperationResult<Set<String>> listIndices(){
+        return cast(callRO(LIST_INDICES, response -> {
             List<String> indices = cast(response.get(0));
             return setOf(indices);
-        });
+        }, space));
     }
-    
+
+    public void beginTransaction(){
+        tarantoolInstance.transactionManager().begin();
+    }
+
+    public void commitTransaction(){
+        tarantoolInstance.transactionManager().commit();
+    }
+
+    public void cancelTransaction(){
+        tarantoolInstance.transactionManager().cancel();
+    }
+
+
+
+    private TarantoolOperationResult<?> callRO(String function, Function<List<?>, Object> mapper, Object ... args){
+        return tarantoolInstance.transactionManager().callRO(function, mapper, args);
+    }
+
+    private TarantoolOperationResult<?> callRW(String function, Function<List<?>, Object> mapper, Object ... args){
+        return tarantoolInstance.transactionManager().callRW(function, mapper, args);
+    }
 }

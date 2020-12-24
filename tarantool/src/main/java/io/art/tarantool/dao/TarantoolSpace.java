@@ -1,29 +1,25 @@
 package io.art.tarantool.dao;
 
-import io.art.tarantool.module.client.TarantoolClusterClient;
+import io.art.tarantool.dao.transaction.result.TarantoolOperationResult;
 import io.art.value.immutable.Value;
-import io.tarantool.driver.api.TarantoolClient;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.*;
 import static io.art.core.caster.Caster.cast;
-
+import java.util.*;
 
 import static io.art.logging.LoggingModule.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_GET_RESPONSE;
 import static lombok.AccessLevel.*;
-
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 public class TarantoolSpace {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(TarantoolSpace.class);
     private final TarantoolAsynchronousSpace asynchronousSpace;
 
-    public TarantoolSpace(TarantoolClusterClient client, String space){
-        this.asynchronousSpace = new TarantoolAsynchronousSpace(client, space);
+    public TarantoolSpace(TarantoolInstance instance, String space){
+        this.asynchronousSpace = new TarantoolAsynchronousSpace(instance, space);
     }
 
     public Optional<Value> get(Value key){
@@ -94,10 +90,23 @@ public class TarantoolSpace {
         return cast(synchronize(asynchronousSpace.listIndices()));
     }
 
+    public void beginTransaction(){
+        asynchronousSpace.beginTransaction();
+    }
 
-    private Object synchronize(CompletableFuture<?> future){
+    public void commitTransaction(){
+        asynchronousSpace.commitTransaction();
+    }
+
+    public void cancelTransaction(){
+        asynchronousSpace.cancelTransaction();
+    }
+
+
+
+    private Object synchronize(TarantoolOperationResult<?> result){
         try {
-            return future.get();
+            return result.get();
         }catch(Throwable throwable){
             throw new TarantoolDaoException(UNABLE_TO_GET_RESPONSE, throwable);
         }

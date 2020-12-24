@@ -61,6 +61,9 @@ public interface TarantoolModuleConstants {
         String RESULT_IS_INVALID = "Response ''{0}'' returned from Tarantool can`t be converted to Entity";
         String UNABLE_TO_GET_RESPONSE = "Unable to get response from function call";
         String UNKNOWN_BALANCING_METHOD = "Unknown load balancing method: ''{0}''";
+        String NULL_REQUEST_DATA_EXCEPTION = "Request data tuple is null";
+        String TRANSACTION_FAILED = "Transaction failed with error message: ''{0}''";
+        String GET_RESULT_OF_NOT_COMMITTED_TRANSACTION = "Attempted to get result of not committed transaction. Commit first.";
     }
 
     interface LoggingMessages {

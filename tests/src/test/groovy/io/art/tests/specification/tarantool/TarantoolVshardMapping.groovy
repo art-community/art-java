@@ -21,7 +21,7 @@ import static io.art.value.factory.PrimitivesFactory.intPrimitive
 import static io.art.value.factory.PrimitivesFactory.stringPrimitive
 
 class TarantoolVshardMapping extends Specification {
-    def benchmarkOpsCount = 10000
+    def testOpsCount = 100
     def mappingTimeout = 300
 
     def setupSpec(){
@@ -196,25 +196,25 @@ class TarantoolVshardMapping extends Specification {
                 .unique(false))
 
         when:
-        for (int i = 0; i<benchmarkOpsCount; i++){
+        for (int i = 0; i<testOpsCount; i++){
             space.autoIncrement(data)
         }
 
         db.createIndex(spaceName, 'data', tarantoolSpaceIndex()
                 .part(3)
                 .unique(false))
-        sleep(mappingTimeout*10)
+        sleep(mappingTimeout*5)
 
         def response = space.select('data', stringPrimitive('data')).get().get()
         int succeeded = response.size()
         then:
-        (succeeded == benchmarkOpsCount)
+        (succeeded == testOpsCount)
 
         cleanup:
         db.dropSpace(spaceName)
     }
 
-    def "Router2 mapping loss rate"(){
+    def "Router2 mapping loss"(){
         setup:
         def clusterId = "routers"
         def spaceName = "r2_map_loss"
@@ -248,14 +248,14 @@ class TarantoolVshardMapping extends Specification {
         when:
 
         int succeeded = 0
-        for (int i = 0; i<benchmarkOpsCount; i++){
+        for (int i = 0; i<testOpsCount; i++){
             space.autoIncrement(data)
             sleep(mappingTimeout)
             if (space.get(intPrimitive(i+1)).get().isPresent()) succeeded++
         }
         println(intPrimitive(succeeded))
         then:
-        (succeeded == benchmarkOpsCount)
+        (succeeded == testOpsCount)
 
         cleanup:
         db.dropSpace(spaceName)

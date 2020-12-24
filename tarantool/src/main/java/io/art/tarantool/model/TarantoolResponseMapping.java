@@ -17,19 +17,28 @@ import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
-public class TarantoolResponse {
+public class TarantoolResponseMapping {
 
-    public static Optional<Value> read(List<?> response){
+
+    public static Object noMapping(List<?> response) {
+        return response;
+    }
+
+    public static Long toLong(List<?> response){
+        return ((Number) response.get(0)).longValue();
+    }
+
+    public static Optional<Value> toValue(List<?> response){
         response = cast(response.get(0));
         if ((isEmpty(response.get(0))) || response.size() < 2) return empty();
         return ofNullable(readTuple(response));
     }
 
-    public static Optional<List<io.art.value.immutable.Value>> readBatch(List<?> response){
+    public static Optional<List<Value>> toValuesList(List<?> response){
         response = cast(response.get(0));
         if (response.isEmpty()) return empty();
 
-        List<io.art.value.immutable.Value> result = response.stream()
+        List<Value> result = response.stream()
                 .map(entry -> readTuple(cast(entry)))
                 .collect(toList());
         return ofNullable(result);
