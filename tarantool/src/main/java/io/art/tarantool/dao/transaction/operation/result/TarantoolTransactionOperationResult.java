@@ -1,10 +1,12 @@
-package io.art.tarantool.dao.transaction.result;
+package io.art.tarantool.dao.transaction.operation.result;
 
+import io.art.tarantool.dao.transaction.operation.dependency.TransactionFieldDependency;
+import io.art.tarantool.dao.transaction.operation.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.dao.transaction.operation.dependency.TransactionTupleDependency;
 import io.art.tarantool.exception.TarantoolTransactionException;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -41,13 +43,13 @@ public class TarantoolTransactionOperationResult<T> implements TarantoolOperatio
     }
 
     @Override
-    public Map<String, List<?>> useResult(){
-        return mapOf("dependency", linkedListOf(transactionEntryNumber + 1));
+    public TarantoolTransactionDependency useResult(){
+        return new TransactionTupleDependency(transactionEntryNumber);
     }
 
     @Override
-    public Map<String, List<?>> useResultField(String fieldName){
-        return mapOf("dependency", linkedListOf(transactionEntryNumber + 1, fieldName));
+    public TarantoolTransactionDependency useResultField(String fieldName){
+        return new TransactionFieldDependency(transactionEntryNumber, fieldName);
     }
 
     @Override

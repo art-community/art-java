@@ -4,17 +4,14 @@ import io.art.tarantool.configuration.space.TarantoolSpaceConfig;
 import io.art.tarantool.configuration.space.TarantoolSpaceFormat;
 import io.art.tarantool.configuration.space.TarantoolSpaceIndex;
 import io.art.tarantool.dao.transaction.TarantoolTransactionManager;
-import io.art.tarantool.dao.transaction.result.TarantoolOperationResult;
+import io.art.tarantool.dao.transaction.operation.result.TarantoolOperationResult;
 import io.art.tarantool.exception.TarantoolDaoException;
 import io.art.tarantool.model.TarantoolResponseMapping;
 import io.art.tarantool.module.client.TarantoolClusterClient;
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
 import static io.art.core.caster.Caster.cast;
 import static io.art.core.factory.SetFactory.setOf;

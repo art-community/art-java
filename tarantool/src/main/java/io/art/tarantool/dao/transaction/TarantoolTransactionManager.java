@@ -1,20 +1,18 @@
 package io.art.tarantool.dao.transaction;
 
-import io.art.tarantool.dao.transaction.entry.TarantoolTransactionEntry;
-import io.art.tarantool.dao.transaction.result.TarantoolOperationResult;
-import io.art.tarantool.dao.transaction.result.TarantoolSingleOperationResult;
-import io.art.tarantool.dao.transaction.result.TarantoolTransactionOperationResult;
+import io.art.tarantool.dao.transaction.operation.result.TarantoolOperationResult;
+import io.art.tarantool.dao.transaction.operation.result.TarantoolSingleOperationResult;
+import io.art.tarantool.dao.transaction.operation.result.TarantoolTransactionOperationResult;
 import io.art.tarantool.module.client.TarantoolClusterClient;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import static io.art.core.factory.ListFactory.linkedList;
 import static io.art.core.factory.ListFactory.linkedListOf;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.TRANSACTION;
-import static io.art.tarantool.dao.transaction.entry.TarantoolTransactionEntry.tarantoolTransactionEntry;
+import static io.art.tarantool.dao.transaction.operation.TarantoolTransactionOperation.tarantoolTransactionOperation;
 
 public class TarantoolTransactionManager {
     private final TarantoolClusterClient client;
@@ -56,7 +54,7 @@ public class TarantoolTransactionManager {
 
     private TarantoolOperationResult<?> addOperation(String function, Function<List<?>, Object> responseMapper, Object ... args){
         TarantoolTransactionOperationResult<Object> result = new TarantoolTransactionOperationResult<Object>(operations.size(), responseMapper);
-        operations.add(tarantoolTransactionEntry(function, args));
+        operations.add(tarantoolTransactionOperation(function, args));
         results.add(result);
         return result;
     }

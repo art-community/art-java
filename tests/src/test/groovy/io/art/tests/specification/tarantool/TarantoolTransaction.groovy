@@ -19,6 +19,7 @@ import static io.art.tarantool.configuration.space.TarantoolSpaceConfig.tarantoo
 import static io.art.tarantool.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
 import static io.art.tarantool.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.NUMBER
+import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.STRING
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.UNSIGNED
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolIndexType
 import static io.art.tarantool.module.TarantoolModule.getCluster
@@ -50,12 +51,17 @@ class TarantoolTransaction extends Specification {
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
         db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .field("id", NUMBER, false))
+                .field("id", NUMBER, false)
+                .field("data", STRING, false))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
                 .part("id")
                 .ifNotExists(true)
                 .unique(true))
+        db.createIndex(spaceName, 'data', tarantoolSpaceIndex()
+                .part('data')
+                .ifNotExists(true)
+                .unique(false))
 
 
         when:
@@ -78,6 +84,15 @@ class TarantoolTransaction extends Specification {
         then:
         ((Entity)result1.get().get()).get('id') == intPrimitive(5) &&
                 ((Entity)result2.get().get()).get('id') == intPrimitive(6)
+
+        when:
+        space.beginTransaction()
+        result1 = space.autoIncrement(data)
+        result2 = space.select('data', result1.useResultField('data'))
+
+
+
+
 
         cleanup:
         db.dropSpace(spaceName)

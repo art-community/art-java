@@ -1,6 +1,7 @@
 package io.art.tarantool.dao;
 
-import io.art.tarantool.dao.transaction.result.TarantoolOperationResult;
+import io.art.tarantool.dao.transaction.operation.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.dao.transaction.operation.result.TarantoolOperationResult;
 import io.art.tarantool.model.TarantoolUpdateFieldOperation;
 import io.art.value.immutable.Value;
 import io.art.tarantool.model.TarantoolResponseMapping;
@@ -30,9 +31,18 @@ public class TarantoolAsynchronousSpace {
         return cast(callRO(GET, TarantoolResponseMapping::toValue, space, requestTuple(key)));
     }
 
+    public TarantoolOperationResult<Optional<Value>> get(TarantoolTransactionDependency keyDependency){
+        return cast(callRO(GET, TarantoolResponseMapping::toValue, space, keyDependency.get()));
+    }
+
     public TarantoolOperationResult<Optional<Value>> get(String index, Value key){
         return cast(callRO(GET, TarantoolResponseMapping::toValue, space, index, requestTuple(key)));
     }
+
+    public TarantoolOperationResult<Optional<Value>> get(String index, TarantoolTransactionDependency keyDependency){
+        return cast(callRO(GET, TarantoolResponseMapping::toValue, space, index, keyDependency.get()));
+    }
+
 
     public TarantoolOperationResult<Optional<List<Value>>> select(Value request){
         return cast(callRO(SELECT, TarantoolResponseMapping::toValuesList, space, requestTuple(request)));
@@ -42,37 +52,78 @@ public class TarantoolAsynchronousSpace {
         return cast(callRO(SELECT, TarantoolResponseMapping::toValuesList, space, requestTuple(request), index));
     }
 
+    public TarantoolOperationResult<Optional<List<Value>>> select(TarantoolTransactionDependency requestDependency){
+        return cast(callRO(SELECT, TarantoolResponseMapping::toValuesList, space, requestDependency.get()));
+    }
+
+    public TarantoolOperationResult<Optional<List<Value>>> select(String index, TarantoolTransactionDependency requestDependency){
+        return cast(callRO(SELECT, TarantoolResponseMapping::toValuesList, space, requestDependency.get(), index));
+    }
+
+
     public TarantoolOperationResult<Optional<Value>> delete(Value key){
         return cast(callRW(DELETE, TarantoolResponseMapping::toValue, space, requestTuple(key)));
     }
+
+    public TarantoolOperationResult<Optional<Value>> delete(TarantoolTransactionDependency keyDependency){
+        return cast(callRW(DELETE, TarantoolResponseMapping::toValue, space, keyDependency.get()));
+    }
+
 
     public TarantoolOperationResult<Optional<Value>> insert(Value data){
         return cast(callRW(INSERT, TarantoolResponseMapping::toValue, space, dataTuple(data)));
     }
 
+    public TarantoolOperationResult<Optional<Value>> insert(TarantoolTransactionDependency dataDependency){
+        return cast(callRW(INSERT, TarantoolResponseMapping::toValue, space, dataDependency.get()));
+    }
+
+
     public TarantoolOperationResult<Optional<Value>> autoIncrement(Value data){
         return cast(callRW(AUTO_INCREMENT, TarantoolResponseMapping::toValue, space, dataTuple(data)));
     }
 
-    public TarantoolOperationResult<Optional<Value>> autoIncrement(TarantoolOperationResult<?> data){
-        return cast(callRW(AUTO_INCREMENT, TarantoolResponseMapping::toValue, space, data.useResult()));
+    public TarantoolOperationResult<Optional<Value>> autoIncrement(TarantoolTransactionDependency dataDependency){
+        return cast(callRW(AUTO_INCREMENT, TarantoolResponseMapping::toValue, space, dataDependency.get()));
     }
+
 
     public TarantoolOperationResult<Optional<Value>> put(Value data){
         return cast(callRW(PUT, TarantoolResponseMapping::toValue, space, dataTuple(data)));
     }
 
+    public TarantoolOperationResult<Optional<Value>> put(TarantoolTransactionDependency dataDependency){
+        return cast(callRW(PUT, TarantoolResponseMapping::toValue, space, dataDependency.get()));
+    }
+
+
     public TarantoolOperationResult<Optional<Value>> replace(Value data){
         return cast(callRW(REPLACE, TarantoolResponseMapping::toValue, space, dataTuple(data)));
     }
+
+    public TarantoolOperationResult<Optional<Value>> replace(TarantoolTransactionDependency dataDependency){
+        return cast(callRW(REPLACE, TarantoolResponseMapping::toValue, space, dataDependency.get()));
+    }
+
 
     public TarantoolOperationResult<Optional<Value>> update(Value key, TarantoolUpdateFieldOperation... operations){
         return cast(callRW(UPDATE, TarantoolResponseMapping::toValue, space, requestTuple(key), updateOperationsTuple(operations)));
     }
 
+    public TarantoolOperationResult<Optional<Value>> update(TarantoolTransactionDependency keyDependency, TarantoolUpdateFieldOperation... operations){
+        return cast(callRW(UPDATE, TarantoolResponseMapping::toValue, space, keyDependency.get(), updateOperationsTuple(operations)));
+    }
+
+
     public TarantoolOperationResult<Optional<Value>> upsert(Value defaultValue, TarantoolUpdateFieldOperation... operations){
         return cast(callRW(UPSERT, TarantoolResponseMapping::toValue, space, dataTuple(defaultValue), updateOperationsTuple(operations)));
     }
+
+    public TarantoolOperationResult<Optional<Value>> upsert(TarantoolTransactionDependency defaultValueDependency, TarantoolUpdateFieldOperation... operations){
+        return cast(callRW(UPSERT, TarantoolResponseMapping::toValue, space, defaultValueDependency.get(), updateOperationsTuple(operations)));
+    }
+
+
 
     public TarantoolOperationResult<Long> count(){
         return cast(callRO(COUNT, TarantoolResponseMapping::toLong, space));

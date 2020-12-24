@@ -1,4 +1,4 @@
-package io.art.tarantool.dao.transaction.result;
+package io.art.tarantool.dao.transaction.operation.result;
 
 import java.util.concurrent.ExecutionException;
 

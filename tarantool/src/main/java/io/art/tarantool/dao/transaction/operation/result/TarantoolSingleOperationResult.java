@@ -1,4 +1,4 @@
-package io.art.tarantool.dao.transaction.result;
+package io.art.tarantool.dao.transaction.operation.result;
 
 import io.art.core.exception.NotImplementedException;
 import java.util.List;
@@ -6,8 +6,6 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
-
-import static io.art.core.caster.Caster.cast;
 
 
 public class TarantoolSingleOperationResult<T> implements TarantoolOperationResult<T>{
