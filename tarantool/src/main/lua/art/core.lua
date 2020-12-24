@@ -22,7 +22,11 @@ local core = {
         end
     end,
 
-    fiber = require('fiber')
+    fiber = require('fiber'),
+
+    functionFromString = function(string)
+        return loadstring('return ' .. string)()
+    end
 }
 
 return core
