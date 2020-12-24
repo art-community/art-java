@@ -65,9 +65,10 @@ local box = {
         local schema_tuple = box.tuple.new({schema_hash, 1, data[2], bucket_id})
         art.core.schemaOf(space):upsert(schema_tuple, { { '+', 'count', 1}})
 
+        data[1] = data[1]:transform(#data[1], 1)
         art.cluster.mapping.put(space, data[1])
 
-        return {data[1]:transform(-1, 1), data[2]}
+        return {data[1], data[2]}
     end,
 
     put = function(space, data, bucket_id)
@@ -154,12 +155,14 @@ local box = {
         dropIndex = function(space, name)
             art.cluster.mapping.space.unwatchIndex(space, box.space[space].index[name])
             box.space[space].index[name]:drop()
+            return {}
         end,
 
         truncate = function(space)
             box.space[space]:truncate()
             art.core.schemaOf(space):truncate()
             art.cluster.mapping.space.truncate(space)
+            return {}
         end,
 
         rename = function(space, name)
@@ -176,6 +179,7 @@ local box = {
             box.space[space]:drop()
             art.cluster.mapping.space.unwatch(space)
             art.core.schemaOf(space):drop()
+            return {}
         end,
 
         create = function(name, config)
@@ -194,6 +198,7 @@ local box = {
                 if_not_exists = true,
                 parts = {'hash'}
             })
+            return {}
         end,
 
         createVsharded = function(name, config)
@@ -218,6 +223,27 @@ local box = {
                 parts = {'bucket_id'},
                 unique = false
             })
+            return {}
+        end,
+
+        list = function()
+            local result = {}
+            for _,v in pairs(box.space._space:select()) do
+                if not (string.startswith(v[3], '_')) then table.insert(result, v[3]) end
+            end
+            return result
+        end,
+
+        listIndices = function(space)
+            local temp = {}
+            local result = {}
+            for _, v in pairs(box.space[space].index) do
+                temp[v.name] = true
+            end
+            for k in pairs(temp) do
+                table.insert(result, k)
+            end
+            return result
         end
     },
 }

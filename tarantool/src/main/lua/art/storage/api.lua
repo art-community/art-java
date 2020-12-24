@@ -1,51 +1,4 @@
 local api = {
-    get = function(space, key, index)
-        return box.atomic(art.box.get, space, key, index)
-    end,
-
-    getBatch = function(space, keys)
-        return art.box.getBatch(space, keys)
-    end,
-
-    delete = function(space, id)
-        local result = box.atomic(art.box.delete, space, id)
-        return result
-    end,
-
-    insert = function(space, data, bucket_id)
-        local result = box.atomic(art.box.insert, space, data, bucket_id)
-        return result
-    end,
-
-    autoIncrement = function(space, data, bucket_id)
-        local result = box.atomic(art.box.autoIncrement, space, data, bucket_id)
-        return result
-    end,
-
-    put = function(space, data, bucket_id)
-        local result =  box.atomic(art.box.put, space, data, bucket_id)
-        return result
-    end,
-
-    update = function(space, id, commands, bucket_id)
-        local result = box.atomic(art.box.update, space, id, commands, bucket_id)
-        return result
-    end,
-
-    replace = function(space, data, bucket_id)
-        local result = box.atomic(art.box.replace, space, data, bucket_id)
-        return result
-    end,
-
-    upsert = function(space, data, commands, bucket_id)
-        local result = box.atomic(art.box.upsert, space, data, commands, bucket_id)
-        return result
-    end,
-
-    select = function(space, request, index)
-        return box.atomic(art.box.select, space, request, index)
-    end,
-
     space = {
         create = function(name, config)
             art.box.space.waitForClusterOperation()
@@ -99,25 +52,64 @@ local api = {
         end,
 
         list = function()
-            local result = {}
-            for _,v in pairs(box.space._space:select()) do
-                if not (string.startswith(v[3], '_')) then table.insert(result, v[3]) end
-            end
-            return result
+            return art.box.space.list()
         end,
 
         listIndices = function(space)
-            local temp = {}
-            local result = {}
-            for _, v in pairs(box.space[space].index) do
-                temp[v.name] = true
-            end
-            for k in pairs(temp) do
-                table.insert(result, k)
-            end
-            return result
+            return art.box.space.listIndices(space)
         end
-    }
+    },
+
+    transaction = function(requests)
+        return art.transaction.execute(requests)
+    end,
+
+    get = function(space, key, index)
+        return art.box.get(space, key, index)
+    end,
+
+    getBatch = function(space, keys)
+        return art.box.getBatch(space, keys)
+    end,
+
+    delete = function(space, key)
+        local result = box.atomic(art.box.delete, space, key)
+        return result
+    end,
+
+    insert = function(space, data, bucket_id)
+        local result = art.box.insert(space, data, bucket_id)
+        return result
+    end,
+
+    autoIncrement = function(space, data, bucket_id)
+        local result = art.box.autoIncrement(space, data, bucket_id)
+        return result
+    end,
+
+    put = function(space, data, bucket_id)
+        local result =  box.atomic(art.box.put, space, data, bucket_id)
+        return result
+    end,
+
+    update = function(space, id, commands, bucket_id)
+        local result = box.atomic(art.box.update, space, id, commands, bucket_id)
+        return result
+    end,
+
+    replace = function(space, data, bucket_id)
+        local result = box.atomic(art.box.replace, space, data, bucket_id)
+        return result
+    end,
+
+    upsert = function(space, data, commands, bucket_id)
+        local result = box.atomic(art.box.upsert, space, data, commands, bucket_id)
+        return result
+    end,
+
+    select = function(space, request, index)
+        return box.atomic(art.box.select, space, request, index)
+    end
 }
 
 return api
