@@ -36,10 +36,10 @@ import java.util.function.*;
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
 public class ServiceModeler<T> {
+    private final Protocol protocol;
     private Class<?> serviceClass;
     private String id;
     private boolean includeAllMethods;
-    private final Protocol protocol;
     private final Map<String, ServiceMethodModeler> concreteMethods = map();
     private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> anyMethod = (id, builder) -> builder;
 

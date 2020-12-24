@@ -18,11 +18,12 @@
 
 package io.art.core.annotation;
 
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 import java.lang.annotation.*;
 
-@Target(TYPE)
+@Target({TYPE, METHOD})
 @Retention(SOURCE)
 public @interface UsedByGenerator {
 }
