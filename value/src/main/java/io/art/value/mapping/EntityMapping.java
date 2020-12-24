@@ -84,16 +84,12 @@ public class EntityMapping {
         return let(entity.find(key), value -> mapper.map(cast(value)));
     }
 
-    public <T, V extends Value> T mapOrDefault(String key, PrimitiveType type, ValueToModelMapper<T, V> mapper) {
-        return entity.mapOrDefault(key, type, mapper);
+    public <T, V extends Value> T mapOrDefault(String key, PrimitiveType valueType, ValueToModelMapper<T, V> valueMapper) {
+        return entity.mapOrDefault(stringPrimitive(key), valueType, valueMapper);
     }
 
     public static <K, V> EntityToModelMapper<Map<K, V>> toMap(PrimitiveToModelMapper<K> toKey, PrimitiveFromModelMapper<K> fromKey, ValueToModelMapper<V, ? extends Value> value) {
         return entity -> let(entity, notNull -> notNull.asMap(toKey, fromKey, value));
-    }
-
-    public static <K, V> EntityToModelMapper<Map<K, V>> toMutableMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
-        return entity -> let(entity, notNull -> notNull.toMap(keyMapper, valueMapper));
     }
 
     public static <K, V> EntityFromModelMapper<Map<K, V>> fromMap(PrimitiveToModelMapper<K> toKey, PrimitiveFromModelMapper<K> fromKey, ValueFromModelMapper<V, ? extends Value> value) {
@@ -102,5 +98,9 @@ public class EntityMapping {
                 .map(fromKey::map)
                 .collect(toCollection(SetFactory::set)), key -> value.map(notNull.get(toKey.map(key))));
         return entity -> let(entity, mapper);
+    }
+
+    public static <K, V> EntityToModelMapper<Map<K, V>> toMutableMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
+        return entity -> let(entity, notNull -> notNull.toMap(keyMapper, valueMapper));
     }
 }

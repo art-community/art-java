@@ -190,14 +190,13 @@ public class Entity implements Value {
         }
     }
 
-    public <T, V extends Value> T mapOrDefault(String key, PrimitiveType type, ValueToModelMapper<T, V> mapper) {
-        Primitive primitive = stringPrimitive(key);
-        Object cached = mappedValueCache.get(primitive);
+    public <T, V extends Value> T mapOrDefault(Primitive key, PrimitiveType type, ValueToModelMapper<T, V> mapper) {
+        Object cached = mappedValueCache.get(key);
         if (nonNull(cached)) return cast(cached);
-        Value value = get(primitive);
+        Value value = get(key);
         if (isNull(value)) value = type.getDefaultValue();
         cached = let(cast(value), mapper::map);
-        mappedValueCache.put(primitive, cast(cached));
+        mappedValueCache.put(key, cast(cached));
         return cast(cached);
     }
 
