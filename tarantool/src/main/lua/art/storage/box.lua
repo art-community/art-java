@@ -39,36 +39,38 @@ local box = {
     end,
 
     insert = function(space, data, bucket_id)
-        data[1] = box.tuple.new(data[1])
-        data[2] = box.tuple.new(data[2])
-        local schema_hash = art.core.hash({ data[2], bucket_id})
-        data[1] = data[1]:update({{'!', #data[1]+1, schema_hash}})
-        box.space[space]:insert(data[1])
+        local tuple = {}
+        tuple[1] = box.tuple.new(data[1])
+        tuple[2] = box.tuple.new(data[2])
+        local schema_hash = art.core.hash({ tuple[2], bucket_id})
+        tuple[1] = tuple[1]:update({{'!', #tuple[1]+1, schema_hash}})
+        box.space[space]:insert(tuple[1])
 
-        local schema_tuple = box.tuple.new({schema_hash, 1, data[2], bucket_id})
+        local schema_tuple = box.tuple.new({schema_hash, 1, tuple[2], bucket_id})
         art.core.schemaOf(space):upsert(schema_tuple, { { '+', 'count', 1}})
 
-        art.cluster.mapping.put(space, data[1])
-
-        return {data[1]:transform(#data[1], 1), data[2]}
+        art.cluster.mapping.put(space, tuple[1])
+        tuple[1] = tuple[1]:transform(#tuple[1], 1)
+        return tuple
     end,
 
     autoIncrement = function(space, data, bucket_id)
-        data[1] = box.tuple.new(data[1])
-        data[2] = box.tuple.new(data[2])
-        local schema_hash = art.core.hash({ data[2], bucket_id})
+        local tuple = {}
+        tuple[1] = box.tuple.new(data[1])
+        tuple[2] = box.tuple.new(data[2])
+        local schema_hash = art.core.hash({ tuple[2], bucket_id})
 
-        data[1] = data[1]:update({{'!', #data[1]+1, schema_hash}, {'#', 1, 1}})
-        data[1] = box.space[space]:auto_increment(data[1]:totable())
+        tuple[1] = tuple[1]:update({{'!', #tuple[1]+1, schema_hash}, {'#', 1, 1}})
+        tuple[1] = box.space[space]:auto_increment(tuple[1]:totable())
 
 
-        local schema_tuple = box.tuple.new({schema_hash, 1, data[2], bucket_id})
+        local schema_tuple = box.tuple.new({schema_hash, 1, tuple[2], bucket_id})
         art.core.schemaOf(space):upsert(schema_tuple, { { '+', 'count', 1}})
 
-        data[1] = data[1]:transform(#data[1], 1)
-        art.cluster.mapping.put(space, data[1])
+        tuple[1] = tuple[1]:transform(#tuple[1], 1)
+        art.cluster.mapping.put(space, tuple[1])
 
-        return {data[1], data[2]}
+        return tuple
     end,
 
     put = function(space, data, bucket_id)
@@ -77,12 +79,11 @@ local box = {
             id[k] = data[1][v.fieldno]
         end
         art.box.delete(space, id)
-        local response = art.box.insert(space, data, bucket_id)
-        return response
+        return art.box.insert(space, data, bucket_id)
     end,
 
-    update = function(space, id, commands, bucket_id)
-        local data = art.box.get(space, id)
+    update = function(space, key, commands, bucket_id)
+        local data = art.box.get(space, key)
         data[1] = data[1]:update(commands[1])
         data[2] = box.tuple.new(data[2]):update(commands[2]):totable()
         art.box.put(space, data, bucket_id)
@@ -94,12 +95,12 @@ local box = {
     end,
 
     upsert = function(space, data, commands, bucket_id)
-        local id = {}
+        local key = {}
         for k,v in pairs(box.space[space].index[0].parts) do
-            id[k] = data[1][v.fieldno]
+            key[k] = data[1][v.fieldno]
         end
-        if box.space[space]:get(id) then
-            return art.box.update(space, id, commands, bucket_id)
+        if box.space[space]:get(key) then
+            return art.box.update(space, key, commands, bucket_id)
         else
             return art.box.insert(space, data, bucket_id)
         end
