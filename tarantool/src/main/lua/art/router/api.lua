@@ -118,6 +118,10 @@ local api = {
         end
     },
 
+    transaction = function(requests)
+        return art.transaction.execute(requests)
+    end,
+
     get = function(space, key, index)
         if not (index) then index = 0 end
         local mapping_entry = box.space[space].index[index]:get(key)

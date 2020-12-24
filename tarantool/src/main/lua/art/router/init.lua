@@ -1,11 +1,11 @@
 art = {
-    core = {
-        fiber = require('fiber'),
-    },
+    core = require('art.core'),
 
     config = require('art.router.config'),
 
     cluster = require('art.router.cluster'),
+
+    transaction = require('art.transaction'),
 
     api = require('art.router.api')
 }
