@@ -59,11 +59,11 @@ public class ModuleLauncher {
                     .loadConfigurations()
                     .configuration()
                     .orderedSources();
-            ConfiguratorCustomizer configuratorCustomizer = model.getConfiguratorCustomizer();
-            ValueCustomizer valueCustomizer = configuratorCustomizer.value().apply(new ValueCustomizer());
-            LoggingCustomizer loggingCustomizer = configuratorCustomizer.logging().apply(new LoggingCustomizer());
-            ServerCustomizer serverCustomizer = configuratorCustomizer.server().apply(new ServerCustomizer());
-            RsocketCustomizer rsocketCustomizer = configuratorCustomizer.rsocket().apply(new RsocketCustomizer());
+            ModuleCustomizer moduleCustomizer = model.getModuleCustomizer();
+            ValueCustomizer valueCustomizer = moduleCustomizer.value().apply(new ValueCustomizer());
+            LoggingCustomizer loggingCustomizer = moduleCustomizer.logging().apply(new LoggingCustomizer());
+            ServerCustomizer serverCustomizer = moduleCustomizer.server().apply(new ServerCustomizer());
+            RsocketCustomizer rsocketCustomizer = moduleCustomizer.rsocket().apply(new RsocketCustomizer());
             ImmutableArray.Builder<Module> modules = immutableArrayBuilder();
             modules.add(
                     configurator,

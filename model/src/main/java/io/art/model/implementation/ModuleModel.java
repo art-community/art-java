@@ -19,9 +19,7 @@
 package io.art.model.implementation;
 
 import io.art.model.customizer.*;
-import io.art.model.modeler.*;
 import lombok.*;
-import static io.art.model.constants.ModelConstants.*;
 import java.util.function.*;
 
 @Getter
@@ -30,18 +28,10 @@ public class ModuleModel {
     private final String mainModuleId;
     private final ServerModel serverModel;
     @Builder.Default
-    private ConfiguratorCustomizer configuratorCustomizer = new ConfiguratorCustomizer();
+    private ModuleCustomizer moduleCustomizer = new ModuleCustomizer();
 
-    public ModuleModel configure(UnaryOperator<ConfiguratorCustomizer> configurator) {
-        configuratorCustomizer = configurator.apply(new ConfiguratorCustomizer());
+    public ModuleModel customize(UnaryOperator<ModuleCustomizer> customizer) {
+        moduleCustomizer = customizer.apply(new ModuleCustomizer());
         return this;
-    }
-
-    public static ModuleModeler module() {
-        return new ModuleModeler(DEFAULT_MODULE_ID);
-    }
-
-    public static ModuleModeler module(String id) {
-        return new ModuleModeler(id);
     }
 }

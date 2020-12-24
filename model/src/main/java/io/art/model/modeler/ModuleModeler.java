@@ -20,6 +20,7 @@ package io.art.model.modeler;
 
 import io.art.model.implementation.*;
 import lombok.*;
+import static io.art.model.constants.ModelConstants.DEFAULT_MODULE_ID;
 import java.util.function.*;
 
 @Getter
@@ -33,10 +34,18 @@ public class ModuleModeler {
         return this;
     }
 
-    public ModuleModel make() {
+    public ModuleModel apply() {
         return ModuleModel.builder()
                 .mainModuleId(mainModuleId)
-                .serverModel(server.toModel())
+                .serverModel(server.apply())
                 .build();
+    }
+
+    public static ModuleModeler module() {
+        return new ModuleModeler(DEFAULT_MODULE_ID);
+    }
+
+    public static ModuleModeler module(String id) {
+        return new ModuleModeler(id);
     }
 }

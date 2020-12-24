@@ -26,7 +26,7 @@ import java.util.function.*;
 @Getter
 @Setter
 @Accessors(fluent = true)
-public class ConfiguratorCustomizer {
+public class ModuleCustomizer {
     private UnaryOperator<LoggingCustomizer> logging = identity();
     private UnaryOperator<ServerCustomizer> server = identity();
     private UnaryOperator<ValueCustomizer> value = identity();

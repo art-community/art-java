@@ -25,7 +25,7 @@ class TarantoolVshardMapping extends Specification {
     def mappingTimeout = 300
 
     def setupSpec(){
-        launch module().make()
+        launch module().apply()
     }
 
     def "Router1 CRUD"() {

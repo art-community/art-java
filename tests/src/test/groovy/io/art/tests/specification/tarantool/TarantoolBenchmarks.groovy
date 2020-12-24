@@ -28,7 +28,7 @@ class TarantoolBenchmarks extends Specification {
     def benchmarkOpsCount = 10000
 
     def setupSpec(){
-        launch module().make()
+        launch module().apply()
     }
 
     def "Storage1 CRUD(warmup)"() {

@@ -38,7 +38,7 @@ public class ServerModeler {
         return this;
     }
 
-    ServerModel toModel() {
+    ServerModel apply() {
         ImmutableMap<String, ServiceModel<?>> services = this.services.build()
                 .stream()
                 .map(ServiceModeler::apply)
