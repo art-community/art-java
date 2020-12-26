@@ -16,36 +16,40 @@
  * limitations under the License.
  */
 
-package io.art.model.modeler;
+package io.art.model.configurator;
 
 import io.art.model.implementation.*;
 import lombok.*;
-import static io.art.model.constants.ModelConstants.DEFAULT_MODULE_ID;
+import static io.art.model.constants.ModelConstants.*;
 import java.util.function.*;
 
 @Getter
 @RequiredArgsConstructor
-public class ModuleModeler {
+public class ModuleModelConfigurator {
     private final String mainModuleId;
-    private final ServerModeler server = new ServerModeler();
+    private final ServerModelConfigurator server = new ServerModelConfigurator();
 
-    public ModuleModeler serve(UnaryOperator<ServerModeler> server) {
+    public ModuleModelConfigurator serve(UnaryOperator<ServerModelConfigurator> server) {
         server.apply(this.server);
         return this;
     }
 
-    public ModuleModel apply() {
+    public ModuleModel configure() {
         return ModuleModel.builder()
                 .mainModuleId(mainModuleId)
-                .serverModel(server.apply())
+                .serverModel(server.configure())
                 .build();
     }
 
-    public static ModuleModeler module() {
-        return new ModuleModeler(DEFAULT_MODULE_ID);
+    public static ModuleModelConfigurator module(String id) {
+        return new ModuleModelConfigurator(id);
     }
 
-    public static ModuleModeler module(String id) {
-        return new ModuleModeler(id);
+    public static ModuleModelConfigurator module() {
+        return module(DEFAULT_MODULE_ID);
+    }
+
+    public static ModuleModelConfigurator module(Class<?> mainClass) {
+        return module(mainClass.getSimpleName());
     }
 }

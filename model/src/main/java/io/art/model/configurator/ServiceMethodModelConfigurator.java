@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.model.modeler;
+package io.art.model.configurator;
 
 import io.art.model.implementation.*;
 import io.art.server.decorator.*;
@@ -30,19 +30,19 @@ import java.util.function.*;
 
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
-public class ServiceMethodModeler {
-    private final ServiceModeler<?> serviceModeler;
+public class ServiceMethodModelConfigurator {
+    private final ServiceModelConfigurator<?> serviceModelConfigurator;
     private final String id;
     private Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = identity();
 
-    public ServiceMethodModeler enableLogging() {
+    public ServiceMethodModelConfigurator enableLogging() {
         decorator = decorator.andThen(builder -> builder
-                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModeler.getServiceClass().getSimpleName(), id), INPUT))
-                .outputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModeler.getServiceClass().getSimpleName(), id), OUTPUT)));
+                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModelConfigurator.getServiceClass().getSimpleName(), id), INPUT))
+                .outputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModelConfigurator.getServiceClass().getSimpleName(), id), OUTPUT)));
         return this;
     }
 
-    ServiceMethodModel apply() {
+    ServiceMethodModel configure() {
         return new ServiceMethodModel(id, decorator);
     }
 }

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.model.modeler;
+package io.art.model.configurator;
 
 import io.art.model.implementation.*;
 import io.art.server.decorator.*;
@@ -35,47 +35,47 @@ import java.util.function.*;
 
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
-public class ServiceModeler<T> {
+public class ServiceModelConfigurator<T> {
     private final Protocol protocol;
     private Class<?> serviceClass;
     private String id;
     private boolean includeAllMethods;
-    private final Map<String, ServiceMethodModeler> concreteMethods = map();
+    private final Map<String, ServiceMethodModelConfigurator> concreteMethods = map();
     private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> anyMethod = (id, builder) -> builder;
 
-    public ServiceModeler<T> to(Class<?> service) {
+    public ServiceModelConfigurator<T> to(Class<?> service) {
         return to(service, identity());
     }
 
-    public ServiceModeler<T> to(Class<?> service, UnaryOperator<ServiceModeler<T>> operator) {
+    public ServiceModelConfigurator<T> to(Class<?> service, UnaryOperator<ServiceModelConfigurator<T>> operator) {
         this.id = service.getSimpleName();
         this.serviceClass = service;
         this.includeAllMethods = true;
         return operator.apply(this);
     }
 
-    public ServiceModeler<T> to(Class<?> service, String method) {
+    public ServiceModelConfigurator<T> to(Class<?> service, String method) {
         return to(service, method, identity());
     }
 
-    public ServiceModeler<T> to(Class<?> service, String method, UnaryOperator<ServiceMethodModeler> operator) {
+    public ServiceModelConfigurator<T> to(Class<?> service, String method, UnaryOperator<ServiceMethodModelConfigurator> operator) {
         this.id = service.getSimpleName();
         this.serviceClass = service;
-        operator.apply(putIfAbsent(this.concreteMethods, method, () -> new ServiceMethodModeler(this, method)));
+        operator.apply(putIfAbsent(this.concreteMethods, method, () -> new ServiceMethodModelConfigurator(this, method)));
         return this;
     }
 
-    public ServiceModeler<T> enableLogging() {
+    public ServiceModelConfigurator<T> enableLogging() {
         return decorateAny((method, builder) -> builder
                 .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), INPUT))
                 .outputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), OUTPUT)));
     }
 
-    public ServiceModeler<T> enableLogging(String id) {
+    public ServiceModelConfigurator<T> enableLogging(String id) {
         return decorateConcrete(id, (method, builder) -> builder.enableLogging());
     }
 
-    private ServiceModeler<T> decorateAny(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
+    private ServiceModelConfigurator<T> decorateAny(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
         BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> current = this.anyMethod;
         anyMethod = (method, builder) -> {
             builder = current.apply(method, builder);
@@ -84,15 +84,15 @@ public class ServiceModeler<T> {
         return this;
     }
 
-    private ServiceModeler<T> decorateConcrete(String method, BiConsumer<String, ServiceMethodModeler> decorator) {
-        decorator.accept(method, putIfAbsent(this.concreteMethods, method, () -> new ServiceMethodModeler(this, method)));
+    private ServiceModelConfigurator<T> decorateConcrete(String method, BiConsumer<String, ServiceMethodModelConfigurator> decorator) {
+        decorator.accept(method, putIfAbsent(this.concreteMethods, method, () -> new ServiceMethodModelConfigurator(this, method)));
         return this;
     }
 
-    ServiceModel<T> apply() {
+    ServiceModel<T> configure() {
         return ServiceModel.<T>builder()
                 .anyMethodDecorator(anyMethod)
-                .concreteMethods(concreteMethods.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().apply())))
+                .concreteMethods(concreteMethods.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().configure())))
                 .includeAllMethods(includeAllMethods)
                 .id(id)
                 .serviceClass(serviceClass)

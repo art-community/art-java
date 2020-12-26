@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.model.modeler;
+package io.art.model.configurator;
 
 import io.art.core.collection.*;
 import io.art.model.implementation.*;
@@ -30,18 +30,18 @@ import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 @Getter(value = PACKAGE)
-public class ServerModeler {
-    private final ImmutableSet.Builder<ServiceModeler<?>> services = immutableSetBuilder();
+public class ServerModelConfigurator {
+    private final ImmutableSet.Builder<ServiceModelConfigurator<?>> services = immutableSetBuilder();
 
-    public ServerModeler rsocket(UnaryOperator<ServiceModeler<RsocketServiceConfiguration>> modeler) {
-        services.add(modeler.apply(new ServiceModeler<>(RSOCKET)));
+    public ServerModelConfigurator rsocket(UnaryOperator<ServiceModelConfigurator<RsocketServiceConfiguration>> modeler) {
+        services.add(modeler.apply(new ServiceModelConfigurator<>(RSOCKET)));
         return this;
     }
 
-    ServerModel apply() {
+    ServerModel configure() {
         ImmutableMap<String, ServiceModel<?>> services = this.services.build()
                 .stream()
-                .map(ServiceModeler::apply)
+                .map(ServiceModelConfigurator::configure)
                 .collect(immutableMapCollector(ServiceModel::getId, identity()));
         return new ServerModel(services);
     }

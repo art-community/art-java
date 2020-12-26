@@ -20,6 +20,7 @@ package io.art.launcher;
 
 import io.art.communicator.module.*;
 import io.art.configurator.module.*;
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.context.*;
@@ -49,6 +50,7 @@ import static java.util.Optional.*;
 import java.util.concurrent.atomic.*;
 
 @UtilityClass
+@UsedByGenerator
 public class ModuleLauncher {
     private final static AtomicBoolean launched = new AtomicBoolean(false);
 
@@ -77,7 +79,7 @@ public class ModuleLauncher {
                     tarantool(sources)
             );
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
-            initialize(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
+            initialize(new DefaultContextConfiguration(model.getMainModuleId()), modules.build(), message -> logger.get().info(message));
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
             if (needBlock(rsocketCustomizer)) block();
         }
