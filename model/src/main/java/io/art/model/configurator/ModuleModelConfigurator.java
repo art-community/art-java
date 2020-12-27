@@ -28,9 +28,15 @@ import java.util.function.*;
 public class ModuleModelConfigurator {
     private final String mainModuleId;
     private final ServerModelConfigurator server = new ServerModelConfigurator();
+    private final CommunicatorModelConfigurator communicator = new CommunicatorModelConfigurator();
 
     public ModuleModelConfigurator serve(UnaryOperator<ServerModelConfigurator> server) {
         server.apply(this.server);
+        return this;
+    }
+
+    public ModuleModelConfigurator communicate(UnaryOperator<CommunicatorModelConfigurator> communicator) {
+        communicator.apply(this.communicator);
         return this;
     }
 
@@ -38,6 +44,7 @@ public class ModuleModelConfigurator {
         return ModuleModel.builder()
                 .mainModuleId(mainModuleId)
                 .serverModel(server.configure())
+                .communicatorModel(communicator.configure())
                 .build();
     }
 

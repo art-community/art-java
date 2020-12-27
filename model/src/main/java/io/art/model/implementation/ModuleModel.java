@@ -27,6 +27,7 @@ import java.util.function.*;
 public class ModuleModel {
     private final String mainModuleId;
     private final ServerModel serverModel;
+    private final CommunicatorModel communicatorModel;
     @Builder.Default
     private ModuleCustomizer moduleCustomizer = new ModuleCustomizer();
 

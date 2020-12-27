@@ -89,7 +89,7 @@ public class ServiceModelConfigurator<T> {
         return this;
     }
 
-    ServiceModel<T> configure() {
+    ServiceModel configure() {
         return ServiceModel.<T>builder()
                 .anyMethodDecorator(anyMethod)
                 .concreteMethods(concreteMethods.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().configure())))

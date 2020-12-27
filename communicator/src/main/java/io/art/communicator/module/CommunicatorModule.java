@@ -23,6 +23,7 @@ import io.art.communicator.state.*;
 import io.art.core.module.*;
 import lombok.*;
 import static io.art.communicator.configuration.CommunicatorModuleConfiguration.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.context.Context.*;
 
 @Getter
@@ -37,5 +38,9 @@ public class CommunicatorModule implements StatefulModule<CommunicatorModuleConf
 
     public static StatefulModuleProxy<CommunicatorModuleConfiguration, CommunicatorModuleState> communicatorModule() {
         return getCommunicatorModule();
+    }
+
+    public static <T> T communicator(Class<T> communicatorClass) {
+        return cast(communicatorModule().configuration().getCommunicators().get(communicatorClass.getSimpleName()));
     }
 }

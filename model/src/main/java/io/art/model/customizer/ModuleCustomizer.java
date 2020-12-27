@@ -29,6 +29,7 @@ import java.util.function.*;
 public class ModuleCustomizer {
     private UnaryOperator<LoggingCustomizer> logging = identity();
     private UnaryOperator<ServerCustomizer> server = identity();
+    private UnaryOperator<CommunicatorCustomizer> communicator = identity();
     private UnaryOperator<ValueCustomizer> value = identity();
     private UnaryOperator<RsocketCustomizer> rsocket = identity();
 }

@@ -20,29 +20,31 @@ package io.art.model.configurator;
 
 import io.art.core.collection.*;
 import io.art.model.implementation.*;
-import io.art.rsocket.configuration.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collection.ImmutableSet.*;
-import static io.art.model.constants.ModelConstants.Protocol.*;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 @Getter(value = PACKAGE)
-public class ServerModelConfigurator {
-    private final ImmutableSet.Builder<ServiceModelConfigurator<?>> services = immutableSetBuilder();
+public class CommunicatorModelConfigurator {
+    private final ImmutableSet.Builder<CommunicatorSpecificationConfigurator> communicators = immutableSetBuilder();
 
-    public ServerModelConfigurator rsocket(UnaryOperator<ServiceModelConfigurator<RsocketServiceConfiguration>> modeler) {
-        services.add(modeler.apply(new ServiceModelConfigurator<>(RSOCKET)));
+    public CommunicatorModelConfigurator rsocket(Class<?> implementationInterface) {
+        return rsocket(implementationInterface, UnaryOperator.identity());
+    }
+
+    public CommunicatorModelConfigurator rsocket(Class<?> implementationInterface, UnaryOperator<CommunicatorSpecificationConfigurator> modeler) {
+        communicators.add(modeler.apply(new CommunicatorSpecificationConfigurator(implementationInterface.getSimpleName(), implementationInterface)));
         return this;
     }
 
-    ServerModel configure() {
-        ImmutableMap<String, ServiceModel> services = this.services.build()
+    CommunicatorModel configure() {
+        ImmutableMap<String, CommunicatorSpecificationModel> communicators = this.communicators.build()
                 .stream()
-                .map(ServiceModelConfigurator::configure)
-                .collect(immutableMapCollector(ServiceModel::getId, identity()));
-        return new ServerModel(services);
+                .map(CommunicatorSpecificationConfigurator::configure)
+                .collect(immutableMapCollector(CommunicatorSpecificationModel::getId, identity()));
+        return new CommunicatorModel(communicators);
     }
 }

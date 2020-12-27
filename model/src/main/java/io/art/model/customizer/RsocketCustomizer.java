@@ -30,8 +30,14 @@ public class RsocketCustomizer {
         return this;
     }
 
+    public RsocketCustomizer activateCommunicator() {
+        configuration.activateCommunicator = true;
+        return this;
+    }
+
     @Getter
     public static class CustomRsocketModuleConfiguration extends RsocketModuleConfiguration {
         private boolean activateServer;
+        private boolean activateCommunicator;
     }
 }
