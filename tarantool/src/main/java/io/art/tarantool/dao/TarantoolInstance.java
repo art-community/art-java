@@ -5,7 +5,6 @@ import io.art.tarantool.configuration.space.TarantoolSpaceFormat;
 import io.art.tarantool.configuration.space.TarantoolSpaceIndex;
 import io.art.tarantool.transaction.TarantoolTransactionManager;
 import io.art.tarantool.transaction.operation.result.TarantoolOperationResult;
-import io.art.tarantool.exception.TarantoolDaoException;
 import io.art.tarantool.model.TarantoolResponseMapping;
 import io.art.tarantool.module.client.TarantoolClusterClient;
 import lombok.Getter;
@@ -14,9 +13,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Set;
 
 import static io.art.core.caster.Caster.cast;
-import static io.art.core.factory.SetFactory.setOf;
 import static io.art.logging.LoggingModule.logger;
-import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.UNABLE_TO_GET_RESPONSE;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static java.util.Objects.isNull;
 import static lombok.AccessLevel.PRIVATE;

@@ -3,14 +3,8 @@ package io.art.tests.specification.tarantool
 
 import io.art.tarantool.dao.TarantoolAsynchronousSpace
 import io.art.tarantool.dao.TarantoolInstance
-import io.art.tarantool.dao.TarantoolSpace
-import io.art.tarantool.model.TarantoolUpdateFieldOperation
-import io.art.tarantool.module.client.TarantoolClusterClient
-import io.art.tarantool.storage.TarantoolStorageSpace
-import io.art.value.builder.EntityBuilder
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
-import io.tarantool.driver.api.TarantoolClient
 import spock.lang.Specification
 
 import static io.art.launcher.ModuleLauncher.launch
@@ -20,9 +14,7 @@ import static io.art.tarantool.configuration.space.TarantoolSpaceFormat.tarantoo
 import static io.art.tarantool.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.NUMBER
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.STRING
-import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.UNSIGNED
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolIndexType
-import static io.art.tarantool.module.TarantoolModule.getCluster
 import static io.art.tarantool.module.TarantoolModule.tarantoolInstance
 import static io.art.value.factory.PrimitivesFactory.intPrimitive
 import static io.art.value.factory.PrimitivesFactory.stringPrimitive
