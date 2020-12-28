@@ -79,7 +79,7 @@ class TarantoolBenchmarks extends Specification {
                 .build()
         space.autoIncrement(data)
         then:
-        ((space.len() == 5) && (space.schemaLen() == 2))
+        ((space.len().get() == 5) && (space.schemaLen().get() == 2))
 
 
         when:
@@ -99,7 +99,7 @@ class TarantoolBenchmarks extends Specification {
         space.truncate()
         sleep(synchronizationTimeout)
         then:
-        (space.count() == 0) && (space.schemaCount() == 0)
+        (space.count().get() == 0) && (space.schemaCount().get() == 0)
 
 
         when:

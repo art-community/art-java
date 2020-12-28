@@ -1,17 +1,21 @@
 package io.art.tarantool.model;
 
 import io.art.tarantool.exception.TarantoolDaoException;
+import io.art.tarantool.exception.TarantoolTransactionException;
 import io.art.value.immutable.Value;
 import io.art.value.tuple.PlainTupleReader;
 import io.art.value.tuple.schema.ValueSchema;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static io.art.core.caster.Caster.cast;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
+import static io.art.core.factory.SetFactory.setOf;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.RESULT_IS_INVALID;
 
+import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.TRANSACTION_FAILED;
 import static java.text.MessageFormat.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
@@ -24,8 +28,8 @@ public class TarantoolResponseMapping {
         return empty();
     }
 
-    public static Long toLong(List<?> response){
-        return ((Number) response.get(0)).longValue();
+    public static Optional<Long> toLong(List<?> response){
+        return Optional.of(((Number) response.get(0)).longValue());
     }
 
     public static Optional<Value> toValue(List<?> response){
@@ -41,7 +45,19 @@ public class TarantoolResponseMapping {
         List<Value> result = response.stream()
                 .map(entry -> readTuple(cast(entry)))
                 .collect(toList());
-        return ofNullable(result);
+        return Optional.of(result);
+    }
+
+    public static Optional<Set<String>> toStringSet(List<?> response){
+        List<String> indices = cast(response.get(0));
+        return Optional.of(setOf(indices));
+    }
+
+    public static List<?> transactionResponseToTuple(List<?> transactionResponse, Integer tupleIndex){
+        if (!(Boolean) transactionResponse.get(0)) throw new TarantoolTransactionException(format(TRANSACTION_FAILED, transactionResponse.get(1)));
+        List<?> result = cast(transactionResponse.get(1));
+        result = cast(result.get(tupleIndex));
+        return result;
     }
 
     private static Value readTuple(List<?> tuple){

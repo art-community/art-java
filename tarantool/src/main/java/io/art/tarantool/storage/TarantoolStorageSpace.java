@@ -13,32 +13,32 @@ public class TarantoolStorageSpace implements StorageSpace{
 
     @Override
     public Optional<Value> get(Value key) {
-        return space.get(key);
+        return space.get(key).getOptional();
     }
 
     @Override
     public Optional<List<Value>> find(Value request){
-        return space.select(request);
+        return space.select(request).getOptional();
     }
 
     @Override
     public Optional<Value> delete(Value key){
-        return space.delete(key);
+        return space.delete(key).getOptional();
     }
 
     @Override
     public Optional<Value> insert(Value data) {
-        return space.insert(data);
+        return space.insert(data).getOptional();
     }
 
     @Override
     public Optional<Value> autoIncrement(Value data) {
-        return space.autoIncrement(data);
+        return space.autoIncrement(data).getOptional();
     }
 
     @Override
     public Optional<Value> put(Value data) {
-        return space.put(data);
+        return space.put(data).getOptional();
     }
 
     @Override
@@ -47,8 +47,8 @@ public class TarantoolStorageSpace implements StorageSpace{
     }
 
     @Override
-    public Long count(){
-        return space.count();
+    public Optional<Long> count(){
+        return space.count().getOptional();
     }
 
 }

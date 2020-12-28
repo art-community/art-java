@@ -6,11 +6,11 @@ import io.art.tarantool.transaction.operation.result.TarantoolTransactionOperati
 import io.art.tarantool.module.client.TarantoolClusterClient;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import static io.art.core.factory.ListFactory.linkedList;
-import static io.art.core.factory.ListFactory.linkedListOf;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.TRANSACTION;
 import static io.art.tarantool.transaction.operation.TarantoolTransactionOperation.tarantoolTransactionOperation;
 
@@ -32,7 +32,7 @@ public class TarantoolTransactionManager {
     public void commit(){
         CompletableFuture<List<?>> response = call(TRANSACTION, operations);
         for (TarantoolTransactionOperationResult<?> result : results){
-            result.transactionFutureResponse = response;
+            result.setFutureTransactionResponse(response);
         }
         clearTransaction();
     }
@@ -41,26 +41,26 @@ public class TarantoolTransactionManager {
         clearTransaction();
     }
 
-    public TarantoolOperationResult<?> callRW(String function, Function<List<?>, Object> responseMapper, Object ... args){
+    public TarantoolOperationResult<?> callRW(String function, Function<List<?>, Optional<?>> responseMapper, Object ... args){
         isRWTransaction = true;
         return callRO(function, responseMapper, args);
     }
 
-    public TarantoolOperationResult<?> callRO(String function, Function<List<?>, Object> responseMapper, Object ... args){
+    public TarantoolOperationResult<?> callRO(String function, Function<List<?>, Optional<?>> responseMapper, Object ... args){
         return activeTransaction ? addOperation(function, responseMapper, args) : callSingleOperation(function, responseMapper, args);
     }
 
 
 
-    private TarantoolOperationResult<?> addOperation(String function, Function<List<?>, Object> responseMapper, Object ... args){
-        TarantoolTransactionOperationResult<Object> result = new TarantoolTransactionOperationResult<>(operations.size(), responseMapper);
+    private TarantoolOperationResult<?> addOperation(String function, Function<List<?>, Optional<?>> responseMapper, Object ... args){
+        TarantoolTransactionOperationResult<?> result = new TarantoolTransactionOperationResult<>(operations.size(), responseMapper);
         operations.add(tarantoolTransactionOperation(function, args));
         results.add(result);
         return result;
     }
 
-    private TarantoolOperationResult<?> callSingleOperation(String function, Function<List<?>, Object> responseMapper, Object ... args){
-        TarantoolSingleOperationResult<Object> result = new TarantoolSingleOperationResult<>(call(function, args), responseMapper);
+    private TarantoolOperationResult<?> callSingleOperation(String function, Function<List<?>, Optional<?>> responseMapper, Object ... args){
+        TarantoolSingleOperationResult<?> result = new TarantoolSingleOperationResult<>(call(function, args), responseMapper);
         isRWTransaction = false;
         return result;
     }

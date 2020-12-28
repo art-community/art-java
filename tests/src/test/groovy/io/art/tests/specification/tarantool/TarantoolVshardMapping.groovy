@@ -66,7 +66,7 @@ class TarantoolVshardMapping extends Specification {
         def spaces = db.listSpaces()
         def indices = space.listIndices()
         then:
-        spaces.contains(spaceName) && indices.contains("primary")
+        spaces.contains(spaceName) && indices.get().contains("primary")
 
 
         when:
@@ -90,7 +90,7 @@ class TarantoolVshardMapping extends Specification {
         space.autoIncrement(data)
         then:
         sleep(mappingTimeout)
-        ((space.len() == 5) && (space.schemaLen() == 2))
+        ((space.len().get() == 5) && (space.schemaLen().get() == 2))
 
 
         when:
@@ -112,7 +112,7 @@ class TarantoolVshardMapping extends Specification {
         when:
         space.truncate()
         then:
-        (space.count() == 0) && (space.schemaCount() == 0)
+        (space.count().get() == 0) && (space.schemaCount().get() == 0)
 
 
         when:
@@ -205,7 +205,7 @@ class TarantoolVshardMapping extends Specification {
                 .unique(false))
         sleep(mappingTimeout*5)
 
-        def response = space.select('data', stringPrimitive('data')).get().get()
+        def response = space.select('data', stringPrimitive('data')).get()
         int succeeded = response.size()
         then:
         (succeeded == testOpsCount)
@@ -251,7 +251,7 @@ class TarantoolVshardMapping extends Specification {
         for (int i = 0; i<testOpsCount; i++){
             space.autoIncrement(data)
             sleep(mappingTimeout)
-            if (space.get(intPrimitive(i+1)).get().isPresent()) succeeded++
+            if (space.get(intPrimitive(i+1)).isPresent()) succeeded++
         }
         println(intPrimitive(succeeded))
         then:

@@ -58,12 +58,12 @@ public interface TarantoolModuleConstants {
         String CLUSTER_CONFIGURATION_IS_NULL = "Tarantool cluster ''{0}'' configuration is null. Please specify it.";
         String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}''.";
         String UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Retrying...\n";
-        String RESULT_IS_INVALID = "Response ''{0}'' returned from Tarantool can`t be converted to Entity";
-        String UNABLE_TO_GET_RESPONSE = "Unable to get response from function call";
+        String RESULT_IS_INVALID = "Response ''{0}'' returned from Tarantool can`t be converted to Entity.";
+        String UNABLE_TO_GET_RESPONSE = "Unable to get response from function call.";
         String UNKNOWN_BALANCING_METHOD = "Unknown load balancing method: ''{0}''";
-        String NULL_REQUEST_DATA_EXCEPTION = "Request data tuple is null";
+        String NULL_REQUEST_DATA_EXCEPTION = "Request data tuple is null.";
         String TRANSACTION_FAILED = "Transaction failed with error message: ''{0}''";
-        String GET_RESULT_OF_NOT_COMMITTED_TRANSACTION = "Attempted to get result of not committed transaction. Commit first.";
+        String GET_RESULT_OF_NOT_COMMITTED_TRANSACTION = "Attempt to get result of not committed transaction. Commit first.";
         String ILLEGAL_TRANSACTION_DEPENDENCY_USAGE = "Attempt to use transaction dependency outside of transaction. Use response data directly by get() instead.";
     }
 

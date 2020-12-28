@@ -71,8 +71,8 @@ class TarantoolTransaction extends Specification {
         space.commitTransaction()
 
         then:
-        ((Entity)result1.get().get()).get('id') == intPrimitive(3) &&
-                ((Entity)result2.get().get()).get('id') == intPrimitive(4)
+        ((Entity) result1.get()).get('id') == intPrimitive(3) &&
+                ((Entity) result2.get()).get('id') == intPrimitive(4)
 
 
         when:
@@ -82,13 +82,14 @@ class TarantoolTransaction extends Specification {
         space.commitTransaction()
 
         then:
-        ((Entity)result1.get().get()).get('id') == intPrimitive(5) &&
-                ((Entity)result2.get().get()).get('id') == intPrimitive(6)
+        ((Entity) result1.get()).get('id') == intPrimitive(5) &&
+                ((Entity) result2.get()).get('id') == intPrimitive(6)
 
         when:
         space.beginTransaction()
         result1 = space.autoIncrement(data)
         result2 = space.select('data', result1.useResultField('data'))
+        space.commitTransaction()
         then: true
 
 

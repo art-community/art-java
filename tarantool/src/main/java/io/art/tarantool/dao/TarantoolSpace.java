@@ -22,72 +22,72 @@ public class TarantoolSpace {
         this.asynchronousSpace = new TarantoolAsynchronousSpace(instance, space);
     }
 
-    public Optional<Value> get(Value key){
-        return cast(synchronize(asynchronousSpace.get(key)));
+    public TarantoolOperationResult<Value> get(Value key){
+        return asynchronousSpace.get(key).synchronize();
     }
 
-    public Optional<Value> get(String index, Value key){
-        return cast(synchronize(asynchronousSpace.get(index, key)));
+    public TarantoolOperationResult<Value> get(String index, Value key){
+        return asynchronousSpace.get(index, key).synchronize();
     }
 
-    public Optional<List<Value>> select(Value request){
-        return cast(synchronize(asynchronousSpace.select(request)));
+    public TarantoolOperationResult<List<Value>> select(Value request){
+        return asynchronousSpace.select(request).synchronize();
     }
 
-    public Optional<List<Value>> select(String index, Value request){
-        return cast(synchronize(asynchronousSpace.select(index, request)));
+    public TarantoolOperationResult<List<Value>> select(String index, Value request){
+        return asynchronousSpace.select(index, request).synchronize();
     }
 
-    public Optional<Value> delete(Value key){
-        return cast(synchronize(asynchronousSpace.delete(key)));
+    public TarantoolOperationResult<Value> delete(Value key){
+        return asynchronousSpace.delete(key).synchronize();
     }
 
-    public Optional<Value> insert(Value data){
-        return cast(synchronize(asynchronousSpace.insert(data)));
+    public TarantoolOperationResult<Value> insert(Value data){
+        return asynchronousSpace.insert(data).synchronize();
     }
 
-    public Optional<Value> autoIncrement(Value data){
-        return cast(synchronize(asynchronousSpace.autoIncrement(data)));
+    public TarantoolOperationResult<Value> autoIncrement(Value data){
+        return asynchronousSpace.autoIncrement(data).synchronize();
     }
 
-    public Optional<Value> put(Value data){
-        return cast(synchronize(asynchronousSpace.put(data)));
+    public TarantoolOperationResult<Value> put(Value data){
+        return asynchronousSpace.put(data).synchronize();
     }
 
-    public Optional<Value> replace(Value data){
-        return cast(synchronize(asynchronousSpace.replace(data)));
+    public TarantoolOperationResult<Value> replace(Value data){
+        return asynchronousSpace.replace(data).synchronize();
     }
 
-    public Optional<Value> update(Value key, TarantoolUpdateFieldOperation... operations){
-        return cast(synchronize(asynchronousSpace.update(key, operations)));
+    public TarantoolOperationResult<Value> update(Value key, TarantoolUpdateFieldOperation... operations){
+        return asynchronousSpace.update(key, operations).synchronize();
     }
 
-    public Optional<Value> upsert(Value defaultValue, TarantoolUpdateFieldOperation... operations){
-        return cast(synchronize(asynchronousSpace.upsert(defaultValue, operations)));
+    public TarantoolOperationResult<Value> upsert(Value defaultValue, TarantoolUpdateFieldOperation... operations){
+        return asynchronousSpace.upsert(defaultValue, operations).synchronize();
     }
 
-    public Long count(){
-        return cast(synchronize(asynchronousSpace.count()));
+    public TarantoolOperationResult<Long> count(){
+        return asynchronousSpace.count().synchronize();
     }
 
-    public Long len(){
-        return cast(synchronize(asynchronousSpace.len()));
+    public TarantoolOperationResult<Long> len(){
+        return asynchronousSpace.len().synchronize();
     }
 
-    public Long schemaCount(){
-        return cast(synchronize(asynchronousSpace.schemaCount()));
+    public TarantoolOperationResult<Long> schemaCount(){
+        return asynchronousSpace.schemaCount().synchronize();
     }
 
-    public Long schemaLen(){
-        return cast(synchronize(asynchronousSpace.schemaLen()));
+    public TarantoolOperationResult<Long> schemaLen(){
+        return asynchronousSpace.schemaLen().synchronize();
     }
 
     public void truncate(){
         asynchronousSpace.truncate();
     }
 
-    public Set<String> listIndices(){
-        return cast(synchronize(asynchronousSpace.listIndices()));
+    public TarantoolOperationResult<Set<String>> listIndices(){
+        return asynchronousSpace.listIndices().synchronize();
     }
 
     public void beginTransaction(){
@@ -104,12 +104,6 @@ public class TarantoolSpace {
 
 
 
-    private Object synchronize(TarantoolOperationResult<?> result){
-        try {
-            return result.get();
-        }catch(Throwable throwable){
-            throw new TarantoolDaoException(UNABLE_TO_GET_RESPONSE, throwable);
-        }
-    }
+
 
 }

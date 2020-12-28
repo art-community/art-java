@@ -60,7 +60,7 @@ class Tarantool extends Specification {
         def spaces = db.listSpaces()
         def indices = space.listIndices()
         then:
-        spaces.contains(spaceName) && indices.contains("primary")
+        spaces.contains(spaceName) && indices.get().contains("primary")
 
         when:
         space.insert(data)
@@ -80,7 +80,7 @@ class Tarantool extends Specification {
                 .build()
         space.autoIncrement(data)
         then:
-        (space.len() == 5) && (space.schemaLen() == 2)
+        (space.len().get() == 5) && (space.schemaLen().get() == 2)
 
 
         when:
@@ -100,7 +100,7 @@ class Tarantool extends Specification {
         space.truncate()
         sleep(synchronizationTimeout)
         then:
-        (space.count() == 0) && (space.schemaCount() == 0)
+        (space.count().get() == 0) && (space.schemaCount().get() == 0)
 
 
         when:
@@ -187,7 +187,7 @@ class Tarantool extends Specification {
         def spaces = db.listSpaces()
         def indices = space.listIndices()
         then:
-        spaces.contains(spaceName) && indices.contains("primary")
+        spaces.contains(spaceName) && indices.get().contains("primary")
 
 
         when:
@@ -211,7 +211,7 @@ class Tarantool extends Specification {
         space.autoIncrement(data)
         then:
         sleep(synchronizationTimeout)
-        (space.len() == 5) && (space.schemaLen() == 2)
+        (space.len().get() == 5) && (space.schemaLen().get() == 2)
 
 
         when:
@@ -233,7 +233,7 @@ class Tarantool extends Specification {
         when:
         space.truncate()
         then:
-        (space.count() == 0) && (space.schemaCount() == 0)
+        (space.count().get() == 0) && (space.schemaCount().get() == 0)
 
 
         when:
@@ -332,7 +332,7 @@ class Tarantool extends Specification {
                 .build()
         space.autoIncrement(data)
         then:
-        (space.count() == 5)
+        (space.count().get() == 5)
 
 
         when:
@@ -352,7 +352,7 @@ class Tarantool extends Specification {
         space.truncate()
         sleep(synchronizationTimeout)
         then:
-        (space.count() == 0)
+        (space.count().get() == 0)
 
 
         when:
@@ -414,7 +414,7 @@ class Tarantool extends Specification {
         space.insert(data)
         sleep(synchronizationTimeout)
         then:
-        ((Entity) space.get(request).get().get()) == data
+        (Entity) space.get(request).get() == data
 
 
         when:
@@ -436,12 +436,12 @@ class Tarantool extends Specification {
         when:
         request = intPrimitive(2)
         then:
-        space.get(request).get().isEmpty() && space.select(request).get().isEmpty()
+        space.get(request).isEmpty() && space.select(request).isEmpty()
 
 
         when:
         request = intPrimitive(7)
-        Entity response = space.select(request).get().get().get(0) as Entity
+        Entity response = space.select(request).get().get(0) as Entity
         then:
         response == data
 
@@ -461,14 +461,14 @@ class Tarantool extends Specification {
         space.put(data)
         sleep(synchronizationTimeout)
         then:
-        space.get(request).get().get() == data
+        space.get(request).get() == data
 
 
         when:
         space.delete(intPrimitive(7))
         sleep(synchronizationTimeout)
         then:
-        space.get(request).get().isEmpty()
+        space.get(request).isEmpty()
 
 
         when:
@@ -477,7 +477,7 @@ class Tarantool extends Specification {
                 TarantoolUpdateFieldOperation.assigment(2, 'data', stringPrimitive("another")))
         sleep(synchronizationTimeout)
         then:
-        (space.get(request).get().get() as Entity).get("data") == stringPrimitive("another")
+        (space.get(request).get() as Entity).get("data") == stringPrimitive("another")
 
         when:
         space.put(data)
@@ -488,14 +488,14 @@ class Tarantool extends Specification {
         space.replace(data)
         sleep(synchronizationTimeout)
         then:
-        space.get(intPrimitive(7)).get().get() == data
+        space.get(intPrimitive(7)).get() == data
 
         when:
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
         sleep(synchronizationTimeout)
         then:
-        space.get(intPrimitive(7)).get().isPresent() && space.get(intPrimitive(8)).get().isPresent()
+        space.get(intPrimitive(7)).isPresent() && space.get(intPrimitive(8)).isPresent()
 
 
         cleanup:
