@@ -1,8 +1,8 @@
-package io.art.tarantool.dao.transaction;
+package io.art.tarantool.transaction;
 
-import io.art.tarantool.dao.transaction.operation.result.TarantoolOperationResult;
-import io.art.tarantool.dao.transaction.operation.result.TarantoolSingleOperationResult;
-import io.art.tarantool.dao.transaction.operation.result.TarantoolTransactionOperationResult;
+import io.art.tarantool.transaction.operation.result.TarantoolOperationResult;
+import io.art.tarantool.transaction.operation.result.TarantoolSingleOperationResult;
+import io.art.tarantool.transaction.operation.result.TarantoolTransactionOperationResult;
 import io.art.tarantool.module.client.TarantoolClusterClient;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.function.Function;
 import static io.art.core.factory.ListFactory.linkedList;
 import static io.art.core.factory.ListFactory.linkedListOf;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.TRANSACTION;
-import static io.art.tarantool.dao.transaction.operation.TarantoolTransactionOperation.tarantoolTransactionOperation;
+import static io.art.tarantool.transaction.operation.TarantoolTransactionOperation.tarantoolTransactionOperation;
 
 public class TarantoolTransactionManager {
     private final TarantoolClusterClient client;
@@ -53,14 +53,14 @@ public class TarantoolTransactionManager {
 
 
     private TarantoolOperationResult<?> addOperation(String function, Function<List<?>, Object> responseMapper, Object ... args){
-        TarantoolTransactionOperationResult<Object> result = new TarantoolTransactionOperationResult<Object>(operations.size(), responseMapper);
+        TarantoolTransactionOperationResult<Object> result = new TarantoolTransactionOperationResult<>(operations.size(), responseMapper);
         operations.add(tarantoolTransactionOperation(function, args));
         results.add(result);
         return result;
     }
 
     private TarantoolOperationResult<?> callSingleOperation(String function, Function<List<?>, Object> responseMapper, Object ... args){
-        TarantoolSingleOperationResult<Object> result = new TarantoolSingleOperationResult<Object>(call(function, args), responseMapper);
+        TarantoolSingleOperationResult<Object> result = new TarantoolSingleOperationResult<>(call(function, args), responseMapper);
         isRWTransaction = false;
         return result;
     }

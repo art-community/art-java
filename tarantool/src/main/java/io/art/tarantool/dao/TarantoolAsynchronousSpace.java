@@ -1,7 +1,7 @@
 package io.art.tarantool.dao;
 
-import io.art.tarantool.dao.transaction.operation.dependency.TarantoolTransactionDependency;
-import io.art.tarantool.dao.transaction.operation.result.TarantoolOperationResult;
+import io.art.tarantool.transaction.operation.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.transaction.operation.result.TarantoolOperationResult;
 import io.art.tarantool.model.TarantoolUpdateFieldOperation;
 import io.art.value.immutable.Value;
 import io.art.tarantool.model.TarantoolResponseMapping;

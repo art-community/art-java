@@ -1,6 +1,8 @@
-package io.art.tarantool.dao.transaction.operation.result;
+package io.art.tarantool.transaction.operation.result;
 
 import io.art.core.exception.NotImplementedException;
+import io.art.tarantool.transaction.operation.dependency.TarantoolTransactionDependency;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
@@ -22,12 +24,12 @@ public class TarantoolSingleOperationResult<T> implements TarantoolOperationResu
     }
 
     @Override
-    public List<?> useResult(){
+    public TarantoolTransactionDependency useResult(){
         throw new NotImplementedException("useResult for non-transactional method call");
     }
 
     @Override
-    public List<?> useResultField(String fieldName){
+    public TarantoolTransactionDependency useResultField(String fieldName){
         throw new NotImplementedException("useResultField for non-transactional method call");
     }
 

@@ -1,6 +1,6 @@
 package io.art.tarantool.dao;
 
-import io.art.tarantool.dao.transaction.operation.result.TarantoolOperationResult;
+import io.art.tarantool.transaction.operation.result.TarantoolOperationResult;
 import io.art.value.immutable.Value;
 import lombok.*;
 import org.apache.logging.log4j.*;

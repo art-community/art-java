@@ -1,8 +1,8 @@
-package io.art.tarantool.dao.transaction.operation.result;
+package io.art.tarantool.transaction.operation.result;
 
-import io.art.tarantool.dao.transaction.operation.dependency.TransactionFieldDependency;
-import io.art.tarantool.dao.transaction.operation.dependency.TarantoolTransactionDependency;
-import io.art.tarantool.dao.transaction.operation.dependency.TransactionTupleDependency;
+import io.art.tarantool.transaction.operation.dependency.TransactionFieldDependency;
+import io.art.tarantool.transaction.operation.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.transaction.operation.dependency.TransactionTupleDependency;
 import io.art.tarantool.exception.TarantoolTransactionException;
 import lombok.Getter;
 
@@ -36,7 +36,7 @@ public class TarantoolTransactionOperationResult<T> implements TarantoolOperatio
     public T get() throws ExecutionException, InterruptedException {
         if (isNull(transactionFutureResponse)) throw new TarantoolTransactionException(GET_RESULT_OF_NOT_COMMITTED_TRANSACTION);
         List<?> result = transactionFutureResponse.get();
-        if (!(Boolean) result.get(0)) throw new TarantoolTransactionException(format(TRANSACTION_FAILED, (String) result.get(1)));
+        if (!(Boolean) result.get(0)) throw new TarantoolTransactionException(format(TRANSACTION_FAILED, result.get(1)));
         result = cast(result.get(1));
         result = cast(result.get(transactionEntryNumber));
         return responseMapper.apply(result);

@@ -1,4 +1,4 @@
-package io.art.tarantool.dao.transaction.operation;
+package io.art.tarantool.transaction.operation;
 
 import java.util.List;
 
