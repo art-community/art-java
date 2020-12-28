@@ -20,8 +20,8 @@ import static java.util.stream.Collectors.toList;
 public class TarantoolResponseMapping {
 
 
-    public static Object noMapping(List<?> response) {
-        return response;
+    public static Optional<?> toEmpty(List<?> response) {
+        return empty();
     }
 
     public static Long toLong(List<?> response){

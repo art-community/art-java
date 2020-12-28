@@ -49,27 +49,27 @@ public class TarantoolInstance {
     }
 
     public void createSpace(String space, TarantoolSpaceConfig config){
-        synchronize(transactionManager().callRW(CREATE_SPACE, TarantoolResponseMapping::noMapping, space, config.getConfig()));
+        synchronize(transactionManager().callRW(CREATE_SPACE, TarantoolResponseMapping::toEmpty, space, config.getConfig()));
     }
 
     public void formatSpace(String space, TarantoolSpaceFormat format){
-        synchronize(transactionManager().callRW(FORMAT_SPACE, TarantoolResponseMapping::noMapping, space, format.getFormat()));
+        synchronize(transactionManager().callRW(FORMAT_SPACE, TarantoolResponseMapping::toEmpty, space, format.getFormat()));
     }
 
     public void createIndex(String space, String indexName, TarantoolSpaceIndex indexConfig){
-        synchronize(transactionManager().callRW(CREATE_INDEX, TarantoolResponseMapping::noMapping, space, indexName, indexConfig.getIndex()));
+        synchronize(transactionManager().callRW(CREATE_INDEX, TarantoolResponseMapping::toEmpty, space, indexName, indexConfig.getIndex()));
     }
 
     public void dropIndex(String space, String indexName){
-        synchronize(transactionManager().callRW(DROP_INDEX, TarantoolResponseMapping::noMapping, space, indexName));
+        synchronize(transactionManager().callRW(DROP_INDEX, TarantoolResponseMapping::toEmpty, space, indexName));
     }
 
     public void renameSpace(String space, String newName){
-        synchronize(transactionManager().callRW(RENAME_SPACE, TarantoolResponseMapping::noMapping, space, newName));
+        synchronize(transactionManager().callRW(RENAME_SPACE, TarantoolResponseMapping::toEmpty, space, newName));
     }
 
     public void dropSpace(String space){
-        synchronize(transactionManager().callRW(DROP_SPACE, TarantoolResponseMapping::noMapping, space));
+        synchronize(transactionManager().callRW(DROP_SPACE, TarantoolResponseMapping::toEmpty, space));
     }
 
     public void beginTransaction(){
