@@ -142,7 +142,7 @@ public class TarantoolAsynchronousSpace {
     }
 
     public void truncate(){
-        callRW(TRUNCATE, TarantoolResponseMapping::noMapping, space);
+        callRW(TRUNCATE, TarantoolResponseMapping::toEmpty, space);
     }
 
     public TarantoolOperationResult<Set<String>> listIndices(){
