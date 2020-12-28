@@ -89,6 +89,7 @@ class TarantoolTransaction extends Specification {
         space.beginTransaction()
         result1 = space.autoIncrement(data)
         result2 = space.select('data', result1.useResultField('data'))
+        then: true
 
 
 

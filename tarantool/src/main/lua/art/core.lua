@@ -26,6 +26,11 @@ local core = {
 
     functionFromString = function(string)
         return loadstring('return ' .. string)()
+    end,
+
+    atomic = function(functionObject, ...)
+        if box.is_in_txn() then return functionObject(...) end
+        return box.atomic(functionObject, ...)
     end
 }
 
