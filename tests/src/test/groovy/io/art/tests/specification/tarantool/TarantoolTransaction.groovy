@@ -78,7 +78,7 @@ class TarantoolTransaction extends Specification {
         when:
         space.beginTransaction()
         result1 = space.autoIncrement(data)
-        result2 = space.autoIncrement(result1)
+        result2 = space.autoIncrement(result1.useResult())
         space.commitTransaction()
 
         then:
