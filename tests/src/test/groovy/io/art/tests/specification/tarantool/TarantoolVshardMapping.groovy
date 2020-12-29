@@ -22,7 +22,7 @@ import static io.art.value.factory.PrimitivesFactory.stringPrimitive
 
 class TarantoolVshardMapping extends Specification {
     def testOpsCount = 100
-    def mappingTimeout = 300
+    def mappingTimeout = 250
 
     def setupSpec(){
         launch module().make()
@@ -66,14 +66,15 @@ class TarantoolVshardMapping extends Specification {
         def spaces = db.listSpaces()
         def indices = space.listIndices()
         then:
-        spaces.contains(spaceName) && indices.get().contains("primary")
+        spaces.get().contains(spaceName) && indices.get().contains("primary")
 
 
         when:
         space.insert(data)
-        then:
         sleep(mappingTimeout)
-        space.get(request).get() == data
+        def result = space.get(request).get()
+        then:
+        result == data
 
 
         when:

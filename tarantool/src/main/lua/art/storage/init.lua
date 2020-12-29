@@ -7,7 +7,7 @@ art = {
 
     cluster = require('art.storage.cluster'),
 
-    transaction = require('art.transaction'),
+    transaction = require('art.storage.transaction'),
 
     api = require('art.storage.api')
 }

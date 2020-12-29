@@ -1,8 +1,9 @@
-package io.art.tarantool.transaction.operation.result;
+package io.art.tarantool.dao.transaction.operation.result;
 
 import io.art.core.exception.NotImplementedException;
 import io.art.tarantool.exception.TarantoolDaoException;
-import io.art.tarantool.transaction.operation.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.dao.transaction.operation.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.exception.TarantoolTransactionException;
 import lombok.experimental.Delegate;
 
 import java.util.List;
@@ -27,18 +28,18 @@ public class TarantoolSingleOperationResult<T> implements TarantoolOperationResu
         try {
             return futureResult.get();
         } catch (InterruptedException | ExecutionException e) {
-            throw new TarantoolDaoException(UNABLE_TO_GET_RESPONSE);
+            throw new TarantoolDaoException(UNABLE_TO_GET_RESPONSE, e);
         }
     }
 
     @Override
     public TarantoolTransactionDependency useResult(){
-        throw new NotImplementedException(ILLEGAL_TRANSACTION_DEPENDENCY_USAGE);
+        throw new TarantoolTransactionException(ILLEGAL_TRANSACTION_DEPENDENCY_USAGE);
     }
 
     @Override
     public TarantoolTransactionDependency useResultField(String fieldName){
-        throw new NotImplementedException(ILLEGAL_TRANSACTION_DEPENDENCY_USAGE);
+        throw new TarantoolTransactionException(ILLEGAL_TRANSACTION_DEPENDENCY_USAGE);
     }
 
     @Override

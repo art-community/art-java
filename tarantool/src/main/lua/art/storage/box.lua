@@ -38,8 +38,9 @@ local box = {
         return {response, response_schema}
     end,
 
-    insert = function(space, data, bucket_id)
+    insert = function(space, data)
         local tuple = {}
+        local bucket_id = art.core.bucketFromData(space, data)
         tuple[1] = box.tuple.new(data[1])
         tuple[2] = box.tuple.new(data[2])
         local schema_hash = art.core.hash({ tuple[2], bucket_id})
@@ -54,8 +55,9 @@ local box = {
         return tuple
     end,
 
-    autoIncrement = function(space, data, bucket_id)
+    autoIncrement = function(space, data)
         local tuple = {}
+        local bucket_id = art.core.bucketFromData(space, data)
         tuple[1] = box.tuple.new(data[1])
         tuple[2] = box.tuple.new(data[2])
         local schema_hash = art.core.hash({ tuple[2], bucket_id})
@@ -73,8 +75,9 @@ local box = {
         return tuple
     end,
 
-    put = function(space, data, bucket_id)
+    put = function(space, data)
         local id = {}
+        local bucket_id = art.core.bucketFromData(space, data)
         for k,v in pairs(box.space[space].index[0].parts) do
             id[k] = data[1][v.fieldno]
         end
@@ -82,20 +85,23 @@ local box = {
         return art.box.insert(space, data, bucket_id)
     end,
 
-    update = function(space, key, commands, bucket_id)
+    update = function(space, key, commands)
         local data = art.box.get(space, key)
+        local bucket_id = data.bucket_id
         data[1] = data[1]:update(commands[1])
         data[2] = box.tuple.new(data[2]):update(commands[2]):totable()
         art.box.put(space, data, bucket_id)
         return data
     end,
 
-    replace = function(space, data, bucket_id)
+    replace = function(space, data)
+        local bucket_id = art.core.bucketFromData(space, data)
         return art.box.put(space, data, bucket_id)
     end,
 
-    upsert = function(space, data, commands, bucket_id)
+    upsert = function(space, data, commands)
         local key = {}
+        local bucket_id = art.core.bucketFromData(space, data)
         for k,v in pairs(box.space[space].index[0].parts) do
             key[k] = data[1][v.fieldno]
         end

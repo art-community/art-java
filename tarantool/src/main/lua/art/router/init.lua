@@ -5,7 +5,7 @@ art = {
 
     cluster = require('art.router.cluster'),
 
-    transaction = require('art.transaction'),
+    transaction = require('art.router.transaction'),
 
     api = require('art.router.api')
 }

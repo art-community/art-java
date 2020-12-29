@@ -10,7 +10,7 @@ local api = {
         end,
 
         format = function(space, format)
-            local result = art.cluster.space.execute('format', { space, format})
+            local result = art.cluster.space.execute('format', {space, format})
             if (result[1]) then
                 art.cluster.mapping.space.format(space, format)
             end
@@ -18,7 +18,7 @@ local api = {
         end,
 
         createIndex = function(space, index_name, index)
-            local result = art.cluster.space.execute('createIndex', { space, index_name, index})
+            local result = art.cluster.space.execute('createIndex', {space, index_name, index})
             if (result[1]) then
                 art.cluster.mapping.space.createIndex(space, index_name, index)
             end
@@ -26,7 +26,7 @@ local api = {
         end,
 
         dropIndex = function(space, index_name)
-            local result = art.cluster.space.execute('dropIndex', { space, index_name})
+            local result = art.cluster.space.execute('dropIndex', {space, index_name})
             if result[1] then
                 art.cluster.mapping.space.dropIndex(space, index_name)
             end
@@ -34,7 +34,7 @@ local api = {
         end,
 
         rename = function(space, new_name)
-            local result = art.cluster.space.execute('rename', { space, new_name})
+            local result = art.cluster.space.execute('rename', {space, new_name})
             if (result[1]) then
                 box.atomic(art.cluster.mapping.space.rename, space, new_name)
             end
@@ -42,7 +42,7 @@ local api = {
         end,
 
         truncate = function(space)
-            local result = art.cluster.space.execute('truncate', { space})
+            local result = art.cluster.space.execute('truncate', {space})
             if (result[1]) then
                 art.cluster.mapping.space.truncate(space)
             end
@@ -50,7 +50,7 @@ local api = {
         end,
 
         drop = function(space)
-            local result = art.cluster.space.execute('drop', { space})
+            local result = art.cluster.space.execute('drop', {space})
             if (result[1]) then
                 art.cluster.mapping.space.drop(space)
             end
@@ -58,7 +58,7 @@ local api = {
         end,
 
         count = function(space)
-            local counts = art.cluster.space.execute('count', { space})
+            local counts = art.cluster.space.execute('count', {space})
             local result = 0
             if (not counts[1]) then return counts end
             for _,v in pairs(counts[2]) do
@@ -68,7 +68,7 @@ local api = {
         end,
 
         schemaCount = function(space)
-            local counts = art.cluster.space.execute('schemaCount', { space})
+            local counts = art.cluster.space.execute('schemaCount', {space})
             local result = 0
             if (not counts[1]) then return counts end
             for _,v in pairs(counts[2]) do
@@ -78,7 +78,7 @@ local api = {
         end,
 
         len = function(space)
-            local counts = art.cluster.space.execute('len', { space})
+            local counts = art.cluster.space.execute('len', {space})
             local result = 0
             if (not counts[1]) then return counts end
             for _,v in pairs(counts[2]) do
@@ -88,7 +88,7 @@ local api = {
         end,
 
         schemaLen = function(space)
-            local counts = art.cluster.space.execute('schemaLen', { space})
+            local counts = art.cluster.space.execute('schemaLen', {space})
             local result = 0
             if (not counts[1]) then return counts end
             for _,v in pairs(counts[2]) do
@@ -119,51 +119,50 @@ local api = {
     },
 
     transaction = function(requests)
-        return art.transaction.execute(requests)
+        return unpack(art.transaction.execute(requests))
     end,
 
     get = function(space, key, index)
-        if not (index) then index = 0 end
-        local mapping_entry = box.space[space].index[index]:get(key)
-        if not (mapping_entry) then return {{}} end
-        return vshard.router.callro(mapping_entry.bucket_id, 'art.box.get', {space, key, index})
+        local bucket_id = art.core.bucketFromKey(space, key)
+        if not(bucket_id) then return {{}} end
+        return vshard.router.callro(bucket_id, 'art.api.get', {space, key, index})
     end,
 
     delete = function(space, key)
-        local mapping_entry = box.space[space]:get(key)
-        if not (mapping_entry) then return {{}} end
-        return vshard.router.callrw(mapping_entry.bucket_id, 'art.box.delete', {space, key})
+        local bucket_id = art.core.bucketFromKey(space, key)
+        if not(bucket_id) then return {{}} end
+        return vshard.router.callrw(bucket_id, 'art.api.delete', {space, key})
     end,
 
     insert = function(space, data)
-        local bucket_id = data[1][ box.space[space].index.bucket_id.parts[1].fieldno ]
-        return vshard.router.callrw(bucket_id, 'art.box.insert', {space, data, bucket_id})
+        local bucket_id = art.core.bucketFromData(space, data)
+        return vshard.router.callrw(bucket_id, 'art.api.insert', {space, data})
     end,
 
     autoIncrement = function(space, data)
-        local bucket_id = data[1][ box.space[space].index.bucket_id.parts[1].fieldno ]
-        return vshard.router.callrw(bucket_id, 'art.box.autoIncrement', {space, data, bucket_id})
+        local bucket_id = art.core.bucketFromData(space, data)
+        return vshard.router.callrw(bucket_id, 'art.api.autoIncrement', {space, data})
     end,
 
     put = function(space, data)
-        local bucket_id = data[1][ box.space[space].index.bucket_id.parts[1].fieldno ]
-        return vshard.router.callrw(bucket_id, 'art.box.put', {space, data, bucket_id})
+        local bucket_id = art.core.bucketFromData(space, data)
+        return vshard.router.callrw(bucket_id, 'art.api.put', {space, data})
     end,
 
     update = function(space, key, commands)
-        local mapping_entry = box.space[space]:get(key)
-        if not (mapping_entry) then return {{}} end
-        return vshard.router.callrw(mapping_entry.bucket_id, 'art.box.update', {space, key, commands, mapping_entry.bucket_id})
+        local bucket_id = art.core.bucketFromKey(space, key)
+        if not(bucket_id) then return {{}} end
+        return vshard.router.callrw(bucket_id, 'art.api.update', {space, key, commands})
     end,
 
     replace = function(space, data)
-        local bucket_id = data[1][ box.space[space].index.bucket_id.parts[1].fieldno ]
-        return vshard.router.callrw(bucket_id, 'art.box.replace', {space, data, bucket_id})
+        local bucket_id = art.core.bucketFromData(space, data)
+        return vshard.router.callrw(bucket_id, 'art.api.replace', {space, data})
     end,
 
     upsert = function(space, data, commands)
-        local bucket_id = data[1][ box.space[space].index.bucket_id.parts[1].fieldno ]
-        return vshard.router.callrw(bucket_id, 'art.box.upsert', {space, data, commands, bucket_id})
+        local bucket_id = art.core.bucketFromData(space, data)
+        return vshard.router.callrw(bucket_id, 'art.api.upsert', {space, data, commands})
     end,
 
     select = function(space, request, index)

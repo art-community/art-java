@@ -11,13 +11,13 @@ local transaction = {
             currentOperationResult[1], currentOperationResult[2] = pcall( art.core.functionFromString(request[1]), unpack(art.transaction.insertDependencies(request[2], results)) )
             if not(currentOperationResult[1]) then
                 box.rollback()
-                return false, currentOperationResult[2]
+                return {false, 'Operation ' .. index .. ':' .. currentOperationResult[2]}
             end
             results[index] = {currentOperationResult[2]}
         end
         box.commit()
 
-        return true, results
+        return {true, results}
     end,
 
     insertDependencies = function(args, prevResults)

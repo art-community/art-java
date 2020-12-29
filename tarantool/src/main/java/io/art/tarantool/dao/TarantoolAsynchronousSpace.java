@@ -1,7 +1,7 @@
 package io.art.tarantool.dao;
 
-import io.art.tarantool.transaction.operation.dependency.TarantoolTransactionDependency;
-import io.art.tarantool.transaction.operation.result.TarantoolOperationResult;
+import io.art.tarantool.dao.transaction.operation.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.dao.transaction.operation.result.TarantoolOperationResult;
 import io.art.tarantool.model.TarantoolUpdateFieldOperation;
 import io.art.value.immutable.Value;
 import io.art.tarantool.model.TarantoolResponseMapping;
@@ -124,7 +124,6 @@ public class TarantoolAsynchronousSpace {
     }
 
 
-
     public TarantoolOperationResult<Long> count(){
         return cast(callRO(COUNT, TarantoolResponseMapping::toLong, space));
     }
@@ -147,18 +146,6 @@ public class TarantoolAsynchronousSpace {
 
     public TarantoolOperationResult<Set<String>> listIndices(){
         return cast(callRO(LIST_INDICES, TarantoolResponseMapping::toStringSet, space));
-    }
-
-    public void beginTransaction(){
-        tarantoolInstance.transactionManager().begin();
-    }
-
-    public void commitTransaction(){
-        tarantoolInstance.transactionManager().commit();
-    }
-
-    public void cancelTransaction(){
-        tarantoolInstance.transactionManager().cancel();
     }
 
 

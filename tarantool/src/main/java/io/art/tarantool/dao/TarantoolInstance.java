@@ -3,8 +3,8 @@ package io.art.tarantool.dao;
 import io.art.tarantool.configuration.space.TarantoolSpaceConfig;
 import io.art.tarantool.configuration.space.TarantoolSpaceFormat;
 import io.art.tarantool.configuration.space.TarantoolSpaceIndex;
-import io.art.tarantool.transaction.TarantoolTransactionManager;
-import io.art.tarantool.transaction.operation.result.TarantoolOperationResult;
+import io.art.tarantool.dao.transaction.TarantoolTransactionManager;
+import io.art.tarantool.dao.transaction.operation.result.TarantoolOperationResult;
 import io.art.tarantool.model.TarantoolResponseMapping;
 import io.art.tarantool.module.client.TarantoolClusterClient;
 import lombok.Getter;
@@ -30,9 +30,8 @@ public class TarantoolInstance {
         this.client = client;
     }
 
-    public Set<String> listSpaces(){
-        TarantoolOperationResult<Set<String>> result = cast(transactionManager().callRO(LIST_SPACES, TarantoolResponseMapping::toStringSet));
-        return result.get();
+    public TarantoolOperationResult<Set<String>> listSpaces(){
+        return cast(transactionManager().callRO(LIST_SPACES, TarantoolResponseMapping::toStringSet).synchronize());
     }
 
     public TarantoolSpace space(String space){

@@ -1,6 +1,6 @@
-package io.art.tarantool.transaction.operation.result;
+package io.art.tarantool.dao.transaction.operation.result;
 
-import io.art.tarantool.transaction.operation.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.dao.transaction.operation.dependency.TarantoolTransactionDependency;
 
 import java.util.Optional;
 import java.util.function.Supplier;

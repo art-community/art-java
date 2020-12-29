@@ -60,7 +60,7 @@ class Tarantool extends Specification {
         def spaces = db.listSpaces()
         def indices = space.listIndices()
         then:
-        spaces.contains(spaceName) && indices.get().contains("primary")
+        spaces.get().contains(spaceName) && indices.get().contains("primary")
 
         when:
         space.insert(data)
@@ -187,7 +187,7 @@ class Tarantool extends Specification {
         def spaces = db.listSpaces()
         def indices = space.listIndices()
         then:
-        spaces.contains(spaceName) && indices.get().contains("primary")
+        spaces.get().contains(spaceName) && indices.get().contains("primary")
 
 
         when:
@@ -408,7 +408,7 @@ class Tarantool extends Specification {
         def spaces = db.listSpaces()
         def indices = space.listIndices().get()
         then:
-        spaces.contains(spaceName) && indices.contains("primary")
+        spaces.get().contains(spaceName) && indices.contains("primary")
 
         when:
         space.insert(data)

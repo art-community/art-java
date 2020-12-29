@@ -31,6 +31,17 @@ local core = {
     atomic = function(functionObject, ...)
         if box.is_in_txn() then return functionObject(...) end
         return box.atomic(functionObject, ...)
+    end,
+
+    bucketFromData = function(space, data)
+        if not(box.space[space].index.bucket_id) then return end
+        return data[1][ box.space[space].index.bucket_id.parts[1].fieldno ]
+    end,
+
+    bucketFromKey = function(space, key)
+        local mapping_entry = box.space[space]:get(key)
+        if not (mapping_entry) then return end
+        return mapping_entry.bucket_id
     end
 }
 

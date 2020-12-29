@@ -18,7 +18,7 @@ local api = {
 
         dropIndex = function(space, index_name)
             art.box.space.waitForClusterOperation()
-            local result = art.core.atomic(art.box.space.dropIndex, space, index_name)
+            art.core.atomic(art.box.space.dropIndex, space, index_name)
         end,
 
         rename = function(space, new_name)
@@ -61,7 +61,7 @@ local api = {
     },
 
     transaction = function(requests)
-        return art.transaction.execute(requests)
+        return unpack(art.transaction.execute(requests))
     end,
 
     get = function(space, key, index)
@@ -77,33 +77,33 @@ local api = {
         return result
     end,
 
-    insert = function(space, data, bucket_id)
-        local result = art.core.atomic(art.box.insert, space, data, bucket_id)
+    insert = function(space, data)
+        local result = art.core.atomic(art.box.insert, space, data)
         return result
     end,
 
-    autoIncrement = function(space, data, bucket_id)
-        local result = art.core.atomic(art.box.autoIncrement, space, data, bucket_id)
+    autoIncrement = function(space, data)
+        local result = art.core.atomic(art.box.autoIncrement, space, data)
         return result
     end,
 
-    put = function(space, data, bucket_id)
-        local result =  art.core.atomic(art.box.put, space, data, bucket_id)
+    put = function(space, data)
+        local result =  art.core.atomic(art.box.put, space, data)
         return result
     end,
 
-    update = function(space, id, commands, bucket_id)
-        local result = art.core.atomic(art.box.update, space, id, commands, bucket_id)
+    update = function(space, id, commands)
+        local result = art.core.atomic(art.box.update, space, id, commands)
         return result
     end,
 
-    replace = function(space, data, bucket_id)
-        local result = art.core.atomic(art.box.replace, space, data, bucket_id)
+    replace = function(space, data)
+        local result = art.core.atomic(art.box.replace, space, data)
         return result
     end,
 
-    upsert = function(space, data, commands, bucket_id)
-        local result = art.core.atomic(art.box.upsert, space, data, commands, bucket_id)
+    upsert = function(space, data, commands)
+        local result = art.core.atomic(art.box.upsert, space, data, commands)
         return result
     end,
 
