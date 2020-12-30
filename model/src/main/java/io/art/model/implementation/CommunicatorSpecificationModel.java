@@ -18,12 +18,18 @@
 
 package io.art.model.implementation;
 
+import io.art.communicator.specification.CommunicatorSpecification.*;
 import lombok.*;
+import java.util.function.*;
 
+@Getter
 @RequiredArgsConstructor
-public class GrpcCommunicatorModel {
-    private final String name;
-    private final Class<?> specification;
+public class CommunicatorSpecificationModel {
+    private final String id;
+    private final Class<?> implementationInterface;
+    private final Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> decorator;
 
-
+    public CommunicatorSpecificationBuilder implement(CommunicatorSpecificationBuilder builder) {
+        return decorator.apply(builder);
+    }
 }
