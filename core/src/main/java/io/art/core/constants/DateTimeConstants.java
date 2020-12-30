@@ -53,13 +53,13 @@ public interface DateTimeConstants {
     DateTimeFormatter DD_MM_YYYY_HH_MM_SS_DOT_FORMAT = ofPattern(DD_MM_YYYY_HH_MM_SS_DOT);
 
     String DD_MM_YYYY_HH_MM_SS_24H_DOT = "dd.MM.yyyy HH:mm:ss";
-    DateTimeFormatter DD_MM_YYYY_HH_MM_SS_24H_DOT_FORMAT = ofPattern(DD_MM_YYYY_HH_MM_SS_DOT);
+    DateTimeFormatter DD_MM_YYYY_HH_MM_SS_24H_DOT_FORMAT = ofPattern(DD_MM_YYYY_HH_MM_SS_24H_DOT);
 
     String DD_MM_YYYY_HH_MM_SS_24H_SLASH = "dd/MM/yyyy HH:mm:ss";
     DateTimeFormatter DD_MM_YYYY_HH_MM_SS_24H_SLASH_FORMAT = ofPattern(DD_MM_YYYY_HH_MM_SS_24H_SLASH);
 
     String DD_MM_YYYY_HH_MM_SS_24H_DASH = "dd-MM-yyyy HH:mm:ss";
-    DateTimeFormatter DD_MM_YYYY_HH_MM_SS_24H_DASH_FORMAT = ofPattern(DD_MM_YYYY_HH_MM_SS_24H_DOT);
+    DateTimeFormatter DD_MM_YYYY_HH_MM_SS_24H_DASH_FORMAT = ofPattern(DD_MM_YYYY_HH_MM_SS_24H_DASH);
 
     String YYYYMM = "yyyyMM";
     DateTimeFormatter YYYYMM_FORMAT = ofPattern(YYYYMM);

@@ -33,7 +33,6 @@ public interface ValueConstants {
         String TUPLE_NOT_SUPPORTED_VALUE_TYPE = "Value type: ''{0}'' not support for tuples";
         String NOT_PRIMITIVE_TYPE = "Not primitive type: ''{0}''";
         String XML_TAG_IS_EMPTY = "Xml tag is empty";
-        String NULL_FIELD_MESSAGE = "Received null for not nullable field ''{0}''";
         String INDEX_MAPPING_EXCEPTION = "Exception occurred during mapping array element ''{0}'':";
         String FIELD_MAPPING_EXCEPTION = "Exception occurred during mapping entity field ''{0}'':";
     }

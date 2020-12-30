@@ -18,50 +18,17 @@
 
 package io.art.model.implementation;
 
+import io.art.communicator.specification.CommunicatorSpecification.*;
+import io.art.core.collection.*;
 import lombok.*;
-import static java.util.function.UnaryOperator.identity;
-import java.util.function.*;
+import static io.art.core.checker.NullityChecker.*;
 
 @Getter
+@RequiredArgsConstructor
 public class CommunicatorModel {
-    private GrpcCommunicatorModel grpcModel;
-    private HttpCommunicatorModel httpModel;
-    private RsocketCommunicatorModel rsocketModel;
-    private SoapCommunicatorModel soapModel;
+    private final ImmutableMap<String, CommunicatorSpecificationModel> communicators;
 
-    public CommunicatorModel grpc(String name, Class<?> specification) {
-        return grpc(name, specification, identity());
-    }
-
-    public CommunicatorModel http(String name, Class<?> specification) {
-        return http(name, specification, identity());
-    }
-
-    public CommunicatorModel rsocket(String name, Class<?> specification) {
-        return rsocket(name, specification, identity());
-    }
-
-    public CommunicatorModel soap(String name, Class<?> specification) {
-        return soap(name, specification, identity());
-    }
-
-    public CommunicatorModel grpc(String name, Class<?> specification, UnaryOperator<GrpcCommunicatorModel> communicator) {
-        grpcModel = communicator.apply(new GrpcCommunicatorModel(name, specification));
-        return this;
-    }
-
-    public CommunicatorModel http(String name, Class<?> specification, UnaryOperator<HttpCommunicatorModel> communicator) {
-        httpModel = communicator.apply(new HttpCommunicatorModel(name, specification));
-        return this;
-    }
-
-    public CommunicatorModel rsocket(String name, Class<?> specification, UnaryOperator<RsocketCommunicatorModel> communicator) {
-        rsocketModel = communicator.apply(new RsocketCommunicatorModel(name, specification));
-        return this;
-    }
-
-    public CommunicatorModel soap(String name, Class<?> specification, UnaryOperator<SoapCommunicatorModel> communicator) {
-        soapModel = communicator.apply(new SoapCommunicatorModel(name, specification));
-        return this;
+    public CommunicatorSpecificationBuilder implement(String id, CommunicatorSpecificationBuilder current) {
+        return let(communicators.get(id), communicator -> communicator.implement(current));
     }
 }

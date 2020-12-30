@@ -20,6 +20,7 @@ package io.art.launcher;
 
 import io.art.communicator.module.*;
 import io.art.configurator.module.*;
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.context.*;
@@ -47,9 +48,9 @@ import static io.art.logging.LoggingModule.*;
 import static io.art.model.constants.ModelConstants.Protocol.*;
 import static java.util.Optional.*;
 import java.util.concurrent.atomic.*;
-import io.art.core.module.Module;
 
 @UtilityClass
+@UsedByGenerator
 public class ModuleLauncher {
     private final static AtomicBoolean launched = new AtomicBoolean(false);
 
@@ -60,11 +61,12 @@ public class ModuleLauncher {
                     .loadConfigurations()
                     .configuration()
                     .orderedSources();
-            ConfiguratorCustomizer configuratorCustomizer = model.getConfiguratorCustomizer();
-            ValueCustomizer valueCustomizer = configuratorCustomizer.value().apply(new ValueCustomizer());
-            LoggingCustomizer loggingCustomizer = configuratorCustomizer.logging().apply(new LoggingCustomizer());
-            ServerCustomizer serverCustomizer = configuratorCustomizer.server().apply(new ServerCustomizer());
-            RsocketCustomizer rsocketCustomizer = configuratorCustomizer.rsocket().apply(new RsocketCustomizer());
+            ModuleCustomizer moduleCustomizer = model.getModuleCustomizer();
+            ValueCustomizer valueCustomizer = moduleCustomizer.value().apply(new ValueCustomizer());
+            LoggingCustomizer loggingCustomizer = moduleCustomizer.logging().apply(new LoggingCustomizer());
+            ServerCustomizer serverCustomizer = moduleCustomizer.server().apply(new ServerCustomizer());
+            CommunicatorCustomizer communicatorCustomizer = moduleCustomizer.communicator().apply(new CommunicatorCustomizer());
+            RsocketCustomizer rsocketCustomizer = moduleCustomizer.rsocket().apply(new RsocketCustomizer());
             ImmutableArray.Builder<Module> modules = immutableArrayBuilder();
             modules.add(
                     configurator,
@@ -73,70 +75,76 @@ public class ModuleLauncher {
                     json(sources),
                     xml(sources),
                     server(sources, serverCustomizer),
-                    communicator(sources),
-                    rsocket(sources, model.getServerModel(), rsocketCustomizer),
+                    communicator(sources, communicatorCustomizer),
+                    rsocket(sources, model, rsocketCustomizer),
                     tarantool(sources)
             );
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
-            initialize(new DefaultContextConfiguration(), modules.build(), message -> logger.get().info(message));
+            initialize(new DefaultContextConfiguration(model.getMainModuleId()), modules.build(), message -> logger.get().info(message));
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
-            boolean needBlock = rsocketCustomizer.getConfiguration().isActivateServer();
-            if (needBlock) {
-                block();
-            }
+            if (needBlock(rsocketCustomizer)) block();
         }
     }
 
-    private ValueModule value(ImmutableArray<ConfigurationSource> sources, ValueCustomizer valueCustomizer) {
+    private static ValueModule value(ImmutableArray<ConfigurationSource> sources, ValueCustomizer valueCustomizer) {
         ValueModule value = new ValueModule();
         value.configure(configurator -> configurator.from(sources));
         ofNullable(valueCustomizer).ifPresent(customizer -> value.configure(configurator -> configurator.override(customizer.getConfiguration())));
         return value;
     }
 
-    private LoggingModule logging(ImmutableArray<ConfigurationSource> sources, LoggingCustomizer loggingCustomizer) {
+    private static LoggingModule logging(ImmutableArray<ConfigurationSource> sources, LoggingCustomizer loggingCustomizer) {
         LoggingModule logging = new LoggingModule();
         logging.configure(configurator -> configurator.from(sources));
         ofNullable(loggingCustomizer).ifPresent(customizer -> logging.configure(configurator -> configurator.override(customizer.getConfiguration())));
         return logging;
     }
 
-    private JsonModule json(ImmutableArray<ConfigurationSource> sources) {
+    private static JsonModule json(ImmutableArray<ConfigurationSource> sources) {
         JsonModule json = new JsonModule();
         json.configure(configurator -> configurator.from(sources));
         return json;
     }
 
-    private XmlModule xml(ImmutableArray<ConfigurationSource> sources) {
+    private static XmlModule xml(ImmutableArray<ConfigurationSource> sources) {
         XmlModule xml = new XmlModule();
         xml.configure(configurator -> configurator.from(sources));
         return xml;
     }
 
-    private ServerModule server(ImmutableArray<ConfigurationSource> sources, ServerCustomizer serverCustomizer) {
+    private static ServerModule server(ImmutableArray<ConfigurationSource> sources, ServerCustomizer serverCustomizer) {
         ServerModule server = new ServerModule();
         ofNullable(serverCustomizer).ifPresent(customizer -> server.configure(configurator -> configurator.from(sources).override(customizer.getConfiguration())));
         return server;
     }
 
-    private CommunicatorModule communicator(ImmutableArray<ConfigurationSource> sources) {
+    private static CommunicatorModule communicator(ImmutableArray<ConfigurationSource> sources, CommunicatorCustomizer communicatorCustomizer) {
         CommunicatorModule communicator = new CommunicatorModule();
-        communicator.configure(configurator -> configurator.from(sources));
+        ofNullable(communicatorCustomizer).ifPresent(customizer -> communicator.configure(configurator -> configurator.from(sources).override(customizer.getConfiguration())));
         return communicator;
     }
 
-    private RsocketModule rsocket(ImmutableArray<ConfigurationSource> sources, ServerModel serverModel, RsocketCustomizer rsocketCustomizer) {
+    private static RsocketModule rsocket(ImmutableArray<ConfigurationSource> sources, ModuleModel model, RsocketCustomizer rsocketCustomizer) {
         RsocketModule rsocket = new RsocketModule();
+        ServerModel serverModel = model.getServerModel();
+        CommunicatorModel communicatorModel = model.getCommunicatorModel();
         if (serverModel.getServices().values().stream().anyMatch(service -> service.getProtocol() == RSOCKET)) {
             rsocketCustomizer.activateServer();
+        }
+        if (!communicatorModel.getCommunicators().isEmpty()) {
+            rsocketCustomizer.activateCommunicator();
         }
         rsocket.configure(configurator -> configurator.from(sources).override(rsocketCustomizer.getConfiguration()));
         return rsocket;
     }
 
-    private TarantoolModule tarantool(ImmutableArray<ConfigurationSource> sources) {
+    private static TarantoolModule tarantool(ImmutableArray<ConfigurationSource> sources) {
         TarantoolModule tarantool = new TarantoolModule();
         tarantool.configure(configurator -> configurator.from(sources));
         return tarantool;
+    }
+
+    private static boolean needBlock(RsocketCustomizer rsocketCustomizer) {
+        return rsocketCustomizer.getConfiguration().isActivateServer();
     }
 }

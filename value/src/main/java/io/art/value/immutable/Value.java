@@ -20,11 +20,11 @@ package io.art.value.immutable;
 
 import io.art.value.constants.ValueConstants.*;
 import io.art.value.exception.*;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueConstants.ValueType.*;
-import static java.text.MessageFormat.format;
+import static java.text.MessageFormat.*;
 import java.util.*;
 
 public interface Value {

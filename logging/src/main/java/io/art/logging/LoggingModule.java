@@ -83,16 +83,6 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
         }
     }
 
-    @Override
-    public String print() {
-        return printer()
-                .mainSection(LoggingModule.class.getSimpleName())
-                .tabulation(1)
-                .value(ASYNCHRONOUS_KEY, configuration.isAsynchronous())
-                .value(COLORED_KEY, configuration.isColored())
-                .print();
-    }
-
     private Logger currentLogger() {
         return configuration.isColored() ? new ColoredLogger(cast(LogManager.getLogger(LoggingModule.class))) : LogManager.getLogger(LoggingModule.class);
     }

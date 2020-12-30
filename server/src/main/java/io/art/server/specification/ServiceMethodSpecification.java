@@ -103,7 +103,7 @@ public class ServiceMethodSpecification {
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
             mappedInput = mappedInput.transformDeferred(decorator);
         }
-        mappedInput = mappedInput.onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
+        mappedInput = mappedInput.onErrorResume(Throwable.class, this::mapException);
         switch (inputMode) {
             case BLOCKING:
                 return mappedInput.blockFirst();
@@ -134,7 +134,7 @@ public class ServiceMethodSpecification {
         }
         return mappedOutput
                 .map(value -> (Value) outputMapper.map(cast(value)))
-                .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
+                .onErrorResume(Throwable.class, this::mapException);
     }
 
     private Flux<Value> mapException(Throwable exception) {

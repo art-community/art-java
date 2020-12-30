@@ -47,22 +47,22 @@ public class EntityConfigurationSource implements ConfigurationSource {
 
     @Override
     public Integer getInt(String path) {
-        return entity.mapNested(path, toInt);
+        return entity.mapping().mapNested(path, toInt);
     }
 
     @Override
     public Long getLong(String path) {
-        return entity.mapNested(path, toLong);
+        return entity.mapping().mapNested(path, toLong);
     }
 
     @Override
     public Boolean getBool(String path) {
-        return entity.mapNested(path, toBool);
+        return entity.mapping().mapNested(path, toBool);
     }
 
     @Override
     public Double getDouble(String path) {
-        return entity.mapNested(path, toDouble);
+        return entity.mapping().mapNested(path, toDouble);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class EntityConfigurationSource implements ConfigurationSource {
 
     @Override
     public String getString(String path) {
-        return entity.mapNested(path, toString);
+        return entity.mapping().mapNested(path, toString);
     }
 
     @Override
@@ -91,32 +91,32 @@ public class EntityConfigurationSource implements ConfigurationSource {
 
     @Override
     public List<Integer> getIntList(String path) {
-        return entity.mapNested(path, ArrayMapping.toList(toInt));
+        return entity.mapping().mapNested(path, ArrayMapping.toList(toInt));
     }
 
     @Override
     public List<Long> getLongList(String path) {
-        return entity.mapNested(path, ArrayMapping.toList(toLong));
+        return entity.mapping().mapNested(path, ArrayMapping.toList(toLong));
     }
 
     @Override
     public List<Boolean> getBoolList(String path) {
-        return entity.mapNested(path, ArrayMapping.toList(toBool));
+        return entity.mapping().mapNested(path, ArrayMapping.toList(toBool));
     }
 
     @Override
     public List<Double> getDoubleList(String path) {
-        return entity.mapNested(path, ArrayMapping.toList(toDouble));
+        return entity.mapping().mapNested(path, ArrayMapping.toList(toDouble));
     }
 
     @Override
     public List<String> getStringList(String path) {
-        return entity.mapNested(path, ArrayMapping.toList(toString));
+        return entity.mapping().mapNested(path, ArrayMapping.toList(toString));
     }
 
     @Override
     public List<Duration> getDurationList(String path) {
-        return entity.mapNested(path, ArrayMapping.toList(element -> let(toString.map(asPrimitive(element)), DurationParser::parseDuration)));
+        return entity.mapping().mapNested(path, ArrayMapping.toList(element -> let(toString.map(asPrimitive(element)), DurationParser::parseDuration)));
     }
 
     @Override

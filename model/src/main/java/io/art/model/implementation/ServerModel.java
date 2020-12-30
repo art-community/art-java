@@ -26,7 +26,7 @@ import static io.art.server.specification.ServiceMethodSpecification.*;
 @Getter
 @RequiredArgsConstructor
 public class ServerModel {
-    private final ImmutableMap<String, ServiceModel<?>> services;
+    private final ImmutableMap<String, ServiceModel> services;
 
     public ServiceMethodSpecificationBuilder implement(String serviceId, String methodId, ServiceMethodSpecificationBuilder current) {
         return let(services.get(serviceId), service -> service.implement(methodId, current));

@@ -18,6 +18,7 @@
 
 package io.art.value.immutable;
 
+import io.art.core.annotation.*;
 import io.art.value.constants.ValueConstants.*;
 import lombok.*;
 import static io.art.core.constants.ArrayConstants.*;

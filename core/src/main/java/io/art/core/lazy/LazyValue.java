@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
-public class LazyValue<T> {
+public class LazyValue<T> implements Supplier<T> {
     private final AtomicReference<T> value = new AtomicReference<>();
     private final Supplier<T> loader;
 
@@ -36,5 +36,21 @@ public class LazyValue<T> {
 
     public static <T> LazyValue<T> lazy(Supplier<T> factory) {
         return new LazyValue<>(factory);
+    }
+
+    @Override
+    public int hashCode() {
+        return get().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (!(other instanceof LazyValue)) {
+            return false;
+        }
+        return get().equals(((LazyValue<?>) other).get());
     }
 }

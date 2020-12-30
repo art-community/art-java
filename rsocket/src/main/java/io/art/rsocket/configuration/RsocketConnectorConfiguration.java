@@ -25,7 +25,6 @@ import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.model.RsocketSetupPayload.*;
 import io.art.rsocket.payload.*;
-import io.art.value.constants.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
 import lombok.*;
@@ -113,12 +112,12 @@ public class RsocketConnectorConfiguration {
                 configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
                 break;
             case WS:
-                String url = source.getString(TRANSPORT_HTTP_BASE_URL_KEY);
+                String url = source.getString(TRANSPORT_WS_BASE_URL_KEY);
                 if (isEmpty(url)) {
-                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_HTTP_BASE_URL_KEY)));
+                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_WS_BASE_URL_KEY)));
                 }
                 configuration.httpWebSocketClient = create().baseUrl(url);
-                configuration.httpWebSocketPath = orElse(source.getString(TRANSPORT_HTTP_PATH_KEY), SLASH);
+                configuration.httpWebSocketPath = orElse(source.getString(TRANSPORT_WS_PATH_KEY), SLASH);
                 break;
         }
 

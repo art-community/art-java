@@ -27,7 +27,7 @@ import java.util.function.*;
 
 @Getter
 @Builder
-public class ServiceModel<T> {
+public class ServiceModel {
     private final Class<?> serviceClass;
     private final String id;
     private final boolean includeAllMethods;

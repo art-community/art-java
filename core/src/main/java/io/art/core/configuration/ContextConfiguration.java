@@ -50,9 +50,10 @@ public interface ContextConfiguration {
 
     ZoneId getZoneId();
 
+    @RequiredArgsConstructor
     class DefaultContextConfiguration implements ContextConfiguration {
         @Getter
-        private final String mainModuleId = DEFAULT_MAIN_MODULE_ID;
+        private final String mainModuleId;
         @Getter
         private final Charset charset = UTF_8;
         @Getter

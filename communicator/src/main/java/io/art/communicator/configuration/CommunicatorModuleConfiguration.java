@@ -18,6 +18,7 @@
 
 package io.art.communicator.configuration;
 
+import io.art.communicator.specification.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
@@ -33,6 +34,7 @@ import java.util.*;
 public class CommunicatorModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, CommunicatorConfiguration> communicators = emptyImmutableMap();
     private Scheduler scheduler;
+    private ImmutableMap<String, Object> registry = emptyImmutableMap();
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<CommunicatorModuleConfiguration, Configurator> {
@@ -48,6 +50,13 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
                             .stream()
                             .collect(immutableMapCollector(Map.Entry::getKey, entry -> CommunicatorConfiguration.from(entry.getValue()))))
                     .orElse(emptyImmutableMap());
+            return this;
+        }
+
+        @Override
+        public Configurator override(CommunicatorModuleConfiguration configuration) {
+            this.configuration.communicators = configuration.getCommunicators();
+            this.configuration.registry = configuration.getRegistry();
             return this;
         }
     }
