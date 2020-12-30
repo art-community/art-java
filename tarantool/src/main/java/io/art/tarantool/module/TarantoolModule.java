@@ -7,7 +7,7 @@ import io.art.tarantool.configuration.TarantoolModuleConfiguration;
 import io.art.tarantool.exception.TarantoolModuleException;
 import io.art.tarantool.module.client.TarantoolClusterClient;
 import io.art.tarantool.module.state.TarantoolModuleState;
-import io.art.tarantool.dao.TarantoolInstance;
+import io.art.tarantool.instance.TarantoolInstance;
 import lombok.Getter;
 
 import static io.art.core.context.Context.*;

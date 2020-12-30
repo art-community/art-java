@@ -1,4 +1,4 @@
-package io.art.tarantool.transaction.operation.dependency;
+package io.art.tarantool.model.transaction.dependency;
 
 import lombok.AllArgsConstructor;
 

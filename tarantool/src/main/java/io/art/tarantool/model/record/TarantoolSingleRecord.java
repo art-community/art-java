@@ -1,7 +1,7 @@
-package io.art.tarantool.transaction.operation.result;
+package io.art.tarantool.model.record;
 
 import io.art.tarantool.exception.TarantoolDaoException;
-import io.art.tarantool.transaction.operation.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
 import io.art.tarantool.exception.TarantoolTransactionException;
 import lombok.experimental.Delegate;
 
@@ -15,10 +15,10 @@ import static io.art.core.caster.Caster.cast;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 
 
-public class TarantoolSingleOperationResult<T> implements TarantoolOperationResult<T>{
+public class TarantoolSingleRecord<T> implements TarantoolRecord<T> {
     private final CompletableFuture<Optional<T>> futureResult;
 
-    public TarantoolSingleOperationResult(CompletableFuture<List<?>> futureResult, Function<List<?>, ?> responseMapper){
+    public TarantoolSingleRecord(CompletableFuture<List<?>> futureResult, Function<List<?>, ?> responseMapper){
         this.futureResult = cast(futureResult.thenApply(responseMapper));
     }
 
@@ -46,7 +46,7 @@ public class TarantoolSingleOperationResult<T> implements TarantoolOperationResu
         return futureResult.isDone();
     }
 
-    public TarantoolSingleOperationResult<T> synchronize(){
+    public TarantoolSingleRecord<T> synchronize(){
         getOptional();
         return this;
     }

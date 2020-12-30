@@ -1,4 +1,4 @@
-package io.art.tarantool.model;
+package io.art.tarantool.model.mapping;
 
 import io.art.tarantool.exception.TarantoolDaoException;
 import io.art.tarantool.exception.TarantoolTransactionException;

@@ -1,11 +1,11 @@
-package io.art.tarantool.transaction.operation.result;
+package io.art.tarantool.model.record;
 
-import io.art.tarantool.transaction.operation.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public interface TarantoolOperationResult <T>{
+public interface TarantoolRecord<T>{
 
     TarantoolTransactionDependency useResult();
 
@@ -13,7 +13,7 @@ public interface TarantoolOperationResult <T>{
 
     boolean isDone();
 
-    TarantoolOperationResult<T> synchronize();
+    TarantoolRecord<T> synchronize();
 
     Optional<T> getOptional();
 

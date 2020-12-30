@@ -3,9 +3,9 @@ package io.art.tests.specification.tarantool
 
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
-import io.art.tarantool.dao.TarantoolInstance
-import io.art.tarantool.dao.TarantoolSpace
-import io.art.tarantool.model.TarantoolUpdateFieldOperation
+import io.art.tarantool.instance.TarantoolInstance
+import io.art.tarantool.space.TarantoolSpace
+import io.art.tarantool.model.operation.TarantoolUpdateFieldOperation
 import spock.lang.Specification
 
 

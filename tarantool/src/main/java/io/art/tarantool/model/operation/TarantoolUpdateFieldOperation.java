@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.tarantool.model;
+package io.art.tarantool.model.operation;
 
 import io.art.value.immutable.Value;
 import io.art.value.tuple.PlainTupleWriter.*;

@@ -1,6 +1,7 @@
-package io.art.tarantool.model;
+package io.art.tarantool.model.mapping;
 
 import io.art.tarantool.exception.TarantoolDaoException;
+import io.art.tarantool.model.operation.TarantoolUpdateFieldOperation;
 import io.art.value.immutable.Value;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toList;
 
 
-public class TarantoolRequest {
+public class TarantoolRequestMapping {
 
     public static List<?> requestTuple(Value request){
         PlainTupleWriterResult writerResult = writeTuple(request);

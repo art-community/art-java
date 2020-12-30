@@ -1,6 +1,6 @@
-package io.art.tarantool.model;
+package io.art.tarantool.model.operation;
 
-import io.art.tarantool.transaction.operation.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
 
 import java.util.Map;
 

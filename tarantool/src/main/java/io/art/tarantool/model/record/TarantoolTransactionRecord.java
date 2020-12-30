@@ -1,9 +1,9 @@
-package io.art.tarantool.transaction.operation.result;
+package io.art.tarantool.model.record;
 
 import io.art.tarantool.exception.TarantoolDaoException;
-import io.art.tarantool.transaction.operation.dependency.TransactionFieldDependency;
-import io.art.tarantool.transaction.operation.dependency.TarantoolTransactionDependency;
-import io.art.tarantool.transaction.operation.dependency.TransactionTupleDependency;
+import io.art.tarantool.model.transaction.dependency.TransactionFieldDependency;
+import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.model.transaction.dependency.TransactionTupleDependency;
 import io.art.tarantool.exception.TarantoolTransactionException;
 import lombok.experimental.Delegate;
 
@@ -15,16 +15,16 @@ import java.util.function.Function;
 
 import static io.art.core.caster.Caster.cast;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
-import static io.art.tarantool.model.TarantoolResponseMapping.transactionResponseToTuple;
+import static io.art.tarantool.model.mapping.TarantoolResponseMapping.transactionResponseToTuple;
 import static java.util.Objects.isNull;
 
 
-public class TarantoolTransactionOperationResult<T> implements TarantoolOperationResult<T>{
+public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
     private final int transactionEntryNumber;
     private CompletableFuture<Optional<T>> futureResult;
     private final Function<List<?>, Optional<T>> responseMapper;
 
-    public TarantoolTransactionOperationResult(int transactionEntryNumber, Function<List<?>, Optional<?>> responseMapper){
+    public TarantoolTransactionRecord(int transactionEntryNumber, Function<List<?>, Optional<?>> responseMapper){
         this.transactionEntryNumber = transactionEntryNumber;
         this.responseMapper = cast(responseMapper);
     }
@@ -62,7 +62,7 @@ public class TarantoolTransactionOperationResult<T> implements TarantoolOperatio
         return futureResult.isDone();
     }
 
-    public TarantoolTransactionOperationResult<T> synchronize(){
+    public TarantoolTransactionRecord<T> synchronize(){
         getOptional();
         return this;
     }
