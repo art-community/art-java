@@ -3,8 +3,8 @@ package io.art.tarantool.dao;
 import io.art.tarantool.configuration.space.TarantoolSpaceConfig;
 import io.art.tarantool.configuration.space.TarantoolSpaceFormat;
 import io.art.tarantool.configuration.space.TarantoolSpaceIndex;
-import io.art.tarantool.dao.transaction.TarantoolTransactionManager;
-import io.art.tarantool.dao.transaction.operation.result.TarantoolOperationResult;
+import io.art.tarantool.transaction.TarantoolTransactionManager;
+import io.art.tarantool.transaction.operation.result.TarantoolOperationResult;
 import io.art.tarantool.model.TarantoolResponseMapping;
 import io.art.tarantool.module.client.TarantoolClusterClient;
 import lombok.Getter;
@@ -25,7 +25,6 @@ public class TarantoolInstance {
     protected final TarantoolClusterClient client;
 
 
-
     public TarantoolInstance(TarantoolClusterClient client){
         this.client = client;
     }
@@ -35,11 +34,11 @@ public class TarantoolInstance {
     }
 
     public TarantoolSpace space(String space){
-        return new TarantoolSpace(this, space);
+        return new TarantoolSpace(transactionManager(), space);
     }
 
     public TarantoolAsynchronousSpace asynchronousSpace(String space){
-        return new TarantoolAsynchronousSpace(this, space);
+        return new TarantoolAsynchronousSpace(transactionManager(), space);
     }
 
     public void createSpace(String space, TarantoolSpaceConfig config){
@@ -78,7 +77,7 @@ public class TarantoolInstance {
         transactionManager().cancel();
     }
 
-    protected TarantoolTransactionManager transactionManager(){
+    private TarantoolTransactionManager transactionManager(){
         if (isNull(transactionManagerHolder.get())) transactionManagerHolder.set(new TarantoolTransactionManager(client));
         return transactionManagerHolder.get();
     }

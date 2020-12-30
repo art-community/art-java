@@ -1,10 +1,9 @@
-package io.art.tarantool.dao.transaction.operation.result;
+package io.art.tarantool.transaction.operation.result;
 
-import io.art.core.exception.NotImplementedException;
 import io.art.tarantool.exception.TarantoolDaoException;
-import io.art.tarantool.dao.transaction.operation.dependency.TransactionFieldDependency;
-import io.art.tarantool.dao.transaction.operation.dependency.TarantoolTransactionDependency;
-import io.art.tarantool.dao.transaction.operation.dependency.TransactionTupleDependency;
+import io.art.tarantool.transaction.operation.dependency.TransactionFieldDependency;
+import io.art.tarantool.transaction.operation.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.transaction.operation.dependency.TransactionTupleDependency;
 import io.art.tarantool.exception.TarantoolTransactionException;
 import lombok.experimental.Delegate;
 

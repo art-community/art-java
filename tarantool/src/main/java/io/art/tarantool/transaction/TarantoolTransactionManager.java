@@ -1,8 +1,8 @@
-package io.art.tarantool.dao.transaction;
+package io.art.tarantool.transaction;
 
-import io.art.tarantool.dao.transaction.operation.result.TarantoolOperationResult;
-import io.art.tarantool.dao.transaction.operation.result.TarantoolSingleOperationResult;
-import io.art.tarantool.dao.transaction.operation.result.TarantoolTransactionOperationResult;
+import io.art.tarantool.transaction.operation.result.TarantoolOperationResult;
+import io.art.tarantool.transaction.operation.result.TarantoolSingleOperationResult;
+import io.art.tarantool.transaction.operation.result.TarantoolTransactionOperationResult;
 import io.art.tarantool.module.client.TarantoolClusterClient;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 import static io.art.core.factory.ListFactory.linkedList;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.TRANSACTION;
-import static io.art.tarantool.dao.transaction.operation.TarantoolTransactionOperation.tarantoolTransactionOperation;
+import static io.art.tarantool.transaction.operation.TarantoolTransactionOperation.tarantoolTransactionOperation;
 
 public class TarantoolTransactionManager {
     private final TarantoolClusterClient client;

@@ -1,7 +1,8 @@
 package io.art.tarantool.dao;
 
-import io.art.tarantool.dao.transaction.operation.dependency.TarantoolTransactionDependency;
-import io.art.tarantool.dao.transaction.operation.result.TarantoolOperationResult;
+import io.art.tarantool.transaction.TarantoolTransactionManager;
+import io.art.tarantool.transaction.operation.dependency.TarantoolTransactionDependency;
+import io.art.tarantool.transaction.operation.result.TarantoolOperationResult;
 import io.art.value.immutable.Value;
 import lombok.*;
 import org.apache.logging.log4j.*;
@@ -17,8 +18,8 @@ public class TarantoolSpace {
     private static final Logger logger = logger(TarantoolSpace.class);
     private final TarantoolAsynchronousSpace asynchronousSpace;
 
-    public TarantoolSpace(TarantoolInstance instance, String space){
-        this.asynchronousSpace = new TarantoolAsynchronousSpace(instance, space);
+    public TarantoolSpace(TarantoolTransactionManager transactionManager, String space){
+        this.asynchronousSpace = new TarantoolAsynchronousSpace(transactionManager, space);
     }
 
 

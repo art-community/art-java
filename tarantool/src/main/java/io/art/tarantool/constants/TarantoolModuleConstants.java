@@ -102,6 +102,12 @@ public interface TarantoolModuleConstants {
         String TRANSACTION = "art.api.transaction";
     }
 
+    interface SelectOptions{
+        String LIMIT = "limit";
+        String OFFSET = "offset";
+        String ITERATOR = "iterator";
+    }
+
     enum TarantoolFieldType {
         UNSIGNED,
         STRING,
@@ -118,6 +124,11 @@ public interface TarantoolModuleConstants {
         BITSET,
         RTREE
     }
+
+    enum TarantoolIndexIterator{
+
+    }
+
 
     @Getter
     @AllArgsConstructor
