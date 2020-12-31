@@ -8,7 +8,7 @@ import static io.art.core.lazy.LazyValue.*;
 import java.util.*;
 import java.util.function.*;
 
-public class SingletonObject {
+public class SingletonsRegistry {
     private final static Map<Supplier<?>, LazyValue<?>> SINGLETONS = concurrentHashMap();
 
     public static <T> T singleton(Supplier<T> factory) {
