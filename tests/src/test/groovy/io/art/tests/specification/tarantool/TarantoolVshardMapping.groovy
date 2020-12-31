@@ -98,7 +98,7 @@ class TarantoolVshardMapping extends Specification {
         request = intPrimitive(2)
         then:
         true
-        space.get(request).isEmpty() && space.select(request).isEmpty()
+        space.get(request).isEmpty() && space.select(request).fetch().isEmpty()
 
 
         when:
@@ -206,7 +206,9 @@ class TarantoolVshardMapping extends Specification {
                 .unique(false))
         sleep(mappingTimeout*5)
 
-        def response = space.select('data', stringPrimitive('data')).get()
+        def response = space.select(stringPrimitive('data'))
+                .index('data')
+                .get()
         int succeeded = response.size()
         then:
         (succeeded == testOpsCount)

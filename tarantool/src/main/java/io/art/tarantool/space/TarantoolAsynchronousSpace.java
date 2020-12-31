@@ -1,5 +1,7 @@
 package io.art.tarantool.space;
 
+import io.art.core.factory.MapFactory;
+import io.art.tarantool.constants.TarantoolModuleConstants;
 import io.art.tarantool.transaction.TarantoolTransactionManager;
 import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
 import io.art.tarantool.model.record.TarantoolRecord;
@@ -10,12 +12,12 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 import static io.art.core.caster.Caster.cast;
-import static io.art.core.factory.SetFactory.setOf;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.SelectOptions.*;
 import static io.art.tarantool.model.mapping.TarantoolRequestMapping.*;
 
 @AllArgsConstructor
@@ -43,20 +45,12 @@ public class TarantoolAsynchronousSpace {
     }
 
 
-    public TarantoolRecord<List<Value>> select(Value request){
-        return cast(transactionManager.callRO(SELECT, TarantoolResponseMapping::toValuesList, space, requestTuple(request)));
+    public SelectRequest select(Value request){
+        return new SelectRequest(request);
     }
 
-    public TarantoolRecord<List<Value>> select(String index, Value request){
-        return cast(transactionManager.callRO(SELECT, TarantoolResponseMapping::toValuesList, space, requestTuple(request), index));
-    }
-
-    public TarantoolRecord<List<Value>> select(TarantoolTransactionDependency requestDependency){
-        return cast(transactionManager.callRO(SELECT, TarantoolResponseMapping::toValuesList, space, requestDependency.get()));
-    }
-
-    public TarantoolRecord<List<Value>> select(String index, TarantoolTransactionDependency requestDependency){
-        return cast(transactionManager.callRO(SELECT, TarantoolResponseMapping::toValuesList, space, requestDependency.get(), index));
+    public SelectRequest select(TarantoolTransactionDependency requestDependency){
+        return new SelectRequest(requestDependency);
     }
 
 
@@ -145,6 +139,52 @@ public class TarantoolAsynchronousSpace {
 
     public TarantoolRecord<Set<String>> listIndices(){
         return cast(transactionManager.callRO(LIST_INDICES, TarantoolResponseMapping::toStringSet, space));
+    }
+
+    public class SelectRequest {
+        private final Object request;
+        private Map<String, Object> options = MapFactory.map();
+        private Object index = 0;
+
+        public SelectRequest(Value request) {
+            this.request = requestTuple(request);
+        }
+
+        public SelectRequest(TarantoolTransactionDependency requestDependency) {
+            this.request = requestDependency.get();
+        }
+
+        public SelectRequest index(String index) {
+            this.index = index;
+            return this;
+        }
+
+        public SelectRequest limit(Long limit) {
+            options.put(LIMIT, limit);
+            return this;
+        }
+
+        public SelectRequest offset(Long offset) {
+            options.put(OFFSET, offset);
+            return this;
+        }
+
+        public SelectRequest iterator(TarantoolModuleConstants.TarantoolIndexIterator iterator){
+            options.put(ITERATOR, iterator.toString());
+            return this;
+        }
+
+        public TarantoolRecord<List<Value>> fetch(){
+            return cast(transactionManager.callRO(SELECT, TarantoolResponseMapping::toValuesList, space, request, index, options));
+        }
+
+        public List<Value> get(){
+            return fetch().get();
+        }
+
+        public Stream<Value> stream() {
+            return fetch().get().stream();
+        }
     }
     
 }

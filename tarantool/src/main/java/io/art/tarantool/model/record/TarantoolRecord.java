@@ -3,6 +3,7 @@ package io.art.tarantool.model.record;
 import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
 
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface TarantoolRecord<T>{
@@ -32,4 +33,6 @@ public interface TarantoolRecord<T>{
     T orElseThrow();
 
     <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X;
+
+    <U> Optional<U> map(Function<? super T, ? extends U> mapper);
 }

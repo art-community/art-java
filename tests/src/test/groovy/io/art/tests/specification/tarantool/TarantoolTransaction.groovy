@@ -82,7 +82,9 @@ class TarantoolTransaction extends Specification {
         when:
         db.beginTransaction()
         result1 = space.autoIncrement(data)
-        result2 = space.select('data', result1.useResultField('data'))
+        result2 = space.select(result1.useResultField('data'))
+                .index('data')
+                .fetch()
         db.commitTransaction()
         result1.synchronize()
         then:

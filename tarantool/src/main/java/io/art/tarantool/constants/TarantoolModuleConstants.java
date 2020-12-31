@@ -126,7 +126,15 @@ public interface TarantoolModuleConstants {
     }
 
     enum TarantoolIndexIterator{
-
+        EQ,
+        REQ,
+        GT,
+        GE,
+        ALL,
+        LT,
+        LE,
+        OVERLAPS,
+        NEIGHBOR
     }
 
 

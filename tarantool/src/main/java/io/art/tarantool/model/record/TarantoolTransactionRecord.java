@@ -23,6 +23,7 @@ public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
     private final int transactionEntryNumber;
     private CompletableFuture<Optional<T>> futureResult;
     private final Function<List<?>, Optional<T>> responseMapper;
+    private Function<T, Object> mapper;
 
     public TarantoolTransactionRecord(int transactionEntryNumber, Function<List<?>, Optional<?>> responseMapper){
         this.transactionEntryNumber = transactionEntryNumber;

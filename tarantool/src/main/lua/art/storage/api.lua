@@ -107,8 +107,8 @@ local api = {
         return result
     end,
 
-    select = function(space, request, index)
-        return art.core.atomic(art.box.select, space, request, index)
+    select = function(space, request, index, ...)
+        return art.core.atomic(art.box.select, space, request, index, ...)
     end
 }
 

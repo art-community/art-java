@@ -4,11 +4,13 @@ import io.art.tarantool.model.operation.TarantoolUpdateFieldOperation;
 import io.art.tarantool.transaction.TarantoolTransactionManager;
 import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
 import io.art.tarantool.model.record.TarantoolRecord;
+import io.art.tarantool.space.TarantoolAsynchronousSpace.SelectRequest;
 import io.art.value.immutable.Value;
 import lombok.*;
 import org.apache.logging.log4j.*;
 
 import java.util.*;
+
 
 import static io.art.logging.LoggingModule.*;
 import static lombok.AccessLevel.*;
@@ -40,20 +42,12 @@ public class TarantoolSpace {
     }
 
 
-    public TarantoolRecord<List<Value>> select(Value request){
-        return asynchronousSpace.select(request).synchronize();
+    public SelectRequest select(Value request){
+        return asynchronousSpace.select(request);
     }
 
-    public TarantoolRecord<List<Value>> select(TarantoolTransactionDependency requestDependency){
-        return asynchronousSpace.select(requestDependency).synchronize();
-    }
-
-    public TarantoolRecord<List<Value>> select(String index, Value request){
-        return asynchronousSpace.select(index, request).synchronize();
-    }
-
-    public TarantoolRecord<List<Value>> select(String index, TarantoolTransactionDependency requestDependency){
-        return asynchronousSpace.select(index, requestDependency).synchronize();
+    public SelectRequest select(TarantoolTransactionDependency requestDependency){
+        return asynchronousSpace.select(requestDependency);
     }
 
 

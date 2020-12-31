@@ -86,7 +86,7 @@ class Tarantool extends Specification {
         when:
         request = intPrimitive(2)
         then:
-        space.get(request).isEmpty() && space.select(request).isEmpty()
+        space.get(request).isEmpty() && space.select(request).fetch().isEmpty()
 
 
         when:
@@ -218,7 +218,7 @@ class Tarantool extends Specification {
         request = intPrimitive(2)
         then:
         true
-        space.get(request).isEmpty() && space.select(request).isEmpty()
+        space.get(request).isEmpty() && space.select(request).fetch().isEmpty()
 
 
         when:
@@ -436,7 +436,7 @@ class Tarantool extends Specification {
         when:
         request = intPrimitive(2)
         then:
-        space.get(request).isEmpty() && space.select(request).isEmpty()
+        space.get(request).isEmpty() && space.select(request).fetch().isEmpty()
 
 
         when:
