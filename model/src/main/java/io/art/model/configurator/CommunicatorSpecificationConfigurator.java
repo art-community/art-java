@@ -31,7 +31,7 @@ import java.util.function.*;
 public class CommunicatorSpecificationConfigurator {
     private final String id;
     private final Class<?> implementationInterface;
-    private Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> decorator = builder -> builder.implementation(RsocketCommunicatorImplementation.builder()
+    private final Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> decorator = builder -> builder.implementation(RsocketCommunicatorImplementation.builder()
             .client(rsocketModule().state().getClient(getId()))
             .build());
 
