@@ -16,23 +16,19 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation;
+package io.art.model.implementation.communicator;
 
-import io.art.model.customizer.*;
+import io.art.communicator.specification.CommunicatorSpecification.*;
+import io.art.core.collection.*;
 import lombok.*;
-import java.util.function.*;
+import static io.art.core.checker.NullityChecker.*;
 
 @Getter
-@Builder
-public class ModuleModel {
-    private final String mainModuleId;
-    private final ServerModel serverModel;
-    private final CommunicatorModel communicatorModel;
-    @Builder.Default
-    private ModuleCustomizer moduleCustomizer = new ModuleCustomizer();
+@RequiredArgsConstructor
+public class CommunicatorModel {
+    private final ImmutableMap<String, CommunicatorSpecificationModel> communicators;
 
-    public ModuleModel customize(UnaryOperator<ModuleCustomizer> customizer) {
-        moduleCustomizer = customizer.apply(new ModuleCustomizer());
-        return this;
+    public CommunicatorSpecificationBuilder implement(String id, CommunicatorSpecificationBuilder current) {
+        return let(communicators.get(id), communicator -> communicator.implement(current));
     }
 }

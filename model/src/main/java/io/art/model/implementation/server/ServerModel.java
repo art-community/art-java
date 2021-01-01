@@ -16,19 +16,27 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation;
+package io.art.model.implementation.server;
 
 import io.art.core.collection.*;
+import lombok.Builder;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.server.specification.ServiceMethodSpecification.*;
+import java.util.Map.*;
 
 @Getter
-@RequiredArgsConstructor
+@Builder
 public class ServerModel {
-    private final ImmutableMap<String, ServiceModel> services;
+    @Builder.Default
+    private final ImmutableMap<String, RsocketServiceModel> rsocketServices = emptyImmutableMap();
 
     public ServiceMethodSpecificationBuilder implement(String serviceId, String methodId, ServiceMethodSpecificationBuilder current) {
-        return let(services.get(serviceId), service -> service.implement(methodId, current));
+        return let(getServices().get(serviceId), service -> service.implement(methodId, current));
+    }
+
+    public ImmutableMap<String, ServiceModel> getServices() {
+        return rsocketServices.entrySet().stream().collect(immutableMapCollector(Entry::getKey, Entry::getValue));
     }
 }

@@ -16,19 +16,20 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation;
+package io.art.model.implementation.communicator;
 
 import io.art.communicator.specification.CommunicatorSpecification.*;
-import io.art.core.collection.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
+import java.util.function.*;
 
 @Getter
 @RequiredArgsConstructor
-public class CommunicatorModel {
-    private final ImmutableMap<String, CommunicatorSpecificationModel> communicators;
+public class CommunicatorSpecificationModel {
+    private final String id;
+    private final Class<?> implementationInterface;
+    private final Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> decorator;
 
-    public CommunicatorSpecificationBuilder implement(String id, CommunicatorSpecificationBuilder current) {
-        return let(communicators.get(id), communicator -> communicator.implement(current));
+    public CommunicatorSpecificationBuilder implement(CommunicatorSpecificationBuilder builder) {
+        return decorator.apply(builder);
     }
 }

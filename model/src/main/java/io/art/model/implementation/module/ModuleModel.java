@@ -16,20 +16,25 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation;
+package io.art.model.implementation.module;
 
-import io.art.communicator.specification.CommunicatorSpecification.*;
+import io.art.model.customizer.*;
+import io.art.model.implementation.communicator.*;
+import io.art.model.implementation.server.*;
 import lombok.*;
 import java.util.function.*;
 
 @Getter
-@RequiredArgsConstructor
-public class CommunicatorSpecificationModel {
-    private final String id;
-    private final Class<?> implementationInterface;
-    private final Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> decorator;
+@Builder
+public class ModuleModel {
+    private final String mainModuleId;
+    private final ServerModel serverModel;
+    private final CommunicatorModel communicatorModel;
+    @Builder.Default
+    private ModuleCustomizer moduleCustomizer = new ModuleCustomizer();
 
-    public CommunicatorSpecificationBuilder implement(CommunicatorSpecificationBuilder builder) {
-        return decorator.apply(builder);
+    public ModuleModel customize(UnaryOperator<ModuleCustomizer> customizer) {
+        moduleCustomizer = customizer.apply(new ModuleCustomizer());
+        return this;
     }
 }

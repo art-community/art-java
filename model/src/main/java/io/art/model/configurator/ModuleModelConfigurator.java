@@ -26,7 +26,7 @@ import java.util.function.*;
 @Getter
 @RequiredArgsConstructor
 public class ModuleModelConfigurator {
-    private final String mainModuleId;
+    private final String moduleId;
     private final ServerModelConfigurator server = new ServerModelConfigurator();
     private final CommunicatorModelConfigurator communicator = new CommunicatorModelConfigurator();
 
@@ -42,7 +42,7 @@ public class ModuleModelConfigurator {
 
     public ModuleModel configure() {
         return ModuleModel.builder()
-                .mainModuleId(mainModuleId)
+                .mainModuleId(moduleId)
                 .serverModel(server.configure())
                 .communicatorModel(communicator.configure())
                 .build();
