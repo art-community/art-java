@@ -19,24 +19,22 @@
 package io.art.model.customizer;
 
 import io.art.communicator.configuration.*;
-import io.art.communicator.specification.*;
+import io.art.communicator.registry.*;
 import io.art.core.collection.*;
-import io.art.server.configuration.*;
-import io.art.server.registry.*;
 import lombok.*;
 
 public class CommunicatorCustomizer {
     @Getter
-    private final CustomServerModuleConfiguration configuration = new CustomServerModuleConfiguration();
+    private final Custom configuration = new Custom();
 
-    public CommunicatorCustomizer registry(ImmutableMap<String, Object> registry) {
+    public CommunicatorCustomizer registry(CommunicatorProxyRegistry registry) {
         configuration.registry = registry;
         return this;
     }
 
     @Getter
-    public static class CustomServerModuleConfiguration extends CommunicatorModuleConfiguration {
-        private ImmutableMap<String, CommunicatorConfiguration> communicators;
-        private ImmutableMap<String, Object> registry;
+    private static class Custom extends CommunicatorModuleConfiguration {
+        private ImmutableMap<String, CommunicatorConfiguration> configurations;
+        private CommunicatorProxyRegistry registry;
     }
 }

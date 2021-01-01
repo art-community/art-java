@@ -23,7 +23,7 @@ import lombok.*;
 
 public class RsocketCustomizer {
     @Getter
-    private final CustomRsocketModuleConfiguration configuration = new CustomRsocketModuleConfiguration();
+    private final Custom configuration = new Custom();
 
     public RsocketCustomizer activateServer() {
         configuration.activateServer = true;
@@ -36,7 +36,7 @@ public class RsocketCustomizer {
     }
 
     @Getter
-    public static class CustomRsocketModuleConfiguration extends RsocketModuleConfiguration {
+    public static class Custom extends RsocketModuleConfiguration {
         private boolean activateServer;
         private boolean activateCommunicator;
     }

@@ -19,7 +19,6 @@
 package io.art.rsocket.communicator;
 
 import io.art.communicator.implementation.*;
-import io.art.core.lazy.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.payload.*;
 import io.art.value.immutable.Value;
@@ -27,21 +26,26 @@ import io.rsocket.core.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.value.constants.ValueConstants.*;
 import static lombok.AccessLevel.*;
 
 @Builder
 public class RsocketCommunicatorImplementation implements CommunicatorImplementation {
-    private final LazyValue<RSocketClient> client;
+    private final String connectorId;
     private final CommunicationMode communicationMode;
     private final DataFormat dataFormat;
     private final DataFormat metadataFormat;
 
     @Getter(lazy = true, value = PRIVATE)
-    private final RsocketPayloadWriter writer = new RsocketPayloadWriter(dataFormat, metadataFormat);
+    private final RsocketPayloadWriter writer = new RsocketPayloadWriter(getDataFormat(), getMetaDataFormat());
 
     @Getter(lazy = true, value = PRIVATE)
-    private final RsocketPayloadReader reader = new RsocketPayloadReader(dataFormat, metadataFormat);
+    private final RsocketPayloadReader reader = new RsocketPayloadReader(getDataFormat(), getMetaDataFormat());
+
+    @Getter(lazy = true, value = PRIVATE)
+    private final RSocketClient client = rsocketModule().state().getClient(connectorId).get();
 
     @Override
     public Flux<Value> communicate(Flux<Value> input) {
@@ -49,23 +53,31 @@ public class RsocketCommunicatorImplementation implements CommunicatorImplementa
         RsocketPayloadReader reader = getReader();
         switch (communicationMode) {
             case FIRE_AND_FORGET:
-                return cast(client.get().fireAndForget(input.map(writer::writePayloadData).last()).flux());
+                return cast(getClient().fireAndForget(input.map(writer::writePayloadData).last()).flux());
             case REQUEST_RESPONSE:
-                return client.get()
+                return getClient()
                         .requestResponse(input.map(writer::writePayloadData).last())
                         .flux()
                         .map(payload -> reader.readPayloadData(payload).getValue());
             case REQUEST_STREAM:
-                return client.get()
+                return getClient()
                         .requestStream(input.map(writer::writePayloadData).last())
                         .map(payload -> reader.readPayloadData(payload).getValue());
             case REQUEST_CHANNEL:
-                return client.get()
+                return getClient()
                         .requestChannel(input.map(writer::writePayloadData))
                         .map(payload -> reader.readPayloadData(payload).getValue());
             case METADATA_PUSH:
-                return cast(client.get().metadataPush(input.map(writer::writePayloadData).last()).flux());
+                return cast(getClient().metadataPush(input.map(writer::writePayloadData).last()).flux());
         }
         throw new IllegalStateException();
+    }
+
+    private DataFormat getDataFormat() {
+        return orElse(dataFormat, rsocketModule().configuration().getCommunicatorConfiguration().getDefaultDataFormat());
+    }
+
+    private DataFormat getMetaDataFormat() {
+        return orElse(metadataFormat, rsocketModule().configuration().getCommunicatorConfiguration().getDefaultMetaDataFormat());
     }
 }

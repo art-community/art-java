@@ -133,7 +133,7 @@ public class ModuleLauncher {
         if (isNotEmpty(serverModel.getRsocketServices())) {
             rsocketCustomizer.activateServer();
         }
-        if (!communicatorModel.getCommunicators().isEmpty()) {
+        if (isNotEmpty(communicatorModel.getCommunicators())) {
             rsocketCustomizer.activateCommunicator();
         }
         rsocket.configure(configurator -> configurator.from(sources).override(rsocketCustomizer.getConfiguration()));

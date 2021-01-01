@@ -20,20 +20,16 @@ package io.art.model.configurator;
 
 import io.art.communicator.specification.CommunicatorSpecification.*;
 import io.art.model.implementation.communicator.*;
-import io.art.rsocket.communicator.*;
 import lombok.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
-public class CommunicatorSpecificationConfigurator {
+public class CommunicatorSpecificationModelConfigurator {
     private final String id;
     private final Class<?> implementationInterface;
-    private final Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> decorator = builder -> builder.implementation(RsocketCommunicatorImplementation.builder()
-            .client(rsocketModule().state().getClient(getId()))
-            .build());
+    private final Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> decorator;
 
     CommunicatorSpecificationModel configure() {
         return new CommunicatorSpecificationModel(id, implementationInterface, decorator);

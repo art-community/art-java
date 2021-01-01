@@ -16,15 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.model.customizer;
+package io.art.communicator.exception;
 
-import io.art.value.configuration.*;
-import lombok.*;
-
-public class ValueCustomizer {
-    @Getter
-    private final Custom configuration = new Custom();
-
-    private static class Custom extends ValueModuleConfiguration {
+public class CommunicatorModuleException extends RuntimeException {
+    public CommunicatorModuleException(String message) {
+        super(message);
     }
 }

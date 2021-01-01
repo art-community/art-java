@@ -21,29 +21,36 @@ package io.art.model.configurator;
 import io.art.core.collection.*;
 import io.art.model.implementation.communicator.*;
 import lombok.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collection.ImmutableSet.*;
+import static java.util.Arrays.*;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 @Getter(value = PACKAGE)
 public class CommunicatorModelConfigurator {
-    private final ImmutableSet.Builder<CommunicatorSpecificationConfigurator> communicators = immutableSetBuilder();
+    private final ImmutableSet.Builder<CommunicatorSpecificationModelConfigurator> communicators = immutableSetBuilder();
 
-    public CommunicatorModelConfigurator rsocket(Class<?> implementationInterface) {
-        return rsocket(implementationInterface, UnaryOperator.identity());
-    }
-
-    public CommunicatorModelConfigurator rsocket(Class<?> implementationInterface, UnaryOperator<CommunicatorSpecificationConfigurator> modeler) {
-        communicators.add(modeler.apply(new CommunicatorSpecificationConfigurator(implementationInterface.getSimpleName(), implementationInterface)));
+    @SafeVarargs
+    public final CommunicatorModelConfigurator rsocket(Class<?> implementationInterface, UnaryOperator<CommunicatorSpecificationModelConfigurator>... configurators) {
+        if (isEmpty(configurators)) {
+            communicators.add(new CommunicatorSpecificationModelConfigurator(implementationInterface.getSimpleName(), implementationInterface, Function.identity()));
+            return this;
+        }
+        stream(configurators)
+                .map(configurator -> (Function<CommunicatorSpecificationModelConfigurator, CommunicatorSpecificationModelConfigurator>) configurator)
+                .reduce(Function::andThen)
+                .map(configurator -> configurator.apply(new CommunicatorSpecificationModelConfigurator(implementationInterface.getSimpleName(), implementationInterface, Function.identity())))
+                .ifPresent(communicators::add);
         return this;
     }
 
     CommunicatorModel configure() {
         ImmutableMap<String, CommunicatorSpecificationModel> communicators = this.communicators.build()
                 .stream()
-                .map(CommunicatorSpecificationConfigurator::configure)
+                .map(CommunicatorSpecificationModelConfigurator::configure)
                 .collect(immutableMapCollector(CommunicatorSpecificationModel::getId, identity()));
         return new CommunicatorModel(communicators);
     }

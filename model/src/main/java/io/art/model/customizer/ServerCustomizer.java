@@ -24,7 +24,7 @@ import lombok.*;
 
 public class ServerCustomizer {
     @Getter
-    private final CustomServerModuleConfiguration configuration = new CustomServerModuleConfiguration();
+    private final Custom configuration = new Custom();
 
     public ServerCustomizer registry(ServiceSpecificationRegistry registry) {
         configuration.registry = registry;
@@ -32,7 +32,7 @@ public class ServerCustomizer {
     }
 
     @Getter
-    public static class CustomServerModuleConfiguration extends ServerModuleConfiguration {
+    private static class Custom extends ServerModuleConfiguration {
         private ServiceSpecificationRegistry registry;
     }
 }

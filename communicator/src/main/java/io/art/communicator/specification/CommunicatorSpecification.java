@@ -32,7 +32,7 @@ import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
+import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -63,20 +63,22 @@ public class CommunicatorSpecification {
     private final CommunicatorModuleConfiguration moduleConfiguration = communicatorModule().configuration();
 
     @Getter(lazy = true)
-    private final CommunicatorConfiguration communicatorConfiguration = getModuleConfiguration().getCommunicators().get(communicatorId);
+    private final CommunicatorConfiguration communicatorConfiguration = getModuleConfiguration().getConfigurations().get(communicatorId);
 
-    public Object communicate(Object input) {
+    public <T> T communicate() {
         Scheduler scheduler = let(getCommunicatorConfiguration(), CommunicatorConfiguration::getScheduler, getModuleConfiguration().getScheduler());
-        return mapOutput(Flux.defer(() -> deferredCommunicate(input)).subscribeOn(scheduler));
+        return cast(mapOutput(defer(() -> deferredCommunicate(null)).subscribeOn(scheduler)));
+    }
+
+    public <T> T communicate(Object input) {
+        Scheduler scheduler = let(getCommunicatorConfiguration(), CommunicatorConfiguration::getScheduler, getModuleConfiguration().getScheduler());
+        return cast(mapOutput(defer(() -> deferredCommunicate(input)).subscribeOn(scheduler)));
     }
 
     private Flux<Value> deferredCommunicate(Object input) {
         try {
-            Flux<Value> output = implementation.communicate(mapInput(input));
-            if (isNull(output)) {
-                return Flux.empty();
-            }
-            return output;
+            Flux<Value> output = implementation.communicate(let(input, this::mapInput, empty()));
+            return orElse(output, empty());
         } catch (Throwable throwable) {
             return mapException(throwable);
         }
@@ -86,11 +88,11 @@ public class CommunicatorSpecification {
         Flux<Object> inputFlux;
         switch (inputMode) {
             case BLOCKING:
-                inputFlux = Flux.just(input);
+                inputFlux = just(input);
                 break;
             case MONO:
             case FLUX:
-                inputFlux = Flux.from(cast(input));
+                inputFlux = from(cast(input));
                 break;
             default:
                 throw new CommunicatorException(format(UNKNOWN_INPUT_MODE, inputMode), getCommunicatorId());
@@ -101,7 +103,7 @@ public class CommunicatorSpecification {
         }
         return inputFlux
                 .map(value -> inputMapper.map(cast(value)))
-                .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
+                .onErrorResume(Throwable.class, throwable -> just(exceptionMapper.map(throwable)));
     }
 
     private Object mapOutput(Flux<Value> output) {
@@ -109,7 +111,7 @@ public class CommunicatorSpecification {
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
             mappedOutput = mappedOutput.transformDeferred(decorator);
         }
-        mappedOutput = mappedOutput.onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)));
+        mappedOutput = mappedOutput.onErrorResume(Throwable.class, throwable -> just(exceptionMapper.map(throwable)));
         switch (outputMode) {
             case BLOCKING:
                 return mappedOutput.blockFirst();
@@ -123,12 +125,12 @@ public class CommunicatorSpecification {
     }
 
     private Flux<Value> mapException(Throwable exception) {
-        Flux<Object> errorOutput = Flux.error(exception);
+        Flux<Object> errorOutput = error(exception);
         for (UnaryOperator<Flux<Object>> decorator : exceptionDecorators) {
             errorOutput = errorOutput.transformDeferred(decorator);
         }
         return errorOutput
-                .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
+                .onErrorResume(Throwable.class, throwable -> just(exceptionMapper.map(throwable)))
                 .cast(Value.class);
     }
 }
