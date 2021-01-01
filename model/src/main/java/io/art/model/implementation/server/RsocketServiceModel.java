@@ -16,29 +16,30 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation;
+package io.art.model.implementation.server;
 
 import io.art.core.collection.*;
 import io.art.model.constants.ModelConstants.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.model.constants.ModelConstants.ConfiguratorScope.*;
 import java.util.function.*;
 
 @Getter
 @Builder
-public class ServiceModel {
+public class RsocketServiceModel implements ServiceModel {
     private final Class<?> serviceClass;
     private final String id;
-    private final boolean includeAllMethods;
-    private final Protocol protocol;
-    private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> anyMethodDecorator;
-    private final ImmutableMap<String, ServiceMethodModel> concreteMethods;
+    private final ConfiguratorScope scope;
+    private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> classDecorator;
+    private final ImmutableMap<String, RsocketServiceMethodModel> methods;
 
+    @Override
     public ServiceMethodSpecificationBuilder implement(String id, ServiceMethodSpecificationBuilder current) {
-        if (includeAllMethods) {
-            return let(anyMethodDecorator, decorator -> decorator.apply(id, current));
+        if (scope == CLASS) {
+            return let(classDecorator, decorator -> decorator.apply(id, current));
         }
-        return let(concreteMethods.get(id), methodModel -> methodModel.implement(current));
+        return let(methods.get(id), methodModel -> methodModel.implement(current));
     }
 }

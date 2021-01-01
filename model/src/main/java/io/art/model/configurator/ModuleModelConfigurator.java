@@ -18,7 +18,7 @@
 
 package io.art.model.configurator;
 
-import io.art.model.implementation.*;
+import io.art.model.implementation.module.*;
 import lombok.*;
 import static io.art.model.constants.ModelConstants.*;
 import java.util.function.*;

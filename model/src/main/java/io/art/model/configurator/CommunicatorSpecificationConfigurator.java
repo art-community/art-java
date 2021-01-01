@@ -19,7 +19,7 @@
 package io.art.model.configurator;
 
 import io.art.communicator.specification.CommunicatorSpecification.*;
-import io.art.model.implementation.*;
+import io.art.model.implementation.communicator.*;
 import io.art.rsocket.communicator.*;
 import lombok.*;
 import static io.art.rsocket.module.RsocketModule.*;

@@ -26,12 +26,13 @@ import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.context.*;
 import io.art.core.lazy.*;
 import io.art.core.module.*;
-import io.art.core.module.Module;
 import io.art.core.source.*;
 import io.art.json.module.*;
 import io.art.logging.*;
 import io.art.model.customizer.*;
-import io.art.model.implementation.*;
+import io.art.model.implementation.communicator.*;
+import io.art.model.implementation.module.*;
+import io.art.model.implementation.server.*;
 import io.art.rsocket.module.*;
 import io.art.server.module.*;
 import io.art.tarantool.module.*;
@@ -39,6 +40,7 @@ import io.art.value.module.*;
 import io.art.xml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
@@ -46,7 +48,6 @@ import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.launcher.ModuleLauncherConstants.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.model.constants.ModelConstants.Protocol.*;
 import static java.util.Optional.*;
 import java.util.concurrent.atomic.*;
 
@@ -129,7 +130,7 @@ public class ModuleLauncher {
         RsocketModule rsocket = new RsocketModule();
         ServerModel serverModel = model.getServerModel();
         CommunicatorModel communicatorModel = model.getCommunicatorModel();
-        if (serverModel.getServices().values().stream().anyMatch(service -> service.getProtocol() == RSOCKET)) {
+        if (isNotEmpty(serverModel.getRsocketServices())) {
             rsocketCustomizer.activateServer();
         }
         if (!communicatorModel.getCommunicators().isEmpty()) {
