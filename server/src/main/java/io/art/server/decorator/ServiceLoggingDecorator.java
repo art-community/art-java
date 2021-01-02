@@ -20,7 +20,7 @@ package io.art.server.decorator;
 
 import io.art.core.constants.*;
 import io.art.core.lazy.*;
-import io.art.server.model.*;
+import io.art.core.model.*;
 import io.art.server.specification.*;
 import lombok.*;
 import org.apache.logging.log4j.*;

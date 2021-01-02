@@ -16,23 +16,21 @@
  * limitations under the License.
  */
 
-package io.art.server.model;
+package io.art.core.model;
 
-import io.art.value.immutable.*;
-import lombok.Value;
-import static io.art.value.factory.PrimitivesFactory.*;
-import static io.art.value.immutable.Entity.*;
+import lombok.*;
+import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.factory.MapFactory.*;
+import java.util.*;
 
 @Value
 public class ServiceMethodIdentifier {
+    private final static Map<String, ServiceMethodIdentifier> CACHE = concurrentHashMap() ;
     String serviceId;
     String methodId;
 
     public static ServiceMethodIdentifier serviceMethod(String serviceId, String methodId) {
-        return new ServiceMethodIdentifier(serviceId, methodId);
-    }
-
-    public Entity toEntity() {
-        return entityBuilder().put(stringPrimitive("serviceId"), stringPrimitive(serviceId)).put(stringPrimitive("methodId"), stringPrimitive(methodId)).build();
+        return putIfAbsent(CACHE, EMPTY_STRING + serviceId + methodId, () -> new ServiceMethodIdentifier(serviceId, methodId));
     }
 }

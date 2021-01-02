@@ -23,7 +23,7 @@ import io.art.server.decorator.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
-import static io.art.server.model.ServiceMethodIdentifier.*;
+import static io.art.core.model.ServiceMethodIdentifier.serviceMethod;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;

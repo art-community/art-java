@@ -20,7 +20,6 @@ package io.art.model.configurator;
 
 import io.art.communicator.specification.CommunicatorSpecification.*;
 import io.art.model.implementation.communicator.*;
-import io.art.server.model.*;
 import lombok.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
@@ -31,14 +30,23 @@ public class CommunicatorSpecificationModelConfigurator {
     private final String id;
     private final Class<?> proxyClass;
     private final Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> decorator;
-    private String serviceId;
+    private String targetServiceId;
 
     public CommunicatorSpecificationModelConfigurator to(Class<?> targetService) {
-        serviceId = targetService.getSimpleName();
+        return to(targetService.getSimpleName());
+    }
+
+    public CommunicatorSpecificationModelConfigurator to(String targetServiceId) {
+        this.targetServiceId = targetServiceId;
         return this;
     }
 
     CommunicatorSpecificationModel configure() {
-        return new CommunicatorSpecificationModel(id, proxyClass, serviceId, decorator);
+        return CommunicatorSpecificationModel.builder()
+                .id(id)
+                .proxyClass(proxyClass)
+                .targetServiceId(targetServiceId)
+                .decorator(decorator)
+                .build();
     }
 }

@@ -19,6 +19,7 @@
 package io.art.rsocket.configuration;
 
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.server.model.*;
 import io.art.value.constants.ValueConstants.*;
@@ -30,9 +31,9 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.emptyImmutableMap;
 import static io.art.core.collection.ImmutableMap.immutableMapCollector;
+import static io.art.core.model.ServiceMethodIdentifier.serviceMethod;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
-import static io.art.server.model.ServiceMethodIdentifier.*;
 import static io.art.value.constants.ValueConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.util.Optional.*;

@@ -26,7 +26,7 @@ import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.server.model.ServiceMethodIdentifier.*;
+import static io.art.core.model.ServiceMethodIdentifier.serviceMethod;
 import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;

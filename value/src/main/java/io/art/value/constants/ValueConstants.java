@@ -28,7 +28,15 @@ import static io.art.value.factory.PrimitivesFactory.*;
 import static java.text.MessageFormat.*;
 
 public interface ValueConstants {
+    interface Keys {
+        String SERVICE_ID_KEY = "serviceId";
+        String METHOD_ID_KEY = "methodId";
+        String SERVICE_METHOD_IDENTIFIERS_KEY = "serviceMethodIdentifiers";
+    }
+
     interface ExceptionMessages {
+        String SERVICE_ID_NOT_PRESENTED = "Key 'serviceId' was not presented in: {0}";
+        String METHOD_ID_NOT_PRESENTED = "Key 'methodId' was not presented in: {0}";
         String UNKNOWN_VALUE_TYPE = "Unknown value type: ''{0}''";
         String TUPLE_NOT_SUPPORTED_VALUE_TYPE = "Value type: ''{0}'' not support for tuples";
         String NOT_PRIMITIVE_TYPE = "Not primitive type: ''{0}''";

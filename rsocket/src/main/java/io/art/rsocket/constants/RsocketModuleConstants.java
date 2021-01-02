@@ -23,7 +23,7 @@ import java.time.*;
 
 public interface RsocketModuleConstants {
     interface ExceptionMessages {
-        String SPECIFICATION_NOT_FOUND = "Setup payload was null or not contained serviceId, methodId. Default service method id was not specified in configuration";
+        String SPECIFICATION_NOT_FOUND = "Specification was not found for service method identifiers: {0}";
         String CONFIGURATION_PARAMETER_NOT_EXISTS = "RSocket configuration parameter does not exists: ''{0}''";
     }
 
@@ -101,7 +101,8 @@ public interface RsocketModuleConstants {
 
     interface ContextKeys {
         String REQUESTER_RSOCKET_KEY = "requesterRsocket";
-        String SETUP_PAYLOAD = "setupPayload";
+        String SETUP_PAYLOAD_KEY = "setupPayload";
+        String SPECIFICATION_KEY = "specification";
     }
 
     interface Defaults {

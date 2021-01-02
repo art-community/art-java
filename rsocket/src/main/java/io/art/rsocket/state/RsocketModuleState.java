@@ -19,7 +19,6 @@
 package io.art.rsocket.state;
 
 import io.art.core.collection.*;
-import io.art.core.factory.*;
 import io.art.core.lazy.*;
 import io.art.core.module.*;
 import io.art.rsocket.model.*;
@@ -43,6 +42,10 @@ public class RsocketModuleState implements ModuleState {
 
     public void registerRequester(RSocket socket) {
         requesters.add(socket);
+    }
+
+    public void disposeRequester(RSocket socket) {
+        requesters.remove(socket);
     }
 
     public ImmutableArray<RSocket> getRequesters() {
@@ -84,7 +87,7 @@ public class RsocketModuleState implements ModuleState {
 
         public static RsocketThreadLocalState fromContext(Context context) {
             RSocket requesterRsocket = context.get(REQUESTER_RSOCKET_KEY);
-            RsocketSetupPayload setupPayload = context.get(SETUP_PAYLOAD);
+            RsocketSetupPayload setupPayload = context.get(SETUP_PAYLOAD_KEY);
             return new RsocketThreadLocalState(requesterRsocket, setupPayload);
         }
     }

@@ -19,14 +19,14 @@
 package io.art.rsocket.socket;
 
 import io.art.core.mime.*;
+import io.art.core.model.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
 import io.art.rsocket.state.*;
-import io.art.server.model.*;
 import io.art.server.specification.*;
-import io.art.value.immutable.Value;
+import io.art.value.immutable.*;
 import io.rsocket.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
@@ -34,24 +34,29 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
+import static io.art.rsocket.model.RsocketSetupPayload.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.rsocket.state.RsocketModuleState.RsocketThreadLocalState.*;
 import static io.art.server.module.ServerModule.*;
 import static io.art.value.constants.ValueConstants.*;
+import static io.art.value.constants.ValueConstants.Keys.*;
+import static io.art.value.immutable.Value.*;
+import static io.art.value.mapping.ServiceIdMapping.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import java.util.*;
 import java.util.function.*;
 
 public class ServingRsocket implements RSocket {
-    private ServiceMethodSpecification specification;
     private final RsocketPayloadReader reader;
     private final RsocketPayloadWriter writer;
     private final RSocket requesterSocket;
     private final RsocketModuleState moduleState = rsocketModule().state();
     private final RsocketSetupPayload setupPayload;
     private final RsocketServerConfiguration serverConfiguration;
+
     private volatile Runnable onDispose;
+    private volatile ServiceMethodSpecification specification;
 
     public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket, RsocketServerConfiguration serverConfiguration) {
         this.serverConfiguration = serverConfiguration;
@@ -62,10 +67,17 @@ public class ServingRsocket implements RSocket {
         DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()), defaultMetaDataFormat);
         reader = new RsocketPayloadReader(dataFormat, metaDataFormat);
         writer = new RsocketPayloadWriter(dataFormat, metaDataFormat);
-        setupPayload = RsocketSetupPayload.builder()
+        RsocketPayloadValue payloadData = reader.readPayloadData(payload);
+        RsocketSetupPayloadBuilder setupPayloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(dataFormat)
-                .metadataFormat(metaDataFormat)
-                .build();
+                .metadataFormat(metaDataFormat);
+        Entity serviceIdentifiers;
+        if (isEntity(payloadData.getValue()) && nonNull(serviceIdentifiers = asEntity(asEntity(payloadData.getValue()).get(SERVICE_METHOD_IDENTIFIERS_KEY)))) {
+            ServiceMethodIdentifier serviceMethodId = toServiceMethod(serviceIdentifiers);
+            setupPayloadBuilder.serviceMethodId(serviceMethodId);
+            initializeSpecification(serviceMethodId);
+        }
+        setupPayload = setupPayloadBuilder.build();
     }
 
     @Override
@@ -104,12 +116,17 @@ public class ServingRsocket implements RSocket {
 
     @Override
     public Mono<Void> metadataPush(Payload payload) {
-        initializeSpecification(reader.readPayloadMetaData(payload));
+        RsocketPayloadValue payloadData = reader.readPayloadMetaData(payload);
+        Entity serviceIdentifiers;
+        if (isEntity(payloadData.getValue()) && nonNull(serviceIdentifiers = asEntity(asEntity(payloadData.getValue()).get(SERVICE_METHOD_IDENTIFIERS_KEY)))) {
+            initializeSpecification(toServiceMethod(serviceIdentifiers));
+        }
         return Mono.empty();
     }
 
     @Override
     public void dispose() {
+        moduleState.disposeRequester(this);
         apply(onDispose, Runnable::run);
     }
 
@@ -124,30 +141,21 @@ public class ServingRsocket implements RSocket {
                 .dematerialize()
                 .subscriberContext(context -> context
                         .putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket)
-                        .putNonNull(SETUP_PAYLOAD, setupPayload)));
+                        .putNonNull(SPECIFICATION_KEY, specification)
+                        .putNonNull(SETUP_PAYLOAD_KEY, setupPayload)));
     }
 
-    private void initializeSpecification(RsocketPayloadValue payloadValue) {
+    private void initializeSpecification(ServiceMethodIdentifier identifier) {
         ServiceMethodIdentifier defaultServiceMethod = serverConfiguration.getDefaultServiceMethod();
-        if (isNull(payloadValue) && isNull(defaultServiceMethod)) {
-            throw new RsocketException(SPECIFICATION_NOT_FOUND);
+        if (isNull(defaultServiceMethod)) {
+            this.specification = specifications()
+                    .findMethodById(identifier)
+                    .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, identifier)));
+            return;
         }
 
-        Optional<ServiceMethodSpecification> possibleSpecification = Optional.empty();
-        if (nonNull(payloadValue) && nonNull(payloadValue.getValue())) {
-            possibleSpecification = specifications().findMethodByValue(payloadValue.getValue());
-            if (!possibleSpecification.isPresent() && isNull(defaultServiceMethod)) {
-                throw new RsocketException(SPECIFICATION_NOT_FOUND);
-            }
-        }
-
-        if (!possibleSpecification.isPresent() && nonNull(defaultServiceMethod)) {
-            possibleSpecification = specifications().findMethodById(defaultServiceMethod);
-            if (!possibleSpecification.isPresent()) {
-                throw new RsocketException(SPECIFICATION_NOT_FOUND);
-            }
-        }
-
-        this.specification = possibleSpecification.get();
+        this.specification = specifications()
+                .findMethodById(defaultServiceMethod)
+                .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, defaultServiceMethod)));
     }
 }

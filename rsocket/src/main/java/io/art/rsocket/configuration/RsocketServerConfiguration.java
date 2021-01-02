@@ -19,10 +19,10 @@
 package io.art.rsocket.configuration;
 
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.rsocket.constants.*;
 import io.art.rsocket.interceptor.*;
-import io.art.server.model.*;
 import io.art.value.constants.ValueConstants.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
@@ -32,14 +32,13 @@ import reactor.netty.http.server.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableMap.emptyImmutableMap;
-import static io.art.core.collection.ImmutableMap.immutableMapCollector;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.NetworkConstants.*;
+import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
-import static io.art.server.model.ServiceMethodIdentifier.*;
 import static io.art.value.constants.ValueConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.util.Optional.*;
@@ -59,7 +58,7 @@ public class RsocketServerConfiguration {
     private PayloadDecoder payloadDecoder;
     private int maxInboundPayloadSize;
     private RsocketModuleConstants.TransportMode transport;
-    private Consumer<InterceptorRegistry> interceptorConfigurer;
+    private Consumer<InterceptorRegistry> interceptorConfigurator;
     private DataFormat defaultDataFormat;
     private DataFormat defaultMetaDataFormat;
 
@@ -72,7 +71,7 @@ public class RsocketServerConfiguration {
         configuration.payloadDecoder = PayloadDecoder.DEFAULT;
         configuration.maxInboundPayloadSize = FRAME_LENGTH_MASK;
         configuration.transport = TCP;
-        configuration.interceptorConfigurer = registry -> registry
+        configuration.interceptorConfigurator = registry -> registry
                 .forResponder(new RsocketLoggingInterceptor(configuration::isLogging))
                 .forRequester(new RsocketLoggingInterceptor(configuration::isLogging));
         configuration.tcpServer = TcpServer.create().port(DEFAULT_PORT).host(BROADCAST_IP_ADDRESS);
@@ -92,7 +91,7 @@ public class RsocketServerConfiguration {
                 : PayloadDecoder.ZERO_COPY;
         configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
         configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
-        configuration.interceptorConfigurer = registry -> registry
+        configuration.interceptorConfigurator = registry -> registry
                 .forResponder(new RsocketLoggingInterceptor(configuration::isLogging))
                 .forRequester(new RsocketLoggingInterceptor(configuration::isLogging));
 

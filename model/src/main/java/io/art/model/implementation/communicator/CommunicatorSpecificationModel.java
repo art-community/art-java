@@ -19,16 +19,15 @@
 package io.art.model.implementation.communicator;
 
 import io.art.communicator.specification.CommunicatorSpecification.*;
-import io.art.server.model.*;
 import lombok.*;
 import java.util.function.*;
 
 @Getter
-@RequiredArgsConstructor
+@Builder
 public class CommunicatorSpecificationModel {
     private final String id;
     private final Class<?> proxyClass;
-    private final String serviceId;
+    private final String targetServiceId;
     private final Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> decorator;
 
     public CommunicatorSpecificationBuilder implement(CommunicatorSpecificationBuilder builder) {

@@ -19,9 +19,9 @@
 package io.art.rsocket.communicator;
 
 import io.art.communicator.implementation.*;
+import io.art.core.model.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.payload.*;
-import io.art.server.model.*;
 import io.art.value.immutable.Value;
 import io.rsocket.core.*;
 import io.rsocket.util.*;
@@ -31,7 +31,8 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.value.constants.ValueConstants.*;
-import static io.art.value.factory.EntityFactory.*;
+import static io.art.value.mapping.ServiceIdMapping.fromServiceMethod;
+import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Mono.*;
 
@@ -41,7 +42,7 @@ public class RsocketCommunicatorImplementation implements CommunicatorImplementa
     private final CommunicationMode communicationMode;
     private final DataFormat dataFormat;
     private final DataFormat metadataFormat;
-    private final ServiceMethodIdentifier serviceMethod;
+    private final ServiceMethodIdentifier targetServiceMethod;
 
     @Getter(lazy = true, value = PRIVATE)
     private final RsocketPayloadWriter writer = new RsocketPayloadWriter(getDataFormat(), getMetaDataFormat());
@@ -54,9 +55,12 @@ public class RsocketCommunicatorImplementation implements CommunicatorImplementa
 
     @Override
     public Flux<Value> communicate(Flux<Value> input) {
-        return getClient()
-                .metadataPush(just(getWriter().writePayloadMetaData(emptyEntity(), serviceMethod.toEntity())))
-                .thenMany(processCommunication(input));
+        if (nonNull(targetServiceMethod)) {
+            return getClient()
+                    .metadataPush(just(getWriter().writePayloadMetaData(fromServiceMethod(targetServiceMethod))))
+                    .thenMany(processCommunication(input));
+        }
+        return processCommunication(input);
     }
 
     private Flux<Value> processCommunication(Flux<Value> input) {
@@ -78,6 +82,8 @@ public class RsocketCommunicatorImplementation implements CommunicatorImplementa
                 return getClient()
                         .requestChannel(input.map(writer::writePayloadData))
                         .map(payload -> reader.readPayloadData(payload).getValue());
+            case METADATA_PUSH:
+                return cast(getClient().metadataPush(input.map(writer::writePayloadMetaData).last(EmptyPayload.INSTANCE)).flux());
         }
         throw new IllegalStateException();
     }

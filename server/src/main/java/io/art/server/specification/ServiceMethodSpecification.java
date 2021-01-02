@@ -21,6 +21,7 @@ package io.art.server.specification;
 import io.art.core.annotation.*;
 import io.art.core.caster.*;
 import io.art.core.constants.*;
+import io.art.core.model.*;
 import io.art.server.configuration.*;
 import io.art.server.exception.*;
 import io.art.server.implementation.*;
@@ -32,6 +33,7 @@ import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.model.ServiceMethodIdentifier.serviceMethod;
 import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
@@ -112,7 +114,7 @@ public class ServiceMethodSpecification {
             case FLUX:
                 return mappedInput;
         }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_INPUT_MODE, inputMode), serviceId, methodId);
+        throw new ServiceMethodExecutionException(format(UNKNOWN_INPUT_MODE, inputMode), serviceMethod(serviceId, methodId));
     }
 
     private Flux<Value> mapOutput(Object output) {
@@ -126,7 +128,7 @@ public class ServiceMethodSpecification {
                 mappedOutput = Flux.from(cast(output));
                 break;
             default:
-                throw new ServiceMethodExecutionException(format(UNKNOWN_OUTPUT_MODE, outputMode), serviceId, methodId);
+                throw new ServiceMethodExecutionException(format(UNKNOWN_OUTPUT_MODE, outputMode), serviceMethod(serviceId, methodId));
         }
         mappedOutput = mappedOutput.filter(Objects::nonNull).filter(value -> !deactivated());
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {

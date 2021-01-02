@@ -18,6 +18,7 @@
 
 package io.art.rsocket.model;
 
+import io.art.core.model.*;
 import io.art.value.builder.*;
 import io.art.value.constants.ValueConstants.*;
 import io.art.server.model.*;

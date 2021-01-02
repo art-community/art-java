@@ -65,7 +65,7 @@ public class RsocketServer implements Server {
                     ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
                     : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
             Disposable disposable = server
-                    .interceptors(interceptorRegistry -> configuration.getInterceptorConfigurer().accept(interceptorRegistry))
+                    .interceptors(interceptorRegistry -> configuration.getInterceptorConfigurator().accept(interceptorRegistry))
                     .payloadDecoder(configuration.getPayloadDecoder())
                     .bind(transport)
                     .doOnSubscribe(subscription -> getLogger().info(SERVER_STARTED))
