@@ -84,6 +84,7 @@ public class ModuleLauncher {
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
             initialize(new DefaultContextConfiguration(model.getMainModuleId()), modules.build(), message -> logger.get().info(message));
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
+            model.getOnLoad().run();
             if (needBlock(rsocketCustomizer)) block();
         }
     }

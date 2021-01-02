@@ -29,6 +29,7 @@ public class ModuleModelConfigurator {
     private final String moduleId;
     private final ServerModelConfigurator server = new ServerModelConfigurator();
     private final CommunicatorModelConfigurator communicator = new CommunicatorModelConfigurator();
+    private Runnable onLoad = () -> {};
 
     public ModuleModelConfigurator serve(UnaryOperator<ServerModelConfigurator> server) {
         server.apply(this.server);
@@ -40,11 +41,17 @@ public class ModuleModelConfigurator {
         return this;
     }
 
+    public ModuleModelConfigurator onLoad(Runnable action) {
+        this.onLoad = action;
+        return this;
+    }
+
     public ModuleModel configure() {
         return ModuleModel.builder()
                 .mainModuleId(moduleId)
                 .serverModel(server.configure())
                 .communicatorModel(communicator.configure())
+                .onLoad(onLoad)
                 .build();
     }
 

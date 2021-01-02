@@ -56,6 +56,18 @@ public class NullityChecker {
         return nonNull(value) ? action.apply(value) : null;
     }
 
+    public static <T> T orNull(T value, Predicate<T> condition) {
+        return condition.test(value) ? value : null;
+    }
+
+    public static <T> T orNull(T value, Supplier<Boolean> condition) {
+        return condition.get() ? value : null;
+    }
+
+    public static <T> T orNull(T value, Boolean condition) {
+        return condition ? value : null;
+    }
+
     public static <T, R> R orNull(T value, Predicate<T> condition, Function<T, R> action) {
         return condition.test(value) ? action.apply(value) : null;
     }

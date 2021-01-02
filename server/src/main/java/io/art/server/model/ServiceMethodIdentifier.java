@@ -18,7 +18,10 @@
 
 package io.art.server.model;
 
-import lombok.*;
+import io.art.value.immutable.*;
+import lombok.Value;
+import static io.art.value.factory.PrimitivesFactory.*;
+import static io.art.value.immutable.Entity.*;
 
 @Value
 public class ServiceMethodIdentifier {
@@ -27,5 +30,9 @@ public class ServiceMethodIdentifier {
 
     public static ServiceMethodIdentifier serviceMethod(String serviceId, String methodId) {
         return new ServiceMethodIdentifier(serviceId, methodId);
+    }
+
+    public Entity toEntity() {
+        return entityBuilder().put(stringPrimitive("serviceId"), stringPrimitive(serviceId)).put(stringPrimitive("methodId"), stringPrimitive(methodId)).build();
     }
 }

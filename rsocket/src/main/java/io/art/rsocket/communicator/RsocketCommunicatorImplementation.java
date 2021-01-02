@@ -21,15 +21,19 @@ package io.art.rsocket.communicator;
 import io.art.communicator.implementation.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.payload.*;
+import io.art.server.model.*;
 import io.art.value.immutable.Value;
 import io.rsocket.core.*;
+import io.rsocket.util.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.value.constants.ValueConstants.*;
+import static io.art.value.factory.EntityFactory.*;
 import static lombok.AccessLevel.*;
+import static reactor.core.publisher.Mono.*;
 
 @Builder
 public class RsocketCommunicatorImplementation implements CommunicatorImplementation {
@@ -37,6 +41,7 @@ public class RsocketCommunicatorImplementation implements CommunicatorImplementa
     private final CommunicationMode communicationMode;
     private final DataFormat dataFormat;
     private final DataFormat metadataFormat;
+    private final ServiceMethodIdentifier serviceMethod;
 
     @Getter(lazy = true, value = PRIVATE)
     private final RsocketPayloadWriter writer = new RsocketPayloadWriter(getDataFormat(), getMetaDataFormat());
@@ -49,26 +54,30 @@ public class RsocketCommunicatorImplementation implements CommunicatorImplementa
 
     @Override
     public Flux<Value> communicate(Flux<Value> input) {
+        return getClient()
+                .metadataPush(just(getWriter().writePayloadMetaData(emptyEntity(), serviceMethod.toEntity())))
+                .thenMany(processCommunication(input));
+    }
+
+    private Flux<Value> processCommunication(Flux<Value> input) {
         RsocketPayloadWriter writer = getWriter();
         RsocketPayloadReader reader = getReader();
         switch (communicationMode) {
             case FIRE_AND_FORGET:
-                return cast(getClient().fireAndForget(input.map(writer::writePayloadData).last()).flux());
+                return cast(getClient().fireAndForget(input.map(writer::writePayloadData).last(EmptyPayload.INSTANCE)).flux());
             case REQUEST_RESPONSE:
                 return getClient()
-                        .requestResponse(input.map(writer::writePayloadData).last())
+                        .requestResponse(input.map(writer::writePayloadData).last(EmptyPayload.INSTANCE))
                         .flux()
                         .map(payload -> reader.readPayloadData(payload).getValue());
             case REQUEST_STREAM:
                 return getClient()
-                        .requestStream(input.map(writer::writePayloadData).last())
+                        .requestStream(input.map(writer::writePayloadData).last(EmptyPayload.INSTANCE))
                         .map(payload -> reader.readPayloadData(payload).getValue());
             case REQUEST_CHANNEL:
                 return getClient()
                         .requestChannel(input.map(writer::writePayloadData))
                         .map(payload -> reader.readPayloadData(payload).getValue());
-            case METADATA_PUSH:
-                return cast(getClient().metadataPush(input.map(writer::writePayloadData).last()).flux());
         }
         throw new IllegalStateException();
     }
