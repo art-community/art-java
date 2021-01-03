@@ -19,7 +19,6 @@
 package io.art.rsocket.communicator;
 
 import io.art.communicator.implementation.*;
-import io.art.core.atomic.*;
 import io.art.core.lazy.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -34,7 +33,6 @@ import lombok.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
-import static io.art.core.atomic.AtomicLazyValue.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.lazy.LazyValue.*;
@@ -57,14 +55,14 @@ public class RsocketCommunicator implements CommunicatorImplementation {
     @Getter(lazy = true, value = PRIVATE)
     private final RsocketPayloadReader reader = new RsocketPayloadReader(setupPayload().getDataFormat(), setupPayload().getMetadataFormat());
 
-    private final AtomicLazyValue<RSocketClient> client = atomicLazy();
+    private final LazyValue<RSocketClient> client = lazy(this::createClient);
 
     @Getter(lazy = true, value = PRIVATE)
     private final RsocketCommunicatorConfiguration communicatorConfiguration = rsocketModule().configuration().getCommunicatorConfiguration();
 
     @Override
     public void start() {
-        client.initialize(this::createClient);
+        client.initialize();
     }
 
     @Override
@@ -104,7 +102,7 @@ public class RsocketCommunicator implements CommunicatorImplementation {
         throw new IllegalStateException();
     }
 
-    private LazyValue<RSocketClient> createClient() {
+    private RSocketClient createClient() {
         RsocketConnectorConfiguration connectorConfiguration = getCommunicatorConfiguration().getConnectors().get(connectorId);
         RSocketConnector connector = RSocketConnector.create()
                 .dataMimeType(connectorConfiguration.getDataMimeType().toString())
@@ -119,11 +117,11 @@ public class RsocketCommunicator implements CommunicatorImplementation {
             case TCP:
                 TcpClient tcpClient = connectorConfiguration.getTcpClient();
                 int tcpMaxFrameLength = connectorConfiguration.getTcpMaxFrameLength();
-                return lazy(() -> from(connector.connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength))));
+                return from(connector.connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength)));
             case WS:
                 HttpClient httpWebSocketClient = connectorConfiguration.getHttpWebSocketClient();
                 String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
-                return lazy(() -> from(connector.connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath))));
+                return from(connector.connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath)));
         }
         throw new IllegalStateException();
     }

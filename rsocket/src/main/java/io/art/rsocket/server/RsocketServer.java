@@ -18,8 +18,8 @@
 
 package io.art.rsocket.server;
 
-import io.art.core.atomic.*;
 import io.art.core.caster.*;
+import io.art.core.lazy.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
@@ -31,7 +31,7 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
-import static io.art.core.atomic.AtomicValue.*;
+import static io.art.core.lazy.LazyValue.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -46,11 +46,11 @@ public class RsocketServer implements Server {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketServer.class);
 
-    private final AtomicValue<Disposable> server = atomic();
+    private final LazyValue<Disposable> server = lazy(this::createServer);
 
     @Override
     public void start() {
-        server.initialize(this::createServer);
+        server.initialize();
     }
 
     @Override
