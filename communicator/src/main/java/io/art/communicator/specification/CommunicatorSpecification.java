@@ -115,7 +115,7 @@ public class CommunicatorSpecification {
             case BLOCKING:
                 return mappedOutput.blockFirst();
             case MONO:
-                return mappedOutput.last();
+                return mappedOutput == Flux.empty() ? null : mappedOutput.last();
             case FLUX:
                 return mappedOutput;
             default:

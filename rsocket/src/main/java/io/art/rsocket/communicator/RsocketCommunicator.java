@@ -37,12 +37,8 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.core.operator.Operators.*;
-import static io.art.value.mapping.ServiceIdMapping.*;
-import static io.rsocket.core.RSocketClient.from;
-import static java.util.Objects.*;
+import static io.rsocket.core.RSocketClient.*;
 import static lombok.AccessLevel.*;
-import static reactor.core.publisher.Mono.*;
-import java.util.function.*;
 
 @Getter
 @Builder
@@ -62,9 +58,6 @@ public class RsocketCommunicator implements CommunicatorImplementation<RsocketCo
     @Getter(lazy = true, value = PRIVATE)
     private final LazyValue<RSocketClient> client = createClient();
 
-    @Getter(lazy = true, value = PRIVATE)
-    private final Function<Flux<Value>, Flux<Value>> implementation = createImplementation();
-
     private RsocketCommunicatorConfiguration communicatorConfiguration;
 
     @Override
@@ -82,10 +75,6 @@ public class RsocketCommunicator implements CommunicatorImplementation<RsocketCo
 
     @Override
     public Flux<Value> communicate(Flux<Value> input) {
-        return getImplementation().apply(input);
-    }
-
-    private Flux<Value> processCommunication(Flux<Value> input) {
         RsocketPayloadWriter writer = getWriter();
         RsocketPayloadReader reader = getReader();
         switch (communicationMode) {
@@ -95,15 +84,21 @@ public class RsocketCommunicator implements CommunicatorImplementation<RsocketCo
                 return getClient().get()
                         .requestResponse(input.map(writer::writePayloadData).last(EmptyPayload.INSTANCE))
                         .flux()
-                        .map(payload -> reader.readPayloadData(payload).getValue());
+                        .map(reader::readPayloadData)
+                        .filter(data -> !data.isEmpty())
+                        .map(RsocketPayloadValue::getValue);
             case REQUEST_STREAM:
                 return getClient().get()
                         .requestStream(input.map(writer::writePayloadData).last(EmptyPayload.INSTANCE))
-                        .map(payload -> reader.readPayloadData(payload).getValue());
+                        .map(reader::readPayloadData)
+                        .filter(data -> !data.isEmpty())
+                        .map(RsocketPayloadValue::getValue);
             case REQUEST_CHANNEL:
                 return getClient().get()
                         .requestChannel(input.map(writer::writePayloadData))
-                        .map(payload -> reader.readPayloadData(payload).getValue());
+                        .map(reader::readPayloadData)
+                        .filter(data -> !data.isEmpty())
+                        .map(RsocketPayloadValue::getValue);
             case METADATA_PUSH:
                 return cast(getClient().get().metadataPush(input.map(writer::writePayloadMetaData).last(EmptyPayload.INSTANCE)).flux());
         }
@@ -124,14 +119,6 @@ public class RsocketCommunicator implements CommunicatorImplementation<RsocketCo
                 return lazy(() -> from(connector.connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath))));
         }
         throw new IllegalStateException();
-    }
-
-    private Function<Flux<Value>, Flux<Value>> createImplementation() {
-        if (isNull(setupPayload().getServiceMethod())) return this::processCommunication;
-        return input -> getClient()
-                .get()
-                .metadataPush(just(getWriter().writePayloadMetaData(fromServiceMethod(setupPayload().getServiceMethod()))))
-                .thenMany(processCommunication(input));
     }
 
     private RsocketSetupPayload setupPayload() {

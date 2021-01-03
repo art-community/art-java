@@ -64,11 +64,11 @@ public class RsocketManager {
     }
 
 
-    public void startSever() {
+    public void startServer() {
         (server = new RsocketServer(rsocketConfiguration.getServerConfiguration())).start();
     }
 
-    public void stopSever() {
+    public void stopServer() {
         apply(server, RsocketServer::stop);
         state.getRequesters().forEach(RsocketManager::disposeRsocket);
     }

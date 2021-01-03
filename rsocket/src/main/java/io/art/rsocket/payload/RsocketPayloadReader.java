@@ -26,6 +26,7 @@ import lombok.*;
 import static io.art.json.descriptor.JsonReader.*;
 import static io.art.message.pack.descriptor.MessagePackReader.*;
 import static io.art.protobuf.descriptor.ProtobufReader.*;
+import static io.art.rsocket.model.RsocketPayloadValue.emptyRsocketPayload;
 import static io.art.xml.descriptor.XmlReader.*;
 
 @RequiredArgsConstructor
@@ -36,7 +37,7 @@ public class RsocketPayloadReader {
     public RsocketPayloadValue readPayloadData(Payload payload) {
         ByteBuf data = payload.sliceData();
         if (data.capacity() == 0) {
-            return null;
+            return emptyRsocketPayload();
         }
         switch (dataFormat) {
             case PROTOBUF:
@@ -54,7 +55,7 @@ public class RsocketPayloadReader {
     public RsocketPayloadValue readPayloadMetaData(Payload payload) {
         ByteBuf data = payload.sliceMetadata();
         if (data.capacity() == 0) {
-            return null;
+            return emptyRsocketPayload();
         }
         switch (metaDataFormat) {
             case PROTOBUF:

@@ -110,7 +110,7 @@ public class ServiceMethodSpecification {
             case BLOCKING:
                 return mappedInput.blockFirst();
             case MONO:
-                return mappedInput.last();
+                return mappedInput == Flux.empty() ? null : mappedInput.last();
             case FLUX:
                 return mappedInput;
         }

@@ -24,10 +24,12 @@ import io.art.value.constants.ValueConstants.*;
 import io.art.value.immutable.*;
 import lombok.Value;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Fields.*;
+import static io.art.value.constants.ValueConstants.Keys.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Entity.*;
-import static java.util.Objects.*;
+import static io.art.value.mapping.ServiceMethodMapping.*;
 
 @Value
 @Builder(toBuilder = true)
@@ -40,11 +42,7 @@ public class RsocketSetupPayload {
         EntityBuilder entityBuilder = entityBuilder()
                 .put(SETUP_PAYLOAD_DATA_FORMAT_FIELD, stringPrimitive(dataFormat.getFormat()))
                 .put(SETUP_PAYLOAD_META_DATA_FORMAT_FIELD, stringPrimitive(metadataFormat.getFormat()));
-        if (nonNull(serviceMethod)) {
-            entityBuilder
-                    .put(SETUP_PAYLOAD_SERVICE_ID_FIELD, stringPrimitive(serviceMethod.getServiceId()))
-                    .put(SETUP_PAYLOAD_METHOD_ID_FIELD, stringPrimitive(serviceMethod.getMethodId()));
-        }
+        apply(serviceMethod, () -> entityBuilder.put(stringPrimitive(SERVICE_METHOD_IDENTIFIERS_KEY), fromServiceMethod(serviceMethod)));
         return entityBuilder.build();
     }
 }
