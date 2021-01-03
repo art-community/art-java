@@ -82,6 +82,12 @@ public class ServiceMethodSpecification {
     @Getter(lazy = true)
     private final ServiceMethodConfiguration methodConfiguration = let(getServiceConfiguration(), configuration -> configuration.getMethods().get(methodId));
 
+    @Getter(lazy = true)
+    private final Function<Flux<Value>, Object> mapInput = selectMapInput();
+
+    @Getter(lazy = true)
+    private final Function<Object, Flux<Object>> mapOutput = selectMapOutput();
+
     public Flux<Value> serve(Flux<Value> input) {
         if (deactivated()) {
             return Flux.empty();
@@ -105,31 +111,11 @@ public class ServiceMethodSpecification {
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
             mappedInput = mappedInput.transformDeferred(decorator);
         }
-        mappedInput = mappedInput.onErrorResume(Throwable.class, this::mapException);
-        switch (inputMode) {
-            case BLOCKING:
-                return mappedInput.blockFirst();
-            case MONO:
-                return mappedInput == Flux.empty() ? null : mappedInput.last();
-            case FLUX:
-                return mappedInput;
-        }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_INPUT_MODE, inputMode), serviceMethod(serviceId, methodId));
+        return getMapInput().apply(cast(mappedInput.onErrorResume(Throwable.class, this::mapException)));
     }
 
     private Flux<Value> mapOutput(Object output) {
-        Flux<Object> mappedOutput;
-        switch (outputMode) {
-            case BLOCKING:
-                mappedOutput = Flux.just(output);
-                break;
-            case MONO:
-            case FLUX:
-                mappedOutput = Flux.from(cast(output));
-                break;
-            default:
-                throw new ServiceMethodExecutionException(format(UNKNOWN_OUTPUT_MODE, outputMode), serviceMethod(serviceId, methodId));
-        }
+        Flux<Object> mappedOutput = getMapOutput().apply(output);
         mappedOutput = mappedOutput.filter(Objects::nonNull).filter(value -> !deactivated());
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
             mappedOutput = mappedOutput.transformDeferred(decorator);
@@ -162,5 +148,36 @@ public class ServiceMethodSpecification {
             return false;
         }
         return getMethodConfiguration().isDeactivated();
+    }
+
+    private Function<Flux<Value>, Object> selectMapInput() {
+        if (isNull(inputMode)) {
+            throw new ServiceMethodExecutionException(format(UNKNOWN_INPUT_MODE, inputMode), serviceMethod(serviceId, methodId));
+        }
+        switch (inputMode) {
+            case BLOCKING:
+                return Flux::blockFirst;
+            case MONO:
+                return mappedInput -> orNull(mappedInput, checking -> checking == Flux.<Value>empty(), Flux::last);
+            case FLUX:
+                return mappedInput -> mappedInput;
+            default:
+                throw new ServiceMethodExecutionException(format(UNKNOWN_INPUT_MODE, inputMode), serviceMethod(serviceId, methodId));
+        }
+    }
+
+    private Function<Object, Flux<Object>> selectMapOutput() {
+        if (isNull(outputMode)) {
+            throw new ServiceMethodExecutionException(format(UNKNOWN_INPUT_MODE, outputMode), serviceMethod(serviceId, methodId));
+        }
+        switch (outputMode) {
+            case BLOCKING:
+                return Flux::just;
+            case MONO:
+            case FLUX:
+                return output -> Flux.from(cast(output));
+            default:
+                throw new ServiceMethodExecutionException(format(UNKNOWN_OUTPUT_MODE, outputMode), serviceMethod(serviceId, methodId));
+        }
     }
 }

@@ -33,6 +33,7 @@ import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
@@ -67,6 +68,12 @@ public class CommunicatorSpecification {
     @Getter(lazy = true)
     private final CommunicatorConfiguration communicatorConfiguration = getModuleConfiguration().getConfigurations().get(communicatorId);
 
+    @Getter(lazy = true)
+    private final Function<Object, Flux<Object>> mapInput = selectMapInput();
+
+    @Getter(lazy = true)
+    private final Function<Flux<Object>, Object> mapOutput = selectMapOutput();
+
     public <T> T communicate() {
         Scheduler scheduler = let(getCommunicatorConfiguration(), CommunicatorConfiguration::getScheduler, getModuleConfiguration().getScheduler());
         return cast(mapOutput(defer(() -> deferredCommunicate(null)).subscribeOn(scheduler)));
@@ -87,19 +94,7 @@ public class CommunicatorSpecification {
     }
 
     private Flux<Value> mapInput(Object input) {
-        Flux<Object> inputFlux;
-        switch (inputMode) {
-            case BLOCKING:
-                inputFlux = just(input);
-                break;
-            case MONO:
-            case FLUX:
-                inputFlux = from(cast(input));
-                break;
-            default:
-                throw new CommunicatorException(format(UNKNOWN_INPUT_MODE, inputMode), getCommunicatorId());
-        }
-        inputFlux = inputFlux.filter(Objects::nonNull);
+        Flux<Object> inputFlux = getMapInput().apply(input).filter(Objects::nonNull);
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
             inputFlux = inputFlux.transformDeferred(decorator);
         }
@@ -111,16 +106,7 @@ public class CommunicatorSpecification {
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
             mappedOutput = mappedOutput.transformDeferred(decorator);
         }
-        switch (outputMode) {
-            case BLOCKING:
-                return mappedOutput.blockFirst();
-            case MONO:
-                return mappedOutput == Flux.empty() ? null : mappedOutput.last();
-            case FLUX:
-                return mappedOutput;
-            default:
-                throw new CommunicatorException(format(UNKNOWN_OUTPUT_MODE, outputMode), getCommunicatorId());
-        }
+        return getMapOutput().apply(mappedOutput);
     }
 
     private Flux<Value> mapException(Throwable exception) {
@@ -129,5 +115,36 @@ public class CommunicatorSpecification {
             errorOutput = errorOutput.transformDeferred(decorator);
         }
         return cast(errorOutput);
+    }
+
+    private Function<Object, Flux<Object>> selectMapInput() {
+        if (isNull(inputMode)) {
+            throw new CommunicatorException(format(UNKNOWN_INPUT_MODE, inputMode), communicatorId);
+        }
+        switch (inputMode) {
+            case BLOCKING:
+                return Flux::just;
+            case MONO:
+            case FLUX:
+                return input -> from(cast(input));
+            default:
+                throw new CommunicatorException(format(UNKNOWN_INPUT_MODE, inputMode), communicatorId);
+        }
+    }
+
+    private Function<Flux<Object>, Object> selectMapOutput() {
+        if (isNull(outputMode)) {
+            throw new CommunicatorException(format(UNKNOWN_INPUT_MODE, outputMode), communicatorId);
+        }
+        switch (outputMode) {
+            case BLOCKING:
+                return Flux::blockFirst;
+            case MONO:
+                return output -> orNull(output, checking -> checking == Flux.empty(), Flux::last);
+            case FLUX:
+                return output -> output;
+            default:
+                throw new CommunicatorException(format(UNKNOWN_OUTPUT_MODE, outputMode), communicatorId);
+        }
     }
 }
