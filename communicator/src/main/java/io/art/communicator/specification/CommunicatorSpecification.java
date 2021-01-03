@@ -75,8 +75,7 @@ public class CommunicatorSpecification {
     private final Function<Flux<Object>, Object> mapOutput = selectMapOutput();
 
     public <T> T communicate() {
-        Scheduler scheduler = let(getCommunicatorConfiguration(), CommunicatorConfiguration::getScheduler, getModuleConfiguration().getScheduler());
-        return cast(mapOutput(defer(() -> deferredCommunicate(null)).subscribeOn(scheduler)));
+        return communicate(null);
     }
 
     public <T> T communicate(Object input) {
