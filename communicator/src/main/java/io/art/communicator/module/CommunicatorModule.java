@@ -24,7 +24,9 @@ import io.art.communicator.state.*;
 import io.art.core.module.*;
 import lombok.*;
 import static io.art.communicator.configuration.CommunicatorModuleConfiguration.*;
+import static io.art.communicator.constants.CommunicatorModuleConstants.ExceptionMessages.*;
 import static io.art.core.context.Context.*;
+import static java.text.MessageFormat.*;
 
 @Getter
 public class CommunicatorModule implements StatefulModule<CommunicatorModuleConfiguration, Configurator, CommunicatorModuleState> {
@@ -41,10 +43,14 @@ public class CommunicatorModule implements StatefulModule<CommunicatorModuleConf
     }
 
     public static <T> T communicator(Class<T> communicatorClass) {
+        return communicator(communicatorClass.getSimpleName());
+    }
+
+    public static <T> T communicator(String id) {
         return communicatorModule()
                 .configuration()
                 .getRegistry()
-                .<T>get(communicatorClass.getSimpleName())
-                .orElseThrow(() -> new CommunicatorModuleException("Communicator with id was not registered"));
+                .<T>get(id)
+                .orElseThrow(() -> new CommunicatorModuleException(format(COMMUNICATOR_WAS_NOT_REGISTERED, id)));
     }
 }

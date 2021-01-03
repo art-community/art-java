@@ -18,7 +18,6 @@
 
 package io.art.model.implementation.communicator;
 
-import io.art.communicator.constants.*;
 import io.art.communicator.specification.CommunicatorSpecification.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.*;
 import java.util.function.*;

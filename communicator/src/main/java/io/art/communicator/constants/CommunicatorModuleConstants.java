@@ -31,6 +31,7 @@ public interface CommunicatorModuleConstants {
     interface ExceptionMessages {
         String UNKNOWN_INPUT_MODE = "Unknown input mode: ''{0}''";
         String UNKNOWN_OUTPUT_MODE = "Unknown output mode: ''{0}''";
+        String COMMUNICATOR_WAS_NOT_REGISTERED = "Communicator with {0} was not registered";
     }
 
     interface ConfigurationKeys {
@@ -40,6 +41,6 @@ public interface CommunicatorModuleConstants {
     }
 
     interface CommunicationProtocol {
-
+        String name();
     }
 }
