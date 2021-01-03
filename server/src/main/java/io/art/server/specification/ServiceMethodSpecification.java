@@ -37,6 +37,7 @@ import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -86,7 +87,7 @@ public class ServiceMethodSpecification {
             return Flux.empty();
         }
         Scheduler scheduler = let(getMethodConfiguration(), ServiceMethodConfiguration::getScheduler, getModuleConfiguration().getScheduler());
-        return Flux.defer(() -> deferredServe(input)).subscribeOn(scheduler);
+        return defer(() -> deferredServe(input)).subscribeOn(scheduler);
     }
 
     private Flux<Value> deferredServe(Flux<Value> input) {
