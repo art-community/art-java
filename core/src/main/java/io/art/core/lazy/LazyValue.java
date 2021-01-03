@@ -34,6 +34,12 @@ public class LazyValue<T> implements Supplier<T> {
         return value.get() != null;
     }
 
+    public void ifInitialized(Consumer<T> action) {
+        if (initialized()) {
+            action.accept(get());
+        }
+    }
+
     public static <T> LazyValue<T> lazy(Supplier<T> factory) {
         return new LazyValue<>(factory);
     }

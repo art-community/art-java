@@ -130,11 +130,11 @@ public class ModuleLauncher {
     private static RsocketModule rsocket(ImmutableArray<ConfigurationSource> sources, ModuleModel model, RsocketCustomizer rsocketCustomizer) {
         RsocketModule rsocket = new RsocketModule();
         ServerModel serverModel = model.getServerModel();
-        CommunicatorModel communicatorModel = model.getCommunicatorModel();
+        CommunicatorModuleModel communicatorModel = model.getCommunicatorModel();
         if (isNotEmpty(serverModel.getRsocketServices())) {
             rsocketCustomizer.activateServer();
         }
-        if (isNotEmpty(communicatorModel.getCommunicators())) {
+        if (isNotEmpty(communicatorModel.getRsocketCommunicators())) {
             rsocketCustomizer.activateCommunicator();
         }
         rsocket.configure(configurator -> configurator.from(sources).override(rsocketCustomizer.getConfiguration()));

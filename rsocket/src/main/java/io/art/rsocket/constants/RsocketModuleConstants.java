@@ -18,6 +18,8 @@
 
 package io.art.rsocket.constants;
 
+import io.art.communicator.constants.*;
+import io.art.communicator.constants.CommunicatorModuleConstants.*;
 import lombok.*;
 import java.time.*;
 
@@ -186,5 +188,9 @@ public interface RsocketModuleConstants {
         REQUEST_STREAM,
         REQUEST_CHANNEL,
         METADATA_PUSH;
+    }
+
+    enum RsocketProtocol implements CommunicationProtocol {
+        RSOCKET
     }
 }

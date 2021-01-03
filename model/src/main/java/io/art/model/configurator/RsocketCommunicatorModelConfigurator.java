@@ -26,26 +26,33 @@ import java.util.function.*;
 
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
-public class CommunicatorSpecificationModelConfigurator {
+public class RsocketCommunicatorModelConfigurator {
     private final String id;
     private final Class<?> proxyClass;
     private final Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> decorator;
     private String targetServiceId;
+    private String targetMethodId;
 
-    public CommunicatorSpecificationModelConfigurator to(Class<?> targetService) {
+    public RsocketCommunicatorModelConfigurator to(Class<?> targetService) {
         return to(targetService.getSimpleName());
     }
 
-    public CommunicatorSpecificationModelConfigurator to(String targetServiceId) {
+    public RsocketCommunicatorModelConfigurator to(String targetServiceId) {
         this.targetServiceId = targetServiceId;
         return this;
     }
 
-    CommunicatorSpecificationModel configure() {
-        return CommunicatorSpecificationModel.builder()
+    public RsocketCommunicatorModelConfigurator overrideMethod(String id) {
+        this.targetMethodId = id;
+        return this;
+    }
+
+    RsocketCommunicatorModel configure() {
+        return RsocketCommunicatorModel.builder()
                 .id(id)
                 .proxyClass(proxyClass)
                 .targetServiceId(targetServiceId)
+                .targetMethodId(targetMethodId)
                 .decorator(decorator)
                 .build();
     }

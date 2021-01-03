@@ -67,14 +67,14 @@ public class ServingRsocket implements RSocket {
         DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()), defaultMetaDataFormat);
         reader = new RsocketPayloadReader(dataFormat, metaDataFormat);
         writer = new RsocketPayloadWriter(dataFormat, metaDataFormat);
-        RsocketPayloadValue payloadData = reader.readPayloadData(payload);
+        RsocketPayloadValue payloadData = reader.readPayloadMetaData(payload);
         RsocketSetupPayloadBuilder setupPayloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(dataFormat)
                 .metadataFormat(metaDataFormat);
         Entity serviceIdentifiers;
         if (isEntity(payloadData.getValue()) && nonNull(serviceIdentifiers = asEntity(asEntity(payloadData.getValue()).get(SERVICE_METHOD_IDENTIFIERS_KEY)))) {
             ServiceMethodIdentifier serviceMethodId = toServiceMethod(serviceIdentifiers);
-            setupPayloadBuilder.serviceMethodId(serviceMethodId);
+            setupPayloadBuilder.serviceMethod(serviceMethodId);
             initializeSpecification(serviceMethodId);
         }
         setupPayload = setupPayloadBuilder.build();

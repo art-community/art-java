@@ -33,7 +33,7 @@ public class ServerModel {
     private final ImmutableMap<String, RsocketServiceModel> rsocketServices = emptyImmutableMap();
 
     public ServiceMethodSpecificationBuilder implement(String serviceId, String methodId, ServiceMethodSpecificationBuilder current) {
-        return let(getServices().get(serviceId), service -> service.implement(methodId, current));
+        return let(getServices().get(serviceId), service -> service.implement(methodId, current), current);
     }
 
     public ImmutableMap<String, ServiceModel> getServices() {

@@ -21,11 +21,8 @@ package io.art.communicator.specification;
 import io.art.communicator.configuration.*;
 import io.art.communicator.exception.*;
 import io.art.communicator.implementation.*;
-import io.art.core.caster.*;
+import io.art.core.annotation.*;
 import io.art.core.constants.*;
-import io.art.value.builder.*;
-import io.art.value.factory.*;
-import io.art.value.immutable.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.*;
@@ -35,7 +32,6 @@ import static io.art.communicator.constants.CommunicatorModuleConstants.Exceptio
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.value.factory.PrimitivesFactory.stringPrimitive;
 import static java.text.MessageFormat.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
@@ -43,6 +39,7 @@ import java.util.function.*;
 
 @Getter
 @Builder
+@UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CommunicatorSpecification {
     @EqualsAndHashCode.Include
@@ -59,9 +56,6 @@ public class CommunicatorSpecification {
 
     private final ValueFromModelMapper<?, ? extends Value> inputMapper;
     private final ValueToModelMapper<?, ? extends Value> outputMapper;
-
-    @Builder.Default
-    private final ValueFromModelMapper<Throwable, ? extends Value> exceptionMapper = throwable -> Entity.entityBuilder().put(stringPrimitive("message"), stringPrimitive(throwable.getMessage())).build();
 
     private final CommunicatorImplementation implementation;
     private final MethodProcessingMode inputMode;
@@ -109,9 +103,7 @@ public class CommunicatorSpecification {
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
             inputFlux = inputFlux.transformDeferred(decorator);
         }
-        return cast(inputFlux
-                .map(value -> inputMapper.map(cast(value)))
-                .onErrorResume(Throwable.class, throwable -> just(cast(exceptionMapper.map(throwable)))));
+        return cast(inputFlux.map(value -> inputMapper.map(cast(value))));
     }
 
     private Object mapOutput(Flux<Value> output) {
@@ -136,8 +128,6 @@ public class CommunicatorSpecification {
         for (UnaryOperator<Flux<Object>> decorator : exceptionDecorators) {
             errorOutput = errorOutput.transformDeferred(decorator);
         }
-        return errorOutput
-                .onErrorResume(Throwable.class, throwable -> just(exceptionMapper.map(throwable)))
-                .cast(Value.class);
+        return cast(errorOutput);
     }
 }

@@ -18,19 +18,19 @@
 
 package io.art.model.implementation.communicator;
 
+import io.art.communicator.constants.CommunicatorModuleConstants.*;
 import io.art.communicator.specification.CommunicatorSpecification.*;
 import lombok.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
 import java.util.function.*;
 
 @Getter
 @Builder
-public class CommunicatorSpecificationModel {
+public class RsocketCommunicatorModel implements CommunicatorModel {
     private final String id;
     private final Class<?> proxyClass;
     private final String targetServiceId;
+    private final String targetMethodId;
+    private final CommunicationProtocol protocol = RSOCKET;
     private final Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> decorator;
-
-    public CommunicatorSpecificationBuilder implement(CommunicatorSpecificationBuilder builder) {
-        return decorator.apply(builder);
-    }
 }

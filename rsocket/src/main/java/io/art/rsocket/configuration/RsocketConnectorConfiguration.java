@@ -24,26 +24,24 @@ import io.art.rsocket.exception.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.model.RsocketSetupPayload.*;
-import io.art.rsocket.payload.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
 import lombok.*;
-import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.model.ServiceMethodIdentifier.serviceMethod;
-import static io.art.value.constants.ValueConstants.*;
-import static io.art.value.constants.ValueConstants.DataFormat.*;
-import static io.art.value.mime.MimeTypeDataFormatMapper.*;
+import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
+import static io.art.value.constants.ValueConstants.*;
+import static io.art.value.constants.ValueConstants.DataFormat.*;
+import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -53,12 +51,12 @@ import static reactor.netty.http.client.HttpClient.*;
 @RequiredArgsConstructor
 public class RsocketConnectorConfiguration {
     private final RSocketConnector connector;
+    private RsocketSetupPayload setupPayload;
     private TransportMode transport;
     private TcpClient tcpClient;
     private int tcpMaxFrameLength;
     private HttpClient httpWebSocketClient;
     private String httpWebSocketPath;
-    private boolean lazy;
     private boolean logging;
 
     public static RsocketConnectorConfiguration from(RsocketCommunicatorConfiguration communicatorConfiguration, ConfigurationSource source) {
@@ -93,12 +91,10 @@ public class RsocketConnectorConfiguration {
         String methodId = source.getString(DEFAULT_METHOD_ID_KEY);
 
         if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
-            setupPayloadBuilder.serviceMethodId(serviceMethod(serviceId, methodId));
+            setupPayloadBuilder.serviceMethod(serviceMethod(serviceId, methodId));
         }
 
-        RsocketPayloadWriter writer = new RsocketPayloadWriter(dataFormat, metaDataFormat);
-        connector.setupPayload(Mono.create(emitter -> emitter.success(writer.writePayloadData(setupPayloadBuilder.build().toEntity()))));
-
+        configuration.setupPayload = setupPayloadBuilder.build();
 
         configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
         switch (configuration.transport) {
@@ -120,8 +116,6 @@ public class RsocketConnectorConfiguration {
                 configuration.httpWebSocketPath = orElse(source.getString(TRANSPORT_WS_PATH_KEY), SLASH);
                 break;
         }
-
-        configuration.lazy = orElse(source.getBool(LAZY_KEY), false);
 
         return configuration;
     }

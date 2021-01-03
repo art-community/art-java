@@ -38,4 +38,8 @@ public interface CommunicatorModuleConstants {
         String TARGETS_KEY = "targets";
         String LOGGING_KEY = "logging";
     }
+
+    interface CommunicationProtocol {
+
+    }
 }

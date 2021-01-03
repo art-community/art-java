@@ -18,6 +18,8 @@
 
 package io.art.model.customizer;
 
+import io.art.core.collection.*;
+import io.art.rsocket.communicator.*;
 import io.art.rsocket.configuration.*;
 import lombok.*;
 

@@ -21,6 +21,10 @@ package io.art.communicator.implementation;
 import io.art.value.immutable.Value;
 import reactor.core.publisher.*;
 
-public interface CommunicatorImplementation {
+public interface CommunicatorImplementation<T> {
+    void start(T configuration);
+
+    void stop();
+
     Flux<Value> communicate(Flux<Value> input);
 }

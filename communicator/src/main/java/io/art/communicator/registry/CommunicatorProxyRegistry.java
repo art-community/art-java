@@ -18,15 +18,20 @@
 
 package io.art.communicator.registry;
 
+import io.art.communicator.constants.CommunicatorModuleConstants.*;
+import io.art.communicator.implementation.*;
+import io.art.communicator.proxy.*;
 import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.MapFactory.*;
 import static java.util.Optional.*;
 import java.util.*;
 
 @UsedByGenerator
 public class CommunicatorProxyRegistry {
-    private final Map<String, Object> proxies = map();
+    private final Map<String, CommunicatorProxy<?>> proxies = map();
 
     public <T> Optional<T> get(String id) {
         return ofNullable(cast(proxies.get(id)));
@@ -36,7 +41,15 @@ public class CommunicatorProxyRegistry {
         return proxies.keySet();
     }
 
-    public CommunicatorProxyRegistry register(String id, Object proxy) {
+    public <T extends CommunicatorImplementation> ImmutableMap<String, CommunicatorProxy<T>> getByProtocol(CommunicationProtocol protocol) {
+        return proxies
+                .entrySet()
+                .stream()
+                .filter(entry -> protocol.equals(entry.getValue().getProtocol()))
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> cast(entry.getValue())));
+    }
+
+    public CommunicatorProxyRegistry register(String id, CommunicatorProxy<?> proxy) {
         proxies.put(id, proxy);
         return this;
     }

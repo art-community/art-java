@@ -26,17 +26,16 @@ import io.rsocket.*;
 import io.rsocket.core.*;
 import lombok.*;
 import reactor.util.context.*;
-import static io.art.core.factory.ArrayFactory.immutableArrayOf;
-import static io.art.core.factory.ListFactory.linkedListOf;
-import static io.art.core.factory.MapFactory.immutableMapOf;
-import static io.art.core.factory.MapFactory.map;
+import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.ListFactory.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import java.util.*;
 import java.util.function.*;
 
 public class RsocketModuleState implements ModuleState {
     private final List<RSocket> requesters = linkedListOf();
-    private final Map<String, LazyValue<RSocketClient>> clients = map();
+    private final Map<RsocketSetupPayload, LazyValue<RSocketClient>> clients = map();
     private final ThreadLocal<RsocketThreadLocalState> threadLocalState = new ThreadLocal<>();
 
 
@@ -63,19 +62,6 @@ public class RsocketModuleState implements ModuleState {
 
     public RsocketThreadLocalState localState() {
         return threadLocalState.get();
-    }
-
-
-    public LazyValue<RSocketClient> getClient(String id) {
-        return clients.get(id);
-    }
-
-    public ImmutableMap<String, LazyValue<RSocketClient>> getClients() {
-        return immutableMapOf(clients);
-    }
-
-    public void registerClient(String id, LazyValue<RSocketClient> client) {
-        clients.put(id, client);
     }
 
 

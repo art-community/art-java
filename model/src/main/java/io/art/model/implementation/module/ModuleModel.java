@@ -29,7 +29,7 @@ import java.util.function.*;
 public class ModuleModel {
     private final String mainModuleId;
     private final ServerModel serverModel;
-    private final CommunicatorModel communicatorModel;
+    private final CommunicatorModuleModel communicatorModel;
     private final Runnable onLoad;
     @Builder.Default
     private ModuleCustomizer moduleCustomizer = new ModuleCustomizer();
