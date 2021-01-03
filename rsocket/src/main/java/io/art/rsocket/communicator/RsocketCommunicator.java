@@ -107,7 +107,15 @@ public class RsocketCommunicator implements CommunicatorImplementation<RsocketCo
 
     private LazyValue<RSocketClient> createClient() {
         RsocketConnectorConfiguration connectorConfiguration = communicatorConfiguration.getConnectors().get(connectorId);
-        RSocketConnector connector = connectorConfiguration.getConnector().setupPayload(getWriter().writePayloadMetaData(setupPayload().toEntity()));
+        RSocketConnector connector = RSocketConnector.create()
+                .dataMimeType(connectorConfiguration.getDataMimeType().toString())
+                .metadataMimeType(connectorConfiguration.getMetaDataMimeType().toString())
+                .fragment(connectorConfiguration.getFragment())
+                .interceptors(connectorConfiguration.getInterceptors());
+        apply(connectorConfiguration.getKeepAlive(), keepAlive -> connector.keepAlive(keepAlive.getInterval(), keepAlive.getMaxLifeTime()));
+        apply(connectorConfiguration.getResume(), connector::resume);
+        apply(connectorConfiguration.getRetry(), connector::reconnect);
+        connector.setupPayload(getWriter().writePayloadMetaData(setupPayload().toEntity()));
         switch (connectorConfiguration.getTransport()) {
             case TCP:
                 TcpClient tcpClient = connectorConfiguration.getTcpClient();

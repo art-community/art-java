@@ -20,7 +20,6 @@ package io.art.rsocket.socket;
 
 import io.art.core.mime.*;
 import io.art.core.model.*;
-import io.art.core.operator.Operators;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
@@ -35,7 +34,6 @@ import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.operator.Operators.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.model.RsocketSetupPayload.*;
@@ -49,7 +47,7 @@ import static io.art.value.mapping.ServiceMethodMapping.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import java.util.function.*;
+import static reactor.core.publisher.Flux.*;
 
 public class ServingRsocket implements RSocket {
     private final RsocketPayloadReader reader;
@@ -96,41 +94,37 @@ public class ServingRsocket implements RSocket {
     @Override
     public Mono<Void> fireAndForget(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
-        Flux<Value> input = addContext(payloadValue.isEmpty() ? Flux.empty() : Flux.just(payloadValue.getValue()));
+        Flux<Value> input = addContext(payloadValue.isEmpty() ? empty() : just(payloadValue.getValue()));
         return specification.serve(input).then();
     }
 
     @Override
     public Mono<Payload> requestResponse(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
-        Flux<Value> input = addContext(payloadValue.isEmpty() ? Flux.empty() : Flux.just(payloadValue.getValue()));
+        Flux<Value> input = addContext(payloadValue.isEmpty() ? empty() : just(payloadValue.getValue()));
         return specification.serve(input).map(writer::writePayloadData).last(EmptyPayload.INSTANCE);
     }
 
     @Override
     public Flux<Payload> requestStream(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
-        Flux<Value> input = addContext(payloadValue.isEmpty() ? Flux.empty() : Flux.just(payloadValue.getValue()));
+        Flux<Value> input = addContext(payloadValue.isEmpty() ? empty() : just(payloadValue.getValue()));
         return specification.serve(input).map(writer::writePayloadData);
     }
 
     @Override
     public Flux<Payload> requestChannel(Publisher<Payload> payloads) {
-        EmitterProcessor<Value> inputProcessor = EmitterProcessor.create();
-        FluxSink<Value> inputEmitter = inputProcessor.sink();
-        Consumer<Payload> sendPayload = payload -> applyIf(reader.readPayloadData(payload), data -> !data.isEmpty(), data -> inputEmitter.next(data.getValue()));
-        Flux<Value> inputFlux = addContext(inputProcessor).doOnSubscribe(subscription -> {
-            inputEmitter.onRequest(subscription::request);
-            inputEmitter.onCancel(subscription::cancel);
-            inputEmitter.onDispose(Flux.from(payloads).subscribe(sendPayload, inputEmitter::error, inputEmitter::complete));
-        });
-        return specification.serve(inputFlux).map(writer::writePayloadData);
+        return specification.serve(from(payloads)
+                .map(reader::readPayloadData)
+                .filter(data -> !data.isEmpty())
+                .map(RsocketPayloadValue::getValue))
+                .map(writer::writePayloadData);
     }
 
     @Override
     public Mono<Void> metadataPush(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadMetaData(payload);
-        Flux<Value> input = addContext(isNull(payloadValue) ? Flux.empty() : Flux.just(payloadValue.getValue()));
+        Flux<Value> input = addContext(isNull(payloadValue) ? empty() : just(payloadValue.getValue()));
         return specification.serve(input).then();
     }
 
