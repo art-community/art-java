@@ -55,8 +55,6 @@ import java.util.function.*;
 public class RsocketConnectorConfiguration {
     private PayloadDecoder payloadDecoder;
     private int maxInboundPayloadSize;
-    private MimeType dataMimeType;
-    private MimeType metaDataMimeType;
     private int fragment;
     private Consumer<InterceptorRegistry> interceptors;
     private RsocketKeepAliveConfiguration keepAlive;
@@ -77,8 +75,6 @@ public class RsocketConnectorConfiguration {
         DataFormat metaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), communicatorConfiguration.getDefaultMetaDataFormat());
         configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT ? PayloadDecoder.DEFAULT : PayloadDecoder.ZERO_COPY;
         configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), communicatorConfiguration.getMaxInboundPayloadSize());
-        configuration.dataMimeType = toMimeType(dataFormat);
-        configuration.metaDataMimeType = toMimeType(metaDataFormat);
         configuration.fragment = orElse(source.getInt(FRAGMENTATION_MTU_KEY), communicatorConfiguration.getFragmentationMtu());
         configuration.interceptors = registry -> registry
                 .forResponder(new RsocketLoggingInterceptor(configuration::isLogging))
