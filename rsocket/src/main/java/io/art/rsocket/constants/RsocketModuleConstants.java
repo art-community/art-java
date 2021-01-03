@@ -98,7 +98,7 @@ public interface RsocketModuleConstants {
 
         String CONNECTORS_KEY = "connectors";
 
-        String LAZY_KEY = "lazy";
+        String INSTANT_KEY = "instant";
     }
 
     interface ContextKeys {

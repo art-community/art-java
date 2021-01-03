@@ -41,7 +41,7 @@ public class CommunicatorProxyRegistry {
         return proxies.keySet();
     }
 
-    public <T extends CommunicatorImplementation> ImmutableMap<String, CommunicatorProxy<T>> getByProtocol(CommunicationProtocol protocol) {
+    public <T extends CommunicatorImplementation<?>> ImmutableMap<String, CommunicatorProxy<T>> getByProtocol(CommunicationProtocol protocol) {
         return proxies
                 .entrySet()
                 .stream()

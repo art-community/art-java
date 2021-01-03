@@ -116,4 +116,9 @@ public class ArrayFactory {
         for (boolean element : elements) array.add(element);
         return array;
     }
+
+    @SafeVarargs
+    public static <T> T[] arrayOf(T... elements) {
+        return elements;
+    }
 }

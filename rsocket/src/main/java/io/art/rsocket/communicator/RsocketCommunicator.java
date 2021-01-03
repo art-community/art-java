@@ -22,6 +22,7 @@ import io.art.communicator.implementation.*;
 import io.art.core.lazy.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
+import io.art.rsocket.manager.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
 import io.art.value.immutable.Value;
@@ -35,6 +36,7 @@ import reactor.netty.tcp.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.operator.Operators.*;
 import static io.art.value.mapping.ServiceIdMapping.*;
 import static io.rsocket.core.RSocketClient.from;
 import static java.util.Objects.*;
@@ -47,7 +49,9 @@ import java.util.function.*;
 public class RsocketCommunicator implements CommunicatorImplementation<RsocketCommunicatorConfiguration> {
     private final String connectorId;
     private final CommunicationMode communicationMode;
-    private final RsocketSetupPayload setupPayload;
+
+    @Builder.Default
+    private final RsocketSetupPayload setupPayload = RsocketSetupPayload.builder().build();
 
     @Getter(lazy = true, value = PRIVATE)
     private final RsocketPayloadWriter writer = new RsocketPayloadWriter(setupPayload().getDataFormat(), setupPayload().getMetadataFormat());
@@ -59,22 +63,21 @@ public class RsocketCommunicator implements CommunicatorImplementation<RsocketCo
     private final LazyValue<RSocketClient> client = createClient();
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Function<Flux<Value>, Flux<Value>> implementation = isNull(setupPayload().getServiceMethod()) ? this::processCommunication : input -> getClient()
-            .get()
-            .metadataPush(just(getWriter().writePayloadMetaData(fromServiceMethod(setupPayload().getServiceMethod()))))
-            .thenMany(processCommunication(input));
+    private final Function<Flux<Value>, Flux<Value>> implementation = createImplementation();
 
     private RsocketCommunicatorConfiguration communicatorConfiguration;
 
     @Override
     public void start(RsocketCommunicatorConfiguration configuration) {
         this.communicatorConfiguration = configuration;
-        getClient().get();
+        if (configuration.isInstant()) {
+            getClient().get();
+        }
     }
 
     @Override
     public void stop() {
-        getClient().ifInitialized(RSocketClient::dispose);
+        getClient().ifInitialized(client -> applyIf(client, RSocketClient::isDisposed, RsocketManager::disposeRsocket));
     }
 
     @Override
@@ -121,6 +124,14 @@ public class RsocketCommunicator implements CommunicatorImplementation<RsocketCo
                 return lazy(() -> from(connector.connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath))));
         }
         throw new IllegalStateException();
+    }
+
+    private Function<Flux<Value>, Flux<Value>> createImplementation() {
+        if (isNull(setupPayload().getServiceMethod())) return this::processCommunication;
+        return input -> getClient()
+                .get()
+                .metadataPush(just(getWriter().writePayloadMetaData(fromServiceMethod(setupPayload().getServiceMethod()))))
+                .thenMany(processCommunication(input));
     }
 
     private RsocketSetupPayload setupPayload() {

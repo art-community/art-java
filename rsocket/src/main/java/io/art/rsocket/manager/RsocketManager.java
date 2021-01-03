@@ -63,16 +63,18 @@ public class RsocketManager {
                 .forEach(proxy -> proxy.getImplementations().forEach(RsocketCommunicator::stop));
     }
 
+
     public void startSever() {
         (server = new RsocketServer(rsocketConfiguration.getServerConfiguration())).start();
     }
 
     public void stopSever() {
         apply(server, RsocketServer::stop);
-        state.getRequesters().forEach(this::disposeRsocket);
+        state.getRequesters().forEach(RsocketManager::disposeRsocket);
     }
 
-    private void disposeRsocket(Disposable rsocket) {
+
+    public static void disposeRsocket(Disposable rsocket) {
         if (rsocket.isDisposed()) {
             return;
         }

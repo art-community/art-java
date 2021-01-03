@@ -24,19 +24,19 @@ import java.util.function.*;
 
 @UtilityClass
 public class EqualityChecker {
-    public static <T> T ifEquals(T val, T pattern, T ifEquals) {
-        return Objects.equals(val, pattern) ? ifEquals : val;
+    public static <T> T ifEquals(T value, T pattern, T ifEquals) {
+        return Objects.equals(value, pattern) ? ifEquals : value;
     }
 
-    public static <T> T ifNotEquals(T val, T pattern, T ifNotEquals) {
-        return !Objects.equals(val, pattern) ? ifNotEquals : val;
+    public static <T> T ifNotEquals(T value, T pattern, T ifNotEquals) {
+        return !Objects.equals(value, pattern) ? ifNotEquals : value;
     }
 
-    public static <T> T ifEquals(T val, T pattern, Supplier<T> ifEquals) {
-        return Objects.equals(val, pattern) ? ifEquals.get() : val;
+    public static <T> T ifEquals(T value, T pattern, Supplier<T> ifEquals) {
+        return Objects.equals(value, pattern) ? ifEquals.get() : value;
     }
 
-    public static <T> T ifNotEquals(T val, T pattern, Supplier<T> ifNotEquals) {
-        return !Objects.equals(val, pattern) ? ifNotEquals.get() : val;
+    public static <T> T ifNotEquals(T value, T pattern, Supplier<T> ifNotEquals) {
+        return !Objects.equals(value, pattern) ? ifNotEquals.get() : value;
     }
 }

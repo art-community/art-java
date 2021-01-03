@@ -50,6 +50,7 @@ public class RsocketCommunicatorConfiguration {
     private DataFormat defaultMetaDataFormat;
     private ServiceMethodIdentifier defaultServiceMethod;
     private RsocketKeepAliveConfiguration keepAliveConfiguration;
+    private boolean instant;
 
     public static RsocketCommunicatorConfiguration from(ConfigurationSource source) {
         RsocketCommunicatorConfiguration configuration = new RsocketCommunicatorConfiguration();
@@ -64,6 +65,7 @@ public class RsocketCommunicatorConfiguration {
         configuration.defaultDataFormat = dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), JSON);
         configuration.defaultMetaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), JSON);
         configuration.logging = orElse(source.getBool(LOGGING_KEY), false);
+        configuration.instant = orElse(source.getBool(INSTANT_KEY), false);
         configuration.fragmentationMtu = orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0);
         configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
         configuration.resume = let(source.getNested(RESUME_SECTION), RsocketResumeConfigurator::from);
