@@ -19,23 +19,20 @@
 package io.art.rsocket.state;
 
 import io.art.core.collection.*;
-import io.art.core.lazy.*;
 import io.art.core.module.*;
 import io.art.rsocket.model.*;
+import io.art.server.specification.*;
 import io.rsocket.*;
-import io.rsocket.core.*;
 import lombok.*;
 import reactor.util.context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.core.factory.MapFactory.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import java.util.*;
 import java.util.function.*;
 
 public class RsocketModuleState implements ModuleState {
     private final List<RSocket> requesters = linkedListOf();
-    private final Map<RsocketSetupPayload, LazyValue<RSocketClient>> clients = map();
     private final ThreadLocal<RsocketThreadLocalState> threadLocalState = new ThreadLocal<>();
 
 
@@ -70,11 +67,13 @@ public class RsocketModuleState implements ModuleState {
     public static class RsocketThreadLocalState {
         private final RSocket requesterRsocket;
         private final RsocketSetupPayload setupPayload;
+        private final ServiceMethodSpecification specification;
 
         public static RsocketThreadLocalState fromContext(Context context) {
             RSocket requesterRsocket = context.get(REQUESTER_RSOCKET_KEY);
             RsocketSetupPayload setupPayload = context.get(SETUP_PAYLOAD_KEY);
-            return new RsocketThreadLocalState(requesterRsocket, setupPayload);
+            ServiceMethodSpecification specification = context.get(SPECIFICATION_KEY);
+            return new RsocketThreadLocalState(requesterRsocket, setupPayload, specification);
         }
     }
 }

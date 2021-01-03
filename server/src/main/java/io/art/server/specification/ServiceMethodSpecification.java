@@ -22,7 +22,6 @@ import io.art.core.annotation.*;
 import io.art.core.caster.*;
 import io.art.core.constants.*;
 import io.art.server.configuration.*;
-import io.art.server.exception.*;
 import io.art.server.implementation.*;
 import io.art.server.model.*;
 import io.art.value.immutable.Value;
@@ -32,10 +31,7 @@ import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.model.ServiceMethodIdentifier.*;
-import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
 import static io.art.server.module.ServerModule.*;
-import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
@@ -152,7 +148,7 @@ public class ServiceMethodSpecification {
 
     private Function<Flux<Value>, Object> selectMapInput() {
         if (isNull(inputMode)) {
-            throw new ServiceMethodExecutionException(format(UNKNOWN_INPUT_MODE, inputMode), serviceMethod(serviceId, methodId));
+            throw new IllegalStateException();
         }
         switch (inputMode) {
             case BLOCKING:
@@ -162,13 +158,13 @@ public class ServiceMethodSpecification {
             case FLUX:
                 return mappedInput -> mappedInput;
             default:
-                throw new ServiceMethodExecutionException(format(UNKNOWN_INPUT_MODE, inputMode), serviceMethod(serviceId, methodId));
+                throw new IllegalStateException();
         }
     }
 
     private Function<Object, Flux<Object>> selectMapOutput() {
         if (isNull(outputMode)) {
-            throw new ServiceMethodExecutionException(format(UNKNOWN_INPUT_MODE, outputMode), serviceMethod(serviceId, methodId));
+            throw new IllegalStateException();
         }
         switch (outputMode) {
             case BLOCKING:
@@ -177,7 +173,7 @@ public class ServiceMethodSpecification {
             case FLUX:
                 return output -> Flux.from(cast(output));
             default:
-                throw new ServiceMethodExecutionException(format(UNKNOWN_OUTPUT_MODE, outputMode), serviceMethod(serviceId, methodId));
+                throw new IllegalStateException();
         }
     }
 }

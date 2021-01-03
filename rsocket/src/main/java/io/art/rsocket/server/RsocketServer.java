@@ -30,7 +30,6 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
-import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -82,17 +81,6 @@ public class RsocketServer implements Server {
             value.dispose();
             getLogger().info(SERVER_STOPPED);
         }
-    }
-
-    @Override
-    public void await() {
-        block();
-    }
-
-    @Override
-    public void restart() {
-        stop();
-        start();
     }
 
     @Override

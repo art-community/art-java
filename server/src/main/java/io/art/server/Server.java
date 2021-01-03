@@ -18,14 +18,21 @@
 
 package io.art.server;
 
+import static io.art.core.extensions.ThreadExtensions.*;
+
 public interface Server {
     void start();
 
     void stop();
 
-    void await();
-
     boolean available();
 
-    void restart();
+    default void await() {
+        block();
+    }
+
+    default void restart() {
+        stop();
+        start();
+    }
 }

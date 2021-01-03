@@ -77,7 +77,7 @@ public class RsocketManager {
     }
 
 
-    public static void disposeRsocket(Disposable rsocket) {
+    public void disposeRsocket(Disposable rsocket) {
         if (rsocket.isDisposed()) {
             return;
         }

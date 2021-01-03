@@ -19,7 +19,6 @@
 package io.art.communicator.specification;
 
 import io.art.communicator.configuration.*;
-import io.art.communicator.exception.*;
 import io.art.communicator.implementation.*;
 import io.art.core.annotation.*;
 import io.art.core.constants.*;
@@ -28,17 +27,14 @@ import io.art.value.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
-import static io.art.communicator.constants.CommunicatorModuleConstants.ExceptionMessages.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
 
-@Getter
 @Builder
 @UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -57,7 +53,6 @@ public class CommunicatorSpecification {
 
     private final ValueFromModelMapper<?, ? extends Value> inputMapper;
     private final ValueToModelMapper<?, ? extends Value> outputMapper;
-
     private final CommunicatorImplementation implementation;
     private final MethodProcessingMode inputMode;
     private final MethodProcessingMode outputMode;
@@ -117,9 +112,7 @@ public class CommunicatorSpecification {
     }
 
     private Function<Object, Flux<Object>> selectMapInput() {
-        if (isNull(inputMode)) {
-            throw new CommunicatorException(format(UNKNOWN_INPUT_MODE, inputMode), communicatorId);
-        }
+        if (isNull(inputMode)) throw new IllegalStateException();
         switch (inputMode) {
             case BLOCKING:
                 return Flux::just;
@@ -127,14 +120,12 @@ public class CommunicatorSpecification {
             case FLUX:
                 return input -> from(cast(input));
             default:
-                throw new CommunicatorException(format(UNKNOWN_INPUT_MODE, inputMode), communicatorId);
+                throw new IllegalStateException();
         }
     }
 
     private Function<Flux<Object>, Object> selectMapOutput() {
-        if (isNull(outputMode)) {
-            throw new CommunicatorException(format(UNKNOWN_INPUT_MODE, outputMode), communicatorId);
-        }
+        if (isNull(outputMode)) throw new IllegalStateException();
         switch (outputMode) {
             case BLOCKING:
                 return Flux::blockFirst;
@@ -143,7 +134,7 @@ public class CommunicatorSpecification {
             case FLUX:
                 return output -> output;
             default:
-                throw new CommunicatorException(format(UNKNOWN_OUTPUT_MODE, outputMode), communicatorId);
+                throw new IllegalStateException();
         }
     }
 }
