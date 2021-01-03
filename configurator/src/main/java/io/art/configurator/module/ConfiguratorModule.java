@@ -33,6 +33,7 @@ import static io.art.core.context.Context.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static java.nio.file.Paths.*;
+import static lombok.AccessLevel.*;
 import java.io.*;
 import java.util.*;
 
@@ -41,7 +42,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     private final String id = ConfiguratorModule.class.getSimpleName();
     private final ConfiguratorModuleConfiguration configuration = new ConfiguratorModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private static final StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule = context().getStatelessModule(ConfiguratorModule.class.getSimpleName());
 
     public StatelessModuleProxy<ConfiguratorModuleConfiguration> loadConfigurations() {

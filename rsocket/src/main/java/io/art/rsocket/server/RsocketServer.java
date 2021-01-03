@@ -21,6 +21,7 @@ package io.art.rsocket.server;
 import io.art.core.caster.*;
 import io.art.core.lazy.*;
 import io.art.rsocket.configuration.*;
+import io.art.rsocket.manager.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
 import io.rsocket.*;
@@ -32,6 +33,7 @@ import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
 import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.operator.Operators.applyIf;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
@@ -89,8 +91,8 @@ public class RsocketServer implements Server {
                 .subscribe();
     }
 
-    private void disposeServer(Disposable value) {
-        value.dispose();
+    private void disposeServer(Disposable server) {
+        applyIf(server, socket -> !socket.isDisposed(), RsocketManager::disposeRsocket);
         getLogger().info(SERVER_STOPPED);
     }
 

@@ -27,10 +27,12 @@ import io.art.rsocket.manager.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
 import io.art.value.immutable.Value;
+import io.rsocket.*;
 import io.rsocket.core.*;
 import io.rsocket.transport.netty.client.*;
 import io.rsocket.util.*;
 import lombok.*;
+import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
@@ -38,8 +40,11 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.core.operator.Operators.*;
+import static io.art.logging.LoggingModule.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.rsocket.core.RSocketClient.*;
+import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 
 @Builder
@@ -47,8 +52,13 @@ public class RsocketCommunicator implements CommunicatorImplementation {
     private final String connectorId;
     private final CommunicationMode communicationMode;
 
+    private final LazyValue<RSocketClient> client = lazy(this::createClient);
+
     @Builder.Default
     private final RsocketSetupPayload setupPayload = RsocketSetupPayload.builder().build();
+
+    @Getter(lazy = true, value = PRIVATE)
+    private final Logger logger = logger(RsocketCommunicator.class);
 
     @Getter(lazy = true, value = PRIVATE)
     private final RsocketPayloadWriter writer = new RsocketPayloadWriter(setupPayload().getDataFormat(), setupPayload().getMetadataFormat());
@@ -56,10 +66,12 @@ public class RsocketCommunicator implements CommunicatorImplementation {
     @Getter(lazy = true, value = PRIVATE)
     private final RsocketPayloadReader reader = new RsocketPayloadReader(setupPayload().getDataFormat(), setupPayload().getMetadataFormat());
 
-    private final LazyValue<RSocketClient> client = lazy(this::createClient);
-
     @Getter(lazy = true, value = PRIVATE)
     private final RsocketCommunicatorConfiguration communicatorConfiguration = rsocketModule().configuration().getCommunicatorConfiguration();
+
+    @Getter(lazy = true, value = PRIVATE)
+    private final RsocketConnectorConfiguration connectorConfiguration = getCommunicatorConfiguration().getConnectors().get(connectorId);
+
 
     @Override
     public void start() {
@@ -68,7 +80,12 @@ public class RsocketCommunicator implements CommunicatorImplementation {
 
     @Override
     public void stop() {
-        client.dispose(client -> applyIf(client, socket -> !socket.isDisposed(), RsocketManager::disposeRsocket));
+        client.dispose(this::dispose);
+    }
+
+    private void dispose(RSocketClient client) {
+        applyIf(client, socket -> !socket.isDisposed(), RsocketManager::disposeRsocket);
+        getLogger().info(format(COMMUNICATOR_STOPPED, connectorId));
     }
 
     @Override
@@ -104,7 +121,7 @@ public class RsocketCommunicator implements CommunicatorImplementation {
     }
 
     private RSocketClient createClient() {
-        RsocketConnectorConfiguration connectorConfiguration = getCommunicatorConfiguration().getConnectors().get(connectorId);
+        RsocketConnectorConfiguration connectorConfiguration = getConnectorConfiguration();
         RSocketConnector connector = RSocketConnector.create()
                 .dataMimeType(connectorConfiguration.getDataMimeType().toString())
                 .metadataMimeType(connectorConfiguration.getMetaDataMimeType().toString())
@@ -118,20 +135,27 @@ public class RsocketCommunicator implements CommunicatorImplementation {
             case TCP:
                 TcpClient tcpClient = connectorConfiguration.getTcpClient();
                 int tcpMaxFrameLength = connectorConfiguration.getTcpMaxFrameLength();
-                return from(connector.connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength)));
+                Mono<RSocket> socket = connector
+                        .connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength))
+                        .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorId, setupPayload)));
+                return from(socket);
             case WS:
                 HttpClient httpWebSocketClient = connectorConfiguration.getHttpWebSocketClient();
                 String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
-                return from(connector.connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath)));
+                socket = connector
+                        .connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath))
+                        .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorId, setupPayload)));
+                return from(socket);
         }
         throw new ImpossibleSituation();
     }
 
     private RsocketSetupPayload setupPayload() {
+        RsocketConnectorConfiguration connectorConfiguration = getConnectorConfiguration();
         return setupPayload
                 .toBuilder()
-                .dataFormat(orElse(setupPayload.getDataFormat(), getCommunicatorConfiguration().getDefaultDataFormat()))
-                .metadataFormat(orElse(setupPayload.getMetadataFormat(), getCommunicatorConfiguration().getDefaultMetaDataFormat()))
+                .dataFormat(orElse(setupPayload.getDataFormat(), connectorConfiguration.getSetupPayload().getDataFormat()))
+                .metadataFormat(orElse(setupPayload.getMetadataFormat(), connectorConfiguration.getSetupPayload().getMetadataFormat()))
                 .build();
     }
 }

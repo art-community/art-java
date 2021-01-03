@@ -38,6 +38,7 @@ public interface ExceptionMessages {
     String UNKNOWN_DURATION_TIME_UNITS = "Unknown duration time units: ''{0}''";
     String METHOD_NOT_IMPLEMENTED = "Method not implemented: ''{0}''";
     String ARGUMENT_IS_NULL = "Argument ''{0}'' is null";
+    String DATA_FORMAT_IS_NULL = "Argument 'dataFormat' is null";
     String DUPLICATE_KEY = "Duplicate key {0}";
     String IMPOSSIBLE_MESSAGE = "Occurred impossible situation. Possible bug inside core or generation mechanism";
 }

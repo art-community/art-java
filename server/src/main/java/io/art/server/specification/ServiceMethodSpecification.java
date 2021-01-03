@@ -19,7 +19,6 @@
 package io.art.server.specification;
 
 import io.art.core.annotation.*;
-import io.art.core.caster.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
 import io.art.server.configuration.*;
@@ -27,6 +26,7 @@ import io.art.server.implementation.*;
 import io.art.server.model.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
+import io.art.value.mapping.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
@@ -34,29 +34,36 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
 
-@Getter
 @Builder(toBuilder = true)
 @UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceMethodSpecification {
-    @Builder.Default
-    private final ValueToModelMapper<?, ? extends Value> inputMapper = Caster::cast;
-    @Builder.Default
-    private final ValueFromModelMapper<?, ? extends Value> outputMapper = Caster::cast;
-    private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
-    private final ServiceMethodImplementation implementation;
-    private final MethodProcessingMode inputMode;
-    private final MethodProcessingMode outputMode;
-
+    @Getter
     @EqualsAndHashCode.Include
     private final String methodId;
 
+    @Getter
     @EqualsAndHashCode.Include
     private final String serviceId;
+
+    @Getter
+    private final MethodProcessingMode inputMode;
+
+    @Getter
+    private final MethodProcessingMode outputMode;
+
+    private final ValueToModelMapper<?, ? extends Value> inputMapper;
+    private final ValueFromModelMapper<?, ? extends Value> outputMapper;
+
+    @Builder.Default
+    private final ValueFromModelMapper<Throwable, ? extends Value> exceptionMapper = ThrowableMapping::fromThrowable;
+
+    private final ServiceMethodImplementation implementation;
 
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
@@ -64,25 +71,22 @@ public class ServiceMethodSpecification {
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    @Singular("exceptionDecorator")
-    private final List<UnaryOperator<Flux<Object>>> exceptionDecorator;
-
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private final ServerModuleConfiguration moduleConfiguration = serverModule().configuration();
 
-    @Getter(lazy = true)
-    private final ServiceSpecification serviceSpecification = specifications().get(serviceId).orElseThrow(IllegalStateException::new);
+    @Getter(lazy = true, value = PRIVATE)
+    private final ServiceSpecification serviceSpecification = specifications().get(serviceId).orElseThrow(ImpossibleSituation::new);
 
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private final ServiceConfiguration serviceConfiguration = getServiceSpecification().getConfiguration();
 
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private final ServiceMethodConfiguration methodConfiguration = let(getServiceConfiguration(), configuration -> configuration.getMethods().get(methodId));
 
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private final Function<Flux<Value>, Object> mapInput = selectMapInput();
 
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private final Function<Object, Flux<Object>> mapOutput = selectMapOutput();
 
     public Flux<Value> serve(Flux<Value> input) {
@@ -124,7 +128,7 @@ public class ServiceMethodSpecification {
 
     private Flux<Value> mapException(Throwable exception) {
         Flux<Object> errorOutput = Flux.error(exception).filter(value -> !deactivated());
-        for (UnaryOperator<Flux<Object>> decorator : exceptionDecorator) {
+        for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
             errorOutput = errorOutput.transformDeferred(decorator);
         }
         return errorOutput

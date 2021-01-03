@@ -27,6 +27,7 @@ import static io.art.communicator.configuration.CommunicatorModuleConfiguration.
 import static io.art.communicator.constants.CommunicatorModuleConstants.ExceptionMessages.*;
 import static io.art.core.context.Context.*;
 import static java.text.MessageFormat.*;
+import static lombok.AccessLevel.*;
 
 @Getter
 public class CommunicatorModule implements StatefulModule<CommunicatorModuleConfiguration, Configurator, CommunicatorModuleState> {
@@ -34,7 +35,7 @@ public class CommunicatorModule implements StatefulModule<CommunicatorModuleConf
     private final CommunicatorModuleConfiguration configuration = new CommunicatorModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
     private final CommunicatorModuleState state = new CommunicatorModuleState();
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private static final
     StatefulModuleProxy<CommunicatorModuleConfiguration, CommunicatorModuleState> communicatorModule = context().getStatefulModule(CommunicatorModule.class.getSimpleName());
 

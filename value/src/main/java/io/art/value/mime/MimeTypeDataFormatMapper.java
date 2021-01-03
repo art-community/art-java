@@ -25,7 +25,6 @@ import lombok.experimental.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.mime.MimeTypes.*;
 import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
-import static java.text.MessageFormat.*;
 
 @UtilityClass
 public class MimeTypeDataFormatMapper {
@@ -58,6 +57,6 @@ public class MimeTypeDataFormatMapper {
             case MESSAGE_PACK:
                 return APPLICATION_MESSAGE_PACK;
         }
-        throw new IllegalArgumentException(format(ARGUMENT_IS_NULL, "dataFormat"));
+        throw new IllegalArgumentException(DATA_FORMAT_IS_NULL);
     }
 }

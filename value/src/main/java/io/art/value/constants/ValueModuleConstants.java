@@ -31,6 +31,14 @@ public interface ValueModuleConstants {
         String SERVICE_ID_KEY = "serviceId";
         String METHOD_ID_KEY = "methodId";
         String SERVICE_METHOD_IDENTIFIERS_KEY = "serviceMethodIdentifiers";
+        String CLASS_KEY = "class";
+        String MESSAGE_KEY = "message";
+        String CAUSE_KEY = "cause";
+        String STACK_TRACE_KEY = "stackTrace";
+        String DECLARING_CLASS_KEY = "declaringClass";
+        String METHOD_NAME_KEY = "methodName";
+        String FILE_NAME_KEY = "fileName";
+        String LINE_NUMBER_KEY = "lineNumber";
     }
 
     interface ExceptionMessages {

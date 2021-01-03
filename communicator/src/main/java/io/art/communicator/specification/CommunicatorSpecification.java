@@ -32,6 +32,7 @@ import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static java.util.Objects.*;
+import static lombok.AccessLevel.PRIVATE;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
@@ -43,31 +44,31 @@ public class CommunicatorSpecification {
     @EqualsAndHashCode.Include
     private final String communicatorId;
 
+    private final MethodProcessingMode inputMode;
+
+    private final MethodProcessingMode outputMode;
+
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
 
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    @Singular("exceptionDecorator")
-    private final List<UnaryOperator<Flux<Object>>> exceptionDecorators;
-
     private final ValueFromModelMapper<?, ? extends Value> inputMapper;
     private final ValueToModelMapper<?, ? extends Value> outputMapper;
-    private final CommunicatorImplementation implementation;
-    private final MethodProcessingMode inputMode;
-    private final MethodProcessingMode outputMode;
 
-    @Getter(lazy = true)
+    private final CommunicatorImplementation implementation;
+
+    @Getter(lazy = true, value = PRIVATE)
     private final CommunicatorModuleConfiguration moduleConfiguration = communicatorModule().configuration();
 
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private final CommunicatorConfiguration communicatorConfiguration = getModuleConfiguration().getConfigurations().get(communicatorId);
 
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private final Function<Object, Flux<Object>> mapInput = selectMapInput();
 
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private final Function<Flux<Object>, Object> mapOutput = selectMapOutput();
 
     public <T> T communicate() {
@@ -106,7 +107,7 @@ public class CommunicatorSpecification {
 
     private Flux<Value> mapException(Throwable exception) {
         Flux<Object> errorOutput = error(exception);
-        for (UnaryOperator<Flux<Object>> decorator : exceptionDecorators) {
+        for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
             errorOutput = errorOutput.transformDeferred(decorator);
         }
         return cast(errorOutput);
