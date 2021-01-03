@@ -23,18 +23,21 @@ import io.art.core.extensions.*;
 import io.art.core.stream.*;
 import io.art.value.immutable.*;
 import io.art.xml.exception.*;
+import lombok.*;
 import lombok.experimental.*;
+import org.apache.logging.log4j.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.value.constants.ValueConstants.ValueType.XmlValueType.CDATA;
+import static io.art.value.constants.ValueConstants.ValueType.XmlValueType.*;
 import static io.art.xml.constants.XmlDocumentConstants.*;
 import static io.art.xml.module.XmlModule.*;
 import static java.nio.ByteBuffer.*;
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
 import javax.xml.stream.*;
 import java.io.*;
 import java.nio.*;
@@ -43,6 +46,9 @@ import java.util.*;
 
 @UtilityClass
 public class XmlWriter {
+    @Getter(lazy = true, value = PRIVATE)
+    private static final Logger logger = logger(XmlWriter.class);
+
     public static byte[] writeXmlToBytes(XmlEntity entity) throws XmlException {
         ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
         try {
@@ -90,7 +96,7 @@ public class XmlWriter {
                 try {
                     writer.close();
                 } catch (Throwable throwable) {
-                    logger(XmlWriter.class).error(throwable.getMessage(), throwable);
+                    getLogger().error(throwable.getMessage(), throwable);
                 }
             }
         }
