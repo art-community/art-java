@@ -32,6 +32,7 @@ import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
 import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -94,8 +95,8 @@ public class RsocketServer implements Server {
     }
 
     private Mono<RSocket> createSocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
-        Mono<ServingRsocket> socket = Mono.create(emitter -> emitter.success(new ServingRsocket(payload, requesterSocket, configuration)));
         Logger logger = getLogger();
+        Mono<ServingRsocket> socket = Mono.create(emitter -> ignoreException(() -> emitter.success(new ServingRsocket(payload, requesterSocket, configuration)), throwable -> logger.error(throwable.getMessage(), throwable)));
         if (configuration.isLogging()) {
             socket = socket
                     .doOnSuccess(servingSocket -> servingSocket.onDispose(() -> logger.info(SERVER_CLIENT_DISCONNECTED)))

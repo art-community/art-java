@@ -22,6 +22,7 @@ import io.art.communicator.configuration.*;
 import io.art.communicator.implementation.*;
 import io.art.core.annotation.*;
 import io.art.core.constants.*;
+import io.art.core.exception.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.*;
@@ -112,7 +113,7 @@ public class CommunicatorSpecification {
     }
 
     private Function<Object, Flux<Object>> selectMapInput() {
-        if (isNull(inputMode)) throw new IllegalStateException();
+        if (isNull(inputMode)) throw new ImpossibleSituation();
         switch (inputMode) {
             case BLOCKING:
                 return Flux::just;
@@ -120,12 +121,12 @@ public class CommunicatorSpecification {
             case FLUX:
                 return input -> from(cast(input));
             default:
-                throw new IllegalStateException();
+                throw new ImpossibleSituation();
         }
     }
 
     private Function<Flux<Object>, Object> selectMapOutput() {
-        if (isNull(outputMode)) throw new IllegalStateException();
+        if (isNull(outputMode)) throw new ImpossibleSituation();
         switch (outputMode) {
             case BLOCKING:
                 return Flux::blockFirst;
@@ -134,7 +135,7 @@ public class CommunicatorSpecification {
             case FLUX:
                 return output -> output;
             default:
-                throw new IllegalStateException();
+                throw new ImpossibleSituation();
         }
     }
 }

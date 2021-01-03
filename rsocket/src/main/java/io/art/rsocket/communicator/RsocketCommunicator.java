@@ -19,6 +19,7 @@
 package io.art.rsocket.communicator;
 
 import io.art.communicator.implementation.*;
+import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -99,7 +100,7 @@ public class RsocketCommunicator implements CommunicatorImplementation {
             case METADATA_PUSH:
                 return cast(client.get().metadataPush(input.map(writer::writePayloadMetaData).last(EmptyPayload.INSTANCE)).flux());
         }
-        throw new IllegalStateException();
+        throw new ImpossibleSituation();
     }
 
     private RSocketClient createClient() {
@@ -123,7 +124,7 @@ public class RsocketCommunicator implements CommunicatorImplementation {
                 String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
                 return from(connector.connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath)));
         }
-        throw new IllegalStateException();
+        throw new ImpossibleSituation();
     }
 
     private RsocketSetupPayload setupPayload() {

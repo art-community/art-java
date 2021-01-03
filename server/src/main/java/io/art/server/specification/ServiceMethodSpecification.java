@@ -21,6 +21,7 @@ package io.art.server.specification;
 import io.art.core.annotation.*;
 import io.art.core.caster.*;
 import io.art.core.constants.*;
+import io.art.core.exception.*;
 import io.art.server.configuration.*;
 import io.art.server.implementation.*;
 import io.art.server.model.*;
@@ -148,7 +149,7 @@ public class ServiceMethodSpecification {
 
     private Function<Flux<Value>, Object> selectMapInput() {
         if (isNull(inputMode)) {
-            throw new IllegalStateException();
+            throw new ImpossibleSituation();
         }
         switch (inputMode) {
             case BLOCKING:
@@ -158,13 +159,13 @@ public class ServiceMethodSpecification {
             case FLUX:
                 return mappedInput -> mappedInput;
             default:
-                throw new IllegalStateException();
+                throw new ImpossibleSituation();
         }
     }
 
     private Function<Object, Flux<Object>> selectMapOutput() {
         if (isNull(outputMode)) {
-            throw new IllegalStateException();
+            throw new ImpossibleSituation();
         }
         switch (outputMode) {
             case BLOCKING:
@@ -173,7 +174,7 @@ public class ServiceMethodSpecification {
             case FLUX:
                 return output -> Flux.from(cast(output));
             default:
-                throw new IllegalStateException();
+                throw new ImpossibleSituation();
         }
     }
 }

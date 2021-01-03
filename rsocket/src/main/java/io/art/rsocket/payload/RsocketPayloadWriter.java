@@ -18,6 +18,7 @@
 
 package io.art.rsocket.payload;
 
+import io.art.core.exception.*;
 import io.art.value.immutable.Value;
 import io.rsocket.*;
 import lombok.*;
@@ -49,7 +50,7 @@ public class RsocketPayloadWriter {
                 return create(writeMessagePackToBytes(value));
 
         }
-        throw new IllegalStateException();
+        throw new ImpossibleSituation();
     }
 
     public Payload writePayloadMetaData(Value metadataValue) {
@@ -64,6 +65,6 @@ public class RsocketPayloadWriter {
                 return create(EMPTY_BYTES, writeMessagePackToBytes(metadataValue));
 
         }
-        throw new IllegalStateException();
+        throw new ImpossibleSituation();
     }
 }

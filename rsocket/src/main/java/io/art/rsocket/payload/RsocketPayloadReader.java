@@ -18,6 +18,7 @@
 
 package io.art.rsocket.payload;
 
+import io.art.core.exception.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.art.rsocket.model.*;
 import io.netty.buffer.*;
@@ -36,28 +37,17 @@ public class RsocketPayloadReader {
 
     public RsocketPayloadValue readPayloadData(Payload payload) {
         ByteBuf data = payload.sliceData();
-        if (data.capacity() == 0) {
-            return emptyRsocketPayload();
-        }
-        switch (dataFormat) {
-            case PROTOBUF:
-                return new RsocketPayloadValue(payload, readProtobuf(data));
-            case JSON:
-                return new RsocketPayloadValue(payload, readJson(data));
-            case XML:
-                return new RsocketPayloadValue(payload, readXml(data));
-            case MESSAGE_PACK:
-                return new RsocketPayloadValue(payload, readMessagePack(data));
-        }
-        throw new IllegalStateException();
+        return read(payload, data, dataFormat);
     }
 
     public RsocketPayloadValue readPayloadMetaData(Payload payload) {
         ByteBuf data = payload.sliceMetadata();
-        if (data.capacity() == 0) {
-            return emptyRsocketPayload();
-        }
-        switch (metaDataFormat) {
+        return read(payload, data, metaDataFormat);
+    }
+
+    private RsocketPayloadValue read(Payload payload, ByteBuf data, DataFormat format) {
+        if (data.capacity() == 0) return emptyRsocketPayload();
+        switch (format) {
             case PROTOBUF:
                 return new RsocketPayloadValue(payload, readProtobuf(data));
             case JSON:
@@ -67,6 +57,6 @@ public class RsocketPayloadReader {
             case MESSAGE_PACK:
                 return new RsocketPayloadValue(payload, readMessagePack(data));
         }
-        throw new IllegalStateException();
+        throw new ImpossibleSituation();
     }
 }
