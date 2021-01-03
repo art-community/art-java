@@ -18,7 +18,7 @@
 
 package io.art.rsocket.payload;
 
-import io.art.value.constants.ValueConstants.*;
+import io.art.value.constants.ValueModuleConstants.*;
 import io.art.rsocket.model.*;
 import io.netty.buffer.*;
 import io.rsocket.*;

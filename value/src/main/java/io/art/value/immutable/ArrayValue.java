@@ -18,10 +18,9 @@
 
 package io.art.value.immutable;
 
-import io.art.core.annotation.*;
 import io.art.core.exception.*;
 import io.art.core.lazy.*;
-import io.art.value.constants.ValueConstants.*;
+import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.exception.*;
 import io.art.value.mapper.*;
 import lombok.*;
@@ -33,8 +32,8 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.lazy.LazyValue.*;
-import static io.art.value.constants.ValueConstants.ExceptionMessages.INDEX_MAPPING_EXCEPTION;
-import static io.art.value.constants.ValueConstants.ValueType.*;
+import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.INDEX_MAPPING_EXCEPTION;
+import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static io.art.value.mapping.PrimitiveMapping.*;
 import static java.text.MessageFormat.format;

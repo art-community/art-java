@@ -19,6 +19,7 @@
 package io.art.rsocket.communicator;
 
 import io.art.communicator.implementation.*;
+import io.art.core.atomic.*;
 import io.art.core.lazy.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -33,6 +34,7 @@ import lombok.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
+import static io.art.core.atomic.AtomicLazyValue.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.lazy.LazyValue.*;
@@ -41,7 +43,6 @@ import static io.art.rsocket.module.RsocketModule.*;
 import static io.rsocket.core.RSocketClient.*;
 import static lombok.AccessLevel.*;
 
-@Getter
 @Builder
 public class RsocketCommunicator implements CommunicatorImplementation {
     private final String connectorId;
@@ -56,20 +57,19 @@ public class RsocketCommunicator implements CommunicatorImplementation {
     @Getter(lazy = true, value = PRIVATE)
     private final RsocketPayloadReader reader = new RsocketPayloadReader(setupPayload().getDataFormat(), setupPayload().getMetadataFormat());
 
-    @Getter(lazy = true, value = PRIVATE)
-    private final LazyValue<RSocketClient> client = createClient();
+    private final AtomicLazyValue<RSocketClient> client = atomicLazy();
 
     @Getter(lazy = true, value = PRIVATE)
     private final RsocketCommunicatorConfiguration communicatorConfiguration = rsocketModule().configuration().getCommunicatorConfiguration();
 
     @Override
     public void start() {
-        getClient().get();
+        client.initialize(this::createClient);
     }
 
     @Override
     public void stop() {
-        getClient().ifInitialized(client -> applyIf(client, socket -> !socket.isDisposed(), RsocketManager::disposeRsocket));
+        client.dispose(client -> applyIf(client, socket -> !socket.isDisposed(), RsocketManager::disposeRsocket));
     }
 
     @Override
@@ -78,28 +78,28 @@ public class RsocketCommunicator implements CommunicatorImplementation {
         RsocketPayloadReader reader = getReader();
         switch (communicationMode) {
             case FIRE_AND_FORGET:
-                return cast(getClient().get().fireAndForget(input.map(writer::writePayloadData).last(EmptyPayload.INSTANCE)).flux());
+                return cast(client.get().fireAndForget(input.map(writer::writePayloadData).last(EmptyPayload.INSTANCE)).flux());
             case REQUEST_RESPONSE:
-                return getClient().get()
+                return client.get()
                         .requestResponse(input.map(writer::writePayloadData).last(EmptyPayload.INSTANCE))
                         .flux()
                         .map(reader::readPayloadData)
                         .filter(data -> !data.isEmpty())
                         .map(RsocketPayloadValue::getValue);
             case REQUEST_STREAM:
-                return getClient().get()
+                return client.get()
                         .requestStream(input.map(writer::writePayloadData).last(EmptyPayload.INSTANCE))
                         .map(reader::readPayloadData)
                         .filter(data -> !data.isEmpty())
                         .map(RsocketPayloadValue::getValue);
             case REQUEST_CHANNEL:
-                return getClient().get()
+                return client.get()
                         .requestChannel(input.map(writer::writePayloadData))
                         .map(reader::readPayloadData)
                         .filter(data -> !data.isEmpty())
                         .map(RsocketPayloadValue::getValue);
             case METADATA_PUSH:
-                return cast(getClient().get().metadataPush(input.map(writer::writePayloadMetaData).last(EmptyPayload.INSTANCE)).flux());
+                return cast(client.get().metadataPush(input.map(writer::writePayloadMetaData).last(EmptyPayload.INSTANCE)).flux());
         }
         throw new IllegalStateException();
     }

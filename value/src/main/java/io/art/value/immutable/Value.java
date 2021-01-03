@@ -18,12 +18,12 @@
 
 package io.art.value.immutable;
 
-import io.art.value.constants.ValueConstants.*;
+import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.exception.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
-import static io.art.value.constants.ValueConstants.ValueType.*;
+import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
+import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static java.text.MessageFormat.*;
 import java.util.*;
 

@@ -19,12 +19,12 @@
 package io.art.value.mime;
 
 import io.art.core.mime.*;
-import io.art.value.constants.ValueConstants.*;
+import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.exception.*;
 import lombok.experimental.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.mime.MimeTypes.*;
-import static io.art.value.constants.ValueConstants.DataFormat.*;
+import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 import static java.text.MessageFormat.*;
 
 @UtilityClass

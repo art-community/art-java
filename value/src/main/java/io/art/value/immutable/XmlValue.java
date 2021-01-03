@@ -18,7 +18,7 @@
 
 package io.art.value.immutable;
 
-import io.art.value.constants.ValueConstants.ValueType.*;
+import io.art.value.constants.ValueModuleConstants.ValueType.*;
 
 public interface XmlValue<T> {
     T getValue();

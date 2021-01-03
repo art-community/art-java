@@ -28,7 +28,7 @@ import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.value.constants.ValueConstants.ValueType.*;
+import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.factory.EntityFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static java.util.stream.Collectors.*;

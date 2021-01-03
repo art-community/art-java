@@ -34,7 +34,7 @@ public class LazyValue<T> implements Supplier<T> {
         return nonNull(value.get());
     }
 
-    public void ifInitialized(Consumer<T> action) {
+    public void apply(Consumer<T> action) {
         if (initialized()) {
             action.accept(get());
         }

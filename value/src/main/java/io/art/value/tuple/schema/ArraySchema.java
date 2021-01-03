@@ -24,7 +24,7 @@ import io.art.value.immutable.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableArray.immutableArrayCollector;
-import static io.art.value.constants.ValueConstants.ValueType.*;
+import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import java.util.*;
 
 @Getter

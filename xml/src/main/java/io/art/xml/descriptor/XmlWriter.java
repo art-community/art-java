@@ -31,7 +31,7 @@ import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.value.constants.ValueConstants.ValueType.XmlValueType.*;
+import static io.art.value.constants.ValueModuleConstants.ValueType.XmlValueType.*;
 import static io.art.xml.constants.XmlDocumentConstants.*;
 import static io.art.xml.module.XmlModule.*;
 import static java.nio.ByteBuffer.*;

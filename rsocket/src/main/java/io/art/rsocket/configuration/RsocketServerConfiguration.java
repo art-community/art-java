@@ -23,7 +23,7 @@ import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.rsocket.constants.*;
 import io.art.rsocket.interceptor.*;
-import io.art.value.constants.ValueConstants.*;
+import io.art.value.constants.ValueModuleConstants.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
 import io.rsocket.plugins.*;
@@ -39,7 +39,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
-import static io.art.value.constants.ValueConstants.DataFormat.*;
+import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.util.Optional.*;
 import java.util.*;

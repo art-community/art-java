@@ -20,13 +20,13 @@ package io.art.rsocket.model;
 
 import io.art.core.model.*;
 import io.art.value.builder.*;
-import io.art.value.constants.ValueConstants.*;
+import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.immutable.*;
 import lombok.Value;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Fields.*;
-import static io.art.value.constants.ValueConstants.Keys.*;
+import static io.art.value.constants.ValueModuleConstants.Keys.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Entity.*;
 import static io.art.value.mapping.ServiceMethodMapping.*;

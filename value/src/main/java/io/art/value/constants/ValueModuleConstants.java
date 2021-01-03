@@ -19,15 +19,14 @@
 package io.art.value.constants;
 
 import io.art.value.exception.*;
-import io.art.value.factory.*;
 import io.art.value.immutable.*;
 import lombok.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
+import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static java.text.MessageFormat.*;
 
-public interface ValueConstants {
+public interface ValueModuleConstants {
     interface Keys {
         String SERVICE_ID_KEY = "serviceId";
         String METHOD_ID_KEY = "methodId";
