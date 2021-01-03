@@ -58,7 +58,7 @@ public class CommunicatorSpecification {
     private final ValueFromModelMapper<?, ? extends Value> inputMapper;
     private final ValueToModelMapper<?, ? extends Value> outputMapper;
 
-    private final CommunicatorImplementation<?> implementation;
+    private final CommunicatorImplementation implementation;
     private final MethodProcessingMode inputMode;
     private final MethodProcessingMode outputMode;
 

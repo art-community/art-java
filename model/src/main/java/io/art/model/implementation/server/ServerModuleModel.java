@@ -28,7 +28,7 @@ import java.util.Map.*;
 
 @Getter
 @Builder
-public class ServerModel {
+public class ServerModuleModel {
     @Builder.Default
     private final ImmutableMap<String, RsocketServiceModel> rsocketServices = emptyImmutableMap();
 

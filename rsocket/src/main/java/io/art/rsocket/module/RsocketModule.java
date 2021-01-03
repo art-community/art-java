@@ -20,13 +20,13 @@ package io.art.rsocket.module;
 
 import io.art.core.module.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.manager.*;
 import io.art.rsocket.state.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
+import static io.art.rsocket.manager.RsocketManager.*;
 import static lombok.AccessLevel.*;
 
 @Getter
@@ -39,7 +39,6 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     private final RsocketModuleConfiguration configuration = new RsocketModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
     private final RsocketModuleState state = new RsocketModuleState();
-    private final RsocketManager manager = new RsocketManager(configuration, state);
 
     public static StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule() {
         return getRsocketModule();
@@ -48,16 +47,16 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     @Override
     public void onLoad() {
         if (configuration.isActivateCommunicator()) {
-            manager.startConnectors();
+            startConnectors();
         }
         if (configuration.isActivateServer()) {
-            manager.startServer();
+            startServer();
         }
     }
 
     @Override
     public void onUnload() {
-        manager.stopConnectors();
-        manager.stopServer();
+        stopConnectors();
+        stopServer();
     }
 }

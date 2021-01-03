@@ -21,8 +21,8 @@ package io.art.communicator.implementation;
 import io.art.value.immutable.Value;
 import reactor.core.publisher.*;
 
-public interface CommunicatorImplementation<T> {
-    void start(T configuration);
+public interface CommunicatorImplementation {
+    void start();
 
     void stop();
 

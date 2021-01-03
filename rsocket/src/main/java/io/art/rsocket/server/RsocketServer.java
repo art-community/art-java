@@ -45,7 +45,7 @@ public class RsocketServer implements Server {
     private final AtomicReference<Disposable> server = new AtomicReference<>();
 
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = logger(RsocketServer.class);
+    private static final Logger logger = logger(RsocketServer.class);
 
     @Override
     public void start() {

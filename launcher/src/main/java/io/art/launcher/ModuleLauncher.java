@@ -54,7 +54,7 @@ import java.util.concurrent.atomic.*;
 @UtilityClass
 @UsedByGenerator
 public class ModuleLauncher {
-    private final static AtomicBoolean launched = new AtomicBoolean(false);
+    private static final AtomicBoolean launched = new AtomicBoolean(false);
 
     public static void launch(ModuleModel model) {
         if (launched.compareAndSet(false, true)) {
@@ -129,7 +129,7 @@ public class ModuleLauncher {
 
     private static RsocketModule rsocket(ImmutableArray<ConfigurationSource> sources, ModuleModel model, RsocketCustomizer rsocketCustomizer) {
         RsocketModule rsocket = new RsocketModule();
-        ServerModel serverModel = model.getServerModel();
+        ServerModuleModel serverModel = model.getServerModel();
         CommunicatorModuleModel communicatorModel = model.getCommunicatorModel();
         if (isNotEmpty(serverModel.getRsocketServices())) {
             rsocketCustomizer.activateServer();

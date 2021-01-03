@@ -43,7 +43,7 @@ public class YamlConfigurationSource implements ConfigurationSource {
     private final ModuleConfigurationSourceType type;
     private final File file;
     private final JsonNode configuration;
-    private final static YAMLMapper yamlMapper = new YAMLMapper();
+    private static final YAMLMapper yamlMapper = new YAMLMapper();
 
     public YamlConfigurationSource(String section, ModuleConfigurationSourceType type, File file) {
         this.section = section;

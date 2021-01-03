@@ -36,7 +36,7 @@ public class ResilienceModule implements StatefulModule<ResilienceModuleConfigur
     private final ResilienceModuleConfiguration.Configurator configurator = new ResilienceModuleConfiguration.Configurator(configuration);
     private final ResilienceModuleState state = new ResilienceModuleState();
     @Getter(lazy = true)
-    private final static
+    private static final
     StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule = context().getStatefulModule(ResilienceModule.class.getSimpleName());
 
     public static StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule() {

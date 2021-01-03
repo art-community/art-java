@@ -37,12 +37,13 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.core.operator.Operators.*;
+import static io.art.rsocket.module.RsocketModule.*;
 import static io.rsocket.core.RSocketClient.*;
 import static lombok.AccessLevel.*;
 
 @Getter
 @Builder
-public class RsocketCommunicator implements CommunicatorImplementation<RsocketCommunicatorConfiguration> {
+public class RsocketCommunicator implements CommunicatorImplementation {
     private final String connectorId;
     private final CommunicationMode communicationMode;
 
@@ -58,19 +59,17 @@ public class RsocketCommunicator implements CommunicatorImplementation<RsocketCo
     @Getter(lazy = true, value = PRIVATE)
     private final LazyValue<RSocketClient> client = createClient();
 
-    private RsocketCommunicatorConfiguration communicatorConfiguration;
+    @Getter(lazy = true, value = PRIVATE)
+    private final RsocketCommunicatorConfiguration communicatorConfiguration = rsocketModule().configuration().getCommunicatorConfiguration();
 
     @Override
-    public void start(RsocketCommunicatorConfiguration configuration) {
-        this.communicatorConfiguration = configuration;
-        if (configuration.isInstant()) {
-            getClient().get();
-        }
+    public void start() {
+        getClient().get();
     }
 
     @Override
     public void stop() {
-        getClient().ifInitialized(client -> applyIf(client, RSocketClient::isDisposed, RsocketManager::disposeRsocket));
+        getClient().ifInitialized(client -> applyIf(client, socket -> !socket.isDisposed(), RsocketManager::disposeRsocket));
     }
 
     @Override
@@ -106,7 +105,7 @@ public class RsocketCommunicator implements CommunicatorImplementation<RsocketCo
     }
 
     private LazyValue<RSocketClient> createClient() {
-        RsocketConnectorConfiguration connectorConfiguration = communicatorConfiguration.getConnectors().get(connectorId);
+        RsocketConnectorConfiguration connectorConfiguration = getCommunicatorConfiguration().getConnectors().get(connectorId);
         RSocketConnector connector = RSocketConnector.create()
                 .dataMimeType(connectorConfiguration.getDataMimeType().toString())
                 .metadataMimeType(connectorConfiguration.getMetaDataMimeType().toString())
@@ -132,8 +131,8 @@ public class RsocketCommunicator implements CommunicatorImplementation<RsocketCo
     private RsocketSetupPayload setupPayload() {
         return setupPayload
                 .toBuilder()
-                .dataFormat(orElse(setupPayload.getDataFormat(), communicatorConfiguration.getDefaultDataFormat()))
-                .metadataFormat(orElse(setupPayload.getMetadataFormat(), communicatorConfiguration.getDefaultMetaDataFormat()))
+                .dataFormat(orElse(setupPayload.getDataFormat(), getCommunicatorConfiguration().getDefaultDataFormat()))
+                .metadataFormat(orElse(setupPayload.getMetadataFormat(), getCommunicatorConfiguration().getDefaultMetaDataFormat()))
                 .build();
     }
 }

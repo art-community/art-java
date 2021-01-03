@@ -9,8 +9,8 @@ import java.util.*;
 import java.util.function.*;
 
 public class SingletonsRegistry {
-    private final static Map<Supplier<?>, LazyValue<?>> SINGLETONS_BY_FUNCTION = concurrentHashMap();
-    private final static Map<Class<?>, LazyValue<?>> SINGLETONS_BY_CLASS = concurrentHashMap();
+    private static final Map<Supplier<?>, LazyValue<?>> SINGLETONS_BY_FUNCTION = concurrentHashMap();
+    private static final Map<Class<?>, LazyValue<?>> SINGLETONS_BY_CLASS = concurrentHashMap();
 
     public static <T> T singleton(Supplier<T> factory) {
         return cast(putIfAbsent(SINGLETONS_BY_FUNCTION, factory, () -> lazy(factory)).get());

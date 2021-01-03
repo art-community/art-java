@@ -21,10 +21,10 @@ package io.art.rsocket.manager;
 
 import io.art.communicator.configuration.*;
 import io.art.rsocket.communicator.*;
-import io.art.rsocket.configuration.*;
 import io.art.rsocket.server.*;
 import io.art.rsocket.state.*;
 import lombok.*;
+import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import static io.art.communicator.module.CommunicatorModule.*;
@@ -33,26 +33,29 @@ import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
+import static io.art.rsocket.module.RsocketModule.*;
 import static lombok.AccessLevel.*;
 
-@RequiredArgsConstructor
+@UtilityClass
 public class RsocketManager {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketManager.class);
 
     @Getter(lazy = true, value = PRIVATE)
-    private final CommunicatorModuleConfiguration communicatorConfiguration = communicatorModule().configuration();
+    private static final CommunicatorModuleConfiguration communicatorConfiguration = communicatorModule().configuration();
 
-    private final RsocketModuleConfiguration rsocketConfiguration;
-    private final RsocketModuleState state;
-    private RsocketServer server;
+    @Getter(lazy = true, value = PRIVATE)
+    private static final RsocketServer server = new RsocketServer(rsocketModule().configuration().getServerConfiguration());
+
+    @Getter(lazy = true, value = PRIVATE)
+    private static final RsocketModuleState state = rsocketModule().state();
 
     public void startConnectors() {
         getCommunicatorConfiguration()
                 .getRegistry()
                 .<RsocketCommunicator>getByProtocol(RSOCKET)
                 .values()
-                .forEach(proxy -> proxy.getImplementations().forEach(communicator -> communicator.start(rsocketConfiguration.getCommunicatorConfiguration())));
+                .forEach(proxy -> proxy.getImplementations().forEach(RsocketCommunicator::start));
     }
 
     public void stopConnectors() {
@@ -65,12 +68,12 @@ public class RsocketManager {
 
 
     public void startServer() {
-        (server = new RsocketServer(rsocketConfiguration.getServerConfiguration())).start();
+        getServer().start();
     }
 
     public void stopServer() {
-        apply(server, RsocketServer::stop);
-        state.getRequesters().forEach(RsocketManager::disposeRsocket);
+        apply(getServer(), RsocketServer::stop);
+        getState().getRequesters().forEach(RsocketManager::disposeRsocket);
     }
 
 

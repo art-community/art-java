@@ -27,7 +27,7 @@ import static lombok.AccessLevel.*;
 @Getter
 public class XmlModule implements StatelessModule<XmlModuleConfiguration, XmlModuleConfiguration.Configurator> {
     @Getter(lazy = true, value = PRIVATE)
-    private final static StatelessModuleProxy<XmlModuleConfiguration> xmlModule = context().getStatelessModule(XmlModule.class.getSimpleName());
+    private static final StatelessModuleProxy<XmlModuleConfiguration> xmlModule = context().getStatelessModule(XmlModule.class.getSimpleName());
     private final String id = XmlModule.class.getSimpleName();
     private final XmlModuleConfiguration configuration = new XmlModuleConfiguration();
     private final XmlModuleConfiguration.Configurator configurator = new XmlModuleConfiguration.Configurator(configuration);

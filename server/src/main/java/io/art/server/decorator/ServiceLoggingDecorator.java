@@ -36,7 +36,7 @@ import java.util.function.*;
 
 public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = logger(ServiceLoggingDecorator.class);
+    private static final Logger logger = logger(ServiceLoggingDecorator.class);
     private final LazyValue<UnaryOperator<Flux<Object>>> decorator = lazy(this::createDecorator);
     private final MethodDecoratorScope scope;
     private final Supplier<Boolean> enabled;

@@ -59,11 +59,11 @@ public class ServerModelConfigurator {
         return this;
     }
 
-    ServerModel configure() {
+    ServerModuleModel configure() {
         ImmutableMap<String, RsocketServiceModel> rsocketServices = this.rsocketServices.build()
                 .stream()
                 .map(RsocketServiceModelConfigurator::configure)
                 .collect(immutableMapCollector(RsocketServiceModel::getId, identity()));
-        return ServerModel.builder().rsocketServices(rsocketServices).build();
+        return ServerModuleModel.builder().rsocketServices(rsocketServices).build();
     }
 }

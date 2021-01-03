@@ -28,7 +28,7 @@ import java.util.function.*;
 @Builder
 public class ModuleModel {
     private final String mainModuleId;
-    private final ServerModel serverModel;
+    private final ServerModuleModel serverModel;
     private final CommunicatorModuleModel communicatorModel;
     private final Runnable onLoad;
     @Builder.Default
