@@ -18,17 +18,21 @@
 
 package io.art.model.implementation.communicator;
 
+import io.art.communicator.constants.*;
 import io.art.communicator.specification.CommunicatorSpecification.*;
-import io.art.core.collection.*;
-import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
+import static io.art.communicator.constants.CommunicatorModuleConstants.*;
+import java.util.function.*;
 
-@Getter
-@RequiredArgsConstructor
-public class CommunicatorModel {
-    private final ImmutableMap<String, CommunicatorSpecificationModel> communicators;
+public interface CommunicatorModel {
+    String getId();
 
-    public CommunicatorSpecificationBuilder implement(String id, CommunicatorSpecificationBuilder current) {
-        return let(communicators.get(id), communicator -> communicator.implement(current));
+    Class<?> getProxyClass();
+
+    CommunicationProtocol getProtocol();
+
+    Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> getDecorator();
+
+    default CommunicatorSpecificationBuilder implement(CommunicatorSpecificationBuilder builder) {
+        return getDecorator().apply(builder);
     }
 }
