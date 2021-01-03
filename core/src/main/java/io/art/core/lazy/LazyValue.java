@@ -31,7 +31,7 @@ public class LazyValue<T> implements Supplier<T> {
     }
 
     public boolean initialized() {
-        return value.get() != null;
+        return nonNull(value.get());
     }
 
     public void ifInitialized(Consumer<T> action) {
@@ -51,7 +51,7 @@ public class LazyValue<T> implements Supplier<T> {
 
     @Override
     public boolean equals(Object other) {
-        if (other == null) {
+        if (isNull(other)) {
             return false;
         }
         if (!(other instanceof LazyValue)) {

@@ -38,6 +38,7 @@ import static io.art.value.constants.ValueConstants.ValueType.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static io.art.value.mapping.PrimitiveMapping.*;
 import static java.text.MessageFormat.format;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import javax.annotation.*;
 import java.util.*;
@@ -212,8 +213,8 @@ public class ArrayValue implements Value {
         Value entry;
         for (int index = 0; index < size; index++) {
             entry = this.get(index);
-            if (entry == null) {
-                if (another.get(index) == null) continue;
+            if (isNull(entry)) {
+                if (isNull(another.get(index))) continue;
                 return false;
             }
             if (!(entry.equals(another.get(index)))) return false;

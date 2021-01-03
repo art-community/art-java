@@ -20,6 +20,7 @@ package io.art.server.validation;
 
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static java.util.Objects.*;
 import java.util.function.*;
 
 @Getter
@@ -36,7 +37,7 @@ public abstract class ValidationExpression<T> {
     public boolean evaluate(String field, T value) {
         this.field = field;
         this.value = value;
-        return value != null;
+        return nonNull(value);
     }
 
     public String getErrorMessage() {

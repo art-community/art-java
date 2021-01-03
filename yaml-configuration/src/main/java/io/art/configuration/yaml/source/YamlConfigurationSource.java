@@ -22,14 +22,14 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.*;
 import com.fasterxml.jackson.dataformat.yaml.*;
 import io.art.configuration.yaml.exception.*;
-import io.art.core.combiner.*;
 import io.art.core.factory.*;
 import io.art.core.source.*;
 import lombok.*;
 import static com.fasterxml.jackson.databind.node.JsonNodeType.*;
-import static io.art.core.combiner.SectionCombiner.combine;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.combiner.SectionCombiner.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.parser.DurationParser.*;
 import static java.util.stream.Collectors.*;
 import static java.util.stream.StreamSupport.*;
@@ -155,6 +155,7 @@ public class YamlConfigurationSource implements ConfigurationSource {
     }
 
     @Override
+    @SuppressWarnings(NULLABLE_PROBLEMS)
     public Set<String> getKeys() {
         return stream(((Iterable<String>) configuration::fieldNames).spliterator(), false).collect(toCollection(SetFactory::set));
     }

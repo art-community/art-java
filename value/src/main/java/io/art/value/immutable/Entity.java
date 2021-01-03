@@ -160,7 +160,7 @@ public class Entity implements Value {
         Queue<String> sections = queueOf(key.split(delimiter));
         Entity entity = this;
         String section;
-        while ((section = sections.poll()) != null) {
+        while (nonNull(section = sections.poll())) {
             value = entity.get(section);
             if (valueIsNull(value)) return null;
             if (!isEntity(value)) {
@@ -244,8 +244,8 @@ public class Entity implements Value {
         Value entry;
         for (Primitive key : keySet) {
             entry = this.get(key);
-            if (entry == null) {
-                if (another.get(key) == null) continue;
+            if (isNull(entry)) {
+                if (isNull(another.get(key))) continue;
                 return false;
             }
             if (!(entry.equals(another.get(key)))) return false;
