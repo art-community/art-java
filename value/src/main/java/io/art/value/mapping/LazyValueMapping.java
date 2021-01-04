@@ -25,48 +25,49 @@ import io.art.value.mapper.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.lazy.LazyValue.*;
 
 @UtilityClass
 @UsedByGenerator
 public class LazyValueMapping {
     public static <T> ValueFromModelMapper<LazyValue<T>, Value> fromLazy(ValueFromModelMapper<T, Value> valueMapper) {
-        return lazy -> valueMapper.map(lazy.get());
+        return lazy -> let(lazy, value -> let(value.get(), valueMapper::map));
     }
 
     public static <T> ValueToModelMapper<LazyValue<T>, Value> toLazy(ValueToModelMapper<T, Value> valueMapper) {
-        return value -> lazy(() -> valueMapper.map(value));
+        return value -> let(value, lazy -> lazy(() -> valueMapper.map(lazy)));
     }
 
     public static <T> PrimitiveFromModelMapper<LazyValue<T>> fromLazy(PrimitiveFromModelMapper<T> valueMapper) {
-        return lazy -> valueMapper.map(lazy.get());
+        return lazy -> let(lazy, value -> let(value.get(), valueMapper::map));
     }
 
     public static <T> PrimitiveToModelMapper<LazyValue<T>> toLazy(PrimitiveToModelMapper<T> valueMapper) {
-        return value -> lazy(() -> valueMapper.map(value));
+        return value -> let(value, lazy -> lazy(() -> valueMapper.map(lazy)));
     }
 
     public static <T> ArrayFromModelMapper<LazyValue<T>> fromLazy(ArrayFromModelMapper<T> valueMapper) {
-        return lazy -> valueMapper.map(lazy.get());
+        return lazy -> let(lazy, value -> let(value.get(), valueMapper::map));
     }
 
     public static <T> ArrayToModelMapper<LazyValue<T>> toLazy(ArrayToModelMapper<T> valueMapper) {
-        return value -> lazy(() -> valueMapper.map(value));
+        return value -> let(value, lazy -> lazy(() -> valueMapper.map(lazy)));
     }
 
     public static <T> EntityFromModelMapper<LazyValue<T>> fromLazy(EntityFromModelMapper<T> valueMapper) {
-        return lazy -> valueMapper.map(lazy.get());
+        return lazy -> let(lazy, value -> let(value.get(), valueMapper::map));
     }
 
     public static <T> EntityToModelMapper<LazyValue<T>> toLazy(EntityToModelMapper<T> valueMapper) {
-        return value -> lazy(() -> valueMapper.map(value));
+        return value -> let(value, lazy -> lazy(() -> valueMapper.map(lazy)));
     }
 
     public static <T> BinaryFromModelMapper<LazyValue<T>> fromLazy(BinaryFromModelMapper<T> valueMapper) {
-        return lazy -> valueMapper.map(lazy.get());
+        return lazy -> let(lazy, value -> let(value.get(), valueMapper::map));
     }
 
     public static <T> BinaryToModelMapper<LazyValue<T>> toLazy(BinaryToModelMapper<T> valueMapper) {
-        return value -> lazy(() -> valueMapper.map(value));
+        return value -> let(value, lazy -> lazy(() -> valueMapper.map(lazy)));
     }
 }
