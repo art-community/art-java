@@ -3,7 +3,6 @@ package io.art.tarantool.instance;
 import io.art.tarantool.configuration.space.TarantoolSpaceConfig;
 import io.art.tarantool.configuration.space.TarantoolSpaceFormat;
 import io.art.tarantool.configuration.space.TarantoolSpaceIndex;
-import io.art.tarantool.space.TarantoolAsynchronousSpace;
 import io.art.tarantool.space.TarantoolSpace;
 import io.art.tarantool.transaction.TarantoolTransactionManager;
 import io.art.tarantool.model.record.TarantoolRecord;
@@ -35,10 +34,6 @@ public class TarantoolInstance {
 
     public TarantoolSpace space(String space){
         return new TarantoolSpace(transactionManager, space);
-    }
-
-    public TarantoolAsynchronousSpace asynchronousSpace(String space){
-        return new TarantoolAsynchronousSpace(transactionManager, space);
     }
 
     public void createSpace(String space, TarantoolSpaceConfig config){

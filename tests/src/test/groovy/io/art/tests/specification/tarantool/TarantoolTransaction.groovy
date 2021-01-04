@@ -1,7 +1,7 @@
 
 package io.art.tests.specification.tarantool
 
-import io.art.tarantool.space.TarantoolAsynchronousSpace
+import io.art.tarantool.space.TarantoolSpace
 import io.art.tarantool.instance.TarantoolInstance
 import io.art.tarantool.model.operation.TarantoolUpdateFieldOperation
 import io.art.value.immutable.Entity
@@ -22,7 +22,7 @@ import static io.art.value.factory.PrimitivesFactory.intPrimitive
 import static io.art.value.factory.PrimitivesFactory.stringPrimitive
 
 class TarantoolTransaction extends Specification {
-    def synchronizationTimeout = 300
+    def synchronizationTimeout = 60
 
     def setupSpec(){
         launch module().make()
@@ -34,7 +34,7 @@ class TarantoolTransaction extends Specification {
         def spaceName = 's1_tx'
 
         TarantoolInstance db = tarantoolInstance(clusterId)
-        TarantoolAsynchronousSpace space = db.asynchronousSpace(spaceName)
+        TarantoolSpace space = db.space(spaceName)
 
         Value data = Entity.entityBuilder()
                 .put("id", intPrimitive(3))
@@ -103,7 +103,7 @@ class TarantoolTransaction extends Specification {
 
 
         def db = tarantoolInstance(clusterId)
-        def space = db.asynchronousSpace(spaceName)
+        def space = db.space(spaceName)
 
 
 
@@ -159,7 +159,7 @@ class TarantoolTransaction extends Specification {
                 .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("testData"))
                 .build()
-        space = db.asynchronousSpace(spaceName)
+        space = db.space(spaceName)
         space.autoIncrement(data)
         then:
         def len = space.len()

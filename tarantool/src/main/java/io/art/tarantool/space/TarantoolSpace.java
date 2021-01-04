@@ -1,141 +1,190 @@
 package io.art.tarantool.space;
 
-import io.art.tarantool.model.operation.TarantoolUpdateFieldOperation;
+import io.art.core.factory.MapFactory;
+import io.art.tarantool.constants.TarantoolModuleConstants;
 import io.art.tarantool.transaction.TarantoolTransactionManager;
 import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
 import io.art.tarantool.model.record.TarantoolRecord;
-import io.art.tarantool.space.TarantoolAsynchronousSpace.SelectRequest;
+import io.art.tarantool.model.operation.TarantoolUpdateFieldOperation;
 import io.art.value.immutable.Value;
-import lombok.*;
-import org.apache.logging.log4j.*;
+import io.art.tarantool.model.mapping.TarantoolResponseMapping;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+
 
 import java.util.*;
+import java.util.stream.Stream;
 
+import static io.art.core.caster.Caster.cast;
+import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.SelectOptions.*;
+import static io.art.tarantool.model.mapping.TarantoolRequestMapping.*;
 
-import static io.art.logging.LoggingModule.*;
-import static lombok.AccessLevel.*;
-
+@AllArgsConstructor
 public class TarantoolSpace {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(TarantoolSpace.class);
-    private final TarantoolAsynchronousSpace asynchronousSpace;
-
-    public TarantoolSpace(TarantoolTransactionManager transactionManager, String space){
-        this.asynchronousSpace = new TarantoolAsynchronousSpace(transactionManager, space);
-    }
+    @NonNull
+    private final TarantoolTransactionManager transactionManager;
+    @NonNull
+    private final String space;
 
 
     public TarantoolRecord<Value> get(Value key){
-        return asynchronousSpace.get(key).synchronize();
+        return cast(transactionManager.callRO(GET, TarantoolResponseMapping::toValue, space, requestTuple(key)));
     }
 
     public TarantoolRecord<Value> get(TarantoolTransactionDependency keyDependency){
-        return asynchronousSpace.get(keyDependency).synchronize();
+        return cast(transactionManager.callRO(GET, TarantoolResponseMapping::toValue, space, keyDependency.get()));
     }
 
     public TarantoolRecord<Value> get(String index, Value key){
-        return asynchronousSpace.get(index, key).synchronize();
+        return cast(transactionManager.callRO(GET, TarantoolResponseMapping::toValue, space, index, requestTuple(key)));
     }
 
     public TarantoolRecord<Value> get(String index, TarantoolTransactionDependency keyDependency){
-        return asynchronousSpace.get(index, keyDependency).synchronize();
+        return cast(transactionManager.callRO(GET, TarantoolResponseMapping::toValue, space, index, keyDependency.get()));
     }
 
 
     public SelectRequest select(Value request){
-        return asynchronousSpace.select(request);
+        return new SelectRequest(request);
     }
 
     public SelectRequest select(TarantoolTransactionDependency requestDependency){
-        return asynchronousSpace.select(requestDependency);
+        return new SelectRequest(requestDependency);
     }
 
 
     public TarantoolRecord<Value> delete(Value key){
-        return asynchronousSpace.delete(key).synchronize();
+        return cast(transactionManager.callRW(DELETE, TarantoolResponseMapping::toValue, space, requestTuple(key)));
     }
 
     public TarantoolRecord<Value> delete(TarantoolTransactionDependency keyDependency){
-        return asynchronousSpace.delete(keyDependency).synchronize();
+        return cast(transactionManager.callRW(DELETE, TarantoolResponseMapping::toValue, space, keyDependency.get()));
     }
 
 
     public TarantoolRecord<Value> insert(Value data){
-        return asynchronousSpace.insert(data).synchronize();
+        return cast(transactionManager.callRW(INSERT, TarantoolResponseMapping::toValue, space, dataTuple(data)));
     }
 
     public TarantoolRecord<Value> insert(TarantoolTransactionDependency dataDependency){
-        return asynchronousSpace.insert(dataDependency).synchronize();
+        return cast(transactionManager.callRW(INSERT, TarantoolResponseMapping::toValue, space, dataDependency.get()));
     }
 
 
     public TarantoolRecord<Value> autoIncrement(Value data){
-        return asynchronousSpace.autoIncrement(data).synchronize();
+        return cast(transactionManager.callRW(AUTO_INCREMENT, TarantoolResponseMapping::toValue, space, dataTuple(data)));
     }
 
     public TarantoolRecord<Value> autoIncrement(TarantoolTransactionDependency dataDependency){
-        return asynchronousSpace.autoIncrement(dataDependency).synchronize();
+        return cast(transactionManager.callRW(AUTO_INCREMENT, TarantoolResponseMapping::toValue, space, dataDependency.get()));
     }
 
 
     public TarantoolRecord<Value> put(Value data){
-        return asynchronousSpace.put(data).synchronize();
+        return cast(transactionManager.callRW(PUT, TarantoolResponseMapping::toValue, space, dataTuple(data)));
     }
 
     public TarantoolRecord<Value> put(TarantoolTransactionDependency dataDependency){
-        return asynchronousSpace.put(dataDependency).synchronize();
+        return cast(transactionManager.callRW(PUT, TarantoolResponseMapping::toValue, space, dataDependency.get()));
     }
 
 
     public TarantoolRecord<Value> replace(Value data){
-        return asynchronousSpace.replace(data).synchronize();
+        return cast(transactionManager.callRW(REPLACE, TarantoolResponseMapping::toValue, space, dataTuple(data)));
     }
 
     public TarantoolRecord<Value> replace(TarantoolTransactionDependency dataDependency){
-        return asynchronousSpace.replace(dataDependency).synchronize();
+        return cast(transactionManager.callRW(REPLACE, TarantoolResponseMapping::toValue, space, dataDependency.get()));
     }
 
 
     public TarantoolRecord<Value> update(Value key, TarantoolUpdateFieldOperation... operations){
-        return asynchronousSpace.update(key, operations).synchronize();
+        return cast(transactionManager.callRW(UPDATE, TarantoolResponseMapping::toValue, space, requestTuple(key), updateOperationsTuple(operations)));
     }
 
     public TarantoolRecord<Value> update(TarantoolTransactionDependency keyDependency, TarantoolUpdateFieldOperation... operations){
-        return asynchronousSpace.update(keyDependency, operations).synchronize();
+        return cast(transactionManager.callRW(UPDATE, TarantoolResponseMapping::toValue, space, keyDependency.get(), updateOperationsTuple(operations)));
     }
 
 
     public TarantoolRecord<Value> upsert(Value defaultValue, TarantoolUpdateFieldOperation... operations){
-        return asynchronousSpace.upsert(defaultValue, operations).synchronize();
+        return cast(transactionManager.callRW(UPSERT, TarantoolResponseMapping::toValue, space, dataTuple(defaultValue), updateOperationsTuple(operations)));
     }
 
     public TarantoolRecord<Value> upsert(TarantoolTransactionDependency defaultValueDependency, TarantoolUpdateFieldOperation... operations){
-        return asynchronousSpace.upsert(defaultValueDependency, operations).synchronize();
+        return cast(transactionManager.callRW(UPSERT, TarantoolResponseMapping::toValue, space, defaultValueDependency.get(), updateOperationsTuple(operations)));
     }
 
 
     public TarantoolRecord<Long> count(){
-        return asynchronousSpace.count().synchronize();
+        return cast(transactionManager.callRO(COUNT, TarantoolResponseMapping::toLong, space));
     }
 
     public TarantoolRecord<Long> len(){
-        return asynchronousSpace.len().synchronize();
+        return cast(transactionManager.callRO(LEN, TarantoolResponseMapping::toLong, space));
     }
 
     public TarantoolRecord<Long> schemaCount(){
-        return asynchronousSpace.schemaCount().synchronize();
+        return cast(transactionManager.callRO(SCHEMA_COUNT, TarantoolResponseMapping::toLong, space));
     }
 
     public TarantoolRecord<Long> schemaLen(){
-        return asynchronousSpace.schemaLen().synchronize();
+        return cast(transactionManager.callRO(SCHEMA_LEN, TarantoolResponseMapping::toLong, space));
     }
 
     public void truncate(){
-        asynchronousSpace.truncate();
+        transactionManager.callRW(TRUNCATE, TarantoolResponseMapping::toEmpty, space);
     }
 
     public TarantoolRecord<Set<String>> listIndices(){
-        return asynchronousSpace.listIndices().synchronize();
+        return cast(transactionManager.callRO(LIST_INDICES, TarantoolResponseMapping::toStringSet, space));
     }
 
+    public class SelectRequest {
+        private final Object request;
+        private Map<String, Object> options = MapFactory.map();
+        private Object index = 0;
+
+        public SelectRequest(Value request) {
+            this.request = requestTuple(request);
+        }
+
+        public SelectRequest(TarantoolTransactionDependency requestDependency) {
+            this.request = requestDependency.get();
+        }
+
+        public SelectRequest index(String index) {
+            this.index = index;
+            return this;
+        }
+
+        public SelectRequest limit(Long limit) {
+            options.put(LIMIT, limit);
+            return this;
+        }
+
+        public SelectRequest offset(Long offset) {
+            options.put(OFFSET, offset);
+            return this;
+        }
+
+        public SelectRequest iterator(TarantoolModuleConstants.TarantoolIndexIterator iterator){
+            options.put(ITERATOR, iterator.toString());
+            return this;
+        }
+
+        public TarantoolRecord<List<Value>> fetch(){
+            return cast(transactionManager.callRO(SELECT, TarantoolResponseMapping::toValuesList, space, request, index, options));
+        }
+
+        public List<Value> get(){
+            return fetch().get();
+        }
+
+        public Stream<Value> stream() {
+            return fetch().get().stream();
+        }
+    }
+    
 }

@@ -2,8 +2,7 @@
 package io.art.tests.specification.tarantool
 
 import io.art.tarantool.instance.TarantoolInstance
-import io.art.tarantool.model.record.TarantoolRecord
-import io.art.tarantool.space.TarantoolAsynchronousSpace
+import io.art.tarantool.space.TarantoolSpace
 import io.art.value.immutable.Entity
 import spock.lang.Specification
 
@@ -20,6 +19,8 @@ import static io.art.value.factory.PrimitivesFactory.*
 
 class TarantoolLoadTest extends Specification {
     def benchmarkOpsCount = 1000000
+    def benchSleepEvery = 500
+    def benchTimeout = 10 //due to high freq of requests, every %benchSleepEvery% requests needed timeout to avoid client errors
 
     def setupSpec(){
         launch module().make()
@@ -32,7 +33,7 @@ class TarantoolLoadTest extends Specification {
         def clusterId = "routers"
 
         TarantoolInstance db = tarantoolInstance(clusterId)
-        TarantoolAsynchronousSpace space = db.asynchronousSpace(spaceName)
+        TarantoolSpace space = db.space(spaceName)
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
@@ -64,9 +65,9 @@ class TarantoolLoadTest extends Specification {
                 .build()
 
         when:
-        List<?> responses =  new LinkedList<>();
         for (int i = 0; i<benchmarkOpsCount; i++){
-            responses.add(space.autoIncrement(data1))
+            space.autoIncrement(data1)
+            if (i%benchSleepEvery == 0) sleep(benchTimeout)
         }
         then:
         true
@@ -81,7 +82,7 @@ class TarantoolLoadTest extends Specification {
         def clusterId = "storage1"
 
         TarantoolInstance db = tarantoolInstance(clusterId)
-        TarantoolAsynchronousSpace space = db.asynchronousSpace(spaceName)
+        TarantoolSpace space = db.space(spaceName)
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
@@ -102,9 +103,9 @@ class TarantoolLoadTest extends Specification {
 
 
         when:
-        List<?> responses =  new LinkedList<>();
         for (int i = 0; i<benchmarkOpsCount; i++){
-            responses.add(space.autoIncrement(data))
+            space.autoIncrement(data)
+            if (i%benchSleepEvery == 0) sleep(benchTimeout)
         }
         then:
         true
@@ -119,7 +120,7 @@ class TarantoolLoadTest extends Specification {
         int divider = 1000
 
         TarantoolInstance db = tarantoolInstance(clusterId)
-        TarantoolAsynchronousSpace space = db.asynchronousSpace(spaceName)
+        TarantoolSpace space = db.space(spaceName)
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
@@ -131,7 +132,7 @@ class TarantoolLoadTest extends Specification {
                 .ifNotExists(true)
                 .unique(true))
 
-        Entity data1 = Entity.entityBuilder()
+        Entity data = Entity.entityBuilder()
                 .put("id", intPrimitive(1))
                 .put("bucket_id", intPrimitive(1))
                 .put("data", stringPrimitive("testData"))
@@ -139,11 +140,11 @@ class TarantoolLoadTest extends Specification {
                 .build()
 
         when:
-        List<?> responses =  new LinkedList<>();
         for(int j = 0; j<divider; j++) {
             db.beginTransaction()
             for (int i = 0; i < benchmarkOpsCount / divider; i++) {
-                responses.add(space.autoIncrement(data1))
+                space.autoIncrement(data)
+                if (i%benchSleepEvery == 0) sleep(benchTimeout)
             }
             db.commitTransaction()
         }
