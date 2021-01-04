@@ -41,14 +41,14 @@ public class YamlConfigurationSource implements ConfigurationSource {
     private final ModuleConfigurationSourceType type;
     private final File file;
     private final JsonNode configuration;
-    private static final YAMLMapper yamlMapper = new YAMLMapper();
+    private static final YAMLMapper YAML_MAPPER = new YAMLMapper();
 
     public YamlConfigurationSource(String section, ModuleConfigurationSourceType type, File file) {
         this.section = section;
         this.type = type;
         this.file = file;
         try {
-            configuration = yamlMapper.readTree(file);
+            configuration = YAML_MAPPER.readTree(file);
         } catch (IOException exception) {
             throw new YamlConfigurationLoadingException(exception);
         }
