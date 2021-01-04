@@ -20,18 +20,25 @@ package io.art.model.customizer;
 
 import io.art.configurator.configuration.*;
 import io.art.configurator.custom.*;
+import io.art.core.collection.*;
+import io.art.core.source.*;
 import lombok.*;
 
 public class ConfiguratorCustomizer {
-    @Getter
-    private final Custom configuration = new Custom();
+    private CustomConfigurationRegistry registry;
 
     public ConfiguratorCustomizer registry(CustomConfigurationRegistry registry) {
-        configuration.customConfigurations = registry;
+        this.registry = registry;
         return this;
     }
 
+    public ConfiguratorModuleConfiguration configure(ImmutableArray<ConfigurationSource> sources) {
+        return new Custom(registry.configure(sources));
+    }
+
+    @Getter
+    @RequiredArgsConstructor
     private static class Custom extends ConfiguratorModuleConfiguration {
-        private CustomConfigurationRegistry customConfigurations;
+        private final ImmutableMap<Class<?>, ?> customConfigurations;
     }
 }

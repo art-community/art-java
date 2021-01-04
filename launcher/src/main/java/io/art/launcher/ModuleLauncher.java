@@ -93,8 +93,7 @@ public class ModuleLauncher {
     }
 
     private static Module configurator(ConfiguratorModule configuratorModule, ImmutableArray<ConfigurationSource> sources, ConfiguratorCustomizer configuratorCustomizer) {
-        configuratorModule.configure(configurator -> configurator.from(sources));
-        ofNullable(configuratorCustomizer).ifPresent(customizer -> configuratorModule.configure(configurator -> configurator.override(customizer.getConfiguration())));
+        ofNullable(configuratorCustomizer).ifPresent(customizer -> configuratorModule.configure(configurator -> configurator.override(customizer.configure(sources))));
         return configuratorModule;
     }
 

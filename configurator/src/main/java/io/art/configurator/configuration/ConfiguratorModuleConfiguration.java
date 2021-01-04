@@ -18,7 +18,6 @@
 
 package io.art.configurator.configuration;
 
-import io.art.configurator.custom.*;
 import io.art.configurator.source.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
@@ -31,11 +30,10 @@ import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static java.util.Comparator.*;
 
+@Getter
 public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
-    @Getter
     private ImmutableMap<ModuleConfigurationSourceType, ConfigurationSource> sources = emptyImmutableMap();
-
-    private CustomConfigurationRegistry customConfigurations = new CustomConfigurationRegistry();
+    private ImmutableMap<Class<?>, ?> customConfigurations = emptyImmutableMap();
 
     public PropertiesConfigurationSource getProperties() {
         return cast(sources.get(PROPERTIES));
@@ -50,7 +48,7 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
     }
 
     public <T> T getCustomConfiguration(Class<T> modelClass) {
-        return customConfigurations.getConfiguration(modelClass);
+        return cast(customConfigurations.get(modelClass));
     }
 
     @RequiredArgsConstructor
@@ -69,7 +67,7 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator override(ConfiguratorModuleConfiguration configuration) {
-            this.configuration.customConfigurations = configuration.customConfigurations;
+            this.configuration.customConfigurations = configuration.getCustomConfigurations();
             return this;
         }
     }

@@ -27,7 +27,6 @@ import static com.typesafe.config.ConfigFactory.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
 import static io.art.core.extensions.FileExtensions.*;
 import java.io.*;
-import java.time.*;
 import java.util.*;
 
 @Getter
@@ -43,28 +42,8 @@ public class FileConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public Integer getInt(String path) {
-        return source.getInt(path);
-    }
-
-    @Override
-    public Long getLong(String path) {
-        return source.getLong(path);
-    }
-
-    @Override
     public Boolean getBool(String path) {
         return source.getBool(path);
-    }
-
-    @Override
-    public Double getDouble(String path) {
-        return source.getDouble(path);
-    }
-
-    @Override
-    public Float getFloat(String path) {
-        return source.getFloat(path);
     }
 
     @Override
@@ -73,33 +52,14 @@ public class FileConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public Duration getDuration(String path) {
-        return source.getDuration(path);
-    }
-
-    @Override
     public ConfigurationSource getNested(String path) {
         return source.getNested(path);
     }
 
-    @Override
-    public List<Integer> getIntList(String path) {
-        return source.getIntList(path);
-    }
-
-    @Override
-    public List<Long> getLongList(String path) {
-        return source.getLongList(path);
-    }
 
     @Override
     public List<Boolean> getBoolList(String path) {
         return source.getBoolList(path);
-    }
-
-    @Override
-    public List<Double> getDoubleList(String path) {
-        return source.getDoubleList(path);
     }
 
     @Override
@@ -108,14 +68,10 @@ public class FileConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public List<Duration> getDurationList(String path) {
-        return source.getDurationList(path);
-    }
-
-    @Override
     public List<ConfigurationSource> getNestedList(String path) {
         return source.getNestedList(path);
     }
+
 
     @Override
     public Set<String> getKeys() {
