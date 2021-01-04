@@ -1,6 +1,7 @@
 
 package io.art.tests.specification.tarantool
 
+
 import io.art.tarantool.space.TarantoolSpace
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
@@ -19,6 +20,7 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolIndex
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.*
 import static io.art.value.factory.PrimitivesFactory.*
 import static io.art.tarantool.module.TarantoolModule.*
+import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolIndexIterator;
 
 class Tarantool extends Specification {
     def synchronizationTimeout = 60
@@ -27,24 +29,7 @@ class Tarantool extends Specification {
         launch module().make()
     }
 
-    def "Storage CRUD"(){
-        setup:
-        def spaceName = "s2_CRUD"
-        def clusterId = "storage2"
-
-
-        TarantoolInstance db = tarantoolInstance(clusterId)
-        TarantoolSpace space = db.space(spaceName)
-
-
-
-        Entity data = Entity.entityBuilder()
-                .put("id", intPrimitive(3))
-                .put("data", stringPrimitive("testData"))
-                .put("anotherData", stringPrimitive("another data"))
-                .build()
-        Value request = intPrimitive(3)
-
+    static def createSpace(TarantoolInstance db, String spaceName){
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
         db.formatSpace(spaceName, tarantoolSpaceFormat()
@@ -54,6 +39,41 @@ class Tarantool extends Specification {
                 .part("id")
                 .ifNotExists(true)
                 .unique(true))
+    }
+
+    static def createShardedSpace(TarantoolInstance db, String spaceName){
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .field("id", UNSIGNED, false)
+                .field("bucket_id", UNSIGNED))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true))
+        db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
+                .part(2)
+                .unique(false))
+    }
+
+
+
+    def "Storage CRUD"(){
+        setup:
+        def spaceName = "s2_CRUD"
+        def clusterId = "storage2"
+        TarantoolInstance db = tarantoolInstance(clusterId)
+        TarantoolSpace space = db.space(spaceName)
+        createSpace(db, spaceName)
+
+
+        Entity data = Entity.entityBuilder()
+                .put("id", intPrimitive(3))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
+                .build()
+        Value request = intPrimitive(3)
 
 
         when:
@@ -88,7 +108,7 @@ class Tarantool extends Specification {
         when:
         request = intPrimitive(2)
         then:
-        space.get(request).isEmpty() && space.select(request).fetch().isEmpty()
+        space.get(request).isEmpty() && space.select(request).execute().isEmpty()
 
 
         when:
@@ -158,11 +178,9 @@ class Tarantool extends Specification {
         setup:
         def clusterId = "routers"
         def spaceName = "r_crud"
-
-
         TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
-
+        createShardedSpace(db, spaceName)
 
 
         Entity data = Entity.entityBuilder()
@@ -173,19 +191,7 @@ class Tarantool extends Specification {
                 .build()
         Value request = intPrimitive(3)
 
-        db.createSpace(spaceName, tarantoolSpaceConfig()
-                .ifNotExists(true))
-        db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .field("id", UNSIGNED, false)
-                .field("bucket_id", UNSIGNED))
-        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
-                .type(TarantoolIndexType.TREE)
-                .part("id")
-                .ifNotExists(true)
-                .unique(true))
-        db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
-                .part(2)
-                .unique(false))
+
 
 
         when:
@@ -223,7 +229,7 @@ class Tarantool extends Specification {
         request = intPrimitive(2)
         then:
         true
-        space.get(request).isEmpty() && space.select(request).fetch().isEmpty()
+        space.get(request).isEmpty() && space.select(request).execute().isEmpty()
 
 
         when:
@@ -290,14 +296,59 @@ class Tarantool extends Specification {
         db.dropSpace(spaceName)
     }
 
+    def "Routers select"(){
+        setup:
+        def clusterId = "routers"
+        def spaceName = "r_select"
+        TarantoolInstance db = tarantoolInstance(clusterId)
+        TarantoolSpace space = db.space(spaceName)
+        createShardedSpace(db, spaceName)
+        db.createIndex(spaceName, "dataIndex", tarantoolSpaceIndex().unique(false).part(3))
+
+
+        Entity data = Entity.entityBuilder()
+                .put("id", intPrimitive(3))
+                .put("bucket_id", intPrimitive(99))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
+                .build()
+
+
+        when:
+        space.autoIncrement(data)
+        space.autoIncrement(data)
+        space.autoIncrement(data)
+        space.autoIncrement(data)
+        space.autoIncrement(data)
+        sleep(synchronizationTimeout)
+        def response = space.select(intPrimitive(5)).index("primary")
+                .iterator(TarantoolIndexIterator.EQ)
+                .execute().synchronize()
+        then:
+        ((Entity) response.get().get(0)).get("id") == intPrimitive(5) && response.get().size() == 1
+
+        when:
+        response = space.select(intPrimitive(3)).index("primary").iterator(TarantoolIndexIterator.GE).execute().synchronize()
+        then:
+        response.get().size() == 3
+
+        when:
+        response = space.select(stringPrimitive("testData")).index("dataIndex").execute().synchronize()
+        then:
+        response.get().size() == 5
+
+
+        cleanup:
+        db.dropSpace(spaceName)
+    }
+
     def "TarantoolStorage interface ops"(){
         setup:
         def spaceName = "s1_storage_ops"
         def clusterId = "storage1"
-
         def db = tarantoolInstance(clusterId)
         def space = new TarantoolStorageSpace(db.space(spaceName))
-
+        createSpace(db, spaceName)
 
 
         Entity data = Entity.entityBuilder()
@@ -306,16 +357,6 @@ class Tarantool extends Specification {
                 .put("anotherData", stringPrimitive("another data"))
                 .build()
         Value request = intPrimitive(3)
-
-        db.createSpace(spaceName, tarantoolSpaceConfig()
-                .ifNotExists(true))
-        db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .field("id", UNSIGNED, false))
-        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
-                .type(TarantoolIndexType.TREE)
-                .part("id")
-                .ifNotExists(true)
-                .unique(true))
 
 
 
@@ -447,6 +488,4 @@ class Tarantool extends Specification {
         cleanup:
         getCluster(clusterId).getClient('storage_2_a').eval("art.box.space.activeClusterOperation = false")
     }
-
-
 }

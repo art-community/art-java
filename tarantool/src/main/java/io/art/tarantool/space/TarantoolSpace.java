@@ -174,16 +174,16 @@ public class TarantoolSpace {
             return this;
         }
 
-        public TarantoolRecord<List<Value>> fetch(){
+        public TarantoolRecord<List<Value>> execute(){
             return cast(transactionManager.callRO(SELECT, TarantoolResponseMapping::toValuesList, space, request, index, options));
         }
 
         public List<Value> get(){
-            return fetch().get();
+            return execute().get();
         }
 
         public Stream<Value> stream() {
-            return fetch().get().stream();
+            return execute().get().stream();
         }
     }
     

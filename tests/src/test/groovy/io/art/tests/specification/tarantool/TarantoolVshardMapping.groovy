@@ -97,7 +97,7 @@ class TarantoolVshardMapping extends Specification {
         request = intPrimitive(2)
         then:
         true
-        space.get(request).isEmpty() && space.select(request).fetch().isEmpty()
+        space.get(request).isEmpty() && space.select(request).execute().isEmpty()
 
 
         when:

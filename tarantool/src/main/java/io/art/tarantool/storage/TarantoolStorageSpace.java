@@ -19,7 +19,7 @@ public class TarantoolStorageSpace implements StorageSpace{
 
     @Override
     public Optional<List<Value>> find(Value request){
-        return space.select(request).fetch().getOptional();
+        return space.select(request).execute().getOptional();
     }
 
     @Override

@@ -95,7 +95,7 @@ class TarantoolBenchmarks extends Specification {
         when:
         request = intPrimitive(2)
         then:
-        space.get(request).isEmpty() && space.select(request).fetch().isEmpty()
+        space.get(request).isEmpty() && space.select(request).execute().isEmpty()
 
 
         when:
