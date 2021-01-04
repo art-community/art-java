@@ -60,18 +60,21 @@ public class ModuleLauncher {
         if (launched.compareAndSet(false, true)) {
             ConfiguratorModule configurator = new ConfiguratorModule();
             ImmutableArray<ConfigurationSource> sources = configurator
-                    .loadConfigurations()
+                    .initializeConfigurator()
                     .configuration()
                     .orderedSources();
-            ModuleCustomizer moduleCustomizer = model.getModuleCustomizer();
+
+            ModuleCustomizer moduleCustomizer = model.getCustomizer();
+            ConfiguratorCustomizer configuratorCustomizer = moduleCustomizer.configurator().apply(new ConfiguratorCustomizer());
             ValueCustomizer valueCustomizer = moduleCustomizer.value().apply(new ValueCustomizer());
             LoggingCustomizer loggingCustomizer = moduleCustomizer.logging().apply(new LoggingCustomizer());
             ServerCustomizer serverCustomizer = moduleCustomizer.server().apply(new ServerCustomizer());
             CommunicatorCustomizer communicatorCustomizer = moduleCustomizer.communicator().apply(new CommunicatorCustomizer());
             RsocketCustomizer rsocketCustomizer = moduleCustomizer.rsocket().apply(new RsocketCustomizer());
             ImmutableArray.Builder<Module> modules = immutableArrayBuilder();
+
             modules.add(
-                    configurator,
+                    configurator(configurator, sources, configuratorCustomizer),
                     value(sources, valueCustomizer),
                     logging(sources, loggingCustomizer),
                     json(sources),
@@ -87,6 +90,12 @@ public class ModuleLauncher {
             model.getOnLoad().run();
             if (needBlock(rsocketCustomizer)) block();
         }
+    }
+
+    private static Module configurator(ConfiguratorModule configuratorModule, ImmutableArray<ConfigurationSource> sources, ConfiguratorCustomizer configuratorCustomizer) {
+        configuratorModule.configure(configurator -> configurator.from(sources));
+        ofNullable(configuratorCustomizer).ifPresent(customizer -> configuratorModule.configure(configurator -> configurator.override(customizer.getConfiguration())));
+        return configuratorModule;
     }
 
     private static ValueModule value(ImmutableArray<ConfigurationSource> sources, ValueCustomizer valueCustomizer) {

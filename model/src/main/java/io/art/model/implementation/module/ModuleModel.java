@@ -18,8 +18,10 @@
 
 package io.art.model.implementation.module;
 
+import io.art.configurator.module.*;
 import io.art.model.customizer.*;
 import io.art.model.implementation.communicator.*;
+import io.art.model.implementation.configurator.*;
 import io.art.model.implementation.server.*;
 import lombok.*;
 import java.util.function.*;
@@ -28,14 +30,16 @@ import java.util.function.*;
 @Builder
 public class ModuleModel {
     private final String mainModuleId;
+    private final ConfiguratorModuleModel configuratorModel;
     private final ServerModuleModel serverModel;
     private final CommunicatorModuleModel communicatorModel;
     private final Runnable onLoad;
+
     @Builder.Default
-    private ModuleCustomizer moduleCustomizer = new ModuleCustomizer();
+    private ModuleCustomizer customizer = new ModuleCustomizer();
 
     public ModuleModel customize(UnaryOperator<ModuleCustomizer> customizer) {
-        moduleCustomizer = customizer.apply(new ModuleCustomizer());
+        this.customizer = customizer.apply(new ModuleCustomizer());
         return this;
     }
 }

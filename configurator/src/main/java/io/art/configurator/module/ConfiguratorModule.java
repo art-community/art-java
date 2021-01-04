@@ -45,7 +45,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     @Getter(lazy = true, value = PRIVATE)
     private static final StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule = context().getStatelessModule(ConfiguratorModule.class.getSimpleName());
 
-    public StatelessModuleProxy<ConfiguratorModuleConfiguration> loadConfigurations() {
+    public StatelessModuleProxy<ConfiguratorModuleConfiguration> initializeConfigurator() {
         configure(configurator -> configurator
                 .from(new EnvironmentConfigurationSource())
                 .from(new PropertiesConfigurationSource())
@@ -71,6 +71,10 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .map(path -> get(path).toFile())
                 .filter(File::exists)
                 .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(EMPTY_STRING, CUSTOM_FILE, file))));
+    }
+
+    public static <T> T configuration(Class<T> model) {
+        return configuratorModule().configuration().getCustomConfiguration(model);
     }
 
     public static StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule() {

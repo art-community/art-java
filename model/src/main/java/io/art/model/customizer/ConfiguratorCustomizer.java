@@ -18,19 +18,20 @@
 
 package io.art.model.customizer;
 
+import io.art.configurator.configuration.*;
+import io.art.configurator.custom.*;
 import lombok.*;
-import lombok.experimental.*;
-import static java.util.function.UnaryOperator.*;
-import java.util.function.*;
 
-@Getter
-@Setter
-@Accessors(fluent = true)
-public class ModuleCustomizer {
-    private UnaryOperator<ConfiguratorCustomizer> configurator = identity();
-    private UnaryOperator<LoggingCustomizer> logging = identity();
-    private UnaryOperator<ServerCustomizer> server = identity();
-    private UnaryOperator<CommunicatorCustomizer> communicator = identity();
-    private UnaryOperator<ValueCustomizer> value = identity();
-    private UnaryOperator<RsocketCustomizer> rsocket = identity();
+public class ConfiguratorCustomizer {
+    @Getter
+    private final Custom configuration = new Custom();
+
+    public ConfiguratorCustomizer registry(CustomConfigurationRegistry registry) {
+        configuration.customConfigurations = registry;
+        return this;
+    }
+
+    private static class Custom extends ConfiguratorModuleConfiguration {
+        private CustomConfigurationRegistry customConfigurations;
+    }
 }
