@@ -41,6 +41,6 @@ public class TarantoolFunctionCaller {
     }
 
     private static void logInfo(String message){
-        if (tarantoolModule().configuration().enableTracing) getLogger().info(message);
+        if (tarantoolModule().configuration().logging) getLogger().info(message);
     }
 }
