@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 import static io.art.core.caster.Caster.cast;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
-import static io.art.tarantool.model.mapping.TarantoolResponseMapping.tupleFromTransactionResponse;
+import static io.art.tarantool.model.mapping.TarantoolResponseMapping.tupleFromTransaction;
 import static java.util.Objects.isNull;
 
 
@@ -32,7 +32,7 @@ public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
 
     public void transactionCommitted(CompletableFuture<List<?>> futureResponse) {
         this.futureResult = futureResponse
-                .thenApply(response -> tupleFromTransactionResponse(response, transactionEntryNumber))
+                .thenApply(response -> tupleFromTransaction(response, transactionEntryNumber))
                 .thenApply(responseMapper);
     }
 
