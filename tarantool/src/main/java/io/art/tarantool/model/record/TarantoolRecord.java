@@ -19,9 +19,8 @@ public interface TarantoolRecord<T>{
     Optional<T> getOptional();
 
 
-    /*
+
     //Optional delegates:
-    */
     T get();
 
     boolean isPresent();
