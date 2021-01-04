@@ -43,6 +43,7 @@ import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.*;
 import javax.annotation.*;
 import java.util.*;
@@ -53,7 +54,7 @@ public class Entity implements Value {
     @Getter
     private final ValueType type = ENTITY;
     private final EntityMapping mapping = new EntityMapping(this);
-    private final Map<Primitive, ?> mappedValueCache = concurrentHashMap();
+    private final Map<Primitive, ?> mappedValueCache = concurrentMap();
     private final Set<Primitive> keys;
     private final Function<Primitive, ? extends Value> valueProvider;
 
@@ -180,7 +181,6 @@ public class Entity implements Value {
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
         try {
             Object cached = mappedValueCache.get(primitive);
-
             if (nonNull(cached)) return cast(cached);
             cached = let(cast(get(primitive)), mapper::map);
             if (nonNull(cached)) mappedValueCache.put(primitive, cast(cached));
@@ -188,6 +188,14 @@ public class Entity implements Value {
         } catch (Throwable throwable) {
             throw new ValueMappingException(format(FIELD_MAPPING_EXCEPTION, primitive), throwable);
         }
+    }
+
+    public <T, V extends Value> Optional<T> mapOptional(Primitive primitive, ValueToModelMapper<Optional<T>, V> mapper) {
+        Object cached = mappedValueCache.get(primitive);
+        if (nonNull(cached)) return cast(cached);
+        cached = ofNullable(get(primitive)).map(value -> mapper.map(cast(value)));
+        mappedValueCache.put(primitive, cast(cached));
+        return cast(cached);
     }
 
     public <T, V extends Value> T mapOrDefault(Primitive key, PrimitiveType type, ValueToModelMapper<T, V> mapper) {
@@ -252,6 +260,7 @@ public class Entity implements Value {
         }
         return true;
     }
+
 
     public class ProxyMap<K, V> implements Map<K, V> {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;

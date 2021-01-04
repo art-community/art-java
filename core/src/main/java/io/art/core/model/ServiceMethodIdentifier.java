@@ -26,7 +26,7 @@ import java.util.*;
 
 @Value
 public class ServiceMethodIdentifier {
-    private static final Map<String, ServiceMethodIdentifier> CACHE = concurrentHashMap();
+    private static final Map<String, ServiceMethodIdentifier> CACHE = weakMap();
 
     String serviceId;
     String methodId;

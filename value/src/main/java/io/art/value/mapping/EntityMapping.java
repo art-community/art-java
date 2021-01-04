@@ -44,40 +44,12 @@ public class EntityMapping {
         return map(stringPrimitive(key), mapper);
     }
 
-    public <T, V extends Value> T map(Long key, ValueToModelMapper<T, V> mapper) {
-        return map(longPrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Integer key, ValueToModelMapper<T, V> mapper) {
-        return map(intPrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Double key, ValueToModelMapper<T, V> mapper) {
-        return map(doublePrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Boolean key, ValueToModelMapper<T, V> mapper) {
-        return map(boolPrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Byte key, ValueToModelMapper<T, V> mapper) {
-        return map(bytePrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Float key, ValueToModelMapper<T, V> mapper) {
-        return map(floatPrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Character key, ValueToModelMapper<T, V> mapper) {
-        return map(charPrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Short key, ValueToModelMapper<T, V> mapper) {
-        return map(shortPrimitive(key), mapper);
-    }
-
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
         return entity.map(primitive, mapper);
+    }
+
+    public <T, V extends Value> Optional<T> mapOptional(String key, ValueToModelMapper<Optional<T>, V> mapper) {
+        return entity.mapOptional(stringPrimitive(key), mapper);
     }
 
     public <T, V extends Value> T mapNested(String key, ValueToModelMapper<T, V> mapper) {
