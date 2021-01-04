@@ -53,7 +53,7 @@ public class TarantoolResponseMapping {
         return Optional.of(setOf(indices));
     }
 
-    public static List<?> transactionResponseToTuple(List<?> transactionResponse, Integer tupleIndex){
+    public static List<?> tupleFromTransactionResponse(List<?> transactionResponse, Integer tupleIndex){
         if (!(Boolean) transactionResponse.get(0)) throw new TarantoolTransactionException(format(TRANSACTION_FAILED, transactionResponse.get(1)));
         List<?> result = cast(transactionResponse.get(1));
         result = cast(result.get(tupleIndex));
