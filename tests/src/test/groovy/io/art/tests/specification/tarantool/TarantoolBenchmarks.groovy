@@ -25,7 +25,7 @@ import static io.art.value.factory.PrimitivesFactory.longPrimitive
 import static io.art.value.factory.PrimitivesFactory.stringPrimitive
 
 class TarantoolBenchmarks extends Specification {
-    def benchmarkOpsCount = 10000
+    def benchmarkOpsCount = 100000
     def synchronizationTimeout = 300
 
     def setupSpec(){

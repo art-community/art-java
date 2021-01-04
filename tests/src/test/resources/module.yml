@@ -1,5 +1,5 @@
 tarantool:
-  logging: true
+  logging: false
   clusters:
     routers:
       instances:
@@ -30,7 +30,7 @@ tarantool:
           username: username
           password: password
           host: localhost
-          port: 3303
+          port: 3302
           readable: true
           writeable: false
     storage2:
@@ -39,7 +39,7 @@ tarantool:
           username: username
           password: password
           host: localhost
-          port: 3302
+          port: 3303
           readable: false
           writeable: true
         storage_2_b:
