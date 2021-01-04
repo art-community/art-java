@@ -2,12 +2,17 @@ package io.art.logging;
 
 import lombok.*;
 import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.core.*;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.util.*;
 import static io.art.logging.LogColorizer.byLevel;
 
 @Getter
 public class ColoredLogger extends Logger {
+    public ColoredLogger(String name) {
+        super(LoggerContext.getContext(), name, LogManager.getLogger().getMessageFactory());
+    }
+
     public ColoredLogger(Logger logger) {
         super(logger.getContext(), logger.getName(), logger.getMessageFactory());
     }

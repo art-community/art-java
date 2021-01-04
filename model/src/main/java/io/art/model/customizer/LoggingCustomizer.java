@@ -23,7 +23,7 @@ import lombok.*;
 
 public class LoggingCustomizer {
     @Getter
-    private final CustomLoggingModuleConfiguration configuration = new CustomLoggingModuleConfiguration();
+    private final Custom configuration = new Custom();
 
     public LoggingCustomizer colored() {
         return colored(true);
@@ -44,7 +44,7 @@ public class LoggingCustomizer {
     }
 
     @Getter
-    private static class CustomLoggingModuleConfiguration extends LoggingModuleConfiguration {
+    private static class Custom extends LoggingModuleConfiguration {
         private boolean colored = true;
         private boolean asynchronous = false;
     }

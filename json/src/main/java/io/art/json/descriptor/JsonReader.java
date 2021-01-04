@@ -166,7 +166,7 @@ public class JsonReader {
             case START_OBJECT:
                 return entityArray(parseEntityArray(parser));
             case START_ARRAY:
-                return innerArray(parseInnerArray(parser));
+                return nestedArray(parseInnerArray(parser));
             case VALUE_STRING:
                 return stringArray(parseStringArray(parser));
             case VALUE_NUMBER_INT:

@@ -18,22 +18,20 @@
 
 package io.art.server.exception;
 
+import io.art.core.model.*;
 import lombok.*;
 
 @Getter
 public class ServiceMethodExecutionException extends RuntimeException {
-    private final String serviceId;
-    private final String methodId;
+    private final ServiceMethodIdentifier id;
 
-    public ServiceMethodExecutionException(String message, String serviceId, String methodId) {
+    public ServiceMethodExecutionException(String message, ServiceMethodIdentifier id) {
         super(message);
-        this.serviceId = serviceId;
-        this.methodId = methodId;
+        this.id = id;
     }
 
-    public ServiceMethodExecutionException(Throwable cause, String serviceId, String methodId) {
+    public ServiceMethodExecutionException(Throwable cause, ServiceMethodIdentifier id) {
         super(cause);
-        this.serviceId = serviceId;
-        this.methodId = methodId;
+        this.id = id;
     }
 }

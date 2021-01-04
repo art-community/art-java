@@ -64,4 +64,12 @@ public class EntityFactory {
     public static Entity byteEntity(Set<Byte> fields, Function<Byte, ? extends Value> valueProvider) {
         return new Entity(fields.stream().map(PrimitivesFactory::bytePrimitive).collect(toCollection(SetFactory::set)), key -> valueProvider.apply(key.getByte()));
     }
+
+    public static Entity shortEntity(Set<Short> fields, Function<Short, ? extends Value> valueProvider) {
+        return new Entity(fields.stream().map(PrimitivesFactory::shortPrimitive).collect(toCollection(SetFactory::set)), key -> valueProvider.apply(key.getShort()));
+    }
+
+    public static Entity charEntity(Set<Character> fields, Function<Character, ? extends Value> valueProvider) {
+        return new Entity(fields.stream().map(PrimitivesFactory::charPrimitive).collect(toCollection(SetFactory::set)), key -> valueProvider.apply(key.getChar()));
+    }
 }

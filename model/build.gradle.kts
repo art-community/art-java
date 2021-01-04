@@ -23,4 +23,5 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":value"))
     implementation(project(":server"))
+    implementation(project(":communicator"))
 }

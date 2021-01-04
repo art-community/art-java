@@ -18,9 +18,9 @@
 
 package io.art.value.immutable;
 
-import io.art.value.constants.ValueConstants.ValueType.*;
+import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import lombok.*;
-import static io.art.value.constants.ValueConstants.ValueType.XmlValueType.*;
+import static io.art.value.constants.ValueModuleConstants.ValueType.XmlValueType.*;
 
 @Getter
 @AllArgsConstructor

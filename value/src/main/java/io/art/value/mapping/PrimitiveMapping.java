@@ -71,4 +71,7 @@ public class PrimitiveMapping {
 
     public static PrimitiveFromModelMapper<Date> fromDate = dateTime -> let(dateTime, notNull -> longPrimitive(notNull.getTime()));
     public static PrimitiveToModelMapper<Date> toDate = dateTime -> let(dateTime, notNull -> new Date(notNull.getLong()));
+
+    public static PrimitiveFromModelMapper<Duration> fromDuration = duration -> let(duration, notNull -> longPrimitive(duration.toMillis()));
+    public static PrimitiveToModelMapper<Duration> toDuration = duration -> let(duration, notNull -> Duration.ofMillis(duration.getLong()));
 }

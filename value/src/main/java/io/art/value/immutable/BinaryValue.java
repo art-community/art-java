@@ -18,10 +18,10 @@
 
 package io.art.value.immutable;
 
-import io.art.value.constants.ValueConstants.*;
+import io.art.value.constants.ValueModuleConstants.*;
 import lombok.*;
 import static io.art.core.constants.ArrayConstants.*;
-import static io.art.value.constants.ValueConstants.ValueType.BINARY;
+import static io.art.value.constants.ValueModuleConstants.ValueType.BINARY;
 
 @Getter
 @RequiredArgsConstructor

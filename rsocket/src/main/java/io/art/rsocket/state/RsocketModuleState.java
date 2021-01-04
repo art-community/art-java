@@ -19,30 +19,29 @@
 package io.art.rsocket.state;
 
 import io.art.core.collection.*;
-import io.art.core.factory.*;
-import io.art.core.lazy.*;
 import io.art.core.module.*;
 import io.art.rsocket.model.*;
+import io.art.server.specification.*;
 import io.rsocket.*;
-import io.rsocket.core.*;
 import lombok.*;
 import reactor.util.context.*;
-import static io.art.core.factory.ArrayFactory.immutableArrayOf;
-import static io.art.core.factory.ListFactory.linkedListOf;
-import static io.art.core.factory.MapFactory.immutableMapOf;
-import static io.art.core.factory.MapFactory.map;
+import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.ListFactory.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import java.util.*;
 import java.util.function.*;
 
 public class RsocketModuleState implements ModuleState {
     private final List<RSocket> requesters = linkedListOf();
-    private final Map<String, LazyValue<RSocketClient>> clients = map();
     private final ThreadLocal<RsocketThreadLocalState> threadLocalState = new ThreadLocal<>();
 
 
     public void registerRequester(RSocket socket) {
         requesters.add(socket);
+    }
+
+    public void disposeRequester(RSocket socket) {
+        requesters.remove(socket);
     }
 
     public ImmutableArray<RSocket> getRequesters() {
@@ -63,29 +62,18 @@ public class RsocketModuleState implements ModuleState {
     }
 
 
-    public LazyValue<RSocketClient> getClient(String id) {
-        return clients.get(id);
-    }
-
-    public ImmutableMap<String, LazyValue<RSocketClient>> getClients() {
-        return immutableMapOf(clients);
-    }
-
-    public void registerClient(String id, LazyValue<RSocketClient> client) {
-        clients.put(id, client);
-    }
-
-
     @Getter
     @Builder(toBuilder = true)
     public static class RsocketThreadLocalState {
         private final RSocket requesterRsocket;
         private final RsocketSetupPayload setupPayload;
+        private final ServiceMethodSpecification specification;
 
         public static RsocketThreadLocalState fromContext(Context context) {
             RSocket requesterRsocket = context.get(REQUESTER_RSOCKET_KEY);
-            RsocketSetupPayload setupPayload = context.get(SETUP_PAYLOAD);
-            return new RsocketThreadLocalState(requesterRsocket, setupPayload);
+            RsocketSetupPayload setupPayload = context.get(SETUP_PAYLOAD_KEY);
+            ServiceMethodSpecification specification = context.get(SPECIFICATION_KEY);
+            return new RsocketThreadLocalState(requesterRsocket, setupPayload, specification);
         }
     }
 }

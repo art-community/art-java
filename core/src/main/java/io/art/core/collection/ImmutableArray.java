@@ -176,6 +176,10 @@ public class ImmutableArray<T> implements Iterable<T> {
             return this;
         }
 
+        public int size() {
+            return build().size();
+        }
+
         public ImmutableArray<T> build() {
             return new ImmutableArray<>(builder.build());
         }

@@ -18,17 +18,14 @@
 
 package io.art.value.immutable;
 
-import io.art.core.constants.*;
 import io.art.value.constants.*;
-import io.art.value.constants.ValueConstants.ValueType.*;
+import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import lombok.*;
 import lombok.experimental.*;
-import static io.art.core.checker.EmptinessChecker.ifNotEmpty;
-import static io.art.core.checker.EmptinessChecker.letIfNotEmpty;
-import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.value.constants.ValueConstants.ValueType.PrimitiveType.STRING;
-import static java.util.Objects.isNull;
+import static io.art.value.constants.ValueModuleConstants.ValueType.PrimitiveType.STRING;
+import static java.util.Objects.*;
 import java.util.*;
 
 @Getter
@@ -102,7 +99,7 @@ public class Primitive implements Value {
     }
 
     @Override
-    public ValueConstants.ValueType getType() {
+    public ValueModuleConstants.ValueType getType() {
         return PrimitiveType.asValueType(primitiveType);
     }
 

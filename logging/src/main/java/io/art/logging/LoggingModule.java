@@ -83,33 +83,23 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
         }
     }
 
-    @Override
-    public String print() {
-        return printer()
-                .mainSection(LoggingModule.class.getSimpleName())
-                .tabulation(1)
-                .value(ASYNCHRONOUS_KEY, configuration.isAsynchronous())
-                .value(COLORED_KEY, configuration.isColored())
-                .print();
-    }
-
     private Logger currentLogger() {
-        return configuration.isColored() ? new ColoredLogger(cast(LogManager.getLogger(LoggingModule.class))) : LogManager.getLogger(LoggingModule.class);
+        return configuration.isColored() ? new ColoredLogger(LoggingModule.class.getName()) : LogManager.getLogger(LoggingModule.class);
     }
 
     private Logger currentLogger(String topic) {
-        return configuration.isColored() ? new ColoredLogger(cast(LogManager.getLogger(topic))) : LogManager.getLogger(topic);
+        return configuration.isColored() ? new ColoredLogger(topic) : LogManager.getLogger(topic);
     }
 
     public static Logger logger() {
-        return loggingModule().configuration().isColored() ? new ColoredLogger(cast(LogManager.getLogger())) : LogManager.getLogger();
+        return loggingModule().configuration().isColored() ? new ColoredLogger(LoggingModule.class.getName()) : LogManager.getLogger();
     }
 
     public static Logger logger(String topic) {
-        return loggingModule().configuration().isColored() ? new ColoredLogger(cast(LogManager.getLogger(topic))) : LogManager.getLogger(topic);
+        return loggingModule().configuration().isColored() ? new ColoredLogger(topic) : LogManager.getLogger(topic);
     }
 
     public static Logger logger(Class<?> topicClass) {
-        return loggingModule().configuration().isColored() ? new ColoredLogger(cast(LogManager.getLogger(topicClass))) : LogManager.getLogger(topicClass);
+        return loggingModule().configuration().isColored() ? new ColoredLogger(topicClass.getName()) : LogManager.getLogger(topicClass);
     }
 }

@@ -24,7 +24,9 @@ import io.art.value.immutable.*;
 import io.art.value.immutable.XmlEntity.*;
 import io.art.xml.exception.*;
 import io.netty.buffer.*;
+import lombok.*;
 import lombok.experimental.*;
+import org.apache.logging.log4j.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.context.Context.*;
@@ -35,6 +37,7 @@ import static io.art.xml.constants.XmlMappingExceptionMessages.*;
 import static io.art.xml.module.XmlModule.*;
 import static java.util.Objects.*;
 import static javax.xml.stream.XMLStreamConstants.*;
+import static lombok.AccessLevel.*;
 import javax.xml.stream.*;
 import java.io.*;
 import java.nio.*;
@@ -42,6 +45,9 @@ import java.nio.file.*;
 
 @UtilityClass
 public class XmlReader {
+    @Getter(lazy = true, value = PRIVATE)
+    private static final Logger logger = logger(XmlWriter.class);
+
     public static XmlEntity readXml(byte[] bytes) {
         return readXml(new ByteArrayInputStream(bytes));
     }
@@ -80,7 +86,7 @@ public class XmlReader {
                 try {
                     reader.close();
                 } catch (Throwable throwable) {
-                    logger(XmlWriter.class).error(throwable.getMessage(), throwable);
+                    getLogger().error(throwable.getMessage(), throwable);
                 }
             }
         }

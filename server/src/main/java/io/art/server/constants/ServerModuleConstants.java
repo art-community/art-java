@@ -25,9 +25,6 @@ import static java.lang.Short.MAX_VALUE;
 import static reactor.core.scheduler.Schedulers.newBoundedElastic;
 
 public interface ServerModuleConstants {
-    String SERVICE_ID = "serviceId";
-    String METHOD_ID = "methodId";
-
     enum RequestValidationPolicy {
         VALIDATABLE,
         NOT_NULL,
@@ -73,8 +70,6 @@ public interface ServerModuleConstants {
     }
 
     interface ExceptionMessages {
-        String UNKNOWN_INPUT_MODE = "Unknown input mode: ''{0}''";
-        String UNKNOWN_OUTPUT_MODE = "Unknown output mode: ''{0}''";
     }
 
     interface ValidationErrorPatterns {

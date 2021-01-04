@@ -18,7 +18,10 @@
 
 package io.art.core.source;
 
-import static io.art.core.collector.MapCollectors.mapCollector;
+import io.art.core.factory.*;
+import io.art.core.parser.*;
+import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.collector.MapCollectors.*;
 import static java.util.function.Function.*;
 import static java.util.stream.Collectors.*;
 import java.time.*;
@@ -27,35 +30,104 @@ import java.util.*;
 public interface ConfigurationSource {
     String getSection();
 
-    Integer getInt(String path);
-
-    Long getLong(String path);
 
     Boolean getBool(String path);
 
-    Double getDouble(String path);
-
-    Float getFloat(String path);
-
     String getString(String path);
-
-    Duration getDuration(String path);
 
     ConfigurationSource getNested(String path);
 
-    List<Integer> getIntList(String path);
-
-    List<Long> getLongList(String path);
 
     List<Boolean> getBoolList(String path);
 
-    List<Double> getDoubleList(String path);
-
     List<String> getStringList(String path);
 
-    List<Duration> getDurationList(String path);
-
     List<ConfigurationSource> getNestedList(String path);
+
+
+    default Integer getInt(String path) {
+        return letIfNotEmpty(getString(path), Integer::parseInt);
+    }
+
+    default Long getLong(String path) {
+        return letIfNotEmpty(getString(path), Long::parseLong);
+    }
+
+    default Double getDouble(String path) {
+        return letIfNotEmpty(getString(path), Double::parseDouble);
+    }
+
+    default Float getFloat(String path) {
+        return letIfNotEmpty(getString(path), Float::parseFloat);
+    }
+
+    default Short getShort(String path) {
+        return letIfNotEmpty(getString(path), Short::parseShort);
+    }
+
+    default Character getChar(String path) {
+        String string = getString(path);
+        return letIfNotEmpty(string, notEmpty -> notEmpty.charAt(0));
+    }
+
+    default Byte getByte(String path) {
+        return letIfNotEmpty(getString(path), Byte::parseByte);
+    }
+
+    default Duration getDuration(String path) {
+        return letIfNotEmpty(getString(path), DurationParser::parseDuration);
+    }
+
+
+    default List<Integer> getIntList(String path) {
+        return getStringList(path)
+                .stream()
+                .map(Integer::parseInt)
+                .collect(toCollection(ArrayFactory::dynamicArray));
+    }
+
+    default List<Long> getLongList(String path) {
+        return getStringList(path)
+                .stream()
+                .map(Long::parseLong)
+                .collect(toCollection(ArrayFactory::dynamicArray));
+    }
+
+    default List<Double> getDoubleList(String path) {
+        return getStringList(path)
+                .stream()
+                .map(Double::parseDouble)
+                .collect(toCollection(ArrayFactory::dynamicArray));
+    }
+
+    default List<Short> getShortList(String path) {
+        return getStringList(path)
+                .stream()
+                .map(Short::parseShort)
+                .collect(toCollection(ArrayFactory::dynamicArray));
+    }
+
+    default List<Character> getCharList(String path) {
+        return getStringList(path)
+                .stream()
+                .map(string -> letIfNotEmpty(string, notEmpty -> notEmpty.charAt(0)))
+                .collect(toCollection(ArrayFactory::dynamicArray));
+    }
+
+    default List<Byte> getByteList(String path) {
+        return getStringList(path)
+                .stream()
+                .map(Byte::parseByte)
+                .collect(toCollection(ArrayFactory::dynamicArray));
+    }
+
+    default List<Duration> getDurationList(String path) {
+        return getStringList(path)
+                .stream()
+                .map(DurationParser::parseDuration)
+                .collect(toCollection(ArrayFactory::dynamicArray));
+    }
+
 
     default Map<String, Integer> getIntMap(String path) {
         ConfigurationSource nested = getNested(path);
@@ -94,6 +166,7 @@ public interface ConfigurationSource {
         }
         return nested.getKeys().stream().collect(mapCollector(identity(), nested::getNested));
     }
+
 
     ModuleConfigurationSourceType getType();
 

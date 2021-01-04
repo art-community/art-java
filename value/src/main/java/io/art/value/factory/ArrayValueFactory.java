@@ -83,6 +83,12 @@ public class ArrayValueFactory {
         return new ArrayValue(index -> bytePrimitive(cast(value.get(index))), lazy(value::size));
     }
 
+    public static ArrayValue charArray(List<Character> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return new ArrayValue(index -> charPrimitive(cast(value.get(index))), lazy(value::size));
+    }
+
 
     public static ArrayValue stringArray(Collection<String> value) {
         return stringArray(fixedArrayOf(value));
@@ -128,6 +134,12 @@ public class ArrayValueFactory {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return byteArray(fixedArrayOf(value));
+    }
+
+    public static ArrayValue charArray(Collection<Character> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return charArray(fixedArrayOf(value));
     }
 
 
@@ -236,16 +248,16 @@ public class ArrayValueFactory {
     }
 
 
-    public static <T extends ArrayValue> ArrayValue innerArray(List<T> value) {
+    public static <T extends ArrayValue> ArrayValue nestedArray(List<T> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(value::get, lazy(value::size));
     }
 
-    public static <T extends ArrayValue> ArrayValue innerArray(Collection<T> value) {
+    public static <T extends ArrayValue> ArrayValue nestedArray(Collection<T> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        return innerArray(fixedArrayOf(value));
+        return nestedArray(fixedArrayOf(value));
     }
 
 

@@ -18,13 +18,11 @@
 
 package io.art.configurator.source;
 
-import io.art.core.constants.*;
 import io.art.core.source.*;
 import lombok.*;
 import static com.typesafe.config.ConfigFactory.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
-import static io.art.core.constants.StringConstants.EMPTY_STRING;
-import java.time.*;
+import static io.art.core.constants.StringConstants.*;
 import java.util.*;
 
 @Getter
@@ -38,28 +36,8 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public Integer getInt(String path) {
-        return typesafeConfigurationSource.getInt(path);
-    }
-
-    @Override
-    public Long getLong(String path) {
-        return typesafeConfigurationSource.getLong(path);
-    }
-
-    @Override
     public Boolean getBool(String path) {
         return typesafeConfigurationSource.getBool(path);
-    }
-
-    @Override
-    public Double getDouble(String path) {
-        return typesafeConfigurationSource.getDouble(path);
-    }
-
-    @Override
-    public Float getFloat(String path) {
-        return typesafeConfigurationSource.getFloat(path);
     }
 
     @Override
@@ -68,33 +46,14 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public Duration getDuration(String path) {
-        return typesafeConfigurationSource.getDuration(path);
-    }
-
-    @Override
     public ConfigurationSource getNested(String path) {
         return typesafeConfigurationSource.getNested(path);
     }
 
-    @Override
-    public List<Integer> getIntList(String path) {
-        return typesafeConfigurationSource.getIntList(path);
-    }
-
-    @Override
-    public List<Long> getLongList(String path) {
-        return typesafeConfigurationSource.getLongList(path);
-    }
 
     @Override
     public List<Boolean> getBoolList(String path) {
         return typesafeConfigurationSource.getBoolList(path);
-    }
-
-    @Override
-    public List<Double> getDoubleList(String path) {
-        return typesafeConfigurationSource.getDoubleList(path);
     }
 
     @Override
@@ -103,19 +62,16 @@ public class EnvironmentConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public List<Duration> getDurationList(String path) {
-        return typesafeConfigurationSource.getDurationList(path);
-    }
-
-    @Override
     public List<ConfigurationSource> getNestedList(String path) {
         return typesafeConfigurationSource.getNestedList(path);
     }
+
 
     @Override
     public Set<String> getKeys() {
         return typesafeConfigurationSource.getKeys();
     }
+
 
     @Override
     public boolean has(String path) {

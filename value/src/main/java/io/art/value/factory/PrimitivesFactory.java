@@ -22,7 +22,7 @@ import io.art.value.immutable.*;
 import lombok.experimental.*;
 import static io.art.core.checker.NullityChecker.let;
 import static io.art.core.constants.StringConstants.EMPTY_STRING;
-import static io.art.value.constants.ValueConstants.ValueType.PrimitiveType.*;
+import static io.art.value.constants.ValueModuleConstants.ValueType.PrimitiveType.*;
 
 @UtilityClass
 public class PrimitivesFactory {

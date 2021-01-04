@@ -20,13 +20,13 @@ package io.art.core.model;
 
 import io.art.core.constants.*;
 import lombok.*;
-import static io.art.core.constants.InterceptionStrategy.*;
+import static io.art.core.constants.InterceptionAction.*;
 
 @Getter
 @Builder(builderMethodName = "interceptionResult")
 public class InterceptionResult {
     @Builder.Default
-    private final InterceptionStrategy strategy = NEXT;
+    private final InterceptionAction action = NEXT;
     private final Object in;
     private final Object out;
 
@@ -42,14 +42,14 @@ public class InterceptionResult {
         return interceptionResult()
                 .in(in)
                 .out(in)
-                .strategy(PROCESS)
+                .action(PROCESS)
                 .build();
     }
 
     public static InterceptionResult process(Object in, Object out) {
         return interceptionResult()
                 .in(in)
-                .strategy(PROCESS)
+                .action(PROCESS)
                 .out(out)
                 .build();
     }
@@ -58,14 +58,14 @@ public class InterceptionResult {
         return interceptionResult()
                 .in(in)
                 .out(in)
-                .strategy(TERMINATE)
+                .action(TERMINATE)
                 .build();
     }
 
     public static InterceptionResult terminate(Object in, Object out) {
         return interceptionResult()
                 .in(in)
-                .strategy(TERMINATE)
+                .action(TERMINATE)
                 .out(out)
                 .build();
     }

@@ -31,7 +31,7 @@ class TarantoolBenchmarks extends Specification {
     def benchTimeout = 10 //due to high freq of requests, every %benchSleepEvery% requests needed timeout to avoid client errors
 
     def setupSpec(){
-        launch module().make()
+        launch module().apply()
     }
 
     def "Storage CRUD(warmup)"(){

@@ -18,11 +18,13 @@
 
 package io.art.rsocket.payload;
 
+import io.art.core.exception.*;
 import io.art.value.immutable.Value;
 import io.rsocket.*;
 import lombok.*;
-import static io.art.value.constants.ValueConstants.*;
-import static io.art.value.constants.ValueConstants.ValueType.*;
+import static io.art.core.constants.ArrayConstants.EMPTY_BYTES;
+import static io.art.value.constants.ValueModuleConstants.*;
+import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.xml.XmlEntityFromEntityConverter.*;
 import static io.art.json.descriptor.JsonWriter.*;
@@ -48,21 +50,21 @@ public class RsocketPayloadWriter {
                 return create(writeMessagePackToBytes(value));
 
         }
-        throw new IllegalStateException();
+        throw new ImpossibleSituation();
     }
 
-    public Payload writePayloadMetaData(Value dataValue, Value metadataValue) {
+    public Payload writePayloadMetaData(Value metadataValue) {
         switch (metaDataFormat) {
             case PROTOBUF:
-                return create(writeProtobufToBytes(dataValue), writeProtobufToBytes(metadataValue));
+                return create(EMPTY_BYTES, writeProtobufToBytes(metadataValue));
             case JSON:
-                return create(writeJsonToBytes(dataValue), writeJsonToBytes(metadataValue));
+                return create(EMPTY_BYTES, writeJsonToBytes(metadataValue));
             case XML:
-                return create(writeXmlToBytes(asXml(dataValue)), writeXmlToBytes(asXml(metadataValue)));
+                return create(EMPTY_BYTES, writeXmlToBytes(asXml(metadataValue)));
             case MESSAGE_PACK:
-                return create(writeMessagePackToBytes(dataValue), writeMessagePackToBytes(metadataValue));
+                return create(EMPTY_BYTES, writeMessagePackToBytes(metadataValue));
 
         }
-        throw new IllegalStateException();
+        throw new ImpossibleSituation();
     }
 }

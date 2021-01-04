@@ -23,10 +23,8 @@ import lombok.*;
 
 public class ValueCustomizer {
     @Getter
-    private final CustomValueModuleConfiguration configuration = new CustomValueModuleConfiguration();
+    private final Custom configuration = new Custom();
 
-    @Getter
-    @RequiredArgsConstructor
-    public static class CustomValueModuleConfiguration extends ValueModuleConfiguration {
+    private static class Custom extends ValueModuleConfiguration {
     }
 }
