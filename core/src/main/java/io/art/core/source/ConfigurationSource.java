@@ -18,6 +18,7 @@
 
 package io.art.core.source;
 
+import io.art.core.extensions.*;
 import io.art.core.factory.*;
 import io.art.core.parser.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -76,6 +77,22 @@ public interface ConfigurationSource {
 
     default Duration getDuration(String path) {
         return letIfNotEmpty(getString(path), DurationParser::parseDuration);
+    }
+
+    default UUID getUuid(String path) {
+        return letIfNotEmpty(getString(path), UUID::fromString);
+    }
+
+    default LocalDateTime getLocalDateTime(String path) {
+        return letIfNotEmpty(getString(path), LocalDateTime::parse);
+    }
+
+    default ZonedDateTime getZonedDateTime(String path) {
+        return letIfNotEmpty(getString(path), ZonedDateTime::parse);
+    }
+
+    default Date getDate(String path) {
+        return letIfNotEmpty(getZonedDateTime(path), DateTimeExtensions::toSimpleDate);
     }
 
 

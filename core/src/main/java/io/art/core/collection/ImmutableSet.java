@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-public class ImmutableSet<T> implements Iterable<T> {
+public class ImmutableSet<T> implements ImmutableCollection<T> {
     private final Set<T> set;
 
     private static final ImmutableSet<?> EMPTY = new ImmutableSet<>(emptySet());
@@ -44,44 +44,53 @@ public class ImmutableSet<T> implements Iterable<T> {
         this.set = set;
     }
 
+    public Set<T> toMutable() {
+        return new LinkedHashSet<>(set);
+    }
+
+    @Override
     public int size() {
         return set.size();
     }
 
+    @Override
     public boolean isEmpty() {
         return set.isEmpty();
     }
 
+    @Override
     public boolean contains(Object object) {
         return set.contains(object);
     }
 
+    @Override
     public boolean containsAll(Collection<?> c) {
         return set.containsAll(c);
     }
 
+    @Override
     public Object[] toArray() {
         return set.toArray();
     }
 
+    @Override
     public T[] toArray(T[] array) {
         return this.set.toArray(array);
     }
 
+    @Override
     public Stream<T> stream() {
         return set.stream();
     }
 
+    @Override
     public Stream<T> parallelStream() {
         return set.parallelStream();
     }
 
+    @Override
     public void forEach(Consumer<? super T> action) {
         set.forEach(action);
-    }
-
-    public Set<T> toMutable() {
-        return new LinkedHashSet<>(set);
     }
 
     @Override

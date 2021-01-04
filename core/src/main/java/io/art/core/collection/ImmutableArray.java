@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-public class ImmutableArray<T> implements Iterable<T> {
+public class ImmutableArray<T> implements ImmutableCollection<T> {
     private final List<T> array;
 
     private static final ImmutableArray<?> EMPTY = new ImmutableArray<>(emptyList());
@@ -45,48 +45,58 @@ public class ImmutableArray<T> implements Iterable<T> {
         this.array = list;
     }
 
-    public int size() {
-        return array.size();
-    }
-
-    public boolean isEmpty() {
-        return array.isEmpty();
-    }
-
-    public boolean contains(Object object) {
-        return array.contains(object);
-    }
-
-    public boolean containsAll(Collection<?> c) {
-        return array.containsAll(c);
-    }
-
-    public Object[] toArray() {
-        return array.toArray();
-    }
-
-    public T[] toArray(T[] array) {
-        return this.array.toArray(array);
-    }
 
     public T get(int index) {
         return array.get(index);
     }
 
+    public List<T> toMutable() {
+        return new ArrayList<>(array);
+    }
+
+    @Override
+    public int size() {
+        return array.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return array.isEmpty();
+    }
+
+    @Override
+    public boolean contains(Object object) {
+        return array.contains(object);
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        return array.containsAll(c);
+    }
+
+    @Override
+    public Object[] toArray() {
+        return array.toArray();
+    }
+
+    @Override
+    public T[] toArray(T[] array) {
+        return this.array.toArray(array);
+    }
+
+    @Override
     public Stream<T> stream() {
         return array.stream();
     }
 
+    @Override
     public Stream<T> parallelStream() {
         return array.parallelStream();
     }
 
+    @Override
     public void forEach(Consumer<? super T> action) {
         array.forEach(action);
-    }
-
-    public List<T> toMutable() {
-        return new ArrayList<>(array);
     }
 
     @Override
