@@ -22,10 +22,15 @@ local transaction = {
 
     mapBucket = function(transaction)
         local bucket
+        local result
         for _, operation in pairs(transaction) do
             bucket = art.transaction.bucketMappers[operation[1]](operation[2])
-            if (bucket) then return bucket end
+            if (bucket) then
+                if not(result == nil) and not(bucket == result) then return end
+                result = bucket
+            end
         end
+        return result
     end,
 
     bucketMappers = {},
