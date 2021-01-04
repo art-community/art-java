@@ -67,13 +67,13 @@ public class TarantoolClusterClient {
     }
 
     public TarantoolClient getClient(String clientId){
-        Optional<TarantoolClient> existingClient = tarantoolModule().state().getClient(clientId);
+        Optional<TarantoolClient> existingClient = tarantoolModule().state().getClient(clusterId, clientId);
         if (existingClient.isPresent()) return existingClient.get();
 
         TarantoolInstanceConfiguration configuration = tarantoolModule().configuration().clusters.get(clusterId).instances.get(clientId);
         if (isNull(configuration)) throw new TarantoolModuleException(format(CONFIGURATION_IS_NULL, clientId));
         TarantoolClient newClient = connect(clientId, configuration);
-        tarantoolModule().state().registerClient(clientId, newClient);
+        tarantoolModule().state().registerClient(clusterId, clientId, newClient);
         return newClient;
     }
 

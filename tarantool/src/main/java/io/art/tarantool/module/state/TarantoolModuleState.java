@@ -10,11 +10,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import static io.art.core.factory.MapFactory.map;
+import static java.util.Objects.isNull;
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
 public class TarantoolModuleState implements ModuleState {
     private final Map<String, TarantoolClusterClient> activeClusters = map();
-    private final Map<String, TarantoolClient> activeClients = map();
+    private final Map<String, Map<String, TarantoolClient>> activeClients = map();
+
 
     public Optional<TarantoolClusterClient> getClusterClient(String clusterId){
         return ofNullable(activeClusters.get(clusterId));
@@ -24,12 +27,14 @@ public class TarantoolModuleState implements ModuleState {
         activeClusters.put(clusterId, client);
     }
 
-    public Optional<TarantoolClient> getClient(String clientId){
-        return ofNullable(activeClients.get(clientId));
+    public Optional<TarantoolClient> getClient(String clusterId, String clientId){
+        if (isNull(activeClients.get(clusterId))) return empty();
+        return ofNullable(activeClients.get(clusterId).get(clientId));
     }
 
-    public void registerClient(String clientId, TarantoolClient client){
-        activeClients.put(clientId, client);
+    public void registerClient(String clusterId, String clientId, TarantoolClient client){
+        if (isNull(activeClients.get(clusterId))) activeClients.put(clusterId, map());
+        activeClients.get(clusterId).put(clientId, client);
     }
 
 
