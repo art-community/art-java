@@ -77,7 +77,7 @@ public class SetFactory {
         return new ImmutableSet<>(asList(elements));
     }
 
-    public static <T> ImmutableSet<T> immutableSetOf(Collection<T> elements) {
+    public static <T> ImmutableSet<T> immutableSetOf(Iterable<T> elements) {
         return new ImmutableSet<>(elements);
     }
 

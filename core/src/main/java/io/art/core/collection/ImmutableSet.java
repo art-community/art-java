@@ -36,7 +36,7 @@ public class ImmutableSet<T> implements ImmutableCollection<T> {
             Builder::build
     );
 
-    public ImmutableSet(Collection<T> collection) {
+    public ImmutableSet(Iterable<T> collection) {
         this.set = com.google.common.collect.ImmutableSet.copyOf(collection);
     }
 

@@ -37,8 +37,8 @@ public class ImmutableArray<T> implements ImmutableCollection<T> {
             Builder::build
     );
 
-    public ImmutableArray(Collection<T> collection) {
-        this.array = new ArrayList<>(collection);
+    public ImmutableArray(Iterable<T> collection) {
+        this.array = ImmutableList.copyOf(collection);
     }
 
     public ImmutableArray(ImmutableList<T> list) {
@@ -133,7 +133,7 @@ public class ImmutableArray<T> implements ImmutableCollection<T> {
         return cast(EMPTY);
     }
 
-    public static <T> ImmutableArray<T> immutableSortedArray(Collection<T> elements, Comparator<T> comparator) {
+    public static <T> ImmutableArray<T> immutableSortedArray(Iterable<T> elements, Comparator<T> comparator) {
         return new ImmutableArray<>(Ordering.from(comparator).immutableSortedCopy(elements));
     }
 

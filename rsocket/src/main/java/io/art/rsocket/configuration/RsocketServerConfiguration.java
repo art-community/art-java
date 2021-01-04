@@ -32,7 +32,6 @@ import reactor.netty.http.server.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
@@ -41,8 +40,6 @@ import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
-import static java.util.Optional.*;
-import java.util.*;
 import java.util.function.*;
 
 @Getter
@@ -85,7 +82,7 @@ public class RsocketServerConfiguration {
         configuration.defaultMetaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), JSON);
         configuration.logging = orElse(source.getBool(LOGGING_KEY), false);
         configuration.fragmentationMtu = orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0);
-        configuration.resume = let(source.getNested(RESUME_SECTION), RsocketResumeConfigurator::from);
+        configuration.resume = source.getNested(RESUME_SECTION, RsocketResumeConfigurator::from);
         configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT
                 ? PayloadDecoder.DEFAULT
                 : PayloadDecoder.ZERO_COPY;
@@ -115,11 +112,7 @@ public class RsocketServerConfiguration {
                 break;
         }
 
-        configuration.services = ofNullable(source.getNestedMap(SERVICES_KEY))
-                .map(configurations -> configurations.entrySet()
-                        .stream()
-                        .collect(immutableMapCollector(Map.Entry::getKey, entry -> RsocketServiceConfiguration.from(configuration, entry.getValue()))))
-                .orElse(emptyImmutableMap());
+        configuration.services = source.getNestedMap(SERVICES_KEY, service -> RsocketServiceConfiguration.from(configuration, service));
 
         return configuration;
     }

@@ -29,11 +29,11 @@ public class ArrayFactory {
     }
 
 
-    public static <T> ImmutableArray<T> immutableArrayOf(Collection<T> elements) {
+    public static <T> ImmutableArray<T> immutableArrayOf(Iterable<T> elements) {
         return isEmpty(elements) ? ImmutableArray.emptyImmutableArray() : new ImmutableArray<>(elements);
     }
 
-    public static <T> ImmutableArray<T> immutableSortedArrayOf(Comparator<T> comparator, Collection<T> elements) {
+    public static <T> ImmutableArray<T> immutableSortedArrayOf(Comparator<T> comparator, Iterable<T> elements) {
         return isEmpty(elements) ? emptyImmutableArray() : immutableSortedArray(elements, comparator);
     }
 

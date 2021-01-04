@@ -19,12 +19,15 @@
 package io.art.configurator.source;
 
 import com.typesafe.config.*;
+import io.art.core.collection.*;
 import io.art.core.factory.*;
 import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableArray.immutableArrayCollector;
 import static io.art.core.combiner.SectionCombiner.combine;
 import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.factory.SetFactory.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import java.util.*;
@@ -57,27 +60,27 @@ public class TypesafeConfigurationSource implements ConfigurationSource {
 
 
     @Override
-    public List<Boolean> getBoolList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getBooleanList);
+    public ImmutableArray<Boolean> getBoolList(String path) {
+        return orEmptyImmutableArray(path, typesafeConfiguration::hasPath, typesafeConfiguration::getBooleanList);
     }
 
     @Override
-    public List<String> getStringList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getStringList);
+    public ImmutableArray<String> getStringList(String path) {
+        return orEmptyImmutableArray(path, typesafeConfiguration::hasPath, typesafeConfiguration::getStringList);
     }
 
     @Override
-    public List<ConfigurationSource> getNestedList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getConfigList)
+    public ImmutableArray<ConfigurationSource> getNestedList(String path) {
+        return orEmptyImmutableArray(path, typesafeConfiguration::hasPath, typesafeConfiguration::getConfigList)
                 .stream()
                 .map(config -> new TypesafeConfigurationSource(combine(section, path), type, config))
-                .collect(toCollection(ArrayFactory::dynamicArray));
+                .collect(immutableArrayCollector());
     }
 
 
     @Override
-    public Set<String> getKeys() {
-        return typesafeConfiguration.root().keySet();
+    public ImmutableSet<String> getKeys() {
+        return immutableSetOf(typesafeConfiguration.root().keySet());
     }
 
     @Override

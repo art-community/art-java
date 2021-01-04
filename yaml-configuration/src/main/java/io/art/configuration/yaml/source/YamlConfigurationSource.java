@@ -22,11 +22,14 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.*;
 import com.fasterxml.jackson.dataformat.yaml.*;
 import io.art.configuration.yaml.exception.*;
+import io.art.core.collection.*;
 import io.art.core.factory.*;
 import io.art.core.source.*;
 import lombok.*;
 import static com.fasterxml.jackson.databind.node.JsonNodeType.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableArray.immutableArrayCollector;
+import static io.art.core.collection.ImmutableSet.immutableSetCollector;
 import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
@@ -78,31 +81,31 @@ public class YamlConfigurationSource implements ConfigurationSource {
 
 
     @Override
-    public List<Boolean> getBoolList(String path) {
+    public ImmutableArray<Boolean> getBoolList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
                 .map(JsonNode::asBoolean)
-                .collect(toCollection(ArrayFactory::dynamicArray));
+                .collect(immutableArrayCollector());
     }
 
     @Override
-    public List<String> getStringList(String path) {
+    public ImmutableArray<String> getStringList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
                 .map(JsonNode::asText)
-                .collect(toCollection(ArrayFactory::dynamicArray));
+                .collect(immutableArrayCollector());
     }
 
     @Override
-    public List<ConfigurationSource> getNestedList(String path) {
+    public ImmutableArray<ConfigurationSource> getNestedList(String path) {
         return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
                 .map(node -> new YamlConfigurationSource(combine(section, path), type, file, node))
-                .collect(toCollection(ArrayFactory::dynamicArray));
+                .collect(immutableArrayCollector());
     }
 
 
     @Override
     @SuppressWarnings(NULLABLE_PROBLEMS)
-    public Set<String> getKeys() {
-        return stream(((Iterable<String>) configuration::fieldNames).spliterator(), false).collect(toCollection(SetFactory::set));
+    public ImmutableSet<String> getKeys() {
+        return stream(((Iterable<String>) configuration::fieldNames).spliterator(), false).collect(immutableSetCollector());
     }
 
     @Override

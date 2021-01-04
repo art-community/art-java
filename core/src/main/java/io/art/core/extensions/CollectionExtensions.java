@@ -18,8 +18,10 @@
 
 package io.art.core.extensions;
 
+import io.art.core.collection.*;
 import lombok.experimental.*;
 import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
+import static io.art.core.factory.ArrayFactory.immutableArrayOf;
 import static io.art.core.factory.SetFactory.setOf;
 import static java.util.Collections.*;
 import static java.util.Objects.isNull;
@@ -30,6 +32,10 @@ import java.util.function.*;
 public final class CollectionExtensions {
     public static <T, R> List<R> orEmptyList(T value, Predicate<T> condition, Function<T, List<R>> action) {
         return condition.test(value) ? action.apply(value) : emptyList();
+    }
+
+    public static <T, R> ImmutableArray<R> orEmptyImmutableArray(T value, Predicate<T> condition, Function<T, List<R>> action) {
+        return condition.test(value) ? immutableArrayOf(action.apply(value)) : ImmutableArray.emptyImmutableArray();
     }
 
     public static boolean areAllUnique(Collection<?> collection) {

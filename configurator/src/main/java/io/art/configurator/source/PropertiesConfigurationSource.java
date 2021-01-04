@@ -18,6 +18,7 @@
 
 package io.art.configurator.source;
 
+import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
 import static com.typesafe.config.ConfigFactory.*;
@@ -54,23 +55,23 @@ public class PropertiesConfigurationSource implements ConfigurationSource {
 
 
     @Override
-    public List<Boolean> getBoolList(String path) {
+    public ImmutableArray<Boolean> getBoolList(String path) {
         return typesafeConfigurationSource.getBoolList(path);
     }
 
     @Override
-    public List<String> getStringList(String path) {
+    public ImmutableArray<String> getStringList(String path) {
         return typesafeConfigurationSource.getStringList(path);
     }
 
     @Override
-    public List<ConfigurationSource> getNestedList(String path) {
+    public ImmutableArray<ConfigurationSource> getNestedList(String path) {
         return typesafeConfigurationSource.getNestedList(path);
     }
 
 
     @Override
-    public Set<String> getKeys() {
+    public ImmutableSet<String> getKeys() {
         return typesafeConfigurationSource.getKeys();
     }
 
