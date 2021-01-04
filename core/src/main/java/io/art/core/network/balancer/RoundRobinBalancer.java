@@ -25,11 +25,12 @@ import static io.art.core.factory.ListFactory.linkedListOf;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
-@Getter
+
 public class RoundRobinBalancer<T> implements Balancer<T> {
+    @Getter
     private List<T> endpoints = linkedList();
     private final AtomicInteger position = new AtomicInteger(0);
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = AccessLevel.PRIVATE)
     private final int listSize = endpoints.size();
 
     @Override
