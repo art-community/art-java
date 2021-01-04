@@ -74,11 +74,11 @@ public class SetFactory {
 
     @SafeVarargs
     public static <T> ImmutableSet<T> immutableSetOf(T... elements) {
-        return new ImmutableSet<>(asList(elements));
+        return new ImmutableSetImplementation<>(asList(elements));
     }
 
     public static <T> ImmutableSet<T> immutableSetOf(Iterable<T> elements) {
-        return new ImmutableSet<>(elements);
+        return new ImmutableSetImplementation<>(elements);
     }
 
 

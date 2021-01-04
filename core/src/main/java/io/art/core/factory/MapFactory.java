@@ -29,7 +29,7 @@ public class MapFactory {
 
 
     public static <K, V> ImmutableMap<K, V> immutableMapOf(Map<K, V> map) {
-        return new ImmutableMap<>(map);
+        return new ImmutableMapImplementation<>(map);
     }
 
 

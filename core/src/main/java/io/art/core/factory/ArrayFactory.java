@@ -30,7 +30,7 @@ public class ArrayFactory {
 
 
     public static <T> ImmutableArray<T> immutableArrayOf(Iterable<T> elements) {
-        return isEmpty(elements) ? ImmutableArray.emptyImmutableArray() : new ImmutableArray<>(elements);
+        return isEmpty(elements) ? emptyImmutableArray() : new ImmutableArrayImplementation<>(elements);
     }
 
     public static <T> ImmutableArray<T> immutableSortedArrayOf(Comparator<T> comparator, Iterable<T> elements) {
@@ -39,11 +39,11 @@ public class ArrayFactory {
 
     @SafeVarargs
     public static <T> ImmutableArray<T> immutableArrayOf(T... elements) {
-        return isEmpty(elements) ? ImmutableArray.emptyImmutableArray() : new ImmutableArray<>(Arrays.asList(elements));
+        return isEmpty(elements) ? emptyImmutableArray() : new ImmutableArrayImplementation<>(asList(elements));
     }
 
     public static <T> ImmutableArray<T> immutableArrayOf(Stream<T> stream) {
-        return isNull(stream) ? ImmutableArray.emptyImmutableArray() : stream.collect(ImmutableArray.immutableArrayCollector());
+        return isNull(stream) ? emptyImmutableArray() : stream.collect(immutableArrayCollector());
     }
 
 
