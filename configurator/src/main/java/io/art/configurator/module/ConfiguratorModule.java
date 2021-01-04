@@ -59,8 +59,8 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .ifPresent(source -> configure(configurator -> configurator.from(source)));
         EnvironmentConfigurationSource environment = getConfiguration().getEnvironment();
         PropertiesConfigurationSource properties = getConfiguration().getProperties();
-        configureByFile(addFirstToList(environment.getString(MODULE_CONFIG_FILE_ENVIRONMENT), environment.getStringList(MODULE_CONFIG_FILES_ENVIRONMENT)));
-        configureByFile(addFirstToList(properties.getString(MODULE_CONFIG_FILE_PROPERTY), properties.getStringList(MODULE_CONFIG_FILES_PROPERTY)));
+        configureByFile(addFirstToList(environment.getString(MODULE_CONFIG_FILE_ENVIRONMENT), environment.getStringList(MODULE_CONFIG_FILES_ENVIRONMENT).toMutable()));
+        configureByFile(addFirstToList(properties.getString(MODULE_CONFIG_FILE_PROPERTY), properties.getStringList(MODULE_CONFIG_FILES_PROPERTY).toMutable()));
         return new StatelessModuleProxy<>(this);
     }
 
