@@ -18,65 +18,17 @@
 
 package io.art.configurator.source;
 
-import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
+import lombok.experimental.Delegate;
 import static com.typesafe.config.ConfigFactory.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.constants.StringConstants.*;
-import java.util.*;
 
 @Getter
-public class PropertiesConfigurationSource implements ConfigurationSource {
+public class PropertiesConfigurationSource implements NestedConfiguration {
     private final ConfigurationSourceType type = PROPERTIES;
+    @Delegate
     private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(EMPTY_STRING, PROPERTIES, systemProperties());
-
-    @Override
-    public String getSection() {
-        return typesafeConfigurationSource.getSection();
-    }
-
-
-    @Override
-    public Boolean getBool(String path) {
-        return typesafeConfigurationSource.getBool(path);
-    }
-
-    @Override
-    public String getString(String path) {
-        return typesafeConfigurationSource.getString(path);
-    }
-
-    @Override
-    public ConfigurationSource getNested(String path) {
-        return typesafeConfigurationSource.getNested(path);
-    }
-
-
-    @Override
-    public ImmutableArray<Boolean> getBoolList(String path) {
-        return typesafeConfigurationSource.getBoolList(path);
-    }
-
-    @Override
-    public ImmutableArray<String> getStringList(String path) {
-        return typesafeConfigurationSource.getStringList(path);
-    }
-
-    @Override
-    public ImmutableArray<ConfigurationSource> getNestedList(String path) {
-        return typesafeConfigurationSource.getNestedList(path);
-    }
-
-
-    @Override
-    public ImmutableSet<String> getKeys() {
-        return typesafeConfigurationSource.getKeys();
-    }
-
-    @Override
-    public boolean has(String path) {
-        return typesafeConfigurationSource.has(path);
-    }
 }

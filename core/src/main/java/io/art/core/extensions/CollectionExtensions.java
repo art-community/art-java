@@ -20,9 +20,11 @@ package io.art.core.extensions;
 
 import io.art.core.collection.*;
 import io.art.core.collector.*;
+import io.art.core.factory.*;
 import lombok.experimental.*;
 import static io.art.core.collector.SetCollector.setCollector;
 import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.MapFactory.immutableMapOf;
 import static io.art.core.factory.SetFactory.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
@@ -37,8 +39,16 @@ public final class CollectionExtensions {
         return condition.test(value) ? action.apply(value) : emptyList();
     }
 
-    public static <T, R> ImmutableArray<R> orEmptyImmutableArray(T value, Predicate<T> condition, Function<T, List<R>> action) {
+    public static <T, R> ImmutableArray<R> orEmptyImmutableArray(T value, Predicate<T> condition, Function<T, ImmutableArray<R>> action) {
         return condition.test(value) ? immutableArrayOf(action.apply(value)) : ImmutableArray.emptyImmutableArray();
+    }
+
+    public static <T, R> ImmutableArray<R> orEmptyImmutableArray(T value, Function<T, ImmutableArray<R>> action) {
+        return value != null ? immutableArrayOf(action.apply(value)) : ImmutableArray.emptyImmutableArray();
+    }
+
+    public static <K, V, R> ImmutableMap<K, V> orEmptyImmutableMap(R value, Function<R, ImmutableMap<K ,V>> action) {
+        return value != null ? immutableMapOf(action.apply(value)) : ImmutableMap.emptyImmutableMap();
     }
 
     public static boolean areAllUnique(Collection<?> collection) {

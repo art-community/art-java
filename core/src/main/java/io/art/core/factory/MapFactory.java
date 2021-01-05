@@ -32,6 +32,10 @@ public class MapFactory {
         return new ImmutableMapImplementation<>(map);
     }
 
+    public static <K, V> ImmutableMap<K, V> immutableMapOf(ImmutableMap<K, V> map) {
+        return new ImmutableMapImplementation<>(map);
+    }
+
 
     public static <K, V> ConcurrentHashMap<K, V> concurrentMap() {
         return new ConcurrentHashMap<>();

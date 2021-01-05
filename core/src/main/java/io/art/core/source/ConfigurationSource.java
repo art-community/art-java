@@ -24,8 +24,7 @@ import io.art.core.parser.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
-import static io.art.core.collection.ImmutableMap.*;
-import static java.util.function.Function.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.*;
@@ -33,10 +32,26 @@ import java.util.function.*;
 public interface ConfigurationSource {
     String getSection();
 
+    ModuleConfigurationSourceType getType();
 
-    Boolean getBool(String path);
+    ImmutableSet<String> getKeys();
 
-    String getString(String path);
+    NestedConfiguration getNested(String path);
+
+    boolean has(String path);
+
+
+    default <T> T getNested(String path, Function<NestedConfiguration, T> mapper) {
+        return let(getNested(path), mapper);
+    }
+
+    default Boolean getBool(String path) {
+        return let(getNested(path), NestedConfiguration::asBool);
+    }
+
+    default String getString(String path) {
+        return let(getNested(path), NestedConfiguration::asString);
+    }
 
     default Integer getInt(String path) {
         return letIfNotEmpty(getString(path), Integer::parseInt);
@@ -87,127 +102,108 @@ public interface ConfigurationSource {
         return letIfNotEmpty(getZonedDateTime(path), DateTimeExtensions::toSimpleDate);
     }
 
-    ConfigurationSource getNested(String path);
 
-    default <T> T getNested(String path, Function<ConfigurationSource, T> mapper) {
-        return let(getNested(path), mapper);
+    default ImmutableArray<Boolean> getBoolArray(String path) {
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asBoolArray);
     }
 
+    default ImmutableArray<String> getStringArray(String path) {
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asStringArray);
+    }
 
-    ImmutableArray<Boolean> getBoolList(String path);
-
-    ImmutableArray<String> getStringList(String path);
-
-    default ImmutableArray<Integer> getIntList(String path) {
-        return getStringList(path)
+    default ImmutableArray<Integer> getIntArray(String path) {
+        return getStringArray(path)
                 .stream()
                 .map(Integer::parseInt)
                 .collect(immutableArrayCollector());
     }
 
-    default ImmutableArray<Long> getLongList(String path) {
-        return getStringList(path)
+    default ImmutableArray<Long> getLongArray(String path) {
+        return getStringArray(path)
                 .stream()
                 .map(Long::parseLong)
                 .collect(immutableArrayCollector());
     }
 
-    default ImmutableArray<Double> getDoubleList(String path) {
-        return getStringList(path)
+    default ImmutableArray<Float> getFloatArray(String path) {
+        return getStringArray(path)
+                .stream()
+                .map(Float::parseFloat)
+                .collect(immutableArrayCollector());
+    }
+
+    default ImmutableArray<Double> getDoubleArray(String path) {
+        return getStringArray(path)
                 .stream()
                 .map(Double::parseDouble)
                 .collect(immutableArrayCollector());
     }
 
-    default ImmutableArray<Short> getShortList(String path) {
-        return getStringList(path)
+    default ImmutableArray<Short> getShortArray(String path) {
+        return getStringArray(path)
                 .stream()
                 .map(Short::parseShort)
                 .collect(immutableArrayCollector());
     }
 
-    default ImmutableArray<Character> getCharList(String path) {
-        return getStringList(path)
+    default ImmutableArray<Character> getCharArray(String path) {
+        return getStringArray(path)
                 .stream()
                 .map(string -> letIfNotEmpty(string, notEmpty -> notEmpty.charAt(0)))
                 .collect(immutableArrayCollector());
     }
 
-    default ImmutableArray<Byte> getByteList(String path) {
-        return getStringList(path)
+    default ImmutableArray<Byte> getByteArray(String path) {
+        return getStringArray(path)
                 .stream()
                 .map(Byte::parseByte)
                 .collect(immutableArrayCollector());
     }
 
-    default ImmutableArray<Duration> getDurationList(String path) {
-        return getStringList(path)
+    default ImmutableArray<Duration> getDurationArray(String path) {
+        return getStringArray(path)
                 .stream()
                 .map(DurationParser::parseDuration)
                 .collect(immutableArrayCollector());
     }
 
-    default ImmutableArray<UUID> getUuidList(String path) {
-        return getStringList(path)
+    default ImmutableArray<UUID> getUuidArray(String path) {
+        return getStringArray(path)
                 .stream()
                 .map(UUID::fromString)
                 .collect(immutableArrayCollector());
     }
 
-    default ImmutableArray<LocalDateTime> getLocalDateTimeList(String path) {
-        return getStringList(path)
+    default ImmutableArray<LocalDateTime> getLocalDateTimeArray(String path) {
+        return getStringArray(path)
                 .stream()
                 .map(LocalDateTime::parse)
                 .collect(immutableArrayCollector());
     }
 
-    default ImmutableArray<ZonedDateTime> getZonedDateTimeList(String path) {
-        return getStringList(path)
+    default ImmutableArray<ZonedDateTime> getZonedDateTimeArray(String path) {
+        return getStringArray(path)
                 .stream()
                 .map(ZonedDateTime::parse)
                 .collect(immutableArrayCollector());
     }
 
-    default ImmutableArray<Date> getDateList(String path) {
-        return getZonedDateTimeList(path)
+    default ImmutableArray<Date> getDateArray(String path) {
+        return getZonedDateTimeArray(path)
                 .stream()
                 .map(DateTimeExtensions::toSimpleDate)
                 .collect(immutableArrayCollector());
     }
 
-    ImmutableArray<ConfigurationSource> getNestedList(String path);
 
-    default <T> ImmutableArray<T> getNestedList(String path, Function<ConfigurationSource, T> mapper) {
-        return getNestedList(path).stream().map(mapper).collect(immutableArrayCollector());
+    default <T> ImmutableMap<String, T> getNestedMap(String path, Function<NestedConfiguration, T> mapper) {
+        return orEmptyImmutableMap(getNested(path), configuration -> configuration.asMap(mapper));
     }
 
-
-    default <T> ImmutableMap<String, T> getMap(Function<String, T> mapper) {
-        return getKeys().stream().collect(immutableMapCollector(identity(), mapper));
+    default <T> ImmutableArray<T> getNestedArray(String path, Function<NestedConfiguration, T> mapper) {
+        return orEmptyImmutableArray(getNested(path), configuration -> configuration.asArray(mapper));
     }
 
-    default ImmutableMap<String, ConfigurationSource> getNestedMap(String path) {
-        ConfigurationSource nested = getNested(path);
-        if (!has(path)) {
-            return emptyImmutableMap();
-        }
-        return nested.getKeys().stream().collect(immutableMapCollector(identity(), nested::getNested));
-    }
-
-    default <T> ImmutableMap<String, T> getNestedMap(String path, Function<ConfigurationSource, T> mapper) {
-        ConfigurationSource nested = getNested(path);
-        if (!has(path)) {
-            return emptyImmutableMap();
-        }
-        return nested.getKeys().stream().collect(immutableMapCollector(identity(), key -> let(nested.getNested(key), mapper)));
-    }
-
-
-    ModuleConfigurationSourceType getType();
-
-    ImmutableSet<String> getKeys();
-
-    boolean has(String path);
 
     interface ModuleConfigurationSourceType {
         int getOrder();

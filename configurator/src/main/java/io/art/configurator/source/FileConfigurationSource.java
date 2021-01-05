@@ -21,20 +21,20 @@ package io.art.configurator.source;
 import io.art.configuration.yaml.source.*;
 import io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import io.art.configurator.exception.*;
-import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
+import lombok.experimental.Delegate;
 import static com.typesafe.config.ConfigFactory.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
 import static io.art.core.extensions.FileExtensions.*;
 import java.io.*;
-import java.util.*;
 
 @Getter
-public class FileConfigurationSource implements ConfigurationSource {
+public class FileConfigurationSource implements NestedConfiguration {
     private final String section;
     private final ConfigurationSourceType type;
-    private final ConfigurationSource source;
+    @Delegate
+    private final NestedConfiguration source;
 
     public FileConfigurationSource(String section, ConfigurationSourceType type, File file) {
         this.section = section;
@@ -42,49 +42,7 @@ public class FileConfigurationSource implements ConfigurationSource {
         source = selectSource(section, type, file);
     }
 
-    @Override
-    public Boolean getBool(String path) {
-        return source.getBool(path);
-    }
-
-    @Override
-    public String getString(String path) {
-        return source.getString(path);
-    }
-
-    @Override
-    public ConfigurationSource getNested(String path) {
-        return source.getNested(path);
-    }
-
-
-    @Override
-    public ImmutableArray<Boolean> getBoolList(String path) {
-        return source.getBoolList(path);
-    }
-
-    @Override
-    public ImmutableArray<String> getStringList(String path) {
-        return source.getStringList(path);
-    }
-
-    @Override
-    public ImmutableArray<ConfigurationSource> getNestedList(String path) {
-        return source.getNestedList(path);
-    }
-
-
-    @Override
-    public ImmutableSet<String> getKeys() {
-        return source.getKeys();
-    }
-
-    @Override
-    public boolean has(String path) {
-        return source.has(path);
-    }
-
-    private static ConfigurationSource selectSource(String section, ConfigurationSourceType type, File file) {
+    private static NestedConfiguration selectSource(String section, ConfigurationSourceType type, File file) {
         String extension = parseExtension(file.getAbsolutePath());
         switch (extension) {
             case HOCON_EXTENSION:

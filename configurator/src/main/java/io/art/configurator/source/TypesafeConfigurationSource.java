@@ -26,28 +26,29 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.combiner.SectionCombiner.combine;
 import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static java.util.Objects.*;
 
 @Getter
 @RequiredArgsConstructor
-public class TypesafeConfigurationSource implements ConfigurationSource {
+public class TypesafeConfigurationSource implements NestedConfiguration {
     private final String section;
     private final ModuleConfigurationSourceType type;
     private final Config typesafeConfiguration;
 
     @Override
-    public Boolean getBool(String path) {
-        return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getBoolean);
+    public Boolean asBool() {
+        return let(typesafeConfiguration, configuration -> configuration.getBoolean(section));
     }
 
     @Override
-    public String getString(String path) {
-        return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getString);
+    public String asString() {
+        return let(typesafeConfiguration, configuration -> configuration.getString(section));
     }
 
     @Override
-    public ConfigurationSource getNested(String path) {
+    public NestedConfiguration getNested(String path) {
         Config configuration = this.typesafeConfiguration.atPath(path);
         if (isNull(configuration) || !this.typesafeConfiguration.hasPath(path) || configuration.isEmpty()) {
             return null;
@@ -55,25 +56,13 @@ public class TypesafeConfigurationSource implements ConfigurationSource {
         return new TypesafeConfigurationSource(combine(section, path), type, configuration);
     }
 
-
     @Override
-    public ImmutableArray<Boolean> getBoolList(String path) {
-        return orEmptyImmutableArray(path, typesafeConfiguration::hasPath, typesafeConfiguration::getBooleanList);
-    }
-
-    @Override
-    public ImmutableArray<String> getStringList(String path) {
-        return orEmptyImmutableArray(path, typesafeConfiguration::hasPath, typesafeConfiguration::getStringList);
-    }
-
-    @Override
-    public ImmutableArray<ConfigurationSource> getNestedList(String path) {
-        return orEmptyImmutableArray(path, typesafeConfiguration::hasPath, typesafeConfiguration::getConfigList)
+    public ImmutableArray<NestedConfiguration> asArray() {
+        return orEmptyImmutableArray(section, typesafeConfiguration::hasPath, path -> immutableArrayOf(typesafeConfiguration.getConfigList(path)))
                 .stream()
-                .map(config -> new TypesafeConfigurationSource(combine(section, path), type, config))
+                .map(config -> new TypesafeConfigurationSource(section, type, config))
                 .collect(immutableArrayCollector());
     }
-
 
     @Override
     public ImmutableSet<String> getKeys() {

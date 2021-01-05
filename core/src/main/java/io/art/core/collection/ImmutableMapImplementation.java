@@ -29,6 +29,10 @@ public class ImmutableMapImplementation<K, V> implements ImmutableMap<K, V> {
         this.map = com.google.common.collect.ImmutableMap.copyOf(map);
     }
 
+    public ImmutableMapImplementation(ImmutableMap<K, V> map) {
+        this.map = com.google.common.collect.ImmutableMap.copyOf(map.entrySet());
+    }
+
     private ImmutableMapImplementation(com.google.common.collect.ImmutableMap<K, V> map) {
         this.map = map;
     }

@@ -72,4 +72,6 @@ public interface StringConstants {
     String PIPE = "|";
     String ANSI_RESET = "\u001B[0m";
     String EXCLAMATION_MARK = "!";
+    String LESS = "<";
+    String MORE = ">";
 }

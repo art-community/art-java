@@ -32,11 +32,14 @@ import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
+import static java.util.Objects.*;
+import static java.util.Spliterator.*;
+import static java.util.Spliterators.*;
 import static java.util.stream.StreamSupport.*;
 import java.io.*;
 
 @Getter
-public class YamlConfigurationSource implements ConfigurationSource {
+public class YamlConfigurationSource implements NestedConfiguration {
     private final String section;
     private final ModuleConfigurationSourceType type;
     private final File file;
@@ -62,53 +65,37 @@ public class YamlConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public Boolean getBool(String path) {
-        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), JsonNode::asBoolean);
+    public Boolean asBool() {
+        return let(configuration, JsonNode::asBoolean);
     }
 
     @Override
-    public String getString(String path) {
-        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), JsonNode::asText);
+    public String asString() {
+        return let(configuration, JsonNode::asText);
     }
 
     @Override
-    public ConfigurationSource getNested(String path) {
-        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), node -> new YamlConfigurationSource(combine(section, path), type, file, node));
-    }
-
-
-    @Override
-    public ImmutableArray<Boolean> getBoolList(String path) {
-        return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
-                .map(JsonNode::asBoolean)
+    public ImmutableArray<NestedConfiguration> asArray() {
+        if (isNull(configuration)) return emptyImmutableArray();
+        if (configuration.getNodeType() != ARRAY) {
+            return emptyImmutableArray();
+        }
+        return stream(spliterator(configuration.elements(), configuration.size(), IMMUTABLE), false)
+                .filter(node -> !node.isNull() && !node.isMissingNode())
+                .map(node -> new YamlConfigurationSource(section, type, file, node))
                 .collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<String> getStringList(String path) {
-        return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
-                .map(JsonNode::asText)
-                .collect(immutableArrayCollector());
+    public NestedConfiguration getNested(String path) {
+        JsonNode configNode = getYamlConfigNode(path);
+        return orNull(configNode, node -> !node.isNull() && !node.isMissingNode(), node -> new YamlConfigurationSource(combine(section, path), type, file, node));
     }
-
-    @Override
-    public ImmutableArray<ConfigurationSource> getNestedList(String path) {
-        return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
-                .map(node -> new YamlConfigurationSource(combine(section, path), type, file, node))
-                .collect(immutableArrayCollector());
-    }
-
 
     @Override
     @SuppressWarnings(NULLABLE_PROBLEMS)
     public ImmutableSet<String> getKeys() {
         return stream(((Iterable<String>) configuration::fieldNames).spliterator(), false).collect(immutableSetCollector());
-    }
-
-    @Override
-    public boolean has(String path) {
-        JsonNodeType nodeType = getYamlConfigNode(path).getNodeType();
-        return nodeType != NULL && nodeType != MISSING;
     }
 
     private JsonNode getYamlConfigNode(String path) {
@@ -147,5 +134,10 @@ public class YamlConfigurationSource implements ConfigurationSource {
             node = node.path(path.substring(0, dotIndex));
             path = path.substring(dotIndex + 1);
         }
+    }
+    @Override
+    public boolean has(String path) {
+        JsonNode nodeType = getYamlConfigNode(path);
+        return nodeType.isNull() && !nodeType.isMissingNode();
     }
 }
