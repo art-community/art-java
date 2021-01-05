@@ -20,17 +20,14 @@ package io.art.configurator.source;
 
 import com.typesafe.config.*;
 import io.art.core.collection.*;
-import io.art.core.factory.*;
 import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableArray.immutableArrayCollector;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.combiner.SectionCombiner.combine;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.SetFactory.*;
 import static java.util.Objects.*;
-import static java.util.stream.Collectors.*;
-import java.util.*;
 
 @Getter
 @RequiredArgsConstructor

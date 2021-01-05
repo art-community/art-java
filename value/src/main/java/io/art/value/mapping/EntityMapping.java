@@ -20,7 +20,6 @@ package io.art.value.mapping;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.core.factory.*;
 import io.art.value.immutable.Value;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
@@ -29,10 +28,10 @@ import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collector.SetCollector.setCollector;
 import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.factory.EntityFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
-import static java.util.stream.Collectors.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -70,7 +69,7 @@ public class EntityMapping {
         Function<Map<K, V>, Entity> mapper = notNull -> entity(notNull.keySet()
                 .stream()
                 .map(fromKey::map)
-                .collect(toCollection(SetFactory::set)), key -> value.map(notNull.get(toKey.map(key))));
+                .collect(setCollector()), key -> value.map(notNull.get(toKey.map(key))));
         return entity -> let(entity, mapper);
     }
 
@@ -83,7 +82,7 @@ public class EntityMapping {
         Function<ImmutableMap<K, V>, Entity> mapper = notNull -> entity(notNull.keySet()
                 .stream()
                 .map(fromKey::map)
-                .collect(toCollection(SetFactory::set)), key -> value.map(notNull.get(toKey.map(key))));
+                .collect(setCollector()), key -> value.map(notNull.get(toKey.map(key))));
         return entity -> let(entity, mapper);
     }
 

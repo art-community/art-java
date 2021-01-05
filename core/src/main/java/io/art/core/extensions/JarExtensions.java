@@ -19,13 +19,12 @@
 package io.art.core.extensions;
 
 import io.art.core.exception.*;
-import io.art.core.factory.*;
+import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.constants.StringConstants.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.StandardCopyOption.*;
 import static java.util.Optional.*;
 import static java.util.regex.Pattern.*;
-import static java.util.stream.Collectors.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
@@ -75,7 +74,7 @@ public class JarExtensions {
     public static void extractJar(String jarPath, String directory) {
         try (ZipFile jarArchive = new ZipFile(jarPath)) {
             createDirectories(Paths.get(directory));
-            for (ZipEntry entry : jarArchive.stream().collect(toCollection(ArrayFactory::dynamicArray))) {
+            for (ZipEntry entry : jarArchive.stream().collect(arrayCollector())) {
                 Path entryDestination = Paths.get(directory).resolve(entry.getName());
                 if (entry.isDirectory() && !exists(entryDestination)) {
                     createDirectory(entryDestination);
@@ -120,7 +119,7 @@ public class JarExtensions {
             List<? extends ZipEntry> entries = jarArchive
                     .stream()
                     .filter(entry -> compile(entryRegex).matcher(entry.getName()).matches())
-                    .collect(toCollection(ArrayFactory::dynamicArray));
+                    .collect(arrayCollector());
             for (ZipEntry entry : entries) {
                 Path entryDest = Paths.get(directory).resolve(entry.getName());
 

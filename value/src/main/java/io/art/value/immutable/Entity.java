@@ -33,6 +33,7 @@ import io.art.value.mapping.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collector.SetCollector.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
@@ -44,8 +45,7 @@ import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.*;
+import static java.util.Optional.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -283,7 +283,7 @@ public class Entity implements Value {
             this.valueMapper = valueMapper;
             this.fromKeyMapper = fromKeyMapper;
             this.evaluated = lazy(() -> Entity.this.toMap(toKeyMapper, valueMapper));
-            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toCollection(SetFactory::setOf)));
+            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(setCollector()));
         }
 
         @Override

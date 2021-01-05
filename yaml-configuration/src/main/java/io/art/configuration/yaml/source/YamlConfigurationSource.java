@@ -23,20 +23,17 @@ import com.fasterxml.jackson.databind.node.*;
 import com.fasterxml.jackson.dataformat.yaml.*;
 import io.art.configuration.yaml.exception.*;
 import io.art.core.collection.*;
-import io.art.core.factory.*;
 import io.art.core.source.*;
 import lombok.*;
 import static com.fasterxml.jackson.databind.node.JsonNodeType.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableArray.immutableArrayCollector;
-import static io.art.core.collection.ImmutableSet.immutableSetCollector;
+import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
-import static java.util.stream.Collectors.*;
 import static java.util.stream.StreamSupport.*;
 import java.io.*;
-import java.util.*;
 
 @Getter
 public class YamlConfigurationSource implements ConfigurationSource {

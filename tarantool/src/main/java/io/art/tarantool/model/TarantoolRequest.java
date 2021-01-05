@@ -1,24 +1,22 @@
 package io.art.tarantool.model;
 
-import io.art.value.immutable.Value;
-import io.art.value.tuple.PlainTupleWriter;
-
+import io.art.core.checker.*;
+import io.art.value.immutable.*;
+import io.art.value.tuple.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.collector.ArrayCollector.*;
+import static io.art.value.tuple.PlainTupleWriter.*;
+import static java.util.Arrays.*;
 import java.util.ArrayList;
-import java.util.List;
-
-import static io.art.core.caster.Caster.cast;
-import static io.art.core.checker.EmptinessChecker.isNotEmpty;
-import static io.art.value.tuple.PlainTupleWriter.writeTuple;
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
+import java.util.*;
 
 public class TarantoolRequest {
 
-    public static List<?> requestTuple(Value request){
+    public static List<?> requestTuple(Value request) {
         return writeTuple(request).getTuple();
     }
 
-    public static List<?> dataTuple(Value data){
+    public static List<?> dataTuple(Value data) {
         PlainTupleWriter.PlainTupleWriterResult writerResult = writeTuple(data);
         List<?> result = new ArrayList<>();
         result.add(cast(writerResult.getTuple()));
@@ -29,11 +27,11 @@ public class TarantoolRequest {
     public static List<?> updateOperationsTuple(TarantoolUpdateFieldOperation... operations) {
         List<?> valueOperations = stream(operations)
                 .map(TarantoolUpdateFieldOperation::getValueOperation)
-                .collect(toList());
+                .collect(arrayCollector());
         List<?> schemaOperations = stream(operations)
-                .filter(operation -> isNotEmpty(operation.getSchemaOperation()))
                 .map(TarantoolUpdateFieldOperation::getSchemaOperation)
-                .collect(toList());
+                .filter(EmptinessChecker::isNotEmpty)
+                .collect(arrayCollector());
         List<?> results = new ArrayList<>();
         results.add(cast(valueOperations));
         results.add(cast(schemaOperations));

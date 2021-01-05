@@ -5,10 +5,10 @@ import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.collector.ArrayCollector.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
-import static java.util.stream.Collectors.*;
 import java.util.ArrayList;
 import java.util.*;
 import java.util.stream.*;
@@ -61,7 +61,7 @@ public class ArrayFactory {
     }
 
     public static <T> List<T> dynamicArrayOf(Stream<T> stream) {
-        return isEmpty(stream) ? emptyList() : stream.collect(toCollection(ArrayFactory::dynamicArray));
+        return isEmpty(stream) ? emptyList() : stream.collect(arrayCollector());
     }
 
     public static <T> List<T> dynamicArrayOf(Collection<T> elements) {

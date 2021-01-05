@@ -19,20 +19,18 @@
 package io.art.value.xml;
 
 import io.art.core.collection.*;
-import io.art.core.factory.*;
 import io.art.value.builder.*;
 import io.art.value.immutable.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.collector.MapCollectors.mapCollector;
+import static io.art.core.collector.ArrayCollector.*;
+import static io.art.core.collector.MapCollector.*;
 import static io.art.core.extensions.CollectionExtensions.*;
-import static io.art.core.factory.ArrayFactory.immutableArrayOf;
 import static io.art.value.factory.ArrayValueFactory.*;
 import static io.art.value.factory.EntityFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Entity.*;
 import static java.util.Objects.*;
-import static java.util.stream.Collectors.*;
 import java.util.*;
 
 @UtilityClass
@@ -46,7 +44,7 @@ public final class XmlEntityToEntityConverter {
         }
         ImmutableArray<XmlEntity> children = xmlEntity.getChildren();
         if (isEmpty(children)) return entityBuilder.build();
-        if (areAllUnique(children.stream().map(XmlEntity::getTag).collect(toCollection(ArrayFactory::dynamicArray)))) {
+        if (areAllUnique(children.stream().map(XmlEntity::getTag).collect(arrayCollector()))) {
             EntityBuilder innerEntityBuilder = entityBuilder();
             for (XmlEntity child : children) {
                 if (isEmpty(child.getChildren())) {

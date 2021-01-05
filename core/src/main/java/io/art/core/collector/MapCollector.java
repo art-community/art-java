@@ -27,7 +27,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 @UtilityClass
-public class MapCollectors {
+public class MapCollector {
     public static <T, K, V> Collector<T, ?, Map<K, V>> mapCollector(Function<? super T, ? extends K> keyFunction, Function<? super T, ? extends V> valueFunction) {
         BinaryOperator<V> mergeFunction = (key, value) -> {
             throw new IllegalStateException(format(DUPLICATE_KEY, key));
