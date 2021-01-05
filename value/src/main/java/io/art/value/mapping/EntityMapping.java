@@ -19,6 +19,7 @@
 package io.art.value.mapping;
 
 import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import io.art.core.factory.*;
 import io.art.value.immutable.Value;
 import io.art.value.immutable.*;
@@ -60,6 +61,7 @@ public class EntityMapping {
         return entity.mapOrDefault(stringPrimitive(key), valueType, valueMapper);
     }
 
+
     public static <K, V> EntityToModelMapper<Map<K, V>> toMap(PrimitiveToModelMapper<K> toKey, PrimitiveFromModelMapper<K> fromKey, ValueToModelMapper<V, ? extends Value> value) {
         return entity -> let(entity, notNull -> notNull.asMap(toKey, fromKey, value));
     }
@@ -72,7 +74,21 @@ public class EntityMapping {
         return entity -> let(entity, mapper);
     }
 
-    public static <K, V> EntityToModelMapper<Map<K, V>> toMutableMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
-        return entity -> let(entity, notNull -> notNull.toMap(keyMapper, valueMapper));
+
+    public static <K, V> EntityToModelMapper<ImmutableMap<K, V>> toImmutableMap(PrimitiveToModelMapper<K> toKey, PrimitiveFromModelMapper<K> fromKey, ValueToModelMapper<V, ? extends Value> value) {
+        return entity -> let(entity, notNull -> notNull.asImmutableMap(toKey, fromKey, value));
+    }
+
+    public static <K, V> EntityFromModelMapper<ImmutableMap<K, V>> fromImmutableMap(PrimitiveToModelMapper<K> toKey, PrimitiveFromModelMapper<K> fromKey, ValueFromModelMapper<V, ? extends Value> value) {
+        Function<ImmutableMap<K, V>, Entity> mapper = notNull -> entity(notNull.keySet()
+                .stream()
+                .map(fromKey::map)
+                .collect(toCollection(SetFactory::set)), key -> value.map(notNull.get(toKey.map(key))));
+        return entity -> let(entity, mapper);
+    }
+
+
+    public static <K, V> EntityToModelMapper<Map<K, V>> toMutableMap(PrimitiveToModelMapper<K> toKey, ValueToModelMapper<V, ? extends Value> value) {
+        return entity -> let(entity, notNull -> notNull.toMap(toKey, value));
     }
 }

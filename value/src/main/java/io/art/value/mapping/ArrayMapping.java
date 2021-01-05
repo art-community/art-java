@@ -19,6 +19,7 @@
 package io.art.value.mapping;
 
 import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import io.art.value.factory.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
@@ -78,6 +79,15 @@ public class ArrayMapping {
     }
 
 
+    public static <T> ArrayToModelMapper<ImmutableArray<T>> toImmutableArray(ValueToModelMapper<T, ? extends Value> elementMapper) {
+        return array -> let(array, notNull -> notNull.asImmutableArray(elementMapper));
+    }
+
+    public static <T> ArrayToModelMapper<ImmutableSet<T>> toImmutableSet(ValueToModelMapper<T, ? extends Value> elementMapper) {
+        return array -> let(array, notNull -> notNull.asImmutableSet(elementMapper));
+    }
+
+
     public static <T> ArrayFromModelMapper<Collection<T>> fromCollection(ValueFromModelMapper<T, ? extends Value> elementMapper) {
         return list -> let(list, notNull -> array(list, elementMapper));
     }
@@ -100,6 +110,15 @@ public class ArrayMapping {
 
     public static <T> ArrayFromModelMapper<Deque<T>> fromDeque(ValueFromModelMapper<T, ? extends Value> elementMapper) {
         return collection -> let(collection, notNull -> array(collection, elementMapper));
+    }
+
+
+    public static <T> ArrayFromModelMapper<ImmutableArray<T>> fromImmutableArray(ValueFromModelMapper<T, ? extends Value> elementMapper) {
+        return list -> let(list, notNull -> array(list, elementMapper));
+    }
+
+    public static <T> ArrayFromModelMapper<ImmutableSet<T>> fromImmutableSet(ValueFromModelMapper<T, ? extends Value> elementMapper) {
+        return list -> let(list, notNull -> array(list, elementMapper));
     }
 
 

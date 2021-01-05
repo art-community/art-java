@@ -15,7 +15,7 @@ public interface ImmutableCollection<T> extends Iterable<T> {
 
     Object[] toArray();
 
-    T[] toArray(T[] array);
+    <A> A[] toArray(A[] array);
 
     Stream<T> stream();
 

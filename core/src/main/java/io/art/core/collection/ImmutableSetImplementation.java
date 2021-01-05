@@ -64,7 +64,7 @@ public class ImmutableSetImplementation<T> implements ImmutableSet<T> {
     }
 
     @Override
-    public T[] toArray(T[] array) {
+    public <A> A[] toArray(A[] array) {
         return this.set.toArray(array);
     }
 

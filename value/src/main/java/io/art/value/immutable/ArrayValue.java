@@ -18,6 +18,9 @@
 
 package io.art.value.immutable;
 
+import com.google.common.collect.*;
+import io.art.core.collection.*;
+import io.art.core.collection.ImmutableSet;
 import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.value.constants.ValueModuleConstants.*;
@@ -39,6 +42,7 @@ import static io.art.value.mapping.PrimitiveMapping.*;
 import static java.text.MessageFormat.format;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.Spliterator.IMMUTABLE;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -128,12 +132,20 @@ public class ArrayValue implements Value {
         return asList(identity());
     }
 
+    public ImmutableArray<Value> asImmutableArray() {
+        return new ProxyList<>(identity());
+    }
+
     public Stream<Value> asStream() {
         return asStream(identity());
     }
 
     public Set<Value> asSet() {
         return asSet(identity());
+    }
+
+    public ImmutableSet<Value> asImmutableSet() {
+        return new ProxySet<>(identity());
     }
 
     public Queue<Value> asQueue() {
@@ -149,11 +161,19 @@ public class ArrayValue implements Value {
         return new ProxyList<>(mapper);
     }
 
+    public <T> ImmutableArray<T> asImmutableArray(ValueToModelMapper<T, ? extends Value> mapper) {
+        return new ProxyList<>(mapper);
+    }
+
     public <T> Stream<T> asStream(ValueToModelMapper<T, ? extends Value> mapper) {
         return asList(mapper).stream();
     }
 
     public <T> Set<T> asSet(ValueToModelMapper<T, ? extends Value> mapper) {
+        return new ProxySet<>(mapper);
+    }
+
+    public <T> ImmutableSet<T> asImmutableSet(ValueToModelMapper<T, ? extends Value> mapper) {
         return new ProxySet<>(mapper);
     }
 
@@ -222,7 +242,7 @@ public class ArrayValue implements Value {
     }
 
 
-    private class ProxyList<T> implements List<T> {
+    private class ProxyList<T> implements List<T>, ImmutableArray<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
         private final LazyValue<List<T>> evaluated;
 
@@ -326,6 +346,12 @@ public class ArrayValue implements Value {
             return evaluated.get().toArray();
         }
 
+
+        @Override
+        public void forEach(Consumer<? super T> action) {
+            iterator().forEachRemaining(action);
+        }
+
         @Override
         @Nonnull
         public <A> A[] toArray(@Nonnull A[] array) {
@@ -363,8 +389,23 @@ public class ArrayValue implements Value {
         }
 
         @Override
+        public boolean removeIf(Predicate<? super T> filter) {
+            return false;
+        }
+
+        @Override
         public boolean retainAll(@Nonnull Collection<?> collection) {
             throw new NotImplementedException("retainAll");
+        }
+
+        @Override
+        public void replaceAll(UnaryOperator<T> operator) {
+            throw new NotImplementedException("replaceAll");
+        }
+
+        @Override
+        public void sort(Comparator<? super T> c) {
+            throw new NotImplementedException("sort");
         }
 
         @Override
@@ -375,6 +416,11 @@ public class ArrayValue implements Value {
         @Override
         public T get(int index) {
             return ArrayValue.this.map(index, mapper);
+        }
+
+        @Override
+        public List<T> toMutable() {
+            return evaluated.get();
         }
 
         @Override
@@ -419,9 +465,24 @@ public class ArrayValue implements Value {
         public List<T> subList(int fromIndex, int toIndex) {
             return evaluated.get().subList(fromIndex, toIndex);
         }
+
+        @Override
+        public Spliterator<T> spliterator() {
+            return Spliterators.spliterator(iterator(), size(), IMMUTABLE);
+        }
+
+        @Override
+        public Stream<T> stream() {
+            return StreamSupport.stream(spliterator(), false);
+        }
+
+        @Override
+        public Stream<T> parallelStream() {
+            return StreamSupport.stream(spliterator(), true);
+        }
     }
 
-    private class ProxySet<T> implements Set<T> {
+    private class ProxySet<T> implements Set<T>, ImmutableSet<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
         private final LazyValue<Set<T>> evaluated;
 
@@ -444,6 +505,11 @@ public class ArrayValue implements Value {
                 cursor++;
                 return value;
             }
+        }
+
+        @Override
+        public Set<T> toMutable() {
+            return evaluated.get();
         }
 
         @Override
@@ -480,6 +546,11 @@ public class ArrayValue implements Value {
         }
 
         @Override
+        public void forEach(Consumer<? super T> action) {
+            iterator().forEachRemaining(action);
+        }
+
+        @Override
         public boolean add(T element) {
             throw new NotImplementedException("add");
         }
@@ -505,6 +576,11 @@ public class ArrayValue implements Value {
         }
 
         @Override
+        public boolean removeIf(Predicate<? super T> filter) {
+            throw new NotImplementedException("removeIf");
+        }
+
+        @Override
         public boolean retainAll(@Nonnull Collection<?> collection) {
             throw new NotImplementedException("retainAll");
         }
@@ -512,6 +588,21 @@ public class ArrayValue implements Value {
         @Override
         public void clear() {
             throw new NotImplementedException("clear");
+        }
+
+        @Override
+        public Spliterator<T> spliterator() {
+            return Spliterators.spliterator(iterator(), size(), IMMUTABLE);
+        }
+
+        @Override
+        public Stream<T> stream() {
+            return StreamSupport.stream(spliterator(), false);
+        }
+
+        @Override
+        public Stream<T> parallelStream() {
+            return StreamSupport.stream(spliterator(), true);
         }
     }
 

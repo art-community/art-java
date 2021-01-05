@@ -70,7 +70,7 @@ public class ImmutableArrayImplementation<T> implements ImmutableArray<T> {
     }
 
     @Override
-    public T[] toArray(T[] array) {
+    public <A> A[] toArray(A[] array) {
         return this.array.toArray(array);
     }
 

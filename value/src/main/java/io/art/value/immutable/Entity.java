@@ -20,6 +20,7 @@ package io.art.value.immutable;
 
 import io.art.core.annotation.*;
 import io.art.core.checker.*;
+import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.factory.*;
 import io.art.core.lazy.*;
@@ -228,6 +229,16 @@ public class Entity implements Value {
         return new ProxyMap<>(toKeyMapper, fromKeyMapper, valueMapper);
     }
 
+
+    public ImmutableMap<Primitive, ? extends Value> asImmutableMap() {
+        return asImmutableMap(key -> key, key -> key, value -> value);
+    }
+
+    public <K, V> ImmutableMap<K, V> asImmutableMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
+        return new ProxyMap<>(toKeyMapper, fromKeyMapper, valueMapper);
+    }
+
+
     @UsedByGenerator
     public EntityMapping mapping() {
         return mapping;
@@ -262,7 +273,7 @@ public class Entity implements Value {
     }
 
 
-    public class ProxyMap<K, V> implements Map<K, V> {
+    public class ProxyMap<K, V> implements Map<K, V>, ImmutableMap<K, V> {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
         private final LazyValue<Map<K, V>> evaluated;
@@ -345,6 +356,66 @@ public class Entity implements Value {
         @Nonnull
         public Set<Entry<K, V>> entrySet() {
             return evaluated.get().entrySet();
+        }
+
+        @Override
+        public V getOrDefault(Object key, V defaultValue) {
+            return orElse(get(key), defaultValue);
+        }
+
+        @Override
+        public void forEach(BiConsumer<? super K, ? super V> action) {
+            entrySet().forEach(entry -> action.accept(entry.getKey(), entry.getValue()));
+        }
+
+        @Override
+        public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
+            throw new NotImplementedException("replaceAll");
+        }
+
+        @Override
+        public V putIfAbsent(K key, V value) {
+            throw new NotImplementedException("putIfAbsent");
+        }
+
+        @Override
+        public boolean remove(Object key, Object value) {
+            throw new NotImplementedException("remove");
+        }
+
+        @Override
+        public boolean replace(K key, V oldValue, V newValue) {
+            throw new NotImplementedException("replace");
+        }
+
+        @Override
+        public V replace(K key, V value) {
+            throw new NotImplementedException("replace");
+        }
+
+        @Override
+        public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
+            throw new NotImplementedException("computeIfAbsent");
+        }
+
+        @Override
+        public V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+            throw new NotImplementedException("computeIfPresent");
+        }
+
+        @Override
+        public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+            throw new NotImplementedException("compute");
+        }
+
+        @Override
+        public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+            throw new NotImplementedException("merge");
+        }
+
+        @Override
+        public Map<K, V> toMutable() {
+            return evaluated.get();
         }
     }
 
