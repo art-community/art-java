@@ -19,26 +19,20 @@
 package io.art.configurator.source;
 
 import io.art.core.collection.*;
-import io.art.core.factory.*;
 import io.art.core.source.*;
 import io.art.value.immutable.Value;
 import io.art.value.immutable.*;
-import io.art.value.mapping.*;
 import lombok.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
-import static io.art.core.collection.ImmutableArray.emptyImmutableArray;
-import static io.art.core.collection.ImmutableArray.immutableArrayCollector;
-import static io.art.core.collection.ImmutableSet.immutableSetCollector;
+import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.combiner.SectionCombiner.*;
-import static io.art.core.factory.ArrayFactory.immutableArrayOf;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.value.immutable.Value.*;
-import static io.art.value.mapping.ArrayMapping.toList;
+import static io.art.value.mapping.ArrayMapping.*;
 import static io.art.value.mapping.PrimitiveMapping.toString;
 import static io.art.value.mapping.PrimitiveMapping.*;
-import static java.util.Collections.*;
 import static java.util.Objects.*;
-import static java.util.stream.Collectors.*;
-import java.util.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -69,12 +63,12 @@ public class EntityConfigurationSource implements ConfigurationSource {
 
     @Override
     public ImmutableArray<Boolean> getBoolList(String path) {
-        return entity.mapping().mapNested(path, array -> isArray(array) ? immutableArrayOf(toList(toBool).map(asArray(array))) : emptyImmutableArray());
+        return entity.mapping().mapNested(path, array -> isArray(array) ? immutableArrayOf(toImmutableArray(toBool).map(asArray(array))) : emptyImmutableArray());
     }
 
     @Override
     public ImmutableArray<String> getStringList(String path) {
-        return entity.mapping().mapNested(path, array -> isArray(array) ? immutableArrayOf(toList(toString).map(asArray(array))) : emptyImmutableArray());
+        return entity.mapping().mapNested(path, array -> isArray(array) ? immutableArrayOf(toImmutableArray(toString).map(asArray(array))) : emptyImmutableArray());
     }
 
     @Override
