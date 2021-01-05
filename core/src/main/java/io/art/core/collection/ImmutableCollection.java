@@ -11,7 +11,7 @@ public interface ImmutableCollection<T> extends Iterable<T> {
 
     boolean contains(Object object);
 
-    boolean containsAll(Collection<?> c);
+    boolean containsAll(Collection<?> collection);
 
     Object[] toArray();
 

@@ -18,6 +18,7 @@
 
 package io.art.core.collection;
 
+import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -89,6 +90,7 @@ public class ImmutableMapImplementation<K, V> implements ImmutableMap<K, V> {
 
     @Override
     public boolean equals(Object object) {
+        if (isNull(object)) return false;
         if (object == this) return true;
         if (!(object instanceof ImmutableMapImplementation)) return false;
         return map.equals(((ImmutableMapImplementation<?, ?>) object).map);
@@ -97,5 +99,10 @@ public class ImmutableMapImplementation<K, V> implements ImmutableMap<K, V> {
     @Override
     public int hashCode() {
         return map.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return map.toString();
     }
 }

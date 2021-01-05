@@ -1,5 +1,6 @@
 package io.art.core.factory;
 
+import io.art.core.collection.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static java.util.Arrays.*;
@@ -34,6 +35,14 @@ public class ListFactory {
 
     public static <T> List<T> linkedListOf(Collection<T> elements) {
         return isEmpty(elements) ? new LinkedList<>() : new LinkedList<>(elements);
+    }
+
+    public static <T> List<T> linkedListOf(ImmutableArray<T> elements) {
+        return isEmpty(elements) ? new LinkedList<>() : new LinkedList<>(elements.toMutable());
+    }
+
+    public static <T> List<T> linkedListOf(ImmutableSet<T> elements) {
+        return isEmpty(elements) ? new LinkedList<>() : new LinkedList<>(elements.toMutable());
     }
 
     public static List<Long> linkedListOf(long[] elements) {

@@ -54,8 +54,8 @@ public class ImmutableSetImplementation<T> implements ImmutableSet<T> {
     }
 
     @Override
-    public boolean containsAll(Collection<?> c) {
-        return set.containsAll(c);
+    public boolean containsAll(Collection<?> collection) {
+        return set.containsAll(collection);
     }
 
     @Override
@@ -103,5 +103,10 @@ public class ImmutableSetImplementation<T> implements ImmutableSet<T> {
     @Override
     public int hashCode() {
         return set.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return set.toString();
     }
 }

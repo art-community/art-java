@@ -2,6 +2,6 @@ package io.art.configurator.custom;
 
 import io.art.core.source.*;
 
-public interface CustomConfigurationProxy<T> {
+public interface CustomConfigurator<T> {
     T configure(ConfigurationSource source);
 }

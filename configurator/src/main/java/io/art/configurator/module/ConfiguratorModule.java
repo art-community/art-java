@@ -73,8 +73,8 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(EMPTY_STRING, CUSTOM_FILE, file))));
     }
 
-    public static <T> T configuration(Class<T> model) {
-        return configuratorModule().configuration().getCustomConfiguration(model);
+    public static <T> T configuration(Class<T> type) {
+        return configuratorModule().configuration().getCustomConfiguration(type);
     }
 
     public static StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule() {

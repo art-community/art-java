@@ -19,6 +19,14 @@ public class ArrayFactory {
         return isEmpty(elements) ? emptyList() : new ArrayList<>(elements);
     }
 
+    public static <T> List<T> fixedArrayOf(ImmutableArray<T> elements) {
+        return isEmpty(elements) ? emptyList() : new ArrayList<>(elements.toMutable());
+    }
+
+    public static <T> List<T> fixedArrayOf(ImmutableSet<T> elements) {
+        return isEmpty(elements) ? emptyList() : new ArrayList<>(elements.toMutable());
+    }
+
     @SafeVarargs
     public static <T> List<T> fixedArrayOf(T... elements) {
         return isEmpty(elements) ? emptyList() : asList(elements);
@@ -66,6 +74,14 @@ public class ArrayFactory {
 
     public static <T> List<T> dynamicArrayOf(Collection<T> elements) {
         return isEmpty(elements) ? new ArrayList<>() : new ArrayList<>(elements);
+    }
+
+    public static <T> List<T> dynamicArrayOf(ImmutableArray<T> elements) {
+        return isEmpty(elements) ? new ArrayList<>() : new ArrayList<>(elements.toMutable());
+    }
+
+    public static <T> List<T> dynamicArrayOf(ImmutableSet<T> elements) {
+        return isEmpty(elements) ? new ArrayList<>() : new ArrayList<>(elements.toMutable());
     }
 
     public static List<Long> dynamicArrayOf(long[] elements) {

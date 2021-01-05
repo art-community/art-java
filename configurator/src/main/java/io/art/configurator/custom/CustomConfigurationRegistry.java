@@ -9,18 +9,18 @@ import java.util.*;
 
 @UsedByGenerator
 public class CustomConfigurationRegistry {
-    private final Map<Class<?>, CustomConfigurationProxy<?>> proxies = map();
+    private final Map<Class<?>, CustomConfigurator<?>> configurators = map();
 
     public ImmutableMap<Class<?>, ?> configure(ImmutableArray<ConfigurationSource> sources) {
-        Map<Class<?>, ?> configurations = mapOf(proxies.size());
+        Map<Class<?>, ?> configurations = mapOf(configurators.size());
         for (ConfigurationSource source : sources) {
-            proxies.forEach((key, proxy) -> configurations.put(key, cast(proxy.configure(source))));
+            configurators.forEach((key, proxy) -> configurations.put(key, cast(proxy.configure(source))));
         }
         return immutableMapOf(configurations);
     }
 
-    public CustomConfigurationRegistry register(Class<?> modelClass, CustomConfigurationProxy<?> proxy) {
-        proxies.put(modelClass, proxy);
+    public CustomConfigurationRegistry register(Class<?> modelClass, CustomConfigurator<?> configurator) {
+        configurators.put(modelClass, configurator);
         return this;
     }
 }

@@ -182,12 +182,8 @@ public interface ConfigurationSource {
     }
 
 
-    default <T> ImmutableMap<String, T> getNestedMap(String path, Function<ConfigurationSource, T> mapper) {
-        ConfigurationSource nested = getNested(path);
-        if (!has(path)) {
-            return emptyImmutableMap();
-        }
-        return nested.getKeys().stream().collect(immutableMapCollector(identity(), key -> let(nested.getNested(key), mapper)));
+    default <T> ImmutableMap<String, T> getMap(Function<String, T> mapper) {
+        return getKeys().stream().collect(immutableMapCollector(identity(), mapper));
     }
 
     default ImmutableMap<String, ConfigurationSource> getNestedMap(String path) {
@@ -196,6 +192,14 @@ public interface ConfigurationSource {
             return emptyImmutableMap();
         }
         return nested.getKeys().stream().collect(immutableMapCollector(identity(), nested::getNested));
+    }
+
+    default <T> ImmutableMap<String, T> getNestedMap(String path, Function<ConfigurationSource, T> mapper) {
+        ConfigurationSource nested = getNested(path);
+        if (!has(path)) {
+            return emptyImmutableMap();
+        }
+        return nested.getKeys().stream().collect(immutableMapCollector(identity(), key -> let(nested.getNested(key), mapper)));
     }
 
 

@@ -60,8 +60,8 @@ public class ImmutableArrayImplementation<T> implements ImmutableArray<T> {
     }
 
     @Override
-    public boolean containsAll(Collection<?> c) {
-        return array.containsAll(c);
+    public boolean containsAll(Collection<?> collection) {
+        return array.containsAll(collection);
     }
 
     @Override
@@ -119,5 +119,10 @@ public class ImmutableArrayImplementation<T> implements ImmutableArray<T> {
     @Override
     public int lastIndexOf(Object object) {
         return array.lastIndexOf(object);
+    }
+
+    @Override
+    public String toString() {
+        return array.toString();
     }
 }
