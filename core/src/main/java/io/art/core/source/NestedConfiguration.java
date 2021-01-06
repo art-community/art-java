@@ -18,7 +18,7 @@ public interface NestedConfiguration extends ConfigurationSource {
     String asString();
 
 
-    default Integer astInt() {
+    default Integer asInt() {
         return letIfNotEmpty(asString(), Integer::parseInt);
     }
 
@@ -83,7 +83,7 @@ public interface NestedConfiguration extends ConfigurationSource {
     }
 
     default ImmutableArray<Integer> asIntArray() {
-        return asArray(NestedConfiguration::astInt);
+        return asArray(NestedConfiguration::asInt);
     }
 
     default ImmutableArray<Long> asLongArray() {

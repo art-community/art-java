@@ -41,10 +41,6 @@ public interface ConfigurationSource {
     boolean has(String path);
 
 
-    default <T> T getNested(String path, Function<NestedConfiguration, T> mapper) {
-        return let(getNested(path), mapper);
-    }
-
     default Boolean getBool(String path) {
         return let(getNested(path), NestedConfiguration::asBool);
     }
@@ -196,12 +192,16 @@ public interface ConfigurationSource {
     }
 
 
-    default <T> ImmutableMap<String, T> getNestedMap(String path, Function<NestedConfiguration, T> mapper) {
-        return orEmptyImmutableMap(getNested(path), configuration -> configuration.asMap(mapper));
+    default <T> T getNested(String path, Function<NestedConfiguration, T> mapper) {
+        return let(getNested(path), mapper);
     }
 
     default <T> ImmutableArray<T> getNestedArray(String path, Function<NestedConfiguration, T> mapper) {
         return orEmptyImmutableArray(getNested(path), configuration -> configuration.asArray(mapper));
+    }
+
+    default <T> ImmutableMap<String, T> getNestedMap(String path, Function<NestedConfiguration, T> mapper) {
+        return orEmptyImmutableMap(getNested(path), configuration -> configuration.asMap(mapper));
     }
 
 
