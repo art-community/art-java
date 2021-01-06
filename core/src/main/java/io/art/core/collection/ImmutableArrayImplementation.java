@@ -74,6 +74,7 @@ public class ImmutableArrayImplementation<T> implements ImmutableArray<T> {
         return this.array.toArray(array);
     }
 
+
     @Override
     public Stream<T> stream() {
         return array.stream();
