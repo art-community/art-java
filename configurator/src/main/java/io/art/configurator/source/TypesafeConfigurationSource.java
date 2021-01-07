@@ -29,6 +29,7 @@ import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static java.util.Objects.*;
+import java.util.function.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -61,6 +62,14 @@ public class TypesafeConfigurationSource implements NestedConfiguration {
         return orEmptyImmutableArray(section, typesafeConfiguration::hasPath, path -> immutableArrayOf(typesafeConfiguration.getConfigList(path)))
                 .stream()
                 .map(config -> new TypesafeConfigurationSource(section, type, config))
+                .collect(immutableArrayCollector());
+    }
+
+    @Override
+    public <T> ImmutableArray<T> asArray(Function<NestedConfiguration, T> mapper) {
+        return orEmptyImmutableArray(section, typesafeConfiguration::hasPath, path -> immutableArrayOf(typesafeConfiguration.getConfigList(path)))
+                .stream()
+                .map(config -> mapper.apply(new TypesafeConfigurationSource(section, type, config)))
                 .collect(immutableArrayCollector());
     }
 

@@ -72,9 +72,7 @@ public interface NestedConfiguration extends ConfigurationSource {
 
     ImmutableArray<NestedConfiguration> asArray();
 
-    default <T> ImmutableArray<T> asArray(Function<NestedConfiguration, T> mapper) {
-        return asArray().stream().map(mapper).collect(immutableArrayCollector());
-    }
+    <T> ImmutableArray<T> asArray(Function<NestedConfiguration, T> mapper);
 
     default ImmutableArray<Boolean> asBoolArray() {
         return asArray(NestedConfiguration::asBool);

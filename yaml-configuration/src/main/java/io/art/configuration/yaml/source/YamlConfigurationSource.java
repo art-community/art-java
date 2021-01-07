@@ -38,6 +38,7 @@ import static java.util.Spliterators.*;
 import static java.util.stream.StreamSupport.*;
 import java.io.*;
 import java.util.*;
+import java.util.function.*;
 
 @Getter
 public class YamlConfigurationSource implements NestedConfiguration {
@@ -84,6 +85,18 @@ public class YamlConfigurationSource implements NestedConfiguration {
         return stream(spliterator(configuration.elements(), configuration.size(), IMMUTABLE), false)
                 .filter(node -> !node.isNull() && !node.isMissingNode())
                 .map(node -> new YamlConfigurationSource(section, type, file, node))
+                .collect(immutableArrayCollector());
+    }
+
+    @Override
+    public <T> ImmutableArray<T> asArray(Function<NestedConfiguration, T> mapper) {
+        if (isNull(configuration)) return emptyImmutableArray();
+        if (configuration.getNodeType() != ARRAY) {
+            return emptyImmutableArray();
+        }
+        return stream(spliterator(configuration.elements(), configuration.size(), IMMUTABLE), false)
+                .filter(node -> !node.isNull() && !node.isMissingNode())
+                .map(node -> mapper.apply(new YamlConfigurationSource(section, type, file, node)))
                 .collect(immutableArrayCollector());
     }
 
