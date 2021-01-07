@@ -37,6 +37,7 @@ import static java.util.Spliterator.*;
 import static java.util.Spliterators.*;
 import static java.util.stream.StreamSupport.*;
 import java.io.*;
+import java.util.*;
 
 @Getter
 public class YamlConfigurationSource implements NestedConfiguration {

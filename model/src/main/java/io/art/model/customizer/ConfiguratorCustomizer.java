@@ -20,6 +20,7 @@ package io.art.model.customizer;
 
 import io.art.configurator.configuration.*;
 import io.art.configurator.custom.*;
+import io.art.configurator.model.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
@@ -39,6 +40,6 @@ public class ConfiguratorCustomizer {
     @Getter
     @RequiredArgsConstructor
     private static class Custom extends ConfiguratorModuleConfiguration {
-        private final ImmutableMap<Class<?>, ?> customConfigurations;
+        private final ImmutableMap<CustomConfigurationModel, ?> customConfigurations;
     }
 }

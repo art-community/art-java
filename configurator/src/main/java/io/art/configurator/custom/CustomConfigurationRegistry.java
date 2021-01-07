@@ -1,26 +1,38 @@
 package io.art.configurator.custom;
 
+import io.art.configurator.model.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.factory.MapFactory.*;
+import static java.util.Objects.*;
 import java.util.*;
 
 @UsedByGenerator
 public class CustomConfigurationRegistry {
-    private final Map<Class<?>, CustomConfigurator<?>> configurators = map();
+    private final Map<CustomConfigurationModel, CustomConfigurator<?>> configurators = map();
 
-    public ImmutableMap<Class<?>, ?> configure(ImmutableArray<ConfigurationSource> sources) {
-        Map<Class<?>, ?> configurations = mapOf(configurators.size());
+    public ImmutableMap<CustomConfigurationModel, ?> configure(ImmutableArray<ConfigurationSource> sources) {
+        Map<CustomConfigurationModel, ?> configurations = mapOf(configurators.size());
         for (ConfigurationSource source : sources) {
-            configurators.forEach((key, proxy) -> configurations.put(key, cast(proxy.configure(source))));
+            for (Map.Entry<CustomConfigurationModel, CustomConfigurator<?>> entry : configurators.entrySet()) {
+                if (isNotEmpty(entry.getKey().getSection())) {
+                    NestedConfiguration nested = source.getNested(entry.getKey().getSection());
+                    if (nonNull(nested)) {
+                        configurations.put(entry.getKey(), cast(entry.getValue().configure(nested)));
+                    }
+                    continue;
+                }
+                configurations.put(entry.getKey(), cast(entry.getValue().configure(source)));
+            }
         }
         return immutableMapOf(configurations);
     }
 
-    public CustomConfigurationRegistry register(Class<?> modelClass, CustomConfigurator<?> configurator) {
-        configurators.put(modelClass, configurator);
+    public CustomConfigurationRegistry register(ImmutableSet<CustomConfigurationModel> models, CustomConfigurator<?> configurator) {
+        models.forEach(model -> configurators.put(model, configurator));
         return this;
     }
 }
