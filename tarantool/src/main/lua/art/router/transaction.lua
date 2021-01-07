@@ -15,7 +15,6 @@ local transaction = {
     isSafe = function(transaction)
         for _, operation in pairs(transaction) do
             if (string.startswith(operation[1], 'art.api.space') and (not (operation[1]:find('list'))) ) then return false end
-            if (operation[1] == 'art.api.select') then return false end
         end
         return true
     end,
@@ -52,6 +51,7 @@ end
 
 mappers['art.api.space.list'] = noMap
 mappers['art.api.space.listIndices'] = noMap
+mappers['art.api.select'] = noMap
 
 mappers['art.api.get'] = mapFromKey
 mappers['art.api.delete'] = mapFromKey
