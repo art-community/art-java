@@ -272,6 +272,56 @@ public class ArrayFactory {
 
 
     @SafeVarargs
+    public <T> Stream<T> streamOf(T... elements) {
+        return fixedArrayOf(elements).stream();
+    }
+
+    public static <T> Stream<T> streamOf(Collection<T> elements) {
+        return fixedArrayOf(elements).stream();
+    }
+
+    public static <T> Stream<T> streamOf(ImmutableArray<T> elements) {
+        return fixedArrayOf(elements).stream();
+    }
+
+    public static <T> Stream<T> streamOf(ImmutableSet<T> elements) {
+        return fixedArrayOf(elements).stream();
+    }
+
+    public static Stream<Long> streamOf(long[] elements) {
+        return fixedArrayOf(elements).stream();
+    }
+
+    public static Stream<Short> streamOf(short[] elements) {
+        return fixedArrayOf(elements).stream();
+    }
+
+    public static Stream<Integer> streamOf(int[] elements) {
+        return fixedArrayOf(elements).stream();
+    }
+
+    public static Stream<Byte> streamOf(byte[] elements) {
+        return fixedArrayOf(elements).stream();
+    }
+
+    public static Stream<Double> streamOf(double[] elements) {
+        return fixedArrayOf(elements).stream();
+    }
+
+    public static Stream<Float> streamOf(float[] elements) {
+        return fixedArrayOf(elements).stream();
+    }
+
+    public static Stream<Boolean> streamOf(boolean[] elements) {
+        return fixedArrayOf(elements).stream();
+    }
+
+    public static Stream<Character> streamOf(char[] elements) {
+        return fixedArrayOf(elements).stream();
+    }
+
+
+    @SafeVarargs
     public static <T> T[] arrayOf(T... elements) {
         return elements;
     }

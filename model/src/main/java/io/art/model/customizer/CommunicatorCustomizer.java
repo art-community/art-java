@@ -20,7 +20,6 @@ package io.art.model.customizer;
 
 import io.art.communicator.configuration.*;
 import io.art.communicator.registry.*;
-import io.art.core.collection.*;
 import lombok.*;
 
 public class CommunicatorCustomizer {
@@ -34,7 +33,6 @@ public class CommunicatorCustomizer {
 
     @Getter
     private static class Custom extends CommunicatorModuleConfiguration {
-        private ImmutableMap<String, CommunicatorConfiguration> configurations;
         private CommunicatorProxyRegistry registry;
     }
 }
