@@ -26,7 +26,7 @@ class Tarantool extends Specification {
     def synchronizationTimeout = 60
 
     def setupSpec(){
-        launch module(TarantoolModule.class).configure()
+        launch module().configure()
     }
 
     static def createSpace(TarantoolInstance db, String spaceName){

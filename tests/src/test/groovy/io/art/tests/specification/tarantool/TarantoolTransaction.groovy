@@ -25,7 +25,7 @@ class TarantoolTransaction extends Specification {
     def synchronizationTimeout = 60
 
     def setupSpec(){
-        launch module().make()
+        launch module().configure()
     }
 
     def "Storage1 transactions"() {
@@ -163,9 +163,8 @@ class TarantoolTransaction extends Specification {
         space.autoIncrement(data)
         then:
         def len = space.len()
-        def schemaLen = space.schemaLen()
         sleep(synchronizationTimeout)
-        len.get() == 5 && schemaLen.get() == 2
+        len.get() == 5
 
 
         when:

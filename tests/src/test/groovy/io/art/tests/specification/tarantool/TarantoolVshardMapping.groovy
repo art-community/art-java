@@ -25,7 +25,7 @@ class TarantoolVshardMapping extends Specification {
     def synchronizationTimeout = 60
 
     def setupSpec(){
-        launch module().apply()
+        launch module().configure()
     }
 
     def "Routers CRUD"() {
