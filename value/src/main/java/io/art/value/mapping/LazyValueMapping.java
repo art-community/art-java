@@ -25,18 +25,19 @@ import io.art.value.mapper.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.lazy.LazyValue.*;
 
 @UtilityClass
 @UsedByGenerator
 public class LazyValueMapping {
-    public static <T> ValueFromModelMapper<LazyValue<T>, Value> fromLazy(ValueFromModelMapper<T, Value> valueMapper) {
+    public static <T> ValueFromModelMapper<LazyValue<T>, Value> fromLazy(ValueFromModelMapper<T, ? extends Value> valueMapper) {
         return lazy -> let(lazy, value -> let(value.get(), valueMapper::map));
     }
 
-    public static <T> ValueToModelMapper<LazyValue<T>, Value> toLazy(ValueToModelMapper<T, Value> valueMapper) {
-        return value -> let(value, lazy -> lazy(() -> valueMapper.map(lazy)));
+    public static <T> ValueToModelMapper<LazyValue<T>, Value> toLazy(ValueToModelMapper<T, ? extends Value> valueMapper) {
+        return value -> let(value, lazy -> lazy(() -> valueMapper.map(cast(lazy))));
     }
 
     public static <T> PrimitiveFromModelMapper<LazyValue<T>> fromLazy(PrimitiveFromModelMapper<T> valueMapper) {

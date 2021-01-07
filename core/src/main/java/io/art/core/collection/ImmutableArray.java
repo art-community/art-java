@@ -20,6 +20,7 @@ package io.art.core.collection;
 
 import com.google.common.collect.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static java.util.Collections.*;
 import java.util.*;
 import java.util.stream.*;
@@ -41,6 +42,12 @@ public interface ImmutableArray<T> extends ImmutableCollection<T> {
     int indexOf(Object object);
 
     int lastIndexOf(Object object);
+
+    default ImmutableArray<T> reverse() {
+        List<T> elements = toMutable();
+        Collections.reverse(elements);
+        return immutableArrayOf(elements);
+    }
 
     static <T> ImmutableArray<T> emptyImmutableArray() {
         return cast(EMPTY);

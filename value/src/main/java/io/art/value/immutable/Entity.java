@@ -194,7 +194,7 @@ public class Entity implements Value {
     public <T, V extends Value> Optional<T> mapOptional(Primitive primitive, ValueToModelMapper<Optional<T>, V> mapper) {
         Object cached = mappedValueCache.get(primitive);
         if (nonNull(cached)) return cast(cached);
-        cached = ofNullable(get(primitive)).map(value -> mapper.map(cast(value)));
+        cached = mapper.map(cast(get(primitive)));
         mappedValueCache.put(primitive, cast(cached));
         return cast(cached);
     }

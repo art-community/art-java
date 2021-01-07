@@ -34,7 +34,8 @@ public interface ConfiguratorModuleConstants {
         PROPERTIES(1),
         RESOURCES_FILE(2),
         CUSTOM_FILE(3),
-        ENTITY(4);
+        ENTITY(4),
+        DELEGATE(5);
 
         private final int order;
     }

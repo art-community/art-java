@@ -1,25 +1,21 @@
 package io.art.model.configurator;
 
+import io.art.configurator.model.*;
 import io.art.model.implementation.configurator.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.SetFactory.*;
-import static java.util.Arrays.*;
 import java.util.*;
 
 public class ConfiguratorModelConfigurator {
-    private final Set<Class<?>> customConfigurations = set();
+    private final Set<CustomConfigurationModel> customConfigurations = set();
 
-    public ConfiguratorModelConfigurator configuration(Class<?>... modelClasses) {
-        customConfigurations.addAll(asList(modelClasses));
+    public ConfiguratorModelConfigurator configuration(Class<?> model) {
+        customConfigurations.add(new CustomConfigurationModel(EMPTY_STRING, model));
         return this;
     }
 
-    public ConfiguratorModelConfigurator configurations(Class<?>... modelClasses) {
-        customConfigurations.addAll(asList(modelClasses));
-        return this;
-    }
-
-    public ConfiguratorModelConfigurator configurations(Collection<Class<?>> modelClasses) {
-        customConfigurations.addAll(modelClasses);
+    public ConfiguratorModelConfigurator configuration(String section, Class<?> model) {
+        customConfigurations.add(new CustomConfigurationModel(section, model));
         return this;
     }
 
