@@ -102,7 +102,7 @@ class Tarantool extends Specification {
         space.autoIncrement(data)
         sleep(synchronizationTimeout)
         then:
-        ((space.len().get() == 5) && (space.schemaLen().get() == 2))
+        space.len().get() == 5
 
 
         when:
@@ -122,7 +122,7 @@ class Tarantool extends Specification {
         space.truncate()
         sleep(synchronizationTimeout)
         then:
-        (space.count().get() == 0) && (space.schemaCount().get() == 0)
+        space.count().get() == 0
 
 
         when:
@@ -222,7 +222,7 @@ class Tarantool extends Specification {
         space.autoIncrement(data)
         then:
         sleep(synchronizationTimeout)
-        (space.len().get() == 5) && (space.schemaLen().get() == 2)
+        space.len().get() == 5
 
 
         when:
@@ -244,7 +244,7 @@ class Tarantool extends Specification {
         when:
         space.truncate()
         then:
-        (space.count().get() == 0) && (space.schemaCount().get() == 0)
+        space.count().get() == 0
 
 
         when:

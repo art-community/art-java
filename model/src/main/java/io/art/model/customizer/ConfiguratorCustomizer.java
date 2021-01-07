@@ -25,6 +25,8 @@ import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
 
+import static java.util.Objects.isNull;
+
 public class ConfiguratorCustomizer {
     private CustomConfigurationRegistry registry;
 
@@ -34,6 +36,7 @@ public class ConfiguratorCustomizer {
     }
 
     public ConfiguratorModuleConfiguration configure(ImmutableArray<ConfigurationSource> sources) {
+        if (isNull(registry)) registry = new CustomConfigurationRegistry();
         return new Custom(registry.configure(sources));
     }
 
