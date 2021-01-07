@@ -22,5 +22,9 @@ import io.art.value.immutable.Value;
 import reactor.core.publisher.*;
 
 public interface CommunicatorImplementation {
+    void start();
+
+    void stop();
+
     Flux<Value> communicate(Flux<Value> input);
 }

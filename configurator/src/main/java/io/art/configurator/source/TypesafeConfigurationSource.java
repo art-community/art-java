@@ -19,61 +19,36 @@
 package io.art.configurator.source;
 
 import com.typesafe.config.*;
-import io.art.core.factory.*;
+import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.combiner.SectionCombiner.combine;
 import static io.art.core.extensions.CollectionExtensions.*;
-import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.*;
-import java.time.*;
-import java.util.*;
+import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.SetFactory.*;
+import static java.util.Objects.*;
 
 @Getter
 @RequiredArgsConstructor
-public class TypesafeConfigurationSource implements ConfigurationSource {
+public class TypesafeConfigurationSource implements NestedConfiguration {
     private final String section;
     private final ModuleConfigurationSourceType type;
     private final Config typesafeConfiguration;
 
     @Override
-    public Integer getInt(String path) {
-        return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getInt);
+    public Boolean asBool() {
+        return let(typesafeConfiguration, configuration -> configuration.getBoolean(section));
     }
 
     @Override
-    public Long getLong(String path) {
-        return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getLong);
+    public String asString() {
+        return let(typesafeConfiguration, configuration -> configuration.getString(section));
     }
 
     @Override
-    public Boolean getBool(String path) {
-        return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getBoolean);
-    }
-
-    @Override
-    public Double getDouble(String path) {
-        return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getDouble);
-    }
-
-    @Override
-    public Float getFloat(String path) {
-        return let(getDouble(path), Number::floatValue);
-    }
-
-    @Override
-    public String getString(String path) {
-        return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getString);
-    }
-
-    @Override
-    public Duration getDuration(String path) {
-        return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getDuration);
-    }
-
-    @Override
-    public ConfigurationSource getNested(String path) {
+    public NestedConfiguration getNested(String path) {
         Config configuration = this.typesafeConfiguration.atPath(path);
         if (isNull(configuration) || !this.typesafeConfiguration.hasPath(path) || configuration.isEmpty()) {
             return null;
@@ -82,46 +57,16 @@ public class TypesafeConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public List<Integer> getIntList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getIntList);
-    }
-
-    @Override
-    public List<Long> getLongList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getLongList);
-    }
-
-    @Override
-    public List<Boolean> getBoolList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getBooleanList);
-    }
-
-    @Override
-    public List<Double> getDoubleList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getDoubleList);
-    }
-
-    @Override
-    public List<String> getStringList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getStringList);
-    }
-
-    @Override
-    public List<Duration> getDurationList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getDurationList);
-    }
-
-    @Override
-    public List<ConfigurationSource> getNestedList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getConfigList)
+    public ImmutableArray<NestedConfiguration> asArray() {
+        return orEmptyImmutableArray(section, typesafeConfiguration::hasPath, path -> immutableArrayOf(typesafeConfiguration.getConfigList(path)))
                 .stream()
-                .map(config -> new TypesafeConfigurationSource(combine(section, path), type, config))
-                .collect(toCollection(ArrayFactory::dynamicArray));
+                .map(config -> new TypesafeConfigurationSource(section, type, config))
+                .collect(immutableArrayCollector());
     }
 
     @Override
-    public Set<String> getKeys() {
-        return typesafeConfiguration.root().keySet();
+    public ImmutableSet<String> getKeys() {
+        return immutableSetOf(typesafeConfiguration.root().keySet());
     }
 
     @Override

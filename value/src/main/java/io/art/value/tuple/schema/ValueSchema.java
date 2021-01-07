@@ -19,7 +19,7 @@
 package io.art.value.tuple.schema;
 
 import io.art.core.factory.*;
-import io.art.value.constants.ValueConstants.*;
+import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.immutable.Value;
 import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;

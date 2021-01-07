@@ -19,12 +19,15 @@
 package io.art.communicator.module;
 
 import io.art.communicator.configuration.*;
+import io.art.communicator.exception.*;
 import io.art.communicator.state.*;
 import io.art.core.module.*;
 import lombok.*;
 import static io.art.communicator.configuration.CommunicatorModuleConfiguration.*;
-import static io.art.core.caster.Caster.*;
+import static io.art.communicator.constants.CommunicatorModuleConstants.ExceptionMessages.*;
 import static io.art.core.context.Context.*;
+import static java.text.MessageFormat.*;
+import static lombok.AccessLevel.*;
 
 @Getter
 public class CommunicatorModule implements StatefulModule<CommunicatorModuleConfiguration, Configurator, CommunicatorModuleState> {
@@ -32,7 +35,7 @@ public class CommunicatorModule implements StatefulModule<CommunicatorModuleConf
     private final CommunicatorModuleConfiguration configuration = new CommunicatorModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
     private final CommunicatorModuleState state = new CommunicatorModuleState();
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private static final
     StatefulModuleProxy<CommunicatorModuleConfiguration, CommunicatorModuleState> communicatorModule = context().getStatefulModule(CommunicatorModule.class.getSimpleName());
 
@@ -41,6 +44,14 @@ public class CommunicatorModule implements StatefulModule<CommunicatorModuleConf
     }
 
     public static <T> T communicator(Class<T> communicatorClass) {
-        return cast(communicatorModule().configuration().getCommunicators().get(communicatorClass.getSimpleName()));
+        return communicator(communicatorClass.getSimpleName());
+    }
+
+    public static <T> T communicator(String id) {
+        return communicatorModule()
+                .configuration()
+                .getRegistry()
+                .<T>get(id)
+                .orElseThrow(() -> new CommunicatorModuleException(format(COMMUNICATOR_WAS_NOT_REGISTERED, id)));
     }
 }

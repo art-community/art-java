@@ -18,12 +18,14 @@
 
 package io.art.rsocket.constants;
 
+import io.art.communicator.constants.*;
+import io.art.communicator.constants.CommunicatorModuleConstants.*;
 import lombok.*;
 import java.time.*;
 
 public interface RsocketModuleConstants {
     interface ExceptionMessages {
-        String SPECIFICATION_NOT_FOUND = "Setup payload was null or not contained serviceId, methodId. Default service method id was not specified in configuration";
+        String SPECIFICATION_NOT_FOUND = "Specification was not found for service method identifiers: {0}";
         String CONFIGURATION_PARAMETER_NOT_EXISTS = "RSocket configuration parameter does not exists: ''{0}''";
     }
 
@@ -31,6 +33,8 @@ public interface RsocketModuleConstants {
         String RSOCKET_DISPOSING = "Disposing RSocket";
         String SERVER_STARTED = "RSocket server started";
         String SERVER_STOPPED = "RSocket server stopped";
+        String COMMUNICATOR_STARTED = "RSocket communicator started. Connector: {0}, setup payload: {1}";
+        String COMMUNICATOR_STOPPED = "RSocket communicator stopped. Connector: {0}, setup payload: {1}";
         String SERVER_CLIENT_CONNECTED = "RSocket server client connected";
         String SERVER_CLIENT_DISCONNECTED = "RSocket server client disconnected";
         String FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget() with request data: {0} and metadata: {1}";
@@ -96,12 +100,13 @@ public interface RsocketModuleConstants {
 
         String CONNECTORS_KEY = "connectors";
 
-        String LAZY_KEY = "lazy";
+        String INSTANT_KEY = "instant";
     }
 
     interface ContextKeys {
         String REQUESTER_RSOCKET_KEY = "requesterRsocket";
-        String SETUP_PAYLOAD = "setupPayload";
+        String SETUP_PAYLOAD_KEY = "setupPayload";
+        String SPECIFICATION_KEY = "specification";
     }
 
     interface Defaults {
@@ -185,5 +190,9 @@ public interface RsocketModuleConstants {
         REQUEST_STREAM,
         REQUEST_CHANNEL,
         METADATA_PUSH;
+    }
+
+    enum RsocketProtocol implements CommunicationProtocol {
+        RSOCKET
     }
 }

@@ -19,32 +19,39 @@
 package io.art.model.configurator;
 
 import io.art.core.collection.*;
-import io.art.model.implementation.*;
+import io.art.model.implementation.communicator.*;
 import lombok.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collection.ImmutableSet.*;
+import static java.util.Arrays.*;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 @Getter(value = PACKAGE)
 public class CommunicatorModelConfigurator {
-    private final ImmutableSet.Builder<CommunicatorSpecificationConfigurator> communicators = immutableSetBuilder();
+    private final ImmutableSet.Builder<RsocketCommunicatorModelConfigurator> rsocketCommunicators = immutableSetBuilder();
 
-    public CommunicatorModelConfigurator rsocket(Class<?> implementationInterface) {
-        return rsocket(implementationInterface, UnaryOperator.identity());
-    }
-
-    public CommunicatorModelConfigurator rsocket(Class<?> implementationInterface, UnaryOperator<CommunicatorSpecificationConfigurator> modeler) {
-        communicators.add(modeler.apply(new CommunicatorSpecificationConfigurator(implementationInterface.getSimpleName(), implementationInterface)));
+    @SafeVarargs
+    public final CommunicatorModelConfigurator rsocket(Class<?> proxyClass, UnaryOperator<RsocketCommunicatorModelConfigurator>... configurators) {
+        if (isEmpty(configurators)) {
+            rsocketCommunicators.add(new RsocketCommunicatorModelConfigurator(proxyClass.getSimpleName(), proxyClass, identity()));
+            return this;
+        }
+        stream(configurators)
+                .map(configurator -> (Function<RsocketCommunicatorModelConfigurator, RsocketCommunicatorModelConfigurator>) configurator)
+                .reduce(Function::andThen)
+                .map(configurator -> configurator.apply(new RsocketCommunicatorModelConfigurator(proxyClass.getSimpleName(), proxyClass, identity())))
+                .ifPresent(rsocketCommunicators::add);
         return this;
     }
 
-    CommunicatorModel configure() {
-        ImmutableMap<String, CommunicatorSpecificationModel> communicators = this.communicators.build()
+    CommunicatorModuleModel configure() {
+        ImmutableMap<String, RsocketCommunicatorModel> rsocket = this.rsocketCommunicators.build()
                 .stream()
-                .map(CommunicatorSpecificationConfigurator::configure)
-                .collect(immutableMapCollector(CommunicatorSpecificationModel::getId, identity()));
-        return new CommunicatorModel(communicators);
+                .map(RsocketCommunicatorModelConfigurator::configure)
+                .collect(immutableMapCollector(RsocketCommunicatorModel::getId, identity()));
+        return new CommunicatorModuleModel(rsocket);
     }
 }

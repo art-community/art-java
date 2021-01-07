@@ -19,7 +19,9 @@
 package io.art.rsocket.server;
 
 import io.art.core.caster.*;
+import io.art.core.lazy.*;
 import io.art.rsocket.configuration.*;
+import io.art.rsocket.manager.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
 import io.rsocket.*;
@@ -30,69 +32,33 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
-import static io.art.core.extensions.ThreadExtensions.*;
+import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.operator.Operators.applyIf;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
 public class RsocketServer implements Server {
     private final RsocketServerConfiguration configuration;
-    private final AtomicReference<Disposable> server = new AtomicReference<>();
 
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = logger(RsocketServer.class);
+    private static final Logger logger = logger(RsocketServer.class);
+
+    private final LazyValue<Disposable> server = lazy(this::createServer);
 
     @Override
     public void start() {
-        if (server.compareAndSet(null, null)) {
-            TransportMode transportMode = configuration.getTransport();
-            RSocketServer server = RSocketServer
-                    .create(this::createSocket)
-                    .fragment(configuration.getMaxInboundPayloadSize());
-            if (configuration.getFragmentationMtu() > 0) {
-                server.fragment(configuration.getFragmentationMtu());
-            }
-            Resume resume;
-            if (nonNull(resume = configuration.getResume())) {
-                server.resume(resume);
-            }
-            ServerTransport<CloseableChannel> transport = transportMode == TCP
-                    ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
-                    : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
-            Disposable disposable = server
-                    .interceptors(interceptorRegistry -> configuration.getInterceptorConfigurer().accept(interceptorRegistry))
-                    .payloadDecoder(configuration.getPayloadDecoder())
-                    .bind(transport)
-                    .doOnSubscribe(subscription -> getLogger().info(SERVER_STARTED))
-                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
-                    .subscribe();
-            this.server.set(disposable);
-        }
+        server.initialize();
     }
 
     @Override
     public void stop() {
-        Disposable value;
-        if (nonNull(value = server.getAndSet(null))) {
-            value.dispose();
-            getLogger().info(SERVER_STOPPED);
-        }
-    }
-
-    @Override
-    public void await() {
-        block();
-    }
-
-    @Override
-    public void restart() {
-        stop();
-        start();
+        server.dispose(this::disposeServer);
     }
 
     @Override
@@ -101,9 +67,38 @@ public class RsocketServer implements Server {
         return nonNull(value = server.get()) && !value.isDisposed();
     }
 
+    private Disposable createServer() {
+        TransportMode transportMode = configuration.getTransport();
+        RSocketServer server = RSocketServer
+                .create(this::createSocket)
+                .fragment(configuration.getMaxInboundPayloadSize());
+        if (configuration.getFragmentationMtu() > 0) {
+            server.fragment(configuration.getFragmentationMtu());
+        }
+        Resume resume;
+        if (nonNull(resume = configuration.getResume())) {
+            server.resume(resume);
+        }
+        ServerTransport<CloseableChannel> transport = transportMode == TCP
+                ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
+                : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
+        return server
+                .interceptors(interceptorRegistry -> configuration.getInterceptorConfigurator().accept(interceptorRegistry))
+                .payloadDecoder(configuration.getPayloadDecoder())
+                .bind(transport)
+                .doOnSubscribe(subscription -> getLogger().info(SERVER_STARTED))
+                .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
+                .subscribe();
+    }
+
+    private void disposeServer(Disposable server) {
+        applyIf(server, socket -> !socket.isDisposed(), RsocketManager::disposeRsocket);
+        getLogger().info(SERVER_STOPPED);
+    }
+
     private Mono<RSocket> createSocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
-        Mono<ServingRsocket> socket = Mono.create(emitter -> emitter.success(new ServingRsocket(payload, requesterSocket, configuration)));
         Logger logger = getLogger();
+        Mono<ServingRsocket> socket = Mono.create(emitter -> ignoreException(() -> emitter.success(new ServingRsocket(payload, requesterSocket, configuration)), throwable -> logger.error(throwable.getMessage(), throwable)));
         if (configuration.isLogging()) {
             socket = socket
                     .doOnSuccess(servingSocket -> servingSocket.onDispose(() -> logger.info(SERVER_CLIENT_DISCONNECTED)))

@@ -16,19 +16,25 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation;
+package io.art.model.implementation.communicator;
 
+import io.art.communicator.specification.CommunicatorSpecification.*;
 import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.server.specification.ServiceMethodSpecification.*;
+import static io.art.core.collection.ImmutableMap.*;
+import java.util.*;
 
 @Getter
 @RequiredArgsConstructor
-public class ServerModel {
-    private final ImmutableMap<String, ServiceModel> services;
+public class CommunicatorModuleModel {
+    private final ImmutableMap<String, RsocketCommunicatorModel> rsocketCommunicators;
 
-    public ServiceMethodSpecificationBuilder implement(String serviceId, String methodId, ServiceMethodSpecificationBuilder current) {
-        return let(services.get(serviceId), service -> service.implement(methodId, current));
+    public CommunicatorSpecificationBuilder implement(String id, CommunicatorSpecificationBuilder current) {
+        return let(getCommunicators().get(id), communicator -> communicator.implement(current), current);
+    }
+
+    public ImmutableMap<String, CommunicatorModel> getCommunicators() {
+        return rsocketCommunicators.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, Map.Entry::getValue));
     }
 }

@@ -19,16 +19,31 @@
 package io.art.value.constants;
 
 import io.art.value.exception.*;
-import io.art.value.factory.*;
 import io.art.value.immutable.*;
 import lombok.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
+import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static java.text.MessageFormat.*;
 
-public interface ValueConstants {
+public interface ValueModuleConstants {
+    interface Keys {
+        String SERVICE_ID_KEY = "serviceId";
+        String METHOD_ID_KEY = "methodId";
+        String SERVICE_METHOD_IDENTIFIERS_KEY = "serviceMethodIdentifiers";
+        String CLASS_KEY = "class";
+        String MESSAGE_KEY = "message";
+        String CAUSE_KEY = "cause";
+        String STACK_TRACE_KEY = "stackTrace";
+        String DECLARING_CLASS_KEY = "declaringClass";
+        String METHOD_NAME_KEY = "methodName";
+        String FILE_NAME_KEY = "fileName";
+        String LINE_NUMBER_KEY = "lineNumber";
+    }
+
     interface ExceptionMessages {
+        String SERVICE_ID_NOT_PRESENTED = "Key 'serviceId' was not presented in: {0}";
+        String METHOD_ID_NOT_PRESENTED = "Key 'methodId' was not presented in: {0}";
         String UNKNOWN_VALUE_TYPE = "Unknown value type: ''{0}''";
         String TUPLE_NOT_SUPPORTED_VALUE_TYPE = "Value type: ''{0}'' not support for tuples";
         String NOT_PRIMITIVE_TYPE = "Not primitive type: ''{0}''";
@@ -54,13 +69,13 @@ public interface ValueConstants {
         @Getter
         @AllArgsConstructor
         public enum PrimitiveType {
-            STRING(stringPrimitive(EMPTY_STRING)),
-            LONG(longPrimitive(0L)),
-            DOUBLE(doublePrimitive(0.)),
-            FLOAT(floatPrimitive(0.f)),
-            INT(intPrimitive(0)),
-            BOOL(boolPrimitive(false)),
-            BYTE(bytePrimitive((byte) 0));
+            STRING(DEFAULT_STRING_PRIMITIVE),
+            LONG(DEFAULT_LONG_PRIMITIVE),
+            DOUBLE(DEFAULT_DOUBLE_PRIMITIVE),
+            FLOAT(DEFAULT_FLOAT_PRIMITIVE),
+            INT(DEFAULT_INT_PRIMITIVE),
+            BOOL(DEFAULT_BOOL_PRIMITIVE),
+            BYTE(DEFAULT_BYTE_PRIMITIVE);
 
             private final Primitive defaultValue;
 

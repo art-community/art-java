@@ -18,8 +18,10 @@
 
 package io.art.core.checker;
 
+import io.art.core.collection.*;
 import io.netty.buffer.*;
 import lombok.experimental.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
 import static java.util.Objects.*;
 import java.nio.*;
@@ -37,7 +39,51 @@ public class EmptinessChecker {
         return !isEmpty(value);
     }
 
+    public static boolean isNotEmpty(byte[] content) {
+        return !isEmpty(content);
+    }
+
+    public static boolean isNotEmpty(short[] content) {
+        return !isEmpty(content);
+    }
+
+    public static boolean isNotEmpty(long[] content) {
+        return !isEmpty(content);
+    }
+
+    public static boolean isNotEmpty(int[] content) {
+        return !isEmpty(content);
+    }
+
+    public static boolean isNotEmpty(float[] content) {
+        return !isEmpty(content);
+    }
+
+    public static boolean isNotEmpty(double[] content) {
+        return !isEmpty(content);
+    }
+
+    public static boolean isNotEmpty(boolean[] content) {
+        return !isEmpty(content);
+    }
+
+    public static boolean isNotEmpty(char[] content) {
+        return !isEmpty(content);
+    }
+
     public static boolean isNotEmpty(Collection<?> collection) {
+        return !isEmpty(collection);
+    }
+
+    public static boolean isNotEmpty(Map<?, ?> map) {
+        return !isEmpty(map);
+    }
+
+    public static boolean isNotEmpty(ImmutableMap<?, ?> map) {
+        return !isEmpty(map);
+    }
+
+    public static boolean isNotEmpty(ImmutableCollection<?> collection) {
         return !isEmpty(collection);
     }
 
@@ -45,12 +91,17 @@ public class EmptinessChecker {
         return !isEmpty(stream);
     }
 
+    public static boolean isNotEmpty(ByteBuffer buffer) {
+        return isEmpty(buffer);
+    }
 
-    public static <T> void ifNotEmpty(T value, Consumer<T> action) {
-        if (isEmpty(value)) {
-            return;
-        }
-        action.accept(value);
+    public static boolean isNotEmpty(ByteBuf buffer) {
+        return !isEmpty(buffer);
+    }
+
+    @SuppressWarnings(ALL)
+    public static boolean isNotEmpty(Optional<?> optional) {
+        return !isEmpty(optional);
     }
 
 
@@ -62,7 +113,6 @@ public class EmptinessChecker {
     public static boolean isEmpty(Object[] content) {
         return isNull(content) || content.length == 0;
     }
-
 
     public static boolean isEmpty(byte[] content) {
         return isNull(content) || content.length == 0;
@@ -104,6 +154,14 @@ public class EmptinessChecker {
         return isNull(collection) || collection.isEmpty();
     }
 
+    public static boolean isEmpty(ImmutableMap<?, ?> map) {
+        return isNull(map) || map.isEmpty();
+    }
+
+    public static boolean isEmpty(ImmutableCollection<?> collection) {
+        return isNull(collection) || collection.isEmpty();
+    }
+
     public static boolean isEmpty(Stream<?> stream) {
         return isNull(stream) || stream.count() == 0;
     }
@@ -116,6 +174,11 @@ public class EmptinessChecker {
         return isNull(buffer) || buffer.readableBytes() == 0;
     }
 
+    @SuppressWarnings(ALL)
+    public static boolean isEmpty(Optional<?> optional) {
+        return isNull(optional) || !optional.isPresent();
+    }
+
 
     public static <T> T ifEmpty(T value, T ifEmpty) {
         return isEmpty(value) ? ifEmpty : value;
@@ -125,21 +188,28 @@ public class EmptinessChecker {
         return isEmpty(value) ? ifEmpty.get() : value;
     }
 
-    public static <T,R> R letIfNotEmpty(T value, Function<T, R> action) {
+    public static <T> void ifNotEmpty(T value, Consumer<T> action) {
+        if (isEmpty(value)) {
+            return;
+        }
+        action.accept(value);
+    }
+
+    public static <T, R> R letIfNotEmpty(T value, Function<T, R> action) {
         if (isEmpty(value)) {
             return null;
         }
         return action.apply(value);
     }
 
-    public static <T,R> R letIfNotEmpty(T value, Function<T, R> action, R orElse) {
+    public static <T, R> R letIfNotEmpty(T value, Function<T, R> action, R orElse) {
         if (isEmpty(value)) {
             return orElse;
         }
         return action.apply(value);
     }
 
-    public static <T,R> R letIfNotEmpty(T value, Function<T, R> action, Supplier<R> orElse) {
+    public static <T, R> R letIfNotEmpty(T value, Function<T, R> action, Supplier<R> orElse) {
         if (isEmpty(value)) {
             return orElse.get();
         }

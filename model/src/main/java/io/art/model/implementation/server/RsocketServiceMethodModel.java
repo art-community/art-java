@@ -16,16 +16,20 @@
  * limitations under the License.
  */
 
-package io.art.server.model;
+package io.art.model.implementation.server;
 
+import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
+import java.util.function.*;
 
-@Value
-public class ServiceMethodIdentifier {
-    String serviceId;
-    String methodId;
+@Getter
+@RequiredArgsConstructor
+public class RsocketServiceMethodModel implements ServiceMethodModel {
+    private final String id;
+    private final Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
 
-    public static ServiceMethodIdentifier serviceMethod(String serviceId, String methodId) {
-        return new ServiceMethodIdentifier(serviceId, methodId);
+    @Override
+    public ServiceMethodSpecificationBuilder implement(ServiceMethodSpecificationBuilder builder) {
+        return decorator.apply(builder);
     }
 }

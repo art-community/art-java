@@ -26,7 +26,7 @@ import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
 import static io.art.core.factory.ArrayFactory.fixedArrayOf;
-import static io.art.value.constants.ValueConstants.ValueType.*;
+import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.tuple.schema.ValueSchema.*;
 import static java.util.Objects.*;

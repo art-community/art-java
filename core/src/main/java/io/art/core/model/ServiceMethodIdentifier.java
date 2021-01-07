@@ -16,19 +16,22 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation;
+package io.art.core.model;
 
-import io.art.communicator.specification.CommunicatorSpecification.*;
-import io.art.core.collection.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.factory.MapFactory.*;
+import java.util.*;
 
-@Getter
-@RequiredArgsConstructor
-public class CommunicatorModel {
-    private final ImmutableMap<String, CommunicatorSpecificationModel> communicators;
+@Value
+public class ServiceMethodIdentifier {
+    private static final Map<String, ServiceMethodIdentifier> CACHE = weakMap();
 
-    public CommunicatorSpecificationBuilder implement(String id, CommunicatorSpecificationBuilder current) {
-        return let(communicators.get(id), communicator -> communicator.implement(current));
+    String serviceId;
+    String methodId;
+
+    public static ServiceMethodIdentifier serviceMethod(String serviceId, String methodId) {
+        return putIfAbsent(CACHE, EMPTY_STRING + serviceId + methodId, () -> new ServiceMethodIdentifier(serviceId, methodId));
     }
 }

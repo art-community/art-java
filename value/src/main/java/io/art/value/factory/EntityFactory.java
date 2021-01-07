@@ -18,12 +18,11 @@
 
 package io.art.value.factory;
 
-import io.art.core.factory.*;
 import io.art.value.immutable.*;
 import lombok.experimental.*;
+import static io.art.core.collector.SetCollector.setCollector;
 import static io.art.core.factory.SetFactory.setOf;
 import static io.art.value.immutable.Entity.*;
-import static java.util.stream.Collectors.toCollection;
 import java.util.*;
 import java.util.function.*;
 
@@ -38,38 +37,38 @@ public class EntityFactory {
     }
 
     public static Entity stringEntity(Set<String> fields, Function<String, ? extends Value> valueProvider) {
-        return new Entity(fields.stream().map(PrimitivesFactory::stringPrimitive).collect(toCollection(SetFactory::set)), key -> valueProvider.apply(key.getString()));
+        return new Entity(fields.stream().map(PrimitivesFactory::stringPrimitive).collect(setCollector()), key -> valueProvider.apply(key.getString()));
     }
 
     public static Entity intEntity(Set<Integer> fields, Function<Integer, ? extends Value> valueProvider) {
-        return new Entity(fields.stream().map(PrimitivesFactory::intPrimitive).collect(toCollection(SetFactory::set)), key -> valueProvider.apply(key.getInt()));
+        return new Entity(fields.stream().map(PrimitivesFactory::intPrimitive).collect(setCollector()), key -> valueProvider.apply(key.getInt()));
     }
 
     public static Entity longEntity(Set<Long> fields, Function<Long, ? extends Value> valueProvider) {
-        return new Entity(fields.stream().map(PrimitivesFactory::longPrimitive).collect(toCollection(SetFactory::set)), key -> valueProvider.apply(key.getLong()));
+        return new Entity(fields.stream().map(PrimitivesFactory::longPrimitive).collect(setCollector()), key -> valueProvider.apply(key.getLong()));
     }
 
     public static Entity doubleEntity(Set<Double> fields, Function<Double, ? extends Value> valueProvider) {
-        return new Entity(fields.stream().map(PrimitivesFactory::doublePrimitive).collect(toCollection(SetFactory::set)), key -> valueProvider.apply(key.getDouble()));
+        return new Entity(fields.stream().map(PrimitivesFactory::doublePrimitive).collect(setCollector()), key -> valueProvider.apply(key.getDouble()));
     }
 
     public static Entity floatEntity(Set<Float> fields, Function<Float, ? extends Value> valueProvider) {
-        return new Entity(fields.stream().map(PrimitivesFactory::floatPrimitive).collect(toCollection(SetFactory::set)), key -> valueProvider.apply(key.getFloat()));
+        return new Entity(fields.stream().map(PrimitivesFactory::floatPrimitive).collect(setCollector()), key -> valueProvider.apply(key.getFloat()));
     }
 
     public static Entity boolEntity(Set<Boolean> fields, Function<Boolean, ? extends Value> valueProvider) {
-        return new Entity(fields.stream().map(PrimitivesFactory::boolPrimitive).collect(toCollection(SetFactory::set)), key -> valueProvider.apply(key.getBool()));
+        return new Entity(fields.stream().map(PrimitivesFactory::boolPrimitive).collect(setCollector()), key -> valueProvider.apply(key.getBool()));
     }
 
     public static Entity byteEntity(Set<Byte> fields, Function<Byte, ? extends Value> valueProvider) {
-        return new Entity(fields.stream().map(PrimitivesFactory::bytePrimitive).collect(toCollection(SetFactory::set)), key -> valueProvider.apply(key.getByte()));
+        return new Entity(fields.stream().map(PrimitivesFactory::bytePrimitive).collect(setCollector()), key -> valueProvider.apply(key.getByte()));
     }
 
     public static Entity shortEntity(Set<Short> fields, Function<Short, ? extends Value> valueProvider) {
-        return new Entity(fields.stream().map(PrimitivesFactory::shortPrimitive).collect(toCollection(SetFactory::set)), key -> valueProvider.apply(key.getShort()));
+        return new Entity(fields.stream().map(PrimitivesFactory::shortPrimitive).collect(setCollector()), key -> valueProvider.apply(key.getShort()));
     }
 
     public static Entity charEntity(Set<Character> fields, Function<Character, ? extends Value> valueProvider) {
-        return new Entity(fields.stream().map(PrimitivesFactory::charPrimitive).collect(toCollection(SetFactory::set)), key -> valueProvider.apply(key.getChar()));
+        return new Entity(fields.stream().map(PrimitivesFactory::charPrimitive).collect(setCollector()), key -> valueProvider.apply(key.getChar()));
     }
 }

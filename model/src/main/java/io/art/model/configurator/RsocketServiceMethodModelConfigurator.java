@@ -18,31 +18,35 @@
 
 package io.art.model.configurator;
 
-import io.art.model.implementation.*;
+import io.art.model.implementation.server.*;
 import io.art.server.decorator.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
-import static io.art.server.model.ServiceMethodIdentifier.*;
+import static io.art.core.model.ServiceMethodIdentifier.serviceMethod;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
-public class ServiceMethodModelConfigurator {
-    private final ServiceModelConfigurator<?> serviceModelConfigurator;
+public class RsocketServiceMethodModelConfigurator {
+    private final RsocketServiceModelConfigurator serviceModelConfigurator;
     private final String id;
     private Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = identity();
 
-    public ServiceMethodModelConfigurator enableLogging() {
-        decorator = decorator.andThen(builder -> builder
+    public RsocketServiceMethodModelConfigurator enableLogging() {
+        return decorate(builder -> builder
                 .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModelConfigurator.getServiceClass().getSimpleName(), id), INPUT))
                 .outputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModelConfigurator.getServiceClass().getSimpleName(), id), OUTPUT)));
+    }
+
+    private RsocketServiceMethodModelConfigurator decorate(Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
+        this.decorator = decorator.andThen(decorator);
         return this;
     }
 
-    ServiceMethodModel configure() {
-        return new ServiceMethodModel(id, decorator);
+    RsocketServiceMethodModel configure() {
+        return new RsocketServiceMethodModel(id, decorator);
     }
 }

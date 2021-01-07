@@ -27,7 +27,6 @@ import static io.art.core.collection.ImmutableMap.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.Defaults.*;
 import static java.util.Optional.*;
-import java.util.*;
 
 @Getter
 @AllArgsConstructor
@@ -39,11 +38,7 @@ public class ServiceConfiguration {
     public static ServiceConfiguration from(ConfigurationSource source) {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
         Scheduler scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
-        ImmutableMap<String, ServiceMethodConfiguration> methods = ofNullable(source.getNestedMap(METHODS_KEY))
-                .map(configurations -> configurations.entrySet()
-                        .stream()
-                        .collect(immutableMapCollector(Map.Entry::getKey, entry -> ServiceMethodConfiguration.from(entry.getValue()))))
-                .orElse(emptyImmutableMap());
+        ImmutableMap<String, ServiceMethodConfiguration> methods = source.getNestedMap(METHODS_KEY, ServiceMethodConfiguration::from);
         return new ServiceConfiguration(deactivated, methods, scheduler);
     }
 }

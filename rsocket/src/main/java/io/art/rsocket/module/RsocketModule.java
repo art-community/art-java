@@ -19,28 +19,15 @@
 package io.art.rsocket.module;
 
 import io.art.core.module.*;
-import io.art.core.printer.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.manager.*;
 import io.art.rsocket.state.*;
-import io.art.server.specification.*;
-import io.netty.handler.codec.http.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
-import org.reactivestreams.*;
-import reactor.core.publisher.*;
-import reactor.netty.http.server.*;
-import reactor.netty.tcp.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.printer.ColoredPrinter.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
-import static java.util.Objects.*;
+import static io.art.rsocket.manager.RsocketManager.*;
 import static lombok.AccessLevel.*;
-import java.util.*;
 
 @Getter
 public class RsocketModule implements StatefulModule<RsocketModuleConfiguration, Configurator, RsocketModuleState> {
@@ -52,7 +39,6 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     private final RsocketModuleConfiguration configuration = new RsocketModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
     private final RsocketModuleState state = new RsocketModuleState();
-    private final RsocketManager manager = new RsocketManager(configuration, state);
 
     public static StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule() {
         return getRsocketModule();
@@ -61,16 +47,16 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     @Override
     public void onLoad() {
         if (configuration.isActivateCommunicator()) {
-            manager.startConnectors();
+            startConnectors();
         }
         if (configuration.isActivateServer()) {
-            manager.startSever();
+            startServer();
         }
     }
 
     @Override
     public void onUnload() {
-        manager.stopConnectors();
-        manager.stopSever();
+        stopConnectors();
+        stopServer();
     }
 }

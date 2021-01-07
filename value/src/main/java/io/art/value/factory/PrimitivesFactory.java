@@ -19,46 +19,75 @@
 package io.art.value.factory;
 
 import io.art.value.immutable.*;
-import lombok.experimental.*;
-import static io.art.core.checker.NullityChecker.let;
-import static io.art.core.constants.StringConstants.EMPTY_STRING;
-import static io.art.value.constants.ValueConstants.ValueType.PrimitiveType.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.factory.MapFactory.*;
+import static io.art.value.constants.ValueModuleConstants.ValueType.PrimitiveType.*;
+import static java.util.Objects.*;
+import java.util.*;
 
-@UtilityClass
 public class PrimitivesFactory {
+    public final static Primitive DEFAULT_STRING_PRIMITIVE = new Primitive(EMPTY_STRING, STRING);
+    public final static Primitive DEFAULT_LONG_PRIMITIVE = new Primitive(0L, LONG);
+    public final static Primitive DEFAULT_INT_PRIMITIVE = new Primitive(0, INT);
+    public final static Primitive DEFAULT_BOOL_PRIMITIVE = new Primitive(false, BOOL);
+    public final static Primitive DEFAULT_BYTE_PRIMITIVE = new Primitive(0, BYTE);
+    public final static Primitive DEFAULT_DOUBLE_PRIMITIVE = new Primitive(0., DOUBLE);
+    public final static Primitive DEFAULT_FLOAT_PRIMITIVE = new Primitive(0.f, FLOAT);
+
+    private final static Primitive EMPTY_STRING_PRIMITIVE = new Primitive(null, STRING);
+    private final static Primitive EMPTY_LONG_PRIMITIVE = new Primitive(null, LONG);
+    private final static Primitive EMPTY_INT_PRIMITIVE = new Primitive(null, INT);
+    private final static Primitive EMPTY_BOOL_PRIMITIVE = new Primitive(null, BOOL);
+    private final static Primitive EMPTY_BYTE_PRIMITIVE = new Primitive(null, BYTE);
+    private final static Primitive EMPTY_DOUBLE_PRIMITIVE = new Primitive(null, DOUBLE);
+    private final static Primitive EMPTY_FLOAT_PRIMITIVE = new Primitive(null, FLOAT);
+
+    private final static Map<Object, Primitive> CACHE = weakMap();
+
     public static Primitive stringPrimitive(String value) {
-        return new Primitive(value, STRING);
+        if (isNull(value)) return EMPTY_STRING_PRIMITIVE;
+        return putIfAbsent(CACHE, value, () -> new Primitive(value, STRING));
     }
 
     public static Primitive longPrimitive(Long value) {
-        return new Primitive(value, LONG);
+        if (isNull(value)) return EMPTY_LONG_PRIMITIVE;
+        return putIfAbsent(CACHE, value, () -> new Primitive(value, LONG));
     }
 
     public static Primitive intPrimitive(Integer value) {
-        return new Primitive(value, INT);
+        if (isNull(value)) return EMPTY_INT_PRIMITIVE;
+        return putIfAbsent(CACHE, value, () -> new Primitive(value, INT));
     }
-    
+
     public static Primitive shortPrimitive(Short value) {
-        return new Primitive(value, INT);
+        if (isNull(value)) return EMPTY_INT_PRIMITIVE;
+        return putIfAbsent(CACHE, value, () -> new Primitive(value, INT));
     }
-    
+
     public static Primitive charPrimitive(Character value) {
-        return new Primitive(let(value, character -> EMPTY_STRING + character, (String) null) , STRING);
+        if (isNull(value)) return EMPTY_STRING_PRIMITIVE;
+        return putIfAbsent(CACHE, value, () -> new Primitive(let(value, character -> EMPTY_STRING + character, (String) null), STRING));
     }
 
     public static Primitive boolPrimitive(Boolean value) {
-        return new Primitive(value, BOOL);
+        if (isNull(value)) return EMPTY_BOOL_PRIMITIVE;
+        return putIfAbsent(CACHE, value, () -> new Primitive(value, BOOL));
     }
 
     public static Primitive doublePrimitive(Double value) {
-        return new Primitive(value, DOUBLE);
+        if (isNull(value)) return EMPTY_DOUBLE_PRIMITIVE;
+        return putIfAbsent(CACHE, value, () -> new Primitive(value, DOUBLE));
     }
 
     public static Primitive bytePrimitive(Byte value) {
-        return new Primitive(value, BYTE);
+        if (isNull(value)) return EMPTY_BYTE_PRIMITIVE;
+        return putIfAbsent(CACHE, value, () -> new Primitive(value, BYTE));
     }
 
     public static Primitive floatPrimitive(Float value) {
-        return new Primitive(value, FLOAT);
+        if (isNull(value)) return EMPTY_FLOAT_PRIMITIVE;
+        return putIfAbsent(CACHE, value, () -> new Primitive(value, FLOAT));
     }
 }

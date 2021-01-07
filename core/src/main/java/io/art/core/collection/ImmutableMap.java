@@ -25,88 +25,44 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-public class ImmutableMap<K, V> {
-    private final Map<K, V> map;
+public interface ImmutableMap<K, V> {
+    ImmutableMap<?, ?> EMPTY = new ImmutableMapImplementation<>(emptyMap());
 
-    private static final ImmutableMap<?, ?> EMPTY = new ImmutableMap<>(emptyMap());
+    int size();
 
-    public ImmutableMap(Map<K, V> map) {
-        this.map = com.google.common.collect.ImmutableMap.copyOf(map);
-    }
+    boolean isEmpty();
 
-    private ImmutableMap(com.google.common.collect.ImmutableMap<K, V> map) {
-        this.map = map;
-    }
+    boolean containsKey(Object key);
 
-    public int size() {
-        return map.size();
-    }
+    boolean containsValue(Object value);
 
-    public boolean isEmpty() {
-        return map.isEmpty();
-    }
+    V get(Object key);
 
-    public boolean containsKey(Object key) {
-        return map.containsKey(key);
-    }
+    Set<K> keySet();
 
-    public boolean containsValue(Object value) {
-        return map.containsValue(value);
-    }
+    Collection<V> values();
 
-    public V get(Object key) {
-        return map.get(key);
-    }
+    Set<Map.Entry<K, V>> entrySet();
 
-    public Set<K> keySet() {
-        return map.keySet();
-    }
+    V getOrDefault(Object key, V defaultValue);
 
-    public Collection<V> values() {
-        return map.values();
-    }
+    void forEach(BiConsumer<? super K, ? super V> action);
 
-    public Set<Map.Entry<K, V>> entrySet() {
-        return map.entrySet();
-    }
+    Map<K, V> toMutable();
 
-    public V getOrDefault(Object key, V defaultValue) {
-        return map.getOrDefault(key, defaultValue);
-    }
-
-    public void forEach(BiConsumer<? super K, ? super V> action) {
-        map.forEach(action);
-    }
-
-    public Map<K, V> toMutable() {
-        return new LinkedHashMap<>(map);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) return true;
-        if (!(object instanceof ImmutableMap)) return false;
-        return map.equals(((ImmutableMap<?, ?>) object).map);
-    }
-
-    @Override
-    public int hashCode() {
-        return map.hashCode();
-    }
-
-    public static <K, V> ImmutableMap<K, V> emptyImmutableMap() {
+    static <K, V> ImmutableMap<K, V> emptyImmutableMap() {
         return cast(EMPTY);
     }
 
-    public static <K, V> Builder<K, V> immutableMapBuilder() {
+    static <K, V> Builder<K, V> immutableMapBuilder() {
         return new Builder<>();
     }
 
-    public static Builder<String, String> immutableMapBuilder(int size) {
+    static Builder<String, String> immutableMapBuilder(int size) {
         return new Builder<>(size);
     }
 
-    public static <T, K, V> Collector<T, ?, ImmutableMap<K, V>> immutableMapCollector(
+    static <T, K, V> Collector<T, ?, ImmutableMap<K, V>> immutableMapCollector(
             Function<? super T, ? extends K> keyFunction,
             Function<? super T, ? extends V> valueFunction) {
         return Collector.of(
@@ -117,17 +73,17 @@ public class ImmutableMap<K, V> {
         );
     }
 
-    public static <T, K, V> Collector<T, ?, ImmutableMap<K, V>> immutableMapCollector(
+    static <T, K, V> Collector<T, ?, ImmutableMap<K, V>> immutableMapCollector(
             Function<? super T, ? extends K> keyFunction,
             Function<? super T, ? extends V> valueFunction,
             BinaryOperator<V> mergeFunction) {
         Collector<T, ?, LinkedHashMap<K, V>> mapCollector = toMap(keyFunction, valueFunction, mergeFunction, LinkedHashMap::new);
-        Function<LinkedHashMap<K, V>, ImmutableMap<K, V>> mapFunction = ImmutableMap::new;
+        Function<LinkedHashMap<K, V>, ImmutableMap<K, V>> mapFunction = ImmutableMapImplementation::new;
         return collectingAndThen(mapCollector, mapFunction);
     }
 
 
-    public static class Builder<K, V> {
+    class Builder<K, V> {
         private final com.google.common.collect.ImmutableMap.Builder<K, V> builder;
 
         public Builder() {
@@ -164,12 +120,12 @@ public class ImmutableMap<K, V> {
         }
 
         private Builder<K, V> combine(Builder<K, V> builder) {
-            this.builder.putAll(builder.build().map);
+            this.builder.putAll(builder.build().entrySet());
             return this;
         }
 
         public ImmutableMap<K, V> build() {
-            return new ImmutableMap<>(builder.build());
+            return new ImmutableMapImplementation<>(builder.build());
         }
     }
 }

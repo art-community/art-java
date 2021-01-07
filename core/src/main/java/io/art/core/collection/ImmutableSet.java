@@ -21,104 +21,33 @@ package io.art.core.collection;
 import static io.art.core.caster.Caster.*;
 import static java.util.Collections.*;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
-public class ImmutableSet<T> implements Iterable<T> {
-    private final Set<T> set;
+public interface ImmutableSet<T> extends ImmutableCollection<T> {
+    ImmutableSet<?> EMPTY = new ImmutableSetImplementation<>(emptySet());
 
-    private static final ImmutableSet<?> EMPTY = new ImmutableSet<>(emptySet());
-
-    private static final Collector<Object, ?, ImmutableSet<Object>> COLLECTOR = Collector.of(
+    Collector<Object, ?, ImmutableSet<Object>> COLLECTOR = Collector.of(
             ImmutableSet::immutableSetBuilder,
             Builder::add,
             Builder::combine,
             Builder::build
     );
 
-    public ImmutableSet(Collection<T> collection) {
-        this.set = com.google.common.collect.ImmutableSet.copyOf(collection);
-    }
+    Set<T> toMutable();
 
-    private ImmutableSet(com.google.common.collect.ImmutableSet<T> set) {
-        this.set = set;
-    }
-
-    public int size() {
-        return set.size();
-    }
-
-    public boolean isEmpty() {
-        return set.isEmpty();
-    }
-
-    public boolean contains(Object object) {
-        return set.contains(object);
-    }
-
-    public boolean containsAll(Collection<?> c) {
-        return set.containsAll(c);
-    }
-
-    public Object[] toArray() {
-        return set.toArray();
-    }
-
-    public T[] toArray(T[] array) {
-        return this.set.toArray(array);
-    }
-
-    public Stream<T> stream() {
-        return set.stream();
-    }
-
-    public Stream<T> parallelStream() {
-        return set.parallelStream();
-    }
-
-    public void forEach(Consumer<? super T> action) {
-        set.forEach(action);
-    }
-
-    public Set<T> toMutable() {
-        return new LinkedHashSet<>(set);
-    }
-
-    @Override
-    public Iterator<T> iterator() {
-        return set.iterator();
-    }
-
-    @Override
-    public Spliterator<T> spliterator() {
-        return set.spliterator();
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) return true;
-        if (!(object instanceof ImmutableSet)) return false;
-        return set.equals(((ImmutableSet<?>) object).set);
-    }
-
-    @Override
-    public int hashCode() {
-        return set.hashCode();
-    }
-
-    public static <T> ImmutableSet<T> emptyImmutableSet() {
+    static <T> ImmutableSet<T> emptyImmutableSet() {
         return cast(EMPTY);
     }
 
-    public static <T> Collector<T, T, ImmutableSet<T>> immutableSetCollector() {
+    static <T> Collector<T, T, ImmutableSet<T>> immutableSetCollector() {
         return cast(COLLECTOR);
     }
 
-    public static <T> Builder<T> immutableSetBuilder() {
+    static <T> Builder<T> immutableSetBuilder() {
         return new Builder<>();
     }
 
-    public static class Builder<T> {
+    class Builder<T> {
         private final com.google.common.collect.ImmutableSet.Builder<T> builder = com.google.common.collect.ImmutableSet.builder();
 
         public Builder<T> add(T element) {
@@ -148,7 +77,7 @@ public class ImmutableSet<T> implements Iterable<T> {
         }
 
         public ImmutableSet<T> build() {
-            return new ImmutableSet<>(builder.build());
+            return new ImmutableSetImplementation<>(builder.build());
         }
     }
 }

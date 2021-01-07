@@ -19,30 +19,51 @@
 package io.art.model.configurator;
 
 import io.art.core.collection.*;
-import io.art.model.implementation.*;
-import io.art.rsocket.configuration.*;
-import lombok.*;
+import io.art.model.implementation.server.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collection.ImmutableSet.*;
-import static io.art.model.constants.ModelConstants.Protocol.*;
-import static java.util.function.Function.*;
-import static lombok.AccessLevel.*;
+import static io.art.model.constants.ModelConstants.ConfiguratorScope.*;
+import static java.util.Arrays.*;
+import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
-@Getter(value = PACKAGE)
 public class ServerModelConfigurator {
-    private final ImmutableSet.Builder<ServiceModelConfigurator<?>> services = immutableSetBuilder();
+    private final ImmutableSet.Builder<RsocketServiceModelConfigurator> rsocketServices = immutableSetBuilder();
 
-    public ServerModelConfigurator rsocket(UnaryOperator<ServiceModelConfigurator<RsocketServiceConfiguration>> modeler) {
-        services.add(modeler.apply(new ServiceModelConfigurator<>(RSOCKET)));
+    @SafeVarargs
+    public final ServerModelConfigurator rsocket(Class<?> service, UnaryOperator<RsocketServiceModelConfigurator>... configurators) {
+        if (isEmpty(configurators)) {
+            rsocketServices.add(new RsocketServiceModelConfigurator(service, service.getSimpleName(), CLASS));
+            return this;
+        }
+        stream(configurators)
+                .map(configurator -> (Function<RsocketServiceModelConfigurator, RsocketServiceModelConfigurator>) configurator)
+                .reduce(Function::andThen)
+                .map(configurator -> configurator.apply(new RsocketServiceModelConfigurator(service, service.getSimpleName(), CLASS)))
+                .ifPresent(rsocketServices::add);
         return this;
     }
 
-    ServerModel configure() {
-        ImmutableMap<String, ServiceModel> services = this.services.build()
+    @SafeVarargs
+    public final ServerModelConfigurator rsocket(Class<?> service, String method, UnaryOperator<RsocketServiceModelConfigurator>... configurators) {
+        if (isEmpty(configurators)) {
+            rsocketServices.add(new RsocketServiceModelConfigurator(service, service.getSimpleName(), METHOD).method(method));
+            return this;
+        }
+        stream(configurators)
+                .map(configurator -> (Function<RsocketServiceModelConfigurator, RsocketServiceModelConfigurator>) configurator)
+                .reduce(Function::andThen)
+                .map(configurator -> configurator.apply(new RsocketServiceModelConfigurator(service, service.getSimpleName(), METHOD).method(method)))
+                .ifPresent(rsocketServices::add);
+        return this;
+    }
+
+    ServerModuleModel configure() {
+        ImmutableMap<String, RsocketServiceModel> rsocketServices = this.rsocketServices.build()
                 .stream()
-                .map(ServiceModelConfigurator::configure)
-                .collect(immutableMapCollector(ServiceModel::getId, identity()));
-        return new ServerModel(services);
+                .map(RsocketServiceModelConfigurator::configure)
+                .collect(immutableMapCollector(RsocketServiceModel::getId, identity()));
+        return ServerModuleModel.builder().rsocketServices(rsocketServices).build();
     }
 }

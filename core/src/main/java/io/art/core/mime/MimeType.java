@@ -18,12 +18,22 @@
 
 package io.art.core.mime;
 
-import io.art.core.builder.*;
-import io.art.core.factory.*;
-import lombok.*;
 import io.art.core.exception.*;
-import static io.art.core.factory.MapFactory.map;
-import static io.art.core.factory.MapFactory.mapOf;
+import lombok.*;
+import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.CharacterConstants.DOUBLE_QUOTES;
+import static io.art.core.constants.CharacterConstants.SEMICOLON;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.MimeTypeConstants.*;
+import static io.art.core.constants.StringConstants.EQUAL;
+import static io.art.core.constants.StringConstants.PLUS;
+import static io.art.core.constants.StringConstants.SLASH;
+import static io.art.core.constants.StringConstants.WILDCARD;
+import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.StringExtensions.*;
+import static io.art.core.factory.MapFactory.*;
 import static java.lang.Float.*;
 import static java.lang.String.*;
 import static java.nio.charset.Charset.*;
@@ -32,21 +42,8 @@ import static java.util.Collections.*;
 import static java.util.Locale.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.constants.CharacterConstants.DOUBLE_QUOTES;
-import static io.art.core.constants.CharacterConstants.SEMICOLON;
-import static io.art.core.constants.ExceptionMessages.*;
-import static io.art.core.constants.MimeTypeConstants.*;
-import static io.art.core.constants.StringConstants.EQUAL;
-import static io.art.core.constants.StringConstants.PLUS;
-import static io.art.core.constants.StringConstants.SLASH;
-import static io.art.core.constants.StringConstants.WILDCARD;
-import static io.art.core.constants.StringConstants.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.extensions.StringExtensions.*;
 import java.nio.charset.*;
 import java.util.*;
-import java.util.function.*;
 
 @Getter
 @RequiredArgsConstructor(access = PRIVATE)
@@ -183,12 +180,12 @@ public class MimeType implements Comparable<MimeType> {
     }
 
     public Charset getCharset() {
-        return let(getParameter(PARAM_CHARSET), (Function<String, Charset>) charset -> forName(unquote(charset)));
+        return let(getParameter(PARAM_CHARSET), charset -> forName(unquote(charset)));
     }
 
     public float getQValue() {
-        String qStr = getParameter(PARAM_Q);
-        return qStr != null ? parseFloat(unquote(qStr)) : 1.f;
+        String asString = getParameter(PARAM_Q);
+        return let(asString, value -> parseFloat(unquote(value)), 1.f);
     }
 
     public String getParameter(String name) {
@@ -295,7 +292,7 @@ public class MimeType implements Comparable<MimeType> {
     }
 
     @Override
-    public int compareTo(@SuppressWarnings("NullableProblems") MimeType other) {
+    public int compareTo(@SuppressWarnings(NULLABLE_PROBLEMS) MimeType other) {
         if (isNull(other)) return -1;
         int comp = type.compareToIgnoreCase(other.type);
         if (comp != 0) {

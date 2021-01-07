@@ -19,45 +19,51 @@
 package io.art.server.specification;
 
 import io.art.core.annotation.*;
-import io.art.core.caster.*;
 import io.art.core.constants.*;
+import io.art.core.exception.*;
 import io.art.server.configuration.*;
-import io.art.server.exception.*;
 import io.art.server.implementation.*;
 import io.art.server.model.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
+import io.art.value.mapping.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.server.constants.ServerModuleConstants.ExceptionMessages.*;
 import static io.art.server.module.ServerModule.*;
-import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
+import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
 
-@Getter
 @Builder(toBuilder = true)
 @UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceMethodSpecification {
-    @Builder.Default
-    private final ValueToModelMapper<?, ? extends Value> inputMapper = Caster::cast;
-    @Builder.Default
-    private final ValueFromModelMapper<?, ? extends Value> outputMapper = Caster::cast;
-    private final ValueFromModelMapper<Throwable, Value> exceptionMapper;
-    private final ServiceMethodImplementation implementation;
-    private final MethodProcessingMode inputMode;
-    private final MethodProcessingMode outputMode;
-
+    @Getter
     @EqualsAndHashCode.Include
     private final String methodId;
 
+    @Getter
     @EqualsAndHashCode.Include
     private final String serviceId;
+
+    @Getter
+    private final MethodProcessingMode inputMode;
+
+    @Getter
+    private final MethodProcessingMode outputMode;
+
+    private final ValueToModelMapper<?, ? extends Value> inputMapper;
+    private final ValueFromModelMapper<?, ? extends Value> outputMapper;
+
+    @Builder.Default
+    private final ValueFromModelMapper<Throwable, ? extends Value> exceptionMapper = ThrowableMapping::fromThrowable;
+
+    private final ServiceMethodImplementation implementation;
 
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
@@ -65,27 +71,30 @@ public class ServiceMethodSpecification {
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    @Singular("exceptionDecorator")
-    private final List<UnaryOperator<Flux<Object>>> exceptionDecorator;
-
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private final ServerModuleConfiguration moduleConfiguration = serverModule().configuration();
 
-    @Getter(lazy = true)
-    private final ServiceSpecification serviceSpecification = specifications().get(serviceId).orElseThrow(IllegalStateException::new);
+    @Getter(lazy = true, value = PRIVATE)
+    private final ServiceSpecification serviceSpecification = specifications().get(serviceId).orElseThrow(ImpossibleSituation::new);
 
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private final ServiceConfiguration serviceConfiguration = getServiceSpecification().getConfiguration();
 
-    @Getter(lazy = true)
+    @Getter(lazy = true, value = PRIVATE)
     private final ServiceMethodConfiguration methodConfiguration = let(getServiceConfiguration(), configuration -> configuration.getMethods().get(methodId));
+
+    @Getter(lazy = true, value = PRIVATE)
+    private final Function<Flux<Value>, Object> mapInput = selectMapInput();
+
+    @Getter(lazy = true, value = PRIVATE)
+    private final Function<Object, Flux<Object>> mapOutput = selectMapOutput();
 
     public Flux<Value> serve(Flux<Value> input) {
         if (deactivated()) {
             return Flux.empty();
         }
         Scheduler scheduler = let(getMethodConfiguration(), ServiceMethodConfiguration::getScheduler, getModuleConfiguration().getScheduler());
-        return Flux.defer(() -> deferredServe(input)).subscribeOn(scheduler);
+        return defer(() -> deferredServe(input)).subscribeOn(scheduler);
     }
 
     private Flux<Value> deferredServe(Flux<Value> input) {
@@ -103,31 +112,11 @@ public class ServiceMethodSpecification {
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
             mappedInput = mappedInput.transformDeferred(decorator);
         }
-        mappedInput = mappedInput.onErrorResume(Throwable.class, this::mapException);
-        switch (inputMode) {
-            case BLOCKING:
-                return mappedInput.blockFirst();
-            case MONO:
-                return mappedInput.last();
-            case FLUX:
-                return mappedInput;
-        }
-        throw new ServiceMethodExecutionException(format(UNKNOWN_INPUT_MODE, inputMode), serviceId, methodId);
+        return getMapInput().apply(cast(mappedInput.onErrorResume(Throwable.class, this::mapException)));
     }
 
     private Flux<Value> mapOutput(Object output) {
-        Flux<Object> mappedOutput;
-        switch (outputMode) {
-            case BLOCKING:
-                mappedOutput = Flux.just(output);
-                break;
-            case MONO:
-            case FLUX:
-                mappedOutput = Flux.from(cast(output));
-                break;
-            default:
-                throw new ServiceMethodExecutionException(format(UNKNOWN_OUTPUT_MODE, outputMode), serviceId, methodId);
-        }
+        Flux<Object> mappedOutput = getMapOutput().apply(output);
         mappedOutput = mappedOutput.filter(Objects::nonNull).filter(value -> !deactivated());
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
             mappedOutput = mappedOutput.transformDeferred(decorator);
@@ -139,7 +128,7 @@ public class ServiceMethodSpecification {
 
     private Flux<Value> mapException(Throwable exception) {
         Flux<Object> errorOutput = Flux.error(exception).filter(value -> !deactivated());
-        for (UnaryOperator<Flux<Object>> decorator : exceptionDecorator) {
+        for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
             errorOutput = errorOutput.transformDeferred(decorator);
         }
         return errorOutput
@@ -160,5 +149,36 @@ public class ServiceMethodSpecification {
             return false;
         }
         return getMethodConfiguration().isDeactivated();
+    }
+
+    private Function<Flux<Value>, Object> selectMapInput() {
+        if (isNull(inputMode)) {
+            throw new ImpossibleSituation();
+        }
+        switch (inputMode) {
+            case BLOCKING:
+                return Flux::blockFirst;
+            case MONO:
+                return mappedInput -> orNull(mappedInput, checking -> checking == Flux.<Value>empty(), Flux::last);
+            case FLUX:
+                return mappedInput -> mappedInput;
+            default:
+                throw new ImpossibleSituation();
+        }
+    }
+
+    private Function<Object, Flux<Object>> selectMapOutput() {
+        if (isNull(outputMode)) {
+            throw new ImpossibleSituation();
+        }
+        switch (outputMode) {
+            case BLOCKING:
+                return Flux::just;
+            case MONO:
+            case FLUX:
+                return output -> Flux.from(cast(output));
+            default:
+                throw new ImpossibleSituation();
+        }
     }
 }

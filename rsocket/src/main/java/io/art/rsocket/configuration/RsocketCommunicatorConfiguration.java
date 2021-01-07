@@ -19,21 +19,20 @@
 package io.art.rsocket.configuration;
 
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.core.source.*;
-import io.art.server.model.*;
-import io.art.value.constants.ValueConstants.*;
+import io.art.value.constants.ValueModuleConstants.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
 import lombok.*;
 import reactor.util.retry.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableMap.emptyImmutableMap;
-import static io.art.core.collection.ImmutableMap.immutableMapCollector;
+import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
-import static io.art.server.model.ServiceMethodIdentifier.*;
-import static io.art.value.constants.ValueConstants.DataFormat.*;
+import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.util.Optional.*;
 import java.util.*;
@@ -67,19 +66,14 @@ public class RsocketCommunicatorConfiguration {
         configuration.logging = orElse(source.getBool(LOGGING_KEY), false);
         configuration.fragmentationMtu = orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0);
         configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
-        configuration.resume = let(source.getNested(RESUME_SECTION), RsocketResumeConfigurator::from);
-        configuration.reconnect = let(source.getNested(RECONNECT_SECTION), RsocketRetryConfigurator::from);
-        configuration.keepAliveConfiguration = let(source.getNested(KEEP_ALIVE_SECTION), RsocketKeepAliveConfiguration::from);
+        configuration.resume = source.getNested(RESUME_SECTION, RsocketResumeConfigurator::from);
+        configuration.reconnect = source.getNested(RECONNECT_SECTION, RsocketRetryConfigurator::from);
+        configuration.keepAliveConfiguration = source.getNested(KEEP_ALIVE_SECTION, RsocketKeepAliveConfiguration::from);
         configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT
                 ? PayloadDecoder.DEFAULT
                 : PayloadDecoder.ZERO_COPY;
 
-        configuration.connectors = ofNullable(source.getNestedMap(CONNECTORS_KEY))
-                .map(configurations -> configurations.entrySet()
-                        .stream()
-                        .collect(immutableMapCollector(Map.Entry::getKey, entry -> RsocketConnectorConfiguration.from(configuration, entry.getValue()))))
-                .orElse(emptyImmutableMap());
-
+        configuration.connectors = source.getNestedMap(CONNECTORS_KEY, connector -> RsocketConnectorConfiguration.from(configuration, connector));
         return configuration;
     }
 }

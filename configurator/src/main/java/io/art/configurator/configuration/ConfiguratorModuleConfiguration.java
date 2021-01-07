@@ -33,6 +33,7 @@ import static java.util.Comparator.*;
 @Getter
 public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<ModuleConfigurationSourceType, ConfigurationSource> sources = emptyImmutableMap();
+    private ImmutableMap<Class<?>, ?> customConfigurations = emptyImmutableMap();
 
     public PropertiesConfigurationSource getProperties() {
         return cast(sources.get(PROPERTIES));
@@ -44,6 +45,10 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
 
     public ImmutableArray<ConfigurationSource> orderedSources() {
         return immutableSortedArray(getSources().values(), comparingInt((ConfigurationSource source) -> source.getType().getOrder()));
+    }
+
+    public <T> T getCustomConfiguration(Class<T> modelClass) {
+        return cast(customConfigurations.get(modelClass));
     }
 
     @RequiredArgsConstructor
@@ -59,5 +64,11 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
             return this;
         }
 
+
+        @Override
+        public Configurator override(ConfiguratorModuleConfiguration configuration) {
+            this.configuration.customConfigurations = configuration.getCustomConfigurations();
+            return this;
+        }
     }
 }

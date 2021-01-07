@@ -33,7 +33,7 @@ import java.util.function.*;
 
 public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = logger(ServiceLoggingDecorator.class);
+    private static final Logger logger = logger(ServiceLoggingDecorator.class);
     private final UnaryOperator<Flux<Object>> decorator;
 
     public ServiceValidationDecorator(RequestValidationPolicy policy) {

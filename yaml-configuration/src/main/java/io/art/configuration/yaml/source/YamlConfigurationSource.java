@@ -22,35 +22,36 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.*;
 import com.fasterxml.jackson.dataformat.yaml.*;
 import io.art.configuration.yaml.exception.*;
-import io.art.core.combiner.*;
-import io.art.core.factory.*;
+import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
 import static com.fasterxml.jackson.databind.node.JsonNodeType.*;
-import static io.art.core.combiner.SectionCombiner.combine;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.parser.DurationParser.*;
-import static java.util.stream.Collectors.*;
+import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.combiner.SectionCombiner.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static io.art.core.constants.StringConstants.*;
+import static java.util.Objects.*;
+import static java.util.Spliterator.*;
+import static java.util.Spliterators.*;
 import static java.util.stream.StreamSupport.*;
 import java.io.*;
-import java.time.*;
-import java.util.*;
 
 @Getter
-public class YamlConfigurationSource implements ConfigurationSource {
+public class YamlConfigurationSource implements NestedConfiguration {
     private final String section;
     private final ModuleConfigurationSourceType type;
     private final File file;
     private final JsonNode configuration;
-    private final static YAMLMapper yamlMapper = new YAMLMapper();
+    private static final YAMLMapper YAML_MAPPER = new YAMLMapper();
 
     public YamlConfigurationSource(String section, ModuleConfigurationSourceType type, File file) {
         this.section = section;
         this.type = type;
         this.file = file;
         try {
-            configuration = yamlMapper.readTree(file);
+            configuration = YAML_MAPPER.readTree(file);
         } catch (IOException exception) {
             throw new YamlConfigurationLoadingException(exception);
         }
@@ -64,105 +65,37 @@ public class YamlConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public Integer getInt(String path) {
-        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), JsonNode::asInt);
+    public Boolean asBool() {
+        return let(configuration, JsonNode::asBoolean);
     }
 
     @Override
-    public Long getLong(String path) {
-        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), JsonNode::asLong);
+    public String asString() {
+        return let(configuration, JsonNode::asText);
     }
 
     @Override
-    public Boolean getBool(String path) {
-        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), JsonNode::asBoolean);
+    public ImmutableArray<NestedConfiguration> asArray() {
+        if (isNull(configuration)) return emptyImmutableArray();
+        if (configuration.getNodeType() != ARRAY) {
+            return emptyImmutableArray();
+        }
+        return stream(spliterator(configuration.elements(), configuration.size(), IMMUTABLE), false)
+                .filter(node -> !node.isNull() && !node.isMissingNode())
+                .map(node -> new YamlConfigurationSource(section, type, file, node))
+                .collect(immutableArrayCollector());
     }
 
     @Override
-    public Double getDouble(String path) {
-        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), JsonNode::asDouble);
+    public NestedConfiguration getNested(String path) {
+        JsonNode configNode = getYamlConfigNode(path);
+        return orNull(configNode, node -> !node.isNull() && !node.isMissingNode(), node -> new YamlConfigurationSource(combine(section, path), type, file, node));
     }
 
     @Override
-    public Float getFloat(String path) {
-        return let(getDouble(path), Number::floatValue);
-    }
-
-    @Override
-    public String getString(String path) {
-        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), JsonNode::asText);
-    }
-
-    @Override
-    public Duration getDuration(String path) {
-        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), node -> parseDuration(node.asText()));
-    }
-
-    @Override
-    public ConfigurationSource getNested(String path) {
-        return orNull(getYamlConfigNode(path), node -> !node.isMissingNode(), node -> new YamlConfigurationSource(combine(section, path), type, file, node));
-    }
-
-    @Override
-    public List<Integer> getIntList(String path) {
-        return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
-                .map(JsonNode::asInt)
-                .collect(toCollection(ArrayFactory::dynamicArray));
-    }
-
-    @Override
-    public List<Long> getLongList(String path) {
-        return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
-                .map(JsonNode::asLong)
-                .collect(toCollection(ArrayFactory::dynamicArray));
-    }
-
-    @Override
-    public List<Boolean> getBoolList(String path) {
-        return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
-                .map(JsonNode::asBoolean)
-                .collect(toCollection(ArrayFactory::dynamicArray));
-    }
-
-    @Override
-    public List<Double> getDoubleList(String path) {
-        return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
-                .map(JsonNode::asDouble)
-                .collect(toCollection(ArrayFactory::dynamicArray));
-
-    }
-
-    @Override
-    public List<String> getStringList(String path) {
-        return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
-                .map(JsonNode::asText)
-                .collect(toCollection(ArrayFactory::dynamicArray));
-    }
-
-    @Override
-    public List<Duration> getDurationList(String path) {
-        return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
-                .map(node -> parseDuration(node.asText()))
-                .collect(toCollection(ArrayFactory::dynamicArray));
-
-    }
-
-    @Override
-    public List<ConfigurationSource> getNestedList(String path) {
-        return stream(((Iterable<JsonNode>) () -> getYamlConfigNode(path).iterator()).spliterator(), false)
-                .map(node -> new YamlConfigurationSource(combine(section, path), type, file, node))
-                .collect(toCollection(ArrayFactory::dynamicArray));
-    }
-
-    @Override
-    public Set<String> getKeys() {
-        return stream(((Iterable<String>) configuration::fieldNames).spliterator(), false).collect(toCollection(SetFactory::set));
-    }
-
-    @Override
-    public boolean has(String path) {
-        JsonNodeType nodeType = getYamlConfigNode(path).getNodeType();
-        return nodeType != NULL && nodeType != MISSING;
+    @SuppressWarnings(NULLABLE_PROBLEMS)
+    public ImmutableSet<String> getKeys() {
+        return stream(((Iterable<String>) configuration::fieldNames).spliterator(), false).collect(immutableSetCollector());
     }
 
     private JsonNode getYamlConfigNode(String path) {
@@ -201,5 +134,10 @@ public class YamlConfigurationSource implements ConfigurationSource {
             node = node.path(path.substring(0, dotIndex));
             path = path.substring(dotIndex + 1);
         }
+    }
+    @Override
+    public boolean has(String path) {
+        JsonNode nodeType = getYamlConfigNode(path);
+        return nodeType.isNull() && !nodeType.isMissingNode();
     }
 }

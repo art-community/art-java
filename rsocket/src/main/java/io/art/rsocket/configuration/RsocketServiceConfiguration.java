@@ -21,10 +21,7 @@ package io.art.rsocket.configuration;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
-import static io.art.core.collection.ImmutableMap.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
-import static java.util.Optional.*;
-import java.util.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -34,11 +31,7 @@ public class RsocketServiceConfiguration {
 
     public static RsocketServiceConfiguration from(RsocketServerConfiguration serverConfiguration, ConfigurationSource source) {
         RsocketServiceConfiguration configuration = new RsocketServiceConfiguration(serverConfiguration);
-        configuration.methods = ofNullable(source.getNestedMap(METHODS_KEY))
-                .map(configurations -> configurations.entrySet()
-                        .stream()
-                        .collect(immutableMapCollector(Map.Entry::getKey, entry -> RsocketMethodConfiguration.from(configuration, entry.getValue()))))
-                .orElse(emptyImmutableMap());
+        configuration.methods = source.getNestedMap(METHODS_KEY, method -> RsocketMethodConfiguration.from(configuration, method));
         return configuration;
     }
 }

@@ -21,7 +21,7 @@ package io.art.rsocket.configuration;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.orElse;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
 
@@ -52,7 +52,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator override(RsocketModuleConfiguration configuration) {
-            //this.configuration.activateCommunicator = configuration.isActivateCommunicator();
+            this.configuration.activateCommunicator = configuration.isActivateCommunicator();
             this.configuration.activateServer = configuration.isActivateServer();
             return this;
         }

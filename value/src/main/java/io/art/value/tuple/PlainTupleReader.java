@@ -20,13 +20,13 @@ package io.art.value.tuple;
 
 import io.art.core.collection.*;
 import io.art.value.builder.*;
-import io.art.value.constants.ValueConstants.*;
+import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.exception.*;
 import io.art.value.immutable.*;
 import io.art.value.tuple.schema.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.value.constants.ValueConstants.ExceptionMessages.*;
+import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 import static io.art.value.factory.ArrayValueFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.BinaryValue.*;

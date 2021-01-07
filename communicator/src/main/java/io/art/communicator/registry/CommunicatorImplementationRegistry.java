@@ -16,23 +16,24 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation;
+package io.art.communicator.registry;
 
-import io.art.model.customizer.*;
-import lombok.*;
-import java.util.function.*;
+import io.art.communicator.implementation.*;
+import io.art.core.annotation.*;
+import io.art.core.collection.*;
+import static io.art.core.factory.ArrayFactory.*;
+import java.util.*;
 
-@Getter
-@Builder
-public class ModuleModel {
-    private final String mainModuleId;
-    private final ServerModel serverModel;
-    private final CommunicatorModel communicatorModel;
-    @Builder.Default
-    private ModuleCustomizer moduleCustomizer = new ModuleCustomizer();
+@UsedByGenerator
+public class CommunicatorImplementationRegistry<T extends CommunicatorImplementation> {
+    private final List<T> implementations = dynamicArray();
 
-    public ModuleModel customize(UnaryOperator<ModuleCustomizer> customizer) {
-        moduleCustomizer = customizer.apply(new ModuleCustomizer());
-        return this;
+    public ImmutableArray<T> get() {
+        return immutableArrayOf(implementations);
+    }
+
+    public T register(T implementation) {
+        implementations.add(implementation);
+        return implementation;
     }
 }

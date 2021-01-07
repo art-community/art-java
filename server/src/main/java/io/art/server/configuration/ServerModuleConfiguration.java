@@ -25,13 +25,11 @@ import io.art.server.model.*;
 import io.art.server.registry.*;
 import lombok.*;
 import reactor.core.scheduler.*;
-import static io.art.core.checker.NullityChecker.apply;
-import static io.art.core.collection.ImmutableMap.emptyImmutableMap;
-import static io.art.core.collection.ImmutableMap.immutableMapCollector;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.Defaults.*;
 import static java.util.Optional.*;
-import java.util.*;
 
 
 @Getter
@@ -48,11 +46,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
         public Configurator from(ConfigurationSource source) {
             configuration.scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
             configuration.configurations = ofNullable(source.getNested(SERVER_SECTION))
-                    .map(server -> server.getNestedMap(SERVER_SERVICES_KEY))
-                    .map(services -> services
-                            .entrySet()
-                            .stream()
-                            .collect(immutableMapCollector(Map.Entry::getKey, entry -> ServiceConfiguration.from(entry.getValue()))))
+                    .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, ServiceConfiguration::from))
                     .orElse(emptyImmutableMap());
             return this;
         }

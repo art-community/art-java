@@ -84,22 +84,22 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     }
 
     private Logger currentLogger() {
-        return configuration.isColored() ? new ColoredLogger(cast(LogManager.getLogger(LoggingModule.class))) : LogManager.getLogger(LoggingModule.class);
+        return configuration.isColored() ? new ColoredLogger(LoggingModule.class.getName()) : LogManager.getLogger(LoggingModule.class);
     }
 
     private Logger currentLogger(String topic) {
-        return configuration.isColored() ? new ColoredLogger(cast(LogManager.getLogger(topic))) : LogManager.getLogger(topic);
+        return configuration.isColored() ? new ColoredLogger(topic) : LogManager.getLogger(topic);
     }
 
     public static Logger logger() {
-        return loggingModule().configuration().isColored() ? new ColoredLogger(cast(LogManager.getLogger())) : LogManager.getLogger();
+        return loggingModule().configuration().isColored() ? new ColoredLogger(LoggingModule.class.getName()) : LogManager.getLogger();
     }
 
     public static Logger logger(String topic) {
-        return loggingModule().configuration().isColored() ? new ColoredLogger(cast(LogManager.getLogger(topic))) : LogManager.getLogger(topic);
+        return loggingModule().configuration().isColored() ? new ColoredLogger(topic) : LogManager.getLogger(topic);
     }
 
     public static Logger logger(Class<?> topicClass) {
-        return loggingModule().configuration().isColored() ? new ColoredLogger(cast(LogManager.getLogger(topicClass))) : LogManager.getLogger(topicClass);
+        return loggingModule().configuration().isColored() ? new ColoredLogger(topicClass.getName()) : LogManager.getLogger(topicClass);
     }
 }

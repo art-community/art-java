@@ -18,7 +18,7 @@
 
 package io.art.communicator.configuration;
 
-import io.art.communicator.specification.*;
+import io.art.communicator.registry.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
@@ -26,15 +26,16 @@ import lombok.*;
 import reactor.core.scheduler.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.*;
+import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.let;
 import static io.art.core.collection.ImmutableMap.*;
 import static java.util.Optional.*;
-import java.util.*;
 
 @Getter
 public class CommunicatorModuleConfiguration implements ModuleConfiguration {
-    private ImmutableMap<String, CommunicatorConfiguration> communicators = emptyImmutableMap();
+    private ImmutableMap<String, CommunicatorConfiguration> configurations = emptyImmutableMap();
     private Scheduler scheduler;
-    private ImmutableMap<String, Object> registry = emptyImmutableMap();
+    private CommunicatorProxyRegistry registry = new CommunicatorProxyRegistry();
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<CommunicatorModuleConfiguration, Configurator> {
@@ -43,20 +44,16 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator from(ConfigurationSource source) {
             configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
-            configuration.communicators = ofNullable(source.getNested(COMMUNICATOR_SECTION))
-                    .map(server -> server.getNestedMap(TARGETS_KEY))
-                    .map(services -> services
-                            .entrySet()
-                            .stream()
-                            .collect(immutableMapCollector(Map.Entry::getKey, entry -> CommunicatorConfiguration.from(entry.getValue()))))
+            configuration.configurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))
+                    .map(server -> server.getNestedMap(TARGETS_KEY, CommunicatorConfiguration::from))
                     .orElse(emptyImmutableMap());
             return this;
         }
 
         @Override
         public Configurator override(CommunicatorModuleConfiguration configuration) {
-            this.configuration.communicators = configuration.getCommunicators();
-            this.configuration.registry = configuration.getRegistry();
+            ifNotEmpty(configuration.getConfigurations(), configurations -> this.configuration.configurations = configurations);
+            let(configuration.getRegistry(), registry -> this.configuration.registry = registry);
             return this;
         }
     }

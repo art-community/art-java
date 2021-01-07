@@ -18,107 +18,17 @@
 
 package io.art.configurator.source;
 
-import io.art.core.constants.*;
 import io.art.core.source.*;
 import lombok.*;
+import lombok.experimental.Delegate;
 import static com.typesafe.config.ConfigFactory.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
-import static io.art.core.constants.StringConstants.EMPTY_STRING;
-import java.time.*;
-import java.util.*;
+import static io.art.core.constants.StringConstants.*;
 
 @Getter
-public class EnvironmentConfigurationSource implements ConfigurationSource {
+public class EnvironmentConfigurationSource implements NestedConfiguration {
     private final ModuleConfigurationSourceType type = ENVIRONMENT;
+    @Delegate
     private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(EMPTY_STRING, ENVIRONMENT, systemEnvironment());
 
-    @Override
-    public String getSection() {
-        return typesafeConfigurationSource.getSection();
-    }
-
-    @Override
-    public Integer getInt(String path) {
-        return typesafeConfigurationSource.getInt(path);
-    }
-
-    @Override
-    public Long getLong(String path) {
-        return typesafeConfigurationSource.getLong(path);
-    }
-
-    @Override
-    public Boolean getBool(String path) {
-        return typesafeConfigurationSource.getBool(path);
-    }
-
-    @Override
-    public Double getDouble(String path) {
-        return typesafeConfigurationSource.getDouble(path);
-    }
-
-    @Override
-    public Float getFloat(String path) {
-        return typesafeConfigurationSource.getFloat(path);
-    }
-
-    @Override
-    public String getString(String path) {
-        return typesafeConfigurationSource.getString(path);
-    }
-
-    @Override
-    public Duration getDuration(String path) {
-        return typesafeConfigurationSource.getDuration(path);
-    }
-
-    @Override
-    public ConfigurationSource getNested(String path) {
-        return typesafeConfigurationSource.getNested(path);
-    }
-
-    @Override
-    public List<Integer> getIntList(String path) {
-        return typesafeConfigurationSource.getIntList(path);
-    }
-
-    @Override
-    public List<Long> getLongList(String path) {
-        return typesafeConfigurationSource.getLongList(path);
-    }
-
-    @Override
-    public List<Boolean> getBoolList(String path) {
-        return typesafeConfigurationSource.getBoolList(path);
-    }
-
-    @Override
-    public List<Double> getDoubleList(String path) {
-        return typesafeConfigurationSource.getDoubleList(path);
-    }
-
-    @Override
-    public List<String> getStringList(String path) {
-        return typesafeConfigurationSource.getStringList(path);
-    }
-
-    @Override
-    public List<Duration> getDurationList(String path) {
-        return typesafeConfigurationSource.getDurationList(path);
-    }
-
-    @Override
-    public List<ConfigurationSource> getNestedList(String path) {
-        return typesafeConfigurationSource.getNestedList(path);
-    }
-
-    @Override
-    public Set<String> getKeys() {
-        return typesafeConfigurationSource.getKeys();
-    }
-
-    @Override
-    public boolean has(String path) {
-        return typesafeConfigurationSource.has(path);
-    }
 }

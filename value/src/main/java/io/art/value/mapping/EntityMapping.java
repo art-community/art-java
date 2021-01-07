@@ -19,7 +19,7 @@
 package io.art.value.mapping;
 
 import io.art.core.annotation.*;
-import io.art.core.factory.*;
+import io.art.core.collection.*;
 import io.art.value.immutable.Value;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
@@ -28,10 +28,10 @@ import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.value.constants.ValueConstants.ValueType.*;
+import static io.art.core.collector.SetCollector.setCollector;
+import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.factory.EntityFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
-import static java.util.stream.Collectors.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -44,40 +44,12 @@ public class EntityMapping {
         return map(stringPrimitive(key), mapper);
     }
 
-    public <T, V extends Value> T map(Long key, ValueToModelMapper<T, V> mapper) {
-        return map(longPrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Integer key, ValueToModelMapper<T, V> mapper) {
-        return map(intPrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Double key, ValueToModelMapper<T, V> mapper) {
-        return map(doublePrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Boolean key, ValueToModelMapper<T, V> mapper) {
-        return map(boolPrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Byte key, ValueToModelMapper<T, V> mapper) {
-        return map(bytePrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Float key, ValueToModelMapper<T, V> mapper) {
-        return map(floatPrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Character key, ValueToModelMapper<T, V> mapper) {
-        return map(charPrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Short key, ValueToModelMapper<T, V> mapper) {
-        return map(shortPrimitive(key), mapper);
-    }
-
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
         return entity.map(primitive, mapper);
+    }
+
+    public <T, V extends Value> Optional<T> mapOptional(String key, ValueToModelMapper<Optional<T>, V> mapper) {
+        return entity.mapOptional(stringPrimitive(key), mapper);
     }
 
     public <T, V extends Value> T mapNested(String key, ValueToModelMapper<T, V> mapper) {
@@ -88,6 +60,7 @@ public class EntityMapping {
         return entity.mapOrDefault(stringPrimitive(key), valueType, valueMapper);
     }
 
+
     public static <K, V> EntityToModelMapper<Map<K, V>> toMap(PrimitiveToModelMapper<K> toKey, PrimitiveFromModelMapper<K> fromKey, ValueToModelMapper<V, ? extends Value> value) {
         return entity -> let(entity, notNull -> notNull.asMap(toKey, fromKey, value));
     }
@@ -96,11 +69,25 @@ public class EntityMapping {
         Function<Map<K, V>, Entity> mapper = notNull -> entity(notNull.keySet()
                 .stream()
                 .map(fromKey::map)
-                .collect(toCollection(SetFactory::set)), key -> value.map(notNull.get(toKey.map(key))));
+                .collect(setCollector()), key -> value.map(notNull.get(toKey.map(key))));
         return entity -> let(entity, mapper);
     }
 
-    public static <K, V> EntityToModelMapper<Map<K, V>> toMutableMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
-        return entity -> let(entity, notNull -> notNull.toMap(keyMapper, valueMapper));
+
+    public static <K, V> EntityToModelMapper<ImmutableMap<K, V>> toImmutableMap(PrimitiveToModelMapper<K> toKey, PrimitiveFromModelMapper<K> fromKey, ValueToModelMapper<V, ? extends Value> value) {
+        return entity -> let(entity, notNull -> notNull.asImmutableMap(toKey, fromKey, value));
+    }
+
+    public static <K, V> EntityFromModelMapper<ImmutableMap<K, V>> fromImmutableMap(PrimitiveToModelMapper<K> toKey, PrimitiveFromModelMapper<K> fromKey, ValueFromModelMapper<V, ? extends Value> value) {
+        Function<ImmutableMap<K, V>, Entity> mapper = notNull -> entity(notNull.keySet()
+                .stream()
+                .map(fromKey::map)
+                .collect(setCollector()), key -> value.map(notNull.get(toKey.map(key))));
+        return entity -> let(entity, mapper);
+    }
+
+
+    public static <K, V> EntityToModelMapper<Map<K, V>> toMutableMap(PrimitiveToModelMapper<K> toKey, ValueToModelMapper<V, ? extends Value> value) {
+        return entity -> let(entity, notNull -> notNull.toMap(toKey, value));
     }
 }

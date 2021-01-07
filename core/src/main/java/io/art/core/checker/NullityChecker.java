@@ -46,6 +46,12 @@ public class NullityChecker {
         return isNull(value) ? orElse.get() : value;
     }
 
+    public static <T> void apply(T value, Runnable action) {
+        if (nonNull(value)) {
+            action.run();
+        }
+    }
+
     public static <T> void apply(T value, Consumer<T> consumer) {
         if (nonNull(value)) {
             consumer.accept(value);
@@ -54,6 +60,18 @@ public class NullityChecker {
 
     public static <T, R> R let(T value, Function<T, R> action) {
         return nonNull(value) ? action.apply(value) : null;
+    }
+
+    public static <T> T orNull(T value, Predicate<T> condition) {
+        return condition.test(value) ? value : null;
+    }
+
+    public static <T> T orNull(T value, Supplier<Boolean> condition) {
+        return condition.get() ? value : null;
+    }
+
+    public static <T> T orNull(T value, Boolean condition) {
+        return condition ? value : null;
     }
 
     public static <T, R> R orNull(T value, Predicate<T> condition, Function<T, R> action) {

@@ -16,20 +16,22 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation;
+package io.art.model.implementation.communicator;
 
 import io.art.communicator.specification.CommunicatorSpecification.*;
-import lombok.*;
+import static io.art.communicator.constants.CommunicatorModuleConstants.*;
 import java.util.function.*;
 
-@Getter
-@RequiredArgsConstructor
-public class CommunicatorSpecificationModel {
-    private final String id;
-    private final Class<?> implementationInterface;
-    private final Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> decorator;
+public interface CommunicatorModel {
+    String getId();
 
-    public CommunicatorSpecificationBuilder implement(CommunicatorSpecificationBuilder builder) {
-        return decorator.apply(builder);
+    Class<?> getProxyClass();
+
+    CommunicationProtocol getProtocol();
+
+    Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> getDecorator();
+
+    default CommunicatorSpecificationBuilder implement(CommunicatorSpecificationBuilder builder) {
+        return getDecorator().apply(builder);
     }
 }

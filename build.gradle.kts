@@ -38,7 +38,7 @@ tasks.withType(Wrapper::class.java) {
     gradleVersion = "6.5.1"
 }
 
-group = "io.github.art"
+group = "io.art"
 
 buildScan {
     termsOfServiceUrl = "https://gradle.com/terms-of-service"

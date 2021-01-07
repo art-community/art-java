@@ -26,12 +26,13 @@ import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.context.*;
 import io.art.core.lazy.*;
 import io.art.core.module.*;
-import io.art.core.module.Module;
 import io.art.core.source.*;
 import io.art.json.module.*;
 import io.art.logging.*;
 import io.art.model.customizer.*;
-import io.art.model.implementation.*;
+import io.art.model.implementation.communicator.*;
+import io.art.model.implementation.module.*;
+import io.art.model.implementation.server.*;
 import io.art.rsocket.module.*;
 import io.art.server.module.*;
 import io.art.tarantool.module.*;
@@ -39,6 +40,7 @@ import io.art.value.module.*;
 import io.art.xml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
@@ -46,31 +48,33 @@ import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.launcher.ModuleLauncherConstants.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.model.constants.ModelConstants.Protocol.*;
 import static java.util.Optional.*;
 import java.util.concurrent.atomic.*;
 
 @UtilityClass
 @UsedByGenerator
 public class ModuleLauncher {
-    private final static AtomicBoolean launched = new AtomicBoolean(false);
+    private static final AtomicBoolean launched = new AtomicBoolean(false);
 
     public static void launch(ModuleModel model) {
         if (launched.compareAndSet(false, true)) {
             ConfiguratorModule configurator = new ConfiguratorModule();
             ImmutableArray<ConfigurationSource> sources = configurator
-                    .loadConfigurations()
+                    .initializeConfigurator()
                     .configuration()
                     .orderedSources();
-            ModuleCustomizer moduleCustomizer = model.getModuleCustomizer();
+
+            ModuleCustomizer moduleCustomizer = model.getCustomizer();
+            ConfiguratorCustomizer configuratorCustomizer = moduleCustomizer.configurator().apply(new ConfiguratorCustomizer());
             ValueCustomizer valueCustomizer = moduleCustomizer.value().apply(new ValueCustomizer());
             LoggingCustomizer loggingCustomizer = moduleCustomizer.logging().apply(new LoggingCustomizer());
             ServerCustomizer serverCustomizer = moduleCustomizer.server().apply(new ServerCustomizer());
             CommunicatorCustomizer communicatorCustomizer = moduleCustomizer.communicator().apply(new CommunicatorCustomizer());
             RsocketCustomizer rsocketCustomizer = moduleCustomizer.rsocket().apply(new RsocketCustomizer());
             ImmutableArray.Builder<Module> modules = immutableArrayBuilder();
+
             modules.add(
-                    configurator,
+                    configurator(configurator, sources, configuratorCustomizer),
                     value(sources, valueCustomizer),
                     logging(sources, loggingCustomizer),
                     json(sources),
@@ -83,8 +87,14 @@ public class ModuleLauncher {
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
             initialize(new DefaultContextConfiguration(model.getMainModuleId()), modules.build(), message -> logger.get().info(message));
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
+            model.getOnLoad().run();
             if (needBlock(rsocketCustomizer)) block();
         }
+    }
+
+    private static Module configurator(ConfiguratorModule configuratorModule, ImmutableArray<ConfigurationSource> sources, ConfiguratorCustomizer configuratorCustomizer) {
+        ofNullable(configuratorCustomizer).ifPresent(customizer -> configuratorModule.configure(configurator -> configurator.override(customizer.configure(sources))));
+        return configuratorModule;
     }
 
     private static ValueModule value(ImmutableArray<ConfigurationSource> sources, ValueCustomizer valueCustomizer) {
@@ -127,12 +137,12 @@ public class ModuleLauncher {
 
     private static RsocketModule rsocket(ImmutableArray<ConfigurationSource> sources, ModuleModel model, RsocketCustomizer rsocketCustomizer) {
         RsocketModule rsocket = new RsocketModule();
-        ServerModel serverModel = model.getServerModel();
-        CommunicatorModel communicatorModel = model.getCommunicatorModel();
-        if (serverModel.getServices().values().stream().anyMatch(service -> service.getProtocol() == RSOCKET)) {
+        ServerModuleModel serverModel = model.getServerModel();
+        CommunicatorModuleModel communicatorModel = model.getCommunicatorModel();
+        if (isNotEmpty(serverModel.getRsocketServices())) {
             rsocketCustomizer.activateServer();
         }
-        if (!communicatorModel.getCommunicators().isEmpty()) {
+        if (isNotEmpty(communicatorModel.getRsocketCommunicators())) {
             rsocketCustomizer.activateCommunicator();
         }
         rsocket.configure(configurator -> configurator.from(sources).override(rsocketCustomizer.getConfiguration()));

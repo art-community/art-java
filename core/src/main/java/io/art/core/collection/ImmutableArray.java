@@ -22,124 +22,47 @@ import com.google.common.collect.*;
 import static io.art.core.caster.Caster.*;
 import static java.util.Collections.*;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
-public class ImmutableArray<T> implements Iterable<T> {
-    private final List<T> array;
+public interface ImmutableArray<T> extends ImmutableCollection<T> {
+    ImmutableArray<?> EMPTY = new ImmutableArrayImplementation<>(emptyList());
 
-    private static final ImmutableArray<?> EMPTY = new ImmutableArray<>(emptyList());
-
-    private static final Collector<Object, ?, ImmutableArray<Object>> COLLECTOR = Collector.of(
+    Collector<Object, ?, ImmutableArray<Object>> COLLECTOR = Collector.of(
             ImmutableArray::immutableArrayBuilder,
-            Builder::add,
-            Builder::combine,
-            Builder::build
+            ImmutableArray.Builder::add,
+            ImmutableArray.Builder::combine,
+            ImmutableArray.Builder::build
     );
 
-    public ImmutableArray(Collection<T> collection) {
-        this.array = new ArrayList<>(collection);
-    }
+    T get(int index);
 
-    public ImmutableArray(ImmutableList<T> list) {
-        this.array = list;
-    }
+    List<T> toMutable();
 
-    public int size() {
-        return array.size();
-    }
+    int indexOf(Object object);
 
-    public boolean isEmpty() {
-        return array.isEmpty();
-    }
+    int lastIndexOf(Object object);
 
-    public boolean contains(Object object) {
-        return array.contains(object);
-    }
-
-    public boolean containsAll(Collection<?> c) {
-        return array.containsAll(c);
-    }
-
-    public Object[] toArray() {
-        return array.toArray();
-    }
-
-    public T[] toArray(T[] array) {
-        return this.array.toArray(array);
-    }
-
-    public T get(int index) {
-        return array.get(index);
-    }
-
-    public Stream<T> stream() {
-        return array.stream();
-    }
-
-    public Stream<T> parallelStream() {
-        return array.parallelStream();
-    }
-
-    public void forEach(Consumer<? super T> action) {
-        array.forEach(action);
-    }
-
-    public List<T> toMutable() {
-        return new ArrayList<>(array);
-    }
-
-    @Override
-    public Iterator<T> iterator() {
-        return array.iterator();
-    }
-
-    @Override
-    public Spliterator<T> spliterator() {
-        return array.spliterator();
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) return true;
-        if (!(object instanceof ImmutableArray)) return false;
-        return array.equals(((ImmutableArray<?>) object).array);
-    }
-
-    @Override
-    public int hashCode() {
-        return array.hashCode();
-    }
-
-    public int indexOf(Object object) {
-        return array.indexOf(object);
-    }
-
-    public int lastIndexOf(Object object) {
-        return array.lastIndexOf(object);
-    }
-
-    public static <T> ImmutableArray<T> emptyImmutableArray() {
+    static <T> ImmutableArray<T> emptyImmutableArray() {
         return cast(EMPTY);
     }
 
-    public static <T> ImmutableArray<T> immutableSortedArray(Collection<T> elements, Comparator<T> comparator) {
-        return new ImmutableArray<>(Ordering.from(comparator).immutableSortedCopy(elements));
+    static <T> ImmutableArray<T> immutableSortedArray(Iterable<T> elements, Comparator<T> comparator) {
+        return new ImmutableArrayImplementation<>(Ordering.from(comparator).immutableSortedCopy(elements));
     }
 
-    public static <T> Collector<T, T, ImmutableArray<T>> immutableArrayCollector() {
+    static <T> Collector<T, T, ImmutableArray<T>> immutableArrayCollector() {
         return cast(COLLECTOR);
     }
 
-    public static <T> Builder<T> immutableArrayBuilder() {
+    static <T> Builder<T> immutableArrayBuilder() {
         return new Builder<>();
     }
 
-    public static <T> Builder<T> immutableArrayBuilder(int size) {
+    static <T> Builder<T> immutableArrayBuilder(int size) {
         return new Builder<>(size);
     }
 
-    public static class Builder<T> {
+    class Builder<T> {
         private final ImmutableList.Builder<T> builder;
 
         public Builder() {
@@ -181,7 +104,7 @@ public class ImmutableArray<T> implements Iterable<T> {
         }
 
         public ImmutableArray<T> build() {
-            return new ImmutableArray<>(builder.build());
+            return new ImmutableArrayImplementation<>(builder.build());
         }
     }
 }
