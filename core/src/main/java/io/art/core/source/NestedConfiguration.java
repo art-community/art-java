@@ -6,7 +6,6 @@ import io.art.core.extensions.*;
 import io.art.core.parser.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static java.util.function.Function.*;
 import java.time.*;

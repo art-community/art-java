@@ -103,7 +103,7 @@ public class Context {
         messages.forEach(printer);
         for (Module module : modules) {
             module.onLoad();
-            ifNotEmpty(module.print(), printer);
+            applyIfNotEmpty(module.print(), printer);
         }
     }
 
