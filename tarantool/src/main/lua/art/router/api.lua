@@ -67,28 +67,8 @@ local api = {
             return result
         end,
 
-        schemaCount = function(space)
-            local counts = art.cluster.space.execute('schemaCount', {space})
-            local result = 0
-            if (not counts[1]) then return counts end
-            for _,v in pairs(counts[2]) do
-                result = result + v[2]
-            end
-            return result
-        end,
-
         len = function(space)
             local counts = art.cluster.space.execute('len', {space})
-            local result = 0
-            if (not counts[1]) then return counts end
-            for _,v in pairs(counts[2]) do
-                result = result + v[2]
-            end
-            return result
-        end,
-
-        schemaLen = function(space)
-            local counts = art.cluster.space.execute('schemaLen', {space})
             local result = 0
             if (not counts[1]) then return counts end
             for _,v in pairs(counts[2]) do

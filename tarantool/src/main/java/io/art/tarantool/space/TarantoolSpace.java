@@ -125,13 +125,6 @@ public class TarantoolSpace {
         return cast(transactionManager.callRO(LEN, TarantoolResponseMapping::toLong, space));
     }
 
-    public TarantoolRecord<Long> schemaCount(){
-        return cast(transactionManager.callRO(SCHEMA_COUNT, TarantoolResponseMapping::toLong, space));
-    }
-
-    public TarantoolRecord<Long> schemaLen(){
-        return cast(transactionManager.callRO(SCHEMA_LEN, TarantoolResponseMapping::toLong, space));
-    }
 
     public void truncate(){
         transactionManager.callRW(TRUNCATE, TarantoolResponseMapping::toEmpty, space);

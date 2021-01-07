@@ -140,16 +140,8 @@ local box = {
             return box.space[space]:count()
         end,
 
-        schemaCount = function(space)
-            return art.core.schemaOf(space):count()
-        end,
-
         len = function(space)
             return box.space[space]:len()
-        end,
-
-        schemaLen = function(space)
-            return art.core.schemaOf(space):len()
         end,
 
         createIndex = function(space, name, index)
