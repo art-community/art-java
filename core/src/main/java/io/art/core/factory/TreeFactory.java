@@ -1,5 +1,6 @@
 package io.art.core.factory;
 
+import io.art.core.collection.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static java.util.Arrays.*;
@@ -7,8 +8,8 @@ import java.util.*;
 
 @UtilityClass
 public class TreeFactory {
-    public static <T extends Comparable<T>> TreeSet<T> tree() {
-        return new TreeSet<>();
+    public static <T> TreeSet<T> tree(Comparator<T> comparator) {
+        return new TreeSet<>(comparator);
     }
 
     @SafeVarargs
@@ -19,19 +20,19 @@ public class TreeFactory {
         return treeSet;
     }
 
-    @SafeVarargs
-    public static <T extends Comparable<T>> TreeSet<T> treeOf(T... elements) {
-        TreeSet<T> treeSet = new TreeSet<>();
-        if (isEmpty(elements)) return treeSet;
-        treeSet.addAll(asList(elements));
-        return treeSet;
-    }
-
     public static <T> TreeSet<T> treeOf(Collection<T> elements, Comparator<T> comparator) {
         TreeSet<T> treeSet = new TreeSet<>(comparator);
         if (isEmpty(elements)) return treeSet;
         treeSet.addAll(elements);
         return treeSet;
+    }
+
+    public static <T> TreeSet<T> treeOf(ImmutableSet<T> elements, Comparator<T> comparator) {
+        return isEmpty(elements) ? tree(comparator) : treeOf(elements.toMutable(), comparator);
+    }
+
+    public static <T> TreeSet<T> treeOf(ImmutableArray<T> elements, Comparator<T> comparator) {
+        return isEmpty(elements) ? tree(comparator) : treeOf(elements.toMutable(), comparator);
     }
 
     public static TreeSet<Long> treeOf(Comparator<Long> comparator, long[] elements) {
@@ -80,6 +81,13 @@ public class TreeFactory {
         TreeSet<Short> treeSet = new TreeSet<>(comparator);
         if (isEmpty(elements)) return treeSet;
         for (short element : elements) treeSet.add(element);
+        return treeSet;
+    }
+
+    public static TreeSet<Character> treeOf(Comparator<Character> comparator, char[] elements) {
+        TreeSet<Character> treeSet = new TreeSet<>(comparator);
+        if (isEmpty(elements)) return treeSet;
+        for (char element : elements) treeSet.add(element);
         return treeSet;
     }
 }

@@ -1,5 +1,6 @@
 package io.art.core.factory;
 
+import io.art.core.collection.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static java.util.Arrays.*;
@@ -15,9 +16,12 @@ public class QueueFactory {
         return isEmpty(elements) ? new LinkedList<>() : new LinkedList<>(elements);
     }
 
-    @SafeVarargs
-    public static <T> Deque<T> dequeOf(T... elements) {
-        return isEmpty(elements) ? new LinkedList<>() : new LinkedList<>(asList(elements));
+    public static <T> Deque<T> dequeOf(ImmutableSet<T> elements) {
+        return isEmpty(elements) ? deque() : dequeOf(elements.toMutable());
+    }
+
+    public static <T> Deque<T> dequeOf(ImmutableArray<T> elements) {
+        return isEmpty(elements) ? deque() : dequeOf(elements.toMutable());
     }
 
     public static Deque<Long> dequeOf(long[] elements) {
@@ -76,14 +80,14 @@ public class QueueFactory {
         return deque;
     }
 
+    @SafeVarargs
+    public static <T> Deque<T> dequeOf(T... elements) {
+        return isEmpty(elements) ? new LinkedList<>() : new LinkedList<>(asList(elements));
+    }
+
 
     public static <T> Queue<T> queue() {
         return new LinkedList<>();
-    }
-
-    @SafeVarargs
-    public static <T> Queue<T> queueOf(T... elements) {
-        return isEmpty(elements) ? new LinkedList<>() : new LinkedList<>(asList(elements));
     }
 
     public static Queue<Long> queueOf(long[] elements) {
@@ -146,21 +150,38 @@ public class QueueFactory {
         return isEmpty(elements) ? new LinkedList<>() : new LinkedList<>(elements);
     }
 
+    public static <T> Queue<T> queueOf(ImmutableSet<T> elements) {
+        return isEmpty(elements) ? queue() : queueOf(elements.toMutable());
+    }
+
+    public static <T> Queue<T> queueOf(ImmutableArray<T> elements) {
+        return isEmpty(elements) ? queue() : queueOf(elements.toMutable());
+    }
+
+    @SafeVarargs
+    public static <T> Queue<T> queueOf(T... elements) {
+        return isEmpty(elements) ? new LinkedList<>() : new LinkedList<>(asList(elements));
+    }
 
     public static <T> PriorityQueue<T> priorityQueue(Comparator<T> comparator) {
         return new PriorityQueue<>(comparator);
     }
 
-    @SafeVarargs
-    public static <T> PriorityQueue<T> priorityQueueOf(Comparator<T> comparator, T... elements) {
-        PriorityQueue<T> queue = new PriorityQueue<>(comparator);
-        queue.addAll(asList(elements));
-        return isEmpty(elements) ? new PriorityQueue<>(comparator) : queue;
-    }
-
     public static <T> PriorityQueue<T> priorityQueueOf(Comparator<T> comparator, Collection<T> elements) {
         PriorityQueue<T> queue = new PriorityQueue<>(comparator);
         queue.addAll(elements);
+        return isEmpty(elements) ? new PriorityQueue<>(comparator) : queue;
+    }
+
+    public static <T> PriorityQueue<T> priorityQueueOf(Comparator<T> comparator, ImmutableArray<T> elements) {
+        PriorityQueue<T> queue = new PriorityQueue<>(comparator);
+        queue.addAll(elements.toMutable());
+        return isEmpty(elements) ? new PriorityQueue<>(comparator) : queue;
+    }
+
+    public static <T> PriorityQueue<T> priorityQueueOf(Comparator<T> comparator, ImmutableSet<T> elements) {
+        PriorityQueue<T> queue = new PriorityQueue<>(comparator);
+        queue.addAll(elements.toMutable());
         return isEmpty(elements) ? new PriorityQueue<>(comparator) : queue;
     }
 
@@ -213,6 +234,13 @@ public class QueueFactory {
     public static PriorityQueue<Character> priorityQueueOf(Comparator<Character> comparator, char[] elements) {
         PriorityQueue<Character> queue = new PriorityQueue<>(comparator);
         for (char element : elements) queue.add(element);
+        return isEmpty(elements) ? new PriorityQueue<>(comparator) : queue;
+    }
+
+    @SafeVarargs
+    public static <T> PriorityQueue<T> priorityQueueOf(Comparator<T> comparator, T... elements) {
+        PriorityQueue<T> queue = new PriorityQueue<>(comparator);
+        queue.addAll(asList(elements));
         return isEmpty(elements) ? new PriorityQueue<>(comparator) : queue;
     }
 }

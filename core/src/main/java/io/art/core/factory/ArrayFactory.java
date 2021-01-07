@@ -2,7 +2,6 @@ package io.art.core.factory;
 
 import io.art.core.collection.*;
 import lombok.experimental.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collector.ArrayCollector.*;
@@ -16,15 +15,51 @@ import java.util.stream.*;
 @UtilityClass
 public class ArrayFactory {
     public static <T> List<T> fixedArrayOf(Collection<T> elements) {
-        return isEmpty(elements) ? emptyList() : new ArrayList<>(elements);
+        return isEmpty(elements) ? emptyList() : dynamicArrayOf(elements);
     }
 
     public static <T> List<T> fixedArrayOf(ImmutableArray<T> elements) {
-        return isEmpty(elements) ? emptyList() : new ArrayList<>(elements.toMutable());
+        return isEmpty(elements) ? emptyList() : elements.toMutable();
     }
 
     public static <T> List<T> fixedArrayOf(ImmutableSet<T> elements) {
-        return isEmpty(elements) ? emptyList() : new ArrayList<>(elements.toMutable());
+        return isEmpty(elements) ? emptyList() : dynamicArrayOf(elements.toMutable());
+    }
+
+    public static <T> List<T> fixedArrayOf(Stream<T> stream) {
+        return isEmpty(stream) ? emptyList() : dynamicArrayOf(stream);
+    }
+
+    public static List<Long> fixedArrayOf(long[] elements) {
+        return isEmpty(elements) ? emptyList() : dynamicArrayOf(elements);
+    }
+
+    public static List<Short> fixedArrayOf(short[] elements) {
+        return isEmpty(elements) ? emptyList() : dynamicArrayOf(elements);
+    }
+
+    public static List<Integer> fixedArrayOf(int[] elements) {
+        return isEmpty(elements) ? emptyList() : dynamicArrayOf(elements);
+    }
+
+    public static List<Byte> fixedArrayOf(byte[] elements) {
+        return isEmpty(elements) ? emptyList() : dynamicArrayOf(elements);
+    }
+
+    public static List<Double> fixedArrayOf(double[] elements) {
+        return isEmpty(elements) ? emptyList() : dynamicArrayOf(elements);
+    }
+
+    public static List<Float> fixedArrayOf(float[] elements) {
+        return isEmpty(elements) ? emptyList() : dynamicArrayOf(elements);
+    }
+
+    public static List<Boolean> fixedArrayOf(boolean[] elements) {
+        return isEmpty(elements) ? emptyList() : dynamicArrayOf(elements);
+    }
+
+    public static List<Character> fixedArrayOf(char[] elements) {
+        return isEmpty(elements) ? emptyList() : dynamicArrayOf(elements);
     }
 
     @SafeVarargs
@@ -32,26 +67,121 @@ public class ArrayFactory {
         return isEmpty(elements) ? emptyList() : asList(elements);
     }
 
-    public static <T> List<T> fixedArrayOf(Stream<T> stream) {
-        return isEmpty(stream) ? emptyList() : asList(cast(stream.toArray()));
-    }
-
 
     public static <T> ImmutableArray<T> immutableArrayOf(Iterable<T> elements) {
         return isEmpty(elements) ? emptyImmutableArray() : new ImmutableArrayImplementation<>(elements);
     }
 
-    public static <T> ImmutableArray<T> immutableSortedArrayOf(Comparator<T> comparator, Iterable<T> elements) {
+    public static <T> ImmutableArray<T> immutableSortedArrayOf(Iterable<T> elements, Comparator<T> comparator) {
         return isEmpty(elements) ? emptyImmutableArray() : immutableSortedArray(elements, comparator);
+    }
+
+
+    public static <T> ImmutableArray<T> immutableSortedArrayOf(Stream<T> stream, Comparator<T> comparator) {
+        return isEmpty(stream) ? emptyImmutableArray() : immutableSortedArray(fixedArrayOf(stream), comparator);
+    }
+
+    public static ImmutableArray<Long> immutableSortedArrayOf(long[] elements, Comparator<Long> comparator) {
+        return isEmpty(elements) ? emptyImmutableArray() : immutableSortedArray(fixedArrayOf(elements), comparator);
+    }
+
+    public static ImmutableArray<Short> immutableSortedArrayOf(short[] elements, Comparator<Short> comparator) {
+        return isEmpty(elements) ? emptyImmutableArray() : immutableSortedArray(fixedArrayOf(elements), comparator);
+    }
+
+    public static ImmutableArray<Integer> immutableSortedArrayOf(int[] elements, Comparator<Integer> comparator) {
+        return isEmpty(elements) ? emptyImmutableArray() : immutableSortedArray(fixedArrayOf(elements), comparator);
+    }
+
+    public static ImmutableArray<Byte> immutableSortedArrayOf(byte[] elements, Comparator<Byte> comparator) {
+        return isEmpty(elements) ? emptyImmutableArray() : immutableSortedArray(fixedArrayOf(elements), comparator);
+    }
+
+    public static ImmutableArray<Double> immutableSortedArrayOf(double[] elements, Comparator<Double> comparator) {
+        return isEmpty(elements) ? emptyImmutableArray() : immutableSortedArray(fixedArrayOf(elements), comparator);
+    }
+
+    public static ImmutableArray<Float> immutableSortedArrayOf(float[] elements, Comparator<Float> comparator) {
+        return isEmpty(elements) ? emptyImmutableArray() : immutableSortedArray(fixedArrayOf(elements), comparator);
+    }
+
+    public static ImmutableArray<Boolean> immutableSortedArrayOf(boolean[] elements, Comparator<Boolean> comparator) {
+        return isEmpty(elements) ? emptyImmutableArray() : immutableSortedArray(fixedArrayOf(elements), comparator);
+    }
+
+    public static ImmutableArray<Character> immutableSortedArrayOf(char[] elements, Comparator<Character> comparator) {
+        return isEmpty(elements) ? emptyImmutableArray() : immutableSortedArray(fixedArrayOf(elements), comparator);
+    }
+
+    @SafeVarargs
+    public static <T> ImmutableArray<T> immutableSortedArrayOf(Comparator<T> comparator, T... elements) {
+        return isEmpty(elements) ? emptyImmutableArray() : immutableSortedArray(fixedArrayOf(elements), comparator);
+    }
+
+
+    public static <T> ImmutableArray<T> immutableArrayOf(Stream<T> stream) {
+        return isNull(stream) ? emptyImmutableArray() : stream.collect(immutableArrayCollector());
+    }
+
+    public static ImmutableArray<Long> immutableArrayOf(long[] elements) {
+        if (isEmpty(elements)) return emptyImmutableArray();
+        Builder<Long> builder = immutableArrayBuilder();
+        for (long element : elements) builder.add(element);
+        return builder.build();
+    }
+
+    public static ImmutableArray<Short> immutableArrayOf(short[] elements) {
+        if (isEmpty(elements)) return emptyImmutableArray();
+        Builder<Short> builder = immutableArrayBuilder();
+        for (short element : elements) builder.add(element);
+        return builder.build();
+    }
+
+    public static ImmutableArray<Integer> immutableArrayOf(int[] elements) {
+        if (isEmpty(elements)) return emptyImmutableArray();
+        Builder<Integer> builder = immutableArrayBuilder();
+        for (int element : elements) builder.add(element);
+        return builder.build();
+    }
+
+    public static ImmutableArray<Byte> immutableArrayOf(byte[] elements) {
+        if (isEmpty(elements)) return emptyImmutableArray();
+        Builder<Byte> builder = immutableArrayBuilder();
+        for (byte element : elements) builder.add(element);
+        return builder.build();
+    }
+
+    public static ImmutableArray<Double> immutableArrayOf(double[] elements) {
+        if (isEmpty(elements)) return emptyImmutableArray();
+        Builder<Double> builder = immutableArrayBuilder();
+        for (double element : elements) builder.add(element);
+        return builder.build();
+    }
+
+    public static ImmutableArray<Float> immutableArrayOf(float[] elements) {
+        if (isEmpty(elements)) return emptyImmutableArray();
+        Builder<Float> builder = immutableArrayBuilder();
+        for (float element : elements) builder.add(element);
+        return builder.build();
+    }
+
+    public static ImmutableArray<Boolean> immutableArrayOf(boolean[] elements) {
+        if (isEmpty(elements)) return emptyImmutableArray();
+        Builder<Boolean> builder = immutableArrayBuilder();
+        for (boolean element : elements) builder.add(element);
+        return builder.build();
+    }
+
+    public static ImmutableArray<Character> immutableArrayOf(char[] elements) {
+        if (isEmpty(elements)) return emptyImmutableArray();
+        Builder<Character> builder = immutableArrayBuilder();
+        for (char element : elements) builder.add(element);
+        return builder.build();
     }
 
     @SafeVarargs
     public static <T> ImmutableArray<T> immutableArrayOf(T... elements) {
         return isEmpty(elements) ? emptyImmutableArray() : new ImmutableArrayImplementation<>(asList(elements));
-    }
-
-    public static <T> ImmutableArray<T> immutableArrayOf(Stream<T> stream) {
-        return isNull(stream) ? emptyImmutableArray() : stream.collect(immutableArrayCollector());
     }
 
 
@@ -61,11 +191,6 @@ public class ArrayFactory {
 
     public static <T> List<T> dynamicArray(int size) {
         return size <= 0 ? new ArrayList<>() : new ArrayList<>(size);
-    }
-
-    @SafeVarargs
-    public static <T> List<T> dynamicArrayOf(T... elements) {
-        return isEmpty(elements) ? new ArrayList<>() : new ArrayList<>(asList(elements));
     }
 
     public static <T> List<T> dynamicArrayOf(Stream<T> stream) {
@@ -141,7 +266,14 @@ public class ArrayFactory {
     }
 
     @SafeVarargs
+    public static <T> List<T> dynamicArrayOf(T... elements) {
+        return isEmpty(elements) ? new ArrayList<>() : new ArrayList<>(asList(elements));
+    }
+
+
+    @SafeVarargs
     public static <T> T[] arrayOf(T... elements) {
         return elements;
     }
+
 }

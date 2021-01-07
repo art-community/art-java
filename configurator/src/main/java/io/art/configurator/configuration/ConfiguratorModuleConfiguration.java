@@ -27,8 +27,8 @@ import io.art.core.source.ConfigurationSource.*;
 import lombok.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static java.util.Comparator.*;
 
 @Getter
@@ -48,7 +48,7 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
     }
 
     public ImmutableArray<ConfigurationSource> orderedSources() {
-        return immutableSortedArray(getSources().values(), comparingInt((ConfigurationSource source) -> source.getType().getOrder()));
+        return immutableSortedArrayOf(getSources().values(), comparingInt((ConfigurationSource source) -> source.getType().getOrder()));
     }
 
     public ConfigurationSource getConfiguration() {
