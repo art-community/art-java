@@ -27,6 +27,11 @@ class Tarantool extends Specification {
         launch module().configure()
     }
 
+    def "test"() {
+        setup:
+        println "test"
+    }
+
     def "Storage1 CRUD"() {
         setup:
         def spaceName = "s1_CRUD"

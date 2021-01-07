@@ -115,11 +115,11 @@ public class ServingRsocket implements RSocket {
 
     @Override
     public Flux<Payload> requestChannel(Publisher<Payload> payloads) {
-        return specification.serve(from(payloads)
+        Flux<Value> input = addContext(from(payloads)
                 .map(reader::readPayloadData)
                 .filter(data -> !data.isEmpty())
-                .map(RsocketPayloadValue::getValue))
-                .map(writer::writePayloadData);
+                .map(RsocketPayloadValue::getValue));
+        return specification.serve(input).map(writer::writePayloadData);
     }
 
     @Override

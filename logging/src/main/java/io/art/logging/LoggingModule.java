@@ -57,13 +57,13 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     public void onLoad() {
         getLogManager().reset();
 
-        boolean fromFile = ofNullable(getProperty(LOG42_CONFIGURATION_FILE_PROPERTY))
+        boolean fromFile = ofNullable(configuration.getConfigurationPath())
                 .map(Paths::get)
                 .map(path -> path.toFile().exists())
                 .orElse(false);
 
         if (fromFile) {
-            currentLogger().info(format(CONFIGURE_FROM_FILE, getProperty(LOG42_CONFIGURATION_FILE_PROPERTY)));
+            currentLogger().info(format(CONFIGURE_FROM_FILE, configuration.getConfigurationPath()));
             return;
         }
 

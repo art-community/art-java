@@ -23,11 +23,15 @@ import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.logging.LoggingModuleConstants.ConfigurationKeys.*;
+import static io.art.logging.LoggingModuleConstants.LOG42_CONFIGURATION_FILE_PROPERTY;
+import static java.lang.System.getProperty;
+import java.nio.file.*;
 
 @Getter
 public class LoggingModuleConfiguration implements ModuleConfiguration {
     private boolean colored = false;
     private boolean asynchronous = false;
+    private String configurationPath;
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<LoggingModuleConfiguration, Configurator> {
@@ -37,6 +41,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
         public Configurator from(ConfigurationSource source) {
             configuration.colored = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(COLORED_KEY)), false);
             configuration.asynchronous = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(ASYNCHRONOUS_KEY)), false);
+            configuration.configurationPath = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getString(CONFIGURATION_PATH_KEY)), getProperty(LOG42_CONFIGURATION_FILE_PROPERTY));
             return this;
         }
 
@@ -44,6 +49,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
         public Configurator override(LoggingModuleConfiguration configuration) {
             this.configuration.asynchronous = configuration.isAsynchronous();
             this.configuration.colored = configuration.isColored();
+            apply(configuration.getConfigurationPath(), path -> this.configuration.configurationPath = path);
             return this;
         }
     }

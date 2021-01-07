@@ -181,4 +181,8 @@ public class ServiceMethodSpecification {
                 throw new ImpossibleSituation();
         }
     }
+
+    public static void main(String[] args) {
+
+    }
 }
