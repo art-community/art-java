@@ -39,16 +39,8 @@ local api = {
             return art.box.space.count(space)
         end,
 
-        schemaCount = function(space)
-            return art.box.space.schemaCount(space)
-        end,
-
         len = function(space)
             return art.box.space.len(space)
-        end,
-
-        schemaLen = function(space)
-            return art.box.space.schemaLen(space)
         end,
 
         list = function()
