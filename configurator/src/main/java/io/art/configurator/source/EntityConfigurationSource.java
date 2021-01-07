@@ -19,14 +19,12 @@
 package io.art.configurator.source;
 
 import io.art.core.factory.*;
-import io.art.core.parser.*;
 import io.art.core.source.*;
-import io.art.value.immutable.*;
 import io.art.value.immutable.Value;
+import io.art.value.immutable.*;
 import io.art.value.mapping.*;
 import lombok.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.mapping.PrimitiveMapping.toString;
@@ -34,7 +32,6 @@ import static io.art.value.mapping.PrimitiveMapping.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
-import java.time.*;
 import java.util.*;
 
 @Getter
@@ -46,38 +43,13 @@ public class EntityConfigurationSource implements ConfigurationSource {
     private final Entity entity;
 
     @Override
-    public Integer getInt(String path) {
-        return entity.mapNested(path, toInt);
-    }
-
-    @Override
-    public Long getLong(String path) {
-        return entity.mapNested(path, toLong);
-    }
-
-    @Override
     public Boolean getBool(String path) {
-        return entity.mapNested(path, toBool);
-    }
-
-    @Override
-    public Double getDouble(String path) {
-        return entity.mapNested(path, toDouble);
-    }
-
-    @Override
-    public Float getFloat(String path) {
-        return let(getDouble(path), Number::floatValue);
+        return entity.mapping().mapNested(path, toBool);
     }
 
     @Override
     public String getString(String path) {
-        return entity.mapNested(path, toString);
-    }
-
-    @Override
-    public Duration getDuration(String path) {
-        return let(getString(path), DurationParser::parseDuration);
+        return entity.mapping().mapNested(path, toString);
     }
 
     @Override
@@ -90,33 +62,13 @@ public class EntityConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public List<Integer> getIntList(String path) {
-        return entity.mapNested(path, ArrayMapping.toList(toInt));
-    }
-
-    @Override
-    public List<Long> getLongList(String path) {
-        return entity.mapNested(path, ArrayMapping.toList(toLong));
-    }
-
-    @Override
     public List<Boolean> getBoolList(String path) {
-        return entity.mapNested(path, ArrayMapping.toList(toBool));
-    }
-
-    @Override
-    public List<Double> getDoubleList(String path) {
-        return entity.mapNested(path, ArrayMapping.toList(toDouble));
+        return entity.mapping().mapNested(path, ArrayMapping.toList(toBool));
     }
 
     @Override
     public List<String> getStringList(String path) {
-        return entity.mapNested(path, ArrayMapping.toList(toString));
-    }
-
-    @Override
-    public List<Duration> getDurationList(String path) {
-        return entity.mapNested(path, ArrayMapping.toList(element -> let(toString.map(asPrimitive(element)), DurationParser::parseDuration)));
+        return entity.mapping().mapNested(path, ArrayMapping.toList(toString));
     }
 
     @Override

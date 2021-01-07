@@ -28,6 +28,7 @@ import io.github.resilience4j.retry.*;
 import io.github.resilience4j.timelimiter.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
+import static lombok.AccessLevel.PRIVATE;
 
 @Getter
 public class ResilienceModule implements StatefulModule<ResilienceModuleConfiguration, ResilienceModuleConfiguration.Configurator, ResilienceModuleState> {
@@ -35,8 +36,8 @@ public class ResilienceModule implements StatefulModule<ResilienceModuleConfigur
     private final ResilienceModuleConfiguration configuration = new ResilienceModuleConfiguration();
     private final ResilienceModuleConfiguration.Configurator configurator = new ResilienceModuleConfiguration.Configurator(configuration);
     private final ResilienceModuleState state = new ResilienceModuleState();
-    @Getter(lazy = true)
-    private final static
+    @Getter(lazy = true, value = PRIVATE)
+    private static final
     StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule = context().getStatefulModule(ResilienceModule.class.getSimpleName());
 
     public static StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule() {

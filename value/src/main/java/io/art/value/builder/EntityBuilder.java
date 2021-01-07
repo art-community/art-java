@@ -58,6 +58,14 @@ public class EntityBuilder {
         return lazyPut(key, () -> value);
     }
 
+    public EntityBuilder put(Character key, Value value) {
+        return lazyPut(key, () -> value);
+    }
+
+    public EntityBuilder put(Short key, Value value) {
+        return lazyPut(key, () -> value);
+    }
+
     public EntityBuilder put(Primitive key, Value value) {
         return lazyPut(key, () -> value);
     }
@@ -89,6 +97,14 @@ public class EntityBuilder {
 
     public <T> EntityBuilder put(Float key, T value, ValueFromModelMapper<T, ? extends Value> mapper) {
         return put(floatPrimitive(key), value, mapper);
+    }
+
+    public <T> EntityBuilder put(Character key, T value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        return put(charPrimitive(key), value, mapper);
+    }
+
+    public <T> EntityBuilder put(Short key, T value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        return put(shortPrimitive(key), value, mapper);
     }
 
     public <T> EntityBuilder put(Primitive primitive, T value, ValueFromModelMapper<T, ? extends Value> mapper) {
@@ -125,6 +141,14 @@ public class EntityBuilder {
         return lazyPut(floatPrimitive(key), value);
     }
 
+    public EntityBuilder lazyPut(Character key, Supplier<? extends Value> value) {
+        return lazyPut(charPrimitive(key), value);
+    }
+
+    public EntityBuilder lazyPut(Short key, Supplier<? extends Value> value) {
+        return lazyPut(shortPrimitive(key), value);
+    }
+
     public EntityBuilder lazyPut(Primitive primitive, Supplier<? extends Value> value) {
         if (!Value.valueIsNull(primitive) && nonNull(value)) {
             fields.put(primitive, value);
@@ -159,6 +183,14 @@ public class EntityBuilder {
 
     public <T> EntityBuilder lazyPut(Float key, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
         return lazyPut(floatPrimitive(key), value, mapper);
+    }
+
+    public <T> EntityBuilder lazyPut(Character key, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        return lazyPut(charPrimitive(key), value, mapper);
+    }
+
+    public <T> EntityBuilder lazyPut(Short key, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        return lazyPut(shortPrimitive(key), value, mapper);
     }
 
     public <T> EntityBuilder lazyPut(Primitive primitive, Supplier<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {

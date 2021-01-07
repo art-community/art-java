@@ -38,4 +38,9 @@ public class ThreadExtensions {
         consumeException((Function<Throwable, RuntimeException>) InternalRuntimeException::new)
                 .run(() -> currentThread().join());
     }
+
+    public static void sleep(long millis) {
+        consumeException((Function<Throwable, RuntimeException>) InternalRuntimeException::new)
+                .run(() -> Thread.sleep(millis));
+    }
 }

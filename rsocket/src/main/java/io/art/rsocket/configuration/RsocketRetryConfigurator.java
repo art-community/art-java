@@ -18,6 +18,7 @@
 
 package io.art.rsocket.configuration;
 
+import io.art.core.exception.*;
 import io.art.core.source.*;
 import lombok.experimental.*;
 import reactor.util.retry.*;
@@ -52,7 +53,7 @@ public class RsocketRetryConfigurator {
             case INDEFINITELY:
                 return indefinitely();
         }
-        throw new IllegalStateException();
+        throw new ImpossibleSituation();
     }
 
     public static Retry from(ConfigurationSource source, Retry defaultRetry) {

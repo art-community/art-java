@@ -18,32 +18,31 @@
 
 package io.art.rsocket.model;
 
+import io.art.core.model.*;
 import io.art.value.builder.*;
-import io.art.value.constants.ValueConstants.*;
-import io.art.server.model.*;
+import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.immutable.*;
+import lombok.Value;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Fields.*;
+import static io.art.value.constants.ValueModuleConstants.Keys.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Entity.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.Fields.*;
-import static java.util.Objects.*;
+import static io.art.value.mapping.ServiceMethodMapping.*;
 
-@Getter
-@Builder
+@Value
+@Builder(toBuilder = true)
 public class RsocketSetupPayload {
-    private final DataFormat dataFormat;
-    private final DataFormat metadataFormat;
-    private final ServiceMethodIdentifier serviceMethodId;
+    DataFormat dataFormat;
+    DataFormat metadataFormat;
+    ServiceMethodIdentifier serviceMethod;
 
     public Entity toEntity() {
         EntityBuilder entityBuilder = entityBuilder()
                 .put(SETUP_PAYLOAD_DATA_FORMAT_FIELD, stringPrimitive(dataFormat.getFormat()))
                 .put(SETUP_PAYLOAD_META_DATA_FORMAT_FIELD, stringPrimitive(metadataFormat.getFormat()));
-        if (nonNull(serviceMethodId)) {
-            entityBuilder
-                    .put(SETUP_PAYLOAD_SERVICE_ID_FIELD, stringPrimitive(serviceMethodId.getServiceId()))
-                    .put(SETUP_PAYLOAD_METHOD_ID_FIELD, stringPrimitive(serviceMethodId.getMethodId()));
-        }
+        apply(serviceMethod, () -> entityBuilder.put(stringPrimitive(SERVICE_METHOD_IDENTIFIERS_KEY), fromServiceMethod(serviceMethod)));
         return entityBuilder.build();
     }
 }

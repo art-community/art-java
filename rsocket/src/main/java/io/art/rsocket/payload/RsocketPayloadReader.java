@@ -18,7 +18,8 @@
 
 package io.art.rsocket.payload;
 
-import io.art.value.constants.ValueConstants.*;
+import io.art.core.exception.*;
+import io.art.value.constants.ValueModuleConstants.*;
 import io.art.rsocket.model.*;
 import io.netty.buffer.*;
 import io.rsocket.*;
@@ -26,6 +27,7 @@ import lombok.*;
 import static io.art.json.descriptor.JsonReader.*;
 import static io.art.message.pack.descriptor.MessagePackReader.*;
 import static io.art.protobuf.descriptor.ProtobufReader.*;
+import static io.art.rsocket.model.RsocketPayloadValue.emptyRsocketPayload;
 import static io.art.xml.descriptor.XmlReader.*;
 
 @RequiredArgsConstructor
@@ -35,28 +37,17 @@ public class RsocketPayloadReader {
 
     public RsocketPayloadValue readPayloadData(Payload payload) {
         ByteBuf data = payload.sliceData();
-        if (data.capacity() == 0) {
-            return null;
-        }
-        switch (dataFormat) {
-            case PROTOBUF:
-                return new RsocketPayloadValue(payload, readProtobuf(data));
-            case JSON:
-                return new RsocketPayloadValue(payload, readJson(data));
-            case XML:
-                return new RsocketPayloadValue(payload, readXml(data));
-            case MESSAGE_PACK:
-                return new RsocketPayloadValue(payload, readMessagePack(data));
-        }
-        throw new IllegalStateException();
+        return read(payload, data, dataFormat);
     }
 
     public RsocketPayloadValue readPayloadMetaData(Payload payload) {
         ByteBuf data = payload.sliceMetadata();
-        if (data.capacity() == 0) {
-            return null;
-        }
-        switch (metaDataFormat) {
+        return read(payload, data, metaDataFormat);
+    }
+
+    private RsocketPayloadValue read(Payload payload, ByteBuf data, DataFormat format) {
+        if (data.capacity() == 0) return emptyRsocketPayload();
+        switch (format) {
             case PROTOBUF:
                 return new RsocketPayloadValue(payload, readProtobuf(data));
             case JSON:
@@ -66,6 +57,6 @@ public class RsocketPayloadReader {
             case MESSAGE_PACK:
                 return new RsocketPayloadValue(payload, readMessagePack(data));
         }
-        throw new IllegalStateException();
+        throw new ImpossibleSituation();
     }
 }

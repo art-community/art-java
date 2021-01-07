@@ -18,20 +18,28 @@
 
 package io.art.model.customizer;
 
+import io.art.core.collection.*;
+import io.art.rsocket.communicator.*;
 import io.art.rsocket.configuration.*;
 import lombok.*;
 
 public class RsocketCustomizer {
     @Getter
-    private final CustomRsocketModuleConfiguration configuration = new CustomRsocketModuleConfiguration();
+    private final Custom configuration = new Custom();
 
     public RsocketCustomizer activateServer() {
         configuration.activateServer = true;
         return this;
     }
 
+    public RsocketCustomizer activateCommunicator() {
+        configuration.activateCommunicator = true;
+        return this;
+    }
+
     @Getter
-    public static class CustomRsocketModuleConfiguration extends RsocketModuleConfiguration {
+    public static class Custom extends RsocketModuleConfiguration {
         private boolean activateServer;
+        private boolean activateCommunicator;
     }
 }

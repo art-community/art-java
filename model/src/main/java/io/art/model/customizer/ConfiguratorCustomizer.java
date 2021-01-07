@@ -18,17 +18,27 @@
 
 package io.art.model.customizer;
 
+import io.art.configurator.configuration.*;
+import io.art.configurator.custom.*;
+import io.art.core.collection.*;
+import io.art.core.source.*;
 import lombok.*;
-import lombok.experimental.*;
-import static java.util.function.UnaryOperator.*;
-import java.util.function.*;
 
-@Getter
-@Setter
-@Accessors(fluent = true)
 public class ConfiguratorCustomizer {
-    private UnaryOperator<LoggingCustomizer> logging = identity();
-    private UnaryOperator<ServerCustomizer> server = identity();
-    private UnaryOperator<ValueCustomizer> value = identity();
-    private UnaryOperator<RsocketCustomizer> rsocket = identity();
+    private CustomConfigurationRegistry registry;
+
+    public ConfiguratorCustomizer registry(CustomConfigurationRegistry registry) {
+        this.registry = registry;
+        return this;
+    }
+
+    public ConfiguratorModuleConfiguration configure(ImmutableArray<ConfigurationSource> sources) {
+        return new Custom(registry.configure(sources));
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    private static class Custom extends ConfiguratorModuleConfiguration {
+        private final ImmutableMap<Class<?>, ?> customConfigurations;
+    }
 }

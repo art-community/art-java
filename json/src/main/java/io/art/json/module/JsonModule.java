@@ -27,7 +27,7 @@ import static lombok.AccessLevel.*;
 @Getter
 public class JsonModule implements StatelessModule<JsonModuleConfiguration, JsonModuleConfiguration.Configurator> {
     @Getter(lazy = true, value = PRIVATE)
-    private final static StatelessModuleProxy<JsonModuleConfiguration> jsonModule = context().getStatelessModule(JsonModule.class.getSimpleName());
+    private static final StatelessModuleProxy<JsonModuleConfiguration> jsonModule = context().getStatelessModule(JsonModule.class.getSimpleName());
     private final String id = JsonModule.class.getSimpleName();
     private final JsonModuleConfiguration configuration = new JsonModuleConfiguration();
     private final JsonModuleConfiguration.Configurator configurator = new JsonModuleConfiguration.Configurator(configuration);

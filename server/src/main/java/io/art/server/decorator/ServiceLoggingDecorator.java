@@ -20,7 +20,7 @@ package io.art.server.decorator;
 
 import io.art.core.constants.*;
 import io.art.core.lazy.*;
-import io.art.server.model.*;
+import io.art.core.model.*;
 import io.art.server.specification.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
@@ -36,7 +36,7 @@ import java.util.function.*;
 
 public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = logger(ServiceLoggingDecorator.class);
+    private static final Logger logger = logger(ServiceLoggingDecorator.class);
     private final LazyValue<UnaryOperator<Flux<Object>>> decorator = lazy(this::createDecorator);
     private final MethodDecoratorScope scope;
     private final Supplier<Boolean> enabled;

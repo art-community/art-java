@@ -18,37 +18,38 @@
 
 package io.art.server.implementation;
 
+import io.art.core.model.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.model.ServiceMethodIdentifier.serviceMethod;
 import java.util.function.*;
 
 @Getter
 @RequiredArgsConstructor
 public class ServiceMethodImplementation {
-    private final String serviceId;
-    private final String methodId;
+    private final ServiceMethodIdentifier id;
     private final Function<?, ?> functor;
 
     public static <T> ServiceMethodImplementation runner(Runnable runner, String serviceId, String methodId) {
-        return new ServiceMethodImplementation(serviceId, methodId, request -> {
+        return new ServiceMethodImplementation(serviceMethod(serviceId, methodId), request -> {
             runner.run();
             return null;
         });
     }
 
     public static <T> ServiceMethodImplementation consumer(Consumer<T> consumer, String serviceId, String methodId) {
-        return new ServiceMethodImplementation(serviceId, methodId, request -> {
+        return new ServiceMethodImplementation(serviceMethod(serviceId, methodId), request -> {
             consumer.accept(cast(request));
             return null;
         });
     }
 
     public static <T> ServiceMethodImplementation producer(Supplier<T> producer, String serviceId, String methodId) {
-        return new ServiceMethodImplementation(serviceId, methodId, request -> producer.get());
+        return new ServiceMethodImplementation(serviceMethod(serviceId, methodId), request -> producer.get());
     }
 
     public static <Input, Output> ServiceMethodImplementation handler(Function<Input, Output> function, String serviceId, String methodId) {
-        return new ServiceMethodImplementation(serviceId, methodId, function);
+        return new ServiceMethodImplementation(serviceMethod(serviceId, methodId), function);
     }
 
     public Object execute(Object request) {

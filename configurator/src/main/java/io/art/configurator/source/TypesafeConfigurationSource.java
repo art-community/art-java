@@ -25,9 +25,8 @@ import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.combiner.SectionCombiner.combine;
 import static io.art.core.extensions.CollectionExtensions.*;
-import static java.util.Objects.isNull;
+import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
-import java.time.*;
 import java.util.*;
 
 @Getter
@@ -38,38 +37,13 @@ public class TypesafeConfigurationSource implements ConfigurationSource {
     private final Config typesafeConfiguration;
 
     @Override
-    public Integer getInt(String path) {
-        return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getInt);
-    }
-
-    @Override
-    public Long getLong(String path) {
-        return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getLong);
-    }
-
-    @Override
     public Boolean getBool(String path) {
         return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getBoolean);
     }
 
     @Override
-    public Double getDouble(String path) {
-        return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getDouble);
-    }
-
-    @Override
-    public Float getFloat(String path) {
-        return let(getDouble(path), Number::floatValue);
-    }
-
-    @Override
     public String getString(String path) {
         return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getString);
-    }
-
-    @Override
-    public Duration getDuration(String path) {
-        return orNull(path, typesafeConfiguration::hasPath, typesafeConfiguration::getDuration);
     }
 
     @Override
@@ -81,15 +55,6 @@ public class TypesafeConfigurationSource implements ConfigurationSource {
         return new TypesafeConfigurationSource(combine(section, path), type, configuration);
     }
 
-    @Override
-    public List<Integer> getIntList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getIntList);
-    }
-
-    @Override
-    public List<Long> getLongList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getLongList);
-    }
 
     @Override
     public List<Boolean> getBoolList(String path) {
@@ -97,18 +62,8 @@ public class TypesafeConfigurationSource implements ConfigurationSource {
     }
 
     @Override
-    public List<Double> getDoubleList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getDoubleList);
-    }
-
-    @Override
     public List<String> getStringList(String path) {
         return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getStringList);
-    }
-
-    @Override
-    public List<Duration> getDurationList(String path) {
-        return orEmptyList(path, typesafeConfiguration::hasPath, typesafeConfiguration::getDurationList);
     }
 
     @Override
@@ -118,6 +73,7 @@ public class TypesafeConfigurationSource implements ConfigurationSource {
                 .map(config -> new TypesafeConfigurationSource(combine(section, path), type, config))
                 .collect(toCollection(ArrayFactory::dynamicArray));
     }
+
 
     @Override
     public Set<String> getKeys() {

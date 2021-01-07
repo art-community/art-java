@@ -21,14 +21,8 @@ package io.art.model.constants;
 public interface ModelConstants {
     String DEFAULT_MODULE_ID = "module";
 
-    interface ExceptionMessages {
-        String MODEL_WAS_NOT_IMPLEMENTED = "Model {0} was not implemented";
-    }
-
-    enum Protocol {
-        RSOCKET,
-        GRPC,
-        HTTP,
-        SOAP
+    enum ConfiguratorScope {
+        CLASS,
+        METHOD
     }
 }
