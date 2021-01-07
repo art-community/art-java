@@ -98,8 +98,6 @@ public interface RsocketModuleConstants {
         String MAX_LIFE_TIME_KEY = "maxLifeTime";
 
         String CONNECTORS_KEY = "connectors";
-
-        String INSTANT_KEY = "instant";
     }
 
     interface ContextKeys {
@@ -124,8 +122,6 @@ public interface RsocketModuleConstants {
     interface Fields {
         String SETUP_PAYLOAD_DATA_FORMAT_FIELD = "dataFormat";
         String SETUP_PAYLOAD_META_DATA_FORMAT_FIELD = "metaDataFormat";
-        String SETUP_PAYLOAD_SERVICE_ID_FIELD = "serviceId";
-        String SETUP_PAYLOAD_METHOD_ID_FIELD = "methodId";
     }
 
 
