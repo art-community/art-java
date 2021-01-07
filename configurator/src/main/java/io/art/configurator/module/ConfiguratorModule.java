@@ -20,6 +20,7 @@ package io.art.configurator.module;
 
 import io.art.configurator.configuration.*;
 import io.art.configurator.configuration.ConfiguratorModuleConfiguration.*;
+import io.art.configurator.exception.*;
 import io.art.configurator.model.*;
 import io.art.configurator.source.*;
 import io.art.core.checker.*;
@@ -30,12 +31,12 @@ import static io.art.configurator.constants.ConfiguratorModuleConstants.Configur
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorKeys.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static java.nio.file.Paths.*;
-import static java.util.Optional.*;
 import static lombok.AccessLevel.*;
 import java.io.*;
 import java.util.*;
@@ -76,20 +77,20 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(EMPTY_STRING, CUSTOM_FILE, file))));
     }
 
-    public static Optional<ConfigurationSource> configuration() {
-        return ofNullable(configuratorModule().configuration().getConfiguration());
+    public static ConfigurationSource configuration() {
+        return configuratorModule().configuration().getConfiguration();
     }
 
-    public static Optional<ConfigurationSource> configuration(String section) {
-        return configuration().map(configuration -> configuration.getNested(section));
+    public static ConfigurationSource configuration(String section) {
+        return orThrow(configuration().getNested(section), () -> new ConfigurationNotFoundException(section));
     }
 
-    public static <T> Optional<T> configuration(Class<T> type) {
+    public static <T> T configuration(Class<T> type) {
         return configuration(EMPTY_STRING, type);
     }
 
-    public static <T> Optional<T> configuration(String section, Class<T> type) {
-        return ofNullable(configuratorModule().configuration().getCustomConfiguration(new CustomConfigurationModel(section, type)));
+    public static <T> T configuration(String section, Class<T> type) {
+        return orThrow(configuratorModule().configuration().getCustomConfiguration(new CustomConfigurationModel(section, type)), () -> new ConfigurationNotFoundException(section));
     }
 
     public static StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule() {
