@@ -188,7 +188,7 @@ public class EmptinessChecker {
         return isEmpty(value) ? ifEmpty.get() : value;
     }
 
-    public static <T> void applyIfNotEmpty(T value, Consumer<T> action) {
+    public static <T> void ifNotEmpty(T value, Consumer<T> action) {
         if (isEmpty(value)) {
             return;
         }

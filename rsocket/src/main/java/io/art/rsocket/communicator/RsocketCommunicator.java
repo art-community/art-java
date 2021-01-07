@@ -27,7 +27,6 @@ import io.art.rsocket.manager.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
 import io.art.value.immutable.Value;
-import io.rsocket.*;
 import io.rsocket.core.*;
 import io.rsocket.transport.netty.client.*;
 import io.rsocket.util.*;
@@ -129,30 +128,29 @@ public class RsocketCommunicator implements CommunicatorImplementation {
 
     private RSocketClient createClient() {
         RsocketConnectorConfiguration connectorConfiguration = getConnectorConfiguration();
+        RsocketSetupPayload setupPayload = getAdoptedSetupPayload();
         RSocketConnector connector = RSocketConnector.create()
-                .dataMimeType(toMimeType(getAdoptedSetupPayload().getDataFormat()).toString())
-                .metadataMimeType(toMimeType(getAdoptedSetupPayload().getMetadataFormat()).toString())
+                .dataMimeType(toMimeType(setupPayload.getDataFormat()).toString())
+                .metadataMimeType(toMimeType(setupPayload.getMetadataFormat()).toString())
                 .fragment(connectorConfiguration.getFragment())
                 .interceptors(connectorConfiguration.getInterceptors());
         apply(connectorConfiguration.getKeepAlive(), keepAlive -> connector.keepAlive(keepAlive.getInterval(), keepAlive.getMaxLifeTime()));
         apply(connectorConfiguration.getResume(), connector::resume);
         apply(connectorConfiguration.getRetry(), connector::reconnect);
-        connector.setupPayload(getWriter().writePayloadMetaData(getAdoptedSetupPayload().toEntity()));
+        connector.setupPayload(getWriter().writePayloadMetaData(setupPayload.toEntity()));
         switch (connectorConfiguration.getTransport()) {
             case TCP:
                 TcpClient tcpClient = connectorConfiguration.getTcpClient();
                 int tcpMaxFrameLength = connectorConfiguration.getTcpMaxFrameLength();
-                Mono<RSocket> socket = connector
+                return from(connector
                         .connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength))
-                        .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorId, getAdoptedSetupPayload())));
-                return from(socket);
+                        .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorId, setupPayload))));
             case WS:
                 HttpClient httpWebSocketClient = connectorConfiguration.getHttpWebSocketClient();
                 String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
-                socket = connector
+                return from(connector
                         .connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath))
-                        .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorId, getAdoptedSetupPayload())));
-                return from(socket);
+                        .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorId, setupPayload))));
         }
         throw new ImpossibleSituation();
     }

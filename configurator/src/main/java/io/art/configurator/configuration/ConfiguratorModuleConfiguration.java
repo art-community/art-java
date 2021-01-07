@@ -27,7 +27,7 @@ import io.art.core.source.ConfigurationSource.*;
 import lombok.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.EmptinessChecker.applyIfNotEmpty;
+import static io.art.core.checker.EmptinessChecker.ifNotEmpty;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static java.util.Comparator.*;
@@ -76,7 +76,7 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator override(ConfiguratorModuleConfiguration configuration) {
-            applyIfNotEmpty(configuration.getCustomConfigurations(), configurations -> this.configuration.customConfigurations = configurations);
+            ifNotEmpty(configuration.getCustomConfigurations(), configurations -> this.configuration.customConfigurations = configurations);
             return this;
         }
     }

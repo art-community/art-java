@@ -20,6 +20,7 @@ package io.art.rsocket.server;
 
 import io.art.core.caster.*;
 import io.art.core.lazy.*;
+import io.art.core.runnable.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.manager.*;
 import io.art.rsocket.socket.*;
@@ -33,7 +34,7 @@ import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
 import static io.art.core.lazy.LazyValue.*;
-import static io.art.core.operator.Operators.applyIf;
+import static io.art.core.operator.Operators.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
@@ -98,7 +99,10 @@ public class RsocketServer implements Server {
 
     private Mono<RSocket> createSocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
         Logger logger = getLogger();
-        Mono<ServingRsocket> socket = Mono.create(emitter -> ignoreException(() -> emitter.success(new ServingRsocket(payload, requesterSocket, configuration)), throwable -> logger.error(throwable.getMessage(), throwable)));
+        Mono<ServingRsocket> socket = Mono.create(emitter -> {
+            ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, requesterSocket, configuration));
+            ignoreException(createRsocket, throwable -> logger.error(throwable.getMessage(), throwable));
+        });
         if (configuration.isLogging()) {
             socket = socket
                     .doOnSuccess(servingSocket -> servingSocket.onDispose(() -> logger.info(SERVER_CLIENT_DISCONNECTED)))

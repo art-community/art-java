@@ -18,7 +18,6 @@
 
 package io.art.rsocket.constants;
 
-import io.art.communicator.constants.*;
 import io.art.communicator.constants.CommunicatorModuleConstants.*;
 import lombok.*;
 import java.time.*;
