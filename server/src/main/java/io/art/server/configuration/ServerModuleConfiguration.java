@@ -19,6 +19,7 @@
 package io.art.server.configuration;
 
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.server.model.*;
@@ -29,7 +30,9 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.Defaults.*;
+import static java.util.Objects.*;
 import static java.util.Optional.*;
+import java.util.function.*;
 
 
 @Getter
@@ -37,6 +40,41 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, ServiceConfiguration> configurations = emptyImmutableMap();
     private Scheduler scheduler;
     private ServiceSpecificationRegistry registry = new ServiceSpecificationRegistry();
+
+    public boolean isLogging(ServiceMethodIdentifier identifier) {
+        return checkService(identifier, ServiceConfiguration::isLogging, true)
+                || checkMethod(identifier, ServiceMethodConfiguration::isLogging, true);
+    }
+
+    public boolean isValidating(ServiceMethodIdentifier identifier) {
+        return checkService(identifier, ServiceConfiguration::isValidating, true)
+                || checkMethod(identifier, ServiceMethodConfiguration::isValidating, true);
+    }
+
+    public boolean isDeactivated(ServiceMethodIdentifier identifier) {
+        return checkService(identifier, ServiceConfiguration::isDeactivated, false)
+                || checkMethod(identifier, ServiceMethodConfiguration::isLogging, false);
+    }
+
+    private <T> T checkService(ServiceMethodIdentifier identifier, Function<ServiceConfiguration, T> mapper, T defaultValue) {
+        ServiceConfiguration serviceConfiguration = configurations.get(identifier.getServiceId());
+        if (isNull(serviceConfiguration)) {
+            return defaultValue;
+        }
+        return mapper.apply(serviceConfiguration);
+    }
+
+    private <T> T checkMethod(ServiceMethodIdentifier identifier, Function<ServiceMethodConfiguration, T> mapper, T defaultValue) {
+        ServiceConfiguration serviceConfiguration = configurations.get(identifier.getServiceId());
+        if (isNull(serviceConfiguration)) {
+            return defaultValue;
+        }
+        ServiceMethodConfiguration methodConfiguration = serviceConfiguration.getMethods().get(identifier.getMethodId());
+        if (isNull(methodConfiguration)) {
+            return defaultValue;
+        }
+        return mapper.apply(methodConfiguration);
+    }
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<ServerModuleConfiguration, Configurator> {

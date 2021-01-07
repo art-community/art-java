@@ -44,60 +44,39 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
 
     public ServiceLoggingDecorator(ServiceMethodIdentifier serviceMethodId, MethodDecoratorScope scope) {
         this.scope = scope;
-        this.enabled = () -> true;
-        this.serviceMethodId = serviceMethodId;
-    }
-
-    public ServiceLoggingDecorator(ServiceMethodIdentifier serviceMethodId, MethodDecoratorScope scope, Supplier<Boolean> enabled) {
-        this.scope = scope;
-        this.enabled = enabled;
+        this.enabled = () -> serverModule().configuration().isLogging(serviceMethodId);
         this.serviceMethodId = serviceMethodId;
     }
 
     @Override
     public Flux<Object> apply(Flux<Object> input) {
+        if (!enabled.get()) {
+            return input;
+        }
         return decorator.get().apply(input);
     }
 
     private void logBlockingInput(Object data, ServiceMethodSpecification specification) {
-        if (!enabled.get()) {
-            return;
-        }
         getLogger().info(format(BLOCKING_SERVICE_REQUEST_MESSAGE, specification.getServiceId(), specification.getMethodId(), data));
     }
 
     private void logBlockingOutput(Object data, ServiceMethodSpecification specification) {
-        if (!enabled.get()) {
-            return;
-        }
         getLogger().info(format(SERVICE_EXECUTED_MESSAGE, specification.getServiceId(), specification.getMethodId(), data));
     }
 
     private void logSubscribe(ServiceMethodSpecification specification) {
-        if (!enabled.get()) {
-            return;
-        }
         getLogger().info(format(SERVICE_SUBSCRIBED_MESSAGE, specification.getServiceId(), specification.getMethodId()));
     }
 
     private void logReactiveInput(Object data, ServiceMethodSpecification specification) {
-        if (!enabled.get()) {
-            return;
-        }
         getLogger().info(format(REACTIVE_SERVICE_INPUT_MESSAGE, specification.getServiceId(), specification.getMethodId(), data));
     }
 
     private void logReactiveOutput(Object data, ServiceMethodSpecification specification) {
-        if (!enabled.get()) {
-            return;
-        }
         getLogger().info(format(REACTIVE_SERVICE_OUTPUT_MESSAGE, specification.getServiceId(), specification.getMethodId(), data));
     }
 
     private void logException(Throwable exception, ServiceMethodSpecification specification) {
-        if (!enabled.get()) {
-            return;
-        }
         getLogger().error(format(SERVICE_FAILED_MESSAGE, specification.getServiceId(), specification.getMethodId()), exception);
     }
 

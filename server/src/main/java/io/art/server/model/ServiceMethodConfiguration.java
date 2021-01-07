@@ -30,12 +30,14 @@ import static io.art.server.constants.ServerModuleConstants.Defaults.*;
 public class ServiceMethodConfiguration {
     private final boolean deactivated;
     private final boolean logging;
+    private final boolean validating;
     private final Scheduler scheduler;
 
     public static ServiceMethodConfiguration from(ConfigurationSource source) {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
-        boolean logging = orElse(source.getBool(LOGGING_KEY), false);
+        boolean logging = orElse(source.getBool(LOGGING_KEY), true);
+        boolean validating = orElse(source.getBool(VALIDATING_KEY), true);
         Scheduler scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
-        return new ServiceMethodConfiguration(deactivated, logging, scheduler);
+        return new ServiceMethodConfiguration(deactivated, logging, validating, scheduler);
     }
 }

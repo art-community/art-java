@@ -25,7 +25,7 @@ import static java.text.MessageFormat.*;
 import java.util.function.*;
 
 @Getter
-class NotEmptyStringValidationExpression extends ValidationExpression<String> {
+public class NotEmptyStringValidationExpression extends ValidationExpression<String> {
     NotEmptyStringValidationExpression() {
         super(NOT_EMPTY_STRING);
     }

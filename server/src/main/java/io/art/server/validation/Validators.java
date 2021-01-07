@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.function.*;
 
 @UtilityClass
-public class ValidationExpressions {
+public class Validators {
     public static <T> ValidationExpression<T> notNull() {
         return cast(new NotNullValidationExpression());
     }

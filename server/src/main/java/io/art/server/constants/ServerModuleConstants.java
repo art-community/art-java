@@ -20,9 +20,9 @@ package io.art.server.constants;
 
 import reactor.core.scheduler.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
-import static io.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
-import static java.lang.Short.MAX_VALUE;
-import static reactor.core.scheduler.Schedulers.newBoundedElastic;
+import static io.art.core.constants.ThreadConstants.*;
+import static java.lang.Short.*;
+import static reactor.core.scheduler.Schedulers.*;
 
 public interface ServerModuleConstants {
     enum RequestValidationPolicy {
@@ -40,20 +40,25 @@ public interface ServerModuleConstants {
         String SERVER_SERVICES_KEY = "services";
         String DEACTIVATED_KEY = "deactivated";
         String LOGGING_KEY = "logging";
+        String VALIDATING_KEY = "validating";
         String METHODS_KEY = "methods";
     }
 
-    interface ValidationExpressionTypes {
-        String BETWEEN_DOUBLE = "BETWEEN_DOUBLE";
-        String BETWEEN_INT = "BETWEEN_INT";
-        String BETWEEN_LONG = "BETWEEN_LONG";
-        String CONTAINS = "CONTAINS";
-        String EQUALS = "EQUALS";
-        String NOT_EMPTY_COLLECTION = "NOT_EMPTY_COLLECTION";
-        String NOT_EMPTY_MAP = "NOT_EMPTY_MAP";
-        String NOT_EMPTY_STRING = "NOT_EMPTY_STRING";
-        String NOT_EQUALS = "NOT_EQUALS";
-        String NOT_NULL = "NOT_NULL";
+    interface ValidationExpressionType {
+        String name();
+    }
+
+    enum ValidationExpressionTypes implements ValidationExpressionType {
+        BETWEEN_DOUBLE,
+        BETWEEN_INT,
+        BETWEEN_LONG,
+        CONTAINS,
+        EQUALS,
+        NOT_EMPTY_COLLECTION,
+        NOT_EMPTY_MAP,
+        NOT_EMPTY_STRING,
+        NOT_EQUALS,
+        NOT_NULL
     }
 
     interface LoggingMessages {

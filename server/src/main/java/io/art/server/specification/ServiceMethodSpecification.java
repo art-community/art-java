@@ -57,7 +57,10 @@ public class ServiceMethodSpecification {
     @Getter
     private final MethodProcessingMode outputMode;
 
+    @Getter
     private final ValueToModelMapper<?, ? extends Value> inputMapper;
+
+    @Getter
     private final ValueFromModelMapper<?, ? extends Value> outputMapper;
 
     @Builder.Default
@@ -84,15 +87,12 @@ public class ServiceMethodSpecification {
     private final ServiceMethodConfiguration methodConfiguration = let(getServiceConfiguration(), configuration -> configuration.getMethods().get(methodId));
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Function<Flux<Value>, Object> mapInput = selectMapInput();
+    private final Function<Flux<Object>, Object> adoptInput = adoptInput();
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Function<Object, Flux<Object>> mapOutput = selectMapOutput();
+    private final Function<Object, Flux<Object>> adoptOutput = adoptOutput();
 
     public Flux<Value> serve(Flux<Value> input) {
-        if (deactivated()) {
-            return Flux.empty();
-        }
         Scheduler scheduler = let(getMethodConfiguration(), ServiceMethodConfiguration::getScheduler, getModuleConfiguration().getScheduler());
         return defer(() -> deferredServe(input)).subscribeOn(scheduler);
     }
@@ -108,26 +108,26 @@ public class ServiceMethodSpecification {
     }
 
     private Object mapInput(Flux<Value> input) {
-        Flux<Object> mappedInput = input.filter(value -> !deactivated()).map(value -> inputMapper.map(cast(value)));
+        Flux<Object> mappedInput = input.map(value -> inputMapper.map(cast(value)));
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
             mappedInput = mappedInput.transformDeferred(decorator);
         }
-        return getMapInput().apply(cast(mappedInput.onErrorResume(Throwable.class, this::mapException)));
+        return getAdoptInput().apply(mappedInput);
     }
 
     private Flux<Value> mapOutput(Object output) {
-        Flux<Object> mappedOutput = getMapOutput().apply(output);
-        mappedOutput = mappedOutput.filter(Objects::nonNull).filter(value -> !deactivated());
+        Flux<Object> mappedOutput = getAdoptOutput().apply(output);
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
             mappedOutput = mappedOutput.transformDeferred(decorator);
         }
         return mappedOutput
+                .filter(Objects::nonNull)
                 .map(value -> (Value) outputMapper.map(cast(value)))
                 .onErrorResume(Throwable.class, this::mapException);
     }
 
     private Flux<Value> mapException(Throwable exception) {
-        Flux<Object> errorOutput = Flux.error(exception).filter(value -> !deactivated());
+        Flux<Object> errorOutput = Flux.error(exception);
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
             errorOutput = errorOutput.transformDeferred(decorator);
         }
@@ -137,21 +137,7 @@ public class ServiceMethodSpecification {
 
     }
 
-    private boolean deactivated() {
-        ServiceConfiguration serviceConfiguration = getServiceConfiguration();
-        if (isNull(serviceConfiguration)) {
-            return false;
-        }
-        if (serviceConfiguration.isDeactivated()) {
-            return true;
-        }
-        if (isNull(getMethodConfiguration())) {
-            return false;
-        }
-        return getMethodConfiguration().isDeactivated();
-    }
-
-    private Function<Flux<Value>, Object> selectMapInput() {
+    private Function<Flux<Object>, Object> adoptInput() {
         if (isNull(inputMode)) {
             throw new ImpossibleSituation();
         }
@@ -159,7 +145,7 @@ public class ServiceMethodSpecification {
             case BLOCKING:
                 return Flux::blockFirst;
             case MONO:
-                return mappedInput -> orNull(mappedInput, checking -> checking == Flux.<Value>empty(), Flux::last);
+                return mappedInput -> orNull(mappedInput, checking -> checking == Flux.empty(), Flux::last);
             case FLUX:
                 return mappedInput -> mappedInput;
             default:
@@ -167,7 +153,7 @@ public class ServiceMethodSpecification {
         }
     }
 
-    private Function<Object, Flux<Object>> selectMapOutput() {
+    private Function<Object, Flux<Object>> adoptOutput() {
         if (isNull(outputMode)) {
             throw new ImpossibleSituation();
         }
@@ -182,7 +168,4 @@ public class ServiceMethodSpecification {
         }
     }
 
-    public static void main(String[] args) {
-
-    }
 }

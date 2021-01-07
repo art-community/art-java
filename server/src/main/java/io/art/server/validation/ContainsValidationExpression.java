@@ -24,7 +24,7 @@ import static java.text.MessageFormat.*;
 import java.util.*;
 import java.util.function.*;
 
-class ContainsValidationExpression extends ValidationExpression<Object> {
+public class ContainsValidationExpression extends ValidationExpression<Object> {
     private final List<?> list;
 
     ContainsValidationExpression(List<?> objectList) {
