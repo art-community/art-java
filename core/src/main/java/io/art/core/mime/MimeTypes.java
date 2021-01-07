@@ -23,6 +23,7 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.mime.MimeType.*;
 import static java.nio.charset.Charset.*;
 import static java.nio.charset.StandardCharsets.*;
+import java.nio.charset.*;
 
 public interface MimeTypes {
     MimeType ALL = mimeType(WILDCARD, WILDCARD);
@@ -62,6 +63,10 @@ public interface MimeTypes {
     MimeType TEXT_CSS = mimeType("text", "css");
     MimeType TEXT_JS = mimeType("text", "javascript");
     MimeType APPLICATION_MESSAGE_PACK = mimeType("application", "message-pack");
+    MimeType APPLICATION_YAML = mimeType("application", "yaml");
+    MimeType APPLICATION_YML = mimeType("application", "yml");
+    MimeType APPLICATION_YAML_UTF_8 = mimeType("application", "yaml", UTF_8);
+    MimeType APPLICATION_YML_UTF_8 = mimeType("application", "yml", UTF_8);
     MimeType APPLICATION_MESSAGE_PACK_UTF_8 = mimeType("application", "message-pack", UTF_8);
     MimeType APPLICATION_PROTOBUF = mimeType("application", "vnd.google.protobuf");
     MimeType APPLICATION_PROTOBUF_UTF_8 = mimeType("application", "vnd.google.protobuf", UTF_8);
