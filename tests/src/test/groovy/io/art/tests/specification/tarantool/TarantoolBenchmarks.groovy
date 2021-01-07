@@ -1,6 +1,7 @@
 
 package io.art.tests.specification.tarantool
 
+import io.art.tarantool.module.TarantoolModule
 import io.art.tarantool.space.TarantoolSpace
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
@@ -11,7 +12,7 @@ import spock.lang.Specification
 
 
 import static io.art.launcher.ModuleLauncher.launch
-import static io.art.model.implementation.ModuleModel.module
+import static io.art.model.configurator.ModuleModelConfigurator.*;
 
 
 import static io.art.tarantool.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
@@ -31,7 +32,7 @@ class TarantoolBenchmarks extends Specification {
     def benchTimeout = 10 //due to high freq of requests, every %benchSleepEvery% requests needed timeout to avoid client errors
 
     def setupSpec(){
-        launch module().apply()
+        launch module(TarantoolModule.class).configure()
     }
 
     def "Storage CRUD(warmup)"(){

@@ -1,7 +1,7 @@
 
 package io.art.tests.specification.tarantool
 
-
+import io.art.tarantool.module.TarantoolModule
 import io.art.tarantool.space.TarantoolSpace
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
@@ -12,7 +12,7 @@ import io.art.tarantool.storage.TarantoolStorageSpace
 import spock.lang.Specification
 
 import static io.art.launcher.ModuleLauncher.launch
-import static io.art.model.modeler.ModuleModeler.module
+import static io.art.model.configurator.ModuleModelConfigurator.*;
 import static io.art.tarantool.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
 import static io.art.tarantool.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
 import static io.art.tarantool.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
@@ -26,7 +26,7 @@ class Tarantool extends Specification {
     def synchronizationTimeout = 60
 
     def setupSpec(){
-        launch module().apply()
+        launch module(TarantoolModule.class).configure()
     }
 
     static def createSpace(TarantoolInstance db, String spaceName){
