@@ -273,7 +273,7 @@ public class Entity implements Value {
     }
 
 
-    public class ProxyMap<K, V> implements Map<K, V>, ImmutableMap<K, V> {
+    private class ProxyMap<K, V> implements Map<K, V>, ImmutableMap<K, V> {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
         private final LazyValue<Map<K, V>> evaluated;
