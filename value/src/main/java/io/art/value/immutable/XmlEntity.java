@@ -26,7 +26,7 @@ import io.art.value.exception.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collection.ImmutableMap.*;
-import static io.art.core.collector.MapCollectors.mapCollector;
+import static io.art.core.collector.MapCollector.mapCollector;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;

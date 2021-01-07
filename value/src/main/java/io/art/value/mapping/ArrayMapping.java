@@ -19,6 +19,7 @@
 package io.art.value.mapping;
 
 import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import io.art.value.factory.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
@@ -26,10 +27,12 @@ import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.value.factory.ArrayValueFactory.*;
 import static java.util.Arrays.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 @UtilityClass
 @UsedByGenerator
@@ -53,33 +56,39 @@ public class ArrayMapping {
     public ArrayFromModelMapper<boolean[]> fromBoolArray = array -> let(array, ArrayValueFactory::boolArray);
 
 
-    public static <T> ArrayToModelMapper<Collection<T>> toCollection(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.asList(elementMapper));
-    }
-
     public static <T> ArrayToModelMapper<T[]> toArray(Function<Integer, T[]> factory, ValueToModelMapper<T, ? extends Value> elementMapper) {
         return array -> let(array, notNull -> notNull.asList(elementMapper).toArray(factory.apply(array.size())));
     }
 
-    public static <T> ArrayToModelMapper<List<T>> toList(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.asList(elementMapper));
+    public static <T> ArrayToModelMapper<Stream<T>> toStream(ValueToModelMapper<T, ? extends Value> elementMapper) {
+        return array -> let(array, notNull -> notNull.asList(elementMapper).stream());
     }
 
-    public static <T> ArrayToModelMapper<Set<T>> toSet(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.asSet(elementMapper));
+
+    public static <T> ArrayToModelMapper<ImmutableArray<T>> toImmutableArray(ValueToModelMapper<T, ? extends Value> elementMapper) {
+        return array -> let(array, notNull -> notNull.asImmutableArray(elementMapper));
     }
 
-    public static <T> ArrayToModelMapper<Queue<T>> toQueue(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.asQueue(elementMapper));
+    public static <T> ArrayToModelMapper<ImmutableSet<T>> toImmutableSet(ValueToModelMapper<T, ? extends Value> elementMapper) {
+        return array -> let(array, notNull -> notNull.asImmutableSet(elementMapper));
     }
 
-    public static <T> ArrayToModelMapper<Deque<T>> toDeque(ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.asDeque(elementMapper));
+
+    public static <T> ArrayFromModelMapper<ImmutableArray<T>> fromImmutableArray(ValueFromModelMapper<T, ? extends Value> elementMapper) {
+        return list -> let(list, notNull -> array(list, elementMapper));
+    }
+
+    public static <T> ArrayFromModelMapper<ImmutableSet<T>> fromImmutableSet(ValueFromModelMapper<T, ? extends Value> elementMapper) {
+        return list -> let(list, notNull -> array(list, elementMapper));
     }
 
 
     public static <T> ArrayFromModelMapper<Collection<T>> fromCollection(ValueFromModelMapper<T, ? extends Value> elementMapper) {
         return list -> let(list, notNull -> array(list, elementMapper));
+    }
+
+    public static <T> ArrayFromModelMapper<Stream<T>> fromStream(ValueFromModelMapper<T, ? extends Value> elementMapper) {
+        return list -> let(list, notNull -> array(list.collect(immutableArrayCollector()), elementMapper));
     }
 
     public static <T> ArrayFromModelMapper<T[]> fromArray(ValueFromModelMapper<T, ? extends Value> elementMapper) {

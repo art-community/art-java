@@ -27,9 +27,9 @@ import reactor.core.scheduler.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.let;
 import static io.art.core.collection.ImmutableMap.*;
 import static java.util.Optional.*;
-import java.util.*;
 
 @Getter
 public class CommunicatorModuleConfiguration implements ModuleConfiguration {
@@ -45,11 +45,7 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         public Configurator from(ConfigurationSource source) {
             configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
             configuration.configurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))
-                    .map(server -> server.getNestedMap(TARGETS_KEY))
-                    .map(services -> services
-                            .entrySet()
-                            .stream()
-                            .collect(immutableMapCollector(Map.Entry::getKey, entry -> CommunicatorConfiguration.from(entry.getValue()))))
+                    .map(server -> server.getNestedMap(TARGETS_KEY, CommunicatorConfiguration::from))
                     .orElse(emptyImmutableMap());
             return this;
         }
@@ -57,7 +53,7 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator override(CommunicatorModuleConfiguration configuration) {
             ifNotEmpty(configuration.getConfigurations(), configurations -> this.configuration.configurations = configurations);
-            this.configuration.registry = configuration.getRegistry();
+            let(configuration.getRegistry(), registry -> this.configuration.registry = registry);
             return this;
         }
     }

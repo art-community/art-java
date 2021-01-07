@@ -198,16 +198,22 @@ public class ArrayValueFactory {
         return new ArrayValue(value::get, lazy(value::size));
     }
 
+    public static <T extends Value> ArrayValue array(Collection<T> value) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return array(fixedArrayOf(value));
+    }
+
     public static <T extends Value> ArrayValue array(ImmutableArray<T> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(value::get, lazy(value::size));
     }
 
-    public static <T extends Value> ArrayValue array(Collection<T> value) {
+    public static <T extends Value> ArrayValue array(ImmutableCollection<T> value) {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
-        return array(fixedArrayOf(value));
+        return array(immutableArrayOf(value));
     }
 
 
@@ -227,6 +233,12 @@ public class ArrayValueFactory {
         if (isNull(value)) return null;
         if (EmptinessChecker.isEmpty(value)) return EMPTY;
         return new ArrayValue(index -> let(value.get(index), mapper::map), lazy(value::size));
+    }
+
+    public static <T> ArrayValue array(ImmutableCollection<T> value, ValueFromModelMapper<T, ? extends Value> mapper) {
+        if (isNull(value)) return null;
+        if (EmptinessChecker.isEmpty(value)) return EMPTY;
+        return array(immutableArrayOf(value), mapper);
     }
 
 

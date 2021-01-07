@@ -18,11 +18,12 @@
 
 package io.art.core.extensions;
 
+import io.art.core.collection.*;
 import io.art.core.constants.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
-import static java.util.Arrays.asList;
+import static java.util.Arrays.*;
 import static java.util.Objects.*;
 import java.util.*;
 
@@ -48,13 +49,39 @@ public class StringExtensions {
         return toDelimitedString(collection, delimiter, StringConstants.EMPTY_STRING, StringConstants.EMPTY_STRING);
     }
 
+    public static String toDelimitedString(ImmutableArray<?> collection, String delimiter, String prefix, String suffix) {
+        if (isEmpty(collection)) {
+            return StringConstants.EMPTY_STRING;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        Iterator<?> it = collection.iterator();
+        while (it.hasNext()) {
+            sb.append(prefix).append(it.next()).append(suffix);
+            if (it.hasNext()) {
+                sb.append(delimiter);
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String toDelimitedString(ImmutableArray<?> collection, String delimiter) {
+        return toDelimitedString(collection, delimiter, StringConstants.EMPTY_STRING, StringConstants.EMPTY_STRING);
+    }
+
+
     public static String toCommaDelimitedString(Collection<?> collection) {
+        return toDelimitedString(collection, StringConstants.COMMA);
+    }
+
+    public static String toCommaDelimitedString(ImmutableArray<?> collection) {
         return toDelimitedString(collection, StringConstants.COMMA);
     }
 
     public static String toCommaDelimitedString(Object[] array) {
         return toDelimitedString(asList(array), StringConstants.COMMA);
     }
+
 
     public static <T> String toString(T value, String ifNull) {
         if (isNull(value)) return ifNull;

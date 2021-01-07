@@ -22,6 +22,14 @@ public class SetFactory {
         return isEmpty(elements) ? new LinkedHashSet<>() : new LinkedHashSet<>(elements);
     }
 
+    public static <T> Set<T> setOf(ImmutableSet<T> elements) {
+        return isEmpty(elements) ? new LinkedHashSet<>() : new LinkedHashSet<>(elements.toMutable());
+    }
+
+    public static <T> Set<T> setOf(ImmutableArray<T> elements) {
+        return isEmpty(elements) ? new LinkedHashSet<>() : new LinkedHashSet<>(elements.toMutable());
+    }
+
     public static Set<Long> setOf(long[] elements) {
         if (isEmpty(elements)) return setOf();
         Set<Long> set = setOf();
@@ -74,11 +82,11 @@ public class SetFactory {
 
     @SafeVarargs
     public static <T> ImmutableSet<T> immutableSetOf(T... elements) {
-        return new ImmutableSet<>(asList(elements));
+        return new ImmutableSetImplementation<>(asList(elements));
     }
 
-    public static <T> ImmutableSet<T> immutableSetOf(Collection<T> elements) {
-        return new ImmutableSet<>(elements);
+    public static <T> ImmutableSet<T> immutableSetOf(Iterable<T> elements) {
+        return new ImmutableSetImplementation<>(elements);
     }
 
 

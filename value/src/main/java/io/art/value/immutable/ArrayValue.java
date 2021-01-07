@@ -18,6 +18,7 @@
 
 package io.art.value.immutable;
 
+import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.value.constants.ValueModuleConstants.*;
@@ -32,13 +33,13 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.lazy.LazyValue.*;
-import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.INDEX_MAPPING_EXCEPTION;
+import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static io.art.value.mapping.PrimitiveMapping.*;
-import static java.text.MessageFormat.format;
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
+import static java.util.Spliterator.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -48,7 +49,7 @@ import java.util.stream.*;
 public class ArrayValue implements Value {
     @Getter
     private final ValueType type = ARRAY;
-    private final Map<Integer, ?> mappedValueCache = concurrentHashMap();
+    private final Map<Integer, ?> mappedValueCache = concurrentMap();
     private final Function<Integer, ? extends Value> valueProvider;
     private final LazyValue<Integer> size;
 
@@ -136,12 +137,12 @@ public class ArrayValue implements Value {
         return asSet(identity());
     }
 
-    public Queue<Value> asQueue() {
-        return asQueue(identity());
+    public ImmutableArray<Value> asImmutableArray() {
+        return new ProxyList<>(identity());
     }
 
-    public Deque<Value> asDeque() {
-        return asDeque(identity());
+    public ImmutableSet<Value> asImmutableSet() {
+        return new ProxySet<>(identity());
     }
 
 
@@ -157,12 +158,12 @@ public class ArrayValue implements Value {
         return new ProxySet<>(mapper);
     }
 
-    public <T> Queue<T> asQueue(ValueToModelMapper<T, ? extends Value> mapper) {
-        return new ProxyQueue<>(mapper);
+    public <T> ImmutableArray<T> asImmutableArray(ValueToModelMapper<T, ? extends Value> mapper) {
+        return new ProxyList<>(mapper);
     }
 
-    public <T> Deque<T> asDeque(ValueToModelMapper<T, ? extends Value> mapper) {
-        return new ProxyDeque<>(mapper);
+    public <T> ImmutableSet<T> asImmutableSet(ValueToModelMapper<T, ? extends Value> mapper) {
+        return new ProxySet<>(mapper);
     }
 
 
@@ -222,7 +223,7 @@ public class ArrayValue implements Value {
     }
 
 
-    private class ProxyList<T> implements List<T> {
+    private class ProxyList<T> implements List<T>, ImmutableArray<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
         private final LazyValue<List<T>> evaluated;
 
@@ -326,6 +327,12 @@ public class ArrayValue implements Value {
             return evaluated.get().toArray();
         }
 
+
+        @Override
+        public void forEach(Consumer<? super T> action) {
+            iterator().forEachRemaining(action);
+        }
+
         @Override
         @Nonnull
         public <A> A[] toArray(@Nonnull A[] array) {
@@ -363,8 +370,23 @@ public class ArrayValue implements Value {
         }
 
         @Override
+        public boolean removeIf(Predicate<? super T> filter) {
+            return false;
+        }
+
+        @Override
         public boolean retainAll(@Nonnull Collection<?> collection) {
             throw new NotImplementedException("retainAll");
+        }
+
+        @Override
+        public void replaceAll(UnaryOperator<T> operator) {
+            throw new NotImplementedException("replaceAll");
+        }
+
+        @Override
+        public void sort(Comparator<? super T> c) {
+            throw new NotImplementedException("sort");
         }
 
         @Override
@@ -375,6 +397,11 @@ public class ArrayValue implements Value {
         @Override
         public T get(int index) {
             return ArrayValue.this.map(index, mapper);
+        }
+
+        @Override
+        public List<T> toMutable() {
+            return evaluated.get();
         }
 
         @Override
@@ -419,9 +446,24 @@ public class ArrayValue implements Value {
         public List<T> subList(int fromIndex, int toIndex) {
             return evaluated.get().subList(fromIndex, toIndex);
         }
+
+        @Override
+        public Spliterator<T> spliterator() {
+            return Spliterators.spliterator(iterator(), size(), IMMUTABLE);
+        }
+
+        @Override
+        public Stream<T> stream() {
+            return StreamSupport.stream(spliterator(), false);
+        }
+
+        @Override
+        public Stream<T> parallelStream() {
+            return StreamSupport.stream(spliterator(), true);
+        }
     }
 
-    private class ProxySet<T> implements Set<T> {
+    private class ProxySet<T> implements Set<T>, ImmutableSet<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
         private final LazyValue<Set<T>> evaluated;
 
@@ -447,100 +489,9 @@ public class ArrayValue implements Value {
         }
 
         @Override
-        public int size() {
-            return ArrayValue.this.size();
+        public Set<T> toMutable() {
+            return evaluated.get();
         }
-
-        @Override
-        public boolean isEmpty() {
-            return size() == 0;
-        }
-
-        @Override
-        public boolean contains(Object value) {
-            return evaluated.get().contains(value);
-        }
-
-        @Override
-        @Nonnull
-        public Iterator<T> iterator() {
-            return new ProxyIterator();
-        }
-
-        @Override
-        @Nonnull
-        public Object[] toArray() {
-            return evaluated.get().toArray();
-        }
-
-        @Override
-        @Nonnull
-        public <A> A[] toArray(@Nonnull A[] array) {
-            return evaluated.get().toArray(array);
-        }
-
-        @Override
-        public boolean add(T element) {
-            throw new NotImplementedException("add");
-        }
-
-        @Override
-        public boolean remove(Object object) {
-            throw new NotImplementedException("remove");
-        }
-
-        @Override
-        public boolean containsAll(@Nonnull Collection<?> collection) {
-            return evaluated.get().containsAll(collection);
-        }
-
-        @Override
-        public boolean addAll(@Nonnull Collection<? extends T> collection) {
-            throw new NotImplementedException("addAll");
-        }
-
-        @Override
-        public boolean removeAll(@Nonnull Collection<?> collection) {
-            throw new NotImplementedException("removeAll");
-        }
-
-        @Override
-        public boolean retainAll(@Nonnull Collection<?> collection) {
-            throw new NotImplementedException("retainAll");
-        }
-
-        @Override
-        public void clear() {
-            throw new NotImplementedException("clear");
-        }
-    }
-
-    private class ProxyQueue<T> implements Queue<T> {
-        protected final ValueToModelMapper<T, ? extends Value> mapper;
-        private final LazyValue<Queue<T>> evaluated;
-        private int index = 0;
-
-        public ProxyQueue(ValueToModelMapper<T, ? extends Value> mapper) {
-            this.mapper = mapper;
-            this.evaluated = lazy(() -> ArrayValue.this.toQueue(mapper));
-        }
-
-        private class ProxyIterator implements Iterator<T> {
-            private int cursor = 0;
-
-            @Override
-            public boolean hasNext() {
-                return cursor != ArrayValue.this.size();
-            }
-
-            @Override
-            public T next() {
-                T value = ArrayValue.this.map(cursor, mapper);
-                cursor++;
-                return value;
-            }
-        }
-
 
         @Override
         public int size() {
@@ -576,38 +527,13 @@ public class ArrayValue implements Value {
         }
 
         @Override
+        public void forEach(Consumer<? super T> action) {
+            iterator().forEachRemaining(action);
+        }
+
+        @Override
         public boolean add(T element) {
             throw new NotImplementedException("add");
-        }
-
-        @Override
-        public boolean offer(T t) {
-            throw new NotImplementedException("offer");
-        }
-
-        @Override
-        public T remove() {
-            throw new NotImplementedException("offer");
-        }
-
-        @Override
-        public T poll() {
-            throw new NotImplementedException("offer");
-        }
-
-        @Override
-        public T element() {
-            if (isEmpty()) {
-                throw new NoSuchElementException();
-            }
-            return peek();
-        }
-
-        @Override
-        public T peek() {
-            T value = ArrayValue.this.map(index, mapper);
-            index++;
-            return value;
         }
 
         @Override
@@ -631,6 +557,11 @@ public class ArrayValue implements Value {
         }
 
         @Override
+        public boolean removeIf(Predicate<? super T> filter) {
+            throw new NotImplementedException("removeIf");
+        }
+
+        @Override
         public boolean retainAll(@Nonnull Collection<?> collection) {
             throw new NotImplementedException("retainAll");
         }
@@ -639,156 +570,21 @@ public class ArrayValue implements Value {
         public void clear() {
             throw new NotImplementedException("clear");
         }
-    }
-
-    private class ProxyDeque<T> extends ProxyQueue<T> implements Deque<T> {
-        public ProxyDeque(ValueToModelMapper<T, ? extends Value> mapper) {
-            super(mapper);
-        }
-
-        private class ProxyDescendingIterator implements ListIterator<T> {
-            private final int index = size.get();
-
-            @Override
-            public boolean hasNext() {
-                return hasPrevious();
-            }
-
-            @Override
-            public T next() {
-                return previous();
-            }
-
-            @Override
-            public boolean hasPrevious() {
-                return index != 0;
-            }
-
-            @Override
-            public T previous() {
-                return ArrayValue.this.map(previousIndex(), mapper);
-            }
-
-            @Override
-            public int nextIndex() {
-                return index;
-            }
-
-            @Override
-            public int previousIndex() {
-                return index - 1;
-            }
-
-            @Override
-            public void remove() {
-                throw new NotImplementedException("iterator.remove");
-            }
-
-            @Override
-            public void set(T element) {
-                throw new NotImplementedException("iterator.set");
-            }
-
-            @Override
-            public void add(T t) {
-                throw new NotImplementedException("iterator.add");
-            }
-        }
-
-        ;
 
         @Override
-        public void addFirst(T t) {
-            throw new NotImplementedException("addFirst");
+        public Spliterator<T> spliterator() {
+            return Spliterators.spliterator(iterator(), size(), IMMUTABLE);
         }
 
         @Override
-        public void addLast(T t) {
-            throw new NotImplementedException("addLast");
+        public Stream<T> stream() {
+            return StreamSupport.stream(spliterator(), false);
         }
 
         @Override
-        public boolean offerFirst(T t) {
-            throw new NotImplementedException("offerFirst");
+        public Stream<T> parallelStream() {
+            return StreamSupport.stream(spliterator(), true);
         }
-
-        @Override
-        public boolean offerLast(T t) {
-            throw new NotImplementedException("offerLast");
-        }
-
-        @Override
-        public T removeFirst() {
-            throw new NotImplementedException("removeFirst");
-        }
-
-        @Override
-        public T removeLast() {
-            throw new NotImplementedException("removeLast");
-        }
-
-        @Override
-        public T pollFirst() {
-            throw new NotImplementedException("pollFirst");
-        }
-
-        @Override
-        public T pollLast() {
-            throw new NotImplementedException("pollLast");
-        }
-
-        @Override
-        public T getFirst() {
-            return ArrayValue.this.map(0, mapper);
-        }
-
-        @Override
-        public T getLast() {
-            return ArrayValue.this.map(size.get() - 1, mapper);
-        }
-
-        @Override
-        public T peekFirst() {
-            if (isEmpty()) {
-                throw new NoSuchElementException();
-            }
-            return getFirst();
-        }
-
-        @Override
-        public T peekLast() {
-            if (isEmpty()) {
-                throw new NoSuchElementException();
-            }
-            return getLast();
-        }
-
-        @Override
-        public boolean removeFirstOccurrence(Object o) {
-            throw new NotImplementedException("removeFirstOccurrence");
-        }
-
-        @Override
-        public boolean removeLastOccurrence(Object o) {
-            throw new NotImplementedException("removeLastOccurrence");
-        }
-
-        @Override
-        public void push(T t) {
-            throw new NotImplementedException("push");
-        }
-
-        @Override
-        public T pop() {
-            throw new NotImplementedException("pop");
-        }
-
-        @Override
-        @Nonnull
-        public Iterator<T> descendingIterator() {
-            return new ProxyDescendingIterator();
-        }
-
     }
 
     public static ArrayValue EMPTY = new ArrayValue(index -> null, lazy(() -> 0));

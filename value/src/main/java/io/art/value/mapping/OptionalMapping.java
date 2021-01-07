@@ -19,56 +19,59 @@
 package io.art.value.mapping;
 
 import io.art.core.annotation.*;
+import io.art.core.caster.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
-import static io.art.core.checker.NullityChecker.let;
-import static io.art.core.extensions.OptionalExtensions.unwrap;
+import static io.art.core.caster.Caster.cast;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.extensions.OptionalExtensions.*;
 import static java.util.Optional.*;
 import java.util.*;
 
 @UtilityClass
 @UsedByGenerator
 public class OptionalMapping {
-    public static <T> ValueFromModelMapper<Optional<T>, Value> fromOptional(ValueFromModelMapper<T, Value> valueMapper) {
+    public static <T> ValueFromModelMapper<Optional<T>, Value> fromOptional(ValueFromModelMapper<T, ? extends Value> valueMapper) {
         return value -> let(unwrap(value), valueMapper::map);
-    }
-
-    public static <T> ValueToModelMapper<Optional<T>, Value> toOptional(ValueToModelMapper<T, Value> valueMapper) {
-        return value -> ofNullable(value).map(valueMapper::map);
     }
 
     public static <T> PrimitiveFromModelMapper<Optional<T>> fromOptional(PrimitiveFromModelMapper<T> valueMapper) {
         return value -> let(unwrap(value), valueMapper::map);
     }
 
-    public static <T> PrimitiveToModelMapper<Optional<T>> toOptional(PrimitiveToModelMapper<T> valueMapper) {
-        return value -> ofNullable(value).map(valueMapper::map);
-    }
-
     public static <T> ArrayFromModelMapper<Optional<T>> fromOptional(ArrayFromModelMapper<T> valueMapper) {
         return value -> let(unwrap(value), valueMapper::map);
-    }
-
-    public static <T> ArrayToModelMapper<Optional<T>> toOptional(ArrayToModelMapper<T> valueMapper) {
-        return value -> ofNullable(value).map(valueMapper::map);
     }
 
     public static <T> EntityFromModelMapper<Optional<T>> fromOptional(EntityFromModelMapper<T> valueMapper) {
         return value -> let(unwrap(value), valueMapper::map);
     }
 
-    public static <T> EntityToModelMapper<Optional<T>> toOptional(EntityToModelMapper<T> valueMapper) {
-        return value -> ofNullable(value).map(valueMapper::map);
-    }
-
     public static <T> BinaryFromModelMapper<Optional<T>> fromOptional(BinaryFromModelMapper<T> valueMapper) {
         return value -> let(unwrap(value), valueMapper::map);
     }
 
+
+    public static <T> ValueToModelMapper<Optional<T>, Value> toOptional(ValueToModelMapper<T, ? extends Value> valueMapper) {
+        return value -> ofNullable(value).map(optional -> valueMapper.map(cast(optional)));
+    }
+
+    public static <T> EntityToModelMapper<Optional<T>> toOptional(EntityToModelMapper<T> valueMapper) {
+        return value -> ofNullable(value).map(valueMapper::map);
+    }
+
     public static <T> BinaryToModelMapper<Optional<T>> toOptional(BinaryToModelMapper<T> valueMapper) {
+        return value -> ofNullable(value).map(valueMapper::map);
+    }
+
+    public static <T> ArrayToModelMapper<Optional<T>> toOptional(ArrayToModelMapper<T> valueMapper) {
+        return value -> ofNullable(value).map(valueMapper::map);
+    }
+
+    public static <T> PrimitiveToModelMapper<Optional<T>> toOptional(PrimitiveToModelMapper<T> valueMapper) {
         return value -> ofNullable(value).map(valueMapper::map);
     }
 }

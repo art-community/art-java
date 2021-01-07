@@ -69,13 +69,13 @@ public interface ValueModuleConstants {
         @Getter
         @AllArgsConstructor
         public enum PrimitiveType {
-            STRING(stringPrimitive(EMPTY_STRING)),
-            LONG(longPrimitive(0L)),
-            DOUBLE(doublePrimitive(0.)),
-            FLOAT(floatPrimitive(0.f)),
-            INT(intPrimitive(0)),
-            BOOL(boolPrimitive(false)),
-            BYTE(bytePrimitive((byte) 0));
+            STRING(DEFAULT_STRING_PRIMITIVE),
+            LONG(DEFAULT_LONG_PRIMITIVE),
+            DOUBLE(DEFAULT_DOUBLE_PRIMITIVE),
+            FLOAT(DEFAULT_FLOAT_PRIMITIVE),
+            INT(DEFAULT_INT_PRIMITIVE),
+            BOOL(DEFAULT_BOOL_PRIMITIVE),
+            BYTE(DEFAULT_BYTE_PRIMITIVE);
 
             private final Primitive defaultValue;
 

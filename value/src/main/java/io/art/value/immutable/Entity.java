@@ -20,6 +20,7 @@ package io.art.value.immutable;
 
 import io.art.core.annotation.*;
 import io.art.core.checker.*;
+import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.factory.*;
 import io.art.core.lazy.*;
@@ -32,6 +33,7 @@ import io.art.value.mapping.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collector.SetCollector.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
@@ -43,7 +45,7 @@ import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static java.util.stream.Collectors.*;
+import static java.util.Optional.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -53,7 +55,7 @@ public class Entity implements Value {
     @Getter
     private final ValueType type = ENTITY;
     private final EntityMapping mapping = new EntityMapping(this);
-    private final Map<Primitive, ?> mappedValueCache = concurrentHashMap();
+    private final Map<Primitive, ?> mappedValueCache = concurrentMap();
     private final Set<Primitive> keys;
     private final Function<Primitive, ? extends Value> valueProvider;
 
@@ -180,7 +182,6 @@ public class Entity implements Value {
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
         try {
             Object cached = mappedValueCache.get(primitive);
-
             if (nonNull(cached)) return cast(cached);
             cached = let(cast(get(primitive)), mapper::map);
             if (nonNull(cached)) mappedValueCache.put(primitive, cast(cached));
@@ -188,6 +189,14 @@ public class Entity implements Value {
         } catch (Throwable throwable) {
             throw new ValueMappingException(format(FIELD_MAPPING_EXCEPTION, primitive), throwable);
         }
+    }
+
+    public <T, V extends Value> Optional<T> mapOptional(Primitive primitive, ValueToModelMapper<Optional<T>, V> mapper) {
+        Object cached = mappedValueCache.get(primitive);
+        if (nonNull(cached)) return cast(cached);
+        cached = mapper.map(cast(get(primitive)));
+        mappedValueCache.put(primitive, cast(cached));
+        return cast(cached);
     }
 
     public <T, V extends Value> T mapOrDefault(Primitive key, PrimitiveType type, ValueToModelMapper<T, V> mapper) {
@@ -219,6 +228,16 @@ public class Entity implements Value {
     public <K, V> Map<K, V> asMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
         return new ProxyMap<>(toKeyMapper, fromKeyMapper, valueMapper);
     }
+
+
+    public ImmutableMap<Primitive, ? extends Value> asImmutableMap() {
+        return asImmutableMap(key -> key, key -> key, value -> value);
+    }
+
+    public <K, V> ImmutableMap<K, V> asImmutableMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
+        return new ProxyMap<>(toKeyMapper, fromKeyMapper, valueMapper);
+    }
+
 
     @UsedByGenerator
     public EntityMapping mapping() {
@@ -253,7 +272,8 @@ public class Entity implements Value {
         return true;
     }
 
-    public class ProxyMap<K, V> implements Map<K, V> {
+
+    public class ProxyMap<K, V> implements Map<K, V>, ImmutableMap<K, V> {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
         private final LazyValue<Map<K, V>> evaluated;
@@ -263,7 +283,7 @@ public class Entity implements Value {
             this.valueMapper = valueMapper;
             this.fromKeyMapper = fromKeyMapper;
             this.evaluated = lazy(() -> Entity.this.toMap(toKeyMapper, valueMapper));
-            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(toCollection(SetFactory::setOf)));
+            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(setCollector()));
         }
 
         @Override
@@ -336,6 +356,66 @@ public class Entity implements Value {
         @Nonnull
         public Set<Entry<K, V>> entrySet() {
             return evaluated.get().entrySet();
+        }
+
+        @Override
+        public V getOrDefault(Object key, V defaultValue) {
+            return orElse(get(key), defaultValue);
+        }
+
+        @Override
+        public void forEach(BiConsumer<? super K, ? super V> action) {
+            entrySet().forEach(entry -> action.accept(entry.getKey(), entry.getValue()));
+        }
+
+        @Override
+        public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
+            throw new NotImplementedException("replaceAll");
+        }
+
+        @Override
+        public V putIfAbsent(K key, V value) {
+            throw new NotImplementedException("putIfAbsent");
+        }
+
+        @Override
+        public boolean remove(Object key, Object value) {
+            throw new NotImplementedException("remove");
+        }
+
+        @Override
+        public boolean replace(K key, V oldValue, V newValue) {
+            throw new NotImplementedException("replace");
+        }
+
+        @Override
+        public V replace(K key, V value) {
+            throw new NotImplementedException("replace");
+        }
+
+        @Override
+        public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
+            throw new NotImplementedException("computeIfAbsent");
+        }
+
+        @Override
+        public V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+            throw new NotImplementedException("computeIfPresent");
+        }
+
+        @Override
+        public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+            throw new NotImplementedException("compute");
+        }
+
+        @Override
+        public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+            throw new NotImplementedException("merge");
+        }
+
+        @Override
+        public Map<K, V> toMutable() {
+            return evaluated.get();
         }
     }
 

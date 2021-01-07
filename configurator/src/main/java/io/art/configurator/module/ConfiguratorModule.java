@@ -20,9 +20,11 @@ package io.art.configurator.module;
 
 import io.art.configurator.configuration.*;
 import io.art.configurator.configuration.ConfiguratorModuleConfiguration.*;
+import io.art.configurator.model.*;
 import io.art.configurator.source.*;
 import io.art.core.checker.*;
 import io.art.core.module.*;
+import io.art.core.source.*;
 import lombok.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorKeys.*;
@@ -33,6 +35,7 @@ import static io.art.core.context.Context.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static java.nio.file.Paths.*;
+import static java.util.Optional.*;
 import static lombok.AccessLevel.*;
 import java.io.*;
 import java.util.*;
@@ -59,8 +62,8 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .ifPresent(source -> configure(configurator -> configurator.from(source)));
         EnvironmentConfigurationSource environment = getConfiguration().getEnvironment();
         PropertiesConfigurationSource properties = getConfiguration().getProperties();
-        configureByFile(addFirstToList(environment.getString(MODULE_CONFIG_FILE_ENVIRONMENT), environment.getStringList(MODULE_CONFIG_FILES_ENVIRONMENT)));
-        configureByFile(addFirstToList(properties.getString(MODULE_CONFIG_FILE_PROPERTY), properties.getStringList(MODULE_CONFIG_FILES_PROPERTY)));
+        configureByFile(addFirstToList(environment.getString(MODULE_CONFIG_FILE_ENVIRONMENT), environment.getStringArray(MODULE_CONFIG_FILES_ENVIRONMENT).toMutable()));
+        configureByFile(addFirstToList(properties.getString(MODULE_CONFIG_FILE_PROPERTY), properties.getStringArray(MODULE_CONFIG_FILES_PROPERTY).toMutable()));
         return new StatelessModuleProxy<>(this);
     }
 
@@ -73,8 +76,20 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(EMPTY_STRING, CUSTOM_FILE, file))));
     }
 
-    public static <T> T configuration(Class<T> model) {
-        return configuratorModule().configuration().getCustomConfiguration(model);
+    public static Optional<ConfigurationSource> configuration() {
+        return ofNullable(configuratorModule().configuration().getConfiguration());
+    }
+
+    public static Optional<ConfigurationSource> configuration(String section) {
+        return configuration().map(configuration -> configuration.getNested(section));
+    }
+
+    public static <T> Optional<T> configuration(Class<T> type) {
+        return configuration(EMPTY_STRING, type);
+    }
+
+    public static <T> Optional<T> configuration(String section, Class<T> type) {
+        return ofNullable(configuratorModule().configuration().getCustomConfiguration(new CustomConfigurationModel(section, type)));
     }
 
     public static StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule() {

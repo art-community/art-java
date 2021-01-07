@@ -18,6 +18,7 @@
 
 package io.art.configurator.configuration;
 
+import io.art.configurator.model.*;
 import io.art.configurator.source.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
@@ -33,7 +34,10 @@ import static java.util.Comparator.*;
 @Getter
 public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<ModuleConfigurationSourceType, ConfigurationSource> sources = emptyImmutableMap();
-    private ImmutableMap<Class<?>, ?> customConfigurations = emptyImmutableMap();
+    private ImmutableMap<CustomConfigurationModel, ?> customConfigurations = emptyImmutableMap();
+
+    @Getter(lazy = true)
+    private final ConfigurationSource delegate = new DelegateConfigurationSource(orderedSources());
 
     public PropertiesConfigurationSource getProperties() {
         return cast(sources.get(PROPERTIES));
@@ -47,7 +51,11 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
         return immutableSortedArray(getSources().values(), comparingInt((ConfigurationSource source) -> source.getType().getOrder()));
     }
 
-    public <T> T getCustomConfiguration(Class<T> modelClass) {
+    public ConfigurationSource getConfiguration() {
+        return getDelegate();
+    }
+
+    public <T> T getCustomConfiguration(CustomConfigurationModel modelClass) {
         return cast(customConfigurations.get(modelClass));
     }
 

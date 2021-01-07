@@ -21,6 +21,7 @@ package io.art.model.configurator;
 import io.art.model.implementation.module.*;
 import lombok.*;
 import static io.art.model.constants.ModelConstants.*;
+import static java.util.Objects.*;
 import java.util.function.*;
 
 @Getter
@@ -49,7 +50,15 @@ public class ModuleModelConfigurator {
     }
 
     public ModuleModelConfigurator onLoad(Runnable action) {
-        this.onLoad = action;
+        Runnable current = this.onLoad;
+        if (isNull(current)) {
+            this.onLoad = action;
+            return this;
+        }
+        this.onLoad = () -> {
+            current.run();
+            action.run();
+        };
         return this;
     }
 

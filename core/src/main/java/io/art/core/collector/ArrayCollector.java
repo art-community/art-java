@@ -16,22 +16,21 @@
  * limitations under the License.
  */
 
-package io.art.core.model;
+package io.art.core.collector;
 
-import lombok.*;
-import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.CollectionExtensions.*;
-import static io.art.core.factory.MapFactory.*;
+import io.art.core.factory.*;
+import lombok.experimental.*;
+import static java.util.stream.Collectors.*;
 import java.util.*;
+import java.util.stream.*;
 
-@Value
-public class ServiceMethodIdentifier {
-    private static final Map<String, ServiceMethodIdentifier> CACHE = weakMap();
+@UtilityClass
+public class ArrayCollector {
+    public static <T> Collector<T, ?, List<T>> arrayCollector() {
+        return toCollection(ArrayFactory::dynamicArray);
+    }
 
-    String serviceId;
-    String methodId;
-
-    public static ServiceMethodIdentifier serviceMethod(String serviceId, String methodId) {
-        return putIfAbsent(CACHE, EMPTY_STRING + serviceId + methodId, () -> new ServiceMethodIdentifier(serviceId, methodId));
+    public static <T> Collector<T, ?, List<T>> listCollector() {
+        return toCollection(ListFactory::linkedList);
     }
 }
