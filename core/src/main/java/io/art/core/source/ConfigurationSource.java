@@ -18,17 +18,18 @@
 
 package io.art.core.source;
 
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.extensions.*;
 import io.art.core.parser.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.*;
 
+@UsedByGenerator
 public interface ConfigurationSource {
     String getSection();
 
@@ -108,87 +109,51 @@ public interface ConfigurationSource {
     }
 
     default ImmutableArray<Integer> getIntArray(String path) {
-        return getStringArray(path)
-                .stream()
-                .map(Integer::parseInt)
-                .collect(immutableArrayCollector());
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asIntArray);
     }
 
     default ImmutableArray<Long> getLongArray(String path) {
-        return getStringArray(path)
-                .stream()
-                .map(Long::parseLong)
-                .collect(immutableArrayCollector());
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asLongArray);
     }
 
     default ImmutableArray<Float> getFloatArray(String path) {
-        return getStringArray(path)
-                .stream()
-                .map(Float::parseFloat)
-                .collect(immutableArrayCollector());
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asFloatArray);
     }
 
     default ImmutableArray<Double> getDoubleArray(String path) {
-        return getStringArray(path)
-                .stream()
-                .map(Double::parseDouble)
-                .collect(immutableArrayCollector());
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asDoubleArray);
     }
 
     default ImmutableArray<Short> getShortArray(String path) {
-        return getStringArray(path)
-                .stream()
-                .map(Short::parseShort)
-                .collect(immutableArrayCollector());
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asShortArray);
     }
 
     default ImmutableArray<Character> getCharArray(String path) {
-        return getStringArray(path)
-                .stream()
-                .map(string -> letIfNotEmpty(string, notEmpty -> notEmpty.charAt(0)))
-                .collect(immutableArrayCollector());
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asCharArray);
     }
 
     default ImmutableArray<Byte> getByteArray(String path) {
-        return getStringArray(path)
-                .stream()
-                .map(Byte::parseByte)
-                .collect(immutableArrayCollector());
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asByteArray);
     }
 
     default ImmutableArray<Duration> getDurationArray(String path) {
-        return getStringArray(path)
-                .stream()
-                .map(DurationParser::parseDuration)
-                .collect(immutableArrayCollector());
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asDurationArray);
     }
 
     default ImmutableArray<UUID> getUuidArray(String path) {
-        return getStringArray(path)
-                .stream()
-                .map(UUID::fromString)
-                .collect(immutableArrayCollector());
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asUuidArray);
     }
 
     default ImmutableArray<LocalDateTime> getLocalDateTimeArray(String path) {
-        return getStringArray(path)
-                .stream()
-                .map(LocalDateTime::parse)
-                .collect(immutableArrayCollector());
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asLocalDateTimeArray);
     }
 
     default ImmutableArray<ZonedDateTime> getZonedDateTimeArray(String path) {
-        return getStringArray(path)
-                .stream()
-                .map(ZonedDateTime::parse)
-                .collect(immutableArrayCollector());
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asZonedDateTimeArray);
     }
 
     default ImmutableArray<Date> getDateArray(String path) {
-        return getZonedDateTimeArray(path)
-                .stream()
-                .map(DateTimeExtensions::toSimpleDate)
-                .collect(immutableArrayCollector());
+        return orEmptyImmutableArray(getNested(path), NestedConfiguration::asDateArray);
     }
 
 

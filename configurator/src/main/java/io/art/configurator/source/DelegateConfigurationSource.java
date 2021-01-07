@@ -29,7 +29,10 @@ public class DelegateConfigurationSource implements ConfigurationSource {
 
     @Override
     public ImmutableSet<String> getKeys() {
-        return sources.stream().flatMap(source -> source.getKeys().stream()).collect(immutableSetCollector());
+        return sources
+                .stream()
+                .flatMap(source -> source.getKeys().stream())
+                .collect(immutableSetCollector());
     }
 
     @Override

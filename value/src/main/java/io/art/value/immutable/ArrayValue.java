@@ -327,12 +327,6 @@ public class ArrayValue implements Value {
             return evaluated.get().toArray();
         }
 
-
-        @Override
-        public void forEach(Consumer<? super T> action) {
-            iterator().forEachRemaining(action);
-        }
-
         @Override
         @Nonnull
         public <A> A[] toArray(@Nonnull A[] array) {
@@ -449,7 +443,7 @@ public class ArrayValue implements Value {
 
         @Override
         public Spliterator<T> spliterator() {
-            return Spliterators.spliterator(iterator(), size(), IMMUTABLE);
+            return Spliterators.spliterator(iterator(), size(), ORDERED);
         }
 
         @Override
@@ -527,11 +521,6 @@ public class ArrayValue implements Value {
         }
 
         @Override
-        public void forEach(Consumer<? super T> action) {
-            iterator().forEachRemaining(action);
-        }
-
-        @Override
         public boolean add(T element) {
             throw new NotImplementedException("add");
         }
@@ -573,7 +562,7 @@ public class ArrayValue implements Value {
 
         @Override
         public Spliterator<T> spliterator() {
-            return Spliterators.spliterator(iterator(), size(), IMMUTABLE);
+            return Spliterators.spliterator(iterator(), size(), ORDERED);
         }
 
         @Override

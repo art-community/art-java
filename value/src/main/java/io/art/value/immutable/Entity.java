@@ -45,7 +45,6 @@ import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static java.util.Optional.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -394,22 +393,22 @@ public class Entity implements Value {
         }
 
         @Override
-        public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
+        public V computeIfAbsent(K key, @Nonnull Function<? super K, ? extends V> mappingFunction) {
             throw new NotImplementedException("computeIfAbsent");
         }
 
         @Override
-        public V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+        public V computeIfPresent(K key, @Nonnull BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
             throw new NotImplementedException("computeIfPresent");
         }
 
         @Override
-        public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+        public V compute(K key, @Nonnull BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
             throw new NotImplementedException("compute");
         }
 
         @Override
-        public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+        public V merge(K key, @Nonnull V value, @Nonnull BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
             throw new NotImplementedException("merge");
         }
 

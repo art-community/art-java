@@ -59,7 +59,7 @@ public class Primitive implements Value {
     public Character getChar() {
         String stringValue = getString();
         if (isNull(stringValue)) return null;
-        return letIfNotEmpty(stringValue, string -> string.charAt(0), Character.MIN_VALUE);
+        return letIfNotEmpty(stringValue, string -> string.charAt(0));
     }
 
     public Double getDouble() {

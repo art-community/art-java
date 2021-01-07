@@ -20,7 +20,7 @@ package io.art.core.collection;
 
 import com.google.common.collect.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.util.Collections.*;
 import java.util.*;
 import java.util.stream.*;
@@ -44,9 +44,11 @@ public interface ImmutableArray<T> extends ImmutableCollection<T> {
     int lastIndexOf(Object object);
 
     default ImmutableArray<T> reverse() {
-        List<T> elements = toMutable();
-        Collections.reverse(elements);
-        return immutableArrayOf(elements);
+        Builder<T> builder = immutableArrayBuilder();
+        for (int index = size() - 1; index > 0; index--) {
+            builder.add(get(index));
+        }
+        return builder.build();
     }
 
     static <T> ImmutableArray<T> emptyImmutableArray() {
@@ -76,6 +78,7 @@ public interface ImmutableArray<T> extends ImmutableCollection<T> {
             builder = ImmutableList.builder();
         }
 
+        @SuppressWarnings(UNSTABLE_API_USAGE)
         public Builder(int size) {
             builder = ImmutableList.builderWithExpectedSize(size);
         }
