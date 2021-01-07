@@ -93,4 +93,11 @@ public class ListFactory {
         for (boolean element : elements) array.add(element);
         return array;
     }
+
+    public static List<Character> linkedListOf(char[] elements) {
+        if (isEmpty(elements)) return linkedListOf();
+        List<Character> array = linkedListOf();
+        for (char element : elements) array.add(element);
+        return array;
+    }
 }

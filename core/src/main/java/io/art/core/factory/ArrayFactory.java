@@ -69,7 +69,7 @@ public class ArrayFactory {
     }
 
     public static <T> List<T> dynamicArrayOf(Stream<T> stream) {
-        return isEmpty(stream) ? emptyList() : stream.collect(arrayCollector());
+        return isEmpty(stream) ? new ArrayList<>() : stream.collect(arrayCollector());
     }
 
     public static <T> List<T> dynamicArrayOf(Collection<T> elements) {
@@ -130,6 +130,13 @@ public class ArrayFactory {
         if (isEmpty(elements)) return emptyList();
         List<Boolean> array = dynamicArray(elements.length);
         for (boolean element : elements) array.add(element);
+        return array;
+    }
+
+    public static List<Character> dynamicArrayOf(char[] elements) {
+        if (isEmpty(elements)) return emptyList();
+        List<Character> array = dynamicArray(elements.length);
+        for (char element : elements) array.add(element);
         return array;
     }
 

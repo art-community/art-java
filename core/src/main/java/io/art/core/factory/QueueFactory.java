@@ -69,6 +69,12 @@ public class QueueFactory {
         return deque;
     }
 
+    public static Deque<Character> dequeOf(char[] elements) {
+        if (isEmpty(elements)) return dequeOf();
+        Deque<Character> deque = dequeOf();
+        for (char element : elements) deque.add(element);
+        return deque;
+    }
 
 
     public static <T> Queue<T> queue() {
@@ -129,10 +135,16 @@ public class QueueFactory {
         return deque;
     }
 
+    public static Queue<Character> queueOf(char[] elements) {
+        if (isEmpty(elements)) return queueOf();
+        Queue<Character> deque = queueOf();
+        for (char element : elements) deque.add(element);
+        return deque;
+    }
+
     public static <T> Queue<T> queueOf(Collection<T> elements) {
         return isEmpty(elements) ? new LinkedList<>() : new LinkedList<>(elements);
     }
-
 
 
     public static <T> PriorityQueue<T> priorityQueue(Comparator<T> comparator) {
@@ -195,6 +207,12 @@ public class QueueFactory {
     public static PriorityQueue<Short> priorityQueueOf(Comparator<Short> comparator, short[] elements) {
         PriorityQueue<Short> queue = new PriorityQueue<>(comparator);
         for (short element : elements) queue.add(element);
+        return isEmpty(elements) ? new PriorityQueue<>(comparator) : queue;
+    }
+
+    public static PriorityQueue<Character> priorityQueueOf(Comparator<Character> comparator, char[] elements) {
+        PriorityQueue<Character> queue = new PriorityQueue<>(comparator);
+        for (char element : elements) queue.add(element);
         return isEmpty(elements) ? new PriorityQueue<>(comparator) : queue;
     }
 }
