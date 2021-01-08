@@ -54,22 +54,17 @@ public class RsocketCommunicator implements CommunicatorImplementation {
     private final String connectorId;
     private final CommunicationMode communicationMode;
 
-    @Builder.Default
-    private final RsocketSetupPayload setupPayload = RsocketSetupPayload.builder().build();
-
     @Getter(lazy = true, value = PRIVATE)
     private final Logger logger = logger(RsocketCommunicator.class);
 
+    @Builder.Default
+    private final RsocketSetupPayload setupPayload = RsocketSetupPayload.builder().build();
+
     private final ManagedValue<RsocketCommunicatorConfiguration> communicatorConfiguration = managed(this::communicatorConfiguration);
-
     private final ManagedValue<RsocketConnectorConfiguration> connectorConfiguration = managed(this::connectorConfiguration);
-
     private final ManagedValue<RsocketSetupPayload> adoptedSetupPayload = managed(this::adoptedSetupPayload);
-
     private final ManagedValue<RsocketPayloadWriter> writer = managed(this::writer);
-
     private final ManagedValue<RsocketPayloadReader> reader = managed(this::reader);
-
     private final ManagedValue<RSocketClient> client = managed(this::createClient);
 
     @Override

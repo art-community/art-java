@@ -5,6 +5,6 @@ import lombok.experimental.*;
 @UtilityClass
 public class MagicRunner {
     public static void doSomeMagic() {
-        //MAGIC IS HERE
+        //Sleight of hand and no fraud
     }
 }

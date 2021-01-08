@@ -72,14 +72,16 @@ public class ServingRsocket implements RSocket {
         Entity serviceIdentifiers;
         if (isEntity(payloadMetaData.getValue()) && nonNull(serviceIdentifiers = asEntity(asEntity(payloadMetaData.getValue()).get(SERVICE_METHOD_IDENTIFIERS_KEY)))) {
             ServiceMethodIdentifier serviceMethodId = toServiceMethod(serviceIdentifiers);
-            ServiceMethodIdentifier defaultServiceMethod = serverConfiguration.getDefaultServiceMethod();
-            setupPayload = setupPayloadBuilder.serviceMethod(serviceMethodId).build();
-            if (isNull(defaultServiceMethod)) {
+            if (nonNull(serviceMethodId)) {
+                setupPayload = setupPayloadBuilder.serviceMethod(serviceMethodId).build();
                 specification = initializeSpecification(serviceMethodId);
                 return;
             }
+        }
+        ServiceMethodIdentifier defaultServiceMethod = serverConfiguration.getDefaultServiceMethod();
+        if (nonNull(defaultServiceMethod)) {
+            setupPayload = setupPayloadBuilder.serviceMethod(defaultServiceMethod).build();
             specification = initializeSpecification(defaultServiceMethod);
-            return;
         }
         throw new ImpossibleSituation();
     }

@@ -86,13 +86,16 @@ public class RsocketServer implements Server {
         ServerTransport<CloseableChannel> transport = transportMode == TCP
                 ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
                 : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
-        return server
+        Mono<CloseableChannel> bind = server
                 .interceptors(registry -> configureInterceptors(configuration, registry))
                 .payloadDecoder(configuration.getPayloadDecoder())
-                .bind(transport)
-                .doOnSubscribe(subscription -> getLogger().info(SERVER_STARTED))
-                .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
-                .block();
+                .bind(transport);
+        if (configuration.isLogging()) {
+            bind = bind
+                    .doOnSubscribe(subscription -> getLogger().info(SERVER_STARTED))
+                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+        }
+        return bind.block();
     }
 
     private void configureInterceptors(RsocketServerConfiguration configuration, InterceptorRegistry registry) {
@@ -117,6 +120,7 @@ public class RsocketServer implements Server {
     }
 
     private Mono<Void> onClose() {
-        return channel.get().onClose().doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
+        Mono<Void> onClose = channel.get().onClose();
+        return  onClose.doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
     }
 }
