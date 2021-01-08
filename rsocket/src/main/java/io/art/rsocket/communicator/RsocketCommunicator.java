@@ -37,7 +37,7 @@ import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.lazy.ManagedValue.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.module.RsocketModule.*;
@@ -57,17 +57,17 @@ public class RsocketCommunicator implements CommunicatorImplementation {
     @Getter(lazy = true, value = PRIVATE)
     private final Logger logger = logger(RsocketCommunicator.class);
 
-    private final LazyValue<RsocketCommunicatorConfiguration> communicatorConfiguration = lazy(this::communicatorConfiguration);
+    private final ManagedValue<RsocketCommunicatorConfiguration> communicatorConfiguration = managed(this::communicatorConfiguration);
 
-    private final LazyValue<RsocketConnectorConfiguration> connectorConfiguration = lazy(this::connectorConfiguration);
+    private final ManagedValue<RsocketConnectorConfiguration> connectorConfiguration = managed(this::connectorConfiguration);
 
-    private final LazyValue<RsocketSetupPayload> adoptedSetupPayload = lazy(this::adoptedSetupPayload);
+    private final ManagedValue<RsocketSetupPayload> adoptedSetupPayload = managed(this::adoptedSetupPayload);
 
-    private final LazyValue<RsocketPayloadWriter> writer = lazy(this::writer);
+    private final ManagedValue<RsocketPayloadWriter> writer = managed(this::writer);
 
-    private final LazyValue<RsocketPayloadReader> reader = lazy(this::reader);
+    private final ManagedValue<RsocketPayloadReader> reader = managed(this::reader);
 
-    private final LazyValue<RSocketClient> client = lazy(this::createClient);
+    private final ManagedValue<RSocketClient> client = managed(this::createClient);
 
     @Override
     public void initialize() {

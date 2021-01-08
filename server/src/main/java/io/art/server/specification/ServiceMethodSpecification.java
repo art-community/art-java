@@ -33,11 +33,10 @@ import io.art.value.mapper.*;
 import io.art.value.mapping.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.lazy.ManagedValue.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
@@ -96,10 +95,10 @@ public class ServiceMethodSpecification implements Managed {
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Object, Flux<Object>> adoptOutput = adoptOutput();
 
-    private final LazyValue<ServerModuleConfiguration> moduleConfiguration = lazy(this::moduleConfiguration);
-    private final LazyValue<ServiceSpecification> serviceSpecification = lazy(this::serviceSpecification);
-    private final LazyValue<Optional<ServiceConfiguration>> serviceConfiguration = lazy(this::serviceConfiguration);
-    private final LazyValue<Optional<ServiceMethodConfiguration>> methodConfiguration = lazy(this::methodConfiguration);
+    private final ManagedValue<ServerModuleConfiguration> moduleConfiguration = managed(this::moduleConfiguration);
+    private final ManagedValue<ServiceSpecification> serviceSpecification = managed(this::serviceSpecification);
+    private final ManagedValue<Optional<ServiceConfiguration>> serviceConfiguration = managed(this::serviceConfiguration);
+    private final ManagedValue<Optional<ServiceMethodConfiguration>> methodConfiguration = managed(this::methodConfiguration);
 
     @Override
     public void initialize() {
@@ -118,8 +117,9 @@ public class ServiceMethodSpecification implements Managed {
     }
 
     public Flux<Value> serve(Flux<Value> input) {
-        Scheduler scheduler = methodConfiguration.get().map(ServiceMethodConfiguration::getScheduler).orElseGet(moduleConfiguration.get()::getScheduler);
-        return defer(() -> deferredServe(input)).subscribeOn(scheduler);
+        return defer(() -> deferredServe(input)).subscribeOn(methodConfiguration.get()
+                .map(ServiceMethodConfiguration::getScheduler)
+                .orElseGet(moduleConfiguration.get()::getScheduler));
     }
 
     private Flux<Value> deferredServe(Flux<Value> input) {

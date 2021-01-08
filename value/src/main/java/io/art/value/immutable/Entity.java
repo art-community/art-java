@@ -19,8 +19,6 @@
 package io.art.value.immutable;
 
 import io.art.core.annotation.*;
-import io.art.core.caster.*;
-import io.art.core.checker.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.factory.*;
@@ -39,7 +37,8 @@ import static io.art.core.collector.SetCollector.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
-import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.lazy.LazyValue.lazy;
+import static io.art.core.lazy.ManagedValue.*;
 import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.factory.PrimitivesFactory.*;

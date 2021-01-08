@@ -1,22 +1,21 @@
 package io.art.core.lazy;
 
-import io.art.core.annotation.*;
 import io.art.core.exception.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static java.util.Objects.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
-@UsedByGenerator
 @RequiredArgsConstructor
-public class LazyValue<T> implements Supplier<T> {
+public class ManagedValue<T> implements Supplier<T> {
     private volatile T value;
     private final AtomicBoolean initialized = new AtomicBoolean();
     private final Supplier<T> loader;
 
-    public LazyValue<T> initialize() {
+    public ManagedValue<T> initialize() {
         get();
         return this;
     }
@@ -35,8 +34,23 @@ public class LazyValue<T> implements Supplier<T> {
         return this.value;
     }
 
-    public static <T> LazyValue<T> lazy(Supplier<T> factory) {
-        return new LazyValue<>(factory);
+    public void dispose(Consumer<T> action) {
+        if (!initialized() || isNull(value)) return;
+        while (nonNull(this.value)) {
+            if (this.initialized.compareAndSet(true, false)) {
+                T current = this.value;
+                action.accept(current);
+                this.value = null;
+            }
+        }
+    }
+
+    public void dispose() {
+        dispose(emptyConsumer());
+    }
+
+    public static <T> ManagedValue<T> managed(Supplier<T> factory) {
+        return new ManagedValue<>(factory);
     }
 
     @Override
@@ -49,9 +63,9 @@ public class LazyValue<T> implements Supplier<T> {
         if (isNull(other)) {
             return false;
         }
-        if (!(other instanceof LazyValue)) {
+        if (!(other instanceof ManagedValue)) {
             return false;
         }
-        return get().equals(((LazyValue<?>) other).get());
+        return get().equals(((ManagedValue<?>) other).get());
     }
 }

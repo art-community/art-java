@@ -32,7 +32,7 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
-import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.lazy.ManagedValue.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
@@ -49,9 +49,9 @@ public class RsocketServer implements Server {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketServer.class);
 
-    private final LazyValue<CloseableChannel> channel = lazy(this::createServer);
+    private final ManagedValue<CloseableChannel> channel = managed(this::createServer);
 
-    private final LazyValue<Mono<Void>> onClose = lazy(this::onClose);
+    private final ManagedValue<Mono<Void>> onClose = managed(this::onClose);
 
     @Override
     public void initialize() {

@@ -25,7 +25,7 @@ import io.art.server.specification.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
-import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.lazy.ManagedValue.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
 import static io.art.server.module.ServerModule.*;
@@ -37,7 +37,7 @@ import java.util.function.*;
 public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(ServiceLoggingDecorator.class);
-    private final LazyValue<UnaryOperator<Flux<Object>>> decorator = lazy(this::createDecorator);
+    private final ManagedValue<UnaryOperator<Flux<Object>>> decorator = managed(this::createDecorator);
     private final MethodDecoratorScope scope;
     private final Supplier<Boolean> enabled;
     private final ServiceMethodIdentifier serviceMethodId;

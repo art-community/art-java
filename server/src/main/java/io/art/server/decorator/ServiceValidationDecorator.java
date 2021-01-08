@@ -27,7 +27,7 @@ import io.art.server.validation.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
-import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.lazy.ManagedValue.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.RequestValidationPolicy.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
@@ -45,12 +45,12 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
     private final UnaryOperator<Flux<Object>> decorator;
     private final Supplier<Boolean> enabled;
     private final Supplier<Boolean> deactivated;
-    private final LazyValue<Boolean> hasInput;
+    private final ManagedValue<Boolean> hasInput;
 
     public ServiceValidationDecorator(RequestValidationPolicy policy, ServiceMethodIdentifier serviceMethodId) {
         decorator = decorate(policy);
         enabled = () -> serverModule().configuration().isValidating(serviceMethodId);
-        hasInput = lazy(() -> hasInput(serviceMethodId));
+        hasInput = managed(() -> hasInput(serviceMethodId));
         deactivated = () -> serverModule().configuration().isDeactivated(serviceMethodId);
     }
 
