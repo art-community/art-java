@@ -18,7 +18,6 @@
 
 package io.art.model.configurator;
 
-import io.art.communicator.specification.CommunicatorSpecification.*;
 import io.art.model.implementation.communicator.*;
 import lombok.*;
 import static lombok.AccessLevel.*;

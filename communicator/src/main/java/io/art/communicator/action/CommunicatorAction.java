@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.communicator.specification;
+package io.art.communicator.action;
 
 import io.art.communicator.configuration.*;
 import io.art.communicator.implementation.*;
@@ -45,27 +45,35 @@ import java.util.function.*;
 @Builder
 @UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class CommunicatorSpecification implements Managed {
+public class CommunicatorAction implements Managed {
     @EqualsAndHashCode.Include
     private final String communicatorId;
 
+    @EqualsAndHashCode.Include
+    private final String actionId;
+
+    @Getter
     private final ServiceMethodIdentifier targetServiceMethod;
 
+    @Getter
+    private final ValueFromModelMapper<?, ? extends Value> inputMapper;
+
+    @Getter
+    private final ValueToModelMapper<?, ? extends Value> outputMapper;
+
+    @Getter
     private final MethodProcessingMode inputMode;
 
+    @Getter
     private final MethodProcessingMode outputMode;
+
+    private final CommunicatorActionImplementation implementation;
 
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
 
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
-
-    private final ValueFromModelMapper<?, ? extends Value> inputMapper;
-
-    private final ValueToModelMapper<?, ? extends Value> outputMapper;
-
-    private final CommunicatorImplementation implementation;
 
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Object, Flux<Object>> adoptInput = adoptInput();

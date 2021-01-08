@@ -19,7 +19,6 @@
 package io.art.model.implementation.communicator;
 
 import io.art.communicator.constants.CommunicatorModuleConstants.*;
-import io.art.communicator.specification.CommunicatorSpecification.*;
 import lombok.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
 import java.util.function.*;

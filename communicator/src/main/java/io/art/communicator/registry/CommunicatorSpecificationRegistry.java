@@ -18,7 +18,7 @@
 
 package io.art.communicator.registry;
 
-import io.art.communicator.specification.*;
+import io.art.communicator.action.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import static io.art.core.factory.ArrayFactory.*;
@@ -26,13 +26,13 @@ import java.util.*;
 
 @UsedByGenerator
 public class CommunicatorSpecificationRegistry  {
-    private final List<CommunicatorSpecification> specifications = dynamicArray();
+    private final List<CommunicatorAction> specifications = dynamicArray();
 
-    public ImmutableArray<CommunicatorSpecification> get() {
+    public ImmutableArray<CommunicatorAction> get() {
         return immutableArrayOf(specifications);
     }
 
-    public CommunicatorSpecification register(CommunicatorSpecification specification) {
+    public CommunicatorAction register(CommunicatorAction specification) {
         specifications.add(specification);
         return specification;
     }
