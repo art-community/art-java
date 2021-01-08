@@ -27,7 +27,6 @@ import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.scheduler.constants.SchedulerModuleConstants.*;
 import static java.util.UUID.*;
 import java.util.function.*;
 
@@ -36,51 +35,35 @@ public class TaskFactory {
     @Getter(lazy = true)
     private final static Logger logger = logger(DeferredExecutor.class);
 
-    public static RunnableTask uniqueRunnableTask(ExceptionRunnable runnable) {
-        return new RunnableTask(randomUUID().toString(), taskId -> ignoreException(runnable, TaskFactory::logError));
+    public static RunnableTask task(ExceptionRunnable runnable) {
+        return task(randomUUID().toString(), runnable);
     }
 
-    public static RunnableTask commonRunnableTask(ExceptionRunnable runnable) {
-        return new RunnableTask(COMMON_TASK, taskId -> ignoreException(runnable, TaskFactory::logError));
-    }
-
-    public static RunnableTask runnableTask(String id, ExceptionRunnable runnable) {
+    public static RunnableTask task(String id, ExceptionRunnable runnable) {
         return new RunnableTask(id, taskId -> ignoreException(runnable, TaskFactory::logError));
     }
 
-    public static <T> CallableTask<T> uniqueCallableTask(ExceptionCallable<T> callable) {
-        return new CallableTask<>(randomUUID().toString(), taskId -> ignoreException(callable, TaskFactory::logError));
+    public static <T> CallableTask<T> task(ExceptionCallable<T> callable) {
+        return task(randomUUID().toString(), callable);
     }
 
-    public static <T> RunnableTask commonCallableTask(ExceptionCallable<T> callable) {
-        return new RunnableTask(COMMON_TASK, taskId -> ignoreException(callable, TaskFactory::logError));
+    public static <T> CallableTask<T> task(String id, ExceptionCallable<T> callable) {
+        return new CallableTask<>(id, taskId -> ignoreException(callable, TaskFactory::logError));
     }
 
-    public static <T> RunnableTask callableTask(String id, ExceptionCallable<T> callable) {
-        return new RunnableTask(id, taskId -> ignoreException(callable, TaskFactory::logError));
+    public static RunnableTask task(Consumer<String> consumer) {
+        return task(randomUUID().toString(), consumer);
     }
 
-    public static RunnableTask uniqueRunnableTask(Consumer<String> consumer) {
-        return new RunnableTask(randomUUID().toString(), consumer);
-    }
-
-    public static RunnableTask commonRunnableTask(Consumer<String> consumer) {
-        return new RunnableTask(COMMON_TASK, consumer);
-    }
-
-    public static RunnableTask runnableTask(String id, Consumer<String> consumer) {
+    public static RunnableTask task(String id, Consumer<String> consumer) {
         return new RunnableTask(id, consumer);
     }
 
-    public static <T> CallableTask<T> uniqueCallableTask(Function<String, T> function) {
-        return new CallableTask<>(randomUUID().toString(), function);
+    public static <T> CallableTask<T> task(Function<String, T> function) {
+        return task(randomUUID().toString(), function);
     }
 
-    public static <T> CallableTask<T> commonCallableTask(Function<String, T> function) {
-        return new CallableTask<>(COMMON_TASK, function);
-    }
-
-    public static <T> CallableTask<T> callableTask(String id, Function<String, T> function) {
+    public static <T> CallableTask<T> task(String id, Function<String, T> function) {
         return new CallableTask<>(id, function);
     }
 

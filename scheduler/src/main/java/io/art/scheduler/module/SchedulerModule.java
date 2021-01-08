@@ -57,7 +57,7 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
     public void onLoad() {
         Duration duration = configuration.getRefreshDuration();
         if (isNull(duration)) return;
-        asynchronousPeriod(runnableTask(REFRESHER_TASK, context()::reload), now().plus(duration), duration);
+        scheduleDelayed(task(REFRESHER_TASK, context()::reload), now().plus(duration), duration);
     }
 
     @Override
@@ -69,6 +69,12 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
     public void afterReload() {
         Duration duration = configuration.getRefreshDuration();
         if (isNull(duration)) return;
-        asynchronousPeriod(runnableTask(REFRESHER_TASK, context()::reload), now().plus(duration), duration);
+        scheduleDelayed(task(REFRESHER_TASK, context()::reload), now().plus(duration), duration);
+    }
+
+    @Override
+    public void onUnload() {
+        configuration.getDeferredExecutor().shutdown();
+        configuration.getPeriodicExecutor().shutdown();
     }
 }

@@ -19,15 +19,20 @@
 package io.art.scheduler.executor.periodic;
 
 import lombok.*;
+import java.time.*;
+import java.util.concurrent.*;
+import java.util.function.*;
 
 @AllArgsConstructor
-class NotifiedRunnable implements Runnable {
-    private final Runnable executionCallable;
-    private final Runnable notification;
+class RepeatableCallable<T> implements Callable<T> {
+    private final Callable<T> action;
+    private final Consumer<LocalDateTime> repeat;
+    private final LocalDateTime now = LocalDateTime.now();
 
     @Override
-    public void run() {
-        executionCallable.run();
-        notification.run();
+    public T call() throws Exception {
+        T result = action.call();
+        repeat.accept(now);
+        return result;
     }
 }

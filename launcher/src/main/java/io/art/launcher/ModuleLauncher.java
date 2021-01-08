@@ -38,6 +38,7 @@ import io.art.server.module.*;
 import io.art.tarantool.module.*;
 import io.art.value.module.*;
 import io.art.xml.module.*;
+import io.art.yaml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.caster.Caster.*;
@@ -77,6 +78,7 @@ public class ModuleLauncher {
                     .put(LoggingModule::new, module -> logging(cast(module), state, loggingCustomizer))
                     .put(SchedulerModule::new, module -> scheduler(cast(module), state))
                     .put(JsonModule::new, module -> json(cast(module), state))
+                    .put(YamlModule::new, module -> yaml(cast(module), state))
                     .put(XmlModule::new, module -> xml(cast(module), state))
                     .put(ServerModule::new, module -> server(cast(module), state, serverCustomizer))
                     .put(CommunicatorModule::new, module -> communicator(cast(module), state, communicatorCustomizer))
@@ -122,6 +124,11 @@ public class ModuleLauncher {
     private static JsonModule json(JsonModule json, ModuleConfiguringState state) {
         json.configure(configurator -> configurator.from(state.getConfigurator().orderedSources()));
         return json;
+    }
+
+    private static YamlModule yaml(YamlModule yaml, ModuleConfiguringState state) {
+        yaml.configure(configurator -> configurator.from(state.getConfigurator().orderedSources()));
+        return yaml;
     }
 
     private static XmlModule xml(XmlModule xml, ModuleConfiguringState state) {

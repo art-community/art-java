@@ -21,7 +21,6 @@ package io.art.scheduler.constants;
 import lombok.*;
 
 public interface SchedulerModuleConstants {
-    String COMMON_TASK = "COMMON_TASK";
     String REFRESHER_TASK = "REFRESHER_TASK";
 
     interface ConfigurationKeys {
