@@ -34,12 +34,4 @@ public class RsocketServiceModel implements ServiceModel {
     private final ConfiguratorScope scope;
     private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> classDecorator;
     private final ImmutableMap<String, RsocketServiceMethodModel> methods;
-
-    @Override
-    public ServiceMethodSpecificationBuilder implement(String id, ServiceMethodSpecificationBuilder current) {
-        if (scope == CLASS) {
-            return let(classDecorator, decorator -> decorator.apply(id, current));
-        }
-        return let(methods.get(id), methodModel -> methodModel.implement(current));
-    }
 }

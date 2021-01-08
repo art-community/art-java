@@ -23,22 +23,24 @@ import io.art.core.source.*;
 import lombok.*;
 import reactor.core.scheduler.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableMap.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.Defaults.*;
-import static java.util.Optional.*;
 
 @Getter
 @AllArgsConstructor
 public class ServiceConfiguration {
     private final boolean deactivated;
+    private final boolean logging;
+    private final boolean validating;
     private final ImmutableMap<String, ServiceMethodConfiguration> methods;
     private final Scheduler scheduler;
 
     public static ServiceConfiguration from(ConfigurationSource source) {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
+        boolean logging = orElse(source.getBool(LOGGING_KEY), true);
+        boolean validating = orElse(source.getBool(VALIDATING_KEY), true);
         Scheduler scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
         ImmutableMap<String, ServiceMethodConfiguration> methods = source.getNestedMap(METHODS_KEY, ServiceMethodConfiguration::from);
-        return new ServiceConfiguration(deactivated, methods, scheduler);
+        return new ServiceConfiguration(deactivated, logging, validating, methods, scheduler);
     }
 }

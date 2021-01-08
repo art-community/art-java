@@ -21,6 +21,7 @@ package io.art.rsocket.payload;
 import io.art.core.exception.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.art.rsocket.model.*;
+import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import io.rsocket.*;
 import lombok.*;
@@ -29,6 +30,7 @@ import static io.art.message.pack.descriptor.MessagePackReader.*;
 import static io.art.protobuf.descriptor.ProtobufReader.*;
 import static io.art.rsocket.model.RsocketPayloadValue.emptyRsocketPayload;
 import static io.art.xml.descriptor.XmlReader.*;
+import static io.art.yaml.descriptor.YamlReader.readYaml;
 
 @RequiredArgsConstructor
 public class RsocketPayloadReader {
@@ -52,6 +54,8 @@ public class RsocketPayloadReader {
                 return new RsocketPayloadValue(payload, readProtobuf(data));
             case JSON:
                 return new RsocketPayloadValue(payload, readJson(data));
+            case YAML:
+                return new RsocketPayloadValue(payload, readYaml(data));
             case XML:
                 return new RsocketPayloadValue(payload, readXml(data));
             case MESSAGE_PACK:

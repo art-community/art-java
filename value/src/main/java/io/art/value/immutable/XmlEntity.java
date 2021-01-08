@@ -26,7 +26,7 @@ import io.art.value.exception.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collection.ImmutableMap.*;
-import static io.art.core.collector.MapCollector.mapCollector;
+import static io.art.core.collector.MapCollector.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
@@ -300,7 +300,6 @@ public class XmlEntity implements Value {
             return this;
         }
 
-        @SuppressWarnings("Duplicates")
         public XmlEntity create() {
             if (EmptinessChecker.isEmpty(tag) && EmptinessChecker.isEmpty(children)) {
                 throw new XmlEntityCreationException(XML_TAG_IS_EMPTY);
@@ -317,7 +316,6 @@ public class XmlEntity implements Value {
             return entity;
         }
 
-        @SuppressWarnings("Duplicates")
         public XmlEntityBuilder attach() {
             if (Objects.isNull(tag)) {
                 throw new XmlEntityCreationException(XML_TAG_IS_EMPTY);

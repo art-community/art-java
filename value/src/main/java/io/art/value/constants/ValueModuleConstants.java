@@ -27,7 +27,8 @@ import static io.art.value.factory.PrimitivesFactory.*;
 import static java.text.MessageFormat.*;
 
 public interface ValueModuleConstants {
-    interface Keys {
+    interface Fields {
+        String EXCEPTION_KEY = "exception";
         String SERVICE_ID_KEY = "serviceId";
         String METHOD_ID_KEY = "methodId";
         String SERVICE_METHOD_IDENTIFIERS_KEY = "serviceMethodIdentifiers";
@@ -112,6 +113,7 @@ public interface ValueModuleConstants {
     enum DataFormat {
         PROTOBUF("protobuf"),
         JSON("json"),
+        YAML("yaml"),
         XML("xml"),
         MESSAGE_PACK("messagePack");
 
@@ -120,6 +122,7 @@ public interface ValueModuleConstants {
         public static DataFormat dataFormat(String format, DataFormat fallback) {
             if (PROTOBUF.format.equalsIgnoreCase(format)) return PROTOBUF;
             if (JSON.format.equalsIgnoreCase(format)) return JSON;
+            if (YAML.format.equalsIgnoreCase(format)) return YAML;
             if (XML.format.equalsIgnoreCase(format)) return XML;
             if (MESSAGE_PACK.format.equalsIgnoreCase(format)) return MESSAGE_PACK;
             return fallback;

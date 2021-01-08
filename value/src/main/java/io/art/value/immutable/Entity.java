@@ -19,7 +19,6 @@
 package io.art.value.immutable;
 
 import io.art.core.annotation.*;
-import io.art.core.checker.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.factory.*;
@@ -32,12 +31,14 @@ import io.art.value.mapper.*;
 import io.art.value.mapping.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collector.SetCollector.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
-import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.lazy.LazyValue.lazy;
+import static io.art.core.lazy.ManagedValue.*;
 import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.factory.PrimitivesFactory.*;
@@ -45,7 +46,7 @@ import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static java.util.Optional.*;
+import static java.util.Optional.empty;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -156,7 +157,7 @@ public class Entity implements Value {
 
 
     public Value find(String key, String delimiter) {
-        if (EmptinessChecker.isEmpty(key)) return null;
+        if (isEmpty(key)) return null;
         Value value;
         if (nonNull(value = get(key))) return value;
         Queue<String> sections = queueOf(key.split(delimiter));
@@ -181,32 +182,33 @@ public class Entity implements Value {
 
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
         try {
-            Object cached = mappedValueCache.get(primitive);
-            if (nonNull(cached)) return cast(cached);
+            T cached = cast(mappedValueCache.get(primitive));
+            if (nonNull(cached)) return cached;
             cached = let(cast(get(primitive)), mapper::map);
-            if (nonNull(cached)) mappedValueCache.put(primitive, cast(cached));
-            return cast(cached);
+            if (isNull(cached)) return null;
+            mappedValueCache.put(primitive, cast(cached));
+            return cached;
         } catch (Throwable throwable) {
             throw new ValueMappingException(format(FIELD_MAPPING_EXCEPTION, primitive), throwable);
         }
     }
 
     public <T, V extends Value> Optional<T> mapOptional(Primitive primitive, ValueToModelMapper<Optional<T>, V> mapper) {
-        Object cached = mappedValueCache.get(primitive);
-        if (nonNull(cached)) return cast(cached);
+        Optional<T> cached = cast(mappedValueCache.get(primitive));
+        if (nonNull(cached)) return cached;
         cached = mapper.map(cast(get(primitive)));
+        if (isEmpty(cached)) return empty();
         mappedValueCache.put(primitive, cast(cached));
-        return cast(cached);
+        return cached;
     }
 
     public <T, V extends Value> T mapOrDefault(Primitive key, PrimitiveType type, ValueToModelMapper<T, V> mapper) {
-        Object cached = mappedValueCache.get(key);
-        if (nonNull(cached)) return cast(cached);
-        Value value = get(key);
-        if (isNull(value)) value = type.getDefaultValue();
-        cached = let(cast(value), mapper::map);
+        T cached = cast(mappedValueCache.get(key));
+        if (nonNull(cached)) return cached;
+        Value value = orElse(get(key), type::getDefaultValue);
+        cached = mapper.map(cast(value));
         mappedValueCache.put(key, cast(cached));
-        return cast(cached);
+        return cached;
     }
 
 
@@ -273,7 +275,7 @@ public class Entity implements Value {
     }
 
 
-    public class ProxyMap<K, V> implements Map<K, V>, ImmutableMap<K, V> {
+    private class ProxyMap<K, V> implements Map<K, V>, ImmutableMap<K, V> {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
         private final LazyValue<Map<K, V>> evaluated;
@@ -394,22 +396,22 @@ public class Entity implements Value {
         }
 
         @Override
-        public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
+        public V computeIfAbsent(K key, @Nonnull Function<? super K, ? extends V> mappingFunction) {
             throw new NotImplementedException("computeIfAbsent");
         }
 
         @Override
-        public V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+        public V computeIfPresent(K key, @Nonnull BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
             throw new NotImplementedException("computeIfPresent");
         }
 
         @Override
-        public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+        public V compute(K key, @Nonnull BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
             throw new NotImplementedException("compute");
         }
 
         @Override
-        public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+        public V merge(K key, @Nonnull V value, @Nonnull BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
             throw new NotImplementedException("merge");
         }
 

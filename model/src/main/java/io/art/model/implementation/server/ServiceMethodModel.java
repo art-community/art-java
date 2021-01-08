@@ -8,5 +8,8 @@ public interface ServiceMethodModel {
 
     Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> getDecorator();
 
-    ServiceMethodSpecificationBuilder implement(ServiceMethodSpecificationBuilder builder);
+    default ServiceMethodSpecificationBuilder implement(ServiceMethodSpecificationBuilder builder) {
+        return getDecorator().apply(builder);
+    }
+
 }

@@ -23,7 +23,7 @@ import io.art.server.decorator.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
-import static io.art.core.model.ServiceMethodIdentifier.serviceMethod;
+import static io.art.core.model.ServiceMethodIdentifier.*;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
@@ -37,8 +37,8 @@ public class RsocketServiceMethodModelConfigurator {
 
     public RsocketServiceMethodModelConfigurator enableLogging() {
         return decorate(builder -> builder
-                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModelConfigurator.getServiceClass().getSimpleName(), id), INPUT))
-                .outputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModelConfigurator.getServiceClass().getSimpleName(), id), OUTPUT)));
+                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModelConfigurator.getId(), id), INPUT))
+                .outputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceModelConfigurator.getId(), id), OUTPUT)));
     }
 
     private RsocketServiceMethodModelConfigurator decorate(Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {

@@ -21,10 +21,9 @@ package io.art.model.configurator;
 import io.art.core.collection.*;
 import io.art.model.implementation.communicator.*;
 import lombok.*;
-import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collection.ImmutableSet.*;
-import static java.util.Arrays.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
@@ -35,11 +34,7 @@ public class CommunicatorModelConfigurator {
 
     @SafeVarargs
     public final CommunicatorModelConfigurator rsocket(Class<?> proxyClass, UnaryOperator<RsocketCommunicatorModelConfigurator>... configurators) {
-        if (isEmpty(configurators)) {
-            rsocketCommunicators.add(new RsocketCommunicatorModelConfigurator(proxyClass.getSimpleName(), proxyClass, identity()));
-            return this;
-        }
-        stream(configurators)
+        streamOf(configurators)
                 .map(configurator -> (Function<RsocketCommunicatorModelConfigurator, RsocketCommunicatorModelConfigurator>) configurator)
                 .reduce(Function::andThen)
                 .map(configurator -> configurator.apply(new RsocketCommunicatorModelConfigurator(proxyClass.getSimpleName(), proxyClass, identity())))

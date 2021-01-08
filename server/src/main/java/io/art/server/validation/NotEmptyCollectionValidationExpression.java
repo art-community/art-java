@@ -24,7 +24,7 @@ import static java.text.MessageFormat.*;
 import java.util.*;
 import java.util.function.*;
 
-class NotEmptyCollectionValidationExpression extends ValidationExpression<Collection<?>> {
+public class NotEmptyCollectionValidationExpression extends ValidationExpression<Collection<?>> {
     NotEmptyCollectionValidationExpression() {
         super(NOT_EMPTY_COLLECTION);
     }

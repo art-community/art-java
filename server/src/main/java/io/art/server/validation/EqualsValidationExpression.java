@@ -23,7 +23,7 @@ import static io.art.server.constants.ServerModuleConstants.ValidationExpression
 import static java.text.MessageFormat.*;
 import java.util.function.*;
 
-class EqualsValidationExpression extends ValidationExpression<Object> {
+public class EqualsValidationExpression extends ValidationExpression<Object> {
     private final Object other;
 
     EqualsValidationExpression(Object other) {

@@ -28,7 +28,7 @@ import lombok.*;
 import static java.util.Objects.isNull;
 
 public class ConfiguratorCustomizer {
-    private CustomConfigurationRegistry registry;
+    private CustomConfigurationRegistry registry = new CustomConfigurationRegistry();
 
     public ConfiguratorCustomizer registry(CustomConfigurationRegistry registry) {
         this.registry = registry;

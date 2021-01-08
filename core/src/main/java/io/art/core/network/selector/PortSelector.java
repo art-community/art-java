@@ -116,7 +116,7 @@ public class PortSelector {
         }
 
         Set<Integer> findAvailablePorts(int numRequested, int minPort, int maxPort) {
-            Set<Integer> availablePorts = tree();
+            Set<Integer> availablePorts = tree(Integer::compare);
             int attemptCount = 0;
 
             while ((++attemptCount <= numRequested + PORT_OFFSET) && availablePorts.size() < numRequested) {

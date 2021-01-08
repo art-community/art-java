@@ -32,7 +32,7 @@ import static java.nio.ByteBuffer.*;
 import static java.nio.channels.FileChannel.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.nio.file.StandardCopyOption.*;
 import static java.nio.file.StandardOpenOption.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -52,20 +52,13 @@ public class FileExtensions {
         return path.substring(path.lastIndexOf(DOT) + 1);
     }
 
+
     public static String readFile(String path) {
         return readFile(get(path), DEFAULT_BUFFER_SIZE);
     }
 
-    public static String readFileQuietly(String path) {
-        return readFileQuietly(get(path), DEFAULT_BUFFER_SIZE);
-    }
-
     public static String readFile(Path path) {
         return readFile(path, DEFAULT_BUFFER_SIZE);
-    }
-
-    public static String readFileQuietly(Path path) {
-        return readFileQuietly(path, DEFAULT_BUFFER_SIZE);
     }
 
     public static String readFile(String path, int bufferSize) {
@@ -79,8 +72,7 @@ public class FileExtensions {
         ByteBuffer buffer = allocateDirect(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
         CharsetDecoder decoder = context().configuration().getCharset().newDecoder();
-        try {
-            FileChannel fileChannel = open(path);
+        try (FileChannel fileChannel = open(path)) {
             do {
                 fileChannel.read(buffer);
                 buffer.flip();
@@ -97,15 +89,81 @@ public class FileExtensions {
         }
     }
 
+
+    public static String readFileQuietly(String path) {
+        return readFileQuietly(path, DEFAULT_BUFFER_SIZE);
+    }
+
+    public static String readFileQuietly(String path, int bufferSize) {
+        return readFileQuietly(get(path), bufferSize);
+    }
+
+    public static String readFileQuietly(Path path) {
+        return readFileQuietly(path, DEFAULT_BUFFER_SIZE);
+    }
+
     public static String readFileQuietly(Path path, int bufferSize) {
+        return readFileQuietly(path, bufferSize, context().configuration().getCharset());
+    }
+
+
+    public static String readFile(String path, Charset charset) {
+        return readFile(path, DEFAULT_BUFFER_SIZE, charset);
+    }
+
+    public static String readFile(Path path, Charset charset) {
+        return readFile(path, DEFAULT_BUFFER_SIZE, charset);
+    }
+
+    public static String readFile(String path, int bufferSize, Charset charset) {
+        return readFile(get(path), bufferSize, charset);
+    }
+
+    public static String readFile(Path path, int bufferSize, Charset charset) {
         if (bufferSize <= 0) {
             return EMPTY_STRING;
         }
         ByteBuffer buffer = allocateDirect(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
-        CharsetDecoder decoder = context().configuration().getCharset().newDecoder();
-        try {
-            FileChannel fileChannel = open(path);
+        CharsetDecoder decoder = charset.newDecoder();
+        try (FileChannel fileChannel = open(path)) {
+            do {
+                fileChannel.read(buffer);
+                buffer.flip();
+                if (buffer.limit() > 1) {
+                    result.append(decoder.decode(buffer).toString());
+                }
+                buffer.clear();
+            } while (fileChannel.position() < fileChannel.size());
+            return result.toString();
+        } catch (IOException ioException) {
+            throw new InternalRuntimeException(ioException);
+        } finally {
+            buffer.clear();
+        }
+    }
+
+
+    public static String readFileQuietly(String path, Charset charset) {
+        return readFileQuietly(path, DEFAULT_BUFFER_SIZE, charset);
+    }
+
+    public static String readFileQuietly(String path, int bufferSize, Charset charset) {
+        return readFileQuietly(get(path), bufferSize, charset);
+    }
+
+    public static String readFileQuietly(Path path, Charset charset) {
+        return readFileQuietly(path, DEFAULT_BUFFER_SIZE, charset);
+    }
+
+    public static String readFileQuietly(Path path, int bufferSize, Charset charset) {
+        if (bufferSize <= 0) {
+            return EMPTY_STRING;
+        }
+        ByteBuffer buffer = allocateDirect(bufferSize);
+        StringBuilder result = new StringBuilder(EMPTY_STRING);
+        CharsetDecoder decoder = charset.newDecoder();
+        try (FileChannel fileChannel = open(path)) {
             do {
                 fileChannel.read(buffer);
                 buffer.flip();
@@ -148,8 +206,7 @@ public class FileExtensions {
         }
         ByteBuffer buffer = allocateDirect(bufferSize);
         byte[] result = EMPTY_BYTES;
-        try {
-            FileChannel fileChannel = open(path);
+        try (FileChannel fileChannel = open(path)) {
             do {
                 fileChannel.read(buffer);
                 buffer.flip();

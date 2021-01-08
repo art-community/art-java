@@ -49,7 +49,7 @@ public class FileConfigurationSource implements NestedConfiguration {
             case JSON_EXTENSION:
             case CONF_EXTENSION:
             case PROPERTIES_EXTENSION:
-                return new TypesafeConfigurationSource(section, type, parseFile(file));
+                return new TypesafeConfigurationSource(section, type, file);
             case YAML_EXTENSION:
             case YML_EXTENSION:
                 return new YamlConfigurationSource(section, type, file);

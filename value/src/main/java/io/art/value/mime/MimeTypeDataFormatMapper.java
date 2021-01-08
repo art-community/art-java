@@ -23,8 +23,10 @@ import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.exception.*;
 import lombok.experimental.*;
 import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.MimeTypeConstants.*;
 import static io.art.core.mime.MimeTypes.*;
 import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
+import java.nio.charset.*;
 
 @UtilityClass
 public class MimeTypeDataFormatMapper {
@@ -34,6 +36,8 @@ public class MimeTypeDataFormatMapper {
         if (APPLICATION_XML.equals(type)) return XML;
         if (TEXT_XML.equals(type)) return XML;
         if (APPLICATION_MESSAGE_PACK.equals(type)) return MESSAGE_PACK;
+        if (APPLICATION_YAML.equals(type)) return YAML;
+        if (APPLICATION_YML.equals(type)) return YAML;
         throw new UnsupportedMimeTypeException(type);
     }
 
@@ -43,6 +47,8 @@ public class MimeTypeDataFormatMapper {
         if (APPLICATION_XML.equals(type)) return XML;
         if (TEXT_XML.equals(type)) return XML;
         if (APPLICATION_MESSAGE_PACK.equals(type)) return MESSAGE_PACK;
+        if (APPLICATION_YAML.equals(type)) return YAML;
+        if (APPLICATION_YML.equals(type)) return YAML;
         return fallback;
     }
 
@@ -56,6 +62,24 @@ public class MimeTypeDataFormatMapper {
                 return APPLICATION_XML;
             case MESSAGE_PACK:
                 return APPLICATION_MESSAGE_PACK;
+            case YAML:
+                return APPLICATION_YAML;
+        }
+        throw new IllegalArgumentException(DATA_FORMAT_IS_NULL);
+    }
+
+    public static MimeType toMimeType(DataFormat dataFormat, Charset charset) {
+        switch (dataFormat) {
+            case PROTOBUF:
+                return APPLICATION_PROTOBUF.withParameter(PARAM_CHARSET, charset.name());
+            case JSON:
+                return APPLICATION_JSON.withParameter(PARAM_CHARSET, charset.name());
+            case XML:
+                return APPLICATION_XML.withParameter(PARAM_CHARSET, charset.name());
+            case MESSAGE_PACK:
+                return APPLICATION_MESSAGE_PACK.withParameter(PARAM_CHARSET, charset.name());
+            case YAML:
+                return APPLICATION_YAML.withParameter(PARAM_CHARSET, charset.name());
         }
         throw new IllegalArgumentException(DATA_FORMAT_IS_NULL);
     }
