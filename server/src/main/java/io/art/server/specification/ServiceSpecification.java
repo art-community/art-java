@@ -19,8 +19,10 @@
 package io.art.server.specification;
 
 import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import io.art.server.model.*;
 import lombok.*;
+import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 
 @Getter
@@ -34,4 +36,8 @@ public class ServiceSpecification {
 
     @Singular("method")
     private final Map<String, ServiceMethodSpecification> methods;
+
+    public ImmutableMap<String, ServiceMethodSpecification> getMethods() {
+        return immutableMapOf(methods);
+    }
 }

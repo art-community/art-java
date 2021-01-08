@@ -32,25 +32,28 @@ public interface RsocketModuleConstants {
         String RSOCKET_DISPOSING = "Disposing RSocket";
         String SERVER_STARTED = "RSocket server started";
         String SERVER_STOPPED = "RSocket server stopped";
-        String COMMUNICATOR_STARTED = "RSocket communicator started. Connector: {0}, setup payload: {1}";
-        String COMMUNICATOR_STOPPED = "RSocket communicator stopped. Connector: {0}, setup payload: {1}";
-        String SERVER_CLIENT_CONNECTED = "RSocket server client connected";
-        String SERVER_CLIENT_DISCONNECTED = "RSocket server client disconnected";
-        String FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget() with request data: {0} and metadata: {1}";
+        String COMMUNICATOR_STARTED = "RSocket communicator started\nConnector: {0}\nSetup payload: {1}";
+        String COMMUNICATOR_STOPPED = "RSocket communicator stopped\nConnector: {0}\nSetup payload: {1}";
+
+        String FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget()\nData:\n{0}\nMetadata:\n{1}";
         String FIRE_AND_FORGET_RESPONSE_LOG = "RSocket fireAndForget() completed";
-        String FIRE_AND_FORGET_EXCEPTION_LOG = "RSocket fireAndForget() failed with exception: {0}";
-        String METADATA_PUSH_REQUEST_LOG = "RSocket executing metadataPush() with request data: {0} and metadata: {1}";
+        String FIRE_AND_FORGET_EXCEPTION_LOG = "RSocket fireAndForget() failed\nException:\n{0}";
+
+        String METADATA_PUSH_REQUEST_LOG = "RSocket executing metadataPush().Data:\n{0}\nMetadata:\n{1}";
         String METADATA_PUSH_RESPONSE_LOG = "RSocket metadataPush() completed";
-        String METADATA_PUSH_EXCEPTION_LOG = "RSocket metadataPush() failed with exception: {0}";
-        String REQUEST_RESPONSE_REQUEST_LOG = "RSocket executing requestResponse() with request data: {0} and metadata: {1}";
-        String RESPONSE_RESPONSE_LOG = "RSocket requestResponse() completed with response data: {0} and metadata: {1}";
-        String REQUEST_RESPONSE_EXCEPTION_LOG = "RSocket requestResponse() failed with exception: {0}";
-        String REQUEST_STREAM_REQUEST_LOG = "RSocket executing requestStream() with request data: {0} and metadata: {1}";
-        String REQUEST_STREAM_RESPONSE_LOG = "RSocket requestStream() processed with response data: {0} and metadata: {1}";
-        String REQUEST_STREAM_EXCEPTION_LOG = "RSocket requestStream() failed with exception: {0}";
-        String REQUEST_CHANNEL_REQUEST_LOG = "RSocket requestChannel() processed with request data: {0} and metadata: {1}";
-        String REQUEST_CHANNEL_RESPONSE_LOG = "RSocket requestChannel() processed with response data: {0} and metadata: {1}";
-        String REQUEST_CHANNEL_EXCEPTION_LOG = "RSocket requestChannel() failed with exception: {0}";
+        String METADATA_PUSH_EXCEPTION_LOG = "RSocket metadataPush() failed\nException:\n{0}";
+
+        String REQUEST_RESPONSE_REQUEST_LOG = "RSocket executing requestResponse()\nData:\n{0}\nMetadata:\n{1}";
+        String RESPONSE_RESPONSE_LOG = "RSocket requestResponse() completed\nData:\n{0}\nMetadata:\n{1}";
+        String REQUEST_RESPONSE_EXCEPTION_LOG = "RSocket requestResponse() failed\nException:\n{0}";
+
+        String REQUEST_STREAM_REQUEST_LOG = "RSocket executing requestStream()\nData:\n{0}\nMetadata:\n{1}";
+        String REQUEST_STREAM_RESPONSE_LOG = "RSocket requestStream() processed\nData:\n{0}\nMetadata:\n{1}";
+        String REQUEST_STREAM_EXCEPTION_LOG = "RSocket requestStream() failed\nException:\n{0}";
+
+        String REQUEST_CHANNEL_REQUEST_LOG = "RSocket requestChannel() processed\nData:\n{0}\nMetadata:\n{1}";
+        String REQUEST_CHANNEL_RESPONSE_LOG = "RSocket requestChannel() processed\nData:\n{0}\nMetadata:\n{1}";
+        String REQUEST_CHANNEL_EXCEPTION_LOG = "RSocket requestChannel() failed\nException:\n{0}";
     }
 
     interface ConfigurationKeys {
@@ -122,7 +125,6 @@ public interface RsocketModuleConstants {
         String SETUP_PAYLOAD_DATA_FORMAT_FIELD = "dataFormat";
         String SETUP_PAYLOAD_META_DATA_FORMAT_FIELD = "metaDataFormat";
     }
-
 
     @Getter
     @AllArgsConstructor

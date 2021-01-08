@@ -19,7 +19,6 @@
 package io.art.server.constants;
 
 import reactor.core.scheduler.*;
-import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.constants.ThreadConstants.*;
 import static java.lang.Short.*;
 import static reactor.core.scheduler.Schedulers.*;
@@ -62,16 +61,12 @@ public interface ServerModuleConstants {
     }
 
     interface LoggingMessages {
-        String SERVICE_REGISTRATION_MESSAGE = success("Registered service: ''{0}''");
-
-        String SERVICE_SUBSCRIBED_MESSAGE = success("Service subscribed: ''{0}.{1}''");
-
-        String BLOCKING_SERVICE_REQUEST_MESSAGE = success("Service: ''{0}.{1}'' received blocked request: {2}");
-        String SERVICE_EXECUTED_MESSAGE = success("Service: ''{0}.{1}'' produced blocked response: {2}");
-        String SERVICE_FAILED_MESSAGE = error("Service failed: ''{0}.{1}''");
-
-        String REACTIVE_SERVICE_INPUT_MESSAGE = success("Service: ''{0}.{1}'' received reactive input: {2}");
-        String REACTIVE_SERVICE_OUTPUT_MESSAGE = success("Service: ''{0}.{1}'' produced reactive output: {2}");
+        String SERVICE_REGISTRATION_MESSAGE = "Registered service: ''{0}'' with methods: {1}";
+        String SERVICE_SUBSCRIBED_MESSAGE = "Service subscribed: ''{0}.{1}''";
+        String SERVICE_INPUT_DATA = "Service ''{0}.{1}'' input:\n{2}";
+        String SERVICE_OUTPUT_DATA = "Service ''{0}.{1}'' output:\n{2}";
+        String SERVICE_COMPLETED_MESSAGE = "Service completed: ''{0}.{1}''";
+        String SERVICE_FAILED_MESSAGE = "Service failed: ''{0}.{1}''";
     }
 
     interface ExceptionMessages {

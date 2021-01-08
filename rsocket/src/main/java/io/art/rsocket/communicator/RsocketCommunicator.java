@@ -23,11 +23,13 @@ import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
-import io.art.rsocket.manager.*;
+import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
 import io.art.value.immutable.Value;
+import io.rsocket.*;
 import io.rsocket.core.*;
+import io.rsocket.plugins.*;
 import io.rsocket.transport.netty.client.*;
 import io.rsocket.util.*;
 import lombok.*;
@@ -40,6 +42,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.lazy.ManagedValue.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
+import static io.art.rsocket.manager.RsocketManager.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.rsocket.core.RSocketClient.*;
@@ -51,22 +54,17 @@ public class RsocketCommunicator implements CommunicatorImplementation {
     private final String connectorId;
     private final CommunicationMode communicationMode;
 
-    @Builder.Default
-    private final RsocketSetupPayload setupPayload = RsocketSetupPayload.builder().build();
-
     @Getter(lazy = true, value = PRIVATE)
     private final Logger logger = logger(RsocketCommunicator.class);
 
+    @Builder.Default
+    private final RsocketSetupPayload setupPayload = RsocketSetupPayload.builder().build();
+
     private final ManagedValue<RsocketCommunicatorConfiguration> communicatorConfiguration = managed(this::communicatorConfiguration);
-
     private final ManagedValue<RsocketConnectorConfiguration> connectorConfiguration = managed(this::connectorConfiguration);
-
     private final ManagedValue<RsocketSetupPayload> adoptedSetupPayload = managed(this::adoptedSetupPayload);
-
     private final ManagedValue<RsocketPayloadWriter> writer = managed(this::writer);
-
     private final ManagedValue<RsocketPayloadReader> reader = managed(this::reader);
-
     private final ManagedValue<RSocketClient> client = managed(this::createClient);
 
     @Override
@@ -81,7 +79,7 @@ public class RsocketCommunicator implements CommunicatorImplementation {
 
     @Override
     public void dispose() {
-        client.dispose(RsocketManager::disposeRsocket);
+        client.dispose(this::disposeClient);
         reader.dispose();
         writer.dispose();
         adoptedSetupPayload.dispose();
@@ -128,7 +126,7 @@ public class RsocketCommunicator implements CommunicatorImplementation {
                 .dataMimeType(toMimeType(setupPayload.getDataFormat()).toString())
                 .metadataMimeType(toMimeType(setupPayload.getMetadataFormat()).toString())
                 .fragment(connectorConfiguration.getFragment())
-                .interceptors(connectorConfiguration.getInterceptors());
+                .interceptors(registry -> configureInterceptors(connectorConfiguration, registry));
         apply(connectorConfiguration.getKeepAlive(), keepAlive -> connector.keepAlive(keepAlive.getInterval(), keepAlive.getMaxLifeTime()));
         apply(connectorConfiguration.getResume(), connector::resume);
         apply(connectorConfiguration.getRetry(), connector::reconnect);
@@ -137,21 +135,37 @@ public class RsocketCommunicator implements CommunicatorImplementation {
             case TCP:
                 TcpClient tcpClient = connectorConfiguration.getTcpClient();
                 int tcpMaxFrameLength = connectorConfiguration.getTcpMaxFrameLength();
-                return from(connector
+                RSocket socket = connector
                         .connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength))
                         .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorId, setupPayload)))
                         .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
-                        .doOnTerminate(() -> getLogger().info(format(COMMUNICATOR_STOPPED, connectorId, setupPayload))));
+                        .blockOptional()
+                        .orElseThrow(ImpossibleSituation::new);
+                return from(socket);
             case WS:
                 HttpClient httpWebSocketClient = connectorConfiguration.getHttpWebSocketClient();
                 String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
-                return from(connector
+                socket = connector
                         .connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath))
                         .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorId, setupPayload)))
                         .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
-                        .doOnTerminate(() -> getLogger().info(format(COMMUNICATOR_STOPPED, connectorId, setupPayload))));
+                        .blockOptional()
+                        .orElseThrow(ImpossibleSituation::new);
+                return from(socket);
         }
         throw new ImpossibleSituation();
+    }
+
+    private void configureInterceptors(RsocketConnectorConfiguration configuration, InterceptorRegistry registry) {
+        apply(configuration.getInterceptorConfigurator(), configurator -> configurator.accept(registry));
+        registry
+                .forResponder(new RsocketConnectorLoggingInterceptor(connectorId))
+                .forRequester(new RsocketConnectorLoggingInterceptor(connectorId));
+    }
+
+    private void disposeClient(RSocketClient rsocket) {
+        disposeRsocket(rsocket);
+        getLogger().info(format(COMMUNICATOR_STOPPED, connectorId, setupPayload));
     }
 
     private RsocketCommunicatorConfiguration communicatorConfiguration() {

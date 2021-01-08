@@ -33,8 +33,7 @@ import io.rsocket.*;
 import io.rsocket.util.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
-import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.*;
+import reactor.util.context.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.model.RsocketSetupPayload.*;
@@ -42,7 +41,7 @@ import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.rsocket.state.RsocketModuleState.RsocketThreadLocalState.*;
 import static io.art.server.module.ServerModule.*;
 import static io.art.value.constants.ValueModuleConstants.*;
-import static io.art.value.constants.ValueModuleConstants.Keys.*;
+import static io.art.value.constants.ValueModuleConstants.Fields.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.mapping.ServiceMethodMapping.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
@@ -57,8 +56,6 @@ public class ServingRsocket implements RSocket {
     private final RsocketModuleState moduleState = rsocketModule().state();
     private final RsocketSetupPayload setupPayload;
     private final ServiceMethodSpecification specification;
-
-    private volatile Runnable onDispose;
 
     public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket, RsocketServerConfiguration serverConfiguration) {
         moduleState.registerRequester(this.requesterSocket = requesterSocket);
@@ -75,21 +72,16 @@ public class ServingRsocket implements RSocket {
         Entity serviceIdentifiers;
         if (isEntity(payloadMetaData.getValue()) && nonNull(serviceIdentifiers = asEntity(asEntity(payloadMetaData.getValue()).get(SERVICE_METHOD_IDENTIFIERS_KEY)))) {
             ServiceMethodIdentifier serviceMethodId = toServiceMethod(serviceIdentifiers);
-            ServiceMethodIdentifier defaultServiceMethod = serverConfiguration.getDefaultServiceMethod();
-            if (isNull(defaultServiceMethod)) {
-                specification = specifications()
-                        .findMethodById(serviceMethodId)
-                        .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
+            if (nonNull(serviceMethodId)) {
                 setupPayload = setupPayloadBuilder.serviceMethod(serviceMethodId).build();
-                specification.initialize();
+                specification = initializeSpecification(serviceMethodId);
                 return;
             }
-            specification = specifications()
-                    .findMethodById(defaultServiceMethod)
-                    .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, defaultServiceMethod)));
+        }
+        ServiceMethodIdentifier defaultServiceMethod = serverConfiguration.getDefaultServiceMethod();
+        if (nonNull(defaultServiceMethod)) {
             setupPayload = setupPayloadBuilder.serviceMethod(defaultServiceMethod).build();
-            specification.initialize();
-            return;
+            specification = initializeSpecification(defaultServiceMethod);
         }
         throw new ImpossibleSituation();
     }
@@ -135,20 +127,27 @@ public class ServingRsocket implements RSocket {
     public void dispose() {
         moduleState.disposeRequester(this);
         specification.dispose();
-        apply(onDispose, Runnable::run);
     }
 
-    public void onDispose(Runnable action) {
-        this.onDispose = action;
+    private ServiceMethodSpecification initializeSpecification(ServiceMethodIdentifier serviceMethodId) {
+        ServiceMethodSpecification specification = specifications()
+                .findMethodById(serviceMethodId)
+                .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
+        specification.initialize();
+        return specification;
     }
 
     private <T> Flux<T> addContext(Flux<T> flux) {
-        return cast(flux
-                .materialize()
-                .doOnNext(signal -> moduleState.localState(fromContext(signal.getContext())))
-                .dematerialize()
-                .subscriberContext(context -> context
-                        .putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket)
-                        .putNonNull(SETUP_PAYLOAD_KEY, setupPayload)));
+        return flux.doOnEach(signal -> loadContext(signal.getContext())).subscriberContext(this::saveContext);
+    }
+
+    private void loadContext(Context context) {
+        moduleState.localState(fromContext(context));
+    }
+
+    private Context saveContext(Context context) {
+        return context
+                .putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket)
+                .putNonNull(SETUP_PAYLOAD_KEY, setupPayload);
     }
 }

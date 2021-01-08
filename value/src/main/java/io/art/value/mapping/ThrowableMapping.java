@@ -4,7 +4,7 @@ import io.art.value.builder.*;
 import io.art.value.immutable.*;
 import lombok.experimental.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.value.constants.ValueModuleConstants.Keys.*;
+import static io.art.value.constants.ValueModuleConstants.Fields.*;
 import static io.art.value.constants.ValueModuleConstants.ValueType.PrimitiveType.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Entity.*;
@@ -22,6 +22,11 @@ public class ThrowableMapping {
         return builder.build();
     }
 
+    public Entity fromThrowableNested(Throwable throwable) {
+        return entityBuilder().lazyPut(stringPrimitive(EXCEPTION_KEY), () -> fromThrowable(throwable)).build();
+    }
+
+
     public Throwable toThrowable(Entity entity) {
         String message = entity.map(stringPrimitive(MESSAGE_KEY), toString);
         StackTraceElement[] stackTrace = entity.map(stringPrimitive(STACK_TRACE_KEY), toArray(StackTraceElement[]::new, ThrowableMapping::toStackTraceElement));
@@ -30,6 +35,11 @@ public class ThrowableMapping {
         throwable.setStackTrace(stackTrace);
         return throwable;
     }
+
+    public Throwable toThrowableNested(Entity entity) {
+        return entity.mapping().map(EXCEPTION_KEY, ThrowableMapping::toThrowable);
+    }
+
 
     public Value fromStackTraceElement(StackTraceElement element) {
         return Entity.entityBuilder()
@@ -49,5 +59,4 @@ public class ThrowableMapping {
         int lineNumber = entity.mapOrDefault(stringPrimitive(LINE_NUMBER_KEY), INT, toInt);
         return new StackTraceElement(declaringClass, methodName, fileName, lineNumber);
     }
-
 }
