@@ -20,7 +20,7 @@ package io.art.rsocket.manager;
 
 
 import io.art.communicator.configuration.*;
-import io.art.rsocket.communicator.*;
+import io.art.communicator.specification.*;
 import io.art.rsocket.server.*;
 import io.art.rsocket.state.*;
 import lombok.*;
@@ -47,31 +47,28 @@ public class RsocketManager {
     @Getter(lazy = true, value = PRIVATE)
     private static final RsocketServer server = new RsocketServer(rsocketModule().configuration().getServerConfiguration());
 
-    @Getter(lazy = true, value = PRIVATE)
-    private static final RsocketModuleState state = rsocketModule().state();
-
-    public void startConnectors() {
+    public void initializeCommunicators() {
         getCommunicatorConfiguration()
                 .getRegistry()
-                .<RsocketCommunicator>getByProtocol(RSOCKET)
+                .getByProtocol(RSOCKET)
                 .values()
-                .forEach(proxy -> proxy.getImplementations().forEach(RsocketCommunicator::start));
+                .forEach(proxy -> proxy.getSpecifications().forEach(CommunicatorSpecification::initialize));
     }
 
-    public void stopConnectors() {
+    public void disposeCommunicators() {
         getCommunicatorConfiguration()
                 .getRegistry()
-                .<RsocketCommunicator>getByProtocol(RSOCKET)
+                .getByProtocol(RSOCKET)
                 .values()
-                .forEach(proxy -> proxy.getImplementations().forEach(RsocketCommunicator::stop));
+                .forEach(proxy -> proxy.getSpecifications().forEach(CommunicatorSpecification::dispose));
     }
 
-    public void startServer() {
-        getServer().start();
+    public void initializeServer() {
+        getServer().initialize();
     }
 
-    public void stopServer() {
-        apply(getServer(), RsocketServer::stop);
+    public void disposeServer() {
+        apply(getServer(), RsocketServer::dispose);
     }
 
 

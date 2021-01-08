@@ -81,12 +81,14 @@ public class ServingRsocket implements RSocket {
                         .findMethodById(serviceMethodId)
                         .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
                 setupPayload = setupPayloadBuilder.serviceMethod(serviceMethodId).build();
+                specification.initialize();
                 return;
             }
             specification = specifications()
                     .findMethodById(defaultServiceMethod)
                     .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, defaultServiceMethod)));
             setupPayload = setupPayloadBuilder.serviceMethod(defaultServiceMethod).build();
+            specification.initialize();
             return;
         }
         throw new ImpossibleSituation();
@@ -132,6 +134,7 @@ public class ServingRsocket implements RSocket {
     @Override
     public void dispose() {
         moduleState.disposeRequester(this);
+        specification.dispose();
         apply(onDispose, Runnable::run);
     }
 

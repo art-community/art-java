@@ -18,10 +18,8 @@
 
 package io.art.server;
 
-public interface Server {
-    void start();
+import io.art.core.managed.*;
 
-    void stop();
-
+public interface Server extends Managed {
     boolean available();
 }

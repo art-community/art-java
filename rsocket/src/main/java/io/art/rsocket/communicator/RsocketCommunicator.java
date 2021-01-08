@@ -40,7 +40,6 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
-import static io.art.rsocket.manager.RsocketManager.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.rsocket.core.RSocketClient.*;
@@ -60,19 +59,18 @@ public class RsocketCommunicator implements CommunicatorImplementation {
 
     private final LazyValue<RsocketCommunicatorConfiguration> communicatorConfiguration = lazy(this::communicatorConfiguration);
 
-    private final LazyValue<RsocketConnectorConfiguration> connectorConfiguration = communicatorConfiguration.map(this::connectorConfiguration);
+    private final LazyValue<RsocketConnectorConfiguration> connectorConfiguration = lazy(this::connectorConfiguration);
 
     private final LazyValue<RsocketSetupPayload> adoptedSetupPayload = lazy(this::adoptedSetupPayload);
 
-    private final LazyValue<RsocketPayloadWriter> writer = adoptedSetupPayload.map(payload -> new RsocketPayloadWriter(payload.getDataFormat(), payload.getMetadataFormat()));
+    private final LazyValue<RsocketPayloadWriter> writer = lazy(this::writer);
 
-    private final LazyValue<RsocketPayloadReader> reader = adoptedSetupPayload.map(payload -> new RsocketPayloadReader(payload.getDataFormat(), payload.getMetadataFormat()));
+    private final LazyValue<RsocketPayloadReader> reader = lazy(this::reader);
 
     private final LazyValue<RSocketClient> client = lazy(this::createClient);
 
-
     @Override
-    public void start() {
+    public void initialize() {
         communicatorConfiguration.initialize();
         connectorConfiguration.initialize();
         adoptedSetupPayload.initialize();
@@ -82,7 +80,7 @@ public class RsocketCommunicator implements CommunicatorImplementation {
     }
 
     @Override
-    public void stop() {
+    public void dispose() {
         client.dispose(RsocketManager::disposeRsocket);
         reader.dispose();
         writer.dispose();
@@ -156,13 +154,12 @@ public class RsocketCommunicator implements CommunicatorImplementation {
         throw new ImpossibleSituation();
     }
 
-
     private RsocketCommunicatorConfiguration communicatorConfiguration() {
         return rsocketModule().configuration().getCommunicatorConfiguration();
     }
 
-    private RsocketConnectorConfiguration connectorConfiguration(RsocketCommunicatorConfiguration communicatorConfiguration) {
-        return communicatorConfiguration.getConnectors().get(connectorId);
+    private RsocketConnectorConfiguration connectorConfiguration() {
+        return communicatorConfiguration.get().getConnectors().get(connectorId);
     }
 
     private RsocketSetupPayload adoptedSetupPayload() {
@@ -172,5 +169,13 @@ public class RsocketCommunicator implements CommunicatorImplementation {
                 .dataFormat(orElse(setupPayload.getDataFormat(), connectorConfiguration.getSetupPayload().getDataFormat()))
                 .metadataFormat(orElse(setupPayload.getMetadataFormat(), connectorConfiguration.getSetupPayload().getMetadataFormat()))
                 .build();
+    }
+
+    private RsocketPayloadWriter writer() {
+        return new RsocketPayloadWriter(adoptedSetupPayload.get().getDataFormat(), adoptedSetupPayload.get().getMetadataFormat());
+    }
+
+    private RsocketPayloadReader reader() {
+        return new RsocketPayloadReader(adoptedSetupPayload.get().getDataFormat(), adoptedSetupPayload.get().getMetadataFormat());
     }
 }

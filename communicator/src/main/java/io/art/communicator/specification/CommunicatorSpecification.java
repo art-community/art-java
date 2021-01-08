@@ -23,6 +23,8 @@ import io.art.communicator.implementation.*;
 import io.art.core.annotation.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
+import io.art.core.lazy.*;
+import io.art.core.managed.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.*;
@@ -31,8 +33,9 @@ import reactor.core.scheduler.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.lazy.LazyValue.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
@@ -40,7 +43,7 @@ import java.util.function.*;
 @Builder
 @UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class CommunicatorSpecification {
+public class CommunicatorSpecification implements Managed {
     @EqualsAndHashCode.Include
     private final String communicatorId;
 
@@ -55,28 +58,41 @@ public class CommunicatorSpecification {
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
     private final ValueFromModelMapper<?, ? extends Value> inputMapper;
+
     private final ValueToModelMapper<?, ? extends Value> outputMapper;
 
     private final CommunicatorImplementation implementation;
 
     @Getter(lazy = true, value = PRIVATE)
-    private final CommunicatorModuleConfiguration moduleConfiguration = communicatorModule().configuration();
+    private final Function<Object, Flux<Object>> adoptInput = adoptInput();
 
     @Getter(lazy = true, value = PRIVATE)
-    private final CommunicatorConfiguration communicatorConfiguration = getModuleConfiguration().getConfigurations().get(communicatorId);
+    private final Function<Flux<Object>, Object> adoptOutput = adoptOutput();
 
-    @Getter(lazy = true, value = PRIVATE)
-    private final Function<Object, Flux<Object>> mapInput = selectMapInput();
+    private final LazyValue<CommunicatorModuleConfiguration> moduleConfiguration = lazy(this::moduleConfiguration);
 
-    @Getter(lazy = true, value = PRIVATE)
-    private final Function<Flux<Object>, Object> mapOutput = selectMapOutput();
+    private final LazyValue<Optional<CommunicatorConfiguration>> communicatorConfiguration = lazy(this::communicatorConfiguration);
+
+    @Override
+    public void initialize() {
+        moduleConfiguration.initialize();
+        communicatorConfiguration.initialize();
+        implementation.initialize();
+    }
+
+    @Override
+    public void dispose() {
+        implementation.dispose();
+        communicatorConfiguration.dispose();
+        moduleConfiguration.dispose();
+    }
 
     public <T> T communicate() {
         return communicate(null);
     }
 
     public <T> T communicate(Object input) {
-        Scheduler scheduler = let(getCommunicatorConfiguration(), CommunicatorConfiguration::getScheduler, getModuleConfiguration().getScheduler());
+        Scheduler scheduler = communicatorConfiguration.get().map(CommunicatorConfiguration::getScheduler).orElseGet(moduleConfiguration.get()::getScheduler);
         return cast(mapOutput(defer(() -> deferredCommunicate(input)).subscribeOn(scheduler)));
     }
 
@@ -90,7 +106,7 @@ public class CommunicatorSpecification {
     }
 
     private Flux<Value> mapInput(Object input) {
-        Flux<Object> inputFlux = getMapInput().apply(input).filter(Objects::nonNull);
+        Flux<Object> inputFlux = getAdoptInput().apply(input).filter(Objects::nonNull);
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
             inputFlux = inputFlux.transformDeferred(decorator);
         }
@@ -102,7 +118,7 @@ public class CommunicatorSpecification {
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
             mappedOutput = mappedOutput.transformDeferred(decorator);
         }
-        return getMapOutput().apply(mappedOutput);
+        return getAdoptOutput().apply(mappedOutput);
     }
 
     private Flux<Value> mapException(Throwable exception) {
@@ -113,7 +129,7 @@ public class CommunicatorSpecification {
         return cast(errorOutput);
     }
 
-    private Function<Object, Flux<Object>> selectMapInput() {
+    private Function<Object, Flux<Object>> adoptInput() {
         if (isNull(inputMode)) throw new ImpossibleSituation();
         switch (inputMode) {
             case BLOCKING:
@@ -126,7 +142,7 @@ public class CommunicatorSpecification {
         }
     }
 
-    private Function<Flux<Object>, Object> selectMapOutput() {
+    private Function<Flux<Object>, Object> adoptOutput() {
         if (isNull(outputMode)) throw new ImpossibleSituation();
         switch (outputMode) {
             case BLOCKING:
@@ -138,5 +154,14 @@ public class CommunicatorSpecification {
             default:
                 throw new ImpossibleSituation();
         }
+    }
+
+
+    private Optional<CommunicatorConfiguration> communicatorConfiguration() {
+        return Optional.ofNullable(moduleConfiguration.get().getConfigurations().get(communicatorId));
+    }
+
+    private CommunicatorModuleConfiguration moduleConfiguration() {
+        return communicatorModule().configuration();
     }
 }

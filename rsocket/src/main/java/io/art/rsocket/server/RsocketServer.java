@@ -50,15 +50,16 @@ public class RsocketServer implements Server {
     private static final Logger logger = logger(RsocketServer.class);
 
     private final LazyValue<CloseableChannel> channel = lazy(this::createServer);
-    private final LazyValue<Mono<Void>> onClose = channel.map(CloseableChannel::onClose);
+
+    private final LazyValue<Mono<Void>> onClose = lazy(this::onClose);
 
     @Override
-    public void start() {
+    public void initialize() {
         channel.initialize();
     }
 
     @Override
-    public void stop() {
+    public void dispose() {
         channel.dispose(this::disposeServer);
     }
 
@@ -109,5 +110,9 @@ public class RsocketServer implements Server {
                     .doOnSubscribe(subscription -> logger.info(SERVER_CLIENT_CONNECTED));
         }
         return socket.doOnError(throwable -> logger.error(throwable.getMessage(), throwable)).map(Caster::cast);
+    }
+
+    private Mono<Void> onClose() {
+        return channel.get().onClose();
     }
 }

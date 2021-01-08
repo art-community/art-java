@@ -18,22 +18,22 @@
 
 package io.art.communicator.registry;
 
-import io.art.communicator.implementation.*;
+import io.art.communicator.specification.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import static io.art.core.factory.ArrayFactory.*;
 import java.util.*;
 
 @UsedByGenerator
-public class CommunicatorImplementationRegistry<T extends CommunicatorImplementation> {
-    private final List<T> implementations = dynamicArray();
+public class CommunicatorSpecificationRegistry  {
+    private final List<CommunicatorSpecification> specifications = dynamicArray();
 
-    public ImmutableArray<T> get() {
-        return immutableArrayOf(implementations);
+    public ImmutableArray<CommunicatorSpecification> get() {
+        return immutableArrayOf(specifications);
     }
 
-    public T register(T implementation) {
-        implementations.add(implementation);
-        return implementation;
+    public CommunicatorSpecification register(CommunicatorSpecification specification) {
+        specifications.add(specification);
+        return specification;
     }
 }

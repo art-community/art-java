@@ -1,7 +1,10 @@
 package io.art.core.lazy;
 
+import io.art.core.exception.*;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.EmptyFunctions.*;
+import static io.art.core.constants.ExceptionMessages.*;
 import static java.util.Objects.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -21,10 +24,11 @@ public class LazyValue<T> implements Supplier<T> {
         return initialized.get();
     }
 
+    @Override
     public T get() {
         while (isNull(this.value)) {
             if (this.initialized.compareAndSet(false, true)) {
-                this.value = loader.get();
+                this.value = orThrow(loader.get(), new InternalRuntimeException(LAZY_LOADED_VALUE_IS_NULL));
             }
         }
         return this.value;
@@ -39,10 +43,6 @@ public class LazyValue<T> implements Supplier<T> {
                 this.value = null;
             }
         }
-    }
-
-    public <R> LazyValue<R> map(Function<T, R> mapper) {
-        return new LazyValue<>(() -> mapper.apply(get()));
     }
 
     public void dispose() {

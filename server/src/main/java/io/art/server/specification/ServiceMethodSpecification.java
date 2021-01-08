@@ -22,6 +22,8 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
+import io.art.core.lazy.*;
+import io.art.core.managed.*;
 import io.art.server.configuration.*;
 import io.art.server.decorator.*;
 import io.art.server.implementation.*;
@@ -35,8 +37,10 @@ import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.lazy.LazyValue.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
+import static java.util.Optional.*;
 import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
@@ -45,7 +49,7 @@ import java.util.function.*;
 @Builder(toBuilder = true)
 @UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ServiceMethodSpecification {
+public class ServiceMethodSpecification implements Managed {
     @Getter
     @EqualsAndHashCode.Include
     private final String methodId;
@@ -85,17 +89,6 @@ public class ServiceMethodSpecification {
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    @Getter(lazy = true, value = PRIVATE)
-    private final ServerModuleConfiguration moduleConfiguration = serverModule().configuration();
-
-    @Getter(lazy = true, value = PRIVATE)
-    private final ServiceSpecification serviceSpecification = specifications().get(serviceId).orElseThrow(ImpossibleSituation::new);
-
-    @Getter(lazy = true, value = PRIVATE)
-    private final ServiceConfiguration serviceConfiguration = getServiceSpecification().getConfiguration();
-
-    @Getter(lazy = true, value = PRIVATE)
-    private final ServiceMethodConfiguration methodConfiguration = let(getServiceConfiguration(), configuration -> configuration.getMethods().get(methodId));
 
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Flux<Object>, Object> adoptInput = adoptInput();
@@ -103,8 +96,29 @@ public class ServiceMethodSpecification {
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Object, Flux<Object>> adoptOutput = adoptOutput();
 
+    private final LazyValue<ServerModuleConfiguration> moduleConfiguration = lazy(this::moduleConfiguration);
+    private final LazyValue<ServiceSpecification> serviceSpecification = lazy(this::serviceSpecification);
+    private final LazyValue<Optional<ServiceConfiguration>> serviceConfiguration = lazy(this::serviceConfiguration);
+    private final LazyValue<Optional<ServiceMethodConfiguration>> methodConfiguration = lazy(this::methodConfiguration);
+
+    @Override
+    public void initialize() {
+        moduleConfiguration.initialize();
+        serviceSpecification.initialize();
+        serviceConfiguration.initialize();
+        methodConfiguration.initialize();
+    }
+
+    @Override
+    public void dispose() {
+        methodConfiguration.initialize();
+        serviceConfiguration.initialize();
+        serviceSpecification.initialize();
+        moduleConfiguration.initialize();
+    }
+
     public Flux<Value> serve(Flux<Value> input) {
-        Scheduler scheduler = let(getMethodConfiguration(), ServiceMethodConfiguration::getScheduler, getModuleConfiguration().getScheduler());
+        Scheduler scheduler = methodConfiguration.get().map(ServiceMethodConfiguration::getScheduler).orElseGet(moduleConfiguration.get()::getScheduler);
         return defer(() -> deferredServe(input)).subscribeOn(scheduler);
     }
 
@@ -186,5 +200,22 @@ public class ServiceMethodSpecification {
             default:
                 throw new ImpossibleSituation();
         }
+    }
+
+    private ServerModuleConfiguration moduleConfiguration() {
+        return serverModule().configuration();
+    }
+
+
+    private ServiceSpecification serviceSpecification() {
+        return specifications().get(serviceId).orElseThrow(ImpossibleSituation::new);
+    }
+
+    private Optional<ServiceConfiguration> serviceConfiguration() {
+        return ofNullable(serviceSpecification.get().getConfiguration());
+    }
+
+    private Optional<ServiceMethodConfiguration> methodConfiguration() {
+        return serviceConfiguration.get().map(configuration -> configuration.getMethods().get(methodId));
     }
 }
