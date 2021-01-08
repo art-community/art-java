@@ -23,6 +23,7 @@ import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
+import io.art.rsocket.manager.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
 import io.art.value.immutable.Value;
@@ -82,19 +83,12 @@ public class RsocketCommunicator implements CommunicatorImplementation {
 
     @Override
     public void stop() {
-        client.dispose(this::dispose);
+        client.dispose(RsocketManager::disposeRsocket);
         reader.dispose();
         writer.dispose();
         adoptedSetupPayload.dispose();
         connectorConfiguration.dispose();
         communicatorConfiguration.dispose();
-    }
-
-    private void dispose(RSocketClient client) {
-        if (client.isDisposed()) {
-            return;
-        }
-        disposeRsocket(client);
     }
 
     @Override

@@ -64,8 +64,7 @@ public class RsocketServer implements Server {
 
     @Override
     public boolean available() {
-        CloseableChannel channel;
-        return nonNull(channel = this.channel.get()) && !channel.isDisposed();
+        return this.channel.initialized();
     }
 
     private CloseableChannel createServer() {
@@ -94,9 +93,6 @@ public class RsocketServer implements Server {
     }
 
     private void disposeServer(Disposable server) {
-        if (server.isDisposed()) {
-            return;
-        }
         disposeRsocket(server);
         onClose.dispose(Mono::block);
     }

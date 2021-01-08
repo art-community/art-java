@@ -18,22 +18,10 @@
 
 package io.art.server;
 
-import reactor.core.publisher.*;
-import static io.art.core.extensions.ThreadExtensions.*;
-
 public interface Server {
     void start();
 
     void stop();
 
     boolean available();
-
-    default void await() {
-        block();
-    }
-
-    default void restart() {
-        stop();
-        start();
-    }
 }
