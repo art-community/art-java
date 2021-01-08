@@ -23,11 +23,13 @@ import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
+import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
 import io.art.value.immutable.Value;
 import io.rsocket.*;
 import io.rsocket.core.*;
+import io.rsocket.plugins.*;
 import io.rsocket.transport.netty.client.*;
 import io.rsocket.util.*;
 import lombok.*;
@@ -129,7 +131,7 @@ public class RsocketCommunicator implements CommunicatorImplementation {
                 .dataMimeType(toMimeType(setupPayload.getDataFormat()).toString())
                 .metadataMimeType(toMimeType(setupPayload.getMetadataFormat()).toString())
                 .fragment(connectorConfiguration.getFragment())
-                .interceptors(connectorConfiguration.getInterceptors());
+                .interceptors(registry -> configureInterceptors(connectorConfiguration, registry));
         apply(connectorConfiguration.getKeepAlive(), keepAlive -> connector.keepAlive(keepAlive.getInterval(), keepAlive.getMaxLifeTime()));
         apply(connectorConfiguration.getResume(), connector::resume);
         apply(connectorConfiguration.getRetry(), connector::reconnect);
@@ -138,21 +140,32 @@ public class RsocketCommunicator implements CommunicatorImplementation {
             case TCP:
                 TcpClient tcpClient = connectorConfiguration.getTcpClient();
                 int tcpMaxFrameLength = connectorConfiguration.getTcpMaxFrameLength();
-                Mono<RSocket> socket = connector
+                RSocket socket = connector
                         .connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength))
                         .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorId, setupPayload)))
-                        .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
-                return from(socket.block());
+                        .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
+                        .blockOptional()
+                        .orElseThrow(ImpossibleSituation::new);
+                return from(socket);
             case WS:
                 HttpClient httpWebSocketClient = connectorConfiguration.getHttpWebSocketClient();
                 String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
                 socket = connector
                         .connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath))
                         .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorId, setupPayload)))
-                        .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
-                return from(socket.block());
+                        .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
+                        .blockOptional()
+                        .orElseThrow(ImpossibleSituation::new);
+                return from(socket);
         }
         throw new ImpossibleSituation();
+    }
+
+    private void configureInterceptors(RsocketConnectorConfiguration configuration, InterceptorRegistry registry) {
+        apply(configuration.getInterceptorConfigurator(), configurator -> configurator.accept(registry));
+        registry
+                .forResponder(new RsocketConnectorLoggingInterceptor(connectorId))
+                .forRequester(new RsocketConnectorLoggingInterceptor(connectorId));
     }
 
     private void disposeClient(RSocketClient rsocket) {

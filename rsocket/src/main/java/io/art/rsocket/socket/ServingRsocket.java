@@ -73,19 +73,12 @@ public class ServingRsocket implements RSocket {
         if (isEntity(payloadMetaData.getValue()) && nonNull(serviceIdentifiers = asEntity(asEntity(payloadMetaData.getValue()).get(SERVICE_METHOD_IDENTIFIERS_KEY)))) {
             ServiceMethodIdentifier serviceMethodId = toServiceMethod(serviceIdentifiers);
             ServiceMethodIdentifier defaultServiceMethod = serverConfiguration.getDefaultServiceMethod();
+            setupPayload = setupPayloadBuilder.serviceMethod(serviceMethodId).build();
             if (isNull(defaultServiceMethod)) {
-                specification = specifications()
-                        .findMethodById(serviceMethodId)
-                        .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
-                setupPayload = setupPayloadBuilder.serviceMethod(serviceMethodId).build();
-                specification.initialize();
+                specification = initializeSpecification(serviceMethodId);
                 return;
             }
-            specification = specifications()
-                    .findMethodById(defaultServiceMethod)
-                    .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, defaultServiceMethod)));
-            setupPayload = setupPayloadBuilder.serviceMethod(defaultServiceMethod).build();
-            specification.initialize();
+            specification = initializeSpecification(defaultServiceMethod);
             return;
         }
         throw new ImpossibleSituation();
@@ -132,6 +125,14 @@ public class ServingRsocket implements RSocket {
     public void dispose() {
         moduleState.disposeRequester(this);
         specification.dispose();
+    }
+
+    private ServiceMethodSpecification initializeSpecification(ServiceMethodIdentifier serviceMethodId) {
+        ServiceMethodSpecification specification = specifications()
+                .findMethodById(serviceMethodId)
+                .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
+        specification.initialize();
+        return specification;
     }
 
     private <T> Flux<T> addContext(Flux<T> flux) {

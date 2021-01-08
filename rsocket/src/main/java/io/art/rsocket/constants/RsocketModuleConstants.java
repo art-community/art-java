@@ -191,9 +191,4 @@ public interface RsocketModuleConstants {
     enum RsocketProtocol implements CommunicationProtocol {
         RSOCKET
     }
-
-    enum InterceptorTarget {
-        SERVER,
-        CLIENT
-    }
 }
