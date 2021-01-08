@@ -27,7 +27,8 @@ import static io.art.value.factory.PrimitivesFactory.*;
 import static java.text.MessageFormat.*;
 
 public interface ValueModuleConstants {
-    interface Keys {
+    interface Fields {
+        String EXCEPTION_KEY = "exception";
         String SERVICE_ID_KEY = "serviceId";
         String METHOD_ID_KEY = "methodId";
         String SERVICE_METHOD_IDENTIFIERS_KEY = "serviceMethodIdentifiers";

@@ -28,14 +28,12 @@ import lombok.*;
 import reactor.util.retry.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
-import static java.util.Optional.*;
-import java.util.*;
+import static java.util.Objects.*;
 
 @Getter
 public class RsocketCommunicatorConfiguration {
@@ -50,6 +48,12 @@ public class RsocketCommunicatorConfiguration {
     private DataFormat defaultMetaDataFormat;
     private ServiceMethodIdentifier defaultServiceMethod;
     private RsocketKeepAliveConfiguration keepAliveConfiguration;
+
+    public boolean isLogging(String connectorId) {
+        RsocketConnectorConfiguration configuration = connectors.get(connectorId);
+        if (isNull(configuration)) return logging;
+        return configuration.isLogging();
+    }
 
     public static RsocketCommunicatorConfiguration from(ConfigurationSource source) {
         RsocketCommunicatorConfiguration configuration = new RsocketCommunicatorConfiguration();

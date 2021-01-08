@@ -19,36 +19,28 @@
 package io.art.rsocket.manager;
 
 
-import io.art.communicator.configuration.*;
 import io.art.communicator.specification.*;
 import io.art.rsocket.server.*;
-import io.art.rsocket.state.*;
 import lombok.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import static io.art.communicator.module.CommunicatorModule.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import static lombok.AccessLevel.*;
 
 @UtilityClass
 public class RsocketManager {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketManager.class);
-
-    @Getter(lazy = true, value = PRIVATE)
-    private static final CommunicatorModuleConfiguration communicatorConfiguration = communicatorModule().configuration();
-
-    @Getter(lazy = true, value = PRIVATE)
-    private static final RsocketServer server = new RsocketServer(rsocketModule().configuration().getServerConfiguration());
+    private static final RsocketServer SERVER = new RsocketServer();
 
     public void initializeCommunicators() {
-        getCommunicatorConfiguration()
+        communicatorModule()
+                .configuration()
                 .getRegistry()
                 .getByProtocol(RSOCKET)
                 .values()
@@ -56,7 +48,7 @@ public class RsocketManager {
     }
 
     public void disposeCommunicators() {
-        getCommunicatorConfiguration()
+        communicatorModule().configuration()
                 .getRegistry()
                 .getByProtocol(RSOCKET)
                 .values()
@@ -64,11 +56,11 @@ public class RsocketManager {
     }
 
     public void initializeServer() {
-        getServer().initialize();
+        SERVER.initialize();
     }
 
     public void disposeServer() {
-        apply(getServer(), RsocketServer::dispose);
+        SERVER.dispose();
     }
 
 

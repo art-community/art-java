@@ -42,18 +42,21 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
     private ServiceSpecificationRegistry registry = new ServiceSpecificationRegistry();
 
     public boolean isLogging(ServiceMethodIdentifier identifier) {
-        return checkService(identifier, ServiceConfiguration::isLogging, true)
-                || checkMethod(identifier, ServiceMethodConfiguration::isLogging, true);
+        boolean service = checkService(identifier, ServiceConfiguration::isLogging, true);
+        boolean method = checkMethod(identifier, ServiceMethodConfiguration::isLogging, true);
+        return service && method;
     }
 
     public boolean isValidating(ServiceMethodIdentifier identifier) {
-        return checkService(identifier, ServiceConfiguration::isValidating, true)
-                || checkMethod(identifier, ServiceMethodConfiguration::isValidating, true);
+        boolean service = checkService(identifier, ServiceConfiguration::isValidating, true);
+        boolean method = checkMethod(identifier, ServiceMethodConfiguration::isValidating, true);
+        return service && method;
     }
 
     public boolean isDeactivated(ServiceMethodIdentifier identifier) {
-        return checkService(identifier, ServiceConfiguration::isDeactivated, false)
-                || checkMethod(identifier, ServiceMethodConfiguration::isLogging, false);
+        boolean service = checkService(identifier, ServiceConfiguration::isDeactivated, false);
+        boolean method = checkMethod(identifier, ServiceMethodConfiguration::isDeactivated, false);
+        return service || method;
     }
 
     private <T> T checkService(ServiceMethodIdentifier identifier, Function<ServiceConfiguration, T> mapper, T defaultValue) {

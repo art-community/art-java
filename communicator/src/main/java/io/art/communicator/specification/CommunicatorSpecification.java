@@ -25,6 +25,7 @@ import io.art.core.constants.*;
 import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.core.managed.*;
+import io.art.core.model.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.*;
@@ -34,7 +35,9 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.lazy.ManagedValue.*;
 import static java.util.Objects.*;
+import static java.util.Optional.*;
 import static lombok.AccessLevel.*;
+import static reactor.core.publisher.Flux.empty;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
@@ -45,6 +48,8 @@ import java.util.function.*;
 public class CommunicatorSpecification implements Managed {
     @EqualsAndHashCode.Include
     private final String communicatorId;
+
+    private final ServiceMethodIdentifier targetServiceMethod;
 
     private final MethodProcessingMode inputMode;
 
@@ -157,9 +162,8 @@ public class CommunicatorSpecification implements Managed {
         }
     }
 
-
     private Optional<CommunicatorConfiguration> communicatorConfiguration() {
-        return Optional.ofNullable(moduleConfiguration.get().getConfigurations().get(communicatorId));
+        return ofNullable(moduleConfiguration.get().getConfigurations().get(communicatorId));
     }
 
     private CommunicatorModuleConfiguration moduleConfiguration() {
