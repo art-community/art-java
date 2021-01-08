@@ -21,6 +21,7 @@ package io.art.communicator.module;
 import io.art.communicator.configuration.*;
 import io.art.communicator.exception.*;
 import io.art.communicator.state.*;
+import io.art.core.caster.*;
 import io.art.core.module.*;
 import lombok.*;
 import static io.art.communicator.configuration.CommunicatorModuleConfiguration.*;
@@ -51,7 +52,8 @@ public class CommunicatorModule implements StatefulModule<CommunicatorModuleConf
         return communicatorModule()
                 .configuration()
                 .getRegistry()
-                .<T>get(id)
+                .get(id)
+                .map(Caster::<T>cast)
                 .orElseThrow(() -> new CommunicatorModuleException(format(COMMUNICATOR_WAS_NOT_REGISTERED, id)));
     }
 }

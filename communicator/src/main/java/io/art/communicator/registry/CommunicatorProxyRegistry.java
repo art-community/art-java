@@ -35,7 +35,7 @@ public class CommunicatorProxyRegistry {
     private final Map<String, CommunicatorProxy> proxies = map();
 
     public Optional<CommunicatorProxy> get(String id) {
-        return ofNullable(cast(proxies.get(id)));
+        return ofNullable(proxies.get(id));
     }
 
     public Set<String> identifiers() {

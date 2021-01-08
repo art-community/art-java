@@ -100,7 +100,7 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
 
     @Override
     public Flux<Value> communicate(Flux<Value> input) {
-        return communicate.apply(input);
+        return getCommunicate().apply(input);
     }
 
     private RSocketClient createClient() {

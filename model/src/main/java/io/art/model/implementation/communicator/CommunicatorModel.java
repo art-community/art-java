@@ -18,6 +18,7 @@
 
 package io.art.model.implementation.communicator;
 
+import io.art.communicator.action.CommunicatorAction.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.*;
 import java.util.function.*;
 
@@ -28,9 +29,9 @@ public interface CommunicatorModel {
 
     CommunicationProtocol getProtocol();
 
-    Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> getDecorator();
+    Function<CommunicatorActionBuilder, CommunicatorActionBuilder> getDecorator();
 
-    default CommunicatorSpecificationBuilder implement(CommunicatorSpecificationBuilder builder) {
+    default CommunicatorActionBuilder implement(CommunicatorActionBuilder builder) {
         return getDecorator().apply(builder);
     }
 }
