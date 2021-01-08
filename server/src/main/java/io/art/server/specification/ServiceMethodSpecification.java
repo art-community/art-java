@@ -35,7 +35,7 @@ import io.art.value.mapping.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.let;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.lazy.ManagedValue.*;
 import static io.art.server.module.ServerModule.*;
@@ -71,7 +71,7 @@ public class ServiceMethodSpecification implements Managed {
     private final ValueFromModelMapper<?, ? extends Value> outputMapper;
 
     @Builder.Default
-    private final ValueFromModelMapper<Throwable, ? extends Value> exceptionMapper = ThrowableMapping::fromThrowable;
+    private final ValueFromModelMapper<Throwable, ? extends Value> exceptionMapper = ThrowableMapping::fromThrowableNested;
 
     private final ServiceMethodImplementation implementation;
 
@@ -87,7 +87,6 @@ public class ServiceMethodSpecification implements Managed {
 
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
-
 
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Flux<Object>, Object> adoptInput = adoptInput();
@@ -165,7 +164,7 @@ public class ServiceMethodSpecification implements Managed {
         }
         return errorOutput
                 .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
-                .cast(Value.class);
+                .map(Caster::cast);
 
     }
 

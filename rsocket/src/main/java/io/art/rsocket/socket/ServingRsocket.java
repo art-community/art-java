@@ -41,7 +41,7 @@ import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.rsocket.state.RsocketModuleState.RsocketThreadLocalState.*;
 import static io.art.server.module.ServerModule.*;
 import static io.art.value.constants.ValueModuleConstants.*;
-import static io.art.value.constants.ValueModuleConstants.Keys.*;
+import static io.art.value.constants.ValueModuleConstants.Fields.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.mapping.ServiceMethodMapping.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;

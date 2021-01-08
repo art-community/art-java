@@ -6,7 +6,7 @@ import io.art.value.immutable.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
-import static io.art.value.constants.ValueModuleConstants.Keys.*;
+import static io.art.value.constants.ValueModuleConstants.Fields.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Entity.*;
 import static io.art.value.mapping.PrimitiveMapping.*;

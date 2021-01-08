@@ -26,7 +26,7 @@ import lombok.Value;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Fields.*;
-import static io.art.value.constants.ValueModuleConstants.Keys.*;
+import static io.art.value.constants.ValueModuleConstants.Fields.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Entity.*;
 import static io.art.value.mapping.ServiceMethodMapping.*;
