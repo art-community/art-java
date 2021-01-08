@@ -81,12 +81,14 @@ public class ServingRsocket implements RSocket {
                         .findMethodById(serviceMethodId)
                         .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
                 setupPayload = setupPayloadBuilder.serviceMethod(serviceMethodId).build();
+                specification.initialize();
                 return;
             }
             specification = specifications()
                     .findMethodById(defaultServiceMethod)
                     .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, defaultServiceMethod)));
             setupPayload = setupPayloadBuilder.serviceMethod(defaultServiceMethod).build();
+            specification.initialize();
             return;
         }
         throw new ImpossibleSituation();
@@ -115,11 +117,11 @@ public class ServingRsocket implements RSocket {
 
     @Override
     public Flux<Payload> requestChannel(Publisher<Payload> payloads) {
-        return specification.serve(from(payloads)
+        Flux<Value> input = addContext(from(payloads)
                 .map(reader::readPayloadData)
                 .filter(data -> !data.isEmpty())
-                .map(RsocketPayloadValue::getValue))
-                .map(writer::writePayloadData);
+                .map(RsocketPayloadValue::getValue));
+        return specification.serve(input).map(writer::writePayloadData);
     }
 
     @Override
@@ -132,6 +134,7 @@ public class ServingRsocket implements RSocket {
     @Override
     public void dispose() {
         moduleState.disposeRequester(this);
+        specification.dispose();
         apply(onDispose, Runnable::run);
     }
 
@@ -146,7 +149,6 @@ public class ServingRsocket implements RSocket {
                 .dematerialize()
                 .subscriberContext(context -> context
                         .putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket)
-                        .putNonNull(SPECIFICATION_KEY, specification)
                         .putNonNull(SETUP_PAYLOAD_KEY, setupPayload)));
     }
 }

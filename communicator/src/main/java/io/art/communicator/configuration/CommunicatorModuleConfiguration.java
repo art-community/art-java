@@ -27,6 +27,7 @@ import reactor.core.scheduler.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.apply;
 import static io.art.core.checker.NullityChecker.let;
 import static io.art.core.collection.ImmutableMap.*;
 import static java.util.Optional.*;
@@ -53,7 +54,7 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator override(CommunicatorModuleConfiguration configuration) {
             ifNotEmpty(configuration.getConfigurations(), configurations -> this.configuration.configurations = configurations);
-            let(configuration.getRegistry(), registry -> this.configuration.registry = registry);
+            apply(configuration.getRegistry(), registry -> this.configuration.registry = registry);
             return this;
         }
     }

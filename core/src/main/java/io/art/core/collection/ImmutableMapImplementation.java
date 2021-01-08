@@ -20,7 +20,6 @@ package io.art.core.collection;
 
 import static java.util.Objects.*;
 import java.util.*;
-import java.util.function.*;
 
 public class ImmutableMapImplementation<K, V> implements ImmutableMap<K, V> {
     private final Map<K, V> map;
@@ -40,11 +39,6 @@ public class ImmutableMapImplementation<K, V> implements ImmutableMap<K, V> {
     @Override
     public int size() {
         return map.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return map.isEmpty();
     }
 
     @Override
@@ -75,16 +69,6 @@ public class ImmutableMapImplementation<K, V> implements ImmutableMap<K, V> {
     @Override
     public Set<Map.Entry<K, V>> entrySet() {
         return map.entrySet();
-    }
-
-    @Override
-    public V getOrDefault(Object key, V defaultValue) {
-        return map.getOrDefault(key, defaultValue);
-    }
-
-    @Override
-    public void forEach(BiConsumer<? super K, ? super V> action) {
-        map.forEach(action);
     }
 
     @Override

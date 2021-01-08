@@ -1,15 +1,20 @@
 package io.art.core.lazy;
 
+import io.art.core.annotation.*;
+import io.art.core.exception.*;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.ExceptionMessages.*;
 import static java.util.Objects.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
+@UsedByGenerator
 @RequiredArgsConstructor
 public class LazyValue<T> implements Supplier<T> {
-    private final AtomicReference<T> value = new AtomicReference<>();
+    private volatile T value;
+    private final AtomicBoolean initialized = new AtomicBoolean();
     private final Supplier<T> loader;
-
 
     public LazyValue<T> initialize() {
         get();
@@ -17,54 +22,18 @@ public class LazyValue<T> implements Supplier<T> {
     }
 
     public boolean initialized() {
-        return nonNull(value.get());
+        return initialized.get();
     }
 
+    @Override
     public T get() {
-        T value;
-        if (nonNull(value = this.value.get())) {
-            return value;
+        while (isNull(this.value)) {
+            if (this.initialized.compareAndSet(false, true)) {
+                this.value = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
+            }
         }
-        if (this.value.compareAndSet(null, value = loader.get())) {
-            return value;
-        }
-        return this.value.get();
+        return this.value;
     }
-
-
-    public <R> LazyValue<R> map(Function<T, R> mapper) {
-        return new LazyValue<>(() -> mapper.apply(get()));
-    }
-
-
-    public void apply(Consumer<T> action) {
-        update(current -> {
-            action.accept(current);
-            return current;
-        });
-    }
-
-    public void dispose(Consumer<T> action) {
-        T current;
-        if (nonNull(current = value.getAndSet(null))) {
-            action.accept(current);
-        }
-    }
-
-
-    public LazyValue<T> update(UnaryOperator<T> action) {
-        getAndUpdate(action);
-        return this;
-    }
-
-    public T getAndUpdate(UnaryOperator<T> action) {
-        return value.getAndUpdate(action);
-    }
-
-    public T updateAndGet(UnaryOperator<T> action) {
-        return value.updateAndGet(action);
-    }
-
 
     public static <T> LazyValue<T> lazy(Supplier<T> factory) {
         return new LazyValue<>(factory);

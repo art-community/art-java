@@ -18,21 +18,8 @@
 
 package io.art.server;
 
-import static io.art.core.extensions.ThreadExtensions.*;
+import io.art.core.managed.*;
 
-public interface Server {
-    void start();
-
-    void stop();
-
+public interface Server extends Managed {
     boolean available();
-
-    default void await() {
-        block();
-    }
-
-    default void restart() {
-        stop();
-        start();
-    }
 }

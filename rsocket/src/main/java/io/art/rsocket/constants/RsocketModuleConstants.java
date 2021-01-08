@@ -18,7 +18,6 @@
 
 package io.art.rsocket.constants;
 
-import io.art.communicator.constants.*;
 import io.art.communicator.constants.CommunicatorModuleConstants.*;
 import lombok.*;
 import java.time.*;
@@ -99,14 +98,11 @@ public interface RsocketModuleConstants {
         String MAX_LIFE_TIME_KEY = "maxLifeTime";
 
         String CONNECTORS_KEY = "connectors";
-
-        String INSTANT_KEY = "instant";
     }
 
     interface ContextKeys {
         String REQUESTER_RSOCKET_KEY = "requesterRsocket";
         String SETUP_PAYLOAD_KEY = "setupPayload";
-        String SPECIFICATION_KEY = "specification";
     }
 
     interface Defaults {
@@ -125,8 +121,6 @@ public interface RsocketModuleConstants {
     interface Fields {
         String SETUP_PAYLOAD_DATA_FORMAT_FIELD = "dataFormat";
         String SETUP_PAYLOAD_META_DATA_FORMAT_FIELD = "metaDataFormat";
-        String SETUP_PAYLOAD_SERVICE_ID_FIELD = "serviceId";
-        String SETUP_PAYLOAD_METHOD_ID_FIELD = "methodId";
     }
 
 

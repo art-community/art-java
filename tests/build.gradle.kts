@@ -29,6 +29,19 @@ dependencies {
 
 
     implementation(project(":launcher"))
+    implementation(project(":configurator"))
+    implementation(project(":model"))
+    implementation(project(":core"))
+    implementation(project(":logging"))
+    implementation(project(":value"))
+    implementation(project(":json"))
+    implementation(project(":protobuf"))
+    implementation(project(":message-pack"))
+    implementation(project(":xml"))
+    implementation(project(":server"))
+    implementation(project(":communicator"))
+    implementation(project(":rsocket"))
+    implementation(project(":tarantool"))
 
 
     testImplementation("org.codehaus.groovy:groovy:$groovyVersion")

@@ -19,9 +19,8 @@
 package io.art.core.collection;
 
 import com.google.common.collect.*;
+import javax.annotation.*;
 import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
 
 public class ImmutableArrayImplementation<T> implements ImmutableArray<T> {
     private final List<T> array;
@@ -50,11 +49,6 @@ public class ImmutableArrayImplementation<T> implements ImmutableArray<T> {
     }
 
     @Override
-    public boolean isEmpty() {
-        return array.isEmpty();
-    }
-
-    @Override
     public boolean contains(Object object) {
         return array.contains(object);
     }
@@ -74,30 +68,10 @@ public class ImmutableArrayImplementation<T> implements ImmutableArray<T> {
         return this.array.toArray(array);
     }
 
-
-    @Override
-    public Stream<T> stream() {
-        return array.stream();
-    }
-
-    @Override
-    public Stream<T> parallelStream() {
-        return array.parallelStream();
-    }
-
-    @Override
-    public void forEach(Consumer<? super T> action) {
-        array.forEach(action);
-    }
-
+    @Nonnull
     @Override
     public Iterator<T> iterator() {
         return array.iterator();
-    }
-
-    @Override
-    public Spliterator<T> spliterator() {
-        return array.spliterator();
     }
 
     @Override

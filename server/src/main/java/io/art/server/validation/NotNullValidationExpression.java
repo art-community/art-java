@@ -23,7 +23,7 @@ import static io.art.server.constants.ServerModuleConstants.ValidationExpression
 import static java.text.MessageFormat.*;
 import java.util.function.*;
 
-class NotNullValidationExpression extends ValidationExpression<Object> {
+public class NotNullValidationExpression extends ValidationExpression<Object> {
     NotNullValidationExpression() {
         super(NOT_NULL);
     }

@@ -1,9 +1,0 @@
-rsocket:
-  server:
-    logging: true
-    transport:
-      mode: ws
-      port: 5678
-    defaults:
-      dataFormat: json
-      metaDataFormat: json

@@ -29,6 +29,7 @@ import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.mapping.PrimitiveMapping.toString;
 import static java.util.Objects.*;
+import java.util.function.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -60,6 +61,14 @@ public class ValueConfigurationSource implements NestedConfiguration {
             return emptyImmutableArray();
         }
         return Value.asArray(value).asImmutableArray(element -> new ValueConfigurationSource(section, element));
+    }
+
+    @Override
+    public <T> ImmutableArray<T> asArray(Function<NestedConfiguration, T> mapper) {
+        if (!isArray(value)) {
+            return emptyImmutableArray();
+        }
+        return Value.asArray(value).asImmutableArray(element -> mapper.apply(new ValueConfigurationSource(section, element)));
     }
 
     @Override

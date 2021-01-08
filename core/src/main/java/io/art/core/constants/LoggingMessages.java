@@ -23,4 +23,6 @@ import static io.art.core.colorizer.AnsiColorizer.*;
 public interface LoggingMessages {
     String MODULE_LOADED_MESSAGE = success("Module: ''{0}'' was loaded");
     String MODULE_UNLOADED_MESSAGE = success("Module: ''{0}'' was unloaded");
+    String MODULE_RELOADING_START_MESSAGE = success("Module: ''{0}'' reloading...");
+    String MODULE_RELOADING_END_MESSAGE = success("Module: ''{0}'' reloaded");
 }

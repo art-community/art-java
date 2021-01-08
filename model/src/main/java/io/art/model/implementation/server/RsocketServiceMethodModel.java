@@ -27,9 +27,4 @@ import java.util.function.*;
 public class RsocketServiceMethodModel implements ServiceMethodModel {
     private final String id;
     private final Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
-
-    @Override
-    public ServiceMethodSpecificationBuilder implement(ServiceMethodSpecificationBuilder builder) {
-        return decorator.apply(builder);
-    }
 }

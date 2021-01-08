@@ -20,13 +20,14 @@ package io.art.model.configurator;
 
 import io.art.model.constants.ModelConstants.*;
 import io.art.model.implementation.server.*;
+import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.decorator.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.model.ServiceMethodIdentifier.serviceMethod;
+import static io.art.core.model.ServiceMethodIdentifier.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
@@ -49,10 +50,21 @@ public class RsocketServiceModelConfigurator {
         return this;
     }
 
-    public RsocketServiceModelConfigurator enableLogging() {
+    public RsocketServiceModelConfigurator logging() {
         return decorate((method, builder) -> builder
-                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), INPUT))
-                .outputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), OUTPUT)));
+                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(id, method), INPUT))
+                .outputDecorator(new ServiceLoggingDecorator(serviceMethod(id, method), OUTPUT)));
+    }
+
+    public RsocketServiceModelConfigurator deactivation() {
+        return decorate((method, builder) -> builder
+                .inputDecorator(new ServiceDeactivationDecorator(serviceMethod(id, method)))
+                .outputDecorator(new ServiceDeactivationDecorator(serviceMethod(id, method))));
+    }
+
+    public RsocketServiceModelConfigurator validation(RequestValidationPolicy policy) {
+        return decorate((method, builder) -> builder
+                .inputDecorator(new ServiceValidationDecorator(policy, serviceMethod(id, method))));
     }
 
     private RsocketServiceModelConfigurator decorate(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {

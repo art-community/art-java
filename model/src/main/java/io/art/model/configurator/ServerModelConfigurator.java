@@ -20,11 +20,10 @@ package io.art.model.configurator;
 
 import io.art.core.collection.*;
 import io.art.model.implementation.server.*;
-import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.model.constants.ModelConstants.ConfiguratorScope.*;
-import static java.util.Arrays.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
@@ -33,11 +32,7 @@ public class ServerModelConfigurator {
 
     @SafeVarargs
     public final ServerModelConfigurator rsocket(Class<?> service, UnaryOperator<RsocketServiceModelConfigurator>... configurators) {
-        if (isEmpty(configurators)) {
-            rsocketServices.add(new RsocketServiceModelConfigurator(service, service.getSimpleName(), CLASS));
-            return this;
-        }
-        stream(configurators)
+        streamOf(configurators)
                 .map(configurator -> (Function<RsocketServiceModelConfigurator, RsocketServiceModelConfigurator>) configurator)
                 .reduce(Function::andThen)
                 .map(configurator -> configurator.apply(new RsocketServiceModelConfigurator(service, service.getSimpleName(), CLASS)))
@@ -47,11 +42,7 @@ public class ServerModelConfigurator {
 
     @SafeVarargs
     public final ServerModelConfigurator rsocket(Class<?> service, String method, UnaryOperator<RsocketServiceModelConfigurator>... configurators) {
-        if (isEmpty(configurators)) {
-            rsocketServices.add(new RsocketServiceModelConfigurator(service, service.getSimpleName(), METHOD).method(method));
-            return this;
-        }
-        stream(configurators)
+        streamOf(configurators)
                 .map(configurator -> (Function<RsocketServiceModelConfigurator, RsocketServiceModelConfigurator>) configurator)
                 .reduce(Function::andThen)
                 .map(configurator -> configurator.apply(new RsocketServiceModelConfigurator(service, service.getSimpleName(), METHOD).method(method)))

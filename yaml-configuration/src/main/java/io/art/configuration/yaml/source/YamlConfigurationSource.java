@@ -32,27 +32,29 @@ import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.FileExtensions.*;
 import static java.util.Objects.*;
 import static java.util.Spliterator.*;
 import static java.util.Spliterators.*;
 import static java.util.stream.StreamSupport.*;
 import java.io.*;
-import java.util.*;
+import java.util.function.*;
 
 @Getter
 public class YamlConfigurationSource implements NestedConfiguration {
+    private static final YAMLMapper YAML_MAPPER = new YAMLMapper();
+
     private final String section;
     private final ModuleConfigurationSourceType type;
     private final File file;
-    private final JsonNode configuration;
-    private static final YAMLMapper YAML_MAPPER = new YAMLMapper();
+    private JsonNode configuration;
 
     public YamlConfigurationSource(String section, ModuleConfigurationSourceType type, File file) {
         this.section = section;
         this.type = type;
         this.file = file;
         try {
-            configuration = YAML_MAPPER.readTree(file);
+            configuration = YAML_MAPPER.readTree(fileInputStream(file.getPath()));
         } catch (IOException exception) {
             throw new YamlConfigurationLoadingException(exception);
         }
@@ -63,6 +65,15 @@ public class YamlConfigurationSource implements NestedConfiguration {
         this.type = type;
         this.file = file;
         this.configuration = configuration;
+    }
+
+    @Override
+    public void refresh() {
+        try {
+            configuration = YAML_MAPPER.readTree(fileInputStream(file.getPath()));
+        } catch (IOException exception) {
+            throw new YamlConfigurationLoadingException(exception);
+        }
     }
 
     @Override
@@ -82,15 +93,27 @@ public class YamlConfigurationSource implements NestedConfiguration {
             return emptyImmutableArray();
         }
         return stream(spliterator(configuration.elements(), configuration.size(), IMMUTABLE), false)
-                .filter(node -> !node.isNull() && !node.isMissingNode())
+                .filter(YamlConfigurationSource::isValid)
                 .map(node -> new YamlConfigurationSource(section, type, file, node))
+                .collect(immutableArrayCollector());
+    }
+
+    @Override
+    public <T> ImmutableArray<T> asArray(Function<NestedConfiguration, T> mapper) {
+        if (isNull(configuration)) return emptyImmutableArray();
+        if (configuration.getNodeType() != ARRAY) {
+            return emptyImmutableArray();
+        }
+        return stream(spliterator(configuration.elements(), configuration.size(), IMMUTABLE), false)
+                .filter(YamlConfigurationSource::isValid)
+                .map(node -> mapper.apply(new YamlConfigurationSource(section, type, file, node)))
                 .collect(immutableArrayCollector());
     }
 
     @Override
     public NestedConfiguration getNested(String path) {
         JsonNode configNode = getYamlConfigNode(path);
-        return orNull(configNode, node -> !node.isNull() && !node.isMissingNode(), node -> new YamlConfigurationSource(combine(section, path), type, file, node));
+        return orNull(configNode, YamlConfigurationSource::isValid, node -> new YamlConfigurationSource(combine(section, path), type, file, node));
     }
 
     @Override
@@ -99,13 +122,16 @@ public class YamlConfigurationSource implements NestedConfiguration {
         return stream(((Iterable<String>) configuration::fieldNames).spliterator(), false).collect(immutableSetCollector());
     }
 
+    @Override
+    public boolean has(String path) {
+        JsonNode nodeType = getYamlConfigNode(path);
+        return nodeType.isNull() && !nodeType.isMissingNode();
+    }
+
     private JsonNode getYamlConfigNode(String path) {
         JsonNode yamlConfig = configuration;
         JsonNode node = yamlConfig.path(path);
-        JsonNodeType nodeType = node.getNodeType();
-        if (nodeType != NULL && nodeType != MISSING) {
-            return node;
-        }
+        if (isValid(node)) return node;
         int dotIndex = path.indexOf(DOT);
         if (dotIndex == -1) {
             return MissingNode.getInstance();
@@ -136,9 +162,9 @@ public class YamlConfigurationSource implements NestedConfiguration {
             path = path.substring(dotIndex + 1);
         }
     }
-    @Override
-    public boolean has(String path) {
-        JsonNode nodeType = getYamlConfigNode(path);
-        return nodeType.isNull() && !nodeType.isMissingNode();
+
+    private static boolean isValid(JsonNode node) {
+        return !node.isNull() && !node.isMissingNode();
     }
+
 }

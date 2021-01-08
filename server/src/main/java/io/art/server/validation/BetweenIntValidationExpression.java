@@ -23,7 +23,7 @@ import static io.art.server.constants.ServerModuleConstants.ValidationExpression
 import static java.text.MessageFormat.*;
 import java.util.function.*;
 
-class BetweenIntValidationExpression extends ValidationExpression<Integer> {
+public class BetweenIntValidationExpression extends ValidationExpression<Integer> {
     private final int lowerValue;
     private final int greaterValue;
 

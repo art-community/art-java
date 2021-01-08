@@ -19,9 +19,36 @@
 package io.art.server.state;
 
 import io.art.core.module.*;
-import io.art.server.registry.*;
+import io.art.server.specification.*;
 import lombok.*;
+import reactor.util.context.*;
+import static io.art.server.constants.ServerModuleConstants.StateKeys.*;
+import java.util.function.*;
 
 @Getter
 public class ServerModuleState implements ModuleState {
+    private final ThreadLocal<ServerThreadLocalState> threadLocalState = new ThreadLocal<>();
+
+    public void localState(Function<ServerThreadLocalState, ServerThreadLocalState> functor) {
+        threadLocalState.set(functor.apply(threadLocalState.get()));
+    }
+
+    public void localState(ServerThreadLocalState state) {
+        threadLocalState.set(state);
+    }
+
+    public ServerThreadLocalState localState() {
+        return threadLocalState.get();
+    }
+
+    @Getter
+    @Builder(toBuilder = true)
+    public static class ServerThreadLocalState {
+        private final ServiceMethodSpecification specification;
+
+        public static ServerThreadLocalState fromContext(Context context) {
+            ServiceMethodSpecification specification = context.get(SPECIFICATION_KEY);
+            return new ServerThreadLocalState(specification);
+        }
+    }
 }

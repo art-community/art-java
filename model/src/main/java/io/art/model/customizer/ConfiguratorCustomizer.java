@@ -26,7 +26,7 @@ import io.art.core.source.*;
 import lombok.*;
 
 public class ConfiguratorCustomizer {
-    private CustomConfigurationRegistry registry;
+    private CustomConfigurationRegistry registry = new CustomConfigurationRegistry();
 
     public ConfiguratorCustomizer registry(CustomConfigurationRegistry registry) {
         this.registry = registry;
