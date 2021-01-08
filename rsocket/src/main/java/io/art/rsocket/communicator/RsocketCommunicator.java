@@ -42,6 +42,7 @@ import reactor.netty.tcp.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.MethodProcessingMode.*;
 import static io.art.core.lazy.ManagedValue.*;
 import static io.art.logging.LoggingModule.*;
@@ -151,6 +152,7 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
         getLogger().info(format(COMMUNICATOR_STOPPED, connectorId, setupPayload));
     }
 
+    @SuppressWarnings(CONSTANT_CONDITIONS)
     private CommunicatorAction communicatorAction() {
         return communicatorModule()
                 .configuration()
