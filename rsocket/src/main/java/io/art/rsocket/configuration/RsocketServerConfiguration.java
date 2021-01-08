@@ -36,6 +36,7 @@ import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.InterceptorTarget.SERVER;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
@@ -69,8 +70,8 @@ public class RsocketServerConfiguration {
         configuration.maxInboundPayloadSize = FRAME_LENGTH_MASK;
         configuration.transport = TCP;
         configuration.interceptorConfigurator = registry -> registry
-                .forResponder(new RsocketLoggingInterceptor(configuration::isLogging))
-                .forRequester(new RsocketLoggingInterceptor(configuration::isLogging));
+                .forResponder(new RsocketLoggingInterceptor(configuration::isLogging, SERVER))
+                .forRequester(new RsocketLoggingInterceptor(configuration::isLogging, SERVER));
         configuration.tcpServer = TcpServer.create().port(DEFAULT_PORT).host(BROADCAST_IP_ADDRESS);
         configuration.tcpMaxFrameLength = FRAME_LENGTH_MASK;
         return configuration;
@@ -89,8 +90,8 @@ public class RsocketServerConfiguration {
         configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
         configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
         configuration.interceptorConfigurator = registry -> registry
-                .forResponder(new RsocketLoggingInterceptor(configuration::isLogging))
-                .forRequester(new RsocketLoggingInterceptor(configuration::isLogging));
+                .forResponder(new RsocketLoggingInterceptor(configuration::isLogging, SERVER))
+                .forRequester(new RsocketLoggingInterceptor(configuration::isLogging, SERVER));
 
         String serviceId = source.getString(DEFAULT_SERVICE_ID_KEY);
         String methodId = source.getString(DEFAULT_METHOD_ID_KEY);

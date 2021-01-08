@@ -20,9 +20,11 @@ package io.art.server.registry;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.factory.*;
 import io.art.core.model.*;
 import io.art.server.specification.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.core.factory.SetFactory.immutableSetOf;
 import static java.util.Optional.*;
 import java.util.*;
 
@@ -38,8 +40,8 @@ public class ServiceSpecificationRegistry {
         return get(id.getServiceId()).map(service -> service.getMethods().get(id.getMethodId()));
     }
 
-    public Set<String> identifiers() {
-        return services.keySet();
+    public ImmutableSet<String> identifiers() {
+        return immutableSetOf(services.keySet());
     }
 
     public ServiceSpecificationRegistry register(String id, ServiceSpecification specification) {

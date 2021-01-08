@@ -89,7 +89,6 @@ public class RsocketServer implements Server {
                 .bind(transport)
                 .doOnSubscribe(subscription -> getLogger().info(SERVER_STARTED))
                 .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
-                .doOnTerminate(() -> getLogger().info(SERVER_STOPPED))
                 .block();
     }
 
@@ -104,15 +103,10 @@ public class RsocketServer implements Server {
             ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, requesterSocket, configuration));
             ignoreException(createRsocket, throwable -> logger.error(throwable.getMessage(), throwable));
         });
-        if (configuration.isLogging()) {
-            socket = socket
-                    .doOnSuccess(servingSocket -> servingSocket.onDispose(() -> logger.info(SERVER_CLIENT_DISCONNECTED)))
-                    .doOnSubscribe(subscription -> logger.info(SERVER_CLIENT_CONNECTED));
-        }
         return socket.doOnError(throwable -> logger.error(throwable.getMessage(), throwable)).map(Caster::cast);
     }
 
     private Mono<Void> onClose() {
-        return channel.get().onClose();
+        return channel.get().onClose().doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
     }
 }

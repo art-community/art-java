@@ -19,6 +19,7 @@
 package io.art.server.specification;
 
 import io.art.core.annotation.*;
+import io.art.core.caster.*;
 import io.art.core.collection.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
@@ -34,7 +35,7 @@ import io.art.value.mapping.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.checker.NullityChecker.let;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.lazy.ManagedValue.*;
 import static io.art.server.module.ServerModule.*;
@@ -79,7 +80,6 @@ public class ServiceMethodSpecification implements Managed {
     );
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> defaultOutputDecorators = immutableArrayOf(
-            new ServiceStateDecorator(this)
     );
 
     @Singular("inputDecorator")
@@ -125,7 +125,6 @@ public class ServiceMethodSpecification implements Managed {
     private Flux<Value> deferredServe(Flux<Value> input) {
         try {
             Object output = implementation.execute(mapInput(input));
-            if (isNull(output)) return Flux.empty();
             return mapOutput(output);
         } catch (Throwable throwable) {
             return mapException(throwable);
@@ -135,24 +134,23 @@ public class ServiceMethodSpecification implements Managed {
     private Object mapInput(Flux<Value> input) {
         Flux<Object> mappedInput = input.map(value -> inputMapper.map(cast(value)));
         for (UnaryOperator<Flux<Object>> decorator : defaultInputDecorators) {
-            mappedInput = mappedInput.transformDeferred(decorator);
+            mappedInput = mappedInput.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
-            mappedInput = mappedInput.transformDeferred(decorator);
+            mappedInput = mappedInput.transform(decorator);
         }
         return getAdoptInput().apply(mappedInput);
     }
 
     private Flux<Value> mapOutput(Object output) {
-        Flux<Object> mappedOutput = getAdoptOutput().apply(output);
+        Flux<Object> mappedOutput = let(output, getAdoptOutput(), Flux.empty());
         for (UnaryOperator<Flux<Object>> decorator : defaultOutputDecorators) {
-            mappedOutput = mappedOutput.transformDeferred(decorator);
+            mappedOutput = mappedOutput.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
-            mappedOutput = mappedOutput.transformDeferred(decorator);
+            mappedOutput = mappedOutput.transform(decorator);
         }
         return mappedOutput
-                .filter(Objects::nonNull)
                 .map(value -> (Value) outputMapper.map(cast(value)))
                 .onErrorResume(Throwable.class, this::mapException);
     }
@@ -160,10 +158,10 @@ public class ServiceMethodSpecification implements Managed {
     private Flux<Value> mapException(Throwable exception) {
         Flux<Object> errorOutput = Flux.error(exception);
         for (UnaryOperator<Flux<Object>> decorator : defaultOutputDecorators) {
-            errorOutput = errorOutput.transformDeferred(decorator);
+            errorOutput = errorOutput.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
-            errorOutput = errorOutput.transformDeferred(decorator);
+            errorOutput = errorOutput.transform(decorator);
         }
         return errorOutput
                 .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
@@ -179,9 +177,9 @@ public class ServiceMethodSpecification implements Managed {
             case BLOCKING:
                 return Flux::blockFirst;
             case MONO:
-                return mappedInput -> orNull(mappedInput, checking -> checking == Flux.empty(), Flux::last);
+                return Flux::next;
             case FLUX:
-                return mappedInput -> mappedInput;
+                return Caster::cast;
             default:
                 throw new ImpossibleSituation();
         }

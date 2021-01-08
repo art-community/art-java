@@ -33,8 +33,7 @@ import io.rsocket.*;
 import io.rsocket.util.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
-import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.*;
+import reactor.util.context.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.model.RsocketSetupPayload.*;
@@ -57,8 +56,6 @@ public class ServingRsocket implements RSocket {
     private final RsocketModuleState moduleState = rsocketModule().state();
     private final RsocketSetupPayload setupPayload;
     private final ServiceMethodSpecification specification;
-
-    private volatile Runnable onDispose;
 
     public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket, RsocketServerConfiguration serverConfiguration) {
         moduleState.registerRequester(this.requesterSocket = requesterSocket);
@@ -135,20 +132,19 @@ public class ServingRsocket implements RSocket {
     public void dispose() {
         moduleState.disposeRequester(this);
         specification.dispose();
-        apply(onDispose, Runnable::run);
-    }
-
-    public void onDispose(Runnable action) {
-        this.onDispose = action;
     }
 
     private <T> Flux<T> addContext(Flux<T> flux) {
-        return cast(flux
-                .materialize()
-                .doOnNext(signal -> moduleState.localState(fromContext(signal.getContext())))
-                .dematerialize()
-                .subscriberContext(context -> context
-                        .putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket)
-                        .putNonNull(SETUP_PAYLOAD_KEY, setupPayload)));
+        return flux.doOnEach(signal -> loadContext(signal.getContext())).subscriberContext(this::saveContext);
+    }
+
+    private void loadContext(Context context) {
+        moduleState.localState(fromContext(context));
+    }
+
+    private Context saveContext(Context context) {
+        return context
+                .putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket)
+                .putNonNull(SETUP_PAYLOAD_KEY, setupPayload);
     }
 }

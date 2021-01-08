@@ -46,11 +46,11 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
 
     @Override
     public void onLoad() {
-        if (configuration.isActivateCommunicator()) {
-            initializeCommunicators();
-        }
         if (configuration.isActivateServer()) {
             initializeServer();
+        }
+        if (configuration.isActivateCommunicator()) {
+            initializeCommunicators();
         }
     }
 

@@ -40,6 +40,7 @@ import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.InterceptorTarget.CLIENT;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.value.constants.ValueModuleConstants.*;
@@ -77,8 +78,8 @@ public class RsocketConnectorConfiguration {
         configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), communicatorConfiguration.getMaxInboundPayloadSize());
         configuration.fragment = orElse(source.getInt(FRAGMENTATION_MTU_KEY), communicatorConfiguration.getFragmentationMtu());
         configuration.interceptors = registry -> registry
-                .forResponder(new RsocketLoggingInterceptor(configuration::isLogging))
-                .forRequester(new RsocketLoggingInterceptor(configuration::isLogging));
+                .forResponder(new RsocketLoggingInterceptor(configuration::isLogging, CLIENT))
+                .forRequester(new RsocketLoggingInterceptor(configuration::isLogging, CLIENT));
         apply(source.getNested(KEEP_ALIVE_SECTION), section -> configuration.keepAlive = RsocketKeepAliveConfiguration.from(section));
         apply(source.getNested(RESUME_SECTION), section -> configuration.resume = RsocketResumeConfigurator.from(section, communicatorConfiguration.getResume()));
         apply(source.getNested(RECONNECT_SECTION), section -> configuration.retry = RsocketRetryConfigurator.from(section, communicatorConfiguration.getReconnect()));
