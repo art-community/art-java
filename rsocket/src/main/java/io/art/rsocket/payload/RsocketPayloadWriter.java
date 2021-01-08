@@ -22,15 +22,16 @@ import io.art.core.exception.*;
 import io.art.value.immutable.Value;
 import io.rsocket.*;
 import lombok.*;
-import static io.art.core.constants.ArrayConstants.EMPTY_BYTES;
+import static io.art.core.constants.ArrayConstants.*;
+import static io.art.json.descriptor.JsonWriter.*;
+import static io.art.message.pack.descriptor.MessagePackWriter.*;
+import static io.art.protobuf.descriptor.ProtobufWriter.*;
 import static io.art.value.constants.ValueModuleConstants.*;
 import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.xml.XmlEntityFromEntityConverter.*;
-import static io.art.json.descriptor.JsonWriter.*;
-import static io.art.message.pack.descriptor.MessagePackWriter.*;
-import static io.art.protobuf.descriptor.ProtobufWriter.*;
 import static io.art.xml.descriptor.XmlWriter.*;
+import static io.art.yaml.descriptor.YamlWriter.*;
 import static io.rsocket.util.DefaultPayload.*;
 
 @RequiredArgsConstructor
@@ -48,7 +49,8 @@ public class RsocketPayloadWriter {
                 return create(writeXmlToBytes(value.getType() == XML ? asXml(value) : fromEntityAsTags(asEntity(value))));
             case MESSAGE_PACK:
                 return create(writeMessagePackToBytes(value));
-
+            case YAML:
+                return create(writeYamlToBytes(value));
         }
         throw new ImpossibleSituation();
     }
@@ -63,7 +65,8 @@ public class RsocketPayloadWriter {
                 return create(EMPTY_BYTES, writeXmlToBytes(asXml(metadataValue)));
             case MESSAGE_PACK:
                 return create(EMPTY_BYTES, writeMessagePackToBytes(metadataValue));
-
+            case YAML:
+                return create(EMPTY_BYTES, writeYamlToBytes(metadataValue));
         }
         throw new ImpossibleSituation();
     }

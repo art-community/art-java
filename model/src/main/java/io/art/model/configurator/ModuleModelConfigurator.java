@@ -20,8 +20,8 @@ package io.art.model.configurator;
 
 import io.art.model.implementation.module.*;
 import lombok.*;
+import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.model.constants.ModelConstants.*;
-import static java.util.Objects.*;
 import java.util.function.*;
 
 @Getter
@@ -31,8 +31,7 @@ public class ModuleModelConfigurator {
     private final ConfiguratorModelConfigurator configurator = new ConfiguratorModelConfigurator();
     private final ServerModelConfigurator server = new ServerModelConfigurator();
     private final CommunicatorModelConfigurator communicator = new CommunicatorModelConfigurator();
-    private Runnable onLoad = () -> {
-    };
+    private Runnable onLoad = emptyRunnable();
 
     public ModuleModelConfigurator serve(UnaryOperator<ServerModelConfigurator> server) {
         server.apply(this.server);
@@ -51,10 +50,6 @@ public class ModuleModelConfigurator {
 
     public ModuleModelConfigurator onLoad(Runnable action) {
         Runnable current = this.onLoad;
-        if (isNull(current)) {
-            this.onLoad = action;
-            return this;
-        }
         this.onLoad = () -> {
             current.run();
             action.run();

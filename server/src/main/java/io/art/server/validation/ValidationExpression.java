@@ -18,6 +18,7 @@
 
 package io.art.server.validation;
 
+import io.art.server.constants.ServerModuleConstants.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static java.util.Objects.*;
@@ -27,10 +28,10 @@ import java.util.function.*;
 public abstract class ValidationExpression<T> {
     protected String field;
     protected T value;
-    protected final String type;
+    protected final ValidationExpressionType type;
     protected Function<? extends ValidationExpression<?>, String> messageFactory = ValidationExpression::formatErrorMessage;
 
-    protected ValidationExpression(String type) {
+    protected ValidationExpression(ValidationExpressionType type) {
         this.type = type;
     }
 

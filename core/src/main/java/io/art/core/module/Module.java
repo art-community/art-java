@@ -29,6 +29,12 @@ public interface Module {
     default void onUnload() {
     }
 
+    default void beforeReload() {
+    }
+
+    default void afterReload() {
+    }
+
     default String print() {
         return EMPTY_STRING;
     }

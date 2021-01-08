@@ -25,7 +25,7 @@ import static java.text.MessageFormat.*;
 import java.util.function.*;
 
 @Getter
-class BetweenDoubleValidationExpression extends ValidationExpression<Double> {
+public class BetweenDoubleValidationExpression extends ValidationExpression<Double> {
     private final double lowerValue;
     private final double greaterValue;
 

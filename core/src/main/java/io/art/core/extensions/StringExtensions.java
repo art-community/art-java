@@ -49,7 +49,7 @@ public class StringExtensions {
         return toDelimitedString(collection, delimiter, StringConstants.EMPTY_STRING, StringConstants.EMPTY_STRING);
     }
 
-    public static String toDelimitedString(ImmutableArray<?> collection, String delimiter, String prefix, String suffix) {
+    public static String toDelimitedString(ImmutableCollection<?> collection, String delimiter, String prefix, String suffix) {
         if (isEmpty(collection)) {
             return StringConstants.EMPTY_STRING;
         }
@@ -65,7 +65,7 @@ public class StringExtensions {
         return sb.toString();
     }
 
-    public static String toDelimitedString(ImmutableArray<?> collection, String delimiter) {
+    public static String toDelimitedString(ImmutableCollection<?> collection, String delimiter) {
         return toDelimitedString(collection, delimiter, StringConstants.EMPTY_STRING, StringConstants.EMPTY_STRING);
     }
 
@@ -74,7 +74,7 @@ public class StringExtensions {
         return toDelimitedString(collection, StringConstants.COMMA);
     }
 
-    public static String toCommaDelimitedString(ImmutableArray<?> collection) {
+    public static String toCommaDelimitedString(ImmutableCollection<?> collection) {
         return toDelimitedString(collection, StringConstants.COMMA);
     }
 

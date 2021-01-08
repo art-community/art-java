@@ -21,7 +21,6 @@ package io.art.rsocket.state;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.rsocket.model.*;
-import io.art.server.specification.*;
 import io.rsocket.*;
 import lombok.*;
 import reactor.util.context.*;
@@ -34,7 +33,6 @@ import java.util.function.*;
 public class RsocketModuleState implements ModuleState {
     private final List<RSocket> requesters = linkedListOf();
     private final ThreadLocal<RsocketThreadLocalState> threadLocalState = new ThreadLocal<>();
-
 
     public void registerRequester(RSocket socket) {
         requesters.add(socket);
@@ -67,13 +65,11 @@ public class RsocketModuleState implements ModuleState {
     public static class RsocketThreadLocalState {
         private final RSocket requesterRsocket;
         private final RsocketSetupPayload setupPayload;
-        private final ServiceMethodSpecification specification;
 
         public static RsocketThreadLocalState fromContext(Context context) {
             RSocket requesterRsocket = context.get(REQUESTER_RSOCKET_KEY);
             RsocketSetupPayload setupPayload = context.get(SETUP_PAYLOAD_KEY);
-            ServiceMethodSpecification specification = context.get(SPECIFICATION_KEY);
-            return new RsocketThreadLocalState(requesterRsocket, setupPayload, specification);
+            return new RsocketThreadLocalState(requesterRsocket, setupPayload);
         }
     }
 }

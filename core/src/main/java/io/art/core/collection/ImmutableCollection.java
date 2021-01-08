@@ -1,13 +1,12 @@
 package io.art.core.collection;
 
+import static java.util.Spliterator.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
 public interface ImmutableCollection<T> extends Iterable<T> {
     int size();
-
-    boolean isEmpty();
 
     boolean contains(Object object);
 
@@ -17,17 +16,31 @@ public interface ImmutableCollection<T> extends Iterable<T> {
 
     <A> A[] toArray(A[] array);
 
-    default <A> A[] toArray(Function<Integer, A[]> factory) {
+    Iterator<T> iterator();
+
+    default boolean isEmpty() {
+        return size() == 0;
+    }
+
+    default T[] toArray(Function<Integer, T[]> factory) {
         return toArray(factory.apply(size()));
     }
 
-    Stream<T> stream();
+    default Stream<T> stream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
 
-    Stream<T> parallelStream();
+    default Stream<T> parallelStream() {
+        return StreamSupport.stream(spliterator(), true);
+    }
 
-    void forEach(Consumer<? super T> action);
+    @Override
+    default Spliterator<T> spliterator() {
+        return Spliterators.spliterator(iterator(), size(), ORDERED);
+    }
 
-    Iterator<T> iterator();
-
-    Spliterator<T> spliterator();
+    @Override
+    default void forEach(Consumer<? super T> action) {
+        iterator().forEachRemaining(action);
+    }
 }

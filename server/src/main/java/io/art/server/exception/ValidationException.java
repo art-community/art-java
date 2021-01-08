@@ -24,21 +24,16 @@ import static io.art.core.caster.Caster.*;
 
 public class ValidationException extends RuntimeException {
     @Getter
-    private String field;
-    @Getter
-    private String type;
-    @Getter
-    private ValidationExpression<?> expression;
+    private final ValidationExpression<?> expression;
     private Validatable model;
 
-    public ValidationException(String message) {
-        super(message);
+    public ValidationException(ValidationExpression<?> expression) {
+        super(expression.getErrorMessage());
+        this.expression = expression;
     }
 
     public ValidationException(Validatable model, ValidationExpression<?> expression) {
         super(expression.getErrorMessage());
-        this.field = expression.getField();
-        this.type = expression.getType();
         this.expression = expression;
         this.model = model;
     }

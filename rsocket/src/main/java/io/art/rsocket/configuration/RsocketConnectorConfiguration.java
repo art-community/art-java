@@ -18,11 +18,9 @@
 
 package io.art.rsocket.configuration;
 
-import io.art.core.mime.*;
 import io.art.core.source.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.exception.*;
-import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.model.RsocketSetupPayload.*;
 import io.rsocket.core.*;
@@ -44,7 +42,6 @@ import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.value.constants.ValueModuleConstants.*;
 import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
-import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.text.MessageFormat.*;
 import static reactor.netty.http.client.HttpClient.*;
@@ -56,7 +53,7 @@ public class RsocketConnectorConfiguration {
     private PayloadDecoder payloadDecoder;
     private int maxInboundPayloadSize;
     private int fragment;
-    private Consumer<InterceptorRegistry> interceptors;
+    private Consumer<InterceptorRegistry> interceptorConfigurator;
     private RsocketKeepAliveConfiguration keepAlive;
     private Resume resume;
     private Retry retry;
@@ -76,9 +73,6 @@ public class RsocketConnectorConfiguration {
         configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT ? PayloadDecoder.DEFAULT : PayloadDecoder.ZERO_COPY;
         configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), communicatorConfiguration.getMaxInboundPayloadSize());
         configuration.fragment = orElse(source.getInt(FRAGMENTATION_MTU_KEY), communicatorConfiguration.getFragmentationMtu());
-        configuration.interceptors = registry -> registry
-                .forResponder(new RsocketLoggingInterceptor(configuration::isLogging))
-                .forRequester(new RsocketLoggingInterceptor(configuration::isLogging));
         apply(source.getNested(KEEP_ALIVE_SECTION), section -> configuration.keepAlive = RsocketKeepAliveConfiguration.from(section));
         apply(source.getNested(RESUME_SECTION), section -> configuration.resume = RsocketResumeConfigurator.from(section, communicatorConfiguration.getResume()));
         apply(source.getNested(RECONNECT_SECTION), section -> configuration.retry = RsocketRetryConfigurator.from(section, communicatorConfiguration.getReconnect()));

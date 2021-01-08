@@ -1,17 +1,18 @@
 package io.art.core.source;
 
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.extensions.*;
 import io.art.core.parser.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static java.util.function.Function.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.*;
 
+@UsedByGenerator
 public interface NestedConfiguration extends ConfigurationSource {
     Boolean asBool();
 
@@ -70,9 +71,7 @@ public interface NestedConfiguration extends ConfigurationSource {
 
     ImmutableArray<NestedConfiguration> asArray();
 
-    default <T> ImmutableArray<T> asArray(Function<NestedConfiguration, T> mapper) {
-        return asArray().stream().map(mapper).collect(immutableArrayCollector());
-    }
+    <T> ImmutableArray<T> asArray(Function<NestedConfiguration, T> mapper);
 
     default ImmutableArray<Boolean> asBoolArray() {
         return asArray(NestedConfiguration::asBool);

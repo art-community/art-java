@@ -19,7 +19,9 @@
 package io.art.core.collection;
 
 import static io.art.core.caster.Caster.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.util.Collections.*;
+import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import java.util.*;
 import java.util.function.*;
@@ -29,8 +31,6 @@ public interface ImmutableMap<K, V> {
     ImmutableMap<?, ?> EMPTY = new ImmutableMapImplementation<>(emptyMap());
 
     int size();
-
-    boolean isEmpty();
 
     boolean containsKey(Object key);
 
@@ -44,11 +44,24 @@ public interface ImmutableMap<K, V> {
 
     Set<Map.Entry<K, V>> entrySet();
 
-    V getOrDefault(Object key, V defaultValue);
-
-    void forEach(BiConsumer<? super K, ? super V> action);
-
     Map<K, V> toMutable();
+
+
+    default boolean isEmpty() {
+        return size() == 0;
+    }
+
+    default V getOrDefault(Object key, V defaultValue) {
+        V value;
+        return ((nonNull(value = get(key))) || containsKey(key))
+                ? value
+                : defaultValue;
+    }
+
+    default void forEach(BiConsumer<? super K, ? super V> action) {
+        entrySet().forEach(entry -> action.accept(entry.getKey(), entry.getValue()));
+    }
+
 
     static <K, V> ImmutableMap<K, V> emptyImmutableMap() {
         return cast(EMPTY);
@@ -90,6 +103,7 @@ public interface ImmutableMap<K, V> {
             builder = com.google.common.collect.ImmutableMap.builder();
         }
 
+        @SuppressWarnings(UNSTABLE_API_USAGE)
         public Builder(int size) {
             builder = com.google.common.collect.ImmutableMap.builderWithExpectedSize(size);
         }
@@ -104,6 +118,7 @@ public interface ImmutableMap<K, V> {
             return this;
         }
 
+        @SuppressWarnings(UNUSED_RETURN_VALUE)
         public Builder<K, V> putAll(Map<? extends K, ? extends V> map) {
             builder.putAll(map);
             return this;
@@ -114,11 +129,13 @@ public interface ImmutableMap<K, V> {
             return this;
         }
 
+        @SuppressWarnings(UNSTABLE_API_USAGE)
         public Builder<K, V> putAll(Iterable<? extends Map.Entry<? extends K, ? extends V>> entries) {
             builder.putAll(entries);
             return this;
         }
 
+        @SuppressWarnings(UNSTABLE_API_USAGE)
         private Builder<K, V> combine(Builder<K, V> builder) {
             this.builder.putAll(builder.build().entrySet());
             return this;

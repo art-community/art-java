@@ -23,6 +23,10 @@ public class MapFactory {
         return new LinkedHashMap<>(map);
     }
 
+    public static <K, V> Map<K, V> mapOf(ImmutableMap<K, V> map) {
+        return mapOf(map.toMutable());
+    }
+
     public static <K, V> Map<K, V> mapOf(int size) {
         return new LinkedHashMap<>(size);
     }
@@ -37,29 +41,38 @@ public class MapFactory {
     }
 
 
-    public static <K, V> ConcurrentHashMap<K, V> concurrentMap() {
+    public static <K, V> Map<K, V> concurrentMap() {
         return new ConcurrentHashMap<>();
     }
 
-    public static <K, V> ConcurrentHashMap<K, V> concurrentMapOf(K key, V value) {
+    public static <K, V> Map<K, V> concurrentMapOf(K key, V value) {
         return new ConcurrentHashMap<>(mapOf(key, value));
     }
 
-    public static <K, V> ConcurrentHashMap<K, V> concurrentMapOf(Map<K, V> map) {
+    public static <K, V> Map<K, V> concurrentMapOf(Map<K, V> map) {
         if (isEmpty(map)) return concurrentMap();
         return new ConcurrentHashMap<>(map);
     }
 
-    public static <K, V> WeakHashMap<K, V> weakMap() {
+    public static <K, V> Map<K, V> concurrentMapOf(ImmutableMap<K, V> map) {
+        return concurrentMapOf(map.toMutable());
+    }
+
+
+    public static <K, V> Map<K, V> weakMap() {
         return new WeakHashMap<>();
     }
 
-    public static <K, V> WeakHashMap<K, V> weakMapOf(K key, V value) {
+    public static <K, V> Map<K, V> weakMapOf(K key, V value) {
         return new WeakHashMap<>(mapOf(key, value));
     }
 
-    public static <K, V> WeakHashMap<K, V> weakMapOf(Map<K, V> map) {
+    public static <K, V> Map<K, V> weakMapOf(Map<K, V> map) {
         if (isEmpty(map)) return weakMap();
         return new WeakHashMap<>(map);
+    }
+
+    public static <K, V> Map<K, V> weakMapOf(ImmutableMap<K, V> map) {
+        return weakMapOf(map.toMutable());
     }
 }

@@ -22,7 +22,6 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.rsocket.constants.*;
-import io.art.rsocket.interceptor.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
@@ -68,9 +67,6 @@ public class RsocketServerConfiguration {
         configuration.payloadDecoder = PayloadDecoder.DEFAULT;
         configuration.maxInboundPayloadSize = FRAME_LENGTH_MASK;
         configuration.transport = TCP;
-        configuration.interceptorConfigurator = registry -> registry
-                .forResponder(new RsocketLoggingInterceptor(configuration::isLogging))
-                .forRequester(new RsocketLoggingInterceptor(configuration::isLogging));
         configuration.tcpServer = TcpServer.create().port(DEFAULT_PORT).host(BROADCAST_IP_ADDRESS);
         configuration.tcpMaxFrameLength = FRAME_LENGTH_MASK;
         return configuration;
@@ -88,9 +84,6 @@ public class RsocketServerConfiguration {
                 : PayloadDecoder.ZERO_COPY;
         configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
         configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
-        configuration.interceptorConfigurator = registry -> registry
-                .forResponder(new RsocketLoggingInterceptor(configuration::isLogging))
-                .forRequester(new RsocketLoggingInterceptor(configuration::isLogging));
 
         String serviceId = source.getString(DEFAULT_SERVICE_ID_KEY);
         String methodId = source.getString(DEFAULT_METHOD_ID_KEY);

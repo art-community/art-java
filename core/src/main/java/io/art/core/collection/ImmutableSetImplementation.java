@@ -19,8 +19,6 @@
 package io.art.core.collection;
 
 import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
 
 public class ImmutableSetImplementation<T> implements ImmutableSet<T> {
     private final Set<T> set;
@@ -65,32 +63,12 @@ public class ImmutableSetImplementation<T> implements ImmutableSet<T> {
 
     @Override
     public <A> A[] toArray(A[] array) {
-        return this.set.toArray(array);
-    }
-
-    @Override
-    public Stream<T> stream() {
-        return set.stream();
-    }
-
-    @Override
-    public Stream<T> parallelStream() {
-        return set.parallelStream();
-    }
-
-    @Override
-    public void forEach(Consumer<? super T> action) {
-        set.forEach(action);
+        return set.toArray(array);
     }
 
     @Override
     public Iterator<T> iterator() {
         return set.iterator();
-    }
-
-    @Override
-    public Spliterator<T> spliterator() {
-        return set.spliterator();
     }
 
     @Override
