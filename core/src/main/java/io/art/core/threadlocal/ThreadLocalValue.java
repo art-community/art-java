@@ -14,8 +14,9 @@ public class ThreadLocalValue<T> {
     private final Supplier<T> factory;
 
     public T get(){
-        if (isNull(valueHolder.get())) valueHolder.set(factory.get());
-        return valueHolder.get();
+        T value = valueHolder.get();
+        if (isNull(value)) valueHolder.set(value = factory.get());
+        return value;
     }
 
     public <R> ThreadLocalValue<R> map(Function<T, R> mapper) {
