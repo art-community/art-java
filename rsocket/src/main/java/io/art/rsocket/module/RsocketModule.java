@@ -55,22 +55,6 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     }
 
     @Override
-    public void beforeReload() {
-        disposeCommunicators();
-        disposeServer();
-    }
-
-    @Override
-    public void afterReload() {
-        if (configuration.isActivateCommunicator()) {
-            initializeCommunicators();
-        }
-        if (configuration.isActivateServer()) {
-            initializeServer();
-        }
-    }
-
-    @Override
     public void onUnload() {
         disposeCommunicators();
         disposeServer();
