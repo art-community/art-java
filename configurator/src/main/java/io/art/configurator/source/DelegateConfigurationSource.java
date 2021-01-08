@@ -9,12 +9,14 @@ import static io.art.core.constants.StringConstants.*;
 import static java.util.Objects.*;
 
 
-@Getter
 @RequiredArgsConstructor
 public class DelegateConfigurationSource implements ConfigurationSource {
-    private final ImmutableArray<ConfigurationSource> sources;
+    @Getter
     private final ModuleConfigurationSourceType type = DELEGATE;
+    @Getter
     private final String section = EMPTY_STRING;
+
+    private final ImmutableArray<ConfigurationSource> sources;
 
     @Override
     public NestedConfiguration getNested(String path) {
@@ -39,5 +41,4 @@ public class DelegateConfigurationSource implements ConfigurationSource {
     public boolean has(String path) {
         return getKeys().contains(path);
     }
-
 }

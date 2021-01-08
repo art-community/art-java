@@ -35,7 +35,6 @@ public class RsocketModuleState implements ModuleState {
     private final List<RSocket> requesters = linkedListOf();
     private final ThreadLocal<RsocketThreadLocalState> threadLocalState = new ThreadLocal<>();
 
-
     public void registerRequester(RSocket socket) {
         requesters.add(socket);
     }
@@ -67,13 +66,11 @@ public class RsocketModuleState implements ModuleState {
     public static class RsocketThreadLocalState {
         private final RSocket requesterRsocket;
         private final RsocketSetupPayload setupPayload;
-        private final ServiceMethodSpecification specification;
 
         public static RsocketThreadLocalState fromContext(Context context) {
             RSocket requesterRsocket = context.get(REQUESTER_RSOCKET_KEY);
             RsocketSetupPayload setupPayload = context.get(SETUP_PAYLOAD_KEY);
-            ServiceMethodSpecification specification = context.get(SPECIFICATION_KEY);
-            return new RsocketThreadLocalState(requesterRsocket, setupPayload, specification);
+            return new RsocketThreadLocalState(requesterRsocket, setupPayload);
         }
     }
 }

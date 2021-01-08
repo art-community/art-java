@@ -16,21 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.model;
 
-import java.time.*;
-import java.util.concurrent.*;
+import lombok.*;
+import java.util.function.*;
 
-public interface DeferredExecutor {
-    <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime);
-
-    <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask);
-
-    Future<?> execute(Runnable task, LocalDateTime triggerTime);
-
-    Future<?> execute(Runnable task);
-
-    void shutdown();
-
-    void clear();
+@Getter
+@AllArgsConstructor
+public class CallableTask<T> {
+    private final String id;
+    private final Function<String, T> callable;
 }

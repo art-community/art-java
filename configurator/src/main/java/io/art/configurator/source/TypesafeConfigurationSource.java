@@ -22,6 +22,7 @@ import com.typesafe.config.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
+import static com.typesafe.config.ConfigFactory.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.combiner.SectionCombiner.combine;
@@ -29,14 +30,33 @@ import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static java.util.Objects.*;
+import java.io.*;
 import java.util.function.*;
 
 @Getter
-@RequiredArgsConstructor
 public class TypesafeConfigurationSource implements NestedConfiguration {
     private final String section;
     private final ModuleConfigurationSourceType type;
-    private final Config typesafeConfiguration;
+    private File file;
+    private Config typesafeConfiguration;
+
+    public TypesafeConfigurationSource(String section, ModuleConfigurationSourceType type, File file) {
+        this.section = section;
+        this.type = type;
+        this.file = file;
+        this.typesafeConfiguration = parseFile(file);
+    }
+
+    public TypesafeConfigurationSource(String section, ModuleConfigurationSourceType type, Config typesafeConfiguration) {
+        this.section = section;
+        this.type = type;
+        this.typesafeConfiguration = typesafeConfiguration;
+    }
+
+    @Override
+    public void refresh() {
+        apply(file, file -> this.typesafeConfiguration = parseFile(file));
+    }
 
     @Override
     public Boolean asBool() {

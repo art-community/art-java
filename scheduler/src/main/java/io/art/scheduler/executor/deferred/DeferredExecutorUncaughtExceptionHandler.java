@@ -16,14 +16,11 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.executor.deferred;
 
-import lombok.*;
-import java.util.function.*;
-
-@Getter
-@AllArgsConstructor
-public class CallableTask<T> {
-    private final String id;
-    private final Function<String, T> callable;
+class DeferredExecutorUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+    @Override
+    public void uncaughtException(Thread thread, Throwable throwable) {
+        throw new DeferredExecutionThreadPoolException(thread, throwable);
+    }
 }

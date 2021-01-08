@@ -16,21 +16,16 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.executor.deferred;
 
 import lombok.*;
-import java.util.concurrent.*;
-import java.util.function.*;
 
-@AllArgsConstructor
-class NotifiedCallable<T> implements Callable<T> {
-    private final Callable<T> executionCallable;
-    private final Consumer<T> notification;
+@Getter
+class DeferredExecutionThreadPoolException extends RuntimeException {
+    private final Thread thread;
 
-    @Override
-    public T call() throws Exception {
-        T result = executionCallable.call();
-        notification.accept(result);
-        return result;
+    DeferredExecutionThreadPoolException(Thread thread, Throwable cause) {
+        super(cause.getMessage(), cause);
+        this.thread = thread;
     }
 }

@@ -16,11 +16,18 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.executor.periodic;
 
-import io.art.task.deferred.executor.SchedulerModuleExceptions.*;
+import lombok.*;
 
-@FunctionalInterface
-interface ExceptionHandler {
-    void onException(ExceptionEvent event, Throwable throwable);
+@AllArgsConstructor
+class NotifiedRunnable implements Runnable {
+    private final Runnable executionCallable;
+    private final Runnable notification;
+
+    @Override
+    public void run() {
+        executionCallable.run();
+        notification.run();
+    }
 }

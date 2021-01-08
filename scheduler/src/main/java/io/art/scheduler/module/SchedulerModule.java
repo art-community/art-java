@@ -16,13 +16,21 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.module;
 
 import io.art.core.module.*;
+import io.art.scheduler.executor.deferred.*;
+import io.art.scheduler.executor.periodic.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
-import static io.art.task.deferred.executor.SchedulerModuleConfiguration.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.*;
+import static io.art.scheduler.factory.TaskFactory.*;
+import static io.art.scheduler.manager.SchedulersManager.*;
+import static io.art.scheduler.module.SchedulerModuleConfiguration.*;
+import static java.time.LocalDateTime.*;
+import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
+import java.time.*;
 
 @Getter
 public class SchedulerModule implements StatelessModule<SchedulerModuleConfiguration, Configurator> {
@@ -30,7 +38,7 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
     private final SchedulerModuleConfiguration configuration = new SchedulerModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
     @Getter(lazy = true, value = PRIVATE)
-    private final static StatelessModuleProxy<SchedulerModuleConfiguration> schedulerModule = context().getStatelessModule(StatelessModule.class.getSimpleName());
+    private final static StatelessModuleProxy<SchedulerModuleConfiguration> schedulerModule = context().getStatelessModule(SchedulerModule.class.getSimpleName());
 
     public static StatelessModuleProxy<SchedulerModuleConfiguration> schedulerModule() {
         return getSchedulerModule();
@@ -46,13 +54,21 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
     }
 
     @Override
-    public void beforeUnload() {
-        DeferredExecutor deferredExecutor = deferredExecutor();
-        PeriodicExecutor periodicExecutor = periodicExecutor();
-        deferredExecutor.clear();
-        deferredExecutor.shutdown();
-        periodicExecutor.clear();
-        periodicExecutor.shutdown();
+    public void onLoad() {
+        Duration duration = configuration.getRefreshDuration();
+        if (isNull(duration)) return;
+        asynchronousPeriod(runnableTask(REFRESHER_TASK, context()::reload), now().plus(duration), duration);
     }
 
+    @Override
+    public void beforeReload() {
+        periodicExecutor().cancelPeriodicTask(REFRESHER_TASK);
+    }
+
+    @Override
+    public void afterReload() {
+        Duration duration = configuration.getRefreshDuration();
+        if (isNull(duration)) return;
+        asynchronousPeriod(runnableTask(REFRESHER_TASK, context()::reload), now().plus(duration), duration);
+    }
 }

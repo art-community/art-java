@@ -55,6 +55,22 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     }
 
     @Override
+    public void beforeReload() {
+        stopConnectors();
+        stopServer();
+    }
+
+    @Override
+    public void afterReload() {
+        if (configuration.isActivateCommunicator()) {
+            startConnectors();
+        }
+        if (configuration.isActivateServer()) {
+            startServer();
+        }
+    }
+
+    @Override
     public void onUnload() {
         stopConnectors();
         stopServer();

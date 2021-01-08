@@ -66,14 +66,12 @@ public class RsocketManager {
                 .forEach(proxy -> proxy.getImplementations().forEach(RsocketCommunicator::stop));
     }
 
-
     public void startServer() {
         getServer().start();
     }
 
     public void stopServer() {
         apply(getServer(), RsocketServer::stop);
-        getState().getRequesters().forEach(RsocketManager::disposeRsocket);
     }
 
 

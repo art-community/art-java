@@ -31,7 +31,7 @@ public class ModuleModelConfigurator {
     private final ConfiguratorModelConfigurator configurator = new ConfiguratorModelConfigurator();
     private final ServerModelConfigurator server = new ServerModelConfigurator();
     private final CommunicatorModelConfigurator communicator = new CommunicatorModelConfigurator();
-    private Runnable onLoad = EMPTY_RUNNABLE;
+    private Runnable onLoad = emptyRunnable();
 
     public ModuleModelConfigurator serve(UnaryOperator<ServerModelConfigurator> server) {
         server.apply(this.server);

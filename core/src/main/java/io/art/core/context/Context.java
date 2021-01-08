@@ -40,17 +40,18 @@ import java.util.function.*;
 public class Context {
     private static Context INSTANCE;
     private final Map<String, Module> modules = map();
+    private final Map<String, ModuleDecorator> configurators = map();
     private final ContextConfiguration configuration;
     private final Consumer<String> printer;
 
-    private Context(ContextConfiguration configuration, ImmutableArray<Module> modules, Consumer<String> printer) {
+    private Context(ContextConfiguration configuration, ImmutableMap<ModuleFactory, ModuleDecorator> initializers, Consumer<String> printer) {
         this.printer = printer;
         this.configuration = configuration;
-        load(modules);
+        load(initializers);
         getRuntime().addShutdownHook(new Thread(this::unload));
     }
 
-    public static void initialize(ContextConfiguration configuration, ImmutableArray<Module> modules, Consumer<String> printer) {
+    public static void initialize(ContextConfiguration configuration, ImmutableMap<ModuleFactory, ModuleDecorator> modules, Consumer<String> printer) {
         if (nonNull(INSTANCE)) {
             throw new InternalRuntimeException(CONTEXT_ALREADY_INITIALIZED);
         }
@@ -93,15 +94,31 @@ public class Context {
     }
 
 
-    private void load(ImmutableArray<Module> modules) {
+    public void reload() {
+        for (Map.Entry<String, Module> entry : modules.entrySet()) {
+            Module module = entry.getValue();
+            printer.accept(format(MODULE_RELOADING_START_MESSAGE, module.getId()));
+            module.beforeReload();
+            configurators.get(entry.getKey()).apply(module);
+        }
+
+        for (Module module : modules.values()) {
+            module.afterReload();
+            printer.accept(format(MODULE_RELOADING_END_MESSAGE, module.getId()));
+        }
+    }
+
+    private void load(ImmutableMap<ModuleFactory, ModuleDecorator> modules) {
         INSTANCE = this;
         Set<String> messages = setOf(ART_BANNER);
-        for (Module module : modules) {
+        for (Map.Entry<ModuleFactory, ModuleDecorator> entry : modules.entrySet()) {
+            Module module = entry.getKey().get();
             messages.add(format(MODULE_LOADED_MESSAGE, module.getId()));
-            this.modules.put(module.getId(), module);
+            this.modules.put(module.getId(), entry.getValue().apply(module));
+            this.configurators.put(module.getId(), entry.getValue());
         }
         messages.forEach(printer);
-        for (Module module : modules) {
+        for (Module module : this.modules.values()) {
             module.onLoad();
             ifNotEmpty(module.print(), printer);
         }
@@ -111,7 +128,7 @@ public class Context {
         List<Module> modules = linkedListOf(this.modules.values());
         reverse(modules);
         for (Module module : modules) {
-            printer.accept(format(MODULE_UNLOADED_MESSAGE, module.getId(), module.getClass()));
+            printer.accept(format(MODULE_UNLOADED_MESSAGE, module.getId()));
             module.onUnload();
             this.modules.remove(module.getId());
         }

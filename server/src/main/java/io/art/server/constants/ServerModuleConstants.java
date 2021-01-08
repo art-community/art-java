@@ -87,4 +87,7 @@ public interface ServerModuleConstants {
         String REQUEST_IS_NULL = "Validation error. Request is null";
     }
 
+    interface StateKeys {
+        String SPECIFICATION_KEY = "specification";
+    }
 }

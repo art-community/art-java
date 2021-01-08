@@ -18,6 +18,7 @@
 
 package io.art.server;
 
+import reactor.core.publisher.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 
 public interface Server {

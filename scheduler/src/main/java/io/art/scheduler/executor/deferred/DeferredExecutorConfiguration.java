@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.executor.deferred;
 
 import lombok.*;
 import java.lang.Thread.*;

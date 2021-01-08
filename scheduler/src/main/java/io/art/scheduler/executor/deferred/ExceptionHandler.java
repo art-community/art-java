@@ -16,16 +16,11 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.executor.deferred;
 
-import lombok.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 
-@Getter
-class DeferredExecutionThreadPoolException extends RuntimeException {
-    private final Thread thread;
-
-    DeferredExecutionThreadPoolException(Thread thread, Throwable cause) {
-        super(cause);
-        this.thread = thread;
-    }
+@FunctionalInterface
+interface ExceptionHandler {
+    void onException(ExceptionEvent event, Throwable throwable);
 }

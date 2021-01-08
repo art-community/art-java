@@ -22,7 +22,6 @@ import io.art.core.caster.*;
 import io.art.core.lazy.*;
 import io.art.core.runnable.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.manager.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
 import io.rsocket.*;
@@ -34,12 +33,12 @@ import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
 import static io.art.core.lazy.LazyValue.*;
-import static io.art.core.operator.Operators.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
+import static io.art.rsocket.manager.RsocketManager.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 
@@ -50,25 +49,26 @@ public class RsocketServer implements Server {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketServer.class);
 
-    private final LazyValue<Disposable> server = lazy(this::createServer);
+    private final LazyValue<CloseableChannel> channel = lazy(this::createServer);
+    private final LazyValue<Mono<Void>> onClose = channel.map(CloseableChannel::onClose);
 
     @Override
     public void start() {
-        server.initialize();
+        channel.initialize();
     }
 
     @Override
     public void stop() {
-        server.dispose(this::disposeServer);
+        channel.dispose(this::disposeServer);
     }
 
     @Override
     public boolean available() {
-        Disposable value;
-        return nonNull(value = server.get()) && !value.isDisposed();
+        CloseableChannel channel;
+        return nonNull(channel = this.channel.get()) && !channel.isDisposed();
     }
 
-    private Disposable createServer() {
+    private CloseableChannel createServer() {
         TransportMode transportMode = configuration.getTransport();
         RSocketServer server = RSocketServer
                 .create(this::createSocket)
@@ -89,12 +89,16 @@ public class RsocketServer implements Server {
                 .bind(transport)
                 .doOnSubscribe(subscription -> getLogger().info(SERVER_STARTED))
                 .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
-                .subscribe();
+                .doOnTerminate(() -> getLogger().info(SERVER_STOPPED))
+                .block();
     }
 
     private void disposeServer(Disposable server) {
-        applyIf(server, socket -> !socket.isDisposed(), RsocketManager::disposeRsocket);
-        getLogger().info(SERVER_STOPPED);
+        if (server.isDisposed()) {
+            return;
+        }
+        disposeRsocket(server);
+        onClose.dispose(Mono::block);
     }
 
     private Mono<RSocket> createSocket(ConnectionSetupPayload payload, RSocket requesterSocket) {

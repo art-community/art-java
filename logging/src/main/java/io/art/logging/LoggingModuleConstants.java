@@ -19,11 +19,10 @@
 package io.art.logging;
 
 public interface LoggingModuleConstants {
-    String DEFAULT_REQUEST_ID = "default-request-id";
     String LOG4J2_YML_FILE = "log4j2.yml";
     String LOG4J2_YAML_FILE = "log4j2.yaml";
     String LOG42_CONFIGURATION_FILE_PROPERTY = "log4j2.configurationFile";
-    String VALUE_LOG_MESSAGE = "Value: ''{0}''";
+    String DEFAULT_REQUEST_ID = "default-request-id";
 
     interface ConfigurationKeys {
         String LOGGING_SECTION = "logging";

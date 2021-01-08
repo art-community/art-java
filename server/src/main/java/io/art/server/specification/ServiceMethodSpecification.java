@@ -19,9 +19,11 @@
 package io.art.server.specification;
 
 import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
 import io.art.server.configuration.*;
+import io.art.server.decorator.*;
 import io.art.server.implementation.*;
 import io.art.server.model.*;
 import io.art.value.immutable.Value;
@@ -32,6 +34,7 @@ import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
@@ -67,6 +70,14 @@ public class ServiceMethodSpecification {
     private final ValueFromModelMapper<Throwable, ? extends Value> exceptionMapper = ThrowableMapping::fromThrowable;
 
     private final ServiceMethodImplementation implementation;
+
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> defaultInputDecorators = immutableArrayOf(
+            new ServiceStateDecorator(this)
+    );
+
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> defaultOutputDecorators = immutableArrayOf(
+            new ServiceStateDecorator(this)
+    );
 
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
@@ -109,6 +120,9 @@ public class ServiceMethodSpecification {
 
     private Object mapInput(Flux<Value> input) {
         Flux<Object> mappedInput = input.map(value -> inputMapper.map(cast(value)));
+        for (UnaryOperator<Flux<Object>> decorator : defaultInputDecorators) {
+            mappedInput = mappedInput.transformDeferred(decorator);
+        }
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
             mappedInput = mappedInput.transformDeferred(decorator);
         }
@@ -117,6 +131,9 @@ public class ServiceMethodSpecification {
 
     private Flux<Value> mapOutput(Object output) {
         Flux<Object> mappedOutput = getAdoptOutput().apply(output);
+        for (UnaryOperator<Flux<Object>> decorator : defaultOutputDecorators) {
+            mappedOutput = mappedOutput.transformDeferred(decorator);
+        }
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
             mappedOutput = mappedOutput.transformDeferred(decorator);
         }
@@ -128,6 +145,9 @@ public class ServiceMethodSpecification {
 
     private Flux<Value> mapException(Throwable exception) {
         Flux<Object> errorOutput = Flux.error(exception);
+        for (UnaryOperator<Flux<Object>> decorator : defaultOutputDecorators) {
+            errorOutput = errorOutput.transformDeferred(decorator);
+        }
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
             errorOutput = errorOutput.transformDeferred(decorator);
         }
@@ -167,5 +187,4 @@ public class ServiceMethodSpecification {
                 throw new ImpossibleSituation();
         }
     }
-
 }

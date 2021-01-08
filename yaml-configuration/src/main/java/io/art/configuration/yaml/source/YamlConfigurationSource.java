@@ -32,6 +32,7 @@ import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.FileExtensions.*;
 import static java.util.Objects.*;
 import static java.util.Spliterator.*;
 import static java.util.Spliterators.*;
@@ -41,18 +42,19 @@ import java.util.function.*;
 
 @Getter
 public class YamlConfigurationSource implements NestedConfiguration {
+    private static final YAMLMapper YAML_MAPPER = new YAMLMapper();
+
     private final String section;
     private final ModuleConfigurationSourceType type;
     private final File file;
-    private final JsonNode configuration;
-    private static final YAMLMapper YAML_MAPPER = new YAMLMapper();
+    private JsonNode configuration;
 
     public YamlConfigurationSource(String section, ModuleConfigurationSourceType type, File file) {
         this.section = section;
         this.type = type;
         this.file = file;
         try {
-            configuration = YAML_MAPPER.readTree(file);
+            configuration = YAML_MAPPER.readTree(fileInputStream(file.getPath()));
         } catch (IOException exception) {
             throw new YamlConfigurationLoadingException(exception);
         }
@@ -63,6 +65,15 @@ public class YamlConfigurationSource implements NestedConfiguration {
         this.type = type;
         this.file = file;
         this.configuration = configuration;
+    }
+
+    @Override
+    public void refresh() {
+        try {
+            configuration = YAML_MAPPER.readTree(fileInputStream(file.getPath()));
+        } catch (IOException exception) {
+            throw new YamlConfigurationLoadingException(exception);
+        }
     }
 
     @Override

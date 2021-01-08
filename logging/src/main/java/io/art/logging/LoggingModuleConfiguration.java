@@ -23,9 +23,8 @@ import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.logging.LoggingModuleConstants.ConfigurationKeys.*;
-import static io.art.logging.LoggingModuleConstants.LOG42_CONFIGURATION_FILE_PROPERTY;
-import static java.lang.System.getProperty;
-import java.nio.file.*;
+import static io.art.logging.LoggingModuleConstants.*;
+import static java.lang.System.*;
 
 @Getter
 public class LoggingModuleConfiguration implements ModuleConfiguration {

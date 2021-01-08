@@ -22,6 +22,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":logging"))
     implementation(project(":value"))
+    implementation(project(":scheduler"))
     implementation(project(":json"))
     implementation(project(":protobuf"))
     implementation(project(":message-pack"))

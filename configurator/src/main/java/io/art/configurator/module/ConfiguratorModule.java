@@ -24,6 +24,7 @@ import io.art.configurator.exception.*;
 import io.art.configurator.model.*;
 import io.art.configurator.source.*;
 import io.art.core.checker.*;
+import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
@@ -34,7 +35,6 @@ import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConf
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static java.nio.file.Paths.*;
 import static lombok.AccessLevel.*;
@@ -49,7 +49,11 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     @Getter(lazy = true, value = PRIVATE)
     private static final StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule = context().getStatelessModule(ConfiguratorModule.class.getSimpleName());
 
-    public StatelessModuleProxy<ConfiguratorModuleConfiguration> initializeConfigurator() {
+    public ImmutableArray<ConfigurationSource> orderedSources() {
+        return configuration.orderedSources();
+    }
+
+    public ConfiguratorModule configure() {
         configure(configurator -> configurator
                 .from(new EnvironmentConfigurationSource())
                 .from(new PropertiesConfigurationSource())
@@ -63,9 +67,15 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .ifPresent(source -> configure(configurator -> configurator.from(source)));
         EnvironmentConfigurationSource environment = getConfiguration().getEnvironment();
         PropertiesConfigurationSource properties = getConfiguration().getProperties();
-        configureByFile(addFirstToList(environment.getString(MODULE_CONFIG_FILE_ENVIRONMENT), environment.getStringArray(MODULE_CONFIG_FILES_ENVIRONMENT).toMutable()));
-        configureByFile(addFirstToList(properties.getString(MODULE_CONFIG_FILE_PROPERTY), properties.getStringArray(MODULE_CONFIG_FILES_PROPERTY).toMutable()));
-        return new StatelessModuleProxy<>(this);
+        List<String> configFilePaths = environment.getStringArray(MODULE_CONFIG_FILES_ENVIRONMENT).toMutable();
+        configFilePaths.addAll(properties.getStringArray(MODULE_CONFIG_FILES_PROPERTY).toMutable());
+        configureByFile(configFilePaths);
+        return this;
+    }
+
+    @Override
+    public void beforeReload() {
+        orderedSources().forEach(ConfigurationSource::refresh);
     }
 
     private void configureByFile(List<String> paths) {

@@ -52,19 +52,19 @@ public class RsocketServiceModelConfigurator {
 
     public RsocketServiceModelConfigurator logging() {
         return decorate((method, builder) -> builder
-                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), INPUT))
-                .outputDecorator(new ServiceLoggingDecorator(serviceMethod(serviceClass.getSimpleName(), method), OUTPUT)));
+                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(id, method), INPUT))
+                .outputDecorator(new ServiceLoggingDecorator(serviceMethod(id, method), OUTPUT)));
     }
 
     public RsocketServiceModelConfigurator deactivation() {
         return decorate((method, builder) -> builder
-                .inputDecorator(new ServiceDeactivationDecorator(serviceMethod(serviceClass.getSimpleName(), method)))
-                .outputDecorator(new ServiceDeactivationDecorator(serviceMethod(serviceClass.getSimpleName(), method))));
+                .inputDecorator(new ServiceDeactivationDecorator(serviceMethod(id, method)))
+                .outputDecorator(new ServiceDeactivationDecorator(serviceMethod(id, method))));
     }
 
     public RsocketServiceModelConfigurator validation(RequestValidationPolicy policy) {
         return decorate((method, builder) -> builder
-                .inputDecorator(new ServiceValidationDecorator(policy, serviceMethod(serviceClass.getSimpleName(), method))));
+                .inputDecorator(new ServiceValidationDecorator(policy, serviceMethod(id, method))));
     }
 
     private RsocketServiceModelConfigurator decorate(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {

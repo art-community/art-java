@@ -16,10 +16,11 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.manager;
 
+import io.art.scheduler.model.*;
 import lombok.experimental.*;
-import static io.art.task.deferred.executor.SchedulerModule.*;
+import static io.art.scheduler.module.SchedulerModule.*;
 import java.time.*;
 import java.util.Optional;
 import java.util.concurrent.*;
@@ -43,7 +44,7 @@ public class SchedulersManager {
     }
 
     public static <EventResultType> Future<? extends EventResultType> asynchronousPeriod(CallableTask<? extends EventResultType> eventTask,
-                                                                                  LocalDateTime startTime, Duration duration) {
+                                                                                         LocalDateTime startTime, Duration duration) {
         return periodicExecutor().submitPeriodic(eventTask, startTime, duration);
     }
 

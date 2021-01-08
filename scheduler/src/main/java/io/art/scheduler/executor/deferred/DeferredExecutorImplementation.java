@@ -16,16 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.executor.deferred;
 
 import static java.lang.Integer.*;
 import static java.time.LocalDateTime.*;
 import java.time.*;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.*;
 
 public class DeferredExecutorImplementation implements DeferredExecutor {
-    private final ReentrantLock lock = new ReentrantLock();
     private final DeferredEventObserver observer;
 
     DeferredExecutorImplementation(DeferredExecutorConfiguration configuration) {
@@ -38,13 +36,7 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
 
     @Override
     public <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
-        final ReentrantLock lock = this.lock;
-        lock.lock();
-        try {
-            return observer.addEvent(eventTask, triggerTime);
-        } finally {
-            lock.unlock();
-        }
+        return observer.addEvent(eventTask, triggerTime);
     }
 
     @Override
@@ -67,13 +59,7 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
 
     @Override
     public void shutdown() {
-        final ReentrantLock lock = this.lock;
-        lock.lock();
-        try {
-            observer.shutdown();
-        } finally {
-            lock.unlock();
-        }
+        observer.shutdown();
     }
 
     @Override

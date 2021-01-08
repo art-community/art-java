@@ -16,9 +16,11 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.executor.deferred;
 
-import static io.art.task.deferred.executor.SchedulerModuleExceptions.ExceptionEvent.*;
+import io.art.scheduler.exception.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.AWAIT_TERMINATION_EXCEPTION;
+import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.ForkJoinPool.*;
 import static java.util.concurrent.ForkJoinTask.*;
@@ -54,7 +56,9 @@ class DeferredEventObserver {
             return;
         }
         try {
-            threadPool.awaitTermination(configuration.getThreadPoolTerminationTimeout(), MILLISECONDS);
+            if (!threadPool.awaitTermination(configuration.getThreadPoolTerminationTimeout(), MILLISECONDS)) {
+                configuration.getExceptionHandler().onException(POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
+            }
         } catch (Throwable throwable) {
             configuration.getExceptionHandler().onException(POOL_SHUTDOWN, throwable);
         }
@@ -73,7 +77,7 @@ class DeferredEventObserver {
                 try {
                     ForkJoinTask<?> task = getTaskFromEvent(currentEvent).fork();
                     DeferredEvent<?> nextEvent;
-                    if (nonNull(nextEvent = deferredEvents.peek()) && nextEvent.getTriggerDateTime() == currentEvent.getTriggerDateTime()) {
+                    if (nonNull(nextEvent = deferredEvents.peek()) && nextEvent.getTriggerDateTime() == currentEvent.getTriggerDateTime() && !task.isCancelled()) {
                         task.join();
                     }
                 } catch (Throwable throwable) {

@@ -16,21 +16,23 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.executor.deferred;
 
-import static io.art.core.checker.EmptinessChecker.*;
+import lombok.*;
+import org.apache.logging.log4j.*;
+import static com.google.common.base.Throwables.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.task.deferred.executor.SchedulerModuleExceptions.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
 
 public class DeferredExecutorExceptionHandler implements ExceptionHandler {
+    @Getter(lazy = true)
+    private final Logger logger = logger(DeferredExecutorExceptionHandler.class);
+
     @Override
-    public void onException(ExceptionEvent event, Throwable throwable) {
-        logger(DeferredExecutorExceptionHandler.class).error(format(
-                EXCEPTION_OCCURRED_DURING,
-                event.getMessage(),
-                ifEmpty(throwable.getMessage(), throwable.getClass()),
-                throwable)
-        );
+    public void onException(ExceptionMessages.ExceptionEvent event, Throwable throwable) {
+        String message = format(EXCEPTION_OCCURRED_DURING, event.getMessage(), getStackTraceAsString(throwable));
+        getLogger().error(message);
     }
 }

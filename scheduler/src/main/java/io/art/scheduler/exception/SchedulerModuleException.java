@@ -16,18 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.exception;
 
 import lombok.*;
 
-@AllArgsConstructor
-class NotifiedRunnable implements Runnable {
-    private final Runnable executionCallable;
-    private final Runnable notification;
-
-    @Override
-    public void run() {
-        executionCallable.run();
-        notification.run();
+public class SchedulerModuleException extends RuntimeException {
+    public SchedulerModuleException(String message) {
+        super(message);
     }
 }

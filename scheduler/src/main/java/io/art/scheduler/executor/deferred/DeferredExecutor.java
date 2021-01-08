@@ -16,7 +16,21 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.art.rsocket.server;
+package io.art.scheduler.executor.deferred;
 
-import reactor.util.annotation.*;
+import java.time.*;
+import java.util.concurrent.*;
+
+public interface DeferredExecutor {
+    <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime);
+
+    <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask);
+
+    Future<?> execute(Runnable task, LocalDateTime triggerTime);
+
+    Future<?> execute(Runnable task);
+
+    void shutdown();
+
+    void clear();
+}

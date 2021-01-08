@@ -16,39 +16,48 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.factory;
 
+import io.art.core.callable.*;
+import io.art.core.runnable.*;
+import io.art.scheduler.executor.deferred.*;
+import io.art.scheduler.model.*;
+import lombok.*;
 import lombok.experimental.*;
+import org.apache.logging.log4j.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
-import static io.art.task.deferred.executor.SchedulerModuleConstants.*;
+import static io.art.logging.LoggingModule.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.*;
 import static java.util.UUID.*;
-import java.util.concurrent.*;
 import java.util.function.*;
 
 @UtilityClass
 public class TaskFactory {
-    public static RunnableTask uniqueRunnableTask(Runnable runnable) {
-        return new RunnableTask(randomUUID().toString(), taskId -> runnable.run());
+    @Getter(lazy = true)
+    private final static Logger logger = logger(DeferredExecutor.class);
+
+    public static RunnableTask uniqueRunnableTask(ExceptionRunnable runnable) {
+        return new RunnableTask(randomUUID().toString(), taskId -> ignoreException(runnable, TaskFactory::logError));
     }
 
-    public static RunnableTask commonRunnableTask(Runnable runnable) {
-        return new RunnableTask(COMMON_TASK, taskId -> runnable.run());
+    public static RunnableTask commonRunnableTask(ExceptionRunnable runnable) {
+        return new RunnableTask(COMMON_TASK, taskId -> ignoreException(runnable, TaskFactory::logError));
     }
 
-    public static RunnableTask runnableTask(String id, Runnable runnable) {
-        return new RunnableTask(id, taskId -> runnable.run());
+    public static RunnableTask runnableTask(String id, ExceptionRunnable runnable) {
+        return new RunnableTask(id, taskId -> ignoreException(runnable, TaskFactory::logError));
     }
 
-    public static <T> CallableTask<T> uniqueCallableTask(Callable<T> callable) {
-        return new CallableTask<>(randomUUID().toString(), taskId -> wrapException(callable));
+    public static <T> CallableTask<T> uniqueCallableTask(ExceptionCallable<T> callable) {
+        return new CallableTask<>(randomUUID().toString(), taskId -> ignoreException(callable, TaskFactory::logError));
     }
 
-    public static <T> RunnableTask commonCallableTask(Callable<T> callable) {
-        return new RunnableTask(COMMON_TASK, taskId -> wrapException(callable));
+    public static <T> RunnableTask commonCallableTask(ExceptionCallable<T> callable) {
+        return new RunnableTask(COMMON_TASK, taskId -> ignoreException(callable, TaskFactory::logError));
     }
 
-    public static <T> RunnableTask callableTask(String id, Callable<T> callable) {
-        return new RunnableTask(id, taskId -> wrapException(callable));
+    public static <T> RunnableTask callableTask(String id, ExceptionCallable<T> callable) {
+        return new RunnableTask(id, taskId -> ignoreException(callable, TaskFactory::logError));
     }
 
     public static RunnableTask uniqueRunnableTask(Consumer<String> consumer) {
@@ -73,5 +82,9 @@ public class TaskFactory {
 
     public static <T> CallableTask<T> callableTask(String id, Function<String, T> function) {
         return new CallableTask<>(id, function);
+    }
+
+    private static void logError(Throwable error) {
+        getLogger().error(error.getMessage(), error);
     }
 }

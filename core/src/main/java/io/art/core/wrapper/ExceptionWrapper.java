@@ -62,6 +62,15 @@ public class ExceptionWrapper {
         }
     }
 
+    public static <T> T ignoreException(ExceptionCallable<T> action, Consumer<Throwable> onException) {
+        try {
+            return action.call();
+        } catch (Throwable throwable) {
+            onException.accept(throwable);
+            return null;
+        }
+    }
+
     public static void wrapException(Runnable action, ExceptionFactory<?> exceptionFactory) {
         try {
             action.run();
@@ -75,6 +84,15 @@ public class ExceptionWrapper {
             return action.call();
         } catch (Throwable throwable) {
             throw exceptionFactory.create(throwable);
+        }
+    }
+
+    public static <T> T wrapException(Callable<T> action, Consumer<Throwable> exceptionFactory) {
+        try {
+            return action.call();
+        } catch (Throwable throwable) {
+            exceptionFactory.accept(throwable);
+            return null;
         }
     }
 }

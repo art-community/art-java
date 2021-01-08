@@ -16,10 +16,15 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.module;
 
 import io.art.core.module.*;
+import io.art.core.source.*;
+import io.art.scheduler.executor.deferred.*;
+import io.art.scheduler.executor.periodic.*;
 import lombok.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.ConfigurationKeys.*;
+import java.time.*;
 
 @Getter
 public class SchedulerModuleConfiguration implements ModuleConfiguration {
@@ -29,9 +34,16 @@ public class SchedulerModuleConfiguration implements ModuleConfiguration {
     private final PeriodicExecutor periodicExecutor = new PeriodicExecutor(DeferredExecutorImplementation.builder()
             .withExceptionHandler(new DeferredExecutorExceptionHandler())
             .build());
+    private Duration refreshDuration;
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<SchedulerModuleConfiguration, Configurator> {
         private final SchedulerModuleConfiguration configuration;
+
+        @Override
+        public Configurator from(ConfigurationSource source) {
+            configuration.refreshDuration = source.getDuration(CONFIGURATION_REFRESH_DURATION);
+            return this;
+        }
     }
 }

@@ -16,20 +16,21 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.executor.periodic;
 
 import lombok.*;
+import java.util.concurrent.*;
+import java.util.function.*;
 
-public interface SchedulerModuleExceptions {
-    String EXCEPTION_OCCURRED_DURING = "Exception occurred during ''{0}'': {1}";
+@AllArgsConstructor
+class NotifiedCallable<T> implements Callable<T> {
+    private final Callable<T> executionCallable;
+    private final Consumer<T> notification;
 
-    @Getter
-    @AllArgsConstructor
-    enum ExceptionEvent {
-        TASK_EXECUTION("task execution"),
-        TASK_OBSERVING("task observing"),
-        POOL_SHUTDOWN("pool shutdown");
-
-        private final String message;
+    @Override
+    public T call() throws Exception {
+        T result = executionCallable.call();
+        notification.accept(result);
+        return result;
     }
 }

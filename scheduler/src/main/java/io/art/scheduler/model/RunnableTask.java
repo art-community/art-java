@@ -16,8 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.model;
 
-public interface SchedulerModuleConstants {
-    String COMMON_TASK = "COMMON_TASK";
+import lombok.*;
+import java.util.function.*;
+
+@Getter
+@AllArgsConstructor
+public class RunnableTask {
+    private final String id;
+    private final Consumer<String> runnable;
 }

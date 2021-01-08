@@ -16,21 +16,23 @@
  * limitations under the License.
  */
 
-package io.art.task.deferred.executor;
+package io.art.scheduler.executor.periodic;
 
 
+import io.art.scheduler.executor.deferred.*;
+import io.art.scheduler.model.*;
 import lombok.*;
+import static io.art.core.factory.MapFactory.concurrentMap;
 import static java.time.LocalDateTime.*;
 import static java.util.Objects.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.CollectionsFactory.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 
 @RequiredArgsConstructor
 public class PeriodicExecutor {
-    private final Map<String, Future<?>> executingTasks = concurrentHashMap();
+    private final Map<String, Future<?>> executingTasks = concurrentMap();
     private final DeferredExecutor deferredExecutor;
 
     public <EventResultType> Future<? extends EventResultType> submitPeriodic(CallableTask<EventResultType> task, LocalDateTime startTime, Duration duration) {
@@ -66,7 +68,7 @@ public class PeriodicExecutor {
     }
 
     public boolean cancelPeriodicTask(String taskId) {
-        return removePeriodicTask(taskId).map(future -> future.cancel(true)).orElse(false);
+        return removePeriodicTask(taskId).map(future -> future.cancel(false)).orElse(false);
     }
 
     public Optional<Future<?>> removePeriodicTask(String taskId) {

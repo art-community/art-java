@@ -146,7 +146,6 @@ public class ServingRsocket implements RSocket {
                 .dematerialize()
                 .subscriberContext(context -> context
                         .putNonNull(REQUESTER_RSOCKET_KEY, requesterSocket)
-                        .putNonNull(SPECIFICATION_KEY, specification)
                         .putNonNull(SETUP_PAYLOAD_KEY, setupPayload)));
     }
 }

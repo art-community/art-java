@@ -41,6 +41,9 @@ public interface ConfigurationSource {
 
     boolean has(String path);
 
+    default void refresh() {
+
+    }
 
     default Boolean getBool(String path) {
         return let(getNested(path), NestedConfiguration::asBool);
