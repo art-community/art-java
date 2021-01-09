@@ -39,7 +39,7 @@ import java.util.*;
 @UtilityClass
 public class YamlWriter {
     public static byte[] writeYamlToBytes(Value value) {
-        ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
+        ByteBuffer byteBuffer = allocate(DEFAULT_BUFFER_SIZE);
         try {
             try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
                 writeYaml(value, outputStream);

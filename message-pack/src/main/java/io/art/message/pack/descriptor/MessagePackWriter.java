@@ -49,7 +49,7 @@ public class MessagePackWriter {
     }
 
     public static byte[] writeMessagePackToBytes(Value value) {
-        ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
+        ByteBuffer byteBuffer = allocate(DEFAULT_BUFFER_SIZE);
         try {
             try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
                 writeMessagePack(value, outputStream);

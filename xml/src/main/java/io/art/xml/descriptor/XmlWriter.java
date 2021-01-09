@@ -50,7 +50,7 @@ public class XmlWriter {
     private static final Logger logger = logger(XmlWriter.class);
 
     public static byte[] writeXmlToBytes(XmlEntity entity) throws XmlException {
-        ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
+        ByteBuffer byteBuffer = allocate(DEFAULT_BUFFER_SIZE);
         try {
             try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
                 writeXml(entity, outputStream);
