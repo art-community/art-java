@@ -41,7 +41,7 @@ public class ValueModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator override(ValueModuleConfiguration configuration) {
-            apply(configuration.registry, registry -> this.configuration.registry = registry);
+            apply(configuration.getRegistry(), registry -> this.configuration.registry = registry);
             return this;
         }
     }

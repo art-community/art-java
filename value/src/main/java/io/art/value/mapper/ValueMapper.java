@@ -33,11 +33,11 @@ public class ValueMapper<T, V extends Value> {
         return new ValueMapper<>(fromModel, toModel);
     }
 
-    public T map(V value) {
+    public T toModel(V value) {
         return toModel.map(value);
     }
 
-    public V map(T model) {
+    public V fromModel(T model) {
         return fromModel.map(model);
     }
 }

@@ -41,10 +41,14 @@ public class ValueModule implements StatelessModule<ValueModuleConfiguration, Co
     }
 
     public static <T> Value value(Type type, T model) {
-        return valueModule().configuration().getMapper(type).map(model);
+        return valueModule().configuration().getMapper(type).fromModel(model);
     }
 
-    public static <T> T model(Type type, Value model) {
-        return cast(valueModule().configuration().getMapper(type).map(model));
+    public static <T> T model(Class<T> type, Value value) {
+        return cast(valueModule().configuration().getMapper(type).toModel(cast(value)));
+    }
+
+    public static <T> T model(Type type, Value value) {
+        return cast(valueModule().configuration().getMapper(type).toModel(cast(value)));
     }
 }
