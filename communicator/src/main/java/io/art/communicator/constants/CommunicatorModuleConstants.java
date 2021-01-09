@@ -19,26 +19,32 @@
 package io.art.communicator.constants;
 
 import reactor.core.scheduler.*;
-import static io.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
-import static java.lang.Short.MAX_VALUE;
-import static reactor.core.scheduler.Schedulers.newBoundedElastic;
+import static io.art.core.constants.ThreadConstants.*;
+import static java.lang.Short.*;
+import static reactor.core.scheduler.Schedulers.*;
 
 public interface CommunicatorModuleConstants {
     interface Defaults {
-        Scheduler DEFAULT_COMMUNICATOR_SCHEDULER = newBoundedElastic(DEFAULT_THREAD_POOL_SIZE, MAX_VALUE, "communicator");
+        Scheduler DEFAULT_COMMUNICATOR_SCHEDULER = newBoundedElastic(DEFAULT_THREAD_POOL_SIZE, Integer.MAX_VALUE, "communicator");
     }
 
     interface ExceptionMessages {
         String COMMUNICATOR_WAS_NOT_REGISTERED = "Communicator with {0} was not registered";
     }
 
-    interface ConfigurationKeys {
-        String COMMUNICATOR_SECTION = "communicator";
-        String TARGETS_KEY = "targets";
-        String LOGGING_KEY = "logging";
+    interface LoggingMessages {
+       String COMMUNICATOR_REGISTRATION_MESSAGE = "Registered communicator: ''{0}'' with actions: {1}";
     }
 
-    interface CommunicationProtocol {
+    interface ConfigurationKeys {
+        String COMMUNICATOR_SECTION = "communicator";
+        String PROXIES_SECTION = "proxies";
+        String ACTIONS_SECTION = "actions";
+        String LOGGING_KEY = "logging";
+        String CONNECTORS_KEY = "connectors";
+    }
+
+    interface CommunicatorProtocol {
         String name();
     }
 }

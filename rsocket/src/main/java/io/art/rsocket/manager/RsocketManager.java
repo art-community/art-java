@@ -19,7 +19,7 @@
 package io.art.rsocket.manager;
 
 
-import io.art.communicator.specification.*;
+import io.art.communicator.action.*;
 import io.art.rsocket.server.*;
 import lombok.*;
 import lombok.experimental.*;
@@ -44,7 +44,7 @@ public class RsocketManager {
                 .getRegistry()
                 .getByProtocol(RSOCKET)
                 .values()
-                .forEach(proxy -> proxy.getSpecifications().forEach(CommunicatorSpecification::initialize));
+                .forEach(proxy -> proxy.getActions().values().forEach(CommunicatorAction::initialize));
     }
 
     public void disposeCommunicators() {
@@ -52,7 +52,7 @@ public class RsocketManager {
                 .getRegistry()
                 .getByProtocol(RSOCKET)
                 .values()
-                .forEach(proxy -> proxy.getSpecifications().forEach(CommunicatorSpecification::dispose));
+                .forEach(proxy -> proxy.getActions().values().forEach(CommunicatorAction::dispose));
     }
 
     public void initializeServer() {

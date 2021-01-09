@@ -28,10 +28,16 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class ModuleModelConfigurator {
     private final String moduleId;
+    private final ValueModelConfigurator value = new ValueModelConfigurator();
     private final ConfiguratorModelConfigurator configurator = new ConfiguratorModelConfigurator();
     private final ServerModelConfigurator server = new ServerModelConfigurator();
     private final CommunicatorModelConfigurator communicator = new CommunicatorModelConfigurator();
     private Runnable onLoad = emptyRunnable();
+
+    public ModuleModelConfigurator value(UnaryOperator<ValueModelConfigurator> value) {
+        value.apply(this.value);
+        return this;
+    }
 
     public ModuleModelConfigurator serve(UnaryOperator<ServerModelConfigurator> server) {
         server.apply(this.server);
@@ -60,6 +66,7 @@ public class ModuleModelConfigurator {
     public ModuleModel configure() {
         return ModuleModel.builder()
                 .mainModuleId(moduleId)
+                .valueModel(value.configure())
                 .configuratorModel(configurator.configure())
                 .serverModel(server.configure())
                 .communicatorModel(communicator.configure())

@@ -1,19 +1,15 @@
 package io.art.core.threadlocal;
 
-import io.art.core.lazy.LazyValue;
-import lombok.RequiredArgsConstructor;
-
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import static java.util.Objects.isNull;
+import lombok.*;
+import static java.util.Objects.*;
+import java.util.function.*;
 
 @RequiredArgsConstructor
 public class ThreadLocalValue<T> {
     private final ThreadLocal<T> valueHolder = new ThreadLocal<>();
     private final Supplier<T> factory;
 
-    public T get(){
+    public T get() {
         T value = valueHolder.get();
         if (isNull(value)) valueHolder.set(value = factory.get());
         return value;
@@ -32,8 +28,11 @@ public class ThreadLocalValue<T> {
         return valueHolder.get() != null;
     }
 
+    public void dispose() {
+        valueHolder.set(null);
+    }
+
     public static <T> ThreadLocalValue<T> threadLocal(Supplier<T> factory) {
         return new ThreadLocalValue<>(factory);
     }
-
 }

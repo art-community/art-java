@@ -18,20 +18,25 @@
 
 package io.art.model.implementation.communicator;
 
-import io.art.communicator.specification.CommunicatorSpecification.*;
+import io.art.communicator.action.CommunicatorAction.*;
+import io.art.core.model.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.*;
 import java.util.function.*;
 
 public interface CommunicatorModel {
     String getId();
 
+    String getTargetServiceId();
+
+    String getTargetMethodId();
+
     Class<?> getProxyClass();
 
-    CommunicationProtocol getProtocol();
+    CommunicatorProtocol getProtocol();
 
-    Function<CommunicatorSpecificationBuilder, CommunicatorSpecificationBuilder> getDecorator();
+    Function<CommunicatorActionBuilder, CommunicatorActionBuilder> getDecorator();
 
-    default CommunicatorSpecificationBuilder implement(CommunicatorSpecificationBuilder builder) {
+    default CommunicatorActionBuilder implement(CommunicatorActionBuilder builder) {
         return getDecorator().apply(builder);
     }
 }

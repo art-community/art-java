@@ -16,12 +16,24 @@
  * limitations under the License.
  */
 
-package io.art.communicator.implementation;
+package io.art.communicator.registry;
 
-import io.art.core.managed.*;
-import io.art.value.immutable.Value;
-import reactor.core.publisher.*;
+import io.art.communicator.action.*;
+import io.art.core.annotation.*;
+import io.art.core.collection.*;
+import static io.art.core.factory.MapFactory.*;
+import java.util.*;
 
-public interface CommunicatorImplementation extends Managed {
-    Flux<Value> communicate(Flux<Value> input);
+@UsedByGenerator
+public class CommunicatorActionRegistry {
+    private final Map<String, CommunicatorAction> actions = map();
+
+    public ImmutableMap<String, CommunicatorAction> get() {
+        return immutableMapOf(actions);
+    }
+
+    public CommunicatorAction register(String id, CommunicatorAction action) {
+        actions.put(id, action);
+        return action;
+    }
 }

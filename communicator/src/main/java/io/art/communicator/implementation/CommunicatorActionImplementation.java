@@ -16,23 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.server.specification;
+package io.art.communicator.implementation;
 
-import io.art.core.annotation.*;
-import io.art.core.collection.*;
-import lombok.*;
-import static io.art.core.factory.MapFactory.*;
-import java.util.*;
+import io.art.core.managed.*;
+import io.art.value.immutable.Value;
+import reactor.core.publisher.*;
 
-@Getter
-@Builder
-@UsedByGenerator
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ServiceSpecification {
-    @Singular("method")
-    private final Map<String, ServiceMethodSpecification> methods;
-
-    public ImmutableMap<String, ServiceMethodSpecification> getMethods() {
-        return immutableMapOf(methods);
-    }
+public interface CommunicatorActionImplementation extends Managed {
+    Flux<Value> communicate(Flux<Value> input);
 }

@@ -34,6 +34,7 @@ import io.art.value.mapper.*;
 import io.art.value.mapping.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.ArrayFactory.*;
@@ -116,9 +117,10 @@ public class ServiceMethodSpecification implements Managed {
     }
 
     public Flux<Value> serve(Flux<Value> input) {
-        return defer(() -> deferredServe(input)).subscribeOn(methodConfiguration.get()
+        Scheduler scheduler = methodConfiguration.get()
                 .map(ServiceMethodConfiguration::getScheduler)
-                .orElseGet(moduleConfiguration.get()::getScheduler));
+                .orElseGet(moduleConfiguration.get()::getScheduler);
+        return defer(() -> deferredServe(input)).subscribeOn(scheduler);
     }
 
     private Flux<Value> deferredServe(Flux<Value> input) {
@@ -174,7 +176,7 @@ public class ServiceMethodSpecification implements Managed {
         }
         switch (inputMode) {
             case BLOCKING:
-                return Flux::blockFirst;
+                return input -> input.next().block();
             case MONO:
                 return Flux::next;
             case FLUX:
@@ -209,7 +211,7 @@ public class ServiceMethodSpecification implements Managed {
     }
 
     private Optional<ServiceConfiguration> serviceConfiguration() {
-        return ofNullable(serviceSpecification.get().getConfiguration());
+        return ofNullable(moduleConfiguration.get().getConfigurations().get(serviceId));
     }
 
     private Optional<ServiceMethodConfiguration> methodConfiguration() {

@@ -32,6 +32,11 @@ import java.util.function.*;
 public class CommunicatorModelConfigurator {
     private final ImmutableSet.Builder<RsocketCommunicatorModelConfigurator> rsocketCommunicators = immutableSetBuilder();
 
+    public final CommunicatorModelConfigurator rsocket(Class<?> proxyClass) {
+        rsocketCommunicators.add(new RsocketCommunicatorModelConfigurator(proxyClass.getSimpleName(), proxyClass, identity()));
+        return this;
+    }
+
     @SafeVarargs
     public final CommunicatorModelConfigurator rsocket(Class<?> proxyClass, UnaryOperator<RsocketCommunicatorModelConfigurator>... configurators) {
         streamOf(configurators)

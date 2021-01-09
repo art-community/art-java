@@ -25,7 +25,6 @@ import io.art.rsocket.constants.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
-import io.rsocket.plugins.*;
 import lombok.*;
 import reactor.netty.http.server.*;
 import reactor.netty.tcp.*;
@@ -39,7 +38,6 @@ import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
-import java.util.function.*;
 
 @Getter
 public class RsocketServerConfiguration {
@@ -54,7 +52,6 @@ public class RsocketServerConfiguration {
     private PayloadDecoder payloadDecoder;
     private int maxInboundPayloadSize;
     private RsocketModuleConstants.TransportMode transport;
-    private Consumer<InterceptorRegistry> interceptorConfigurator;
     private DataFormat defaultDataFormat;
     private DataFormat defaultMetaDataFormat;
 
