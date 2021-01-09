@@ -209,7 +209,7 @@ public class ServiceMethodSpecification implements Managed {
     }
 
     private Optional<ServiceConfiguration> serviceConfiguration() {
-        return ofNullable(serviceSpecification.get().getConfiguration());
+        return ofNullable(moduleConfiguration.get().getConfigurations().get(serviceId));
     }
 
     private Optional<ServiceMethodConfiguration> methodConfiguration() {

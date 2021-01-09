@@ -18,6 +18,7 @@
 
 package io.art.communicator.configuration;
 
+import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
 import reactor.core.scheduler.*;
@@ -27,13 +28,16 @@ import static io.art.core.checker.NullityChecker.*;
 
 @Getter
 @AllArgsConstructor
-public class CommunicatorConfiguration {
+public class CommunicatorProxyConfiguration {
     private final boolean logging;
     private final Scheduler scheduler;
+    private final ImmutableMap<String, CommunicatorActionConfiguration> actions;
 
-    public static CommunicatorConfiguration from(ConfigurationSource source) {
+
+    public static CommunicatorProxyConfiguration from(ConfigurationSource source) {
         boolean logging = orElse(source.getBool(LOGGING_KEY), false);
         Scheduler scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
-        return new CommunicatorConfiguration(logging, scheduler);
+        ImmutableMap<String, CommunicatorActionConfiguration> actions = source.getNestedMap(ACTIONS_SECTION, CommunicatorActionConfiguration::from);
+        return new CommunicatorProxyConfiguration(logging, scheduler, actions);
     }
 }

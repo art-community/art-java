@@ -188,7 +188,12 @@ public interface RsocketModuleConstants {
         METADATA_PUSH;
     }
 
-    enum RsocketProtocol implements CommunicationProtocol {
-        RSOCKET
+    @Getter
+    @AllArgsConstructor
+    enum RsocketProtocol implements CommunicatorProtocol {
+        RSOCKET("rsocket");
+
+        String protocol;
+
     }
 }

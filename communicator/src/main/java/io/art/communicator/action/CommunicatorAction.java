@@ -67,8 +67,6 @@ public class CommunicatorAction implements Managed {
     @Getter
     private final MethodProcessingMode outputMode;
 
-    private final CommunicatorActionImplementation implementation;
-
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
 
@@ -82,8 +80,10 @@ public class CommunicatorAction implements Managed {
     private final Function<Flux<Object>, Object> adoptOutput = adoptOutput();
 
     private final ManagedValue<CommunicatorModuleConfiguration> moduleConfiguration = managed(this::moduleConfiguration);
+    private final ManagedValue<Optional<CommunicatorProxyConfiguration>> communicatorConfiguration = managed(this::communicatorConfiguration);
 
-    private final ManagedValue<Optional<CommunicatorConfiguration>> communicatorConfiguration = managed(this::communicatorConfiguration);
+
+    private final CommunicatorActionImplementation implementation;
 
     @Override
     public void initialize() {
@@ -106,7 +106,7 @@ public class CommunicatorAction implements Managed {
     public <T> T communicate(Object input) {
         return cast(mapOutput(defer(() -> deferredCommunicate(input))
                 .subscribeOn(communicatorConfiguration.get()
-                        .map(CommunicatorConfiguration::getScheduler)
+                        .map(CommunicatorProxyConfiguration::getScheduler)
                         .orElseGet(moduleConfiguration.get()::getScheduler))));
     }
 
@@ -120,17 +120,17 @@ public class CommunicatorAction implements Managed {
     }
 
     private Flux<Value> mapInput(Object input) {
-        Flux<Object> inputFlux = getAdoptInput().apply(input).filter(Objects::nonNull);
+        Flux<Object> inputFlux = getAdoptInput().apply(input);
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
-            inputFlux = inputFlux.transformDeferred(decorator);
+            inputFlux = inputFlux.transform(decorator);
         }
-        return cast(inputFlux.map(value -> inputMapper.map(cast(value))));
+        return inputFlux.map(value -> inputMapper.map(cast(value)));
     }
 
     private Object mapOutput(Flux<Value> output) {
-        Flux<Object> mappedOutput = output.filter(Objects::nonNull).map(value -> outputMapper.map(cast(value)));
+        Flux<Object> mappedOutput = output.map(value -> outputMapper.map(cast(value)));
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
-            mappedOutput = mappedOutput.transformDeferred(decorator);
+            mappedOutput = mappedOutput.transform(decorator);
         }
         return getAdoptOutput().apply(mappedOutput);
     }
@@ -138,7 +138,7 @@ public class CommunicatorAction implements Managed {
     private Flux<Value> mapException(Throwable exception) {
         Flux<Object> errorOutput = error(exception);
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
-            errorOutput = errorOutput.transformDeferred(decorator);
+            errorOutput = errorOutput.transform(decorator);
         }
         return cast(errorOutput);
     }
@@ -162,7 +162,7 @@ public class CommunicatorAction implements Managed {
             case BLOCKING:
                 return Flux::blockFirst;
             case MONO:
-                return output -> orNull(output, checking -> checking == Flux.empty(), Flux::last);
+                return Flux::next;
             case FLUX:
                 return output -> output;
             default:
@@ -170,7 +170,7 @@ public class CommunicatorAction implements Managed {
         }
     }
 
-    private Optional<CommunicatorConfiguration> communicatorConfiguration() {
+    private Optional<CommunicatorProxyConfiguration> communicatorConfiguration() {
         return ofNullable(moduleConfiguration.get().getConfigurations().get(communicatorId));
     }
 

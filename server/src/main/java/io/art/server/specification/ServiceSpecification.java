@@ -20,7 +20,6 @@ package io.art.server.specification;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.server.model.*;
 import lombok.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;
@@ -30,10 +29,6 @@ import java.util.*;
 @UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceSpecification {
-    @EqualsAndHashCode.Include
-    private final String serviceId;
-    private final ServiceConfiguration configuration;
-
     @Singular("method")
     private final Map<String, ServiceMethodSpecification> methods;
 

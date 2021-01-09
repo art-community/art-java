@@ -32,8 +32,8 @@ public class ServiceConfiguration {
     private final boolean deactivated;
     private final boolean logging;
     private final boolean validating;
-    private final ImmutableMap<String, ServiceMethodConfiguration> methods;
     private final Scheduler scheduler;
+    private final ImmutableMap<String, ServiceMethodConfiguration> methods;
 
     public static ServiceConfiguration from(ConfigurationSource source) {
         boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);

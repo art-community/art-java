@@ -27,7 +27,7 @@ public interface CommunicatorModel {
 
     Class<?> getProxyClass();
 
-    CommunicationProtocol getProtocol();
+    CommunicatorProtocol getProtocol();
 
     Function<CommunicatorActionBuilder, CommunicatorActionBuilder> getDecorator();
 

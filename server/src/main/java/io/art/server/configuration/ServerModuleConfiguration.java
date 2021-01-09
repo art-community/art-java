@@ -38,8 +38,8 @@ import java.util.function.*;
 @Getter
 public class ServerModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, ServiceConfiguration> configurations = emptyImmutableMap();
-    private Scheduler scheduler;
     private ServiceSpecificationRegistry registry = new ServiceSpecificationRegistry();
+    private Scheduler scheduler;
 
     public boolean isLogging(ServiceMethodIdentifier identifier) {
         boolean service = checkService(identifier, ServiceConfiguration::isLogging, true);

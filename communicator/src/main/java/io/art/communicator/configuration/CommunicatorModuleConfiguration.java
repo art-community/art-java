@@ -27,16 +27,15 @@ import reactor.core.scheduler.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.checker.NullityChecker.apply;
-import static io.art.core.checker.NullityChecker.let;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static java.util.Optional.*;
 
 @Getter
 public class CommunicatorModuleConfiguration implements ModuleConfiguration {
-    private ImmutableMap<String, CommunicatorConfiguration> configurations = emptyImmutableMap();
-    private Scheduler scheduler;
+    private ImmutableMap<String, CommunicatorProxyConfiguration> configurations = emptyImmutableMap();
     private CommunicatorProxyRegistry registry = new CommunicatorProxyRegistry();
+    private Scheduler scheduler;
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<CommunicatorModuleConfiguration, Configurator> {
@@ -46,7 +45,7 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         public Configurator from(ConfigurationSource source) {
             configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
             configuration.configurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))
-                    .map(server -> server.getNestedMap(TARGETS_KEY, CommunicatorConfiguration::from))
+                    .map(server -> server.getNestedMap(TARGETS_KEY, CommunicatorProxyConfiguration::from))
                     .orElse(emptyImmutableMap());
             return this;
         }

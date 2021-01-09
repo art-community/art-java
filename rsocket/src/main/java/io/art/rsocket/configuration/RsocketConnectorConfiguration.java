@@ -25,7 +25,6 @@ import io.art.rsocket.model.*;
 import io.art.rsocket.model.RsocketSetupPayload.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
-import io.rsocket.plugins.*;
 import lombok.*;
 import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
@@ -45,7 +44,6 @@ import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.text.MessageFormat.*;
 import static reactor.netty.http.client.HttpClient.*;
-import java.util.function.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -53,7 +51,6 @@ public class RsocketConnectorConfiguration {
     private PayloadDecoder payloadDecoder;
     private int maxInboundPayloadSize;
     private int fragment;
-    private Consumer<InterceptorRegistry> interceptorConfigurator;
     private RsocketKeepAliveConfiguration keepAlive;
     private Resume resume;
     private Retry retry;

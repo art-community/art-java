@@ -31,6 +31,6 @@ public class RsocketCommunicatorModel implements CommunicatorModel {
     private final Class<?> proxyClass;
     private final String targetServiceId;
     private final String targetMethodId;
-    private final CommunicationProtocol protocol = RSOCKET;
+    private final CommunicatorProtocol protocol = RSOCKET;
     private final Function<CommunicatorActionBuilder, CommunicatorActionBuilder> decorator;
 }

@@ -21,9 +21,12 @@ package io.art.value.module;
 import io.art.core.module.*;
 import io.art.value.configuration.*;
 import io.art.value.configuration.ValueModuleConfiguration.*;
+import io.art.value.immutable.Value;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.context.Context.*;
 import static lombok.AccessLevel.*;
+import java.lang.reflect.*;
 
 @Getter
 public class ValueModule implements StatelessModule<ValueModuleConfiguration, Configurator> {
@@ -35,5 +38,13 @@ public class ValueModule implements StatelessModule<ValueModuleConfiguration, Co
 
     public static StatelessModuleProxy<ValueModuleConfiguration> valueModule() {
         return getValueModule();
+    }
+
+    public static <T> Value value(Type type, T model) {
+        return valueModule().configuration().getMapper(type).map(model);
+    }
+
+    public static <T> T model(Type type, Value model) {
+        return cast(valueModule().configuration().getMapper(type).map(model));
     }
 }

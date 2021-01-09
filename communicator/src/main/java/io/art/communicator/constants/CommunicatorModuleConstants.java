@@ -19,9 +19,9 @@
 package io.art.communicator.constants;
 
 import reactor.core.scheduler.*;
-import static io.art.core.constants.ThreadConstants.DEFAULT_THREAD_POOL_SIZE;
-import static java.lang.Short.MAX_VALUE;
-import static reactor.core.scheduler.Schedulers.newBoundedElastic;
+import static io.art.core.constants.ThreadConstants.*;
+import static java.lang.Short.*;
+import static reactor.core.scheduler.Schedulers.*;
 
 public interface CommunicatorModuleConstants {
     interface Defaults {
@@ -34,11 +34,14 @@ public interface CommunicatorModuleConstants {
 
     interface ConfigurationKeys {
         String COMMUNICATOR_SECTION = "communicator";
+        String PROXIES_SECTION = "proxies";
+        String ACTIONS_SECTION = "actions";
         String TARGETS_KEY = "targets";
         String LOGGING_KEY = "logging";
+        String CONNECTORS_KEY = "connectors";
     }
 
-    interface CommunicationProtocol {
+    interface CommunicatorProtocol {
         String name();
     }
 }

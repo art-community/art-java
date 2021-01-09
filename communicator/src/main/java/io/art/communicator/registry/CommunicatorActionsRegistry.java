@@ -25,15 +25,15 @@ import static io.art.core.factory.ArrayFactory.*;
 import java.util.*;
 
 @UsedByGenerator
-public class CommunicatorSpecificationRegistry  {
-    private final List<CommunicatorAction> specifications = dynamicArray();
+public class CommunicatorActionsRegistry {
+    private final List<CommunicatorAction> actions = dynamicArray();
 
     public ImmutableArray<CommunicatorAction> get() {
-        return immutableArrayOf(specifications);
+        return immutableArrayOf(actions);
     }
 
-    public CommunicatorAction register(CommunicatorAction specification) {
-        specifications.add(specification);
-        return specification;
+    public CommunicatorAction register(CommunicatorAction action) {
+        actions.add(action);
+        return action;
     }
 }

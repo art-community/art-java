@@ -24,7 +24,6 @@ import io.art.communicator.proxy.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.MapFactory.*;
 import static java.util.Optional.*;
@@ -42,7 +41,7 @@ public class CommunicatorProxyRegistry {
         return proxies.keySet();
     }
 
-    public ImmutableMap<String, CommunicatorProxy> getByProtocol(CommunicationProtocol protocol) {
+    public ImmutableMap<String, CommunicatorProxy> getByProtocol(CommunicatorProtocol protocol) {
         return proxies
                 .entrySet()
                 .stream()
