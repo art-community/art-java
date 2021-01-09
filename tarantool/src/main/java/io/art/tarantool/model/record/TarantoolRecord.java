@@ -2,8 +2,6 @@ package io.art.tarantool.model.record;
 
 import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
 
-import javax.annotation.Nullable;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;

@@ -3,7 +3,6 @@ package io.art.tarantool.model.record;
 import io.art.tarantool.exception.TarantoolDaoException;
 import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
 import io.art.tarantool.exception.TarantoolTransactionException;
-import lombok.experimental.Delegate;
 
 import java.util.List;
 import java.util.Optional;

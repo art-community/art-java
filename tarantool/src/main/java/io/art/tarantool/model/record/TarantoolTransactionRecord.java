@@ -5,11 +5,8 @@ import io.art.tarantool.model.transaction.dependency.TransactionFieldDependency;
 import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
 import io.art.tarantool.model.transaction.dependency.TransactionTupleDependency;
 import io.art.tarantool.exception.TarantoolTransactionException;
-import lombok.experimental.Delegate;
 
-import javax.annotation.Nullable;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
