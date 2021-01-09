@@ -20,6 +20,7 @@ package io.art.communicator.configuration;
 
 import io.art.communicator.registry.*;
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
@@ -27,16 +28,26 @@ import reactor.core.scheduler.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.checker.NullityChecker.apply;
-import static io.art.core.checker.NullityChecker.let;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static java.util.Optional.*;
+import java.util.*;
 
 @Getter
 public class CommunicatorModuleConfiguration implements ModuleConfiguration {
-    private ImmutableMap<String, CommunicatorConfiguration> configurations = emptyImmutableMap();
-    private Scheduler scheduler;
+    private ImmutableMap<String, CommunicatorProxyConfiguration> configurations = emptyImmutableMap();
     private CommunicatorProxyRegistry registry = new CommunicatorProxyRegistry();
+    private Scheduler scheduler;
+
+    public Optional<String> findConnectorId(String protocol, CommunicatorActionIdentifier id) {
+        Optional<String> connectorId = ofNullable(configurations.get(id.getCommunicatorId())).map(configuration -> configuration.getConnectors().get(protocol));
+        if (connectorId.isPresent()) return connectorId;
+        return getActionConfiguration(id).map(configuration -> configuration.getConnectors().get(protocol));
+    }
+
+    public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
+        return ofNullable(configurations.get(id.getCommunicatorId())).map(configuration -> configuration.getActions().get(id.getActionId()));
+    }
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<CommunicatorModuleConfiguration, Configurator> {
@@ -46,7 +57,7 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         public Configurator from(ConfigurationSource source) {
             configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
             configuration.configurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))
-                    .map(server -> server.getNestedMap(TARGETS_KEY, CommunicatorConfiguration::from))
+                    .map(server -> server.getNestedMap(PROXIES_SECTION, CommunicatorProxyConfiguration::from))
                     .orElse(emptyImmutableMap());
             return this;
         }

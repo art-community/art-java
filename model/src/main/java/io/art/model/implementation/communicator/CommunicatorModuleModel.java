@@ -18,10 +18,10 @@
 
 package io.art.model.implementation.communicator;
 
-import io.art.communicator.specification.CommunicatorSpecification.*;
+import io.art.communicator.action.CommunicatorAction.*;
 import io.art.core.collection.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.checker.NullityChecker.let;
 import static io.art.core.collection.ImmutableMap.*;
 import java.util.*;
 
@@ -30,7 +30,7 @@ import java.util.*;
 public class CommunicatorModuleModel {
     private final ImmutableMap<String, RsocketCommunicatorModel> rsocketCommunicators;
 
-    public CommunicatorSpecificationBuilder implement(String id, CommunicatorSpecificationBuilder current) {
+    public CommunicatorActionBuilder implement(String id, CommunicatorActionBuilder current) {
         return let(getCommunicators().get(id), communicator -> communicator.implement(current), current);
     }
 

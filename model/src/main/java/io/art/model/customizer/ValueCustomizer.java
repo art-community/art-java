@@ -18,13 +18,33 @@
 
 package io.art.model.customizer;
 
+import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import io.art.value.configuration.*;
+import io.art.value.immutable.Value;
+import io.art.value.mapper.*;
+import io.art.value.registry.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.factory.MapFactory.*;
+import static io.art.value.mapper.ValueMapper.*;
+import static java.util.Map.*;
+import java.lang.reflect.*;
+import java.util.*;
 
+@UsedByGenerator
 public class ValueCustomizer {
     @Getter
     private final Custom configuration = new Custom();
 
+    public ValueCustomizer registry(ValueMapperRegistry registry) {
+        configuration.registry = registry;
+        return this;
+    }
+
+    @Getter
     private static class Custom extends ValueModuleConfiguration {
+        private ValueMapperRegistry registry = new ValueMapperRegistry();
     }
 }

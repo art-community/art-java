@@ -5,5 +5,5 @@ public interface CompilerSuppressingWarnings {
     String NULLABLE_PROBLEMS = "NullableProblems";
     String UNSTABLE_API_USAGE = "UnstableApiUsage";
     String UNUSED_RETURN_VALUE = "UnusedReturnValue";
-    String UNCHECKED = "unchecked";
+    String CONSTANT_CONDITIONS =  "ConstantConditions";
 }

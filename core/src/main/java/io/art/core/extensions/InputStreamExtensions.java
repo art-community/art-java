@@ -42,7 +42,7 @@ public class InputStreamExtensions {
         if (bufferSize <= 0) {
             return EMPTY_BYTES;
         }
-        ByteBuffer buffer = allocateDirect(bufferSize);
+        ByteBuffer buffer = allocate(bufferSize);
         byte[] result = EMPTY_BYTES;
         try {
             ReadableByteChannel channel = newChannel(inputStream);

@@ -37,7 +37,6 @@ import static java.util.Objects.*;
 
 @Getter
 public class RsocketCommunicatorConfiguration {
-    private ImmutableMap<String, RsocketConnectorConfiguration> connectors;
     private boolean logging;
     private int fragmentationMtu;
     private Resume resume;
@@ -48,6 +47,7 @@ public class RsocketCommunicatorConfiguration {
     private DataFormat defaultMetaDataFormat;
     private ServiceMethodIdentifier defaultServiceMethod;
     private RsocketKeepAliveConfiguration keepAliveConfiguration;
+    private ImmutableMap<String, RsocketConnectorConfiguration> connectors;
 
     public boolean isLogging(String connectorId) {
         RsocketConnectorConfiguration configuration = connectors.get(connectorId);

@@ -82,6 +82,7 @@ public class ServingRsocket implements RSocket {
         if (nonNull(defaultServiceMethod)) {
             setupPayload = setupPayloadBuilder.serviceMethod(defaultServiceMethod).build();
             specification = initializeSpecification(defaultServiceMethod);
+            return;
         }
         throw new ImpossibleSituation();
     }

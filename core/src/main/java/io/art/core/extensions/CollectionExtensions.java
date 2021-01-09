@@ -19,13 +19,12 @@
 package io.art.core.extensions;
 
 import io.art.core.collection.*;
-import io.art.core.collector.*;
-import io.art.core.factory.*;
 import lombok.experimental.*;
-import static io.art.core.collector.SetCollector.setCollector;
+import static io.art.core.collector.SetCollector.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.factory.MapFactory.immutableMapOf;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
@@ -47,7 +46,7 @@ public final class CollectionExtensions {
         return value != null ? immutableArrayOf(action.apply(value)) : ImmutableArray.emptyImmutableArray();
     }
 
-    public static <K, V, R> ImmutableMap<K, V> orEmptyImmutableMap(R value, Function<R, ImmutableMap<K ,V>> action) {
+    public static <K, V, R> ImmutableMap<K, V> orEmptyImmutableMap(R value, Function<R, ImmutableMap<K, V>> action) {
         return value != null ? immutableMapOf(action.apply(value)) : ImmutableMap.emptyImmutableMap();
     }
 
@@ -97,17 +96,17 @@ public final class CollectionExtensions {
         return set;
     }
 
-    public static <T> List<T> combine(List<T> first, Collection<T> second) {
+    @SafeVarargs
+    public static <T> List<T> combineToList(Collection<T>... collections) {
         List<T> list = dynamicArrayOf();
-        list.addAll(first);
-        list.addAll(second);
+        stream(collections).forEach(list::addAll);
         return list;
     }
 
-    public static <T> Set<T> combine(Set<T> first, Collection<T> second) {
+    @SafeVarargs
+    public static <T> Set<T> combineToSet(Collection<T>... collections) {
         Set<T> set = setOf();
-        set.addAll(first);
-        set.addAll(second);
+        stream(collections).forEach(set::addAll);
         return set;
     }
 

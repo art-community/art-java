@@ -39,7 +39,7 @@ import java.util.*;
 @UtilityClass
 public class JsonWriter {
     public static byte[] writeJsonToBytes(Value value) {
-        ByteBuffer byteBuffer = allocateDirect(DEFAULT_BUFFER_SIZE);
+        ByteBuffer byteBuffer = allocate(DEFAULT_BUFFER_SIZE);
         try {
             try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(byteBuffer)) {
                 writeJson(value, outputStream);

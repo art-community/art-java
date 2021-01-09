@@ -69,7 +69,7 @@ public class FileExtensions {
         if (bufferSize <= 0) {
             return EMPTY_STRING;
         }
-        ByteBuffer buffer = allocateDirect(bufferSize);
+        ByteBuffer buffer = allocate(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
         CharsetDecoder decoder = context().configuration().getCharset().newDecoder();
         try (FileChannel fileChannel = open(path)) {
@@ -123,7 +123,7 @@ public class FileExtensions {
         if (bufferSize <= 0) {
             return EMPTY_STRING;
         }
-        ByteBuffer buffer = allocateDirect(bufferSize);
+        ByteBuffer buffer = allocate(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
         CharsetDecoder decoder = charset.newDecoder();
         try (FileChannel fileChannel = open(path)) {
@@ -160,7 +160,7 @@ public class FileExtensions {
         if (bufferSize <= 0) {
             return EMPTY_STRING;
         }
-        ByteBuffer buffer = allocateDirect(bufferSize);
+        ByteBuffer buffer = allocate(bufferSize);
         StringBuilder result = new StringBuilder(EMPTY_STRING);
         CharsetDecoder decoder = charset.newDecoder();
         try (FileChannel fileChannel = open(path)) {
@@ -204,7 +204,7 @@ public class FileExtensions {
         if (bufferSize <= 0) {
             return EMPTY_BYTES;
         }
-        ByteBuffer buffer = allocateDirect(bufferSize);
+        ByteBuffer buffer = allocate(bufferSize);
         byte[] result = EMPTY_BYTES;
         try (FileChannel fileChannel = open(path)) {
             do {

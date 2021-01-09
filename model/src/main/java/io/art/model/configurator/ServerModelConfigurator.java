@@ -30,6 +30,11 @@ import java.util.function.*;
 public class ServerModelConfigurator {
     private final ImmutableSet.Builder<RsocketServiceModelConfigurator> rsocketServices = immutableSetBuilder();
 
+    public final ServerModelConfigurator rsocket(Class<?> service) {
+        rsocketServices.add(new RsocketServiceModelConfigurator(service, service.getSimpleName(), CLASS));
+        return this;
+    }
+
     @SafeVarargs
     public final ServerModelConfigurator rsocket(Class<?> service, UnaryOperator<RsocketServiceModelConfigurator>... configurators) {
         streamOf(configurators)

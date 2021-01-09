@@ -1,11 +1,11 @@
 package io.art.communicator.proxy;
 
-import io.art.communicator.specification.*;
+import io.art.communicator.action.*;
 import io.art.core.collection.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.*;
 
 public interface CommunicatorProxy {
-    ImmutableArray<CommunicatorSpecification> getSpecifications();
+    ImmutableMap<String, CommunicatorAction> getActions();
 
-    CommunicationProtocol getProtocol();
+    CommunicatorProtocol getProtocol();
 }

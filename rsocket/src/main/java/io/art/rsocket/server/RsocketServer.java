@@ -33,7 +33,6 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.lazy.ManagedValue.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
@@ -99,7 +98,6 @@ public class RsocketServer implements Server {
     }
 
     private void configureInterceptors(RsocketServerConfiguration configuration, InterceptorRegistry registry) {
-        apply(configuration.getInterceptorConfigurator(), configurator -> configurator.accept(registry));
         registry
                 .forResponder(new RsocketServerLoggingInterceptor())
                 .forRequester(new RsocketServerLoggingInterceptor());
@@ -121,6 +119,6 @@ public class RsocketServer implements Server {
 
     private Mono<Void> onClose() {
         Mono<Void> onClose = channel.get().onClose();
-        return  onClose.doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
+        return onClose.doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
     }
 }
