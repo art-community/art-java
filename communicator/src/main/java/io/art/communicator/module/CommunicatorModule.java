@@ -20,15 +20,22 @@ package io.art.communicator.module;
 
 import io.art.communicator.configuration.*;
 import io.art.communicator.exception.*;
+import io.art.communicator.proxy.*;
 import io.art.communicator.state.*;
 import io.art.core.caster.*;
 import io.art.core.module.*;
 import lombok.*;
 import static io.art.communicator.configuration.CommunicatorModuleConfiguration.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ExceptionMessages.*;
+import static io.art.communicator.constants.CommunicatorModuleConstants.LoggingMessages.COMMUNICATOR_REGISTRATION_MESSAGE;
+import static io.art.core.constants.StringConstants.NEW_LINE;
 import static io.art.core.context.Context.*;
+import static io.art.core.extensions.StringExtensions.toCommaDelimitedString;
+import static io.art.core.extensions.StringExtensions.toDelimitedString;
+import static io.art.core.factory.SetFactory.set;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
+import java.util.*;
 
 @Getter
 public class CommunicatorModule implements StatefulModule<CommunicatorModuleConfiguration, Configurator, CommunicatorModuleState> {
@@ -55,5 +62,14 @@ public class CommunicatorModule implements StatefulModule<CommunicatorModuleConf
                 .get(id)
                 .map(Caster::<T>cast)
                 .orElseThrow(() -> new CommunicatorModuleException(format(COMMUNICATOR_WAS_NOT_REGISTERED, id)));
+    }
+    @Override
+    public String print() {
+        Set<String> messages = set();
+        for (Map.Entry<String, CommunicatorProxy> entry : configuration.getRegistry().getProxies().entrySet()) {
+            Set<String> methods = entry.getValue().getActions().keySet();
+            messages.add(format(COMMUNICATOR_REGISTRATION_MESSAGE, entry.getKey(), toCommaDelimitedString(methods)));
+        }
+        return toDelimitedString(messages, NEW_LINE);
     }
 }

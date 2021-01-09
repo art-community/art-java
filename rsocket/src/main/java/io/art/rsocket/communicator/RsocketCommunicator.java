@@ -73,7 +73,7 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Flux<Value>, Flux<Value>> communicate = adoptCommunicate();
 
-    private final ManagedValue<RsocketCommunicatorConfiguration> rsocketConfiguration = managed(this::communicatorConfiguration);
+    private final ManagedValue<RsocketCommunicatorConfiguration> rsocketConfiguration = managed(this::rsocketConfiguration);
     private final ManagedValue<RsocketConnectorConfiguration> connectorConfiguration = managed(this::connectorConfiguration);
     private final ManagedValue<Optional<CommunicatorActionConfiguration>> actionConfiguration = managed(this::actionConfiguration);
     private final ManagedValue<RsocketSetupPayload> setupPayload = managed(this::setupPayload);
@@ -122,23 +122,23 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
             case TCP:
                 TcpClient tcpClient = connectorConfiguration.getTcpClient();
                 int tcpMaxFrameLength = connectorConfiguration.getTcpMaxFrameLength();
-                RSocket socket = connector
-                        .connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength))
-                        .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)))
-                        .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
-                        .blockOptional()
-                        .orElseThrow(ImpossibleSituation::new);
-                return from(socket);
+                Mono<RSocket> socket = connector.connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength));
+                if (rsocketConfiguration.get().isLogging()) {
+                    socket = socket
+                            .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)))
+                            .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+                }
+                return from(socket.blockOptional().orElseThrow(ImpossibleSituation::new));
             case WS:
                 HttpClient httpWebSocketClient = connectorConfiguration.getHttpWebSocketClient();
                 String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
-                socket = connector
-                        .connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath))
-                        .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)))
-                        .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
-                        .blockOptional()
-                        .orElseThrow(ImpossibleSituation::new);
-                return from(socket);
+                socket = connector.connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath));
+                if (rsocketConfiguration.get().isLogging()) {
+                    socket = socket
+                            .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)))
+                            .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+                }
+                return from(socket.blockOptional().orElseThrow(ImpossibleSituation::new));
         }
         throw new ImpossibleSituation();
     }
@@ -165,7 +165,7 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
                 .orElseThrow(ImpossibleSituation::new);
     }
 
-    private RsocketCommunicatorConfiguration communicatorConfiguration() {
+    private RsocketCommunicatorConfiguration rsocketConfiguration() {
         return rsocketModule().configuration().getCommunicatorConfiguration();
     }
 

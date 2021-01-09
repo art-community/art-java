@@ -57,4 +57,8 @@ public class CommunicatorProxyRegistry {
         proxies.put(id, proxy);
         return this;
     }
+
+    public ImmutableMap<String, CommunicatorProxy> getProxies() {
+        return immutableMapOf(proxies);
+    }
 }

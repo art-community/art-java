@@ -32,6 +32,10 @@ public interface CommunicatorModuleConstants {
         String COMMUNICATOR_WAS_NOT_REGISTERED = "Communicator with {0} was not registered";
     }
 
+    interface LoggingMessages {
+       String COMMUNICATOR_REGISTRATION_MESSAGE = "Registered communicator: ''{0}'' with actions: {1}";
+    }
+
     interface ConfigurationKeys {
         String COMMUNICATOR_SECTION = "communicator";
         String PROXIES_SECTION = "proxies";
