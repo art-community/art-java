@@ -108,7 +108,7 @@ public class CommunicatorAction implements Managed {
         Scheduler scheduler = communicatorConfiguration.get()
                 .map(CommunicatorProxyConfiguration::getScheduler)
                 .orElseGet(moduleConfiguration.get()::getScheduler);
-        return cast(mapOutput(defer(() -> deferredCommunicate(input)).publishOn(scheduler).subscribeOn(scheduler)));
+        return cast(mapOutput(defer(() -> deferredCommunicate(input)).subscribeOn(scheduler)));
     }
 
     private Flux<Value> deferredCommunicate(Object input) {
@@ -161,7 +161,7 @@ public class CommunicatorAction implements Managed {
         if (isNull(outputMode)) throw new ImpossibleSituation();
         switch (outputMode) {
             case BLOCKING:
-                return Flux::blockFirst;
+                return input -> input.next().block();
             case MONO:
                 return Flux::next;
             case FLUX:

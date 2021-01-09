@@ -25,7 +25,7 @@ import static reactor.core.scheduler.Schedulers.*;
 
 public interface CommunicatorModuleConstants {
     interface Defaults {
-        Scheduler DEFAULT_COMMUNICATOR_SCHEDULER = newBoundedElastic(DEFAULT_THREAD_POOL_SIZE, MAX_VALUE, "communicator");
+        Scheduler DEFAULT_COMMUNICATOR_SCHEDULER = newBoundedElastic(DEFAULT_THREAD_POOL_SIZE, Integer.MAX_VALUE, "communicator");
     }
 
     interface ExceptionMessages {

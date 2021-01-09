@@ -120,7 +120,7 @@ public class ServiceMethodSpecification implements Managed {
         Scheduler scheduler = methodConfiguration.get()
                 .map(ServiceMethodConfiguration::getScheduler)
                 .orElseGet(moduleConfiguration.get()::getScheduler);
-        return defer(() -> deferredServe(input)).publishOn(scheduler).subscribeOn(scheduler);
+        return defer(() -> deferredServe(input)).subscribeOn(scheduler);
     }
 
     private Flux<Value> deferredServe(Flux<Value> input) {
@@ -176,7 +176,7 @@ public class ServiceMethodSpecification implements Managed {
         }
         switch (inputMode) {
             case BLOCKING:
-                return Flux::blockFirst;
+                return input -> input.next().block();
             case MONO:
                 return Flux::next;
             case FLUX:

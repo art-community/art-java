@@ -113,7 +113,7 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
                 .dataMimeType(toMimeType(setupPayload.getDataFormat()).toString())
                 .metadataMimeType(toMimeType(setupPayload.getMetadataFormat()).toString())
                 .fragment(connectorConfiguration.getFragment())
-                .interceptors(registry -> configureInterceptors(registry));
+                .interceptors(this::configureInterceptors);
         apply(connectorConfiguration.getKeepAlive(), keepAlive -> connector.keepAlive(keepAlive.getInterval(), keepAlive.getMaxLifeTime()));
         apply(connectorConfiguration.getResume(), connector::resume);
         apply(connectorConfiguration.getRetry(), connector::reconnect);
