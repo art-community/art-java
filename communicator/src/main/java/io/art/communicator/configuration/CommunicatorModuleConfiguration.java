@@ -57,7 +57,7 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         public Configurator from(ConfigurationSource source) {
             configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
             configuration.configurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))
-                    .map(server -> server.getNestedMap(TARGETS_KEY, CommunicatorProxyConfiguration::from))
+                    .map(server -> server.getNestedMap(PROXIES_SECTION, CommunicatorProxyConfiguration::from))
                     .orElse(emptyImmutableMap());
             return this;
         }

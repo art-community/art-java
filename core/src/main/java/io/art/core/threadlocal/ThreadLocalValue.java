@@ -28,6 +28,10 @@ public class ThreadLocalValue<T> {
         return valueHolder.get() != null;
     }
 
+    public void dispose() {
+        valueHolder.set(null);
+    }
+
     public static <T> ThreadLocalValue<T> threadLocal(Supplier<T> factory) {
         return new ThreadLocalValue<>(factory);
     }

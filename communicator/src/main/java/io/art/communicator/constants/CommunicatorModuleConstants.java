@@ -36,7 +36,6 @@ public interface CommunicatorModuleConstants {
         String COMMUNICATOR_SECTION = "communicator";
         String PROXIES_SECTION = "proxies";
         String ACTIONS_SECTION = "actions";
-        String TARGETS_KEY = "targets";
         String LOGGING_KEY = "logging";
         String CONNECTORS_KEY = "connectors";
     }
