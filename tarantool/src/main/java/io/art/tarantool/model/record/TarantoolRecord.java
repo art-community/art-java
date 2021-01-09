@@ -2,30 +2,28 @@ package io.art.tarantool.model.record;
 
 import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
 
+import javax.annotation.Nullable;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface TarantoolRecord<T>{
-
+    //Non-blocking methods:
     TarantoolTransactionDependency useResult();
 
     TarantoolTransactionDependency useResultField(String fieldName);
 
     boolean isDone();
 
-    TarantoolRecord<T> synchronize();
+    CompletableFuture<Optional<T>> getFuture();
 
+
+    //Blocking methods:
     Optional<T> getOptional();
 
-
-
-    //Optional delegates:
     T get();
-
-    boolean isPresent();
-
-    boolean isEmpty();
 
     T orElse(T other);
 
@@ -33,5 +31,12 @@ public interface TarantoolRecord<T>{
 
     <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X;
 
-    <U> Optional<U> map(Function<? super T, ? extends U> mapper);
+    <U> U map(Function<Optional<T>, U> mapper);
+
+    TarantoolRecord<T> synchronize();
+
+    boolean isPresent();
+
+    boolean isEmpty();
+
 }
