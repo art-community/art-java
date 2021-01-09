@@ -18,22 +18,21 @@
 
 package io.art.value.configuration;
 
-import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
+import io.art.value.registry.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableMap.*;
 import java.lang.reflect.*;
 
 @Getter
 public class ValueModuleConfiguration implements ModuleConfiguration {
-    private ImmutableMap<Type, ValueMapper<?, ? extends Value>> mappers = emptyImmutableMap();
+    private ValueMapperRegistry registry = new ValueMapperRegistry();
 
     public <T> ValueMapper<T, ? extends Value> getMapper(Type type) {
-        return cast(mappers.get(type));
+        return cast(registry.get(type));
     }
 
     @RequiredArgsConstructor
@@ -42,7 +41,7 @@ public class ValueModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator override(ValueModuleConfiguration configuration) {
-            apply(configuration.mappers, mappers -> this.configuration.mappers = mappers);
+            apply(configuration.registry, registry -> this.configuration.registry = registry);
             return this;
         }
     }

@@ -20,6 +20,7 @@ package io.art.communicator.configuration;
 
 import io.art.communicator.registry.*;
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
@@ -30,12 +31,23 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static java.util.Optional.*;
+import java.util.*;
 
 @Getter
 public class CommunicatorModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, CommunicatorProxyConfiguration> configurations = emptyImmutableMap();
     private CommunicatorProxyRegistry registry = new CommunicatorProxyRegistry();
     private Scheduler scheduler;
+
+    public Optional<String> findConnectorId(String protocol, CommunicatorActionIdentifier id) {
+        Optional<String> connectorId = ofNullable(configurations.get(id.getCommunicatorId())).map(configuration -> configuration.getConnectors().get(protocol));
+        if (connectorId.isPresent()) return connectorId;
+        return getActionConfiguration(id).map(configuration -> configuration.getConnectors().get(protocol));
+    }
+
+    public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
+        return ofNullable(configurations.get(id.getCommunicatorId())).map(configuration -> configuration.getActions().get(id.getActionId()));
+    }
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<CommunicatorModuleConfiguration, Configurator> {

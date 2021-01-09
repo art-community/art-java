@@ -48,6 +48,7 @@ import static reactor.netty.http.client.HttpClient.*;
 @Getter
 @RequiredArgsConstructor
 public class RsocketConnectorConfiguration {
+    private String connectorId;
     private PayloadDecoder payloadDecoder;
     private int maxInboundPayloadSize;
     private int fragment;
@@ -64,6 +65,7 @@ public class RsocketConnectorConfiguration {
 
     public static RsocketConnectorConfiguration from(RsocketCommunicatorConfiguration communicatorConfiguration, ConfigurationSource source) {
         RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration();
+        configuration.connectorId = source.getSection();
         configuration.logging = orElse(source.getBool(LOGGING_KEY), communicatorConfiguration.isLogging());
         DataFormat dataFormat = dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), communicatorConfiguration.getDefaultDataFormat());
         DataFormat metaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), communicatorConfiguration.getDefaultMetaDataFormat());

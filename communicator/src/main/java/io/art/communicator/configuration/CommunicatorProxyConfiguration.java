@@ -32,12 +32,13 @@ public class CommunicatorProxyConfiguration {
     private final boolean logging;
     private final Scheduler scheduler;
     private final ImmutableMap<String, CommunicatorActionConfiguration> actions;
-
+    private final ImmutableMap<String, String> connectors;
 
     public static CommunicatorProxyConfiguration from(ConfigurationSource source) {
         boolean logging = orElse(source.getBool(LOGGING_KEY), false);
         Scheduler scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
         ImmutableMap<String, CommunicatorActionConfiguration> actions = source.getNestedMap(ACTIONS_SECTION, CommunicatorActionConfiguration::from);
-        return new CommunicatorProxyConfiguration(logging, scheduler, actions);
+        ImmutableMap<String, String> connectors = source.getNestedMap(CONNECTORS_KEY, NestedConfiguration::asString);
+        return new CommunicatorProxyConfiguration(logging, scheduler, actions, connectors);
     }
 }

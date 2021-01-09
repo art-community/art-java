@@ -23,6 +23,7 @@ import io.art.value.immutable.Value;
 import static lombok.AccessLevel.*;
 
 @Getter
+@Builder(toBuilder = true)
 @AllArgsConstructor(access = PRIVATE)
 public class ValueMapper<T, V extends Value> {
     private final ValueFromModelMapper<T, V> fromModel;

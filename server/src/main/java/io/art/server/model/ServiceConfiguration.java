@@ -41,6 +41,6 @@ public class ServiceConfiguration {
         boolean validating = orElse(source.getBool(VALIDATING_KEY), true);
         Scheduler scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
         ImmutableMap<String, ServiceMethodConfiguration> methods = source.getNestedMap(METHODS_KEY, ServiceMethodConfiguration::from);
-        return new ServiceConfiguration(deactivated, logging, validating, methods, scheduler);
+        return new ServiceConfiguration(deactivated, logging, validating, scheduler, methods);
     }
 }
