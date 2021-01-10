@@ -6,4 +6,5 @@ public interface CompilerSuppressingWarnings {
     String UNSTABLE_API_USAGE = "UnstableApiUsage";
     String UNUSED_RETURN_VALUE = "UnusedReturnValue";
     String CONSTANT_CONDITIONS =  "ConstantConditions";
+    String UNUSED =  "unused";
 }

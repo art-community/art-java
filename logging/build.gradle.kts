@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":value"))
 
     api("org.slf4j", "slf4j-api", sl4jVersion)
+    api("org.slf4j", "log4j-over-slf4j", sl4jVersion)
     api("org.apache.logging.log4j", "log4j-slf4j-impl", log4jVersion)
 
     api("commons-logging", "commons-logging", commonsLoggingVersion)
