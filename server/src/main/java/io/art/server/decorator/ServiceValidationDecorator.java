@@ -41,7 +41,6 @@ import java.util.function.*;
 public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(ServiceLoggingDecorator.class);
-    private final static ValidationException NULL_EXCEPTION = new ValidationException(notNull(expression -> REQUEST_IS_NULL));
     private final UnaryOperator<Flux<Object>> decorator;
     private final Supplier<Boolean> enabled;
     private final Supplier<Boolean> deactivated;
@@ -49,8 +48,8 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
 
     public ServiceValidationDecorator(RequestValidationPolicy policy, ServiceMethodIdentifier serviceMethodId) {
         decorator = decorate(policy);
-        enabled = () -> serverModule().configuration().isValidating(serviceMethodId);
         hasInput = managed(() -> hasInput(serviceMethodId));
+        enabled = () -> serverModule().configuration().isValidating(serviceMethodId);
         deactivated = () -> serverModule().configuration().isDeactivated(serviceMethodId);
     }
 
@@ -66,7 +65,9 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
         switch (policy) {
             case VALIDATABLE:
             case NOT_NULL:
-                return input -> input.switchIfEmpty(error(NULL_EXCEPTION)).doOnNext(data -> validateReactiveData(policy, data));
+                return input -> input
+                        .switchIfEmpty(error(new ValidationException(notNull(expression -> REQUEST_IS_NULL))))
+                        .doOnNext(data -> validateReactiveData(policy, data));
             case NON_VALIDATABLE:
                 return UnaryOperator.identity();
         }
@@ -87,11 +88,11 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
             return;
         }
         if (policy == NOT_NULL) {
-            if (isNull(data)) throw NULL_EXCEPTION;
+            if (isNull(data)) throw new ValidationException(notNull(expression -> REQUEST_IS_NULL));
             return;
         }
         if (isNull(data)) {
-            throw NULL_EXCEPTION;
+            throw new ValidationException(notNull(expression -> REQUEST_IS_NULL));
         }
         Validatable requestData = (Validatable) data;
         requestData.onValidating(new Validator(requestData));

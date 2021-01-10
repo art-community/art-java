@@ -18,9 +18,11 @@
 
 package io.art.model.customizer;
 
+import io.art.core.annotation.*;
 import io.art.rsocket.configuration.*;
 import lombok.*;
 
+@UsedByGenerator
 public class RsocketCustomizer {
     @Getter
     private final Custom configuration = new Custom();

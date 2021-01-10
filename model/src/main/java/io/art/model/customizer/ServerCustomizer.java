@@ -18,10 +18,12 @@
 
 package io.art.model.customizer;
 
+import io.art.core.annotation.*;
 import io.art.server.configuration.*;
 import io.art.server.registry.*;
 import lombok.*;
 
+@UsedByGenerator
 public class ServerCustomizer {
     @Getter
     private final Custom configuration = new Custom();

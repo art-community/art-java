@@ -18,6 +18,7 @@
 
 package io.art.model.customizer;
 
+import io.art.core.annotation.*;
 import lombok.*;
 import lombok.experimental.*;
 import static java.util.function.UnaryOperator.*;
@@ -25,6 +26,7 @@ import java.util.function.*;
 
 @Getter
 @Setter
+@UsedByGenerator
 @Accessors(fluent = true)
 public class ModuleCustomizer {
     private UnaryOperator<ConfiguratorCustomizer> configurator = identity();
