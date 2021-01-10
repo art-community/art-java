@@ -1,5 +1,6 @@
 package io.art.tarantool.model.record;
 
+import io.art.core.checker.EmptinessChecker;
 import io.art.tarantool.exception.TarantoolDaoException;
 import io.art.tarantool.model.transaction.dependency.TransactionFieldDependency;
 import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
@@ -7,6 +8,7 @@ import io.art.tarantool.model.transaction.dependency.TransactionTupleDependency;
 import io.art.tarantool.exception.TarantoolTransactionException;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -77,7 +79,7 @@ public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
 
     @Override
     public T orElseThrow() {
-        return getOptional().orElseThrow();
+        return getOptional().orElseThrow(() -> new NoSuchElementException("No value present"));
     }
 
     @Override
@@ -104,7 +106,7 @@ public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
 
     @Override
     public boolean isEmpty() {
-        return getOptional().isEmpty();
+        return EmptinessChecker.isEmpty(getOptional());
     }
 
     @Override
