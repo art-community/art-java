@@ -31,7 +31,7 @@ import java.util.function.*;
 
 public class GrpcClientLoggingInterceptor implements ClientInterceptor {
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = loggingModule().getLogger(GrpcClientLoggingInterceptor.class);
+    private static final Logger logger = loggingModule().getLogger(GrpcClientLoggingInterceptor.class);
 
     @Override
     public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(MethodDescriptor<ReqT, RespT> methodDescriptor, CallOptions callOptions, Channel channel) {

@@ -52,7 +52,7 @@ public class HttpCommunicatorImplementation implements HttpCommunicator, HttpAsy
     private final BuilderValidator validator = new BuilderValidator(HttpCommunicator.class.getName());
     private final HttpCommunicationConfiguration configuration = new HttpCommunicationConfiguration();
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = loggingModule().getLogger(HttpCommunicator.class);
+    private static final Logger logger = loggingModule().getLogger(HttpCommunicator.class);
 
     HttpCommunicatorImplementation(String url) {
         this(HttpCommunicationTargetConfiguration.httpCommunicationTarget().build().url(url));

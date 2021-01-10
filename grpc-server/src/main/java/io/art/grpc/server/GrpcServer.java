@@ -46,7 +46,7 @@ import java.util.concurrent.*;
 @AllArgsConstructor
 public class GrpcServer {
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = loggingModule().getLogger(GrpcServer.class);
+    private static final Logger logger = loggingModule().getLogger(GrpcServer.class);
     private final Server server;
 
     public static GrpcServer grpcServer() {
