@@ -54,6 +54,7 @@ public interface ValueModuleConstants {
         String XML_TAG_IS_EMPTY = "Xml tag is empty";
         String INDEX_MAPPING_EXCEPTION = "Exception occurred during mapping array element ''{0}'':";
         String FIELD_MAPPING_EXCEPTION = "Exception occurred during mapping entity field ''{0}'':";
+        String EMPTY_VALIDATION_EXPRESSIONS = "Please provide any validation expression";
     }
 
 

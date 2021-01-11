@@ -25,6 +25,7 @@ import io.art.server.specification.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.lazy.ManagedValue.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
@@ -35,12 +36,12 @@ import java.util.*;
 import java.util.function.*;
 
 public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(ServiceLoggingDecorator.class);
     private final ManagedValue<UnaryOperator<Flux<Object>>> decorator = managed(this::createDecorator);
     private final MethodDecoratorScope scope;
     private final Supplier<Boolean> enabled;
     private final ServiceMethodIdentifier serviceMethodId;
+    @Getter(lazy = true, value = PRIVATE)
+    private final Logger logger = logger(ServiceLoggingDecorator.class.getSimpleName() + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
 
     public ServiceLoggingDecorator(ServiceMethodIdentifier serviceMethodId, MethodDecoratorScope scope) {
         this.scope = scope;
