@@ -26,6 +26,7 @@ import io.art.core.configuration.*;
 import io.art.core.context.*;
 import io.art.core.lazy.*;
 import io.art.core.module.*;
+import io.art.core.module.Module;
 import io.art.json.module.*;
 import io.art.logging.*;
 import io.art.model.customizer.*;
