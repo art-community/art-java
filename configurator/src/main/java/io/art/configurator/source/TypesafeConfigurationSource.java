@@ -37,14 +37,14 @@ import java.util.function.*;
 public class TypesafeConfigurationSource implements NestedConfiguration {
     private final String section;
     private final ModuleConfigurationSourceType type;
-    private File file;
+    private InputStream inputStream;
     private Config typesafeConfiguration;
 
-    public TypesafeConfigurationSource(String section, ModuleConfigurationSourceType type, File file) {
+    public TypesafeConfigurationSource(String section, ModuleConfigurationSourceType type, InputStream inputStream) {
         this.section = section;
         this.type = type;
-        this.file = file;
-        this.typesafeConfiguration = parseFile(file);
+        this.inputStream = inputStream;
+        this.typesafeConfiguration = parseReader(new InputStreamReader(inputStream));
     }
 
     public TypesafeConfigurationSource(String section, ModuleConfigurationSourceType type, Config typesafeConfiguration) {
@@ -55,7 +55,7 @@ public class TypesafeConfigurationSource implements NestedConfiguration {
 
     @Override
     public void refresh() {
-        apply(file, file -> this.typesafeConfiguration = parseFile(file));
+        apply(inputStream, file -> this.typesafeConfiguration = parseReader(new InputStreamReader(inputStream)));
     }
 
     @Override

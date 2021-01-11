@@ -33,7 +33,7 @@ import java.util.function.*;
 @UtilityClass
 public class TaskFactory {
     @Getter(lazy = true)
-    private final static Logger logger = logger(DeferredExecutor.class);
+    private static final Logger logger = logger(DeferredExecutor.class);
 
     public static RunnableTask task(ExceptionRunnable runnable) {
         return task(randomUUID().toString(), runnable);

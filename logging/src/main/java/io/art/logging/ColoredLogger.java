@@ -2,10 +2,10 @@ package io.art.logging;
 
 import lombok.*;
 import org.apache.logging.log4j.*;
-import org.apache.logging.log4j.core.*;
 import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.*;
 import org.apache.logging.log4j.util.*;
-import static io.art.logging.LogColorizer.byLevel;
+import static io.art.logging.LogColorizer.*;
 
 @Getter
 public class ColoredLogger extends Logger {

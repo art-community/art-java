@@ -20,7 +20,6 @@ package io.art.model.configurator;
 
 import io.art.model.constants.ModelConstants.*;
 import io.art.model.implementation.server.*;
-import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.decorator.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
@@ -60,11 +59,6 @@ public class RsocketServiceModelConfigurator {
         return decorate((method, builder) -> builder
                 .inputDecorator(new ServiceDeactivationDecorator(serviceMethod(id, method)))
                 .outputDecorator(new ServiceDeactivationDecorator(serviceMethod(id, method))));
-    }
-
-    public RsocketServiceModelConfigurator validation(RequestValidationPolicy policy) {
-        return decorate((method, builder) -> builder
-                .inputDecorator(new ServiceValidationDecorator(policy, serviceMethod(id, method))));
     }
 
     private RsocketServiceModelConfigurator decorate(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {

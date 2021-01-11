@@ -21,10 +21,12 @@ package io.art.model.customizer;
 import io.art.configurator.configuration.*;
 import io.art.configurator.custom.*;
 import io.art.configurator.model.*;
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
 
+@UsedByGenerator
 public class ConfiguratorCustomizer {
     private CustomConfigurationRegistry registry = new CustomConfigurationRegistry();
 

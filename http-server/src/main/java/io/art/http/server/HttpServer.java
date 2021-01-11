@@ -72,7 +72,7 @@ public class HttpServer {
     private final Set<String> cancelablePaths = setOf();
     private final Tomcat tomcat;
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = loggingModule().getLogger(HttpServer.class);
+    private static final Logger logger = loggingModule().getLogger(HttpServer.class);
 
     private HttpServer(Tomcat tomcat) {
         this.tomcat = tomcat;

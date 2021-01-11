@@ -42,7 +42,7 @@ public class HttpClientModule implements Module<HttpClientModuleConfiguration, H
     private final HttpClientModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private final HttpClientModuleState state = new HttpClientModuleState();
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = loggingModule().getLogger(HttpClientModule.class);
+    private static final Logger logger = loggingModule().getLogger(HttpClientModule.class);
 
     public static HttpClientModuleConfiguration httpClientModule() {
         if (contextIsNotReady()) {

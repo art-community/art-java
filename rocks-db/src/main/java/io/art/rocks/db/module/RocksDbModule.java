@@ -36,9 +36,9 @@ import static io.art.rocks.db.constants.RocksDbModuleConstants.*;
 @Getter
 public class RocksDbModule implements Module<RocksDbModuleConfiguration, RocksDbModuleState> {
     @Getter(lazy = true, value = PRIVATE)
-    private final static RocksDbModuleConfiguration rocksDbModule = context().getModule(ROCKS_DB_MODULE_ID, RocksDbModule::new);
+    private static final RocksDbModuleConfiguration rocksDbModule = context().getModule(ROCKS_DB_MODULE_ID, RocksDbModule::new);
     @Getter(lazy = true, value = PRIVATE)
-    private final static RocksDbModuleState rocksDbModuleState = context().getModuleState(ROCKS_DB_MODULE_ID, RocksDbModule::new);
+    private static final RocksDbModuleState rocksDbModuleState = context().getModuleState(ROCKS_DB_MODULE_ID, RocksDbModule::new);
     private final String id = ROCKS_DB_MODULE_ID;
     private final RocksDbModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private RocksDbModuleState state;

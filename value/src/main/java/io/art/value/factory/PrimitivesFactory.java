@@ -36,15 +36,15 @@ public class PrimitivesFactory {
     public final static Primitive DEFAULT_DOUBLE_PRIMITIVE = new Primitive(0., DOUBLE);
     public final static Primitive DEFAULT_FLOAT_PRIMITIVE = new Primitive(0.f, FLOAT);
 
-    private final static Primitive EMPTY_STRING_PRIMITIVE = new Primitive(null, STRING);
-    private final static Primitive EMPTY_LONG_PRIMITIVE = new Primitive(null, LONG);
-    private final static Primitive EMPTY_INT_PRIMITIVE = new Primitive(null, INT);
-    private final static Primitive EMPTY_BOOL_PRIMITIVE = new Primitive(null, BOOL);
-    private final static Primitive EMPTY_BYTE_PRIMITIVE = new Primitive(null, BYTE);
-    private final static Primitive EMPTY_DOUBLE_PRIMITIVE = new Primitive(null, DOUBLE);
-    private final static Primitive EMPTY_FLOAT_PRIMITIVE = new Primitive(null, FLOAT);
+    private static final Primitive EMPTY_STRING_PRIMITIVE = new Primitive(null, STRING);
+    private static final Primitive EMPTY_LONG_PRIMITIVE = new Primitive(null, LONG);
+    private static final Primitive EMPTY_INT_PRIMITIVE = new Primitive(null, INT);
+    private static final Primitive EMPTY_BOOL_PRIMITIVE = new Primitive(null, BOOL);
+    private static final Primitive EMPTY_BYTE_PRIMITIVE = new Primitive(null, BYTE);
+    private static final Primitive EMPTY_DOUBLE_PRIMITIVE = new Primitive(null, DOUBLE);
+    private static final Primitive EMPTY_FLOAT_PRIMITIVE = new Primitive(null, FLOAT);
 
-    private final static Map<Object, Primitive> CACHE = weakMap();
+    private static final Map<Object, Primitive> CACHE = weakMap();
 
     public static Primitive stringPrimitive(String value) {
         if (isNull(value)) return EMPTY_STRING_PRIMITIVE;

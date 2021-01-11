@@ -26,6 +26,7 @@ import io.art.value.mapper.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.value.factory.ArrayValueFactory.*;
@@ -56,8 +57,9 @@ public class ArrayMapping {
     public ArrayFromModelMapper<boolean[]> fromBoolArray = array -> let(array, ArrayValueFactory::boolArray);
 
 
-    public static <T> ArrayToModelMapper<T[]> toArray(Function<Integer, T[]> factory, ValueToModelMapper<T, ? extends Value> elementMapper) {
-        return array -> let(array, notNull -> notNull.asList(elementMapper).toArray(factory.apply(array.size())));
+    public static <T> ArrayToModelMapper<T[]> toArray(Function<Integer, ?> factory, ValueToModelMapper<T, ? extends Value> elementMapper) {
+        Function<Integer, T[]> function = cast(factory);
+        return array -> let(array, notNull -> notNull.asList(elementMapper).toArray(function.apply(array.size())));
     }
 
     public static <T> ArrayToModelMapper<Stream<T>> toStream(ValueToModelMapper<T, ? extends Value> elementMapper) {

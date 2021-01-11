@@ -46,7 +46,7 @@ public class GrpcClientModule implements Module<GrpcClientModuleConfiguration, G
     private final GrpcClientModuleConfiguration defaultConfiguration = GrpcClientModuleDefaultConfiguration.DEFAULT_CONFIGURATION;
     private final GrpcClientModuleState state = new GrpcClientModuleState();
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = loggingModule().getLogger(GrpcClientModule.class);
+    private static final Logger logger = loggingModule().getLogger(GrpcClientModule.class);
 
     public static GrpcClientModuleConfiguration grpcClientModule() {
         if (contextIsNotReady()) {
