@@ -79,7 +79,7 @@ public class TarantoolSingleRecord<T> implements TarantoolRecord<T> {
 
     @Override
     public boolean isPresent() {
-        return getOptional().isPresent();
+        return EmptinessChecker.isNotEmpty(getOptional());
     }
 
     @Override

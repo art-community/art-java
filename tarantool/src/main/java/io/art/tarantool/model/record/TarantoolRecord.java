@@ -8,17 +8,15 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface TarantoolRecord<T>{
-    //Non-blocking methods:
+
     TarantoolTransactionDependency useResult();
 
     TarantoolTransactionDependency useResultField(String fieldName);
 
-    boolean isDone();
+
 
     CompletableFuture<Optional<T>> getFuture();
 
-
-    //Blocking methods:
     Optional<T> getOptional();
 
     T get();
@@ -31,10 +29,14 @@ public interface TarantoolRecord<T>{
 
     <U> U map(Function<Optional<T>, U> mapper);
 
-    TarantoolRecord<T> synchronize();
+    
+
+    boolean isDone();
 
     boolean isPresent();
 
     boolean isEmpty();
+
+    TarantoolRecord<T> synchronize();
 
 }

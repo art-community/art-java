@@ -1,6 +1,7 @@
 package io.art.tarantool.model.record;
 
 import io.art.core.checker.EmptinessChecker;
+
 import io.art.tarantool.exception.TarantoolDaoException;
 import io.art.tarantool.model.transaction.dependency.TransactionFieldDependency;
 import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
@@ -101,7 +102,7 @@ public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
 
     @Override
     public boolean isPresent() {
-        return getOptional().isPresent();
+        return EmptinessChecker.isNotEmpty(getOptional());
     }
 
     @Override
