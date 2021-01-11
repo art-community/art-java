@@ -49,16 +49,20 @@ import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.launcher.ModuleLauncherConstants.*;
+import static io.art.launcher.ModuleModelProvider.*;
 import static io.art.logging.LoggingModule.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import java.util.concurrent.atomic.*;
-import io.art.core.module.Module;
 
 @UtilityClass
 @UsedByGenerator
 public class ModuleLauncher {
     private static final AtomicBoolean LAUNCHED = new AtomicBoolean(false);
+
+    public static void launch() {
+        launch(provide());
+    }
 
     public static void launch(ModuleModel model) {
         if (LAUNCHED.compareAndSet(false, true)) {
