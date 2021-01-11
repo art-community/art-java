@@ -1,5 +1,5 @@
-name: ART CI
-on: [push, pull_request]
+name: ART Generator CI
+on: [pull_request]
 jobs:
   gradle:
     strategy:
