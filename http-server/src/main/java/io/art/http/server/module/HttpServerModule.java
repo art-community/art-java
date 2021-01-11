@@ -33,7 +33,7 @@ import java.util.*;
 @Getter
 public class HttpServerModule implements Module<HttpServerModuleConfiguration, HttpServerModuleState> {
     @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}), value = PRIVATE)
-    private final static List<HttpServiceSpecification> httpServices = serviceModuleState().getServiceRegistry()
+    private static final List<HttpServiceSpecification> httpServices = serviceModuleState().getServiceRegistry()
             .getServices()
             .values()
             .stream()
@@ -41,9 +41,9 @@ public class HttpServerModule implements Module<HttpServerModuleConfiguration, H
             .map(service -> (HttpServiceSpecification) service)
             .collect(toList());
     @Getter(lazy = true, value = PRIVATE)
-    private final static HttpServerModuleConfiguration httpServerModule = context().getModule(HTTP_SERVER_MODULE_ID, HttpServerModule::new);
+    private static final HttpServerModuleConfiguration httpServerModule = context().getModule(HTTP_SERVER_MODULE_ID, HttpServerModule::new);
     @Getter(lazy = true, value = PRIVATE)
-    private final static HttpServerModuleState httpServerModuleState = context().getModuleState(HTTP_SERVER_MODULE_ID, HttpServerModule::new);
+    private static final HttpServerModuleState httpServerModuleState = context().getModuleState(HTTP_SERVER_MODULE_ID, HttpServerModule::new);
     private final String id = HTTP_SERVER_MODULE_ID;
     private final HttpServerModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
     private final HttpServerModuleState state = new HttpServerModuleState();

@@ -20,8 +20,10 @@ package io.art.model.customizer;
 
 import io.art.communicator.configuration.*;
 import io.art.communicator.registry.*;
+import io.art.core.annotation.*;
 import lombok.*;
 
+@UsedByGenerator
 public class CommunicatorCustomizer {
     @Getter
     private final Custom configuration = new Custom();

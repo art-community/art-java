@@ -16,25 +16,8 @@
  * limitations under the License.
  */
 
-package io.art.model.customizer;
+package io.art.graal.constants;
 
-import io.art.core.annotation.*;
-import io.art.server.configuration.*;
-import io.art.server.registry.*;
-import lombok.*;
-
-@UsedByGenerator
-public class ServerCustomizer {
-    @Getter
-    private final Custom configuration = new Custom();
-
-    public ServerCustomizer registry(ServiceSpecificationRegistry registry) {
-        configuration.registry = registry;
-        return this;
-    }
-
-    @Getter
-    private static class Custom extends ServerModuleConfiguration {
-        private ServiceSpecificationRegistry registry;
-    }
+public interface GraalConstants {
+    String LOG4j_SCRIPT_MANAGER_MESSAGE = "Log4j Script manager not available in GraalVM";
 }

@@ -25,7 +25,7 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class JooqLoggingListener extends LoggerListener {
     @Getter(lazy = true)
-    private final static Logger logger = loggingModule().getLogger(JooqLoggingListener.class);
+    private static final Logger logger = loggingModule().getLogger(JooqLoggingListener.class);
     private final Supplier<Boolean> tracingEnabled;
 
     @Override

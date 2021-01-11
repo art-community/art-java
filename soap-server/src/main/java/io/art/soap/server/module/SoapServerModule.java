@@ -30,7 +30,7 @@ import static io.art.soap.server.constans.SoapServerModuleConstants.*;
 @Getter
 public class SoapServerModule implements Module<SoapServerModuleConfiguration, ModuleState> {
     @Getter(lazy = true, value = PRIVATE)
-    private final static SoapServerModuleConfiguration soapServerModule = context().getModule(SOAP_SERVER_MODULE_ID, SoapServerModule::new);
+    private static final SoapServerModuleConfiguration soapServerModule = context().getModule(SOAP_SERVER_MODULE_ID, SoapServerModule::new);
     private final String id = SOAP_SERVER_MODULE_ID;
     private final SoapServerModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
 

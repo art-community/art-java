@@ -42,7 +42,7 @@ import java.util.*;
 @Getter
 public class KafkaConsumerModule implements Module<KafkaConsumerModuleConfiguration, KafkaConsumerModuleState> {
     @Getter(lazy = true, onMethod = @__({@SuppressWarnings("unchecked")}), value = PRIVATE)
-    private final static List<KafkaConsumerServiceSpecification> kafkaConsumerServices = cast(serviceModuleState()
+    private static final List<KafkaConsumerServiceSpecification> kafkaConsumerServices = cast(serviceModuleState()
             .getServiceRegistry()
             .getServices()
             .values()

@@ -54,6 +54,7 @@ import static io.art.logging.LoggingModule.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import java.util.concurrent.atomic.*;
+import io.art.core.module.Module;
 
 @UtilityClass
 @UsedByGenerator

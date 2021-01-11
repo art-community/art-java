@@ -24,12 +24,6 @@ import static java.lang.Short.*;
 import static reactor.core.scheduler.Schedulers.*;
 
 public interface ServerModuleConstants {
-    enum RequestValidationPolicy {
-        VALIDATABLE,
-        NOT_NULL,
-        NON_VALIDATABLE
-    }
-
     interface Defaults {
         Scheduler DEFAULT_SERVICE_METHOD_SCHEDULER = newBoundedElastic(DEFAULT_THREAD_POOL_SIZE, Integer.MAX_VALUE, "service-method");
     }

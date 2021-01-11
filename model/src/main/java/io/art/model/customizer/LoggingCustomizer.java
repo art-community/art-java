@@ -18,9 +18,11 @@
 
 package io.art.model.customizer;
 
+import io.art.core.annotation.*;
 import io.art.logging.*;
 import lombok.*;
 
+@UsedByGenerator
 public class LoggingCustomizer {
     @Getter
     private final Custom configuration = new Custom();

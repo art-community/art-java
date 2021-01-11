@@ -77,21 +77,19 @@ public final class CollectionExtensions {
 
     public static <T> List<T> addFirstToList(T element, Collection<T> source) {
         List<T> list = dynamicArrayOf(element);
-        list.add(element);
         list.addAll(source);
         return list;
     }
 
     public static <T> List<T> addLastToList(Collection<T> source, T element) {
-        List<T> list = dynamicArrayOf(element);
-        list.addAll(source);
+        List<T> list = dynamicArrayOf(source);
         list.add(element);
         return list;
     }
 
-    public static <T> Set<T> addToSet(T element, Set<T> source) {
-        Set<T> set = setOf(element);
-        set.add(element);
+    @SafeVarargs
+    public static <T> Set<T> addToSet(Set<T> source, T... elements) {
+        Set<T> set = setOf(elements);
         set.addAll(source);
         return set;
     }

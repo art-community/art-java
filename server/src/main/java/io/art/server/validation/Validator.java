@@ -18,8 +18,11 @@
 
 package io.art.server.validation;
 
+import io.art.core.exception.*;
 import io.art.server.exception.*;
 import lombok.*;
+import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 
 @AllArgsConstructor
 public class Validator {
@@ -27,6 +30,10 @@ public class Validator {
 
     @SafeVarargs
     public final <T> Validator validate(String fieldName, T value, ValidationExpression<T>... validationExpressions) {
+        if (isEmpty(validationExpressions)) {
+            throw new InternalRuntimeException(EMPTY_VALIDATION_EXPRESSIONS);
+        }
+
         for (ValidationExpression<T> validationExpression : validationExpressions) {
             if (!validationExpression.evaluate(fieldName, value)) {
                 throw new ValidationException(model, validationExpression);

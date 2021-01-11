@@ -16,25 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.model.customizer;
+val graalVersion: String by project
 
-import io.art.core.annotation.*;
-import io.art.server.configuration.*;
-import io.art.server.registry.*;
-import lombok.*;
-
-@UsedByGenerator
-public class ServerCustomizer {
-    @Getter
-    private final Custom configuration = new Custom();
-
-    public ServerCustomizer registry(ServiceSpecificationRegistry registry) {
-        configuration.registry = registry;
-        return this;
-    }
-
-    @Getter
-    private static class Custom extends ServerModuleConfiguration {
-        private ServiceSpecificationRegistry registry;
-    }
+dependencies {
+    compileOnly(project(":core"))
+    compileOnly(project(":logging"))
+    compileOnly("com.oracle.substratevm:svm:$graalVersion")
 }

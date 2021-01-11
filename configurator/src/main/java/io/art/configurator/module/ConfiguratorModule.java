@@ -25,6 +25,7 @@ import io.art.configurator.model.*;
 import io.art.configurator.source.*;
 import io.art.core.checker.*;
 import io.art.core.collection.*;
+import io.art.core.file.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
@@ -35,7 +36,6 @@ import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConf
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.FileExtensions.*;
 import static java.nio.file.Paths.*;
 import static lombok.AccessLevel.*;
 import java.io.*;
@@ -58,12 +58,12 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .from(new EnvironmentConfigurationSource())
                 .from(new PropertiesConfigurationSource())
         );
-        ClassLoader loader = ConfiguratorModule.class.getClassLoader();
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
         FILE_CONFIGURATION_EXTENSIONS.stream()
-                .map(extension -> loader.getResource(DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension))
+                .map(extension -> loadResource(loader, extension))
                 .filter(Objects::nonNull)
                 .findFirst()
-                .map(resource -> new FileConfigurationSource(EMPTY_STRING, RESOURCES_FILE, fileOf(resource)))
+                .map(resource -> new FileConfigurationSource(EMPTY_STRING, RESOURCES_FILE, resource))
                 .ifPresent(source -> configure(configurator -> configurator.from(source)));
         EnvironmentConfigurationSource environment = getConfiguration().getEnvironment();
         PropertiesConfigurationSource properties = getConfiguration().getProperties();
@@ -84,7 +84,12 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .filter(EmptinessChecker::isNotEmpty)
                 .map(path -> get(path).toFile())
                 .filter(File::exists)
-                .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(EMPTY_STRING, CUSTOM_FILE, file))));
+                .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(EMPTY_STRING, CUSTOM_FILE, new FileProxy(file)))));
+    }
+
+    private FileProxy loadResource(ClassLoader loader, String extension) {
+        InputStream stream = loader.getResourceAsStream(DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension);
+        return let(stream, resource -> new FileProxy(DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension, resource));
     }
 
     public static ConfigurationSource configuration() {

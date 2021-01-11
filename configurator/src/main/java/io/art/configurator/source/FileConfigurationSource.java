@@ -21,10 +21,10 @@ package io.art.configurator.source;
 import io.art.configuration.yaml.source.*;
 import io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import io.art.configurator.exception.*;
+import io.art.core.file.*;
 import io.art.core.source.*;
 import lombok.*;
 import lombok.experimental.Delegate;
-import static com.typesafe.config.ConfigFactory.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
 import static io.art.core.extensions.FileExtensions.*;
 import java.io.*;
@@ -36,23 +36,23 @@ public class FileConfigurationSource implements NestedConfiguration {
     @Delegate
     private final NestedConfiguration source;
 
-    public FileConfigurationSource(String section, ConfigurationSourceType type, File file) {
+    public FileConfigurationSource(String section, ConfigurationSourceType type, FileProxy file) {
         this.section = section;
         this.type = type;
         source = selectSource(section, type, file);
     }
 
-    private static NestedConfiguration selectSource(String section, ConfigurationSourceType type, File file) {
-        String extension = parseExtension(file.getAbsolutePath());
+    private static NestedConfiguration selectSource(String section, ConfigurationSourceType type, FileProxy file) {
+        String extension = parseExtension(file.getPath());
         switch (extension) {
             case HOCON_EXTENSION:
             case JSON_EXTENSION:
             case CONF_EXTENSION:
             case PROPERTIES_EXTENSION:
-                return new TypesafeConfigurationSource(section, type, file);
+                return new TypesafeConfigurationSource(section, type, file.getInputStream());
             case YAML_EXTENSION:
             case YML_EXTENSION:
-                return new YamlConfigurationSource(section, type, file);
+                return new YamlConfigurationSource(section, type, file.getInputStream());
         }
         throw new UnknownConfigurationFileExtensionException(extension);
     }
