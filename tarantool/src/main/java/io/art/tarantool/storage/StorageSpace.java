@@ -5,20 +5,20 @@ import java.util.*;
 
 public interface StorageSpace {
 
-    public Optional<Value> get(Value key);
+    Optional<Value> get(Value key);
 
-    public Optional<List<Value>> find(Value request);
+    Optional<List<Value>> find(Value request);
 
-    public Optional<Value> insert(Value data);
+    Optional<Value> insert(Value data);
 
-    public Optional<Value> autoIncrement(Value data);
+    Optional<Value> autoIncrement(Value data);
 
-    public Optional<Value> put(Value data);
+    Optional<Value> put(Value data);
 
-    public Optional<Value> delete(Value key);
+    Optional<Value> delete(Value key);
 
-    public void truncate();
+    void truncate();
 
-    public Long count();
+    Optional<Long> count();
 
 }

@@ -1,4 +1,4 @@
-package io.art.tarantool.client.caller;
+package io.art.tarantool.module.client.caller;
 
 import io.art.tarantool.exception.TarantoolDaoException;
 import io.tarantool.driver.api.TarantoolClient;
@@ -41,6 +41,6 @@ public class TarantoolFunctionCaller {
     }
 
     private static void logInfo(String message){
-        if (tarantoolModule().configuration().enableTracing) getLogger().info(message);
+        if (tarantoolModule().configuration().logging) getLogger().info(message);
     }
 }
