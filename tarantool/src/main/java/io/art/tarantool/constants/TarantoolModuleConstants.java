@@ -36,10 +36,14 @@ public interface TarantoolModuleConstants {
 
     interface ConfigurationKeys{
         String TARANTOOL_SECTION = "tarantool";
+        String TARANTOOL_LOGGING_KEY = "logging";
+        String TARANTOOL_CLUSTERS_SECTION = "clusters";
+        String TARANTOOL_CLUSTER_BALANCING_METHOD = "balancing";
         String TARANTOOL_INSTANCES_SECTION = "instances";
-        String TARANTOOL_TRACING_KEY = "enable_tracing";
         String TARANTOOL_INSTANCE_HOST_KEY = "host";
         String TARANTOOL_INSTANCE_PORT_KEY = "port";
+        String TARANTOOL_INSTANCE_READABLE_KEY = "readable";
+        String TARANTOOL_INSTANCE_WRITEABLE_KEY = "writeable";
         String TARANTOOL_INSTANCE_USERNAME_KEY = "username";
         String TARANTOOL_INSTANCE_PASSWORD_KEY = "password";
         String TARANTOOL_INSTANCE_CONNECTIONS_KEY = "connections";
@@ -51,10 +55,16 @@ public interface TarantoolModuleConstants {
 
     interface ExceptionMessages {
         String CONFIGURATION_IS_NULL = "Tarantool ''{0}'' configuration is null. Please specify it.";
+        String CLUSTER_CONFIGURATION_IS_NULL = "Tarantool cluster ''{0}'' configuration is null. Please specify it.";
         String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}''.";
         String UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Retrying...\n";
-        String RESULT_IS_INVALID = "Response ''{0}'' returned from Tarantool can`t be converted to Entity";
-        String UNABLE_TO_GET_RESPONSE = "Unable to get response from function call";
+        String RESULT_IS_INVALID = "Response ''{0}'' returned from Tarantool can`t be converted to Entity.";
+        String UNABLE_TO_GET_RESPONSE = "Unable to get response from function call.";
+        String UNKNOWN_BALANCING_METHOD = "Unknown load balancing method: ''{0}''";
+        String NULL_REQUEST_DATA_EXCEPTION = "Request data tuple is null.";
+        String TRANSACTION_FAILED = "Transaction failed with error message: ''{0}''";
+        String GET_RESULT_OF_NOT_COMMITTED_TRANSACTION = "Attempt to get result of not committed transaction. Commit first.";
+        String ILLEGAL_TRANSACTION_DEPENDENCY_USAGE = "Attempt to use transaction dependency outside of transaction. Use response data using get() instead.";
     }
 
     interface LoggingMessages {
@@ -88,6 +98,14 @@ public interface TarantoolModuleConstants {
         String SCHEMA_LEN = "art.api.space.schemaLen";
         String LIST_SPACES = "art.api.space.list";
         String LIST_INDICES = "art.api.space.listIndices";
+
+        String TRANSACTION = "art.api.transaction";
+    }
+
+    interface SelectOptions{
+        String LIMIT = "limit";
+        String OFFSET = "offset";
+        String ITERATOR = "iterator";
     }
 
     enum TarantoolFieldType {
@@ -106,6 +124,19 @@ public interface TarantoolModuleConstants {
         BITSET,
         RTREE
     }
+
+    enum TarantoolIndexIterator{
+        EQ,
+        REQ,
+        GT,
+        GE,
+        ALL,
+        LT,
+        LE,
+        OVERLAPS,
+        NEIGHBOR
+    }
+
 
     @Getter
     @AllArgsConstructor

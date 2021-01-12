@@ -1,16 +1,16 @@
 
 package io.art.tests.specification.tarantool
 
-import io.art.tarantool.dao.TarantoolAsynchronousSpace
-import io.art.tarantool.dao.TarantoolInstance
-import io.art.tarantool.dao.TarantoolSpace
-import io.art.tarantool.model.TarantoolUpdateFieldOperation
+import io.art.tarantool.space.TarantoolSpace
+import io.art.tarantool.instance.TarantoolInstance
+
+import io.art.tarantool.model.operation.TarantoolUpdateFieldOperation
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
 import spock.lang.Specification
 
 import static io.art.launcher.ModuleLauncher.launch
-import static io.art.model.configurator.ModuleModelConfigurator.module
+import static io.art.model.configurator.ModuleModelConfigurator.*;
 import static io.art.tarantool.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
 import static io.art.tarantool.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
 import static io.art.tarantool.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
@@ -21,20 +21,20 @@ import static io.art.value.factory.PrimitivesFactory.intPrimitive
 import static io.art.value.factory.PrimitivesFactory.stringPrimitive
 
 class TarantoolVshardMapping extends Specification {
-    def benchmarkOpsCount = 10000
-    def mappingTimeout = 300
+    def testOpsCount = 100
+    def synchronizationTimeout = 60
 
     def setupSpec(){
         launch module().configure()
     }
 
-    def "Router1 CRUD"() {
+    def "Routers CRUD"() {
         setup:
-        def clientId = "router_1"
-        def spaceName = "r1_crud"
+        def clusterId = "routers"
+        def spaceName = "r_crud"
 
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -66,13 +66,13 @@ class TarantoolVshardMapping extends Specification {
         def spaces = db.listSpaces()
         def indices = space.listIndices()
         then:
-        spaces.contains(spaceName) && indices.contains("primary")
+        spaces.get().contains(spaceName) && indices.get().contains("primary")
 
 
         when:
         space.insert(data)
         then:
-        sleep(mappingTimeout)
+        sleep(synchronizationTimeout)
         space.get(request).get() == data
 
 
@@ -80,7 +80,7 @@ class TarantoolVshardMapping extends Specification {
         space.autoIncrement(data)
         space.autoIncrement(data)
         space.autoIncrement(data)
-        db.renameSpace(spaceName, spaceName = "r1_crud2")
+        db.renameSpace(spaceName, spaceName = "r_crud2")
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("bucket_id", intPrimitive(99))
@@ -89,20 +89,20 @@ class TarantoolVshardMapping extends Specification {
         space = db.space(spaceName)
         space.autoIncrement(data)
         then:
-        sleep(mappingTimeout)
-        ((space.len() == 5) && (space.schemaLen() == 2))
+        sleep(synchronizationTimeout)
+        (space.len().get() == 5) && (space.schemaLen().get() == 2)
 
 
         when:
         request = intPrimitive(2)
         then:
         true
-        space.get(request).isEmpty() && space.select(request).isEmpty()
+        space.get(request).isEmpty() && space.select(request).execute().isEmpty()
 
 
         when:
         request = intPrimitive(7)
-        sleep(mappingTimeout)
+        sleep(synchronizationTimeout)
         Value response = space.select(request).get().get(0)
         then:
         true
@@ -112,7 +112,7 @@ class TarantoolVshardMapping extends Specification {
         when:
         space.truncate()
         then:
-        (space.count() == 0) && (space.schemaCount() == 0)
+        (space.count().get() == 0) && (space.schemaCount().get() == 0)
 
 
         when:
@@ -123,40 +123,40 @@ class TarantoolVshardMapping extends Specification {
                 .build()
         space.put(data)
         then:
-        sleep(mappingTimeout)
+        sleep(synchronizationTimeout)
         space.get(request).get() == data
 
 
         when:
         Value key = intPrimitive(7)
-        space.delete(key)
+        space.delete(key).synchronize()
         then:
         space.get(request).isEmpty()
 
 
         when:
         space.put(data)
-        sleep(mappingTimeout)
+        sleep(synchronizationTimeout)
         space.update(key, TarantoolUpdateFieldOperation.assigment(3, 'data', stringPrimitive("another")))
         then:
-        ((Entity)space.get(request).get()).get("data") == stringPrimitive("another")
+        (space.get(request).get() as Entity).get("data") == stringPrimitive("another")
 
         when:
         space.put(data)
-        sleep(mappingTimeout)
+        sleep(synchronizationTimeout)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("something"))
                 .build()
-        space.replace(data)
+        space.replace(data).synchronize()
         then:
         space.get(key).get() == data
 
         when:
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
-        sleep(mappingTimeout)
+        sleep(synchronizationTimeout)
         then:
         space.get(request).isPresent() && space.get(intPrimitive(8)).isPresent()
 
@@ -166,11 +166,11 @@ class TarantoolVshardMapping extends Specification {
 
     def "Router2 mapping builder"(){
         setup:
-        def clientId = "router_2"
+        def clusterId = "routers"
         def spaceName = "r2_map_build"
 
-        TarantoolInstance db = tarantoolInstance(clientId)
-        TarantoolAsynchronousSpace space = db.asynchronousSpace(spaceName)
+        TarantoolInstance db = tarantoolInstance(clusterId)
+        TarantoolSpace space = db.space(spaceName)
 
 
 
@@ -196,31 +196,33 @@ class TarantoolVshardMapping extends Specification {
                 .unique(false))
 
         when:
-        for (int i = 0; i<benchmarkOpsCount; i++){
+        for (int i = 0; i<testOpsCount; i++){
             space.autoIncrement(data)
         }
 
         db.createIndex(spaceName, 'data', tarantoolSpaceIndex()
                 .part(3)
                 .unique(false))
-        sleep(mappingTimeout*10)
+        sleep(synchronizationTimeout*5)
 
-        def response = space.select('data', stringPrimitive('data')).get().get()
+        def response = space.select(stringPrimitive('data'))
+                .index('data')
+                .get()
         int succeeded = response.size()
         then:
-        (succeeded == benchmarkOpsCount)
+        (succeeded == testOpsCount)
 
         cleanup:
         db.dropSpace(spaceName)
     }
 
-    def "Router2 mapping loss rate"(){
+    def "Router2 mapping loss"(){
         setup:
-        def clientId = "router_2"
+        def clusterId = "routers"
         def spaceName = "r2_map_loss"
 
-        TarantoolInstance db = tarantoolInstance(clientId)
-        TarantoolAsynchronousSpace space = db.asynchronousSpace(spaceName)
+        TarantoolInstance db = tarantoolInstance(clusterId)
+        TarantoolSpace space = db.space(spaceName)
 
 
 
@@ -248,14 +250,14 @@ class TarantoolVshardMapping extends Specification {
         when:
 
         int succeeded = 0
-        for (int i = 0; i<benchmarkOpsCount; i++){
+        for (int i = 0; i<testOpsCount; i++){
             space.autoIncrement(data)
-            sleep(mappingTimeout)
-            if (space.get(intPrimitive(i+1)).get().isPresent()) succeeded++
+            sleep(synchronizationTimeout)
+            if (space.get(intPrimitive(i+1)).isPresent()) succeeded++
         }
         println(intPrimitive(succeeded))
         then:
-        (succeeded == benchmarkOpsCount)
+        (succeeded == testOpsCount)
 
         cleanup:
         db.dropSpace(spaceName)

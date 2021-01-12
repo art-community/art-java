@@ -1,16 +1,20 @@
 
 package io.art.tests.specification.tarantool
 
+import io.art.tarantool.module.TarantoolModule
+import io.art.tarantool.space.TarantoolSpace
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
-import io.art.tarantool.dao.TarantoolInstance
-import io.art.tarantool.dao.TarantoolSpace
-import io.art.tarantool.model.TarantoolUpdateFieldOperation
+import io.art.tarantool.instance.TarantoolInstance
+
+import io.art.tarantool.model.operation.TarantoolUpdateFieldOperation
 import spock.lang.Specification
 
 
 import static io.art.launcher.ModuleLauncher.launch
-import static io.art.model.configurator.ModuleModelConfigurator.module
+import static io.art.model.configurator.ModuleModelConfigurator.*;
+
+
 import static io.art.tarantool.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
 import static io.art.tarantool.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
 import static io.art.tarantool.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
@@ -19,23 +23,27 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolField
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolIndexType
 import static io.art.tarantool.module.TarantoolModule.tarantoolInstance
 import static io.art.value.factory.PrimitivesFactory.intPrimitive
-import static io.art.value.factory.PrimitivesFactory.longPrimitive
 import static io.art.value.factory.PrimitivesFactory.stringPrimitive
 
 class TarantoolBenchmarks extends Specification {
-    def benchmarkOpsCount = 10000
+    def benchmarkOpsCount = 100000
+    def synchronizationTimeout = 50
+    def benchSleepEvery = 500
+    def benchTimeout = 10 //due to high freq of requests, every %benchSleepEvery% requests needed timeout to avoid client errors
 
     def setupSpec(){
         launch module().configure()
     }
 
-    def "Storage1 CRUD(warmup)"() {
+    def "Storage CRUD(warmup)"(){
         setup:
-        def spaceName = "s1_CRUD"
-        def clientId = "storage_1_a"
+        def spaceName = "s2_CRUD"
+        def clusterId = "storage2"
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
+
 
 
         Entity data = Entity.entityBuilder()
@@ -43,7 +51,7 @@ class TarantoolBenchmarks extends Specification {
                 .put("data", stringPrimitive("testData"))
                 .put("anotherData", stringPrimitive("another data"))
                 .build()
-        Value request = longPrimitive(3)
+        Value request = intPrimitive(3)
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
@@ -51,38 +59,44 @@ class TarantoolBenchmarks extends Specification {
                 .field("id", NUMBER, false))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
-                .id(0)
                 .part("id")
                 .ifNotExists(true)
                 .unique(true))
 
 
+        when:
+        def spaces = db.listSpaces()
+        def indices = space.listIndices().get()
+        then:
+        spaces.get().contains(spaceName) && indices.contains("primary")
 
         when:
         space.insert(data)
+        sleep(synchronizationTimeout)
         then:
-        space.get(request).get() == data
+        (Entity) space.get(request).get() == data
 
 
         when:
         space.autoIncrement(data)
         space.autoIncrement(data)
         space.autoIncrement(data)
-        db.renameSpace(spaceName, spaceName = "s1_CRUD2")
+        db.renameSpace(spaceName, spaceName = "s2_CRUD2")
         space = db.space(spaceName)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("data", stringPrimitive("testData"))
                 .build()
         space.autoIncrement(data)
+        sleep(synchronizationTimeout)
         then:
-        ((space.len() == 5) && (space.schemaLen() == 2))
+        ((space.len().get() == 5) && (space.schemaLen().get() == 2))
 
 
         when:
         request = intPrimitive(2)
         then:
-        space.get(request).isEmpty() && space.select(request).isEmpty()
+        space.get(request).isEmpty() && space.select(request).execute().isEmpty()
 
 
         when:
@@ -94,8 +108,9 @@ class TarantoolBenchmarks extends Specification {
 
         when:
         space.truncate()
+        sleep(synchronizationTimeout)
         then:
-        (space.count() == 0) && (space.schemaCount() == 0)
+        (space.count().get() == 0) && (space.schemaCount().get() == 0)
 
 
         when:
@@ -104,12 +119,14 @@ class TarantoolBenchmarks extends Specification {
                 .put("data", stringPrimitive("another data"))
                 .build()
         space.put(data)
+        sleep(synchronizationTimeout)
         then:
         space.get(request).get() == data
 
 
         when:
         space.delete(intPrimitive(7))
+        sleep(synchronizationTimeout)
         then:
         space.get(request).isEmpty()
 
@@ -118,8 +135,9 @@ class TarantoolBenchmarks extends Specification {
         space.put(data)
         space.update(intPrimitive(7),
                 TarantoolUpdateFieldOperation.assigment(2, 'data', stringPrimitive("another")))
+        sleep(synchronizationTimeout)
         then:
-        ((Entity)space.get(request).get()).get("data") == stringPrimitive("another")
+        (space.get(request).get() as Entity).get("data") == stringPrimitive("another")
 
         when:
         space.put(data)
@@ -128,28 +146,28 @@ class TarantoolBenchmarks extends Specification {
                 .put("data", stringPrimitive("something"))
                 .build()
         space.replace(data)
+        sleep(synchronizationTimeout)
         then:
         space.get(intPrimitive(7)).get() == data
 
         when:
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
+        sleep(synchronizationTimeout)
         then:
         space.get(intPrimitive(7)).isPresent() && space.get(intPrimitive(8)).isPresent()
 
 
         cleanup:
         db.dropSpace(spaceName)
-
-
     }
 
-    def "Router1 art.get benchmark"(){
+    def "Routers art.get benchmark"(){
         setup:
-        def clientId = "router_1"
+        def clusterId = "routers"
         def spaceName = "r1_art_get_bench"
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -181,6 +199,7 @@ class TarantoolBenchmarks extends Specification {
 
         for (int i = 0; i<benchmarkOpsCount; i++){
             space.get(request)
+            if (i%benchSleepEvery == 0) sleep(benchTimeout)
         }
         then:
         true
@@ -189,12 +208,12 @@ class TarantoolBenchmarks extends Specification {
         db.dropSpace(spaceName)
     }
 
-    def "Router2 art.auto_increment benchmark"(){
+    def "Routers art.auto_increment benchmark"(){
         setup:
-        def clientId = "router_2"
+        def clusterId = "routers"
         def spaceName = "r2_art_inc_bench"
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -223,6 +242,7 @@ class TarantoolBenchmarks extends Specification {
         when:
         for (int i = 0; i<benchmarkOpsCount; i++){
             space.autoIncrement(data)
+            if (i%benchSleepEvery == 0) sleep(benchTimeout)
         }
         then:
         true
@@ -234,9 +254,9 @@ class TarantoolBenchmarks extends Specification {
     def "Storage1 art.get benchmark"(){
         setup:
         def spaceName = "s1_art_get_bench"
-        def clientId = "storage_1_a"
+        def clusterId = "storage1"
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -264,6 +284,7 @@ class TarantoolBenchmarks extends Specification {
 
         for (int i = 0; i<benchmarkOpsCount; i++){
             space.get(request)
+            if (i%benchSleepEvery == 0) sleep(benchTimeout)
         }
         then:
         true
@@ -275,9 +296,9 @@ class TarantoolBenchmarks extends Specification {
     def "Storage2 art.auto_increment benchmark"(){
         setup:
         def spaceName = "s2_art_inc_bench"
-        def clientId = "storage_2_a"
+        def clusterId = "storage2"
 
-        TarantoolInstance db = tarantoolInstance(clientId)
+        TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
 
 
@@ -304,6 +325,7 @@ class TarantoolBenchmarks extends Specification {
 
         for (int i = 0; i<benchmarkOpsCount; i++){
             space.autoIncrement(data)
+            if (i%benchSleepEvery == 0) sleep(benchTimeout)
         }
         then:
         true

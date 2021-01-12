@@ -2,17 +2,16 @@ package io.art.tarantool.module;
 
 import io.art.core.module.StatefulModule;
 import io.art.core.module.StatefulModuleProxy;
-import io.art.tarantool.configuration.TarantoolInstanceConfiguration;
+import io.art.tarantool.configuration.TarantoolClusterConfiguration;
 import io.art.tarantool.configuration.TarantoolModuleConfiguration;
 import io.art.tarantool.exception.TarantoolModuleException;
+import io.art.tarantool.module.client.TarantoolClusterClient;
 import io.art.tarantool.module.state.TarantoolModuleState;
-import io.art.tarantool.dao.TarantoolInstance;
-import io.tarantool.driver.api.TarantoolClient;
+import io.art.tarantool.instance.TarantoolInstance;
 import lombok.Getter;
 
 import static io.art.core.context.Context.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.CONFIGURATION_IS_NULL;
-import static io.art.tarantool.module.connector.TarantoolConnector.connect;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.CLUSTER_CONFIGURATION_IS_NULL;
 import static java.text.MessageFormat.format;
 import static io.art.tarantool.configuration.TarantoolModuleConfiguration.Configurator;
 import static java.util.Objects.isNull;
@@ -34,17 +33,22 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
         return getTarantoolModule();
     }
 
-    public static TarantoolInstance tarantoolInstance(String clientId){
-        return new TarantoolInstance(getClient(clientId));
+    public static TarantoolInstance tarantoolInstance(String clusterId){
+        return new TarantoolInstance(getCluster(clusterId));
     }
 
-    public static TarantoolClient getClient(String clientId){
-        Optional<TarantoolClient> existingClient = tarantoolModule().state().getClient(clientId);
+    public static TarantoolClusterClient getCluster(String clusterId){
+        Optional<TarantoolClusterClient> existingClient = tarantoolModule().state().getClusterClient(clusterId);
         if (existingClient.isPresent()) return existingClient.get();
-        TarantoolInstanceConfiguration config = tarantoolModule().configuration().instances.get(clientId);
-        if (isNull(config)) throw new TarantoolModuleException(format(CONFIGURATION_IS_NULL, clientId));
-        TarantoolClient newClient = connect(clientId, config);
-        tarantoolModule().state().registerClient(clientId, newClient);
+        TarantoolClusterConfiguration config = tarantoolModule().configuration().clusters.get(clusterId);
+        if (isNull(config)) throw new TarantoolModuleException(format(CLUSTER_CONFIGURATION_IS_NULL, clusterId));
+        TarantoolClusterClient newClient = new TarantoolClusterClient(clusterId, config);
+        tarantoolModule().state().registerClusterClient(clusterId, newClient);
         return newClient;
+    }
+
+    @Override
+    public void onUnload() {
+
     }
 }

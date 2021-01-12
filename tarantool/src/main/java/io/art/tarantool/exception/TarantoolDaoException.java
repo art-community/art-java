@@ -22,4 +22,8 @@ public class TarantoolDaoException extends RuntimeException {
     public TarantoolDaoException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public TarantoolDaoException(String message) {
+        super(message);
+    }
 }

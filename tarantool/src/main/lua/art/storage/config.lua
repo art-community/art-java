@@ -8,22 +8,22 @@ local config = {
         maxBatchesToSend = 100,
 
         watcher = {
-            timeout = 0.1, --watcher sleep time
+            timeout = 0.02, --watcher sleep time
             watchdogTimeout = 1
         },
 
         builder = {
             batchSize = 1024 * 10,
-            timeout = 0.1,
+            timeout = 0.02,
             watchdogTimeout = 1
         },
 
         networkManager = {
-            timeout = 0.2
+            timeout = 0.1
         },
 
         garbageCollector = {
-            timeout = 0.2,
+            timeout = 0.5,
             watchdogTimeout = 1
         }
     },
