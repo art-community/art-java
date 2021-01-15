@@ -2,10 +2,11 @@ package io.art.tarantool.storage;
 
 import io.art.tarantool.space.TarantoolSpace;
 import io.art.value.immutable.*;
+import io.art.storage.space.StorageSpace;
 
 import java.util.*;
 
-public class TarantoolStorageSpace implements StorageSpace{
+public class TarantoolStorageSpace implements StorageSpace<Value>{
     private final TarantoolSpace space;
 
     public TarantoolStorageSpace(TarantoolSpace space){

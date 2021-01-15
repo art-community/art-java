@@ -18,23 +18,8 @@
 
 
 dependencies {
-    val log4jVersion: String by project
-    val tarantoolCartridgeConnectorVersion: String by project
-
     implementation(project(":core"))
     implementation(project(":value"))
     implementation(project(":logging"))
-    implementation(project(":storage"))
 
-
-    api("org.apache.logging.log4j", "log4j-iostreams", log4jVersion)
-            .exclude("org.apache.logging.log4j")
-    api("io.tarantool", "cartridge-driver", tarantoolCartridgeConnectorVersion)
-}
-
-
-java {
-    with(sourceSets.main.get().resources) {
-        srcDir("src/main/lua")
-    }
 }
