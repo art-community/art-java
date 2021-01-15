@@ -30,10 +30,3 @@ dependencies {
             .exclude("org.apache.logging.log4j")
     api("io.tarantool", "cartridge-driver", tarantoolCartridgeConnectorVersion)
 }
-
-
-java {
-    with(sourceSets.main.get().resources) {
-        srcDir("src/main/lua")
-    }
-}
