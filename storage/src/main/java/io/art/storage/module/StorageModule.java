@@ -26,15 +26,15 @@ public class StorageModule implements StatefulModule<StorageModuleConfiguration,
     private final Configurator configurator = new Configurator(configuration);
     private final StorageModuleState state = new StorageModuleState();
 
-    public List<String> storages(){
+    public List<String> spaces(){
         throw new NotImplementedException("TODO");
     }
 
-    public StorageSpace<Value> storage(String storageID){
+    public StorageSpace<Value> space(String spaceID){
         throw new NotImplementedException("TODO");
     }
 
-    public <T> StorageSpace<T> storage(String storageID, Function<Value, T> mapper){
+    public <T> StorageSpace<T> space(String spaceID, Function<Value, T> mapper){
         throw new NotImplementedException("TODO");
     }
 }

@@ -1,5 +1,6 @@
 package io.art.tarantool.model.mapping;
 
+import io.art.core.collection.ImmutableArray;
 import io.art.tarantool.exception.TarantoolDaoException;
 import io.art.tarantool.exception.TarantoolTransactionException;
 import io.art.value.immutable.Value;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 import static io.art.core.caster.Caster.cast;
 import static io.art.core.checker.EmptinessChecker.isEmpty;
+import static io.art.core.collection.ImmutableArray.immutableArrayCollector;
 import static io.art.core.factory.SetFactory.setOf;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.RESULT_IS_INVALID;
 
@@ -19,7 +21,6 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessa
 import static java.text.MessageFormat.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
 
 public class TarantoolResponseMapping {
 
@@ -38,13 +39,13 @@ public class TarantoolResponseMapping {
         return ofNullable(readTuple(response));
     }
 
-    public static Optional<List<Value>> toValuesList(List<?> response){
+    public static Optional<ImmutableArray<Value>> toValuesArray(List<?> response){
         response = cast(response.get(0));
-        if (response.isEmpty()) return empty();
+        if (response.isEmpty()) return Optional.of(ImmutableArray.emptyImmutableArray());
 
-        List<Value> result = response.stream()
+        ImmutableArray<Value> result = response.stream()
                 .map(entry -> readTuple(cast(entry)))
-                .collect(toList());
+                .collect(immutableArrayCollector());
         return Optional.of(result);
     }
 

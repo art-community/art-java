@@ -1,5 +1,6 @@
 package io.art.tarantool.storage;
 
+import io.art.core.collection.ImmutableArray;
 import io.art.tarantool.space.TarantoolSpace;
 import io.art.value.immutable.*;
 import io.art.storage.space.StorageSpace;
@@ -19,8 +20,8 @@ public class TarantoolStorageSpace implements StorageSpace<Value>{
     }
 
     @Override
-    public Optional<List<Value>> find(Value request){
-        return space.select(request).execute().getOptional();
+    public ImmutableArray<Value> find(Value request){
+        return space.select(request).get();
     }
 
     @Override
@@ -33,7 +34,6 @@ public class TarantoolStorageSpace implements StorageSpace<Value>{
         return space.insert(data).getOptional();
     }
 
-    @Override
     public Optional<Value> autoIncrement(Value data) {
         return space.autoIncrement(data).getOptional();
     }

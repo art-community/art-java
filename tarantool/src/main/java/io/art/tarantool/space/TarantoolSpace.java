@@ -1,5 +1,6 @@
 package io.art.tarantool.space;
 
+import io.art.core.collection.ImmutableArray;
 import io.art.core.factory.MapFactory;
 import io.art.tarantool.constants.TarantoolModuleConstants;
 import io.art.tarantool.transaction.TarantoolTransactionManager;
@@ -167,11 +168,11 @@ public class TarantoolSpace {
             return this;
         }
 
-        public TarantoolRecord<List<Value>> execute(){
-            return cast(transactionManager.callRO(SELECT, TarantoolResponseMapping::toValuesList, space, request, index, options));
+        public TarantoolRecord<ImmutableArray<Value>> execute(){
+            return cast(transactionManager.callRO(SELECT, TarantoolResponseMapping::toValuesArray, space, request, index, options));
         }
 
-        public List<Value> get(){
+        public ImmutableArray<Value> get(){
             return execute().get();
         }
 
