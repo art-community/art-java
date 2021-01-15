@@ -243,6 +243,7 @@ class Tarantool extends Specification {
 
         when:
         space.truncate()
+        sleep(synchronizationTimeout)
         then:
         space.count().get() == 0
 
@@ -384,7 +385,7 @@ class Tarantool extends Specification {
         when:
         request = intPrimitive(2)
         then:
-        space.get(request).isEmpty() && space.find(request).isEmpty()
+        !space.get(request).isPresent() && !space.find(request).isPresent()
 
 
         when:
@@ -414,78 +415,11 @@ class Tarantool extends Specification {
         when:
         space.delete(intPrimitive(7))
         then:
-        space.get(request).isEmpty()
+        !space.get(request).isPresent()
 
 
         cleanup:
         db.dropSpace(spaceName)
     }
 
-    def "Storage cluster operations lock"(){
-        setup:
-        def spaceName = "s2_COL"
-        def clusterId = "storage2"
-        TarantoolInstance db = tarantoolInstance(clusterId)
-        boolean result = false
-
-
-        getCluster(clusterId).getClient('storage_2_a').eval("art.box.space.activeClusterOperation = true")
-
-        when:
-        try{
-            db.createSpace(spaceName, tarantoolSpaceConfig())
-        } catch(TarantoolDaoException){
-            result = true
-        }
-        then:
-        result
-
-
-        when:
-        result = false
-        try {
-            db.formatSpace(spaceName, tarantoolSpaceFormat())
-        } catch(TarantoolDaoException){
-            result = true
-        }
-        then:
-        result
-
-
-        when:
-        result = false
-        try {
-            db.createIndex(spaceName, "primary", tarantoolSpaceIndex())
-        } catch(TarantoolDaoException){
-            result = true
-        }
-        then:
-        result
-
-
-        when:
-        result = false
-        try {
-            db.renameSpace(spaceName, spaceName = "s2_COL2")
-        } catch(TarantoolDaoException){
-            result = true
-        }
-        then:
-        result
-
-
-        when:
-        result = false
-        try {
-            db.dropSpace(spaceName)
-        } catch(TarantoolDaoException){
-            result = true
-        }
-        then:
-        result
-
-
-        cleanup:
-        getCluster(clusterId).getClient('storage_2_a').eval("art.box.space.activeClusterOperation = false")
-    }
 }

@@ -37,7 +37,7 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
         return new TarantoolInstance(getCluster(clusterId));
     }
 
-    public static TarantoolClusterClient getCluster(String clusterId){
+    private static TarantoolClusterClient getCluster(String clusterId){
         Optional<TarantoolClusterClient> existingClient = tarantoolModule().state().getClusterClient(clusterId);
         if (existingClient.isPresent()) return existingClient.get();
         TarantoolClusterConfiguration config = tarantoolModule().configuration().clusters.get(clusterId);
