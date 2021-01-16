@@ -7,39 +7,39 @@ import io.art.storage.space.StorageSpace;
 
 import java.util.*;
 
-public class TarantoolStorageSpace implements StorageSpace<Value>{
-    private final TarantoolSpace space;
+public class TarantoolStorageSpace<T> implements StorageSpace<T>{
+    private final TarantoolSpace<T> space;
 
-    public TarantoolStorageSpace(TarantoolSpace space){
+    public TarantoolStorageSpace(TarantoolSpace<T> space){
         this.space = space;
     }
 
     @Override
-    public Optional<Value> get(Value key) {
+    public Optional<T> get(Value key) {
         return space.get(key).getOptional();
     }
 
     @Override
-    public ImmutableArray<Value> find(Value request){
+    public ImmutableArray<T> find(Value request){
         return space.select(request).get();
     }
 
     @Override
-    public Optional<Value> delete(Value key){
+    public Optional<T> delete(Value key){
         return space.delete(key).getOptional();
     }
 
     @Override
-    public Optional<Value> insert(Value data) {
+    public Optional<T> insert(Value data) {
         return space.insert(data).getOptional();
     }
 
-    public Optional<Value> autoIncrement(Value data) {
+    public Optional<T> autoIncrement(Value data) {
         return space.autoIncrement(data).getOptional();
     }
 
     @Override
-    public Optional<Value> put(Value data) {
+    public Optional<T> put(Value data) {
         return space.put(data).getOptional();
     }
 

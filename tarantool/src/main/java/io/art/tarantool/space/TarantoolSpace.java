@@ -9,40 +9,47 @@ import io.art.tarantool.model.record.TarantoolRecord;
 import io.art.tarantool.model.operation.TarantoolUpdateFieldOperation;
 import io.art.value.immutable.Value;
 import io.art.tarantool.model.mapping.TarantoolResponseMapping;
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
 
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static io.art.core.caster.Caster.cast;
+import static io.art.core.collection.ImmutableArray.immutableArrayCollector;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SelectOptions.*;
 import static io.art.tarantool.model.mapping.TarantoolRequestMapping.*;
 
-@AllArgsConstructor
-public class TarantoolSpace {
+public class TarantoolSpace<T> {
     @NonNull
     private final TarantoolTransactionManager transactionManager;
     @NonNull
     private final String space;
+    private final Function<Optional<Value>, Optional<T>> responseMapper;
 
-
-    public TarantoolRecord<Value> get(Value key){
-        return cast(transactionManager.callRO(GET, TarantoolResponseMapping::toValue, space, requestTuple(key)));
+    public TarantoolSpace(String space, TarantoolTransactionManager transactionManager, Function<Optional<Value>, Optional<T>> responseMapper){
+        this.space = space;
+        this.transactionManager = transactionManager;
+        this.responseMapper = responseMapper;
     }
 
-    public TarantoolRecord<Value> get(TarantoolTransactionDependency keyDependency){
-        return cast(transactionManager.callRO(GET, TarantoolResponseMapping::toValue, space, keyDependency.get()));
+
+    public TarantoolRecord<T> get(Value key){
+        return transactionManager.callRO(GET, TarantoolResponseMapping::toValue, space, requestTuple(key)).thenApply(cast(responseMapper));
     }
 
-    public TarantoolRecord<Value> get(String index, Value key){
-        return cast(transactionManager.callRO(GET, TarantoolResponseMapping::toValue, space, index, requestTuple(key)));
+    public TarantoolRecord<T> get(TarantoolTransactionDependency keyDependency){
+        return transactionManager.callRO(GET, TarantoolResponseMapping::toValue, space, keyDependency.get()).thenApply(cast(responseMapper));
     }
 
-    public TarantoolRecord<Value> get(String index, TarantoolTransactionDependency keyDependency){
-        return cast(transactionManager.callRO(GET, TarantoolResponseMapping::toValue, space, index, keyDependency.get()));
+    public TarantoolRecord<T> get(String index, Value key){
+        return transactionManager.callRO(GET, TarantoolResponseMapping::toValue, space, index, requestTuple(key)).thenApply(cast(responseMapper));
+    }
+
+    public TarantoolRecord<T> get(String index, TarantoolTransactionDependency keyDependency){
+        return transactionManager.callRO(GET, TarantoolResponseMapping::toValue, space, index, keyDependency.get()).thenApply(cast(responseMapper));
     }
 
 
@@ -55,66 +62,70 @@ public class TarantoolSpace {
     }
 
 
-    public TarantoolRecord<Value> delete(Value key){
-        return cast(transactionManager.callRW(DELETE, TarantoolResponseMapping::toValue, space, requestTuple(key)));
+    public TarantoolRecord<T> delete(Value key){
+        return transactionManager.callRW(DELETE, TarantoolResponseMapping::toValue, space, requestTuple(key)).thenApply(cast(responseMapper));
     }
 
-    public TarantoolRecord<Value> delete(TarantoolTransactionDependency keyDependency){
-        return cast(transactionManager.callRW(DELETE, TarantoolResponseMapping::toValue, space, keyDependency.get()));
-    }
-
-
-    public TarantoolRecord<Value> insert(Value data){
-        return cast(transactionManager.callRW(INSERT, TarantoolResponseMapping::toValue, space, dataTuple(data)));
-    }
-
-    public TarantoolRecord<Value> insert(TarantoolTransactionDependency dataDependency){
-        return cast(transactionManager.callRW(INSERT, TarantoolResponseMapping::toValue, space, dataDependency.get()));
+    public TarantoolRecord<T> delete(TarantoolTransactionDependency keyDependency){
+        return transactionManager.callRW(DELETE, TarantoolResponseMapping::toValue, space, keyDependency.get()).thenApply(cast(responseMapper));
     }
 
 
-    public TarantoolRecord<Value> autoIncrement(Value data){
-        return cast(transactionManager.callRW(AUTO_INCREMENT, TarantoolResponseMapping::toValue, space, dataTuple(data)));
+    public TarantoolRecord<T> insert(Value data){
+        return transactionManager.callRW(INSERT, TarantoolResponseMapping::toValue, space, dataTuple(data)).thenApply(cast(responseMapper));
     }
 
-    public TarantoolRecord<Value> autoIncrement(TarantoolTransactionDependency dataDependency){
-        return cast(transactionManager.callRW(AUTO_INCREMENT, TarantoolResponseMapping::toValue, space, dataDependency.get()));
-    }
-
-
-    public TarantoolRecord<Value> put(Value data){
-        return cast(transactionManager.callRW(PUT, TarantoolResponseMapping::toValue, space, dataTuple(data)));
-    }
-
-    public TarantoolRecord<Value> put(TarantoolTransactionDependency dataDependency){
-        return cast(transactionManager.callRW(PUT, TarantoolResponseMapping::toValue, space, dataDependency.get()));
+    public TarantoolRecord<T> insert(TarantoolTransactionDependency dataDependency){
+        return transactionManager.callRW(INSERT, TarantoolResponseMapping::toValue, space, dataDependency.get()).thenApply(cast(responseMapper));
     }
 
 
-    public TarantoolRecord<Value> replace(Value data){
-        return cast(transactionManager.callRW(REPLACE, TarantoolResponseMapping::toValue, space, dataTuple(data)));
+    public TarantoolRecord<T> autoIncrement(Value data){
+        return transactionManager.callRW(AUTO_INCREMENT, TarantoolResponseMapping::toValue, space, dataTuple(data)).thenApply(cast(responseMapper));
     }
 
-    public TarantoolRecord<Value> replace(TarantoolTransactionDependency dataDependency){
-        return cast(transactionManager.callRW(REPLACE, TarantoolResponseMapping::toValue, space, dataDependency.get()));
-    }
-
-
-    public TarantoolRecord<Value> update(Value key, TarantoolUpdateFieldOperation... operations){
-        return cast(transactionManager.callRW(UPDATE, TarantoolResponseMapping::toValue, space, requestTuple(key), updateOperationsTuple(operations)));
-    }
-
-    public TarantoolRecord<Value> update(TarantoolTransactionDependency keyDependency, TarantoolUpdateFieldOperation... operations){
-        return cast(transactionManager.callRW(UPDATE, TarantoolResponseMapping::toValue, space, keyDependency.get(), updateOperationsTuple(operations)));
+    public TarantoolRecord<T> autoIncrement(TarantoolTransactionDependency dataDependency){
+        return transactionManager.callRW(AUTO_INCREMENT, TarantoolResponseMapping::toValue, space, dataDependency.get()).thenApply(cast(responseMapper));
     }
 
 
-    public TarantoolRecord<Value> upsert(Value defaultValue, TarantoolUpdateFieldOperation... operations){
-        return cast(transactionManager.callRW(UPSERT, TarantoolResponseMapping::toValue, space, dataTuple(defaultValue), updateOperationsTuple(operations)));
+    public TarantoolRecord<T> put(Value data){
+        return transactionManager.callRW(PUT, TarantoolResponseMapping::toValue, space, dataTuple(data)).thenApply(cast(responseMapper));
     }
 
-    public TarantoolRecord<Value> upsert(TarantoolTransactionDependency defaultValueDependency, TarantoolUpdateFieldOperation... operations){
-        return cast(transactionManager.callRW(UPSERT, TarantoolResponseMapping::toValue, space, defaultValueDependency.get(), updateOperationsTuple(operations)));
+    public TarantoolRecord<T> put(TarantoolTransactionDependency dataDependency){
+        return transactionManager.callRW(PUT, TarantoolResponseMapping::toValue, space, dataDependency.get()).thenApply(cast(responseMapper));
+    }
+
+
+    public TarantoolRecord<T> replace(Value data){
+        return transactionManager.callRW(REPLACE, TarantoolResponseMapping::toValue, space, dataTuple(data)).thenApply(cast(responseMapper));
+    }
+
+    public TarantoolRecord<T> replace(TarantoolTransactionDependency dataDependency){
+        return transactionManager.callRW(REPLACE, TarantoolResponseMapping::toValue, space, dataDependency.get()).thenApply(cast(responseMapper));
+    }
+
+
+    public TarantoolRecord<T> update(Value key, TarantoolUpdateFieldOperation... operations){
+        return transactionManager.callRW(UPDATE, TarantoolResponseMapping::toValue, space, requestTuple(key), updateOperationsTuple(operations))
+                .thenApply(cast(responseMapper));
+    }
+
+    public TarantoolRecord<T> update(TarantoolTransactionDependency keyDependency, TarantoolUpdateFieldOperation... operations){
+        return transactionManager.callRW(UPDATE, TarantoolResponseMapping::toValue, space, keyDependency.get(), updateOperationsTuple(operations))
+                .thenApply(cast(responseMapper));
+    }
+
+
+    public TarantoolRecord<T> upsert(Value defaultValue, TarantoolUpdateFieldOperation... operations){
+        return transactionManager.callRW(UPSERT, TarantoolResponseMapping::toValue, space, dataTuple(defaultValue), updateOperationsTuple(operations))
+                .thenApply(cast(responseMapper));
+    }
+
+    public TarantoolRecord<T> upsert(TarantoolTransactionDependency defaultValueDependency, TarantoolUpdateFieldOperation... operations){
+        return transactionManager.callRW(UPSERT, TarantoolResponseMapping::toValue, space, defaultValueDependency.get(), updateOperationsTuple(operations))
+                .thenApply(cast(responseMapper));
     }
 
 
@@ -137,7 +148,7 @@ public class TarantoolSpace {
 
     public class SelectRequest {
         private final Object request;
-        private Map<String, Object> options = MapFactory.map();
+        private final Map<String, Object> options = MapFactory.map();
         private Object index = 0;
 
         public SelectRequest(Value request) {
@@ -168,15 +179,19 @@ public class TarantoolSpace {
             return this;
         }
 
-        public TarantoolRecord<ImmutableArray<Value>> execute(){
-            return cast(transactionManager.callRO(SELECT, TarantoolResponseMapping::toValuesArray, space, request, index, options));
+        public TarantoolRecord<ImmutableArray<T>> execute(){
+            TarantoolRecord<ImmutableArray<Value>> response = cast(transactionManager
+                    .callRO(SELECT, TarantoolResponseMapping::toValuesArray, space, request, index, options));
+            return response.thenApply(responseData -> responseData.map(values -> values.stream()
+                    .map(entry -> responseMapper.apply(Optional.of(entry)).get())
+                    .collect(immutableArrayCollector())));
         }
 
-        public ImmutableArray<Value> get(){
+        public ImmutableArray<T> get(){
             return execute().get();
         }
 
-        public Stream<Value> stream() {
+        public Stream<T> stream() {
             return execute().get().stream();
         }
     }

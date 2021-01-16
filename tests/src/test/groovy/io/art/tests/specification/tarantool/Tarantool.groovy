@@ -348,7 +348,7 @@ class Tarantool extends Specification {
         def spaceName = "s1_storage_ops"
         def clusterId = "storage1"
         def db = tarantoolInstance(clusterId)
-        def space = new TarantoolStorageSpace(db.space(spaceName))
+        def space = new TarantoolStorageSpace<Value>(db.space(spaceName))
         createSpace(db, spaceName)
 
 

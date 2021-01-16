@@ -2,6 +2,7 @@ package io.art.tarantool.model.record;
 
 import io.art.core.checker.EmptinessChecker;
 
+import io.art.storage.record.StorageRecord;
 import io.art.tarantool.exception.TarantoolDaoException;
 import io.art.tarantool.model.transaction.dependency.TransactionFieldDependency;
 import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
@@ -17,6 +18,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static io.art.core.caster.Caster.cast;
+import static io.art.core.factory.ListFactory.linkedList;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 import static io.art.tarantool.model.mapping.TarantoolResponseMapping.tupleFromTransaction;
 import static java.util.Objects.isNull;
@@ -26,7 +28,7 @@ public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
     private final int transactionEntryNumber;
     private CompletableFuture<Optional<T>> futureResult;
     private final Function<List<?>, Optional<T>> responseMapper;
-    private Function<T, Object> mapper;
+    private final List<TarantoolTransactionRecord<?>> thenApplyRecords = linkedList();
 
     public TarantoolTransactionRecord(int transactionEntryNumber, Function<List<?>, Optional<?>> responseMapper){
         this.transactionEntryNumber = transactionEntryNumber;
@@ -37,6 +39,7 @@ public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
         this.futureResult = futureResponse
                 .thenApply(response -> tupleFromTransaction(response, transactionEntryNumber))
                 .thenApply(responseMapper);
+        thenApplyRecords.forEach(record -> record.transactionCommitted(futureResponse));
     }
 
     @Override
@@ -57,6 +60,14 @@ public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
     public CompletableFuture<Optional<T>> getFuture() {
         if (isNull(futureResult)) throw new TarantoolTransactionException(GET_RESULT_OF_NOT_COMMITTED_TRANSACTION);
         return futureResult;
+    }
+
+    @Override
+    public <U> TarantoolTransactionRecord<U> thenApply(Function<Optional<T>, Optional<U>> mapper){
+        Function<List<?>, Optional<?>> newMapper = (List<?> response) -> mapper.apply(responseMapper.apply(response));
+        TarantoolTransactionRecord<U> newRecord = new TarantoolTransactionRecord<U>(transactionEntryNumber, newMapper);
+        if (!isNull(futureResult)) newRecord.futureResult = this.futureResult.thenApply(mapper);
+        return newRecord;
     }
 
     @Override
@@ -115,5 +126,4 @@ public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
         getOptional();
         return this;
     }
-
 }

@@ -1,6 +1,7 @@
 package io.art.tarantool.model.record;
 
 import io.art.core.checker.EmptinessChecker;
+import io.art.storage.record.StorageRecord;
 import io.art.tarantool.exception.TarantoolDaoException;
 import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
 import io.art.tarantool.exception.TarantoolTransactionException;
@@ -20,8 +21,12 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessa
 public class TarantoolSingleRecord<T> implements TarantoolRecord<T> {
     private final CompletableFuture<Optional<T>> futureResult;
 
-    public TarantoolSingleRecord(CompletableFuture<List<?>> futureResult, Function<List<?>, ?> responseMapper){
+    public TarantoolSingleRecord(CompletableFuture<List<?>> futureResult, Function<List<?>, Optional<?>> responseMapper){
         this.futureResult = cast(futureResult.thenApply(responseMapper));
+    }
+
+    private TarantoolSingleRecord(CompletableFuture<Optional<T>> futureResult){
+        this.futureResult = futureResult;
     }
 
     @Override
@@ -35,10 +40,14 @@ public class TarantoolSingleRecord<T> implements TarantoolRecord<T> {
     }
 
 
-
     @Override
     public CompletableFuture<Optional<T>> getFuture() {
         return futureResult;
+    }
+
+    @Override
+    public <U> TarantoolSingleRecord<U> thenApply(Function<Optional<T>, Optional<U>> mapper){
+        return new TarantoolSingleRecord<U>(futureResult.thenApply(mapper));
     }
 
     @Override

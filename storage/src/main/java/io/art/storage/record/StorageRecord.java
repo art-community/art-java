@@ -9,6 +9,8 @@ public interface StorageRecord <T>{
 
     CompletableFuture<Optional<T>> getFuture();
 
+    <U> StorageRecord<U> thenApply(Function<Optional<T>, Optional<U>> mapper);
+
     Optional<T> getOptional();
 
     T get();

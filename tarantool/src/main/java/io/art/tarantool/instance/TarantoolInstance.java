@@ -8,10 +8,13 @@ import io.art.tarantool.transaction.TarantoolTransactionManager;
 import io.art.tarantool.model.record.TarantoolRecord;
 import io.art.tarantool.model.mapping.TarantoolResponseMapping;
 import io.art.tarantool.module.client.TarantoolClusterClient;
+import io.art.value.immutable.Value;
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import static io.art.core.caster.Caster.cast;
 import static io.art.logging.LoggingModule.logger;
@@ -32,8 +35,12 @@ public class TarantoolInstance {
         return cast(transactionManager.callRO(LIST_SPACES, TarantoolResponseMapping::toStringSet).synchronize());
     }
 
-    public TarantoolSpace space(String space){
-        return new TarantoolSpace(transactionManager, space);
+    public TarantoolSpace<Value> space(String space){
+        return space(space, (response)->response);
+    }
+
+    public <T> TarantoolSpace<T> space(String space, Function<Optional<Value>, Optional<T>> responseMapper){
+        return new TarantoolSpace<T>(space, transactionManager, responseMapper);
     }
 
     public void createSpace(String space, TarantoolSpaceConfig config){
