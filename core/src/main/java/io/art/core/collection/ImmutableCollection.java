@@ -1,5 +1,6 @@
 package io.art.core.collection;
 
+import static io.art.core.caster.Caster.*;
 import static java.util.Spliterator.*;
 import java.util.*;
 import java.util.function.*;
@@ -24,6 +25,11 @@ public interface ImmutableCollection<T> extends Iterable<T> {
 
     default T[] toArray(Function<Integer, T[]> factory) {
         return toArray(factory.apply(size()));
+    }
+
+    default T[] toArrayRaw(Function<Integer, ?> factory) {
+        T[] array = cast(factory.apply(size()));
+        return toArray(array);
     }
 
     default Stream<T> stream() {
