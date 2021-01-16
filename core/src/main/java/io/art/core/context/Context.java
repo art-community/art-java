@@ -20,11 +20,12 @@ package io.art.core.context;
 
 import io.art.core.collection.*;
 import io.art.core.configuration.*;
+import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.exception.*;
 import io.art.core.module.*;
-import io.art.core.module.Module;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.StringConstants.*;
@@ -39,29 +40,30 @@ import java.util.*;
 import java.util.function.*;
 
 public class Context {
+    private static final Context DEFAULT_INSTANCE = new Context(new DefaultContextConfiguration(DEFAULT_MAIN_MODULE_ID), System.out::println);
     private static Context INSTANCE;
     private final Map<String, Module> modules = map();
     private final Map<String, ModuleDecorator> configurators = map();
     private final ContextConfiguration configuration;
     private final Consumer<String> printer;
 
-    private Context(ContextConfiguration configuration, ImmutableMap<ModuleFactory, ModuleDecorator> initializers, Consumer<String> printer) {
+    private Context(ContextConfiguration configuration, Consumer<String> printer) {
         this.printer = printer;
         this.configuration = configuration;
-        load(initializers);
-        getRuntime().addShutdownHook(new Thread(this::unload));
     }
 
-    public static void initialize(ContextConfiguration configuration, ImmutableMap<ModuleFactory, ModuleDecorator> modules, Consumer<String> printer) {
+    public static void initialize(ContextConfiguration configuration, ImmutableMap<ModuleFactory, ModuleDecorator> initializers, Consumer<String> printer) {
         if (nonNull(INSTANCE)) {
             throw new InternalRuntimeException(CONTEXT_ALREADY_INITIALIZED);
         }
-        new Context(configuration, modules, printer);
+        Context context = new Context(configuration, printer);
+        context.load(initializers);
+        getRuntime().addShutdownHook(new Thread(context::unload));
     }
 
     public static Context context() {
         if (isNull(INSTANCE)) {
-            throw new InternalRuntimeException(CONTEXT_NOT_INITIALIZED);
+            return DEFAULT_INSTANCE;
         }
         return INSTANCE;
     }
