@@ -23,6 +23,7 @@ import io.art.core.configuration.*;
 import io.art.core.configuration.ContextConfiguration.*;
 import io.art.core.exception.*;
 import io.art.core.module.*;
+import io.art.core.module.Module;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ContextConstants.*;
