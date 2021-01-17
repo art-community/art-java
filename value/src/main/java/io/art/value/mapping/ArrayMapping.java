@@ -57,7 +57,7 @@ public class ArrayMapping {
     public ArrayFromModelMapper<boolean[]> fromBoolArray = array -> let(array, ArrayValueFactory::boolArray);
 
 
-    public static <T> ArrayToModelMapper<T[]> toArray(Function<Integer, ?> factory, ValueToModelMapper<T, ? extends Value> elementMapper) {
+    public static <T> ArrayToModelMapper<T[]> toArrayRaw(Function<Integer, ?> factory, ValueToModelMapper<T, ? extends Value> elementMapper) {
         Function<Integer, T[]> function = cast(factory);
         return array -> let(array, notNull -> notNull.asList(elementMapper).toArray(function.apply(array.size())));
     }

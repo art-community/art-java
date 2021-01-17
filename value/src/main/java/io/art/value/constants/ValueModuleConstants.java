@@ -123,6 +123,27 @@ public interface ValueModuleConstants {
                         throw new ValueMappingException(format(NOT_PRIMITIVE_TYPE, primitiveType));
                 }
             }
+
+            public static Primitive defaultValue(PrimitiveType primitiveType) {
+                switch (primitiveType) {
+                    case STRING:
+                        return DEFAULT_STRING_PRIMITIVE;
+                    case LONG:
+                        return DEFAULT_INT_PRIMITIVE;
+                    case DOUBLE:
+                        return DEFAULT_LONG_PRIMITIVE;
+                    case INT:
+                        return DEFAULT_DOUBLE_PRIMITIVE;
+                    case BOOL:
+                        return DEFAULT_BOOL_PRIMITIVE;
+                    case BYTE:
+                        return DEFAULT_BYTE_PRIMITIVE;
+                    case FLOAT:
+                        return DEFAULT_FLOAT_PRIMITIVE;
+                    default:
+                        throw new ValueMappingException(format(NOT_PRIMITIVE_TYPE, primitiveType));
+                }
+            }
         }
 
         public enum XmlValueType {

@@ -29,7 +29,7 @@ public class ThrowableMapping {
 
     public Throwable toThrowable(Entity entity) {
         String message = entity.map(stringPrimitive(MESSAGE_KEY), toString);
-        StackTraceElement[] stackTrace = entity.map(stringPrimitive(STACK_TRACE_KEY), toArray(StackTraceElement[]::new, ThrowableMapping::toStackTraceElement));
+        StackTraceElement[] stackTrace = entity.map(stringPrimitive(STACK_TRACE_KEY), toArrayRaw(StackTraceElement[]::new, ThrowableMapping::toStackTraceElement));
         Throwable cause = entity.map(stringPrimitive(CAUSE_KEY), ThrowableMapping::toThrowable);
         Throwable throwable = new Throwable(message, cause);
         throwable.setStackTrace(stackTrace);
