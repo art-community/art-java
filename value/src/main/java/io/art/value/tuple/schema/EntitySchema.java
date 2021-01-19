@@ -33,6 +33,8 @@ import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.immutable.Value.*;
 import static java.text.MessageFormat.*;
+import static java.util.Objects.isNull;
+
 import java.util.*;
 
 @Getter
@@ -46,7 +48,7 @@ public class EntitySchema extends ValueSchema {
         for (Primitive key : keys) {
             if (valueIsNull(key)) continue;
             Value value = entity.get(key);
-            if (valueIsNull(value)) continue;
+            if (isNull(value)) continue;
             let(fromValue(value), schema -> schemaBuilder.add(new EntityFieldSchema(value.getType(), key.getString(), schema)));
         }
         fieldsSchema = schemaBuilder.build();

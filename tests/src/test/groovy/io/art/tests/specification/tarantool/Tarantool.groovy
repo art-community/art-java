@@ -1,7 +1,6 @@
 
 package io.art.tests.specification.tarantool
 
-import io.art.tarantool.module.TarantoolModule
 import io.art.tarantool.space.TarantoolSpace
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
@@ -33,12 +32,13 @@ class Tarantool extends Specification {
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
         db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .field("id", NUMBER, false))
+                .field("id", UNSIGNED, false))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
                 .part("id")
                 .ifNotExists(true)
-                .unique(true))
+                .unique(true)
+                .sequence())
     }
 
     static def createShardedSpace(TarantoolInstance db, String spaceName){
@@ -85,8 +85,9 @@ class Tarantool extends Specification {
         when:
         space.insert(data)
         sleep(synchronizationTimeout)
+        def response = space.get(request).synchronize()
         then:
-        (Entity) space.get(request).get() == data
+        (Entity) response.get() == data
 
 
         when:
@@ -113,7 +114,7 @@ class Tarantool extends Specification {
 
         when:
         request = intPrimitive(7)
-        Entity response = space.select(request).get().get(0) as Entity
+        response = space.select(request).get().get(0) as Entity
         then:
         response == data
 
@@ -417,6 +418,34 @@ class Tarantool extends Specification {
         then:
         !space.get(request).isPresent()
 
+
+        cleanup:
+        db.dropSpace(spaceName)
+    }
+
+    def "Storage sequence"(){
+        setup:
+        def spaceName = "s2_seq"
+        def clusterId = "storage2"
+        TarantoolInstance db = tarantoolInstance(clusterId)
+        TarantoolSpace space = db.space(spaceName)
+        createSpace(db, spaceName)
+
+
+        Entity data = Entity.entityBuilder()
+                .put("id", intPrimitive(null))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
+                .build()
+
+
+        when:
+        def response1 = space.insert(data).synchronize()
+        space.insert(data)
+        space.insert(data).synchronize()
+        def response2 = space.get(intPrimitive(3)).synchronize()
+        then:
+        response1.isPresent() && ((Entity) response2.get()).get("id") == intPrimitive(3)
 
         cleanup:
         db.dropSpace(spaceName)
