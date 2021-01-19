@@ -154,7 +154,7 @@ public class SetFactory {
     }
 
 
-    public static <T> Set<T> concurrentHashSet() {
+    public static <T> Set<T> concurrentSet() {
         return ConcurrentHashMap.newKeySet();
     }
 

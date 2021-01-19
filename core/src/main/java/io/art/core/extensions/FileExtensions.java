@@ -52,6 +52,13 @@ public class FileExtensions {
         return path.substring(path.lastIndexOf(DOT) + 1);
     }
 
+    public static String withoutExtension(String path) {
+        if (isEmpty(path)) {
+            throw new ParseException(format(FILE_PATH_NOT_VALID, path));
+        }
+        return path.substring(0, path.lastIndexOf(DOT));
+    }
+
 
     public static String readFile(String path) {
         return readFile(get(path), DEFAULT_BUFFER_SIZE);
