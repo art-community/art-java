@@ -30,11 +30,15 @@ public class TarantoolSpace<T> {
     @NonNull
     private final String space;
     private final Function<Optional<Value>, Optional<T>> responseMapper;
+    private final Function<List<?>, Optional<?>> selectMapper;
 
     public TarantoolSpace(String space, TarantoolTransactionManager transactionManager, Function<Optional<Value>, Optional<T>> responseMapper){
         this.space = space;
         this.transactionManager = transactionManager;
         this.responseMapper = responseMapper;
+        selectMapper = response -> toValuesArray(response).map(values -> values.stream()
+                        .map(entry -> responseMapper.apply(Optional.of(entry)).get())
+                        .collect(immutableArrayCollector()));
     }
 
 
@@ -182,11 +186,7 @@ public class TarantoolSpace<T> {
         }
 
         public TarantoolRecord<ImmutableArray<T>> execute(){
-            Function<List<?>, Optional<ImmutableArray<T>>> mapper =
-                    response -> toValuesArray(response).map(values -> values.stream()
-                    .map(entry -> responseMapper.apply(Optional.of(entry)).get())
-                    .collect(immutableArrayCollector()));
-            return cast(transactionManager.callRO(SELECT, cast(mapper), space, request, index, options));
+            return cast(transactionManager.callRO(SELECT, selectMapper, space, request, index, options));
         }
 
         public ImmutableArray<T> get(){
