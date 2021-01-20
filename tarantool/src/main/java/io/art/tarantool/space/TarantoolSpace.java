@@ -182,11 +182,11 @@ public class TarantoolSpace<T> {
         }
 
         public TarantoolRecord<ImmutableArray<T>> execute(){
-            Function<Optional<ImmutableArray<Value>>, Optional<ImmutableArray<T>>> mapper =
-                    valuesList -> valuesList.map(values -> values.stream()
+            Function<List<?>, Optional<ImmutableArray<T>>> mapper =
+                    response -> toValuesArray(response).map(values -> values.stream()
                     .map(entry -> responseMapper.apply(Optional.of(entry)).get())
                     .collect(immutableArrayCollector()));
-            return cast(transactionManager.callRO(SELECT, response -> mapper.apply(toValuesArray(response)), space, request, index, options));
+            return cast(transactionManager.callRO(SELECT, cast(mapper), space, request, index, options));
         }
 
         public ImmutableArray<T> get(){
