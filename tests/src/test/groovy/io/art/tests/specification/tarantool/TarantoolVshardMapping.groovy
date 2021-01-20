@@ -58,6 +58,7 @@ class TarantoolVshardMapping extends Specification {
         db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
                 .part(2)
                 .unique(false))
+        sleep(synchronizationTimeout*5)
 
         when:
         for (int i = 0; i<testOpsCount; i++){
@@ -67,7 +68,7 @@ class TarantoolVshardMapping extends Specification {
         db.createIndex(spaceName, 'data', tarantoolSpaceIndex()
                 .part(3)
                 .unique(false))
-        sleep(synchronizationTimeout*5)
+        sleep(synchronizationTimeout*10)
 
         def response = space.select(stringPrimitive('data'))
                 .index('data')

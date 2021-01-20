@@ -36,9 +36,8 @@ public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
     }
 
     public void transactionCommitted(CompletableFuture<List<?>> futureResponse) {
-        this.futureResult = futureResponse
-                .thenApply(response -> tupleFromTransaction(response, transactionEntryNumber))
-                .thenApply(responseMapper);
+        futureResult = futureResponse
+                .thenApply(response -> responseMapper.apply(tupleFromTransaction(response, transactionEntryNumber)));
         thenApplyRecords.forEach(record -> record.transactionCommitted(futureResponse));
     }
 
@@ -66,6 +65,7 @@ public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
     public <U> TarantoolTransactionRecord<U> thenApply(Function<Optional<T>, Optional<U>> mapper){
         Function<List<?>, Optional<?>> newMapper = (List<?> response) -> mapper.apply(responseMapper.apply(response));
         TarantoolTransactionRecord<U> newRecord = new TarantoolTransactionRecord<U>(transactionEntryNumber, newMapper);
+        thenApplyRecords.add(newRecord);
         if (!isNull(futureResult)) newRecord.futureResult = this.futureResult.thenApply(mapper);
         return newRecord;
     }
@@ -126,4 +126,5 @@ public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
         getOptional();
         return this;
     }
+
 }
