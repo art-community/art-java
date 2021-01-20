@@ -44,26 +44,24 @@ import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.apply;
+import static io.art.core.checker.NullityChecker.let;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.lazy.LazyValue.*;
 import static io.art.launcher.ModuleLauncherConstants.*;
-import static io.art.launcher.ModuleModelProvider.*;
 import static io.art.logging.LoggingModule.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
+import java.util.*;
 import java.util.concurrent.atomic.*;
 
 @UtilityClass
 @UsedByGenerator
 public class ModuleLauncher {
     private static final AtomicBoolean LAUNCHED = new AtomicBoolean(false);
-
-    public static void launch() {
-        launch(provide());
-    }
 
     public static void launch(ModuleModel model) {
         if (LAUNCHED.compareAndSet(false, true)) {
@@ -94,7 +92,7 @@ public class ModuleLauncher {
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
             initialize(new ContextConfiguration.DefaultContextConfiguration(model.getMainModuleId()), modules.build(), message -> logger.get().info(message));
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
-            model.getOnLoad().run();
+            apply(model.getOnLoad(), Runnable::run);
             if (needBlock(rsocketCustomizer)) block();
         }
     }
@@ -163,10 +161,10 @@ public class ModuleLauncher {
     private static RsocketModule rsocket(RsocketModule rsocket, ModuleConfiguringState state, RsocketCustomizer rsocketCustomizer) {
         ServerModuleModel serverModel = state.getModel().getServerModel();
         CommunicatorModuleModel communicatorModel = state.getModel().getCommunicatorModel();
-        if (isNotEmpty(serverModel.getRsocketServices())) {
+        if (isNotEmpty(let(serverModel, ServerModuleModel::getRsocketServices))) {
             rsocketCustomizer.activateServer();
         }
-        if (isNotEmpty(communicatorModel.getRsocketCommunicators())) {
+        if (isNotEmpty(let(communicatorModel, CommunicatorModuleModel::getRsocketCommunicators))) {
             rsocketCustomizer.activateCommunicator();
         }
         rsocket.configure(configurator -> configurator.from(state.getConfigurator().orderedSources()).override(rsocketCustomizer.getConfiguration()));

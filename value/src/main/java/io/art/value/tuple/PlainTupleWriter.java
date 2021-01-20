@@ -65,9 +65,12 @@ public class PlainTupleWriter {
         List<?> tuple = dynamicArrayOf();
         Set<Primitive> keys = entity.asMap().keySet();
         for (Primitive key : keys) {
-            if (valueIsNull(key)) continue;
+            if (valueIsNull(key)) continue;;
             Value value = entity.get(key);
-            if (valueIsNull(value)) continue;
+            if (valueIsNull(value)) {
+                tuple.add(null);
+                continue;
+            }
             if (isPrimitive(value)) {
                 tuple.add(cast(asPrimitive(value).getValue()));
                 continue;
@@ -85,7 +88,10 @@ public class PlainTupleWriter {
         List<?> tuple = dynamicArrayOf();
         List<Value> valueList = array.asList();
         for (Value value : valueList) {
-            if (valueIsNull(value)) continue;
+            if (valueIsNull(value)) {
+                tuple.add(null);
+                continue;
+            }
             if (isPrimitive(value)) {
                 tuple.add(cast(asPrimitive(value).getValue()));
                 continue;

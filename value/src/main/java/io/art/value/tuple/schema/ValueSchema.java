@@ -23,8 +23,8 @@ import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.immutable.Value;
 import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
-import static io.art.value.immutable.Value.*;
+import static java.util.Objects.isNull;
+
 import java.util.*;
 
 @Getter
@@ -34,7 +34,7 @@ public class ValueSchema {
     private final ValueType type;
 
     public static ValueSchema fromValue(Value value) {
-        if (valueIsNull(value)) {
+        if (isNull(value)) {
             return null;
         }
 
