@@ -152,6 +152,18 @@ public class TarantoolSpace<T> {
         return cast(transactionManager.callRO(LIST_INDICES, TarantoolResponseMapping::toStringSet, space));
     }
 
+    public void beginTransaction(){
+        transactionManager.begin();
+    }
+
+    public void commitTransaction(){
+        transactionManager.commit();
+    }
+
+    public void cancelTransaction(){
+        transactionManager.cancel();
+    }
+
     public class SelectRequest {
         private final Object request;
         private final Map<String, Object> options = MapFactory.map();
