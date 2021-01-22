@@ -11,6 +11,7 @@ import io.art.tarantool.instance.TarantoolInstance;
 import lombok.Getter;
 
 import static io.art.core.context.Context.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.DEFAULT_CLUSTER_NAME;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.CLUSTER_CONFIGURATION_IS_NULL;
 import static java.text.MessageFormat.format;
 import static io.art.tarantool.configuration.TarantoolModuleConfiguration.Configurator;
@@ -31,6 +32,10 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
 
     public static StatefulModuleProxy<TarantoolModuleConfiguration, TarantoolModuleState> tarantoolModule() {
         return getTarantoolModule();
+    }
+
+    public static TarantoolInstance tarantoolInstance(){
+        return tarantoolInstance(DEFAULT_CLUSTER_NAME);
     }
 
     public static TarantoolInstance tarantoolInstance(String clusterId){
