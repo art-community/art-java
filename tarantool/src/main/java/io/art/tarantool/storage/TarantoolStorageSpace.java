@@ -34,10 +34,6 @@ public class TarantoolStorageSpace<T> implements StorageSpace<T>{
         return space.insert(data).getOptional();
     }
 
-    public Optional<T> autoIncrement(Value data) {
-        return space.autoIncrement(data).getOptional();
-    }
-
     @Override
     public Optional<T> put(Value data) {
         return space.put(data).getOptional();

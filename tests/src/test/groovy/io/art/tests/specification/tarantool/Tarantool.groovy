@@ -354,46 +354,46 @@ class Tarantool extends Specification {
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", intPrimitive(3))
+                .put("id", intPrimitive(null))
                 .put("data", stringPrimitive("testData"))
                 .put("anotherData", stringPrimitive("another data"))
                 .build()
-        Value request = intPrimitive(3)
+        Value request = intPrimitive(1)
 
 
 
         when:
         space.insert(data)
         then:
-        space.get(request).get() == data
+        space.get(request).get().asType(Entity).get("id") == intPrimitive(1)
 
 
         when:
-        space.autoIncrement(data)
-        space.autoIncrement(data)
-        space.autoIncrement(data)
+        space.insert(data)
+        space.insert(data)
+        space.insert(data)
         db.renameSpace(spaceName, spaceName = "s1_storage_ops2")
         space = new TarantoolStorageSpace(db.space(spaceName))
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("data", stringPrimitive("testData"))
                 .build()
-        space.autoIncrement(data)
+        space.insert(data)
         then:
         (space.count().get() == 5)
 
 
         when:
-        request = intPrimitive(2)
+        request = intPrimitive(10)
         then:
         !space.get(request).isPresent() && space.find(request).isEmpty()
 
 
         when:
-        request = intPrimitive(7)
+        request = intPrimitive(2)
         Entity response = space.find(request).get(0) as Entity
         then:
-        response == data
+        response.get("id") == intPrimitive(2)
 
 
         when:
@@ -409,14 +409,15 @@ class Tarantool extends Specification {
                 .put("data", stringPrimitive("another data"))
                 .build()
         space.put(data)
+        sleep(synchronizationTimeout)
         then:
-        space.get(request).get() == data
+        space.get(intPrimitive(7)).get() == data
 
 
         when:
         space.delete(intPrimitive(7))
         then:
-        !space.get(request).isPresent()
+        !space.get(intPrimitive(7)).isPresent()
 
 
         cleanup:
