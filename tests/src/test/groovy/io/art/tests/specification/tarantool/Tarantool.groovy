@@ -7,7 +7,6 @@ import io.art.value.immutable.Value
 import io.art.tarantool.instance.TarantoolInstance
 import io.art.tarantool.model.operation.TarantoolUpdateFieldOperation
 
-import io.art.tarantool.storage.TarantoolStorageSpace
 import spock.lang.Specification
 
 import static io.art.launcher.ModuleLauncher.launch
@@ -338,86 +337,6 @@ class Tarantool extends Specification {
         response = space.select(stringPrimitive("testData")).index("dataIndex").execute().synchronize()
         then:
         response.get().size() == 5
-
-
-        cleanup:
-        db.dropSpace(spaceName)
-    }
-
-    def "TarantoolStorage interface ops"(){
-        setup:
-        def spaceName = "s1_storage_ops"
-        def clusterId = "storage1"
-        def db = tarantoolInstance(clusterId)
-        def space = new TarantoolStorageSpace<Value>(db.space(spaceName))
-        createSpace(db, spaceName)
-
-
-        Entity data = Entity.entityBuilder()
-                .put("id", intPrimitive(null))
-                .put("data", stringPrimitive("testData"))
-                .put("anotherData", stringPrimitive("another data"))
-                .build()
-        Value request = intPrimitive(1)
-
-
-
-        when:
-        space.insert(data)
-        then:
-        space.get(request).get().asType(Entity).get("id") == intPrimitive(1)
-
-
-        when:
-        space.insert(data)
-        space.insert(data)
-        space.insert(data)
-        db.renameSpace(spaceName, spaceName = "s1_storage_ops2")
-        space = new TarantoolStorageSpace(db.space(spaceName))
-        data = Entity.entityBuilder()
-                .put("id", intPrimitive(7))
-                .put("data", stringPrimitive("testData"))
-                .build()
-        space.insert(data)
-        then:
-        (space.count().get() == 5)
-
-
-        when:
-        request = intPrimitive(10)
-        then:
-        !space.get(request).isPresent() && space.find(request).isEmpty()
-
-
-        when:
-        request = intPrimitive(2)
-        Entity response = space.find(request).get(0) as Entity
-        then:
-        response.get("id") == intPrimitive(2)
-
-
-        when:
-        space.truncate()
-        sleep(synchronizationTimeout)
-        then:
-        (space.count().get() == 0)
-
-
-        when:
-        data = Entity.entityBuilder()
-                .put("id", intPrimitive(7))
-                .put("data", stringPrimitive("another data"))
-                .build()
-        space.put(data)
-        sleep(synchronizationTimeout)
-        then:
-        space.get(intPrimitive(7)).get() == data
-
-
-        when:
-        space.delete(intPrimitive(7))
-        then:
-        !space.get(intPrimitive(7)).isPresent()
 
 
         cleanup:

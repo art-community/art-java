@@ -5,11 +5,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public interface StorageRecord <T>{
+public interface Record<T>{
 
     CompletableFuture<Optional<T>> getFuture();
 
-    <U> StorageRecord<U> thenApply(Function<Optional<T>, Optional<U>> mapper);
+    <U> Record<U> thenApply(Function<Optional<T>, Optional<U>> mapper);
 
     Optional<T> getOptional();
 
@@ -31,5 +31,5 @@ public interface StorageRecord <T>{
 
     boolean isEmpty();
 
-    StorageRecord<T> synchronize();
+    Record<T> synchronize();
 }

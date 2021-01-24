@@ -19,6 +19,7 @@ import java.util.function.Function;
 import static io.art.core.caster.Caster.cast;
 import static io.art.logging.LoggingModule.logger;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
+import static java.util.function.Function.identity;
 import static lombok.AccessLevel.PRIVATE;
 
 public class TarantoolInstance {
@@ -35,12 +36,15 @@ public class TarantoolInstance {
         return cast(transactionManager.callRO(LIST_SPACES, TarantoolResponseMapping::toStringSet).synchronize());
     }
 
-    public TarantoolSpace<Value> space(String space){
-        return space(space, (response)->response);
+    public TarantoolSpace<Value, Value> space(String space){
+        return space(space, identity(), identity(), identity());
     }
 
-    public <T> TarantoolSpace<T> space(String space, Function<Optional<Value>, Optional<T>> responseMapper){
-        return new TarantoolSpace<T>(space, transactionManager, responseMapper);
+    public <T, K> TarantoolSpace<T, K> space(String space,
+                                             Function<Optional<Value>, Optional<T>> responseMapper,
+                                             Function<T, Value> requestDataMapper,
+                                             Function<K, Value> requestKeyMapper){
+        return new TarantoolSpace<T, K>(space, transactionManager, responseMapper, requestDataMapper, requestKeyMapper);
     }
 
     public void createSpace(String space, TarantoolSpaceConfig config){

@@ -5,8 +5,7 @@ import io.art.core.module.StatefulModule;
 import io.art.core.module.StatefulModuleProxy;
 import io.art.storage.configuration.StorageModuleConfiguration;
 import io.art.storage.module.state.StorageModuleState;
-import io.art.storage.record.StorageRecord;
-import io.art.storage.space.StorageSpace;
+import io.art.storage.space.Space;
 import io.art.value.immutable.Value;
 import lombok.Getter;
 
@@ -30,11 +29,11 @@ public class StorageModule implements StatefulModule<StorageModuleConfiguration,
         throw new NotImplementedException("TODO");
     }
 
-    public StorageSpace<Value> space(String spaceID){
+    public Space<Value, Value> space(String spaceID){
         throw new NotImplementedException("TODO");
     }
 
-    public <T> StorageSpace<T> space(String spaceID, Function<Value, T> mapper){
+    public <T, K> Space<T, K> space(String spaceID, Function<Value, T> mapper){
         throw new NotImplementedException("TODO");
     }
 }
