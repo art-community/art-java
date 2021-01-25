@@ -23,6 +23,7 @@ import io.art.model.customizer.*;
 import io.art.model.implementation.communicator.*;
 import io.art.model.implementation.configurator.*;
 import io.art.model.implementation.server.*;
+import io.art.model.implementation.storage.StorageModuleModel;
 import io.art.model.implementation.value.*;
 import lombok.*;
 import java.util.function.*;
@@ -35,6 +36,7 @@ public class ModuleModel {
     private final ValueModuleModel valueModel;
     private final ServerModuleModel serverModel;
     private final CommunicatorModuleModel communicatorModel;
+    private final StorageModuleModel storageModel;
     private final Runnable onLoad;
 
     @Builder.Default

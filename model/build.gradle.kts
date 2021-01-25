@@ -24,4 +24,6 @@ dependencies {
     implementation(project(":value"))
     implementation(project(":server"))
     implementation(project(":communicator"))
+    implementation(project(":tarantool"))
+    implementation(project(":storage"))
 }

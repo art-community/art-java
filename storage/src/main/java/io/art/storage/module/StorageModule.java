@@ -10,13 +10,17 @@ import io.art.value.immutable.Value;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
+import static io.art.core.caster.Caster.cast;
 import static io.art.core.context.Context.context;
 import static io.art.storage.configuration.StorageModuleConfiguration.Configurator;
+import static lombok.AccessLevel.PRIVATE;
 
 @Getter
 public class StorageModule implements StatefulModule<StorageModuleConfiguration, Configurator, StorageModuleState> {
+    @Getter(lazy = true, value = PRIVATE)
     private static final StatefulModuleProxy<StorageModuleConfiguration, StorageModuleState> storageModule =
             context().getStatefulModule(StorageModule.class.getSimpleName());
 
@@ -25,15 +29,15 @@ public class StorageModule implements StatefulModule<StorageModuleConfiguration,
     private final Configurator configurator = new Configurator(configuration);
     private final StorageModuleState state = new StorageModuleState();
 
+    public static StatefulModuleProxy<StorageModuleConfiguration, StorageModuleState> storageModule() {
+        return getStorageModule();
+    }
+
     public List<String> spaces(){
         throw new NotImplementedException("TODO");
     }
 
-    public Space<Value, Value> space(String spaceID){
-        throw new NotImplementedException("TODO");
-    }
-
-    public <T, K> Space<T, K> space(String spaceID, Function<Value, T> mapper){
+    public static <T, K> Space<T, K> space(String spaceID){
         throw new NotImplementedException("TODO");
     }
 }

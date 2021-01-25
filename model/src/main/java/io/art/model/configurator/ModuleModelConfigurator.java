@@ -32,6 +32,7 @@ public class ModuleModelConfigurator {
     private final ConfiguratorModelConfigurator configurator = new ConfiguratorModelConfigurator();
     private final ServerModelConfigurator server = new ServerModelConfigurator();
     private final CommunicatorModelConfigurator communicator = new CommunicatorModelConfigurator();
+    private final StorageModelConfigurator storage = new StorageModelConfigurator();
     private Runnable onLoad = emptyRunnable();
 
     public ModuleModelConfigurator value(UnaryOperator<ValueModelConfigurator> value) {
@@ -54,6 +55,11 @@ public class ModuleModelConfigurator {
         return this;
     }
 
+    public ModuleModelConfigurator store(UnaryOperator<StorageModelConfigurator> storage) {
+        storage.apply(this.storage);
+        return this;
+    }
+
     public ModuleModelConfigurator onLoad(Runnable action) {
         Runnable current = this.onLoad;
         this.onLoad = () -> {
@@ -70,6 +76,7 @@ public class ModuleModelConfigurator {
                 .configuratorModel(configurator.configure())
                 .serverModel(server.configure())
                 .communicatorModel(communicator.configure())
+                .storageModel(storage.configure())
                 .onLoad(onLoad)
                 .build();
     }
