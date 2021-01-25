@@ -50,7 +50,8 @@ class Tarantool extends Specification {
                 .type(TarantoolIndexType.TREE)
                 .part("id")
                 .ifNotExists(true)
-                .unique(true))
+                .unique(true)
+                .sequence())
         db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
                 .part(2)
                 .unique(false))
@@ -68,11 +69,11 @@ class Tarantool extends Specification {
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", intPrimitive(3))
+                .put("id", intPrimitive(null))
                 .put("data", stringPrimitive("testData"))
                 .put("anotherData", stringPrimitive("another data"))
                 .build()
-        Value request = intPrimitive(3)
+        Value request = intPrimitive(1)
 
 
         when:
@@ -86,27 +87,28 @@ class Tarantool extends Specification {
         sleep(synchronizationTimeout)
         def response = space.get(request).synchronize()
         then:
-        (Entity) response.get() == data
+        response.isPresent()
 
 
         when:
-        space.autoIncrement(data)
-        space.autoIncrement(data)
-        space.autoIncrement(data)
+
+        space.insert(data)
+        space.insert(data)
+        space.insert(data)
         db.renameSpace(spaceName, spaceName = "s2_CRUD2")
         space = db.space(spaceName)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
                 .put("data", stringPrimitive("testData"))
                 .build()
-        space.autoIncrement(data)
+        space.insert(data)
         sleep(synchronizationTimeout)
         then:
         space.len().get() == 5
 
 
         when:
-        request = intPrimitive(2)
+        request = intPrimitive(5)
         then:
         space.get(request).isEmpty() && space.select(request).get().isEmpty()
 
@@ -184,12 +186,12 @@ class Tarantool extends Specification {
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", intPrimitive(3))
+                .put("id", intPrimitive(null))
                 .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("testData"))
                 .put("anotherData", stringPrimitive("another data"))
                 .build()
-        Value request = intPrimitive(3)
+        Value request = intPrimitive(1)
 
 
 
@@ -205,13 +207,13 @@ class Tarantool extends Specification {
         space.insert(data)
         then:
         sleep(synchronizationTimeout)
-        space.get(request).get() == data
+        space.get(request).isPresent()
 
 
         when:
-        space.autoIncrement(data)
-        space.autoIncrement(data)
-        space.autoIncrement(data)
+        space.insert(data)
+        space.insert(data)
+        space.insert(data)
         db.renameSpace(spaceName, spaceName = "r_crud2")
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
@@ -219,16 +221,15 @@ class Tarantool extends Specification {
                 .put("data", stringPrimitive("testData"))
                 .build()
         space = db.space(spaceName)
-        space.autoIncrement(data)
+        space.insert(data)
         then:
         sleep(synchronizationTimeout)
         space.len().get() == 5
 
 
         when:
-        request = intPrimitive(2)
+        request = intPrimitive(6)
         then:
-        true
         space.get(request).isEmpty() && space.select(request).get().isEmpty()
 
 
@@ -308,7 +309,7 @@ class Tarantool extends Specification {
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", intPrimitive(3))
+                .put("id", intPrimitive(null))
                 .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("testData"))
                 .put("anotherData", stringPrimitive("another data"))
@@ -316,11 +317,11 @@ class Tarantool extends Specification {
 
 
         when:
-        space.autoIncrement(data)
-        space.autoIncrement(data)
-        space.autoIncrement(data)
-        space.autoIncrement(data)
-        space.autoIncrement(data)
+        space.insert(data)
+        space.insert(data)
+        space.insert(data)
+        space.insert(data)
+        space.insert(data)
         sleep(synchronizationTimeout)
         def response = space.select(intPrimitive(5)).index("primary")
                 .iterator(TarantoolIndexIterator.EQ)

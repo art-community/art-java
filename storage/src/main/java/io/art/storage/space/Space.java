@@ -9,6 +9,8 @@ public interface Space<T, K> {
 
     Record<T> get(K key);
 
+    Record<ImmutableArray<T>> getAll();
+
     Record<T> insert(T data);
 
     Record<T> put(T data);

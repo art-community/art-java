@@ -11,6 +11,7 @@ import io.art.value.immutable.Value;
 import io.art.tarantool.model.mapping.TarantoolResponseMapping;
 import io.art.storage.space.Space;
 import lombok.NonNull;
+import lombok.Setter;
 
 
 import java.util.*;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
 
 import static io.art.core.caster.Caster.cast;
 import static io.art.core.collection.ImmutableArray.immutableArrayCollector;
+import static io.art.core.constants.EmptyFunctions.emptyFunction;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SelectOptions.*;
 import static io.art.tarantool.model.mapping.TarantoolRequestMapping.*;
@@ -34,6 +36,8 @@ public class TarantoolSpace<T, K> implements Space<T, K> {
     private final Function<T, Value> requestDataMapper;
     private final Function<K, Value> requestKeyMapper;
     private final Function<List<?>, Optional<?>> selectMapper;
+    @Setter
+    private Function<T, Long> bucketIdGenerator = emptyFunction();
 
     public TarantoolSpace(String space,
                           TarantoolTransactionManager transactionManager,
@@ -70,6 +74,11 @@ public class TarantoolSpace<T, K> implements Space<T, K> {
     }
 
 
+    public TarantoolRecord<ImmutableArray<T>> getAll(){
+        return cast(transactionManager.callRO(SELECT, selectMapper, space));
+    }
+
+
     public SelectRequest select(Value request){
         return new SelectRequest(request);
     }
@@ -91,41 +100,34 @@ public class TarantoolSpace<T, K> implements Space<T, K> {
 
     public TarantoolRecord<T> insert(T data){
         return cast(transactionManager.callRW(INSERT, response -> responseMapper.apply(toValue(response)), space,
-                dataTuple(requestDataMapper.apply(data))));
+                dataTuple(requestDataMapper.apply(data)), bucketIdGenerator.apply(data)));
     }
 
     public TarantoolRecord<T> insert(TarantoolTransactionDependency dataDependency){
-        return cast(transactionManager.callRW(INSERT, response -> responseMapper.apply(toValue(response)), space, dataDependency.get()));
-    }
-
-
-    public TarantoolRecord<T> autoIncrement(T data){
-        return cast(transactionManager.callRW(AUTO_INCREMENT, response -> responseMapper.apply(toValue(response)), space,
-                dataTuple(requestDataMapper.apply(data))));
-    }
-
-    public TarantoolRecord<T> autoIncrement(TarantoolTransactionDependency dataDependency){
-        return cast(transactionManager.callRW(AUTO_INCREMENT, response -> responseMapper.apply(toValue(response)), space, dataDependency.get()));
+        return cast(transactionManager.callRW(INSERT, response -> responseMapper.apply(toValue(response)), space,
+                dataDependency.get()));
     }
 
 
     public TarantoolRecord<T> put(T data){
         return cast(transactionManager.callRW(PUT, response -> responseMapper.apply(toValue(response)), space,
-                dataTuple(requestDataMapper.apply(data))));
+                dataTuple(requestDataMapper.apply(data)), bucketIdGenerator.apply(data)));
     }
 
     public TarantoolRecord<T> put(TarantoolTransactionDependency dataDependency){
-        return cast(transactionManager.callRW(PUT, response -> responseMapper.apply(toValue(response)), space, dataDependency.get()));
+        return cast(transactionManager.callRW(PUT, response -> responseMapper.apply(toValue(response)), space,
+                dataDependency.get()));
     }
 
 
     public TarantoolRecord<T> replace(T data){
         return cast(transactionManager.callRW(REPLACE, response -> responseMapper.apply(toValue(response)), space,
-                dataTuple(requestDataMapper.apply(data))));
+                dataTuple(requestDataMapper.apply(data)), bucketIdGenerator.apply(data)));
     }
 
     public TarantoolRecord<T> replace(TarantoolTransactionDependency dataDependency){
-        return cast(transactionManager.callRW(REPLACE, response -> responseMapper.apply(toValue(response)), space, dataDependency.get()));
+        return cast(transactionManager.callRW(REPLACE, response -> responseMapper.apply(toValue(response)), space,
+                dataDependency.get()));
     }
 
 
@@ -142,7 +144,7 @@ public class TarantoolSpace<T, K> implements Space<T, K> {
 
     public TarantoolRecord<T> upsert(T defaultData, TarantoolUpdateFieldOperation... operations){
         return cast(transactionManager.callRW(UPSERT, response -> responseMapper.apply(toValue(response)), space,
-                dataTuple(requestDataMapper.apply(defaultData)), updateOperationsTuple(operations)));
+                dataTuple(requestDataMapper.apply(defaultData)), updateOperationsTuple(operations), bucketIdGenerator.apply(defaultData)));
     }
 
     public TarantoolRecord<T> upsert(TarantoolTransactionDependency defaultDataDependency, TarantoolUpdateFieldOperation... operations){
