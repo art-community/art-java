@@ -1,5 +1,5 @@
 tarantool:
-  logging: false
+  logging: true
   clusters:
     routers:
       instances:
@@ -46,6 +46,22 @@ tarantool:
           username: username
           password: password
           host: localhost
+          port: 3304
+          readable: true
+          writeable: false
+    art-platform-s2:
+      instances:
+        storage_2_a:
+          username: username
+          password: password
+          host: '168.119.19.42'
+          port: 3303
+          readable: false
+          writeable: true
+        storage_2_b:
+          username: username
+          password: password
+          host: '168.119.19.42'
           port: 3304
           readable: true
           writeable: false
