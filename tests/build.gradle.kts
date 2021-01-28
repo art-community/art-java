@@ -42,6 +42,7 @@ dependencies {
     implementation(project(":communicator"))
     implementation(project(":rsocket"))
     implementation(project(":tarantool"))
+    implementation(project(":storage"))
 
 
     testImplementation("org.codehaus.groovy:groovy:$groovyVersion")

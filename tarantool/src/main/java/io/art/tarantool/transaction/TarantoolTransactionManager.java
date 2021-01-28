@@ -28,8 +28,13 @@ public class TarantoolTransactionManager {
         state().activeTransaction = true;
     }
 
+    public void begin(Long bucketId){
+        begin();
+        state().bucketId = bucketId;
+    }
+
     public void commit(){
-        CompletableFuture<List<?>> response = call(TRANSACTION, state().operations);
+        CompletableFuture<List<?>> response = call(TRANSACTION, state().operations, state().bucketId);
         for (TarantoolTransactionRecord<?> result : state().results){
             result.transactionCommitted(response);
         }
@@ -77,11 +82,13 @@ public class TarantoolTransactionManager {
         state().results.clear();
         state().isRWTransaction = false;
         state().activeTransaction = false;
+        state().bucketId = null;
     }
 
     private static class State {
         public boolean activeTransaction = false;
         public boolean isRWTransaction = false;
+        public Long bucketId = null;
         public final List<List<?>> operations = linkedList();
         public final List<TarantoolTransactionRecord<?>> results = linkedList();
     }

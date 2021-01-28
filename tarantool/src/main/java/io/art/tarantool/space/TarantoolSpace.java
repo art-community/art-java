@@ -169,8 +169,16 @@ public class TarantoolSpace<T, K> implements Space<T, K> {
         return cast(transactionManager.callRO(LIST_INDICES, TarantoolResponseMapping::toStringSet, space));
     }
 
+    public Long bucketOf(T data){
+        return bucketIdGenerator.apply(data);
+    }
+
     public void beginTransaction(){
         transactionManager.begin();
+    }
+
+    public void beginTransaction(Long bucketId){
+        transactionManager.begin(bucketId);
     }
 
     public void commitTransaction(){

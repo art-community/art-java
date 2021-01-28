@@ -33,11 +33,11 @@ public class StorageModule implements StatefulModule<StorageModuleConfiguration,
         return getStorageModule();
     }
 
-    public List<String> spaces(){
-        throw new NotImplementedException("TODO");
+    public static <T extends Space<?,?>> T space(Class<?> spaceModelClass){
+        return space(spaceModelClass.getSimpleName());
     }
 
-    public static <T, K> Space<T, K> space(String spaceID){
-        throw new NotImplementedException("TODO");
+    public static <T extends Space<?,?>> T space(String spaceID){
+        return cast(storageModule().configuration().getSpacesRegistry().get(spaceID));
     }
 }

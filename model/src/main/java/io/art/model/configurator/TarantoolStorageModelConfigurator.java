@@ -15,7 +15,7 @@ import static lombok.AccessLevel.PACKAGE;
 
 @Getter(value = PACKAGE)
 public class TarantoolStorageModelConfigurator {
-    private final String cluster;
+    private String cluster = DEFAULT_CLUSTER_NAME;
     private final String space;
     private final Class<?> spaceModelClass;
     private final Class<?> primaryKeyClass;
@@ -24,17 +24,14 @@ public class TarantoolStorageModelConfigurator {
     private Function<?, Long> bucketIdGenerator = emptyFunction();
 
     public TarantoolStorageModelConfigurator(String space, Class<?> spaceModelClass, Class<?> primaryKeyClass){
-        this.cluster = DEFAULT_CLUSTER_NAME;
         this.space = space;
         this.spaceModelClass = spaceModelClass;
         this.primaryKeyClass = primaryKeyClass;
     }
 
-    public TarantoolStorageModelConfigurator(String cluster, String space, Class<?> spaceModelClass, Class<?> primaryKeyClass){
+    public TarantoolStorageModelConfigurator cluster(String cluster){
         this.cluster = cluster;
-        this.space = space;
-        this.spaceModelClass = spaceModelClass;
-        this.primaryKeyClass = primaryKeyClass;
+        return this;
     }
 
     public TarantoolStorageModelConfigurator bucketIdGenerator(Function<?, Long> bucketIdGenerator){

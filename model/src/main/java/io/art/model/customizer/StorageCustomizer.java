@@ -11,12 +11,12 @@ public class StorageCustomizer {
     private final Custom configuration = new Custom();
 
     public StorageCustomizer registry(StorageSpacesRegistry registry) {
-        configuration.registry = registry;
+        configuration.spacesRegistry = registry;
         return this;
     }
 
     @Getter
     private static class Custom extends StorageModuleConfiguration {
-        private StorageSpacesRegistry registry;
+        private StorageSpacesRegistry spacesRegistry;
     }
 }
