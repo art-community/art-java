@@ -36,6 +36,7 @@ import io.art.model.implementation.server.*;
 import io.art.rsocket.module.*;
 import io.art.scheduler.module.*;
 import io.art.server.module.*;
+import io.art.storage.module.StorageModule;
 import io.art.tarantool.module.*;
 import io.art.value.module.*;
 import io.art.xml.module.*;
@@ -73,6 +74,7 @@ public class ModuleLauncher {
             ServerCustomizer serverCustomizer = moduleCustomizer.server().apply(new ServerCustomizer());
             CommunicatorCustomizer communicatorCustomizer = moduleCustomizer.communicator().apply(new CommunicatorCustomizer());
             RsocketCustomizer rsocketCustomizer = moduleCustomizer.rsocket().apply(new RsocketCustomizer());
+            StorageCustomizer storageCustomizer = moduleCustomizer.storage().apply(new StorageCustomizer());
             ImmutableMap.Builder<ModuleFactory, ModuleDecorator> modules = immutableMapBuilder();
             ModuleConfiguringState state = new ModuleConfiguringState(configurator.configure(), model);
 
@@ -87,7 +89,8 @@ public class ModuleLauncher {
                     .put(ServerModule::new, module -> server(cast(module), state, serverCustomizer))
                     .put(CommunicatorModule::new, module -> communicator(cast(module), state, communicatorCustomizer))
                     .put(RsocketModule::new, module -> rsocket(cast(module), state, rsocketCustomizer))
-                    .put(TarantoolModule::new, module -> tarantool(cast(module), state));
+                    .put(TarantoolModule::new, module -> tarantool(cast(module), state))
+                    .put(StorageModule::new, module -> storage(cast(module), state, storageCustomizer));
 
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
             initialize(new ContextConfiguration.DefaultContextConfiguration(model.getMainModuleId()), modules.build(), message -> logger.get().info(message));
@@ -174,6 +177,15 @@ public class ModuleLauncher {
     private static TarantoolModule tarantool(TarantoolModule tarantool, ModuleConfiguringState state) {
         tarantool.configure(configurator -> configurator.from(state.getConfigurator().orderedSources()));
         return tarantool;
+    }
+
+    private static StorageModule storage(StorageModule storage, ModuleConfiguringState state, StorageCustomizer storageCustomizer){
+        storage.configure(configurator -> configurator.from(state.getConfigurator().orderedSources()));
+        if (isNull(storageCustomizer)){
+            return storage;
+        }
+        storage.configure(configurator -> configurator.override(storageCustomizer.getConfiguration()));
+        return storage;
     }
 
     private static boolean needBlock(RsocketCustomizer rsocketCustomizer) {

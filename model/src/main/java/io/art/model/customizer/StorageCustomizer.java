@@ -8,6 +8,7 @@ import lombok.Getter;
 
 @UsedByGenerator
 public class StorageCustomizer {
+    @Getter
     private final Custom configuration = new Custom();
 
     public StorageCustomizer registry(StorageSpacesRegistry registry) {

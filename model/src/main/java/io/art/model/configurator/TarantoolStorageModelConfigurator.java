@@ -34,7 +34,7 @@ public class TarantoolStorageModelConfigurator {
         return this;
     }
 
-    public TarantoolStorageModelConfigurator bucketIdGenerator(Function<?, Long> bucketIdGenerator){
+    public TarantoolStorageModelConfigurator sharded(Function<?, Long> bucketIdGenerator){
         this.bucketIdGenerator = bucketIdGenerator;
         return this;
     }
