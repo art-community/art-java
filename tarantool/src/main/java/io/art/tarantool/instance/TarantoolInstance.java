@@ -9,6 +9,7 @@ import io.art.tarantool.model.record.TarantoolRecord;
 import io.art.tarantool.model.mapping.TarantoolResponseMapping;
 import io.art.tarantool.module.client.TarantoolClusterClient;
 import io.art.value.immutable.Value;
+import lombok.Builder;
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
 
@@ -17,6 +18,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static io.art.core.caster.Caster.cast;
+import static io.art.core.constants.EmptyFunctions.emptyFunction;
 import static io.art.logging.LoggingModule.logger;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static java.util.function.Function.identity;
@@ -37,14 +39,27 @@ public class TarantoolInstance {
     }
 
     public TarantoolSpace<Value, Value> space(String space){
-        return space(space, identity(), identity(), identity());
+        return cast(TarantoolSpace.builder()
+                .space(space)
+                .transactionManager(transactionManager)
+                .fromModelMapper(cast(identity()))
+                .toModelMapper(cast(identity()))
+                .keyMapper(cast(identity()))
+                .build());
     }
 
+    @Builder(builderMethodName = "spaceBuilder")
     public <T, K> TarantoolSpace<T, K> space(String space,
-                                             Function<Optional<Value>, Optional<T>> responseMapper,
-                                             Function<T, Value> requestDataMapper,
-                                             Function<K, Value> requestKeyMapper){
-        return new TarantoolSpace<T, K>(space, transactionManager, responseMapper, requestDataMapper, requestKeyMapper);
+                                             Function<Optional<Value>, Optional<T>> toModelMapper,
+                                             Function<T, Value> fromModelMapper,
+                                             Function<K, Value> keyMapper){
+        return cast(TarantoolSpace.builder()
+                .space(space)
+                .transactionManager(transactionManager)
+                .fromModelMapper(cast(fromModelMapper))
+                .toModelMapper(cast(toModelMapper))
+                .keyMapper(cast(keyMapper))
+                .build());
     }
 
     public void createSpace(String space, TarantoolSpaceConfig config){

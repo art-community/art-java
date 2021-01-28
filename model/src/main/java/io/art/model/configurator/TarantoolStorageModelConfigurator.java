@@ -1,11 +1,9 @@
 package io.art.model.configurator;
 
-import io.art.model.implementation.communicator.RsocketCommunicatorModel;
 import io.art.model.implementation.storage.TarantoolIndexModel;
 import io.art.model.implementation.storage.TarantoolSortMethodModel;
-import io.art.model.implementation.storage.TarantoolStorageModel;
+import io.art.model.implementation.storage.TarantoolSpaceModel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -54,8 +52,8 @@ public class TarantoolStorageModelConfigurator {
         return this;
     }
 
-    TarantoolStorageModel configure() {
-        return TarantoolStorageModel.builder()
+    TarantoolSpaceModel configure() {
+        return TarantoolSpaceModel.builder()
                 .cluster(cluster)
                 .space(space)
                 .spaceModelClass(spaceModelClass)

@@ -2,8 +2,9 @@ package io.art.model.configurator;
 
 import io.art.core.collection.ImmutableMap;
 import io.art.core.collection.ImmutableSet;
+import io.art.model.implementation.storage.SpaceModel;
 import io.art.model.implementation.storage.StorageModuleModel;
-import io.art.model.implementation.storage.TarantoolStorageModel;
+import io.art.model.implementation.storage.TarantoolSpaceModel;
 
 import static io.art.core.collection.ImmutableMap.immutableMapCollector;
 import static io.art.core.collection.ImmutableSet.immutableSetBuilder;
@@ -23,10 +24,10 @@ public class StorageModelConfigurator {
     }
 
     StorageModuleModel configure() {
-        ImmutableMap<String, TarantoolStorageModel> tarantool = this.tarantoolConfigurators.build()
+        ImmutableMap<String, SpaceModel> tarantoolSpaces = this.tarantoolConfigurators.build()
                 .stream()
                 .map(TarantoolStorageModelConfigurator::configure)
-                .collect(immutableMapCollector(TarantoolStorageModel::getId, identity()));
-        return new StorageModuleModel(tarantool);
+                .collect(immutableMapCollector(TarantoolSpaceModel::getId, identity()));
+        return new StorageModuleModel(tarantoolSpaces);
     }
 }
