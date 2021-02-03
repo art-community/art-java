@@ -25,8 +25,8 @@ import io.art.core.collection.*;
 import io.art.core.configuration.*;
 import io.art.core.context.*;
 import io.art.core.lazy.*;
-import io.art.core.module.*;
 import io.art.core.module.Module;
+import io.art.core.module.*;
 import io.art.json.module.*;
 import io.art.logging.*;
 import io.art.model.customizer.*;
@@ -44,8 +44,7 @@ import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.checker.NullityChecker.apply;
-import static io.art.core.checker.NullityChecker.let;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
@@ -55,7 +54,6 @@ import static io.art.launcher.ModuleLauncherConstants.*;
 import static io.art.logging.LoggingModule.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
-import java.util.*;
 import java.util.concurrent.atomic.*;
 
 @UtilityClass
@@ -90,7 +88,7 @@ public class ModuleLauncher {
                     .put(TarantoolModule::new, module -> tarantool(cast(module), state));
 
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
-            initialize(new ContextConfiguration.DefaultContextConfiguration(model.getMainModuleId()), modules.build(), message -> logger.get().info(message));
+            initialize(new ContextConfiguration(model.getMainModuleId()), modules.build(), message -> logger.get().info(message));
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
             apply(model.getOnLoad(), Runnable::run);
             if (needBlock(rsocketCustomizer)) block();
