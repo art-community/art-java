@@ -11,15 +11,15 @@ import java.util.concurrent.locks.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public class ChangesListener {
-    private volatile int index = 0;
+    private final AtomicInteger index = new AtomicInteger();
     private final ReentrantLock lock = new ReentrantLock();
+    private final AtomicBoolean created = new AtomicBoolean();
     private final AtomicBoolean pending = new AtomicBoolean();
     private final List<Runnable> consumers = copyOnWriteList();
     private final List<ManagedValue<Object>> values = copyOnWriteList();
 
     public ChangesListener reset() {
-        index = 0;
-        pending.set(false);
+        index.set(0);
         return this;
     }
 
@@ -34,6 +34,9 @@ public class ChangesListener {
     }
 
     public ChangesListener produce() {
+        if (created.compareAndSet(false, true)) {
+            return this;
+        }
         if (pending.compareAndSet(true, false)) {
             consumers.forEach(Runnable::run);
         }
@@ -51,12 +54,11 @@ public class ChangesListener {
     }
 
     public <T> T register(T value) {
+        int index = this.index.getAndIncrement();
         if (values.size() > index) {
             return cast(values.get(index).set(value).get());
         }
-        values.add(managed(() -> cast(value)).consume(ignore -> pending.set(true)));
-        pending.set(true);
-        index = values.size();
+        values.add(managed(() -> cast(value)).consume(ignore -> pending.set(created.get())));
         return value;
     }
 

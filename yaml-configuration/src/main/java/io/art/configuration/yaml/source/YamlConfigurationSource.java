@@ -32,7 +32,6 @@ import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.FileExtensions.*;
 import static java.util.Objects.*;
 import static java.util.Spliterator.*;
 import static java.util.Spliterators.*;
@@ -47,25 +46,24 @@ public class YamlConfigurationSource implements NestedConfiguration {
 
     private final String section;
     private final ModuleConfigurationSourceType type;
-    private final InputStream inputStream;
+    private final Supplier<InputStream> inputStream;
     private JsonNode configuration;
 
-    public YamlConfigurationSource(String section, ModuleConfigurationSourceType type, InputStream inputStream) {
+    public YamlConfigurationSource(String section, ModuleConfigurationSourceType type, Supplier<InputStream> inputStream) {
         this.section = section;
         this.type = type;
         this.inputStream = inputStream;
         try {
-            configuration = YAML_MAPPER.readTree(inputStream);
+            configuration = YAML_MAPPER.readTree(inputStream.get());
         } catch (IOException exception) {
             throw new YamlConfigurationLoadingException(exception);
         }
     }
 
-
     @Override
     public void refresh() {
         try {
-            configuration = YAML_MAPPER.readTree(inputStream);
+            configuration = YAML_MAPPER.readTree(inputStream.get());
         } catch (IOException exception) {
             throw new YamlConfigurationLoadingException(exception);
         }

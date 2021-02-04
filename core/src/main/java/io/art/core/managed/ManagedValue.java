@@ -100,7 +100,8 @@ public class ManagedValue<T> implements Supplier<T> {
 
     public void change() {
         dispose();
-        changeConsumers.forEach(consumer -> consumer.accept(get()));
+        T newValue = get();
+        changeConsumers.forEach(consumer -> consumer.accept(newValue));
     }
 
     @Override

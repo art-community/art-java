@@ -74,6 +74,10 @@ public class PeriodicExecutor {
         return ofNullable(executingTasks.remove(taskId)).map(future -> future.cancel(false)).orElse(false);
     }
 
+    public boolean hasPeriodicTask(String taskId) {
+        return executingTasks.containsKey(taskId);
+    }
+
     public void shutdown() {
         deferredExecutor.shutdown();
     }
@@ -98,7 +102,7 @@ public class PeriodicExecutor {
 
     private Future<?> execute(RunnableTask task, LocalDateTime startTime, long periodNanos) {
         final Runnable action = () -> task.getRunnable().accept(task.getId());
-        final Consumer<LocalDateTime> repeat = current -> executeAgain(task, current, periodNanos);
+        final Consumer<LocalDateTime> repeat = now -> executeAgain(task, now, periodNanos);
         Future<?> future = deferredExecutor.execute(new RepeatableRunnable(action, repeat), startTime);
         executingTasks.put(task.getId(), future);
         return future;
@@ -129,7 +133,7 @@ public class PeriodicExecutor {
                 execute(task, now().plus(ofNanos(periodNanos)), periodNanos);
                 return;
             }
-            execute(task, startTime.plus(ofNanos(-periodNanos)), periodNanos);
+            execute(task, startTime.plus(ofNanos(-periodNanos)), -periodNanos);
         }
     }
 }

@@ -27,7 +27,6 @@ import lombok.*;
 import lombok.experimental.Delegate;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
 import static io.art.core.extensions.FileExtensions.*;
-import java.io.*;
 
 @Getter
 public class FileConfigurationSource implements NestedConfiguration {
