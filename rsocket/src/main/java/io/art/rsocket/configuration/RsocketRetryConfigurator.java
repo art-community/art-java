@@ -53,7 +53,7 @@ public class RsocketRetryConfigurator {
             case INDEFINITELY:
                 return indefinitely();
         }
-        throw new ImpossibleSituation();
+        throw new ImpossibleSituationException();
     }
 
     public static Retry from(ConfigurationSource source, Retry defaultRetry) {

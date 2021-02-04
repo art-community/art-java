@@ -26,7 +26,6 @@ import io.art.core.exception.*;
 import io.art.core.lazy.*;
 import io.art.core.managed.*;
 import io.art.server.configuration.*;
-import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.decorator.*;
 import io.art.server.implementation.*;
 import io.art.server.model.*;
@@ -173,7 +172,7 @@ public class ServiceMethodSpecification implements Managed {
 
     private Function<Flux<Object>, Object> adoptInput() {
         if (isNull(inputMode)) {
-            throw new ImpossibleSituation();
+            throw new ImpossibleSituationException();
         }
         switch (inputMode) {
             case BLOCKING:
@@ -183,13 +182,13 @@ public class ServiceMethodSpecification implements Managed {
             case FLUX:
                 return Caster::cast;
             default:
-                throw new ImpossibleSituation();
+                throw new ImpossibleSituationException();
         }
     }
 
     private Function<Object, Flux<Object>> adoptOutput() {
         if (isNull(outputMode)) {
-            throw new ImpossibleSituation();
+            throw new ImpossibleSituationException();
         }
         switch (outputMode) {
             case BLOCKING:
@@ -198,7 +197,7 @@ public class ServiceMethodSpecification implements Managed {
             case FLUX:
                 return output -> Flux.from(cast(output));
             default:
-                throw new ImpossibleSituation();
+                throw new ImpossibleSituationException();
         }
     }
 
@@ -208,7 +207,7 @@ public class ServiceMethodSpecification implements Managed {
 
 
     private ServiceSpecification serviceSpecification() {
-        return specifications().get(serviceId).orElseThrow(ImpossibleSituation::new);
+        return specifications().get(serviceId).orElseThrow(ImpossibleSituationException::new);
     }
 
     private Optional<ServiceConfiguration> serviceConfiguration() {

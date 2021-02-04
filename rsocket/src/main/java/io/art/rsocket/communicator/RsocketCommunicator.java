@@ -128,7 +128,7 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
                             .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)))
                             .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
                 }
-                return from(socket.blockOptional().orElseThrow(ImpossibleSituation::new));
+                return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
             case WS:
                 HttpClient httpWebSocketClient = connectorConfiguration.getHttpWebSocketClient();
                 String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
@@ -138,9 +138,9 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
                             .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)))
                             .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
                 }
-                return from(socket.blockOptional().orElseThrow(ImpossibleSituation::new));
+                return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
         }
-        throw new ImpossibleSituation();
+        throw new ImpossibleSituationException();
     }
 
     private void configureInterceptors(InterceptorRegistry registry) {
@@ -162,7 +162,7 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
                 .configuration()
                 .getRegistry()
                 .findActionById(communicatorActionId)
-                .orElseThrow(ImpossibleSituation::new);
+                .orElseThrow(ImpossibleSituationException::new);
     }
 
     private RsocketCommunicatorConfiguration rsocketConfiguration() {
@@ -255,6 +255,6 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
                         .metadataPush(input.map(writer.get()::writePayloadMetaData).last(EmptyPayload.INSTANCE))
                         .flux());
         }
-        throw new ImpossibleSituation();
+        throw new ImpossibleSituationException();
     }
 }

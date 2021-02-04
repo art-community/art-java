@@ -21,7 +21,6 @@ package io.art.rsocket.payload;
 import io.art.core.exception.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.art.rsocket.model.*;
-import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import io.rsocket.*;
 import lombok.*;
@@ -61,6 +60,6 @@ public class RsocketPayloadReader {
             case MESSAGE_PACK:
                 return new RsocketPayloadValue(payload, readMessagePack(data));
         }
-        throw new ImpossibleSituation();
+        throw new ImpossibleSituationException();
     }
 }

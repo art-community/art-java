@@ -145,7 +145,7 @@ public class CommunicatorAction implements Managed {
     }
 
     private Function<Object, Flux<Object>> adoptInput() {
-        if (isNull(inputMode)) throw new ImpossibleSituation();
+        if (isNull(inputMode)) throw new ImpossibleSituationException();
         switch (inputMode) {
             case BLOCKING:
                 return Flux::just;
@@ -153,12 +153,12 @@ public class CommunicatorAction implements Managed {
             case FLUX:
                 return input -> from(cast(input));
             default:
-                throw new ImpossibleSituation();
+                throw new ImpossibleSituationException();
         }
     }
 
     private Function<Flux<Object>, Object> adoptOutput() {
-        if (isNull(outputMode)) throw new ImpossibleSituation();
+        if (isNull(outputMode)) throw new ImpossibleSituationException();
         switch (outputMode) {
             case BLOCKING:
                 return input -> input.next().block();
@@ -167,7 +167,7 @@ public class CommunicatorAction implements Managed {
             case FLUX:
                 return output -> output;
             default:
-                throw new ImpossibleSituation();
+                throw new ImpossibleSituationException();
         }
     }
 

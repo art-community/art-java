@@ -19,6 +19,5 @@
 package io.art.core.constants;
 
 public interface SystemProperties {
-    String CONFIG_FILE_PATH_PROPERTY = "module.config.file";
     String OS_NAME_PROPERTY = "os.name";
 }

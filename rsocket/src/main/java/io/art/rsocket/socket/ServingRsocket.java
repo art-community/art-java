@@ -84,7 +84,7 @@ public class ServingRsocket implements RSocket {
             specification = initializeSpecification(defaultServiceMethod);
             return;
         }
-        throw new ImpossibleSituation();
+        throw new ImpossibleSituationException();
     }
 
     @Override
