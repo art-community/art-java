@@ -12,11 +12,17 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class DisposableValue<T> implements Supplier<T> {
     private volatile T value;
+    private volatile Consumer<T> disposer = emptyConsumer();
     private final AtomicBoolean initialized = new AtomicBoolean();
     private final Supplier<T> loader;
 
     public DisposableValue<T> initialize() {
         get();
+        return this;
+    }
+
+    public DisposableValue<T> disposer(Consumer<T> disposer) {
+        this.disposer = disposer;
         return this;
     }
 
@@ -50,7 +56,7 @@ public class DisposableValue<T> implements Supplier<T> {
     }
 
     public void dispose() {
-        dispose(emptyConsumer());
+        dispose(disposer);
     }
 
     public static <T> DisposableValue<T> disposable(Supplier<T> factory) {

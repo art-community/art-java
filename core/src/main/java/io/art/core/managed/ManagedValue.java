@@ -28,11 +28,19 @@ public class ManagedValue<T> {
         return disposable;
     }
 
+    public void initialize() {
+        get();
+    }
+
     public void dispose(Consumer<T> action) {
         disposable.dispose(action);
     }
 
     public void dispose() {
+        disposable.dispose();
+    }
+
+    public void onDispose() {
         disposable.dispose();
     }
 
@@ -42,6 +50,11 @@ public class ManagedValue<T> {
 
     public boolean disposed() {
         return disposable.disposed();
+    }
+
+    public ManagedValue<T> disposer(Consumer<T> disposer) {
+        disposable.disposer(disposer);
+        return this;
     }
 
     public ManagedValue<T> consume(Consumer<T> consumer) {
@@ -83,8 +96,8 @@ public class ManagedValue<T> {
         return this;
     }
 
-    public ManagedValue<T> listen(ManagedListener state) {
-        return state.consume(this);
+    public ManagedValue<T> listen(ChangesListener listener) {
+        return listener.consume(this);
     }
 
     public ManagedValue<T> clear() {

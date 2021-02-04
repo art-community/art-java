@@ -16,12 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.server;
+package io.art.core.module;
 
-public interface Server {
-    boolean available();
-
-    void initialize();
-
-    void dispose();
+public interface ModuleRefresher {
 }

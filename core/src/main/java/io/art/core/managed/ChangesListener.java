@@ -6,24 +6,26 @@ import static io.art.core.managed.ManagedValue.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
-public class ManagedListener {
+public class ChangesListener {
     private volatile int index = 0;
     private final AtomicBoolean pending = new AtomicBoolean();
     private final List<Runnable> consumers = copyOnWriteList();
     private final List<ManagedValue<Object>> values = copyOnWriteList();
 
-    public void reset() {
+    public ChangesListener reset() {
         index = 0;
         pending.set(false);
+        return this;
     }
 
-    public void produce() {
+    public ChangesListener produce() {
         if (pending.compareAndSet(true, false)) {
             consumers.forEach(Runnable::run);
         }
+        return this;
     }
 
-    public ManagedListener consume(Runnable action) {
+    public ChangesListener consume(Runnable action) {
         consumers.add(action);
         return this;
     }
@@ -43,7 +45,7 @@ public class ManagedListener {
         return value;
     }
 
-    public static ManagedListener listener() {
-        return new ManagedListener();
+    public static ChangesListener listener() {
+        return new ChangesListener();
     }
 }
