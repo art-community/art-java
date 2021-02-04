@@ -40,33 +40,25 @@ public class PeriodicExecutor {
 
     public <T> Future<? extends T> submitPeriodic(CallableTask<T> task, LocalDateTime startTime, long period) {
         Future<?> future = executingTasks.get(task.getId());
-        if (nonNull(future)) {
-            return cast(future);
-        }
+        if (nonNull(future)) return cast(future);
         return submit(task, startTime, period);
     }
 
     public <T> Future<? extends T> submitPeriodic(CallableTask<T> task, long period) {
         Future<?> future = executingTasks.get(task.getId());
-        if (nonNull(future)) {
-            return cast(future);
-        }
+        if (nonNull(future)) return cast(future);
         return submit(task, period);
     }
 
     public Future<?> executePeriodic(RunnableTask task, LocalDateTime startTime, long period) {
         Future<?> future = executingTasks.get(task.getId());
-        if (nonNull(future)) {
-            return cast(future);
-        }
+        if (nonNull(future)) return cast(future);
         return execute(task, startTime, period);
     }
 
     public Future<?> executePeriodic(RunnableTask task, long period) {
         Future<?> future = executingTasks.get(task.getId());
-        if (nonNull(future)) {
-            return cast(future);
-        }
+        if (nonNull(future)) return cast(future);
         return execute(task, period);
     }
 
@@ -83,57 +75,64 @@ public class PeriodicExecutor {
     }
 
     private <T> Future<? extends T> submit(CallableTask<T> task, LocalDateTime startTime, long periodNanos) {
-        final Callable<T> action = () -> task.getCallable().apply(task.getId());
-        final Consumer<LocalDateTime> repeat = now -> submitAgain(task, now, periodNanos);
-        RepeatableCallable<T> eventTask = new RepeatableCallable<>(action, repeat);
-        Future<? extends T> future = deferredExecutor.submit(eventTask, startTime);
+        Callable<T> action = toCallable(task);
+        Consumer<LocalDateTime> repeat = now -> submitAgain(task, now, periodNanos);
+        RepeatableCallable<T> event = new RepeatableCallable<>(action, taskPredicate(task.getId()), repeat);
+        Future<? extends T> future = deferredExecutor.submit(event, startTime);
         executingTasks.put(task.getId(), future);
         return future;
     }
 
-    private <T> Future<? extends T> submit(CallableTask<T> task, long periodNanos) {
-        final Callable<T> action = () -> task.getCallable().apply(task.getId());
-        final Consumer<LocalDateTime> repeat = now -> submitAgain(task, now, periodNanos);
-        RepeatableCallable<T> eventTask = new RepeatableCallable<>(action, repeat);
-        Future<? extends T> future = deferredExecutor.submit(eventTask);
-        executingTasks.put(task.getId(), future);
-        return future;
-    }
 
     private Future<?> execute(RunnableTask task, LocalDateTime startTime, long periodNanos) {
-        final Runnable action = () -> task.getRunnable().accept(task.getId());
-        final Consumer<LocalDateTime> repeat = now -> executeAgain(task, now, periodNanos);
-        Future<?> future = deferredExecutor.execute(new RepeatableRunnable(action, repeat), startTime);
+        Runnable action = toRunnable(task);
+        Consumer<LocalDateTime> repeat = now -> executeAgain(task, now, periodNanos);
+        RepeatableRunnable event = new RepeatableRunnable(action, taskPredicate(task.getId()), repeat);
+        Future<?> future = deferredExecutor.execute(event, startTime);
         executingTasks.put(task.getId(), future);
         return future;
+    }
+
+
+    private <T> Future<? extends T> submit(CallableTask<T> task, long periodNanos) {
+        return submit(task, now(), periodNanos);
     }
 
     private Future<?> execute(RunnableTask task, long periodNanos) {
-        final Runnable action = () -> task.getRunnable().accept(task.getId());
-        final Consumer<LocalDateTime> repeat = now -> executeAgain(task, now, periodNanos);
-        Future<?> future = deferredExecutor.execute(new RepeatableRunnable(action, repeat));
-        executingTasks.put(task.getId(), future);
-        return future;
+        return execute(task, now(), periodNanos);
     }
 
+    private <T> Callable<T> toCallable(CallableTask<T> task) {
+        return () -> task.getCallable().apply(task.getId());
+    }
+
+    private Runnable toRunnable(RunnableTask task) {
+        return () -> task.getRunnable().accept(task.getId());
+    }
+
+    private Supplier<Boolean> taskPredicate(String id) {
+        return () -> hasPeriodicTask(id);
+    }
 
     private void submitAgain(CallableTask<?> eventTask, LocalDateTime startTime, long periodNanos) {
-        if (executingTasks.containsKey(eventTask.getId())) {
-            if (periodNanos > 0L) {
-                submit(eventTask, now().plus(ofNanos(periodNanos)), periodNanos);
-                return;
-            }
-            submit(eventTask, startTime.plus(ofNanos(-periodNanos)), -periodNanos);
+        if (!executingTasks.containsKey(eventTask.getId())) {
+            return;
         }
+        if (periodNanos > 0L) {
+            submit(eventTask, now().plus(ofNanos(periodNanos)), periodNanos);
+            return;
+        }
+        submit(eventTask, startTime.plus(ofNanos(-periodNanos)), periodNanos);
     }
 
     private void executeAgain(RunnableTask task, LocalDateTime startTime, long periodNanos) {
-        if (executingTasks.containsKey(task.getId())) {
-            if (periodNanos > 0L) {
-                execute(task, now().plus(ofNanos(periodNanos)), periodNanos);
-                return;
-            }
-            execute(task, startTime.plus(ofNanos(-periodNanos)), -periodNanos);
+        if (!executingTasks.containsKey(task.getId())) {
+            return;
         }
+        if (periodNanos > 0L) {
+            execute(task, now().plus(ofNanos(periodNanos)), periodNanos);
+            return;
+        }
+        execute(task, startTime.plus(ofNanos(-periodNanos)), periodNanos);
     }
 }

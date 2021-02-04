@@ -19,18 +19,22 @@
 package io.art.scheduler.executor.periodic;
 
 import lombok.*;
+import static java.time.LocalDateTime.*;
 import java.time.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
 class RepeatableRunnable implements Runnable {
     private final Runnable action;
+    private final Supplier<Boolean> predicate;
     private final Consumer<LocalDateTime> repeat;
-    private final LocalDateTime now = LocalDateTime.now();
 
     @Override
     public void run() {
-        action.run();
+        LocalDateTime now = now();
+        if (predicate.get()) {
+            action.run();
+        }
         repeat.accept(now);
     }
 }
