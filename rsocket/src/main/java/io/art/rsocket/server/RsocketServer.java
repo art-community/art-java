@@ -49,14 +49,17 @@ public class RsocketServer implements Server {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketServer.class);
 
-    private final RsocketModuleRefresher refresher;
     private final RsocketModuleConfiguration configuration;
+    private final ManagedValue<CloseableChannel> channel;
 
-    private final ManagedValue<CloseableChannel> channel = managed(this::createServer).disposer(this::disposeServer);
+    public RsocketServer(RsocketModuleRefresher refresher, RsocketModuleConfiguration configuration) {
+        this.configuration = configuration;
+        channel = managed(this::createServer).listen(refresher.serverListener()).disposer(this::disposeServer);
+    }
 
     @Override
     public void initialize() {
-        channel.listen(refresher.serverListener()).initialize();
+        channel.initialize();
     }
 
     @Override
