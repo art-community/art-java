@@ -1,38 +1,30 @@
 package io.art.core.lazy;
 
 import io.art.core.annotation.*;
-import io.art.core.exception.*;
-import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.lazy.ManagedValue.*;
 import static java.util.Objects.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 @UsedByGenerator
-@RequiredArgsConstructor
 public class LazyValue<T> implements Supplier<T> {
-    private volatile T value;
-    private final AtomicBoolean initialized = new AtomicBoolean();
-    private final Supplier<T> loader;
+    private final ManagedValue<T> managed;
+
+    public LazyValue(Supplier<T> loader) {
+        managed = managed(loader);
+    }
 
     public LazyValue<T> initialize() {
-        get();
+        managed.get();
         return this;
     }
 
     public boolean initialized() {
-        return initialized.get();
+        return managed.initialized();
     }
 
     @Override
     public T get() {
-        while (isNull(this.value)) {
-            if (this.initialized.compareAndSet(false, true)) {
-                this.value = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
-            }
-        }
-        return this.value;
+        return managed.get();
     }
 
     public static <T> LazyValue<T> lazy(Supplier<T> factory) {

@@ -24,6 +24,10 @@ public class ManagedValue<T> implements Supplier<T> {
         return initialized.get();
     }
 
+    public boolean disposed() {
+        return !initialized();
+    }
+
     @Override
     public T get() {
         while (isNull(this.value)) {
@@ -35,7 +39,7 @@ public class ManagedValue<T> implements Supplier<T> {
     }
 
     public void dispose(Consumer<T> action) {
-        if (!initialized() || isNull(value)) return;
+        if (disposed()) return;
         while (nonNull(this.value)) {
             if (this.initialized.compareAndSet(true, false)) {
                 T current = this.value;
