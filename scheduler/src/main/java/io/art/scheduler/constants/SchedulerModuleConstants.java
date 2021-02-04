@@ -24,7 +24,7 @@ public interface SchedulerModuleConstants {
     String REFRESHER_TASK = "REFRESHER_TASK";
 
     interface ConfigurationKeys {
-        String CONFIGURATION_REFRESH_DURATION = "configurator.refresh.duration";
+        String CONFIGURATION_REFRESH_DURATION = "configurator.change.duration";
     }
 
     interface ExceptionMessages {

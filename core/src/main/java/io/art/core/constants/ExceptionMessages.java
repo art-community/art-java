@@ -21,7 +21,7 @@ package io.art.core.constants;
 public interface ExceptionMessages {
     String CONTEXT_ALREADY_INITIALIZED = "Context already initialized";
     String MODULE_WAS_NOT_FOUND = "Module ''{0}'' was not found in context";
-    String MODULE_HAS_NOT_STATE = "Module ''{0}'' has not state";
+    String MODULE_HAS_NOT_STATE = "Module ''{0}'' has not listener";
     String BUILDER_VALIDATOR_HAS_NEXT_ERRORS = "Builder validator for ''{0}'' has next error fields:";
     String COULD_NOT_FIND_AVAILABLE_PORT_AFTER_ATTEMPTS = "Could not find an available ''{0}'' port in the range [{1,number,#}, {2,number,#}] after {3,number,#} attempts";
     String COULD_NOT_FIND_AVAILABLE_PORTS_IN_THE_RANGE = "Could not find {0,number,#} available ''{1}'' ports in the range [{2,number,#}, {3,number,#}]";
@@ -32,12 +32,12 @@ public interface ExceptionMessages {
     String WILDCARD_TYPE_IS_LEGAL_ONLY_FOR_ALL_MIME_TYPES = "Wildcard type is legal only in '*/*' (all mime types)";
     String INVALID_TOKEN = "Invalid token character ''{0}'' in token ''{1}''";
     String PARAMETER_ATTRIBUTE_MUST_NOT_BE_EMPTY = "Parameter 'attribute' must not be empty";
-    String PARAMETER_VALUE_MUST_NOT_BE_EMPTY = "Parameter 'value' must not be empty";
+    String PARAMETER_VALUE_MUST_NOT_BE_EMPTY = "Parameter 'register' must not be empty";
     String FILE_PATH_NOT_VALID = "File path is not valid: ''{0}''";
     String UNKNOWN_DURATION_TIME_UNITS = "Unknown duration time units: ''{0}''";
     String METHOD_NOT_IMPLEMENTED = "Method not implemented: ''{0}''";
     String DATA_FORMAT_IS_NULL = "Argument 'dataFormat' is null";
     String DUPLICATE_KEY = "Duplicate key {0}";
     String IMPOSSIBLE_MESSAGE = "Occurred impossible situation. Possible bug inside core or generation mechanism";
-    String MANAGED_VALUE_IS_NULL = "Managed loaded value is null";
+    String MANAGED_VALUE_IS_NULL = "Managed loaded register is null";
 }

@@ -80,7 +80,7 @@ public class TarantoolTransactionRecord<T> implements TarantoolRecord<T> {
 
     @Override
     public T orElseThrow() {
-        return getOptional().orElseThrow(() -> new NoSuchElementException("No value present"));
+        return getOptional().orElseThrow(() -> new NoSuchElementException("No register present"));
     }
 
     @Override

@@ -8,9 +8,9 @@ import java.util.function.*;
 
 public class ManagedValue<T> {
     private volatile DisposableValue<T> disposable;
-    private final List<Consumer<T>> changeConsumers = copyOnWriteList();
-    private final List<Consumer<T>> clearConsumers = copyOnWriteList();
-    private final List<Predicate<T>> predicates = copyOnWriteList();
+    private final List<Consumer<T>> changeConsumers = linkedList();
+    private final List<Consumer<T>> clearConsumers = linkedList();
+    private final List<Predicate<T>> predicates = linkedList();
 
     public ManagedValue(Supplier<T> loader) {
         disposable = DisposableValue.disposable(loader);
@@ -60,10 +60,14 @@ public class ManagedValue<T> {
     }
 
     public ManagedValue<T> set(T newValue) {
-        if (predicates.stream().anyMatch(predicate -> predicate.test(newValue)) || Objects.equals(disposable.get(), newValue)) {
+        if (predicates.stream().anyMatch(predicate -> predicate.test(newValue))) {
             return this;
         }
-        update(newValue);
+        if (Objects.equals(disposable.get(), newValue)) {
+            return this;
+        }
+        disposable = DisposableValue.disposable(() -> newValue);
+        changeConsumers.forEach(consumer -> consumer.accept(newValue));
         return this;
     }
 
@@ -72,16 +76,26 @@ public class ManagedValue<T> {
         return newValue;
     }
 
-    public ManagedValue<T> clear() {
-        disposable.dispose(disposed -> clearConsumers.forEach(consumer -> consumer.accept(disposed)));
+    public ManagedValue<T> listen(ManagedValue<?>... others) {
+        for (ManagedValue<?> other : others) {
+            other.cleared(value -> clear()).consume(value -> change());
+        }
         return this;
     }
 
-    public ManagedValue<T> dependsOn(ManagedValue<?>... others) {
-        for (ManagedValue<?> other : others) {
-            other.cleared(value -> clear()).consume(value -> update(get()));
-        }
+    public ManagedValue<T> listen(ManagedListener state) {
+        return state.consume(this);
+    }
+
+    public ManagedValue<T> clear() {
+        clearConsumers.forEach(consumer -> consumer.accept(get()));
+        dispose();
         return this;
+    }
+
+    public void change() {
+        dispose();
+        changeConsumers.forEach(consumer -> consumer.accept(get()));
     }
 
     @Override
@@ -102,11 +116,5 @@ public class ManagedValue<T> {
 
     public static <T> ManagedValue<T> managed(Supplier<T> loader) {
         return new ManagedValue<>(loader);
-    }
-
-    private void update(T newValue) {
-        DisposableValue<T> current = this.disposable;
-        this.disposable = DisposableValue.disposable(() -> newValue);
-        current.dispose(disposed -> changeConsumers.forEach(consumer -> consumer.accept(newValue)));
     }
 }

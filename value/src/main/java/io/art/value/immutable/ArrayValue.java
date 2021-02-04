@@ -296,7 +296,7 @@ public class ArrayValue implements Value {
 
             @Override
             public void add(T t) {
-                throw new NotImplementedException("iterator.add");
+                throw new NotImplementedException("iterator.register");
             }
         }
 
@@ -335,7 +335,7 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean add(T element) {
-            throw new NotImplementedException("add");
+            throw new NotImplementedException("register");
         }
 
         @Override
@@ -405,7 +405,7 @@ public class ArrayValue implements Value {
 
         @Override
         public void add(int index, T element) {
-            throw new NotImplementedException("add");
+            throw new NotImplementedException("register");
         }
 
         @Override
@@ -522,7 +522,7 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean add(T element) {
-            throw new NotImplementedException("add");
+            throw new NotImplementedException("register");
         }
 
         @Override
