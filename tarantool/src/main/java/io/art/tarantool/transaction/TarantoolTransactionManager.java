@@ -1,6 +1,6 @@
 package io.art.tarantool.transaction;
 
-import io.art.core.threadlocal.ThreadLocalValue;
+import io.art.core.local.ThreadLocalValue;
 import io.art.tarantool.model.record.TarantoolRecord;
 import io.art.tarantool.model.record.TarantoolSingleRecord;
 import io.art.tarantool.model.record.TarantoolTransactionRecord;
@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import static io.art.core.factory.ListFactory.linkedList;
-import static io.art.core.threadlocal.ThreadLocalValue.threadLocal;
+import static io.art.core.local.ThreadLocalValue.threadLocal;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.TRANSACTION;
 import static io.art.tarantool.model.transaction.operation.TarantoolTransactionOperation.tarantoolTransactionOperation;
 

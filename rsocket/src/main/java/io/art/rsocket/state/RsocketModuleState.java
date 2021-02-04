@@ -38,7 +38,7 @@ public class RsocketModuleState implements ModuleState {
         requesters.add(socket);
     }
 
-    public void disposeRequester(RSocket socket) {
+    public void removeRequester(RSocket socket) {
         requesters.remove(socket);
     }
 

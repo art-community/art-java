@@ -18,12 +18,12 @@
 
 package io.art.server.decorator;
 
-import io.art.core.lazy.*;
+import io.art.core.managed.*;
 import io.art.core.model.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
-import static io.art.core.lazy.ManagedValue.*;
+import static io.art.core.managed.DisposableValue.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.module.ServerModule.*;
 import static lombok.AccessLevel.*;
@@ -32,7 +32,7 @@ import java.util.function.*;
 public class ServiceDeactivationDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(ServiceDeactivationDecorator.class);
-    private final ManagedValue<UnaryOperator<Flux<Object>>> decorator = managed(this::createDecorator);
+    private final DisposableValue<UnaryOperator<Flux<Object>>> decorator = disposable(this::createDecorator);
     private final Supplier<Boolean> enabled;
 
     public ServiceDeactivationDecorator(ServiceMethodIdentifier serviceMethodId) {

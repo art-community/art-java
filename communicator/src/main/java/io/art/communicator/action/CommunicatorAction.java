@@ -23,7 +23,6 @@ import io.art.communicator.implementation.*;
 import io.art.core.annotation.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
-import io.art.core.lazy.*;
 import io.art.core.managed.*;
 import io.art.core.model.*;
 import io.art.value.immutable.Value;
@@ -34,7 +33,7 @@ import reactor.core.scheduler.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.lazy.ManagedValue.*;
+import static io.art.core.managed.DisposableValue.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static lombok.AccessLevel.*;
@@ -80,8 +79,8 @@ public class CommunicatorAction implements Managed {
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Flux<Object>, Object> adoptOutput = adoptOutput();
 
-    private final ManagedValue<CommunicatorModuleConfiguration> moduleConfiguration = managed(this::moduleConfiguration);
-    private final ManagedValue<Optional<CommunicatorProxyConfiguration>> communicatorConfiguration = managed(this::communicatorConfiguration);
+    private final DisposableValue<CommunicatorModuleConfiguration> moduleConfiguration = disposable(this::moduleConfiguration);
+    private final DisposableValue<Optional<CommunicatorProxyConfiguration>> communicatorConfiguration = disposable(this::communicatorConfiguration);
 
 
     private final CommunicatorActionImplementation implementation;

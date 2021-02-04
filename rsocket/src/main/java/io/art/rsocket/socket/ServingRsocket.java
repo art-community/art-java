@@ -126,7 +126,7 @@ public class ServingRsocket implements RSocket {
 
     @Override
     public void dispose() {
-        moduleState.disposeRequester(this);
+        moduleState.removeRequester(this);
         specification.dispose();
     }
 

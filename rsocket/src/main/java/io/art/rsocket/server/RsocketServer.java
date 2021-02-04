@@ -18,7 +18,7 @@
 
 package io.art.rsocket.server;
 
-import io.art.core.lazy.*;
+import io.art.core.managed.*;
 import io.art.core.runnable.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.interceptor.*;
@@ -33,7 +33,7 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
-import static io.art.core.lazy.ManagedValue.*;
+import static io.art.core.managed.DisposableValue.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
@@ -48,9 +48,9 @@ public class RsocketServer implements Server {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketServer.class);
 
-    private final ManagedValue<RsocketServerConfiguration> configuration = managed(rsocketModule().configuration()::getServerConfiguration);
-    private final ManagedValue<CloseableChannel> channel = managed(this::createServer);
-    private final ManagedValue<Mono<Void>> onClose = managed(this::onClose);
+    private final DisposableValue<RsocketServerConfiguration> configuration = disposable(rsocketModule().configuration()::getServerConfiguration);
+    private final DisposableValue<CloseableChannel> channel = disposable(this::createServer);
+    private final DisposableValue<Mono<Void>> onClose = disposable(this::onClose);
 
     @Override
     public void initialize() {

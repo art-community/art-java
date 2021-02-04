@@ -1,4 +1,4 @@
-package io.art.core.lazy;
+package io.art.core.managed;
 
 import io.art.core.exception.*;
 import lombok.*;
@@ -10,12 +10,12 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
-public class ManagedValue<T> implements Supplier<T> {
+public class DisposableValue<T> implements Supplier<T> {
     private volatile T value;
     private final AtomicBoolean initialized = new AtomicBoolean();
     private final Supplier<T> loader;
 
-    public ManagedValue<T> initialize() {
+    public DisposableValue<T> initialize() {
         get();
         return this;
     }
@@ -53,8 +53,8 @@ public class ManagedValue<T> implements Supplier<T> {
         dispose(emptyConsumer());
     }
 
-    public static <T> ManagedValue<T> managed(Supplier<T> factory) {
-        return new ManagedValue<>(factory);
+    public static <T> DisposableValue<T> disposable(Supplier<T> factory) {
+        return new DisposableValue<>(factory);
     }
 
     @Override
@@ -67,9 +67,9 @@ public class ManagedValue<T> implements Supplier<T> {
         if (isNull(other)) {
             return false;
         }
-        if (!(other instanceof ManagedValue)) {
+        if (!(other instanceof DisposableValue)) {
             return false;
         }
-        return get().equals(((ManagedValue<?>) other).get());
+        return get().equals(((DisposableValue<?>) other).get());
     }
 }

@@ -1,16 +1,16 @@
-package io.art.core.lazy;
+package io.art.core.managed;
 
 import io.art.core.annotation.*;
-import static io.art.core.lazy.ManagedValue.*;
+import static io.art.core.managed.DisposableValue.*;
 import static java.util.Objects.*;
 import java.util.function.*;
 
 @UsedByGenerator
 public class LazyValue<T> implements Supplier<T> {
-    private final ManagedValue<T> managed;
+    private final DisposableValue<T> managed;
 
     public LazyValue(Supplier<T> loader) {
-        managed = managed(loader);
+        managed = disposable(loader);
     }
 
     public LazyValue<T> initialize() {
@@ -20,6 +20,10 @@ public class LazyValue<T> implements Supplier<T> {
 
     public boolean initialized() {
         return managed.initialized();
+    }
+
+    public boolean disposed() {
+        return managed.disposed();
     }
 
     @Override

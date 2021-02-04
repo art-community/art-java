@@ -20,7 +20,7 @@ package io.art.value.immutable;
 
 import io.art.core.collection.*;
 import io.art.core.exception.*;
-import io.art.core.lazy.*;
+import io.art.core.managed.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.exception.*;
 import io.art.value.mapper.*;
@@ -32,7 +32,7 @@ import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.factory.SetFactory.*;
-import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.managed.LazyValue.*;
 import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
