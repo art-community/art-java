@@ -21,27 +21,21 @@ public class DisposableValue<T> implements Supplier<T> {
         return this;
     }
 
+    public boolean initialized() {
+        return initialized.get();
+    }
+
     public DisposableValue<T> disposer(Consumer<T> disposer) {
         this.disposer = disposer;
         return this;
-    }
-
-    public boolean initialized() {
-        return initialized.get();
     }
 
     public boolean disposed() {
         return !initialized();
     }
 
-    @Override
-    public T get() {
-        while (isNull(this.value)) {
-            if (this.initialized.compareAndSet(false, true)) {
-                this.value = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
-            }
-        }
-        return this.value;
+    public void dispose() {
+        dispose(disposer);
     }
 
     public void dispose(Consumer<T> action) {
@@ -55,12 +49,14 @@ public class DisposableValue<T> implements Supplier<T> {
         }
     }
 
-    public void dispose() {
-        dispose(disposer);
-    }
-
-    public static <T> DisposableValue<T> disposable(Supplier<T> factory) {
-        return new DisposableValue<>(factory);
+    @Override
+    public T get() {
+        while (isNull(this.value)) {
+            if (this.initialized.compareAndSet(false, true)) {
+                this.value = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
+            }
+        }
+        return this.value;
     }
 
     @Override
@@ -77,5 +73,9 @@ public class DisposableValue<T> implements Supplier<T> {
             return false;
         }
         return get().equals(((DisposableValue<?>) other).get());
+    }
+
+    public static <T> DisposableValue<T> disposable(Supplier<T> factory) {
+        return new DisposableValue<>(factory);
     }
 }

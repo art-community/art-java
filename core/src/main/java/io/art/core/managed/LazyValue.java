@@ -7,32 +7,24 @@ import java.util.function.*;
 
 @UsedByGenerator
 public class LazyValue<T> implements Supplier<T> {
-    private final DisposableValue<T> managed;
+    private final DisposableValue<T> disposable;
 
     public LazyValue(Supplier<T> loader) {
-        managed = disposable(loader);
+        disposable = disposable(loader);
     }
 
     public LazyValue<T> initialize() {
-        managed.get();
+        disposable.get();
         return this;
     }
 
     public boolean initialized() {
-        return managed.initialized();
-    }
-
-    public boolean disposed() {
-        return managed.disposed();
+        return disposable.initialized();
     }
 
     @Override
     public T get() {
-        return managed.get();
-    }
-
-    public static <T> LazyValue<T> lazy(Supplier<T> factory) {
-        return new LazyValue<>(factory);
+        return disposable.get();
     }
 
     @Override
@@ -49,5 +41,9 @@ public class LazyValue<T> implements Supplier<T> {
             return false;
         }
         return get().equals(((LazyValue<?>) other).get());
+    }
+
+    public static <T> LazyValue<T> lazy(Supplier<T> factory) {
+        return new LazyValue<>(factory);
     }
 }

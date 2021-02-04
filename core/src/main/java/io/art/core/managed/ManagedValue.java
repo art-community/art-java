@@ -6,7 +6,7 @@ import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
 
-public class ManagedValue<T> {
+public class ManagedValue<T> implements Supplier<T> {
     private volatile DisposableValue<T> disposable;
     private final List<Consumer<T>> changeConsumers = linkedList();
     private final List<Consumer<T>> clearConsumers = linkedList();
@@ -14,10 +14,6 @@ public class ManagedValue<T> {
 
     public ManagedValue(Supplier<T> loader) {
         disposable = DisposableValue.disposable(loader);
-    }
-
-    public T get() {
-        return disposable.get();
     }
 
     public LazyValue<T> immutable() {
@@ -32,18 +28,6 @@ public class ManagedValue<T> {
         get();
     }
 
-    public void dispose(Consumer<T> action) {
-        disposable.dispose(action);
-    }
-
-    public void dispose() {
-        disposable.dispose();
-    }
-
-    public void onDispose() {
-        disposable.dispose();
-    }
-
     public boolean initialized() {
         return disposable.initialized();
     }
@@ -55,6 +39,14 @@ public class ManagedValue<T> {
     public ManagedValue<T> disposer(Consumer<T> disposer) {
         disposable.disposer(disposer);
         return this;
+    }
+
+    public void dispose(Consumer<T> action) {
+        disposable.dispose(action);
+    }
+
+    public void dispose() {
+        disposable.dispose();
     }
 
     public ManagedValue<T> consume(Consumer<T> consumer) {
@@ -109,6 +101,11 @@ public class ManagedValue<T> {
     public void change() {
         dispose();
         changeConsumers.forEach(consumer -> consumer.accept(get()));
+    }
+
+    @Override
+    public T get() {
+        return disposable.get();
     }
 
     @Override
