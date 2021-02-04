@@ -116,9 +116,9 @@ public class RsocketServer implements Server {
         return socket.doOnError(throwable -> logger.error(throwable.getMessage(), throwable));
     }
 
-    private void processCreation(ConnectionSetupPayload payload, RSocket requesterSocket, MonoSink<RSocket> emitter) {
+    private void processCreation(ConnectionSetupPayload payload, RSocket requester, MonoSink<RSocket> emitter) {
         Logger logger = getLogger();
-        ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, requesterSocket, configuration.getServerConfiguration()));
+        ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, requester, configuration.getServerConfiguration()));
         ignoreException(createRsocket, throwable -> logger.error(throwable.getMessage(), throwable));
     }
 }

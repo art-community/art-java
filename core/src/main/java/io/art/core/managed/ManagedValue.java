@@ -83,7 +83,7 @@ public class ManagedValue<T> implements Supplier<T> {
 
     public ManagedValue<T> listen(ManagedValue<?>... others) {
         for (ManagedValue<?> other : others) {
-            other.cleared(value -> clear()).consume(value -> change());
+            other.cleared(value -> clear()).consume(value -> refresh());
         }
         return this;
     }
@@ -98,10 +98,10 @@ public class ManagedValue<T> implements Supplier<T> {
         return this;
     }
 
-    public void change() {
+    public void refresh() {
         dispose();
-        T newValue = get();
-        changeConsumers.forEach(consumer -> consumer.accept(newValue));
+        T value = get();
+        changeConsumers.forEach(consumer -> consumer.accept(value));
     }
 
     @Override

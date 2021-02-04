@@ -49,7 +49,7 @@ public class ChangesListener {
     }
 
     public <T> ManagedValue<T> consume(ManagedValue<T> value) {
-        consumers.add(value::change);
+        consumers.add(value::refresh);
         return value;
     }
 
