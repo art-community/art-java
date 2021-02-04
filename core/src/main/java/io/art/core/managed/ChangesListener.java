@@ -1,9 +1,10 @@
 package io.art.core.managed;
 
+import io.art.core.local.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.core.managed.ManagedValue.*;
+import static io.art.core.local.ThreadLocalValue.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -11,17 +12,13 @@ import java.util.concurrent.locks.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public class ChangesListener {
-    private final AtomicInteger index = new AtomicInteger();
+    private final ThreadLocalValue<Integer> index = threadLocal(() -> 0);
     private final ReentrantLock lock = new ReentrantLock();
     private final AtomicBoolean created = new AtomicBoolean();
     private final AtomicBoolean pending = new AtomicBoolean();
     private final List<Runnable> consumers = copyOnWriteList();
-    private final List<ManagedValue<Object>> values = copyOnWriteList();
-
-    public ChangesListener reset() {
-        index.set(0);
-        return this;
-    }
+    private final List<Object> values = copyOnWriteList();
+    private final ChangesConsumer consumer = new ChangesConsumer(this);
 
     public ChangesListener lock() {
         lock.lock();
@@ -40,6 +37,7 @@ public class ChangesListener {
         if (pending.compareAndSet(true, false)) {
             consumers.forEach(Runnable::run);
         }
+        index.set(0);
         return this;
     }
 
@@ -53,16 +51,27 @@ public class ChangesListener {
         return value;
     }
 
-    public <T> T register(T value) {
-        int index = this.index.getAndIncrement();
-        if (values.size() > index) {
-            return cast(values.get(index).set(value).get());
-        }
-        values.add(managed(() -> cast(value)).consume(ignore -> pending.set(created.get())));
-        return value;
+    public ChangesConsumer consumer() {
+        return consumer;
     }
 
-    public static ChangesListener listener() {
+    public <T> T register(T value) {
+        int index = this.index.get();
+        if (!created.get()) {
+            values.add(value);
+            this.index.set(index + 1);
+            return value;
+        }
+        Object current = values.get(index);
+        if (!pending.get() && !Objects.equals(value, current)) {
+            values.set(index, value);
+            pending.set(true);
+        }
+        this.index.set(index + 1);
+        return cast(value);
+    }
+
+    public static ChangesListener changesListener() {
         return new ChangesListener();
     }
 }

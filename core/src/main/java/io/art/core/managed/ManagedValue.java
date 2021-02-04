@@ -92,6 +92,10 @@ public class ManagedValue<T> implements Supplier<T> {
         return listener.consume(this);
     }
 
+    public ManagedValue<T> listen(ChangesConsumer listener) {
+        return listener.consume(this);
+    }
+
     public ManagedValue<T> clear() {
         clearConsumers.forEach(consumer -> consumer.accept(get()));
         dispose();

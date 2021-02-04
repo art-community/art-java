@@ -42,7 +42,7 @@ public class SchedulerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.refreshDuration = source.getDuration(CONFIGURATION_REFRESH_DURATION);
+            configuration.refreshDuration = source.getDuration(CONFIGURATOR_REFRESH_DURATION);
             return this;
         }
     }

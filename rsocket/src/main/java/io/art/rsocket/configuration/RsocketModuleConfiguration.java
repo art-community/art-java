@@ -30,6 +30,9 @@ import static java.util.Optional.*;
 public class RsocketModuleConfiguration implements ModuleConfiguration {
     private final RsocketModuleRefresher refresher;
 
+    @Getter(lazy = true)
+    private final RsocketModuleRefresher.Consumer consumer = refresher.consumer();
+
     @Getter
     private RsocketServerConfiguration serverConfiguration;
 
@@ -50,7 +53,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         public Configurator from(ConfigurationSource source) {
             ofNullable(source.getNested(RSOCKET_SECTION))
                     .map(rsocket -> rsocket.getNested(SERVER_SECTION))
-                    .map(server -> RsocketServerConfiguration.from(configuration.refresher.serverListener(), server))
+                    .map(server -> RsocketServerConfiguration.from(configuration.refresher, server))
                     .ifPresent(serverConfiguration -> configuration.serverConfiguration = serverConfiguration);
             ofNullable(source.getNested(RSOCKET_SECTION))
                     .map(rsocket -> rsocket.getNested(COMMUNICATOR_SECTION))

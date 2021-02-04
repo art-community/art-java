@@ -107,10 +107,11 @@ public class RsocketServer implements Server {
 
     private void disposeServer(Disposable server) {
         disposeRsocket(server);
-        channel.get()
-                .onClose()
-                .doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED))
-                .block();
+        Mono<Void> onClose = channel.get().onClose();
+        if (configuration.getServerConfiguration().isLogging()) {
+            onClose = onClose.doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
+        }
+        onClose.block();
     }
 
     private Mono<RSocket> createSocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
