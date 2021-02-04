@@ -88,8 +88,8 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     }
 
     private FileProxy loadResource(ClassLoader loader, String extension) {
-        InputStream stream = loader.getResourceAsStream(DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension);
-        return let(stream, resource -> new FileProxy(DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension, resource));
+        String path = DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension;
+        return let(loader.getResourceAsStream(path), stream -> new FileProxy(path, () -> loader.getResourceAsStream(path)));
     }
 
     public static ConfigurationSource configuration() {

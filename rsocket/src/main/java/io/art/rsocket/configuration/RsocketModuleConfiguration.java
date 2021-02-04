@@ -20,16 +20,26 @@ package io.art.rsocket.configuration;
 
 import io.art.core.module.*;
 import io.art.core.source.*;
+import io.art.rsocket.listener.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
 
-@Getter
+@RequiredArgsConstructor
 public class RsocketModuleConfiguration implements ModuleConfiguration {
+    private final RsocketModuleRefresher refresher;
+
+    @Getter
     private RsocketServerConfiguration serverConfiguration;
+
+    @Getter
     private RsocketCommunicatorConfiguration communicatorConfiguration;
+
+    @Getter
     private boolean activateServer;
+
+    @Getter
     private boolean activateCommunicator;
 
     @RequiredArgsConstructor
@@ -40,7 +50,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         public Configurator from(ConfigurationSource source) {
             ofNullable(source.getNested(RSOCKET_SECTION))
                     .map(rsocket -> rsocket.getNested(SERVER_SECTION))
-                    .map(RsocketServerConfiguration::from)
+                    .map(server -> RsocketServerConfiguration.from(configuration.refresher.serverListener(), server))
                     .ifPresent(serverConfiguration -> configuration.serverConfiguration = serverConfiguration);
             ofNullable(source.getNested(RSOCKET_SECTION))
                     .map(rsocket -> rsocket.getNested(COMMUNICATOR_SECTION))

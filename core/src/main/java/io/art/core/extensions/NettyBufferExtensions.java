@@ -45,7 +45,7 @@ public class NettyBufferExtensions {
         if (isEmpty(array)) {
             return EMPTY_BUFFER;
         }
-        ByteBuf buffer = DEFAULT.directBuffer(array.length);
+        ByteBuf buffer = DEFAULT.buffer(array.length);
         buffer.writeBytes(array);
         return buffer;
     }

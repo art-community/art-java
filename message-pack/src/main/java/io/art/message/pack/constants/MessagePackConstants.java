@@ -24,6 +24,6 @@ import static io.art.core.mime.MimeType.*;
 
 public interface MessagePackConstants {
     interface ExceptionMessages {
-        String VALUE_TYPE_NOT_SUPPORTED = "MessagePack value type ''{0}'' not supported";
+        String VALUE_TYPE_NOT_SUPPORTED = "MessagePack register type ''{0}'' not supported";
     }
 }

@@ -19,6 +19,7 @@
 package io.art.rsocket.state;
 
 import io.art.core.collection.*;
+import io.art.core.managed.*;
 import io.art.core.module.*;
 import io.art.rsocket.model.*;
 import io.rsocket.*;
@@ -26,6 +27,7 @@ import lombok.*;
 import reactor.util.context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.managed.ChangesListener.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import java.util.*;
 import java.util.function.*;
@@ -38,7 +40,7 @@ public class RsocketModuleState implements ModuleState {
         requesters.add(socket);
     }
 
-    public void disposeRequester(RSocket socket) {
+    public void removeRequester(RSocket socket) {
         requesters.remove(socket);
     }
 

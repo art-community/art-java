@@ -114,6 +114,10 @@ public class SchedulersManager {
     }
 
 
+    public static boolean hasTask(String taskId) {
+        return periodicExecutor().hasPeriodicTask(taskId);
+    }
+
     public static boolean cancelTask(String taskId) {
         return periodicExecutor().cancelPeriodicTask(taskId);
     }

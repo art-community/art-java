@@ -60,7 +60,7 @@ public interface RsocketModuleConstants {
         String RSOCKET_SECTION = "rsocket";
         String SERVER_SECTION = "server";
         String COMMUNICATOR_SECTION = "communicator";
-        String RESUME_SECTION = "resume";
+        String RESUME_SECTION = "produce";
         String RETRY_SECTION = "retry";
         String RECONNECT_SECTION = "reconnect";
         String KEEP_ALIVE_SECTION = "keepAlive";

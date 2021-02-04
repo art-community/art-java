@@ -20,13 +20,14 @@ package io.art.rsocket.module;
 
 import io.art.core.module.*;
 import io.art.rsocket.configuration.*;
+import io.art.rsocket.listener.*;
+import io.art.rsocket.manager.*;
 import io.art.rsocket.state.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
-import static io.art.rsocket.manager.RsocketManager.*;
 import static lombok.AccessLevel.*;
 
 @Getter
@@ -36,9 +37,11 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketModule.class);
     private final String id = RsocketModule.class.getSimpleName();
-    private final RsocketModuleConfiguration configuration = new RsocketModuleConfiguration();
-    private final Configurator configurator = new Configurator(configuration);
     private final RsocketModuleState state = new RsocketModuleState();
+    private final RsocketModuleRefresher refresher = new RsocketModuleRefresher();
+    private final RsocketModuleConfiguration configuration = new RsocketModuleConfiguration(refresher);
+    private final RsocketManager manager = new RsocketManager(refresher, configuration);
+    private final Configurator configurator = new Configurator(configuration);
 
     public static StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule() {
         return getRsocketModule();
@@ -47,16 +50,16 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     @Override
     public void onLoad() {
         if (configuration.isActivateServer()) {
-            initializeServer();
+            manager.initializeServer();
         }
         if (configuration.isActivateCommunicator()) {
-            initializeCommunicators();
+            manager.initializeCommunicators();
         }
     }
 
     @Override
     public void onUnload() {
-        disposeCommunicators();
-        disposeServer();
+        manager.disposeCommunicators();
+        manager.disposeServer();
     }
 }

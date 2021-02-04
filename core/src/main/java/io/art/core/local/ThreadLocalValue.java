@@ -1,10 +1,11 @@
-package io.art.core.threadlocal;
+package io.art.core.local;
 
 import lombok.*;
 import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
 import java.util.function.*;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = PRIVATE)
 public class ThreadLocalValue<T> {
     private final ThreadLocal<T> valueHolder = new ThreadLocal<>();
     private final Supplier<T> factory;
@@ -13,6 +14,11 @@ public class ThreadLocalValue<T> {
         T value = valueHolder.get();
         if (isNull(value)) valueHolder.set(value = factory.get());
         return value;
+    }
+
+    public ThreadLocalValue<T> set(T newValue) {
+        valueHolder.set(newValue);
+        return this;
     }
 
     public <R> ThreadLocalValue<R> map(Function<T, R> mapper) {
@@ -25,7 +31,11 @@ public class ThreadLocalValue<T> {
     }
 
     public boolean initialized() {
-        return valueHolder.get() != null;
+        return nonNull(valueHolder.get());
+    }
+
+    public boolean disposed() {
+        return !initialized();
     }
 
     public void dispose() {

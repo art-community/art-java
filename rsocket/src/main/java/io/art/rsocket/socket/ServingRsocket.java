@@ -84,7 +84,7 @@ public class ServingRsocket implements RSocket {
             specification = initializeSpecification(defaultServiceMethod);
             return;
         }
-        throw new ImpossibleSituation();
+        throw new ImpossibleSituationException();
     }
 
     @Override
@@ -126,7 +126,7 @@ public class ServingRsocket implements RSocket {
 
     @Override
     public void dispose() {
-        moduleState.disposeRequester(this);
+        moduleState.removeRequester(this);
         specification.dispose();
     }
 

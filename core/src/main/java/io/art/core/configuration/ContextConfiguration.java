@@ -35,42 +35,20 @@ import java.security.*;
 import java.time.*;
 import java.util.*;
 
-public interface ContextConfiguration {
-    String getMainModuleId();
-
-    String getModuleJarName();
-
-    Charset getCharset();
-
-    String getPrimaryIpAddress();
-
-    ImmutableMap<String, String> getIpAddresses();
-
-    Locale getLocale();
-
-    ZoneId getZoneId();
-
-    @RequiredArgsConstructor
-    class DefaultContextConfiguration implements ContextConfiguration {
-        @Getter
-        private final String mainModuleId;
-        @Getter
-        private final Charset charset = UTF_8;
-        @Getter
-        private final String primaryIpAddress = IpAddressProvider.getIpAddress();
-        @Getter
-        private final ImmutableMap<String, String> ipAddresses = IpAddressProvider.getIpAddresses();
-        @Getter
-        private final Locale locale = getDefault(FORMAT);
-        @Getter
-        private final ZoneId zoneId = systemDefault();
-        @Getter
-        private final String moduleJarName = ofNullable(Context.class.getProtectionDomain())
-                .map(ProtectionDomain::getCodeSource)
-                .map(CodeSource::getLocation)
-                .map(URL::getPath)
-                .map(File::new)
-                .map(File::getPath)
-                .orElse(DEFAULT_MODULE_JAR);
-    }
+@Getter
+@RequiredArgsConstructor
+public class ContextConfiguration {
+    private final String mainModuleId;
+    private final Charset charset = UTF_8;
+    private final String primaryIpAddress = IpAddressProvider.getIpAddress();
+    private final ImmutableMap<String, String> ipAddresses = IpAddressProvider.getIpAddresses();
+    private final Locale locale = getDefault(FORMAT);
+    private final ZoneId zoneId = systemDefault();
+    private final String moduleJarName = ofNullable(Context.class.getProtectionDomain())
+            .map(ProtectionDomain::getCodeSource)
+            .map(CodeSource::getLocation)
+            .map(URL::getPath)
+            .map(File::new)
+            .map(File::getPath)
+            .orElse(DEFAULT_MODULE_JAR);
 }

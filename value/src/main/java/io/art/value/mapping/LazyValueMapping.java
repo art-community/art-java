@@ -19,7 +19,7 @@
 package io.art.value.mapping;
 
 import io.art.core.annotation.*;
-import io.art.core.lazy.*;
+import io.art.core.managed.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
@@ -27,7 +27,7 @@ import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.managed.LazyValue.*;
 
 @UtilityClass
 @UsedByGenerator

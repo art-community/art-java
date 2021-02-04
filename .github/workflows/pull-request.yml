@@ -1,4 +1,4 @@
-name: ART Generator CI
+name: ART Java CI
 on: [pull_request]
 jobs:
   gradle:
