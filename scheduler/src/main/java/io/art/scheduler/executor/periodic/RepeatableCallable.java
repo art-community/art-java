@@ -19,6 +19,7 @@
 package io.art.scheduler.executor.periodic;
 
 import lombok.*;
+import static java.time.LocalDateTime.now;
 import java.time.*;
 import java.util.concurrent.*;
 import java.util.function.*;
@@ -26,13 +27,18 @@ import java.util.function.*;
 @AllArgsConstructor
 class RepeatableCallable<T> implements Callable<T> {
     private final Callable<T> action;
+    private final Supplier<Boolean> predicate;
     private final Consumer<LocalDateTime> repeat;
-    private final LocalDateTime now = LocalDateTime.now();
 
     @Override
     public T call() throws Exception {
-        T result = action.call();
+        LocalDateTime now = now();
+        if (predicate.get()) {
+            T result = action.call();
+            repeat.accept(now);
+            return result;
+        }
         repeat.accept(now);
-        return result;
+        return null;
     }
 }

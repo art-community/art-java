@@ -19,6 +19,7 @@
 package io.art.rsocket.configuration;
 
 import io.art.core.collection.*;
+import io.art.core.managed.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.rsocket.constants.*;
@@ -34,10 +35,12 @@ import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.DEFAULT;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
+import static io.rsocket.frame.decoder.PayloadDecoder.ZERO_COPY;
 
 @Getter
 public class RsocketServerConfiguration {
@@ -69,41 +72,42 @@ public class RsocketServerConfiguration {
         return configuration;
     }
 
-    public static RsocketServerConfiguration from(ConfigurationSource source) {
+    public static RsocketServerConfiguration from(ChangesListener listener, ConfigurationSource source) {
+        listener.reset();
+
         RsocketServerConfiguration configuration = new RsocketServerConfiguration();
-        configuration.defaultDataFormat = dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), JSON);
-        configuration.defaultMetaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), JSON);
-        configuration.logging = orElse(source.getBool(LOGGING_KEY), false);
-        configuration.fragmentationMtu = orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0);
+        configuration.defaultDataFormat = listener.register(dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), JSON));
+        configuration.defaultMetaDataFormat = listener.register(dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), JSON));
+        configuration.logging = listener.register(orElse(source.getBool(LOGGING_KEY), false));
+        configuration.fragmentationMtu = listener.register(orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0));
+        configuration.payloadDecoder = listener.register(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT ? PayloadDecoder.DEFAULT : ZERO_COPY);
+        configuration.maxInboundPayloadSize = listener.register(orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK));
+        configuration.transport = listener.register(rsocketTransport(source.getString(TRANSPORT_MODE_KEY)));
         configuration.resume = source.getNested(RESUME_SECTION, RsocketResumeConfigurator::from);
-        configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT
-                ? PayloadDecoder.DEFAULT
-                : PayloadDecoder.ZERO_COPY;
-        configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
-        configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
 
         String serviceId = source.getString(DEFAULT_SERVICE_ID_KEY);
         String methodId = source.getString(DEFAULT_METHOD_ID_KEY);
 
         if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
-            configuration.defaultServiceMethod = serviceMethod(serviceId, methodId);
+            configuration.defaultServiceMethod = listener.register(serviceMethod(serviceId, methodId));
         }
 
-        int port = orElse(source.getInt(TRANSPORT_PORT_KEY), DEFAULT_PORT);
-        String host = orElse(source.getString(TRANSPORT_HOST_KEY), BROADCAST_IP_ADDRESS);
+        int port = listener.register(orElse(source.getInt(TRANSPORT_PORT_KEY), DEFAULT_PORT));
+        String host = listener.register(orElse(source.getString(TRANSPORT_HOST_KEY), BROADCAST_IP_ADDRESS));
 
         switch (configuration.transport) {
             case TCP:
-                configuration.tcpServer = TcpServer.create().port(port).host(host);
-                configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
+                configuration.tcpServer = TcpServer.create().port(listener.register(port)).host(listener.register(host));
+                configuration.tcpMaxFrameLength = listener.register(orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK));
                 break;
             case WS:
-                configuration.httpWebSocketServer = HttpServer.create().port(port).host(host);
+                configuration.httpWebSocketServer = HttpServer.create().port(listener.register(port)).host(listener.register(host));
                 break;
         }
 
         configuration.services = source.getNestedMap(SERVICES_KEY, service -> RsocketServiceConfiguration.from(configuration, service));
 
+        listener.produce();
         return configuration;
     }
 }

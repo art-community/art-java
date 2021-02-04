@@ -19,10 +19,11 @@
 package io.art.core.caster;
 
 import lombok.experimental.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 
 @UtilityClass
 public class Caster {
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     public static <T> T cast(Object object) {
         return (T) object;
     }

@@ -18,8 +18,10 @@
 
 package io.art.server;
 
-import io.art.core.managed.*;
-
-public interface Server extends Managed {
+public interface Server {
     boolean available();
+
+    void initialize();
+
+    void dispose();
 }

@@ -20,9 +20,10 @@ package io.art.rsocket.manager;
 
 
 import io.art.communicator.action.*;
+import io.art.rsocket.configuration.*;
+import io.art.rsocket.listener.*;
 import io.art.rsocket.server.*;
 import lombok.*;
-import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import static io.art.communicator.module.CommunicatorModule.*;
@@ -32,11 +33,15 @@ import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
 import static lombok.AccessLevel.*;
 
-@UtilityClass
 public class RsocketManager {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketManager.class);
-    private static final RsocketServer SERVER = new RsocketServer();
+
+    private final RsocketServer server;
+
+    public RsocketManager(RsocketModuleRefresher refresher, RsocketModuleConfiguration configuration) {
+        this.server = new RsocketServer(refresher, configuration);
+    }
 
     public void initializeCommunicators() {
         communicatorModule()
@@ -56,15 +61,14 @@ public class RsocketManager {
     }
 
     public void initializeServer() {
-        SERVER.initialize();
+        server.initialize();
     }
 
     public void disposeServer() {
-        SERVER.dispose();
+        server.dispose();
     }
 
-
-    public void disposeRsocket(Disposable rsocket) {
+    public static void disposeRsocket(Disposable rsocket) {
         if (rsocket.isDisposed()) {
             return;
         }

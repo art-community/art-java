@@ -23,10 +23,8 @@ import io.art.core.caster.*;
 import io.art.core.collection.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
-import io.art.core.lazy.*;
 import io.art.core.managed.*;
 import io.art.server.configuration.*;
-import io.art.server.constants.ServerModuleConstants.*;
 import io.art.server.decorator.*;
 import io.art.server.implementation.*;
 import io.art.server.model.*;
@@ -39,7 +37,7 @@ import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.lazy.ManagedValue.*;
+import static io.art.core.managed.DisposableValue.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
@@ -96,10 +94,10 @@ public class ServiceMethodSpecification implements Managed {
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Object, Flux<Object>> adoptOutput = adoptOutput();
 
-    private final ManagedValue<ServerModuleConfiguration> moduleConfiguration = managed(this::moduleConfiguration);
-    private final ManagedValue<ServiceSpecification> serviceSpecification = managed(this::serviceSpecification);
-    private final ManagedValue<Optional<ServiceConfiguration>> serviceConfiguration = managed(this::serviceConfiguration);
-    private final ManagedValue<Optional<ServiceMethodConfiguration>> methodConfiguration = managed(this::methodConfiguration);
+    private final DisposableValue<ServerModuleConfiguration> moduleConfiguration = disposable(this::moduleConfiguration);
+    private final DisposableValue<ServiceSpecification> serviceSpecification = disposable(this::serviceSpecification);
+    private final DisposableValue<Optional<ServiceConfiguration>> serviceConfiguration = disposable(this::serviceConfiguration);
+    private final DisposableValue<Optional<ServiceMethodConfiguration>> methodConfiguration = disposable(this::methodConfiguration);
 
     @Override
     public void initialize() {
@@ -111,10 +109,10 @@ public class ServiceMethodSpecification implements Managed {
 
     @Override
     public void dispose() {
-        methodConfiguration.initialize();
-        serviceConfiguration.initialize();
-        serviceSpecification.initialize();
-        moduleConfiguration.initialize();
+        methodConfiguration.dispose();
+        serviceConfiguration.dispose();
+        serviceSpecification.dispose();
+        moduleConfiguration.dispose();
     }
 
     public Flux<Value> serve(Flux<Value> input) {
@@ -173,7 +171,7 @@ public class ServiceMethodSpecification implements Managed {
 
     private Function<Flux<Object>, Object> adoptInput() {
         if (isNull(inputMode)) {
-            throw new ImpossibleSituation();
+            throw new ImpossibleSituationException();
         }
         switch (inputMode) {
             case BLOCKING:
@@ -183,13 +181,13 @@ public class ServiceMethodSpecification implements Managed {
             case FLUX:
                 return Caster::cast;
             default:
-                throw new ImpossibleSituation();
+                throw new ImpossibleSituationException();
         }
     }
 
     private Function<Object, Flux<Object>> adoptOutput() {
         if (isNull(outputMode)) {
-            throw new ImpossibleSituation();
+            throw new ImpossibleSituationException();
         }
         switch (outputMode) {
             case BLOCKING:
@@ -198,7 +196,7 @@ public class ServiceMethodSpecification implements Managed {
             case FLUX:
                 return output -> Flux.from(cast(output));
             default:
-                throw new ImpossibleSituation();
+                throw new ImpossibleSituationException();
         }
     }
 
@@ -208,7 +206,7 @@ public class ServiceMethodSpecification implements Managed {
 
 
     private ServiceSpecification serviceSpecification() {
-        return specifications().get(serviceId).orElseThrow(ImpossibleSituation::new);
+        return specifications().get(serviceId).orElseThrow(ImpossibleSituationException::new);
     }
 
     private Optional<ServiceConfiguration> serviceConfiguration() {

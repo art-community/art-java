@@ -70,7 +70,7 @@ public class TarantoolSingleRecord<T> implements TarantoolRecord<T> {
 
     @Override
     public T orElseThrow() {
-        return getOptional().orElseThrow(() -> new NoSuchElementException("No value present"));
+        return getOptional().orElseThrow(() -> new NoSuchElementException("No register present"));
     }
 
     @Override

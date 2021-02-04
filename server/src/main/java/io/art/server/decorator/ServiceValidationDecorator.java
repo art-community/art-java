@@ -18,7 +18,7 @@
 
 package io.art.server.decorator;
 
-import io.art.core.lazy.*;
+import io.art.core.managed.*;
 import io.art.core.model.*;
 import io.art.server.exception.*;
 import io.art.server.specification.*;
@@ -26,7 +26,7 @@ import io.art.server.validation.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
-import static io.art.core.lazy.ManagedValue.*;
+import static io.art.core.managed.DisposableValue.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
 import static io.art.server.module.ServerModule.*;
@@ -42,12 +42,12 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
     private final static ValidationException NULL_EXCEPTION = new ValidationException(notNull(expression -> REQUEST_IS_NULL));
     private final Supplier<Boolean> enabled;
     private final Supplier<Boolean> deactivated;
-    private final ManagedValue<Boolean> hasInput;
+    private final DisposableValue<Boolean> hasInput;
 
     public ServiceValidationDecorator(ServiceMethodIdentifier serviceMethodId) {
         enabled = () -> serverModule().configuration().isValidating(serviceMethodId);
         deactivated = () -> serverModule().configuration().isDeactivated(serviceMethodId);
-        hasInput = managed(() -> hasInput(serviceMethodId));
+        hasInput = disposable(() -> hasInput(serviceMethodId));
     }
 
     @Override

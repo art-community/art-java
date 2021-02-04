@@ -24,7 +24,7 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.configuration.*;
 import io.art.core.context.*;
-import io.art.core.lazy.*;
+import io.art.core.managed.*;
 import io.art.core.module.*;
 import io.art.core.module.Module;
 import io.art.json.module.*;
@@ -45,19 +45,19 @@ import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.checker.NullityChecker.apply;
-import static io.art.core.checker.NullityChecker.let;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
-import static io.art.core.lazy.LazyValue.*;
+import static io.art.core.managed.LazyValue.*;
 import static io.art.launcher.ModuleLauncherConstants.*;
 import static io.art.logging.LoggingModule.*;
+import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
-import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 @UtilityClass
 @UsedByGenerator
@@ -68,40 +68,77 @@ public class ModuleLauncher {
         if (LAUNCHED.compareAndSet(false, true)) {
             ConfiguratorModule configurator = new ConfiguratorModule();
             ModuleCustomizer moduleCustomizer = model.getCustomizer();
-            ConfiguratorCustomizer configuratorCustomizer = moduleCustomizer.configurator().apply(new ConfiguratorCustomizer());
-            ValueCustomizer valueCustomizer = moduleCustomizer.value().apply(new ValueCustomizer());
-            LoggingCustomizer loggingCustomizer = moduleCustomizer.logging().apply(new LoggingCustomizer());
-            ServerCustomizer serverCustomizer = moduleCustomizer.server().apply(new ServerCustomizer());
-            CommunicatorCustomizer communicatorCustomizer = moduleCustomizer.communicator().apply(new CommunicatorCustomizer());
-            RsocketCustomizer rsocketCustomizer = moduleCustomizer.rsocket().apply(new RsocketCustomizer());
-            StorageCustomizer storageCustomizer = moduleCustomizer.storage().apply(new StorageCustomizer());
+            UnaryOperator<ConfiguratorCustomizer> configuratorCustomizer = moduleCustomizer.configurator();
+            UnaryOperator<ValueCustomizer> valueCustomizer = moduleCustomizer.value();
+            UnaryOperator<LoggingCustomizer> loggingCustomizer = moduleCustomizer.logging();
+            UnaryOperator<ServerCustomizer> serverCustomizer = moduleCustomizer.server();
+            UnaryOperator<CommunicatorCustomizer> communicatorCustomizer = moduleCustomizer.communicator();
+            UnaryOperator<RsocketCustomizer> rsocket = moduleCustomizer.rsocket();
+            UnaryOperator<StorageCustomizer> storageCustomizer = moduleCustomizer.storage();
             ImmutableMap.Builder<ModuleFactory, ModuleDecorator> modules = immutableMapBuilder();
             ModuleConfiguringState state = new ModuleConfiguringState(configurator.configure(), model);
-
             modules
-                    .put(() -> configurator, module -> configurator(cast(module), configuratorCustomizer))
-                    .put(ValueModule::new, module -> value(cast(module), state, valueCustomizer))
-                    .put(LoggingModule::new, module -> logging(cast(module), state, loggingCustomizer))
-                    .put(SchedulerModule::new, module -> scheduler(cast(module), state))
-                    .put(JsonModule::new, module -> json(cast(module), state))
-                    .put(YamlModule::new, module -> yaml(cast(module), state))
-                    .put(XmlModule::new, module -> xml(cast(module), state))
-                    .put(ServerModule::new, module -> server(cast(module), state, serverCustomizer))
-                    .put(CommunicatorModule::new, module -> communicator(cast(module), state, communicatorCustomizer))
-                    .put(RsocketModule::new, module -> rsocket(cast(module), state, rsocketCustomizer))
-                    .put(TarantoolModule::new, module -> tarantool(cast(module), state))
-                    .put(StorageModule::new, module -> storage(cast(module), state, storageCustomizer));
-
+                    .put(
+                            () -> configurator,
+                            module -> configurator(cast(module), configuratorCustomizer.apply(new ConfiguratorCustomizer()))
+                    )
+                    .put(
+                            ValueModule::new,
+                            module -> value(cast(module), state, valueCustomizer.apply(new ValueCustomizer()))
+                    )
+                    .put(
+                            LoggingModule::new,
+                            module -> logging(cast(module), state, loggingCustomizer.apply(new LoggingCustomizer()))
+                    )
+                    .put(
+                            SchedulerModule::new,
+                            module -> scheduler(cast(module), state)
+                    )
+                    .put(
+                            JsonModule::new,
+                            module -> json(cast(module), state)
+                    )
+                    .put(
+                            YamlModule::new,
+                            module -> yaml(cast(module), state)
+                    )
+                    .put(
+                            XmlModule::new,
+                            module -> xml(cast(module), state)
+                    )
+                    .put(
+                            ServerModule::new,
+                            module -> server(cast(module), state, serverCustomizer.apply(new ServerCustomizer()))
+                    )
+                    .put(
+                            CommunicatorModule::new,
+                            module -> communicator(cast(module), state, communicatorCustomizer.apply(new CommunicatorCustomizer()))
+                    )
+                    .put(
+                            RsocketModule::new,
+                            module -> rsocket(cast(module), state, rsocket.apply(new RsocketCustomizer(cast(module))))
+                    )
+                    .put(
+                            TarantoolModule::new,
+                            module -> tarantool(cast(module), state)
+                    )
+                    .put(
+                            StorageModule::new,
+                            module -> storage(cast(module), state, storageCustomizer.apply(new StorageCustomizer()))
+                    );
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
-            initialize(new ContextConfiguration.DefaultContextConfiguration(model.getMainModuleId()), modules.build(), message -> logger.get().info(message));
+            initialize(new ContextConfiguration(model.getMainModuleId()), modules.build(), message -> logger.get().info(message));
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
             apply(model.getOnLoad(), Runnable::run);
-            if (needBlock(rsocketCustomizer)) block();
+            if (needBlock()) block();
         }
     }
 
     private static Module configurator(ConfiguratorModule configuratorModule, ConfiguratorCustomizer configuratorCustomizer) {
-        ofNullable(configuratorCustomizer).ifPresent(customizer -> configuratorModule.configure(configurator -> configurator.override(customizer.configure(configuratorModule.orderedSources()))));
+        ofNullable(configuratorCustomizer)
+                .ifPresent(customizer -> configuratorModule
+                        .configure(configurator -> configurator
+                                .override(customizer.configure(configuratorModule.orderedSources()))));
         return configuratorModule;
     }
 
@@ -170,7 +207,9 @@ public class ModuleLauncher {
         if (isNotEmpty(let(communicatorModel, CommunicatorModuleModel::getRsocketCommunicators))) {
             rsocketCustomizer.activateCommunicator();
         }
-        rsocket.configure(configurator -> configurator.from(state.getConfigurator().orderedSources()).override(rsocketCustomizer.getConfiguration()));
+        rsocket.configure(configurator -> configurator
+                .from(state.getConfigurator().orderedSources())
+                .override(rsocketCustomizer.getConfiguration()));
         return rsocket;
     }
 
@@ -188,7 +227,7 @@ public class ModuleLauncher {
         return storage;
     }
 
-    private static boolean needBlock(RsocketCustomizer rsocketCustomizer) {
-        return rsocketCustomizer.getConfiguration().isActivateServer();
+    private static boolean needBlock() {
+        return rsocketModule().configuration().isActivateServer();
     }
 }

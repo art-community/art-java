@@ -41,7 +41,7 @@ import java.util.*;
 import java.util.function.*;
 
 public class Context {
-    private static final Context DEFAULT_INSTANCE = new Context(new DefaultContextConfiguration(DEFAULT_MAIN_MODULE_ID), System.out::println);
+    private static final Context DEFAULT_INSTANCE = new Context(new ContextConfiguration(DEFAULT_MAIN_MODULE_ID), System.out::println);
     private static Context INSTANCE;
     private final Map<String, Module> modules = map();
     private final Map<String, ModuleDecorator> configurators = map();

@@ -25,7 +25,7 @@ import lombok.*;
 import static com.typesafe.config.ConfigFactory.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
-import static io.art.core.combiner.SectionCombiner.combine;
+import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.SetFactory.*;
@@ -37,14 +37,14 @@ import java.util.function.*;
 public class TypesafeConfigurationSource implements NestedConfiguration {
     private final String section;
     private final ModuleConfigurationSourceType type;
-    private InputStream inputStream;
+    private Supplier<InputStream> inputStream;
     private Config typesafeConfiguration;
 
-    public TypesafeConfigurationSource(String section, ModuleConfigurationSourceType type, InputStream inputStream) {
+    public TypesafeConfigurationSource(String section, ModuleConfigurationSourceType type, Supplier<InputStream> inputStream) {
         this.section = section;
         this.type = type;
         this.inputStream = inputStream;
-        this.typesafeConfiguration = parseReader(new InputStreamReader(inputStream));
+        this.typesafeConfiguration = parseReader(new InputStreamReader(this.inputStream.get()));
     }
 
     public TypesafeConfigurationSource(String section, ModuleConfigurationSourceType type, Config typesafeConfiguration) {
@@ -55,7 +55,7 @@ public class TypesafeConfigurationSource implements NestedConfiguration {
 
     @Override
     public void refresh() {
-        apply(inputStream, file -> this.typesafeConfiguration = parseReader(new InputStreamReader(inputStream)));
+        apply(inputStream, file -> this.typesafeConfiguration = parseReader(new InputStreamReader(inputStream.get())));
     }
 
     @Override

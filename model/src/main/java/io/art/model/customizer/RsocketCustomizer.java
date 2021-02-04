@@ -20,12 +20,18 @@ package io.art.model.customizer;
 
 import io.art.core.annotation.*;
 import io.art.rsocket.configuration.*;
+import io.art.rsocket.listener.*;
+import io.art.rsocket.module.*;
 import lombok.*;
 
+@Getter
 @UsedByGenerator
 public class RsocketCustomizer {
-    @Getter
-    private final Custom configuration = new Custom();
+    private final Custom configuration;
+
+    public RsocketCustomizer(RsocketModule module) {
+        this.configuration = new Custom(module.getRefresher());
+    }
 
     public RsocketCustomizer activateServer() {
         configuration.activateServer = true;
@@ -41,5 +47,9 @@ public class RsocketCustomizer {
     public static class Custom extends RsocketModuleConfiguration {
         private boolean activateServer;
         private boolean activateCommunicator;
+
+        public Custom(RsocketModuleRefresher refresher) {
+            super(refresher);
+        }
     }
 }

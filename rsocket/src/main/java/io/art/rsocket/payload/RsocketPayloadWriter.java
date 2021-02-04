@@ -52,7 +52,7 @@ public class RsocketPayloadWriter {
             case YAML:
                 return create(writeYamlToBytes(value));
         }
-        throw new ImpossibleSituation();
+        throw new ImpossibleSituationException();
     }
 
     public Payload writePayloadMetaData(Value metadataValue) {
@@ -68,6 +68,6 @@ public class RsocketPayloadWriter {
             case YAML:
                 return create(EMPTY_BYTES, writeYamlToBytes(metadataValue));
         }
-        throw new ImpossibleSituation();
+        throw new ImpossibleSituationException();
     }
 }

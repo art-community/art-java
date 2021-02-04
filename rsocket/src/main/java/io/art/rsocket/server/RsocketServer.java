@@ -18,10 +18,11 @@
 
 package io.art.rsocket.server;
 
-import io.art.core.lazy.*;
+import io.art.core.managed.*;
 import io.art.core.runnable.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.interceptor.*;
+import io.art.rsocket.listener.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
 import io.rsocket.*;
@@ -33,50 +34,51 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
-import static io.art.core.lazy.ManagedValue.*;
+import static io.art.core.managed.ManagedValue.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.rsocket.manager.RsocketManager.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 
+@RequiredArgsConstructor
 public class RsocketServer implements Server {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketServer.class);
 
-    private final ManagedValue<RsocketServerConfiguration> configuration = managed(rsocketModule().configuration()::getServerConfiguration);
-    private final ManagedValue<CloseableChannel> channel = managed(this::createServer);
-    private final ManagedValue<Mono<Void>> onClose = managed(this::onClose);
+    private final RsocketModuleConfiguration configuration;
+    private final ManagedValue<CloseableChannel> channel;
+
+    public RsocketServer(RsocketModuleRefresher refresher, RsocketModuleConfiguration configuration) {
+        this.configuration = configuration;
+        channel = managed(this::createServer).listen(refresher.serverListener()).disposer(this::disposeServer);
+    }
 
     @Override
     public void initialize() {
-        configuration.initialize();
         channel.initialize();
     }
 
     @Override
     public void dispose() {
-        channel.dispose(this::disposeServer);
-        configuration.dispose();
+        channel.dispose();
     }
 
     @Override
     public boolean available() {
-        return this.channel.initialized();
+        return channel.initialized();
     }
 
     private CloseableChannel createServer() {
-        RsocketServerConfiguration configuration = this.configuration.get();
+        RsocketServerConfiguration configuration = this.configuration.getServerConfiguration();
         TransportMode transportMode = configuration.getTransport();
-        RSocketServer server = RSocketServer
-                .create(this::createSocket)
-                .fragment(configuration.getMaxInboundPayloadSize());
-        if (configuration.getFragmentationMtu() > 0) {
-            server.fragment(configuration.getFragmentationMtu());
+        int fragmentationMtu = configuration.getFragmentationMtu();
+        RSocketServer server = RSocketServer.create(this::createSocket).fragment(configuration.getMaxInboundPayloadSize());
+        if (fragmentationMtu > 0) {
+            server.fragment(fragmentationMtu);
         }
         Resume resume;
         if (nonNull(resume = configuration.getResume())) {
@@ -86,7 +88,7 @@ public class RsocketServer implements Server {
                 ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
                 : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
         Mono<CloseableChannel> bind = server
-                .interceptors(registry -> configureInterceptors(configuration, registry))
+                .interceptors(this::configureInterceptors)
                 .payloadDecoder(configuration.getPayloadDecoder())
                 .bind(transport);
         if (configuration.isLogging()) {
@@ -97,7 +99,7 @@ public class RsocketServer implements Server {
         return bind.block();
     }
 
-    private void configureInterceptors(RsocketServerConfiguration configuration, InterceptorRegistry registry) {
+    private void configureInterceptors(InterceptorRegistry registry) {
         registry
                 .forResponder(new RsocketServerLoggingInterceptor())
                 .forRequester(new RsocketServerLoggingInterceptor());
@@ -105,20 +107,21 @@ public class RsocketServer implements Server {
 
     private void disposeServer(Disposable server) {
         disposeRsocket(server);
-        onClose.dispose(Mono::block);
+        channel.get()
+                .onClose()
+                .doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED))
+                .block();
     }
 
     private Mono<RSocket> createSocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
         Logger logger = getLogger();
-        Mono<RSocket> socket = Mono.create(emitter -> {
-            ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, requesterSocket, configuration.get()));
-            ignoreException(createRsocket, throwable -> logger.error(throwable.getMessage(), throwable));
-        });
+        Mono<RSocket> socket = Mono.create(emitter -> processCreation(payload, requesterSocket, emitter));
         return socket.doOnError(throwable -> logger.error(throwable.getMessage(), throwable));
     }
 
-    private Mono<Void> onClose() {
-        Mono<Void> onClose = channel.get().onClose();
-        return onClose.doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
+    private void processCreation(ConnectionSetupPayload payload, RSocket requester, MonoSink<RSocket> emitter) {
+        Logger logger = getLogger();
+        ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, requester, configuration.getServerConfiguration()));
+        ignoreException(createRsocket, throwable -> logger.error(throwable.getMessage(), throwable));
     }
 }

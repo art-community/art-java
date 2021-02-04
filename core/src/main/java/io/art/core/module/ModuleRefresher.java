@@ -16,10 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.core.exception;
+package io.art.core.module;
 
-public class ContextInitializationException extends RuntimeException {
-    public ContextInitializationException(String message) {
-        super(message);
-    }
+public interface ModuleRefresher {
 }
