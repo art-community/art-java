@@ -18,6 +18,7 @@
 
 package io.art.logging;
 
+import io.art.core.context.*;
 import io.art.core.module.*;
 import lombok.*;
 import org.apache.logging.log4j.Logger;
@@ -54,7 +55,7 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     }
 
     @Override
-    public void onLoad() {
+    public void onLoad(Context.Service contextService) {
         getLogManager().reset();
 
         boolean fromFile = ofNullable(configuration.getConfigurationPath())

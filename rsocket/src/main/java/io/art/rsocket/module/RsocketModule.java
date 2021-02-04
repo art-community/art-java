@@ -18,6 +18,7 @@
 
 package io.art.rsocket.module;
 
+import io.art.core.context.*;
 import io.art.core.module.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.listener.*;
@@ -48,7 +49,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     }
 
     @Override
-    public void onLoad() {
+    public void onLoad(Context.Service contextService) {
         if (configuration.isActivateServer()) {
             manager.initializeServer();
         }
@@ -58,7 +59,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     }
 
     @Override
-    public void onUnload() {
+    public void onUnload(Context.Service contextService) {
         manager.disposeCommunicators();
         manager.disposeServer();
     }

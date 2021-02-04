@@ -33,7 +33,7 @@ public interface LoggingModuleConstants {
 
     interface LoggingParameters {
         String LOG_TIMESTAMP = "logTimestamp";
-        String MODULES_KEY = "modules";
+        String MODULES_KEY = "get";
         String SERVICES_KEY = "services";
         String PROTOCOL_KEY = "protocol";
         String TRACE_ID_KEY = "traceId";

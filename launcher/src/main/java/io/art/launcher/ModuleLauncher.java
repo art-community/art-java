@@ -21,12 +21,10 @@ package io.art.launcher;
 import io.art.communicator.module.*;
 import io.art.configurator.module.*;
 import io.art.core.annotation.*;
-import io.art.core.collection.*;
 import io.art.core.configuration.*;
 import io.art.core.context.*;
 import io.art.core.managed.*;
 import io.art.core.module.*;
-import io.art.core.module.Module;
 import io.art.json.module.*;
 import io.art.logging.*;
 import io.art.model.customizer.*;
@@ -42,10 +40,8 @@ import io.art.xml.module.*;
 import io.art.yaml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
@@ -73,62 +69,35 @@ public class ModuleLauncher {
             UnaryOperator<ServerCustomizer> serverCustomizer = moduleCustomizer.server();
             UnaryOperator<CommunicatorCustomizer> communicatorCustomizer = moduleCustomizer.communicator();
             UnaryOperator<RsocketCustomizer> rsocket = moduleCustomizer.rsocket();
-            ImmutableMap.Builder<ModuleFactory, ModuleDecorator> modules = immutableMapBuilder();
+            ModuleInitializerRegistry modules = new ModuleInitializerRegistry();
             ModuleConfiguringState state = new ModuleConfiguringState(configurator.configure(), model);
             modules
-                    .put(
-                            () -> configurator,
-                            module -> configurator(cast(module), configuratorCustomizer.apply(new ConfiguratorCustomizer()))
-                    )
-                    .put(
-                            ValueModule::new,
-                            module -> value(cast(module), state, valueCustomizer.apply(new ValueCustomizer()))
-                    )
-                    .put(
-                            LoggingModule::new,
-                            module -> logging(cast(module), state, loggingCustomizer.apply(new LoggingCustomizer()))
-                    )
-                    .put(
-                            SchedulerModule::new,
-                            module -> scheduler(cast(module), state)
-                    )
-                    .put(
-                            JsonModule::new,
-                            module -> json(cast(module), state)
-                    )
-                    .put(
-                            YamlModule::new,
-                            module -> yaml(cast(module), state)
-                    )
-                    .put(
-                            XmlModule::new,
-                            module -> xml(cast(module), state)
-                    )
-                    .put(
-                            ServerModule::new,
-                            module -> server(cast(module), state, serverCustomizer.apply(new ServerCustomizer()))
-                    )
-                    .put(
-                            CommunicatorModule::new,
-                            module -> communicator(cast(module), state, communicatorCustomizer.apply(new CommunicatorCustomizer()))
-                    )
-                    .put(
-                            RsocketModule::new,
-                            module -> rsocket(cast(module), state, rsocket.apply(new RsocketCustomizer(cast(module))))
-                    )
-                    .put(
-                            TarantoolModule::new,
-                            module -> tarantool(cast(module), state)
-                    );
+                    .put(() -> configurator, module -> configurator(module, configuratorCustomizer.apply(new ConfiguratorCustomizer())))
+                    .put(ValueModule::new, module -> value(module, state, valueCustomizer.apply(new ValueCustomizer())))
+                    .put(LoggingModule::new, module -> logging(module, state, loggingCustomizer.apply(new LoggingCustomizer())))
+                    .put(SchedulerModule::new, module -> scheduler(module, state))
+                    .put(JsonModule::new, module -> json(module, state))
+                    .put(YamlModule::new, module -> yaml(module, state))
+                    .put(XmlModule::new, module -> xml(module, state))
+                    .put(ServerModule::new, module -> server(module, state, serverCustomizer.apply(new ServerCustomizer())))
+                    .put(CommunicatorModule::new, module -> communicator(module, state, communicatorCustomizer.apply(new CommunicatorCustomizer())))
+                    .put(RsocketModule::new, module -> rsocket(module, state, rsocket.apply(new RsocketCustomizer(module))))
+                    .put(TarantoolModule::new, module -> tarantool(module, state));
             LazyValue<Logger> logger = lazy(() -> logger(Context.class));
-            initialize(new ContextConfiguration(model.getMainModuleId()), modules.build(), message -> logger.get().info(message));
+            ContextConfiguration contextConfiguration = ContextConfiguration.builder()
+                    .onUnload(model.getOnUnload())
+                    .onLoad(model.getOnLoad())
+                    .beforeReload(model.getBeforeReload())
+                    .afterReload(model.getAfterReload())
+                    .mainModuleId(model.getMainModuleId())
+                    .build();
+            initialize(contextConfiguration, modules.get(), message -> logger.get().info(message));
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
-            apply(model.getOnLoad(), Runnable::run);
             if (needBlock()) block();
         }
     }
 
-    private static Module configurator(ConfiguratorModule configuratorModule, ConfiguratorCustomizer configuratorCustomizer) {
+    private static ConfiguratorModule configurator(ConfiguratorModule configuratorModule, ConfiguratorCustomizer configuratorCustomizer) {
         ofNullable(configuratorCustomizer)
                 .ifPresent(customizer -> configuratorModule
                         .configure(configurator -> configurator
