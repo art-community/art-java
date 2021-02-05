@@ -10,6 +10,7 @@ import static io.art.core.changes.ChangesListener.*;
 @Accessors(fluent = true)
 public class RsocketModuleRefresher implements ModuleRefresher {
     private final ChangesListener serverListener = changesListener();
+    private final ChangesListener communicatorListener = changesListener();
     private final ChangesListener serverLoggingListener = changesListener();
     private final Consumer consumer = new Consumer();
 

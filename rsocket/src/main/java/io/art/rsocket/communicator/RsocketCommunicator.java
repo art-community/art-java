@@ -92,7 +92,6 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
     }
 
     private RSocketClient createClient() {
-        RsocketCommunicatorConfiguration communicatorConfiguration = communicatorConfiguration();
         RsocketConnectorConfiguration connectorConfiguration = connectorConfiguration();
         RSocketConnector connector = RSocketConnector.create()
                 .dataMimeType(toMimeType(setupPayload.get().getDataFormat()).toString())
@@ -108,7 +107,7 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
                 TcpClient tcpClient = connectorConfiguration.getTcpClient();
                 int tcpMaxFrameLength = connectorConfiguration.getTcpMaxFrameLength();
                 Mono<RSocket> socket = connector.connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength));
-                if (communicatorConfiguration.isLogging()) {
+                if (connectorConfiguration.isLogging()) {
                     socket = socket
                             .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)))
                             .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
@@ -119,7 +118,7 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
                 String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
                 socket = connector
                         .connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath));
-                if (communicatorConfiguration.isLogging()) {
+                if (connectorConfiguration.isLogging()) {
                     socket = socket
                             .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)))
                             .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
@@ -153,12 +152,8 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
                 .orElseThrow(ImpossibleSituationException::new);
     }
 
-    private RsocketCommunicatorConfiguration communicatorConfiguration() {
-        return rsocketModule().configuration().getCommunicatorConfiguration();
-    }
-
     private RsocketConnectorConfiguration connectorConfiguration() {
-        RsocketCommunicatorConfiguration communicatorConfiguration = communicatorConfiguration();
+        RsocketCommunicatorConfiguration communicatorConfiguration = rsocketModule().configuration().getCommunicatorConfiguration();
         return communicatorModule()
                 .configuration()
                 .findConnectorId(RSOCKET.getProtocol(), communicatorActionId)

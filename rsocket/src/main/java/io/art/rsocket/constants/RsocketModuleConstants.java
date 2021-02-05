@@ -73,6 +73,7 @@ public interface RsocketModuleConstants {
         String DEFAULT_SERVICE_ID_KEY = "defaults.serviceId";
         String DEFAULT_METHOD_ID_KEY = "defaults.methodId";
 
+        String TRANSPORT_SECTION = "transport";
         String TRANSPORT_MODE_KEY = "transport.mode";
         String TRANSPORT_PORT_KEY = "transport.port";
         String TRANSPORT_HOST_KEY = "transport.host";
@@ -178,8 +179,13 @@ public interface RsocketModuleConstants {
         private final String decoder;
 
         public static PayloadDecoderMode rsocketPayloadDecoder(String decoder) {
+            return rsocketPayloadDecoder(decoder, DEFAULT);
+        }
+
+        public static PayloadDecoderMode rsocketPayloadDecoder(String decoder, PayloadDecoderMode fallback) {
             if (ZERO_COPY.decoder.equalsIgnoreCase(decoder)) return ZERO_COPY;
-            return DEFAULT;
+            if (DEFAULT.decoder.equalsIgnoreCase(decoder)) return DEFAULT;
+            return fallback;
         }
     }
 
