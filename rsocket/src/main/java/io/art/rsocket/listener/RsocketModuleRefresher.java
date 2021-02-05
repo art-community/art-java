@@ -1,10 +1,10 @@
 package io.art.rsocket.listener;
 
-import io.art.core.managed.*;
+import io.art.core.changes.*;
 import io.art.core.module.*;
 import lombok.*;
 import lombok.experimental.*;
-import static io.art.core.managed.ChangesListener.*;
+import static io.art.core.changes.ChangesListener.*;
 
 @Getter
 @Accessors(fluent = true)

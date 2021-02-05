@@ -1,32 +1,39 @@
-package io.art.core.managed;
+package io.art.core.property;
 
+import io.art.core.changes.*;
+import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.core.managed.LazyValue.*;
+import static io.art.core.property.LazyProperty.*;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
 
-public class ManagedValue<T> implements Supplier<T> {
-    private volatile DisposableValue<T> disposable;
+public class Property<T> implements Supplier<T> {
+    private volatile DisposableProperty<T> disposable;
+    private final Consumer<T> disposer;
     private final List<Consumer<T>> changeConsumers = linkedList();
     private final List<Consumer<T>> clearConsumers = linkedList();
     private final List<Predicate<T>> predicates = linkedList();
 
-    public ManagedValue(Supplier<T> loader) {
-        disposable = DisposableValue.disposable(loader);
+    public Property(Supplier<T> loader, Consumer<T> disposer) {
+        disposable = DisposableProperty.disposable(loader, disposer);
+        this.disposer = disposer;
     }
 
-    public LazyValue<T> immutable() {
+
+    public LazyProperty<T> immutable() {
         return lazy(disposable);
     }
 
-    public DisposableValue<T> disposable() {
-        return disposable;
+    public DisposableProperty<T> disposable() {
+        return DisposableProperty.disposable(disposable);
     }
+
 
     public void initialize() {
         get();
     }
+
 
     public boolean initialized() {
         return disposable.initialized();
@@ -36,10 +43,6 @@ public class ManagedValue<T> implements Supplier<T> {
         return disposable.disposed();
     }
 
-    public ManagedValue<T> disposer(Consumer<T> disposer) {
-        disposable.disposer(disposer);
-        return this;
-    }
 
     public void dispose(Consumer<T> action) {
         disposable.dispose(action);
@@ -49,54 +52,44 @@ public class ManagedValue<T> implements Supplier<T> {
         disposable.dispose();
     }
 
-    public ManagedValue<T> consume(Consumer<T> consumer) {
+
+    public Property<T> consume(Consumer<T> consumer) {
         changeConsumers.add(consumer);
         return this;
     }
 
-    public ManagedValue<T> cleared(Consumer<T> consumer) {
+    public Property<T> cleared(Consumer<T> consumer) {
         clearConsumers.add(consumer);
         return this;
     }
 
-    public ManagedValue<T> prevent(Predicate<T> predicate) {
+    public Property<T> prevent(Predicate<T> predicate) {
         predicates.add(predicate);
         return this;
     }
 
-    public ManagedValue<T> set(T newValue) {
+    public Property<T> listen(ChangesListener listener) {
+        return listener.consume(this);
+    }
+
+    public Property<T> listen(ChangesConsumer listener) {
+        return listener.consume(this);
+    }
+
+
+    public Property<T> set(T newValue) {
         if (predicates.stream().anyMatch(predicate -> predicate.test(newValue))) {
             return this;
         }
         if (Objects.equals(disposable.get(), newValue)) {
             return this;
         }
-        disposable = DisposableValue.disposable(() -> newValue);
+        disposable = DisposableProperty.disposable(() -> newValue, disposer);
         changeConsumers.forEach(consumer -> consumer.accept(newValue));
         return this;
     }
 
-    public T produce(T newValue) {
-        set(newValue);
-        return newValue;
-    }
-
-    public ManagedValue<T> listen(ManagedValue<?>... others) {
-        for (ManagedValue<?> other : others) {
-            other.cleared(value -> clear()).consume(value -> refresh());
-        }
-        return this;
-    }
-
-    public ManagedValue<T> listen(ChangesListener listener) {
-        return listener.consume(this);
-    }
-
-    public ManagedValue<T> listen(ChangesConsumer listener) {
-        return listener.consume(this);
-    }
-
-    public ManagedValue<T> clear() {
+    public Property<T> clear() {
         clearConsumers.forEach(consumer -> consumer.accept(get()));
         dispose();
         return this;
@@ -107,6 +100,7 @@ public class ManagedValue<T> implements Supplier<T> {
         T value = get();
         changeConsumers.forEach(consumer -> consumer.accept(value));
     }
+
 
     @Override
     public T get() {
@@ -123,13 +117,18 @@ public class ManagedValue<T> implements Supplier<T> {
         if (isNull(other)) {
             return false;
         }
-        if (!(other instanceof ManagedValue)) {
+        if (!(other instanceof Property)) {
             return false;
         }
-        return get().equals(((ManagedValue<?>) other).get());
+        return get().equals(((Property<?>) other).get());
     }
 
-    public static <T> ManagedValue<T> managed(Supplier<T> loader) {
-        return new ManagedValue<>(loader);
+
+    public static <T> Property<T> property(Supplier<T> loader) {
+        return new Property<>(loader, emptyConsumer());
+    }
+
+    public static <T> Property<T> property(Supplier<T> loader, Consumer<T> disposer) {
+        return new Property<>(loader, disposer);
     }
 }

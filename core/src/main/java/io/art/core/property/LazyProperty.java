@@ -1,19 +1,19 @@
-package io.art.core.managed;
+package io.art.core.property;
 
 import io.art.core.annotation.*;
-import static io.art.core.managed.DisposableValue.*;
+import static io.art.core.property.DisposableProperty.*;
 import static java.util.Objects.*;
 import java.util.function.*;
 
 @UsedByGenerator
-public class LazyValue<T> implements Supplier<T> {
-    private final DisposableValue<T> disposable;
+public class LazyProperty<T> implements Supplier<T> {
+    private final DisposableProperty<T> disposable;
 
-    public LazyValue(Supplier<T> loader) {
+    public LazyProperty(Supplier<T> loader) {
         disposable = disposable(loader);
     }
 
-    public LazyValue<T> initialize() {
+    public LazyProperty<T> initialize() {
         disposable.get();
         return this;
     }
@@ -37,13 +37,13 @@ public class LazyValue<T> implements Supplier<T> {
         if (isNull(other)) {
             return false;
         }
-        if (!(other instanceof LazyValue)) {
+        if (!(other instanceof LazyProperty)) {
             return false;
         }
-        return get().equals(((LazyValue<?>) other).get());
+        return get().equals(((LazyProperty<?>) other).get());
     }
 
-    public static <T> LazyValue<T> lazy(Supplier<T> factory) {
-        return new LazyValue<>(factory);
+    public static <T> LazyProperty<T> lazy(Supplier<T> factory) {
+        return new LazyProperty<>(factory);
     }
 }

@@ -22,7 +22,7 @@ import io.art.communicator.action.*;
 import io.art.communicator.configuration.*;
 import io.art.communicator.implementation.*;
 import io.art.core.exception.*;
-import io.art.core.managed.*;
+import io.art.core.property.*;
 import io.art.core.model.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -45,7 +45,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.MethodProcessingMode.*;
-import static io.art.core.managed.DisposableValue.*;
+import static io.art.core.property.DisposableProperty.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.CommunicationMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
@@ -73,13 +73,13 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Flux<Value>, Flux<Value>> communicate = adoptCommunicate();
 
-    private final DisposableValue<RsocketCommunicatorConfiguration> rsocketConfiguration = disposable(this::rsocketConfiguration);
-    private final DisposableValue<RsocketConnectorConfiguration> connectorConfiguration = disposable(this::connectorConfiguration);
-    private final DisposableValue<Optional<CommunicatorActionConfiguration>> actionConfiguration = disposable(this::actionConfiguration);
-    private final DisposableValue<RsocketSetupPayload> setupPayload = disposable(this::setupPayload);
-    private final DisposableValue<RsocketPayloadWriter> writer = disposable(this::writer);
-    private final DisposableValue<RsocketPayloadReader> reader = disposable(this::reader);
-    private final DisposableValue<RSocketClient> client = disposable(this::createClient);
+    private final DisposableProperty<RsocketCommunicatorConfiguration> rsocketConfiguration = disposable(this::rsocketConfiguration);
+    private final DisposableProperty<RsocketConnectorConfiguration> connectorConfiguration = disposable(this::connectorConfiguration);
+    private final DisposableProperty<Optional<CommunicatorActionConfiguration>> actionConfiguration = disposable(this::actionConfiguration);
+    private final DisposableProperty<RsocketSetupPayload> setupPayload = disposable(this::setupPayload);
+    private final DisposableProperty<RsocketPayloadWriter> writer = disposable(this::writer);
+    private final DisposableProperty<RsocketPayloadReader> reader = disposable(this::reader);
+    private final DisposableProperty<RSocketClient> client = disposable(this::createClient);
 
     @Override
     public void initialize() {

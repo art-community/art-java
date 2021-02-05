@@ -1,4 +1,4 @@
-package io.art.core.managed;
+package io.art.core.property;
 
 import io.art.core.exception.*;
 import lombok.*;
@@ -10,29 +10,27 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
-public class DisposableValue<T> implements Supplier<T> {
+public class DisposableProperty<T> implements Supplier<T> {
     private volatile T value;
-    private volatile Consumer<T> disposer = emptyConsumer();
-    private final AtomicBoolean initialized = new AtomicBoolean();
     private final Supplier<T> loader;
+    private final Consumer<T> disposer;
+    private final AtomicBoolean initialized = new AtomicBoolean();
 
-    public DisposableValue<T> initialize() {
+
+    public DisposableProperty<T> initialize() {
         get();
         return this;
     }
+
 
     public boolean initialized() {
         return initialized.get();
     }
 
-    public DisposableValue<T> disposer(Consumer<T> disposer) {
-        this.disposer = disposer;
-        return this;
-    }
-
     public boolean disposed() {
         return !initialized();
     }
+
 
     public void dispose() {
         dispose(disposer);
@@ -48,6 +46,7 @@ public class DisposableValue<T> implements Supplier<T> {
             }
         }
     }
+
 
     @Override
     public T get() {
@@ -69,13 +68,17 @@ public class DisposableValue<T> implements Supplier<T> {
         if (isNull(other)) {
             return false;
         }
-        if (!(other instanceof DisposableValue)) {
+        if (!(other instanceof DisposableProperty)) {
             return false;
         }
-        return get().equals(((DisposableValue<?>) other).get());
+        return get().equals(((DisposableProperty<?>) other).get());
     }
 
-    public static <T> DisposableValue<T> disposable(Supplier<T> factory) {
-        return new DisposableValue<>(factory);
+    public static <T> DisposableProperty<T> disposable(Supplier<T> factory) {
+        return new DisposableProperty<>(factory, emptyConsumer());
+    }
+
+    public static <T> DisposableProperty<T> disposable(Supplier<T> factory, Consumer<T> disposer) {
+        return new DisposableProperty<>(factory, disposer);
     }
 }

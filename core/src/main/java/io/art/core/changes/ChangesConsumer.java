@@ -1,5 +1,6 @@
-package io.art.core.managed;
+package io.art.core.changes;
 
+import io.art.core.property.*;
 import lombok.*;
 
 @RequiredArgsConstructor
@@ -11,7 +12,7 @@ public class ChangesConsumer {
         return this;
     }
 
-    public <T> ManagedValue<T> consume(ManagedValue<T> value) {
+    public <T> Property<T> consume(Property<T> value) {
         listener.consume(value);
         return value;
     }

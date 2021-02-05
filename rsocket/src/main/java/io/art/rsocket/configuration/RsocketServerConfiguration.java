@@ -18,8 +18,8 @@
 
 package io.art.rsocket.configuration;
 
+import io.art.core.changes.*;
 import io.art.core.collection.*;
-import io.art.core.managed.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.rsocket.constants.*;

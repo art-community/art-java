@@ -23,7 +23,7 @@ import io.art.core.caster.*;
 import io.art.core.collection.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
-import io.art.core.managed.*;
+import io.art.core.property.*;
 import io.art.server.configuration.*;
 import io.art.server.decorator.*;
 import io.art.server.implementation.*;
@@ -37,7 +37,7 @@ import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.managed.DisposableValue.*;
+import static io.art.core.property.DisposableProperty.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
@@ -94,10 +94,10 @@ public class ServiceMethodSpecification implements Managed {
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Object, Flux<Object>> adoptOutput = adoptOutput();
 
-    private final DisposableValue<ServerModuleConfiguration> moduleConfiguration = disposable(this::moduleConfiguration);
-    private final DisposableValue<ServiceSpecification> serviceSpecification = disposable(this::serviceSpecification);
-    private final DisposableValue<Optional<ServiceConfiguration>> serviceConfiguration = disposable(this::serviceConfiguration);
-    private final DisposableValue<Optional<ServiceMethodConfiguration>> methodConfiguration = disposable(this::methodConfiguration);
+    private final DisposableProperty<ServerModuleConfiguration> moduleConfiguration = disposable(this::moduleConfiguration);
+    private final DisposableProperty<ServiceSpecification> serviceSpecification = disposable(this::serviceSpecification);
+    private final DisposableProperty<Optional<ServiceConfiguration>> serviceConfiguration = disposable(this::serviceConfiguration);
+    private final DisposableProperty<Optional<ServiceMethodConfiguration>> methodConfiguration = disposable(this::methodConfiguration);
 
     @Override
     public void initialize() {

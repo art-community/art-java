@@ -26,7 +26,7 @@ import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.managed.LazyValue.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.ArrayValue.*;
 import static java.util.Objects.*;

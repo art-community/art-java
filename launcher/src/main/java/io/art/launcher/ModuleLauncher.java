@@ -23,7 +23,7 @@ import io.art.configurator.module.*;
 import io.art.core.annotation.*;
 import io.art.core.configuration.*;
 import io.art.core.context.*;
-import io.art.core.managed.*;
+import io.art.core.property.*;
 import io.art.core.module.*;
 import io.art.json.module.*;
 import io.art.logging.*;
@@ -45,7 +45,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
-import static io.art.core.managed.LazyValue.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.ModuleLauncherConstants.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.module.RsocketModule.*;
@@ -83,7 +83,7 @@ public class ModuleLauncher {
                     .put(CommunicatorModule::new, module -> communicator(module, state, communicatorCustomizer.apply(new CommunicatorCustomizer())))
                     .put(RsocketModule::new, module -> rsocket(module, state, rsocket.apply(new RsocketCustomizer(module))))
                     .put(TarantoolModule::new, module -> tarantool(module, state));
-            LazyValue<Logger> logger = lazy(() -> logger(Context.class));
+            LazyProperty<Logger> logger = lazy(() -> logger(Context.class));
             ContextConfiguration contextConfiguration = ContextConfiguration.builder()
                     .onUnload(model.getOnUnload())
                     .onLoad(model.getOnLoad())

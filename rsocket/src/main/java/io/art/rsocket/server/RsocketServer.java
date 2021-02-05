@@ -18,7 +18,7 @@
 
 package io.art.rsocket.server;
 
-import io.art.core.managed.*;
+import io.art.core.property.*;
 import io.art.core.runnable.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.interceptor.*;
@@ -34,7 +34,7 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
-import static io.art.core.managed.ManagedValue.*;
+import static io.art.core.property.Property.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
@@ -50,7 +50,7 @@ public class RsocketServer implements Server {
     private static final Logger logger = logger(RsocketServer.class);
 
     private final RsocketModuleConfiguration configuration;
-    private final ManagedValue<CloseableChannel> channel;
+    private final Property<CloseableChannel> channel;
 
     public RsocketServer(RsocketModuleRefresher refresher, RsocketModuleConfiguration configuration) {
         this.configuration = configuration;

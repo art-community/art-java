@@ -19,14 +19,14 @@
 package io.art.server.decorator;
 
 import io.art.core.constants.*;
-import io.art.core.managed.*;
+import io.art.core.property.*;
 import io.art.core.model.*;
 import io.art.server.specification.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.managed.DisposableValue.*;
+import static io.art.core.property.DisposableProperty.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
 import static io.art.server.module.ServerModule.*;
@@ -36,7 +36,7 @@ import java.util.*;
 import java.util.function.*;
 
 public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
-    private final DisposableValue<UnaryOperator<Flux<Object>>> decorator = disposable(this::createDecorator);
+    private final DisposableProperty<UnaryOperator<Flux<Object>>> decorator = disposable(this::createDecorator);
     private final MethodDecoratorScope scope;
     private final Supplier<Boolean> enabled;
     private final ServiceMethodIdentifier serviceMethodId;

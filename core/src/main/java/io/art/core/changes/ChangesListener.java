@@ -1,6 +1,7 @@
-package io.art.core.managed;
+package io.art.core.changes;
 
 import io.art.core.local.*;
+import io.art.core.property.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ListFactory.*;
@@ -46,7 +47,7 @@ public class ChangesListener {
         return this;
     }
 
-    public <T> ManagedValue<T> consume(ManagedValue<T> value) {
+    public <T> Property<T> consume(Property<T> value) {
         consumers.add(value::refresh);
         return value;
     }
