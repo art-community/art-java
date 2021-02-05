@@ -208,6 +208,7 @@ public class RsocketConnectorConfiguration {
                 break;
         }
 
+        listener.produce();
         return configuration;
     }
 }
