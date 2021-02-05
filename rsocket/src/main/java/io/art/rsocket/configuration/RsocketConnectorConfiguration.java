@@ -64,12 +64,91 @@ public class RsocketConnectorConfiguration {
     private DataFormat dataFormat;
     private DataFormat metaDataFormat;
 
+    public static RsocketConnectorConfiguration defaults() {
+        RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration();
+        configuration.logging = false;
+        configuration.fragment = 0;
+        configuration.maxInboundPayloadSize = Integer.MAX_VALUE;
+        configuration.payloadDecoderMode = DEFAULT;
+        configuration.dataFormat = JSON;
+        configuration.metaDataFormat = JSON;
+        configuration.setupPayload = RsocketSetupPayload.builder()
+                .dataFormat(configuration.dataFormat)
+                .metadataFormat(configuration.metaDataFormat)
+                .build();
+        configuration.tcpMaxFrameLength = FRAME_LENGTH_MASK;
+        configuration.httpWebSocketPath = SLASH;
+        return configuration;
+    }
+
+    public static RsocketConnectorConfiguration from(ConfigurationSource source) {
+        RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration();
+        RsocketConnectorConfiguration defaults = defaults();
+
+        configuration.logging = orElse(source.getBool(LOGGING_KEY), defaults.logging);
+        configuration.fragment = orElse(source.getInt(FRAGMENTATION_MTU_KEY), defaults.fragment);
+        configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize);
+        configuration.payloadDecoderMode = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode);
+        configuration.dataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat);
+        configuration.metaDataFormat = dataFormat(source.getString(META_DATA_FORMAT_KEY), defaults.metaDataFormat);
+        configuration.keepAlive = source.getNested(KEEP_ALIVE_SECTION, RsocketKeepAliveConfiguration::from);
+        configuration.resume = source.getNested(RESUME_SECTION, RsocketResumeConfigurator::from);
+        configuration.retry = source.getNested(RECONNECT_SECTION, RsocketRetryConfigurator::from);
+
+        RsocketSetupPayloadBuilder setupPayloadBuilder = RsocketSetupPayload.builder()
+                .dataFormat(configuration.dataFormat)
+                .metadataFormat(configuration.metaDataFormat);
+
+        String serviceId = source.getString(SERVICE_ID_KEY);
+        String methodId = source.getString(METHOD_ID_KEY);
+
+        if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
+            setupPayloadBuilder.serviceMethod(serviceMethod(serviceId, methodId));
+        }
+
+        configuration.setupPayload = setupPayloadBuilder.build();
+
+        if (!source.has(TRANSPORT_SECTION)) {
+            configuration.tcpMaxFrameLength = defaults.tcpMaxFrameLength;
+            configuration.httpWebSocketPath = defaults.httpWebSocketPath;
+            return configuration;
+        }
+
+        configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
+        switch (configuration.transport) {
+            case TCP:
+                String host = source.getString(TRANSPORT_TCP_HOST_KEY);
+                int port = source.getInt(TRANSPORT_TCP_PORT_KEY);
+                if (isEmpty(host)) {
+                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_TCP_HOST_KEY)));
+                }
+                if (isEmpty(port)) {
+                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_PORT_KEY)));
+                }
+                configuration.tcpClient = TcpClient.create().port(port).host(host);
+                configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), defaults.tcpMaxFrameLength);
+                break;
+            case WS:
+                String url = source.getString(TRANSPORT_WS_BASE_URL_KEY);
+                if (isEmpty(url)) {
+                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_WS_BASE_URL_KEY)));
+                }
+                configuration.httpWebSocketClient = create().baseUrl(url);
+                configuration.httpWebSocketPath = orElse(source.getString(TRANSPORT_WS_PATH_KEY), SLASH);
+                break;
+            default:
+                throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_MODE_KEY)));
+        }
+
+        return configuration;
+    }
+
     public static RsocketConnectorConfiguration from(RsocketCommunicatorConfiguration communicatorConfiguration, ConfigurationSource source) {
         RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration();
         RsocketConnectorConfiguration defaults = communicatorConfiguration.getDefaultConnectorConfiguration();
 
-        configuration.dataFormat = dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), defaults.dataFormat);
-        configuration.metaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), defaults.metaDataFormat);
+        configuration.dataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat);
+        configuration.metaDataFormat = dataFormat(source.getString(META_DATA_FORMAT_KEY), defaults.metaDataFormat);
         configuration.connectorId = source.getSection();
         configuration.logging = orElse(source.getBool(LOGGING_KEY), defaults.logging);
         configuration.payloadDecoderMode = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode);
@@ -83,8 +162,8 @@ public class RsocketConnectorConfiguration {
                 .dataFormat(configuration.dataFormat)
                 .metadataFormat(configuration.metaDataFormat);
 
-        String serviceId = source.getString(DEFAULT_SERVICE_ID_KEY);
-        String methodId = source.getString(DEFAULT_METHOD_ID_KEY);
+        String serviceId = source.getString(SERVICE_ID_KEY);
+        String methodId = source.getString(METHOD_ID_KEY);
 
         if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
             setupPayloadBuilder.serviceMethod(serviceMethod(serviceId, methodId));
@@ -124,65 +203,6 @@ public class RsocketConnectorConfiguration {
                 configuration.httpWebSocketClient = orElse(configuration.httpWebSocketClient, create().baseUrl(url));
                 configuration.httpWebSocketPath = orElse(source.getString(TRANSPORT_WS_PATH_KEY), defaults.httpWebSocketPath);
                 break;
-        }
-
-        return configuration;
-    }
-
-    public static RsocketConnectorConfiguration from(ConfigurationSource source) {
-        RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration();
-
-        configuration.logging = orElse(source.getBool(LOGGING_KEY), false);
-        configuration.fragment = orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0);
-        configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
-        configuration.keepAlive = source.getNested(KEEP_ALIVE_SECTION, RsocketKeepAliveConfiguration::from);
-        configuration.resume = source.getNested(RESUME_SECTION, RsocketResumeConfigurator::from);
-        configuration.retry = source.getNested(RECONNECT_SECTION, RsocketRetryConfigurator::from);
-        configuration.payloadDecoderMode = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY));
-        configuration.dataFormat = dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), JSON);
-        configuration.metaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), JSON);
-
-        RsocketSetupPayloadBuilder setupPayloadBuilder = RsocketSetupPayload.builder()
-                .dataFormat(configuration.dataFormat)
-                .metadataFormat(configuration.metaDataFormat);
-
-        String serviceId = source.getString(DEFAULT_SERVICE_ID_KEY);
-        String methodId = source.getString(DEFAULT_METHOD_ID_KEY);
-
-        if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
-            setupPayloadBuilder.serviceMethod(serviceMethod(serviceId, methodId));
-        }
-
-        configuration.setupPayload = setupPayloadBuilder.build();
-
-        if (!source.has(TRANSPORT_SECTION)) {
-            return configuration;
-        }
-
-        configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY));
-        switch (configuration.transport) {
-            case TCP:
-                String host = source.getString(TRANSPORT_TCP_HOST_KEY);
-                int port = source.getInt(TRANSPORT_TCP_PORT_KEY);
-                if (isEmpty(host)) {
-                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_TCP_HOST_KEY)));
-                }
-                if (isEmpty(port)) {
-                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_PORT_KEY)));
-                }
-                configuration.tcpClient = TcpClient.create().port(port).host(host);
-                configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK);
-                break;
-            case WS:
-                String url = source.getString(TRANSPORT_WS_BASE_URL_KEY);
-                if (isEmpty(url)) {
-                    throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_WS_BASE_URL_KEY)));
-                }
-                configuration.httpWebSocketClient = create().baseUrl(url);
-                configuration.httpWebSocketPath = orElse(source.getString(TRANSPORT_WS_PATH_KEY), SLASH);
-                break;
-            default:
-                throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_MODE_KEY)));
         }
 
         return configuration;

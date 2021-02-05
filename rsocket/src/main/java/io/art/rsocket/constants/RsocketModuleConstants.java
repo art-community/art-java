@@ -68,10 +68,11 @@ public interface RsocketModuleConstants {
         String RECONNECT_SECTION = "reconnect";
         String KEEP_ALIVE_SECTION = "keepAlive";
 
-        String DEFAULT_DATA_FORMAT_KEY = "defaults.dataFormat";
-        String DEFAULT_META_DATA_FORMAT_KEY = "defaults.metaDataFormat";
-        String DEFAULT_SERVICE_ID_KEY = "defaults.serviceId";
-        String DEFAULT_METHOD_ID_KEY = "defaults.methodId";
+        String DEFAULT_SECTION = "default";
+        String DATA_FORMAT_KEY = "dataFormat";
+        String META_DATA_FORMAT_KEY = "metaDataFormat";
+        String SERVICE_ID_KEY = "serviceId";
+        String METHOD_ID_KEY = "methodId";
 
         String TRANSPORT_SECTION = "transport";
         String TRANSPORT_MODE_KEY = "transport.mode";

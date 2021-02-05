@@ -21,6 +21,7 @@ package io.art.rsocket.configuration;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.let;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static java.util.Objects.*;
 
@@ -37,7 +38,7 @@ public class RsocketCommunicatorConfiguration {
 
     public static RsocketCommunicatorConfiguration from(ConfigurationSource source) {
         RsocketCommunicatorConfiguration configuration = new RsocketCommunicatorConfiguration();
-        configuration.defaultConnectorConfiguration = RsocketConnectorConfiguration.from(source);
+        configuration.defaultConnectorConfiguration = let(source.getNested(DEFAULT_SECTION), RsocketConnectorConfiguration::from, RsocketConnectorConfiguration.defaults());
         configuration.connectors = source.getNestedMap(CONNECTORS_KEY, connector -> RsocketConnectorConfiguration.from(configuration, connector));
         return configuration;
     }

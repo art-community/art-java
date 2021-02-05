@@ -78,8 +78,8 @@ public class RsocketServerConfiguration {
         ChangesListener serverLoggingListener = refresher.serverLoggingListener();
 
         RsocketServerConfiguration configuration = new RsocketServerConfiguration();
-        configuration.defaultDataFormat = serverListener.register(dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), JSON));
-        configuration.defaultMetaDataFormat = serverListener.register(dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), JSON));
+        configuration.defaultDataFormat = serverListener.register(dataFormat(source.getString(DATA_FORMAT_KEY), JSON));
+        configuration.defaultMetaDataFormat = serverListener.register(dataFormat(source.getString(META_DATA_FORMAT_KEY), JSON));
         configuration.logging = serverLoggingListener.register(orElse(source.getBool(LOGGING_KEY), false));
         configuration.fragmentationMtu = serverListener.register(orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0));
         configuration.payloadDecoder = serverListener.register(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT ? PayloadDecoder.DEFAULT : ZERO_COPY);
@@ -87,8 +87,8 @@ public class RsocketServerConfiguration {
         configuration.transport = serverListener.register(rsocketTransport(source.getString(TRANSPORT_MODE_KEY)));
         configuration.resume = source.getNested(RESUME_SECTION, RsocketResumeConfigurator::from);
 
-        String serviceId = source.getString(DEFAULT_SERVICE_ID_KEY);
-        String methodId = source.getString(DEFAULT_METHOD_ID_KEY);
+        String serviceId = source.getString(SERVICE_ID_KEY);
+        String methodId = source.getString(METHOD_ID_KEY);
 
         if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
             configuration.defaultServiceMethod = serverListener.register(serviceMethod(serviceId, methodId));

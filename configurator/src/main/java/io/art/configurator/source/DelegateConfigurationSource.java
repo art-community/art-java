@@ -36,9 +36,4 @@ public class DelegateConfigurationSource implements ConfigurationSource {
                 .flatMap(source -> source.getKeys().stream())
                 .collect(immutableSetCollector());
     }
-
-    @Override
-    public boolean has(String path) {
-        return getKeys().contains(path);
-    }
 }
