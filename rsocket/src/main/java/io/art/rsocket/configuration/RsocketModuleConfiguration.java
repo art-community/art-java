@@ -57,7 +57,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                     .ifPresent(serverConfiguration -> configuration.serverConfiguration = serverConfiguration);
             ofNullable(source.getNested(RSOCKET_SECTION))
                     .map(rsocket -> rsocket.getNested(COMMUNICATOR_SECTION))
-                    .map(RsocketCommunicatorConfiguration::from)
+                    .map(communicator -> RsocketCommunicatorConfiguration.from(configuration.refresher, communicator))
                     .ifPresent(communicatorConfiguration -> configuration.communicatorConfiguration = communicatorConfiguration);
             configuration.serverConfiguration = orElse(configuration.serverConfiguration, RsocketServerConfiguration::defaults);
             return this;

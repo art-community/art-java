@@ -20,6 +20,7 @@ package io.art.rsocket.configuration;
 
 import io.art.core.collection.*;
 import io.art.core.source.*;
+import io.art.rsocket.refresher.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.let;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
@@ -36,10 +37,10 @@ public class RsocketCommunicatorConfiguration {
         return configuration.isLogging();
     }
 
-    public static RsocketCommunicatorConfiguration from(ConfigurationSource source) {
+    public static RsocketCommunicatorConfiguration from(RsocketModuleRefresher refresher, ConfigurationSource source) {
         RsocketCommunicatorConfiguration configuration = new RsocketCommunicatorConfiguration();
         configuration.defaultConnectorConfiguration = let(source.getNested(DEFAULT_SECTION), RsocketConnectorConfiguration::from, RsocketConnectorConfiguration.defaults());
-        configuration.connectors = source.getNestedMap(CONNECTORS_KEY, connector -> RsocketConnectorConfiguration.from(configuration, connector));
+        configuration.connectors = source.getNestedMap(CONNECTORS_KEY, connector -> RsocketConnectorConfiguration.from(refresher, configuration, connector));
         return configuration;
     }
 }

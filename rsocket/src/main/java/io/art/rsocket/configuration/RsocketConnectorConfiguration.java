@@ -18,11 +18,13 @@
 
 package io.art.rsocket.configuration;
 
+import io.art.core.changes.*;
 import io.art.core.source.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.model.RsocketSetupPayload.*;
+import io.art.rsocket.refresher.*;
 import io.rsocket.core.*;
 import lombok.*;
 import reactor.netty.http.client.*;
@@ -143,13 +145,14 @@ public class RsocketConnectorConfiguration {
         return configuration;
     }
 
-    public static RsocketConnectorConfiguration from(RsocketCommunicatorConfiguration communicatorConfiguration, ConfigurationSource source) {
+    public static RsocketConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketCommunicatorConfiguration communicatorConfiguration, ConfigurationSource source) {
         RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration();
         RsocketConnectorConfiguration defaults = communicatorConfiguration.getDefaultConnectorConfiguration();
+        configuration.connectorId = source.getSection();
+        ChangesListener listener = refresher.connectorListeners().listener(configuration.connectorId);
 
         configuration.dataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat);
         configuration.metaDataFormat = dataFormat(source.getString(META_DATA_FORMAT_KEY), defaults.metaDataFormat);
-        configuration.connectorId = source.getSection();
         configuration.logging = orElse(source.getBool(LOGGING_KEY), defaults.logging);
         configuration.payloadDecoderMode = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode);
         configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize);
