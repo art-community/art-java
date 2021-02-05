@@ -32,6 +32,7 @@ import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.Defaults.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
+import java.util.*;
 import java.util.function.*;
 
 
@@ -40,6 +41,10 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, ServiceConfiguration> configurations = emptyImmutableMap();
     private ServiceSpecificationRegistry registry = new ServiceSpecificationRegistry();
     private Scheduler scheduler;
+
+    public Optional<ServiceMethodConfiguration> getMethodConfiguration(String serviceId, String methodId) {
+        return ofNullable(configurations.get(serviceId)).map(configuration -> configuration.getMethods().get(methodId));
+    }
 
     public boolean isLogging(ServiceMethodIdentifier identifier) {
         boolean service = checkService(identifier, ServiceConfiguration::isLogging, true);

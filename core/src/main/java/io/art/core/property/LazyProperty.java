@@ -13,6 +13,7 @@ public class LazyProperty<T> implements Supplier<T> {
         disposable = disposable(loader);
     }
 
+
     public LazyProperty<T> initialize() {
         disposable.get();
         return this;
@@ -21,6 +22,12 @@ public class LazyProperty<T> implements Supplier<T> {
     public boolean initialized() {
         return disposable.initialized();
     }
+
+    public LazyProperty<T> initialized(Consumer<T> consumer) {
+        disposable.initialized(consumer);
+        return this;
+    }
+
 
     @Override
     public T get() {

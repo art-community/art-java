@@ -19,10 +19,13 @@
 package io.art.rsocket.constants;
 
 import io.art.communicator.constants.CommunicatorModuleConstants.*;
+import io.rsocket.util.*;
 import lombok.*;
 import java.time.*;
 
 public interface RsocketModuleConstants {
+    public static final EmptyPayload EMPTY_PAYLOAD = EmptyPayload.INSTANCE;
+
     interface ExceptionMessages {
         String SPECIFICATION_NOT_FOUND = "Specification was not found for service method identifiers: {0}";
         String CONFIGURATION_PARAMETER_NOT_EXISTS = "RSocket configuration parameter does not exists: ''{0}''";

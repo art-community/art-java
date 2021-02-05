@@ -20,7 +20,7 @@ package io.art.rsocket.configuration;
 
 import io.art.core.module.*;
 import io.art.core.source.*;
-import io.art.rsocket.listener.*;
+import io.art.rsocket.refresher.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;

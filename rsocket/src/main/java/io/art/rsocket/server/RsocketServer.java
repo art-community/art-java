@@ -22,7 +22,7 @@ import io.art.core.property.*;
 import io.art.core.runnable.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.interceptor.*;
-import io.art.rsocket.listener.*;
+import io.art.rsocket.refresher.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
 import io.rsocket.*;
@@ -51,10 +51,13 @@ public class RsocketServer implements Server {
 
     private final RsocketModuleConfiguration configuration;
     private final Property<CloseableChannel> channel;
+    private volatile Mono<Void> closer;
 
     public RsocketServer(RsocketModuleRefresher refresher, RsocketModuleConfiguration configuration) {
         this.configuration = configuration;
-        channel = managed(this::createServer).listen(refresher.serverListener()).disposer(this::disposeServer);
+        channel = property(this::createServer, this::disposeServer)
+                .listen(refresher.serverListener())
+                .initialized(this::setupCloser);
     }
 
     @Override
@@ -76,7 +79,7 @@ public class RsocketServer implements Server {
         RsocketServerConfiguration configuration = this.configuration.getServerConfiguration();
         TransportMode transportMode = configuration.getTransport();
         int fragmentationMtu = configuration.getFragmentationMtu();
-        RSocketServer server = RSocketServer.create(this::createSocket).fragment(configuration.getMaxInboundPayloadSize());
+        RSocketServer server = RSocketServer.create(this::createAcceptor).fragment(configuration.getMaxInboundPayloadSize());
         if (fragmentationMtu > 0) {
             server.fragment(fragmentationMtu);
         }
@@ -107,22 +110,23 @@ public class RsocketServer implements Server {
 
     private void disposeServer(Disposable server) {
         disposeRsocket(server);
-        Mono<Void> onClose = channel.get().onClose();
-        if (configuration.getServerConfiguration().isLogging()) {
-            onClose = onClose.doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
-        }
-        onClose.block();
+        closer.block();
     }
 
-    private Mono<RSocket> createSocket(ConnectionSetupPayload payload, RSocket requesterSocket) {
-        Logger logger = getLogger();
-        Mono<RSocket> socket = Mono.create(emitter -> processCreation(payload, requesterSocket, emitter));
-        return socket.doOnError(throwable -> logger.error(throwable.getMessage(), throwable));
+    private Mono<RSocket> createAcceptor(ConnectionSetupPayload payload, RSocket requesterSocket) {
+        Mono<RSocket> socket = Mono.create(emitter -> createSocket(payload, requesterSocket, emitter));
+        return socket.doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
     }
 
-    private void processCreation(ConnectionSetupPayload payload, RSocket requester, MonoSink<RSocket> emitter) {
-        Logger logger = getLogger();
+    private void createSocket(ConnectionSetupPayload payload, RSocket requester, MonoSink<RSocket> emitter) {
         ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, requester, configuration.getServerConfiguration()));
-        ignoreException(createRsocket, throwable -> logger.error(throwable.getMessage(), throwable));
+        ignoreException(createRsocket, throwable -> getLogger().error(throwable.getMessage(), throwable));
+    }
+
+    private void setupCloser(CloseableChannel channel) {
+        this.closer = channel.onClose();
+        if (configuration.getServerConfiguration().isLogging()) {
+            this.closer = channel.onClose().doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
+        }
     }
 }

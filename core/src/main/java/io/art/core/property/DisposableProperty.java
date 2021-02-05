@@ -3,9 +3,10 @@ package io.art.core.property;
 import io.art.core.exception.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.factory.ListFactory.*;
 import static java.util.Objects.*;
+import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
@@ -13,12 +14,24 @@ import java.util.function.*;
 public class DisposableProperty<T> implements Supplier<T> {
     private volatile T value;
     private final Supplier<T> loader;
-    private final Consumer<T> disposer;
     private final AtomicBoolean initialized = new AtomicBoolean();
+    private final List<Consumer<T>> initializeConsumers = linkedList();
+    private final List<Consumer<T>> disposeConsumers = linkedList();
 
 
     public DisposableProperty<T> initialize() {
         get();
+        return this;
+    }
+
+
+    public DisposableProperty<T> initialized(Consumer<T> consumer) {
+        initializeConsumers.add(consumer);
+        return this;
+    }
+
+    public DisposableProperty<T> disposed(Consumer<T> consumer) {
+        disposeConsumers.add(consumer);
         return this;
     }
 
@@ -33,7 +46,7 @@ public class DisposableProperty<T> implements Supplier<T> {
 
 
     public void dispose() {
-        dispose(disposer);
+        dispose(value -> disposeConsumers.forEach(consumer -> consumer.accept(value)));
     }
 
     public void dispose(Consumer<T> action) {
@@ -53,6 +66,7 @@ public class DisposableProperty<T> implements Supplier<T> {
         while (isNull(this.value)) {
             if (this.initialized.compareAndSet(false, true)) {
                 this.value = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
+                initializeConsumers.forEach(consumer -> consumer.accept(value));
             }
         }
         return this.value;
@@ -75,10 +89,10 @@ public class DisposableProperty<T> implements Supplier<T> {
     }
 
     public static <T> DisposableProperty<T> disposable(Supplier<T> factory) {
-        return new DisposableProperty<>(factory, emptyConsumer());
+        return new DisposableProperty<>(factory);
     }
 
     public static <T> DisposableProperty<T> disposable(Supplier<T> factory, Consumer<T> disposer) {
-        return new DisposableProperty<>(factory, disposer);
+        return new DisposableProperty<>(factory).disposed(disposer);
     }
 }

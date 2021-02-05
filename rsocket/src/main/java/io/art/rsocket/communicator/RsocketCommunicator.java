@@ -19,11 +19,10 @@
 package io.art.rsocket.communicator;
 
 import io.art.communicator.action.*;
-import io.art.communicator.configuration.*;
 import io.art.communicator.implementation.*;
 import io.art.core.exception.*;
-import io.art.core.property.*;
 import io.art.core.model.*;
+import io.art.core.property.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.interceptor.*;
@@ -34,7 +33,6 @@ import io.rsocket.*;
 import io.rsocket.core.*;
 import io.rsocket.plugins.*;
 import io.rsocket.transport.netty.client.*;
-import io.rsocket.util.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
@@ -45,9 +43,10 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.MethodProcessingMode.*;
-import static io.art.core.property.DisposableProperty.*;
+import static io.art.core.property.Property.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.CommunicationMode.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
 import static io.art.rsocket.manager.RsocketManager.*;
@@ -57,7 +56,6 @@ import static io.rsocket.core.RSocketClient.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import java.util.*;
 import java.util.function.*;
 
 @Builder
@@ -70,58 +68,47 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
     @Getter(lazy = true, value = PRIVATE)
     private final CommunicatorAction communicatorAction = communicatorAction();
 
-    @Getter(lazy = true, value = PRIVATE)
-    private final Function<Flux<Value>, Flux<Value>> communicate = adoptCommunicate();
+    private final Property<RSocketClient> client = property(this::createClient, this::disposeClient);
 
-    private final DisposableProperty<RsocketCommunicatorConfiguration> rsocketConfiguration = disposable(this::rsocketConfiguration);
-    private final DisposableProperty<RsocketConnectorConfiguration> connectorConfiguration = disposable(this::connectorConfiguration);
-    private final DisposableProperty<Optional<CommunicatorActionConfiguration>> actionConfiguration = disposable(this::actionConfiguration);
-    private final DisposableProperty<RsocketSetupPayload> setupPayload = disposable(this::setupPayload);
-    private final DisposableProperty<RsocketPayloadWriter> writer = disposable(this::writer);
-    private final DisposableProperty<RsocketPayloadReader> reader = disposable(this::reader);
-    private final DisposableProperty<RSocketClient> client = disposable(this::createClient);
+    private final Property<Function<Flux<Value>, Flux<Value>>> communicate = property(this::adoptCommunicate)
+            .listen(client);
+
+    private final Property<RsocketSetupPayload> setupPayload = property(this::setupPayload)
+            .listen(client);
 
     @Override
     public void initialize() {
-        connectorConfiguration.initialize();
-        setupPayload.initialize();
-        writer.initialize();
-        reader.initialize();
         client.initialize();
     }
 
     @Override
     public void dispose() {
-        reader.dispose();
-        writer.dispose();
-        setupPayload.dispose();
-        connectorConfiguration.dispose();
-        rsocketConfiguration.dispose();
+        client.dispose();
     }
 
     @Override
     public Flux<Value> communicate(Flux<Value> input) {
-        return getCommunicate().apply(input);
+        return communicate.get().apply(input);
     }
 
     private RSocketClient createClient() {
-        RsocketConnectorConfiguration connectorConfiguration = this.connectorConfiguration.get();
-        RsocketSetupPayload setupPayload = this.setupPayload.get();
+        RsocketCommunicatorConfiguration communicatorConfiguration = communicatorConfiguration();
+        RsocketConnectorConfiguration connectorConfiguration = connectorConfiguration();
         RSocketConnector connector = RSocketConnector.create()
-                .dataMimeType(toMimeType(setupPayload.getDataFormat()).toString())
-                .metadataMimeType(toMimeType(setupPayload.getMetadataFormat()).toString())
+                .dataMimeType(toMimeType(setupPayload.get().getDataFormat()).toString())
+                .metadataMimeType(toMimeType(setupPayload.get().getMetadataFormat()).toString())
                 .fragment(connectorConfiguration.getFragment())
-                .interceptors(this::configureInterceptors);
+                .interceptors(registry -> configureInterceptors(connectorConfiguration, registry));
         apply(connectorConfiguration.getKeepAlive(), keepAlive -> connector.keepAlive(keepAlive.getInterval(), keepAlive.getMaxLifeTime()));
         apply(connectorConfiguration.getResume(), connector::resume);
         apply(connectorConfiguration.getRetry(), connector::reconnect);
-        connector.setupPayload(this.writer.get().writePayloadMetaData(setupPayload.toEntity()));
+        connector.setupPayload(setupPayload.get().getWriter().writePayloadMetaData(setupPayload.get().toEntity()));
         switch (connectorConfiguration.getTransport()) {
             case TCP:
                 TcpClient tcpClient = connectorConfiguration.getTcpClient();
                 int tcpMaxFrameLength = connectorConfiguration.getTcpMaxFrameLength();
                 Mono<RSocket> socket = connector.connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength));
-                if (rsocketConfiguration.get().isLogging()) {
+                if (communicatorConfiguration.isLogging()) {
                     socket = socket
                             .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)))
                             .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
@@ -130,8 +117,9 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
             case WS:
                 HttpClient httpWebSocketClient = connectorConfiguration.getHttpWebSocketClient();
                 String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
-                socket = connector.connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath));
-                if (rsocketConfiguration.get().isLogging()) {
+                socket = connector
+                        .connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath));
+                if (communicatorConfiguration.isLogging()) {
                     socket = socket
                             .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)))
                             .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
@@ -141,17 +129,19 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
         throw new ImpossibleSituationException();
     }
 
-    private void configureInterceptors(InterceptorRegistry registry) {
-        String connectorId = connectorConfiguration.get().getConnectorId();
+    private void configureInterceptors(RsocketConnectorConfiguration connectorConfiguration, InterceptorRegistry registry) {
+        String connectorId = connectorConfiguration.getConnectorId();
         registry
                 .forResponder(new RsocketConnectorLoggingInterceptor(connectorId))
                 .forRequester(new RsocketConnectorLoggingInterceptor(connectorId));
     }
 
     private void disposeClient(RSocketClient rsocket) {
-        String connectorId = connectorConfiguration.get().getConnectorId();
+        RsocketConnectorConfiguration connectorConfiguration = connectorConfiguration();
         disposeRsocket(rsocket);
-        getLogger().info(format(COMMUNICATOR_STOPPED, connectorId, setupPayload));
+        if (connectorConfiguration.isLogging()) {
+            getLogger().info(format(COMMUNICATOR_STOPPED, connectorConfiguration.getConnectorId(), setupPayload));
+        }
     }
 
     @SuppressWarnings(CONSTANT_CONDITIONS)
@@ -163,24 +153,21 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
                 .orElseThrow(ImpossibleSituationException::new);
     }
 
-    private RsocketCommunicatorConfiguration rsocketConfiguration() {
+    private RsocketCommunicatorConfiguration communicatorConfiguration() {
         return rsocketModule().configuration().getCommunicatorConfiguration();
     }
 
     private RsocketConnectorConfiguration connectorConfiguration() {
+        RsocketCommunicatorConfiguration communicatorConfiguration = communicatorConfiguration();
         return communicatorModule()
                 .configuration()
                 .findConnectorId(RSOCKET.getProtocol(), communicatorActionId)
-                .map(id -> rsocketConfiguration.get().getConnectors().get(id))
-                .orElseGet(() -> rsocketConfiguration.get().getConnectors().get(communicatorActionId.getCommunicatorId()));
-    }
-
-    private Optional<CommunicatorActionConfiguration> actionConfiguration() {
-        return communicatorModule().configuration().getActionConfiguration(communicatorActionId);
+                .map(communicatorConfiguration.getConnectors()::get)
+                .orElseGet(() -> communicatorConfiguration.getConnectors().get(communicatorActionId.getCommunicatorId()));
     }
 
     private RsocketSetupPayload setupPayload() {
-        RsocketConnectorConfiguration connectorConfiguration = this.connectorConfiguration.get();
+        RsocketConnectorConfiguration connectorConfiguration = connectorConfiguration();
         CommunicatorAction communicatorAction = getCommunicatorAction();
         return RsocketSetupPayload.builder()
                 .serviceMethod(communicatorAction.getTargetServiceMethod())
@@ -189,12 +176,36 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
                 .build();
     }
 
-    private RsocketPayloadWriter writer() {
-        return new RsocketPayloadWriter(setupPayload.get().getDataFormat(), setupPayload.get().getMetadataFormat());
-    }
-
-    private RsocketPayloadReader reader() {
-        return new RsocketPayloadReader(setupPayload.get().getDataFormat(), setupPayload.get().getMetadataFormat());
+    private Function<Flux<Value>, Flux<Value>> adoptCommunicate() {
+        RsocketPayloadWriter writer = setupPayload.get().getWriter();
+        RsocketPayloadReader reader = setupPayload.get().getReader();
+        RSocketClient client = this.client.get();
+        switch (communicationMode()) {
+            case FIRE_AND_FORGET:
+                return input -> cast(client.fireAndForget(input.map(writer::writePayloadData).last(EMPTY_PAYLOAD)).flux());
+            case REQUEST_RESPONSE:
+                return input -> client
+                        .requestResponse(input.map(writer::writePayloadData).last(EMPTY_PAYLOAD))
+                        .flux()
+                        .map(reader::readPayloadData)
+                        .filter(data -> !data.isEmpty())
+                        .map(RsocketPayloadValue::getValue);
+            case REQUEST_STREAM:
+                return input -> client
+                        .requestStream(input.map(writer::writePayloadData).last(EMPTY_PAYLOAD))
+                        .map(reader::readPayloadData)
+                        .filter(data -> !data.isEmpty())
+                        .map(RsocketPayloadValue::getValue);
+            case REQUEST_CHANNEL:
+                return input -> client
+                        .requestChannel(input.map(writer::writePayloadData))
+                        .map(reader::readPayloadData)
+                        .filter(data -> !data.isEmpty())
+                        .map(RsocketPayloadValue::getValue);
+            case METADATA_PUSH:
+                return input -> cast(client.metadataPush(input.map(writer::writePayloadMetaData).last(EMPTY_PAYLOAD)).flux());
+        }
+        throw new ImpossibleSituationException();
     }
 
     private CommunicationMode communicationMode() {
@@ -211,48 +222,4 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
         return REQUEST_RESPONSE;
     }
 
-    private Function<Flux<Value>, Flux<Value>> adoptCommunicate() {
-        switch (communicationMode()) {
-            case FIRE_AND_FORGET:
-                return input -> cast(client.get()
-                        .fireAndForget(input.map(this.writer.get()::writePayloadData).last(EmptyPayload.INSTANCE))
-                        .flux());
-            case REQUEST_RESPONSE:
-                return input -> {
-                    RsocketPayloadWriter writer = this.writer.get();
-                    RsocketPayloadReader reader = this.reader.get();
-                    return client.get()
-                            .requestResponse(input.map(writer::writePayloadData).last(EmptyPayload.INSTANCE))
-                            .flux()
-                            .map(reader::readPayloadData)
-                            .filter(data -> !data.isEmpty())
-                            .map(RsocketPayloadValue::getValue);
-                };
-            case REQUEST_STREAM:
-                return input -> {
-                    RsocketPayloadWriter writer = this.writer.get();
-                    RsocketPayloadReader reader = this.reader.get();
-                    return client.get()
-                            .requestStream(input.map(writer::writePayloadData).last(EmptyPayload.INSTANCE))
-                            .map(reader::readPayloadData)
-                            .filter(data -> !data.isEmpty())
-                            .map(RsocketPayloadValue::getValue);
-                };
-            case REQUEST_CHANNEL:
-                return input -> {
-                    RsocketPayloadWriter writer = this.writer.get();
-                    RsocketPayloadReader reader = this.reader.get();
-                    return client.get()
-                            .requestChannel(input.map(writer::writePayloadData))
-                            .map(reader::readPayloadData)
-                            .filter(data -> !data.isEmpty())
-                            .map(RsocketPayloadValue::getValue);
-                };
-            case METADATA_PUSH:
-                return input -> cast(client.get()
-                        .metadataPush(input.map(writer.get()::writePayloadMetaData).last(EmptyPayload.INSTANCE))
-                        .flux());
-        }
-        throw new ImpossibleSituationException();
-    }
 }

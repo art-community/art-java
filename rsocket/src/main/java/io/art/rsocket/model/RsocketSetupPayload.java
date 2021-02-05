@@ -19,6 +19,7 @@
 package io.art.rsocket.model;
 
 import io.art.core.model.*;
+import io.art.rsocket.payload.*;
 import io.art.value.builder.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.immutable.*;
@@ -37,6 +38,13 @@ public class RsocketSetupPayload {
     DataFormat dataFormat;
     DataFormat metadataFormat;
     ServiceMethodIdentifier serviceMethod;
+
+    @Getter(lazy = true)
+    RsocketPayloadWriter writer = new RsocketPayloadWriter(this);
+
+    @Getter(lazy = true)
+    RsocketPayloadReader reader = new RsocketPayloadReader(this);
+
 
     public Entity toEntity() {
         EntityBuilder entityBuilder = entityBuilder()

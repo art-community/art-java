@@ -23,7 +23,6 @@ import io.art.core.caster.*;
 import io.art.core.collection.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
-import io.art.core.property.*;
 import io.art.server.configuration.*;
 import io.art.server.decorator.*;
 import io.art.server.implementation.*;
@@ -37,10 +36,8 @@ import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.property.DisposableProperty.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
-import static java.util.Optional.*;
 import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
@@ -49,7 +46,7 @@ import java.util.function.*;
 @Builder(toBuilder = true)
 @UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ServiceMethodSpecification implements Managed {
+public class ServiceMethodSpecification {
     @Getter
     @EqualsAndHashCode.Include
     private final String methodId;
@@ -94,31 +91,14 @@ public class ServiceMethodSpecification implements Managed {
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Object, Flux<Object>> adoptOutput = adoptOutput();
 
-    private final DisposableProperty<ServerModuleConfiguration> moduleConfiguration = disposable(this::moduleConfiguration);
-    private final DisposableProperty<ServiceSpecification> serviceSpecification = disposable(this::serviceSpecification);
-    private final DisposableProperty<Optional<ServiceConfiguration>> serviceConfiguration = disposable(this::serviceConfiguration);
-    private final DisposableProperty<Optional<ServiceMethodConfiguration>> methodConfiguration = disposable(this::methodConfiguration);
-
-    @Override
-    public void initialize() {
-        moduleConfiguration.initialize();
-        serviceSpecification.initialize();
-        serviceConfiguration.initialize();
-        methodConfiguration.initialize();
-    }
-
-    @Override
-    public void dispose() {
-        methodConfiguration.dispose();
-        serviceConfiguration.dispose();
-        serviceSpecification.dispose();
-        moduleConfiguration.dispose();
-    }
+    @Getter(lazy = true, value = PRIVATE)
+    private final ServerModuleConfiguration configuration = serverModule().configuration();
 
     public Flux<Value> serve(Flux<Value> input) {
-        Scheduler scheduler = methodConfiguration.get()
+        Scheduler scheduler = getConfiguration()
+                .getMethodConfiguration(serviceId, methodId)
                 .map(ServiceMethodConfiguration::getScheduler)
-                .orElseGet(moduleConfiguration.get()::getScheduler);
+                .orElseGet(getConfiguration()::getScheduler);
         return defer(() -> deferredServe(input)).subscribeOn(scheduler);
     }
 
@@ -198,22 +178,5 @@ public class ServiceMethodSpecification implements Managed {
             default:
                 throw new ImpossibleSituationException();
         }
-    }
-
-    private ServerModuleConfiguration moduleConfiguration() {
-        return serverModule().configuration();
-    }
-
-
-    private ServiceSpecification serviceSpecification() {
-        return specifications().get(serviceId).orElseThrow(ImpossibleSituationException::new);
-    }
-
-    private Optional<ServiceConfiguration> serviceConfiguration() {
-        return ofNullable(moduleConfiguration.get().getConfigurations().get(serviceId));
-    }
-
-    private Optional<ServiceMethodConfiguration> methodConfiguration() {
-        return serviceConfiguration.get().map(configuration -> configuration.getMethods().get(methodId));
     }
 }

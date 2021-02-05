@@ -47,9 +47,9 @@ public class ChangesListener {
         return this;
     }
 
-    public <T> Property<T> consume(Property<T> value) {
-        consumers.add(value::refresh);
-        return value;
+    public <T> Property<T> consume(Property<T> property) {
+        consumers.add(property::refresh);
+        return property;
     }
 
     public ChangesConsumer consumer() {

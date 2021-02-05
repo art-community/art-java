@@ -21,7 +21,7 @@ package io.art.rsocket.module;
 import io.art.core.context.*;
 import io.art.core.module.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.listener.*;
+import io.art.rsocket.refresher.*;
 import io.art.rsocket.manager.*;
 import io.art.rsocket.state.*;
 import lombok.*;

@@ -19,6 +19,7 @@
 package io.art.rsocket.payload;
 
 import io.art.core.exception.*;
+import io.art.rsocket.model.*;
 import io.art.value.immutable.Value;
 import io.rsocket.*;
 import lombok.*;
@@ -38,6 +39,11 @@ import static io.rsocket.util.DefaultPayload.*;
 public class RsocketPayloadWriter {
     private final DataFormat dataFormat;
     private final DataFormat metaDataFormat;
+
+    public RsocketPayloadWriter(RsocketSetupPayload setupPayload) {
+        this.dataFormat = setupPayload.getDataFormat();
+        this.metaDataFormat = setupPayload.getMetadataFormat();
+    }
 
     public Payload writePayloadData(Value value) {
         switch (dataFormat) {

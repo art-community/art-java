@@ -4,6 +4,7 @@ import io.art.core.changes.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.property.LazyProperty.*;
+import static java.util.Arrays.*;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
@@ -34,7 +35,6 @@ public class Property<T> implements Supplier<T> {
         get();
     }
 
-
     public boolean initialized() {
         return disposable.initialized();
     }
@@ -53,7 +53,17 @@ public class Property<T> implements Supplier<T> {
     }
 
 
-    public Property<T> consume(Consumer<T> consumer) {
+    public Property<T> initialized(Consumer<T> consumer) {
+        disposable.initialized(consumer);
+        return this;
+    }
+
+    public Property<T> disposed(Consumer<T> consumer) {
+        disposable.disposed(consumer);
+        return this;
+    }
+
+    public Property<T> changed(Consumer<T> consumer) {
         changeConsumers.add(consumer);
         return this;
     }
@@ -65,6 +75,14 @@ public class Property<T> implements Supplier<T> {
 
     public Property<T> prevent(Predicate<T> predicate) {
         predicates.add(predicate);
+        return this;
+    }
+
+    public Property<T> listen(Property<?>... others) {
+        stream(others).forEach(other -> other
+                .initialized(value -> initialize())
+                .cleared(value -> clear())
+                .changed(value -> refresh()));
         return this;
     }
 

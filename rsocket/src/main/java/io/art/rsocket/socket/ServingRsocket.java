@@ -30,11 +30,11 @@ import io.art.server.specification.*;
 import io.art.value.immutable.Value;
 import io.art.value.immutable.*;
 import io.rsocket.*;
-import io.rsocket.util.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.util.context.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.model.RsocketSetupPayload.*;
 import static io.art.rsocket.module.RsocketModule.*;
@@ -98,7 +98,7 @@ public class ServingRsocket implements RSocket {
     public Mono<Payload> requestResponse(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
         Flux<Value> input = addContext(payloadValue.isEmpty() ? empty() : just(payloadValue.getValue()));
-        return specification.serve(input).map(writer::writePayloadData).last(EmptyPayload.INSTANCE);
+        return specification.serve(input).map(writer::writePayloadData).last(EMPTY_PAYLOAD);
     }
 
     @Override
@@ -127,15 +127,12 @@ public class ServingRsocket implements RSocket {
     @Override
     public void dispose() {
         moduleState.removeRequester(this);
-        specification.dispose();
     }
 
     private ServiceMethodSpecification initializeSpecification(ServiceMethodIdentifier serviceMethodId) {
-        ServiceMethodSpecification specification = specifications()
+        return specifications()
                 .findMethodById(serviceMethodId)
                 .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
-        specification.initialize();
-        return specification;
     }
 
     private <T> Flux<T> addContext(Flux<T> flux) {

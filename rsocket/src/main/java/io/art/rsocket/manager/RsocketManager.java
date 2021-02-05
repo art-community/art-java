@@ -21,7 +21,7 @@ package io.art.rsocket.manager;
 
 import io.art.communicator.action.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.listener.*;
+import io.art.rsocket.refresher.*;
 import io.art.rsocket.server.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
@@ -76,4 +76,3 @@ public class RsocketManager {
         ignoreException(rsocket::dispose, getLogger()::error);
     }
 }
-
