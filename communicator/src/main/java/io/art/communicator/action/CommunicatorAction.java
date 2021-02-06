@@ -140,14 +140,14 @@ public class CommunicatorAction implements Managed {
     }
 
     private Object mapOutput(Flux<Value> output) {
-        Flux<Object> mappedOutput = output.map(value -> outputMapper.map(cast(value)));
+        Flux<Object> outputFlux = output.map(value -> outputMapper.map(cast(value)));
         for (UnaryOperator<Flux<Object>> decorator : defaultOutputDecorators) {
-            mappedOutput = mappedOutput.transform(decorator);
+            outputFlux = outputFlux.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
-            mappedOutput = mappedOutput.transform(decorator);
+            outputFlux = outputFlux.transform(decorator);
         }
-        return getAdoptOutput().apply(mappedOutput);
+        return getAdoptOutput().apply(outputFlux);
     }
 
     private Flux<Value> mapException(Throwable exception) {
