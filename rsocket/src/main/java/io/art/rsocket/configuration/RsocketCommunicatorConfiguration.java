@@ -22,25 +22,26 @@ import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.let;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.rsocket.configuration.RsocketConnectorConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static java.util.Objects.*;
 
 @Getter
 public class RsocketCommunicatorConfiguration {
     private RsocketConnectorConfiguration defaultConnectorConfiguration;
-    private ImmutableMap<String, RsocketConnectorConfiguration> connectors;
+    private ImmutableMap<String, RsocketConnectorConfiguration> connectorConfigurations;
 
     public boolean isLogging(String connectorId) {
-        RsocketConnectorConfiguration configuration = connectors.get(connectorId);
+        RsocketConnectorConfiguration configuration = connectorConfigurations.get(connectorId);
         if (isNull(configuration)) return defaultConnectorConfiguration.isLogging();
         return configuration.isLogging();
     }
 
     public static RsocketCommunicatorConfiguration from(RsocketModuleRefresher refresher, ConfigurationSource source) {
         RsocketCommunicatorConfiguration configuration = new RsocketCommunicatorConfiguration();
-        configuration.defaultConnectorConfiguration = let(source.getNested(DEFAULT_SECTION), RsocketConnectorConfiguration::from, RsocketConnectorConfiguration.defaults());
-        configuration.connectors = source.getNestedMap(CONNECTORS_KEY, connector -> RsocketConnectorConfiguration.from(refresher, configuration, connector));
+        configuration.defaultConnectorConfiguration = let(source.getNested(DEFAULT_SECTION), RsocketConnectorConfiguration::rsocketConnector, defaults());
+        configuration.connectorConfigurations = source.getNestedMap(CONNECTORS_KEY, connector -> rsocketConnector(refresher, configuration.defaultConnectorConfiguration, connector));
         return configuration;
     }
 }

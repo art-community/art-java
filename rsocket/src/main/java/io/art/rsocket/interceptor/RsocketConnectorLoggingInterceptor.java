@@ -18,28 +18,33 @@
 
 package io.art.rsocket.interceptor;
 
+import io.art.core.property.*;
+import io.art.rsocket.refresher.*;
 import io.rsocket.*;
 import io.rsocket.plugins.*;
-import io.rsocket.util.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.property.Property.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static lombok.AccessLevel.*;
 
-@RequiredArgsConstructor
 public class RsocketConnectorLoggingInterceptor implements RSocketInterceptor {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketConnectorLoggingInterceptor.class);
+
     private final String connectorId;
+    private final Property<Boolean> enabled;
+
+    public RsocketConnectorLoggingInterceptor(String connectorId, RsocketModuleRefresher.Consumer consumer) {
+        this.connectorId = connectorId;
+        enabled = property(this::enabled).listen(consumer.connectorLoggingConsumers().consumer(connectorId));
+    }
 
     @Override
     public RSocket apply(RSocket rsocket) {
-        if (!enabled()) {
-            return new RSocketProxy(rsocket);
-        }
-        return new RsocketLoggingProxy(getLogger(), rsocket);
+        return new RsocketLoggingProxy(getLogger(), rsocket, enabled);
     }
 
     private boolean enabled() {

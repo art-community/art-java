@@ -20,7 +20,6 @@ package io.art.communicator.constants;
 
 import reactor.core.scheduler.*;
 import static io.art.core.constants.ThreadConstants.*;
-import static java.lang.Short.*;
 import static reactor.core.scheduler.Schedulers.*;
 
 public interface CommunicatorModuleConstants {
@@ -33,7 +32,7 @@ public interface CommunicatorModuleConstants {
     }
 
     interface LoggingMessages {
-       String COMMUNICATOR_REGISTRATION_MESSAGE = "Registered communicator: ''{0}'' with actions: {1}";
+        String COMMUNICATOR_REGISTRATION_MESSAGE = "Registered communicator: ''{0}'' with actions: {1}";
     }
 
     interface ConfigurationKeys {
@@ -45,6 +44,8 @@ public interface CommunicatorModuleConstants {
     }
 
     interface CommunicatorProtocol {
+        String getProtocol();
+
         String name();
     }
 }

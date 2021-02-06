@@ -20,6 +20,7 @@ package io.art.rsocket.communicator;
 
 import io.art.communicator.action.*;
 import io.art.communicator.implementation.*;
+import io.art.core.changes.*;
 import io.art.core.exception.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
@@ -28,6 +29,7 @@ import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
+import io.art.rsocket.refresher.*;
 import io.art.value.immutable.Value;
 import io.rsocket.*;
 import io.rsocket.core.*;
@@ -59,11 +61,11 @@ import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 @Builder
-public class RsocketCommunicator implements CommunicatorActionImplementation {
+public class RsocketCommunicatorAction implements CommunicatorActionImplementation {
     private final CommunicatorActionIdentifier communicatorActionId;
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Logger logger = logger(RsocketCommunicator.class);
+    private final Logger logger = logger(RsocketCommunicatorAction.class);
 
     @Getter(lazy = true, value = PRIVATE)
     private final CommunicatorAction communicatorAction = communicatorAction();
@@ -78,7 +80,9 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
 
     @Override
     public void initialize() {
-        client.initialize();
+        String connectorId = connectorConfiguration().getConnectorId();
+        ChangesConsumer consumer = communicatorConsumer().connectorConsumers().consumer(connectorId);
+        client.listen(consumer).initialize();
     }
 
     @Override
@@ -99,8 +103,8 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
                 .fragment(connectorConfiguration.getFragment())
                 .interceptors(registry -> configureInterceptors(connectorConfiguration, registry));
         apply(connectorConfiguration.getKeepAlive(), keepAlive -> connector.keepAlive(keepAlive.getInterval(), keepAlive.getMaxLifeTime()));
-        apply(connectorConfiguration.getResume(), connector::resume);
-        apply(connectorConfiguration.getRetry(), connector::reconnect);
+        apply(connectorConfiguration.getResume(), resume -> connector.resume(resume.toResume()));
+        apply(connectorConfiguration.getRetry(), retry -> connector.reconnect(retry.toRetry()));
         connector.setupPayload(setupPayload.get().getWriter().writePayloadMetaData(setupPayload.get().toEntity()));
         switch (connectorConfiguration.getTransport()) {
             case TCP:
@@ -116,8 +120,7 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
             case WS:
                 HttpClient httpWebSocketClient = connectorConfiguration.getHttpWebSocketClient();
                 String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
-                socket = connector
-                        .connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath));
+                socket = connector.connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath));
                 if (connectorConfiguration.isLogging()) {
                     socket = socket
                             .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)))
@@ -131,8 +134,8 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
     private void configureInterceptors(RsocketConnectorConfiguration connectorConfiguration, InterceptorRegistry registry) {
         String connectorId = connectorConfiguration.getConnectorId();
         registry
-                .forResponder(new RsocketConnectorLoggingInterceptor(connectorId))
-                .forRequester(new RsocketConnectorLoggingInterceptor(connectorId));
+                .forResponder(new RsocketConnectorLoggingInterceptor(connectorId, communicatorConsumer()))
+                .forRequester(new RsocketConnectorLoggingInterceptor(connectorId, communicatorConsumer()));
     }
 
     private void disposeClient(RSocketClient rsocket) {
@@ -157,8 +160,8 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
         return communicatorModule()
                 .configuration()
                 .findConnectorId(RSOCKET.getProtocol(), communicatorActionId)
-                .map(communicatorConfiguration.getConnectors()::get)
-                .orElseGet(() -> communicatorConfiguration.getConnectors().get(communicatorActionId.getCommunicatorId()));
+                .map(communicatorConfiguration.getConnectorConfigurations()::get)
+                .orElseGet(() -> communicatorConfiguration.getConnectorConfigurations().get(communicatorActionId.getCommunicatorId()));
     }
 
     private RsocketSetupPayload setupPayload() {
@@ -217,4 +220,7 @@ public class RsocketCommunicator implements CommunicatorActionImplementation {
         return REQUEST_RESPONSE;
     }
 
+    private RsocketModuleRefresher.Consumer communicatorConsumer() {
+        return rsocketModule().configuration().getConsumer();
+    }
 }

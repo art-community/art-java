@@ -40,13 +40,15 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
     private Scheduler scheduler;
 
     public Optional<String> findConnectorId(String protocol, CommunicatorActionIdentifier id) {
-        Optional<String> connectorId = ofNullable(configurations.get(id.getCommunicatorId())).map(configuration -> configuration.getConnectors().get(protocol));
+        CommunicatorProxyConfiguration proxyConfiguration = configurations.get(id.getCommunicatorId());
+        Optional<String> connectorId = ofNullable(proxyConfiguration).map(configuration -> configuration.getConnectors().get(protocol));
         if (connectorId.isPresent()) return connectorId;
         return getActionConfiguration(id).map(configuration -> configuration.getConnectors().get(protocol));
     }
 
     public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
-        return ofNullable(configurations.get(id.getCommunicatorId())).map(configuration -> configuration.getActions().get(id.getActionId()));
+        CommunicatorProxyConfiguration proxyConfiguration = configurations.get(id.getCommunicatorId());
+        return ofNullable(proxyConfiguration).map(configuration -> configuration.getActions().get(id.getActionId()));
     }
 
     @RequiredArgsConstructor

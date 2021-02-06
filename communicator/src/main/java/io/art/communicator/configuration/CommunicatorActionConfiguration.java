@@ -27,16 +27,16 @@ import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults
 import static io.art.core.checker.NullityChecker.*;
 
 @Getter
-@AllArgsConstructor
 public class CommunicatorActionConfiguration {
-    private final boolean logging;
-    private final Scheduler scheduler;
-    private final ImmutableMap<String, String> connectors;
+    private boolean logging;
+    private Scheduler scheduler;
+    private ImmutableMap<String, String> connectors;
 
     public static CommunicatorActionConfiguration from(ConfigurationSource source) {
-        boolean logging = orElse(source.getBool(LOGGING_KEY), false);
-        Scheduler scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
-        ImmutableMap<String, String> connectors = source.getNestedMap(CONNECTORS_KEY, NestedConfiguration::asString);
-        return new CommunicatorActionConfiguration(logging, scheduler, connectors);
+        CommunicatorActionConfiguration configuration = new CommunicatorActionConfiguration();
+        configuration.logging = orElse(source.getBool(LOGGING_KEY), false);
+        configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
+        configuration.connectors = source.getNestedMap(CONNECTORS_KEY, NestedConfiguration::asString);
+        return configuration;
     }
 }

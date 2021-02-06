@@ -25,7 +25,6 @@ import io.art.core.source.*;
 import io.art.rsocket.constants.*;
 import io.art.rsocket.refresher.*;
 import io.art.value.constants.ValueModuleConstants.*;
-import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
 import lombok.*;
 import reactor.netty.http.server.*;
@@ -52,7 +51,7 @@ public class RsocketServerConfiguration {
     private int tcpMaxFrameLength;
     private boolean logging;
     private int fragmentationMtu;
-    private Resume resume;
+    private RsocketResumeConfiguration resume;
     private PayloadDecoder payloadDecoder;
     private int maxInboundPayloadSize;
     private RsocketModuleConstants.TransportMode transport;
@@ -74,18 +73,20 @@ public class RsocketServerConfiguration {
     }
 
     public static RsocketServerConfiguration from(RsocketModuleRefresher refresher, ConfigurationSource source) {
+        RsocketServerConfiguration configuration = new RsocketServerConfiguration();
+
         ChangesListener serverListener = refresher.serverListener();
         ChangesListener serverLoggingListener = refresher.serverLoggingListener();
 
-        RsocketServerConfiguration configuration = new RsocketServerConfiguration();
+        configuration.logging = serverLoggingListener.register(orElse(source.getBool(LOGGING_KEY), false));
+
         configuration.defaultDataFormat = serverListener.register(dataFormat(source.getString(DATA_FORMAT_KEY), JSON));
         configuration.defaultMetaDataFormat = serverListener.register(dataFormat(source.getString(META_DATA_FORMAT_KEY), JSON));
-        configuration.logging = serverLoggingListener.register(orElse(source.getBool(LOGGING_KEY), false));
         configuration.fragmentationMtu = serverListener.register(orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0));
         configuration.payloadDecoder = serverListener.register(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT ? PayloadDecoder.DEFAULT : ZERO_COPY);
         configuration.maxInboundPayloadSize = serverListener.register(orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK));
         configuration.transport = serverListener.register(rsocketTransport(source.getString(TRANSPORT_MODE_KEY)));
-        configuration.resume = source.getNested(RESUME_SECTION, RsocketResumeConfigurator::from);
+        configuration.resume = serverListener.register(source.getNested(RESUME_SECTION, RsocketResumeConfiguration::rsocketResume));
 
         String serviceId = source.getString(SERVICE_ID_KEY);
         String methodId = source.getString(METHOD_ID_KEY);

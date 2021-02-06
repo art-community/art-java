@@ -34,6 +34,7 @@ import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.property.Property.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
@@ -41,7 +42,6 @@ import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.rsocket.manager.RsocketManager.*;
-import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 
 @RequiredArgsConstructor
@@ -56,7 +56,7 @@ public class RsocketServer implements Server {
     public RsocketServer(RsocketModuleRefresher refresher, RsocketModuleConfiguration configuration) {
         this.configuration = configuration;
         channel = property(this::createServer, this::disposeServer)
-                .listen(refresher.serverListener())
+                .listen(refresher.consumer().serverConsumer())
                 .initialized(this::setupCloser);
     }
 
@@ -83,10 +83,7 @@ public class RsocketServer implements Server {
         if (fragmentationMtu > 0) {
             server.fragment(fragmentationMtu);
         }
-        Resume resume;
-        if (nonNull(resume = configuration.getResume())) {
-            server.resume(resume);
-        }
+        apply(configuration.getResume(), resume -> server.resume(resume.toResume()));
         ServerTransport<CloseableChannel> transport = transportMode == TCP
                 ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
                 : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
@@ -104,8 +101,8 @@ public class RsocketServer implements Server {
 
     private void configureInterceptors(InterceptorRegistry registry) {
         registry
-                .forResponder(new RsocketServerLoggingInterceptor())
-                .forRequester(new RsocketServerLoggingInterceptor());
+                .forResponder(new RsocketServerLoggingInterceptor(configuration.getConsumer()))
+                .forRequester(new RsocketServerLoggingInterceptor(configuration.getConsumer()));
     }
 
     private void disposeServer(Disposable server) {

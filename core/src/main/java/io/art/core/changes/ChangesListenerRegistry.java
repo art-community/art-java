@@ -6,7 +6,7 @@ import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 
 public class ChangesListenerRegistry {
-    private final Map<String, ChangesListener> listeners = map();
+    private final Map<String, ChangesListener> listeners = concurrentMap();
     @Getter
     private final ChangesConsumerRegistry consumers = new ChangesConsumerRegistry(this);
 

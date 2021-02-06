@@ -25,16 +25,17 @@ import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.model.RsocketSetupPayload.*;
 import io.art.rsocket.refresher.*;
-import io.rsocket.core.*;
 import lombok.*;
 import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
-import reactor.util.retry.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
+import static io.art.rsocket.configuration.RsocketKeepAliveConfiguration.*;
+import static io.art.rsocket.configuration.RsocketResumeConfiguration.*;
+import static io.art.rsocket.configuration.RsocketRetryConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
@@ -54,8 +55,8 @@ public class RsocketConnectorConfiguration {
     private int maxInboundPayloadSize;
     private int fragment;
     private RsocketKeepAliveConfiguration keepAlive;
-    private Resume resume;
-    private Retry retry;
+    private RsocketResumeConfiguration resume;
+    private RsocketRetryConfiguration retry;
     private RsocketSetupPayload setupPayload;
     private TransportMode transport;
     private TcpClient tcpClient;
@@ -83,7 +84,7 @@ public class RsocketConnectorConfiguration {
         return configuration;
     }
 
-    public static RsocketConnectorConfiguration from(ConfigurationSource source) {
+    public static RsocketConnectorConfiguration rsocketConnector(ConfigurationSource source) {
         RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration();
         RsocketConnectorConfiguration defaults = defaults();
 
@@ -93,9 +94,9 @@ public class RsocketConnectorConfiguration {
         configuration.payloadDecoderMode = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode);
         configuration.dataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat);
         configuration.metaDataFormat = dataFormat(source.getString(META_DATA_FORMAT_KEY), defaults.metaDataFormat);
-        configuration.keepAlive = source.getNested(KEEP_ALIVE_SECTION, RsocketKeepAliveConfiguration::from);
-        configuration.resume = source.getNested(RESUME_SECTION, RsocketResumeConfigurator::from);
-        configuration.retry = source.getNested(RECONNECT_SECTION, RsocketRetryConfigurator::from);
+        configuration.keepAlive = source.getNested(KEEP_ALIVE_SECTION, RsocketKeepAliveConfiguration::rsocketKeepAlive);
+        configuration.resume = source.getNested(RESUME_SECTION, RsocketResumeConfiguration::rsocketResume);
+        configuration.retry = source.getNested(RECONNECT_SECTION, RsocketRetryConfiguration::rsocketRetry);
 
         RsocketSetupPayloadBuilder setupPayloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(configuration.dataFormat)
@@ -145,21 +146,23 @@ public class RsocketConnectorConfiguration {
         return configuration;
     }
 
-    public static RsocketConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketCommunicatorConfiguration communicatorConfiguration, ConfigurationSource source) {
+    public static RsocketConnectorConfiguration rsocketConnector(RsocketModuleRefresher refresher, RsocketConnectorConfiguration defaults, ConfigurationSource source) {
         RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration();
-        RsocketConnectorConfiguration defaults = communicatorConfiguration.getDefaultConnectorConfiguration();
         configuration.connectorId = source.getSection();
-        ChangesListener listener = refresher.connectorListeners().listener(configuration.connectorId);
 
-        configuration.dataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat);
-        configuration.metaDataFormat = dataFormat(source.getString(META_DATA_FORMAT_KEY), defaults.metaDataFormat);
-        configuration.logging = orElse(source.getBool(LOGGING_KEY), defaults.logging);
-        configuration.payloadDecoderMode = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode);
-        configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize);
-        configuration.fragment = orElse(source.getInt(FRAGMENTATION_MTU_KEY), defaults.fragment);
-        configuration.keepAlive = let(source.getNested(KEEP_ALIVE_SECTION), section -> RsocketKeepAliveConfiguration.from(section, defaults.keepAlive), defaults.keepAlive);
-        configuration.resume = let(source.getNested(RESUME_SECTION), section -> RsocketResumeConfigurator.from(section, defaults.resume), defaults.resume);
-        configuration.retry = let(source.getNested(RECONNECT_SECTION), section -> RsocketRetryConfigurator.from(section, defaults.retry), defaults.retry);
+        ChangesListener listener = refresher.connectorListeners().listener(configuration.connectorId);
+        ChangesListener loggingListener = refresher.connectorLoggingListeners().listener(configuration.connectorId);
+
+        configuration.logging = loggingListener.register(orElse(source.getBool(LOGGING_KEY), defaults.logging));
+
+        configuration.dataFormat = listener.register(dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat));
+        configuration.metaDataFormat = listener.register(dataFormat(source.getString(META_DATA_FORMAT_KEY), defaults.metaDataFormat));
+        configuration.payloadDecoderMode = listener.register(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode));
+        configuration.maxInboundPayloadSize = listener.register(orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize));
+        configuration.fragment = listener.register(orElse(source.getInt(FRAGMENTATION_MTU_KEY), defaults.fragment));
+        configuration.keepAlive = listener.register(let(source.getNested(KEEP_ALIVE_SECTION), section -> rsocketKeepAlive(section, defaults.keepAlive), defaults.keepAlive));
+        configuration.resume = listener.register(let(source.getNested(RESUME_SECTION), section -> rsocketResume(section, defaults.resume), defaults.resume));
+        configuration.retry = listener.register(let(source.getNested(RECONNECT_SECTION), section -> rsocketRetry(section, defaults.retry), defaults.retry));
 
         RsocketSetupPayloadBuilder setupPayloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(configuration.dataFormat)
@@ -172,17 +175,17 @@ public class RsocketConnectorConfiguration {
             setupPayloadBuilder.serviceMethod(serviceMethod(serviceId, methodId));
         }
 
-        configuration.setupPayload = setupPayloadBuilder.build();
+        configuration.setupPayload = listener.register(setupPayloadBuilder.build());
 
         if (!source.has(TRANSPORT_SECTION) && isNull(defaults.transport)) {
             throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_SECTION)));
         }
 
-        configuration.transport = rsocketTransport(source.getString(TRANSPORT_MODE_KEY), defaults.transport);
+        configuration.transport = listener.register(rsocketTransport(source.getString(TRANSPORT_MODE_KEY), defaults.transport));
         switch (configuration.transport) {
             case TCP:
-                String host = source.getString(TRANSPORT_TCP_HOST_KEY);
-                Integer port = source.getInt(TRANSPORT_TCP_PORT_KEY);
+                String host = listener.register(source.getString(TRANSPORT_TCP_HOST_KEY));
+                Integer port = listener.register(source.getInt(TRANSPORT_TCP_PORT_KEY));
                 if (isEmpty(host) && isNull(defaults.tcpClient)) {
                     throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_TCP_HOST_KEY)));
                 }
@@ -193,10 +196,10 @@ public class RsocketConnectorConfiguration {
                     configuration.tcpClient = defaults.tcpClient;
                 }
                 configuration.tcpClient = orElse(configuration.tcpClient, TcpClient.create().port(port).host(host));
-                configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), defaults.tcpMaxFrameLength);
+                configuration.tcpMaxFrameLength = listener.register(orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), defaults.tcpMaxFrameLength));
                 break;
             case WS:
-                String url = source.getString(TRANSPORT_WS_BASE_URL_KEY);
+                String url = listener.register(source.getString(TRANSPORT_WS_BASE_URL_KEY));
                 if (isEmpty(url) && isNull(defaults.httpWebSocketClient)) {
                     throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_WS_BASE_URL_KEY)));
                 }
@@ -204,11 +207,12 @@ public class RsocketConnectorConfiguration {
                     configuration.httpWebSocketClient = defaults.httpWebSocketClient;
                 }
                 configuration.httpWebSocketClient = orElse(configuration.httpWebSocketClient, create().baseUrl(url));
-                configuration.httpWebSocketPath = orElse(source.getString(TRANSPORT_WS_PATH_KEY), defaults.httpWebSocketPath);
+                configuration.httpWebSocketPath = listener.register(orElse(source.getString(TRANSPORT_WS_PATH_KEY), defaults.httpWebSocketPath));
                 break;
         }
 
         listener.produce();
+        loggingListener.produce();
         return configuration;
     }
 }
