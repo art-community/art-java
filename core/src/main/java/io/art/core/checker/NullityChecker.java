@@ -62,6 +62,12 @@ public class NullityChecker {
         return nonNull(value) ? action.apply(value) : null;
     }
 
+    public static <T> T run(T value, Consumer<T> action) {
+        if (isNull(value)) return null;
+        action.accept(value);
+        return null;
+    }
+
     public static <T> T orNull(T value, Predicate<T> condition) {
         return condition.test(value) ? value : null;
     }

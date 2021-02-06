@@ -4,7 +4,9 @@ import io.art.core.exception.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.factory.QueueFactory.*;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -15,7 +17,7 @@ public class DisposableProperty<T> implements Supplier<T> {
     private volatile T value;
     private final Supplier<T> loader;
     private final AtomicBoolean initialized = new AtomicBoolean();
-    private final List<Consumer<T>> initializeConsumers = linkedList();
+    private final Queue<Consumer<T>> initializeConsumers = queue();
     private final List<Consumer<T>> disposeConsumers = linkedList();
 
 
@@ -66,7 +68,7 @@ public class DisposableProperty<T> implements Supplier<T> {
         while (isNull(this.value)) {
             if (this.initialized.compareAndSet(false, true)) {
                 this.value = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
-                initializeConsumers.forEach(consumer -> consumer.accept(value));
+                erase(initializeConsumers, consumer -> consumer.accept(value));
             }
         }
         return this.value;
