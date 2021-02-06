@@ -56,7 +56,6 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
                 .serverLoggingConsumer());
     }
 
-
     @Override
     public Flux<Object> apply(Flux<Object> input) {
         return getDecorator().apply(input);
