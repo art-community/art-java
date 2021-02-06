@@ -35,6 +35,12 @@ public interface SchedulerModuleConstants {
         long DEFAULT_SHUTDOWN_TIMEOUT = 60 * 1000;
     }
 
+    interface LoggingMessages {
+        String DEFERRED_TASK_SUBMITTED = "Deferred task submitted at {0}";
+        String PERIODIC_TASK_SUBMITTED = "Periodic task submitted: {0} - at {1} every {2}";
+        String PERIODIC_TASK_CANCELED = "Periodic task canceled: {0}";
+    }
+
     interface ConfigurationKeys {
         String CONFIGURATOR_REFRESH_DURATION = "configurator.refresh.duration";
     }

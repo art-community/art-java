@@ -18,8 +18,6 @@
 
 package io.art.scheduler.executor.deferred;
 
-import static java.lang.Integer.*;
-import static java.time.LocalDateTime.*;
 import java.time.*;
 import java.util.concurrent.*;
 
@@ -36,21 +34,11 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
     }
 
     @Override
-    public <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask) {
-        return submit(eventTask, now());
-    }
-
-    @Override
     public Future<?> execute(Runnable task, LocalDateTime triggerTime) {
         return submit(() -> {
             task.run();
             return null;
         }, triggerTime);
-    }
-
-    @Override
-    public Future<?> execute(Runnable command) {
-        return execute(command, now());
     }
 
     @Override
