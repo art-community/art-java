@@ -69,8 +69,9 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
     @Getter(lazy = true, value = PRIVATE)
     private final CommunicatorAction communicatorAction = communicatorAction();
 
-    private final Property<RSocketClient> client = property(this::createClient, this::disposeClient)
-            .listenConsumer(() -> communicatorConsumer().connectorConsumers().consumer(connectorConfiguration().getConnectorId()));
+    private final Property<RSocketClient> client = property(this::createClient, this::disposeClient).listenConsumer(() -> communicatorConsumer()
+            .connectorConsumers()
+            .consumer(connectorConfiguration().getConnectorId()));
 
     private final Property<Function<Flux<Value>, Flux<Value>>> communicate = property(this::adoptCommunicate)
             .listenProperties(client);
@@ -131,9 +132,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
 
     private void configureInterceptors(RsocketConnectorConfiguration connectorConfiguration, InterceptorRegistry registry) {
         String connectorId = connectorConfiguration.getConnectorId();
-        registry
-                .forResponder(new RsocketConnectorLoggingInterceptor(connectorId, communicatorConsumer()))
-                .forRequester(new RsocketConnectorLoggingInterceptor(connectorId, communicatorConsumer()));
+        registry.forResponder(new RsocketConnectorLoggingInterceptor(connectorId)).forRequester(new RsocketConnectorLoggingInterceptor(connectorId));
     }
 
     private void disposeClient(RSocketClient rsocket) {

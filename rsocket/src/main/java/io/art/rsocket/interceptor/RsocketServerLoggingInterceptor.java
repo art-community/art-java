@@ -20,7 +20,6 @@ package io.art.rsocket.interceptor;
 
 import io.art.core.property.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.refresher.*;
 import io.rsocket.*;
 import io.rsocket.plugins.*;
 import lombok.*;
@@ -34,11 +33,11 @@ import static lombok.AccessLevel.*;
 public class RsocketServerLoggingInterceptor implements RSocketInterceptor {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketServerLoggingInterceptor.class);
-    private final Property<Boolean> enabled;
 
-    public RsocketServerLoggingInterceptor(RsocketModuleRefresher.Consumer consumer) {
-        enabled = property(this::enabled).listenConsumer(consumer::serverLoggingConsumer);
-    }
+    private final Property<Boolean> enabled = property(this::enabled).listenConsumer(() ->
+            configuration()
+                    .getConsumer()
+                    .serverLoggingConsumer());
 
     @Override
     public RSocket apply(RSocket rsocket) {
@@ -46,6 +45,10 @@ public class RsocketServerLoggingInterceptor implements RSocketInterceptor {
     }
 
     private boolean enabled() {
-        return let(rsocketModule().configuration().getServerConfiguration(), RsocketServerConfiguration::isLogging, false);
+        return let(configuration().getServerConfiguration(), RsocketServerConfiguration::isLogging, false);
+    }
+
+    private RsocketModuleConfiguration configuration() {
+        return rsocketModule().configuration();
     }
 }

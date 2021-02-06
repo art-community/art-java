@@ -26,6 +26,7 @@ import io.art.server.specification.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.LoggingModule.*;
@@ -36,10 +37,13 @@ import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
+@RequiredArgsConstructor
 public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     private final MethodDecoratorScope scope;
     private final ServiceMethodIdentifier serviceMethodId;
-    private final Property<Boolean> enabled;
+    private final Property<Boolean> enabled = property(() -> configuration().isLogging(serviceMethodId)).listenConsumer(() -> configuration()
+            .getConsumer()
+            .serverLoggingConsumer());
 
     @Getter(lazy = true, value = PRIVATE)
     private final UnaryOperator<Flux<Object>> decorator = createDecorator();
@@ -47,11 +51,6 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
     private final Logger logger = logger(ServiceLoggingDecorator.class.getSimpleName() + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
 
-    public ServiceLoggingDecorator(ServiceMethodIdentifier serviceMethodId, MethodDecoratorScope scope) {
-        this.scope = scope;
-        this.serviceMethodId = serviceMethodId;
-        enabled = property(() -> configuration().isLogging(serviceMethodId)).listenConsumer(() -> configuration().getConsumer().serverLoggingConsumer());
-    }
 
     @Override
     public Flux<Object> apply(Flux<Object> input) {
@@ -83,6 +82,7 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
         getLogger().error(format(SERVICE_FAILED_MESSAGE, specification.getServiceId(), specification.getMethodId()), exception);
     }
 
+    @SuppressWarnings(CONSTANT_CONDITIONS)
     private UnaryOperator<Flux<Object>> createDecorator() {
         Optional<ServiceMethodSpecification> possibleSpecification = specifications().findMethodById(serviceMethodId);
         if (!possibleSpecification.isPresent()) {

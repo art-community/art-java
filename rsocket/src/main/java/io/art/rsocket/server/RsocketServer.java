@@ -100,9 +100,7 @@ public class RsocketServer implements Server {
     }
 
     private void configureInterceptors(InterceptorRegistry registry) {
-        registry
-                .forResponder(new RsocketServerLoggingInterceptor(configuration.getConsumer()))
-                .forRequester(new RsocketServerLoggingInterceptor(configuration.getConsumer()));
+        registry.forResponder(new RsocketServerLoggingInterceptor()).forRequester(new RsocketServerLoggingInterceptor());
     }
 
     private void disposeServer(Disposable server) {
