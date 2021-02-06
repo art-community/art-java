@@ -23,8 +23,8 @@ import io.art.configurator.module.*;
 import io.art.core.annotation.*;
 import io.art.core.configuration.*;
 import io.art.core.context.*;
-import io.art.core.property.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.json.module.*;
 import io.art.logging.*;
 import io.art.model.customizer.*;
@@ -79,7 +79,7 @@ public class ModuleLauncher {
                     .put(JsonModule::new, module -> json(module, state))
                     .put(YamlModule::new, module -> yaml(module, state))
                     .put(XmlModule::new, module -> xml(module, state))
-                    .put(ServerModule::new, module -> server(module, state, serverCustomizer.apply(new ServerCustomizer())))
+                    .put(ServerModule::new, module -> server(module, state, serverCustomizer.apply(new ServerCustomizer(module))))
                     .put(CommunicatorModule::new, module -> communicator(module, state, communicatorCustomizer.apply(new CommunicatorCustomizer())))
                     .put(RsocketModule::new, module -> rsocket(module, state, rsocket.apply(new RsocketCustomizer(module))))
                     .put(TarantoolModule::new, module -> tarantool(module, state));

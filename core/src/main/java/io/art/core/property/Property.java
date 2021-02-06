@@ -78,7 +78,7 @@ public class Property<T> implements Supplier<T> {
         return this;
     }
 
-    public Property<T> listen(Property<?>... others) {
+    public Property<T> listenProperties(Property<?>... others) {
         stream(others).forEach(other -> other
                 .initialized(value -> initialize())
                 .cleared(value -> clear())
@@ -86,12 +86,12 @@ public class Property<T> implements Supplier<T> {
         return this;
     }
 
-    public Property<T> listen(ChangesListener listener) {
-        return listener.consume(this);
+    public Property<T> listenConsumer(Supplier<ChangesConsumer> listener) {
+        return initialized(ignore -> listener.get().consume(this));
     }
 
-    public Property<T> listen(ChangesConsumer listener) {
-        return listener.consume(this);
+    public Property<T> listen(Supplier<ChangesListener> listener) {
+        return initialized(ignore -> listener.get().consume(this));
     }
 
 

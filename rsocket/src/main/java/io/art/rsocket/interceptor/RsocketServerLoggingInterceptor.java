@@ -37,7 +37,7 @@ public class RsocketServerLoggingInterceptor implements RSocketInterceptor {
     private final Property<Boolean> enabled;
 
     public RsocketServerLoggingInterceptor(RsocketModuleRefresher.Consumer consumer) {
-        enabled = property(this::enabled).listen(consumer.serverLoggingConsumer());
+        enabled = property(this::enabled).listenConsumer(consumer::serverLoggingConsumer);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class RsocketConnectorLoggingInterceptor implements RSocketInterceptor {
 
     public RsocketConnectorLoggingInterceptor(String connectorId, RsocketModuleRefresher.Consumer consumer) {
         this.connectorId = connectorId;
-        enabled = property(this::enabled).listen(consumer.connectorLoggingConsumers().consumer(connectorId));
+        enabled = property(this::enabled).listenConsumer(() -> consumer.connectorLoggingConsumers().consumer(connectorId));
     }
 
     @Override

@@ -23,6 +23,7 @@ import io.art.core.model.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.server.model.*;
+import io.art.server.refresher.*;
 import io.art.server.registry.*;
 import lombok.*;
 import reactor.core.scheduler.*;
@@ -36,10 +37,18 @@ import java.util.*;
 import java.util.function.*;
 
 
-@Getter
+@RequiredArgsConstructor
 public class ServerModuleConfiguration implements ModuleConfiguration {
+    private final ServerModuleRefresher refresher;
+
+    @Getter(lazy = true)
+    private final ServerModuleRefresher.Consumer consumer = refresher.consumer();
+
+    @Getter
     private ImmutableMap<String, ServiceConfiguration> configurations = emptyImmutableMap();
+    @Getter
     private ServiceSpecificationRegistry registry = new ServiceSpecificationRegistry();
+    @Getter
     private Scheduler scheduler;
 
     public Optional<ServiceMethodConfiguration> getMethodConfiguration(String serviceId, String methodId) {

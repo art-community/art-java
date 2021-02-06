@@ -21,6 +21,7 @@ package io.art.server.module;
 import io.art.core.module.*;
 import io.art.server.configuration.*;
 import io.art.server.configuration.ServerModuleConfiguration.*;
+import io.art.server.refresher.*;
 import io.art.server.registry.*;
 import io.art.server.specification.*;
 import io.art.server.state.*;
@@ -40,7 +41,8 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, C
     @Getter(lazy = true, value = PRIVATE)
     private static final StatefulModuleProxy<ServerModuleConfiguration, ServerModuleState> serverModule = context().getStatefulModule(ServerModule.class.getSimpleName());
     private final String id = ServerModule.class.getSimpleName();
-    private final ServerModuleConfiguration configuration = new ServerModuleConfiguration();
+    private final ServerModuleRefresher refresher = new ServerModuleRefresher();
+    private final ServerModuleConfiguration configuration = new ServerModuleConfiguration(refresher);
     private final Configurator configurator = new Configurator(configuration);
     private final ServerModuleState state = new ServerModuleState();
 

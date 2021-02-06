@@ -20,7 +20,6 @@ package io.art.rsocket.communicator;
 
 import io.art.communicator.action.*;
 import io.art.communicator.implementation.*;
-import io.art.core.changes.*;
 import io.art.core.exception.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
@@ -70,19 +69,18 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
     @Getter(lazy = true, value = PRIVATE)
     private final CommunicatorAction communicatorAction = communicatorAction();
 
-    private final Property<RSocketClient> client = property(this::createClient, this::disposeClient);
+    private final Property<RSocketClient> client = property(this::createClient, this::disposeClient)
+            .listenConsumer(() -> communicatorConsumer().connectorConsumers().consumer(connectorConfiguration().getConnectorId()));
 
     private final Property<Function<Flux<Value>, Flux<Value>>> communicate = property(this::adoptCommunicate)
-            .listen(client);
+            .listenProperties(client);
 
     private final Property<RsocketSetupPayload> setupPayload = property(this::setupPayload)
-            .listen(client);
+            .listenProperties(client);
 
     @Override
     public void initialize() {
-        String connectorId = connectorConfiguration().getConnectorId();
-        ChangesConsumer consumer = communicatorConsumer().connectorConsumers().consumer(connectorId);
-        client.listen(consumer).initialize();
+        client.initialize();
     }
 
     @Override

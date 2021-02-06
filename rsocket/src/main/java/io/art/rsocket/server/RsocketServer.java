@@ -56,7 +56,7 @@ public class RsocketServer implements Server {
     public RsocketServer(RsocketModuleRefresher refresher, RsocketModuleConfiguration configuration) {
         this.configuration = configuration;
         channel = property(this::createServer, this::disposeServer)
-                .listen(refresher.consumer().serverConsumer())
+                .listenConsumer(refresher.consumer()::serverConsumer)
                 .initialized(this::setupCloser);
     }
 
