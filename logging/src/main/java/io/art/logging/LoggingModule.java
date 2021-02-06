@@ -84,6 +84,11 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
         }
     }
 
+    @Override
+    public void afterReload(Context.Service contextService) {
+        getLogManager().reset();
+    }
+
     private Logger currentLogger() {
         return configuration.isColored() ? new ColoredLogger(LoggingModule.class.getName()) : LogManager.getLogger(LoggingModule.class);
     }
