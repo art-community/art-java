@@ -101,7 +101,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
         public Configurator from(ConfigurationSource source) {
             configuration.scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
             configuration.configurations = ofNullable(source.getNested(SERVER_SECTION))
-                    .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, ServiceConfiguration::from))
+                    .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceConfiguration.from(configuration.refresher, service)))
                     .orElse(emptyImmutableMap());
             return this;
         }

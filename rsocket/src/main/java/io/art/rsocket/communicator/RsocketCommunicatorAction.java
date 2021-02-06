@@ -71,7 +71,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
 
     private final Property<RSocketClient> client = property(this::createClient, this::disposeClient).listenConsumer(() -> consumer()
             .connectorConsumers()
-            .consumer(connectorConfiguration().getConnectorId()));
+            .consumerFor(connectorConfiguration().getConnectorId()));
 
     private final Property<Function<Flux<Value>, Flux<Value>>> communicate = property(this::adoptCommunicate)
             .listenProperties(client);

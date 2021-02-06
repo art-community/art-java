@@ -56,7 +56,7 @@ public class ChangesListener {
         return consumer;
     }
 
-    public <T> T register(T value) {
+    public <T> T emit(T value) {
         int index = this.index.get();
         if (!created.get()) {
             values.add(value);

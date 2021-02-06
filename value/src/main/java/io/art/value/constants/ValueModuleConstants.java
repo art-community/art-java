@@ -48,7 +48,7 @@ public interface ValueModuleConstants {
     interface ExceptionMessages {
         String SERVICE_ID_NOT_PRESENTED = "Key 'serviceId' was not presented in: {0}";
         String METHOD_ID_NOT_PRESENTED = "Key 'methodId' was not presented in: {0}";
-        String UNKNOWN_VALUE_TYPE = "Unknown register type: ''{0}''";
+        String UNKNOWN_VALUE_TYPE = "Unknown emit type: ''{0}''";
         String TUPLE_NOT_SUPPORTED_VALUE_TYPE = "Value type: ''{0}'' not support for tuples";
         String NOT_PRIMITIVE_TYPE = "Not primitive type: ''{0}''";
         String XML_TAG_IS_EMPTY = "Xml tag is empty";

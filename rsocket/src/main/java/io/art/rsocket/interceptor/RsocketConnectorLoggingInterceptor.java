@@ -42,7 +42,7 @@ public class RsocketConnectorLoggingInterceptor implements RSocketInterceptor {
         enabled = property(this::enabled).listenConsumer(() -> configuration()
                 .getConsumer()
                 .connectorLoggingConsumers()
-                .consumer(connectorId));
+                .consumerFor(connectorId));
     }
 
     @Override

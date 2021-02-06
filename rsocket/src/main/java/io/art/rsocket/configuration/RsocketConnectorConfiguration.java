@@ -150,19 +150,19 @@ public class RsocketConnectorConfiguration {
         RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration();
         configuration.connectorId = source.getSection();
 
-        ChangesListener listener = refresher.connectorListeners().listener(configuration.connectorId);
-        ChangesListener loggingListener = refresher.connectorLoggingListeners().listener(configuration.connectorId);
+        ChangesListener listener = refresher.connectorListeners().listenerFor(configuration.connectorId);
+        ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(configuration.connectorId);
 
-        configuration.logging = loggingListener.register(orElse(source.getBool(LOGGING_KEY), defaults.logging));
+        configuration.logging = loggingListener.emit(orElse(source.getBool(LOGGING_KEY), defaults.logging));
 
-        configuration.dataFormat = listener.register(dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat));
-        configuration.metaDataFormat = listener.register(dataFormat(source.getString(META_DATA_FORMAT_KEY), defaults.metaDataFormat));
-        configuration.payloadDecoderMode = listener.register(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode));
-        configuration.maxInboundPayloadSize = listener.register(orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize));
-        configuration.fragment = listener.register(orElse(source.getInt(FRAGMENTATION_MTU_KEY), defaults.fragment));
-        configuration.keepAlive = listener.register(let(source.getNested(KEEP_ALIVE_SECTION), section -> rsocketKeepAlive(section, defaults.keepAlive), defaults.keepAlive));
-        configuration.resume = listener.register(let(source.getNested(RESUME_SECTION), section -> rsocketResume(section, defaults.resume), defaults.resume));
-        configuration.retry = listener.register(let(source.getNested(RECONNECT_SECTION), section -> rsocketRetry(section, defaults.retry), defaults.retry));
+        configuration.dataFormat = listener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat));
+        configuration.metaDataFormat = listener.emit(dataFormat(source.getString(META_DATA_FORMAT_KEY), defaults.metaDataFormat));
+        configuration.payloadDecoderMode = listener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode));
+        configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize));
+        configuration.fragment = listener.emit(orElse(source.getInt(FRAGMENTATION_MTU_KEY), defaults.fragment));
+        configuration.keepAlive = listener.emit(let(source.getNested(KEEP_ALIVE_SECTION), section -> rsocketKeepAlive(section, defaults.keepAlive), defaults.keepAlive));
+        configuration.resume = listener.emit(let(source.getNested(RESUME_SECTION), section -> rsocketResume(section, defaults.resume), defaults.resume));
+        configuration.retry = listener.emit(let(source.getNested(RECONNECT_SECTION), section -> rsocketRetry(section, defaults.retry), defaults.retry));
 
         RsocketSetupPayloadBuilder setupPayloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(configuration.dataFormat)
@@ -175,17 +175,17 @@ public class RsocketConnectorConfiguration {
             setupPayloadBuilder.serviceMethod(serviceMethod(serviceId, methodId));
         }
 
-        configuration.setupPayload = listener.register(setupPayloadBuilder.build());
+        configuration.setupPayload = listener.emit(setupPayloadBuilder.build());
 
         if (!source.has(TRANSPORT_SECTION) && isNull(defaults.transport)) {
             throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_SECTION)));
         }
 
-        configuration.transport = listener.register(rsocketTransport(source.getString(TRANSPORT_MODE_KEY), defaults.transport));
+        configuration.transport = listener.emit(rsocketTransport(source.getString(TRANSPORT_MODE_KEY), defaults.transport));
         switch (configuration.transport) {
             case TCP:
-                String host = listener.register(source.getString(TRANSPORT_TCP_HOST_KEY));
-                Integer port = listener.register(source.getInt(TRANSPORT_TCP_PORT_KEY));
+                String host = listener.emit(source.getString(TRANSPORT_TCP_HOST_KEY));
+                Integer port = listener.emit(source.getInt(TRANSPORT_TCP_PORT_KEY));
                 if (isEmpty(host) && isNull(defaults.tcpClient)) {
                     throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_TCP_HOST_KEY)));
                 }
@@ -196,10 +196,10 @@ public class RsocketConnectorConfiguration {
                     configuration.tcpClient = defaults.tcpClient;
                 }
                 configuration.tcpClient = orElse(configuration.tcpClient, TcpClient.create().port(port).host(host));
-                configuration.tcpMaxFrameLength = listener.register(orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), defaults.tcpMaxFrameLength));
+                configuration.tcpMaxFrameLength = listener.emit(orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), defaults.tcpMaxFrameLength));
                 break;
             case WS:
-                String url = listener.register(source.getString(TRANSPORT_WS_BASE_URL_KEY));
+                String url = listener.emit(source.getString(TRANSPORT_WS_BASE_URL_KEY));
                 if (isEmpty(url) && isNull(defaults.httpWebSocketClient)) {
                     throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_WS_BASE_URL_KEY)));
                 }
@@ -207,7 +207,7 @@ public class RsocketConnectorConfiguration {
                     configuration.httpWebSocketClient = defaults.httpWebSocketClient;
                 }
                 configuration.httpWebSocketClient = orElse(configuration.httpWebSocketClient, create().baseUrl(url));
-                configuration.httpWebSocketPath = listener.register(orElse(source.getString(TRANSPORT_WS_PATH_KEY), defaults.httpWebSocketPath));
+                configuration.httpWebSocketPath = listener.emit(orElse(source.getString(TRANSPORT_WS_PATH_KEY), defaults.httpWebSocketPath));
                 break;
         }
 

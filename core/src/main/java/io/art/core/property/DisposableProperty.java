@@ -48,15 +48,11 @@ public class DisposableProperty<T> implements Supplier<T> {
 
 
     public void dispose() {
-        dispose(value -> disposeConsumers.forEach(consumer -> consumer.accept(value)));
-    }
-
-    public void dispose(Consumer<T> action) {
         if (disposed()) return;
         while (nonNull(this.value)) {
             if (this.initialized.compareAndSet(true, false)) {
                 T current = this.value;
-                action.accept(current);
+                disposeConsumers.forEach(consumer -> consumer.accept(current));
                 this.value = null;
             }
         }

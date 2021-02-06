@@ -43,11 +43,6 @@ public class Property<T> implements Supplier<T> {
         return disposable.disposed();
     }
 
-
-    public void dispose(Consumer<T> action) {
-        disposable.dispose(action);
-    }
-
     public void dispose() {
         disposable.dispose();
     }
@@ -117,7 +112,6 @@ public class Property<T> implements Supplier<T> {
         dispose();
         T value = get();
         changeConsumers.forEach(consumer -> consumer.accept(value));
-        System.out.println("REFRESHING" + get());
     }
 
 

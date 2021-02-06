@@ -34,10 +34,9 @@ public class RsocketServerLoggingInterceptor implements RSocketInterceptor {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketServerLoggingInterceptor.class);
 
-    private final Property<Boolean> enabled = property(this::enabled).listenConsumer(() ->
-            configuration()
-                    .getConsumer()
-                    .serverLoggingConsumer());
+    private final Property<Boolean> enabled = property(this::enabled).listenConsumer(() -> configuration()
+            .getConsumer()
+            .serverLoggingConsumer());
 
     @Override
     public RSocket apply(RSocket rsocket) {

@@ -20,7 +20,6 @@ package io.art.core.extensions;
 
 import io.art.core.collection.*;
 import lombok.experimental.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collector.SetCollector.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
@@ -120,7 +119,9 @@ public final class CollectionExtensions {
     }
 
     public static <T> void erase(Queue<T> queue, Consumer<T> elementConsumer) {
-        while (nonNull(run(queue.poll(), elementConsumer))) {
+        T element;
+        while (nonNull(element = queue.poll())) {
+            elementConsumer.accept(element);
         }
     }
 }
