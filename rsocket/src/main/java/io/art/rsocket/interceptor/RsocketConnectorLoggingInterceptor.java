@@ -30,17 +30,20 @@ import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static lombok.AccessLevel.*;
 
-@RequiredArgsConstructor
 public class RsocketConnectorLoggingInterceptor implements RSocketInterceptor {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketConnectorLoggingInterceptor.class);
 
     private final String connectorId;
+    private final Property<Boolean> enabled;
 
-    private final Property<Boolean> enabled = property(this::enabled).listenConsumer(() -> configuration()
-            .getConsumer()
-            .connectorLoggingConsumers()
-            .consumer(connectorId));
+    public RsocketConnectorLoggingInterceptor(String connectorId) {
+        this.connectorId = connectorId;
+        enabled = property(this::enabled).listenConsumer(() -> configuration()
+                .getConsumer()
+                .connectorLoggingConsumers()
+                .consumer(connectorId));
+    }
 
     @Override
     public RSocket apply(RSocket rsocket) {

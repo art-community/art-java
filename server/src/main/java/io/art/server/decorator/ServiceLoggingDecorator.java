@@ -37,19 +37,24 @@ import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
-@RequiredArgsConstructor
 public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     private final MethodDecoratorScope scope;
     private final ServiceMethodIdentifier serviceMethodId;
-    private final Property<Boolean> enabled = property(() -> configuration().isLogging(serviceMethodId)).listenConsumer(() -> configuration()
-            .getConsumer()
-            .serverLoggingConsumer());
+    private final Property<Boolean> enabled;
 
     @Getter(lazy = true, value = PRIVATE)
     private final UnaryOperator<Flux<Object>> decorator = createDecorator();
 
     @Getter(lazy = true, value = PRIVATE)
     private final Logger logger = logger(ServiceLoggingDecorator.class.getSimpleName() + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
+
+    public ServiceLoggingDecorator(ServiceMethodIdentifier serviceMethodId, MethodDecoratorScope scope) {
+        this.scope = scope;
+        this.serviceMethodId = serviceMethodId;
+        enabled = property(() -> configuration().isLogging(serviceMethodId)).listenConsumer(() -> configuration()
+                .getConsumer()
+                .serverLoggingConsumer());
+    }
 
 
     @Override

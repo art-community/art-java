@@ -29,7 +29,6 @@ import reactor.core.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
 import static lombok.AccessLevel.*;
 
@@ -72,7 +71,6 @@ public class RsocketManager {
         if (rsocket.isDisposed()) {
             return;
         }
-        getLogger().info(RSOCKET_DISPOSING);
         ignoreException(rsocket::dispose, getLogger()::error);
     }
 }
