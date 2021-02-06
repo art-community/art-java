@@ -30,10 +30,6 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
         observer = new DeferredEventObserver(configuration);
     }
 
-    public static DeferredExecutorBuilder builder() {
-        return new DeferredExecutorBuilder();
-    }
-
     @Override
     public <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
         return observer.addEvent(eventTask, triggerTime);
@@ -65,10 +61,5 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
     @Override
     public void clear() {
         observer.clear();
-    }
-
-    static class DeferredExecutorConstants {
-        static final int DEFAULT_MAX_QUEUE_SIZE = MAX_VALUE - 8;
-        static final int DEFAULT_SHUTDOWN_TIMEOUT = 60 * 1000;
     }
 }

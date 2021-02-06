@@ -25,5 +25,5 @@ import java.util.function.*;
 @AllArgsConstructor
 public class RunnableTask {
     private final String id;
-    private final Consumer<String> runnable;
+    private final Consumer<String> action;
 }

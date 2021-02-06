@@ -22,12 +22,12 @@ import lombok.*;
 import java.lang.Thread.*;
 
 @Getter
-@Setter
+@Builder
 class DeferredExecutorConfiguration {
-    private ExceptionHandler exceptionHandler;
-    private UncaughtExceptionHandler threadPoolExceptionHandler;
-    private int eventsQueueMaxSize;
-    private int threadPoolCoreSize;
-    private boolean awaitAllTasksTerminationOnShutdown;
-    private long threadPoolTerminationTimeout;
+    private final ExceptionHandler exceptionHandler;
+    private final UncaughtExceptionHandler threadPoolExceptionHandler;
+    private final int eventsQueueMaxSize;
+    private final int threadPoolCoreSize;
+    private final boolean awaitAllTasksTerminationOnShutdown;
+    private final long threadPoolTerminationTimeout;
 }

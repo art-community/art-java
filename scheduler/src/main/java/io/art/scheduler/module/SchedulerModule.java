@@ -23,6 +23,7 @@ import io.art.core.module.*;
 import io.art.scheduler.executor.deferred.*;
 import io.art.scheduler.executor.periodic.*;
 import lombok.*;
+import static io.art.core.constants.DateTimeConstants.YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT;
 import static io.art.core.context.Context.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.*;
 import static io.art.scheduler.factory.TaskFactory.*;
@@ -63,11 +64,12 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
 
     @Override
     public void beforeReload(Context.Service contextService) {
-        periodicExecutor().cancelPeriodicTask(REFRESHER_TASK);
+        cancelTask(REFRESHER_TASK);
     }
 
     @Override
     public void afterReload(Context.Service contextService) {
+        System.out.println("reload at: " + LocalDateTime.now().format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT));
         Duration duration = configuration.getRefreshDuration();
         if (isNull(duration)) return;
         scheduleDelayed(task(REFRESHER_TASK, contextService::reload), now().plus(duration), duration);

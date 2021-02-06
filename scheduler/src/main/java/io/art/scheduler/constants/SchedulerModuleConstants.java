@@ -19,9 +19,21 @@
 package io.art.scheduler.constants;
 
 import lombok.*;
+import static java.lang.Integer.*;
 
 public interface SchedulerModuleConstants {
     String REFRESHER_TASK = "REFRESHER_TASK";
+
+    enum PeriodicTaskMode {
+        FIXED,
+        DELAYED
+    }
+
+
+    interface Defaults {
+        int DEFAULT_MAX_QUEUE_SIZE = MAX_VALUE - 8;
+        long DEFAULT_SHUTDOWN_TIMEOUT = 60 * 1000;
+    }
 
     interface ConfigurationKeys {
         String CONFIGURATOR_REFRESH_DURATION = "configurator.refresh.duration";

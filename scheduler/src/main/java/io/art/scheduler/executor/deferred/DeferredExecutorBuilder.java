@@ -18,8 +18,9 @@
 
 package io.art.scheduler.executor.deferred;
 
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.ThreadConstants.*;
-import static io.art.scheduler.executor.deferred.DeferredExecutorImplementation.DeferredExecutorConstants.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.Defaults.*;
 import static java.lang.Thread.*;
 import static java.util.Objects.*;
 
@@ -62,13 +63,13 @@ public class DeferredExecutorBuilder {
     }
 
     public DeferredExecutor build() {
-        DeferredExecutorConfiguration executorConfiguration = new DeferredExecutorConfiguration();
-        executorConfiguration.setExceptionHandler(isNull(exceptionHandler) ? new DeferredExecutorExceptionHandler() : exceptionHandler);
-        executorConfiguration.setEventsQueueMaxSize(isNull(eventsQueueMaxSize) ? DEFAULT_MAX_QUEUE_SIZE : eventsQueueMaxSize);
-        executorConfiguration.setThreadPoolCoreSize(isNull(threadPoolCoreSize) ? DEFAULT_THREAD_POOL_SIZE : threadPoolCoreSize);
-        executorConfiguration.setThreadPoolExceptionHandler(isNull(threadPoolExceptionHandler) ? new DeferredExecutorUncaughtExceptionHandler() : threadPoolExceptionHandler);
-        executorConfiguration.setAwaitAllTasksTerminationOnShutdown(nonNull(awaitAllTasksTerminationOnShutdown) && awaitAllTasksTerminationOnShutdown);
-        executorConfiguration.setThreadPoolTerminationTimeout(isNull(threadPoolTerminationTimeout) ? DEFAULT_SHUTDOWN_TIMEOUT : threadPoolTerminationTimeout);
-        return new DeferredExecutorImplementation(executorConfiguration);
+        return new DeferredExecutorImplementation(DeferredExecutorConfiguration.builder()
+                .exceptionHandler(orElse(exceptionHandler, new DeferredExecutorExceptionHandler()))
+                .eventsQueueMaxSize(orElse(eventsQueueMaxSize, DEFAULT_MAX_QUEUE_SIZE))
+                .threadPoolCoreSize(orElse(threadPoolCoreSize, DEFAULT_THREAD_POOL_SIZE))
+                .threadPoolExceptionHandler(orElse(threadPoolExceptionHandler, new DeferredExecutorUncaughtExceptionHandler()))
+                .awaitAllTasksTerminationOnShutdown(nonNull(awaitAllTasksTerminationOnShutdown) && awaitAllTasksTerminationOnShutdown)
+                .threadPoolTerminationTimeout(orElse(threadPoolTerminationTimeout, DEFAULT_SHUTDOWN_TIMEOUT))
+                .build());
     }
 }

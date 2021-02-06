@@ -33,4 +33,9 @@ public interface DeferredExecutor {
     void shutdown();
 
     void clear();
+
+    static DeferredExecutorBuilder builder() {
+        return new DeferredExecutorBuilder();
+    }
+
 }

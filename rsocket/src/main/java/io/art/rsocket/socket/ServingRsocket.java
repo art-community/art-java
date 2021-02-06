@@ -59,10 +59,8 @@ public class ServingRsocket implements RSocket {
 
     public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket, RsocketServerConfiguration serverConfiguration) {
         moduleState.registerRequester(this.requesterSocket = requesterSocket);
-        DataFormat defaultDataFormat = serverConfiguration.getDefaultDataFormat();
-        DataFormat defaultMetaDataFormat = serverConfiguration.getDefaultMetaDataFormat();
-        DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()), defaultDataFormat);
-        DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()), defaultMetaDataFormat);
+        DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()), serverConfiguration.getDefaultDataFormat());
+        DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()), serverConfiguration.getDefaultMetaDataFormat());
         reader = new RsocketPayloadReader(dataFormat, metaDataFormat);
         writer = new RsocketPayloadWriter(dataFormat, metaDataFormat);
         RsocketPayloadValue payloadMetaData = reader.readPayloadMetaData(payload);
