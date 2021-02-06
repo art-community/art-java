@@ -27,6 +27,7 @@ public interface LoggingModuleConstants {
     interface ConfigurationKeys {
         String LOGGING_SECTION = "logging";
         String COLORED_KEY = "colored";
+        String ENABLED_KEY = "enabled";
         String ASYNCHRONOUS_KEY = "asynchronous";
         String CONFIGURATION_PATH_KEY = "configuration.path";
     }

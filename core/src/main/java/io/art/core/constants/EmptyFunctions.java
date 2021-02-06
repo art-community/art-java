@@ -13,6 +13,15 @@ public interface EmptyFunctions {
         };
     }
 
+    static <T, U> BiConsumer<T, U> emptyBiConsumer() {
+        return (T first, U second) -> {
+        };
+    }
+
+    static <T, U, R> BiFunction<T, U, R> emptyBiFunction() {
+        return (T first, U second) -> null;
+    }
+
     static <T> Supplier<T> emptySupplier() {
         return () -> null;
     }
