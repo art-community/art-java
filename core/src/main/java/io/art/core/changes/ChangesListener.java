@@ -3,6 +3,7 @@ package io.art.core.changes;
 import io.art.core.local.*;
 import io.art.core.property.*;
 import lombok.*;
+import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.local.ThreadLocalValue.*;
@@ -19,7 +20,14 @@ public class ChangesListener {
     private final AtomicBoolean pending = new AtomicBoolean();
     private final List<Runnable> consumers = copyOnWriteList();
     private final List<Object> values = copyOnWriteList();
+
+    @Getter
+    @Accessors(fluent = true)
     private final ChangesConsumer consumer = new ChangesConsumer(this);
+
+    @Getter
+    @Accessors(fluent = true)
+    private final ChangesProducer producer = new ChangesProducer(this);
 
     public ChangesListener lock() {
         lock.lock();
@@ -50,10 +58,6 @@ public class ChangesListener {
     public <T> Property<T> consume(Property<T> property) {
         consumers.add(property::refresh);
         return property;
-    }
-
-    public ChangesConsumer consumer() {
-        return consumer;
     }
 
     public <T> T emit(T value) {

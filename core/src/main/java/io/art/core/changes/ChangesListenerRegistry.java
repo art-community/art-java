@@ -15,6 +15,9 @@ public class ChangesListenerRegistry {
     @Getter
     private final ChangesConsumerRegistry consumers = new ChangesConsumerRegistry(this);
 
+    @Getter
+    private final ChangesProducerRegistry producers = new ChangesProducerRegistry(this);
+
 
     public ChangesListener listenerFor(String id) {
         if (!listeners.containsKey(id)) {

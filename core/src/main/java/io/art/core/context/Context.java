@@ -21,7 +21,6 @@ package io.art.core.context;
 import io.art.core.collection.*;
 import io.art.core.configuration.*;
 import io.art.core.exception.*;
-import io.art.core.module.Module;
 import io.art.core.module.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
