@@ -34,9 +34,13 @@ import static io.art.value.mapping.ServiceMethodMapping.*;
 
 @Value
 @Builder(toBuilder = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class RsocketSetupPayload {
+    @EqualsAndHashCode.Include
     DataFormat dataFormat;
+    @EqualsAndHashCode.Include
     DataFormat metadataFormat;
+    @EqualsAndHashCode.Include
     ServiceMethodIdentifier serviceMethod;
 
     @Getter(lazy = true)

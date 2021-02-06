@@ -117,6 +117,7 @@ public class Property<T> implements Supplier<T> {
         dispose();
         T value = get();
         changeConsumers.forEach(consumer -> consumer.accept(value));
+        System.out.println("REFRESHING" + get());
     }
 
 

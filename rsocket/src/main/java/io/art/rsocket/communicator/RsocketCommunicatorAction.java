@@ -109,21 +109,21 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
             case TCP:
                 TcpClient tcpClient = connectorConfiguration.getTcpClient();
                 int tcpMaxFrameLength = connectorConfiguration.getTcpMaxFrameLength();
-                Mono<RSocket> socket = connector.connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength));
+                Mono<RSocket> socket = connector
+                        .connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength))
+                        .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
                 if (connectorConfiguration.isLogging()) {
-                    socket = socket
-                            .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)))
-                            .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+                    socket = socket.doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)));
                 }
                 return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
             case WS:
                 HttpClient httpWebSocketClient = connectorConfiguration.getHttpWebSocketClient();
                 String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
-                socket = connector.connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath));
+                socket = connector
+                        .connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath))
+                        .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
                 if (connectorConfiguration.isLogging()) {
-                    socket = socket
-                            .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)))
-                            .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+                    socket = socket.doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)));
                 }
                 return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
         }
