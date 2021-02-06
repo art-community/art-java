@@ -69,7 +69,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
     @Getter(lazy = true, value = PRIVATE)
     private final CommunicatorAction communicatorAction = communicatorAction();
 
-    private final Property<RSocketClient> client = property(this::createClient, this::disposeClient).listenConsumer(() -> communicatorConsumer()
+    private final Property<RSocketClient> client = property(this::createClient, this::disposeClient).listenConsumer(() -> consumer()
             .connectorConsumers()
             .consumer(connectorConfiguration().getConnectorId()));
 
@@ -217,7 +217,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
         return REQUEST_RESPONSE;
     }
 
-    private RsocketModuleRefresher.Consumer communicatorConsumer() {
+    private RsocketModuleRefresher.Consumer consumer() {
         return rsocketModule().configuration().getConsumer();
     }
 }
