@@ -2,12 +2,11 @@ package io.art.model.implementation.storage;
 
 import io.art.storage.space.Space;
 import io.art.tarantool.space.TarantoolSpace;
-import io.art.value.immutable.Value;
+import io.art.tarantool.transaction.TarantoolTransactionManager;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -21,7 +20,7 @@ public class TarantoolSpaceModel implements SpaceModel {
     private final String space;
     private final Class<?> spaceModelClass;
     private final Class<?> primaryKeyClass;
-    private final Map<String, TarantoolIndexModel> searchers;
+    private final Map<String, Class<?>> searchers;
     private final Map<String, TarantoolSortMethodModel> sorters;
     private final Function<?, Long> bucketIdGenerator;
 
@@ -29,18 +28,13 @@ public class TarantoolSpaceModel implements SpaceModel {
         return spaceModelClass.getSimpleName();
     }
 
-    public Supplier<Space<?, ?>> implement(Function<Optional<Value>, Optional<?>> toModelMapper,
-                                           Function<?, Value> fromModelMapper,
-                                           Function<?, Value> keyMapper){
-        return ()-> {
-            TarantoolSpace<?,?> newSpace = tarantoolInstance(cluster).spaceBuilder()
-                .space(space)
-                .toModelMapper(cast(toModelMapper))
-                .fromModelMapper(cast(fromModelMapper))
-                .keyMapper(cast(keyMapper))
-                .build();
-            newSpace.setBucketIdGenerator(cast(bucketIdGenerator));
-            return newSpace;
-        };
+    @Override
+    public Class<?> getBasicSpaceInterface() {
+        return TarantoolSpace.class;
+    }
+
+    @Override
+    public Supplier<Space<?, ?>> implement(Function<?, Space<?, ?>> generatedSpaceBuilder) {
+        return () -> generatedSpaceBuilder.apply(cast(tarantoolInstance(cluster).getTransactionManager()));
     }
 }

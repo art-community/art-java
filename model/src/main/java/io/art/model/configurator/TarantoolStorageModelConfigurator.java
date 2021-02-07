@@ -19,7 +19,7 @@ public class TarantoolStorageModelConfigurator {
     private final String space;
     private final Class<?> spaceModelClass;
     private final Class<?> primaryKeyClass;
-    private final Map<String, TarantoolIndexModel> searchers = map();
+    private final Map<String, Class<?>> searchers = map();
     private final Map<String, TarantoolSortMethodModel> sorters = map();
     private Function<?, Long> bucketIdGenerator = emptyFunction();
 
@@ -39,8 +39,8 @@ public class TarantoolStorageModelConfigurator {
         return this;
     }
 
-    public TarantoolStorageModelConfigurator searchBy(String indexName, Class<?>... fieldTypes){
-        searchers.put(indexName, new TarantoolIndexModel(fieldTypes));
+    public TarantoolStorageModelConfigurator searchBy(String indexName, Class<?> keyClass){
+        searchers.put(indexName, keyClass);
         return this;
     }
 

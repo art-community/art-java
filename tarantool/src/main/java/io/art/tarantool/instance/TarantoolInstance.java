@@ -3,7 +3,7 @@ package io.art.tarantool.instance;
 import io.art.tarantool.configuration.space.TarantoolSpaceConfig;
 import io.art.tarantool.configuration.space.TarantoolSpaceFormat;
 import io.art.tarantool.configuration.space.TarantoolSpaceIndex;
-import io.art.tarantool.space.TarantoolSpace;
+import io.art.tarantool.space.*;
 import io.art.tarantool.transaction.TarantoolTransactionManager;
 import io.art.tarantool.model.record.TarantoolRecord;
 import io.art.tarantool.model.mapping.TarantoolResponseMapping;
@@ -27,6 +27,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class TarantoolInstance {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(TarantoolInstance.class);
+    @Getter
     private final TarantoolTransactionManager transactionManager;
 
 
@@ -39,7 +40,7 @@ public class TarantoolInstance {
     }
 
     public TarantoolSpace<Value, Value> space(String space){
-        return cast(TarantoolSpace.builder()
+        return cast(TarantoolSpaceImplementation.builder()
                 .space(space)
                 .transactionManager(transactionManager)
                 .fromModelMapper(cast(identity()))
@@ -53,7 +54,7 @@ public class TarantoolInstance {
                                              Function<Optional<Value>, Optional<T>> toModelMapper,
                                              Function<T, Value> fromModelMapper,
                                              Function<K, Value> keyMapper){
-        return cast(TarantoolSpace.builder()
+        return cast(TarantoolSpaceImplementation.builder()
                 .space(space)
                 .transactionManager(transactionManager)
                 .fromModelMapper(cast(fromModelMapper))

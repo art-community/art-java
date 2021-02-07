@@ -1,13 +1,13 @@
 package io.art.storage.registry;
 
-import io.art.core.lazy.LazyValue;
+import io.art.core.managed.LazyValue;
 import io.art.storage.space.Space;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
 import static io.art.core.factory.MapFactory.map;
-import static io.art.core.lazy.LazyValue.lazy;
+import static io.art.core.managed.LazyValue.lazy;
 
 public class StorageSpacesRegistry {
     private final Map<String, LazyValue<Space<?,?>>> spaces = map();

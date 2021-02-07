@@ -74,4 +74,6 @@ public interface StringConstants {
     String EXCLAMATION_MARK = "!";
     String LESS = "<";
     String MORE = ">";
+    String JAVA_SOURCE_FILE_EXTENSION = ".java";
+    String JAVA_CLASS_FILE_EXTENSION = ".class";
 }

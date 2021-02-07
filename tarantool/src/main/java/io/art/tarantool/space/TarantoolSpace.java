@@ -1,238 +1,60 @@
 package io.art.tarantool.space;
 
-import io.art.core.collection.ImmutableArray;
-import io.art.core.factory.MapFactory;
-import io.art.tarantool.constants.TarantoolModuleConstants;
-import io.art.tarantool.transaction.TarantoolTransactionManager;
-import io.art.tarantool.model.transaction.dependency.TarantoolTransactionDependency;
-import io.art.tarantool.model.record.TarantoolRecord;
-import io.art.tarantool.model.operation.TarantoolUpdateFieldOperation;
-import io.art.value.immutable.Value;
-import io.art.tarantool.model.mapping.TarantoolResponseMapping;
-import io.art.storage.space.Space;
-import lombok.Builder;
-import lombok.Setter;
-
-
+import io.art.core.collection.*;
+import io.art.storage.space.*;
+import io.art.tarantool.model.operation.*;
+import io.art.tarantool.model.record.*;
+import io.art.tarantool.model.transaction.dependency.*;
+import io.art.value.immutable.*;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Stream;
+import io.art.tarantool.space.TarantoolSpaceImplementation.SelectRequest;
 
-import static io.art.core.caster.Caster.cast;
-import static io.art.core.collection.ImmutableArray.immutableArrayCollector;
-import static io.art.core.constants.EmptyFunctions.emptyFunction;
-import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.SelectOptions.*;
-import static io.art.tarantool.model.mapping.TarantoolRequestMapping.*;
-import static io.art.tarantool.model.mapping.TarantoolResponseMapping.toValue;
-import static io.art.tarantool.model.mapping.TarantoolResponseMapping.toValuesArray;
+public interface TarantoolSpace<T, K> extends Space<T, K> {
 
-public class TarantoolSpace<T, K> implements Space<T, K> {
-    private final TarantoolTransactionManager transactionManager;
-    private final String space;
-    private final Function<Optional<Value>, Optional<T>> toModelMapper;
-    private final Function<T, Value> fromModelMapper;
-    private final Function<K, Value> keyMapper;
-    private final Function<List<?>, Optional<?>> selectToModelMapper;
-    @Setter
-    private Function<T, Long> bucketIdGenerator = emptyFunction();
+    TarantoolRecord<T> get(K key);
+    TarantoolRecord<T> get(TarantoolTransactionDependency keyDependency);
 
-    @Builder
-    public TarantoolSpace(String space,
-                          TarantoolTransactionManager transactionManager,
-                          Function<Optional<Value>, Optional<T>> toModelMapper,
-                          Function<T, Value> fromModelMapper,
-                          Function<K, Value> keyMapper){
-        this.space = space;
-        this.transactionManager = transactionManager;
-        this.toModelMapper = toModelMapper;
-        this.fromModelMapper = fromModelMapper;
-        this.keyMapper = keyMapper;
-        selectToModelMapper = response -> toValuesArray(response).map(values -> values.stream()
-                        .map(entry -> toModelMapper.apply(Optional.of(entry)).get())
-                        .collect(immutableArrayCollector()));
-    }
+    TarantoolRecord<T> get(String index, Value key);
+    TarantoolRecord<T> get(String index, TarantoolTransactionDependency keyDependency);
 
+    TarantoolRecord<ImmutableArray<T>> getAll();
 
-    public TarantoolRecord<T> get(K key){
-        return cast(transactionManager.callRO(GET, response -> toModelMapper.apply(toValue(response)), space,
-                requestTuple(keyMapper.apply(key))));
-    }
+    SelectRequest select(Value request);
+    SelectRequest select(TarantoolTransactionDependency requestDependency);
 
-    public TarantoolRecord<T> get(TarantoolTransactionDependency keyDependency){
-        return cast(transactionManager.callRO(GET, response -> toModelMapper.apply(toValue(response)), space, keyDependency.get()));
-    }
+    TarantoolRecord<T> delete(K key);
+    TarantoolRecord<T> delete(TarantoolTransactionDependency keyDependency);
 
-    public TarantoolRecord<T> get(String index, Value key){
-        return cast(transactionManager.callRO(GET, response -> toModelMapper.apply(toValue(response)), space, index,
-                requestTuple(key)));
-    }
+    TarantoolRecord<T> insert(T data);
+    TarantoolRecord<T> insert(TarantoolTransactionDependency dataDependency);
 
-    public TarantoolRecord<T> get(String index, TarantoolTransactionDependency keyDependency){
-        return cast(transactionManager.callRO(GET, response -> toModelMapper.apply(toValue(response)), space, index, keyDependency.get()));
-    }
+    TarantoolRecord<T> put(T data);
+    TarantoolRecord<T> put(TarantoolTransactionDependency dataDependency);
 
+    TarantoolRecord<T> replace(T data);
+    TarantoolRecord<T> replace(TarantoolTransactionDependency dataDependency);
 
-    public TarantoolRecord<ImmutableArray<T>> getAll(){
-        return cast(transactionManager.callRO(SELECT, selectToModelMapper, space));
-    }
+    TarantoolRecord<T> update(K key, TarantoolUpdateFieldOperation... operations);
+    TarantoolRecord<T> update(TarantoolTransactionDependency keyDependency, TarantoolUpdateFieldOperation... operations);
 
+    TarantoolRecord<T> upsert(T defaultData, TarantoolUpdateFieldOperation... operations);
+    TarantoolRecord<T> upsert(TarantoolTransactionDependency defaultDataDependency, TarantoolUpdateFieldOperation... operations);
 
-    public SelectRequest select(Value request){
-        return new SelectRequest(request);
-    }
+    TarantoolRecord<Long> count();
+    TarantoolRecord<Long> len();
 
-    public SelectRequest select(TarantoolTransactionDependency requestDependency){
-        return new SelectRequest(requestDependency);
-    }
+    void truncate();
 
+    TarantoolRecord<Set<String>> listIndices();
 
-    public TarantoolRecord<T> delete(K key){
-        return cast(transactionManager.callRW(DELETE, response -> toModelMapper.apply(toValue(response)), space,
-                requestTuple(keyMapper.apply(key))));
-    }
+    Long bucketOf(T data);
 
-    public TarantoolRecord<T> delete(TarantoolTransactionDependency keyDependency){
-        return cast(transactionManager.callRW(DELETE, response -> toModelMapper.apply(toValue(response)), space, keyDependency.get()));
-    }
+    void beginTransaction();
 
+    void beginTransaction(Long bucketId);
 
-    public TarantoolRecord<T> insert(T data){
-        return cast(transactionManager.callRW(INSERT, response -> toModelMapper.apply(toValue(response)), space,
-                dataTuple(fromModelMapper.apply(data)), bucketIdGenerator.apply(data)));
-    }
+    void commitTransaction();
 
-    public TarantoolRecord<T> insert(TarantoolTransactionDependency dataDependency){
-        return cast(transactionManager.callRW(INSERT, response -> toModelMapper.apply(toValue(response)), space,
-                dataDependency.get()));
-    }
-
-
-    public TarantoolRecord<T> put(T data){
-        return cast(transactionManager.callRW(PUT, response -> toModelMapper.apply(toValue(response)), space,
-                dataTuple(fromModelMapper.apply(data)), bucketIdGenerator.apply(data)));
-    }
-
-    public TarantoolRecord<T> put(TarantoolTransactionDependency dataDependency){
-        return cast(transactionManager.callRW(PUT, response -> toModelMapper.apply(toValue(response)), space,
-                dataDependency.get()));
-    }
-
-
-    public TarantoolRecord<T> replace(T data){
-        return cast(transactionManager.callRW(REPLACE, response -> toModelMapper.apply(toValue(response)), space,
-                dataTuple(fromModelMapper.apply(data)), bucketIdGenerator.apply(data)));
-    }
-
-    public TarantoolRecord<T> replace(TarantoolTransactionDependency dataDependency){
-        return cast(transactionManager.callRW(REPLACE, response -> toModelMapper.apply(toValue(response)), space,
-                dataDependency.get()));
-    }
-
-
-    public TarantoolRecord<T> update(K key, TarantoolUpdateFieldOperation... operations){
-        return cast(transactionManager.callRW(UPDATE, response -> toModelMapper.apply(toValue(response)), space,
-                requestTuple(keyMapper.apply(key)), updateOperationsTuple(operations)));
-    }
-
-    public TarantoolRecord<T> update(TarantoolTransactionDependency keyDependency, TarantoolUpdateFieldOperation... operations){
-        return cast(transactionManager.callRW(UPDATE, response -> toModelMapper.apply(toValue(response)), space,
-                keyDependency.get(), updateOperationsTuple(operations)));
-    }
-
-
-    public TarantoolRecord<T> upsert(T defaultData, TarantoolUpdateFieldOperation... operations){
-        return cast(transactionManager.callRW(UPSERT, response -> toModelMapper.apply(toValue(response)), space,
-                dataTuple(fromModelMapper.apply(defaultData)), updateOperationsTuple(operations), bucketIdGenerator.apply(defaultData)));
-    }
-
-    public TarantoolRecord<T> upsert(TarantoolTransactionDependency defaultDataDependency, TarantoolUpdateFieldOperation... operations){
-        return cast(transactionManager.callRW(UPSERT, response -> toModelMapper.apply(toValue(response)), space,
-                defaultDataDependency.get(), updateOperationsTuple(operations)));
-    }
-
-
-    public TarantoolRecord<Long> count(){
-        return cast(transactionManager.callRO(COUNT, TarantoolResponseMapping::toLong, space));
-    }
-
-    public TarantoolRecord<Long> len(){
-        return cast(transactionManager.callRO(LEN, TarantoolResponseMapping::toLong, space));
-    }
-
-
-    public void truncate(){
-        transactionManager.callRW(TRUNCATE, TarantoolResponseMapping::toEmpty, space);
-    }
-
-    public TarantoolRecord<Set<String>> listIndices(){
-        return cast(transactionManager.callRO(LIST_INDICES, TarantoolResponseMapping::toStringSet, space));
-    }
-
-    public Long bucketOf(T data){
-        return bucketIdGenerator.apply(data);
-    }
-
-    public void beginTransaction(){
-        transactionManager.begin();
-    }
-
-    public void beginTransaction(Long bucketId){
-        transactionManager.begin(bucketId);
-    }
-
-    public void commitTransaction(){
-        transactionManager.commit();
-    }
-
-    public void cancelTransaction(){
-        transactionManager.cancel();
-    }
-
-    public class SelectRequest {
-        private final Object request;
-        private final Map<String, Object> options = MapFactory.map();
-        private Object index = 0;
-
-        public SelectRequest(Value request) {
-            this.request = requestTuple(request);
-        }
-
-        public SelectRequest(TarantoolTransactionDependency requestDependency) {
-            this.request = requestDependency.get();
-        }
-
-        public SelectRequest index(String index) {
-            this.index = index;
-            return this;
-        }
-
-        public SelectRequest limit(Long limit) {
-            options.put(LIMIT, limit);
-            return this;
-        }
-
-        public SelectRequest offset(Long offset) {
-            options.put(OFFSET, offset);
-            return this;
-        }
-
-        public SelectRequest iterator(TarantoolModuleConstants.TarantoolIndexIterator iterator){
-            options.put(ITERATOR, iterator.toString());
-            return this;
-        }
-
-        public TarantoolRecord<ImmutableArray<T>> execute(){
-            return cast(transactionManager.callRO(SELECT, selectToModelMapper, space, request, index, options));
-        }
-
-        public ImmutableArray<T> get(){
-            return execute().get();
-        }
-
-        public Stream<T> stream() {
-            return execute().get().stream();
-        }
-    }
+    void cancelTransaction();
 
 }

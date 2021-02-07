@@ -34,7 +34,7 @@ public class StorageModelConfigurator {
     }
 
     StorageModuleModel configure() {
-        ImmutableMap<String, SpaceModel> tarantoolSpaces = this.tarantoolConfigurators.build()
+        ImmutableMap<String, TarantoolSpaceModel> tarantoolSpaces = this.tarantoolConfigurators.build()
                 .stream()
                 .map(TarantoolStorageModelConfigurator::configure)
                 .collect(immutableMapCollector(TarantoolSpaceModel::getId, identity()));
