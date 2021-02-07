@@ -148,7 +148,7 @@ public class RsocketConnectorConfiguration {
 
     public static RsocketConnectorConfiguration rsocketConnector(RsocketModuleRefresher refresher, RsocketConnectorConfiguration defaults, ConfigurationSource source) {
         RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration();
-        configuration.connectorId = source.getSection();
+        configuration.connectorId = source.getParent();
 
         ChangesListener listener = refresher.connectorListeners().listenerFor(configuration.connectorId);
         ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(configuration.connectorId);
