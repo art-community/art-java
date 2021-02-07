@@ -9,16 +9,19 @@ import static io.art.core.changes.ChangesListener.*;
 @Getter
 @Accessors(fluent = true)
 public class ServerModuleRefresher implements ModuleRefresher {
+    private final ChangesListener serverDeactivationListener = changesListener();
     private final ChangesListener serverLoggingListener = changesListener();
     private final Consumer consumer = new Consumer();
 
     public void produce() {
         serverLoggingListener.produce();
+        serverDeactivationListener.produce();
     }
 
     @Getter
     @Accessors(fluent = true)
     public class Consumer {
         private final ChangesConsumer serverLoggingConsumer = serverLoggingListener.consumer();
+        private final ChangesConsumer serverDeactivationConsumer = serverDeactivationListener.consumer();
     }
 }

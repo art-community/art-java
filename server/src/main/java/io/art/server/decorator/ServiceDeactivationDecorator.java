@@ -18,12 +18,14 @@
 
 package io.art.server.decorator;
 
-import io.art.core.property.*;
 import io.art.core.model.*;
+import io.art.core.property.*;
+import io.art.server.configuration.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
 import static io.art.core.property.DisposableProperty.*;
+import static io.art.core.property.Property.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.module.ServerModule.*;
 import static lombok.AccessLevel.*;
@@ -33,16 +35,28 @@ public class ServiceDeactivationDecorator implements UnaryOperator<Flux<Object>>
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(ServiceDeactivationDecorator.class);
     private final DisposableProperty<UnaryOperator<Flux<Object>>> decorator = disposable(this::createDecorator);
-    private final Supplier<Boolean> enabled;
+    private final Property<Boolean> enabled;
 
     public ServiceDeactivationDecorator(ServiceMethodIdentifier serviceMethodId) {
-        this.enabled = () -> serverModule().configuration().isDeactivated(serviceMethodId);
+        this.enabled = property(enabled(serviceMethodId)).listenConsumer(() -> configuration()
+                .getConsumer()
+                .serverDeactivationConsumer());
+    }
+
+    private Supplier<Boolean> enabled(ServiceMethodIdentifier serviceMethodId) {
+        return () -> configuration().isDeactivated(serviceMethodId);
     }
 
     @Override
     public Flux<Object> apply(Flux<Object> input) {
         return decorator.get().apply(input);
     }
+
+
+    private ServerModuleConfiguration configuration() {
+        return serverModule().configuration();
+    }
+
 
     private UnaryOperator<Flux<Object>> createDecorator() {
         return input -> input.filter(ignored -> enabled.get());

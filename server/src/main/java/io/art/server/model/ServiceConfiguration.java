@@ -39,7 +39,8 @@ public class ServiceConfiguration {
     public static ServiceConfiguration from(ServerModuleRefresher refresher, ConfigurationSource source) {
         ServiceConfiguration configuration = new ServiceConfiguration();
         ChangesListener loggingListener = refresher.serverLoggingListener();
-        configuration.deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
+        ChangesListener deactivationListener = refresher.serverDeactivationListener();
+        configuration.deactivated = deactivationListener.emit(orElse(source.getBool(DEACTIVATED_KEY), false));
         configuration.logging = loggingListener.emit(orElse(source.getBool(LOGGING_KEY), true));
         configuration.validating = orElse(source.getBool(VALIDATING_KEY), true);
         configuration.scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
