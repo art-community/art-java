@@ -16,30 +16,30 @@
  * limitations under the License.
  */
 
-package io.art.server.decorator;
+package io.art.communicator.decorator;
 
+import io.art.communicator.action.*;
+import io.art.communicator.configuration.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
-import io.art.server.configuration.*;
-import io.art.server.specification.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
-import static io.art.core.model.ServiceMethodIdentifier.*;
+import static io.art.communicator.module.CommunicatorModule.*;
+import static io.art.core.model.CommunicatorActionIdentifier.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.server.module.ServerModule.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
-public class ServiceDeactivationDecorator implements UnaryOperator<Flux<Object>> {
+public class CommunicatorDeactivationDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(ServiceDeactivationDecorator.class);
+    private static final Logger logger = logger(CommunicatorDeactivationDecorator.class);
     private final Property<Boolean> enabled;
 
-    public ServiceDeactivationDecorator(ServiceMethodSpecification specification) {
-        ServiceMethodIdentifier serviceMethodId = serviceMethod(specification.getServiceId(), specification.getMethodId());
-        this.enabled = property(enabled(serviceMethodId)).listenConsumer(() -> configuration()
+    public CommunicatorDeactivationDecorator(CommunicatorAction action) {
+        CommunicatorActionIdentifier communicatorAction = communicatorAction(action.getCommunicatorId(), action.getActionId());
+        this.enabled = property(enabled(communicatorAction)).listenConsumer(() -> configuration()
                 .getConsumer()
                 .deactivationConsumer());
     }
@@ -50,11 +50,11 @@ public class ServiceDeactivationDecorator implements UnaryOperator<Flux<Object>>
     }
 
 
-    private ServerModuleConfiguration configuration() {
-        return serverModule().configuration();
+    private CommunicatorModuleConfiguration configuration() {
+        return communicatorModule().configuration();
     }
 
-    private Supplier<Boolean> enabled(ServiceMethodIdentifier serviceMethodId) {
-        return () -> configuration().isDeactivated(serviceMethodId);
+    private Supplier<Boolean> enabled(CommunicatorActionIdentifier communicatorAction) {
+        return () -> configuration().isDeactivated(communicatorAction);
     }
 }

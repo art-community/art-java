@@ -19,6 +19,7 @@
 package io.art.server.decorator;
 
 import io.art.core.constants.*;
+import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.server.configuration.*;
 import io.art.server.specification.*;
@@ -50,9 +51,10 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     public ServiceLoggingDecorator(ServiceMethodSpecification specification, MethodDecoratorScope scope) {
         this.scope = scope;
         this.specification = specification;
-        enabled = property(() -> configuration().isLogging(serviceMethod(specification.getServiceId(), specification.getMethodId()))).listenConsumer(() -> configuration()
+        ServiceMethodIdentifier serviceMethod = serviceMethod(specification.getServiceId(), specification.getMethodId());
+        enabled = property(() -> configuration().isLogging(serviceMethod)).listenConsumer(() -> configuration()
                 .getConsumer()
-                .serverLoggingConsumer());
+                .loggingConsumer());
     }
 
     @Override

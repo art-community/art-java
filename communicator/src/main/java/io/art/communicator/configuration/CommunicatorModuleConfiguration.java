@@ -18,6 +18,7 @@
 
 package io.art.communicator.configuration;
 
+import io.art.communicator.refresher.*;
 import io.art.communicator.registry.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
@@ -30,13 +31,23 @@ import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static java.util.Objects.*;
 import static java.util.Optional.*;
 import java.util.*;
+import java.util.function.*;
 
-@Getter
+@RequiredArgsConstructor
 public class CommunicatorModuleConfiguration implements ModuleConfiguration {
+    private final CommunicatorModuleRefresher refresher;
+
+    @Getter(lazy = true)
+    private final CommunicatorModuleRefresher.Consumer consumer = refresher.consumer();
+
+    @Getter
     private ImmutableMap<String, CommunicatorProxyConfiguration> configurations = emptyImmutableMap();
+    @Getter
     private CommunicatorProxyRegistry registry = new CommunicatorProxyRegistry();
+    @Getter
     private Scheduler scheduler;
 
     public Optional<String> findConnectorId(String protocol, CommunicatorActionIdentifier id) {
@@ -51,6 +62,38 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         return ofNullable(proxyConfiguration).map(configuration -> configuration.getActions().get(id.getActionId()));
     }
 
+    public boolean isLogging(CommunicatorActionIdentifier identifier) {
+        boolean communicator = checkCommunicator(identifier, CommunicatorProxyConfiguration::isLogging, true);
+        boolean action = checkAction(identifier, CommunicatorActionConfiguration::isLogging, true);
+        return communicator && action;
+    }
+
+    public boolean isDeactivated(CommunicatorActionIdentifier identifier) {
+        boolean communicator = checkCommunicator(identifier, CommunicatorProxyConfiguration::isDeactivated, false);
+        boolean action = checkAction(identifier, CommunicatorActionConfiguration::isDeactivated, false);
+        return communicator && action;
+    }
+
+    private <T> T checkCommunicator(CommunicatorActionIdentifier identifier, Function<CommunicatorProxyConfiguration, T> mapper, T defaultValue) {
+        CommunicatorProxyConfiguration proxyConfiguration = configurations.get(identifier.getCommunicatorId());
+        if (isNull(proxyConfiguration)) {
+            return defaultValue;
+        }
+        return mapper.apply(proxyConfiguration);
+    }
+
+    private <T> T checkAction(CommunicatorActionIdentifier identifier, Function<CommunicatorActionConfiguration, T> mapper, T defaultValue) {
+        CommunicatorProxyConfiguration proxyConfiguration = configurations.get(identifier.getCommunicatorId());
+        if (isNull(proxyConfiguration)) {
+            return defaultValue;
+        }
+        CommunicatorActionConfiguration actionConfiguration = proxyConfiguration.getActions().get(identifier.getActionId());
+        if (isNull(actionConfiguration)) {
+            return defaultValue;
+        }
+        return mapper.apply(actionConfiguration);
+    }
+
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<CommunicatorModuleConfiguration, Configurator> {
         private final CommunicatorModuleConfiguration configuration;
@@ -59,8 +102,9 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         public Configurator from(ConfigurationSource source) {
             configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
             configuration.configurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))
-                    .map(server -> server.getNestedMap(PROXIES_SECTION, CommunicatorProxyConfiguration::from))
+                    .map(communicator -> communicator.getNestedMap(PROXIES_SECTION, proxy -> CommunicatorProxyConfiguration.from(configuration.refresher, proxy)))
                     .orElse(emptyImmutableMap());
+            configuration.refresher.produce();
             return this;
         }
 

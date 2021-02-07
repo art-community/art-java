@@ -18,6 +18,8 @@
 
 package io.art.communicator.configuration;
 
+import io.art.communicator.refresher.*;
+import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
@@ -29,16 +31,20 @@ import static io.art.core.checker.NullityChecker.*;
 @Getter
 public class CommunicatorProxyConfiguration {
     private boolean logging;
+    private boolean deactivated;
     private Scheduler scheduler;
     private ImmutableMap<String, CommunicatorActionConfiguration> actions;
     private ImmutableMap<String, String> connectors;
 
-    public static CommunicatorProxyConfiguration from(ConfigurationSource source) {
+    public static CommunicatorProxyConfiguration from(CommunicatorModuleRefresher refresher, ConfigurationSource source) {
         CommunicatorProxyConfiguration configuration = new CommunicatorProxyConfiguration();
-        configuration.logging = orElse(source.getBool(LOGGING_KEY), false);
+        ChangesListener loggingListener = refresher.loggingListener();
+        ChangesListener deactivationListener = refresher.deactivationListener();
+        configuration.logging = loggingListener.emit(orElse(source.getBool(LOGGING_KEY), false));
+        configuration.deactivated = deactivationListener.emit(orElse(source.getBool(DEACTIVATED_KEY), false));
         configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
-        configuration.actions = source.getNestedMap(ACTIONS_SECTION, CommunicatorActionConfiguration::from);
         configuration.connectors = source.getNestedMap(CONNECTORS_KEY, NestedConfiguration::asString);
+        configuration.actions = source.getNestedMap(ACTIONS_SECTION, action -> CommunicatorActionConfiguration.from(refresher, action));
         return configuration;
     }
 }

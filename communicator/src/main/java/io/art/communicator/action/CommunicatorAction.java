@@ -19,6 +19,7 @@
 package io.art.communicator.action;
 
 import io.art.communicator.configuration.*;
+import io.art.communicator.decorator.*;
 import io.art.communicator.implementation.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
@@ -35,6 +36,7 @@ import reactor.core.scheduler.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.property.Property.*;
 import static java.util.Objects.*;
@@ -49,9 +51,11 @@ import java.util.function.*;
 @UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CommunicatorAction implements Managed {
+    @Getter
     @EqualsAndHashCode.Include
     private final String communicatorId;
 
+    @Getter
     @EqualsAndHashCode.Include
     private final String actionId;
 
@@ -70,17 +74,27 @@ public class CommunicatorAction implements Managed {
     @Getter
     private final MethodProcessingMode outputMode;
 
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeInputDecorators = immutableArrayOf(
+            new CommunicatorLoggingDecorator(this, INPUT)
+    );
+
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> afterInputDecorators = immutableArrayOf(
+            new CommunicatorDeactivationDecorator(this)
+    );
+
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeOutputDecorators = immutableArrayOf(
+            new CommunicatorLoggingDecorator(this, OUTPUT)
+    );
+
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> afterOutputDecorators = immutableArrayOf(
+            new CommunicatorDeactivationDecorator(this)
+    );
+
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
 
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
-
-    private final ImmutableArray<UnaryOperator<Flux<Object>>> defaultInputDecorators = immutableArrayOf(
-    );
-
-    private final ImmutableArray<UnaryOperator<Flux<Object>>> defaultOutputDecorators = immutableArrayOf(
-    );
 
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Object, Flux<Object>> adoptInput = adoptInput();
@@ -130,10 +144,13 @@ public class CommunicatorAction implements Managed {
 
     private Flux<Value> mapInput(Object input) {
         Flux<Object> inputFlux = getAdoptInput().apply(input);
-        for (UnaryOperator<Flux<Object>> decorator : defaultInputDecorators) {
+        for (UnaryOperator<Flux<Object>> decorator : beforeInputDecorators) {
             inputFlux = inputFlux.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
+            inputFlux = inputFlux.transform(decorator);
+        }
+        for (UnaryOperator<Flux<Object>> decorator : afterInputDecorators) {
             inputFlux = inputFlux.transform(decorator);
         }
         return inputFlux.map(value -> inputMapper.map(cast(value)));
@@ -141,10 +158,13 @@ public class CommunicatorAction implements Managed {
 
     private Object mapOutput(Flux<Value> output) {
         Flux<Object> outputFlux = output.map(value -> outputMapper.map(cast(value)));
-        for (UnaryOperator<Flux<Object>> decorator : defaultOutputDecorators) {
+        for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
             outputFlux = outputFlux.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
+            outputFlux = outputFlux.transform(decorator);
+        }
+        for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
             outputFlux = outputFlux.transform(decorator);
         }
         return getAdoptOutput().apply(outputFlux);

@@ -18,6 +18,8 @@
 
 package io.art.communicator.configuration;
 
+import io.art.communicator.refresher.*;
+import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
@@ -29,12 +31,16 @@ import static io.art.core.checker.NullityChecker.*;
 @Getter
 public class CommunicatorActionConfiguration {
     private boolean logging;
+    private boolean deactivated;
     private Scheduler scheduler;
     private ImmutableMap<String, String> connectors;
 
-    public static CommunicatorActionConfiguration from(ConfigurationSource source) {
+    public static CommunicatorActionConfiguration from(CommunicatorModuleRefresher refresher, ConfigurationSource source) {
         CommunicatorActionConfiguration configuration = new CommunicatorActionConfiguration();
-        configuration.logging = orElse(source.getBool(LOGGING_KEY), false);
+        ChangesListener loggingListener = refresher.loggingListener();
+        ChangesListener deactivationListener = refresher.deactivationListener();
+        configuration.logging = loggingListener.emit(orElse(source.getBool(LOGGING_KEY), false));
+        configuration.deactivated = deactivationListener.emit(orElse(source.getBool(DEACTIVATED_KEY), false));
         configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
         configuration.connectors = source.getNestedMap(CONNECTORS_KEY, NestedConfiguration::asString);
         return configuration;

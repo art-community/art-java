@@ -37,7 +37,6 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
@@ -74,14 +73,21 @@ public class ServiceMethodSpecification {
 
     private final ServiceMethodImplementation implementation;
 
-    private final ImmutableArray<UnaryOperator<Flux<Object>>> defaultInputDecorators = immutableArrayOf(
-            new ServiceStateDecorator(this),
-            new ServiceLoggingDecorator(this, INPUT),
-            new ServiceDeactivationDecorator(this)
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeInputDecorators = immutableArrayOf(
+            new ServiceLoggingDecorator(this, INPUT)
     );
 
-    private final ImmutableArray<UnaryOperator<Flux<Object>>> defaultOutputDecorators = immutableArrayOf(
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> afterInputDecorators = immutableArrayOf(
+            new ServiceDeactivationDecorator(this),
+            new ServiceStateDecorator(this)
+    );
+
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeOutputDecorators = immutableArrayOf(
             new ServiceLoggingDecorator(this, OUTPUT)
+    );
+
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> afterOutputDecorators = immutableArrayOf(
+            new ServiceDeactivationDecorator(this)
     );
 
     @Singular("inputDecorator")
@@ -118,10 +124,13 @@ public class ServiceMethodSpecification {
 
     private Object mapInput(Flux<Value> input) {
         Flux<Object> mappedInput = input.map(value -> inputMapper.map(cast(value)));
-        for (UnaryOperator<Flux<Object>> decorator : defaultInputDecorators) {
+        for (UnaryOperator<Flux<Object>> decorator : beforeInputDecorators) {
             mappedInput = mappedInput.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
+            mappedInput = mappedInput.transform(decorator);
+        }
+        for (UnaryOperator<Flux<Object>> decorator : afterInputDecorators) {
             mappedInput = mappedInput.transform(decorator);
         }
         return getAdoptInput().apply(mappedInput);
@@ -129,10 +138,13 @@ public class ServiceMethodSpecification {
 
     private Flux<Value> mapOutput(Object output) {
         Flux<Object> mappedOutput = let(output, getAdoptOutput(), Flux.empty());
-        for (UnaryOperator<Flux<Object>> decorator : defaultOutputDecorators) {
+        for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
             mappedOutput = mappedOutput.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
+            mappedOutput = mappedOutput.transform(decorator);
+        }
+        for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
             mappedOutput = mappedOutput.transform(decorator);
         }
         return mappedOutput
@@ -142,10 +154,13 @@ public class ServiceMethodSpecification {
 
     private Flux<Value> mapException(Throwable exception) {
         Flux<Object> errorOutput = Flux.error(exception);
-        for (UnaryOperator<Flux<Object>> decorator : defaultOutputDecorators) {
+        for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
             errorOutput = errorOutput.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
+            errorOutput = errorOutput.transform(decorator);
+        }
+        for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
             errorOutput = errorOutput.transform(decorator);
         }
         return errorOutput

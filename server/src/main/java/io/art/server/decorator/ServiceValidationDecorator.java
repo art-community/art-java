@@ -18,15 +18,18 @@
 
 package io.art.server.decorator;
 
-import io.art.core.property.*;
 import io.art.core.model.*;
+import io.art.core.property.*;
+import io.art.server.configuration.*;
 import io.art.server.exception.*;
+import io.art.server.refresher.*;
 import io.art.server.specification.*;
 import io.art.server.validation.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
-import static io.art.core.property.DisposableProperty.*;
+import static io.art.core.property.LazyProperty.*;
+import static io.art.core.property.Property.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
 import static io.art.server.module.ServerModule.*;
@@ -40,27 +43,25 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(ServiceLoggingDecorator.class);
     private final static ValidationException NULL_EXCEPTION = new ValidationException(notNull(expression -> REQUEST_IS_NULL));
-    private final Supplier<Boolean> enabled;
-    private final Supplier<Boolean> deactivated;
-    private final DisposableProperty<Boolean> hasInput;
+    private final Property<Boolean> enabled;
+    private final Property<Boolean> deactivated;
+    private final LazyProperty<Boolean> hasInput;
 
-    public ServiceValidationDecorator(ServiceMethodIdentifier serviceMethodId) {
-        enabled = () -> serverModule().configuration().isValidating(serviceMethodId);
-        deactivated = () -> serverModule().configuration().isDeactivated(serviceMethodId);
-        hasInput = disposable(() -> hasInput(serviceMethodId));
+    public ServiceValidationDecorator(ServiceMethodIdentifier serviceMethod) {
+        ServerModuleRefresher.Consumer consumer = configuration().getConsumer();
+        enabled = property(() -> configuration().isValidating(serviceMethod)).listenConsumer(consumer::validationConsumer);
+        deactivated = property(() -> configuration().isLogging(serviceMethod)).listenConsumer(consumer::loggingConsumer);
+        hasInput = lazy(() -> hasInput(serviceMethod));
     }
 
     @Override
     public Flux<Object> apply(Flux<Object> input) {
-        if (!enabled.get() || deactivated.get() || !hasInput.get()) {
-            return input;
-        }
+        if (disabled()) return input;
         return input.switchIfEmpty(error(NULL_EXCEPTION.fillInStackTrace())).doOnNext(this::validateReactiveData);
     }
 
     private boolean hasInput(ServiceMethodIdentifier serviceMethodId) {
-        return serverModule()
-                .configuration()
+        return configuration()
                 .getRegistry()
                 .findMethodById(serviceMethodId)
                 .map(ServiceMethodSpecification::getInputMapper)
@@ -68,8 +69,17 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
     }
 
     private void validateReactiveData(Object data) {
+        if (disabled()) return;
         if (isNull(data)) throw (ValidationException) NULL_EXCEPTION.fillInStackTrace();
         Validatable requestData = (Validatable) data;
         requestData.onValidating(new Validator(requestData));
+    }
+
+    private boolean disabled() {
+        return !enabled.get() || deactivated.get() || !hasInput.get();
+    }
+
+    private ServerModuleConfiguration configuration() {
+        return serverModule().configuration();
     }
 }

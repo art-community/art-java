@@ -18,7 +18,9 @@
 
 package io.art.server.model;
 
+import io.art.core.changes.*;
 import io.art.core.source.*;
+import io.art.server.refresher.*;
 import lombok.*;
 import reactor.core.scheduler.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -26,18 +28,21 @@ import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.Defaults.*;
 
 @Getter
-@AllArgsConstructor
 public class ServiceMethodConfiguration {
-    private final boolean deactivated;
-    private final boolean logging;
-    private final boolean validating;
-    private final Scheduler scheduler;
+    private boolean deactivated;
+    private boolean logging;
+    private boolean validating;
+    private Scheduler scheduler;
 
-    public static ServiceMethodConfiguration from(ConfigurationSource source) {
-        boolean deactivated = orElse(source.getBool(DEACTIVATED_KEY), false);
-        boolean logging = orElse(source.getBool(LOGGING_KEY), true);
-        boolean validating = orElse(source.getBool(VALIDATING_KEY), true);
-        Scheduler scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
-        return new ServiceMethodConfiguration(deactivated, logging, validating, scheduler);
+    public static ServiceMethodConfiguration from(ServerModuleRefresher refresher, ConfigurationSource source) {
+        ServiceMethodConfiguration configuration = new ServiceMethodConfiguration();
+        ChangesListener deactivationListener = refresher.deactivationListener();
+        ChangesListener loggingListener = refresher.loggingListener();
+        ChangesListener validationListener = refresher.validationListener();
+        configuration.deactivated = deactivationListener.emit(orElse(source.getBool(DEACTIVATED_KEY), false));
+        configuration.logging = loggingListener.emit(orElse(source.getBool(LOGGING_KEY), true));
+        configuration.validating = validationListener.emit(orElse(source.getBool(VALIDATING_KEY), true));
+        configuration.scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
+        return configuration;
     }
 }
