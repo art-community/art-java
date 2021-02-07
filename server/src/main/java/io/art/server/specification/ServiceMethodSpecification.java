@@ -35,7 +35,9 @@ import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
@@ -73,10 +75,13 @@ public class ServiceMethodSpecification {
     private final ServiceMethodImplementation implementation;
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> defaultInputDecorators = immutableArrayOf(
-            new ServiceStateDecorator(this)
+            new ServiceStateDecorator(this),
+            new ServiceLoggingDecorator(this, INPUT),
+            new ServiceDeactivationDecorator(this)
     );
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> defaultOutputDecorators = immutableArrayOf(
+            new ServiceLoggingDecorator(this, OUTPUT)
     );
 
     @Singular("inputDecorator")

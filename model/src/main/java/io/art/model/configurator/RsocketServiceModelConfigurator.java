@@ -49,18 +49,6 @@ public class RsocketServiceModelConfigurator {
         return this;
     }
 
-    public RsocketServiceModelConfigurator logging() {
-        return decorate((method, builder) -> builder
-                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(id, method), INPUT))
-                .outputDecorator(new ServiceLoggingDecorator(serviceMethod(id, method), OUTPUT)));
-    }
-
-    public RsocketServiceModelConfigurator deactivation() {
-        return decorate((method, builder) -> builder
-                .inputDecorator(new ServiceDeactivationDecorator(serviceMethod(id, method)))
-                .outputDecorator(new ServiceDeactivationDecorator(serviceMethod(id, method))));
-    }
-
     private RsocketServiceModelConfigurator decorate(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
         BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> current = this.classDecorator;
         classDecorator = (method, builder) -> {

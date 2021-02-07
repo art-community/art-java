@@ -21,9 +21,11 @@ package io.art.server.decorator;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.server.configuration.*;
+import io.art.server.specification.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
+import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.module.ServerModule.*;
@@ -35,8 +37,8 @@ public class ServiceDeactivationDecorator implements UnaryOperator<Flux<Object>>
     private static final Logger logger = logger(ServiceDeactivationDecorator.class);
     private final Property<Boolean> enabled;
 
-    public ServiceDeactivationDecorator(ServiceMethodIdentifier serviceMethodId) {
-        this.enabled = property(enabled(serviceMethodId)).listenConsumer(() -> configuration()
+    public ServiceDeactivationDecorator(ServiceMethodSpecification specification) {
+        this.enabled = property(enabled(serviceMethod(specification.getServiceId(), specification.getMethodId()))).listenConsumer(() -> configuration()
                 .getConsumer()
                 .serverDeactivationConsumer());
     }

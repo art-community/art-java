@@ -19,7 +19,6 @@
 package io.art.server.decorator;
 
 import io.art.core.constants.*;
-import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.server.configuration.*;
 import io.art.server.specification.*;
@@ -28,18 +27,18 @@ import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
 import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
-import java.util.*;
 import java.util.function.*;
 
 public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     private final MethodDecoratorScope scope;
-    private final ServiceMethodIdentifier serviceMethodId;
+    private final ServiceMethodSpecification specification;
     private final Property<Boolean> enabled;
 
     @Getter(lazy = true, value = PRIVATE)
@@ -48,10 +47,10 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
     private final Logger logger = logger(ServiceLoggingDecorator.class.getSimpleName() + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
 
-    public ServiceLoggingDecorator(ServiceMethodIdentifier serviceMethodId, MethodDecoratorScope scope) {
+    public ServiceLoggingDecorator(ServiceMethodSpecification specification, MethodDecoratorScope scope) {
         this.scope = scope;
-        this.serviceMethodId = serviceMethodId;
-        enabled = property(() -> configuration().isLogging(serviceMethodId)).listenConsumer(() -> configuration()
+        this.specification = specification;
+        enabled = property(() -> configuration().isLogging(serviceMethod(specification.getServiceId(), specification.getMethodId()))).listenConsumer(() -> configuration()
                 .getConsumer()
                 .serverLoggingConsumer());
     }
@@ -88,11 +87,6 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
 
     @SuppressWarnings(CONSTANT_CONDITIONS)
     private UnaryOperator<Flux<Object>> createDecorator() {
-        Optional<ServiceMethodSpecification> possibleSpecification = specifications().findMethodById(serviceMethodId);
-        if (!possibleSpecification.isPresent()) {
-            return UnaryOperator.identity();
-        }
-        ServiceMethodSpecification specification = possibleSpecification.get();
         switch (scope) {
             case INPUT:
                 return input -> input
